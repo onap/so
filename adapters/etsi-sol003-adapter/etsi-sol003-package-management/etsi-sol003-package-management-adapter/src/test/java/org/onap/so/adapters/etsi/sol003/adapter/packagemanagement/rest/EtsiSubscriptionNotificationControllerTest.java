@@ -20,6 +20,50 @@
 
 package org.onap.so.adapters.etsi.sol003.adapter.packagemanagement.rest;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.onap.so.adapters.etsi.sol003.adapter.etsicatalog.notification.model.NOTIFICATIONLINKSERIALIZER;
+import org.onap.so.adapters.etsi.sol003.adapter.etsicatalog.notification.model.PkgChangeNotification;
+import org.onap.so.adapters.etsi.sol003.adapter.etsicatalog.notification.model.PkgOnboardingNotification;
+import org.onap.so.adapters.etsi.sol003.adapter.etsicatalog.notification.model.PkgmLinks;
+import org.onap.so.adapters.etsi.sol003.adapter.packagemanagement.JSON;
+import org.onap.so.adapters.etsi.sol003.adapter.packagemanagement.PackageManagementConstants;
+import org.onap.so.adapters.etsi.sol003.adapter.packagemanagement.extclients.etsicatalog.model.ProblemDetails;
+import org.onap.so.adapters.etsi.sol003.adapter.packagemanagement.extclients.vnfm.notification.model.VnfPackageChangeNotification;
+import org.onap.so.adapters.etsi.sol003.adapter.packagemanagement.extclients.vnfm.notification.model.VnfPackageOnboardingNotification;
+import org.onap.so.adapters.etsi.sol003.adapter.packagemanagement.model.PkgmSubscriptionRequest;
+import org.onap.so.adapters.etsi.sol003.adapter.packagemanagement.model.SubscriptionsAuthentication;
+import org.onap.so.adapters.etsi.sol003.adapter.packagemanagement.model.SubscriptionsAuthenticationParamsBasic;
+import org.onap.so.adapters.etsi.sol003.adapter.packagemanagement.model.SubscriptionsAuthenticationParamsOauth2ClientCredentials;
+import org.onap.so.configuration.rest.BasicHttpHeadersProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.GsonHttpMessageConverter;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.web.client.RestTemplate;
+import java.net.URI;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.onap.so.adapters.etsi.sol003.adapter.common.CommonConstants.ETSI_SUBSCRIPTION_NOTIFICATION_CONTROLLER_BASE_URL;
@@ -31,49 +75,6 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.onap.so.adapters.etsi.sol003.adapter.etsicatalog.notification.model.NOTIFICATIONLINKSERIALIZER;
-import org.onap.so.adapters.etsi.sol003.adapter.etsicatalog.notification.model.PkgChangeNotification;
-import org.onap.so.adapters.etsi.sol003.adapter.etsicatalog.notification.model.PkgOnboardingNotification;
-import org.onap.so.adapters.etsi.sol003.adapter.etsicatalog.notification.model.PkgmLinks;
-import org.onap.so.adapters.etsi.sol003.adapter.packagemanagement.extclients.vnfm.notification.model.VnfPackageChangeNotification;
-import org.onap.so.adapters.etsi.sol003.adapter.packagemanagement.extclients.vnfm.notification.model.VnfPackageOnboardingNotification;
-import org.onap.so.adapters.etsi.sol003.adapter.packagemanagement.PackageManagementConstants;
-import org.onap.so.adapters.etsi.sol003.adapter.packagemanagement.extclients.etsicatalog.model.ProblemDetails;
-import org.onap.so.adapters.etsi.sol003.adapter.packagemanagement.model.PkgmSubscriptionRequest;
-import org.onap.so.adapters.etsi.sol003.adapter.packagemanagement.model.SubscriptionsAuthentication;
-import org.onap.so.adapters.etsi.sol003.adapter.packagemanagement.model.SubscriptionsAuthenticationParamsBasic;
-import org.onap.so.adapters.etsi.sol003.adapter.packagemanagement.model.SubscriptionsAuthenticationParamsOauth2ClientCredentials;
-import org.onap.so.configuration.rest.BasicHttpHeadersProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.web.client.RestTemplate;
-import org.threeten.bp.LocalDateTime;
-import org.threeten.bp.OffsetDateTime;
-import org.threeten.bp.ZoneOffset;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 /**
  * @author Andrew Lamb (andrew.a.lamb@est.tech)
@@ -101,20 +102,20 @@ public class EtsiSubscriptionNotificationControllerTest {
     private static final String EXPECTED_OAUTH_AUTHORIZATION = "Bearer " + TOKEN;
     private static final String NOTIFICATION_ID = "NOTIFICATION_ID";
     private static final String SUBSCRIPTION_ID = "SUBSCRIPTION_ID";
-    private static final OffsetDateTime TIMESTAMP =
-            OffsetDateTime.of(LocalDateTime.of(2020, 1, 1, 1, 1, 1, 1), ZoneOffset.ofHours(1));
+    private static final String TIME_STAMP_STRING_EXPECTED_FROM_ETSI_CATALOG = "2020-01-01 01:01:01";
+    private static final java.time.LocalDateTime TIMESTAMP = java.time.LocalDateTime.of(2020, 1, 1, 1, 1, 1, 1);
     private static final String VNFPKG_ID = UUID.randomUUID().toString();
     private static final String VNFD_ID = UUID.randomUUID().toString();
 
     private BasicHttpHeadersProvider basicHttpHeadersProvider;
-    private final Gson gson = new GsonBuilder().create();;
+    private final Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class,
+            new EtsiSubscriptionNotificationController.LocalDateTimeTypeAdapter()).create();
 
     @Autowired
     @Qualifier(CONFIGURABLE_REST_TEMPLATE)
     private RestTemplate restTemplate;
     private MockRestServiceServer mockRestServiceServer;
 
-    @Autowired
     private TestRestTemplate testRestTemplate;
 
     @Autowired
@@ -127,7 +128,13 @@ public class EtsiSubscriptionNotificationControllerTest {
         basicHttpHeadersProvider = new BasicHttpHeadersProvider();
         cache = cacheServiceProvider.getCache(PackageManagementConstants.PACKAGE_MANAGEMENT_SUBSCRIPTION_CACHE);
         cache.clear();
+
+        final Gson gson = JSON.createGson().registerTypeAdapter(LocalDateTime.class,
+                new EtsiSubscriptionNotificationController.LocalDateTimeTypeAdapter()).create();
+        testRestTemplate = new TestRestTemplate(
+                new RestTemplateBuilder().additionalMessageConverters(new GsonHttpMessageConverter(gson)));
     }
+
 
     @After
     public void tearDown() {
@@ -147,7 +154,6 @@ public class EtsiSubscriptionNotificationControllerTest {
                 buildPkgmSubscriptionRequest(SubscriptionsAuthentication.AuthTypeEnum.BASIC);
         cache.put(SUBSCRIPTION_ID, subscriptionRequest);
         final PkgOnboardingNotification notification = buildPkgOnboardingNotification();
-        final String notificationString = gson.toJson(notification);
 
         mockRestServiceServer.expect(requestTo(CALLBACK_URI)).andExpect(method(HttpMethod.POST))
                 .andExpect(jsonPath("$.id").value(NOTIFICATION_ID))
@@ -155,13 +161,12 @@ public class EtsiSubscriptionNotificationControllerTest {
                         .value(VnfPackageOnboardingNotification.NotificationTypeEnum.VNFPACKAGEONBOARDINGNOTIFICATION
                                 .toString()))
                 .andExpect(jsonPath("$.subscriptionId").value(SUBSCRIPTION_ID))
-                .andExpect(jsonPath("$.timeStamp").value(TIMESTAMP.toString()))
-                .andExpect(jsonPath("$.vnfPkgId").value(VNFPKG_ID.toString()))
-                .andExpect(jsonPath("$.vnfdId").value(VNFD_ID.toString()))
+                .andExpect(jsonPath("$.timeStamp").value(TIME_STAMP_STRING_EXPECTED_FROM_ETSI_CATALOG))
+                .andExpect(jsonPath("$.vnfPkgId").value(VNFPKG_ID)).andExpect(jsonPath("$.vnfdId").value(VNFD_ID))
                 .andExpect(jsonPath("$._links").value(buildPkgmLinks()))
                 .andExpect(header("Authorization", EXPECTED_BASIC_AUTHORIZATION)).andRespond(withSuccess());
 
-        final ResponseEntity<?> response = sendHttpPost(notificationString);
+        final ResponseEntity<?> response = sendHttpPost(notification);
 
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
@@ -169,8 +174,7 @@ public class EtsiSubscriptionNotificationControllerTest {
     @Test
     public void testOnboardingNotificationNotSentOnToVnfmCallbackUri_SubscriptionRequestNotInCache_Fail() {
         final PkgOnboardingNotification notification = buildPkgOnboardingNotification();
-        final String notificationString = gson.toJson(notification);
-        final ResponseEntity<?> response = sendHttpPost(notificationString);
+        final ResponseEntity<?> response = sendHttpPost(notification);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertTrue(response.getBody() instanceof ProblemDetails);
@@ -188,12 +192,11 @@ public class EtsiSubscriptionNotificationControllerTest {
                 buildPkgmSubscriptionRequest(SubscriptionsAuthentication.AuthTypeEnum.BASIC);
         cache.put(SUBSCRIPTION_ID, subscriptionRequest);
         final PkgOnboardingNotification notification = buildPkgOnboardingNotification();
-        final String notificationString = gson.toJson(notification);
 
         mockRestServiceServer.expect(requestTo(CALLBACK_URI)).andExpect(method(HttpMethod.POST))
                 .andRespond(withStatus(HttpStatus.BAD_REQUEST));
 
-        final ResponseEntity<?> response = sendHttpPost(notificationString);
+        final ResponseEntity<?> response = sendHttpPost(notification);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertTrue(response.getBody() instanceof ProblemDetails);
@@ -211,12 +214,11 @@ public class EtsiSubscriptionNotificationControllerTest {
                 buildPkgmSubscriptionRequest(SubscriptionsAuthentication.AuthTypeEnum.BASIC);
         cache.put(SUBSCRIPTION_ID, subscriptionRequest);
         final PkgOnboardingNotification notification = buildPkgOnboardingNotification();
-        final String notificationString = gson.toJson(notification);
 
         mockRestServiceServer.expect(requestTo(CALLBACK_URI)).andExpect(method(HttpMethod.POST))
                 .andRespond(withStatus(HttpStatus.MOVED_PERMANENTLY));
 
-        final ResponseEntity<?> response = sendHttpPost(notificationString);
+        final ResponseEntity<?> response = sendHttpPost(notification);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertTrue(response.getBody() instanceof ProblemDetails);
@@ -233,12 +235,11 @@ public class EtsiSubscriptionNotificationControllerTest {
                 buildPkgmSubscriptionRequest(SubscriptionsAuthentication.AuthTypeEnum.BASIC);
         cache.put(SUBSCRIPTION_ID, subscriptionRequest);
         final PkgOnboardingNotification notification = buildPkgOnboardingNotification();
-        final String notificationString = gson.toJson(notification);
 
         mockRestServiceServer.expect(requestTo(CALLBACK_URI)).andExpect(method(HttpMethod.POST))
                 .andRespond(withStatus(HttpStatus.NOT_FOUND));
 
-        final ResponseEntity<?> response = sendHttpPost(notificationString);
+        final ResponseEntity<?> response = sendHttpPost(notification);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertTrue(response.getBody() instanceof ProblemDetails);
@@ -256,12 +257,11 @@ public class EtsiSubscriptionNotificationControllerTest {
                 buildPkgmSubscriptionRequest(SubscriptionsAuthentication.AuthTypeEnum.BASIC);
         cache.put(SUBSCRIPTION_ID, subscriptionRequest);
         final PkgOnboardingNotification notification = buildPkgOnboardingNotification();
-        final String notificationString = gson.toJson(notification);
 
         mockRestServiceServer.expect(requestTo(CALLBACK_URI)).andExpect(method(HttpMethod.POST))
                 .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
 
-        final ResponseEntity<?> response = sendHttpPost(notificationString);
+        final ResponseEntity<?> response = sendHttpPost(notification);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertTrue(response.getBody() instanceof ProblemDetails);
@@ -280,16 +280,14 @@ public class EtsiSubscriptionNotificationControllerTest {
                 buildPkgmSubscriptionRequest(SubscriptionsAuthentication.AuthTypeEnum.BASIC);
         cache.put(SUBSCRIPTION_ID, subscriptionRequest);
         final PkgChangeNotification notification = buildPkgChangeNotification();
-        final String notificationString = gson.toJson(notification);
 
         mockRestServiceServer.expect(requestTo(CALLBACK_URI)).andExpect(method(HttpMethod.POST))
                 .andExpect(jsonPath("$.id").value(NOTIFICATION_ID))
                 .andExpect(jsonPath("$.notificationType").value(
                         VnfPackageChangeNotification.NotificationTypeEnum.VNFPACKAGECHANGENOTIFICATION.getValue()))
                 .andExpect(jsonPath("$.subscriptionId").value(SUBSCRIPTION_ID))
-                .andExpect(jsonPath("$.timeStamp").value(TIMESTAMP.toString()))
-                .andExpect(jsonPath("$.vnfPkgId").value(VNFPKG_ID.toString()))
-                .andExpect(jsonPath("$.vnfdId").value(VNFD_ID.toString()))
+                .andExpect(jsonPath("$.timeStamp").value(TIME_STAMP_STRING_EXPECTED_FROM_ETSI_CATALOG))
+                .andExpect(jsonPath("$.vnfPkgId").value(VNFPKG_ID)).andExpect(jsonPath("$.vnfdId").value(VNFD_ID))
                 .andExpect(
                         jsonPath("$.changeType").value(PkgChangeNotification.ChangeTypeEnum.OP_STATE_CHANGE.toString()))
                 .andExpect(jsonPath("$.operationalState")
@@ -297,7 +295,7 @@ public class EtsiSubscriptionNotificationControllerTest {
                 .andExpect(jsonPath("$._links").value(buildPkgmLinks()))
                 .andExpect(header("Authorization", EXPECTED_BASIC_AUTHORIZATION)).andRespond(withSuccess());
 
-        final ResponseEntity<?> response = sendHttpPost(notificationString);
+        final ResponseEntity<?> response = sendHttpPost(notification);
 
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
@@ -305,8 +303,7 @@ public class EtsiSubscriptionNotificationControllerTest {
     @Test
     public void testChangeNotificationNotSentOnToVnfmCallbackUri_SubscriptionRequestNotInCache_Fail() {
         final PkgChangeNotification notification = buildPkgChangeNotification();
-        final String notificationString = gson.toJson(notification);
-        final ResponseEntity<?> response = sendHttpPost(notificationString);
+        final ResponseEntity<?> response = sendHttpPost(notification);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertTrue(response.getBody() instanceof ProblemDetails);
@@ -324,12 +321,11 @@ public class EtsiSubscriptionNotificationControllerTest {
                 buildPkgmSubscriptionRequest(SubscriptionsAuthentication.AuthTypeEnum.BASIC);
         cache.put(SUBSCRIPTION_ID, subscriptionRequest);
         final PkgChangeNotification notification = buildPkgChangeNotification();
-        final String notificationString = gson.toJson(notification);
 
         mockRestServiceServer.expect(requestTo(CALLBACK_URI)).andExpect(method(HttpMethod.POST))
                 .andRespond(withStatus(HttpStatus.BAD_REQUEST));
 
-        final ResponseEntity<?> response = sendHttpPost(notificationString);
+        final ResponseEntity<?> response = sendHttpPost(notification);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertTrue(response.getBody() instanceof ProblemDetails);
@@ -347,12 +343,11 @@ public class EtsiSubscriptionNotificationControllerTest {
                 buildPkgmSubscriptionRequest(SubscriptionsAuthentication.AuthTypeEnum.BASIC);
         cache.put(SUBSCRIPTION_ID, subscriptionRequest);
         final PkgChangeNotification notification = buildPkgChangeNotification();
-        final String notificationString = gson.toJson(notification);
 
         mockRestServiceServer.expect(requestTo(CALLBACK_URI)).andExpect(method(HttpMethod.POST))
                 .andRespond(withStatus(HttpStatus.NOT_FOUND));
 
-        final ResponseEntity<?> response = sendHttpPost(notificationString);
+        final ResponseEntity<?> response = sendHttpPost(notification);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertTrue(response.getBody() instanceof ProblemDetails);
@@ -370,12 +365,11 @@ public class EtsiSubscriptionNotificationControllerTest {
                 buildPkgmSubscriptionRequest(SubscriptionsAuthentication.AuthTypeEnum.BASIC);
         cache.put(SUBSCRIPTION_ID, subscriptionRequest);
         final PkgChangeNotification notification = buildPkgChangeNotification();
-        final String notificationString = gson.toJson(notification);
 
         mockRestServiceServer.expect(requestTo(CALLBACK_URI)).andExpect(method(HttpMethod.POST))
                 .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
 
-        final ResponseEntity<?> response = sendHttpPost(notificationString);
+        final ResponseEntity<?> response = sendHttpPost(notification);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertTrue(response.getBody() instanceof ProblemDetails);
@@ -394,7 +388,6 @@ public class EtsiSubscriptionNotificationControllerTest {
                 buildPkgmSubscriptionRequest(SubscriptionsAuthentication.AuthTypeEnum.BASIC);
         cache.put(SUBSCRIPTION_ID, subscriptionRequest);
         final PkgOnboardingNotification notification = buildPkgOnboardingNotification();
-        final String notificationString = gson.toJson(notification);
 
         mockRestServiceServer.expect(requestTo(CALLBACK_URI)).andExpect(method(HttpMethod.POST))
                 .andExpect(jsonPath("$.id").value(NOTIFICATION_ID))
@@ -402,13 +395,12 @@ public class EtsiSubscriptionNotificationControllerTest {
                         .value(VnfPackageOnboardingNotification.NotificationTypeEnum.VNFPACKAGEONBOARDINGNOTIFICATION
                                 .toString()))
                 .andExpect(jsonPath("$.subscriptionId").value(SUBSCRIPTION_ID))
-                .andExpect(jsonPath("$.timeStamp").value(TIMESTAMP.toString()))
-                .andExpect(jsonPath("$.vnfPkgId").value(VNFPKG_ID.toString()))
-                .andExpect(jsonPath("$.vnfdId").value(VNFD_ID.toString()))
+                .andExpect(jsonPath("$.timeStamp").value(TIME_STAMP_STRING_EXPECTED_FROM_ETSI_CATALOG))
+                .andExpect(jsonPath("$.vnfPkgId").value(VNFPKG_ID)).andExpect(jsonPath("$.vnfdId").value(VNFD_ID))
                 .andExpect(jsonPath("$._links").value(buildPkgmLinks()))
                 .andExpect(header("Authorization", EXPECTED_BASIC_AUTHORIZATION)).andRespond(withSuccess());
 
-        final ResponseEntity<?> response = sendHttpPost(notificationString);
+        final ResponseEntity<?> response = sendHttpPost(notification);
 
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
@@ -419,13 +411,12 @@ public class EtsiSubscriptionNotificationControllerTest {
                 buildPkgmSubscriptionRequest(SubscriptionsAuthentication.AuthTypeEnum.BASIC);
         cache.put(SUBSCRIPTION_ID, subscriptionRequest);
         final PkgChangeNotification notification = buildPkgChangeNotification();
-        final String notificationString = gson.toJson(notification);
 
         mockRestServiceServer.expect(requestTo(CALLBACK_URI)).andExpect(method(HttpMethod.POST))
                 .andExpect(header("Authorization", EXPECTED_BASIC_AUTHORIZATION))
                 .andRespond(withStatus(HttpStatus.UNAUTHORIZED));
 
-        final ResponseEntity<?> response = sendHttpPost(notificationString);
+        final ResponseEntity<?> response = sendHttpPost(notification);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertTrue(response.getBody() instanceof ProblemDetails);
@@ -443,7 +434,6 @@ public class EtsiSubscriptionNotificationControllerTest {
                 buildPkgmSubscriptionRequest(SubscriptionsAuthentication.AuthTypeEnum.OAUTH2_CLIENT_CREDENTIALS);
         cache.put(SUBSCRIPTION_ID, subscriptionRequest);
         final PkgChangeNotification notification = buildPkgChangeNotification();
-        final String notificationString = gson.toJson(notification);
 
         mockRestServiceServer.expect(requestTo(TOKEN_ENDPOINT)).andExpect(method(HttpMethod.POST))
                 .andExpect(header("Authorization", EXPECTED_BASIC_AUTHORIZATION))
@@ -455,16 +445,15 @@ public class EtsiSubscriptionNotificationControllerTest {
                 .andExpect(jsonPath("$.notificationType").value(
                         VnfPackageChangeNotification.NotificationTypeEnum.VNFPACKAGECHANGENOTIFICATION.toString()))
                 .andExpect(jsonPath("$.subscriptionId").value(SUBSCRIPTION_ID))
-                .andExpect(jsonPath("$.timeStamp").value(TIMESTAMP.toString()))
-                .andExpect(jsonPath("$.vnfPkgId").value(VNFPKG_ID.toString()))
-                .andExpect(jsonPath("$.vnfdId").value(VNFD_ID.toString()))
+                .andExpect(jsonPath("$.timeStamp").value(TIME_STAMP_STRING_EXPECTED_FROM_ETSI_CATALOG))
+                .andExpect(jsonPath("$.vnfPkgId").value(VNFPKG_ID)).andExpect(jsonPath("$.vnfdId").value(VNFD_ID))
                 .andExpect(
                         jsonPath("$.changeType").value(PkgChangeNotification.ChangeTypeEnum.OP_STATE_CHANGE.toString()))
                 .andExpect(jsonPath("$.operationalState")
                         .value(PkgChangeNotification.OperationalStateEnum.ENABLED.toString()))
                 .andExpect(jsonPath("$._links").value(buildPkgmLinks())).andRespond(withSuccess());
 
-        final ResponseEntity<?> response = sendHttpPost(notificationString);
+        final ResponseEntity<?> response = sendHttpPost(notification);
 
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
@@ -475,12 +464,11 @@ public class EtsiSubscriptionNotificationControllerTest {
                 buildPkgmSubscriptionRequest(SubscriptionsAuthentication.AuthTypeEnum.OAUTH2_CLIENT_CREDENTIALS);
         cache.put(SUBSCRIPTION_ID, subscriptionRequest);
         final PkgChangeNotification notification = buildPkgChangeNotification();
-        final String notificationString = gson.toJson(notification);
 
         mockRestServiceServer.expect(requestTo(TOKEN_ENDPOINT)).andExpect(method(HttpMethod.POST))
                 .andExpect(header("Authorization", EXPECTED_BASIC_AUTHORIZATION)).andRespond(withSuccess());
 
-        final ResponseEntity<?> response = sendHttpPost(notificationString);
+        final ResponseEntity<?> response = sendHttpPost(notification);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertTrue(response.getBody() instanceof ProblemDetails);
@@ -497,9 +485,8 @@ public class EtsiSubscriptionNotificationControllerTest {
                 buildPkgmSubscriptionRequest(SubscriptionsAuthentication.AuthTypeEnum.TLS_CERT);
         cache.put(SUBSCRIPTION_ID, subscriptionRequest);
         final PkgChangeNotification notification = buildPkgChangeNotification();
-        final String notificationString = gson.toJson(notification);
 
-        final ResponseEntity<?> response = sendHttpPost(notificationString);
+        final ResponseEntity<?> response = sendHttpPost(notification);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertTrue(response.getBody() instanceof ProblemDetails);
