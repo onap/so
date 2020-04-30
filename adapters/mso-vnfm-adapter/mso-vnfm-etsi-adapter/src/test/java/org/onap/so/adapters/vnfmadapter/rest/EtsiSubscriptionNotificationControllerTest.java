@@ -99,6 +99,10 @@ public class EtsiSubscriptionNotificationControllerTest {
             OffsetDateTime.of(LocalDateTime.of(2020, 1, 1, 1, 1, 1, 1), ZoneOffset.ofHours(1));
     private static final String VNFPKG_ID = UUID.randomUUID().toString();
     private static final String VNFD_ID = UUID.randomUUID().toString();
+    private static final String EXPECTED_VNF_PACKAGE_HREF =
+            "https://so-vnfm-adapter.onap:30406/so/vnfm-adapter/v1/vnfpkgm/v1/vnf_packages/" + VNFPKG_ID;
+    private static final String EXPECTED_SUBSCRIPTION_HREF =
+            "https://so-vnfm-adapter.onap:30406/so/vnfm-adapter/v1/vnfpkgm/v1/subscriptions/" + SUBSCRIPTION_ID;
 
     private BasicHttpHeadersProvider basicHttpHeadersProvider;
     private final Gson gson = new GsonBuilder().create();;
@@ -151,7 +155,8 @@ public class EtsiSubscriptionNotificationControllerTest {
                 .andExpect(jsonPath("$.timeStamp").value(TIMESTAMP.toString()))
                 .andExpect(jsonPath("$.vnfPkgId").value(VNFPKG_ID.toString()))
                 .andExpect(jsonPath("$.vnfdId").value(VNFD_ID.toString()))
-                .andExpect(jsonPath("$._links").value(buildPkgmLinks()))
+                .andExpect(jsonPath("$._links")
+                        .value(buildPkgmLinks(EXPECTED_VNF_PACKAGE_HREF, EXPECTED_SUBSCRIPTION_HREF)))
                 .andExpect(header("Authorization", EXPECTED_BASIC_AUTHORIZATION)).andRespond(withSuccess());
 
         final ResponseEntity<?> response = sendHttpPost(notificationString);
@@ -287,7 +292,8 @@ public class EtsiSubscriptionNotificationControllerTest {
                         jsonPath("$.changeType").value(PkgChangeNotification.ChangeTypeEnum.OP_STATE_CHANGE.toString()))
                 .andExpect(jsonPath("$.operationalState")
                         .value(PkgChangeNotification.OperationalStateEnum.ENABLED.toString()))
-                .andExpect(jsonPath("$._links").value(buildPkgmLinks()))
+                .andExpect(jsonPath("$._links")
+                        .value(buildPkgmLinks(EXPECTED_VNF_PACKAGE_HREF, EXPECTED_SUBSCRIPTION_HREF)))
                 .andExpect(header("Authorization", EXPECTED_BASIC_AUTHORIZATION)).andRespond(withSuccess());
 
         final ResponseEntity<?> response = sendHttpPost(notificationString);
@@ -398,7 +404,8 @@ public class EtsiSubscriptionNotificationControllerTest {
                 .andExpect(jsonPath("$.timeStamp").value(TIMESTAMP.toString()))
                 .andExpect(jsonPath("$.vnfPkgId").value(VNFPKG_ID.toString()))
                 .andExpect(jsonPath("$.vnfdId").value(VNFD_ID.toString()))
-                .andExpect(jsonPath("$._links").value(buildPkgmLinks()))
+                .andExpect(jsonPath("$._links")
+                        .value(buildPkgmLinks(EXPECTED_VNF_PACKAGE_HREF, EXPECTED_SUBSCRIPTION_HREF)))
                 .andExpect(header("Authorization", EXPECTED_BASIC_AUTHORIZATION)).andRespond(withSuccess());
 
         final ResponseEntity<?> response = sendHttpPost(notificationString);
@@ -455,7 +462,9 @@ public class EtsiSubscriptionNotificationControllerTest {
                         jsonPath("$.changeType").value(PkgChangeNotification.ChangeTypeEnum.OP_STATE_CHANGE.toString()))
                 .andExpect(jsonPath("$.operationalState")
                         .value(PkgChangeNotification.OperationalStateEnum.ENABLED.toString()))
-                .andExpect(jsonPath("$._links").value(buildPkgmLinks())).andRespond(withSuccess());
+                .andExpect(jsonPath("$._links")
+                        .value(buildPkgmLinks(EXPECTED_VNF_PACKAGE_HREF, EXPECTED_SUBSCRIPTION_HREF)))
+                .andRespond(withSuccess());
 
         final ResponseEntity<?> response = sendHttpPost(notificationString);
 
@@ -532,17 +541,12 @@ public class EtsiSubscriptionNotificationControllerTest {
     }
 
     private PkgmLinks buildPkgmLinks() {
-        final PkgmLinks pkgmLinks = new PkgmLinks();
+        return buildPkgmLinks("vnf_package_href", "subscription_href");
+    }
 
-        final NOTIFICATIONLINKSERIALIZER subscriptionLinkSerializer = new NOTIFICATIONLINKSERIALIZER();
-        subscriptionLinkSerializer.setHref("subscription_href");
-        pkgmLinks.setSubscription(subscriptionLinkSerializer);
-
-        final NOTIFICATIONLINKSERIALIZER vnfPackageLinkSerializer = new NOTIFICATIONLINKSERIALIZER();
-        vnfPackageLinkSerializer.setHref("vnf_package_href");
-        pkgmLinks.setVnfPackage(vnfPackageLinkSerializer);
-
-        return pkgmLinks;
+    private PkgmLinks buildPkgmLinks(final String vnfPkgHref, final String subscriptionHref) {
+        return new PkgmLinks().vnfPackage(new NOTIFICATIONLINKSERIALIZER().href(vnfPkgHref))
+                .subscription(new NOTIFICATIONLINKSERIALIZER().href(subscriptionHref));
     }
 
     private PkgmSubscriptionRequest buildPkgmSubscriptionRequest(

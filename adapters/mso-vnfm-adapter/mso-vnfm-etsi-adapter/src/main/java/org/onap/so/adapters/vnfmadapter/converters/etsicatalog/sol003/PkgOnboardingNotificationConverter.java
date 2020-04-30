@@ -21,6 +21,7 @@
 package org.onap.so.adapters.vnfmadapter.converters.etsicatalog.sol003;
 
 import static org.slf4j.LoggerFactory.getLogger;
+import org.onap.so.adapters.vnfmadapter.VnfmAdapterUrlProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.notification.model.PkgOnboardingNotification;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.notification.model.VnfPackageOnboardingNotification;
 import org.slf4j.Logger;
@@ -37,6 +38,10 @@ import org.springframework.stereotype.Service;
 public class PkgOnboardingNotificationConverter extends AbstractPkgNotificationConverter
         implements Converter<PkgOnboardingNotification, VnfPackageOnboardingNotification> {
     private static final Logger logger = getLogger(PkgOnboardingNotificationConverter.class);
+
+    public PkgOnboardingNotificationConverter(final VnfmAdapterUrlProvider vnfmAdapterUrlProvider) {
+        super(vnfmAdapterUrlProvider);
+    }
 
     /**
      * Convert a {@link PkgOnboardingNotification} Object to an {@link VnfPackageOnboardingNotification} Object
@@ -61,7 +66,8 @@ public class PkgOnboardingNotificationConverter extends AbstractPkgNotificationC
         vnfPackageOnboardingNotification.setVnfPkgId(pkgOnboardingNotification.getVnfPkgId());
         vnfPackageOnboardingNotification.setVnfdId(pkgOnboardingNotification.getVnfdId());
 
-        vnfPackageOnboardingNotification.setLinks(convert((pkgOnboardingNotification.getLinks())));
+        vnfPackageOnboardingNotification.setLinks(convert(pkgOnboardingNotification.getLinks(),
+                pkgOnboardingNotification.getVnfPkgId(), pkgOnboardingNotification.getSubscriptionId()));
 
         return vnfPackageOnboardingNotification;
     }

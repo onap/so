@@ -56,8 +56,8 @@ public class MessageConverterConfiguration {
         final DefaultConversionService service = new DefaultConversionService();
         service.addConverter(new VnfPkgInfoConverter(vnfmAdapterUrlProvider));
         service.addConverter(new PkgmSubscriptionRequestConverter());
-        service.addConverter(new PkgChangeNotificationConverter());
-        service.addConverter(new PkgOnboardingNotificationConverter());
+        service.addConverter(new PkgChangeNotificationConverter(vnfmAdapterUrlProvider));
+        service.addConverter(new PkgOnboardingNotificationConverter(vnfmAdapterUrlProvider));
         return service;
     }
 
