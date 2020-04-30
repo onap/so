@@ -47,6 +47,10 @@ public class AAIUriFactory {
         }
     }
 
+    public static AAIResourceUri createResourceUri(AAIFluentSingleType uri) {
+        return new AAISimpleUri(uri.build(), uri.values());
+    }
+
     public static NodesSingleUri createNodesUri(AAIObjectType type, Object... values) {
         return new NodesSingleUri(type, values);
 
@@ -86,6 +90,12 @@ public class AAIUriFactory {
     public static AAISimplePluralUri createResourceFromParentURI(AAIResourceUri parentUri, AAIObjectPlurals childType) {
 
         return new AAISimplePluralUri(parentUri, childType);
+    }
+
+    public static AAISimplePluralUri createResourceUri(AAIFluentPluralType uri) {
+
+        return new AAISimplePluralUri(uri.build());
+
     }
 
     /**

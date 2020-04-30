@@ -22,6 +22,7 @@ package org.onap.aaiclient.client.aai;
 
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.CustomQuery;
+import org.onap.aaiclient.client.aai.entities.uri.AAIFluentTypeReverseLookup;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryQueryClient;
 import org.onap.aaiclient.client.graphinventory.entities.uri.GraphInventoryUri;
@@ -53,8 +54,8 @@ public class AAIQueryClient
     }
 
     @Override
-    public AAIObjectType createType(String name) {
-        return AAIObjectType.fromTypeName(name);
+    public AAIObjectType createType(String name, String uri) {
+        return new AAIFluentTypeReverseLookup().fromName(name, uri);
     }
 
 }

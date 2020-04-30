@@ -24,6 +24,7 @@ import java.util.List;
 import javax.ws.rs.core.UriBuilder;
 import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
+import org.onap.aaiclient.client.aai.entities.uri.AAIFluentTypeReverseLookup;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryObjectName;
@@ -68,7 +69,7 @@ public class Relationships extends GraphInventoryRelationships<AAIResultWrapper,
     }
 
     @Override
-    protected AAIObjectType fromTypeName(String name) {
-        return AAIObjectType.fromTypeName(name);
+    protected AAIObjectType fromTypeName(String name, String uri) {
+        return new AAIFluentTypeReverseLookup().fromName(name, uri);
     }
 }

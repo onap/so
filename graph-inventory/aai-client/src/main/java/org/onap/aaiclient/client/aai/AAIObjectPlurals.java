@@ -77,12 +77,18 @@ public class AAIObjectPlurals implements AAIObjectBase, GraphInventoryObjectPlur
 
     private final String uriTemplate;
     private final String partialUri;
-    private final AAIObjectType type;
+    private final String name;
 
     protected AAIObjectPlurals(AAIObjectType type, String parentUri, String partialUri) {
         this.uriTemplate = parentUri + partialUri;
         this.partialUri = partialUri;
-        this.type = type;
+        this.name = type.typeName();
+    }
+
+    public AAIObjectPlurals(String name, String parentUri, String partialUri) {
+        this.uriTemplate = parentUri + partialUri;
+        this.partialUri = partialUri;
+        this.name = name;
     }
 
     @Override
@@ -101,17 +107,27 @@ public class AAIObjectPlurals implements AAIObjectBase, GraphInventoryObjectPlur
     }
 
     @Override
-    public AAIObjectType getType() {
-        return this.type;
-    }
-
-    @Override
     public String typeName() {
-        return this.getType().typeName();
+        return this.typeName(CaseFormat.LOWER_HYPHEN);
     }
 
     @Override
     public String typeName(CaseFormat format) {
-        return this.getType().typeName(format);
+        return CaseFormat.LOWER_HYPHEN.to(format, this.name.replace("default-", ""));
+    }
+
+    @Override
+    public int hashCode() {
+        return this.typeName().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (o instanceof AAIObjectBase) {
+            return this.typeName().equals(((AAIObjectBase) o).typeName());
+        }
+
+        return false;
     }
 }

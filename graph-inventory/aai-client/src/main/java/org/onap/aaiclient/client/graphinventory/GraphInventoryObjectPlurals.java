@@ -22,6 +22,4 @@ package org.onap.aaiclient.client.graphinventory;
 
 public interface GraphInventoryObjectPlurals extends GraphInventoryObjectBase {
 
-    public GraphInventoryObjectType getType();
-
 }
