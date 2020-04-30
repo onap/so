@@ -908,15 +908,15 @@ WHERE NF_ROLE = 'GR-API-DEFAULT' AND ACTION = 'applyUpdatedConfig';
 
 INSERT INTO rainy_day_handler_macro (FLOW_NAME, SERVICE_TYPE, VNF_TYPE, ERROR_CODE, WORK_STEP, POLICY, SECONDARY_POLICY, REG_EX_ERROR_MESSAGE, SERVICE_ROLE)
 VALUES 
-('VNFCheckPserversLockedFlagActivity','*','*','*','*','Manual','Abort','*', '*'),
-('VNFCheckInMaintFlagActivity','*','*','*','*','Manual','Abort','*', '*'),
-('VNFSetInMaintFlagActivity','*','*','*','*','Manual','Abort','*', '*'),
-('VNFCheckClosedLoopDisabledFlagActivity','*','*','*','*','Manual','Abort','*', '*'),
-('VNFSetClosedLoopDisabledFlagActivity','*','*','*','*','Manual','Abort','*', '*'),
-('VNFLockActivity','*','*','*','*','Manual','Abort','*', '*'),
-('VNFUpgradePreCheckActivity','*','*','*','*','Manual','Abort','*', '*'),
-('VNFQuiesceTrafficActivity','*','*','*','*','Manual','Abort','*', '*'),
-('VNFStopActivity','*','*','*','*','Manual','Abort','*', '*'),
+('VNFCheckPserversLockedFlagActivity','*','*','*','*','Rollback','Abort','*', '*'),
+('VNFCheckInMaintFlagActivity','*','*','*','*','Rollback','Abort','*', '*'),
+('VNFSetInMaintFlagActivity','*','*','*','*','Rollback','Abort','*', '*'),
+('VNFCheckClosedLoopDisabledFlagActivity','*','*','*','*','Rollback','Abort','*', '*'),
+('VNFSetClosedLoopDisabledFlagActivity','*','*','*','*','Rollback','Abort','*', '*'),
+('VNFLockActivity','*','*','*','*','Rollback','Abort','*', '*'),
+('VNFUpgradePreCheckActivity','*','*','*','*','Rollback','Abort','*', '*'),
+('VNFQuiesceTrafficActivity','*','*','*','*','Rollback','Abort','*', '*'),
+('VNFStopActivity','*','*','*','*','Rollback','Abort','*', '*'),
 ('VNFSnapShotActivity','*','*','*','*','Manual','Abort','*', '*'),
 ('VNFStartActivity','*','*','*','*','Manual','Abort','*', '*'),
 ('VNFUpgradeBackupActivity','*','*','*','*','Manual','Abort','*', '*'),
@@ -925,5 +925,7 @@ VALUES
 ('VNFResumeTrafficActivity','*','*','*','*','Manual','Abort','*', '*'),
 ('VNFUnlockActivity','*','*','*','*','Manual','Abort','*', '*'),
 ('SDNOVnfHealthCheckBB','*','*','*','*','Manual','Abort','*', '*'),
+('VNFHealthCheckActivity','*','*','*','*','Manual','Abort','*', '*'),
+('VNFConfigModifyActivity','*','*','*','*','Manual','Abort','*', '*'),
 ('VNFUnsetInMaintFlagActivity','*','*','*','*','Manual','Abort','*', '*'),
 ('VNFUnsetClosedLoopDisabledActivity','*','*','*','*','Manual','Abort','*', '*');

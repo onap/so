@@ -373,6 +373,106 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
     }
 
     @Test
+    public void rollbackExecutionRollbackInPlaceSoftwareUpdateTest() {
+        execution.setVariable("isRollback", false);
+        execution.setVariable("handlingCode", "Rollback");
+        List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
+        BuildingBlock buildingBlock1 = new BuildingBlock().setBpmnFlowName("VNFCheckPserversLockedFlagActivity");
+        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock1);
+        flowsToExecute.add(ebb1);
+
+        BuildingBlock buildingBlock2 = new BuildingBlock().setBpmnFlowName("VNFCheckInMaintFlagActivity");
+        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock2);
+        flowsToExecute.add(ebb2);
+
+        BuildingBlock buildingBlock3 = new BuildingBlock().setBpmnFlowName("VNFSetInMaintFlagActivity");
+        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock3);
+        flowsToExecute.add(ebb3);
+
+        BuildingBlock buildingBlock4 = new BuildingBlock().setBpmnFlowName("VNFCheckClosedLoopDisabledFlagActivity");
+        ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock4);
+        flowsToExecute.add(ebb4);
+
+        BuildingBlock buildingBlock5 = new BuildingBlock().setBpmnFlowName("VNFSetClosedLoopDisabledFlagActivity");
+        ExecuteBuildingBlock ebb5 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock5);
+        flowsToExecute.add(ebb5);
+
+        BuildingBlock buildingBlock6 = new BuildingBlock().setBpmnFlowName("VNFLockActivity");
+        ExecuteBuildingBlock ebb6 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock6);
+        flowsToExecute.add(ebb6);
+
+        BuildingBlock buildingBlock7 = new BuildingBlock().setBpmnFlowName("VNFUpgradePreCheckActivity");
+        ExecuteBuildingBlock ebb7 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock7);
+        flowsToExecute.add(ebb7);
+
+        BuildingBlock buildingBlock8 = new BuildingBlock().setBpmnFlowName("VNFQuiesceTrafficActivity");
+        ExecuteBuildingBlock ebb8 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock8);
+        flowsToExecute.add(ebb8);
+
+        BuildingBlock buildingBlock9 = new BuildingBlock().setBpmnFlowName("VNFStopActivity");
+        ExecuteBuildingBlock ebb9 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock9);
+        flowsToExecute.add(ebb9);
+
+        BuildingBlock buildingBlock10 = new BuildingBlock().setBpmnFlowName("VNFSnapShotActivity");
+        ExecuteBuildingBlock ebb10 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock10);
+        flowsToExecute.add(ebb10);
+
+        execution.setVariable("flowsToExecute", flowsToExecute);
+        execution.setVariable("gCurrentSequence", 10);
+
+        workflowActionBBTasks.rollbackExecutionPath(execution);
+        List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+        assertEquals("VNFStartActivity", ebbs.get(0).getBuildingBlock().getBpmnFlowName());
+        assertEquals("VNFResumeTrafficActivity", ebbs.get(1).getBuildingBlock().getBpmnFlowName());
+        assertEquals("VNFUnlockActivity", ebbs.get(2).getBuildingBlock().getBpmnFlowName());
+        assertEquals("VNFUnsetClosedLoopDisabledFlagActivity", ebbs.get(3).getBuildingBlock().getBpmnFlowName());
+        assertEquals("VNFUnsetInMaintFlagActivity", ebbs.get(4).getBuildingBlock().getBpmnFlowName());
+        assertEquals(0, execution.getVariable("gCurrentSequence"));
+        assertEquals(5, ebbs.size());
+    }
+
+    @Test
+    public void rollbackExecutionRollbackConfigModifyTest() {
+        execution.setVariable("isRollback", false);
+        execution.setVariable("handlingCode", "Rollback");
+        List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
+        BuildingBlock buildingBlock1 = new BuildingBlock().setBpmnFlowName("VNFCheckPserversLockedFlagActivity");
+        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock1);
+        flowsToExecute.add(ebb1);
+
+        BuildingBlock buildingBlock2 = new BuildingBlock().setBpmnFlowName("VNFCheckInMaintFlagActivity");
+        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock2);
+        flowsToExecute.add(ebb2);
+
+        BuildingBlock buildingBlock3 = new BuildingBlock().setBpmnFlowName("VNFSetInMaintFlagActivity");
+        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock3);
+        flowsToExecute.add(ebb3);
+
+        BuildingBlock buildingBlock4 = new BuildingBlock().setBpmnFlowName("VNFCheckClosedLoopDisabledFlagActivity");
+        ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock4);
+        flowsToExecute.add(ebb4);
+
+        BuildingBlock buildingBlock5 = new BuildingBlock().setBpmnFlowName("VNFSetClosedLoopDisabledFlagActivity");
+        ExecuteBuildingBlock ebb5 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock5);
+        flowsToExecute.add(ebb5);
+
+        BuildingBlock buildingBlock6 = new BuildingBlock().setBpmnFlowName("VNFHealthCheckActivity");
+        ExecuteBuildingBlock ebb6 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock6);
+        flowsToExecute.add(ebb6);
+
+        execution.setVariable("flowsToExecute", flowsToExecute);
+        execution.setVariable("gCurrentSequence", 6);
+
+        workflowActionBBTasks.rollbackExecutionPath(execution);
+        List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+        assertEquals("VNFUnsetClosedLoopDisabledFlagActivity", ebbs.get(0).getBuildingBlock().getBpmnFlowName());
+        assertEquals("VNFUnsetInMaintFlagActivity", ebbs.get(1).getBuildingBlock().getBpmnFlowName());
+        assertEquals(0, execution.getVariable("gCurrentSequence"));
+        assertEquals(2, ebbs.size());
+    }
+
+
+    @Test
     public void checkRetryStatusTest() {
         String reqId = "reqId123";
         execution.setVariable("mso-request-id", reqId);
