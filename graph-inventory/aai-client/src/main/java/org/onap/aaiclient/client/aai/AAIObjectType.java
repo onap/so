@@ -74,6 +74,7 @@ import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.aai.domain.yang.VpnBinding;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.aai.domain.yang.Zone;
+import org.onap.aaiclient.client.aai.entities.uri.AAIFluentTypeReverseLookup;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryObjectType;
 import org.onap.so.constants.Defaults;
 import org.reflections.Reflections;
@@ -262,12 +263,16 @@ public class AAIObjectType implements AAIObjectBase, GraphInventoryObjectType, S
     }
 
     protected AAIObjectType(String parentUri, String partialUri, String name) {
+        this(parentUri, partialUri, name, true);
+    }
+
+    public AAIObjectType(String parentUri, String partialUri, String name, boolean register) {
         this.parentUri = parentUri;
         this.partialUri = partialUri;
         this.uriTemplate = parentUri + partialUri;
         this.aaiObjectClass = null;
         this.name = name;
-        if (!AAIObjectType.map.containsKey(name)) {
+        if (register && !AAIObjectType.map.containsKey(name)) {
             AAIObjectType.map.put(name, this);
         }
     }
@@ -286,6 +291,11 @@ public class AAIObjectType implements AAIObjectBase, GraphInventoryObjectType, S
     @Override
     public String toString() {
         return this.uriTemplate();
+    }
+
+    public static AAIObjectType fromTypeName(String name, String uri) {
+
+        return new AAIFluentTypeReverseLookup().fromName(name, uri);
     }
 
     public static AAIObjectType fromTypeName(String name) {
@@ -314,6 +324,21 @@ public class AAIObjectType implements AAIObjectBase, GraphInventoryObjectType, S
     @Override
     public String partialUri() {
         return this.partialUri;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.typeName().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (o instanceof AAIObjectBase) {
+            return this.typeName().equals(((AAIObjectBase) o).typeName());
+        }
+
+        return false;
     }
 
     protected String removeParentUri(Class<?> aaiObjectClass, String parentUri) {

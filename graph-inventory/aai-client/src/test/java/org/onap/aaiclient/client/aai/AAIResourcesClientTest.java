@@ -49,7 +49,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.GenericVnfs;
 import org.onap.aai.domain.yang.Relationship;
-import org.onap.so.client.RestClient;
 import org.onap.aaiclient.client.aai.entities.AAIEdgeLabel;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
@@ -57,6 +56,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.defaultproperties.DefaultAAIPropertiesImpl;
 import org.onap.aaiclient.client.graphinventory.exceptions.GraphInventoryMultipleItemsException;
+import org.onap.so.client.RestClient;
 import com.github.tomakehurst.wiremock.admin.NotFoundException;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 

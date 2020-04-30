@@ -27,4 +27,8 @@ public interface UriParser {
     public Set<String> getVariables();
 
     public Map<String, String> parse(final String uri);
+
+    public boolean isMatch(final String uri);
+
+    public String getTemplate();
 }

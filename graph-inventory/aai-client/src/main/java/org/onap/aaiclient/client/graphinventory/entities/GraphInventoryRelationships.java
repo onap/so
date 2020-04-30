@@ -86,8 +86,8 @@ public abstract class GraphInventoryRelationships<Wrapper extends GraphInventory
                 final String relatedTo = (String) relationship.get("related-to");
                 if (p.test(relatedTo)) {
                     Type type;
-                    type = fromTypeName(relatedTo);
                     final String relatedLink = (String) relationship.get("related-link");
+                    type = fromTypeName(relatedTo, relatedLink);
 
                     result.add(createUri(type, relatedLink));
                 }
@@ -116,7 +116,7 @@ public abstract class GraphInventoryRelationships<Wrapper extends GraphInventory
 
     protected abstract Uri createUri(Type type, String relatedLink);
 
-    protected abstract Type fromTypeName(String name);
+    protected abstract Type fromTypeName(String name, String uri);
 
     protected List<String> getRelatedLinks(Optional<GraphInventoryObjectName> type) {
         String matcher = "";
