@@ -27,9 +27,9 @@ import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.INPUT
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.SPACE;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.UNDERSCORE;
 import static org.onap.so.bpmn.servicedecomposition.entities.ResourceKey.GENERIC_VNF_ID;
-import org.onap.etsi.sol003.adapter.lcm.v1.model.CreateVnfRequest;
-import org.onap.etsi.sol003.adapter.lcm.v1.model.CreateVnfResponse;
-import org.onap.etsi.sol003.adapter.lcm.v1.model.Tenant;
+import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.CreateVnfRequest;
+import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.CreateVnfResponse;
+import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.Tenant;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.utils.InputParameter;
 import org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.utils.NullInputParameter;

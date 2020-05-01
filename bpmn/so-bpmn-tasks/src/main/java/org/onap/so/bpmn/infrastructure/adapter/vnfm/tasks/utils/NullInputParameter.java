@@ -22,7 +22,7 @@ package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.utils;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.onap.etsi.sol003.adapter.lcm.v1.model.ExternalVirtualLink;
+import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.ExternalVirtualLink;
 
 /**
  * @author waqas.ikram@est.tech

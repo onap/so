@@ -20,10 +20,10 @@
 
 package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks;
 
-import org.onap.etsi.sol003.adapter.lcm.v1.model.CreateVnfRequest;
-import org.onap.etsi.sol003.adapter.lcm.v1.model.CreateVnfResponse;
-import org.onap.etsi.sol003.adapter.lcm.v1.model.DeleteVnfResponse;
-import org.onap.etsi.sol003.adapter.lcm.v1.model.QueryJobResponse;
+import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.CreateVnfRequest;
+import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.CreateVnfResponse;
+import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.DeleteVnfResponse;
+import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.QueryJobResponse;
 import org.onap.so.rest.exceptions.HttpResouceNotFoundException;
 import org.onap.so.rest.exceptions.InvalidRestRequestException;
 import org.onap.so.rest.exceptions.RestProcessingException;

@@ -21,7 +21,7 @@
 package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks;
 
 import static org.onap.so.bpmn.servicedecomposition.entities.ResourceKey.GENERIC_VNF_ID;
-import org.onap.etsi.sol003.adapter.lcm.v1.model.DeleteVnfResponse;
+import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.DeleteVnfResponse;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;

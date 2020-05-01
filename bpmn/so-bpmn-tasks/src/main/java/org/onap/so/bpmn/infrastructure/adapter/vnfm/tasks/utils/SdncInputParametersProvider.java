@@ -29,7 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.onap.etsi.sol003.adapter.lcm.v1.model.ExternalVirtualLink;
+import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.ExternalVirtualLink;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
 import org.onap.so.client.sdnc.SDNCClient;

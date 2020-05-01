@@ -29,6 +29,7 @@ import static org.mockito.Mockito.when;
 import java.util.UUID;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.DeleteVnfResponse;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -36,7 +37,6 @@ import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
-import org.onap.etsi.sol003.adapter.lcm.v1.model.DeleteVnfResponse;
 import com.google.common.base.Optional;
 
 /**

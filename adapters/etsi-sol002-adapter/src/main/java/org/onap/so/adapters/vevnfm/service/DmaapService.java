@@ -20,7 +20,7 @@
 
 package org.onap.so.adapters.vevnfm.service;
 
-import org.onap.so.adapters.etsi.sol003.adapter.lcm.lcn.model.VnfLcmOperationOccurrenceNotification;
+import org.onap.so.adapters.etsisol003adapter.lcm.lcn.model.VnfLcmOperationOccurrenceNotification;
 import org.onap.so.adapters.vevnfm.configuration.ConfigProperties;
 import org.onap.so.adapters.vevnfm.event.DmaapEvent;
 import org.onap.so.rest.service.HttpRestServiceProvider;

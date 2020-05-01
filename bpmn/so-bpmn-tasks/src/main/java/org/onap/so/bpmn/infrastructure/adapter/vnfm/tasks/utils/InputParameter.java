@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.onap.etsi.sol003.adapter.lcm.v1.model.ExternalVirtualLink;
+import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.ExternalVirtualLink;
 
 /**
  * Wrapper class for instance parameters which are based on SOL003

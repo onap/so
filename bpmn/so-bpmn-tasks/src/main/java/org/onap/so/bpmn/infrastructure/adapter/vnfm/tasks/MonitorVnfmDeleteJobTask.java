@@ -21,8 +21,8 @@ package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks;
 
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.DELETE_VNF_RESPONSE_PARAM_NAME;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.OPERATION_STATUS_PARAM_NAME;
-import org.onap.etsi.sol003.adapter.lcm.v1.model.DeleteVnfResponse;
-import org.onap.etsi.sol003.adapter.lcm.v1.model.OperationStateEnum;
+import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.DeleteVnfResponse;
+import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.OperationStateEnum;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.slf4j.Logger;

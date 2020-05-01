@@ -37,7 +37,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.etsi.sol003.adapter.lcm.v1.model.ExternalVirtualLink;
+import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.ExternalVirtualLink;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
 import org.onap.so.client.exception.BadResponseException;

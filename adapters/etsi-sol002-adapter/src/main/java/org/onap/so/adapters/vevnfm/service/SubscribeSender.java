@@ -20,11 +20,10 @@
 
 package org.onap.so.adapters.vevnfm.service;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.onap.aai.domain.yang.EsrSystemInfo;
+import org.onap.so.adapters.etsisol003adapter.lcm.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.onap.so.adapters.vevnfm.configuration.ConfigProperties;
 import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
-import org.onap.so.adapters.etsi.sol003.adapter.lcm.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.ToString;
 
 @Service
