@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "36975a16_6fa34992",
+        "filename": "adapters/etsi-sol003-adapter/etsi-sol003-adapter-application/src/main/java/org/onap/so/adapters/etsisol003adapter/VnfmAdapterApplication.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2020-05-01T12:14:04Z",
+      "side": 1,
+      "message": "do we change this name?",
+      "range": {
+        "startLine": 24,
+        "startChar": 55,
+        "endLine": 24,
+        "endChar": 76
+      },
+      "revId": "188a5baa0f585103f8bc6d45813f7fcb9e2d8a0b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
