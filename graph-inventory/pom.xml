@@ -9,7 +9,7 @@
   <artifactId>graph-inventory</artifactId>
   <packaging>pom</packaging>
   <modules>
-    <!--  <module>fluent-builder-maven-plugin</module>-->
+    <module>fluent-builder-maven-plugin</module>
     <module>aai-client</module>
   </modules>
 </project>

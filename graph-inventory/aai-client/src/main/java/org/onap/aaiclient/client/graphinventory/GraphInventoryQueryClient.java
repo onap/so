@@ -95,8 +95,8 @@ public abstract class GraphInventoryQueryClient<S, I, Wrapper extends GraphInven
                 if (!entrySet.getKey().equals("url")) {
                     String url = (String) m.get("url");
                     String stringJson = mapper.writeValueAsString(entrySet.getValue());
-                    result.add(
-                            new ResourceAndUrl<Wrapper>(url, createType(entrySet.getKey()), createWrapper(stringJson)));
+                    result.add(new ResourceAndUrl<Wrapper>(url, createType(entrySet.getKey(), url),
+                            createWrapper(stringJson)));
                 }
             }
         }
@@ -106,7 +106,7 @@ public abstract class GraphInventoryQueryClient<S, I, Wrapper extends GraphInven
 
     public abstract Wrapper createWrapper(String json);
 
-    public abstract Type createType(String name);
+    public abstract Type createType(String name, String uri);
 
     public S depth(String depth) {
         this.depth = Optional.of(depth);

@@ -31,6 +31,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.onap.aaiclient.client.aai.AAIObjectPlurals;
 import org.onap.aaiclient.client.aai.AAIObjectType;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
 
 public class AAISimpleUriTest {
@@ -129,5 +130,15 @@ public class AAISimpleUriTest {
         e2.queryParam("test", "value");
 
         assertEquals(e2.build().toString(), uri.build().toString());
+    }
+
+    @Test
+    public void fluentBuilderTest() {
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                .cloudRegion("cloud1", "cloud-id").tenant("tenant-id").vserver("vserver-id"));
+
+        assertEquals(
+                "/cloud-infrastructure/cloud-regions/cloud-region/cloud1/cloud-id/tenants/tenant/tenant-id/vservers/vserver/vserver-id",
+                uri.build().toString());
     }
 }

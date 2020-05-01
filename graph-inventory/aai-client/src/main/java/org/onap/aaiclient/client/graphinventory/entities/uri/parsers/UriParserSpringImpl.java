@@ -32,9 +32,16 @@ import org.springframework.web.util.UriUtils;
 public class UriParserSpringImpl implements UriParser {
 
     private final UriTemplate uriTemplate;
+    private final String template;
 
     public UriParserSpringImpl(final String template) {
         this.uriTemplate = new UriTemplate(template);
+        this.template = template;
+    }
+
+    @Override
+    public boolean isMatch(final String uri) {
+        return this.uriTemplate.matches(uri);
     }
 
     @Override
@@ -49,6 +56,11 @@ public class UriParserSpringImpl implements UriParser {
     @Override
     public Set<String> getVariables() {
         return Collections.unmodifiableSet(new LinkedHashSet<String>(this.uriTemplate.getVariableNames()));
+    }
+
+    @Override
+    public String getTemplate() {
+        return this.template;
     }
 
     protected Map<String, String> decodeParams(Map<String, String> map) {
