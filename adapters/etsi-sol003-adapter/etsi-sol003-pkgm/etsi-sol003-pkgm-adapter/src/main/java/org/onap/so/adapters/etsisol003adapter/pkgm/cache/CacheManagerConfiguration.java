@@ -1,6 +1,6 @@
 /*-
  * ============LICENSE_START=======================================================
- *  Copyright (C) 2019 Nordix Foundation.
+ *  Copyright (C) 2020 Nordix Foundation.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,30 +18,33 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.etsisol003adapter.pkgm.subscriptionmanagement.cache;
+package org.onap.so.adapters.etsisol003adapter.pkgm.cache;
 
+import java.util.Arrays;
+import org.onap.so.adapters.etsisol003adapter.pkgm.PackageManagementConstants;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.concurrent.ConcurrentMapCache;
+import org.springframework.cache.support.SimpleCacheManager;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * @author Ronan Kenny (ronan.kenny@est.tech)
  * @author Gareth Roper (gareth.roper@est.tech)
  */
-public abstract class AbstractCacheServiceProvider {
+@Configuration
+public class CacheManagerConfiguration {
 
-    private final CacheManager cacheManager;
-    private final String cacheName;
+    @Bean
+    public CacheManager cacheManager() {
+        final SimpleCacheManager manager = new SimpleCacheManager();
+        manager.setCaches(Arrays.asList(getCache(PackageManagementConstants.PACKAGE_MANAGEMENT_SUBSCRIPTION_CACHE)));
 
-    public AbstractCacheServiceProvider(final String cacheName, final CacheManager cacheManager) {
-        this.cacheName = cacheName;
-        this.cacheManager = cacheManager;
+        return manager;
     }
 
-    public Cache getCache() {
-        final Cache cache = cacheManager.getCache(cacheName);
-        if (cache == null) {
-            throw new CacheNotFoundException("Unable to find " + cacheName + " cache");
-        }
-        return cache;
+    private Cache getCache(final String name) {
+        return new ConcurrentMapCache(name);
     }
 }

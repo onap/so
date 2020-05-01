@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.etsisol003adapter.pkgm.subscriptionmanagement.cache;
+package org.onap.so.adapters.etsisol003adapter.pkgm.cache;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -42,13 +42,12 @@ import org.springframework.stereotype.Service;
  * @author Gareth Roper (gareth.roper@est.tech)
  */
 @Service
-public class PackageManagementCacheServiceProviderImpl extends AbstractCacheServiceProvider
-        implements PackageManagementCacheServiceProvider {
+public class PkgmCacheServiceProviderImpl extends AbstractCacheServiceProvider implements PkgmCacheServiceProvider {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PackageManagementCacheServiceProviderImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PkgmCacheServiceProviderImpl.class);
 
     @Autowired
-    public PackageManagementCacheServiceProviderImpl(final CacheManager cacheManager) {
+    public PkgmCacheServiceProviderImpl(final CacheManager cacheManager) {
         super(PackageManagementConstants.PACKAGE_MANAGEMENT_SUBSCRIPTION_CACHE, cacheManager);
     }
 

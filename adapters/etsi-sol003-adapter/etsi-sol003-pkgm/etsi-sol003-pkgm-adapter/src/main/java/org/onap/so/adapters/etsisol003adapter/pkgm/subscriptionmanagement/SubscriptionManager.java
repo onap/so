@@ -31,6 +31,7 @@ import java.util.Objects;
 import java.util.Optional;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.onap.so.adapters.etsi.sol003.adapter.common.VnfmAdapterUrlProvider;
+import org.onap.so.adapters.etsisol003adapter.pkgm.cache.PkgmCacheServiceProvider;
 import org.onap.so.adapters.etsisol003adapter.pkgm.extclients.etsicatalog.EtsiCatalogServiceProvider;
 import org.onap.so.adapters.etsisol003adapter.pkgm.extclients.etsicatalog.model.BasicAuth;
 import org.onap.so.adapters.etsisol003adapter.pkgm.extclients.etsicatalog.model.NsdmSubscription;
@@ -42,7 +43,6 @@ import org.onap.so.adapters.etsisol003adapter.pkgm.model.VnfPackagesLinksSelf;
 import org.onap.so.adapters.etsisol003adapter.pkgm.rest.exceptions.ConversionFailedException;
 import org.onap.so.adapters.etsisol003adapter.pkgm.rest.exceptions.InternalServerErrorException;
 import org.onap.so.adapters.etsisol003adapter.pkgm.rest.exceptions.SubscriptionNotFoundException;
-import org.onap.so.adapters.etsisol003adapter.pkgm.subscriptionmanagement.cache.PackageManagementCacheServiceProvider;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
@@ -58,13 +58,13 @@ import org.springframework.stereotype.Service;
 public class SubscriptionManager {
 
     private static final Logger logger = getLogger(SubscriptionManager.class);
-    private final PackageManagementCacheServiceProvider packageManagementCacheServiceProvider;
+    private final PkgmCacheServiceProvider packageManagementCacheServiceProvider;
     private final ConversionService conversionService;
     private final EtsiCatalogServiceProvider etsiCatalogServiceProvider;
     private final VnfmAdapterUrlProvider vnfmAdapterUrlProvider;
 
     @Autowired
-    public SubscriptionManager(final PackageManagementCacheServiceProvider packageManagementCacheServiceProvider,
+    public SubscriptionManager(final PkgmCacheServiceProvider packageManagementCacheServiceProvider,
             final ConversionService conversionService, final EtsiCatalogServiceProvider etsiCatalogServiceProvider,
             final VnfmAdapterUrlProvider vnfmAdapterUrlProvider) {
         this.packageManagementCacheServiceProvider = packageManagementCacheServiceProvider;

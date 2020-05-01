@@ -1,6 +1,6 @@
 /*-
  * ============LICENSE_START=======================================================
- *  Copyright (C) 2020 Nordix Foundation.
+ *  Copyright (C) 2019 Nordix Foundation.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,20 +18,30 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.etsisol003adapter.pkgm.subscriptionmanagement.cache;
+package org.onap.so.adapters.etsisol003adapter.pkgm.cache;
+
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 
 /**
- * Exception for failure to find the cache.
- *
  * @author Ronan Kenny (ronan.kenny@est.tech)
  * @author Gareth Roper (gareth.roper@est.tech)
- *
  */
-public class CacheNotFoundException extends RuntimeException {
+public abstract class AbstractCacheServiceProvider {
 
-    private static final long serialVersionUID = -372361485260755367L;
+    private final CacheManager cacheManager;
+    private final String cacheName;
 
-    public CacheNotFoundException(final String message) {
-        super(message);
+    public AbstractCacheServiceProvider(final String cacheName, final CacheManager cacheManager) {
+        this.cacheName = cacheName;
+        this.cacheManager = cacheManager;
+    }
+
+    public Cache getCache() {
+        final Cache cache = cacheManager.getCache(cacheName);
+        if (cache == null) {
+            throw new CacheNotFoundException("Unable to find " + cacheName + " cache");
+        }
+        return cache;
     }
 }

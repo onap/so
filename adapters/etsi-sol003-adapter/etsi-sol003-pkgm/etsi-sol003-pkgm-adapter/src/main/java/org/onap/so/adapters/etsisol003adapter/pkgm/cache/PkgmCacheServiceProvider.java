@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.etsisol003adapter.pkgm.subscriptionmanagement.cache;
+package org.onap.so.adapters.etsisol003adapter.pkgm.cache;
 
 import java.util.Map;
 import java.util.Optional;
@@ -31,7 +31,7 @@ import org.onap.so.adapters.etsisol003adapter.pkgm.model.PkgmSubscriptionRequest
  * @author Gareth Roper (gareth.roper@est.tech)
  *
  */
-public interface PackageManagementCacheServiceProvider {
+public interface PkgmCacheServiceProvider {
 
     /**
      * Checks cache if subscription request Id is already present. If not, it adds the subscription to the cache.

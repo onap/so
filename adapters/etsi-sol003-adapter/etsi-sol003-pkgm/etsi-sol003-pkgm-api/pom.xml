@@ -3,10 +3,10 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.onap.so.adapters</groupId>
-    <artifactId>etsi-sol003-package-management</artifactId>
+    <artifactId>etsi-sol003-pkgm</artifactId>
     <version>1.6.0-SNAPSHOT</version>
   </parent>
-  <artifactId>etsi-sol003-package-management-api</artifactId>
+  <artifactId>etsi-sol003-pkgm-api</artifactId>
   <name>ETSI SOL003 VNF Package Management Adapter API</name>
   <build>
     <plugins>

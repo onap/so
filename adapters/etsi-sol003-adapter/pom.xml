@@ -28,7 +28,7 @@
 
   <modules>
     <module>etsi-sol003-adapter-common</module>
-    <module>etsi-sol003-package-management</module>
+    <module>etsi-sol003-pkgm</module>
     <module>etsi-sol003-lcm</module>
     <module>etsi-sol003-adapter-application</module>
   </modules>

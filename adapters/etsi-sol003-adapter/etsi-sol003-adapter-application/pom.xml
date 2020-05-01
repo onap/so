@@ -79,7 +79,7 @@
     </dependency>
     <dependency>
       <groupId>org.onap.so.adapters</groupId>
-      <artifactId>etsi-sol003-package-management-adapter</artifactId>
+      <artifactId>etsi-sol003-pkgm-adapter</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>
