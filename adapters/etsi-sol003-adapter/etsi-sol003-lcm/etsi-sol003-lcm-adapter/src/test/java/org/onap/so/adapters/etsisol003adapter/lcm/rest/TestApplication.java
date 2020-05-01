@@ -18,40 +18,21 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.etsi.sol003.adapter;
+package org.onap.so.adapters.etsisol003adapter.lcm.rest;
 
-import static org.slf4j.LoggerFactory.getLogger;
-import org.onap.so.adapters.etsisol003adapter.lcm.rest.VnfmAdapterController;
-import org.slf4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.cache.annotation.EnableCaching;
 
-/**
- * The spring boot application for the VNFM (Virtual Network Function Manager) Adapter.
- * <p>
- * The VNFM Adapter receives requests through its REST API {@link VnfmAdapterController} which it adapts into ETSI
- * SOL003 compliant LCM (Life Cycle Management) calls towards an ETSI compliant VNFM.
- *
- * @see <a href= "https://www.etsi.org/deliver/etsi_gs/NFV-SOL/001_099/003/02.05.01_60/gs_nfv-sol003v020501p.pdf">ETSI
- *      SOL003 v2.5.1</a>
- */
 @EnableCaching
 @SpringBootApplication(scanBasePackages = {"org.onap.so"})
 @EnableAutoConfiguration(exclude = {JacksonAutoConfiguration.class})
-public class VnfmAdapterApplication {
-    private static final Logger logger = getLogger(VnfmAdapterApplication.class);
+public class TestApplication {
 
-    /**
-     * Entry point for the Spring boot application
-     *
-     * @param args arguments for the application
-     */
     public static void main(final String[] args) {
-        new SpringApplication(VnfmAdapterApplication.class).run(args);
-        logger.info("VnfmAdapterApplication started!");
+        new SpringApplication(TestApplication.class).run(args);
     }
 
 }
