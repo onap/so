@@ -20,13 +20,16 @@
 
 package org.onap.so.adapters.vnfmadapter.extclients;
 
+import java.time.LocalDateTime;
 import com.google.gson.Gson;
 import java.util.Iterator;
-import org.onap.vnfmadapter.v1.JSON;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.JSON;
+import org.onap.so.adapters.vnfmadapter.rest.EtsiSubscriptionNotificationController;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
+import org.threeten.bp.OffsetDateTime;
 
 /**
  * A base class that can be extended by classes for configuring HttpRestServiceProvider classes. Provides common methods
@@ -35,6 +38,7 @@ import org.springframework.web.client.RestTemplate;
  * @author gareth.roper@est.tech
  */
 public abstract class AbstractServiceProviderConfiguration {
+    private final JSON.OffsetDateTimeTypeAdapter offsetDateTimeTypeAdapter = new JSON.OffsetDateTimeTypeAdapter();
 
     public void setGsonMessageConverter(final RestTemplate restTemplate) {
         final Iterator<HttpMessageConverter<?>> iterator = restTemplate.getMessageConverters().iterator();
@@ -43,7 +47,10 @@ public abstract class AbstractServiceProviderConfiguration {
                 iterator.remove();
             }
         }
-        final Gson gson = new JSON().getGson();
+        final Gson gson = JSON.createGson().registerTypeAdapter(OffsetDateTime.class, offsetDateTimeTypeAdapter)
+                .registerTypeAdapter(LocalDateTime.class,
+                        new EtsiSubscriptionNotificationController.LocalDateTimeTypeAdapter())
+                .create();
         restTemplate.getMessageConverters().add(new GsonHttpMessageConverter(gson));
     }
 }

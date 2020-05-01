@@ -20,11 +20,13 @@
 
 package org.onap.so.adapters.vnfmadapter.rest;
 
-import static org.onap.so.adapters.vnfmadapter.Constants.ETSI_SUBSCRIPTION_NOTIFICATION_CONTROLLER_BASE_URL;
-import static org.slf4j.LoggerFactory.getLogger;
-import java.util.AbstractMap;
-import java.util.Map.Entry;
-import javax.ws.rs.core.MediaType;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.notification.model.PkgChangeNotification;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.notification.model.PkgOnboardingNotification;
 import org.onap.so.adapters.vnfmadapter.packagemanagement.subscriptionmanagement.NotificationManager;
@@ -38,10 +40,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import javax.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.AbstractMap;
+import java.util.Map.Entry;
+import static org.onap.so.adapters.vnfmadapter.Constants.ETSI_SUBSCRIPTION_NOTIFICATION_CONTROLLER_BASE_URL;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * This controller handles the ETSI Subscription Notification Endpoints.
@@ -61,7 +67,7 @@ public class EtsiSubscriptionNotificationController {
     @Autowired
     public EtsiSubscriptionNotificationController(final NotificationManager notificationManager) {
         this.notificationManager = notificationManager;
-        this.gson = new GsonBuilder().create();
+        this.gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter()).create();
     }
 
     @GetMapping(value = "/notification")
@@ -77,10 +83,11 @@ public class EtsiSubscriptionNotificationController {
      * @return Response Code: 204 No Content if Successful, ProblemDetails Object if not.
      */
     @PostMapping(value = "/notification", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public ResponseEntity<?> postSubscriptionNotification(@RequestBody final String notification) {
-        logger.info("Posting subscription notification \n{}", notification);
+    public ResponseEntity<?> postSubscriptionNotification(@RequestBody final Object notification) {
+        logger.info("Posting subscription notification class: {} \n{}", notification.getClass(), notification);
+        final String notificationString = gson.toJson(notification);
 
-        final Entry<String, Object> notificationObject = getNotificationObject(notification);
+        final Entry<String, Object> notificationObject = getNotificationObject(notificationString);
         if (notificationManager.processSubscriptionNotification(notificationObject.getValue(),
                 notificationObject.getKey())) {
             logger.info("Notification Delivered Successfully");
@@ -92,6 +99,7 @@ public class EtsiSubscriptionNotificationController {
     }
 
     private Entry<String, Object> getNotificationObject(final String notification) {
+        logger.info("getNotificationObject() notification: {}", notification);
         final String notificationType = getNotificationType(notification);
         if (PkgOnboardingNotification.NotificationTypeEnum.VNFPACKAGEONBOARDINGNOTIFICATION.getValue()
                 .equals(notificationType)) {
@@ -118,6 +126,7 @@ public class EtsiSubscriptionNotificationController {
 
     private String getNotificationType(final String notification) {
         try {
+            logger.info("getNotificationType() notification: {}", notification);
             final JsonParser parser = new JsonParser();
             final JsonObject element = (JsonObject) parser.parse(notification);
             return element.get("notificationType").getAsString();
@@ -126,6 +135,32 @@ public class EtsiSubscriptionNotificationController {
         }
         throw new NotificationTypeNotSupportedException(
                 "Unable to parse notification type in object \n" + notification);
+    }
+
+    public static class LocalDateTimeTypeAdapter extends TypeAdapter<LocalDateTime> {
+
+        private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        @Override
+        public void write(final JsonWriter out, final LocalDateTime localDateTime) throws IOException {
+            if (localDateTime == null) {
+                out.nullValue();
+            } else {
+                out.value(FORMATTER.format(localDateTime));
+            }
+        }
+
+        @Override
+        public LocalDateTime read(final JsonReader in) throws IOException {
+            switch (in.peek()) {
+                case NULL:
+                    in.nextNull();
+                    return null;
+                default:
+                    final String dateTime = in.nextString();
+                    return LocalDateTime.parse(dateTime, FORMATTER);
+            }
+        }
     }
 
 }

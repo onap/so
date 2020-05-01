@@ -66,6 +66,7 @@
                 <withXml>true</withXml>
                 <useRxJava2>true</useRxJava2>
                 <serializableModel>true</serializableModel>
+                <dateLibrary>java8-localdatetime</dateLibrary>
               </configOptions>
             </configuration>
           </execution>
@@ -86,6 +87,7 @@
                 <withXml>true</withXml>
                 <useRxJava2>true</useRxJava2>
                 <serializableModel>true</serializableModel>
+                <dateLibrary>java8-localdatetime</dateLibrary>
               </configOptions>
             </configuration>
           </execution>
