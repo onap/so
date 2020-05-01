@@ -20,14 +20,18 @@
 
 package org.onap.so.adapters.vevnfm.service;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.so.adapters.etsi.sol003.adapter.lcm.lcn.model.LcnVnfLcmOperationOccurrenceNotificationLinks;
-import org.onap.so.adapters.etsi.sol003.adapter.lcm.lcn.model.LcnVnfLcmOperationOccurrenceNotificationLinksVnfInstance;
-import org.onap.so.adapters.etsi.sol003.adapter.lcm.lcn.model.VnfLcmOperationOccurrenceNotification;
+import org.onap.so.adapters.etsisol003adapter.lcm.lcn.model.LcnVnfLcmOperationOccurrenceNotificationLinks;
+import org.onap.so.adapters.etsisol003adapter.lcm.lcn.model.LcnVnfLcmOperationOccurrenceNotificationLinksVnfInstance;
+import org.onap.so.adapters.etsisol003adapter.lcm.lcn.model.VnfLcmOperationOccurrenceNotification;
 import org.onap.so.adapters.vevnfm.aai.AaiConnection;
 import org.onap.so.adapters.vevnfm.configuration.ConfigProperties;
 import org.onap.so.adapters.vevnfm.constant.NotificationVnfFilterType;

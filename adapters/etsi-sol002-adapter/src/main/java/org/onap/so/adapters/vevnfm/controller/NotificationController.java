@@ -20,7 +20,7 @@
 
 package org.onap.so.adapters.vevnfm.controller;
 
-import org.onap.so.adapters.etsi.sol003.adapter.lcm.lcn.model.VnfLcmOperationOccurrenceNotification;
+import org.onap.so.adapters.etsisol003adapter.lcm.lcn.model.VnfLcmOperationOccurrenceNotification;
 import org.onap.so.adapters.vevnfm.service.DmaapConditionalSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

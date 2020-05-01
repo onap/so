@@ -21,10 +21,10 @@
 package org.onap.so.adapters.vevnfm.event;
 
 import static java.time.temporal.ChronoField.INSTANT_SECONDS;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.Instant;
 import java.util.UUID;
-import org.onap.so.adapters.etsi.sol003.adapter.lcm.lcn.model.VnfLcmOperationOccurrenceNotification;
+import org.onap.so.adapters.etsisol003adapter.lcm.lcn.model.VnfLcmOperationOccurrenceNotification;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class DmaapEvent {
 
