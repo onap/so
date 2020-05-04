@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
 import org.slf4j.Logger;
@@ -120,7 +121,7 @@ public class QueryServiceVnfs extends CatalogQuery {
             put(valueMap, "NF_NAMING_CODE", o.getNfNamingCode());
             put(valueMap, "VNFC_INSTANCE_GROUP_ORDER", o.getVnfcInstanceGroupOrder());
             put(valueMap, "MULTI_STEP_DESIGN", o.getMultiStageDesign());
-            if (isJSONValid(o.getResourceInput())) {
+            if (isJSONValid(StringEscapeUtils.unescapeJava(o.getResourceInput()))) {
                 put(valueMap, "RESOURCE_INPUT", o.getResourceInput());
             }
 
