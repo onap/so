@@ -251,7 +251,6 @@
             <image>
              <name>${docker.image.prefix}/nssmf-adapter</name>
               <build>
-<<<<<<< HEAD   (f360ba resolve problem CreateCommunicationService SST is null)
                <cleanup>try</cleanup>
                <dockerFile>docker-files/Dockerfile.so-app</dockerFile>
                <tags>
