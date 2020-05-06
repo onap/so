@@ -68,7 +68,7 @@ public class ServiceMapper {
     private List<Vnf> mapVnfs(org.onap.so.db.catalog.beans.Service service, int depth) {
         List<Vnf> vnfs = new ArrayList<>();
         logger.info("Vnf Count : {}", service.getVnfCustomizations().size());
-        service.getVnfCustomizations().parallelStream().forEach(vnf -> vnfs.add(mapVnf(vnf, depth)));
+        service.getVnfCustomizations().stream().forEach(vnf -> vnfs.add(mapVnf(vnf, depth)));
         return vnfs;
     }
 
@@ -104,7 +104,7 @@ public class ServiceMapper {
 
     private List<VfModule> mapVfModules(VnfResourceCustomization vnfResourceCustomization, int depth) {
         List<VfModule> vfModules = new ArrayList<>();
-        vnfResourceCustomization.getVfModuleCustomizations().parallelStream()
+        vnfResourceCustomization.getVfModuleCustomizations().stream()
                 .forEach(vfModule -> vfModules.add(mapVfModule(vfModule, depth)));
         return vfModules;
     }
@@ -133,8 +133,7 @@ public class ServiceMapper {
 
     private List<Cvnfc> mapCvnfcs(VfModuleCustomization vfModuleCustomization) {
         List<Cvnfc> cvnfcs = new ArrayList<>();
-        vfModuleCustomization.getCvnfcCustomization().parallelStream()
-                .forEach(cvnfcCust -> cvnfcs.add(mapCvnfcCus(cvnfcCust)));
+        vfModuleCustomization.getCvnfcCustomization().stream().forEach(cvnfcCust -> cvnfcs.add(mapCvnfcCus(cvnfcCust)));
         return cvnfcs;
     }
 
