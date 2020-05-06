@@ -23,9 +23,7 @@
 package org.onap.so.apihandlerinfra.validation;
 
 import org.onap.so.exceptions.ValidationException;
-import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.RequestParameters;
-import com.google.common.base.Strings;
 
 public class CustomWorkflowValidation implements ValidationRule {
 

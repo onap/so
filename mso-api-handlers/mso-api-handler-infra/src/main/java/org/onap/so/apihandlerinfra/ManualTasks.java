@@ -41,7 +41,6 @@ import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandler.common.ResponseBuilder;
 import org.onap.so.apihandler.common.ResponseHandler;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
-import org.onap.so.apihandlerinfra.exceptions.BPMNFailureException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.apihandlerinfra.tasksbeans.TaskRequestReference;

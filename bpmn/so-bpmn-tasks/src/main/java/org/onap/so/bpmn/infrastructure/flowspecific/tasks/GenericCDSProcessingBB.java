@@ -25,7 +25,6 @@ package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerContext;
 import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerRunnable;
-import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.cds.AbstractCDSProcessingBBUtils;
 import org.onap.so.client.cds.GeneratePayloadForCds;
 import org.onap.so.client.cds.beans.AbstractCDSPropertiesBean;
