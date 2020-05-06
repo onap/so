@@ -36,6 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Rule;
@@ -188,6 +189,30 @@ public class AAICreateTasksTest extends BaseTaskTest {
                 genericVnf.capture());
 
         List<Platform> capturedPlatforms = platformCaptor.getAllValues();
+        assertTrue(capturedPlatforms.stream().anyMatch(item -> "testPlatformName".equals(item.getPlatformName())));
+        assertTrue(capturedPlatforms.stream().anyMatch(item -> "testPlatformName2".equals(item.getPlatformName())));
+        assertTrue(capturedPlatforms.stream().anyMatch(item -> "testPlatformName3".equals(item.getPlatformName())));
+        assertTrue(capturedPlatforms.stream().anyMatch(item -> "testPlatformName4".equals(item.getPlatformName())));
+    }
+
+    @Test
+    public void createPlatformNetworkTest() throws Exception {
+        doNothing().when(aaiNetworkResources).createPlatformAndConnectNetwork(network.getPlatform(), network);
+        aaiCreateTasks.createPlatformForNetwork(execution);
+        ArgumentCaptor<Platform> platformCaptor = ArgumentCaptor.forClass(Platform.class);
+        ArgumentCaptor<L3Network> network = ArgumentCaptor.forClass(L3Network.class);
+        Mockito.verify(aaiNetworkResources, times(4)).createPlatformAndConnectNetwork(platformCaptor.capture(),
+                network.capture());
+
+        List<Platform> capturedPlatforms = platformCaptor.getAllValues();
+
+        String actual = capturedPlatforms.stream().map(item -> item.getPlatformName()).collect(Collectors.toList())
+                .stream().sorted().collect(Collectors.joining(" ,"));
+        String expected =
+                Arrays.asList("testPlatformName", "testPlatformName2", "testPlatformName3", "testPlatformName4")
+                        .stream().sorted().collect(Collectors.joining(" ,"));
+
+        assertEquals(expected, actual);
         assertTrue(capturedPlatforms.stream().anyMatch(item -> "testPlatformName".equals(item.getPlatformName())));
         assertTrue(capturedPlatforms.stream().anyMatch(item -> "testPlatformName2".equals(item.getPlatformName())));
         assertTrue(capturedPlatforms.stream().anyMatch(item -> "testPlatformName3".equals(item.getPlatformName())));

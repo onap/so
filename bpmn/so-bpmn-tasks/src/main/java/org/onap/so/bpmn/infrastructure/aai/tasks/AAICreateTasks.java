@@ -321,8 +321,8 @@ public class AAICreateTasks {
                 logger.debug("PlatformName is null in input. Skipping create platform...");
             } else {
                 List<String> platforms = splitCDL(platform.getPlatformName());
-                platforms.stream().forEach(
-                        platformName -> aaiNetworkResources.createPlatformAndConnectNetwork(platform, network));
+                platforms.stream().forEach(platformName -> aaiNetworkResources
+                        .createPlatformAndConnectNetwork(new Platform(platformName), network));
             }
         }
     }

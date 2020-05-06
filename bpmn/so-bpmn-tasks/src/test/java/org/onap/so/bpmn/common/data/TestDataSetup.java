@@ -455,6 +455,10 @@ public class TestDataSetup {
         modelInfoNetwork.setModelUUID("testModelUUID" + l3NetworkCounter);
         network.setModelInfoNetwork(modelInfoNetwork);
 
+        Platform platform = new Platform();
+        platform.setPlatformName(" testPlatformName, testPlatformName2   ,   testPlatformName3   , testPlatformName4");
+        network.setPlatform(platform);
+
         return network;
     }
 
