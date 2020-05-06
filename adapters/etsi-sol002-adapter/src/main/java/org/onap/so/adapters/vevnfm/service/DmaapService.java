@@ -51,9 +51,11 @@ public class DmaapService {
         this.restProvider = restProvider;
     }
 
-    public void send(final VnfLcmOperationOccurrenceNotification notification, final String genericId) {
+    public void send(final VnfLcmOperationOccurrenceNotification notification, final String vserverName,
+            final String genericId) {
         try {
-            final DmaapEvent event = new DmaapEvent(closedLoopControlName, version, notification, genericId);
+            final DmaapEvent event =
+                    new DmaapEvent(closedLoopControlName, version, notification, vserverName, genericId);
             final ResponseEntity<String> response = restProvider.postHttpRequest(event, getUrl(), String.class);
             final HttpStatus statusCode = response.getStatusCode();
             final String body = response.getBody();
