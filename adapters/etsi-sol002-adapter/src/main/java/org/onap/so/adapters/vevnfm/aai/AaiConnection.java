@@ -26,12 +26,12 @@ import java.util.List;
 import java.util.Optional;
 import org.apache.logging.log4j.util.Strings;
 import org.onap.aai.domain.yang.*;
-import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
 import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
+import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,11 @@ import org.springframework.stereotype.Service;
 public class AaiConnection {
 
     private static final Logger logger = LoggerFactory.getLogger(AaiConnection.class);
-
+    private static final String VSERVER = "vserver";
+    private static final String CLOUD_OWNER = "cloud-region.cloud-owner";
+    private static final String CLOUD_REGION_ID = "cloud-region.cloud-region-id";
+    private static final String TENANT_ID = "tenant.tenant-id";
+    private static final String VSERVER_ID = "vserver.vserver-id";
     private static final String SELFLINK = "selflink";
     private static final int FIRST_INDEX = 0;
 
@@ -50,6 +54,18 @@ public class AaiConnection {
         if (infos == null || infos.isEmpty() || Strings.isBlank(infos.get(FIRST_INDEX).getServiceUrl())) {
             throw new VeVnfmException("No 'url' field in VNFM info");
         }
+    }
+
+    public static String getRelationshipData(final Relationship relationship, final String relationshipDataKey) {
+        if (relationship != null) {
+            for (final RelationshipData relationshipData : relationship.getRelationshipData()) {
+                if (relationshipData.getRelationshipKey().equals(relationshipDataKey)) {
+                    return relationshipData.getRelationshipValue();
+                }
+            }
+        }
+
+        return null;
     }
 
     private AAIResourcesClient getResourcesClient() {
@@ -125,10 +141,57 @@ public class AaiConnection {
             final int size = genericVnfList.size();
 
             if (size == 1) {
-                return genericVnfList.get(FIRST_INDEX).getVnfId();
+                final GenericVnf genericVnf = genericVnfList.get(FIRST_INDEX);
+                return genericVnf.getVnfId();
             } else if (size > 1) {
                 logger.warn("more generic vnfs available");
             }
+        }
+
+        return null;
+    }
+
+    public String receiveVserverName(final String genericId) {
+        final AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, genericId);
+        final Optional<GenericVnf> response = getResourcesClient().get(GenericVnf.class, resourceUri);
+
+        if (response.isPresent()) {
+            final GenericVnf genericVnf = response.get();
+            final RelationshipList relationshipList = genericVnf.getRelationshipList();
+
+            if (relationshipList == null) {
+                return null;
+            }
+
+            final List<Relationship> relationships = relationshipList.getRelationship();
+
+            if (relationships == null) {
+                return null;
+            }
+
+            for (final Relationship relationship : relationships) {
+                if (relationship.getRelatedTo().equals(VSERVER)) {
+                    final String cloudOwner = getRelationshipData(relationship, CLOUD_OWNER);
+                    final String cloudId = getRelationshipData(relationship, CLOUD_REGION_ID);
+                    final String tenantId = getRelationshipData(relationship, TENANT_ID);
+                    final String vserverId = getRelationshipData(relationship, VSERVER_ID);
+                    return receiveVserverNameFromParams(cloudOwner, cloudId, tenantId, vserverId);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private String receiveVserverNameFromParams(final String cloudOwner, final String cloudId, final String tenantId,
+            final String vserverId) {
+        final AAIResourceUri resourceUri =
+                AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner, cloudId, tenantId, vserverId);
+        final Optional<Vserver> response = getResourcesClient().get(Vserver.class, resourceUri);
+
+        if (response.isPresent()) {
+            final Vserver vserver = response.get();
+            return vserver.getVserverName();
         }
 
         return null;
