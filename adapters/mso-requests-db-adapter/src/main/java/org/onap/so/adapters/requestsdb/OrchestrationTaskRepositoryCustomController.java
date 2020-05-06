@@ -33,29 +33,29 @@ public class OrchestrationTaskRepositoryCustomController {
     @Autowired
     private OrchestrationTaskRepository orchestrationTaskRepository;
 
-    @RequestMapping(method = RequestMethod.GET, value = "/orchestrationTask")
+    @GetMapping(value = "/orchestrationTask")
     public List<OrchestrationTask> getAllOrchestrationTask() {
         return orchestrationTaskRepository.findAll();
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/orchestrationTask/{taskId}")
+    @GetMapping(value = "/orchestrationTask/{taskId}")
     public OrchestrationTask getOrchestrationTask(@PathVariable("taskId") String taskId) throws MsoRequestsDbException {
         return orchestrationTaskRepository.findById(taskId)
                 .orElseThrow(() -> new MsoRequestsDbException("orchestration task not found: " + taskId));
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/orchestrationTask/")
+    @PostMapping(value = "/orchestrationTask/")
     public OrchestrationTask createOrchestrationTask(@RequestBody OrchestrationTask orchestrationTask) {
         return orchestrationTaskRepository.save(orchestrationTask);
     }
 
-    @RequestMapping(method = RequestMethod.PUT, value = "/orchestrationTask/{taskId}")
+    @PutMapping(value = "/orchestrationTask/{taskId}")
     public OrchestrationTask updateOrchestrationTask(@PathVariable("taskId") String taskId,
             @RequestBody OrchestrationTask orchestrationTask) throws MsoRequestsDbException {
         return orchestrationTaskRepository.save(orchestrationTask);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, value = "/orchestrationTask/{taskId}")
+    @DeleteMapping(value = "/orchestrationTask/{taskId}")
     public void deleteOrchestrationTask(@PathVariable("taskId") String taskId) {
         orchestrationTaskRepository.deleteById(taskId);
     }

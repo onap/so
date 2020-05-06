@@ -29,6 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,27 +41,25 @@ public class InfraActiveRequestsRepositoryCustomController {
     @Autowired
     InfraActiveRequestsRepository infraActiveRequestsRepository;
 
-    @RequestMapping(method = RequestMethod.POST,
-            value = "/infraActiveRequests/getCloudOrchestrationFiltersFromInfraActive")
+    @PostMapping(value = "/infraActiveRequests/getCloudOrchestrationFiltersFromInfraActive")
     public List<InfraActiveRequests> getCloudOrchestrationFiltersFromInfraActive(
             @RequestBody Map<String, String> orchestrationMap) {
         return infraActiveRequestsRepository.getCloudOrchestrationFiltersFromInfraActive(orchestrationMap);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/infraActiveRequests/getOrchestrationFiltersFromInfraActive")
+    @PostMapping(value = "/infraActiveRequests/getOrchestrationFiltersFromInfraActive")
     public List<InfraActiveRequests> getOrchestrationFiltersFromInfraActive(
             @RequestBody Map<String, List<String>> orchestrationMap) {
         return infraActiveRequestsRepository.getOrchestrationFiltersFromInfraActive(orchestrationMap);
     }
 
-    @RequestMapping(method = RequestMethod.GET,
-            value = "/infraActiveRequests/checkVnfIdStatus/{operationalEnvironmentId}")
+    @GetMapping(value = "/infraActiveRequests/checkVnfIdStatus/{operationalEnvironmentId}")
     public InfraActiveRequests checkVnfIdStatus(
             @PathVariable("operationalEnvironmentId") String operationalEnvironmentId) {
         return infraActiveRequestsRepository.checkVnfIdStatus(operationalEnvironmentId);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/infraActiveRequests/checkInstanceNameDuplicate")
+    @PostMapping(value = "/infraActiveRequests/checkInstanceNameDuplicate")
     public InfraActiveRequests checkInstanceNameDuplicate(
             @RequestBody InstanceNameDuplicateCheckRequest instanceNameDuplicateCheckRequest) {
         return infraActiveRequestsRepository.checkInstanceNameDuplicate(
@@ -68,14 +68,14 @@ public class InfraActiveRequestsRepositoryCustomController {
                 instanceNameDuplicateCheckRequest.getRequestScope());
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/infraActiveRequests/v1/getInfraActiveRequests")
+    @PostMapping(value = "/infraActiveRequests/v1/getInfraActiveRequests")
     public List<InfraActiveRequests> getInfraActiveRequests(@RequestBody Map<String, String[]> filters,
             @RequestParam("from") long startTime, @RequestParam("to") long endTime,
             @RequestParam(value = "maxResult", required = false) Integer maxResult) {
         return infraActiveRequestsRepository.getInfraActiveRequests(filters, startTime, endTime, maxResult);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/infraActiveRequests/getInProgressVolumeGroupsAndVfModules")
+    @GetMapping(value = "/infraActiveRequests/getInProgressVolumeGroupsAndVfModules")
     public List<InfraActiveRequests> getInProgressVolumeGroupsAndVfModules() {
         return infraActiveRequestsRepository.getInProgressVolumeGroupsAndVfModules();
     }
