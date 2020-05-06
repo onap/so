@@ -51,15 +51,25 @@ public class DmaapConditionalSender {
 
         switch (notificationVnfFilterType) {
             case ALL:
-                dmaapService.send(notification, aaiConnection.receiveGenericVnfId(href));
+                final String genericIdAll = aaiConnection.receiveGenericVnfId(href);
+                String vserverNameAll = null;
+
+                if (Strings.isNotBlank(genericIdAll)) {
+                    vserverNameAll = aaiConnection.receiveVserverName(genericIdAll);
+                }
+
+                dmaapService.send(notification, vserverNameAll, genericIdAll);
                 logSent = true;
                 break;
             case AAI_CHECKED:
-                final String genericId = aaiConnection.receiveGenericVnfId(href);
-                if (Strings.isNotBlank(genericId)) {
-                    dmaapService.send(notification, genericId);
+                final String genericIdAaiChecked = aaiConnection.receiveGenericVnfId(href);
+
+                if (Strings.isNotBlank(genericIdAaiChecked)) {
+                    final String vserverNameAaiChecked = aaiConnection.receiveVserverName(genericIdAaiChecked);
+                    dmaapService.send(notification, vserverNameAaiChecked, genericIdAaiChecked);
                     logSent = true;
                 }
+
                 break;
             case NONE:
                 break;
