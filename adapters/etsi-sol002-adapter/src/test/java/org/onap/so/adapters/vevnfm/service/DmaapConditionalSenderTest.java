@@ -22,9 +22,7 @@ package org.onap.so.adapters.vevnfm.service;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -79,7 +77,8 @@ public class DmaapConditionalSenderTest {
 
         // then
         verify(aaiConnection, never()).receiveGenericVnfId(any());
-        verify(dmaapService, never()).send(any(), any());
+        verify(dmaapService, never()).createDmaapEvent(any(), any(), any());
+        verify(dmaapService, never()).send(any());
     }
 
     @Test
@@ -96,7 +95,8 @@ public class DmaapConditionalSenderTest {
 
         // then
         verify(aaiConnection).receiveGenericVnfId(eq(HREF));
-        verify(dmaapService).send(eq(notification), eq(GENERIC_ID));
+        verify(dmaapService).createDmaapEvent(eq(notification), any(), eq(GENERIC_ID));
+        verify(dmaapService).send(any());
     }
 
     @Test
@@ -113,7 +113,8 @@ public class DmaapConditionalSenderTest {
 
         // then
         verify(aaiConnection).receiveGenericVnfId(eq(HREF));
-        verify(dmaapService).send(eq(notification), eq(GENERIC_ID));
+        verify(dmaapService).createDmaapEvent(eq(notification), any(), eq(GENERIC_ID));
+        verify(dmaapService).send(any());
     }
 
     @Test
@@ -130,6 +131,7 @@ public class DmaapConditionalSenderTest {
 
         // then
         verify(aaiConnection).receiveGenericVnfId(eq(HREF));
-        verify(dmaapService, never()).send(any(), any());
+        verify(dmaapService, never()).createDmaapEvent(any(), any(), any());
+        verify(dmaapService, never()).send(any());
     }
 }
