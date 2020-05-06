@@ -25,6 +25,7 @@ import org.onap.so.adapters.etsisol003adapter.lcm.lcn.model.VnfLcmOperationOccur
 import org.onap.so.adapters.vevnfm.aai.AaiConnection;
 import org.onap.so.adapters.vevnfm.configuration.ConfigProperties;
 import org.onap.so.adapters.vevnfm.constant.NotificationVnfFilterType;
+import org.onap.so.adapters.vevnfm.event.DmaapEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -47,19 +48,14 @@ public class DmaapConditionalSender {
 
     public void send(final VnfLcmOperationOccurrenceNotification notification) {
         final String href = notification.getLinks().getVnfInstance().getHref();
-        boolean logSent = false;
+        DmaapEvent dmaapEvent = null;
 
         switch (notificationVnfFilterType) {
             case ALL:
-                dmaapService.send(notification, aaiConnection.receiveGenericVnfId(href));
-                logSent = true;
+                dmaapEvent = conditionalSend(true, notification, href);
                 break;
             case AAI_CHECKED:
-                final String genericId = aaiConnection.receiveGenericVnfId(href);
-                if (Strings.isNotBlank(genericId)) {
-                    dmaapService.send(notification, genericId);
-                    logSent = true;
-                }
+                dmaapEvent = conditionalSend(false, notification, href);
                 break;
             case NONE:
                 break;
@@ -69,7 +65,29 @@ public class DmaapConditionalSender {
         }
 
         final String vnfInstanceId = notification.getVnfInstanceId();
-        final String not = logSent ? "" : "not ";
-        logger.info("The info with the VNF id '{}' is " + not + "sent to DMaaP", vnfInstanceId);
+
+        if (dmaapEvent == null) {
+            logger.info("The info with the VNF id '{}' is not sent to DMaaP", vnfInstanceId);
+        } else {
+            dmaapService.send(dmaapEvent);
+            logger.info("The info with the VNF id '{}' is sent to DMaaP", vnfInstanceId);
+        }
+    }
+
+    private DmaapEvent conditionalSend(final boolean allowAll, final VnfLcmOperationOccurrenceNotification notification,
+            final String href) {
+        final String genericId = aaiConnection.receiveGenericVnfId(href);
+        final boolean idNotBlank = Strings.isNotBlank(genericId);
+        String vserverName = null;
+
+        if (idNotBlank) {
+            vserverName = aaiConnection.receiveVserverName(genericId);
+        }
+
+        if (allowAll || idNotBlank) {
+            return dmaapService.createDmaapEvent(notification, vserverName, genericId);
+        }
+
+        return null;
     }
 }
