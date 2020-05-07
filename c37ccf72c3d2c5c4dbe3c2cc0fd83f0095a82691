@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "f9b11543_97d37912",
+        "filename": "adapters/etsi-sol002-adapter/src/main/java/org/onap/so/adapters/vevnfm/aai/AaiConnection.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 3957
+      },
+      "writtenOn": "2020-05-07T10:04:38Z",
+      "side": 1,
+      "message": "goes directly into AAI and payload from VNFM is not checked?\n\nvnfcs are optional in the notif.",
+      "range": {
+        "startLine": 133,
+        "startChar": 1,
+        "endLine": 141,
+        "endChar": 51
+      },
+      "revId": "c37ccf72c3d2c5c4dbe3c2cc0fd83f0095a82691",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3bc56061_091341c4",
         "filename": "adapters/etsi-sol002-adapter/src/main/java/org/onap/so/adapters/vevnfm/aai/AaiConnection.java",
         "patchSetId": 2
@@ -64,6 +87,29 @@
         "startChar": 52,
         "endLine": 31,
         "endChar": 56
+      },
+      "revId": "c37ccf72c3d2c5c4dbe3c2cc0fd83f0095a82691",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4eb1e470_17dca209",
+        "filename": "adapters/etsi-sol002-adapter/src/main/java/org/onap/so/adapters/vevnfm/event/AaiEvent.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 3957
+      },
+      "writtenOn": "2020-05-07T10:04:38Z",
+      "side": 1,
+      "message": "cannot be mandatory. There are events with vnf level only.",
+      "range": {
+        "startLine": 42,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 0
       },
       "revId": "c37ccf72c3d2c5c4dbe3c2cc0fd83f0095a82691",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
