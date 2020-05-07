@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1e400814_e8d4e7dc",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2020-05-07T11:50:43Z",
+      "side": 1,
+      "message": "Add onap/so/vevnfm-adapter for SOL002?",
+      "range": {
+        "startLine": 29,
+        "startChar": 2,
+        "endLine": 29,
+        "endChar": 23
+      },
+      "revId": "336b16f760d264a5e8706e0f3a92d2ceaa6e615e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3533e45f_e7c0e289",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2020-05-07T11:50:43Z",
+      "side": 1,
+      "message": "Needs to add CMCC and ZTE for Catalog Manager. Also Samsung for SOL002",
+      "range": {
+        "startLine": 35,
+        "startChar": 33,
+        "endLine": 35,
+        "endChar": 58
+      },
+      "revId": "336b16f760d264a5e8706e0f3a92d2ceaa6e615e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "38f92c48_4c4e069c",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2020-05-07T11:50:43Z",
+      "side": 1,
+      "message": "I would say, \"SOL004 Package support by ETSI Catalog Manager and SOL003 Adapter\"",
+      "range": {
+        "startLine": 39,
+        "startChar": 55,
+        "endLine": 39,
+        "endChar": 66
+      },
+      "revId": "336b16f760d264a5e8706e0f3a92d2ceaa6e615e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "df00fade_fd493cff",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2020-05-07T11:50:43Z",
+      "side": 1,
+      "message": "SOL005 Adapter supports NS LCM\nIn Frankfurt, they don\u0027t support NS/VNF Package Management yet.",
+      "range": {
+        "startLine": 59,
+        "startChar": 1,
+        "endLine": 59,
+        "endChar": 49
+      },
+      "revId": "336b16f760d264a5e8706e0f3a92d2ceaa6e615e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "166f0676_b0d73701",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 2
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2020-05-07T11:50:43Z",
+      "side": 1,
+      "message": "It is postponed to Guilin. So, maybe remove this?",
+      "range": {
+        "startLine": 192,
+        "startChar": 5,
+        "endLine": 192,
+        "endChar": 166
+      },
+      "revId": "336b16f760d264a5e8706e0f3a92d2ceaa6e615e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fb521e88_017a1da5",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 2
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2020-05-07T11:50:43Z",
+      "side": 1,
+      "message": "We don\u0027t support HTTPS for SO-Monitoring. We blocked it by changing its access to ClusterIp. Maybe we need to remove this from Frankfurt?",
+      "range": {
+        "startLine": 204,
+        "startChar": 5,
+        "endLine": 204,
+        "endChar": 87
+      },
+      "revId": "336b16f760d264a5e8706e0f3a92d2ceaa6e615e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
