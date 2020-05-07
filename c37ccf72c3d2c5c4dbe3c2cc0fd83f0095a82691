@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3bc56061_091341c4",
+        "filename": "adapters/etsi-sol002-adapter/src/main/java/org/onap/so/adapters/vevnfm/aai/AaiConnection.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 6077
+      },
+      "writtenOn": "2020-05-07T09:54:26Z",
+      "side": 1,
+      "message": "you already have this in the receiveGenericVnfId()",
+      "range": {
+        "startLine": 155,
+        "startChar": 0,
+        "endLine": 159,
+        "endChar": 57
+      },
+      "revId": "c37ccf72c3d2c5c4dbe3c2cc0fd83f0095a82691",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "07b7d0ad_d959a2ac",
+        "filename": "adapters/etsi-sol002-adapter/src/main/java/org/onap/so/adapters/vevnfm/aai/AaiConnection.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 6077
+      },
+      "writtenOn": "2020-05-07T09:54:26Z",
+      "side": 1,
+      "message": "Probably I\u0027m missing this point, but if you have such relationship what is the point in below?",
+      "range": {
+        "startLine": 173,
+        "startChar": 16,
+        "endLine": 173,
+        "endChar": 66
+      },
+      "revId": "c37ccf72c3d2c5c4dbe3c2cc0fd83f0095a82691",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ed99a9d6_a26d28e3",
+        "filename": "adapters/etsi-sol002-adapter/src/main/java/org/onap/so/adapters/vevnfm/event/AaiEvent.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 6077
+      },
+      "writtenOn": "2020-05-07T09:54:26Z",
+      "side": 1,
+      "message": "minor: why it is not simply named vserverName?",
+      "range": {
+        "startLine": 31,
+        "startChar": 52,
+        "endLine": 31,
+        "endChar": 56
+      },
+      "revId": "c37ccf72c3d2c5c4dbe3c2cc0fd83f0095a82691",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6d83a17a_0bf0e31c",
+        "filename": "adapters/etsi-sol002-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/DmaapService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 6077
+      },
+      "writtenOn": "2020-05-07T09:54:26Z",
+      "side": 1,
+      "message": "just a thought: in my opinion having long parameter list is not the best way. Why not have send(DmaapEvent) and move creation to different place? Now the method is createAndSend",
+      "range": {
+        "startLine": 54,
+        "startChar": 21,
+        "endLine": 55,
+        "endChar": 34
+      },
+      "revId": "c37ccf72c3d2c5c4dbe3c2cc0fd83f0095a82691",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
