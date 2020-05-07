@@ -22,12 +22,22 @@
 
 package org.onap.so.bpmn.infrastructure.scripts;
 
-import javax.ws.rs.core.UriBuilder
-import javax.xml.parsers.DocumentBuilder
-import javax.xml.parsers.DocumentBuilderFactory
-import org.apache.commons.lang3.*
+import javax.ws.rs.NotFoundException
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.L3Network
+import org.onap.aai.domain.yang.NetworkPolicy
+import org.onap.aai.domain.yang.RouteTableReference
+import org.onap.aai.domain.yang.RouteTarget
+import org.onap.aai.domain.yang.Subnet
+import org.onap.aai.domain.yang.VpnBinding
+import org.onap.aaiclient.client.aai.AAIObjectType
+import org.onap.aaiclient.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
 import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -38,33 +48,10 @@ import org.onap.so.bpmn.common.scripts.VidUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.AAIResourcesClient
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
-import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
 import org.onap.so.constants.Defaults
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import org.springframework.web.util.UriUtils
-import org.w3c.dom.Document
-import org.w3c.dom.Element
-import org.w3c.dom.NamedNodeMap
-import org.w3c.dom.Node
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource
-import org.onap.aai.domain.yang.VpnBinding
-import org.onap.aai.domain.yang.L3Network
-import org.onap.aai.domain.yang.NetworkPolicy
-import org.onap.aai.domain.yang.RouteTableReference
-import org.onap.aai.domain.yang.RouteTarget
-import org.onap.aai.domain.yang.Subnet
-import javax.ws.rs.NotFoundException
-
 import groovy.json.*
-import groovy.xml.XmlUtil
 
 /**
  * This groovy class supports the <class>DoUpdateNetworkInstance.bpmn</class> process.
@@ -347,8 +334,8 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Service Instance not found in aai")
             }else{
                 Map<String, String> keys = uri.getURIKeys()
-                execution.setVariable("serviceType", keys.get("service-type"))
-                execution.setVariable("subscriberName", keys.get("global-customer-id"))
+                execution.setVariable("serviceType", keys.get(AAIFluentTypeBuilder.Types.SERVICE_SUBSCRIPTION.getUriParams().serviceType))
+                execution.setVariable("subscriberName", keys.get(AAIFluentTypeBuilder.Types.CUSTOMER.getUriParams().globalCustomerId))
             }
 
         }catch(BpmnError e) {

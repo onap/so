@@ -34,14 +34,36 @@ import java.util.UUID;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.javatuples.Pair;
+import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
+import org.onap.aaiclient.client.aai.AAIObjectType;
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
+import org.onap.aaiclient.client.aai.entities.Relationships;
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.*;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.LineOfBusiness;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.OwningEntity;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Platform;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Project;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.RouteTableReference;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceProxy;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Tenant;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Vnfc;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding;
 import org.onap.so.bpmn.servicedecomposition.entities.ConfigurationResourceKeys;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
@@ -52,12 +74,6 @@ import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.NoServiceInstanceFoundException;
 import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.ServiceModelNotFoundException;
-import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
-import org.onap.aaiclient.client.aai.AAIObjectType;
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
-import org.onap.aaiclient.client.aai.entities.Relationships;
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResource;
@@ -1044,7 +1060,8 @@ public class BBInputSetup implements JavaDelegate {
 
     protected ServiceSubscription getServiceSubscriptionFromURI(String resourceId, Customer customer) {
         Map<String, String> uriKeys = bbInputSetupUtils.getURIKeysFromServiceInstance(resourceId);
-        String subscriptionServiceType = uriKeys.get("service-type");
+        String subscriptionServiceType =
+                uriKeys.get(AAIFluentTypeBuilder.Types.SERVICE_SUBSCRIPTION.getUriParams().serviceType);
         org.onap.aai.domain.yang.ServiceSubscription serviceSubscriptionAAI =
                 bbInputSetupUtils.getAAIServiceSubscription(customer.getGlobalCustomerId(), subscriptionServiceType);
         if (serviceSubscriptionAAI != null) {
@@ -1056,7 +1073,7 @@ public class BBInputSetup implements JavaDelegate {
 
     protected Customer getCustomerFromURI(String resourceId) {
         Map<String, String> uriKeys = bbInputSetupUtils.getURIKeysFromServiceInstance(resourceId);
-        String globalCustomerId = uriKeys.get("global-customer-id");
+        String globalCustomerId = uriKeys.get(AAIFluentTypeBuilder.Types.CUSTOMER.getUriParams().globalCustomerId);
         org.onap.aai.domain.yang.Customer customerAAI = this.bbInputSetupUtils.getAAICustomer(globalCustomerId);
         if (customerAAI != null) {
             return mapperLayer.mapAAICustomer(customerAAI);
@@ -1085,8 +1102,9 @@ public class BBInputSetup implements JavaDelegate {
         if (customer == null) {
             Map<String, String> uriKeys = bbInputSetupUtils
                     .getURIKeysFromServiceInstance(parameter.getServiceInstance().getServiceInstanceId());
-            String globalCustomerId = uriKeys.get("global-customer-id");
-            String subscriptionServiceType = uriKeys.get("service-type");
+            String globalCustomerId = uriKeys.get(AAIFluentTypeBuilder.Types.CUSTOMER.getUriParams().globalCustomerId);
+            String subscriptionServiceType =
+                    uriKeys.get(AAIFluentTypeBuilder.Types.SERVICE_SUBSCRIPTION.getUriParams().serviceType);
             customer = mapCustomer(globalCustomerId, subscriptionServiceType);
         }
         outputBB.setServiceInstance(parameter.getServiceInstance());

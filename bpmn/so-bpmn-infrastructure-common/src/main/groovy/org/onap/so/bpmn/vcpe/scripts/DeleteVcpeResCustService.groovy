@@ -21,9 +21,17 @@
  */
 package org.onap.so.bpmn.vcpe.scripts
 
-import org.onap.so.logger.LoggingAnchor
+import javax.ws.rs.NotFoundException
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aaiclient.client.aai.AAIObjectType
+import org.onap.aaiclient.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.Relationships
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.logging.filter.base.ErrorCode
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
@@ -31,18 +39,10 @@ import org.onap.so.bpmn.common.scripts.NetworkUtils
 import org.onap.so.bpmn.common.scripts.VidUtils
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import org.onap.aaiclient.client.aai.AAIResourcesClient
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
-import org.onap.aaiclient.client.aai.entities.Relationships
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-import javax.ws.rs.NotFoundException
 
 /**
  * This groovy class supports the <class>DeleteVcpeResCustService.bpmn</class> process.
@@ -220,7 +220,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 					List<AAIResourceUri> vnfUris = relationships.get().getRelatedAAIUris(AAIObjectType.GENERIC_VNF)
 					for(AAIResourceUri u:vnfUris){
 						Map<String, String> keys = u.getURIKeys()
-						String vnfId = keys.get("vnf-id")
+						String vnfId = keys.get(AAIFluentTypeBuilder.Types.GENERIC_VNF.getUriParams().vnfId)
 						relatedVnfIdList.add(vnfId)
 					}
 					List<AAIResourceUri> arUris = relationships.get().getRelatedAAIUris(AAIObjectType.ALLOTTED_RESOURCE)

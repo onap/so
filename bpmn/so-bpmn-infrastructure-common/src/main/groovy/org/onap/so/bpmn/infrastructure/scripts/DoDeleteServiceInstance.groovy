@@ -23,11 +23,15 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import static org.apache.commons.lang3.StringUtils.*;
-
-import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.ServiceInstance
+import org.onap.aaiclient.client.aai.AAIObjectType
+import org.onap.aaiclient.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
@@ -35,16 +39,9 @@ import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.AAIResourcesClient
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.util.UriUtils;
-
-import groovy.json.*
 
 /**
  * This groovy class supports the <class>DoDeleteServiceInstance.bpmn</class> process.
@@ -294,7 +291,7 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 				execution.setVariable("GENGS_FoundIndicator", true)
 				execution.setVariable("GENGS_siResourceLink", uri.build().toString())
 				Map<String, String> keys = uri.getURIKeys()
-				String  globalSubscriberId = execution.getVariable("globalSubscriberId")
+				String  globalSubscriberId = execution.getVariable(AAIFluentTypeBuilder.Types.CUSTOMER.getUriParams().globalCustomerId)
 				if(isBlank(globalSubscriberId)){
 					globalSubscriberId = keys.get("global-customer-id")
 					execution.setVariable("globalSubscriberId", globalSubscriberId)

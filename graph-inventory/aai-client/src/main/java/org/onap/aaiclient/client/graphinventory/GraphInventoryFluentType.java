@@ -4,6 +4,12 @@ public interface GraphInventoryFluentType<T> extends GraphInventoryFluentTypeBas
 
     public interface Info extends GraphInventoryFluentTypeBase.Info {
         String getName();
+
+        UriParams getUriParams();
+
+        public interface UriParams {
+
+        }
     }
 
     T build();

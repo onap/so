@@ -22,7 +22,6 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import org.onap.so.logger.LoggingAnchor
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.VolumeGroup
@@ -31,8 +30,10 @@ import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.Relationships
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-import org.onap.so.constants.Defaults
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.constants.Defaults
+import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -71,7 +72,7 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 				if(relationships.isPresent()){
 					List<AAIResourceUri> tenantUris = relationships.get().getRelatedAAIUris(AAIObjectType.TENANT)
 					for (AAIResourceUri tenantURI: tenantUris){
-							volumeGroupTenantId = tenantURI.getURIKeys().get("tenant-id")
+							volumeGroupTenantId = tenantURI.getURIKeys().get(AAIFluentTypeBuilder.Types.TENANT.getUriParams().tenantId)
 					}
 				}
 				//Determine if Tenant Ids match

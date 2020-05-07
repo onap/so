@@ -22,10 +22,16 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import org.onap.so.logger.LoggingAnchor
+import javax.ws.rs.NotFoundException
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.VolumeGroup
+import org.onap.aaiclient.client.aai.AAIObjectType
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.logging.filter.base.ErrorCode
 import org.onap.so.bpmn.common.scripts.AaiUtil;
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor;
 import org.onap.so.bpmn.common.scripts.ExceptionUtil;
@@ -33,18 +39,12 @@ import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.VidUtils;
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.constants.Defaults
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import groovy.json.JsonSlurper
-
-import javax.ws.rs.NotFoundException
 
 /**
  * This groovy class supports the <class>DeleteVfModuleVolume.bpmn</class> process.
@@ -285,7 +285,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
         if(wrapper.getRelationships().isPresent()) {
             List<AAIResourceUri> tenantURIList = wrapper.getRelationships().get().getRelatedAAIUris(AAIObjectType.TENANT)
             if(!tenantURIList.isEmpty()){
-                return tenantURIList.get(0).getURIKeys().get("tenant-id")
+                return tenantURIList.get(0).getURIKeys().get(AAIFluentTypeBuilder.Types.TENANT.getUriParams().tenantId)
             }
         }
 		return null

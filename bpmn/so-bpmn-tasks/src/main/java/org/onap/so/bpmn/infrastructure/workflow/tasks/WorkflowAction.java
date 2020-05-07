@@ -48,6 +48,13 @@ import org.onap.aai.domain.yang.ServiceInstances;
 import org.onap.aai.domain.yang.Vnfc;
 import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.aai.domain.yang.VpnBinding;
+import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
+import org.onap.aaiclient.client.aai.AAIObjectType;
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
+import org.onap.aaiclient.client.aai.entities.Relationships;
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.so.bpmn.common.BBConstants;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.utils.WorkflowResourceIdsUtils;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
@@ -60,12 +67,6 @@ import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetup;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.DuplicateNameException;
 import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.MultipleObjectsFoundException;
-import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
-import org.onap.aaiclient.client.aai.AAIObjectType;
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
-import org.onap.aaiclient.client.aai.entities.Relationships;
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.AAIConfigurationResources;
 import org.onap.so.client.orchestration.AAIEntityNotFoundException;
@@ -94,9 +95,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.util.CollectionUtils;
 
 @Component
 public class WorkflowAction {
@@ -1547,10 +1548,12 @@ public class WorkflowAction {
                             Map<String, String> keys =
                                     bbInputSetupUtils.getURIKeysFromServiceInstance(si.getServiceInstanceId());
 
-                            throw new DuplicateNameException(SERVICE_INSTANCE,
-                                    String.format(NAME_EXISTS_WITH_DIFF_COMBINATION, instanceName,
-                                            keys.get("global-customer-id"), keys.get("service-type"),
-                                            si.getModelVersionId()));
+                            throw new DuplicateNameException(SERVICE_INSTANCE, String.format(
+                                    NAME_EXISTS_WITH_DIFF_COMBINATION, instanceName,
+                                    keys.get(AAIFluentTypeBuilder.Types.CUSTOMER.getUriParams().globalCustomerId),
+                                    keys.get(
+                                            AAIFluentTypeBuilder.Types.SERVICE_SUBSCRIPTION.getUriParams().serviceType),
+                                    si.getModelVersionId()));
                         }
                     }
                 }

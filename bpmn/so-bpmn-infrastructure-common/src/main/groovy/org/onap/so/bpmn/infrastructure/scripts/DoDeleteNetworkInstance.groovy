@@ -22,10 +22,19 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import org.onap.so.logger.LoggingAnchor
+import javax.ws.rs.core.Response
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.L3Network
+import org.onap.aaiclient.client.aai.AAIObjectType
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.Relationships
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
+import org.onap.logging.filter.base.ErrorCode
+import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -38,23 +47,13 @@ import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
-import org.onap.aaiclient.client.aai.entities.Relationships
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
 import org.onap.so.constants.Defaults
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
 import org.springframework.web.util.UriUtils
-import org.onap.logging.filter.base.ONAPComponents;
-
 import groovy.json.JsonOutput
-import javax.ws.rs.core.Response
 
 public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
     private static final Logger logger = LoggerFactory.getLogger( DoDeleteNetworkInstance.class);
@@ -276,7 +275,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
                         List<AAIResourceUri> tenantURIList = relationships.get().getRelatedAAIUris(AAIObjectType.TENANT)
                         for(AAIResourceUri tenantURI: tenantURIList){
                             if(execution.getVariable(Prefix + "tenantId") == null) {
-                                String tenantId = tenantURI.getURIKeys().get("tenant-id")
+                                String tenantId = tenantURI.getURIKeys().get(AAIFluentTypeBuilder.Types.TENANT.getUriParams().tenantId)
                                 execution.setVariable(Prefix + "tenantId", tenantId)
                                 logger.debug(" Get AAI getTenantId()  : " + tenantId)
                             }
@@ -284,7 +283,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
                         List<AAIResourceUri> cloudRegionURIList = relationships.get().getRelatedAAIUris(AAIObjectType.CLOUD_REGION)
                         for(AAIResourceUri tenantURI: cloudRegionURIList){
                             if(execution.getVariable(Prefix + "lcpCloudRegion") == null) {
-                                String lcpCloudRegion = tenantURI.getURIKeys().get("cloud-region-id")
+                                String lcpCloudRegion = tenantURI.getURIKeys().get(AAIFluentTypeBuilder.Types.CLOUD_REGION.getUriParams().cloudRegionId)
                                 execution.setVariable(Prefix + "lcpCloudRegion", lcpCloudRegion)
                                 logger.debug(" Get AAI getCloudRegion()  : " + lcpCloudRegion)
                             }

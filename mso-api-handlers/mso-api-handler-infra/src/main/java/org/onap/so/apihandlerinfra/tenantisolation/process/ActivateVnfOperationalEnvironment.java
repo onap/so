@@ -26,8 +26,13 @@ import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.json.JSONObject;
 import org.onap.aai.domain.yang.OperationalEnvironment;
+import org.onap.aaiclient.client.aai.AAIObjectType;
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
+import org.onap.aaiclient.client.aai.entities.Relationships;
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.apihandler.common.ErrorNumbers;
-import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
@@ -36,13 +41,9 @@ import org.onap.so.apihandlerinfra.tenantisolation.helpers.AAIClientHelper;
 import org.onap.so.apihandlerinfra.tenantisolation.helpers.ActivateVnfDBHelper;
 import org.onap.so.apihandlerinfra.tenantisolation.helpers.SDCClientHelper;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.ServiceModelList;
-import org.onap.aaiclient.client.aai.AAIObjectType;
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
-import org.onap.aaiclient.client.aai.entities.Relationships;
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.db.request.beans.OperationalEnvDistributionStatus;
 import org.onap.so.db.request.beans.OperationalEnvServiceModelStatus;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.requestsdb.RequestsDBHelper;
 import org.slf4j.Logger;
@@ -58,7 +59,6 @@ public class ActivateVnfOperationalEnvironment {
     private static final Logger logger = LoggerFactory.getLogger(ActivateVnfOperationalEnvironment.class);
     private static final int DEFAULT_ACTIVATE_RETRY_COUNT = 3;
     private static final String DISTRIBUTION_STATUS_SENT = "SENT";
-    private static final String OPER_ENVIRONMENT_ID_KEY = "operational-environment-id";
 
     @Autowired
     private ActivateVnfDBHelper dbHelper;
@@ -97,8 +97,8 @@ public class ActivateVnfOperationalEnvironment {
             List<AAIResourceUri> operationalEnvironments =
                     relationships.getRelatedAAIUris(AAIObjectType.OPERATIONAL_ENVIRONMENT);
             if (!operationalEnvironments.isEmpty()) {
-                ecompOperationalEnvironmentId =
-                        operationalEnvironments.get(0).getURIKeys().get(OPER_ENVIRONMENT_ID_KEY);
+                ecompOperationalEnvironmentId = operationalEnvironments.get(0).getURIKeys().get(
+                        AAIFluentTypeBuilder.Types.OPERATIONAL_ENVIRONMENT.getUriParams().operationalEnvironmentId);
             }
         }
         logger.debug("  vnfOperationalEnvironmentId   : {}", vnfOperationalEnvironmentId);
@@ -123,7 +123,8 @@ public class ActivateVnfOperationalEnvironment {
                             .build();
             throw new ValidateException.Builder(
                     " The ECOMP OE was not in aai record; the value of relationship.relationship-data key: "
-                            + OPER_ENVIRONMENT_ID_KEY,
+                            + AAIFluentTypeBuilder.Types.OPERATIONAL_ENVIRONMENT
+                                    .getUriParams().operationalEnvironmentId,
                     HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo)
                             .build();
         }

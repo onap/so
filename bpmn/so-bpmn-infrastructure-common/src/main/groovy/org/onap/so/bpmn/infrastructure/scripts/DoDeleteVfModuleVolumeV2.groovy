@@ -22,12 +22,16 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import org.apache.commons.lang3.StringUtils
+import javax.ws.rs.NotFoundException
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.aai.domain.yang.Relationship
-import org.onap.aai.domain.yang.RelationshipData
 import org.onap.aai.domain.yang.VolumeGroup
+import org.onap.aaiclient.client.aai.AAIObjectType
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.Relationships
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -35,15 +39,9 @@ import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
-import org.onap.aaiclient.client.aai.entities.Relationships
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.constants.Defaults
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import javax.ws.rs.NotFoundException
 
 class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
     private static final Logger logger = LoggerFactory.getLogger( DoDeleteVfModuleVolumeV2.class);
@@ -180,7 +178,7 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 						exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Volume Group ${volumeGroupId} currently in use - found vf-module relationship.")
 					}
 					for(AAIResourceUri aaiResourceUri: relationships.get().getRelatedAAIUris(AAIObjectType.TENANT)){
-						volumeGroupTenantId = aaiResourceUri.getURIKeys().get("tenant-id")
+						volumeGroupTenantId = aaiResourceUri.getURIKeys().get(AAIFluentTypeBuilder.Types.TENANT.getUriParams().tenantId)
 					}
 				}
 
