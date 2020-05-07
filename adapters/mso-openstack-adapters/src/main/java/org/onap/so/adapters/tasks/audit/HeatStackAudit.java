@@ -288,7 +288,7 @@ public class HeatStackAudit {
      */
     protected List<Optional<Port>> retrieveNeutronPortDetails(Resources resources, String cloudSiteId,
             String tenantId) {
-        return resources.getList().parallelStream().filter(resource -> "OS::Neutron::Port".equals(resource.getType()))
+        return resources.getList().stream().filter(resource -> "OS::Neutron::Port".equals(resource.getType()))
                 .map(resource -> neutron.getNeutronPort(resource.getPhysicalResourceId(), tenantId, cloudSiteId))
                 .collect(Collectors.toList());
 
