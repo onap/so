@@ -20,8 +20,9 @@
 
 package org.onap.so.client.appc;
 
-import java.util.HashMap;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.onap.appc.client.lcm.model.Action;
 import org.onap.appc.client.lcm.model.Status;
@@ -40,10 +41,11 @@ public class ApplicationControllerAction {
     protected ApplicationControllerOrchestrator client = new ApplicationControllerOrchestrator();
     private String errorCode = "1002";
     private String errorMessage = "Unable to reach App C Servers";
+    private static final String PAYLOAD_NOT_PRESENT_ERROR_MSG = "Payload is not present for ";
     private static Logger logger = LoggerFactory.getLogger(ApplicationControllerAction.class);
 
     public void runAppCCommand(Action action, String msoRequestId, String vnfId, Optional<String> payload,
-            HashMap<String, String> payloadInfo, String controllerType) {
+            Map<String, String> payloadInfo, String controllerType) {
         Status appCStatus = null;
         try {
             String vnfName = payloadInfo.getOrDefault("vnfName", "");
@@ -96,20 +98,8 @@ public class ApplicationControllerAction {
                         logger.warn("vserverIds  null in AppCClient");
                         break;
                     }
-                    String vmId = "";
-                    String vserverId = "";
-                    ObjectMapper mapper = new ObjectMapper();
-                    List<String> vmIdJsonList = mapper.readValue(vmIds, new TypeReference<List<String>>() {});
-                    List<String> vserverIdJsonList = mapper.readValue(vserverIds, new TypeReference<List<String>>() {});
-                    int i = 0;
-                    while (i < vmIdJsonList.size()) {
-                        vmId = vmIdJsonList.get(i);
-                        vserverId = vserverIdJsonList.get(i);
-                        Optional<String> vserverIdString = Optional.of(vserverId);
-                        appCStatus =
-                                snapshotAction(msoRequestId, vnfId, vmId, vserverIdString, identityUrl, controllerType);
-                        i++;
-                    }
+                    appCStatus = getSnapshotActionAppcStatus(msoRequestId, vnfId, controllerType, identityUrl, vmIds,
+                            vserverIds);
                     break;
                 case ConfigModify:
                 case ConfigScaleOut:
@@ -140,29 +130,44 @@ public class ApplicationControllerAction {
             logger.error("Error building Appc request: {}", e.getMessage(), e);
             errorCode = "1002";
             errorMessage = e.getMessage();
-        } catch (NoSuchMethodError e) {
-            logger.error("Error building Appc request: {}", e.getMessage(), e);
-            errorMessage = e.getMessage();
         } catch (Exception e) {
             logger.error("Error building Appc request: {}", e.getMessage(), e);
             errorMessage = e.getMessage();
         }
     }
 
+    private Status getSnapshotActionAppcStatus(String msoRequestId, String vnfId, String controllerType,
+            String identityUrl, String vmIds, String vserverIds)
+            throws IOException, ApplicationControllerOrchestratorException {
+        Status appcStatus = null;
+        String vmId = "";
+        String vserverId = "";
+        ObjectMapper mapper = new ObjectMapper();
+        List<String> vmIdJsonList = mapper.readValue(vmIds, new TypeReference<List<String>>() {});
+        List<String> vserverIdJsonList = mapper.readValue(vserverIds, new TypeReference<List<String>>() {});
+        int i = 0;
+        while (i < vmIdJsonList.size()) {
+            vmId = vmIdJsonList.get(i);
+            vserverId = vserverIdJsonList.get(i);
+            Optional<String> vserverIdString = Optional.of(vserverId);
+            appcStatus = snapshotAction(msoRequestId, vnfId, vmId, vserverIdString, identityUrl, controllerType);
+            i++;
+        }
+        return appcStatus;
+    }
+
     private Status payloadAction(Action action, String msoRequestId, String vnfId, Optional<String> payload,
-            String controllerType)
-            throws JsonProcessingException, IllegalArgumentException, ApplicationControllerOrchestratorException {
+            String controllerType) throws ApplicationControllerOrchestratorException {
         if (!(payload.isPresent())) {
-            throw new IllegalArgumentException("Payload is not present for " + action.toString());
+            throw new IllegalArgumentException(PAYLOAD_NOT_PRESENT_ERROR_MSG + action.toString());
         }
         return client.vnfCommand(action, msoRequestId, vnfId, Optional.empty(), payload, controllerType);
     }
 
     private Status quiesceTrafficAction(String msoRequestId, String vnfId, Optional<String> payload, String vnfName,
-            String controllerType)
-            throws JsonProcessingException, IllegalArgumentException, ApplicationControllerOrchestratorException {
+            String controllerType) throws JsonProcessingException, ApplicationControllerOrchestratorException {
         if (!(payload.isPresent())) {
-            throw new IllegalArgumentException("Payload is not present for " + Action.QuiesceTraffic.toString());
+            throw new IllegalArgumentException(PAYLOAD_NOT_PRESENT_ERROR_MSG + Action.QuiesceTraffic.toString());
         }
         payload = PayloadClient.quiesceTrafficFormat(payload, vnfName);
         return client.vnfCommand(Action.QuiesceTraffic, msoRequestId, vnfId, Optional.empty(), payload, controllerType);
@@ -170,19 +175,18 @@ public class ApplicationControllerAction {
 
     private Status upgradeAction(Action action, String msoRequestId, String vnfId, Optional<String> payload,
             String vnfName, String controllerType)
-            throws JsonProcessingException, IllegalArgumentException, ApplicationControllerOrchestratorException {
+            throws JsonProcessingException, ApplicationControllerOrchestratorException {
         if (!(payload.isPresent())) {
-            throw new IllegalArgumentException("Payload is not present for " + action.toString());
+            throw new IllegalArgumentException(PAYLOAD_NOT_PRESENT_ERROR_MSG + action.toString());
         }
         payload = PayloadClient.upgradeFormat(payload, vnfName);
         return client.vnfCommand(action, msoRequestId, vnfId, Optional.empty(), payload, controllerType);
     }
 
     private Status distributeTrafficAction(String msoRequestId, String vnfId, Optional<String> payload, String vnfName,
-            String controllerType)
-            throws JsonProcessingException, IllegalArgumentException, ApplicationControllerOrchestratorException {
+            String controllerType) throws JsonProcessingException, ApplicationControllerOrchestratorException {
         if (!(payload.isPresent())) {
-            throw new IllegalArgumentException("Payload is not present for " + Action.DistributeTraffic.toString());
+            throw new IllegalArgumentException(PAYLOAD_NOT_PRESENT_ERROR_MSG + Action.DistributeTraffic.toString());
         }
         payload = PayloadClient.distributeTrafficFormat(payload, vnfName);
         return client.vnfCommand(Action.DistributeTraffic, msoRequestId, vnfId, Optional.empty(), payload,
@@ -191,10 +195,10 @@ public class ApplicationControllerAction {
 
     private Status distributeTrafficCheckAction(String msoRequestId, String vnfId, Optional<String> payload,
             String vnfName, String controllerType)
-            throws JsonProcessingException, IllegalArgumentException, ApplicationControllerOrchestratorException {
+            throws JsonProcessingException, ApplicationControllerOrchestratorException {
         if (!(payload.isPresent())) {
             throw new IllegalArgumentException(
-                    "Payload is not present for " + Action.DistributeTrafficCheck.toString());
+                    PAYLOAD_NOT_PRESENT_ERROR_MSG + Action.DistributeTrafficCheck.toString());
         }
         payload = PayloadClient.distributeTrafficCheckFormat(payload, vnfName);
         return client.vnfCommand(Action.DistributeTrafficCheck, msoRequestId, vnfId, Optional.empty(), payload,

@@ -80,7 +80,7 @@ public class ExceptionBuilder {
             }
 
             logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-                    ErrorCode.UnknownError.getValue(), msg.toString());
+                    ErrorCode.UnknownError.getValue(), msg);
             execution.setVariable(errorVariable, exception.getMessage());
         } catch (Exception ex) {
             // log trace, allow process to complete gracefully
@@ -113,7 +113,7 @@ public class ExceptionBuilder {
             }
 
             logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-                    ErrorCode.UnknownError.getValue(), msg.toString());
+                    ErrorCode.UnknownError.getValue(), msg);
             execution.setVariable(errorVariable, exception.getMessage());
         } catch (Exception ex) {
             // log trace, allow process to complete gracefully
@@ -144,7 +144,7 @@ public class ExceptionBuilder {
                 }
             }
             logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-                    ErrorCode.UnknownError.getValue(), msg.toString());
+                    ErrorCode.UnknownError.getValue(), msg);
             execution.setVariable(errorVariable, exception.getMessage());
         } catch (Exception ex) {
             // log trace, allow process to complete gracefully
@@ -176,7 +176,7 @@ public class ExceptionBuilder {
                 }
             }
             logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-                    ErrorCode.UnknownError.getValue(), msg.toString());
+                    ErrorCode.UnknownError.getValue(), msg);
             execution.setVariable(errorVariable, exception.getMessage());
         } catch (Exception ex) {
             // log trace, allow process to complete gracefully
@@ -260,7 +260,7 @@ public class ExceptionBuilder {
 
     public void processAuditException(DelegateExecutionImpl execution, boolean flowShouldContinue) {
         logger.debug("Processing Audit Results");
-        String auditListString = (String) execution.getVariable("auditInventoryResult");
+        String auditListString = execution.getVariable("auditInventoryResult");
         String processKey = getProcessKey(execution.getDelegateExecution());
         if (auditListString != null) {
             StringBuilder errorMessage = new StringBuilder();
@@ -304,6 +304,7 @@ public class ExceptionBuilder {
 
             } catch (IOException | BBObjectNotFoundException e) {
                 errorMessage = errorMessage.append("process objects in AAI. ");
+                logger.error("Exception occurred in processAuditException", e);
             }
 
             if (flowShouldContinue) {
