@@ -11,11 +11,8 @@
 
 package org.onap.so.db.request.data.repository;
 
-import org.onap.so.db.request.beans.InstanceNfvoMapping;
-import org.onap.so.db.request.beans.OperationStatus;
-import org.onap.so.db.request.beans.OperationStatusId;
+import org.onap.so.db.request.beans.InstanceNfvoMapping; 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "instanceNfvoMapping", path = "instanceNfvoMapping")
