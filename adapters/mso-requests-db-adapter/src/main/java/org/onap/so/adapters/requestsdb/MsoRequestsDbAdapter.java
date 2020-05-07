@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import org.onap.so.adapters.requestsdb.exceptions.MsoRequestsDbException;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.beans.InstanceNfvoMapping;
+import org.onap.so.db.request.beans.OperationStatus;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
 
 /**
@@ -75,6 +76,12 @@ public interface MsoRequestsDbAdapter {
 
     @WebMethod
     public boolean getSiteStatus(@WebParam(name = "siteName") @XmlElement(required = true) String siteName);
+
+    @WebMethod
+    public OperationStatus getServiceOperationStatus(
+            @WebParam(name = "serviceId") @XmlElement(required = true) String serviceId,
+            @WebParam(name = "operationId") @XmlElement(required = false) String operationId)
+            throws MsoRequestsDbException;
 
     @WebMethod
     public void updateServiceOperationStatus(
