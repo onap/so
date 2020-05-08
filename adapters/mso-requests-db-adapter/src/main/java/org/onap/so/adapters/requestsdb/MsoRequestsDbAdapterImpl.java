@@ -222,6 +222,27 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
     }
 
     /**
+     * get the operation status
+     *
+     * @param serviceId
+     * @param operationId
+     * @return operationStatus
+     * @throws MsoRequestsDbException
+     */
+    @Override
+    @Transactional
+    public OperationStatus getServiceOperationStatus(String serviceId, String operationId)
+            throws MsoRequestsDbException {
+        OperationStatus operationStatus;
+        if (operationId.isEmpty()) {
+            operationStatus = operationStatusRepository.findOneByServiceId(serviceId);
+        } else {
+            operationStatus = operationStatusRepository.findOneByServiceIdAndOperationId(serviceId, operationId);
+        }
+        return operationStatus;
+    }
+
+    /**
      * update operation status <br>
      *
      * @param serviceId
