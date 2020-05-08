@@ -65,7 +65,8 @@ public class CamundaVIDRequest {
 
     @JsonProperty(CommonConstants.SERVICE_INSTANCE_ID_VARIABLE)
     private CamundaInput serviceInstanceId;
-
+    @JsonProperty(CommonConstants.OPERATION_TYPE)
+    private CamundaInput operationType;
     @JsonProperty(CommonConstants.PNF_CORRELATION_ID)
     private CamundaInput pnfCorrelationId;
 
@@ -192,6 +193,16 @@ public class CamundaVIDRequest {
     @JsonProperty(CommonConstants.SERVICE_INSTANCE_ID_VARIABLE)
     public void setServiceInstanceId(CamundaInput serviceInstanceId) {
         this.serviceInstanceId = serviceInstanceId;
+    }
+
+    @JsonProperty(CommonConstants.OPERATION_TYPE)
+    public CamundaInput getOperationType() {
+        return operationType;
+    }
+
+    @JsonProperty(CommonConstants.OPERATION_TYPE)
+    public void setOperationType(CamundaInput operationType) {
+        this.operationType = operationType;
     }
 
     @JsonProperty(CommonConstants.PNF_CORRELATION_ID)
