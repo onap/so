@@ -72,7 +72,6 @@
                 <artifactItem>
                   <groupId>org.onap.aai.schema-service</groupId>
                   <artifactId>aai-schema</artifactId>
-                  <version>1.6.5</version>
                   <outputDirectory>${project.build.directory}/swagger</outputDirectory>
                   <includes>**/*.yaml</includes>
                 </artifactItem>
@@ -276,7 +275,6 @@
     <dependency>
       <groupId>org.onap.aai.schema-service</groupId>
       <artifactId>aai-schema</artifactId>
-      <version>1.6.5</version>
     </dependency>
     <dependency>
       <groupId>com.jayway.jsonpath</groupId>

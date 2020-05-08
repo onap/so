@@ -26,6 +26,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -1389,7 +1390,7 @@ public class ServiceInstancesTest extends BaseTest {
     @Test
     public void replaceVfModuleInstanceNoCloudConfigurationTest() throws IOException {
         wireMockServer.stubFor(
-                get(urlPathEqualTo("/aai/v19/network/generic-vnfs/generic-vnf/ff305d54-75b4-431b-adb2-eb6b9e5ff000"))
+                get(urlPathMatching("/aai/v\\d+/network/generic-vnfs/generic-vnf/ff305d54-75b4-431b-adb2-eb6b9e5ff000"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBodyFile("infra/Vnf.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))

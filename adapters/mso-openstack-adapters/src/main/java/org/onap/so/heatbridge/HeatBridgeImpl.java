@@ -272,6 +272,14 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             } else {
                 lIf.setInterfaceRole(port.getvNicType());
             }
+            boolean isL2Multicast = false;
+            if (port.getProfile().get("trusted") != null) {
+                String trusted = port.getProfile().get("trusted").toString();
+                if (Boolean.parseBoolean(trusted)) {
+                    isL2Multicast = true;
+                }
+            }
+            lIf.setL2Multicasting(isL2Multicast);
             updateLInterfaceIps(port, lIf);
             updateLInterfaceVlan(port, lIf);
 
