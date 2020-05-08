@@ -10,9 +10,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -160,11 +160,12 @@ public class CamundaClientTest {
         boolean aLaCarte = true;
         String requestUri = "v7/serviceInstances/assign";
         String instanceGroupId = "ff305d54-75b4-431b-adb2-eb6b9e5ff000";
+        String operationType = "activation";
 
         String testResult = testClient.wrapVIDRequest(requestId, isBaseVfModule, recipeTimeout, requestAction,
                 serviceInstanceId, pnfCorrelationId, vnfId, vfModuleId, volumeGroupId, networkId, configurationId,
                 serviceType, vnfType, vfModuleType, networkType, requestDetails, apiVersion, aLaCarte, requestUri, "",
-                instanceGroupId, false);
+                instanceGroupId, false, operationType);
         String expected = inputStream("/WrappedVIDRequest.json");
 
         JSONAssert.assertEquals(expected, testResult, false);

@@ -54,6 +54,7 @@ public final class CommonConstants {
     public static final String RECIPE_TIMEOUT_VARIABLE = "recipeTimeout";
     public static final String REQUEST_ACTION_VARIABLE = "requestAction";
     public static final String SERVICE_INSTANCE_ID_VARIABLE = "serviceInstanceId";
+    public static final String OPERATION_TYPE = "operationType";
     public static final String PNF_CORRELATION_ID = "pnfCorrelationId";
     public static final String VNF_ID_VARIABLE = "vnfId";
     public static final String VF_MODULE_ID_VARIABLE = "vfModuleId";
