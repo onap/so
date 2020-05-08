@@ -95,7 +95,11 @@
 		"generateIdsOnly": {
 			"value": false,
 			"type": "Boolean"
-		}
+		},
+        "operationType": {
+            "value": "activation",
+            "type": "String"
+        }
 	}
 }
 
