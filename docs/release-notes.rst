@@ -8,6 +8,238 @@ Service Orchestrator Release Notes
 
 The SO provides the highest level of service orchestration in the ONAP architecture. 
 
+Version: 1.6.1
+-----------------------
+
+:Release Date: 
+
+**Docker Images**
+
+**Dockers released for SO:**
+
+ - onap/so/api-handler-infra
+ - onap/so/bpmn-infra
+ - onap/so/catalog-db-adapter
+ - onap/so/openstack-adapter
+ - onap/so/request-db-adapter
+ - onap/so/sdc-controller
+ - onap/so/sdnc-adapter
+ - onap/so/so-monitoring
+ - onap/so/vfc-adapter
+ - onap/so/vnfm-adapter
+ - onap/so/ve-vnfm-adapter
+ - onap/so/nssmf-adapter
+
+**Release Purpose**
+
+The main goal of the Frankfurt release was to:
+	- ETSI alignment improvements - CMCC, Ericcson, Huawei, Samsung, Verizon, ZTE.
+	    - SOL005 adaptation
+	    - SOL003 adaptation
+	    - SOL002 adaptation
+	    - SOL004 Package support by ETSI Catalog Manager and SOL003 Adapter
+	- PNF orchestration Enhancements - Ericcson, Huawei, Nokia
+	    - PNF software upgrade  
+	    - PNF PNP enhancement  
+	- CCVPN Enhancement
+	    - MDONS support -  Fujitsu
+	    - Eline support - Bell, Huawei, CMCC
+	- 5G Slicing - ATT, Amdocs, CMCC, Huawei, Wipro
+	- CDS integration enhancement - ATT, Bell, Tech Mahindra
+	- (SO Multi Cloud plugin improvements - Intel)
+	- HPA -  Intel (Testing effort)
+
+**New Features**
+
+Features Being considered for F release (As per the resource availability):
+
++---------------------------------------------------------------------+
+|SOL005 Adapter supports communication security       	              |                                    
++---------------------------------------------------------------------+
+|SOL005 Adapter supports NS LCM         |                                    
++---------------------------------------------------------------------+
+|Multi-domain Optical Network Service Orchestration Support in SO     |                                    
++---------------------------------------------------------------------+
+|SOL002 Adapter - supports EM-triggered VNF/VNFC Management           |                                    
++---------------------------------------------------------------------+
+|SO Catalog Management Support                                        |                                    
++---------------------------------------------------------------------+
+|Frankfurt release planning milestone                                 |                                    
++---------------------------------------------------------------------+
+|Initiate/ Terminate slice service; Activate/deactivate Slice service |                                    
++---------------------------------------------------------------------+
+|SO support of Network Slicing Demo in Frankfurt                      |                                    
++---------------------------------------------------------------------+
+|ETSI Alignment Support - SOL003 Adapter Enhancement for Frankfurt    |                                    
++---------------------------------------------------------------------+
+|AAI update for VNF improvements                                      |                                    
++---------------------------------------------------------------------+
+|SO Multicloud plugin to Multicloud improvements                      |                                    
++---------------------------------------------------------------------+
+|SO to CDS Enhancement for Generic Implementation                     |                                    
++---------------------------------------------------------------------+
+|S3P improvement Requirements                                         |
++---------------------------------------------------------------------+
+|Upgrade the APIs to Policy                                           |                                    
++---------------------------------------------------------------------+
+
+**Epics**
+-  [`SO-2524 <https://jira.onap.org/browse/SO-2524>`__\ ] - Functionality and API Freeze
+-  [`SO-2519 <https://jira.onap.org/browse/SO-2519>`__\ ] - TSC must have for Frankfurt
+-  [`SO-2432 <https://jira.onap.org/browse/SO-2432>`__\ ] - Multi-domain Optical Network Service Orchestration Support in SO
+-  [`SO-2427 <https://jira.onap.org/browse/SO-2427>`__\ ] - SOL002 Adapter - supports EM-triggered VNF/VNFC Management
+-  [`SO-2404 <https://jira.onap.org/browse/SO-2404>`__\ ] - SO Catalog Management Support
+-  [`SO-2383 <https://jira.onap.org/browse/SO-2383>`__\ ] - Frankfurt release planning milestone
+-  [`SO-2368 <https://jira.onap.org/browse/SO-2368>`__\ ] - Support 5G slice orchestration
+-  [`SO-2281 <https://jira.onap.org/browse/SO-2281>`__\ ] - SO support of Network Slicing Demo in Frankfurt
+-  [`SO-2156 <https://jira.onap.org/browse/SO-2156>`__\ ] - ETSI Alignment Support - SOL003 Adapter Enhancement for Frankfurt
+-  [`SO-2087 <https://jira.onap.org/browse/SO-2087>`__\ ] - AAI update for VNF improvements
+-  [`SO-2086 <https://jira.onap.org/browse/SO-2086>`__\ ] - SO Multicloud plugin to Multicloud improvements
+-  [`SO-2046 <https://jira.onap.org/browse/SO-2046>`__\ ] - support Java 11 upgrade
+-  [`SO-1579 <https://jira.onap.org/browse/SO-1579>`__\ ] - SO supports ETSI SOL005 Alignment of its interfaces with NFVO
+
+**Stories**
+-  [`SO-2774 <https://jira.onap.org/browse/SO-2774>`__\ ] - simplify fabric into add/delete steps
+-  [`SO-2772 <https://jira.onap.org/browse/SO-2772>`__\ ] - Add validations to prevent out of order deletes
+-  [`SO-2770 <https://jira.onap.org/browse/SO-2770>`__\ ] - Added support for volume group request to
+-  [`SO-2768 <https://jira.onap.org/browse/SO-2768>`__\ ] - mso vnf configuration update composite flow
+-  [`SO-2767 <https://jira.onap.org/browse/SO-2767>`__\ ] - convert openstack to external tasks
+-  [`SO-2763 <https://jira.onap.org/browse/SO-2763>`__\ ] - Ingest and Process Service Function
+-  [`SO-2762 <https://jira.onap.org/browse/SO-2762>`__\ ] - Update Subprocess to use COMPLETE status
+-  [`SO-2761 <https://jira.onap.org/browse/SO-2761>`__\ ] - Use setVariablesLocal for setting task variables
+-  [`SO-2753 <https://jira.onap.org/browse/SO-2753>`__\ ] - mso to add support for creating the cloud region
+-  [`SO-2744 <https://jira.onap.org/browse/SO-2744>`__\ ] - reworked dsl client code to check for outputs
+-  [`SO-2743 <https://jira.onap.org/browse/SO-2743>`__\ ] - split single and plural graph inventory uris
+-  [`SO-2735 <https://jira.onap.org/browse/SO-2735>`__\ ] - update poms to be compatible with eclipse IDE
+-  [`SO-2726 <https://jira.onap.org/browse/SO-2726>`__\ ] - Added check to prevent camunda history lookup on
+-  [`SO-2717 <https://jira.onap.org/browse/SO-2717>`__\ ] - Added git attributes to convert line endings to
+-  [`SO-2715 <https://jira.onap.org/browse/SO-2715>`__\ ] - Enhance startTime filtering for OrchestrationRequests
+-  [`SO-2713 <https://jira.onap.org/browse/SO-2713>`__\ ] - create custom spring aop annotation for logging
+-  [`SO-2700 <https://jira.onap.org/browse/SO-2700>`__\ ] - mso to store the heat template timeout minutes and
+-  [`SO-2697 <https://jira.onap.org/browse/SO-2697>`__\ ] - Added simpleNotTaskInfo format modifier
+-  [`SO-2683 <https://jira.onap.org/browse/SO-2683>`__\ ] - Enhance CSIT for ETSI package management
+-  [`SO-2680 <https://jira.onap.org/browse/SO-2680>`__\ ] - enhance openstack library
+-  [`SO-2675 <https://jira.onap.org/browse/SO-2675>`__\ ] - Rename migration script
+-  [`SO-2674 <https://jira.onap.org/browse/SO-2674>`__\ ] - mso to add tenant name and product family name to
+-  [`SO-2662 <https://jira.onap.org/browse/SO-2662>`__\ ] - Updated pom to release version of logging library
+-  [`SO-2660 <https://jira.onap.org/browse/SO-2660>`__\ ] - SO API extension to retrieve all PNF workflow
+-  [`SO-2657 <https://jira.onap.org/browse/SO-2657>`__\ ] - mso to add support for creating the cloud region
+-  [`SO-2655 <https://jira.onap.org/browse/SO-2655>`__\ ] - added in graceful shutdown to spring boot
+-  [`SO-2653 <https://jira.onap.org/browse/SO-2653>`__\ ] - Initial commit to check client alive
+-  [`SO-2651 <https://jira.onap.org/browse/SO-2651>`__\ ] - Remove unused param
+-  [`SO-2647 <https://jira.onap.org/browse/SO-2647>`__\ ] - Create ConfigDeployPnfBB
+-  [`SO-2646 <https://jira.onap.org/browse/SO-2646>`__\ ] - Create ConfigAssignPnfBB
+-  [`SO-2644 <https://jira.onap.org/browse/SO-2644>`__\ ] - WaitForPnfReadyBB - set orchestration status to Register and then Registered
+-  [`SO-2642 <https://jira.onap.org/browse/SO-2642>`__\ ] - AssignPnfBB - set orchestration status to Assigned after successful assignment
+-  [`SO-2641 <https://jira.onap.org/browse/SO-2641>`__\ ] - Include AssignPnfBB, WaitForPnfReadyBB, ActivatePnfBB in Service-Macro-Create flow
+-  [`SO-2640 <https://jira.onap.org/browse/SO-2640>`__\ ] - AssignPnfBB - store model related PNF parameters in AAI
+-  [`SO-2637 <https://jira.onap.org/browse/SO-2637>`__\ ] - modifications to create network to add lob
+-  [`SO-2623 <https://jira.onap.org/browse/SO-2623>`__\ ] - Remove Valet from openstack adapter
+-  [`SO-2620 <https://jira.onap.org/browse/SO-2620>`__\ ] - Include stack Status Reason when rollback is
+-  [`SO-2616 <https://jira.onap.org/browse/SO-2616>`__\ ] - add manual handling to rainy day handling for bbs
+-  [`SO-2615 <https://jira.onap.org/browse/SO-2615>`__\ ] - convert bbinputsetup populate methods to use
+-  [`SO-2614 <https://jira.onap.org/browse/SO-2614>`__\ ] - Add Neutron Port and Nova Server to Proxy
+-  [`SO-2607 <https://jira.onap.org/browse/SO-2607>`__\ ] - Create ActivatePnfBB
+-  [`SO-2606 <https://jira.onap.org/browse/SO-2606>`__\ ] - Create WaitForPnfReadyBB
+-  [`SO-2605 <https://jira.onap.org/browse/SO-2605>`__\ ] - AssignPnfBB should make a link in AAI between PNF and service instance
+-  [`SO-2603 <https://jira.onap.org/browse/SO-2603>`__\ ] - Replaced annotation with RepositoryRestResource
+-  [`SO-2601 <https://jira.onap.org/browse/SO-2601>`__\ ] - Use the timeout from the heat template instead of
+-  [`SO-2597 <https://jira.onap.org/browse/SO-2597>`__\ ] - removed powermock dependecy and added it to
+-  [`SO-2596 <https://jira.onap.org/browse/SO-2596>`__\ ] - 1911 create appc adapter micro service
+-  [`SO-2591 <https://jira.onap.org/browse/SO-2591>`__\ ] - mso stores vnf application id from macro create
+-  [`SO-2590 <https://jira.onap.org/browse/SO-2590>`__\ ] - configurable aaf user expires
+-  [`SO-2584 <https://jira.onap.org/browse/SO-2584>`__\ ] - consolidated security configuration
+-  [`SO-2577 <https://jira.onap.org/browse/SO-2577>`__\ ] - Support for volume groups on replace VF Module.
+-  [`SO-2572 <https://jira.onap.org/browse/SO-2572>`__\ ] - Remove references to AIC
+-  [`SO-2571 <https://jira.onap.org/browse/SO-2571>`__\ ] - update so to use 1.6.3 snapshot from the logging
+-  [`SO-2570 <https://jira.onap.org/browse/SO-2570>`__\ ] - Add simple query format, to limit response content
+-  [`SO-2568 <https://jira.onap.org/browse/SO-2568>`__\ ] - Create AssignPnfBB
+-  [`SO-2566 <https://jira.onap.org/browse/SO-2566>`__\ ] - Updated simulator test files
+-  [`SO-2565 <https://jira.onap.org/browse/SO-2565>`__\ ] - Include service-instance-id and
+-  [`SO-2564 <https://jira.onap.org/browse/SO-2564>`__\ ] - Refactor WorkflowAction.valiadteResourceIdInAAI -
+-  [`SO-2561 <https://jira.onap.org/browse/SO-2561>`__\ ] - add application id support to so
+-  [`SO-2555 <https://jira.onap.org/browse/SO-2555>`__\ ] - refactor fallouthandler
+-  [`SO-2548 <https://jira.onap.org/browse/SO-2548>`__\ ] - Terminate Slice Instance
+-  [`SO-2547 <https://jira.onap.org/browse/SO-2547>`__\ ] - Deactivate Slice Instance
+-  [`SO-2546 <https://jira.onap.org/browse/SO-2546>`__\ ] - Activate Slice Instance
+-  [`SO-2545 <https://jira.onap.org/browse/SO-2545>`__\ ] - Instantiate Slice Service
+-  [`SO-2540 <https://jira.onap.org/browse/SO-2540>`__\ ] - SO API extension to retrieve PNF workflow
+-  [`SO-2523 <https://jira.onap.org/browse/SO-2523>`__\ ] - vnf and vf module replace requests to make
+-  [`SO-2516 <https://jira.onap.org/browse/SO-2516>`__\ ] - remove unused columns infra active requests
+-  [`SO-2515 <https://jira.onap.org/browse/SO-2515>`__\ ] - Create E2E workflow for software upgrade (PNF)
+-  [`SO-2514 <https://jira.onap.org/browse/SO-2514>`__\ ] - Create dispatcher class for PNF Software upgrade.
+-  [`SO-2511 <https://jira.onap.org/browse/SO-2511>`__\ ] - Updated to include getEntity extract
+-  [`SO-2510 <https://jira.onap.org/browse/SO-2510>`__\ ] - Updated to use getEntity API for ServiceProxy
+-  [`SO-2509 <https://jira.onap.org/browse/SO-2509>`__\ ] - Updated logging library version to 1.6.2-SNAPSHOT
+-  [`SO-2499 <https://jira.onap.org/browse/SO-2499>`__\ ] - Skip requestId lookup when uri is
+-  [`SO-2493 <https://jira.onap.org/browse/SO-2493>`__\ ] - update so to use most recent update of logging
+-  [`SO-2490 <https://jira.onap.org/browse/SO-2490>`__\ ] - add new query for requestdb
+-  [`SO-2488 <https://jira.onap.org/browse/SO-2488>`__\ ] - refactor repeated duplicate check code to RequestHandlerUtils
+-  [`SO-2463 <https://jira.onap.org/browse/SO-2463>`__\ ] - Add so-simulator project
+-  [`SO-2460 <https://jira.onap.org/browse/SO-2460>`__\ ] - MDONS: L1 Service Termination
+-  [`SO-2459 <https://jira.onap.org/browse/SO-2459>`__\ ] - MDONS: L1 Service Creation
+-  [`SO-2444 <https://jira.onap.org/browse/SO-2444>`__\ ] - update scheduled tasks to have mdc setup
+-  [`SO-2442 <https://jira.onap.org/browse/SO-2442>`__\ ] - Add column to catalog db
+-  [`SO-2439 <https://jira.onap.org/browse/SO-2439>`__\ ] - Authentication and Authorization support between SOL005 Adapter and NFVO
+-  [`SO-2438 <https://jira.onap.org/browse/SO-2438>`__\ ] - Secured communication support between SOL005 Adapter and NFVO
+-  [`SO-2428 <https://jira.onap.org/browse/SO-2428>`__\ ] - SOL002 Adapter subscribes and consumes VNF LCM notifications from VNFM (Frankfurt)
+-  [`SO-2426 <https://jira.onap.org/browse/SO-2426>`__\ ] - feature request to so to save name on deletes
+-  [`SO-2412 <https://jira.onap.org/browse/SO-2412>`__\ ] - SOL003 Adapter Package Management by leveraging ONAP-ETSI Catalog Manager
+-  [`SO-2406 <https://jira.onap.org/browse/SO-2406>`__\ ] - Enhance SO SDC Controller to invoke ONAP-ETSI Catalog APIs
+-  [`SO-2399 <https://jira.onap.org/browse/SO-2399>`__\ ] - Update PNF instance attributes in AAI during instantiation (PnP) workflow
+-  [`SO-2398 <https://jira.onap.org/browse/SO-2398>`__\ ] - Converted tests to use LATEST
+-  [`SO-2372 <https://jira.onap.org/browse/SO-2372>`__\ ] - Validate SO Multicloud plugin adapter with Macro call / gr-api
+-  [`SO-2339 <https://jira.onap.org/browse/SO-2339>`__\ ] - Refactor SO/DMaaP client - move BBS functionality to a workflow Task
+-  [`SO-2316 <https://jira.onap.org/browse/SO-2316>`__\ ] - SO to support CDS Actor for ScaleoutBB
+-  [`SO-2312 <https://jira.onap.org/browse/SO-2312>`__\ ] - SO to CDS Enhancement for Generic Implementation
+-  [`SO-2293 <https://jira.onap.org/browse/SO-2293>`__\ ] - vf-module details in SDNC-Directives to pass through GR-API with v2
+-  [`SO-2208 <https://jira.onap.org/browse/SO-2208>`__\ ] - Load proper instanceParams of the object being processed to CDS properties
+-  [`SO-2165 <https://jira.onap.org/browse/SO-2165>`__\ ] - Add Config deploy to service-macro-delete and CDS transition directives for vnf
+-  [`SO-2091 <https://jira.onap.org/browse/SO-2091>`__\ ] - Create new SO building blocks - activateNESw
+-  [`SO-2090 <https://jira.onap.org/browse/SO-2090>`__\ ] - SO-CDS PNF Building Blocks back-end impl
+-  [`SO-2089 <https://jira.onap.org/browse/SO-2089>`__\ ] - Create a new SO building block - preCheck
+-  [`SO-2073 <https://jira.onap.org/browse/SO-2073>`__\ ] - Create a new SO building blocks - postCheck
+-  [`SO-2072 <https://jira.onap.org/browse/SO-2072>`__\ ] - Support PNF CM workflow execution
+-  [`SO-2071 <https://jira.onap.org/browse/SO-2071>`__\ ] - SO API extension to support PNF Upgrade
+-  [`SO-2070 <https://jira.onap.org/browse/SO-2070>`__\ ] - a generic decision points for API
+-  [`SO-2063 <https://jira.onap.org/browse/SO-2063>`__\ ] - AAF integration
+-  [`SO-1657 <https://jira.onap.org/browse/SO-1657>`__\ ] - Automated testing for the SO Monitoring component
+-  [`SO-1635 <https://jira.onap.org/browse/SO-1635>`__\ ] - Preload using user_param (without UI changes)
+-  [`SO-1420 <https://jira.onap.org/browse/SO-1420>`__\ ] - SO should be able to decompose a composite service
+-  [`SO-1277 <https://jira.onap.org/browse/SO-1277>`__\ ] - Adapt PNF PnP flow to support updated AAI PNF model
+-  [`SO-994 <https://jira.onap.org/browse/SO-994>`__\ ] - Sonar Issue: Replace duplicate strings with Constants in ServiceInstances
+-  [`SO-929 <https://jira.onap.org/browse/SO-929>`__\ ] - Removing Sonar reported Vulnerability in AAIObjectMapper file
+-  [`SO-2 <https://jira.onap.org/browse/SO-2>`__\ ] - MSO should mount vnfs in appc that appc has to manage
+
+**Key Issues Addressed**
+
+
+**Security Notes**
+ 
+ Quick Links:
+
+ - `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`_
+ - `Passing Badge information for SO <https://bestpractices.coreinfrastructure.org/en/projects/1702>`_
+
+
+**Known Issues**
+	N/A
+
+OJSI Issues
+
+	N/A
+
+**Upgrade Notes**
+
+	N/A
+
+**Deprecation Notes**
+
+	N/A
+
+**Other**
+
+	N/A
 
 Version: 5.0.1
 -----------------------
