@@ -213,6 +213,29 @@
     },
     {
       "key": {
+        "uuid": "c3720afd_98dda5e6",
+        "filename": "adapters/etsi-sol002-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/DmaapConditionalSender.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 3957
+      },
+      "writtenOn": "2020-05-10T15:40:13Z",
+      "side": 1,
+      "message": "dmaapService.send() call should be moved after this switch to be more readable.\nswitch/case should only populate the parameters for the call.",
+      "range": {
+        "startLine": 61,
+        "startChar": 16,
+        "endLine": 61,
+        "endChar": 33
+      },
+      "revId": "c37ccf72c3d2c5c4dbe3c2cc0fd83f0095a82691",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6d83a17a_0bf0e31c",
         "filename": "adapters/etsi-sol002-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/DmaapService.java",
         "patchSetId": 2
@@ -257,6 +280,52 @@
       "revId": "c37ccf72c3d2c5c4dbe3c2cc0fd83f0095a82691",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6d1988a3_5bf2cf11",
+        "filename": "adapters/etsi-sol002-adapter/src/test/java/org/onap/so/adapters/vevnfm/service/DmaapConditionalSenderTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 3957
+      },
+      "writtenOn": "2020-05-10T15:40:13Z",
+      "side": 1,
+      "message": "why removed explicit import?",
+      "range": {
+        "startLine": 25,
+        "startChar": 34,
+        "endLine": 25,
+        "endChar": 36
+      },
+      "revId": "c37ccf72c3d2c5c4dbe3c2cc0fd83f0095a82691",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bb46d09e_859b162b",
+        "filename": "adapters/etsi-sol002-adapter/src/test/java/org/onap/so/adapters/vevnfm/service/DmaapConditionalSenderTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 3957
+      },
+      "writtenOn": "2020-05-10T15:40:13Z",
+      "side": 1,
+      "message": "is this now testing the options when vserver is not present in the dmaap message?",
+      "range": {
+        "startLine": 38,
+        "startChar": 13,
+        "endLine": 38,
+        "endChar": 40
+      },
+      "revId": "c37ccf72c3d2c5c4dbe3c2cc0fd83f0095a82691",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
