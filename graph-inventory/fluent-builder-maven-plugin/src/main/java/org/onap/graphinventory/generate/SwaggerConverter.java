@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.maven.plugin.logging.Log;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -33,10 +32,6 @@ public class SwaggerConverter {
                 .filter(item -> !item.getKey().endsWith("/relationship-list/relationship"))
                 .collect(Collectors.toMap(item -> item.getKey(), item -> item.getValue()));
 
-        Pattern pluralPattern = Pattern.compile(".*(?<partial>/(?<name>[^{]*$))");
-        Pattern singularPattern = Pattern.compile(".*(?<partial>/(?<name>[^/{}]*)/\\{.*$)");
-        Pattern topLevelPattern = Pattern.compile("^/([^/]+)/.*");
-        Pattern urlTemplatePattern = Pattern.compile("\\{([^}]+)\\}");
         Matcher pluralMatcher;
         Matcher singularMatcher;
         Matcher topLevelMatcher;
@@ -44,9 +39,9 @@ public class SwaggerConverter {
         Map<String, ObjectType> output = new HashMap<>();
         for (Map.Entry<String, Path> entry : paths.entrySet()) {
 
-            pluralMatcher = pluralPattern.matcher(entry.getKey());
-            singularMatcher = singularPattern.matcher(entry.getKey());
-            topLevelMatcher = topLevelPattern.matcher(entry.getKey());
+            pluralMatcher = Patterns.pluralPattern.matcher(entry.getKey());
+            singularMatcher = Patterns.singularPattern.matcher(entry.getKey());
+            topLevelMatcher = Patterns.topLevelPattern.matcher(entry.getKey());
             ObjectType item;
             if (pluralMatcher.matches()) {
                 if (!output.containsKey(pluralMatcher.group("name"))) {
@@ -158,7 +153,7 @@ public class SwaggerConverter {
             }
 
             if (!item.getValue().getFields().isEmpty()) {
-                Matcher templates = urlTemplatePattern.matcher(item.getValue().getPartialUri());
+                Matcher templates = Patterns.urlTemplatePattern.matcher(item.getValue().getPartialUri());
                 List<String> localFields = new ArrayList<>();
                 while (templates.find()) {
                     localFields.add(templates.group(1));

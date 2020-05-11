@@ -58,6 +58,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
+import org.onap.aaiclient.client.aai.AAIObjectType;
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
@@ -94,11 +100,6 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceProxy;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
 import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.NoServiceInstanceFoundException;
 import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.ServiceModelNotFoundException;
-import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
-import org.onap.aaiclient.client.aai.AAIObjectType;
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResource;
 import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
@@ -944,8 +945,8 @@ public class BBInputSetupTest {
         cloudRegion.setTenantId("tenantId");
 
         Map<String, String> uriKeys = new HashMap<>();
-        uriKeys.put("global-customer-id", "global-customer-id");
-        uriKeys.put("service-type", "service-type");
+        uriKeys.put(AAIFluentTypeBuilder.Types.CUSTOMER.getUriParams().globalCustomerId, "global-customer-id");
+        uriKeys.put(AAIFluentTypeBuilder.Types.SERVICE_SUBSCRIPTION.getUriParams().serviceType, "service-type");
 
         Customer customer = new Customer();
         ServiceSubscription serviceSubscription = new ServiceSubscription();

@@ -6,6 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.onap.aai.domain.yang.Vserver;
+import org.onap.aaiclient.client.aai.AAIObjectType;
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
+import org.onap.aaiclient.client.aai.entities.Relationships;
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.appc.client.lcm.model.Action;
 import org.onap.so.appc.orchestrator.service.beans.ApplicationControllerTaskRequest;
 import org.onap.so.appc.orchestrator.service.beans.ApplicationControllerVm;
@@ -17,10 +22,6 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
-import org.onap.aaiclient.client.aai.AAIObjectType;
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
-import org.onap.aaiclient.client.aai.entities.Relationships;
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.AAIVnfResources;
@@ -186,7 +187,7 @@ public class AppcOrchestratorPreProcessor {
                 ArrayList<String> vserverIds = new ArrayList<String>();
                 ArrayList<String> vserverSelfLinks = new ArrayList<String>();
                 for (AAIResourceUri j : vserverUris) {
-                    String vserverId = j.getURIKeys().get("vserver-id");
+                    String vserverId = j.getURIKeys().get(AAIFluentTypeBuilder.Types.VSERVER.getUriParams().vserverId);
                     vserverIds.add(vserverId);
                     Optional<Vserver> oVserver = aaiVnfResources.getVserver(j);
                     if (oVserver.isPresent()) {

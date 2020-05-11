@@ -22,27 +22,27 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import static org.apache.commons.lang.StringUtils.isEmpty
 import org.apache.commons.collections.CollectionUtils
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.VolumeGroup
-import org.onap.so.bpmn.common.scripts.ExceptionUtil
-import org.onap.so.bpmn.common.scripts.MsoUtils
-import org.onap.so.bpmn.common.scripts.VfModuleBase
-import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.onap.so.bpmn.core.WorkflowException
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.Relationships
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-import org.onap.so.constants.Defaults
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.bpmn.common.scripts.ExceptionUtil
+import org.onap.so.bpmn.common.scripts.MsoUtils
+import org.onap.so.bpmn.common.scripts.VfModuleBase
+import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.constants.Defaults
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import static org.apache.commons.lang.StringUtils.isEmpty
 
 class UpdateVfModuleVolume extends VfModuleBase {
     private static final Logger logger = LoggerFactory.getLogger(UpdateVfModuleVolume.class)
@@ -196,7 +196,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 					List<AAIResourceUri> resourceUriList = relationships.get().getRelatedAAIUris(AAIObjectType.TENANT)
 					if(CollectionUtils.isNotEmpty(resourceUriList)){
 						AAIResourceUri tenantUri = resourceUriList.get(0)
-						String volumeGroupTenantId = tenantUri.getURIKeys().get("tenant-id")
+						String volumeGroupTenantId = tenantUri.getURIKeys().get(AAIFluentTypeBuilder.Types.TENANT.getUriParams().tenantId)
 						if( isEmpty(volumeGroupTenantId)){
 							exceptionUtil.buildAndThrowWorkflowException(execution,2500,"Could not find Tenant Id element in Volume Group with Volume Group Id" + volumeGroupId + ", AIC Cloud Region" + aicCloudRegion)
 						}

@@ -28,10 +28,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.onap.so.logger.LoggingAnchor;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.onap.aaiclient.client.aai.AAIObjectType;
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
+import org.onap.aaiclient.client.aai.entities.Relationships;
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.appc.client.lcm.model.Action;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.core.json.JsonUtils;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -40,17 +45,13 @@ import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestParameters;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
-import org.onap.aaiclient.client.aai.AAIObjectType;
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
-import org.onap.aaiclient.client.aai.entities.Relationships;
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.appc.ApplicationControllerAction;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.AAIVnfResources;
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
 import org.onap.so.db.catalog.client.CatalogDbClient;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -257,7 +258,8 @@ public class AppcRunTasks {
             for (AAIResourceUri j : vserverUris) {
                 if (j != null) {
                     if (j.getURIKeys() != null) {
-                        String vserverId = j.getURIKeys().get("vserver-id");
+                        String vserverId =
+                                j.getURIKeys().get(AAIFluentTypeBuilder.Types.VSERVER.getUriParams().vserverId);
                         vserverIds.put(vserverId);
                     }
                     aaiVnfResources.getVserver(j).ifPresent((vserver) -> {

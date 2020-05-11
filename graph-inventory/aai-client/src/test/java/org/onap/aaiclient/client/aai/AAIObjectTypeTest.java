@@ -24,9 +24,9 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 
 public class AAIObjectTypeTest {
-
 
     @Test
     public void fromTypeNameTest() throws IllegalArgumentException, IllegalAccessException, InstantiationException {
@@ -87,5 +87,28 @@ public class AAIObjectTypeTest {
         final String id = "test1";
         AAIResourceUri aaiUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, id);
         assertEquals("/network/network-policies/network-policy/test1", aaiUri.build().toString());
+    }
+
+    @Test
+    public void equalityTest() {
+
+        AAIObjectType genericVnf = AAIFluentTypeBuilder.network().genericVnf("test").build();
+
+        assertEquals(AAIObjectType.GENERIC_VNF, genericVnf);
+
+    }
+
+    @Test
+    public void uriParamTest() {
+
+        assertEquals("vnf-id", AAIFluentTypeBuilder.Types.GENERIC_VNF.getUriParams().vnfId);
+
+        assertEquals("l-interface.interface-name", AAIFluentTypeBuilder.Types.L_INTERFACE.getUriParams().interfaceName);
+
+        assertEquals("cloud-owner", AAIFluentTypeBuilder.Types.CLOUD_REGION.getUriParams().cloudOwner);
+
+        assertEquals("cloud-region-id", AAIFluentTypeBuilder.Types.CLOUD_REGION.getUriParams().cloudRegionId);
+
+
     }
 }

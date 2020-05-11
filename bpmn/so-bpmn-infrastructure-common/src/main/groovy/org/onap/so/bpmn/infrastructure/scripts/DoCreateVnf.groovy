@@ -22,14 +22,15 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import org.onap.so.logger.LoggingAnchor
-import org.onap.so.db.catalog.beans.HomingInstance
-import org.onap.logging.filter.base.ErrorCode
-
 import static org.apache.commons.lang3.StringUtils.*
-
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aaiclient.client.aai.AAIObjectType;
+import org.onap.aaiclient.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.logging.filter.base.ErrorCode
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
@@ -41,13 +42,11 @@ import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.db.catalog.beans.HomingInstance
+import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.onap.aaiclient.client.aai.AAIObjectType;
-import org.onap.aaiclient.client.aai.AAIResourcesClient
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 
 /**
  * This class supports the DoCreateVnf building block subflow
@@ -286,8 +285,8 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 
 			if(resourceClient.exists(uri)){
 				Map<String, String> keys = uri.getURIKeys()
-				execution.setVariable("globalCustomerId", keys.get("global-customer-id"))
-				execution.setVariable("serviceType", keys.get("service-type"))
+				execution.setVariable("globalCustomerId", keys.get(AAIFluentTypeBuilder.Types.CUSTOMER.getUriParams().globalCustomerId))
+				execution.setVariable("serviceType", keys.get(AAIFluentTypeBuilder.Types.SERVICE_SUBSCRIPTION.getUriParams().serviceType))
 				execution.setVariable("GENGS_siResourceLink", uri.build().toString())
 
 			}else{

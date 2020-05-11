@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import javax.lang.model.element.Modifier;
 import org.apache.commons.lang3.ArrayUtils;
@@ -240,19 +241,17 @@ public class FluentGenerator {
     }
 
     protected TypeSpec createTypes() {
-        Pair<String, String> path = splitClasspath(this.nameClass);
-        ClassName nameType = ClassName.get(path.getLeft(), path.getRight());
-
-        List<FieldSpec> params =
-                doc.values().stream().filter(item -> item.getType().equals("singular"))
-                        .sorted(Comparator
-                                .comparing(item -> item.getName()))
-                        .map(item -> FieldSpec
-                                .builder(nameType,
-                                        CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, item.getName()),
-                                        Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                                .initializer("new $T($S)", nameType, item.getName()).build())
-                        .collect(Collectors.toList());
+        List<FieldSpec> params = doc.values().stream().filter(item -> item.getType().equals("singular"))
+                .sorted(Comparator.comparing(item -> item.getName())).map(item -> {
+                    ClassName nameType =
+                            ClassName.get(CLASSPATH, CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_CAMEL, item.getName()))
+                                    .nestedClass("Info");
+                    FieldSpec field = FieldSpec
+                            .builder(nameType, CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, item.getName()),
+                                    Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+                            .initializer("new $T()", nameType).build();
+                    return field;
+                }).collect(Collectors.toList());
 
         TypeSpec type = TypeSpec.classBuilder("Types").addModifiers(Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC)
                 .addFields(params).build();
@@ -276,30 +275,71 @@ public class FluentGenerator {
                 .build());
 
         ClassName superInterface;
+        String name;
         if (oType.getType().equals("plural")) {
-            classFields.add(FieldSpec.builder(String.class, "name")
-                    .addModifiers(Modifier.PRIVATE, Modifier.FINAL, Modifier.STATIC)
-                    .initializer("$S", oType.getAdditionalName()).build());
-            superInterface = ClassName.get(this.pluralBuilderClass, "Info");
+            Pair<String, String> path = splitClasspath(this.pluralBuilderClass);
+            superInterface = ClassName.get(path.getLeft(), path.getRight());
+            name = oType.getAdditionalName();
         } else if (oType.getType().equals("singular")) {
-            classFields.add(FieldSpec.builder(String.class, "name")
-                    .addModifiers(Modifier.PRIVATE, Modifier.FINAL, Modifier.STATIC).initializer("$S", oType.getName())
-                    .build());
-            superInterface = ClassName.get(this.singularBuilderClass, "Info");
+            Pair<String, String> path = splitClasspath(this.singularBuilderClass);
+            superInterface = ClassName.get(path.getLeft(), path.getRight());
+            name = oType.getName();
         } else {
-            superInterface = ClassName.get(this.topLevelBuilderClass, "Info");
+            Pair<String, String> path = splitClasspath(this.topLevelBuilderClass);
+            superInterface = ClassName.get(path.getLeft(), path.getRight());
+            name = oType.getName();
         }
+        superInterface = superInterface.nestedClass("Info");
         methods.add(MethodSpec.methodBuilder("getPaths").returns(ParameterizedTypeName.get(List.class, String.class))
                 .addModifiers(Modifier.PUBLIC).addAnnotation(Override.class).addStatement("return Info.paths").build());
         methods.add(MethodSpec.methodBuilder("getPartialUri").returns(String.class).addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class).addStatement("return Info.partialUri").build());
         if (!oType.getType().equals("top level")) {
+            classFields.add(FieldSpec.builder(String.class, "name")
+                    .addModifiers(Modifier.PRIVATE, Modifier.FINAL, Modifier.STATIC).initializer("$S", name).build());
+            classFields.add(FieldSpec.builder(ClassName.get("", "UriParams"), "uriParams")
+                    .addModifiers(Modifier.PRIVATE, Modifier.FINAL, Modifier.STATIC)
+                    .initializer("new $T()", ClassName.get("", "UriParams")).build());
             methods.add(MethodSpec.methodBuilder("getName").returns(String.class).addModifiers(Modifier.PUBLIC)
                     .addAnnotation(Override.class).addStatement("return Info.name").build());
-        }
-        return TypeSpec.classBuilder("Info").addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .addSuperinterface(superInterface).addFields(classFields).addMethods(methods).build();
 
+            methods.add(MethodSpec.methodBuilder("getUriParams").returns(ClassName.get("", "UriParams"))
+                    .addModifiers(Modifier.PUBLIC).addAnnotation(Override.class).addStatement("return Info.uriParams")
+                    .build());
+        }
+        TypeSpec.Builder returnTypeSpec = TypeSpec.classBuilder("Info").addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .addSuperinterface(superInterface).addFields(classFields).addMethods(methods);
+        if (!oType.getType().equals("top level")) {
+            returnTypeSpec.addType(createUriParamsClass(superInterface, oType));
+        }
+        return returnTypeSpec.build();
+
+    }
+
+    protected TypeSpec createUriParamsClass(ClassName parent, ObjectType oType) {
+
+        List<FieldSpec> classFields = new ArrayList<>();
+        Matcher params = Patterns.urlTemplatePattern.matcher(oType.getPartialUri());
+
+        while (params.find()) {
+            String value;
+            String name;
+
+            if (params.group(2) != null) {
+                name = params.group(2);
+            } else {
+                name = params.group(1);
+            }
+            value = params.group(1);
+
+            name = CaseFormat.LOWER_HYPHEN.to(CaseFormat.LOWER_CAMEL, name);
+
+            classFields.add(FieldSpec.builder(String.class, name, Modifier.PUBLIC, Modifier.FINAL)
+                    .initializer("$S", value).build());
+        }
+
+        return TypeSpec.classBuilder("UriParams").addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+                .addFields(classFields).addSuperinterface(parent.nestedClass("UriParams")).build();
     }
 
     protected String makeValidJavaVariable(String name) {
