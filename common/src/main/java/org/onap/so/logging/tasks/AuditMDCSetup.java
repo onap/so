@@ -3,6 +3,7 @@ package org.onap.so.logging.tasks;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.onap.logging.filter.base.MDCSetup;
 import org.onap.logging.filter.base.ONAPComponents;
@@ -30,6 +31,7 @@ public class AuditMDCSetup {
         MDC.put(ONAPLogConstants.MDCs.SERVICE_NAME, externalTask.getTopicName());
         MDC.put(ONAPLogConstants.MDCs.PARTNER_NAME, ONAPComponents.OPENSTACK_ADAPTER.toString());
         setResponseCode(ONAPLogConstants.ResponseStatus.INPROGRESS.toString());
+        MDC.put(ONAPLogConstants.MDCs.INVOCATION_ID, UUID.randomUUID().toString());
         setElapsedTime();
         mdcSetup.setServerFQDN();
         logger.info(ONAPLogConstants.Markers.ENTRY, "Entering");
@@ -53,5 +55,4 @@ public class AuditMDCSetup {
         MDC.remove(ONAPLogConstants.MDCs.ELAPSED_TIME);
         MDC.remove(ONAPLogConstants.MDCs.PARTNER_NAME);
     }
-
 }

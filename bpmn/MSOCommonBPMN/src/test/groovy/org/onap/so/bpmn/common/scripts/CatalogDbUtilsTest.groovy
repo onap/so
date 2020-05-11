@@ -136,7 +136,6 @@ class CatalogDbUtilsTest {
     }
 
     private void verifyHeadersInHttpClient() {
-        verify(httpClientMock).addAdditionalHeader(eq(ONAPLogConstants.Headers.REQUEST_ID), anyString())
         verify(httpClientMock).addAdditionalHeader("X-FromAppId", "BPMN")
         verify(httpClientMock).addAdditionalHeader("Accept", MediaType.APPLICATION_JSON)
         verify(httpClientMock).addAdditionalHeader("Authorization", AUTHORIZATION_HEADER)

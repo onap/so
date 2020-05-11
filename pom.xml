@@ -823,17 +823,17 @@
       <dependency>
         <groupId>org.onap.logging-analytics</groupId>
         <artifactId>logging-slf4j</artifactId>
-        <version>1.6.6</version>
+        <version>1.6.7-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.onap.logging-analytics</groupId>
         <artifactId>logging-filter-base</artifactId>
-        <version>1.6.6</version>
+        <version>1.6.7-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.onap.logging-analytics</groupId>
         <artifactId>logging-filter-spring</artifactId>
-        <version>1.6.6</version>
+        <version>1.6.7-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>

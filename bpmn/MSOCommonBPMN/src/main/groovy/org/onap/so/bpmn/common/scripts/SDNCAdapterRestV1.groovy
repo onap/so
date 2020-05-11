@@ -224,9 +224,6 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 			URL url = new URL(sdncAdapterUrl)
 
 			HttpClient httpClient = new HttpClientFactory().newJsonClient(url, ONAPComponents.SDNC_ADAPTER)
-			httpClient.addAdditionalHeader("X-ONAP-RequestID", execution.getVariable("mso-request-id"))
-			httpClient.addAdditionalHeader("X-ONAP-InvocationID", UUID.randomUUID().toString())
-			httpClient.addAdditionalHeader("X-ONAP-PartnerName", "SO-SDNCAdapter")
 			httpClient.addAdditionalHeader("mso-request-id", execution.getVariable("mso-request-id"))
 			httpClient.addAdditionalHeader("mso-service-instance-id", execution.getVariable("mso-service-instance-id"))
 			httpClient.addAdditionalHeader("Authorization", execution.getVariable(prefix + "basicAuthHeaderValue"))

@@ -443,7 +443,6 @@ class CatalogDbUtils {
 			String queryEndpoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + endPoint
 			def responseData = ''
 			HttpClient client = httpClientFactory.newJsonClient(new URL(queryEndpoint), ONAPComponents.CATALOG_DB)
-			client.addAdditionalHeader(ONAPLogConstants.Headers.REQUEST_ID, UUID.randomUUID().toString())
 			client.addAdditionalHeader('X-FromAppId', "BPMN")
 			client.addAdditionalHeader('Accept', MediaType.APPLICATION_JSON)
 			String basicAuthCred = execution.getVariable("BasicAuthHeaderValueDB")
