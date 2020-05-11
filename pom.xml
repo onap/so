@@ -20,7 +20,7 @@
   <organization>
     <name>ONAP - SO</name>
     <url>http://www.onap.org/</url>
-  </organization>
+  </organization> 
   <modules>
     <module>deployment-configs</module>
     <module>common</module>
@@ -212,17 +212,9 @@
       </resource>
     </resources>
     <plugins>
-      <!-- <plugin>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
-        <version>1.6.7</version>
-        <extensions>true</extensions>
-        <configuration>
-          <nexusUrl>${nexusproxy}</nexusUrl>
-          <stagingProfileId>176c31dfe190a</stagingProfileId>
-          <serverId>ecomp-staging</serverId>
-        </configuration>
-      </plugin> -->
+      <!-- <plugin> <groupId>org.sonatype.plugins</groupId> <artifactId>nexus-staging-maven-plugin</artifactId> <version>1.6.7</version> 
+        <extensions>true</extensions> <configuration> <nexusUrl>${nexusproxy}</nexusUrl> <stagingProfileId>176c31dfe190a</stagingProfileId> 
+        <serverId>ecomp-staging</serverId> </configuration> </plugin> -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-deploy-plugin</artifactId>
@@ -914,6 +906,11 @@
         <groupId>org.json</groupId>
         <artifactId>json</artifactId>
         <version>20140107</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onap.aai.schema-service</groupId>
+        <artifactId>aai-schema</artifactId>
+        <version>1.7.1-SNAPSHOT</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
