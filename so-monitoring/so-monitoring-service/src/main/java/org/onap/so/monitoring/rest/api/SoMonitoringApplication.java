@@ -27,7 +27,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 /**
  * @author waqas.ikram@ericsson.com
  */
-@SpringBootApplication(scanBasePackages = {"org.onap"}, exclude = SecurityAutoConfiguration.class)
+@SpringBootApplication(scanBasePackages = {"org.onap"})
 public class SoMonitoringApplication {
 
     public static void main(String[] args) {
