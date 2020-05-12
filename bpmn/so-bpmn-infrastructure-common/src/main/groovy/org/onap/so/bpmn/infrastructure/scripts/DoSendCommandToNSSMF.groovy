@@ -25,17 +25,13 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.logging.filter.base.ONAPComponents
 import org.onap.so.beans.nsmf.*
 import org.onap.so.bpmn.common.scripts.*
-import org.onap.so.bpmn.common.util.OofInfraUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.domain.ServiceArtifact
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.client.HttpClient
-import org.onap.so.client.HttpClientFactory
 import org.onap.logging.filter.base.ErrorCode
 import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.MessageEnum
@@ -43,7 +39,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.util.UriUtils
 
-import javax.ws.rs.core.Response
 import java.lang.reflect.Type
 
 /**
@@ -60,7 +55,8 @@ class DoSendCommandToNSSMF extends AbstractServiceTaskProcessor {
     JsonUtils jsonUtil = new JsonUtils()
     VidUtils vidUtils = new VidUtils(this)
     SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
-    OofInfraUtils oofInfraUtils = new OofInfraUtils()
+
+    private NssmfAdapterUtils nssmfAdapterUtils = new NssmfAdapterUtils(httpClientFactory, jsonUtil)
 
 	/**
 	 * This method gets and validates the incoming
@@ -99,7 +95,7 @@ class DoSendCommandToNSSMF extends AbstractServiceTaskProcessor {
 			execution.setVariable("msoRequestId", requestId)
 
 			String operationType = execution.getVariable("operationType")
-			execution.setVariable("operationType", operationType)
+			execution.setVariable("operationType", operationType.toLowerCase())
 			logger.debug("Incoming operationType is: " + operationType)
 
             if (operationType == "activation") {
@@ -123,6 +119,7 @@ class DoSendCommandToNSSMF extends AbstractServiceTaskProcessor {
 		}
 		logger.trace("COMPLETED DoSendCommandToNSSMF PreProcessRequest Process")
 	}
+
     private String mapToJsonStr(Map<String, NSSI> stringNSSIHashMap) {
         HashMap<String, NSSI> map = new HashMap<String, NSSI>()
         for(Map.Entry<String, NSSI> child:stringNSSIHashMap.entrySet())
@@ -131,6 +128,7 @@ class DoSendCommandToNSSMF extends AbstractServiceTaskProcessor {
         }
         return new Gson().toJson(map)
     }
+
 	public	void getNSSIformlist(DelegateExecution execution) {
 
 		String  nssiMap = execution.getVariable("DonssiMap")
@@ -179,6 +177,7 @@ class DoSendCommandToNSSMF extends AbstractServiceTaskProcessor {
 			execution.setVariable("activationIndex", indexcurrent)}
 
 	}
+
 	/**
 	 * get vendor Info
 	 * @param execution
@@ -204,6 +203,7 @@ class DoSendCommandToNSSMF extends AbstractServiceTaskProcessor {
 		}
 		logger.debug("***** Exit processDecomposition *****")
 	}
+
 	public	void UpdateIndex(DelegateExecution execution) {
 		def activationIndex = execution.getVariable("activationIndex")
 		int activateNumberSlice = execution.getVariable("activateNumberSlice") as Integer
@@ -225,7 +225,7 @@ class DoSendCommandToNSSMF extends AbstractServiceTaskProcessor {
 			String operationId = UUID.randomUUID().toString()
 			String operationType =  execution.getVariable("operationType")
 			String userId = ""
-			String result = (operationType.equals("activation"))? "ACTIVATING": "DEACTIVATING"
+			String result = (operationType.equalsIgnoreCase("activation"))? "ACTIVATING": "DEACTIVATING"
 			int progress = rate
 			String reason = ""
 			String operationContent = "Service activation in progress"
@@ -269,24 +269,25 @@ class DoSendCommandToNSSMF extends AbstractServiceTaskProcessor {
 		}
 		logger.trace("finished Activate Slice")
 	}
+
 	public void WaitForReturn(DelegateExecution execution) {
 		//logger.debug("Query : "+ Jobid)
-		def miniute=execution.getVariable("miniute")
+		String miniute = execution.getVariable("miniute")
 		Thread.sleep(10000)
 		int miniute01  = Integer.parseInt(miniute) + 1
 		logger.debug("waiting for : "+ miniute + "miniutes")
 		execution.setVariable("miniute", String.valueOf(miniute01))
 	}
+
 	public void GetTheStatusOfActivation(DelegateExecution execution) {
 
-		String snssai= execution.getVariable("snssai")
 		String domaintype = execution.getVariable("domainType")
 		String NSIserviceid=execution.getVariable("NSIserviceid")
 		String nssiId = execution.getVariable("nssiId")
 		String Jobid=execution.getVariable("JobId")
-		def miniute=execution.getVariable("miniute")
+		String miniute=execution.getVariable("miniute")
 		String vendor = execution.getVariable("vendor")
-		String jobstatus ="error"
+		String jobstatus
 
 
 		logger.debug("Query the jobid activation of SNSSAI: "+ Jobid)
@@ -306,66 +307,46 @@ class DoSendCommandToNSSMF extends AbstractServiceTaskProcessor {
 
 
 		ObjectMapper mapper = new ObjectMapper()
-		String Reqjson = mapper.writeValueAsString(jobStatusRequest)
-		String isActivateSuccessfull=false
+		String nssmfRequest = mapper.writeValueAsString(jobStatusRequest)
+		String isActivateSuccessfull
 
-		String urlString = UrnPropertiesReader.getVariable("mso.adapters.nssmf.endpoint", execution)
-		String nssmfRequest = urlString + "/api/rest/provMns/v1/NSS/jobs/" +Jobid
+        String urlString = "/api/rest/provMns/v1/NSS/jobs/" +Jobid
 
-		//send request to active  NSSI TN option
-		URL url = new URL(nssmfRequest)
+        JobStatusResponse jobStatusResponse = nssmfAdapterUtils.sendPostRequestNSSMF(execution, urlString, nssmfRequest, JobStatusResponse.class)
 
-        HttpClient httpClient = new HttpClientFactory().newJsonClient(url,  ONAPComponents.EXTERNAL)
-		Response httpResponse = httpClient.post(Reqjson)
+        if (jobStatusResponse != null) {
+            execution.setVariable("statusDescription", jobStatusResponse.getResponseDescriptor().getStatusDescription())
+            jobstatus = jobStatusResponse.getResponseDescriptor().getStatus()
+            switch(jobstatus) {
+                case "started":
+                case "processing":
+                    isActivateSuccessfull = "waitting"
+                    execution.setVariable("isActivateSuccessfull", isActivateSuccessfull)
+                    break
+                case "finished":
+                    isActivateSuccessfull = "true"
+                    execution.setVariable("isActivateSuccessfull", isActivateSuccessfull)
+                    execution.setVariable("activateNumberSlice",execution.getVariable("activateNumberSlice")+ 1)
+                    break
+                case "error":
+                default:
+                    isActivateSuccessfull = "false"
+                    execution.setVariable("isActivateSuccessfull", isActivateSuccessfull)
 
-		int responseCode = httpResponse.getStatus()
-		logger.debug("NSSMF activation response code is: " + responseCode)
-
-		if (responseCode == 404) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad job status Response from NSSMF.")
-			isActivateSuccessfull = false
-			execution.setVariable("isActivateSuccessfull", isActivateSuccessfull)
-			jobstatus="error"
-		}else if(responseCode == 200) {
-			if (httpResponse.hasEntity()) {
-				JobStatusResponse jobStatusResponse = httpResponse.readEntity(JobStatusResponse.class)
-				execution.setVariable("statusDescription", jobStatusResponse.getResponseDescriptor().getStatusDescription())
-				jobstatus = jobStatusResponse.getResponseDescriptor().getStatus()
-				switch(jobstatus) {
-					case "started":
-					case "processing":
-						isActivateSuccessfull = "waitting"
-						execution.setVariable("isActivateSuccessfull", isActivateSuccessfull)
-						break
-					case "finished":
-						isActivateSuccessfull = "true"
-						execution.setVariable("isActivateSuccessfull", isActivateSuccessfull)
-						execution.setVariable("activateNumberSlice",execution.getVariable("activateNumberSlice")+ 1)
-						break
-					case "error":
-					default:
-						isActivateSuccessfull = "false"
-						execution.setVariable("isActivateSuccessfull", isActivateSuccessfull)
-
-				}
-				if(Integer.parseInt(miniute) > 6 )
-				{
-					isActivateSuccessfull = "false"
-					execution.setVariable("isActivateSuccessfull", isActivateSuccessfull)
-					exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a timeout job status Response from NSSMF.")
-				}
-			}else
-			{
-				exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad job status Response from NSSMF.")
-				isActivateSuccessfull = false
-				execution.setVariable("isActivateSuccessfull", isActivateSuccessfull)
-			}
-		} else {
-			isActivateSuccessfull = false
-			execution.setVariable("isActivateSuccessfull", isActivateSuccessfull)
-			exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad job status Response from NSSMF.")
-		}
+            }
+            if(Integer.parseInt(miniute) > 6 )
+            {
+                isActivateSuccessfull = "false"
+                execution.setVariable("isActivateSuccessfull", isActivateSuccessfull)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Received a timeout job status Response from NSSMF.")
+            }
+        } else {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Received a Bad job status Response from NSSMF.")
+            isActivateSuccessfull = false
+            execution.setVariable("isActivateSuccessfull", isActivateSuccessfull)
+        }
 	}
+
 	public void SendCommandToNssmf(DelegateExecution execution) {
 
 		String snssai= execution.getVariable("snssai")
@@ -391,49 +372,28 @@ class DoSendCommandToNSSMF extends AbstractServiceTaskProcessor {
 		actRequest.setActDeActNssi(actNssi);
 		actRequest.setEsrInfo(esr)
 
-		ObjectMapper mapper = new ObjectMapper();
-		String json = mapper.writeValueAsString(actRequest);
+		ObjectMapper mapper = new ObjectMapper()
+		String nssmfRequest = mapper.writeValueAsString(actRequest)
 
-
-		String urlString = UrnPropertiesReader.getVariable("mso.adapters.nssmf.endpoint", execution)
-
-		//Prepare auth for NSSMF - Begin
-		def authHeader = ""
-		String basicAuth = UrnPropertiesReader.getVariable("mso.nssmf.auth", execution)
 		String operationType = execution.getVariable("operationType")
 
-		String nssmfRequest = urlString + "/api/rest/provMns/v1/NSS/" + snssai + "/" + operationType
+		String urlString = "/api/rest/provMns/v1/NSS/" + snssai + "/" + operationType.toLowerCase()
 
-		//send request to active  NSSI TN option
-		URL url = new URL(nssmfRequest)
+        NssiResponse nssmfResponse = nssmfAdapterUtils.sendPostRequestNSSMF(execution, urlString, nssmfRequest, NssiResponse.class)
 
-        HttpClient httpClient = new HttpClientFactory().newJsonClient(url, ONAPComponents.EXTERNAL)
-		Response httpResponse = httpClient.post(json)
-
-		int responseCode = httpResponse.getStatus()
-		logger.debug("NSSMF activate response code is: " + responseCode)
-		checkNssmfResponse(httpResponse, execution)
-
-        NssiResponse nssmfResponse = httpResponse.readEntity(NssiResponse.class)
-		String jobId  = nssmfResponse.getJobId() ?: ""
- 		execution.setVariable("JobId", jobId)
+        if (nssmfResponse != null) {
+            String  isNSSIActivated = "true"
+            execution.setVariable("isNSSIActivated", isNSSIActivated)
+            String jobId  = nssmfResponse.getJobId() ?: ""
+            execution.setVariable("JobId", jobId)
+        } else {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Received a Bad Response from NSSMF.")
+            String  isNSSIActivated = "false"
+            execution.setVariable("isNSSIActivated", isNSSIActivated)
+            execution.setVariable("isNSSIActivate","false")
+        }
 
 	}
-	private void checkNssmfResponse(Response httpResponse, DelegateExecution execution) {
-		int responseCode = httpResponse.getStatus()
-		logger.debug("NSSMF response code is: " + responseCode)
-
-		if ( responseCode < 200 || responseCode > 202 || !httpResponse.hasEntity()) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Response from NSSMF.")
-			String  isNSSIActivated = "false"
-			execution.setVariable("isNSSIActivated", isNSSIActivated)
-			execution.setVariable("isNSSIActivate","false")
-		}else{
-			String  isNSSIActivated = "true"
-			execution.setVariable("isNSSIActivated", isNSSIActivated)
-		}
-	}
-
 
 	void sendSyncError (DelegateExecution execution) {
 		logger.trace("start sendSyncError")
