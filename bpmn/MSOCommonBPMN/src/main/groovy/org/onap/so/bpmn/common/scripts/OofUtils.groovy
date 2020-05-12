@@ -24,8 +24,6 @@ package org.onap.so.bpmn.common.scripts
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
-import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.util.OofInfraUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.domain.HomingSolution
@@ -37,26 +35,12 @@ import org.onap.so.bpmn.core.domain.ServiceInstance
 import org.onap.so.bpmn.core.domain.Subscriber
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.client.HttpClient
-import org.onap.so.client.HttpClientFactory
 import org.onap.so.db.catalog.beans.CloudSite
 import org.onap.so.db.catalog.beans.HomingInstance
-import org.onap.logging.filter.base.ONAPComponents;
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
-import org.springframework.http.ResponseEntity
-import org.springframework.http.client.BufferingClientHttpRequestFactory
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.util.UriComponentsBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
 import javax.ws.rs.core.UriBuilder
-import javax.xml.ws.http.HTTPException
 
 import static org.onap.so.bpmn.common.scripts.GenericUtils.*
 
@@ -330,7 +314,7 @@ class OofUtils {
             logger.debug( "Completed Building OOF Request")
             return request
         } catch (Exception ex) {
-             logger.debug( "buildRequest Exception: " + ex)
+            logger.debug( "buildRequest Exception: " + ex)
         }
     }
 
@@ -548,10 +532,41 @@ class OofUtils {
                         "    \"callbackUrl\": \"${callbackUrl}\"\n" +
                         "    },\n")
         response.append(" \"serviceProfile\": {\n" +
-                        "   \"serviceProfileParameters\": \n")
+                "   \"serviceProfileParameters\": ")
         response.append(json);
         response.append("\n }\n")
         response.append("\n}\n")
         return response.toString()
     }
+
+    public String buildSelectNSIRequest(String requestId, String nstInfo, Map<String, Object> profileInfo){
+
+        def transactionId = requestId
+        logger.debug( "transactionId is: " + transactionId)
+        String callbackUrl = "http://0.0.0.0:9000/callback/"
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(profileInfo);
+        StringBuilder response = new StringBuilder();
+        response.append(
+                "{\n" +
+                        "  \"requestInfo\": {\n" +
+                        "    \"transactionId\": \"${transactionId}\",\n" +
+                        "    \"requestId\": \"${requestId}\",\n" +
+                        "    \"sourceId\": \"so\",\n" +
+                        "    \"timeout\": 600,\n" +
+                        "    \"callbackUrl\": \"${callbackUrl}\"\n" +
+                        "    },\n" +
+                        "  \"serviceInfo\": {\n" +
+                        "    \"serviceInstanceId\": \"\",\n" +
+                        "    \"serviceName\": \"\"\n" +
+                        "    },\n" +
+                        "  \"NSTInfoList\": [\n")
+        response.append(nstInfo);
+        response.append("\n  ],\n")
+        response.append("\n \"serviceProfile\": \n")
+        response.append(json);
+        response.append("\n  }\n")
+        return response.toString()
+    }
+
 }
