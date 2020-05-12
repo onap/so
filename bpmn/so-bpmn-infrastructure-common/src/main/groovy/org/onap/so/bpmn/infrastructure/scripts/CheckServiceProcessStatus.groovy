@@ -129,7 +129,7 @@ class CheckServiceProcessStatus extends AbstractServiceTaskProcessor  {
     /**
      * check service status through request operation id, update operation status
     */
-    def preCheckServiceStatusReq = { DelegateExecution execution ->
+    void preCheckServiceStatusReq(DelegateExecution execution) {
         logger.trace(Prefix + "preCheckServiceStatusReq Start")
         String serviceInstanceId = execution.getVariable("serviceInstanceId") as String
         String operationId = execution.getVariable("operationId") as String
@@ -142,7 +142,7 @@ class CheckServiceProcessStatus extends AbstractServiceTaskProcessor  {
      * handle service status, if service status is finished or error, set the service status
      * @param execution
      */
-    def handlerServiceStatusResp = { DelegateExecution execution ->
+    void handlerServiceStatusResp(DelegateExecution execution) {
         logger.trace(Prefix + "handlerServiceStatusResp Start")
         String msg
         try {
@@ -203,7 +203,7 @@ class CheckServiceProcessStatus extends AbstractServiceTaskProcessor  {
     }
 
 
-    def timeWaitDelay = { DelegateExecution execution ->
+    void timeWaitDelay(DelegateExecution execution) {
 
         Long startTime = execution.getVariable("startTime") as Long
         Long timeOut = execution.getVariable("timeOut") as Long
@@ -221,7 +221,7 @@ class CheckServiceProcessStatus extends AbstractServiceTaskProcessor  {
     }
 
 
-    private handlerTimeOut = { DelegateExecution execution ->
+    private handlerTimeOut(DelegateExecution execution) {
 
         Map<String, Object> paramMap = execution.getVariable("timeOutParamMap") as Map
 
@@ -229,7 +229,7 @@ class CheckServiceProcessStatus extends AbstractServiceTaskProcessor  {
     }
 
 
-    private handlerSuccess = { DelegateExecution execution, String result ->
+    private handlerSuccess(DelegateExecution execution, String result) {
 
         Map<String, Object> paramMap = execution.getVariable("successParamMap") as Map
 
@@ -237,7 +237,7 @@ class CheckServiceProcessStatus extends AbstractServiceTaskProcessor  {
     }
 
 
-    private handlerError = { DelegateExecution execution, String result ->
+    private handlerError(DelegateExecution execution, String result) {
 
         Map<String, Object> paramMap = execution.getVariable("errorParamMap") as Map
 
@@ -245,7 +245,7 @@ class CheckServiceProcessStatus extends AbstractServiceTaskProcessor  {
     }
 
 
-    private handlerProcess = { DelegateExecution execution, String result, def paramMap, def status, def msg ->
+    private handlerProcess(DelegateExecution execution, String result, def paramMap, def status, def msg) {
 
         if (paramMap != null) {
             for (Map.Entry<String, Object> entry : paramMap.entrySet()) {
@@ -260,7 +260,7 @@ class CheckServiceProcessStatus extends AbstractServiceTaskProcessor  {
 
 
         if (isBlank(execution.getVariable("operationContent") as String)) {
-            String operationContent =  execution.getVariable("processServiceType") + " " +
+            String operationContent = execution.getVariable("processServiceType") + " " +
                     execution.getVariable("operationType") + " operation finished " + msg
             execution.setVariable("operationContent", operationContent)
         }
@@ -275,7 +275,7 @@ class CheckServiceProcessStatus extends AbstractServiceTaskProcessor  {
     /**
      * judge if the service processing success finished
      */
-    private isSuccessCompleted = { DelegateExecution execution, String result ->
+    private Boolean isSuccessCompleted(DelegateExecution execution, String result) {
 
         //successConditions: processing end success conditions
         List<String> successConditions = execution.getVariable("successConditions") as List
@@ -291,7 +291,7 @@ class CheckServiceProcessStatus extends AbstractServiceTaskProcessor  {
     /**
      * judge if the service processing error finished
      */
-    private isErrorCompleted = { DelegateExecution execution, String result ->
+    private Boolean isErrorCompleted(DelegateExecution execution, String result) {
 
         //errorConditions: processing end error conditions
         List<String> errorConditions = execution.getVariable("errorConditions") as List
@@ -304,7 +304,7 @@ class CheckServiceProcessStatus extends AbstractServiceTaskProcessor  {
     }
 
 
-    def preUpdateOperationProgress = { DelegateExecution execution ->
+    void preUpdateOperationProgress(DelegateExecution execution) {
         logger.trace(Prefix + "prepareUpdateOperationStatus Start")
 
         def progress = execution.getVariable("progress") as Integer
@@ -314,7 +314,7 @@ class CheckServiceProcessStatus extends AbstractServiceTaskProcessor  {
         def resProgress = (initProgress + (endProgress - initProgress) / 100 * progress) as Integer
 
         def operationType = execution.getVariable("operationType")
-        def operationContent =  execution.getVariable("processServiceType") + " " +
+        def operationContent = execution.getVariable("processServiceType") + " " +
                 operationType + " operation processing " + resProgress
 
         // update status creating
