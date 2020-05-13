@@ -143,14 +143,15 @@ dss.prepareEndOperationStatus(execution)</bpmn:script>
         <bpmn:extensionElements>
           <camunda:connector>
             <camunda:inputOutput>
-              <camunda:inputParameter name="url">${CVFMI_dbAdapterEndpoint}</camunda:inputParameter>
+              <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
               <camunda:inputParameter name="headers">
                 <camunda:map>
                   <camunda:entry key="content-type">application/soap+xml</camunda:entry>
                   <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
                 </camunda:map>
               </camunda:inputParameter>
-              <camunda:inputParameter name="payload">${CVFMI_updateServiceOperStatusRequest}</camunda:inputParameter>
+              <camunda:inputParameter name="payload">${updateOperationStatus}
+</camunda:inputParameter>
               <camunda:inputParameter name="method">POST</camunda:inputParameter>
               <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
               <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
