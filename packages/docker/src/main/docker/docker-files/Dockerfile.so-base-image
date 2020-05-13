@@ -8,7 +8,7 @@ ENV http_proxy=$HTTP_PROXY
 ENV https_proxy=$HTTPS_PROXY
 
 # Install commonly needed tools
-RUN apk --no-cache add curl netcat-openbsd nss
+RUN apk --no-cache add curl netcat-openbsd nss apache2-utils
 
 # Create 'so' user
 RUN addgroup -g 1000 so && adduser -S -u 1000 -G so -s /bin/sh so
