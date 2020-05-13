@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wio50w" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.1.2">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wio50w" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.4.1">
   <bpmn:process id="CreateSliceService" name="CreateSliceService" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1nbljfd" name="Create Slice Service Creation Flow">
       <bpmn:outgoing>SequenceFlow_03s744c</bpmn:outgoing>
@@ -369,6 +369,7 @@ css.sendSyncResponse(execution)</bpmn:script>
         <camunda:out source="rollbackData" target="rollbackData" />
         <camunda:out source="rolledBack" target="rolledBack" />
         <camunda:in source="allottedResourceId" target="allottedResourceId" />
+        <camunda:in source="nstSolution" target="nstSolution" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1bevt3a</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0mlrlbv</bpmn:outgoing>
@@ -435,6 +436,10 @@ css.sendSyncResponse(execution)</bpmn:script>
         <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
         <camunda:in source="subscriptionServiceType" target="subscriptionServiceType" />
         <camunda:in source="serviceType" target="serviceType" />
+        <camunda:in source="nstSolution" target="nstSolution" />
+        <camunda:out source="sliceProfileTn" target="sliceProfileTn" />
+        <camunda:out source="sliceProfileCn" target="sliceProfileCn" />
+        <camunda:out source="sliceProfileAn" target="sliceProfileAn" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1ey6m1e</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1aaozcg</bpmn:outgoing>
@@ -802,4 +807,3 @@ css.updateAAIOrchStatus(execution)</bpmn:script>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
-

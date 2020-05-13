@@ -349,7 +349,7 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
         String orchStatus = execution.getVariable("orchestrationStatus")
 
         try {
-            ServiceInstance si = execution.getVariable("serviceInstanceData")
+            ServiceInstance si = new ServiceInstance()
             si.setOrchestrationStatus(orchStatus)
             AAIResourcesClient client = new AAIResourcesClient()
             AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
@@ -375,7 +375,7 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
             String result = "processing"
             String progress = "0"
             String reason = ""
-            String operationContent = "Prepare service creation"
+            String operationContent = "NSMF creation operation start"
             logger.debug("Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId)
             serviceId = UriUtils.encode(serviceId,"UTF-8")
             execution.setVariable("serviceInstanceId", serviceId)
