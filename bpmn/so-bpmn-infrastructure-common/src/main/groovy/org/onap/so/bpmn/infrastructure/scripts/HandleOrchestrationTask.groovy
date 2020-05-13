@@ -103,6 +103,7 @@ class HandleOrchestrationTask extends AbstractServiceTaskProcessor {
             task.setName(taskName)
             task.setStatus(taskStatus)
             task.setIsManual(isManual)
+            task.setCreatedTime(new Date())
             task.setParams(paramJson)
             ObjectMapper objectMapper = new ObjectMapper()
             payload = objectMapper.writeValueAsString(task)
