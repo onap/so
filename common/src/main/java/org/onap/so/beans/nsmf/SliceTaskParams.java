@@ -87,6 +87,13 @@ public class SliceTaskParams implements Serializable {
 
     private String anStatusDescription;
 
+    public SliceTaskParams() {
+        this.serviceProfile = new HashMap<>();
+        this.sliceProfileAn = new HashMap<>();
+        this.sliceProfileCn = new HashMap<>();
+        this.sliceProfileTn = new HashMap<>();
+    }
+
     public String getNstId() {
         return nstId;
     }
