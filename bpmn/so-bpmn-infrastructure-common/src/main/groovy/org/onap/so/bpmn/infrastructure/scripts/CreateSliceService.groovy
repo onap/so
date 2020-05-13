@@ -344,7 +344,7 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
         String orchStatus = execution.getVariable("orchestrationStatus")
 
         try {
-            ServiceInstance si = execution.getVariable("serviceInstanceData")
+            ServiceInstance si = new ServiceInstance()
             si.setOrchestrationStatus(orchStatus)
             AAIResourcesClient client = new AAIResourcesClient()
             AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
