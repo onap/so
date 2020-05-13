@@ -534,6 +534,7 @@ class OofUtils {
     public String buildSelectNSTRequest(String requestId, Map<String, Object> profileInfo) {
         def transactionId = requestId
         logger.debug( "transactionId is: " + transactionId)
+        String callbackUrl = "http://0.0.0.0:9000/callback/"
         ObjectMapper objectMapper = new ObjectMapper()
         String json = objectMapper.writeValueAsString(profileInfo)
         StringBuilder response = new StringBuilder()
@@ -543,11 +544,45 @@ class OofUtils {
                         "    \"transactionId\": \"${transactionId}\",\n" +
                         "    \"requestId\": \"${requestId}\",\n" +
                         "    \"sourceId\": \"so\",\n" +
-                        "    \"timeout\": 600\n" +
+                        "    \"timeout\": 600,\n" +
+                        "    \"callbackUrl\": \"${callbackUrl}\"\n" +
                         "    },\n")
-        response.append(",\n \"serviceInfo\": \n")
+        response.append(" \"serviceProfile\": {\n" +
+                "   \"serviceProfileParameters\": ")
+        response.append(json);
+        response.append("\n }\n")
+        response.append("\n}\n")
+        return response.toString()
+    }
+
+    public String buildSelectNSIRequest(String requestId, String nstInfo, Map<String, Object> profileInfo){
+
+        def transactionId = requestId
+        logger.debug( "transactionId is: " + transactionId)
+        String callbackUrl = "http://0.0.0.0:9000/callback/"
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(profileInfo);
+        StringBuilder response = new StringBuilder();
+        response.append(
+                "{\n" +
+                        "  \"requestInfo\": {\n" +
+                        "    \"transactionId\": \"${transactionId}\",\n" +
+                        "    \"requestId\": \"${requestId}\",\n" +
+                        "    \"sourceId\": \"so\",\n" +
+                        "    \"timeout\": 600,\n" +
+                        "    \"callbackUrl\": \"${callbackUrl}\"\n" +
+                        "    },\n" +
+                        "  \"serviceInfo\": {\n" +
+                        "    \"serviceInstanceId\": \"\",\n" +
+                        "    \"serviceName\": \"\"\n" +
+                        "    },\n" +
+                        "  \"NSTInfoList\": [\n")
+        response.append(nstInfo);
+        response.append("\n  ],\n")
+        response.append("\n \"serviceProfile\": \n")
         response.append(json);
         response.append("\n  }\n")
         return response.toString()
     }
+
 }
