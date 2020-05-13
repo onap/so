@@ -4,7 +4,6 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.aai.domain.yang.SliceProfile
-import org.onap.logging.filter.base.ONAPComponents
 import org.onap.so.beans.nsmf.AllocateAnNssi
 import org.onap.so.beans.nsmf.AllocateCnNssi
 import org.onap.so.beans.nsmf.AllocateTnNssi
@@ -19,18 +18,15 @@ import org.onap.so.beans.nsmf.PerfReq
 import org.onap.so.beans.nsmf.PerfReqEmbbList
 import org.onap.so.beans.nsmf.PerfReqUrllcList
 import org.onap.so.beans.nsmf.ResourceSharingLevel
-import org.onap.so.beans.nsmf.ServiceProfile
 import org.onap.so.beans.nsmf.SliceTaskParams
 import org.onap.so.beans.nsmf.TnSliceProfile
 import org.onap.so.beans.nsmf.UeMobilityLevel
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
+import org.onap.so.bpmn.common.scripts.NssmfAdapterUtils
 import org.onap.so.bpmn.core.RollbackData
-import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.domain.ModelInfo
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.client.HttpClient
-import org.onap.so.client.HttpClientFactory
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.AAIEdgeLabel
@@ -52,6 +48,8 @@ class DoAllocateNSSI extends org.onap.so.bpmn.common.scripts.AbstractServiceTask
     ExceptionUtil exceptionUtil = new ExceptionUtil()
 
     JsonUtils jsonUtil = new JsonUtils()
+
+	private NssmfAdapterUtils nssmfAdapterUtils = new NssmfAdapterUtils(httpClientFactory, jsonUtil)
 
     /**
      * Pre Process the BPMN Flow Request
@@ -155,134 +153,78 @@ class DoAllocateNSSI extends org.onap.so.bpmn.common.scripts.AbstractServiceTask
 
 
     void sendUpdateRequestNSSMF(DelegateExecution execution) {
-        logger.trace("Enter sendUpdateRequestNSSMF in DoAllocateNSSI()")
-        String urlString = UrnPropertiesReader.getVariable("mso.adapters.nssmf.endpoint", execution)
-        logger.debug( "get NSSMF: " + urlString)
+		logger.debug("Enter sendUpdateRequestNSSMF in DoAllocateNSSI()")
+		String domain = execution.getVariable("nsstDomain")
+		String nssmfRequest = buildUpdateNSSMFRequest(execution, domain.toUpperCase())
 
-       //Prepare auth for NSSMF - Begin
-        def authHeader = ""
-        String basicAuth = UrnPropertiesReader.getVariable("mso.nssmf.auth", execution)
-        String domain = execution.getVariable("nsstDomain")
-        String nssmfRequest = buildUpdateNSSMFRequest(execution, domain.toUpperCase())
+		String urlString = "/api/rest/provMns/v1/NSS/SliceProfiles"
 
-        //send request to update NSSI option - Begin
-        URL url = new URL(urlString+"/api/rest/provMns/v1/NSS/SliceProfiles")
-        HttpClient httpClient = new HttpClientFactory().newJsonClient(url, ONAPComponents.EXTERNAL)
-        Response httpResponse = httpClient.post(nssmfRequest)
+		String nssmfResponse = nssmfAdapterUtils.sendPostRequestNSSMF(execution, urlString, nssmfRequest)
 
-        int responseCode = httpResponse.getStatus()
-        logger.debug("NSSMF sync response code is: " + responseCode)
+		if (nssmfResponse != null) {
+			execution.setVariable("nssmfResponse", nssmfResponse)
+			String nssiId = jsonUtil.getJsonValue(nssmfResponse, "nssiId")
+			String jobId = jsonUtil.getJsonValue(nssmfResponse, "jobId")
+			execution.setVariable("nssiId",nssiId)
+			execution.setVariable("jobId",jobId)
 
-        if(responseCode < 199 && responseCode > 299){
-            String nssmfResponse ="NSSMF response have nobody"
-            if(httpResponse.hasEntity())
-                nssmfResponse = httpResponse.readEntity(String.class)
-            logger.trace("received error message from NSSMF : "+nssmfResponse)
-            logger.trace("Exit sendCreateRequestNSSMF in DoAllocateNSSI()")
-            exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from NSSMF.")
-        }
-
-        if(httpResponse.hasEntity()){
-            String nssmfResponse = httpResponse.readEntity(String.class)
-            execution.setVariable("nssmfResponse", nssmfResponse)
-            String nssiId = jsonUtil.getJsonValue(nssmfResponse, "nssiId")
-            String jobId = jsonUtil.getJsonValue(nssmfResponse, "jobId")
-            execution.setVariable("nssiId",nssiId)
-            execution.setVariable("jobId",jobId)
-        }else{
-            exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from NSSMF.")
-        }
-        logger.trace("Exit sendUpdateRequestNSSMF in DoAllocateNSSI()")
+		} else {
+			logger.error("received error message from NSSMF : "+ nssmfResponse)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000,"Received a Bad Sync Response from NSSMF.")
+		}
+		logger.trace("Exit sendUpdateRequestNSSMF in DoAllocateNSSI()")
     }
 
     void sendCreateRequestNSSMF(DelegateExecution execution) {
-        logger.trace("Enter sendCreateRequestNSSMF in DoAllocateNSSI()")
-        String urlString = UrnPropertiesReader.getVariable("mso.adapters.nssmf.endpoint", execution)
-        logger.debug( "get NSSMF: " + urlString)
+		logger.debug("Enter sendCreateRequestNSSMF in DoAllocateNSSI()")
+		//Prepare auth for NSSMF - Begin
+		String domain = execution.getVariable("nsstDomain")
+		String nssmfRequest = buildCreateNSSMFRequest(execution, domain.toUpperCase())
 
-        //Prepare auth for NSSMF - Begin
-        String domain = execution.getVariable("nsstDomain")
-        String nssmfRequest = buildCreateNSSMFRequest(execution, domain.toUpperCase())
+		String urlString = "/api/rest/provMns/v1/NSS/SliceProfiles"
 
-        //send request to get NSI option - Begin
-        URL url = new URL(urlString+"/api/rest/provMns/v1/NSS/SliceProfiles")
-        HttpClient httpClient = new HttpClientFactory().newJsonClient(url, ONAPComponents.EXTERNAL)
-        Response httpResponse = httpClient.post(nssmfRequest)
+		String nssmfResponse = nssmfAdapterUtils.sendPostRequestNSSMF(execution, urlString, nssmfRequest)
 
-        int responseCode = httpResponse.getStatus()
-        logger.debug("NSSMF sync response code is: " + responseCode)
+		if (nssmfResponse != null) {
+			execution.setVariable("nssmfResponse", nssmfResponse)
+			String nssiId = jsonUtil.getJsonValue(nssmfResponse, "nssiId")
+			String jobId = jsonUtil.getJsonValue(nssmfResponse, "jobId")
+			execution.setVariable("nssiId",nssiId)
+			execution.setVariable("jobId",jobId)
 
-        if(responseCode < 199 || responseCode > 299 ){
-            String nssmfResponse ="NSSMF response have nobody"
-            if(httpResponse.hasEntity())
-                nssmfResponse = httpResponse.readEntity(String.class)
-            logger.trace("received error message from NSSMF : "+nssmfResponse)
-            logger.trace("Exit sendCreateRequestNSSMF in DoAllocateNSSI()")
-            exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from NSSMF.")
-        }
+		} else {
+			logger.error("received error message from NSSMF : "+ nssmfResponse)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000,"Received a Bad Sync Response from NSSMF.")
+		}
 
-        if(httpResponse.hasEntity()){
-            String nssmfResponse = httpResponse.readEntity(String.class)
-            execution.setVariable("nssmfResponse", nssmfResponse)
-            String nssiId = jsonUtil.getJsonValue(nssmfResponse, "nssiId")
-            String jobId = jsonUtil.getJsonValue(nssmfResponse, "jobId")
-            execution.setVariable("nssiId",nssiId)
-            execution.setVariable("jobId",jobId)
-        }else{
-            exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from NSSMF.")
-        }
-        logger.trace("Exit sendCreateRequestNSSMF in DoAllocateNSSI()")
-
+		logger.debug("Exit sendCreateRequestNSSMF in DoAllocateNSSI()")
     }
 
     void getNSSMFProgresss(DelegateExecution execution) {
-        logger.trace("Enter getNSSMFProgresss in DoAllocateNSSI()")
+		logger.debug("Enter getNSSMFProgresss in DoAllocateNSSI()")
 
-        String endpoint = UrnPropertiesReader.getVariable("mso.adapters.nssmf.endpoint", execution)
-        logger.debug( "get NSSMF: " + endpoint)
+		String nssmfRequest = buildNSSMFProgressRequest(execution)
+		String strUrl="/api/rest/provMns/v1/NSS/jobs/" + execution.getVariable("jobId")
 
-        //Prepare auth for NSSMF - Begin
-        def authHeader = ""
-        String basicAuth = UrnPropertiesReader.getVariable("mso.nssmf.auth", execution)
+		String nssmfResponse = nssmfAdapterUtils.sendPostRequestNSSMF(execution, strUrl, nssmfRequest)
 
-        String nssmfRequest = buildNSSMFProgressRequest(execution)
-        String strUrl="/api/rest/provMns/v1/NSS/jobs/"+execution.getVariable("jobId")
-        //send request to update NSSI option - Begin
-        URL url = new URL(endpoint+strUrl)
-        HttpClient httpClient = new HttpClientFactory().newJsonClient(url, ONAPComponents.EXTERNAL)
-        Response httpResponse = httpClient.post(nssmfRequest)
-
-        int responseCode = httpResponse.getStatus()
-        logger.debug("NSSMF sync response code is: " + responseCode)
-
-        if(responseCode < 199 || responseCode > 299){
-            String nssmfResponse ="NSSMF response have nobody"
-            if(httpResponse.hasEntity())
-                nssmfResponse = httpResponse.readEntity(String.class)
-            logger.trace("received error message from NSSMF : "+nssmfResponse)
-            logger.trace("Exit sendCreateRequestNSSMF in DoAllocateNSSI()")
-            exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from NSSMF.")
-        }
-
-        if(httpResponse.hasEntity()){
-            String nssmfResponse = httpResponse.readEntity(String.class)
-            Boolean isNSSICreated = false
-            execution.setVariable("nssmfResponse", nssmfResponse)
-            Integer progress = java.lang.Integer.parseInt(jsonUtil.getJsonValue(nssmfResponse, "responseDescriptor.progress"))
-            String status = jsonUtil.getJsonValue(nssmfResponse, "responseDescriptor.status")
-            String statusDescription = jsonUtil.getJsonValue(nssmfResponse, "responseDescriptor.statusDescription")
-            execution.setVariable("nssmfProgress",progress)
-            execution.setVariable("nssmfStatus",status)
-            execution.setVariable("nddmfStatusDescription",statusDescription)
-            if(progress>99)
-                isNSSICreated = true
-            execution.setVariable("isNSSICreated",isNSSICreated)
-
-        }else{
-            exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from NSSMF.")
-        }
-        logger.trace("Exit getNSSMFProgresss in DoAllocateNSSI()")
-
+		if(nssmfResponse != null){
+			Boolean isNSSICreated = false
+			execution.setVariable("nssmfResponse", nssmfResponse)
+			Integer progress = Integer.parseInt(jsonUtil.getJsonValue(nssmfResponse, "responseDescriptor.progress"))
+			String status = jsonUtil.getJsonValue(nssmfResponse, "responseDescriptor.status")
+			String statusDescription = jsonUtil.getJsonValue(nssmfResponse, "responseDescriptor.statusDescription")
+			execution.setVariable("nssmfProgress",progress)
+			execution.setVariable("nssmfStatus",status)
+			execution.setVariable("nddmfStatusDescription",statusDescription)
+			if(progress > 99)
+				isNSSICreated = true
+			execution.setVariable("isNSSICreated",isNSSICreated)
+		} else {
+			logger.error("received error message from NSSMF : "+ nssmfResponse)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000,"Received a Bad Sync Response from NSSMF.")
+		}
+		logger.debug("Exit getNSSMFProgresss in DoAllocateNSSI()")
     }
 
     void updateRelationship(DelegateExecution execution) {
