@@ -287,6 +287,9 @@ public class NetworkAdapterObjectMapper {
         for (org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet subnet : subnets) {
             org.onap.so.openstack.beans.Subnet openstackSubnet =
                     modelMapper.map(subnet, org.onap.so.openstack.beans.Subnet.class);
+            if (StringUtils.isEmpty(openstackSubnet.getGatewayIp())) {
+                openstackSubnet.setGatewayIp("NULL");
+            }
             // update cidr value
             if (subnet.getNetworkStartAddress() != null && subnet.getCidrMask() != null)
                 openstackSubnet
