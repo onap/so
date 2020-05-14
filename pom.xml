@@ -71,7 +71,7 @@
     <camunda.springboot.version>3.2.0</camunda.springboot.version>
     <format.skipValidate>false</format.skipValidate>
     <format.skipExecute>true</format.skipExecute>
-    <io.fabric8.version>4.1.0</io.fabric8.version>
+    <io.fabric8.version>0.33.0</io.fabric8.version>
     <appc.client.version>1.7.1</appc.client.version>
   </properties>
   <distributionManagement>
@@ -536,7 +536,7 @@
       <plugins>
         <plugin>
           <groupId>io.fabric8</groupId>
-          <artifactId>fabric8-maven-plugin</artifactId>
+          <artifactId>docker-maven-plugin</artifactId>
           <version>${io.fabric8.version}</version>
           <configuration>
             <skip>${docker.skip}</skip>
@@ -920,7 +920,6 @@
       <properties>
         <docker.skip>false</docker.skip>
         <docker.skip.build>false</docker.skip.build>
-        <fabric8.skipResourceValidation>true</fabric8.skipResourceValidation>
       </properties>
     </profile>
     <profile>
@@ -929,7 +928,6 @@
         <docker.skip>false</docker.skip>
         <docker.skip.build>false</docker.skip.build>
         <docker.skip.push>false</docker.skip.push>
-        <fabric8.skipResourceValidation>true</fabric8.skipResourceValidation>
       </properties>
     </profile>
     <profile>
