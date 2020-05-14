@@ -129,7 +129,6 @@ class ExternalAPIUtilTest {
         // THEN
         then(httpClient).should(times(1)).addBasicAuthHeader("value_externalapi_auth", "value_mso_msoKey")
         then(httpClient).should(times(1)).addAdditionalHeader("X-FromAppId", "MSO")
-        then(httpClient).should(times(1)).addAdditionalHeader("X-TransactionId", UUID_STR)
         ResponseAssert.assertThat(apiResponse)
                 .hasStatusCode(HttpStatus.ACCEPTED)
                 .hasBody(BODY_PAYLOAD)

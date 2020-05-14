@@ -108,7 +108,6 @@ public class SDCClientHelper {
             HttpClient httpClient = httpClientFactory.newJsonClient(url, ONAPComponents.SDC);
             httpClient.addBasicAuthHeader(sdcClientAuth, msoKey);
             httpClient.addAdditionalHeader("X-ECOMP-InstanceID", sdcActivateInstanceId);
-            httpClient.addAdditionalHeader("X-ECOMP-RequestID", UUID.randomUUID().toString());
             httpClient.addAdditionalHeader("Content-Type", SDCClientHelper.SDC_CONTENT_TYPE);
             httpClient.addAdditionalHeader("Accept", SDCClientHelper.SDC_ACCEPT_TYPE);
             httpClient.addAdditionalHeader("USER_ID", sdcActivateUserId);

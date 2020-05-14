@@ -52,7 +52,8 @@
 	<appender name="Audit"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-			<evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">				
+			<evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">	
+				<marker>ENTRY</marker>			
 				<marker>EXIT</marker>
 			</evaluator>
 			<onMismatch>DENY</onMismatch>
@@ -80,7 +81,8 @@
 	<appender name="Metric"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-			<evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">				
+			<evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">	
+				<marker>INVOKE</marker>			
 				<marker>INVOKE-RETURN</marker>
 			</evaluator>
 			<onMismatch>DENY</onMismatch>

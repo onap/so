@@ -186,7 +186,6 @@ class ExternalAPIUtil {
 			HttpClient httpClient = httpClientFactory.newJsonClient(new URL(url), ONAPComponents.AAI)
 			httpClient.addBasicAuthHeader(execution.getVariable("URN_externalapi_auth"), execution.getVariable("URN_mso_msoKey"))
 			httpClient.addAdditionalHeader("X-FromAppId", "MSO")
-			httpClient.addAdditionalHeader("X-TransactionId", uuid)
 			httpClient.addAdditionalHeader("Target",execution.getVariable("SPPartnerUrl"))
 
 			apiResponse = httpClient.post(payload)
