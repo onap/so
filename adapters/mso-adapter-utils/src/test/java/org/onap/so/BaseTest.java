@@ -32,6 +32,7 @@ import java.io.IOException;
 import javax.ws.rs.core.MediaType;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
+import org.slf4j.MDC;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -62,6 +63,7 @@ public abstract class BaseTest extends TestDataSetup {
     @After
     public void after() {
         wireMockServer.resetAll();
+        MDC.clear();
     }
 
     protected static String getBody(String body, int port, String urlPath) throws IOException {
