@@ -20,6 +20,7 @@
 
 package org.onap.so.client.orchestration;
 
+import com.google.common.base.Strings;
 import java.util.Optional;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
@@ -29,11 +30,15 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AAIPnfResources {
+
+    private static final Logger logger = LoggerFactory.getLogger(AAIPnfResources.class);
 
     @Autowired
     private InjectionHelper injectionHelper;
@@ -58,5 +63,36 @@ public class AAIPnfResources {
         pnf.setOrchestrationStatus(orchestrationStatus);
         pnfCopy.setOrchestrationStatus(orchestrationStatus);
         injectionHelper.getAaiClient().update(pnfURI, aaiObjectMapper.mapPnf(pnfCopy));
+    }
+
+    public void checkIfPnfExistsInAaiAndCanBeUsed(String pnfName) throws Exception {
+        Optional<org.onap.aai.domain.yang.Pnf> pnfFromAai = injectionHelper.getAaiClient()
+                .get(org.onap.aai.domain.yang.Pnf.class, AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfName));
+        if (pnfFromAai.isPresent() && isOrchestrationStatusSet(pnfFromAai.get())) {
+            checkOrchestrationStatusOfExistingPnf(pnfFromAai.get());
+        }
+    }
+
+    private boolean isOrchestrationStatusSet(org.onap.aai.domain.yang.Pnf pnfFromAai) {
+        if (Strings.isNullOrEmpty(pnfFromAai.getOrchestrationStatus())) {
+            logger.debug("pnf with name {} already exists with not set orchestration status and can be used",
+                    pnfFromAai.getPnfName());
+            return false;
+        }
+        return true;
+    }
+
+    private void checkOrchestrationStatusOfExistingPnf(org.onap.aai.domain.yang.Pnf pnfFromAai) throws Exception {
+        if (OrchestrationStatus.INVENTORIED.toString().equals(pnfFromAai.getOrchestrationStatus())) {
+            logger.debug("pnf with name {} already exists with orchestration status Inventoried and can be used",
+                    pnfFromAai.getPnfName());
+        } else {
+            String errorMessage = String.format(
+                    "pnf with name %s already exists with orchestration status %s, only status Inventoried allows to use existing pnf",
+                    pnfFromAai.getPnfName(), pnfFromAai.getOrchestrationStatus());
+            logger.error(errorMessage);
+            throw new Exception(errorMessage);
+
+        }
     }
 }
