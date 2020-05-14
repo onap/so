@@ -31,15 +31,14 @@ import org.onap.so.beans.nsmf.NssiDeAllocateRequest
 import org.onap.so.beans.nsmf.NssiResponse
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
+import org.onap.so.bpmn.common.scripts.NssmfAdapterUtils
 import org.onap.so.bpmn.common.scripts.RequestDBUtil
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.domain.ServiceArtifact
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
-import org.onap.so.client.HttpClientFactory
 import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.db.request.beans.OperationStatus
@@ -56,6 +55,8 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
     private ExceptionUtil exceptionUtil = new ExceptionUtil()
     private JsonUtils jsonUtil = new JsonUtils()
     private RequestDBUtil requestDBUtil = new RequestDBUtil()
+    private NssmfAdapterUtils nssmfAdapterUtils = new NssmfAdapterUtils(httpClientFactory, jsonUtil)
+
     private static final Logger LOGGER = LoggerFactory.getLogger( DoDeallocateNSSI.class)
 
     @Override
@@ -103,7 +104,7 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
      * get vendor Info
      * @param execution
      */
-     void processDecomposition(DelegateExecution execution) {
+    void processDecomposition(DelegateExecution execution) {
         LOGGER.debug("*****${PREFIX} start processDecomposition *****")
 
         try {
@@ -150,26 +151,21 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
         deAllocateRequest.setEsrInfo(getEsrInfo(currentNSSI))
 
         ObjectMapper mapper = new ObjectMapper()
-        String json = mapper.writeValueAsString(deAllocateRequest)
+        String nssmfRequest = mapper.writeValueAsString(deAllocateRequest)
 
-        //Prepare auth for NSSMF - Begin
-        String nssmfRequest = UrnPropertiesReader.getVariable("mso.adapters.nssmf.endpoint", execution)
-        nssmfRequest = nssmfRequest + String.format("/api/rest/provMns/v1/NSS/SliceProfiles/%s",profileId)
-        //nssmfRequest = nssmfRequest + String.format(NssmfAdapterUtil.NSSMI_DEALLOCATE_URL,profileId)
-        //send request to active  NSSI TN option
-        URL url = new URL(nssmfRequest)
-        LOGGER.info("deallocate nssmfRequest:${nssmfRequest}, reqBody: ${json}")
+        String urlStr = String.format("/api/rest/provMns/v1/NSS/SliceProfiles/%s",profileId)
 
-        HttpClient httpClient = getHttpClientFactory().newJsonClient(url, ONAPComponents.EXTERNAL)
-        Response httpResponse = httpClient.post(json)
-        checkNssmfResponse(httpResponse, execution)
+        NssiResponse nssmfResponse = nssmfAdapterUtils.sendPostRequestNSSMF(execution, urlStr, nssmfRequest, NssiResponse.class)
+        if (nssmfResponse != null) {
+            currentNSSI['jobId']= nssmfResponse.getJobId() ?: ""
+            currentNSSI['jobProgress'] = 0
+            execution.setVariable("currentNSSI", currentNSSI)
 
-        NssiResponse nssmfResponse = httpResponse.readEntity(NssiResponse.class)
-        currentNSSI['jobId']= nssmfResponse.getJobId() ?: ""
-        currentNSSI['jobProgress'] = 0
-        execution.setVariable("currentNSSI", currentNSSI)
+            LOGGER.debug("*****${PREFIX} Exit sendRequestToNSSMF *****")
+        } else {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Received a Bad Response from NSSMF.")
+        }
 
-        LOGGER.debug("*****${PREFIX} Exit sendRequestToNSSMF *****")
     }
 
     /**
@@ -189,48 +185,36 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
         jobStatusRequest.setEsrInfo(getEsrInfo(currentNSSI))
 
         ObjectMapper mapper = new ObjectMapper()
-        String json = mapper.writeValueAsString(jobStatusRequest)
+        String nssmfRequest = mapper.writeValueAsString(jobStatusRequest)
 
-        //Prepare auth for NSSMF - Begin
-        String nssmfRequest = UrnPropertiesReader.getVariable("mso.adapters.nssmf.endpoint", execution)
-        nssmfRequest = nssmfRequest + String.format("/api/rest/provMns/v1/NSS/jobs/%s",jobId)
-        //send request to active  NSSI TN option
-        URL url = new URL(nssmfRequest)
-        LOGGER.info("get deallocate job status, nssmfRequest:${nssmfRequest}, requestBody: ${json}")
+        String urlStr = String.format("/api/rest/provMns/v1/NSS/jobs/%s", jobId)
 
-        HttpClient httpClient = getHttpClientFactory().newJsonClient(url, ONAPComponents.EXTERNAL)
-        Response httpResponse = httpClient.post(json)
-        checkNssmfResponse(httpResponse, execution)
+        JobStatusResponse jobStatusResponse = nssmfAdapterUtils.sendPostRequestNSSMF(execution, urlStr, nssmfRequest, JobStatusResponse.class)
 
-        JobStatusResponse jobStatusResponse = httpResponse.readEntity(JobStatusResponse.class)
-        def progress = jobStatusResponse?.getResponseDescriptor()?.getProgress()
-        if(!progress)
-        {
-            LOGGER.error("job progress is null or empty!")
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Received a Bad Job progress from NSSMF.")
+        if (jobStatusResponse != null) {
+            def progress = jobStatusResponse?.getResponseDescriptor()?.getProgress()
+            if(!progress)
+            {
+                LOGGER.error("job progress is null or empty!")
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Received a Bad Job progress from NSSMF.")
+            }
+            int oldProgress = currentNSSI['jobProgress']
+            int currentProgress = progress
+
+            execution.setVariable("isNSSIDeAllocated", (currentProgress == 100))
+            execution.setVariable("isNeedUpdateDB", (oldProgress != currentProgress))
+            currentNSSI['jobProgress'] = currentProgress
+
+            def statusDescription = jobStatusResponse?.getResponseDescriptor()?.getStatusDescription()
+            currentNSSI['statusDescription'] = statusDescription
+
+            LOGGER.debug("job status result: nsiId = ${nsiId}, nssiId=${nssiId}, oldProgress=${oldProgress}, progress = ${currentProgress}" )
+
+        } else {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Received a Bad Response from NSSMF.")
         }
-        int oldProgress = currentNSSI['jobProgress']
-        int currentProgress = progress
 
-        execution.setVariable("isNSSIDeAllocated", (currentProgress == 100))
-        execution.setVariable("isNeedUpdateDB", (oldProgress != currentProgress))
-        currentNSSI['jobProgress'] = currentProgress
-
-        def statusDescription = jobStatusResponse?.getResponseDescriptor()?.getStatusDescription()
-        currentNSSI['statusDescription'] = statusDescription
-
-        LOGGER.debug("job status result: nsiId = ${nsiId}, nssiId=${nssiId}, oldProgress=${oldProgress}, progress = ${currentProgress}" )
     }
-
-    private void checkNssmfResponse(Response httpResponse, DelegateExecution execution) {
-        int responseCode = httpResponse.getStatus()
-        LOGGER.debug("NSSMF response code is: " + responseCode)
-
-        if ( responseCode < 200 || responseCode > 204 || !httpResponse.hasEntity()) {
-            exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Response from NSSMF.")
-        }
-    }
-
 
     private EsrInfo getEsrInfo(def currentNSSI)
     {

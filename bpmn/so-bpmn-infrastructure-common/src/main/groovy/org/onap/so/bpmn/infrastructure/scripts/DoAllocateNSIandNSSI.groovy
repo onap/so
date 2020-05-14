@@ -1,31 +1,45 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * ONAP - SO
+ * ================================================================================
+ * Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License")
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
 package org.onap.so.bpmn.infrastructure.scripts
 
-import com.google.common.reflect.TypeToken
-import com.google.gson.Gson
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.aai.domain.yang.AllottedResource
 import org.onap.aai.domain.yang.Relationship
 import org.onap.aai.domain.yang.RelationshipList
 import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.so.beans.nsmf.SliceTaskParams
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
+import org.onap.so.bpmn.common.scripts.NssmfAdapterUtils
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.ServiceProxy
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
-import org.onap.aaiclient.client.aai.entities.AAIEdgeLabel
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-import org.onap.so.db.request.client.RequestsDbClient
-import org.onap.so.db.request.beans.OrchestrationTask
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 import javax.ws.rs.NotFoundException
-import javax.ws.rs.core.UriBuilder
 
 import static org.apache.commons.lang3.StringUtils.isBlank
 
@@ -36,7 +50,8 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
     ExceptionUtil exceptionUtil = new ExceptionUtil()
 
     JsonUtils jsonUtil = new JsonUtils()
-    RequestsDbClient requestsDbClient = new RequestsDbClient()
+
+    private NssmfAdapterUtils nssmfAdapterUtils = new NssmfAdapterUtils(httpClientFactory, jsonUtil)
 
     /**
      * Pre Process the BPMN Flow Request
@@ -65,8 +80,9 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
         SliceTaskParams sliceParams = execution.getVariable("sliceTaskParams")
         try
         {
-            String modelUuid = jsonUtil.getJsonValue(uuiRequest, "service.parameters.requestInputs.nstar0_allottedresource0_providing_service_uuid")
-            String modelInvariantUuid = jsonUtil.getJsonValue(uuiRequest, "service.parameters.requestInputs.nstar0_allottedresource0_providing_service_invariant_uuid")
+            Map<String, Object> nstSolution = execution.getVariable("nstSolution") as Map
+            String modelUuid = nstSolution.get("UUID")
+            String modelInvariantUuid = nstSolution.get("invariantUUID")
             String serviceModelInfo = """{
             "modelInvariantUuid":"${modelInvariantUuid}",
             "modelUuid":"${modelUuid}",
@@ -105,7 +121,7 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
         String nsiServiceInstanceID = sliceParams.getSuggestNsiId()
 
         AAIResourcesClient resourceClient = new AAIResourcesClient()
-        AAIResourceUri nsiServiceuri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("serviceType"), nsiServiceInstanceID)
+        AAIResourceUri nsiServiceuri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("subscriptionServiceType"), nsiServiceInstanceID)
         //AAIResourceUri nsiServiceuri = AAIUriFactory.createResourceUri(AAIObjectType.QUERY_ALLOTTED_RESOURCE, execution.getVariable("globalSubscriberId"), execution.getVariable("serviceType"), nsiServiceInstanceID)
 
         try {
@@ -156,7 +172,7 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
         {
             try {
                 AAIResourcesClient resourceClient = new AAIResourcesClient()
-                AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("serviceType"), nssiID)
+                AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("subscriptionServiceType"), nssiID)
                 AAIResultWrapper wrapper = resourceClient.get(serviceInstanceUri, NotFoundException.class)
                 Optional<org.onap.aai.domain.yang.ServiceInstance> si = wrapper.asBean(org.onap.aai.domain.yang.ServiceInstance.class)
                 org.onap.aai.domain.yang.ServiceInstance nssi = si.get()
@@ -179,13 +195,13 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
     }
 
     void createNSIinAAI(DelegateExecution execution) {
-        logger.trace("Enter CreateNSIinAAI in DoAllocateNSIandNSSI()")
+        logger.debug("Enter CreateNSIinAAI in DoAllocateNSIandNSSI()")
         ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
         org.onap.aai.domain.yang.ServiceInstance nsi = new ServiceInstance();
         String sliceInstanceId = UUID.randomUUID().toString()
         execution.setVariable("sliceInstanceId",sliceInstanceId)
         nsi.setServiceInstanceId(sliceInstanceId)
-        String sliceInstanceName = "nsi_"+execution.getVariable("serviceInstanceName")
+        String sliceInstanceName = "nsi_"+execution.getVariable("sliceServiceInstanceName")
         nsi.setServiceInstanceName(sliceInstanceName)
         String serviceType = execution.getVariable("serviceType")
         nsi.setServiceType(serviceType)
@@ -202,11 +218,20 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
         //nsi.setEnvironmentContext(snssai)
         String serviceRole = "nsi"
         nsi.setServiceRole(serviceRole)
+        String msg = ""
         try {
 
             AAIResourcesClient client = new AAIResourcesClient()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("subscriptionServiceType"), sliceInstanceId)
-            client.create(uri, nsi)
+            AAIResourceUri nsiServiceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("subscriptionServiceType"), sliceInstanceId)
+            client.create(nsiServiceUri, nsi)
+
+            Relationship relationship = new Relationship()
+            logger.info("Creating Allotted resource relationship, nsiServiceUri: " + nsiServiceUri.build().toString())
+            relationship.setRelatedLink(nsiServiceUri.build().toString())
+            AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.ALLOTTED_RESOURCE,
+                    execution.getVariable("globalSubscriberId"),execution.getVariable("subscriptionServiceType"),
+                    execution.getVariable("sliceServiceInstanceId"), execution.getVariable("allottedResourceId")).relationshipAPI()
+            client.create(allottedResourceUri, relationship)
 
         } catch (BpmnError e) {
             throw e
@@ -243,7 +268,7 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
         execution.setVariable("maxIndex",maxIndex)
         execution.setVariable('nsiServiceInstanceId',sliceInstanceId)
         execution.setVariable("nsiServiceInstanceName",sliceInstanceName)
-        logger.trace("Exit CreateNSIinAAI in DoAllocateNSIandNSSI()")
+        logger.debug("Exit CreateNSIinAAI in DoAllocateNSIandNSSI()")
     }
 
     void getOneNsstInfo(DelegateExecution execution){
@@ -271,7 +296,7 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
         String domain = jsonUtil.getJsonValue(content, "metadata.domainType")
 
         Map<String, Object> nssiMap = execution.getVariable("nssiMap")
-        String servicename = execution.getVariable("serviceInstanceName")
+        String servicename = execution.getVariable("sliceServiceInstanceName")
         String nsiname = "nsi_"+servicename
         nssiMap.put(domain,"""{
                     "serviceInstanceId":"",
