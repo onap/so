@@ -29,11 +29,15 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AAIPnfResources {
+
+    private static final Logger logger = LoggerFactory.getLogger(AAIPnfResources.class);
 
     @Autowired
     private InjectionHelper injectionHelper;
@@ -59,4 +63,26 @@ public class AAIPnfResources {
         pnfCopy.setOrchestrationStatus(orchestrationStatus);
         injectionHelper.getAaiClient().update(pnfURI, aaiObjectMapper.mapPnf(pnfCopy));
     }
+
+    public void checkIfPnfExistsInAaiAndCanBeUsed(String pnfName) throws Exception {
+        Optional<org.onap.aai.domain.yang.Pnf> pnfFromAai = injectionHelper.getAaiClient()
+                .get(org.onap.aai.domain.yang.Pnf.class, AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfName));
+        if (pnfFromAai.isPresent()) {
+            checkOrchestrationStatusOfExistingPnf(pnfFromAai.get());
+        }
+    }
+
+    private void checkOrchestrationStatusOfExistingPnf(org.onap.aai.domain.yang.Pnf pnfFromAai) throws Exception {
+        if (!OrchestrationStatus.INVENTORIED.toString().equals(pnfFromAai.getOrchestrationStatus())) {
+            String errorMessage = String.format(
+                    "pnf with name %s already exists with orchestration status %s, only status Inventoried allows to use existing pnf",
+                    pnfFromAai.getPnfName(), pnfFromAai.getOrchestrationStatus());
+            logger.error(errorMessage);
+            throw new Exception(errorMessage);
+        } else {
+            logger.debug("pnf with name {} already exists with orchestration status Inventoried and can be used",
+                    pnfFromAai.getPnfName());
+        }
+    }
+
 }
