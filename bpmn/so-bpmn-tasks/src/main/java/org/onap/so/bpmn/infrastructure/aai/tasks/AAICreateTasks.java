@@ -260,10 +260,11 @@ public class AAICreateTasks {
     public void createPnf(BuildingBlockExecution execution) {
         try {
             Pnf pnf = extractPojosForBB.extractByKey(execution, ResourceKey.PNF);
+            aaiPnfResources.checkIfPnfExistsInAaiAndCanBeUsed(pnf.getPnfName());
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             aaiPnfResources.createPnfAndConnectServiceInstance(pnf, serviceInstance);
-        } catch (BBObjectNotFoundException e) {
+        } catch (Exception e) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, e);
         }
     }
