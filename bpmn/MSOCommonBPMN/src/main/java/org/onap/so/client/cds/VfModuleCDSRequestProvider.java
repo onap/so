@@ -104,9 +104,10 @@ public class VfModuleCDSRequestProvider implements CDSRequestProvider {
             final GeneralBuildingBlock buildingBlock = execution.getGeneralBuildingBlock();
             List<Map<String, Object>> userParamsFromRequest =
                     buildingBlock.getRequestContext().getRequestParameters().getUserParams();
-
-            configureInstanceParamsForVfModule.populateInstanceParams(vfModuleObject, userParamsFromRequest,
-                    modelCustomizationUuidForVnf, modelCustomizationUuidForVfModule);
+            if (userParamsFromRequest != null && userParamsFromRequest.size() != 0) {
+                configureInstanceParamsForVfModule.populateInstanceParams(vfModuleObject, userParamsFromRequest,
+                        modelCustomizationUuidForVnf, modelCustomizationUuidForVfModule);
+            }
         } catch (Exception e) {
             throw new PayloadGenerationException("Failed to buildPropertyObject for VF-Module", e);
         }

@@ -25,8 +25,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
+import org.onap.so.client.exception.PayloadGenerationException;
+import org.onap.so.serviceinstancebeans.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -34,11 +40,19 @@ import static org.mockito.Mockito.*;
 
 public class VfModuleCDSRequestProviderTest extends AbstractVnfCDSRequestProviderTest {
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Spy
+    protected ExtractServiceFromUserParameters extractServiceFromUserParameters;
+
+    @Spy
+    @InjectMocks
+    protected ConfigureInstanceParamsForVfModule configureInstanceParamsForVfModule;
+
     @InjectMocks
     private VfModuleCDSRequestProvider vfModuleCDSRequestProvider;
 
-    @Mock
-    protected ConfigureInstanceParamsForVfModule configureInstanceParamsForVfModule;
 
     @Test
     public void testRequestPayloadForConfigDeployVfModule() throws Exception {
@@ -52,7 +66,8 @@ public class VfModuleCDSRequestProviderTest extends AbstractVnfCDSRequestProvide
                 ResourceKey.GENERIC_VNF_ID);
         doReturn(createVfModule()).when(extractPojosForBB).extractByKey(buildingBlockExecution,
                 ResourceKey.VF_MODULE_ID);
-        doNothing().when(configureInstanceParamsForVfModule).populateInstanceParams(any(), any(), anyString(),
+        doReturn(getUserParams()).when(extractServiceFromUserParameters).getServiceFromRequestUserParams(anyList());
+        doCallRealMethod().when(configureInstanceParamsForVfModule).populateInstanceParams(any(), any(), anyString(),
                 anyString());
 
         // when
@@ -76,5 +91,39 @@ public class VfModuleCDSRequestProviderTest extends AbstractVnfCDSRequestProvide
         assertThat(propertiesNode.get("vnf-id").asText()).isEqualTo(GENERIC_VNF_ID);
     }
 
+    @Test
+    public void testRequestPayloadForConfigDeployVfModuleWithoutUserParams() throws Exception {
+        // given
+        setScopeAndActionWithoutUserParams(VF_SCOPE, DEPLOY_ACTION);
+        ServiceInstance serviceInstance = createServiceInstance();
 
+        doReturn(serviceInstance).when(extractPojosForBB).extractByKey(buildingBlockExecution,
+                ResourceKey.SERVICE_INSTANCE_ID);
+        doReturn(createGenericVnf()).when(extractPojosForBB).extractByKey(buildingBlockExecution,
+                ResourceKey.GENERIC_VNF_ID);
+        doReturn(createVfModule()).when(extractPojosForBB).extractByKey(buildingBlockExecution,
+                ResourceKey.VF_MODULE_ID);
+        doReturn(getUserParams()).when(extractServiceFromUserParameters).getServiceFromRequestUserParams(anyList());
+        doCallRealMethod().when(configureInstanceParamsForVfModule).populateInstanceParams(any(), any(), anyString(),
+                anyString());
+
+        vfModuleCDSRequestProvider.setExecutionObject(buildingBlockExecution);
+        String payload = vfModuleCDSRequestProvider.buildRequestPayload(DEPLOY_ACTION).get();
+
+        // verify
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode payloadJson = mapper.readTree(payload);
+        JsonNode requestNode = payloadJson.findValue("configDeploy-request");
+        JsonNode propertiesNode = payloadJson.findValue("configDeploy-properties");
+
+        assertNotNull(payload);
+        assertTrue(verfiyJsonFromString(payload));
+        assertThat(requestNode.get("resolution-key").asText()).isEqualTo(VF_MODULE_NAME);
+        assertThat(propertiesNode.get("service-instance-id").asText()).isEqualTo(SERVICE_INSTANCE_ID);
+        assertThat(propertiesNode.get("vf-module-id").asText()).isEqualTo(VF_MODULE_ID);
+        assertThat(propertiesNode.get("vf-module-name").asText()).isEqualTo(VF_MODULE_NAME);
+        assertThat(propertiesNode.get("vf-module-customization-uuid").asText()).isEqualTo(VF_MODULE_CUSTOMIZATION_UUID);
+        assertThat(propertiesNode.get("service-model-uuid").asText()).isEqualTo(SERVICE_MODEL_UUID);
+        assertThat(propertiesNode.get("vnf-id").asText()).isEqualTo(GENERIC_VNF_ID);
+    }
 }
