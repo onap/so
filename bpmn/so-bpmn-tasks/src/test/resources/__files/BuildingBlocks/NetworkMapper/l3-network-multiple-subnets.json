@@ -49,5 +49,30 @@
 			"next-hop": "192.168.1.1",
 			"next-hop-type": null
 			}]
+      }, {
+        "subnet-id" : "subnetId2",
+        "subnet-name" : "aSubnetName2",
+        "neutron-subnet-id" : null,
+        "network-start-address" : "192.168.1.2",
+        "cidr-mask" : "10",
+        "ip-version" : "4",
+        "orchestration-status" : "ACTIVE",
+        "dhcp-enabled" : true,
+        "dhcp-start" : "192.168.1.2",
+        "dhcp-end" : "192.168.1.16",
+        "subnet-role" : "",
+        "ip-assignment-direction" : "true",
+        "subnet-sequence" : null,
+        "host-routes": [{
+			"host-route-id": "hrId1",
+			"route-prefix": "192.168.0.0/16",
+			"next-hop": "192.168.1.1",
+			"next-hop-type": null
+			}, {
+			"host-route-id": "hrId2",
+			"route-prefix": "192.168.1.5/16",
+			"next-hop": "192.168.1.1",
+			"next-hop-type": null
+			}]
       }]
 }
