@@ -910,7 +910,7 @@
       <dependency>
         <groupId>org.onap.aai.schema-service</groupId>
         <artifactId>aai-schema</artifactId>
-        <version>1.7.1-SNAPSHOT</version>
+        <version>1.7.1</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
