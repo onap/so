@@ -44,6 +44,7 @@ import org.onap.so.serviceinstancebeans.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
@@ -201,5 +202,11 @@ public abstract class AbstractVnfCDSRequestProviderTest {
         buildingBlock.setBpmnAction(action);
         executeBuildingBlock.setBuildingBlock(buildingBlock);
         buildingBlockExecution.setVariable(BUILDING_BLOCK, executeBuildingBlock);
+    }
+
+    protected void setScopeAndActionWithoutUserParams(String scope, String action) {
+        buildingBlockExecution.getGeneralBuildingBlock().getRequestContext().getRequestParameters()
+                .setUserParams(new LinkedList<>());
+        setScopeAndAction(scope, action);
     }
 }
