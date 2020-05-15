@@ -91,13 +91,11 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
     }
 
     void updateRelationship(DelegateExecution execution) {
-        logger.trace("Enter update relationship in DoAllocateNSIandNSSI()")
-        String nsiServiceInstanceId = execution.getVariable("nsiServiceInstanceId")
+        logger.debug("Enter update relationship in DoAllocateNSIandNSSI()")
         String allottedResourceId = execution.getVariable("allottedResourceId")
         //Need to check whether nsi exist : Begin
         org.onap.aai.domain.yang.ServiceInstance nsiServiceInstance = new org.onap.aai.domain.yang.ServiceInstance()
         SliceTaskParams sliceParams = execution.getVariable("sliceParams")
-
         String nsiServiceInstanceID = sliceParams.getSuggestNsiId()
 
         AAIResourcesClient resourceClient = new AAIResourcesClient()
@@ -116,14 +114,8 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
 //                exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service instance was not found in aai to " +
 //                        "associate for service :"+serviceInstanceId)
 //            }
-        }catch(BpmnError e) {
-            throw e;
-        }catch (Exception ex){
-            String msg = "NSI suggested in the option doesn't exist. " + nsiServiceInstanceID
-            logger.debug(msg)
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-        }
-        AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.ALLOTTED_RESOURCE, execution.getVariable("globalSubscriberId"), execution.getVariable("serviceType"), nsiServiceInstanceId, allottedResourceId)
+
+        AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.ALLOTTED_RESOURCE, execution.getVariable("globalSubscriberId"), execution.getVariable("subscriptionServiceType"), execution.getVariable("sliceServiceInstanceId"), allottedResourceId)
         getAAIClient().connect(allottedResourceUri,nsiServiceuri)
 
         List<String> nssiAssociated = new ArrayList<>()
@@ -140,7 +132,14 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
         }
         execution.setVariable("nssiAssociated",nssiAssociated)
         execution.setVariable("nsiServiceInstanceName",nsiServiceInstance.getServiceInstanceName())
-        logger.trace("Exit update relationship in DoAllocateNSIandNSSI()")
+        }catch(BpmnError e) {
+            throw e
+        }catch (Exception ex){
+            String msg = "NSI suggested in the option doesn't exist. " + nsiServiceInstanceID
+            logger.debug(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+        logger.debug("Exit update relationship in DoAllocateNSIandNSSI()")
     }
 
     void prepareNssiModelInfo(DelegateExecution execution){

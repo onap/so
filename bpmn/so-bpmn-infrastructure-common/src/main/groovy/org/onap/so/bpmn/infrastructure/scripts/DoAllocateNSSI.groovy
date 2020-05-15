@@ -227,7 +227,7 @@ class DoAllocateNSSI extends org.onap.so.bpmn.common.scripts.AbstractServiceTask
     }
 
     void updateRelationship(DelegateExecution execution) {
-        logger.trace("Enter updateRelationship in DoAllocateNSSI()")
+        logger.debug("Enter updateRelationship in DoAllocateNSSI()")
         String nssiInstanceId = execution.getVariable("nssiInstanceId")
         String nsiInstanceId = execution.getVariable("nsiServiceInstanceId")
         try{
@@ -239,7 +239,7 @@ class DoAllocateNSSI extends org.onap.so.bpmn.common.scripts.AbstractServiceTask
             logger.info(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
-        logger.trace("Exit updateRelationship in DoAllocateNSSI()")
+        logger.debug("Exit updateRelationship in DoAllocateNSSI()")
     }
 
 
