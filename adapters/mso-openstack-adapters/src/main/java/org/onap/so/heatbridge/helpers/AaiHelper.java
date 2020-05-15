@@ -163,9 +163,6 @@ public class AaiHelper {
         if (server.getHost() != null) {
             pserver.setPserverName2(server.getHost());
         }
-        if (server.getStatus() != null && server.getStatus().value() != null) {
-            pserver.setProvStatus(server.getStatus().value());
-        }
         return pserver;
     }
 
