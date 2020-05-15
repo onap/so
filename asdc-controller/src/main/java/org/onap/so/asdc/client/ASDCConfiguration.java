@@ -84,6 +84,11 @@ public class ASDCConfiguration implements IConfiguration {
     }
 
     @Override
+    public java.lang.Boolean isUseHttpsWithSDC() {
+        return getBooleanPropertyWithDefault("mso.asdc-connections.asdc-controller1.useHttpsWithSdc", true);
+    }
+
+    @Override
     public boolean isConsumeProduceStatusTopic() {
         return true;
     }

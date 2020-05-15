@@ -167,7 +167,7 @@
     <dependency>
       <groupId>org.onap.sdc.sdc-distribution-client</groupId>
       <artifactId>sdc-distribution-client</artifactId>
-      <version>1.3.0</version>
+      <version>1.4.1</version>
       <exclusions>
         <exclusion>
           <groupId>org.slf4j</groupId>
