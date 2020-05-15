@@ -275,7 +275,11 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
                 mapKey = "requestorId";
             } else if ("requestExecutionDate".equalsIgnoreCase(mapKey)) {
                 mapKey = "startTime";
-            }
+            } else if ("action".equalsIgnoreCase(mapKey)) {
+		mapKey = "requestAction";
+	    } else if ("requestAction.equalsIgnoreCase(mapKey)) {
+		mapKey = "requestAction";
+	    }
 
             final String operator = entry.getValue().get(0);
             final String propertyValue = entry.getValue().get(1);
@@ -308,9 +312,11 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
 
         }
 
-        final Order order = cb.asc(tableRoot.get(START_TIME));
+    final Order order = cb.asc(tableRoot.get(START_TIME));
 
-        return executeInfraQuery(crit, predicates, order);
+    return
+
+    executeInfraQuery(crit, predicates, order);
     }
 
     // Added this method for Tenant Isolation project ( 1802-295491a) to query the mso_requests DB
@@ -323,8 +329,7 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
      */
     @Override
     public List<InfraActiveRequests> getCloudOrchestrationFiltersFromInfraActive(
-            final Map<String, String> orchestrationMap) {
-        final List<Predicate> predicates = new LinkedList<>();
+            final Map<String, String> orchestrationMap) {final List<Predicate> predicates = new LinkedList<>();
         final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         final CriteriaQuery<InfraActiveRequests> crit = cb.createQuery(InfraActiveRequests.class);
         final Root<InfraActiveRequests> tableRoot = crit.from(InfraActiveRequests.class);
