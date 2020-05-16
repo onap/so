@@ -72,6 +72,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.graphinventory.exceptions.BulkProcessFailed;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.heatbridge.constants.HeatBridgeConstants;
+import org.onap.so.heatbridge.helpers.AaiHelper;
 import org.onap.so.heatbridge.openstack.api.OpenstackClient;
 import org.onap.so.heatbridge.openstack.api.OpenstackClientException;
 import org.openstack4j.model.compute.Flavor;
@@ -228,7 +229,7 @@ public class HeatBridgeImplTest {
 
         Server server2 = mock(Server.class);
         when(server2.getId()).thenReturn("test-server2-id");
-        when(server2.getHypervisorHostname()).thenReturn("test-hypervisor");
+        when(server2.getHypervisorHostname()).thenReturn("");
         when(server2.getName()).thenReturn("test-server2-name");
         when(server2.getStatus()).thenReturn(Status.ACTIVE);
         when(server2.getLinks()).thenReturn(new ArrayList<>());
@@ -260,6 +261,90 @@ public class HeatBridgeImplTest {
                 server2.getId()), uris.get(1));
 
     }
+
+    @Test
+    public void testUpdateVserversToAaiNoHypervisorName() throws HeatBridgeException {
+        // Arrange
+        Server server1 = mock(Server.class);
+
+        when(server1.getId()).thenReturn("test-server1-id");
+        when(server1.getHypervisorHostname()).thenReturn("");
+        when(server1.getName()).thenReturn("test-server1-name");
+        when(server1.getStatus()).thenReturn(Status.ACTIVE);
+        when(server1.getLinks()).thenReturn(new ArrayList<>());
+
+        Server server2 = mock(Server.class);
+        when(server2.getId()).thenReturn("test-server2-id");
+        when(server2.getName()).thenReturn("test-server2-name");
+        when(server2.getStatus()).thenReturn(Status.ACTIVE);
+        when(server2.getLinks()).thenReturn(new ArrayList<>());
+
+        List<Server> servers = Arrays.asList(server1, server2);
+
+        Image image = mock(Image.class);
+        when(server1.getImage()).thenReturn(image);
+        when(server2.getImage()).thenReturn(image);
+        when(image.getId()).thenReturn("test-image-id");
+
+        Flavor flavor = mock(Flavor.class);
+        when(server1.getFlavor()).thenReturn(flavor);
+        when(server2.getFlavor()).thenReturn(flavor);
+        when(flavor.getId()).thenReturn("test-flavor-id");
+
+        // Act
+        heatbridge.buildAddVserversToAaiAction("test-genericVnf-id", "test-vfModule-id", servers);
+
+        // Assert
+        ArgumentCaptor<AAIResourceUri> captor = ArgumentCaptor.forClass(AAIResourceUri.class);
+        verify(transaction, times(2)).create(captor.capture(), any(Vserver.class));
+
+        List<AAIResourceUri> uris = captor.getAllValues();
+        assertEquals(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, CLOUD_OWNER, REGION_ID, TENANT_ID,
+                server1.getId()), uris.get(0));
+        assertEquals(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, CLOUD_OWNER, REGION_ID, TENANT_ID,
+                server2.getId()), uris.get(1));
+    }
+
+    @Test
+    public void testCreateRelationships() throws HeatBridgeException {
+        AaiHelper aaiHelper = new AaiHelper();
+        // Arrange
+        Server server1 = mock(Server.class);
+
+        when(server1.getId()).thenReturn("test-server1-id");
+        when(server1.getHypervisorHostname()).thenReturn("test-hypervisor");
+        when(server1.getName()).thenReturn("test-server1-name");
+        when(server1.getStatus()).thenReturn(Status.ACTIVE);
+        when(server1.getLinks()).thenReturn(new ArrayList<>());
+
+        // HypervisorHostname is not set
+        Server server2 = mock(Server.class);
+        when(server2.getId()).thenReturn("test-server1-id");
+        when(server2.getName()).thenReturn("test-server1-name");
+        when(server2.getStatus()).thenReturn(Status.ACTIVE);
+        when(server2.getLinks()).thenReturn(new ArrayList<>());
+
+        // HypervisorHostname is empty string
+        Server server3 = mock(Server.class);
+        when(server3.getId()).thenReturn("test-server1-id");
+        when(server3.getHypervisorHostname()).thenReturn("");
+        when(server3.getName()).thenReturn("test-server1-name");
+        when(server3.getStatus()).thenReturn(Status.ACTIVE);
+        when(server3.getLinks()).thenReturn(new ArrayList<>());
+
+        org.onap.aai.domain.yang.RelationshipList relList = aaiHelper.getVserverRelationshipList(CLOUD_OWNER, REGION_ID,
+                "test-genericVnf-id", "test-vfModule-id", server1);
+        assertEquals(4, relList.getRelationship().size());
+
+        org.onap.aai.domain.yang.RelationshipList relList2 = aaiHelper.getVserverRelationshipList(CLOUD_OWNER,
+                REGION_ID, "test-genericVnf-id", "test-vfModule-id", server2);
+        assertEquals(3, relList2.getRelationship().size());
+
+        org.onap.aai.domain.yang.RelationshipList relList3 = aaiHelper.getVserverRelationshipList(CLOUD_OWNER,
+                REGION_ID, "test-genericVnf-id", "test-vfModule-id", server3);
+        assertEquals(3, relList3.getRelationship().size());
+    }
+
 
     @Test
     public void testUpdateImagesToAai() throws HeatBridgeException {
