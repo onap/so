@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.onap.aai.domain.yang.Flavor;
 import org.onap.aai.domain.yang.Image;
 import org.onap.aai.domain.yang.PInterface;
@@ -75,11 +76,12 @@ public class AaiHelper {
         List<Relationship> relationships = relationshipList.getRelationship();
 
         // vserver to pserver relationship
-        Relationship pserverRelationship =
-                buildRelationship(HeatBridgeConstants.AAI_PSERVER, ImmutableMap.<String, String>builder()
-                        .put(HeatBridgeConstants.AAI_PSERVER_HOSTNAME, server.getHypervisorHostname()).build());
-        relationships.add(pserverRelationship);
-
+        if (!StringUtils.isEmpty(server.getHypervisorHostname())) {
+            Relationship pserverRelationship =
+                    buildRelationship(HeatBridgeConstants.AAI_PSERVER, ImmutableMap.<String, String>builder()
+                            .put(HeatBridgeConstants.AAI_PSERVER_HOSTNAME, server.getHypervisorHostname()).build());
+            relationships.add(pserverRelationship);
+        }
         // vserver to vf-module relationship
         Relationship vfModuleRelationship = buildRelationship(HeatBridgeConstants.AAI_VF_MODULE,
                 ImmutableMap.<String, String>builder().put(HeatBridgeConstants.AAI_GENERIC_VNF_ID, genericVnfId)
