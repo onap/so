@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.onap.aai.domain.yang.Flavor;
 import org.onap.aai.domain.yang.Image;
 import org.onap.aai.domain.yang.PInterface;
@@ -63,11 +64,16 @@ public class AaiHelper {
     /**
      * Build vserver relationship object to entities: pserver, vf-module, image, flavor
      *
-     * @param cloudOwner AAI cloudOwner value
-     * @param cloudRegionId AAI cloud-region identifier
-     * @param genericVnfId AAI generic-vnf identifier
-     * @param vfModuleId AAI vf-module identifier
-     * @param server Openstack Server object
+     * @param cloudOwner
+     *            AAI cloudOwner value
+     * @param cloudRegionId
+     *            AAI cloud-region identifier
+     * @param genericVnfId
+     *            AAI generic-vnf identifier
+     * @param vfModuleId
+     *            AAI vf-module identifier
+     * @param server
+     *            Openstack Server object
      */
     public RelationshipList getVserverRelationshipList(final String cloudOwner, final String cloudRegionId,
             final String genericVnfId, final String vfModuleId, final Server server) {
@@ -75,32 +81,35 @@ public class AaiHelper {
         List<Relationship> relationships = relationshipList.getRelationship();
 
         // vserver to pserver relationship
-        Relationship pserverRelationship =
-                buildRelationship(HeatBridgeConstants.AAI_PSERVER, ImmutableMap.<String, String>builder()
-                        .put(HeatBridgeConstants.AAI_PSERVER_HOSTNAME, server.getHypervisorHostname()).build());
-        relationships.add(pserverRelationship);
-
+        if (!StringUtils.isEmpty(server.getHypervisorHostname())) {
+            Relationship pserverRelationship = buildRelationship(HeatBridgeConstants.AAI_PSERVER,
+                    ImmutableMap.<String, String> builder()
+                            .put(HeatBridgeConstants.AAI_PSERVER_HOSTNAME, server.getHypervisorHostname()).build());
+            relationships.add(pserverRelationship);
+        }
         // vserver to vf-module relationship
         Relationship vfModuleRelationship = buildRelationship(HeatBridgeConstants.AAI_VF_MODULE,
-                ImmutableMap.<String, String>builder().put(HeatBridgeConstants.AAI_GENERIC_VNF_ID, genericVnfId)
+                ImmutableMap.<String, String> builder().put(HeatBridgeConstants.AAI_GENERIC_VNF_ID, genericVnfId)
                         .put(HeatBridgeConstants.AAI_VF_MODULE_ID, vfModuleId).build());
         relationships.add(vfModuleRelationship);
 
         // vserver to image relationship
         if (server.getImage() != null) {
             Relationship imageRel = buildRelationship(HeatBridgeConstants.AAI_IMAGE,
-                    ImmutableMap.<String, String>builder().put(HeatBridgeConstants.AAI_CLOUD_OWNER, cloudOwner)
+                    ImmutableMap.<String, String> builder().put(HeatBridgeConstants.AAI_CLOUD_OWNER, cloudOwner)
                             .put(HeatBridgeConstants.AAI_CLOUD_REGION_ID, cloudRegionId)
                             .put(HeatBridgeConstants.AAI_IMAGE_ID, server.getImage().getId()).build());
             relationships.add(imageRel);
         }
 
         // vserver to flavor relationship
-        Relationship flavorRel = buildRelationship(HeatBridgeConstants.AAI_FLAVOR,
-                ImmutableMap.<String, String>builder().put(HeatBridgeConstants.AAI_CLOUD_OWNER, cloudOwner)
-                        .put(HeatBridgeConstants.AAI_CLOUD_REGION_ID, cloudRegionId)
-                        .put(HeatBridgeConstants.AAI_FLAVOR_ID, server.getFlavor().getId()).build());
-        relationships.add(flavorRel);
+        if (server.getFlavor() != null) {
+            Relationship flavorRel = buildRelationship(HeatBridgeConstants.AAI_FLAVOR,
+                    ImmutableMap.<String, String> builder().put(HeatBridgeConstants.AAI_CLOUD_OWNER, cloudOwner)
+                            .put(HeatBridgeConstants.AAI_CLOUD_REGION_ID, cloudRegionId)
+                            .put(HeatBridgeConstants.AAI_FLAVOR_ID, server.getFlavor().getId()).build());
+            relationships.add(flavorRel);
+        }
         return relationshipList;
     }
 
@@ -111,7 +120,7 @@ public class AaiHelper {
 
         // sriov-vf to sriov-pf relationship
         Relationship sriovPfRelationship = buildRelationship(HeatBridgeConstants.AAI_SRIOV_PF,
-                ImmutableMap.<String, String>builder().put(HeatBridgeConstants.AAI_PSERVER_HOSTNAME, pserverName)
+                ImmutableMap.<String, String> builder().put(HeatBridgeConstants.AAI_PSERVER_HOSTNAME, pserverName)
                         .put(HeatBridgeConstants.AAI_P_INTERFACE_NAME, pIfName)
                         .put(HeatBridgeConstants.AAI_SRIOV_PF_PCI_ID, pfPciId).build());
         relationships.add(sriovPfRelationship);
@@ -122,8 +131,10 @@ public class AaiHelper {
     /**
      * Transform Openstack Server object to AAI Vserver object
      *
-     * @param serverId Openstack server identifier
-     * @param server Openstack server object
+     * @param serverId
+     *            Openstack server identifier
+     * @param server
+     *            Openstack server object
      * @return AAI Vserver object
      */
     public Vserver buildVserver(final String serverId, final Server server) {
@@ -142,7 +153,8 @@ public class AaiHelper {
     /**
      * Transform Openstack Server object to AAI Pserver object
      *
-     * @param server Openstack server object
+     * @param server
+     *            Openstack server object
      * @return AAI Pserver object
      */
     public Pserver buildPserver(final Server server) {
@@ -167,7 +179,8 @@ public class AaiHelper {
     /**
      * Transform Openstack Server object to AAI PInterface object
      *
-     * @param port Openstack port object
+     * @param port
+     *            Openstack port object
      * @return AAI PInterface object
      */
     public PInterface buildPInterface(Port port) {
@@ -182,7 +195,8 @@ public class AaiHelper {
     /**
      * Transform Openstack Image object to AAI Image object
      *
-     * @param image Openstack Image object
+     * @param image
+     *            Openstack Image object
      * @return AAI Image object
      */
     public Image buildImage(final org.openstack4j.model.compute.Image image) {
@@ -199,7 +213,8 @@ public class AaiHelper {
     /**
      * Transform Openstack Flavor object to AAI Flavor object
      *
-     * @param flavor Openstack Flavor object
+     * @param flavor
+     *            Openstack Flavor object
      * @return AAI Flavor object
      */
     public Flavor buildFlavor(final org.openstack4j.model.compute.Flavor flavor) {
@@ -214,7 +229,8 @@ public class AaiHelper {
     /**
      * Extract a list of flavors URI associated with the list of vservers
      *
-     * @param vservers List of vserver AAI objects
+     * @param vservers
+     *            List of vserver AAI objects
      * @return a list of related flavor related-links
      */
     public List<String> getFlavorsUriFromVserver(final List<Vserver> vservers) {
@@ -227,7 +243,8 @@ public class AaiHelper {
     /**
      * Extract a list of images URI associated with the list of vservers
      *
-     * @param vservers List of vserver AAI objects
+     * @param vservers
+     *            List of vserver AAI objects
      * @return a list of related image related-links
      */
     public List<String> getImagesUriFromVserver(final List<Vserver> vservers) {
@@ -240,7 +257,8 @@ public class AaiHelper {
     /**
      * From the list vserver objects build a map of compute hosts's name and the PCI IDs linked to it.
      *
-     * @param vservers List of vserver AAI objects
+     * @param vservers
+     *            List of vserver AAI objects
      * @return a map of compute names to the PCI ids associated with the compute
      */
     public Map<String, List<String>> getPserverToPciIdMap(final List<Vserver> vservers) {
@@ -268,9 +286,12 @@ public class AaiHelper {
      * Extract from relationship-list object all the relationship-value that match the related-to and relationship-key
      * fields.
      *
-     * @param relationshipListObj AAI relationship-list object
-     * @param relatedToProperty related-to value
-     * @param relationshipKey relationship-key value
+     * @param relationshipListObj
+     *            AAI relationship-list object
+     * @param relatedToProperty
+     *            related-to value
+     * @param relationshipKey
+     *            relationship-key value
      * @return relationship-value matching the key requested for the relationship object of type related-to property
      */
     private List<String> extractRelationshipDataValue(final RelationshipList relationshipListObj,
@@ -289,8 +310,10 @@ public class AaiHelper {
     /**
      * Extract and filter the related-links to all objects that match the type specified by the filter property
      *
-     * @param relationshipListObj AAI object representing relationship object
-     * @param relatedToProperty Value identifying the type of AAI object for related-to field
+     * @param relationshipListObj
+     *            AAI object representing relationship object
+     * @param relatedToProperty
+     *            Value identifying the type of AAI object for related-to field
      * @return a list of related-links filtered by the specified related-to property
      */
     private List<String> filterRelatedLinksByRelatedToProperty(final RelationshipList relationshipListObj,
@@ -306,8 +329,10 @@ public class AaiHelper {
     /**
      * Build the relationship object
      *
-     * @param relatedTo Related to entity value
-     * @param relationshipKeyValues Key value pairs of relationship data
+     * @param relatedTo
+     *            Related to entity value
+     * @param relationshipKeyValues
+     *            Key value pairs of relationship data
      * @return AAI Relationship object
      */
     private Relationship buildRelationship(final String relatedTo, final Map<String, String> relationshipKeyValues) {
