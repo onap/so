@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.onap.aai.domain.yang.Flavor;
 import org.onap.aai.domain.yang.Image;
 import org.onap.aai.domain.yang.PInterface;
@@ -77,9 +78,11 @@ public class AaiHelper {
         List<Relationship> relationships = relationshipList.getRelationship();
 
         // vserver to pserver relationship
-        Relationship pserverRelationship = buildRelationship(
-                AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, server.getHypervisorHostname()));
-        relationships.add(pserverRelationship);
+        if (!StringUtils.isEmpty(server.getHypervisorHostname())) {
+            Relationship pserverRelationship = buildRelationship(
+                    AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, server.getHypervisorHostname()));
+            relationships.add(pserverRelationship);
+        }
 
         // vserver to generic-vnf relationship
         Relationship genericVnfRelationship =
@@ -87,10 +90,11 @@ public class AaiHelper {
         relationships.add(genericVnfRelationship);
 
         // vserver to vnfc relationship
-        Relationship vnfcRelationship =
-                buildRelationship(AAIUriFactory.createResourceUri(AAIObjectType.VNFC, server.getName()));
-        relationships.add(vnfcRelationship);
-
+        if (!StringUtils.isEmpty(server.getName())) {
+            Relationship vnfcRelationship =
+                    buildRelationship(AAIUriFactory.createResourceUri(AAIObjectType.VNFC, server.getName()));
+            relationships.add(vnfcRelationship);
+        }
 
         // vserver to vf-module relationship
         Relationship vfModuleRelationship =
@@ -105,9 +109,12 @@ public class AaiHelper {
         }
 
         // vserver to flavor relationship
-        Relationship flavorRel = buildRelationship(AAIUriFactory.createResourceUri(AAIObjectType.FLAVOR, cloudOwner,
-                cloudRegionId, server.getFlavor().getId()));
-        relationships.add(flavorRel);
+        if (server.getFlavor() != null) {
+            Relationship flavorRel = buildRelationship(AAIUriFactory.createResourceUri(AAIObjectType.FLAVOR, cloudOwner,
+                    cloudRegionId, server.getFlavor().getId()));
+            relationships.add(flavorRel);
+        }
+
         return relationshipList;
     }
 
