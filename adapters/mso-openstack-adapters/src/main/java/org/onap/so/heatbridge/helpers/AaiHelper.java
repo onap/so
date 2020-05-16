@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.onap.aai.domain.yang.Flavor;
 import org.onap.aai.domain.yang.Image;
 import org.onap.aai.domain.yang.PInterface;
@@ -75,11 +76,34 @@ public class AaiHelper {
         List<Relationship> relationships = relationshipList.getRelationship();
 
         // vserver to pserver relationship
+<<<<<<< HEAD   (66e51a Merge "Restore action filter as a valid filter." into frankf)
         Relationship pserverRelationship =
                 buildRelationship(HeatBridgeConstants.AAI_PSERVER, ImmutableMap.<String, String>builder()
                         .put(HeatBridgeConstants.AAI_PSERVER_HOSTNAME, server.getHypervisorHostname()).build());
         relationships.add(pserverRelationship);
+=======
+        if (!StringUtils.isEmpty(server.getHypervisorHostname())) {
+            Relationship pserverRelationship = buildRelationship(
+                    AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, server.getHypervisorHostname()));
+            relationships.add(pserverRelationship);
+        }
+>>>>>>> CHANGE (baa54f add null check for server HostName/Name/Flavor)
 
+<<<<<<< HEAD   (66e51a Merge "Restore action filter as a valid filter." into frankf)
+=======
+        // vserver to generic-vnf relationship
+        Relationship genericVnfRelationship =
+                buildRelationship(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, genericVnfId));
+        relationships.add(genericVnfRelationship);
+
+        // vserver to vnfc relationship
+        if (!StringUtils.isEmpty(server.getName())) {
+            Relationship vnfcRelationship =
+                    buildRelationship(AAIUriFactory.createResourceUri(AAIObjectType.VNFC, server.getName()));
+            relationships.add(vnfcRelationship);
+        }
+
+>>>>>>> CHANGE (baa54f add null check for server HostName/Name/Flavor)
         // vserver to vf-module relationship
         Relationship vfModuleRelationship = buildRelationship(HeatBridgeConstants.AAI_VF_MODULE,
                 ImmutableMap.<String, String>builder().put(HeatBridgeConstants.AAI_GENERIC_VNF_ID, genericVnfId)
@@ -96,11 +120,20 @@ public class AaiHelper {
         }
 
         // vserver to flavor relationship
+<<<<<<< HEAD   (66e51a Merge "Restore action filter as a valid filter." into frankf)
         Relationship flavorRel = buildRelationship(HeatBridgeConstants.AAI_FLAVOR,
                 ImmutableMap.<String, String>builder().put(HeatBridgeConstants.AAI_CLOUD_OWNER, cloudOwner)
                         .put(HeatBridgeConstants.AAI_CLOUD_REGION_ID, cloudRegionId)
                         .put(HeatBridgeConstants.AAI_FLAVOR_ID, server.getFlavor().getId()).build());
         relationships.add(flavorRel);
+=======
+        if (server.getFlavor() != null) {
+            Relationship flavorRel = buildRelationship(AAIUriFactory.createResourceUri(AAIObjectType.FLAVOR, cloudOwner,
+                    cloudRegionId, server.getFlavor().getId()));
+            relationships.add(flavorRel);
+        }
+
+>>>>>>> CHANGE (baa54f add null check for server HostName/Name/Flavor)
         return relationshipList;
     }
 
