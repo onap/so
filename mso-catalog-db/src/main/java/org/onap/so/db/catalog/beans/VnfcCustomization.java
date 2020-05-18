@@ -40,8 +40,10 @@ import javax.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
+@RemoteResource("/vnfcCustomization")
 @Table(name = "vnfc_customization")
 public class VnfcCustomization implements Serializable {
 

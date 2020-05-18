@@ -19,7 +19,6 @@
     <module>mso-api-handler-common</module>
     <module>mso-api-handler-infra</module>
   </modules>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>

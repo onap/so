@@ -59,6 +59,11 @@ public class ExternalTaskServiceUtils {
         return lockDuration;
     }
 
+    public Long getLongLockDuration() {
+        Long lockDuration = Long.parseLong(env.getProperty("mso.long.lock-time", "600000"));
+        return lockDuration;
+    }
+
     @ScheduledLogging
     @Scheduled(fixedDelay = 30000)
     public void checkAllClientsActive() {

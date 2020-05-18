@@ -11,17 +11,11 @@
   <name>MSOCommonBPMN</name>
   <packaging>jar</packaging>
 
-  <properties>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <maven.compiler.source>1.8</maven.compiler.source>
-  </properties>
-
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.0</version>
         <configuration>
           <compilerId>groovy-eclipse-compiler</compilerId>
         </configuration>
@@ -35,7 +29,7 @@
           <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-eclipse-batch</artifactId>
-            <version>2.4.19-01</version>
+            <version>2.5.8-03</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -129,12 +123,13 @@
                       [1.3,)
                     </versionRange>
                     <goals>
-                      <goal>run</goal>
+                      <goal>execute</goal>
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore>
-                    </ignore>
+                    <execute>
+                      <runOnIncremental>true</runOnIncremental>
+                    </execute>
                   </action>
                 </pluginExecution>
               </pluginExecutions>
@@ -205,7 +200,24 @@
     </dependency>
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
-      <artifactId>groovy-all</artifactId>
+      <artifactId>groovy</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-xml</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-json</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-jsr223</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-test</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.onap.so</groupId>
@@ -318,7 +330,7 @@
     <dependency>
       <groupId>uk.co.blackpepper.bowman</groupId>
       <artifactId>bowman-client</artifactId>
-      <version>0.3.0</version>
+      <version>${bowman.client.version}</version>
     </dependency>
     <dependency>
       <groupId>pl.pragmatists</groupId>

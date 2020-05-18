@@ -42,8 +42,10 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 import com.openpojo.business.annotation.BusinessKey;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
+import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
+@RemoteResource("/vnfResource")
 @Table(name = "vnf_resource")
 public class VnfResource implements Serializable {
 

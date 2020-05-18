@@ -29,8 +29,10 @@ import javax.persistence.Table;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import com.openpojo.business.annotation.BusinessKey;
+import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
+@RemoteResource("/tempNetworkHeatTemplateLookup")
 @Table(name = "temp_network_heat_template_lookup")
 @IdClass(TempNetworkHeatTemplateLookupId.class)
 public class TempNetworkHeatTemplateLookup implements Serializable {

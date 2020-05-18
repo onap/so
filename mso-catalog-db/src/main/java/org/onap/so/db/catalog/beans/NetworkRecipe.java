@@ -32,8 +32,10 @@ import javax.persistence.TemporalType;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import com.openpojo.business.annotation.BusinessKey;
+import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
+@RemoteResource("/networkRecipe")
 @Table(name = "network_recipe")
 public class NetworkRecipe implements Serializable, Recipe {
     private static final long serialVersionUID = 768026109321305392L;
