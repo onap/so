@@ -22,7 +22,6 @@ package org.onap.so.adapters.tasks;
 
 import javax.annotation.PostConstruct;
 import org.camunda.bpm.client.ExternalTaskClient;
-import org.onap.so.utils.ExternalTaskServiceUtils;
 import org.onap.so.adapters.tasks.audit.AuditCreateStackService;
 import org.onap.so.adapters.tasks.audit.AuditDeleteStackService;
 import org.onap.so.adapters.tasks.audit.AuditQueryStackService;
@@ -30,6 +29,7 @@ import org.onap.so.adapters.tasks.inventory.CreateInventoryTask;
 import org.onap.so.adapters.tasks.orchestration.PollService;
 import org.onap.so.adapters.tasks.orchestration.RollbackService;
 import org.onap.so.adapters.tasks.orchestration.StackService;
+import org.onap.so.utils.ExternalTaskServiceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,10 +94,10 @@ public class TaskServices {
     }
 
     @PostConstruct
-    public void auditAAIInventory() throws Exception {
+    public void createtAAIInventory() throws Exception {
         for (int i = 0; i < externalTaskServiceUtils.getMaxClients(); i++) {
             ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
-            client.subscribe("InventoryCreate").lockDuration(externalTaskServiceUtils.getLockDuration())
+            client.subscribe("InventoryCreate").lockDuration(externalTaskServiceUtils.getLongLockDuration())
                     .handler(createInventory::executeExternalTask).open();
         }
     }

@@ -40,8 +40,6 @@ import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.onap.so.requestsdb.TimestampXMLAdapter;
-import uk.co.blackpepper.bowman.annotation.LinkedResource;
-import uk.co.blackpepper.bowman.annotation.ResourceId;
 
 @MappedSuperclass
 public abstract class InfraRequests implements java.io.Serializable {
@@ -164,7 +162,6 @@ public abstract class InfraRequests implements java.io.Serializable {
     @JoinColumn(name = "SO_REQUEST_ID", referencedColumnName = "REQUEST_ID", updatable = false)
     private List<CloudApiRequests> cloudApiRequests = new ArrayList<>();
 
-    @ResourceId
     public URI getRequestURI() {
         return URI.create(this.requestId);
     }
@@ -443,7 +440,6 @@ public abstract class InfraRequests implements java.io.Serializable {
         return requestAction;
     }
 
-    @LinkedResource
     public List<CloudApiRequests> getCloudApiRequests() {
         return cloudApiRequests;
     }
