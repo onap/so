@@ -307,7 +307,7 @@
     <dependency>
       <groupId>org.onap.aaf.authz</groupId>
       <artifactId>aaf-cadi-aaf</artifactId>
-      <version>2.1.9</version>
+      <version>${aaf.cadi.version}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.servlet</groupId>

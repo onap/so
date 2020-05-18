@@ -39,8 +39,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.openpojo.business.annotation.BusinessKey;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
+import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
+@RemoteResource("/collectionResourceInstanceGroupCustomization")
 @IdClass(CollectionResourceInstanceGroupCustomizationId.class)
 @Table(name = "collection_resource_instance_group_customization")
 public class CollectionResourceInstanceGroupCustomization implements Serializable {
@@ -60,10 +62,12 @@ public class CollectionResourceInstanceGroupCustomization implements Serializabl
     @Column(name = "INSTANCE_GROUP_MODEL_UUID")
     private String modelUUID;
 
+    @BusinessKey
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "COLLECTION_RESOURCE_CUSTOMIZATION_MODEL_UUID", updatable = false, insertable = false)
     private CollectionResourceCustomization collectionResourceCust;
 
+    @BusinessKey
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "INSTANCE_GROUP_MODEL_UUID", updatable = false, insertable = false)
     private InstanceGroup instanceGroup;

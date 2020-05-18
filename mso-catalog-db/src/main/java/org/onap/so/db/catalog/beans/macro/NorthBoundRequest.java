@@ -36,8 +36,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.openpojo.business.annotation.BusinessKey;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
+import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
+@RemoteResource("/northbound_request_ref_lookup")
 @Table(name = "northbound_request_ref_lookup")
 public class NorthBoundRequest implements Serializable {
 
