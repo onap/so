@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Set;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import org.hamcrest.Matcher;
 import com.openpojo.business.annotation.BusinessKey;
 import com.openpojo.random.RandomFactory;
@@ -41,7 +43,6 @@ import com.openpojo.validation.test.Tester;
 import com.openpojo.validation.utils.ValidationHelper;
 
 public class EqualsAndHashCodeTester implements Tester {
-
 
     private final Matcher m;
     private boolean onlyDeclaredMethods = false;
@@ -117,7 +118,6 @@ public class EqualsAndHashCodeTester implements Tester {
             Affirm.affirmFalse("Expected false for comparison of two unlike objects", "test".equals(classInstanceOne));
         }
     }
-
 
     private Set<PojoField> hasIdOrBusinessKey(PojoClass pojoClass) {
         final Set<PojoField> fields = new HashSet<>();

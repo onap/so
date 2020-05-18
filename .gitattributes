@@ -13,7 +13,7 @@
 *.xml text
 *.sql text
 *.bpmn text
-
+*.sh text eol=lf
 # Declare files that will always have CRLF line endings on checkout.
 
 

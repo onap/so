@@ -34,6 +34,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 /**
  * EntityBean class for a Cloudify Manager. This bean represents a Cloudify node through which TOSCA-based VNFs may be
@@ -45,6 +46,7 @@ import javax.persistence.TemporalType;
  * @author JC1348
  */
 @Entity
+@RemoteResource("/cloudifyManager")
 @Table(name = "cloudify_managers")
 public class CloudifyManager {
 

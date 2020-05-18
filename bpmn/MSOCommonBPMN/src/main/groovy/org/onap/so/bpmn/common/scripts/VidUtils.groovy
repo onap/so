@@ -31,7 +31,6 @@ import org.onap.so.bpmn.core.xml.XmlTool
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-
 class VidUtils {
     private static final Logger logger = LoggerFactory.getLogger( VidUtils.class);
 
