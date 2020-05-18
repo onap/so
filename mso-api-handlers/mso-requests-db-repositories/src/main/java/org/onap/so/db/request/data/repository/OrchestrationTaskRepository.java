@@ -24,10 +24,9 @@ import org.onap.so.db.request.beans.OrchestrationTask;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
-import java.util.List;
 
 @RepositoryRestResource(collectionResourceRel = "orchestrationTask", path = "orchestrationTask")
 public interface OrchestrationTaskRepository extends JpaRepository<OrchestrationTask, String> {
 
-    public List<OrchestrationTask> findByStatus(@Param("status") String status);
+    public OrchestrationTask[] findByStatus(@Param("status") String status);
 }

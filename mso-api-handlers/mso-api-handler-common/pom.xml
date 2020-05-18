@@ -23,7 +23,6 @@
     <reflections-version>0.9.9-RC1</reflections-version>
     <paranamer-version>2.5.2</paranamer-version>
     <scannotation-version>1.0.3</scannotation-version>
-    <java.version>1.8</java.version>
   </properties>
   <dependencyManagement>
     <dependencies>
