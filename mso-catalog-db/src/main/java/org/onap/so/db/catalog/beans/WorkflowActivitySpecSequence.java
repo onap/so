@@ -36,9 +36,11 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.openpojo.business.annotation.BusinessKey;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
+import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 
 @Entity
+@RemoteResource("/workflowActivitySpecSequence")
 @Table(name = "workflow_activity_spec_sequence")
 public class WorkflowActivitySpecSequence implements Serializable {
 

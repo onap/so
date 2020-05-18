@@ -51,8 +51,8 @@ import uk.co.blackpepper.bowman.annotation.ResourceId;
  * will be loaded via CloudConfig object, of which it is a component
  *
  */
-@RemoteResource("/cloudSite")
 @Entity
+@RemoteResource("/cloudSite")
 @Table(name = "cloud_sites")
 @JsonAutoDetect(fieldVisibility = Visibility.ANY)
 public class CloudSite {

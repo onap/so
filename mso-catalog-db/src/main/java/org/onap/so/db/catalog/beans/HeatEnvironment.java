@@ -34,8 +34,10 @@ import javax.persistence.TemporalType;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import com.openpojo.business.annotation.BusinessKey;
+import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
+@RemoteResource("/heatEnvironment")
 @Table(name = "heat_environment")
 public class HeatEnvironment implements Serializable {
 
