@@ -38,8 +38,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.openpojo.business.annotation.BusinessKey;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
+import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
+@RemoteResource("/networkResourceCustomization")
 @Table(name = "network_resource_customization")
 public class NetworkResourceCustomization implements Serializable {
     public static final long serialVersionUID = -1322322139926390329L;

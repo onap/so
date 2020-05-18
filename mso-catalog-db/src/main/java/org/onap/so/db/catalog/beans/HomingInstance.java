@@ -38,8 +38,8 @@ import java.net.URI;
  * homing
  *
  */
-@RemoteResource("/homingInstance")
 @Entity
+@RemoteResource("/homingInstance")
 @Table(name = "homing_instances")
 public class HomingInstance {
     @JsonProperty

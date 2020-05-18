@@ -108,25 +108,58 @@
       <artifactId>cxf-logging</artifactId>
       <version>${project.version}</version>
     </dependency>
-  </dependencies>
 
+
+  </dependencies>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>apache.snapshots</id>
+      <name>Maven Plugin Snapshots</name>
+      <url>http://repository.apache.org/snapshots/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
   <build>
     <finalName>${project.artifactId}-${project.version}</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-java2ws-plugin</artifactId>
-        <version>${cxf.version}</version>
+        <version>3.3.3</version>
         <dependencies>
           <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxws</artifactId>
-            <version>${cxf.version}</version>
+            <version>3.3.3</version>
           </dependency>
           <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-simple</artifactId>
-            <version>${cxf.version}</version>
+            <version>3.3.3</version>
+          </dependency>
+
+          <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-ri</artifactId>
+            <version>2.3.0</version>
+            <type>pom</type>
+          </dependency>
+          <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.3.2</version>
+          </dependency>
+          <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.4.0-b180725.0427</version>
+          </dependency>
+          <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>2.4.0-b180725.0644</version>
           </dependency>
         </dependencies>
         <executions>
@@ -137,6 +170,9 @@
               <className>org.onap.so.adapters.requestsdb.MsoRequestsDbAdapter</className>
               <genWsdl>true</genWsdl>
               <verbose>true</verbose>
+              <ignoredDependencies>
+                <ignoredDependency>com.sun.xml.bind:jaxb-impl</ignoredDependency>
+              </ignoredDependencies>
             </configuration>
             <goals>
               <goal>java2ws</goal>

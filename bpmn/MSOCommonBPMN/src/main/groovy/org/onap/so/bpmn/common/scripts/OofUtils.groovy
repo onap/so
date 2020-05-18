@@ -56,7 +56,6 @@ import org.slf4j.LoggerFactory
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 import javax.ws.rs.core.UriBuilder
-import javax.xml.ws.http.HTTPException
 
 import static org.onap.so.bpmn.common.scripts.GenericUtils.*
 
