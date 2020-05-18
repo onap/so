@@ -13,6 +13,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.openpojo.business.annotation.BusinessKey;
 
 @Entity
+@RemoteResource("/activitySpecCategories")
 @Table(name = "activity_spec_categories")
 public class ActivitySpecCategories implements Serializable {
 

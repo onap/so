@@ -48,7 +48,6 @@ import com.openpojo.business.annotation.BusinessKey;
  */
 
 @Entity
-
 @JsonInclude(Include.NON_NULL)
 @Table(name = "request_processing_data")
 public class RequestProcessingData implements Serializable {
