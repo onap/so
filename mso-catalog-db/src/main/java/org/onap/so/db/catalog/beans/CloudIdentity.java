@@ -36,6 +36,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 /**
  * EntityBean class for a CloudIdentity. This bean represents a cloud identity service instance (i.e. a DCP node) in the
@@ -43,6 +44,7 @@ import javax.persistence.TemporalType;
  *
  */
 @Entity
+@RemoteResource("/cloudIdentity")
 @Table(name = "identity_services")
 public class CloudIdentity {
 
