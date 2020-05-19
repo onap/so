@@ -787,6 +787,11 @@ public class CatalogDbClient {
         return this.getSingleResource(cloudSiteClient, getUri(uri + id));
     }
 
+    // Bring back old version of methind since the caller - OofInfraUtils.java - is not running in a spring context
+    public void postOofHomingCloudSite(CloudSite cloudSite) {
+        this.postSingleResource(cloudSiteClient, cloudSite);
+    }
+
     public CloudSite postCloudSite(CloudSite cloudSite) {
         if (cloudSite == null) {
             throw new EntityNotFoundException("CloudSite passed as null");
