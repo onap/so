@@ -2,6 +2,75 @@
   "comments": [
     {
       "key": {
+        "uuid": "70a34a42_7c7bf0c2",
+        "filename": "adapters/etsi-sol002-adapter/src/main/java/org/onap/so/adapters/vevnfm/aai/AaiConnection.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-05-19T15:46:44Z",
+      "side": 1,
+      "message": "change it to \n\nif (relationship !\u003d null \u0026\u0026 relationship.getRelationshipData() !\u003d null){",
+      "range": {
+        "startLine": 60,
+        "startChar": 12,
+        "endLine": 60,
+        "endChar": 32
+      },
+      "revId": "a33a37de859bb984a6a06523d04cf601e3bec499",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ee3e4a57_955acd06",
+        "filename": "adapters/etsi-sol002-adapter/src/main/java/org/onap/so/adapters/vevnfm/aai/AaiConnection.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-05-19T15:46:44Z",
+      "side": 1,
+      "message": "You may remove second if-statement \n\n            if (relationshipList \u003d\u003d null || relationshipList.getRelationship() \u003d\u003d null) {\n\t\n                return null;\n\t\n            }\n\t\n\t\n            final List\u003cRelationship\u003e relationships \u003d relationshipList.getRelationship();",
+      "range": {
+        "startLine": 162,
+        "startChar": 0,
+        "endLine": 170,
+        "endChar": 13
+      },
+      "revId": "a33a37de859bb984a6a06523d04cf601e3bec499",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f27e5e2c_9b608af5",
+        "filename": "adapters/etsi-sol002-adapter/src/main/java/org/onap/so/adapters/vevnfm/aai/AaiConnection.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-05-19T15:46:44Z",
+      "side": 1,
+      "message": "change it to \n\nVSERVER.equals(relationship.getRelatedTo())",
+      "range": {
+        "startLine": 173,
+        "startChar": 20,
+        "endLine": 173,
+        "endChar": 63
+      },
+      "revId": "a33a37de859bb984a6a06523d04cf601e3bec499",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7bb11083_f8ca5efb",
         "filename": "adapters/etsi-sol002-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/DmaapConditionalSender.java",
         "patchSetId": 5
