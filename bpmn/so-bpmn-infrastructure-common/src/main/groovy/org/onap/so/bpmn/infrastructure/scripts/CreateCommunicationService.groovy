@@ -383,7 +383,7 @@ class CreateCommunicationService extends AbstractServiceTaskProcessor {
             }
 
             e2eInputMap.put("sNSSAI", execution.getVariable("sNSSAI_id"))
-
+	    e2eInputMap.put("sST", execution.getVariable("csServiceType"))
             execution.setVariable("e2eInputMap", e2eInputMap)
             execution.setVariable("e2eServiceType", e2eServiceDecomposition.getServiceType())
             execution.setVariable("e2eModelInvariantUuid", e2eServiceDecomposition.getModelInfo().getModelInvariantUuid())
