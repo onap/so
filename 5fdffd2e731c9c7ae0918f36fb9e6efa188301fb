@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a0c0f8c6_79b4c8f5",
+        "filename": "so-simulator/src/main/docker/Dockerfile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2319
+      },
+      "writtenOn": "2020-05-19T07:34:04Z",
+      "side": 1,
+      "message": "please use docker from ONAP (onap/integration-java11)",
+      "revId": "5fdffd2e731c9c7ae0918f36fb9e6efa188301fb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
