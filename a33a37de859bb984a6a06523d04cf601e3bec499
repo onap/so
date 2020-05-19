@@ -22,6 +22,30 @@
       "revId": "a33a37de859bb984a6a06523d04cf601e3bec499",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7a0f8f03_613f31d3",
+        "filename": "adapters/etsi-sol002-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/DmaapConditionalSender.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-05-19T15:23:14Z",
+      "side": 1,
+      "message": "Yes, the vserverName being null is just one of the execution paths.",
+      "parentUuid": "7bb11083_f8ca5efb",
+      "range": {
+        "startLine": 88,
+        "startChar": 63,
+        "endLine": 88,
+        "endChar": 74
+      },
+      "revId": "a33a37de859bb984a6a06523d04cf601e3bec499",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
