@@ -22,6 +22,9 @@ package org.onap.so.client.orchestration;
 
 import com.google.common.base.Strings;
 import java.util.Optional;
+import org.onap.aai.domain.yang.RelatedToProperty;
+import org.onap.aai.domain.yang.Relationship;
+import org.onap.aai.domain.yang.RelationshipData;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
@@ -68,8 +71,15 @@ public class AAIPnfResources {
     public void checkIfPnfExistsInAaiAndCanBeUsed(String pnfName) throws Exception {
         Optional<org.onap.aai.domain.yang.Pnf> pnfFromAai = injectionHelper.getAaiClient()
                 .get(org.onap.aai.domain.yang.Pnf.class, AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfName));
-        if (pnfFromAai.isPresent() && isOrchestrationStatusSet(pnfFromAai.get())) {
-            checkOrchestrationStatusOfExistingPnf(pnfFromAai.get());
+        if (pnfFromAai.isPresent()) {
+            checkIfPnfCanBeUsed(pnfFromAai.get());
+        }
+    }
+
+    private void checkIfPnfCanBeUsed(org.onap.aai.domain.yang.Pnf pnfFromAai) throws Exception {
+        isRelatedToService(pnfFromAai);
+        if (isOrchestrationStatusSet(pnfFromAai)) {
+            checkOrchestrationStatusOfExistingPnf(pnfFromAai);
         }
     }
 
@@ -92,7 +102,39 @@ public class AAIPnfResources {
                     pnfFromAai.getPnfName(), pnfFromAai.getOrchestrationStatus());
             logger.error(errorMessage);
             throw new Exception(errorMessage);
-
         }
+    }
+
+    private void isRelatedToService(org.onap.aai.domain.yang.Pnf pnfFromAai) throws Exception {
+        if (pnfFromAai.getRelationshipList() != null) {
+            for (Relationship relationship : pnfFromAai.getRelationshipList().getRelationship()) {
+                if (relationship.getRelatedTo().equals("service-instance")) {
+                    String errorMessage = prepareRelationErrorMessage(pnfFromAai, relationship);
+                    logger.error(errorMessage);
+                    throw new Exception(errorMessage);
+                }
+            }
+        }
+    }
+
+    private String prepareRelationErrorMessage(org.onap.aai.domain.yang.Pnf pnfFromAai, Relationship relationship) {
+        String serviceInstanceName = "";
+        String serviceInstanceId = "";
+
+        for (RelationshipData relationshipData : relationship.getRelationshipData()) {
+            if (relationshipData.getRelationshipKey().equals("service-instance.service-instance-id")) {
+                serviceInstanceId = relationshipData.getRelationshipValue();
+                break;
+            }
+        }
+        for (RelatedToProperty relatedToProperty : relationship.getRelatedToProperty()) {
+            if (relatedToProperty.getPropertyKey().equals("service-instance.service-instance-name")) {
+                serviceInstanceName = relatedToProperty.getPropertyValue();
+                break;
+            }
+        }
+        return String.format(
+                "Pnf with name %s exist with orchestration status %s and is related to %s service with certain service-instance-id: %s",
+                pnfFromAai.getPnfName(), pnfFromAai.getOrchestrationStatus(), serviceInstanceName, serviceInstanceId);
     }
 }
