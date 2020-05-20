@@ -29,7 +29,10 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import joptsimple.internal.Strings;
 import org.junit.Before;
 import org.junit.Test;
@@ -148,6 +151,27 @@ public class AAIPnfResourcesTest extends TestDataSetup {
             assertThat(e.getMessage()).isEqualTo(String.format(
                     "pnf with name %s already exists with orchestration status Active, only status Inventoried allows to use existing pnf",
                     PNF_NAME));
+        }
+    }
+
+    @Test
+    public void existingPnfInAaiIsRelatedToService() throws IOException {
+        // given
+        final String relatedTo = "service-instance";
+        final String serviceInstanceId = "service-instance-id";
+        final String path = "src/test/resources/__files/BuildingBlocks/aaiPnf.json";
+        org.onap.aai.domain.yang.Pnf pnfFromAai =
+                new ObjectMapper().readValue(new File(path), org.onap.aai.domain.yang.Pnf.class);
+        when(injectionHelperMock.getAaiClient().get(org.onap.aai.domain.yang.Pnf.class,
+                AAIUriFactory.createResourceUri(AAIObjectType.PNF, PNF_NAME))).thenReturn(Optional.of(pnfFromAai));
+        // when
+        try {
+            testedObject.checkIfPnfExistsInAaiAndCanBeUsed(PNF_NAME);
+        } catch (Exception e) {
+            // then
+            assertThat(e.getMessage()).isEqualTo(String.format(
+                    "Pnf with name %s exist with orchestration status %s and is related to %s service with certain service-instance-id: %s",
+                    PNF_NAME, OrchestrationStatus.ACTIVE, relatedTo, serviceInstanceId));
         }
     }
 
