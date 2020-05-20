@@ -293,10 +293,10 @@ class CreateCommunicationService extends AbstractServiceTaskProcessor {
 
 
             //2. profile info
-            Integer expDataRateDL = jsonUtil.getJsonIntValue(uuiRequest, "service.parameters.requestInputs.expDataRateDL")
-            Integer expDataRateUL = jsonUtil.getJsonIntValue(uuiRequest, "service.parameters.requestInputs.expDataRateUL")
-            Integer latency = jsonUtil.getJsonIntValue(uuiRequest, "service.parameters.requestInputs.latency")
-            Integer maxNumberOfUEs = jsonUtil.getJsonIntValue(uuiRequest, "service.parameters.requestInputs.maxNumberofUEs")
+            Integer expDataRateDL = jsonUtil.getJsonValue(uuiRequest, "service.parameters.requestInputs.expDataRateDL") as Integer
+            Integer expDataRateUL = jsonUtil.getJsonValue(uuiRequest, "service.parameters.requestInputs.expDataRateUL") as Integer
+            Integer latency = jsonUtil.getJsonValue(uuiRequest, "service.parameters.requestInputs.latency") as Integer
+            Integer maxNumberOfUEs = jsonUtil.getJsonValue(uuiRequest, "service.parameters.requestInputs.maxNumberofUEs") as Integer
             String uEMobilityLevel = jsonUtil.getJsonValue(uuiRequest, "service.parameters.requestInputs.uemobilityLevel")
             String resourceSharingLevel = jsonUtil.getJsonValue(uuiRequest, "service.parameters.requestInputs.resourceSharingLevel")
             String coverageArea = jsonUtil.getJsonValue(uuiRequest, "service.parameters.requestInputs.coverageAreaList")
