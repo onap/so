@@ -52,7 +52,7 @@ public class OofInfraUtils {
             getCloudsite = Optional.ofNullable(client.getCloudSite(cloudSite.getId(), endpoint + "/cloudSite/"))
                     .orElse(new CloudSite());
             if (!cloudSite.getId().equals(getCloudsite.getId())) {
-                client.postCloudSite(cloudSite);
+                client.postOofHomingCloudSite(cloudSite);
                 logger.debug("Did not findd cloudsite : {}", cloudSite.getId());
                 logger.debug("Will create cloudSite: {}", cloudSite.toString());
             } else {
