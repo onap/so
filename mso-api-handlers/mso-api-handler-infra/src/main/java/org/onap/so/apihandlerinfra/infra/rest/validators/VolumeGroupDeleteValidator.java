@@ -8,7 +8,9 @@ import org.onap.so.apihandlerinfra.Actions;
 import org.onap.so.apihandlerinfra.infra.rest.AAIDataRetrieval;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class VolumeGroupDeleteValidator implements RequestValidator {
 
     @Autowired

@@ -24,7 +24,9 @@ import java.util.Map;
 import java.util.Optional;
 import org.onap.so.apihandlerinfra.Actions;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
+import org.springframework.stereotype.Component;
 
+@Component
 public interface RequestValidator {
 
 
