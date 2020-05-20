@@ -22,6 +22,30 @@
       "revId": "5738ac29a23832f6b59fb818446100cc83543291",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a126be9a_e94902b7",
+        "filename": "adapters/etsi-sol002-adapter/src/main/java/org/onap/so/adapters/vevnfm/aai/AaiConnection.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-05-20T10:58:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5750717f_6b004031",
+      "range": {
+        "startLine": 168,
+        "startChar": 0,
+        "endLine": 172,
+        "endChar": 98
+      },
+      "revId": "5738ac29a23832f6b59fb818446100cc83543291",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
