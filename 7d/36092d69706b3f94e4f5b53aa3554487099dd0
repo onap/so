@@ -1,0 +1,9 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Mateusz Harazin <mateusz.harazin@nokia.com>
+Code-Review+1: Damian Nowak <damian.nowak@nokia.com>
+Code-Review+2: Steve Smokowski <ss835w@att.com>
+Submitted-by: Steve Smokowski <ss835w@att.com>
+Submitted-at: Wed, 20 May 2020 10:12:05 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/so/+/107726
+Project: so
+Branch: refs/heads/master
