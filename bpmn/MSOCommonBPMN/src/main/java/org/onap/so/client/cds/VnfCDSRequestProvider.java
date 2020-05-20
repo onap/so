@@ -93,9 +93,10 @@ public class VnfCDSRequestProvider implements CDSRequestProvider {
             final GeneralBuildingBlock buildingBlock = execution.getGeneralBuildingBlock();
             List<Map<String, Object>> userParamsFromRequest =
                     buildingBlock.getRequestContext().getRequestParameters().getUserParams();
-
-            configureInstanceParamsForVnf.populateInstanceParams(vnfObject, userParamsFromRequest,
-                    modelCustomizationUuid);
+            if (userParamsFromRequest != null && userParamsFromRequest.size() != 0) {
+                configureInstanceParamsForVnf.populateInstanceParams(vnfObject, userParamsFromRequest,
+                        modelCustomizationUuid);
+            }
         } catch (Exception e) {
             throw new PayloadGenerationException("Failed to buildPropertyObjectForVnf", e);
         }
