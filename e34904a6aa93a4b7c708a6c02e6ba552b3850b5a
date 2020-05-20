@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "77b466e5_57f5610c",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/orchestration/AAIPnfResources.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-05-20T13:13:05Z",
+      "side": 1,
+      "message": "When iterating, you have to be sure that relatedToProperty element has property-key set as - \"service-instance.service-instance-name\". Then you may get service instance name.",
+      "range": {
+        "startLine": 108,
+        "startChar": 22,
+        "endLine": 108,
+        "endChar": 94
+      },
+      "revId": "e34904a6aa93a4b7c708a6c02e6ba552b3850b5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
