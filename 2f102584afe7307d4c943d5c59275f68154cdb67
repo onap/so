@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "30b9ff79_a6b2a91a",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/orchestration/AAIPnfResources.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-05-20T15:49:16Z",
+      "side": 1,
+      "message": "service-instance.service-instance-id",
+      "range": {
+        "startLine": 114,
+        "startChar": 74,
+        "endLine": 114,
+        "endChar": 112
+      },
+      "revId": "2f102584afe7307d4c943d5c59275f68154cdb67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "22726973_ca3d9adc",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/orchestration/AAIPnfResources.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-05-20T15:49:16Z",
+      "side": 1,
+      "message": "This whole code is for preparing error message, I would seperate it to private method. My proposal:\n\n   private void isRelatedToService(org.onap.aai.domain.yang.Pnf pnfFromAai) throws Exception {\n        if (pnfFromAai.getRelationshipList() !\u003d null) {\n            for (Relationship relationship : pnfFromAai.getRelationshipList().getRelationship()) {\n                if (relationship.getRelatedTo().equals(\"service-instance\")) {\n                    String errorMessage \u003d prepareRelationErrorMessage(pnfFromAai, relationship);\n                    logger.error(errorMessage);\n                    throw new Exception(errorMessage);\n                }\n            }\n        }\n    }\n\n    private String prepareRelationErrorMessage(org.onap.aai.domain.yang.Pnf pnfFromAai, Relationship relationship) {\n        String serviceInstanceName \u003d \"\";\n        String serviceInstanceId \u003d \"\";\n        for (RelatedToProperty relatedToProperty : relationship.getRelatedToProperty()) {\n            if (relatedToProperty.getPropertyKey().equals(\"service-instance.service-instance-name\")) {\n                serviceInstanceName \u003d relatedToProperty.getPropertyValue();\n                break;\n            }\n        }\n        for (RelationshipData relationshipData : relationship.getRelationshipData()) {\n            if (relationshipData.getRelationshipKey().equals(\"service-instance.service-instance-id\")) {\n                serviceInstanceId \u003d relationshipData.getRelationshipValue();\n               break;\n            }\n        }\n        return String.format(\n                \"Pnf with name %s exist with orchestration status %s and is related to %s service with certain service-instance-id: %s\",\n                pnfFromAai.getPnfName(), pnfFromAai.getOrchestrationStatus(), serviceInstanceName, serviceInstanceId);\n    }",
+      "range": {
+        "startLine": 112,
+        "startChar": 18,
+        "endLine": 124,
+        "endChar": 55
+      },
+      "revId": "2f102584afe7307d4c943d5c59275f68154cdb67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0628d5b4_8345d82b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/orchestration/AAIPnfResources.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-05-20T15:49:16Z",
+      "side": 1,
+      "message": "Here is not good place to throw exception. If you find a relation \"service-instance\", but not find a instance name for some reason, the exception should be also thrown.",
+      "range": {
+        "startLine": 125,
+        "startChar": 27,
+        "endLine": 125,
+        "endChar": 62
+      },
+      "revId": "2f102584afe7307d4c943d5c59275f68154cdb67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "da50b7ef_49a7f922",
+        "filename": "bpmn/so-bpmn-tasks/src/test/resources/__files/BuildingBlocks/aaiPnf.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-05-20T15:49:16Z",
+      "side": 1,
+      "message": "Inventoried should not happen in case of relation, give more representative case, like \"Active\".",
+      "range": {
+        "startLine": 4,
+        "startChar": 26,
+        "endLine": 4,
+        "endChar": 37
+      },
+      "revId": "2f102584afe7307d4c943d5c59275f68154cdb67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1513df46_1e4a4cc0",
+        "filename": "bpmn/so-bpmn-tasks/src/test/resources/__files/BuildingBlocks/aaiPnf.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-05-20T15:49:16Z",
+      "side": 1,
+      "message": "service-instance.service-instance-id",
+      "range": {
+        "startLine": 18,
+        "startChar": 32,
+        "endLine": 18,
+        "endChar": 70
+      },
+      "revId": "2f102584afe7307d4c943d5c59275f68154cdb67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
