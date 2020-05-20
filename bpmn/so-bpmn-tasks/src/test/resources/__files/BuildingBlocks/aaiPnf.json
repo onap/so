@@ -1,0 +1,35 @@
+{
+  "pnfName": "pnfTest",
+  "pnfId": "pnfId",
+  "orchestrationStatus": "orchestrationStatus",
+  "resourceVersion": "resourceVersion",
+  "relationshipList": {
+    "relationship": [
+      {
+        "relatedTo": "service-instance",
+        "relationshipLabel": "org.onap.relationships.inventory.ComposedOf",
+        "relatedLink": "relatedLink",
+        "relationshipData": [
+          {
+            "relationshipKey": "relationshipKey",
+            "relationshipValue": "relationshipValue"
+          },
+          {
+            "relationshipKey": "relationshipKey",
+            "relationshipValue": "relationshipValue"
+          },
+          {
+            "relationshipKey": "relationshipKey",
+            "relationshipValue": "relationshipValue"
+          }
+        ],
+        "relatedToProperty": [
+          {
+            "propertyKey": "service-instance.service-instance-name",
+            "propertyValue": "ServiceName"
+          }
+        ]
+      }
+    ]
+  }
+}

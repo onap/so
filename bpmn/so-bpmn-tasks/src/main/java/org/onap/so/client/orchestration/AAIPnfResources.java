@@ -22,6 +22,8 @@ package org.onap.so.client.orchestration;
 
 import com.google.common.base.Strings;
 import java.util.Optional;
+import org.onap.aai.domain.yang.RelatedToProperty;
+import org.onap.aai.domain.yang.Relationship;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
@@ -68,7 +70,8 @@ public class AAIPnfResources {
     public void checkIfPnfExistsInAaiAndCanBeUsed(String pnfName) throws Exception {
         Optional<org.onap.aai.domain.yang.Pnf> pnfFromAai = injectionHelper.getAaiClient()
                 .get(org.onap.aai.domain.yang.Pnf.class, AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfName));
-        if (pnfFromAai.isPresent() && isOrchestrationStatusSet(pnfFromAai.get())) {
+        if (pnfFromAai.isPresent() && isOrchestrationStatusSet(pnfFromAai.get())
+                && isRelatedToService(pnfFromAai.get())) {
             checkOrchestrationStatusOfExistingPnf(pnfFromAai.get());
         }
     }
@@ -94,5 +97,25 @@ public class AAIPnfResources {
             throw new Exception(errorMessage);
 
         }
+    }
+
+    private boolean isRelatedToService(org.onap.aai.domain.yang.Pnf pnfFromAai) throws Exception {
+        if (pnfFromAai.getRelationshipList() == null) {
+            return false;
+        }
+        for (Relationship relationship : pnfFromAai.getRelationshipList().getRelationship()) {
+            if (relationship.getRelatedTo().equals("service-instance")) {
+                for (RelatedToProperty relatedToProperty : relationship.getRelatedToProperty()) {
+                    String errorMessage = String.format(
+                            "Pnf with name %s exist with orchestration status %s and is related to %s service",
+                            pnfFromAai.getPnfName(), pnfFromAai.getOrchestrationStatus(),
+                            relatedToProperty.getPropertyValue());
+                    logger.error(errorMessage);
+                    throw new Exception(errorMessage);
+                }
+                return true;
+            }
+        }
+        return false;
     }
 }
