@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "90f8090a_a8c85b1d",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/orchestration/AAIPnfResources.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-05-21T06:35:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "30b9ff79_a6b2a91a",
+      "range": {
+        "startLine": 114,
+        "startChar": 74,
+        "endLine": 114,
+        "endChar": 112
+      },
+      "revId": "2f102584afe7307d4c943d5c59275f68154cdb67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "22726973_ca3d9adc",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/orchestration/AAIPnfResources.java",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "2f102584afe7307d4c943d5c59275f68154cdb67",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7e08d4d6_118efb54",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/orchestration/AAIPnfResources.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-05-21T06:35:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "22726973_ca3d9adc",
+      "range": {
+        "startLine": 112,
+        "startChar": 18,
+        "endLine": 124,
+        "endChar": 55
+      },
+      "revId": "2f102584afe7307d4c943d5c59275f68154cdb67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "e2055d8f_f8bdcbd3",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/orchestration/AAIPnfResources.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-05-21T06:35:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0628d5b4_8345d82b",
+      "range": {
+        "startLine": 125,
+        "startChar": 27,
+        "endLine": 125,
+        "endChar": 62
+      },
+      "revId": "2f102584afe7307d4c943d5c59275f68154cdb67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da50b7ef_49a7f922",
         "filename": "bpmn/so-bpmn-tasks/src/test/resources/__files/BuildingBlocks/aaiPnf.json",
         "patchSetId": 2
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "18b68744_850940d0",
+        "filename": "bpmn/so-bpmn-tasks/src/test/resources/__files/BuildingBlocks/aaiPnf.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-05-21T06:35:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da50b7ef_49a7f922",
+      "range": {
+        "startLine": 4,
+        "startChar": 26,
+        "endLine": 4,
+        "endChar": 37
+      },
+      "revId": "2f102584afe7307d4c943d5c59275f68154cdb67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1513df46_1e4a4cc0",
         "filename": "bpmn/so-bpmn-tasks/src/test/resources/__files/BuildingBlocks/aaiPnf.json",
         "patchSetId": 2
@@ -114,6 +210,30 @@
       "revId": "2f102584afe7307d4c943d5c59275f68154cdb67",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5f42dab3_718fce7c",
+        "filename": "bpmn/so-bpmn-tasks/src/test/resources/__files/BuildingBlocks/aaiPnf.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-05-21T06:35:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1513df46_1e4a4cc0",
+      "range": {
+        "startLine": 18,
+        "startChar": 32,
+        "endLine": 18,
+        "endChar": 70
+      },
+      "revId": "2f102584afe7307d4c943d5c59275f68154cdb67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
