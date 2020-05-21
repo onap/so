@@ -1,0 +1,9 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Yuriy Malakov <Yuriy.Malakov@att.com>
+Code-Review+1: Damian Nowak <damian.nowak@nokia.com>
+Code-Review+2: Lukasz Muszkieta <lukasz.muszkieta@nokia.com>
+Submitted-by: Lukasz Muszkieta <lukasz.muszkieta@nokia.com>
+Submitted-at: Thu, 21 May 2020 10:53:02 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/so/+/107853
+Project: so
+Branch: refs/heads/frankfurt
