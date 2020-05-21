@@ -136,7 +136,6 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
             String OOFResponse = httpResponse.readEntity(String.class)
             logger.debug("NSI OOFResponse is: " + OOFResponse)
             execution.setVariable("OOFResponse", OOFResponse)
-            int index = 0
             //This needs to be changed to derive a value when we add policy to decide the solution options.
             Map OOFResponseObject = new JsonSlurper().parseText(OOFResponse)
             Map solutions = OOFResponseObject.get("solutions")
@@ -145,41 +144,12 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
             Boolean isSharable = resourceSharingLevel.equals("shared")
 
             if (solutions != null) {
-                if (isSharable) {
+                if (isSharable && hasSharedNSIsolutions(solutions)) {
                     //sharedNSISolution
                     processSharedNSISolutions(solutions, execution)
-                } else {
-                    //TODO test OOF
-                    if (solutions.containsKey("newNSISolutions")) {
-                        List<Map> newNSISolutions = solutions.get("newNSISolutions")
-                        List<Map> NSSImap = new ArrayList<>()
-                        if (newNSISolutions != null && newNSISolutions.size() > 0) {
-                            NSSImap = newNSISolutions.get(index).get("NSSISolutions") as List<Map>
-                        }
-                        for (Map nssi : NSSImap) {
-                            def nssiSolution = nssi.get("NSSISolution") as Map<String, ?>
-                            String nssiName = nssiSolution.getOrDefault("NSSIName", "")
-                            String nssiId = nssiSolution.getOrDefault("NSSIId", "")
-                            String domain = nssiSolution.getOrDefault("domainName", "").toString().toUpperCase()
-                            switch (domain) {
-                                case "AN":
-                                    sliceTaskParams.setAnSuggestNssiId(nssiId)
-                                    sliceTaskParams.setAnSuggestNssiName(nssiName)
-                                    break
-                                case "CN":
-                                    sliceTaskParams.setCnSuggestNssiId(nssiId)
-                                    sliceTaskParams.setCnSuggestNssiName(nssiName)
-                                    break
-                                case "TN":
-                                    sliceTaskParams.setTnSuggestNssiId(nssiId)
-                                    sliceTaskParams.setTnSuggestNssiName(nssiName)
-                                    break
-                                default:
-                                    break
-                            }
-                        }
-                        //TODO sliceProfile
-                    }
+                }
+                else if(solutions.containsKey("newNSISolutions")) {
+                    processNewNSISolutions(solutions, execution)
                 }
             }
             execution.setVariable("sliceTaskParams", sliceTaskParams)
@@ -188,17 +158,45 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
         logger.debug("*** Completed options Call to OOF ***")
     }
 
-    private void processSharedNSISolutions(Map solutions, DelegateExecution execution) {
-        if (!solutions.containsKey("sharedNSISolutions"))
-        {
-            logger.error("OOF don't return sharedNSISolutions")
-            return
+    private boolean hasSharedNSIsolutions( Map solutions){
+        if(solutions.containsKey("sharedNSISolutions")){
+            List sharedNSIsolutions = solutions.get("sharedNSISolutions")
+            if (sharedNSIsolutions != null && !sharedNSIsolutions.isEmpty()) {
+                return  true
+            }
         }
+        return false
+    }
+
+    private void processNewNSISolutions(Map solutions, DelegateExecution execution) {
+        int index = 0
+        List<Map> newNSISolutions = solutions.get("newNSISolutions")
+        List<Map> NSSImap = new ArrayList<>()
+        if (newNSISolutions != null && newNSISolutions.size() > 0) {
+            NSSImap = newNSISolutions.get(index).get("NSSISolutions") as List<Map>
+            for (Map nssi : NSSImap) {
+                Map oofSliceProfile = nssi.get("sliceProfile")
+                String domain = oofSliceProfile.getOrDefault("domainType","")
+                logger.debug("OOF newNSISolutions SliceProfile: " +oofSliceProfile.toString()+",domain:${domain}")
+                if(null != domain){
+                    //TODO
+//                    def nssiSolution = nssi.get("NSSISolution") as Map<String, ?>
+//                    String nssiName = nssiSolution.getOrDefault("NSSIName", "")
+//                    String nssiId = nssiSolution.getOrDefault("NSSIId", "")
+//                    saveNSSIId(nssi, sliceTaskParams)
+                    Map<String, Object> sliceProfile = getSliceProfile(domain, execution, oofSliceProfile)
+                    saveSliceProfile(execution, domain, sliceProfile)
+
+                }
+            }
+        }
+    }
+
+    private void processSharedNSISolutions(Map solutions, DelegateExecution execution) {
         String nsiName, nsiInstanceId, nssiId, nssiName
-        Map sliceProfile
         SliceTaskParams sliceTaskParams = execution.getVariable("sliceTaskParams")
 
-        Map sharedNSIsolution = ((List) solutions.get("sharedNSISolutions")).get(0)
+        Map sharedNSIsolution = ((List) solutions.get("sharedNSISolutions"))?.get(0)
         nsiInstanceId = sharedNSIsolution.getOrDefault("NSIId", "")
         nsiName = sharedNSIsolution.getOrDefault("NSIName", "")
         sliceTaskParams.setSuggestNsiId(nsiInstanceId)
@@ -206,77 +204,102 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
 
         //Temporary modification
         List NSSIs = sharedNSIsolution.get("NSSIs")
-        if(NSSIs.size()==1){
-            Map nssi = NSSIs.get(0)
+        for(Map nssi : NSSIs){
+            Map oofSliceProfile = ((List)nssi.get("sliceProfile"))?.get(0)
+            String domain = oofSliceProfile.getOrDefault("domainType","")
             nssiId = nssi.getOrDefault("NSSIId","")
             nssiName = nssi.getOrDefault("NSSIName","")
-            sliceTaskParams.setCnSuggestNssiId(nssiId)
-            //TODO Need update after OOF return camel key and domainType
-            sliceProfile = ((List)nssi.get("sliceProfile"))?.get(0)
-            sliceTaskParams.setCnSuggestNssiName(nssiName)
-//            execution.setVariable("sliceProfileCn", sliceProfile)
-//            sliceTaskParams.setSliceProfileCn(sliceProfile)
+            saveNSSIId(domain, nssiId, nssiName,execution)
+            Map<String, Object> sliceProfile = getSliceProfile(domain, execution, oofSliceProfile)
+            saveSliceProfile(execution, domain, sliceProfile)
+            logger.debug("OOF sharedNSISolution SliceProfile:"+oofSliceProfile.toString()+",domain:${domain}")
+            logger.debug("OOF sharedNSISolution nsiInstanceId:${nsiInstanceId}, nsiName:${nsiName}, nssiId:${nssiId}, nssiName:${nssiName}")
         }
-        logger.debug("OOF sharedNSISolution nsiInstanceId:${nsiInstanceId}, nsiName:${nsiName}, nssiId:${nssiId}, nssiName:${nssiName}")
-        logger.debug("OOF SliceProfile:"+sliceProfile.toString())
     }
 
-    void parseServiceProfile(DelegateExecution execution) {
+    private void parseServiceProfile(DelegateExecution execution) {
         logger.debug("Start parseServiceProfile")
         String serviceType = execution.getVariable("serviceType")
         Map<String, Object> serviceProfile = execution.getVariable("serviceProfile")
         SliceTaskParams sliceTaskParams = execution.getVariable("sliceTaskParams")
         // set sliceProfile for three domains
         if(!sliceTaskParams.getSliceProfileAn()){
-            Map<String, Object> sliceProfileAn = getSliceProfile(serviceType, "AN", serviceProfile)
-            execution.setVariable("sliceProfileAn", sliceProfileAn)
-            sliceTaskParams.setSliceProfileAn(sliceProfileAn)
-            logger.debug("sliceProfileAn: " + sliceProfileAn)
+            Map<String, Object> sliceProfileAn = getSliceProfile( "AN", execution,null)
+            saveSliceProfile(execution,"AN",sliceProfileAn)
         }
 
         if(!sliceTaskParams.getSliceProfileTn()){
-            Map<String, Object> sliceProfileTn = getSliceProfile(serviceType, "TN", serviceProfile)
-            execution.setVariable("sliceProfileTn", sliceProfileTn)
-            sliceTaskParams.setSliceProfileTn(sliceProfileTn)
-            logger.debug("sliceProfileTn: " + sliceProfileTn)
+            Map<String, Object> sliceProfileTn = getSliceProfile( "TN", execution,null)
+            saveSliceProfile(execution,"TN",sliceProfileTn)
         }
 
         if(!sliceTaskParams.getSliceProfileCn()){
-            Map<String, Object> sliceProfileCn = getSliceProfile(serviceType, "CN", serviceProfile)
-            execution.setVariable("sliceProfileCn", sliceProfileCn)
-            sliceTaskParams.setSliceProfileCn(sliceProfileCn)
-            logger.debug("sliceProfileCn: " + sliceProfileCn)
+            Map<String, Object> sliceProfileCn = getSliceProfile( "CN", execution,null, )
+           saveSliceProfile(execution,"CN",sliceProfileCn)
         }
 
         logger.debug("Finish parseServiceProfile")
     }
 
-     Map getSliceProfile(String serviceType, String domain, Map<String, Object> serviceProfile) {
+    private void saveSliceProfile(DelegateExecution execution, String domain, Map<String, Object> sliceProfile){
+        SliceTaskParams sliceTaskParams = execution.getVariable("sliceTaskParams")
+        if(domain.equalsIgnoreCase("AN")){
+            execution.setVariable("sliceProfileAn", sliceProfile)
+            sliceTaskParams.setSliceProfileAn(sliceProfile)
+            logger.debug("sliceProfileAn: " + sliceProfile)
+        }
+        else if(domain.equalsIgnoreCase("TN")){
+            execution.setVariable("sliceProfileTn", sliceProfile)
+            sliceTaskParams.setSliceProfileTn(sliceProfile)
+            logger.debug("sliceProfileTn: " + sliceProfile)
+        }
+        else if(domain.equalsIgnoreCase("CN")){
+            execution.setVariable("sliceProfileCn", sliceProfile)
+            sliceTaskParams.setSliceProfileCn(sliceProfile)
+            logger.debug("sliceProfileCn: " + sliceProfile)
+        }
+    }
+
+    private void saveNSSIId(String domain, String nssiId, String nssiName, DelegateExecution execution) {
+        SliceTaskParams sliceTaskParams = execution.getVariable("sliceTaskParams")
+        if(domain.equalsIgnoreCase("AN")){
+            sliceTaskParams.setAnSuggestNssiId(nssiId)
+            sliceTaskParams.setAnSuggestNssiName(nssiName)
+        }
+        else if(domain.equalsIgnoreCase("CN")){
+            sliceTaskParams.setCnSuggestNssiId(nssiId)
+            sliceTaskParams.setCnSuggestNssiName(nssiName)
+        }
+        else if(domain.equalsIgnoreCase("TN")){
+            sliceTaskParams.setTnSuggestNssiId(nssiId)
+            sliceTaskParams.setTnSuggestNssiName(nssiName)
+        }
+    }
+
+    private Map getSliceProfile(String domain, DelegateExecution execution, Map<String, Object> oofSliceProfile) {
         String profileMapStr
+        Map<String, Object> serviceProfile = execution.getVariable("serviceProfile")
         Integer domainLatency = (Integer) serviceProfile.get("latency")/3
 
-         switch (domain) {
-             case "AN":
-                 profileMapStr = """ {
+        if(domain.equalsIgnoreCase("AN")){
+            profileMapStr = """ {
                     "latency": ${domainLatency}, 
                     "sNSSAI": "sNSSAI", 
                     "uEMobilityLevel": "uEMobilityLevel", 
                     "coverageAreaTAList": "coverageAreaTAList", 
                     "5QI": 100
-                }
-                """.trim().replaceAll(" ", "")
-                 break
-             case "TN":
-                 profileMapStr =""" {
+                }"""
+        }
+        else if(domain.equalsIgnoreCase("TN")){
+            profileMapStr =""" {
                     "latency":${domainLatency},
                     "sNSSAI":"sNSSAI", 
                     "e2eLatency":"latency", 
                     "bandwidth": 100
-                }
-                """.trim().replaceAll(" ", "")
-                 break
-             case "CN":
-                 profileMapStr = """ {
+                }"""
+        }
+        else if(domain.equalsIgnoreCase("CN")){
+            profileMapStr = """ {
                     "areaTrafficCapDL":"areaTrafficCapDL",
                     "maxNumberofUEs":"maxNumberofUEs",
                     "latency":${domainLatency},
@@ -287,27 +310,26 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
                     "expDataRateDL":"expDataRateDL",  
                     "activityFactor":"activityFactor",
                     "resourceSharingLevel":"resourceSharingLevel"
-                }
-                """.trim().replaceAll(" ", "")
-                 break
-             default:
-                 break
-         }
+                }"""
+        }
 
 	    logger.debug("Profile map for " + domain + " : " + profileMapStr)
-        Map<String, Object> profileMaps = objectMapper.readValue(profileMapStr, new TypeReference<Map<String, String>>(){})
+        Map<String, Object> profileMaps = objectMapper.readValue(profileMapStr.trim().replaceAll(" ", ""), new TypeReference<Map<String, String>>(){})
         Map<String, Object> sliceProfile = [:]
         for (Map.Entry<String, String> profileMap : profileMaps) {
             String key = profileMap.key
             String value = profileMaps.get(key)
-            if(serviceProfile.keySet().contains(value)){
+            if(null != oofSliceProfile && oofSliceProfile.keySet().contains(key)){
+                sliceProfile.put(key, oofSliceProfile.get(key))
+                logger.debug("Get from oof, key:${key}, value: ${oofSliceProfile.get(key)}")
+            }
+            else if(serviceProfile.keySet().contains(value)){
                 sliceProfile.put(key, serviceProfile.get(value))
             }
             else{
                 sliceProfile.put(key, profileMaps.get(key))
             }
         }
-
         return sliceProfile
     }
 
