@@ -22,9 +22,7 @@ package org.onap.so.adapters.vevnfm.service;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -35,10 +33,12 @@ import org.onap.so.adapters.etsisol003adapter.lcm.lcn.model.VnfLcmOperationOccur
 import org.onap.so.adapters.vevnfm.aai.AaiConnection;
 import org.onap.so.adapters.vevnfm.configuration.ConfigProperties;
 import org.onap.so.adapters.vevnfm.constant.NotificationVnfFilterType;
+import org.onap.so.adapters.vevnfm.event.DmaapEvent;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DmaapConditionalSenderTest {
 
+    private static final String VSERVER_NAME = "vsn";
     private static final String GENERIC_ID = "gener77";
     private static final String INSTANCE_ID = "insta44";
     private static final String HREF = "/href";
@@ -66,6 +66,10 @@ public class DmaapConditionalSenderTest {
         return notification;
     }
 
+    private static DmaapEvent createDmaapEvent() {
+        return new DmaapEvent(null, null, null, null, null);
+    }
+
     @Test
     public void testSendNone() {
         // given
@@ -79,41 +83,52 @@ public class DmaapConditionalSenderTest {
 
         // then
         verify(aaiConnection, never()).receiveGenericVnfId(any());
-        verify(dmaapService, never()).send(any(), any());
+        verify(dmaapService, never()).createDmaapEvent(any(), any(), any());
+        verify(dmaapService, never()).send(any());
     }
 
     @Test
     public void testSendAll() {
         // given
+        final VnfLcmOperationOccurrenceNotification notification = createNotification();
+        final DmaapEvent dmaapEvent = createDmaapEvent();
+
         when(configProperties.getNotificationVnfFilterType()).thenReturn(NotificationVnfFilterType.ALL);
         when(aaiConnection.receiveGenericVnfId(eq(HREF))).thenReturn(GENERIC_ID);
+        when(aaiConnection.receiveVserverName(eq(GENERIC_ID))).thenReturn(VSERVER_NAME);
+        when(dmaapService.createDmaapEvent(eq(notification), eq(VSERVER_NAME), eq(GENERIC_ID))).thenReturn(dmaapEvent);
 
         final DmaapConditionalSender sender = new DmaapConditionalSender(configProperties, aaiConnection, dmaapService);
-        final VnfLcmOperationOccurrenceNotification notification = createNotification();
 
         // when
         sender.send(notification);
 
         // then
         verify(aaiConnection).receiveGenericVnfId(eq(HREF));
-        verify(dmaapService).send(eq(notification), eq(GENERIC_ID));
+        verify(dmaapService).createDmaapEvent(eq(notification), eq(VSERVER_NAME), eq(GENERIC_ID));
+        verify(dmaapService).send(eq(dmaapEvent));
     }
 
     @Test
     public void testSendAaiCheckedPresent() {
         // given
+        final DmaapEvent dmaapEvent = createDmaapEvent();
+        final VnfLcmOperationOccurrenceNotification notification = createNotification();
+
         when(configProperties.getNotificationVnfFilterType()).thenReturn(NotificationVnfFilterType.AAI_CHECKED);
         when(aaiConnection.receiveGenericVnfId(eq(HREF))).thenReturn(GENERIC_ID);
+        when(aaiConnection.receiveVserverName(eq(GENERIC_ID))).thenReturn(VSERVER_NAME);
+        when(dmaapService.createDmaapEvent(eq(notification), eq(VSERVER_NAME), eq(GENERIC_ID))).thenReturn(dmaapEvent);
 
         final DmaapConditionalSender sender = new DmaapConditionalSender(configProperties, aaiConnection, dmaapService);
-        final VnfLcmOperationOccurrenceNotification notification = createNotification();
 
         // when
         sender.send(notification);
 
         // then
         verify(aaiConnection).receiveGenericVnfId(eq(HREF));
-        verify(dmaapService).send(eq(notification), eq(GENERIC_ID));
+        verify(dmaapService).createDmaapEvent(eq(notification), eq(VSERVER_NAME), eq(GENERIC_ID));
+        verify(dmaapService).send(eq(dmaapEvent));
     }
 
     @Test
@@ -130,6 +145,7 @@ public class DmaapConditionalSenderTest {
 
         // then
         verify(aaiConnection).receiveGenericVnfId(eq(HREF));
-        verify(dmaapService, never()).send(any(), any());
+        verify(dmaapService, never()).createDmaapEvent(any(), any(), any());
+        verify(dmaapService, never()).send(any());
     }
 }

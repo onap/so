@@ -25,16 +25,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class AaiEvent {
 
     private final boolean vserverIsClosedLoopDisabled;
+    private final String vserverName;
     private final String genericVnfVnfId;
 
-    public AaiEvent(final boolean cld, final String id) {
-        this.vserverIsClosedLoopDisabled = cld;
-        this.genericVnfVnfId = id;
+    public AaiEvent(final boolean vserverIsClosedLoopDisabled, final String vserverName, final String genericVnfVnfId) {
+        this.vserverIsClosedLoopDisabled = vserverIsClosedLoopDisabled;
+        this.vserverName = vserverName;
+        this.genericVnfVnfId = genericVnfVnfId;
     }
 
     @JsonProperty("vserver.is-closed-loop-disabled")
     public boolean isVserverIsClosedLoopDisabled() {
         return vserverIsClosedLoopDisabled;
+    }
+
+    @JsonProperty("vserver.vserver-name")
+    public String getVserverName() {
+        return vserverName;
     }
 
     @JsonProperty("generic-vnf.vnf-id")
