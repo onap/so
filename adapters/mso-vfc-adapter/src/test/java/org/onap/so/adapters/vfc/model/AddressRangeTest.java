@@ -20,20 +20,24 @@ public class AddressRangeTest {
     @Test
     public void getMinAddress() {
         addressRange.getMinAddress();
+        assertNotNull(addressRange.getMinAddress());
     }
 
     @Test
     public void setMinAddress() {
         addressRange.setMinAddress("192.168.10.10");
+        assertEquals(addressRange.getMinAddress(),"192.168.10.10");
     }
 
     @Test
     public void getMaxAddress() {
         addressRange.getMaxAddress();
+        assertNotNull(addressRange.getMaxAddress());
     }
 
     @Test
     public void setMaxAddress() {
         addressRange.setMaxAddress("192.168.10.10");
+        assertEquals(addressRange.getMaxAddress(),"192.168.10.10");
     }
 }
