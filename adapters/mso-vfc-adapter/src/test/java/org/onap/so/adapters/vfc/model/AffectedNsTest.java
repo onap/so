@@ -21,20 +21,24 @@ public class AffectedNsTest {
     @Test
     public void getNsInstanceId() {
         affectedNs.getNsInstanceId();
+        assertNotNull(affectedNs.getNsInstanceId());
     }
 
     @Test
     public void setNsInstanceId() {
         affectedNs.setNsInstanceId("c9f0a95e-dea0-4698-96e5-5a79bc5a233d");
+        assertEquals(affectedNs.getNsInstanceId(),"c9f0a95e-dea0-4698-96e5-5a79bc5a233d");
     }
 
     @Test
     public void getNsdId() {
         affectedNs.getNsdId();
+        assertNotNull(affectedNs.getNsdId());
     }
 
     @Test
     public void setNsdId() {
         affectedNs.setNsdId("c9f0a95e-dea0-4698-96e5-5a79bc5a233d");
+        assertEquals(affectedNs.getNsdId(),"c9f0a95e-dea0-4698-96e5-5a79bc5a233d");
     }
 }

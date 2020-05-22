@@ -15,6 +15,8 @@
 package org.onap.so.adapters.vnf;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Test;
 
 public class VfRollbackTest {
@@ -60,7 +62,9 @@ public class VfRollbackTest {
     }
 
     @Test
-    public void testtoString() {
+    public void testtoString()
+    {
         assert (vfRollback.toString() != null);
+        assertNotNull(vfRollback);
     }
 }
