@@ -324,6 +324,7 @@ class DoAllocateNSSI extends org.onap.so.bpmn.common.scripts.AbstractServiceTask
         sliceProfile.setExpDataRate(0)
         sliceProfile.setTrafficDensity(0)
         sliceProfile.setConnDensity(0)
+        sliceProfile.setSNssai(sliceProfileMap.get("sNSSAI").toString())
         sliceProfile.setExpDataRateUL(Integer.parseInt(sliceProfileMap.get("expDataRateUL").toString()))
         sliceProfile.setExpDataRateDL(Integer.parseInt(sliceProfileMap.get("expDataRateDL").toString()))
         sliceProfile.setActivityFactor(Integer.parseInt(sliceProfileMap.get("activityFactor").toString()))
