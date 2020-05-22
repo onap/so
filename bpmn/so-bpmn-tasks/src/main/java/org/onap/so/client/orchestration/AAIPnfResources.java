@@ -98,7 +98,8 @@ public class AAIPnfResources {
                     pnfFromAai.getPnfName());
         } else {
             String errorMessage = String.format(
-                    "pnf with name %s already exists with orchestration status %s, only status Inventoried allows to use existing pnf",
+                    "pnf with name %s already exists with orchestration status %s, existing pnf can be used only "
+                            + "if status is not set or set as Inventoried",
                     pnfFromAai.getPnfName(), pnfFromAai.getOrchestrationStatus());
             logger.error(errorMessage);
             throw new Exception(errorMessage);

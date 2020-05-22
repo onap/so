@@ -149,7 +149,8 @@ public class AAIPnfResourcesTest extends TestDataSetup {
         } catch (Exception e) {
             // then
             assertThat(e.getMessage()).isEqualTo(String.format(
-                    "pnf with name %s already exists with orchestration status Active, only status Inventoried allows to use existing pnf",
+                    "pnf with name %s already exists with orchestration status Active, existing pnf can be used only "
+                            + "if status is not set or set as Inventoried",
                     PNF_NAME));
         }
     }
