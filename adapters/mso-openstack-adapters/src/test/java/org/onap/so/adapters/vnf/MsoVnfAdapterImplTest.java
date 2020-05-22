@@ -57,6 +57,7 @@ import org.onap.so.openstack.utils.MsoHeatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.stubbing.Scenario;
+import static org.junit.Assert.*;
 
 
 public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
@@ -86,6 +87,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
                 "VFMOD", null, null, "b4ea86b4-253f-11e7-93ae-92361f002671", map, Boolean.TRUE, Boolean.TRUE,
                 Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
                 new Holder<VnfRollback>());
+        assertNotNull(map);
     }
 
     @Test
@@ -101,6 +103,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
         instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "",
                 "VFMOD", null, null, "b4ea86b4-253f-11e7-93ae-92361f002671", map, null, Boolean.TRUE, Boolean.FALSE,
                 msoRequest, new Holder<>(), new Holder<Map<String, String>>(), new Holder<VnfRollback>());
+        assertNotNull(map);
     }
 
     @Test
@@ -132,6 +135,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
                 "VFMOD", null, null, "b4ea86b4-253f-11e7-93ae-92361f002671", map, Boolean.FALSE, Boolean.TRUE,
                 Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
                 new Holder<VnfRollback>());
+        assertNotNull(map);
     }
 
 
@@ -149,6 +153,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
                 "VFMOD", null, null, "b4ea86b4-253f-11e7-93ae-92361f002671", map, Boolean.TRUE, Boolean.TRUE,
                 Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
                 new Holder<VnfRollback>());
+        assertNotNull(map);
     }
 
 
@@ -479,6 +484,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
                 "volumeGroupHeatStackId", "baseVfHeatStackId", "vfModuleStackId",
                 "b4ea86b4-253f-11e7-93ae-92361f002671", map, msoRequest, new Holder<Map<String, String>>(),
                 new Holder<VnfRollback>());
+        assertNotNull(msoRequest);
     }
 
     @Test
@@ -499,6 +505,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
         } catch (Exception e) {
 
         }
+        assertNotNull(outputs);
     }
 
     private VfModuleCustomization getVfModuleCustomization() {
