@@ -24,6 +24,7 @@ public class MsoCloudifyTest {
         MsoBlueprintAlreadyExists mbae = new MsoBlueprintAlreadyExists("blueprintId", "cloud");
         MsoCloudifyManagerNotFound mcm = new MsoCloudifyManagerNotFound("cloudSiteId");
         MsoDeploymentAlreadyExists mdae = new MsoDeploymentAlreadyExists("deploymentId", "cloud");
+        assertNotNull((mbae));
     }
 
 }

@@ -27,6 +27,7 @@ public class MsoCloudifyTimeoutTest {
         MsoCloudifyTimeout mct = new MsoCloudifyTimeout(execution);
         mct.getExecution();
         assert (mct.toString() != null);
+        assertNotNull(mct);
     }
 
 }
