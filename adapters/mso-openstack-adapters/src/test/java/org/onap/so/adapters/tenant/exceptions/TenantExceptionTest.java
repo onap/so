@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
+import static org.junit.Assert.*;
 
 public class TenantExceptionTest {
 
@@ -40,5 +41,6 @@ public class TenantExceptionTest {
         te.setFaultInfo(teb);
         assert (te.getFaultInfo() != null);
         assert (te.getFaultInfo().equals(teb));
+        assertNotNull(teb);
     }
 }

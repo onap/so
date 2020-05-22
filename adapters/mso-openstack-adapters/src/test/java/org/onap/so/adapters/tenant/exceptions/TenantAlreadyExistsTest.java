@@ -16,6 +16,7 @@
 package org.onap.so.adapters.tenant.exceptions;
 
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class TenantAlreadyExistsTest {
 
@@ -23,5 +24,6 @@ public class TenantAlreadyExistsTest {
     public void test() {
         TenantAlreadyExists tar = new TenantAlreadyExists("name", "cloudId", "tenantId");
         assert (tar != null);
+        assertNotNull(tar);
     }
 }

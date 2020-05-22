@@ -14,7 +14,7 @@
  */
 
 package org.onap.so.openstack.beans;
-
+import static org.junit.Assert.*;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Test;
@@ -32,5 +32,6 @@ public class MsoTenantTest {
         assert (ms.getMetadata().equals(map));
         assert (ms.getTenantId().equals("tenantId"));
         assert (ms.getTenantName().equals("tenantName"));
+        assertNotNull(map);
     }
 }

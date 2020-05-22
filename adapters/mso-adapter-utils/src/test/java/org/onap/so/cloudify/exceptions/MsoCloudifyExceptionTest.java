@@ -28,6 +28,7 @@ public class MsoCloudifyExceptionTest {
         MsoCloudifyException mcl = new MsoCloudifyException(200, "message", "detail", e);
         mce.setPendingWorkflow(pendingWorkflow);
         assert (mcl.toString() != null);
+        assertNotNull(mce);
     }
 
 }
