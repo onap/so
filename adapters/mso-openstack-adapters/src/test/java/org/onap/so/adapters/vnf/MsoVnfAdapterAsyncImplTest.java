@@ -36,6 +36,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.onap.so.entity.MsoRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import static org.junit.Assert.assertNotNull;
 
 public class MsoVnfAdapterAsyncImplTest extends BaseRestTestUtils {
 
@@ -90,6 +91,7 @@ public class MsoVnfAdapterAsyncImplTest extends BaseRestTestUtils {
         msoRequest.setServiceInstanceId("12345");
         instance.deleteVnfA("mdt1", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12", "messageId",
                 msoRequest, "http://org.onap.so/notify/adapterNotify/updateVnfNotificationRequest");
+        assertNotNull(msoRequest);
     }
 
 }
