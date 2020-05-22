@@ -10,7 +10,7 @@
  */
 
 package org.onap.so.adapters.vfc.model;
-
+ 
 import org.junit.Test;
 import java.util.Collection;
 import java.util.Iterator;
@@ -24,6 +24,7 @@ public class AddPnfDataTest {
     @Test
     public void getPnfId() {
         pnfData.getPnfId();
+        assertNotNull(pnfData.getPnfId());
     }
 
 
@@ -35,6 +36,7 @@ public class AddPnfDataTest {
     @Test
     public void getPnfName() {
         pnfData.getPnfName();
+        assertNotNull(pnfData.getPnfName());
     }
 
     @Test
@@ -45,6 +47,7 @@ public class AddPnfDataTest {
     @Test
     public void getPnfdId() {
         pnfData.getPnfdId();
+        assertNotNull(pnfData.getPnfdId());
     }
 
     @Test
@@ -55,6 +58,7 @@ public class AddPnfDataTest {
     @Test
     public void getPnfProfileId() {
         pnfData.getPnfProfileId();
+        assertNotNull(pnfData.getPnfProfileId());
     }
 
     @Test
@@ -65,6 +69,7 @@ public class AddPnfDataTest {
     @Test
     public void getCpData() {
         pnfData.getCpData();
+        assertNotNull(pnfData.getCpData());
     }
 
     @Test
