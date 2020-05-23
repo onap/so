@@ -199,7 +199,7 @@ class DeleteCommunicationService extends AbstractServiceTaskProcessor {
      * 再次调用deleteE2EServiceInstance接口，然后获取到operationid,
      */
     void sendRequest2NSMFWF(DelegateExecution execution) {
-        LOGGER.trace("begin preRequestSend2NSMF")
+        LOGGER.debug("begin preRequestSend2NSMF")
         try {
             //url:/onap/so/infra/e2eServiceInstances/v3/{serviceInstanceId}"
             def NSMF_endpoint = UrnPropertiesReader.getVariable("mso.infra.endpoint.url", execution)
@@ -213,9 +213,13 @@ class DeleteCommunicationService extends AbstractServiceTaskProcessor {
             """
             requestBody.replaceAll("\\s+", "")
 
-            String basicAuthValue =  UrnPropertiesReader.getVariable("mso.infra.endpoint.auth", execution)
+            String msoKey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
+            String basicAuth =  UrnPropertiesReader.getVariable("mso.infra.endpoint.auth", execution)
+            String basicAuthValue = utils.encrypt(basicAuth, msoKey)
+            String encodeString = utils.getBasicAuth(basicAuthValue, msoKey)
+
             HttpClient httpClient = getHttpClientFactory().newJsonClient(new URL(url), ONAPComponents.SO)
-            httpClient.addAdditionalHeader("Authorization", basicAuthValue)
+            httpClient.addAdditionalHeader("Authorization", encodeString)
             httpClient.addAdditionalHeader("Accept", "application/json")
             Response httpResponse = httpClient.delete(requestBody)
             handleNSSMFWFResponse(httpResponse, execution)
@@ -228,7 +232,7 @@ class DeleteCommunicationService extends AbstractServiceTaskProcessor {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
 
-        LOGGER.trace("exit preRequestSend2NSMF")
+        LOGGER.debug("exit preRequestSend2NSMF")
     }
 
     /**
