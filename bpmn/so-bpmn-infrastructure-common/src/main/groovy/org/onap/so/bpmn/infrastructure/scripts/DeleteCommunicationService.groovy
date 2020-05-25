@@ -213,10 +213,12 @@ class DeleteCommunicationService extends AbstractServiceTaskProcessor {
             """
             requestBody.replaceAll("\\s+", "")
 
-            String msoKey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
-            String basicAuth =  UrnPropertiesReader.getVariable("mso.infra.endpoint.auth", execution)
-            String basicAuthValue = utils.encrypt(basicAuth, msoKey)
-            String encodeString = utils.getBasicAuth(basicAuthValue, msoKey)
+//            String msoKey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
+//            String basicAuth =  UrnPropertiesReader.getVariable("mso.infra.endpoint.auth", execution)
+//            String basicAuthValue = utils.encrypt(basicAuth, msoKey)
+//            String encodeString = utils.getBasicAuth(basicAuthValue, msoKey)
+            //Temporary  Solution
+            String encodeString = "Basic SW5mcmFQb3J0YWxDbGllbnQ6cGFzc3dvcmQxJA=="
 
             HttpClient httpClient = getHttpClientFactory().newJsonClient(new URL(url), ONAPComponents.SO)
             httpClient.addAdditionalHeader("Authorization", encodeString)
