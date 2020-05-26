@@ -320,15 +320,15 @@ public class HeatBridgeImplTest {
 
         org.onap.aai.domain.yang.RelationshipList relList = aaiHelper.getVserverRelationshipList(CLOUD_OWNER, REGION_ID,
                 "test-genericVnf-id", "test-vfModule-id", server1);
-        assertEquals(2, relList.getRelationship().size());
+        assertEquals(3, relList.getRelationship().size());
 
         org.onap.aai.domain.yang.RelationshipList relList2 = aaiHelper.getVserverRelationshipList(CLOUD_OWNER,
                 REGION_ID, "test-genericVnf-id", "test-vfModule-id", server2);
-        assertEquals(1, relList2.getRelationship().size());
+        assertEquals(2, relList2.getRelationship().size());
 
         org.onap.aai.domain.yang.RelationshipList relList3 = aaiHelper.getVserverRelationshipList(CLOUD_OWNER,
                 REGION_ID, "test-genericVnf-id", "test-vfModule-id", server3);
-        assertEquals(1, relList3.getRelationship().size());
+        assertEquals(2, relList3.getRelationship().size());
     }
 
     @Test
