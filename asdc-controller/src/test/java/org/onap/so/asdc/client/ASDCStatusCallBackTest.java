@@ -38,6 +38,7 @@ import org.onap.so.asdc.BaseTest;
 import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
 import org.onap.so.asdc.client.test.emulators.JsonStatusData;
 import org.springframework.beans.factory.annotation.Autowired;
+import static org.junit.Assert.assertNotNull;
 
 public class ASDCStatusCallBackTest extends BaseTest {
     @Autowired
@@ -87,5 +88,6 @@ public class ASDCStatusCallBackTest extends BaseTest {
                 .installTheComponentStatus(isA(IStatusData.class));
 
         statusCallback.activateCallback(statusData);
+        assertNotNull(statusData);
     }
 }

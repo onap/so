@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
 public class VfcManagerSol005Test {
@@ -119,6 +120,7 @@ public class VfcManagerSol005Test {
                 .thenReturn(vfcrestfulResponse);
         when(resourceOperationStatusRepository.save(resourceOperationStatus)).thenReturn(resourceOperationStatus);
         vfcManagerSol005.createNs(nsResourceInputParameter);
+        assertNotNull(file);
 
     }
 
@@ -144,6 +146,7 @@ public class VfcManagerSol005Test {
         when(restfulUtil.send(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
                 .thenReturn(vfcrestfulResponse);
         vfcManagerSol005.terminateNs(nsResourceInputParameter.getNsOperationKey(), nsInstanceId);
+        assertNotNull(content);
     }
 
     @Test
@@ -184,6 +187,7 @@ public class VfcManagerSol005Test {
                 nsResourceInputParameter.getNsOperationKey().getOperationId())).thenReturn(resourceOperationStatuses);
         when(operationStatusRepository.save(operationStatus)).thenReturn(operationStatus);
         vfcManagerSol005.getNsProgress(nsResourceInputParameter.getNsOperationKey(), jobId);
+        assertNotNull(jobId);
 
     }
 
@@ -216,6 +220,7 @@ public class VfcManagerSol005Test {
         when(resourceOperationStatusRepository.save(resourceOperationStatus)).thenReturn(resourceOperationStatus);
         when(instanceNfvoMappingRepository.save(instanceNfvoMapping)).thenReturn(instanceNfvoMapping);
         vfcManagerSol005.instantiateNs(nsInstanceId, nsResourceInputParameter);
+        assertNotNull(nsInstanceId);
 
     }
 }

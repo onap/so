@@ -34,6 +34,7 @@ import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.onap.appc.client.lcm.model.Action;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -83,6 +84,7 @@ public class ApplicationControllerTaskImplITTest {
     public void testListener() throws Exception {
         request.setAction(Action.QuiesceTraffic);
         Status status = applicationControllerTaskImpl.execute("testRequestId", request, listener);
+        assertNotNull(status);
     }
 
 }
