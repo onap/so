@@ -334,15 +334,27 @@ public class HeatBridgeImplTest {
 
         org.onap.aai.domain.yang.RelationshipList relList = aaiHelper.getVserverRelationshipList(CLOUD_OWNER, REGION_ID,
                 "test-genericVnf-id", "test-vfModule-id", server1);
+<<<<<<< HEAD   (487dc2 Merge "fixed some JUnits")
         assertEquals(4, relList.getRelationship().size());
+=======
+        assertEquals(3, relList.getRelationship().size());
+>>>>>>> CHANGE (a06fb5 Add missing relationship in heatbridge)
 
         org.onap.aai.domain.yang.RelationshipList relList2 = aaiHelper.getVserverRelationshipList(CLOUD_OWNER,
                 REGION_ID, "test-genericVnf-id", "test-vfModule-id", server2);
+<<<<<<< HEAD   (487dc2 Merge "fixed some JUnits")
         assertEquals(3, relList2.getRelationship().size());
+=======
+        assertEquals(2, relList2.getRelationship().size());
+>>>>>>> CHANGE (a06fb5 Add missing relationship in heatbridge)
 
         org.onap.aai.domain.yang.RelationshipList relList3 = aaiHelper.getVserverRelationshipList(CLOUD_OWNER,
                 REGION_ID, "test-genericVnf-id", "test-vfModule-id", server3);
+<<<<<<< HEAD   (487dc2 Merge "fixed some JUnits")
         assertEquals(3, relList3.getRelationship().size());
+=======
+        assertEquals(2, relList3.getRelationship().size());
+>>>>>>> CHANGE (a06fb5 Add missing relationship in heatbridge)
     }
 
 

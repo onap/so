@@ -64,7 +64,7 @@ import com.google.common.base.Preconditions;
 public class AaiHelper {
 
     /**
-     * Build vserver relationship object to entities: pserver, vf-module, image, flavor
+     * Build vserver relationship object to entities: pserver, vf-module, generic-vnf, image, flavor
      *
      * @param cloudOwner AAI cloudOwner value
      * @param cloudRegionId AAI cloud-region identifier
@@ -100,6 +100,11 @@ public class AaiHelper {
         Relationship vfModuleRelationship =
                 buildRelationship(AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, genericVnfId, vfModuleId));
         relationships.add(vfModuleRelationship);
+
+        // vserver to generic-vnf relationship
+        Relationship genericVnfRelationship = buildRelationship(HeatBridgeConstants.AAI_GENERIC_VNF, ImmutableMap
+                .<String, String>builder().put(HeatBridgeConstants.AAI_GENERIC_VNF_ID, genericVnfId).build());
+        relationships.add(genericVnfRelationship);
 
         // vserver to image relationship
         if (server.getImage() != null) {
