@@ -23,7 +23,8 @@ public class AddPnfDataTest {
 
     @Test
     public void getPnfId() {
-        pnfData.getPnfId();
+        pnfData.setPnfId("123");
+        assertNotNull(pnfData.getPnfId());
     }
 
 
@@ -34,7 +35,8 @@ public class AddPnfDataTest {
 
     @Test
     public void getPnfName() {
-        pnfData.getPnfName();
+        pnfData.setPnfName("Router");
+        assertNotNull(pnfData.getPnfName());
     }
 
     @Test
@@ -44,7 +46,8 @@ public class AddPnfDataTest {
 
     @Test
     public void getPnfdId() {
-        pnfData.getPnfdId();
+        pnfData.setPnfdId("123");
+        assertNotNull(pnfData.getPnfdId());
     }
 
     @Test
@@ -54,7 +57,8 @@ public class AddPnfDataTest {
 
     @Test
     public void getPnfProfileId() {
-        pnfData.getPnfProfileId();
+        pnfData.setPnfProfileId("abc");
+        assertNotNull(pnfData.getPnfProfileId());
     }
 
     @Test
@@ -69,7 +73,7 @@ public class AddPnfDataTest {
 
     @Test
     public void setCpData() {
-        pnfData.setCpData(new List<PnfExtCpData>() {
+        pnfData.setCpData(new List < PnfExtCpData > () {
             @Override
             public int size() {
                 return 0;
@@ -86,7 +90,7 @@ public class AddPnfDataTest {
             }
 
             @Override
-            public Iterator<PnfExtCpData> iterator() {
+            public Iterator <PnfExtCpData> iterator() {
                 return null;
             }
 
@@ -96,7 +100,7 @@ public class AddPnfDataTest {
             }
 
             @Override
-            public <T> T[] toArray(T[] a) {
+            public < T > T[] toArray(T[] a) {
                 return null;
             }
 
@@ -111,27 +115,27 @@ public class AddPnfDataTest {
             }
 
             @Override
-            public boolean containsAll(Collection<?> c) {
+            public boolean containsAll(Collection << ? > c) {
                 return false;
             }
 
             @Override
-            public boolean addAll(Collection<? extends PnfExtCpData> c) {
+            public boolean addAll(Collection << ? extends PnfExtCpData > c) {
                 return false;
             }
 
             @Override
-            public boolean addAll(int index, Collection<? extends PnfExtCpData> c) {
+            public boolean addAll(int index, Collection << ? extends PnfExtCpData > c) {
                 return false;
             }
 
             @Override
-            public boolean removeAll(Collection<?> c) {
+            public boolean removeAll(Collection << ? > c) {
                 return false;
             }
 
             @Override
-            public boolean retainAll(Collection<?> c) {
+            public boolean retainAll(Collection << ? > c) {
                 return false;
             }
 
@@ -171,17 +175,17 @@ public class AddPnfDataTest {
             }
 
             @Override
-            public ListIterator<PnfExtCpData> listIterator() {
+            public ListIterator <PnfExtCpData> listIterator() {
                 return null;
             }
 
             @Override
-            public ListIterator<PnfExtCpData> listIterator(int index) {
+            public ListIterator <PnfExtCpData> listIterator(int index) {
                 return null;
             }
 
             @Override
-            public List<PnfExtCpData> subList(int fromIndex, int toIndex) {
+            public List <PnfExtCpData> subList(int fromIndex, int toIndex) {
                 return null;
             }
         });
