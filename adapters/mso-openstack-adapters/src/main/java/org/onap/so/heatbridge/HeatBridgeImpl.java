@@ -325,7 +325,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
         Vlan vlan = new Vlan();
         Network network = osClient.getNetworkById(port.getNetworkId());
         lIf.setNetworkName(network.getName());
-        if (network.getNetworkType().equals(NetworkType.VLAN)) {
+        if (network.getNetworkType() != null && network.getNetworkType().equals(NetworkType.VLAN)) {
             vlan.setVlanInterface(network.getProviderSegID());
             Vlans vlans = new Vlans();
             List<Vlan> vlanList = vlans.getVlan();
@@ -333,7 +333,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             lIf.setVlans(vlans);
         }
         // Build sriov-vf to the l-interface
-        if (port.getvNicType().equalsIgnoreCase(HeatBridgeConstants.OS_SRIOV_PORT_TYPE)) {
+        if (port.getvNicType() != null && port.getvNicType().equalsIgnoreCase(HeatBridgeConstants.OS_SRIOV_PORT_TYPE)) {
             SriovVfs sriovVfs = new SriovVfs();
             // JAXB does not generate setters for list, however getter ensures its creation.
             // Thus, all list manipulations must be made on live list.
