@@ -49,6 +49,7 @@ public class DeployActivitySpecsTest extends BaseBPMNTest {
         when(clientMock.execute(any(HttpPost.class))).thenReturn(response);
         String[] args = new String[] {HOSTNAME};
         DeployActivitySpecs.main(args);
+        assertNotNull(HOSTNAME);
     }
 
     @Test
