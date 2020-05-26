@@ -62,7 +62,7 @@ import org.openstack4j.model.network.Port;
 public class AaiHelper {
 
     /**
-     * Build vserver relationship object to entities: pserver, vf-module, image, flavor
+     * Build vserver relationship object to entities: pserver, vf-module, generic-vnf, image, flavor
      *
      * @param cloudOwner AAI cloudOwner value
      * @param cloudRegionId AAI cloud-region identifier
@@ -87,6 +87,12 @@ public class AaiHelper {
                 ImmutableMap.<String, String>builder().put(HeatBridgeConstants.AAI_GENERIC_VNF_ID, genericVnfId)
                         .put(HeatBridgeConstants.AAI_VF_MODULE_ID, vfModuleId).build());
         relationships.add(vfModuleRelationship);
+
+        // vserver to generic-vnf relationship
+        Relationship genericVnfRelationship = buildRelationship(HeatBridgeConstants.AAI_GENERIC_VNF,
+                ImmutableMap.<String, String>builder().put(
+                    HeatBridgeConstants.AAI_GENERIC_VNF_ID, genericVnfId).build());
+        relationships.add(genericVnfRelationship);
 
         // vserver to image relationship
         if (server.getImage() != null) {
