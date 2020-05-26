@@ -25,6 +25,7 @@ import org.onap.so.appc.orchestrator.service.beans.ApplicationControllerVnf;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.onap.appc.client.lcm.model.Action;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ApplicationControllerTaskImplTest {
@@ -264,6 +265,7 @@ public class ApplicationControllerTaskImplTest {
     public void testListener() throws Exception {
         request.setAction(Action.QuiesceTraffic);
         Status status = applicationControllerTaskImpl.execute("testRequestId", request, listener);
+        assertNotNull(status);
     }
 
 }
