@@ -124,6 +124,7 @@ public class WorkflowResourceTest extends BaseTest {
         workflow.setWorkflowActivitySpecSequence(wfss);
 
         workflowRepo.save(workflow);
+        assertNotNull(workflow);
 
     }
 

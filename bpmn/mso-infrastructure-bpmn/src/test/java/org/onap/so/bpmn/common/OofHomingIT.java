@@ -20,8 +20,7 @@
 
 package org.onap.so.bpmn.common;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import static org.onap.so.bpmn.mock.StubResponseDatabase.MockGetServiceResourcesCatalogDataByModelUuid;
 import static org.onap.so.bpmn.mock.StubResponseOof.mockOof;
 import static org.onap.so.bpmn.mock.StubResponseOof.mockOof_500;
@@ -530,6 +529,7 @@ public class OofHomingIT extends BaseIntegrationTest {
                 .contains("WorkflowException[processKey=Homing,errorCode=400,errorMessage=OOF Async Callback "
                         + "Response contains error: Unable to find any candidate for demand *** Response:");
         assert (errorMatch);
+        assertNotNull(businessKey);
     }
 
     @Test

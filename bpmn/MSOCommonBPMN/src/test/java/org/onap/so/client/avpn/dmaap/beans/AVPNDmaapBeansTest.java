@@ -45,6 +45,7 @@ public class AVPNDmaapBeansTest extends BaseTest {
     public void ensureExpectedPojoCount() {
         List<PojoClass> pojoClasses = PojoClassFactory.getPojoClasses(POJO_PACKAGE, new FilterPackageInfo());
         Affirm.affirmEquals("Classes added / removed?", EXPECTED_CLASS_COUNT, pojoClasses.size());
+        assertNotNull(pojoClasses);
     }
 
     @Test
