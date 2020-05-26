@@ -2,6 +2,7 @@ package org.onap.so.apihandlerinfra.infra.rest.validator;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doReturn;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -49,19 +50,34 @@ public class VnfDeleteValidatorTest {
     }
 
     @Test
-    public void validateSuccessTest() {
+    public void validateFailureVfModuleVnfTest() {
         instanceIdMap.put("vnfInstanceId", "1");
-        when(aaiDataRetrieval.isVnfRelatedToVolumes("1")).thenReturn(false);
+        doReturn(Optional.of("test")).when(aaiDataRetrieval).getVfModuleIdsByVnfId("1");
+        Optional<String> result = vnfValidator.validate(instanceIdMap, null, null);
+        assertEquals(true, result.isPresent());
+    }
+
+    @Test
+    public void validateSuccessVfModuleVnfTest() {
+        instanceIdMap.put("vnfInstanceId", "1");
+        doReturn(Optional.empty()).when(aaiDataRetrieval).getVfModuleIdsByVnfId("1");
         Optional<String> result = vnfValidator.validate(instanceIdMap, null, null);
         assertEquals(false, result.isPresent());
     }
 
     @Test
-    public void validateFailureVnfTest() {
+    public void validateFailureVolumeGroupVnfTest() {
         instanceIdMap.put("vnfInstanceId", "1");
-        when(aaiDataRetrieval.isVnfRelatedToVolumes("1")).thenReturn(true);
+        doReturn(Optional.of("test")).when(aaiDataRetrieval).getVolumeGroupIdsByVnfId("1");
         Optional<String> result = vnfValidator.validate(instanceIdMap, null, null);
         assertEquals(true, result.isPresent());
     }
 
+    @Test
+    public void validateSuccessVolumeGroupVnfTest() {
+        instanceIdMap.put("vnfInstanceId", "1");
+        doReturn(Optional.empty()).when(aaiDataRetrieval).getVolumeGroupIdsByVnfId("1");
+        Optional<String> result = vnfValidator.validate(instanceIdMap, null, null);
+        assertEquals(false, result.isPresent());
+    }
 }

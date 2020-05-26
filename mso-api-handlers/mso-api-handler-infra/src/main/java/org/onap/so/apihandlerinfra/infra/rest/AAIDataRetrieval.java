@@ -1,7 +1,10 @@
 package org.onap.so.apihandlerinfra.infra.rest;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.L3Network;
 import org.onap.aai.domain.yang.LInterface;
@@ -9,13 +12,16 @@ import org.onap.aai.domain.yang.Service;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.Tenant;
 import org.onap.aai.domain.yang.VfModule;
+import org.onap.aai.domain.yang.VfModules;
 import org.onap.aai.domain.yang.VolumeGroup;
+import org.onap.aai.domain.yang.VolumeGroups;
 import org.onap.so.apihandlerinfra.infra.rest.exception.AAIEntityNotFound;
 import org.onap.aaiclient.client.aai.AAIDSLQueryClient;
 import org.onap.aaiclient.client.aai.AAIObjectPlurals;
 import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
+import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.graphinventory.entities.DSLQuery;
 import org.onap.aaiclient.client.graphinventory.entities.DSLQueryBuilder;
@@ -164,4 +170,52 @@ public class AAIDataRetrieval {
         return aaiResourcesClient;
     }
 
+    public boolean isVnfRelatedToVFModule(String vnfId) {
+        return !getVfModulesOfVnf(vnfId).isEmpty();
+    }
+
+    public List<VfModule> getVfModulesOfVnf(String vnfId) {
+        List<VfModule> vfModuleList = new ArrayList<VfModule>();
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VF_MODULE, vnfId);
+        Optional<VfModules> vfModules = getAaiResourcesClient().get(VfModules.class, uri);
+        if (!vfModules.isPresent() || vfModules.get().getVfModule().isEmpty()) {
+            logger.debug("No VfModules attached to Vnf in AAI : {}", vnfId);
+        } else {
+            vfModuleList = vfModules.get().getVfModule();
+        }
+        return vfModuleList;
+    }
+
+    public Optional<String> getVfModuleIdsByVnfId(String vnfId) {
+        List<VfModule> vfModulesList = getVfModulesOfVnf(vnfId);
+        if (!vfModulesList.isEmpty()) {
+            return Optional.of(vfModulesList.stream().map(item -> item.getVfModuleId()).collect(Collectors.toList())
+                    .stream().sorted().collect(Collectors.joining(",")));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public List<VolumeGroup> getVolumeGroupsOfVnf(String vnfId) {
+        List<VolumeGroup> volumeGroupList = new ArrayList<VolumeGroup>();
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+                .relatedTo(AAIObjectPlurals.VOLUME_GROUP);
+        Optional<VolumeGroups> volumeGroups = getAaiResourcesClient().get(VolumeGroups.class, uri);
+        if (!volumeGroups.isPresent() || volumeGroups.get().getVolumeGroup().isEmpty()) {
+            logger.debug("No VolumeGroups attached to Vnf in AAI : {}", vnfId);
+        } else {
+            volumeGroupList = volumeGroups.get().getVolumeGroup();
+        }
+        return volumeGroupList;
+    }
+
+    public Optional<String> getVolumeGroupIdsByVnfId(String vnfId) {
+        List<VolumeGroup> volumeGroupList = getVolumeGroupsOfVnf(vnfId);
+        if (!volumeGroupList.isEmpty()) {
+            return Optional.of(volumeGroupList.stream().map(item -> item.getVolumeGroupId())
+                    .collect(Collectors.toList()).stream().sorted().collect(Collectors.joining(",")));
+        } else {
+            return Optional.empty();
+        }
+    }
 }

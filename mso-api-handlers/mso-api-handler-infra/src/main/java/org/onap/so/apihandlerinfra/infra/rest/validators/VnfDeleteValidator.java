@@ -25,8 +25,16 @@ public class VnfDeleteValidator implements RequestValidator {
     @Override
     public Optional<String> validate(Map<String, String> instanceIdMap, ServiceInstancesRequest request,
             Map<String, String> queryParams) {
-        if (aaiDataRetrieval.isVnfRelatedToVolumes(instanceIdMap.get("vnfInstanceId"))) {
-            return Optional.of("Cannot delete vnf it is still related to existing volume groups");
+        final Optional<String> volumeGroupIds =
+                aaiDataRetrieval.getVolumeGroupIdsByVnfId(instanceIdMap.get("vnfInstanceId"));
+        final Optional<String> vfModuleIds = aaiDataRetrieval.getVfModuleIdsByVnfId(instanceIdMap.get("vnfInstanceId"));
+
+        if (volumeGroupIds.isPresent()) {
+            return Optional.of(String.format("Cannot delete vnf it is still related to existing volume group Ids - %s",
+                    volumeGroupIds.get()));
+        } else if (vfModuleIds.isPresent()) {
+            return Optional.of(String.format("Cannot delete vnf it is still related to existing vfModule Ids - %s",
+                    vfModuleIds.get()));
         } else {
             return Optional.empty();
         }
