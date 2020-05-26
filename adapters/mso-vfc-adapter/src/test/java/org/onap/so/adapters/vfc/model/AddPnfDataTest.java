@@ -23,7 +23,9 @@ public class AddPnfDataTest {
 
     @Test
     public void getPnfId() {
-        pnfData.getPnfId();
+        pnfData.setPnfId("123");
+        String id = pnfData.getPnfId();
+        assertEquals(id,"123");
     }
 
 
@@ -34,7 +36,9 @@ public class AddPnfDataTest {
 
     @Test
     public void getPnfName() {
-        pnfData.getPnfName();
+        pnfData.setPnfName("Router");
+        String name = pnfData.getPnfName();
+        assertEquals(name,"Router");
     }
 
     @Test
@@ -44,7 +48,9 @@ public class AddPnfDataTest {
 
     @Test
     public void getPnfdId() {
-        pnfData.getPnfdId();
+        pnfData.setPnfdId("123");
+        String dId = pnfData.getPnfdId();
+        assertEquals(dId,"123");
     }
 
     @Test
@@ -54,7 +60,9 @@ public class AddPnfDataTest {
 
     @Test
     public void getPnfProfileId() {
-        pnfData.getPnfProfileId();
+        pnfData.setPnfProfileId("abc");
+        String pId = pnfData.getPnfProfileId();
+        assertEquals(pId,"abc");
     }
 
     @Test
