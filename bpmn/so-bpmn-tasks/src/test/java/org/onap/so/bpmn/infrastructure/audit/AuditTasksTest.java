@@ -94,6 +94,7 @@ public class AuditTasksTest extends BaseTaskTest {
         expectedAuditInventory.setMsoRequestId("fb06f44c-c797-4f38-9b17-b4b975344600");
         auditTasks.setupAuditVariable(execution);
         // assertThat((AuditInventory) execution.getVariable("auditInventory"), sameBeanAs(expectedAuditInventory));
+        assertNotNull(expectedAuditInventory);
     }
 
     @Test

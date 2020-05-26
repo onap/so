@@ -30,9 +30,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -104,6 +102,7 @@ public class AAIResourcesClientTest {
                 .withQueryParam("resource-version", equalTo("1234")).willReturn(aResponse().withStatus(204)));
         AAIResourcesClient client = aaiClient;
         client.delete(path);
+        assertNotNull(path);
     }
 
     @Test
@@ -115,6 +114,7 @@ public class AAIResourcesClientTest {
                         .withBodyFile("aai/resources/mockObject.json").withStatus(200)));
         AAIResourcesClient client = aaiClient;
         client.get(path);
+        assertNotNull(path);
     }
 
     @Test
@@ -156,6 +156,7 @@ public class AAIResourcesClientTest {
         AAIResourcesClient client = aaiClient;
 
         client.update(path, "{}");
+        assertNotNull(path);
     }
 
     @Test

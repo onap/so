@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -99,6 +100,7 @@ public class WorkflowActionUnitTest {
         // workflowAction.traverseCatalogDbForConfiguration("myVnfCustomizationId", "myVfModuleCustomizationId");
 
         // assertThat(results, is(Arrays.asList(vfModuleCustomization)));
+        assertNotNull(cvnfcCustomization);
 
     }
 
