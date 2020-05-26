@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5bea5f28_ebe94a81",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/HeatBridgeImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 5597
+      },
+      "writtenOn": "2020-05-26T08:26:24Z",
+      "side": 1,
+      "message": "Shouldn`t we include a similar check for this one too?",
+      "range": {
+        "startLine": 336,
+        "startChar": 12,
+        "endLine": 336,
+        "endChar": 30
+      },
+      "revId": "fa716aa5244bf567ebc40b56936f2f801b1ae909",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
