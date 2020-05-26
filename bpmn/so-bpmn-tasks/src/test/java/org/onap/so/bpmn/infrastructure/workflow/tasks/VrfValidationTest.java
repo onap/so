@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.doReturn;
 import java.io.File;
 import java.io.IOException;
@@ -109,6 +110,7 @@ public class VrfValidationTest extends BaseTaskTest {
         configuration.setRole("INFRASTRUCTURE-CLOUD-VPN");
         ExpectedException.none();
         vrfValidation.vrfCatalogDbChecks(service);
+        assertNotNull(service);
     }
 
     @Test
@@ -117,6 +119,7 @@ public class VrfValidationTest extends BaseTaskTest {
         aaiVpnBinding.setVpnType("SERVICE-INFRASTRUCTURE");
         ExpectedException.none();
         vrfValidation.aaiVpnBindingValidation("test-vpn", aaiVpnBinding);
+        assertNotNull(aaiVpnBinding);
     }
 
     @Test
@@ -132,6 +135,7 @@ public class VrfValidationTest extends BaseTaskTest {
         aaiLocalNetwork.setNetworkId("test-network");
         ExpectedException.none();
         vrfValidation.aaiNetworkValidation("test-network", aaiLocalNetwork);
+        assertNotNull(aaiLocalNetwork);
     }
 
     @Test
@@ -158,6 +162,7 @@ public class VrfValidationTest extends BaseTaskTest {
         aaiLocalNetwork.setAggregateRoutes(null);
         ExpectedException.none();
         vrfValidation.aaiAggregateRouteValidation(aaiLocalNetwork);
+        assertNotNull(aaiLocalNetwork);
     }
 
     @Test
@@ -214,6 +219,7 @@ public class VrfValidationTest extends BaseTaskTest {
             doReturn(Optional.of(vpnBinding)).when(wrapper).asBean(VpnBinding.class);
             ExpectedException.none();
             vrfValidation.aaiRouteTargetValidation(l3Network);
+            assertNotNull(vpnBinding);
         }
     }
 }

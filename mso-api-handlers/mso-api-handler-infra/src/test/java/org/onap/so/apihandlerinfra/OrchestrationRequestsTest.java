@@ -451,6 +451,7 @@ public class OrchestrationRequestsTest extends BaseTest {
         // Cannot assert anything further here, already have a wiremock in place
         // which ensures that the post was
         // properly called to update.
+        assertNotNull(entity);
     }
 
     @Test

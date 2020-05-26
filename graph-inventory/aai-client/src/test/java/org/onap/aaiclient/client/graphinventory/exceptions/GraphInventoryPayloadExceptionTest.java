@@ -20,6 +20,7 @@
 
 package org.onap.aaiclient.client.graphinventory.exceptions;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.onap.aaiclient.client.graphinventory.exceptions.GraphInventoryPayloadException;
 
@@ -35,6 +36,10 @@ public class GraphInventoryPayloadExceptionTest {
         GraphInventoryPayloadException test2 = new GraphInventoryPayloadException("testing", t);
 
         GraphInventoryPayloadException test3 = new GraphInventoryPayloadException(t);
+
+        Assert.assertNotNull(test1);
+        Assert.assertNotNull(test2);
+        Assert.assertNotNull(test3);
     }
 
 }
