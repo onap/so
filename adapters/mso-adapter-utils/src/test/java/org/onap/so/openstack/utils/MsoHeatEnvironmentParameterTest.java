@@ -17,6 +17,7 @@ package org.onap.so.openstack.utils;
 
 import static org.mockito.Mockito.mock;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class MsoHeatEnvironmentParameterTest {
 
@@ -35,6 +36,7 @@ public class MsoHeatEnvironmentParameterTest {
         // assertTrue(op.equals(hep));
         meo.equals(op);
         meo.hashCode();
+        assertNotNull(mea);
     }
 
 }
