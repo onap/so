@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a14c898_b18d8ce1",
+        "filename": "adapters/mso-openstack-adapters/src/test/java/org/onap/so/adapters/vnf/MsoVnfAdapterImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2020-05-26T10:46:04Z",
+      "side": 1,
+      "message": "Please do not use * imports;",
+      "revId": "0f6c35d59427a9a97a621d8d6d6a6fecc8b4899f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
