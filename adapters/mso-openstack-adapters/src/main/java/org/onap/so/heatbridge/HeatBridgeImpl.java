@@ -325,7 +325,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
         Vlan vlan = new Vlan();
         Network network = osClient.getNetworkById(port.getNetworkId());
         lIf.setNetworkName(network.getName());
-        if (network.getNetworkType().equals(NetworkType.VLAN)) {
+        if (network.getNetworkType() != null && network.getNetworkType().equals(NetworkType.VLAN)) {
             vlan.setVlanInterface(network.getProviderSegID());
             Vlans vlans = new Vlans();
             List<Vlan> vlanList = vlans.getVlan();
