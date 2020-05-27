@@ -21,7 +21,6 @@
 
 package org.onap.so.adapters.tasks.audit;
 
-import java.util.Optional;
 import org.onap.so.objects.audit.AAIObjectAudit;
 import org.onap.so.objects.audit.AAIObjectAuditList;
 import org.onap.so.utils.ExternalTaskUtils;
@@ -31,13 +30,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import java.util.Optional;
 
 @Component
 public abstract class AbstractAuditService extends ExternalTaskUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractAuditService.class);
-
-
 
     protected static final String UNABLE_TO_FIND_ALL_V_SERVERS_AND_L_INTERACES_IN_A_AI =
             "Unable to find all VServers and L-Interaces in A&AI";
@@ -52,12 +50,11 @@ public abstract class AbstractAuditService extends ExternalTaskUtils {
     }
 
     /**
-     * @param auditHeatStackFailed
      * @param auditList
      * @return
      */
     protected boolean didCreateAuditFail(Optional<AAIObjectAuditList> auditList) {
-        if (auditList.get().getAuditList() != null && !auditList.get().getAuditList().isEmpty()) {
+        if (auditList.isPresent() && isAuditListNotNullAndNotEmpty(auditList.get())) {
             if (logger.isInfoEnabled()) {
                 logger.info("Audit Results: {}", auditList.get().toString());
             }
@@ -69,12 +66,11 @@ public abstract class AbstractAuditService extends ExternalTaskUtils {
     }
 
     /**
-     * @param auditHeatStackFailed
      * @param auditList
      * @return
      */
     protected boolean didDeleteAuditFail(AAIObjectAuditList auditList) {
-        if (auditList.getAuditList() != null && !auditList.getAuditList().isEmpty()) {
+        if (isAuditListNotNullAndNotEmpty(auditList)) {
             if (logger.isInfoEnabled()) {
                 logger.info("Audit Results: {}", auditList.toString());
             }
@@ -84,4 +80,9 @@ public abstract class AbstractAuditService extends ExternalTaskUtils {
             return false;
         }
     }
+
+    private boolean isAuditListNotNullAndNotEmpty(AAIObjectAuditList auditList) {
+        return auditList != null && auditList.getAuditList() != null && !auditList.getAuditList().isEmpty();
+    }
+
 }
