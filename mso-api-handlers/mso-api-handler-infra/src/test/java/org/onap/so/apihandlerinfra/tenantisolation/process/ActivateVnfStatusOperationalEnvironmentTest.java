@@ -242,6 +242,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest {
                                 .withStatus(HttpStatus.SC_ACCEPTED)));
 
         activateVnfStatus.execute(requestId, request);
+        assertNotNull(iar);
     }
 
     @Test
@@ -318,6 +319,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest {
                                 .withStatus(HttpStatus.SC_ACCEPTED)));
 
         activateVnfStatus.execute(requestId, request);
+        assertNotNull(serviceModelDb);
     }
 
     @Test
@@ -544,6 +546,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest {
                                 .withStatus(HttpStatus.SC_ACCEPTED)));
 
         activateVnfStatus.execute(requestId, request);
+        assertNotNull(serviceModelDb);
 
     }
 
