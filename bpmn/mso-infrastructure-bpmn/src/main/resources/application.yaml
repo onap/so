@@ -5,6 +5,7 @@ server:
 mso:
   infra:
     auditInventory: false
+  camundaAuth: AE2E9BE6EF9249085AF98689C4EE087736A5500629A72F35068FFB88813A023581DD6E765071F1C04075B36EA4213A
 spring: 
   datasource:
     hikari:
@@ -42,3 +43,9 @@ management:
       prometheus:
         enabled: true # Whether exporting of metrics to Prometheus is enabled.
         step: 1m # Step size (i.e. reporting frequency) to use.
+org:
+  onap:
+    so:
+      adapters:
+        network:
+          encryptionKey: 07a7159d3bf51a0e53be7a8f89699be7
