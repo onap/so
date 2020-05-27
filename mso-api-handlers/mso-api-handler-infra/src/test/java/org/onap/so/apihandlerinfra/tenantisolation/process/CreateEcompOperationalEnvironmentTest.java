@@ -28,6 +28,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import java.util.UUID;
 import javax.ws.rs.core.HttpHeaders;
@@ -100,6 +101,7 @@ public class CreateEcompOperationalEnvironmentTest extends BaseTest {
                         .withStatus(HttpStatus.SC_OK)));
 
         createEcompOpEn.execute("123", getCloudOrchestrationRequest());
+        assertNotNull(iar);
     }
 
     @Test

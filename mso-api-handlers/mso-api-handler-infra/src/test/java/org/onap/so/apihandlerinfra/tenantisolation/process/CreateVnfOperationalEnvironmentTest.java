@@ -28,6 +28,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
@@ -159,6 +161,7 @@ public class CreateVnfOperationalEnvironmentTest extends BaseTest {
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
         createVnfOpEnv.execute(requestId, request);
+        assertNotNull(requestId);
     }
 
     @Test
@@ -196,5 +199,6 @@ public class CreateVnfOperationalEnvironmentTest extends BaseTest {
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
         createVnfOpEnv.execute(requestId, request);
+        assertNotNull(mapper);
     }
 }

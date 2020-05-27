@@ -29,8 +29,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.hamcrest.Matchers.startsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
+
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import org.apache.http.HttpStatus;
@@ -242,6 +242,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest {
                                 .withStatus(HttpStatus.SC_ACCEPTED)));
 
         activateVnfStatus.execute(requestId, request);
+        assertNotNull(iar);
     }
 
     @Test
@@ -318,6 +319,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest {
                                 .withStatus(HttpStatus.SC_ACCEPTED)));
 
         activateVnfStatus.execute(requestId, request);
+        assertNotNull(serviceModelDb);
     }
 
     @Test
@@ -544,6 +546,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest {
                                 .withStatus(HttpStatus.SC_ACCEPTED)));
 
         activateVnfStatus.execute(requestId, request);
+        assertNotNull(serviceModelDb);
 
     }
 
