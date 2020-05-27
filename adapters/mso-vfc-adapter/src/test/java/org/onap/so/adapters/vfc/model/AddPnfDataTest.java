@@ -16,16 +16,16 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 public class AddPnfDataTest {
     AddPnfData pnfData = new AddPnfData();
 
     @Test
     public void getPnfId() {
-        pnfData.getPnfId();
+        pnfData.setPnfId("123");
+        assertNotNull(pnfData.getPnfId());
     }
-
 
     @Test
     public void setPnfId() {
@@ -34,7 +34,8 @@ public class AddPnfDataTest {
 
     @Test
     public void getPnfName() {
-        pnfData.getPnfName();
+        pnfData.setPnfName("abc");
+        assertNotNull(pnfData.getPnfName());
     }
 
     @Test
@@ -44,7 +45,8 @@ public class AddPnfDataTest {
 
     @Test
     public void getPnfdId() {
-        pnfData.getPnfdId();
+        pnfData.setPnfdId("123");
+        assertNotNull(pnfData.getPnfdId());
     }
 
     @Test
@@ -54,7 +56,8 @@ public class AddPnfDataTest {
 
     @Test
     public void getPnfProfileId() {
-        pnfData.getPnfProfileId();
+        pnfData.setPnfProfileId("123");
+        assertNotNull(pnfData.getPnfProfileId());
     }
 
     @Test

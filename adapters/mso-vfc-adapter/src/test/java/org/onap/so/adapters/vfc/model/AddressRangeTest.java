@@ -12,14 +12,15 @@
 package org.onap.so.adapters.vfc.model;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 public class AddressRangeTest {
     AddressRange addressRange = new AddressRange();
 
     @Test
     public void getMinAddress() {
-        addressRange.getMinAddress();
+        addressRange.setMinAddress("192.168.10.10");
+        assertNotNull(addressRange.getMinAddress());
     }
 
     @Test
@@ -29,7 +30,8 @@ public class AddressRangeTest {
 
     @Test
     public void getMaxAddress() {
-        addressRange.getMaxAddress();
+        addressRange.setMaxAddress("192.168.10.10");
+        assertNotNull(addressRange.getMaxAddress());
     }
 
     @Test

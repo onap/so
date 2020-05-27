@@ -45,6 +45,7 @@ import org.onap.aaiclient.client.aai.AAIVersion;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.junit.Assert.assertNotNull;
 
 public class DeactivateVnfOperationalEnvironmentTest extends BaseTest {
 
@@ -99,6 +100,7 @@ public class DeactivateVnfOperationalEnvironmentTest extends BaseTest {
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
         deactivate.execute(requestId, request);
+        assertNotNull(iar);
     }
 
     @Test
@@ -159,6 +161,7 @@ public class DeactivateVnfOperationalEnvironmentTest extends BaseTest {
                         .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
 
         deactivate.execute(requestId, request);
+        assertNotNull(iar);
     }
 
     @Test
