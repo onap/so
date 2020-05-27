@@ -77,7 +77,7 @@ class DeleteSliceService extends AbstractServiceTaskProcessor {
             checkAndSetRequestParam(siRequest,"globalSubscriberId",false, execution)
             checkAndSetRequestParam(siRequest,"serviceType",false, execution)
             checkAndSetRequestParam(siRequest,"operationId",false, execution)
-
+            checkAndSetRequestParam(siRequest,"scriptName",false, execution)
             //prepare init operation status
             execution.setVariable("progress", "0")
             execution.setVariable("result", "processing")
