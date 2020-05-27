@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "88501f65_11ffd96a",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/VrfValidationTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2020-05-27T11:00:34Z",
+      "side": 1,
+      "message": "I am confused as to how this helps? We already have the assertion that no exception is expected.",
+      "revId": "633ea7efa129f0fab98fc7e6c73579fc8cb47af0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
