@@ -149,6 +149,7 @@ public class ActivateVnfOperationalEnvironmentTest extends BaseTest {
                 .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString())
                         .withStatus(HttpStatus.SC_ACCEPTED)));
         activateVnf.execute(requestId, request);
+        assertNotNull(serviceModelVersionIdList);
     }
 
     @Test
@@ -174,6 +175,7 @@ public class ActivateVnfOperationalEnvironmentTest extends BaseTest {
 
         activateVnf.processActivateSDCRequest(requestId, operationalEnvironmentId, serviceModelVersionIdList,
                 workloadContext, vnfOperationalEnvironmentId);
+        assertNotNull(distributionId);
     }
 
     @Test
