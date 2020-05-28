@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 - 2019 Bell Canada.
+ * Copyright (C) 2020 Deutsche Telekom.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,21 +18,31 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.client.cds;
+package org.onap.so.client;
 
-import org.onap.so.client.RestProperties;
+import java.io.FileInputStream;
+import java.nio.file.Paths;
+import java.security.KeyStore;
 
-public interface CDSProperties extends RestProperties {
+public abstract class KeyStoreLoader {
 
-    String getHost();
+    static final String SSL_KEY_STORE_KEY = "javax.net.ssl.keyStore";
 
-    int getPort();
+    static public KeyStore getKeyStore() {
+        KeyStore ks = null;
+        final char[] password = getSSlKeyStorePassword().toCharArray();
+        try (FileInputStream fis =
+                new FileInputStream(Paths.get(System.getProperty(SSL_KEY_STORE_KEY)).normalize().toString())) {
+            ks = KeyStore.getInstance(KeyStore.getDefaultType());
+            ks.load(fis, password);
+        } catch (final Exception e) {
+            return null;
+        }
 
-    String getBasicAuth();
+        return ks;
+    }
 
-    int getTimeout();
-
-    boolean getUseSSL();
-
-    boolean getUseBasicAuth();
+    static public String getSSlKeyStorePassword() {
+        return System.getProperty("javax.net.ssl.keyStorePassword");
+    }
 }

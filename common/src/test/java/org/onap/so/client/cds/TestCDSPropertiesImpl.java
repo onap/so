@@ -72,4 +72,14 @@ public class TestCDSPropertiesImpl implements CDSProperties {
     public int getTimeout() {
         return 60;
     }
+
+    @Override
+    public boolean getUseSSL() {
+        return false;
+    }
+
+    @Override
+    public boolean getUseBasicAuth() {
+        return true;
+    }
 }
