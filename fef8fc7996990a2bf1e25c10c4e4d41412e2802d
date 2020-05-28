@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a9272028_fa39793f",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/tasks/audit/AbstractAuditService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-05-28T15:24:31Z",
+      "side": 1,
+      "message": "The parameter type should not be Optional, in the place when this method is invoked, the optional is already checked if it is present. Change the parameter type as AAIObjectAuditList.",
+      "range": {
+        "startLine": 56,
+        "startChar": 41,
+        "endLine": 56,
+        "endChar": 79
+      },
+      "revId": "fef8fc7996990a2bf1e25c10c4e4d41412e2802d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "37e70bb5_415a0b5f",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/tasks/audit/AbstractAuditService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-05-28T15:24:31Z",
+      "side": 1,
+      "message": "In both cases of using this method, checking null is not necessary, because AAIObjectAuditList object can be null according to the code.",
+      "range": {
+        "startLine": 85,
+        "startChar": 15,
+        "endLine": 85,
+        "endChar": 32
+      },
+      "revId": "fef8fc7996990a2bf1e25c10c4e4d41412e2802d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
