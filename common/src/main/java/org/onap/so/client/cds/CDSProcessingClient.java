@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 - 2019 Bell Canada.
+ * Copyright (C) 2017 - 2019 Bell Canada, Deutsche Telekom.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,17 @@ package org.onap.so.client.cds;
 import io.grpc.ManagedChannel;
 import io.grpc.internal.DnsNameResolverProvider;
 import io.grpc.internal.PickFirstLoadBalancerProvider;
+import io.grpc.netty.GrpcSslContexts;
 import io.grpc.netty.NettyChannelBuilder;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.CountDownLatch;
+
+import javax.net.ssl.SSLException;
+import javax.net.ssl.TrustManagerFactory;
 import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceInput;
+import org.onap.so.client.KeyStoreLoader;
 import org.onap.so.client.PreconditionFailedException;
 import org.onap.so.client.RestPropertiesLoader;
 import org.slf4j.Logger;
@@ -33,13 +41,15 @@ import org.slf4j.LoggerFactory;
 
 /**
  * <p>
- * The CDS processing client is using gRPC for communication between SO and CDS. That communication is configured to use
- * a streaming approach, meaning that client can send an event to which server can reply will multiple sub-responses,
- * until full completion of the processing.
+ * The CDS processing client is using gRPC for communication between SO and CDS.
+ * That communication is configured to use a streaming approach, meaning that
+ * client can send an event to which server can reply will multiple
+ * sub-responses, until full completion of the processing.
  * </p>
  * <p>
- * In order for the caller to manage the callback, it is the responsibility of the caller to implement and provide a
- * {@link CDSProcessingListener} so received messages can be handled appropriately.
+ * In order for the caller to manage the callback, it is the responsibility of
+ * the caller to implement and provide a {@link CDSProcessingListener} so
+ * received messages can be handled appropriately.
  * </p>
  *
  * Here is an example of implementation of such listener:
@@ -73,10 +83,30 @@ public class CDSProcessingClient implements AutoCloseable {
             throw new PreconditionFailedException(
                     "No RestProperty.CDSProperties implementation found on classpath, can't create client.");
         }
-        this.channel = NettyChannelBuilder.forAddress(props.getHost(), props.getPort())
+        NettyChannelBuilder builder = NettyChannelBuilder.forAddress(props.getHost(), props.getPort())
                 .nameResolverFactory(new DnsNameResolverProvider())
-                .loadBalancerFactory(new PickFirstLoadBalancerProvider())
-                .intercept(new BasicAuthClientInterceptor(props)).usePlaintext().build();
+                .loadBalancerFactory(new PickFirstLoadBalancerProvider());
+        if (props.getUseSSL()) {
+            log.info("Configure SSL connection");
+            KeyStore ks = KeyStoreLoader.getKeyStore();
+            if (ks == null) {
+                log.error("Can't load KeyStore");
+                throw new RuntimeException("Can't load KeyStore to create secure channel");
+            }
+            try {
+                TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                tmf.init(ks);
+                builder.sslContext(GrpcSslContexts.forClient().trustManager(tmf).build());
+            } catch (KeyStoreException | NoSuchAlgorithmException | SSLException e) {
+                log.error("Exception during trust manager creation");
+                throw new RuntimeException(e);
+            }
+        }
+        if (props.getUseBasicAuth()) {
+            log.info("Configure Basic authentication");
+            builder.intercept(new BasicAuthClientInterceptor(props)).usePlaintext();
+        }
+        this.channel = builder.build();
         this.handler = new CDSProcessingHandler(listener);
         log.info("CDSProcessingClient started");
     }
@@ -89,14 +119,16 @@ public class CDSProcessingClient implements AutoCloseable {
     /**
      * Sends a request to the CDS backend micro-service.
      *
-     * The caller will be returned a CountDownLatch that can be used to define how long the processing can wait. The
-     * CountDownLatch is initiated with just 1 count. When the client receives an #onCompleted callback, the counter
-     * will decrement.
+     * The caller will be returned a CountDownLatch that can be used to define how
+     * long the processing can wait. The CountDownLatch is initiated with just 1
+     * count. When the client receives an #onCompleted callback, the counter will
+     * decrement.
      *
      * It is the user responsibility to close the client.
      *
      * @param input request to send
-     * @return CountDownLatch instance that can be use to #await for completeness of processing
+     * @return CountDownLatch instance that can be use to #await for completeness of
+     *         processing
      */
     public CountDownLatch sendRequest(ExecutionServiceInput input) {
         return handler.process(input, channel);

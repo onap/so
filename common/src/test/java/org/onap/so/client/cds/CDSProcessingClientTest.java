@@ -20,7 +20,6 @@
 
 package org.onap.so.client.cds;
 
-
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import io.grpc.inprocess.InProcessChannelBuilder;
@@ -57,7 +56,6 @@ public class CDSProcessingClientTest {
 
     private CDSProcessingHandler handler;
     private CDSProcessingClient client;
-
 
     private final MutableHandlerRegistry serviceRegistry = new MutableHandlerRegistry();
     private final List<String> messagesDelivered = new ArrayList<>();
@@ -114,7 +112,6 @@ public class CDSProcessingClientTest {
     public void testClientCst() {
         new CDSProcessingClient(listener);
     }
-
 
     @Test
     public void testSendMessageFail() throws Exception {
