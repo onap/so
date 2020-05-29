@@ -25,7 +25,6 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
-import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -40,7 +39,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.onap.logging.filter.spring.SpringClientPayloadFilter;
-import org.onap.so.adapters.etsisol003adapter.pkgm.extclients.AbstractServiceProviderConfiguration;
+import org.onap.so.adapters.etsi.sol003.adapter.common.configuration.AbstractServiceProviderConfiguration;
 import org.onap.so.configuration.rest.BasicHttpHeadersProvider;
 import org.onap.so.configuration.rest.HttpClientConnectionConfiguration;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
@@ -56,12 +55,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.GsonHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 /**
  * Configures the HttpRestServiceProvider to make REST calls to the ETSI Catalog Manager
@@ -173,15 +168,9 @@ public class EtsiCatalogServiceProviderConfiguration extends AbstractServiceProv
 
     }
 
-    public void setGsonMessageConverter(final RestTemplate restTemplate) {
-        final Iterator<HttpMessageConverter<?>> iterator = restTemplate.getMessageConverters().iterator();
-        while (iterator.hasNext()) {
-            if (iterator.next() instanceof MappingJackson2HttpMessageConverter) {
-                iterator.remove();
-            }
-        }
-        final Gson gson = new GsonBuilder().create();
-        restTemplate.getMessageConverters().add(new GsonHttpMessageConverter(gson));
+    @Override
+    protected Gson getGson() {
+        return new JSON().getGson();
     }
 
 }
