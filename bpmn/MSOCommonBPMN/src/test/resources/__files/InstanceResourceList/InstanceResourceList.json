@@ -80,6 +80,9 @@
             "portNumer":"0/0/1"
           }
         ],
+        "emptygroup_list2": [
+
+        ],
         "sdwanvpnresource_list":[
           {
             "sdwanvpn_topology":"hub_spoke",
@@ -155,7 +158,8 @@
                 "class":"VNF",
                 "systemIp":"20.20.20.1"
               }
-            ]
+            ],
+            "dummy":""
           },
           {
             "sdwansite_emails":"chenchuanyu@huawei.com",
@@ -192,7 +196,8 @@
                 "class":"PNF",
                 "systemIp":"20.20.20.2"
               }
-            ]
+            ],
+            "dummy":""
           }
         ]
       }
