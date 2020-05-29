@@ -39,7 +39,8 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.aai.domain.yang.EsrVnfm;
-import org.onap.so.adapters.etsisol003adapter.lcm.extclients.AbstractServiceProviderConfiguration;
+import org.onap.so.adapters.etsi.sol003.adapter.common.configuration.AbstractServiceProviderConfiguration;
+import org.onap.so.adapters.etsisol003adapter.lcm.v1.JSON;
 import org.onap.so.configuration.rest.BasicHttpHeadersProvider;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.onap.so.rest.service.HttpRestServiceProviderImpl;
@@ -55,6 +56,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
 import org.springframework.web.client.RestTemplate;
+import com.google.gson.Gson;
 
 /**
  * Configures the HttpRestServiceProvider for REST call to a VNFM.
@@ -149,6 +151,11 @@ public class VnfmServiceProviderConfiguration extends AbstractServiceProviderCon
                 | IOException | UnrecoverableKeyException exception) {
             logger.error("Error reading truststore, TLS connection to VNFM will fail.", exception);
         }
+    }
+
+    @Override
+    protected Gson getGson() {
+        return new JSON().getGson();
     }
 
 }
