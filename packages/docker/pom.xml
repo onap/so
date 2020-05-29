@@ -65,13 +65,11 @@
         <groupId>io.fabric8</groupId>
         <artifactId>docker-maven-plugin</artifactId>
         <version>0.31.0</version>
-
-        <configuration>
+        <configuration combine.self="override">
           <verbose>true</verbose>
           <apiVersion>1.23</apiVersion>
           <pullRegistry>${docker.pull.registry}</pullRegistry>
           <pushRegistry>${docker.push.registry}</pushRegistry>
-
           <images>
             <image>
               <name>${docker.image.prefix}/base-image:1.0</name>
