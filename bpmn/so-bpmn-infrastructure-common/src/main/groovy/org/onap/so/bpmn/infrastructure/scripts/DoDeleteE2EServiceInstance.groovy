@@ -450,6 +450,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
             execution.setVariable("serviceModelInfo", serviceDecomposition.getModelInfo())
 
             List<Resource> deleteResourceList = serviceDecomposition.getServiceResources()
+            List<ImmutablePair<Resource, List<Resource>>> deleteRealResourceList = new ArrayList<ImmutablePair<Resource, List<Resource>>>()
 			if (serviceDecomposition.getServiceType().equals("MDONS_OTN")){
 			   for (Resource resource : deleteResourceList) {
 			        String serviceName = execution.getVariable("serviceInstanceName")
@@ -469,7 +470,6 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
                 relationShipList = jsonSlurper.parseText(serviceRelationShip)
             }
 
-            List<ImmutablePair<Resource, List<Resource>>> deleteRealResourceList = new ArrayList<ImmutablePair<Resource, List<Resource>>>()
 
             //Set the real resource instance id to the decomosed resource list
             //reset the resource instance id , because in the decompose flow ,its a random one.
