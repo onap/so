@@ -24,7 +24,6 @@
 
 package org.onap.so.adapters.sdnc.impl;
 
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStream;
@@ -64,7 +63,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 
 @Component
 public class SDNCRestClient {
