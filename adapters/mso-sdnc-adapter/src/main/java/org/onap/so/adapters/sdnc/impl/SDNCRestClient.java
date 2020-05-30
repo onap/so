@@ -153,10 +153,15 @@ public class SDNCRestClient {
             String basicAuth = "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
             con.setRequestProperty("Authorization", basicAuth);
             con.setRequestMethod(rt.getReqMethod());
+	    String msoAction = rt.getMsoAction();
 
             // Add request headers
             if ("POST".equals(rt.getReqMethod()) || "PUT".equals(rt.getReqMethod())) {
-                con.setRequestProperty("Content-type", "application/xml");
+		if (Constants.MSO_ACTION_MDONS.equals(msoAction)) {
+                     con.setRequestProperty("Content-type", "application/json");
+               } else {
+                      con.setRequestProperty("Content-type", "application/xml");
+                } 
                 con.setRequestProperty("Content-length", String.valueOf(sdncReqBody.length()));
                 con.setDoOutput(true);
                 out = new DataOutputStream(con.getOutputStream());
