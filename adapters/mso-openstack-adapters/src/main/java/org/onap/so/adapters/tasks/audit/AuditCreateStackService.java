@@ -67,7 +67,7 @@ public class AuditCreateStackService extends AbstractAuditService {
                 auditListOpt.get().setHeatStackName(auditInventory.getHeatStackName());
                 GraphInventoryCommonObjectMapperProvider objectMapper = new GraphInventoryCommonObjectMapperProvider();
                 variables.put("auditInventoryResult", objectMapper.getMapper().writeValueAsString(auditListOpt.get()));
-                success = !didCreateAuditFail(auditListOpt);
+                success = !didCreateAuditFail(auditListOpt.get());
             }
         } catch (Exception e) {
             logger.error("Error during audit of stack", e);

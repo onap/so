@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import java.util.Optional;
 
 @Component
 public abstract class AbstractAuditService extends ExternalTaskUtils {
@@ -53,13 +52,13 @@ public abstract class AbstractAuditService extends ExternalTaskUtils {
      * @param auditList
      * @return
      */
-    protected boolean didCreateAuditFail(Optional<AAIObjectAuditList> auditList) {
-        if (auditList.isPresent() && isAuditListNotNullAndNotEmpty(auditList.get())) {
+    protected boolean didCreateAuditFail(AAIObjectAuditList auditList) {
+        if (isAuditListNotNullAndNotEmpty(auditList)) {
             if (logger.isInfoEnabled()) {
-                logger.info("Audit Results: {}", auditList.get().toString());
+                logger.info("Audit Results: {}", auditList.toString());
             }
-            return auditList.get().getAuditList().stream().filter(auditObject -> !auditObject.isDoesObjectExist())
-                    .findFirst().map(v -> true).orElse(false);
+            return auditList.getAuditList().stream().filter(auditObject -> !auditObject.isDoesObjectExist()).findFirst()
+                    .map(v -> true).orElse(false);
         } else {
             return false;
         }
