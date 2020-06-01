@@ -8,7 +8,7 @@ Service Orchestrator Release Notes
 
 The SO provides the highest level of service orchestration in the ONAP architecture. 
 
-Version: 1.6.1
+Version: 1.6.3
 -----------------------
 
 :Release Date: 
@@ -223,7 +223,10 @@ Features Being considered for F release (As per the resource availability):
 
 
 **Known Issues**
-	N/A
+
+-  [`SO-2903 <https://jira.onap.org/browse/SO-2903>`__\ ] - Include so-appc-orchestrator with SO OOM
+Appc Orchestrator Pod  release : Appc - Ochestrator code changes will be delivered as part of the patch on Frankfurt as the OOM changes were delayed. These would be release as part of the post release flows.
+
 
 OJSI Issues
 
