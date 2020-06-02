@@ -59,7 +59,6 @@ import org.onap.aai.domain.yang.VfModule;
 import org.onap.aai.domain.yang.Vlan;
 import org.onap.aai.domain.yang.Vlans;
 import org.onap.aai.domain.yang.Vserver;
-import org.onap.logging.filter.base.ErrorCode;
 import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.AAISingleTransactionClient;
@@ -69,6 +68,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
 import org.onap.aaiclient.client.graphinventory.exceptions.BulkProcessFailed;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.ServerType;
 import org.onap.so.heatbridge.constants.HeatBridgeConstants;
@@ -263,7 +263,9 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             lIf.setInterfaceId(port.getId());
             lIf.setInterfaceName(port.getName());
             lIf.setMacaddr(port.getMacAddress());
-            lIf.setNetworkName((String) port.getProfile().get("physical_network"));
+            if (port.getProfile() != null && port.getProfile().get("physical_network") != null) {
+                lIf.setNetworkName((String) port.getProfile().get("physical_network"));
+            }
             lIf.setIsPortMirrored(false);
             lIf.setIsIpUnnumbered(false);
             lIf.setInMaint(false);
