@@ -179,13 +179,13 @@ public class AuditStackServiceDataTest extends AuditCreateStackService {
 
     @Test
     public void determineAuditResult_Test() throws Exception {
-        boolean actual = auditStackService.didCreateAuditFail(auditListOptSuccess);
+        boolean actual = auditStackService.didCreateAuditFail(auditListOptSuccess.get());
         assertEquals(false, actual);
     }
 
     @Test
     public void determineAuditResult_Failure_Test() throws Exception {
-        boolean actual = auditStackService.didCreateAuditFail(auditListOptFailure);
+        boolean actual = auditStackService.didCreateAuditFail(auditListOptFailure.get());
         assertEquals(true, actual);
     }
 }
