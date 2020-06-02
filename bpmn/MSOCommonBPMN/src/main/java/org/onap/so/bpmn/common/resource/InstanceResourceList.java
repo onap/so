@@ -109,16 +109,20 @@ public class InstanceResourceList {
         }
 
         // check if the resource contains vf-module
-        if (vnfResource != null && vnfResource.getVfModules() != null) {
+        if (isVnfResourceWithVfModule(vnfResource)) {
             sequencedResourceList.addAll(vnfResource.getVfModules());
         }
 
         return sequencedResourceList;
     }
 
+    private static boolean isVnfResourceWithVfModule(VnfResource vnfResource) {
+        return vnfResource != null && vnfResource.getVfModules() != null;
+    }
+
     private static List<Resource> getGroupResourceInstanceList(VnfResource vnfResource, JsonObject vfObj) {
         List<Resource> sequencedResourceList = new ArrayList<>();
-        if (vnfResource.getGroupOrder() != null && !StringUtils.isEmpty(vnfResource.getGroupOrder())) {
+        if (isVnfGroupOrderFilled(vnfResource)) {
             String[] grpSequence = vnfResource.getGroupOrder().split(",");
             for (String grpType : grpSequence) {
                 for (GroupResource gResource : vnfResource.getGroups()) {
@@ -149,5 +153,9 @@ public class InstanceResourceList {
             }
         }
         return sequencedResourceList;
+    }
+
+    private static boolean isVnfGroupOrderFilled(VnfResource vnfResource) {
+        return vnfResource.getGroupOrder() != null && !StringUtils.isEmpty(vnfResource.getGroupOrder());
     }
 }
