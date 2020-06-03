@@ -59,7 +59,7 @@ public class AuditCreateStackService extends AbstractAuditService {
         boolean success = false;
         try {
             Integer retryCount = externalTask.getRetries();
-            logger.info("Executing External Task Audit Inventory, Retry Number: {} \n {}", auditInventory, retryCount);
+            logger.info("Executing External Task Audit Inventory, Retry Number: {} \n {}", retryCount, auditInventory);
             Optional<AAIObjectAuditList> auditListOpt = heatStackAudit.auditHeatStack(auditInventory.getCloudRegion(),
                     auditInventory.getCloudOwner(), auditInventory.getTenantId(), auditInventory.getHeatStackName());
             if (auditListOpt.isPresent()) {
