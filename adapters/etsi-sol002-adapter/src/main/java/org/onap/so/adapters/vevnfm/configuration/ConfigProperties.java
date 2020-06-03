@@ -23,6 +23,7 @@ package org.onap.so.adapters.vevnfm.configuration;
 import org.onap.so.adapters.vevnfm.constant.NotificationVnfFilterType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 
 @Configuration
 public class ConfigProperties {
@@ -71,6 +72,18 @@ public class ConfigProperties {
 
     @Value("${spring.security.usercredentials[0].openpass}")
     private String springSecurityOpenpass;
+
+    @Value("${client.key-store:#{null}}")
+    private Resource clientKeyStore;
+
+    @Value("${client.key-store-password:#{null}}")
+    private String clientKeyStorePassword;
+
+    @Value("${client.trust-store:#{null}}")
+    private Resource clientTrustStore;
+
+    @Value("${client.trust-store-password:#{null}}")
+    private String clientTrustStorePassword;
 
     public String getVevnfmadapterVnfFilterJson() {
         return vevnfmadapterVnfFilterJson;
@@ -130,5 +143,21 @@ public class ConfigProperties {
 
     public String getSpringSecurityOpenpass() {
         return springSecurityOpenpass;
+    }
+
+    public Resource getClientKeyStore() {
+        return clientKeyStore;
+    }
+
+    public String getClientKeyStorePassword() {
+        return clientKeyStorePassword;
+    }
+
+    public Resource getClientTrustStore() {
+        return clientTrustStore;
+    }
+
+    public String getClientTrustStorePassword() {
+        return clientTrustStorePassword;
     }
 }
