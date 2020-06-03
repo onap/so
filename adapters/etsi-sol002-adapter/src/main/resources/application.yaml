@@ -19,17 +19,23 @@ server:
 
 vevnfmadapter:
   vnf-filter-json: '{notificationTypes:[VnfLcmOperationOccurrenceNotification],operationStates:[COMPLETED]}'
-  endpoint: http://so-ve-vnfm-adapter.onap:9098
+  endpoint: http://so-ve-vnfm-adapter:9098
+
+client:
+  key-store: classpath:ve-vnfm-adapter.p12
+  key-store-password: 'ywsqCy:EEo#j}HJHM7z^Rk[L'
+  trust-store: classpath:org.onap.so.trust.jks
+  trust-store-password: ',sx#.C*W)]wVgJC6ccFHI#:H'
 
 mso:
   key: 07a7159d3bf51a0e53be7a8f89699be7
 
 aai:
-  endpoint: https://aai.onap:30233
+  endpoint: https://aai:30233
   auth: 75C4483F9C05E2C33A8602635FA532397EC44AB667A2B64DED4FEE08DD932F2E3C1FEE
 
 vnfm:
-  default-endpoint: https://so-vnfm-simulator.onap:9093
+  default-endpoint: https://so-vnfm-simulator:9093
   subscription: /vnflcm/v1/subscriptions
   notification: /lcm/v1/vnf/instances/notifications
 
@@ -37,7 +43,7 @@ notification:
   vnf-filter-type: NONE
 
 dmaap:
-  endpoint: http://message-router.onap:30227
+  endpoint: http://message-router:30227
   topic: /events/unauthenticated.DCAE_CL_OUTPUT
   closed-loop:
     control:
