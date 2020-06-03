@@ -28,7 +28,6 @@ import org.onap.so.adapters.vevnfm.configuration.ConfigProperties;
 import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.annotation.Recover;
@@ -44,7 +43,6 @@ public class StartupService {
     private final String vnfmDefaultEndpoint;
     private final AaiConnection aaiConnection;
 
-    @Autowired
     public StartupService(final ConfigProperties configProperties, final AaiConnection aaiConnection) {
         this.vnfmDefaultEndpoint = configProperties.getVnfmDefaultEndpoint();
         this.aaiConnection = aaiConnection;
