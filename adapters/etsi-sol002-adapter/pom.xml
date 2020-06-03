@@ -88,6 +88,18 @@
         </executions>
       </plugin>
     </plugins>
+    <resources>
+      <resource>
+        <directory>${basedir}/src/main/resources</directory>
+        <excludes>
+          <exclude>certs/*</exclude>
+        </excludes>
+      </resource>
+      <resource>
+        <directory>${basedir}/src/main/resources/certs</directory>
+        <filtering>false</filtering>
+      </resource>
+    </resources>
   </build>
 
 </project>
