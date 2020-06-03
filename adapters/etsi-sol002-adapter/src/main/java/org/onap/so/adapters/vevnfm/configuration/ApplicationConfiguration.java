@@ -20,16 +20,43 @@
 
 package org.onap.so.adapters.vevnfm.configuration;
 
+import java.io.IOException;
+import java.security.*;
+import java.security.cert.CertificateException;
+import javax.net.ssl.SSLContext;
+import org.apache.http.client.HttpClient;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.onap.so.adapters.vevnfm.provider.AuthorizationHeadersProvider;
 import org.onap.so.configuration.rest.HttpHeadersProvider;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.onap.so.rest.service.HttpRestServiceProviderImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class ApplicationConfiguration {
+
+    private static final Logger logger = LoggerFactory.getLogger(ApplicationConfiguration.class);
+
+    private final Resource clientKeyStore;
+    private final String clientKeyStorePassword;
+    private final Resource clientTrustStore;
+    private final String clientTrustStorePassword;
+
+    public ApplicationConfiguration(final ConfigProperties configProperties) {
+        clientKeyStore = configProperties.getClientKeyStore();
+        clientKeyStorePassword = configProperties.getClientKeyStorePassword();
+        clientTrustStore = configProperties.getClientTrustStore();
+        clientTrustStorePassword = configProperties.getClientTrustStorePassword();
+    }
 
     @Bean
     public AuthorizationHeadersProvider headersProvider() {
@@ -39,6 +66,35 @@ public class ApplicationConfiguration {
     @Bean
     public HttpRestServiceProvider restProvider(final RestTemplate restTemplate,
             final HttpHeadersProvider headersProvider) {
+        modify(restTemplate);
         return new HttpRestServiceProviderImpl(restTemplate, headersProvider);
+    }
+
+    private void modify(final RestTemplate restTemplate) {
+
+        if (clientKeyStore == null || clientTrustStore == null) {
+            return;
+        }
+
+        try {
+            final KeyStore keystore = KeyStore.getInstance("PKCS12");
+            keystore.load(clientKeyStore.getInputStream(), clientKeyStorePassword.toCharArray());
+
+            final SSLContext sslContext = new SSLContextBuilder()
+                    .loadTrustMaterial(clientTrustStore.getURL(), clientTrustStorePassword.toCharArray())
+                    .loadKeyMaterial(keystore, clientKeyStorePassword.toCharArray()).build();
+
+            logger.info("Setting truststore: {}", clientTrustStore.getURL());
+
+            final SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(sslContext);
+            final HttpClient httpClient = HttpClients.custom().setSSLSocketFactory(socketFactory).build();
+            final HttpComponentsClientHttpRequestFactory factory =
+                    new HttpComponentsClientHttpRequestFactory(httpClient);
+
+            restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(factory));
+        } catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException | CertificateException
+                | IOException | UnrecoverableKeyException e) {
+            logger.error("Error reading truststore, TLS connection to VNFM will fail.", e);
+        }
     }
 }
