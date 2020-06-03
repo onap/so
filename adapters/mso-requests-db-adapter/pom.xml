@@ -169,9 +169,7 @@
         <executions>
           <execution>
             <id>original</id>
-            <configuration>
-              <skip>false</skip>
-            </configuration>
+            <phase>package</phase>
           </execution>
         </executions>
       </plugin>
@@ -181,6 +179,9 @@
         <executions>
           <execution>
             <id>extract-docker-file</id>
+            <configuration>
+              <skip>false</skip>
+            </configuration>
           </execution>
         </executions>
       </plugin>

@@ -644,6 +644,7 @@
                 <goal>unpack</goal>
               </goals>
               <configuration>
+                <skip>true</skip>
                 <artifactItems>
                   <artifactItem>
                     <groupId>org.onap.so</groupId>
@@ -665,12 +666,11 @@
           <executions>
             <execution>
               <id>original</id>
-              <phase>package</phase>
+              <phase>none</phase>
               <goals>
                 <goal>jar</goal>
               </goals>
               <configuration>
-                <skip>true</skip>
                 <classifier>${originalClassifier}</classifier>
                 <includes>
                   <include>**</include>
