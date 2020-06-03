@@ -40,6 +40,9 @@
         <executions>
           <execution>
             <id>extract-docker-file</id>
+            <configuration>
+              <skip>false</skip>
+            </configuration>
           </execution>
         </executions>
       </plugin>
