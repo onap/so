@@ -54,7 +54,7 @@ public class VolumeGroupDeleteValidatorTest {
     public void validateSuccessTest() {
         instanceIdMap.put("volumeGroupInstanceId", "1");
         when(aaiDataRetrieval.isVolumeGroupRelatedToVFModule("1")).thenReturn(false);
-        Optional<String> result = volumeGroupDeleteValidator.validate(instanceIdMap, null, null);
+        Optional<String> result = volumeGroupDeleteValidator.validate(instanceIdMap, null, null, null);
         assertEquals(false, result.isPresent());
     }
 
@@ -62,7 +62,7 @@ public class VolumeGroupDeleteValidatorTest {
     public void validateFailureVnfTest() {
         instanceIdMap.put("volumeGroupInstanceId", "1");
         when(aaiDataRetrieval.isVolumeGroupRelatedToVFModule("1")).thenReturn(true);
-        Optional<String> result = volumeGroupDeleteValidator.validate(instanceIdMap, null, null);
+        Optional<String> result = volumeGroupDeleteValidator.validate(instanceIdMap, null, null, null);
         assertEquals(true, result.isPresent());
     }
 

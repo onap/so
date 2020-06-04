@@ -39,5 +39,5 @@ public interface RequestValidator {
 
 
     public Optional<String> validate(Map<String, String> instanceIdMap, ServiceInstancesRequest request,
-            Map<String, String> queryParams);
+            Map<String, String> queryParams, Actions action);
 }

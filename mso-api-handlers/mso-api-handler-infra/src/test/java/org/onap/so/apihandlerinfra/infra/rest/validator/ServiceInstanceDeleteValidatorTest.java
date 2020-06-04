@@ -76,7 +76,7 @@ public class ServiceInstanceDeleteValidatorTest {
         when(aaiDataRetrieval.isServiceRelatedToGenericVnf("1")).thenReturn(false);
         when(aaiDataRetrieval.isServiceRelatedToNetworks("1")).thenReturn(false);
         when(aaiDataRetrieval.isServiceRelatedToConfiguration("1")).thenReturn(false);
-        Optional<String> result = serviceValidator.validate(instanceIdMap, null, null);
+        Optional<String> result = serviceValidator.validate(instanceIdMap, null, null, null);
         assertEquals(false, result.isPresent());
     }
 
@@ -84,7 +84,7 @@ public class ServiceInstanceDeleteValidatorTest {
     public void validateFailureVnfTest() {
         instanceIdMap.put("serviceInstanceId", "1");
         when(aaiDataRetrieval.isServiceRelatedToGenericVnf("1")).thenReturn(true);
-        Optional<String> result = serviceValidator.validate(instanceIdMap, null, null);
+        Optional<String> result = serviceValidator.validate(instanceIdMap, null, null, null);
         assertEquals(true, result.isPresent());
     }
 
@@ -93,7 +93,7 @@ public class ServiceInstanceDeleteValidatorTest {
         instanceIdMap.put("serviceInstanceId", "1");
         when(aaiDataRetrieval.isServiceRelatedToGenericVnf("1")).thenReturn(false);
         when(aaiDataRetrieval.isServiceRelatedToNetworks("1")).thenReturn(true);
-        Optional<String> result = serviceValidator.validate(instanceIdMap, null, null);
+        Optional<String> result = serviceValidator.validate(instanceIdMap, null, null, null);
         assertEquals(true, result.isPresent());
     }
 
@@ -103,7 +103,7 @@ public class ServiceInstanceDeleteValidatorTest {
         when(aaiDataRetrieval.isServiceRelatedToGenericVnf("1")).thenReturn(false);
         when(aaiDataRetrieval.isServiceRelatedToNetworks("1")).thenReturn(false);
         when(aaiDataRetrieval.isServiceRelatedToConfiguration("1")).thenReturn(true);
-        Optional<String> result = serviceValidator.validate(instanceIdMap, null, null);
+        Optional<String> result = serviceValidator.validate(instanceIdMap, null, null, null);
         assertEquals(true, result.isPresent());
     }
 

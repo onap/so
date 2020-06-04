@@ -53,7 +53,7 @@ public class VnfDeleteValidatorTest {
     public void validateFailureVfModuleVnfTest() {
         instanceIdMap.put("vnfInstanceId", "1");
         doReturn(Optional.of("test")).when(aaiDataRetrieval).getVfModuleIdsByVnfId("1");
-        Optional<String> result = vnfValidator.validate(instanceIdMap, null, null);
+        Optional<String> result = vnfValidator.validate(instanceIdMap, null, null, null);
         assertEquals(true, result.isPresent());
     }
 
@@ -61,7 +61,7 @@ public class VnfDeleteValidatorTest {
     public void validateSuccessVfModuleVnfTest() {
         instanceIdMap.put("vnfInstanceId", "1");
         doReturn(Optional.empty()).when(aaiDataRetrieval).getVfModuleIdsByVnfId("1");
-        Optional<String> result = vnfValidator.validate(instanceIdMap, null, null);
+        Optional<String> result = vnfValidator.validate(instanceIdMap, null, null, null);
         assertEquals(false, result.isPresent());
     }
 
@@ -69,7 +69,7 @@ public class VnfDeleteValidatorTest {
     public void validateFailureVolumeGroupVnfTest() {
         instanceIdMap.put("vnfInstanceId", "1");
         doReturn(Optional.of("test")).when(aaiDataRetrieval).getVolumeGroupIdsByVnfId("1");
-        Optional<String> result = vnfValidator.validate(instanceIdMap, null, null);
+        Optional<String> result = vnfValidator.validate(instanceIdMap, null, null, null);
         assertEquals(true, result.isPresent());
     }
 
@@ -77,7 +77,7 @@ public class VnfDeleteValidatorTest {
     public void validateSuccessVolumeGroupVnfTest() {
         instanceIdMap.put("vnfInstanceId", "1");
         doReturn(Optional.empty()).when(aaiDataRetrieval).getVolumeGroupIdsByVnfId("1");
-        Optional<String> result = vnfValidator.validate(instanceIdMap, null, null);
+        Optional<String> result = vnfValidator.validate(instanceIdMap, null, null, null);
         assertEquals(false, result.isPresent());
     }
 }

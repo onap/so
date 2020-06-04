@@ -58,7 +58,7 @@ public class NetworkDeleteValidatorTest {
     public void validateSuccessTest() {
         instanceIdMap.put("networkInstanceId", "1");
         when(aaiDataRetrieval.isNetworkRelatedToModules("1")).thenReturn(false);
-        Optional<String> result = networkValidator.validate(instanceIdMap, null, null);
+        Optional<String> result = networkValidator.validate(instanceIdMap, null, null, null);
         assertEquals(false, result.isPresent());
     }
 
@@ -66,7 +66,7 @@ public class NetworkDeleteValidatorTest {
     public void validateFailureTest() {
         instanceIdMap.put("networkInstanceId", "1");
         when(aaiDataRetrieval.isNetworkRelatedToModules("1")).thenReturn(true);
-        Optional<String> result = networkValidator.validate(instanceIdMap, null, null);
+        Optional<String> result = networkValidator.validate(instanceIdMap, null, null, null);
         assertEquals(true, result.isPresent());
     }
 

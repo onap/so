@@ -24,7 +24,7 @@ public class VolumeGroupDeleteValidator implements RequestValidator {
 
     @Override
     public Optional<String> validate(Map<String, String> instanceIdMap, ServiceInstancesRequest request,
-            Map<String, String> queryParams) {
+            Map<String, String> queryParams, Actions action) {
         if (aaiDataRetrieval.isVolumeGroupRelatedToVFModule(instanceIdMap.get("volumeGroupInstanceId"))) {
             return Optional.of("Cannot delete volume group it is related to existing vf-modules");
         } else {

@@ -34,7 +34,7 @@ public class ServiceInstanceDeleteValidator implements RequestValidator {
 
     @Override
     public Optional<String> validate(Map<String, String> instanceIdMap, ServiceInstancesRequest request,
-            Map<String, String> queryParams) {
+            Map<String, String> queryParams, Actions action) {
         if (aaiDataRetrieval.isServiceRelatedToGenericVnf(instanceIdMap.get("serviceInstanceId"))) {
             return Optional.of("Cannot delete service it is still related to existing vf-modules");
         } else if (aaiDataRetrieval.isServiceRelatedToNetworks(instanceIdMap.get("serviceInstanceId"))) {

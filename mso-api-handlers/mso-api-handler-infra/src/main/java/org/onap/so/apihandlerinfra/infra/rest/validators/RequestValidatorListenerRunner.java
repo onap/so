@@ -73,8 +73,8 @@ public class RequestValidatorListenerRunner extends ListenerRunner {
                 filterListeners(validators, (item -> item.shouldRunFor(requestURI, request, action)));
 
         List<Pair<String, Optional<String>>> results = new ArrayList<>();
-        filtered.forEach(item -> results
-                .add(new Pair<>(item.getClass().getName(), item.validate(instanceIdMap, request, queryParams))));
+        filtered.forEach(item -> results.add(
+                new Pair<>(item.getClass().getName(), item.validate(instanceIdMap, request, queryParams, action))));
 
         return results.stream().filter(item -> item.getValue1().isPresent()).collect(Collectors.toList());
     }

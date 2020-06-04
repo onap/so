@@ -24,7 +24,7 @@ public class VnfDeleteValidator implements RequestValidator {
 
     @Override
     public Optional<String> validate(Map<String, String> instanceIdMap, ServiceInstancesRequest request,
-            Map<String, String> queryParams) {
+            Map<String, String> queryParams, Actions action) {
         final Optional<String> volumeGroupIds =
                 aaiDataRetrieval.getVolumeGroupIdsByVnfId(instanceIdMap.get("vnfInstanceId"));
         final Optional<String> vfModuleIds = aaiDataRetrieval.getVfModuleIdsByVnfId(instanceIdMap.get("vnfInstanceId"));

@@ -25,7 +25,7 @@ public class NetworkDeleteValidator implements RequestValidator {
 
     @Override
     public Optional<String> validate(Map<String, String> instanceIdMap, ServiceInstancesRequest request,
-            Map<String, String> queryParams) {
+            Map<String, String> queryParams, Actions action) {
         if (aaiDataRetrieval.isNetworkRelatedToModules(instanceIdMap.get("networkInstanceId"))) {
             return Optional.of("Cannot delete network it is still related to existing vf-modules");
         } else {
