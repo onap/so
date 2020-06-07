@@ -74,6 +74,8 @@ public class WorkflowActionBBTasks {
     private static final String COMPLETED = "completed";
     private static final String HANDLINGCODE = "handlingCode";
     private static final String ROLLBACKTOCREATED = "RollbackToCreated";
+    private static final String REPLACEINSTANCE = "replaceInstance";
+    private static final String VFMODULE = "VfModule";
     protected String maxRetries = "mso.rainyDay.maxRetries";
     private static final Logger logger = LoggerFactory.getLogger(WorkflowActionBBTasks.class);
 
@@ -286,12 +288,23 @@ public class WorkflowActionBBTasks {
      * working on.
      */
     public void rollbackExecutionPath(DelegateExecution execution) {
+        final String action = (String) execution.getVariable(G_ACTION);
+        final String resourceName = (String) execution.getVariable("resourceName");
         if (!(boolean) execution.getVariable("isRollback")) {
             List<ExecuteBuildingBlock> flowsToExecute =
                     (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+
+            List<ExecuteBuildingBlock> flowsToExecuteChangeBBs = new ArrayList();
+            for (int i = 0; i < flowsToExecute.size(); i++) {
+                if (flowsToExecute.get(i).getBuildingBlock().getBpmnFlowName().startsWith("Change")) {
+                    flowsToExecuteChangeBBs.add(flowsToExecute.get(i));
+                }
+            }
+
             List<ExecuteBuildingBlock> rollbackFlows = new ArrayList();
             int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE);
             int listSize = flowsToExecute.size();
+
             for (int i = listSize - 1; i >= 0; i--) {
                 if (i > currentSequence - 1) {
                     flowsToExecute.remove(i);
@@ -338,6 +351,18 @@ public class WorkflowActionBBTasks {
                         rollbackFlowsFiltered.remove(rollbackFlows.get(i));
                     }
                 }
+            }
+
+            List<ExecuteBuildingBlock> rollbackFlowsFilteredNonChangeBBs = new ArrayList();
+            if (action.equals(REPLACEINSTANCE) && resourceName.equals(VFMODULE)) {
+                for (int i = 0; i < rollbackFlowsFiltered.size(); i++) {
+                    if (!rollbackFlowsFiltered.get(i).getBuildingBlock().getBpmnFlowName().startsWith("Change")) {
+                        rollbackFlowsFilteredNonChangeBBs.add(rollbackFlowsFiltered.get(i));
+                    }
+                }
+                rollbackFlowsFiltered.clear();
+                rollbackFlowsFiltered.addAll(flowsToExecuteChangeBBs);
+                rollbackFlowsFiltered.addAll(rollbackFlowsFilteredNonChangeBBs);
             }
 
             workflowActionBBFailure.updateRequestErrorStatusMessage(execution);
