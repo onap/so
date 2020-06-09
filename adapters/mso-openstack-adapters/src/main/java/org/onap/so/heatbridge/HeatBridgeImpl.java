@@ -145,7 +145,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
         logger.trace("Keystone Version: {} ", keystoneVersion);
         this.osClient = new MsoCloudClientFactoryImpl(new OpenstackClientFactoryImpl()).getOpenstackClient(
                 cloudIdentity.getIdentityUrl(), cloudIdentity.getMsoId(), cloudIdentity.getMsoPass(), regionId,
-                tenantId, keystoneVersion);
+                tenantId, keystoneVersion, cloudIdentity.getUserDomainName(), cloudIdentity.getProjectDomainName());
         logger.trace("Successfully authenticated with keystone for tenant: {} and region: {}", tenantId, regionId);
         return osClient;
     }
