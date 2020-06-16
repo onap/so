@@ -58,7 +58,8 @@ public class ExecuteBuildingBlockRainyDayTest extends BaseTest {
         vnf = setGenericVnf();
 
         BuildingBlock buildingBlock = new BuildingBlock().setBpmnFlowName("AssignServiceInstanceBB");
-        ExecuteBuildingBlock executeBuildingBlock = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock);
+        ExecuteBuildingBlock executeBuildingBlock = new ExecuteBuildingBlock();
+        executeBuildingBlock.setBuildingBlock(buildingBlock);
 
         delegateExecution.setVariable("gBBInput", gBBInput);
         delegateExecution.setVariable("WorkflowException", new WorkflowException("", 7000, ""));

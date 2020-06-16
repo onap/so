@@ -20,136 +20,48 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
-import java.util.List;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
+import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlockBase;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
-import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
+import java.util.List;
 
-public class ConfigBuildingBlocksDataObject {
+public class ConfigBuildingBlocksDataObject extends BuildingBlockBase {
 
-    private ServiceInstancesRequest sIRequest;
-    private List<OrchestrationFlow> orchFlows;
-    private String requestId;
-    private Resource resourceKey;
-    private String apiVersion;
-    private String resourceId;
-    private String requestAction;
-    private boolean aLaCarte;
-    private String vnfType;
-    private WorkflowResourceIds workflowResourceIds;
-    private RequestDetails requestDetails;
     private DelegateExecution execution;
+    private List<OrchestrationFlow> orchFlows;
+    private Resource resourceKey;
+    private ServiceInstancesRequest sIRequest;
 
     public ServiceInstancesRequest getsIRequest() {
         return sIRequest;
     }
 
-    public ConfigBuildingBlocksDataObject setsIRequest(ServiceInstancesRequest sIRequest) {
+    public void setsIRequest(ServiceInstancesRequest sIRequest) {
         this.sIRequest = sIRequest;
-        return this;
     }
 
     public List<OrchestrationFlow> getOrchFlows() {
         return orchFlows;
     }
 
-    public ConfigBuildingBlocksDataObject setOrchFlows(List<OrchestrationFlow> orchFlows) {
+    public void setOrchFlows(List<OrchestrationFlow> orchFlows) {
         this.orchFlows = orchFlows;
-        return this;
-    }
-
-    public String getRequestId() {
-        return requestId;
-    }
-
-    public ConfigBuildingBlocksDataObject setRequestId(String requestId) {
-        this.requestId = requestId;
-        return this;
     }
 
     public Resource getResourceKey() {
         return resourceKey;
     }
 
-    public ConfigBuildingBlocksDataObject setResourceKey(Resource resourceKey) {
+    public void setResourceKey(Resource resourceKey) {
         this.resourceKey = resourceKey;
-        return this;
-    }
-
-    public String getApiVersion() {
-        return apiVersion;
-    }
-
-    public ConfigBuildingBlocksDataObject setApiVersion(String apiVersion) {
-        this.apiVersion = apiVersion;
-        return this;
-    }
-
-    public String getResourceId() {
-        return resourceId;
-    }
-
-    public ConfigBuildingBlocksDataObject setResourceId(String resourceId) {
-        this.resourceId = resourceId;
-        return this;
-    }
-
-    public String getRequestAction() {
-        return requestAction;
-    }
-
-    public ConfigBuildingBlocksDataObject setRequestAction(String requestAction) {
-        this.requestAction = requestAction;
-        return this;
-    }
-
-    public boolean isaLaCarte() {
-        return aLaCarte;
-    }
-
-    public ConfigBuildingBlocksDataObject setaLaCarte(boolean aLaCarte) {
-        this.aLaCarte = aLaCarte;
-        return this;
-    }
-
-    public String getVnfType() {
-        return vnfType;
-    }
-
-    public ConfigBuildingBlocksDataObject setVnfType(String vnfType) {
-        this.vnfType = vnfType;
-        return this;
-    }
-
-    public WorkflowResourceIds getWorkflowResourceIds() {
-        return workflowResourceIds;
-    }
-
-    public ConfigBuildingBlocksDataObject setWorkflowResourceIds(WorkflowResourceIds workflowResourceIds) {
-        this.workflowResourceIds = workflowResourceIds;
-        return this;
-    }
-
-    public RequestDetails getRequestDetails() {
-        return requestDetails;
-    }
-
-    public ConfigBuildingBlocksDataObject setRequestDetails(RequestDetails requestDetails) {
-        this.requestDetails = requestDetails;
-        return this;
     }
 
     public DelegateExecution getExecution() {
         return execution;
     }
 
-    public ConfigBuildingBlocksDataObject setExecution(DelegateExecution execution) {
+    public void setExecution(DelegateExecution execution) {
         this.execution = execution;
-        return this;
     }
-
-
-
 }
