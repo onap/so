@@ -1647,10 +1647,17 @@ public class WorkflowActionTest extends BaseTaskTest {
         List<OrchestrationFlow> orchFlows = createFlowList("DeactivateVfModuleBB", "DeleteVfModuleBB",
                 "UnassignVfModuleBB", "DeactivateFabricConfigurationBB", "UnassignFabricConfigurationBB");
 
-        ConfigBuildingBlocksDataObject dataObj = new ConfigBuildingBlocksDataObject().setsIRequest(sIRequest)
-                .setOrchFlows(orchFlows).setRequestId(requestId).setResourceKey(resourceKey).setApiVersion(apiVersion)
-                .setResourceId(resourceId).setRequestAction(requestAction).setaLaCarte(aLaCarte).setVnfType(vnfType)
-                .setWorkflowResourceIds(workflowResourceIds).setRequestDetails(requestDetails).setExecution(execution);
+        ConfigBuildingBlocksDataObject dataObj = new ConfigBuildingBlocksDataObject();
+        dataObj.setsIRequest(sIRequest);
+        dataObj.setOrchFlows(orchFlows).setRequestId(requestId);
+        dataObj.setResourceKey(resourceKey).setApiVersion(apiVersion);
+        dataObj.setResourceId(resourceId);
+        dataObj.setRequestAction(requestAction);
+        dataObj.setaLaCarte(aLaCarte);
+        dataObj.setVnfType(vnfType);
+        dataObj.setWorkflowResourceIds(workflowResourceIds);
+        dataObj.setRequestDetails(requestDetails);
+        dataObj.setExecution(execution);
 
         org.onap.aai.domain.yang.GenericVnf vnf = new org.onap.aai.domain.yang.GenericVnf();
         vnf.setVnfId("vnf0");

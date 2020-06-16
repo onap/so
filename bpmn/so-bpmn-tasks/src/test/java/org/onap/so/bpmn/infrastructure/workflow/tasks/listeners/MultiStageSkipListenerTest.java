@@ -91,8 +91,10 @@ public class MultiStageSkipListenerTest {
         workflowResourceIds.setServiceInstanceId("serviceInstanceId");
         workflowResourceIds.setVnfId(vnfId);
         BuildingBlock bb = new BuildingBlock().setBpmnFlowName("AssignVfModuleBB");
-        ExecuteBuildingBlock ebb = new ExecuteBuildingBlock().setResourceId(vfModuleId).setBuildingBlock(bb)
-                .setWorkflowResourceIds(workflowResourceIds);
+        ExecuteBuildingBlock ebb = new ExecuteBuildingBlock();
+        ebb.setResourceId(vfModuleId);
+        ebb.setBuildingBlock(bb);
+        ebb.setWorkflowResourceIds(workflowResourceIds);
         flowsToExecute.add(ebb);
         flowsToExecute.add(new ExecuteBuildingBlock());
         flowsToExecute.add(new ExecuteBuildingBlock());
