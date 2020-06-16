@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "004067e1_980850b3",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 891,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-06-16T15:16:20Z",
+      "side": 1,
+      "message": "The method returns true if there is no network collection in resource list, so the method name is not consistent with the logic.\nAdd negation \"!resourceList...\". Remember to remove negation in the place of invoking.",
+      "range": {
+        "startLine": 891,
+        "startChar": 15,
+        "endLine": 891,
+        "endChar": 27
+      },
+      "revId": "99ca10d0c0505ca261540505a4548d36eb3533f6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
