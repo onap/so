@@ -115,7 +115,9 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         ModelInfo mi = new ModelInfo();
         mi.setModelUuid(modelUuid);
         rd.setModelInfo(mi);
-        ExecuteBuildingBlock ebb = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock).setRequestDetails(rd);
+        ExecuteBuildingBlock ebb = new ExecuteBuildingBlock();
+        ebb.setBuildingBlock(buildingBlock);
+        ebb.setRequestDetails(rd);
         flowsToExecute.add(ebb);
 
         List<VnfResourceCustomization> vnfResourceCustomizations = new ArrayList<>();
@@ -150,7 +152,9 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         ModelInfo mi = new ModelInfo();
         mi.setModelUuid(modelUuid);
         rd.setModelInfo(mi);
-        ExecuteBuildingBlock ebb = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock).setRequestDetails(rd);
+        ExecuteBuildingBlock ebb = new ExecuteBuildingBlock();
+        ebb.setBuildingBlock(buildingBlock);
+        ebb.setRequestDetails(rd);
         ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
 
         flowsToExecute.add(ebb);

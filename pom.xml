@@ -534,7 +534,7 @@
     </plugins>
     <pluginManagement>
       <plugins>
-           <plugin>
+        <plugin>
           <groupId>org.eclipse.m2e</groupId>
           <artifactId>lifecycle-mapping</artifactId>
           <version>1.0.0</version>
@@ -554,7 +554,7 @@
                     <execute />
                   </action>
                 </pluginExecution>
-                 <pluginExecution>
+                <pluginExecution>
                   <pluginExecutionFilter>
                     <groupId>org.codehaus.gmaven</groupId>
                     <artifactId>groovy-maven-plugin</artifactId>

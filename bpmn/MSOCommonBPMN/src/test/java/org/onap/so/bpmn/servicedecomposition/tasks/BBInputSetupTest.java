@@ -308,8 +308,9 @@ public class BBInputSetupTest {
     @Test
     public void testGetExecuteBBFromExecution() throws IOException {
         BuildingBlock bb = new BuildingBlock().setBpmnFlowName("AssignServiceInstanceBB");
-        ExecuteBuildingBlock expected =
-                new ExecuteBuildingBlock().setBuildingBlock(bb).setRequestId("00032ab7-3fb3-42e5-965d-8ea592502017");
+        ExecuteBuildingBlock expected = new ExecuteBuildingBlock();
+        expected.setBuildingBlock(bb);
+        expected.setRequestId("00032ab7-3fb3-42e5-965d-8ea592502017");
         DelegateExecution execution = Mockito.mock(DelegateExecution.class);
         doReturn(expected).when(execution).getVariable(any(String.class));
         ExecuteBuildingBlock actual = SPY_bbInputSetup.getExecuteBBFromExecution(execution);
@@ -321,7 +322,8 @@ public class BBInputSetupTest {
         GeneralBuildingBlock expected = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
                 GeneralBuildingBlock.class);
 
-        ExecuteBuildingBlock executeBB = new ExecuteBuildingBlock().setRequestId("requestId");
+        ExecuteBuildingBlock executeBB = new ExecuteBuildingBlock();
+        executeBB.setRequestId("requestId");
         RequestDetails requestDetails = new RequestDetails();
         ModelInfo modelInfo = new ModelInfo();
         modelInfo.setModelType(ModelType.service);
@@ -349,7 +351,8 @@ public class BBInputSetupTest {
         GeneralBuildingBlock expected = mapper
                 .readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockCMExpected.json"), GeneralBuildingBlock.class);
 
-        ExecuteBuildingBlock executeBB = new ExecuteBuildingBlock().setRequestId("requestId");
+        ExecuteBuildingBlock executeBB = new ExecuteBuildingBlock();
+        executeBB.setRequestId("requestId");
         RequestDetails requestDetails = new RequestDetails();
         requestDetails.setModelInfo(null);
         RequestParameters requestParams = new RequestParameters();
@@ -1003,7 +1006,9 @@ public class BBInputSetupTest {
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
 
         BuildingBlock buildingBlock = new BuildingBlock().setBpmnFlowName(AssignFlows.SERVICE_INSTANCE.toString());
-        ExecuteBuildingBlock executeBB = new ExecuteBuildingBlock().setaLaCarte(true).setBuildingBlock(buildingBlock);
+        ExecuteBuildingBlock executeBB = new ExecuteBuildingBlock();
+        executeBB.setaLaCarte(true);
+        executeBB.setBuildingBlock(buildingBlock);
         RequestDetails requestDetails = new RequestDetails();
         RequestInfo reqInfo = new RequestInfo();
         reqInfo.setInstanceName("serviceInstanceName");
@@ -2876,7 +2881,8 @@ public class BBInputSetupTest {
     @Test
     public void testGetVnfId() {
         String expected = "vnfId";
-        ExecuteBuildingBlock executeBB = new ExecuteBuildingBlock().setRequestId("requestId");
+        ExecuteBuildingBlock executeBB = new ExecuteBuildingBlock();
+        executeBB.setRequestId("requestId");
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
         InfraActiveRequests request = new InfraActiveRequests();
         request.setVnfId(expected);
