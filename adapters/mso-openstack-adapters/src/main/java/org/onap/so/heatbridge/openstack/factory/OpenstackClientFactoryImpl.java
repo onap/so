@@ -62,8 +62,8 @@ public class OpenstackClientFactoryImpl implements OpenstackClientFactory {
         try {
             client = OSFactory.builderV3().endpoint(osAccess.getUrl())
                     .credentials(osAccess.getUser(), osAccess.getPassword(), osAccess.getDomainNameIdentifier())
-                    .scopeToProject(Identifier.byId(osAccess.getTenantId())).authenticate()
-                    .useRegion(osAccess.getRegion());
+                    .scopeToProject(Identifier.byId(osAccess.getTenantId()), osAccess.getProjectNameIdentifier())
+                    .authenticate().useRegion(osAccess.getRegion());
             return new OpenstackV3ClientImpl(client);
         } catch (AuthenticationException exception) {
             throw new OpenstackClientException("Failed to authenticate with Keystone-v3: " + osAccess.getUrl(),

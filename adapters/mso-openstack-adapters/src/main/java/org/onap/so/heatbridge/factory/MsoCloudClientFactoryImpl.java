@@ -64,21 +64,26 @@ public class MsoCloudClientFactoryImpl implements MsoCloudClientFactory {
 
     @Override
     public OpenstackClient getOpenstackClient(@Nonnull String url, @Nonnull String msoId, @Nonnull String msoPass,
-            @Nonnull String regionId, @Nonnull String tenantId, @Nonnull String keystoneVersion)
-            throws HeatBridgeException {
+            @Nonnull String regionId, @Nonnull String tenantId, @Nonnull String keystoneVersion, String userDomainName,
+            String projectDomainName) throws HeatBridgeException {
         Objects.requireNonNull(url, "Null openstack url!");
         Objects.requireNonNull(msoId, "Null openstack user id!");
         Objects.requireNonNull(msoPass, "Null openstack password!");
         Objects.requireNonNull(regionId, "Null regionId ID!");
         Objects.requireNonNull(tenantId, "Null tenant ID!");
-        Objects.requireNonNull(tenantId, "Null keystone version");
+        Objects.requireNonNull(keystoneVersion, "Null keystone version");
+        if (userDomainName == null) {
+            userDomainName = HeatBridgeConstants.OS_DEFAULT_DOMAIN_NAME;
+        }
+        if (projectDomainName == null) {
+            projectDomainName = HeatBridgeConstants.OS_DEFAULT_DOMAIN_NAME;
+        }
         try {
             final OpenstackAccess osAccess = new OpenstackAccessBuilder().setBaseUrl(url) // keystone URL
                     .setUser(msoId) // keystone username
                     .setPassword(CryptoUtils.decryptCloudConfigPassword(msoPass)) // keystone decrypted password
                     .setRegion(regionId) // openstack region
-                    .setDomainName(HeatBridgeConstants.OS_DEFAULT_DOMAIN_NAME) // hardcode to "default"
-                    .setTenantId(tenantId) // tenantId
+                    .setDomainName(userDomainName).setProjectName(projectDomainName).setTenantId(tenantId) // tenantId
                     .build();
 
             // Identify the Keystone version

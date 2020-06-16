@@ -55,5 +55,5 @@ public interface MsoCloudClientFactory {
 
 
     OpenstackClient getOpenstackClient(String url, String msoId, String msoPass, String regionId, String tenantId,
-            String keystoneVersion) throws HeatBridgeException;
+            String keystoneVersion, String userDomainName, String projectDomainName) throws HeatBridgeException;
 }

@@ -88,6 +88,10 @@ public class OpenstackAccess {
         return projectName;
     }
 
+    public Identifier getProjectNameIdentifier() {
+        return Identifier.byName(projectName);
+    }
+
     public static class OpenstackAccessBuilder {
 
         private String baseUrl;
