@@ -338,8 +338,7 @@ public class WorkflowAction {
                     }
                     flowsToExecute = buildExecuteBuildingBlockList(orchFlows, resourceList, requestId, apiVersion,
                             resourceId, requestAction, vnfType, workflowResourceIds, requestDetails, vnfReplace);
-                    if (!resourceList.stream().filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType())
-                            .collect(Collectors.toList()).isEmpty()) {
+                    if (isNetworkCollectionInTheResourceList(resourceList)) {
                         logger.info("Sorting for Vlan Tagging");
                         flowsToExecute = sortExecutionPathByObjectForVlanTagging(flowsToExecute, requestAction);
                     }
@@ -799,7 +798,7 @@ public class WorkflowAction {
 
     protected void traverseNetworkCollection(DelegateExecution execution, List<Resource> resourceList,
             org.onap.so.db.catalog.beans.Service service) {
-        if (service.getVnfCustomizations() == null || service.getVnfCustomizations().isEmpty()) {
+        if (isVnfCustomizationsEmpty(service)) {
             List<CollectionResourceCustomization> customizations = service.getCollectionResourceCustomizations();
             if (customizations.isEmpty()) {
                 logger.debug("No Collections found. CollectionResourceCustomization list is empty.");
@@ -866,21 +865,35 @@ public class WorkflowAction {
                     logger.debug("No Network Collection Customization found");
                 }
             }
-            if (resourceList.stream().filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType())
-                    .collect(Collectors.toList()).isEmpty()) {
-                if (service.getNetworkCustomizations() == null) {
-                    logger.debug("No networks were found on this service model");
-                } else {
-                    for (int i = 0; i < service.getNetworkCustomizations().size(); i++) {
-                        resourceList.add(new Resource(WorkflowType.NETWORK,
-                                service.getNetworkCustomizations().get(i).getModelCustomizationUUID(), false));
-                    }
-                }
-            }
+            traverseNetworkCollectionCustomization(resourceList, service);
         } else {
             buildAndThrowException(execution,
                     "Cannot orchestrate Service-Macro-Create without user params with a vnf. Please update ASDC model for new macro orchestration support or add service_recipe records to route to old macro flows");
         }
+    }
+
+    private void traverseNetworkCollectionCustomization(List<Resource> resourceList,
+            org.onap.so.db.catalog.beans.Service service) {
+        if (isNetworkCollectionInTheResourceList(resourceList)) {
+            return;
+        }
+        if (service.getNetworkCustomizations() == null) {
+            logger.debug("No networks were found on this service model");
+            return;
+        }
+        for (int i = 0; i < service.getNetworkCustomizations().size(); i++) {
+            resourceList.add(new Resource(WorkflowType.NETWORK,
+                    service.getNetworkCustomizations().get(i).getModelCustomizationUUID(), false));
+        }
+    }
+
+    private boolean isNetworkCollectionInTheResourceList(List<Resource> resourceList) {
+        return !(resourceList.stream().filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType())
+                .collect(Collectors.toList()).isEmpty());
+    }
+
+    private boolean isVnfCustomizationsEmpty(org.onap.so.db.catalog.beans.Service service) {
+        return service.getVnfCustomizations() == null || service.getVnfCustomizations().isEmpty();
     }
 
     protected void traverseAAIService(DelegateExecution execution, List<Resource> resourceList, String resourceId,
