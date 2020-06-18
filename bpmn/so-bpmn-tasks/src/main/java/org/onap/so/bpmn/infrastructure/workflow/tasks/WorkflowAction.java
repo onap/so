@@ -213,17 +213,8 @@ public class WorkflowAction {
                         orchFlows = queryNorthBoundRequestCatalogDb(execution, requestAction, resourceType, true,
                                 cloudOwner, serviceType);
                     }
-                    String key = "";
-                    ModelInfo modelInfo = sIRequest.getRequestDetails().getModelInfo();
-                    if (modelInfo != null) {
-                        if (modelInfo.getModelType().equals(ModelType.service)) {
-                            key = modelInfo.getModelVersionId();
-                        } else {
-                            key = modelInfo.getModelCustomizationId();
-                        }
-                    }
+                    Resource resourceKey = getResourceKey(sIRequest, resourceType);
                     boolean isConfiguration = isConfiguration(orchFlows);
-                    Resource resourceKey = new Resource(resourceType, key, true);
                     if (isConfiguration && !requestAction.equalsIgnoreCase(CREATEINSTANCE)) {
                         List<ExecuteBuildingBlock> configBuildingBlocks = getConfigBuildingBlocks(
                                 new ConfigBuildingBlocksDataObject().setsIRequest(sIRequest).setOrchFlows(orchFlows)
@@ -406,6 +397,19 @@ public class WorkflowAction {
                 throw ex;
             }
         }
+    }
+
+    private Resource getResourceKey(ServiceInstancesRequest sIRequest, WorkflowType resourceType) {
+        String resourceId = "";
+        ModelInfo modelInfo = sIRequest.getRequestDetails().getModelInfo();
+        if (modelInfo != null) {
+            if (modelInfo.getModelType().equals(ModelType.service)) {
+                resourceId = modelInfo.getModelVersionId();
+            } else {
+                resourceId = modelInfo.getModelCustomizationId();
+            }
+        }
+        return new Resource(resourceType, resourceId, true);
     }
 
     private String getCloudOwner(CloudConfiguration cloudConfiguration) {
