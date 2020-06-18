@@ -13,8 +13,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class SkipConfigVnfListener implements FlowManipulator {
 
-    @Autowired
-    private CatalogDbClient catalogDbClient;
+    private final CatalogDbClient catalogDbClient;
+
+    public SkipConfigVnfListener(CatalogDbClient catalogDbClient) {
+        this.catalogDbClient = catalogDbClient;
+    }
 
     @Override
     public boolean shouldRunFor(String currentBBName, boolean isFirst, BuildingBlockExecution execution) {
