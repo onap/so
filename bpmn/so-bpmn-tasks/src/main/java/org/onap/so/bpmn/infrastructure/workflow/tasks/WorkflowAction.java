@@ -820,64 +820,66 @@ public class WorkflowAction {
 
     private void traverseNetworkCollectionResourceCustomization(List<Resource> resourceList,
             CollectionResourceCustomization collectionResourceCustomization) {
-        if (collectionResourceCustomization != null) {
-            resourceList.add(new Resource(WorkflowType.NETWORKCOLLECTION,
-                    collectionResourceCustomization.getModelCustomizationUUID(), false));
-            logger.debug("Found a network collection");
-            if (collectionResourceCustomization.getCollectionResource() != null) {
-                if (collectionResourceCustomization.getCollectionResource().getInstanceGroup() != null) {
-                    String toscaNodeType = collectionResourceCustomization.getCollectionResource().getInstanceGroup()
-                            .getToscaNodeType();
-                    if (toscaNodeType != null && toscaNodeType.contains(NETWORKCOLLECTION)) {
-                        int minNetworks = 0;
-                        org.onap.so.db.catalog.beans.InstanceGroup instanceGroup =
-                                collectionResourceCustomization.getCollectionResource().getInstanceGroup();
-                        CollectionResourceInstanceGroupCustomization collectionInstCust = null;
-                        if (!instanceGroup.getCollectionInstanceGroupCustomizations().isEmpty()) {
-                            for (CollectionResourceInstanceGroupCustomization collectionInstanceGroupTemp : instanceGroup
-                                    .getCollectionInstanceGroupCustomizations()) {
-                                if (collectionInstanceGroupTemp.getModelCustomizationUUID().equalsIgnoreCase(
-                                        collectionResourceCustomization.getModelCustomizationUUID())) {
-                                    collectionInstCust = collectionInstanceGroupTemp;
-                                    break;
-                                }
-                            }
-                            if (collectionInstCust != null
-                                    && collectionInstCust.getSubInterfaceNetworkQuantity() != null) {
-                                minNetworks = collectionInstCust.getSubInterfaceNetworkQuantity();
-                            }
-                        }
-                        logger.debug("minNetworks: {}", minNetworks);
-                        CollectionNetworkResourceCustomization collectionNetworkResourceCust = null;
-                        for (CollectionNetworkResourceCustomization collectionNetworkTemp : instanceGroup
-                                .getCollectionNetworkResourceCustomizations()) {
-                            if (collectionNetworkTemp.getNetworkResourceCustomization().getModelCustomizationUUID()
-                                    .equalsIgnoreCase(collectionResourceCustomization.getModelCustomizationUUID())) {
-                                collectionNetworkResourceCust = collectionNetworkTemp;
-                                break;
-                            }
-                        }
-                        for (int i = 0; i < minNetworks; i++) {
-                            if (collectionNetworkResourceCust != null && collectionInstCust != null) {
-                                Resource resource = new Resource(WorkflowType.VIRTUAL_LINK,
-                                        collectionNetworkResourceCust.getModelCustomizationUUID(), false);
-                                resource.setVirtualLinkKey(Integer.toString(i));
-                                resourceList.add(resource);
-                            }
-                        }
-                    } else {
-                        logger.debug("Instance Group tosca node type does not contain NetworkCollection:  {}",
-                                toscaNodeType);
-                    }
-                } else {
-                    logger.debug("No Instance Group found for network collection.");
-                }
-            } else {
-                logger.debug("No Network Collection found. collectionResource is null");
-            }
-        } else {
+        if (collectionResourceCustomization == null) {
             logger.debug("No Network Collection Customization found");
+            return;
         }
+        resourceList.add(new Resource(WorkflowType.NETWORKCOLLECTION,
+                collectionResourceCustomization.getModelCustomizationUUID(), false));
+        logger.debug("Found a network collection");
+        if (collectionResourceCustomization.getCollectionResource() == null) {
+            logger.debug("No Network Collection found. collectionResource is null");
+            return;
+        }
+        if (collectionResourceCustomization.getCollectionResource().getInstanceGroup() == null) {
+            logger.debug("No Instance Group found for network collection.");
+            return;
+        }
+        String toscaNodeType =
+                collectionResourceCustomization.getCollectionResource().getInstanceGroup().getToscaNodeType();
+        if (!isToscaNodeTypeHasNetworkCollection(toscaNodeType)) {
+            logger.debug("Instance Group tosca node type does not contain NetworkCollection:  {}", toscaNodeType);
+            return;
+        }
+        int minNetworks = 0;
+        org.onap.so.db.catalog.beans.InstanceGroup instanceGroup =
+                collectionResourceCustomization.getCollectionResource().getInstanceGroup();
+        CollectionResourceInstanceGroupCustomization collectionInstCust = null;
+        if (!instanceGroup.getCollectionInstanceGroupCustomizations().isEmpty()) {
+            for (CollectionResourceInstanceGroupCustomization collectionInstanceGroupTemp : instanceGroup
+                    .getCollectionInstanceGroupCustomizations()) {
+                if (collectionInstanceGroupTemp.getModelCustomizationUUID()
+                        .equalsIgnoreCase(collectionResourceCustomization.getModelCustomizationUUID())) {
+                    collectionInstCust = collectionInstanceGroupTemp;
+                    break;
+                }
+            }
+            if (collectionInstCust != null && collectionInstCust.getSubInterfaceNetworkQuantity() != null) {
+                minNetworks = collectionInstCust.getSubInterfaceNetworkQuantity();
+            }
+        }
+        logger.debug("minNetworks: {}", minNetworks);
+        CollectionNetworkResourceCustomization collectionNetworkResourceCust = null;
+        for (CollectionNetworkResourceCustomization collectionNetworkTemp : instanceGroup
+                .getCollectionNetworkResourceCustomizations()) {
+            if (collectionNetworkTemp.getNetworkResourceCustomization().getModelCustomizationUUID()
+                    .equalsIgnoreCase(collectionResourceCustomization.getModelCustomizationUUID())) {
+                collectionNetworkResourceCust = collectionNetworkTemp;
+                break;
+            }
+        }
+        for (int i = 0; i < minNetworks; i++) {
+            if (collectionNetworkResourceCust != null && collectionInstCust != null) {
+                Resource resource = new Resource(WorkflowType.VIRTUAL_LINK,
+                        collectionNetworkResourceCust.getModelCustomizationUUID(), false);
+                resource.setVirtualLinkKey(Integer.toString(i));
+                resourceList.add(resource);
+            }
+        }
+    }
+
+    private boolean isToscaNodeTypeHasNetworkCollection(String toscaNodeType) {
+        return toscaNodeType != null && toscaNodeType.contains(NETWORKCOLLECTION);
     }
 
     private void traverseNetworkCollectionCustomization(List<Resource> resourceList,
