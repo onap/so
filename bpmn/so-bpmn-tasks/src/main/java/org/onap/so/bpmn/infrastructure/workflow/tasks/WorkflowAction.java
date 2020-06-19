@@ -75,6 +75,7 @@ import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
 import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.CvnfcCustomization;
+import org.onap.so.db.catalog.beans.InstanceGroup;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
@@ -802,20 +803,19 @@ public class WorkflowAction {
 
     protected void traverseNetworkCollection(DelegateExecution execution, List<Resource> resourceList,
             org.onap.so.db.catalog.beans.Service service) {
-        if (isVnfCustomizationsEmpty(service)) {
-            List<CollectionResourceCustomization> customizations = service.getCollectionResourceCustomizations();
-            if (customizations.isEmpty()) {
-                logger.debug("No Collections found. CollectionResourceCustomization list is empty.");
-            } else {
-                CollectionResourceCustomization collectionResourceCustomization =
-                        findCatalogNetworkCollection(execution, service);
-                traverseNetworkCollectionResourceCustomization(resourceList, collectionResourceCustomization);
-            }
-            traverseNetworkCollectionCustomization(resourceList, service);
-        } else {
+        if (isVnfCustomizationsInTheService(service)) {
             buildAndThrowException(execution,
                     "Cannot orchestrate Service-Macro-Create without user params with a vnf. Please update ASDC model for new macro orchestration support or add service_recipe records to route to old macro flows");
         }
+        List<CollectionResourceCustomization> customizations = service.getCollectionResourceCustomizations();
+        if (customizations.isEmpty()) {
+            logger.debug("No Collections found. CollectionResourceCustomization list is empty.");
+        } else {
+            CollectionResourceCustomization collectionResourceCustomization =
+                    findCatalogNetworkCollection(execution, service);
+            traverseNetworkCollectionResourceCustomization(resourceList, collectionResourceCustomization);
+        }
+        traverseNetworkCollectionCustomization(resourceList, service);
     }
 
     private void traverseNetworkCollectionResourceCustomization(List<Resource> resourceList,
@@ -840,6 +840,20 @@ public class WorkflowAction {
             }
         }
         logger.debug("minNetworks: {}", minNetworks);
+        CollectionNetworkResourceCustomization collectionNetworkResourceCust =
+                getCollectionNetworkResourceCustomization(collectionResourceCustomization, instanceGroup);
+        for (int i = 0; i < minNetworks; i++) {
+            if (collectionNetworkResourceCust != null && collectionInstCust != null) {
+                Resource resource = new Resource(WorkflowType.VIRTUAL_LINK,
+                        collectionNetworkResourceCust.getModelCustomizationUUID(), false);
+                resource.setVirtualLinkKey(Integer.toString(i));
+                resourceList.add(resource);
+            }
+        }
+    }
+
+    private CollectionNetworkResourceCustomization getCollectionNetworkResourceCustomization(
+            CollectionResourceCustomization collectionResourceCustomization, InstanceGroup instanceGroup) {
         CollectionNetworkResourceCustomization collectionNetworkResourceCust = null;
         for (CollectionNetworkResourceCustomization collectionNetworkTemp : instanceGroup
                 .getCollectionNetworkResourceCustomizations()) {
@@ -849,14 +863,7 @@ public class WorkflowAction {
                 break;
             }
         }
-        for (int i = 0; i < minNetworks; i++) {
-            if (collectionNetworkResourceCust != null && collectionInstCust != null) {
-                Resource resource = new Resource(WorkflowType.VIRTUAL_LINK,
-                        collectionNetworkResourceCust.getModelCustomizationUUID(), false);
-                resource.setVirtualLinkKey(Integer.toString(i));
-                resourceList.add(resource);
-            }
-        }
+        return collectionNetworkResourceCust;
     }
 
     private boolean collectionResourceCustomizationShouldNotBeProcessed(List<Resource> resourceList,
@@ -914,8 +921,8 @@ public class WorkflowAction {
                 .collect(Collectors.toList()).isEmpty());
     }
 
-    private boolean isVnfCustomizationsEmpty(org.onap.so.db.catalog.beans.Service service) {
-        return service.getVnfCustomizations() == null || service.getVnfCustomizations().isEmpty();
+    private boolean isVnfCustomizationsInTheService(org.onap.so.db.catalog.beans.Service service) {
+        return !(service.getVnfCustomizations() == null || service.getVnfCustomizations().isEmpty());
     }
 
     protected void traverseAAIService(DelegateExecution execution, List<Resource> resourceList, String resourceId,
