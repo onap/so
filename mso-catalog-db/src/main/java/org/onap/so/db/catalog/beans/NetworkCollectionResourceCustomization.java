@@ -26,8 +26,10 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
+import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
+@RemoteResource("/networkCollectionResourceCustomization")
 @DiscriminatorValue(value = "NetworkCollection")
 public class NetworkCollectionResourceCustomization extends CollectionResourceCustomization {
 

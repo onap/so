@@ -20,7 +20,6 @@
 
 package org.onap.so.db.request.data.repository;
 
-import java.util.List;
 import org.onap.so.db.request.beans.OperationalEnvServiceModelStatus;
 import org.onap.so.db.request.beans.OperationalEnvServiceModelStatusId;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -35,7 +34,7 @@ public interface OperationalEnvServiceModelStatusRepository
     public OperationalEnvServiceModelStatus findOneByOperationalEnvIdAndRequestId(String operationalEnvId,
             String requestId);
 
-    public List<OperationalEnvServiceModelStatus> findAllByOperationalEnvIdAndRequestId(
+    public OperationalEnvServiceModelStatus[] findAllByOperationalEnvIdAndRequestId(
             @Param("OPERATIONAL_ENV_ID") String operationalEnvId, @Param("REQUEST_ID") String requestId);
 
     public OperationalEnvServiceModelStatus findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId(

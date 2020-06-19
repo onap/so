@@ -17,11 +17,6 @@
   </properties>
   <dependencies>
     <dependency>
-      <groupId>uk.co.blackpepper.bowman</groupId>
-      <artifactId>bowman-client</artifactId>
-      <version>0.3.0</version>
-    </dependency>
-    <dependency>
       <groupId>org.onap.so</groupId>
       <artifactId>common</artifactId>
       <version>${project.version}</version>
