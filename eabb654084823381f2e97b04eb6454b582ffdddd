@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cb02ee91_a23a152c",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/entities/ExecuteBuildingBlock.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-06-19T16:13:24Z",
+      "side": 1,
+      "message": "unused import, remove please",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 55
+      },
+      "revId": "eabb654084823381f2e97b04eb6454b582ffdddd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "da607cc3_4967a8f4",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/entities/ExecuteBuildingBlock.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-06-19T16:13:24Z",
+      "side": 1,
+      "message": "increment version",
+      "range": {
+        "startLine": 31,
+        "startChar": 49,
+        "endLine": 31,
+        "endChar": 51
+      },
+      "revId": "eabb654084823381f2e97b04eb6454b582ffdddd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aad099f7_8e46fbe3",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ConfigBuildingBlocksDataObject.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-06-19T16:13:24Z",
+      "side": 1,
+      "message": "not used, remove please",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 74
+      },
+      "revId": "eabb654084823381f2e97b04eb6454b582ffdddd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c451b2ab_03e8f736",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ConfigBuildingBlocksDataObject.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-06-19T16:13:24Z",
+      "side": 1,
+      "message": "not used, remove please",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 55
+      },
+      "revId": "eabb654084823381f2e97b04eb6454b582ffdddd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6d205d1c_e964185d",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ConfigBuildingBlocksDataObject.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-06-19T16:13:24Z",
+      "side": 1,
+      "message": "not used, remove please",
+      "range": {
+        "startLine": 36,
+        "startChar": 4,
+        "endLine": 36,
+        "endChar": 32
+      },
+      "revId": "eabb654084823381f2e97b04eb6454b582ffdddd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0a194386_5cd9b39b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ConfigBuildingBlocksDataObject.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-06-19T16:13:24Z",
+      "side": 1,
+      "message": "To be consequent with void setters in BuildingBlockBase, change all setters to void.",
+      "range": {
+        "startLine": 43,
+        "startChar": 2,
+        "endLine": 46,
+        "endChar": 5
+      },
+      "revId": "eabb654084823381f2e97b04eb6454b582ffdddd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "86dbfac7_9fdcc57b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-06-19T16:13:24Z",
+      "side": 1,
+      "message": "move this line before first using of these variable, before the line:\nResource resource \u003d getResource(bbInputSetupUtils, isResume, isALaCarte, uri, requestId);",
+      "range": {
+        "startLine": 177,
+        "startChar": 12,
+        "endLine": 177,
+        "endChar": 95
+      },
+      "revId": "eabb654084823381f2e97b04eb6454b582ffdddd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
