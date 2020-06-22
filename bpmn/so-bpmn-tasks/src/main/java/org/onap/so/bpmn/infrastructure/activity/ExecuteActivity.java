@@ -166,10 +166,16 @@ public class ExecuteActivity implements JavaDelegate {
         String bpmnRequest = (String) execution.getVariable(G_BPMN_REQUEST);
         ServiceInstancesRequest sIRequest = mapper.readValue(bpmnRequest, ServiceInstancesRequest.class);
         RequestDetails requestDetails = sIRequest.getRequestDetails();
-        return new ExecuteBuildingBlock().setaLaCarte(true).setRequestAction((String) execution.getVariable(G_ACTION))
-                .setResourceId((String) execution.getVariable(VNF_ID))
-                .setVnfType((String) execution.getVariable(VNF_TYPE)).setWorkflowResourceIds(workflowResourceIds)
-                .setRequestId(requestId).setBuildingBlock(buildingBlock).setRequestDetails(requestDetails);
+        ExecuteBuildingBlock executeBuildingBlock = new ExecuteBuildingBlock();
+        executeBuildingBlock.setaLaCarte(true);
+        executeBuildingBlock.setRequestAction((String) execution.getVariable(G_ACTION));
+        executeBuildingBlock.setResourceId((String) execution.getVariable(VNF_ID));
+        executeBuildingBlock.setVnfType((String) execution.getVariable(VNF_TYPE));
+        executeBuildingBlock.setWorkflowResourceIds(workflowResourceIds);
+        executeBuildingBlock.setRequestId(requestId);
+        executeBuildingBlock.setBuildingBlock(buildingBlock);
+        executeBuildingBlock.setRequestDetails(requestDetails);
+        return executeBuildingBlock;
     }
 
     protected void buildAndThrowException(DelegateExecution execution, String msg, Exception ex) {
