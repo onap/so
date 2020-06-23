@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5deac7e4_75cceb02",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/entities/ExecuteBuildingBlock.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 6698
+      },
+      "writtenOn": "2020-06-23T15:01:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cb02ee91_a23a152c",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 55
+      },
+      "revId": "eabb654084823381f2e97b04eb6454b582ffdddd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da607cc3_4967a8f4",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/entities/ExecuteBuildingBlock.java",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "eabb654084823381f2e97b04eb6454b582ffdddd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "187efb69_ae9c1645",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/entities/ExecuteBuildingBlock.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 6698
+      },
+      "writtenOn": "2020-06-23T15:01:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da607cc3_4967a8f4",
+      "range": {
+        "startLine": 31,
+        "startChar": 49,
+        "endLine": 31,
+        "endChar": 51
+      },
+      "revId": "eabb654084823381f2e97b04eb6454b582ffdddd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "22daa63b_01e694db",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ConfigBuildingBlocksDataObject.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 6698
+      },
+      "writtenOn": "2020-06-23T15:01:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aad099f7_8e46fbe3",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 74
+      },
+      "revId": "eabb654084823381f2e97b04eb6454b582ffdddd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c451b2ab_03e8f736",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ConfigBuildingBlocksDataObject.java",
         "patchSetId": 2
@@ -91,6 +163,30 @@
       "revId": "eabb654084823381f2e97b04eb6454b582ffdddd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a95ab450_7724197b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ConfigBuildingBlocksDataObject.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 6698
+      },
+      "writtenOn": "2020-06-23T15:01:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c451b2ab_03e8f736",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 55
+      },
+      "revId": "eabb654084823381f2e97b04eb6454b582ffdddd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "8a20545f_19bd54c6",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ConfigBuildingBlocksDataObject.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 6698
+      },
+      "writtenOn": "2020-06-23T15:01:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6d205d1c_e964185d",
+      "range": {
+        "startLine": 36,
+        "startChar": 4,
+        "endLine": 36,
+        "endChar": 32
+      },
+      "revId": "eabb654084823381f2e97b04eb6454b582ffdddd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0a194386_5cd9b39b",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ConfigBuildingBlocksDataObject.java",
         "patchSetId": 2
@@ -140,6 +260,30 @@
     },
     {
       "key": {
+        "uuid": "1bb895c5_ee81fc48",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ConfigBuildingBlocksDataObject.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 6698
+      },
+      "writtenOn": "2020-06-23T15:01:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0a194386_5cd9b39b",
+      "range": {
+        "startLine": 43,
+        "startChar": 2,
+        "endLine": 46,
+        "endChar": 5
+      },
+      "revId": "eabb654084823381f2e97b04eb6454b582ffdddd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "86dbfac7_9fdcc57b",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
         "patchSetId": 2
@@ -160,6 +304,30 @@
       "revId": "eabb654084823381f2e97b04eb6454b582ffdddd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0f80ff63_7cfe1171",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 6698
+      },
+      "writtenOn": "2020-06-23T15:01:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "86dbfac7_9fdcc57b",
+      "range": {
+        "startLine": 177,
+        "startChar": 12,
+        "endLine": 177,
+        "endChar": 95
+      },
+      "revId": "eabb654084823381f2e97b04eb6454b582ffdddd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
