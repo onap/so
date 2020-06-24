@@ -58,6 +58,9 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
     @Autowired
     WorkflowSpecificationsHandler workflowSpecificationsHandler;
 
+    @Autowired
+    ObjectMapper mapper;
+
     @Value("${wiremock.server.port}")
     private String wiremockPort;
 
@@ -152,7 +155,6 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
 
-        ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         WorkflowSpecifications expectedResponse = mapper.readValue(
@@ -306,7 +308,6 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
 
         WorkflowSpecifications workflowSpecifications =
                 workflowSpecificationsHandler.mapWorkflowsToWorkflowSpecifications(workflows);
-        ObjectMapper mapper = new ObjectMapper();
 
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         String workflowSpecificationsJson = mapper.writeValueAsString(workflowSpecifications);
@@ -349,13 +350,58 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
 
-        ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         WorkflowSpecifications expectedResponse = mapper.readValue(
                 new String(Files.readAllBytes(
                         Paths.get("src/test/resources/__files/catalogdb/WorkflowSpecificationsForPnf.json"))),
                 WorkflowSpecifications.class);
+        WorkflowSpecifications realResponse = mapper.readValue(response.getBody(), WorkflowSpecifications.class);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        assertThat(expectedResponse, sameBeanAs(realResponse));
+        assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
+        assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
+        assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
+        assertEquals("1.0.0", response.getHeaders().get("X-LatestVersion").get(0));
+    }
+
+    @Test
+    public void queryWorkflowSpecificationsByResourceTarget_Test_Success() throws JSONException, IOException {
+
+        String URL_PATH = basePath + "/v1/workflows";
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", MediaType.APPLICATION_JSON);
+        headers.set("Content-Type", MediaType.APPLICATION_JSON);
+        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+        String WORKFLOW_QUERY = "/workflow/search/findByResourceTarget[?]resourceTarget=service";
+        String WORKFLOW_SPEC_QUERY = "/workflow/5/workflowActivitySpecSequence";
+        String JSON_FILE_PATH = "src/test/resources/__files/catalogdb/WorkflowSpecificationsForService.json";
+        String MOCK_RESP_FILE = "WorkflowSpecificationsForServiceWorkflows_Response.json";
+        String MOCK_RESP_SPEC_FILE = "Empty_workflowActivitySpecSequence_Response.json";
+
+        wireMockServer.stubFor(get(urlMatching(WORKFLOW_QUERY))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb(MOCK_RESP_FILE))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        wireMockServer.stubFor(get(urlMatching(WORKFLOW_SPEC_QUERY))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb(MOCK_RESP_SPEC_FILE))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        UriComponentsBuilder builder =
+                UriComponentsBuilder.fromHttpUrl(createURLWithPort(URL_PATH)).queryParam("resourceTarget", "service");
+
+        ResponseEntity<String> response =
+                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        WorkflowSpecifications expectedResponse = mapper
+                .readValue(new String(Files.readAllBytes(Paths.get(JSON_FILE_PATH))), WorkflowSpecifications.class);
         WorkflowSpecifications realResponse = mapper.readValue(response.getBody(), WorkflowSpecifications.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
@@ -397,7 +443,6 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
 
-        ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         WorkflowSpecifications expectedResponse = mapper.readValue(
