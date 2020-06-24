@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ac6602f4_88fee282",
+        "filename": "adapters/mso-vfc-adapter/src/test/java/org/onap/so/adapters/vfc/rest/VfcManagerSol005Test.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-06-24T12:10:54Z",
+      "side": 1,
+      "message": "useless assertion, can not be null",
+      "range": {
+        "startLine": 123,
+        "startChar": 22,
+        "endLine": 123,
+        "endChar": 26
+      },
+      "revId": "c15f11cc7cd79ca6eee427deb141cfea109988e4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "59376878_25b65da1",
+        "filename": "adapters/mso-vfc-adapter/src/test/java/org/onap/so/adapters/vfc/rest/VfcManagerSol005Test.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-06-24T12:10:54Z",
+      "side": 1,
+      "message": "the same as above",
+      "range": {
+        "startLine": 149,
+        "startChar": 22,
+        "endLine": 149,
+        "endChar": 29
+      },
+      "revId": "c15f11cc7cd79ca6eee427deb141cfea109988e4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7d98bbc6_b7feff09",
+        "filename": "adapters/mso-vfc-adapter/src/test/java/org/onap/so/adapters/vfc/rest/VfcManagerSol005Test.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-06-24T12:10:54Z",
+      "side": 1,
+      "message": "the same as above",
+      "range": {
+        "startLine": 223,
+        "startChar": 22,
+        "endLine": 223,
+        "endChar": 34
+      },
+      "revId": "c15f11cc7cd79ca6eee427deb141cfea109988e4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e67a619b_aad543a6",
+        "filename": "asdc-controller/src/test/java/org/onap/so/asdc/client/ASDCStatusCallBackTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-06-24T12:10:54Z",
+      "side": 1,
+      "message": "useless assertion, can not be null",
+      "range": {
+        "startLine": 91,
+        "startChar": 22,
+        "endLine": 91,
+        "endChar": 32
+      },
+      "revId": "c15f11cc7cd79ca6eee427deb141cfea109988e4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
