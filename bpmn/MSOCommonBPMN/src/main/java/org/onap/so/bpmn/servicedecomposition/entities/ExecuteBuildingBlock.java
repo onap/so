@@ -23,7 +23,7 @@ package org.onap.so.bpmn.servicedecomposition.entities;
 import java.io.Serializable;
 import org.onap.so.serviceinstancebeans.RequestDetails;
 
-public class ExecuteBuildingBlock implements Serializable {
+public class ExecuteBuildingBlock extends BuildingBlockBase<ExecuteBuildingBlock> implements Serializable {
 
     private static final long serialVersionUID = 2L;
     private BuildingBlock buildingBlock;
@@ -47,84 +47,12 @@ public class ExecuteBuildingBlock implements Serializable {
         return this;
     }
 
-    public String getRequestId() {
-        return requestId;
-    }
-
-    public ExecuteBuildingBlock setRequestId(String requestId) {
-        this.requestId = requestId;
-        return this;
-    }
-
-    public String getApiVersion() {
-        return apiVersion;
-    }
-
-    public ExecuteBuildingBlock setApiVersion(String apiVersion) {
-        this.apiVersion = apiVersion;
-        return this;
-    }
-
-    public String getResourceId() {
-        return resourceId;
-    }
-
-    public ExecuteBuildingBlock setResourceId(String resourceId) {
-        this.resourceId = resourceId;
-        return this;
-    }
-
-    public String getRequestAction() {
-        return requestAction;
-    }
-
-    public ExecuteBuildingBlock setRequestAction(String requestAction) {
-        this.requestAction = requestAction;
-        return this;
-    }
-
-    public Boolean isaLaCarte() {
-        return aLaCarte;
-    }
-
-    public ExecuteBuildingBlock setaLaCarte(Boolean aLaCarte) {
-        this.aLaCarte = aLaCarte;
-        return this;
-    }
-
-    public String getVnfType() {
-        return vnfType;
-    }
-
-    public ExecuteBuildingBlock setVnfType(String vnfType) {
-        this.vnfType = vnfType;
-        return this;
-    }
-
     public Boolean isHoming() {
         return homing;
     }
 
     public ExecuteBuildingBlock setHoming(Boolean homing) {
         this.homing = homing;
-        return this;
-    }
-
-    public WorkflowResourceIds getWorkflowResourceIds() {
-        return workflowResourceIds;
-    }
-
-    public ExecuteBuildingBlock setWorkflowResourceIds(WorkflowResourceIds workflowResourceIds) {
-        this.workflowResourceIds = workflowResourceIds;
-        return this;
-    }
-
-    public RequestDetails getRequestDetails() {
-        return requestDetails;
-    }
-
-    public ExecuteBuildingBlock setRequestDetails(RequestDetails requestDetails) {
-        this.requestDetails = requestDetails;
         return this;
     }
 
