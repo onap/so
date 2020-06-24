@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -43,6 +44,7 @@ public class ResponseHandler {
         String responseBody = camundaResponse.getBody();
         CamundaResponse response = null;
         ObjectMapper mapper = new ObjectMapper();
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         try {
             response = mapper.readValue(responseBody, CamundaResponse.class);
         } catch (IOException | NullPointerException e) {
