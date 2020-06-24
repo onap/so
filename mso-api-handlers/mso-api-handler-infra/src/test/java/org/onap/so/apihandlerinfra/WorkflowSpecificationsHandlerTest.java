@@ -369,7 +369,7 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
     @Test
     public void testWorkflowSpecificationsForPnf_Success() throws JSONException, IOException {
 
-        final String urlPath = basePath + "/v1/pnfWorkflows";
+        final String urlPath = basePath + "/v1/workflows";
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
@@ -390,7 +390,8 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
                         .withBody(getWiremockResponseForCatalogdb("Empty_workflowActivitySpecSequence_Response.json"))
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(urlPath));
+        UriComponentsBuilder builder =
+                UriComponentsBuilder.fromHttpUrl(createURLWithPort(urlPath)).queryParam("resourceTarget", "pnf");
 
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
