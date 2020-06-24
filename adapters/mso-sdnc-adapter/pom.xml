@@ -16,7 +16,7 @@
 
   <build>
     <finalName>${project.artifactId}-${project.version}</finalName>
-      <pluginManagement>
+    <pluginManagement>
       <plugins>
         <plugin>
           <groupId>org.eclipse.m2e</groupId>
