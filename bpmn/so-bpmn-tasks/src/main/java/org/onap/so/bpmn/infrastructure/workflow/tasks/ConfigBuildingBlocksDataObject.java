@@ -26,7 +26,7 @@ import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import java.util.List;
 
-public class ConfigBuildingBlocksDataObject extends BuildingBlockBase {
+public class ConfigBuildingBlocksDataObject extends BuildingBlockBase<ConfigBuildingBlocksDataObject> {
 
     private DelegateExecution execution;
     private List<OrchestrationFlow> orchFlows;
@@ -37,31 +37,35 @@ public class ConfigBuildingBlocksDataObject extends BuildingBlockBase {
         return sIRequest;
     }
 
-    public void setsIRequest(ServiceInstancesRequest sIRequest) {
+    public ConfigBuildingBlocksDataObject setsIRequest(ServiceInstancesRequest sIRequest) {
         this.sIRequest = sIRequest;
+        return this;
     }
 
     public List<OrchestrationFlow> getOrchFlows() {
         return orchFlows;
     }
 
-    public void setOrchFlows(List<OrchestrationFlow> orchFlows) {
+    public ConfigBuildingBlocksDataObject setOrchFlows(List<OrchestrationFlow> orchFlows) {
         this.orchFlows = orchFlows;
+        return this;
     }
 
     public Resource getResourceKey() {
         return resourceKey;
     }
 
-    public void setResourceKey(Resource resourceKey) {
+    public ConfigBuildingBlocksDataObject setResourceKey(Resource resourceKey) {
         this.resourceKey = resourceKey;
+        return this;
     }
 
     public DelegateExecution getExecution() {
         return execution;
     }
 
-    public void setExecution(DelegateExecution execution) {
+    public ConfigBuildingBlocksDataObject setExecution(DelegateExecution execution) {
         this.execution = execution;
+        return this;
     }
 }

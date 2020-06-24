@@ -2,7 +2,7 @@ package org.onap.so.bpmn.servicedecomposition.entities;
 
 import org.onap.so.serviceinstancebeans.RequestDetails;
 
-public class BuildingBlockBase {
+public abstract class BuildingBlockBase<T extends BuildingBlockBase<T>> {
 
     private Boolean aLaCarte;
     private String apiVersion;
@@ -14,40 +14,49 @@ public class BuildingBlockBase {
     private WorkflowResourceIds workflowResourceIds;
     private String vnfType;
 
-    public void setaLaCarte(Boolean aLaCarte) {
+    public T setaLaCarte(Boolean aLaCarte) {
         this.aLaCarte = aLaCarte;
+        return (T) this;
     }
 
-    public void setApiVersion(String apiVersion) {
+    public T setApiVersion(String apiVersion) {
         this.apiVersion = apiVersion;
+        return (T) this;
     }
 
-    public void setResume(Boolean resume) {
+    public T setResume(Boolean resume) {
         isResume = resume;
+        return (T) this;
     }
 
-    public void setResourceId(String resourceId) {
+    public T setResourceId(String resourceId) {
         this.resourceId = resourceId;
+        return (T) this;
     }
 
-    public void setRequestId(String requestId) {
+    public T setRequestId(String requestId) {
         this.requestId = requestId;
+        return (T) this;
     }
 
-    public void setRequestAction(String requestAction) {
+    public T setRequestAction(String requestAction) {
         this.requestAction = requestAction;
+        return (T) this;
     }
 
-    public void setRequestDetails(RequestDetails requestDetails) {
+    public T setRequestDetails(RequestDetails requestDetails) {
         this.requestDetails = requestDetails;
+        return (T) this;
     }
 
-    public void setWorkflowResourceIds(WorkflowResourceIds workflowResourceIds) {
+    public T setWorkflowResourceIds(WorkflowResourceIds workflowResourceIds) {
         this.workflowResourceIds = workflowResourceIds;
+        return (T) this;
     }
 
-    public void setVnfType(String vnfType) {
+    public T setVnfType(String vnfType) {
         this.vnfType = vnfType;
+        return (T) this;
     }
 
     public Boolean isResume() {

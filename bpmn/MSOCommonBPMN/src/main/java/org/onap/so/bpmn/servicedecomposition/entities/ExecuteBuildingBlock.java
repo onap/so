@@ -22,7 +22,7 @@ package org.onap.so.bpmn.servicedecomposition.entities;
 
 import java.io.Serializable;
 
-public class ExecuteBuildingBlock extends BuildingBlockBase implements Serializable {
+public class ExecuteBuildingBlock extends BuildingBlockBase<ExecuteBuildingBlock> implements Serializable {
 
     private BuildingBlock buildingBlock;
     private ConfigurationResourceKeys configurationResourceKeys;
@@ -33,24 +33,27 @@ public class ExecuteBuildingBlock extends BuildingBlockBase implements Serializa
         return buildingBlock;
     }
 
-    public void setBuildingBlock(BuildingBlock buildingBlock) {
+    public ExecuteBuildingBlock setBuildingBlock(BuildingBlock buildingBlock) {
         this.buildingBlock = buildingBlock;
+        return this;
     }
 
     public Boolean isHoming() {
         return homing;
     }
 
-    public void setHoming(Boolean homing) {
+    public ExecuteBuildingBlock setHoming(Boolean homing) {
         this.homing = homing;
+        return this;
     }
 
     public ConfigurationResourceKeys getConfigurationResourceKeys() {
         return configurationResourceKeys;
     }
 
-    public void setConfigurationResourceKeys(ConfigurationResourceKeys configurationResourceKeys) {
+    public ExecuteBuildingBlock setConfigurationResourceKeys(ConfigurationResourceKeys configurationResourceKeys) {
         this.configurationResourceKeys = configurationResourceKeys;
+        return this;
     }
 
 }

@@ -222,23 +222,12 @@ public class WorkflowAction {
                     }
                     Resource resourceKey = getResourceKey(sIRequest, resourceType);
                     if (isConfiguration(orchFlows) && !requestAction.equalsIgnoreCase(CREATEINSTANCE)) {
-                        ConfigBuildingBlocksDataObject configBuildingBlocksDataObject =
-                                new ConfigBuildingBlocksDataObject();
-                        configBuildingBlocksDataObject.setsIRequest(sIRequest);
-                        configBuildingBlocksDataObject.setOrchFlows(orchFlows);
-                        configBuildingBlocksDataObject.setRequestId(requestId);
-                        configBuildingBlocksDataObject.setResourceKey(resourceKey);
-                        configBuildingBlocksDataObject.setApiVersion(apiVersion);
-                        configBuildingBlocksDataObject.setResourceId(resourceId);
-                        configBuildingBlocksDataObject.setRequestAction(requestAction);
-                        configBuildingBlocksDataObject.setaLaCarte(true);
-                        configBuildingBlocksDataObject.setVnfType(vnfType);
-                        configBuildingBlocksDataObject.setWorkflowResourceIds(workflowResourceIds);
-                        configBuildingBlocksDataObject.setRequestDetails(requestDetails);
-                        configBuildingBlocksDataObject.setExecution(execution);
-
-                        List<ExecuteBuildingBlock> configBuildingBlocks =
-                                getConfigBuildingBlocks(configBuildingBlocksDataObject);
+                        List<ExecuteBuildingBlock> configBuildingBlocks = getConfigBuildingBlocks(
+                                new ConfigBuildingBlocksDataObject().setsIRequest(sIRequest).setOrchFlows(orchFlows)
+                                        .setRequestId(requestId).setResourceKey(resourceKey).setApiVersion(apiVersion)
+                                        .setResourceId(resourceId).setRequestAction(requestAction).setaLaCarte(true)
+                                        .setVnfType(vnfType).setWorkflowResourceIds(workflowResourceIds)
+                                        .setRequestDetails(requestDetails).setExecution(execution));
 
                         flowsToExecute.addAll(configBuildingBlocks);
                     }
@@ -249,23 +238,12 @@ public class WorkflowAction {
                             || requestAction.equalsIgnoreCase(REPLACEINSTANCERETAINASSIGNMENTS))
                             && resourceType.equals(WorkflowType.VFMODULE)) {
                         logger.debug("Build a BB list for replacing BB modules");
-
-                        ConfigBuildingBlocksDataObject configBuildingBlocksDataObject =
-                                new ConfigBuildingBlocksDataObject();
-                        configBuildingBlocksDataObject.setsIRequest(sIRequest);
-                        configBuildingBlocksDataObject.setOrchFlows(orchFlows);
-                        configBuildingBlocksDataObject.setRequestId(requestId);
-                        configBuildingBlocksDataObject.setResourceKey(resourceKey);
-                        configBuildingBlocksDataObject.setApiVersion(apiVersion);
-                        configBuildingBlocksDataObject.setResourceId(resourceId);
-                        configBuildingBlocksDataObject.setRequestAction(requestAction);
-                        configBuildingBlocksDataObject.setaLaCarte(true);
-                        configBuildingBlocksDataObject.setVnfType(vnfType);
-                        configBuildingBlocksDataObject.setWorkflowResourceIds(workflowResourceIds);
-                        configBuildingBlocksDataObject.setRequestDetails(requestDetails);
-                        configBuildingBlocksDataObject.setExecution(execution);
-
-                        orchFlows = getVfModuleReplaceBuildingBlocks(configBuildingBlocksDataObject);
+                        orchFlows = getVfModuleReplaceBuildingBlocks(
+                                new ConfigBuildingBlocksDataObject().setsIRequest(sIRequest).setOrchFlows(orchFlows)
+                                        .setRequestId(requestId).setResourceKey(resourceKey).setApiVersion(apiVersion)
+                                        .setResourceId(resourceId).setRequestAction(requestAction).setaLaCarte(true)
+                                        .setVnfType(vnfType).setWorkflowResourceIds(workflowResourceIds)
+                                        .setRequestDetails(requestDetails).setExecution(execution));
                     }
                     for (OrchestrationFlow orchFlow : orchFlows) {
                         ExecuteBuildingBlock ebb = buildExecuteBuildingBlock(orchFlow, requestId, resourceKey,
@@ -1464,16 +1442,10 @@ public class WorkflowAction {
             resourceId = workflowResourceIds.getVolumeGroupId();
         }
 
-        ExecuteBuildingBlock executeBuildingBlock = new ExecuteBuildingBlock();
-        executeBuildingBlock.setApiVersion(apiVersion);
-        executeBuildingBlock.setaLaCarte(aLaCarte);
-        executeBuildingBlock.setRequestAction(requestAction);
-        executeBuildingBlock.setResourceId(resourceId);
-        executeBuildingBlock.setVnfType(vnfType);
-        executeBuildingBlock.setWorkflowResourceIds(workflowResourceIds);
-        executeBuildingBlock.setRequestId(requestId);
-        executeBuildingBlock.setBuildingBlock(buildingBlock);
-        executeBuildingBlock.setRequestDetails(requestDetails);
+        ExecuteBuildingBlock executeBuildingBlock = new ExecuteBuildingBlock().setApiVersion(apiVersion)
+                .setaLaCarte(aLaCarte).setRequestAction(requestAction).setResourceId(resourceId).setVnfType(vnfType)
+                .setWorkflowResourceIds(workflowResourceIds).setRequestId(requestId).setBuildingBlock(buildingBlock)
+                .setRequestDetails(requestDetails);
 
         if (resource != null && (isConfiguration || resource.getResourceType().equals(WorkflowType.CONFIGURATION))) {
             ConfigurationResourceKeys configurationResourceKeys = new ConfigurationResourceKeys();
