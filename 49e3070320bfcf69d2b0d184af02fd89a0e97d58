@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ad013dda_ade9611d",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 881,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-06-24T10:47:53Z",
+      "side": 1,
+      "message": "remove \"is\" from name, just \"ToscaNodeTypeHasNetworkCollection\"",
+      "range": {
+        "startLine": 881,
+        "startChar": 20,
+        "endLine": 881,
+        "endChar": 55
+      },
+      "revId": "49e3070320bfcf69d2b0d184af02fd89a0e97d58",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
