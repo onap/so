@@ -280,7 +280,7 @@
                     </ignore>
                   </action>
                 </pluginExecution>
-                  <pluginExecution>
+                <pluginExecution>
                   <pluginExecutionFilter>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>

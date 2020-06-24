@@ -214,8 +214,7 @@ public class WorkflowAction {
                                 cloudOwner, serviceType);
                     }
                     Resource resourceKey = getResourceKey(sIRequest, resourceType);
-                    boolean isConfiguration = isConfiguration(orchFlows);
-                    if (isConfiguration && !requestAction.equalsIgnoreCase(CREATEINSTANCE)) {
+                    if (isConfiguration(orchFlows) && !requestAction.equalsIgnoreCase(CREATEINSTANCE)) {
                         List<ExecuteBuildingBlock> configBuildingBlocks = getConfigBuildingBlocks(
                                 new ConfigBuildingBlocksDataObject().setsIRequest(sIRequest).setOrchFlows(orchFlows)
                                         .setRequestId(requestId).setResourceKey(resourceKey).setApiVersion(apiVersion)

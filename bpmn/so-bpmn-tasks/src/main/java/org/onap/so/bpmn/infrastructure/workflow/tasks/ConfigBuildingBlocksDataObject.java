@@ -26,10 +26,13 @@ import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
+import java.io.Serializable;
+import java.util.List;
 
-public class ConfigBuildingBlocksDataObject {
+public class ConfigBuildingBlocksDataObject extends BuildingBlockBase<ConfigBuildingBlocksDataObject> implements Serializable {
 
-    private ServiceInstancesRequest sIRequest;
+    private static final long serialVersionUID = 3L;
+    private DelegateExecution execution;
     private List<OrchestrationFlow> orchFlows;
     private String requestId;
     private Resource resourceKey;
@@ -60,84 +63,12 @@ public class ConfigBuildingBlocksDataObject {
         return this;
     }
 
-    public String getRequestId() {
-        return requestId;
-    }
-
-    public ConfigBuildingBlocksDataObject setRequestId(String requestId) {
-        this.requestId = requestId;
-        return this;
-    }
-
     public Resource getResourceKey() {
         return resourceKey;
     }
 
     public ConfigBuildingBlocksDataObject setResourceKey(Resource resourceKey) {
         this.resourceKey = resourceKey;
-        return this;
-    }
-
-    public String getApiVersion() {
-        return apiVersion;
-    }
-
-    public ConfigBuildingBlocksDataObject setApiVersion(String apiVersion) {
-        this.apiVersion = apiVersion;
-        return this;
-    }
-
-    public String getResourceId() {
-        return resourceId;
-    }
-
-    public ConfigBuildingBlocksDataObject setResourceId(String resourceId) {
-        this.resourceId = resourceId;
-        return this;
-    }
-
-    public String getRequestAction() {
-        return requestAction;
-    }
-
-    public ConfigBuildingBlocksDataObject setRequestAction(String requestAction) {
-        this.requestAction = requestAction;
-        return this;
-    }
-
-    public boolean isaLaCarte() {
-        return aLaCarte;
-    }
-
-    public ConfigBuildingBlocksDataObject setaLaCarte(boolean aLaCarte) {
-        this.aLaCarte = aLaCarte;
-        return this;
-    }
-
-    public String getVnfType() {
-        return vnfType;
-    }
-
-    public ConfigBuildingBlocksDataObject setVnfType(String vnfType) {
-        this.vnfType = vnfType;
-        return this;
-    }
-
-    public WorkflowResourceIds getWorkflowResourceIds() {
-        return workflowResourceIds;
-    }
-
-    public ConfigBuildingBlocksDataObject setWorkflowResourceIds(WorkflowResourceIds workflowResourceIds) {
-        this.workflowResourceIds = workflowResourceIds;
-        return this;
-    }
-
-    public RequestDetails getRequestDetails() {
-        return requestDetails;
-    }
-
-    public ConfigBuildingBlocksDataObject setRequestDetails(RequestDetails requestDetails) {
-        this.requestDetails = requestDetails;
         return this;
     }
 
