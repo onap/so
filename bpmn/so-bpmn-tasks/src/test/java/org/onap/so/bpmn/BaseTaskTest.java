@@ -21,6 +21,7 @@
  */
 package org.onap.so.bpmn;
 
+import org.camunda.bpm.engine.RuntimeService;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -60,6 +61,7 @@ import org.onap.so.client.orchestration.VnfAdapterVfModuleResources;
 import org.onap.so.client.orchestration.VnfAdapterVolumeGroupResources;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.client.RequestsDbClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
@@ -162,5 +164,8 @@ public abstract class BaseTaskTest extends TestDataSetup {
 
     @Mock
     protected NamingRequestObject namingRequestObject;
+
+    @Autowired
+    protected RuntimeService runtimeService;
 
 }
