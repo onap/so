@@ -66,7 +66,7 @@
         "OS-SRV-USG:terminated_at": null,
         "key_name": null,
         "OS-EXT-SRV-ATTR:hypervisor_hostname": "test.com",
-        "name": "zauk51bfrwl09oam001",
+        "name": "ssc_server_1",
         "created": "2019-02-11T19:11:58Z",
         "tenant_id": "872f331350c54e59991a8de2cbffb40c",
         "os-extended-volumes:volumes_attached": [],

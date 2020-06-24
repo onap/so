@@ -1,0 +1,87 @@
+{
+    "vserver-id": "d29f3151-592d-4011-9356-ad047794e236",
+    "vserver-name": "ssc_server_1",
+    "vserver-name2": "ssc_server_1",
+    "vserver-selflink": "https://test.com:8774/v2/0422ffb57ba042c0800a29dc85ca70f8/servers/92272b67-d23f-42ca-87fa-7b06a9ec81f3",
+    "in-maint": false,
+    "is-closed-loop-disabled": false,    
+    "l-interfaces": {
+        "l-interface": [
+            {
+                "interface-name": "ssc_1_mgmt_port_0",
+                "selflink": "https://test.com:9696/v2.0/ports/07f5b14c-147a-4d14-8c94-a9e94dbc097b",
+                "interface-id": "e80bec21-4b4b-42b0-ae17-20e736b8a82b",
+                "macaddr": "02:07:f5:b1:4c:14",
+                "network-name": "GRP-27529-T-IST-05E-dyh3b_TIPFR_OAMP_NSD_TSBC0_net_1",
+                "is-port-mirrored": false,
+                "in-maint": false,
+                "is-ip-unnumbered": false,
+                "l3-interface-ipv4-address-list": [
+                    {
+                        "l3-interface-ipv4-address": "192.61.12.203",
+                        "l3-interface-ipv4-prefix-length": 28,
+                        "is-floating": false,
+                        "neutron-network-id": "cae2ade2-9f44-40fa-b124-18b101ff9aa0",
+                        "neutron-subnet-id": "1f954922-6e9c-4a64-9d78-62e869ba8c77"
+                    }
+                ],
+                "vlans" : {
+					"vlan": [
+						{
+							"in-maint": false,
+							"is-ip-unnumbered": false,
+							"is-private": false,
+							"vlan-id-inner": 0,
+							"vlan-id-outer": 123,
+							"vlan-interface": "oamfw_oam_direct1_0_port141"
+						}
+					]
+				}
+            },
+            {
+                "interface-name": "ssc_1_int_ha_port_0",
+                "selflink": "https://test.com:9696/v2.0/ports/0594a2f2-7ea4-42eb-abc2-48ea49677fca",
+                "interface-id": "e80bec21-4b4b-42b0-ae17-20e736b8a82a",
+                "macaddr": "02:05:94:a2:f2:7e",
+                "network-name": "GRP-27529-T-IST-05E-dyh3b_TIPFR-UNTR-ROLE1-PARNT_net_1",
+                "is-port-mirrored": false,
+                "in-maint": false,
+                "is-ip-unnumbered": false,
+                "l-interfaces": {
+                    "l-interface": [
+                        {
+                            "interface-name": "tsbc0005v_tsbc0005vm002_subint_untrusted_role1_81",
+                            "interface-id": "2bbfa345-33bb-495a-94b2-fb514ee1cffc",
+                            "macaddr": "02:05:94:a2:f2:7e",
+                            "network-name": "GRP-27529-T-IST-05E-dyh3b_TIPFR_UNTR_VSE_ROLE10_net_1",
+                            "is-port-mirrored": false,
+                            "in-maint": false,
+                            "is-ip-unnumbered": false
+                        }
+                    ]
+                },
+                "l3-interface-ipv4-address-list": [
+                    {
+                        "l3-interface-ipv4-address": "172.26.0.36",
+                        "l3-interface-ipv4-prefix-length": 27,
+                        "is-floating": false,
+                        "neutron-network-id": "49bd2c8c-808d-4783-a1c5-5d9ae0c6a9fa",
+                        "neutron-subnet-id": "8d073a94-b1b9-493a-8fc1-cf92abcba466"
+                    }
+                ],
+                "vlans" : {
+					"vlan": [
+						{
+							"in-maint": false,
+							"is-ip-unnumbered": false,
+							"is-private": false,
+							"vlan-id-inner": 0,
+							"vlan-id-outer": 965,
+							"vlan-interface": "oamfw_oam_direct1_0_port141"
+						}
+					]
+				}
+            }
+        ]
+    }
+}
