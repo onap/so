@@ -1,0 +1,20 @@
+{
+  "workflowSpecificationList": [
+    {
+      "workflowSpecification": {
+        "artifactInfo": {
+          "artifactType": "workflow",
+          "artifactUuid": "a1fe8726-66d5-3e7f-2212-7e5h662e9255",
+          "artifactName": "DummyServiceWorkflow",
+          "artifactVersion": "1.0",
+          "artifactDescription": "Dummy Service Workflow to test custom Service workflow",
+          "workflowName": "Dummy Service Workflow",
+          "operationName": "DummyServiceWorkflow",
+          "workflowSource": "native",
+          "workflowResourceTarget": "service"
+        },
+        "workflowInputParameters": []
+      }
+    }
+  ]
+}
