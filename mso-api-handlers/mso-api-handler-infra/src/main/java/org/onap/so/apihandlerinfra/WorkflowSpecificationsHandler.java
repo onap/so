@@ -81,12 +81,13 @@ public class WorkflowSpecificationsHandler {
     @Transactional
 
     public Response queryWorkflowSpecifications(@QueryParam("vnfModelVersionId") String vnfModelVersionId,
-            @QueryParam("pnfModelVersionId") String pnfModelVersionId, @PathParam("version") String version)
+            @QueryParam("pnfModelVersionId") String pnfModelVersionId,
+            @QueryParam("resourceTarget") String resourceTarget, @PathParam("version") String version)
             throws Exception {
         String apiVersion = version.substring(1);
 
         List<Workflow> workflows = new ArrayList<>();
-        if (vnfModelVersionId == null && pnfModelVersionId == null) {
+        if (vnfModelVersionId == null && pnfModelVersionId == null && resourceTarget == null) {
             workflows.addAll(queryWorkflowSpecificationsForAll());
         } else {
             // 1. query workflow specifications for given vnfModelVersionId if need.
@@ -104,6 +105,16 @@ public class WorkflowSpecificationsHandler {
                 logger.debug("Retrieved " + pnfWorkflows.size() + " workflows for given pnfModelVerionId.");
                 if (pnfWorkflows.size() > 0) {
                     workflows.addAll(pnfWorkflows);
+                }
+            }
+
+            // 3. query workflow specifications for given resourceTarget
+            if (resourceTarget != null) {
+                List<Workflow> workflowsForResourceTarget = queryWorkflowsForResourceTarget(resourceTarget);
+                logger.debug(
+                        "Retrieved " + workflowsForResourceTarget.size() + " workflows for given resource target.");
+                if (workflowsForResourceTarget.size() > 0) {
+                    workflows.addAll(workflowsForResourceTarget);
                 }
             }
         }
@@ -132,12 +143,13 @@ public class WorkflowSpecificationsHandler {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        List<Workflow> workflows = catalogDbClient.findWorkflowByResourceTarget(pnf_resource);
+        List<Workflow> workflows = queryWorkflowsForResourceTarget(pnf_resource);
 
         Optional<String> optional = getResponseByWorkflowSpec(workflows);
         return builder.buildResponse(HttpStatus.SC_OK, "", optional.isPresent() ? optional.get() : EMPTY_BODY,
                 apiVersion);
     }
+
 
     protected WorkflowSpecifications mapWorkflowsToWorkflowSpecifications(List<Workflow> workflows) {
         if (workflows == null || workflows.isEmpty()) {
@@ -296,4 +308,11 @@ public class WorkflowSpecificationsHandler {
         List<Workflow> workflows = catalogDbClient.findWorkflowByPnfModelUUID(pnfModelVersionId);
         return workflows;
     }
+
+    private List<Workflow> queryWorkflowsForResourceTarget(String resourceTarget) {
+        List<Workflow> workflows = catalogDbClient.findWorkflowByResourceTarget(resourceTarget);
+        return workflows;
+    }
+
+
 }
