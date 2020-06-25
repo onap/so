@@ -22,6 +22,30 @@
       "revId": "94baa2246199938698dd97ab96b151ce1c9d9776",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cfc247a2_225e2e86",
+        "filename": "adapters/etsi-sol002-adapter/src/main/resources/application.yaml",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-06-25T05:52:47Z",
+      "side": 1,
+      "message": "resources/config/overrides/override.yaml within OOM will be used",
+      "parentUuid": "4436232d_dec8c0e0",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 50
+      },
+      "revId": "94baa2246199938698dd97ab96b151ce1c9d9776",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
