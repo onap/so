@@ -1,8 +1,9 @@
 package org.onap.so.bpmn.servicedecomposition.entities;
 
 import org.onap.so.serviceinstancebeans.RequestDetails;
+import java.io.Serializable;
 
-public class BuildingBlockBase {
+public class BuildingBlockBase implements Serializable {
 
     private Boolean aLaCarte;
     private String apiVersion;

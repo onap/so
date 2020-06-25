@@ -20,9 +20,7 @@
 
 package org.onap.so.bpmn.servicedecomposition.entities;
 
-import java.io.Serializable;
-
-public class ExecuteBuildingBlock extends BuildingBlockBase implements Serializable {
+public class ExecuteBuildingBlock extends BuildingBlockBase {
 
     private BuildingBlock buildingBlock;
     private ConfigurationResourceKeys configurationResourceKeys;
