@@ -21,7 +21,6 @@
 package org.onap.so.adapters.inventory.delete;
 
 import javax.annotation.PostConstruct;
-import org.camunda.bpm.client.ExternalTaskClient;
 import org.onap.so.utils.ExternalTaskServiceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -43,10 +42,11 @@ public class DeleteInventoryService {
 
     @PostConstruct
     public void auditAAIInventory() throws Exception {
-        ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
-        client.subscribe("InventoryDelete")
-                .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", "60000")))
-                .handler(deleteInventory::executeExternalTask).open();
+        for (int i = 0; i < externalTaskServiceUtils.getMaxClients(); i++) {
+            externalTaskServiceUtils.createExternalTaskClient().subscribe("InventoryDelete")
+                    .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", "60000")))
+                    .handler(deleteInventory::executeExternalTask).open();
+        }
     }
 
 }
