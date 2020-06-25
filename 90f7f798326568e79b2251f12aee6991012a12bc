@@ -128,6 +128,24 @@
       "revId": "90f7f798326568e79b2251f12aee6991012a12bc",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a5b5f7b8_4eb2455c",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandlerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-06-25T14:29:28Z",
+      "side": 1,
+      "message": "Any org can write their own client to send request to SO-API-HANDLER(thats why these are designed as micro-service). If you are changing this, are you ready to include this in release notes so that all concerned parties change in their system accordingly.",
+      "parentUuid": "ffb770d1_c82d1f6a",
+      "revId": "90f7f798326568e79b2251f12aee6991012a12bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
