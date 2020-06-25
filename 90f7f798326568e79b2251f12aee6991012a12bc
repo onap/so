@@ -146,6 +146,24 @@
       "revId": "90f7f798326568e79b2251f12aee6991012a12bc",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ea29145c_2f12413e",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandlerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-06-25T15:11:39Z",
+      "side": 1,
+      "message": "Yes Rahul, I think we will be updating the release notes for every release. we can include this change for G release if that is needed. Please let me know if we also have other impacts, i have no concern keeping the old API in that case.",
+      "parentUuid": "a5b5f7b8_4eb2455c",
+      "revId": "90f7f798326568e79b2251f12aee6991012a12bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
