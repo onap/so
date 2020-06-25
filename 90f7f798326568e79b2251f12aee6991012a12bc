@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f1f6f28d_de6d5a8b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-06-25T11:16:54Z",
+      "side": 1,
+      "message": "provide exact api url in commit message for better  understanding",
+      "range": {
+        "startLine": 7,
+        "startChar": 1,
+        "endLine": 7,
+        "endChar": 2
+      },
+      "revId": "90f7f798326568e79b2251f12aee6991012a12bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "402b818a_920355d8",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-06-25T11:16:54Z",
+      "side": 1,
+      "message": "why didnt u use findworkflowbyresourcetarget",
+      "range": {
+        "startLine": 291,
+        "startChar": 27,
+        "endLine": 291,
+        "endChar": 58
+      },
+      "revId": "90f7f798326568e79b2251f12aee6991012a12bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "81754954_43567763",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandlerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-06-25T11:16:54Z",
+      "side": 1,
+      "message": "i dint find testcase for service as resource target",
+      "revId": "90f7f798326568e79b2251f12aee6991012a12bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}

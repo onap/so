@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f9dfdd7f_f7ec9013",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandlerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 372,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-06-25T11:16:54Z",
+      "side": 0,
+      "message": "backward compatibility",
+      "range": {
+        "startLine": 372,
+        "startChar": 46,
+        "endLine": 372,
+        "endChar": 51
+      },
+      "revId": "cf5b7493eb7dffdeb211af056ce8459ede89292a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
