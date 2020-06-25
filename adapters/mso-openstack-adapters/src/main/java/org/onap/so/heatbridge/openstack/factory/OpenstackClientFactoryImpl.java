@@ -60,6 +60,7 @@ public class OpenstackClientFactoryImpl implements OpenstackClientFactory {
 
         OSClientV3 client;
         try {
+            OSFactory.enableHttpLoggingFilter(true);
             client = OSFactory.builderV3().endpoint(osAccess.getUrl())
                     .credentials(osAccess.getUser(), osAccess.getPassword(), osAccess.getDomainNameIdentifier())
                     .scopeToProject(Identifier.byId(osAccess.getTenantId()), osAccess.getProjectNameIdentifier())
@@ -81,6 +82,7 @@ public class OpenstackClientFactoryImpl implements OpenstackClientFactory {
 
         OSClientV2 client;
         try {
+            OSFactory.enableHttpLoggingFilter(true);
             client = OSFactory.builderV2().endpoint(osAccess.getUrl())
                     .credentials(osAccess.getUser(), osAccess.getPassword()).tenantId(osAccess.getTenantId())
                     .authenticate().useRegion(osAccess.getRegion());
