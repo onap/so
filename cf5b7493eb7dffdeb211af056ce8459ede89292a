@@ -22,6 +22,30 @@
       "revId": "cf5b7493eb7dffdeb211af056ce8459ede89292a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cc3c0918_13ebcda4",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandlerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 372,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-06-25T12:06:56Z",
+      "side": 0,
+      "message": "Can you please explain Rahul? We need changes in csit which was using the removed API here. Anything else you are referring to?",
+      "parentUuid": "f9dfdd7f_f7ec9013",
+      "range": {
+        "startLine": 372,
+        "startChar": 46,
+        "endLine": 372,
+        "endChar": 51
+      },
+      "revId": "cf5b7493eb7dffdeb211af056ce8459ede89292a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
