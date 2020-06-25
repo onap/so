@@ -46,6 +46,30 @@
       "revId": "cf5b7493eb7dffdeb211af056ce8459ede89292a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cba8b5c0_c6f92abe",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandlerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 372,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-06-25T12:11:45Z",
+      "side": 0,
+      "message": "It is not recommended to change the existing API, thats why versioning happens in api. In csit you can definitely change, but whoever would use G release after upgrade from f release, his client will fail.",
+      "parentUuid": "cc3c0918_13ebcda4",
+      "range": {
+        "startLine": 372,
+        "startChar": 46,
+        "endLine": 372,
+        "endChar": 51
+      },
+      "revId": "cf5b7493eb7dffdeb211af056ce8459ede89292a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
