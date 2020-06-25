@@ -115,8 +115,7 @@ public class BBInputSetupPopulateMethodsTest {
                 .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_serviceMacro.json"), RequestDetails.class);
         ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
                 ExecuteBuildingBlock.class);
-        executeBB.setConfigurationResourceKeys(configResourceKeys);
-        executeBB.setRequestDetails(requestDetails);
+        executeBB.setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails);
         BuildingBlock buildingBlock = executeBB.getBuildingBlock();
         buildingBlock.setBpmnFlowName(AssignFlows.NETWORK_MACRO.toString())
                 .setKey("ab153b6e-c364-44c0-bef6-1f2982117f04");
@@ -182,8 +181,7 @@ public class BBInputSetupPopulateMethodsTest {
         ConfigurationResourceKeys configResourceKeys = prepareConfigurationResourceKeys();
         ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
                 ExecuteBuildingBlock.class);
-        executeBB.setConfigurationResourceKeys(configResourceKeys);
-        executeBB.setRequestDetails(requestDetails);
+        executeBB.setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails);
         BuildingBlock buildingBlock = executeBB.getBuildingBlock();
         buildingBlock.setBpmnFlowName(AssignFlows.VF_MODULE.toString()).setKey("a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f");
 
@@ -245,8 +243,7 @@ public class BBInputSetupPopulateMethodsTest {
         ConfigurationResourceKeys configResourceKeys = prepareConfigurationResourceKeys();
         ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
                 ExecuteBuildingBlock.class);
-        executeBB.setConfigurationResourceKeys(configResourceKeys);
-        executeBB.setRequestDetails(requestDetails);
+        executeBB.setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails);
         BuildingBlock buildingBlock = executeBB.getBuildingBlock();
         buildingBlock.setBpmnFlowName("AssignFabricConfigurationBB").setKey("72d9d1cd-f46d-447a-abdb-451d6fb05fa9");
 

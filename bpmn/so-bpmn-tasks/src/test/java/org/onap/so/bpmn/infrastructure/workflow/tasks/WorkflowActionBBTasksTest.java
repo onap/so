@@ -115,9 +115,7 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         ModelInfo mi = new ModelInfo();
         mi.setModelUuid(modelUuid);
         rd.setModelInfo(mi);
-        ExecuteBuildingBlock ebb = new ExecuteBuildingBlock();
-        ebb.setBuildingBlock(buildingBlock);
-        ebb.setRequestDetails(rd);
+        ExecuteBuildingBlock ebb = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock).setRequestDetails(rd);
         flowsToExecute.add(ebb);
 
         List<VnfResourceCustomization> vnfResourceCustomizations = new ArrayList<>();
@@ -152,9 +150,7 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         ModelInfo mi = new ModelInfo();
         mi.setModelUuid(modelUuid);
         rd.setModelInfo(mi);
-        ExecuteBuildingBlock ebb = new ExecuteBuildingBlock();
-        ebb.setBuildingBlock(buildingBlock);
-        ebb.setRequestDetails(rd);
+        ExecuteBuildingBlock ebb = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock).setRequestDetails(rd);
         ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
 
         flowsToExecute.add(ebb);
@@ -204,18 +200,15 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         execution.setVariable("resourceName", EMPTY_STRING);
         List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
         BuildingBlock buildingBlock1 = new BuildingBlock().setBpmnFlowName("AssignVfModuleBB");
-        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock();
-        ebb1.setBuildingBlock(buildingBlock1);
+        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock1);
         flowsToExecute.add(ebb1);
 
         BuildingBlock buildingBlock2 = new BuildingBlock().setBpmnFlowName("CreateVfModuleBB");
-        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
-        ebb2.setBuildingBlock(buildingBlock2);
+        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock2);
         flowsToExecute.add(ebb2);
 
         BuildingBlock buildingBlock3 = new BuildingBlock().setBpmnFlowName("ActivateVfModuleBB");
-        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock();
-        ebb3.setBuildingBlock(buildingBlock3);
+        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock3);
         flowsToExecute.add(ebb3);
 
         execution.setVariable("flowsToExecute", flowsToExecute);
@@ -238,18 +231,15 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         execution.setVariable("resourceName", EMPTY_STRING);
         List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
         BuildingBlock buildingBlock1 = new BuildingBlock().setBpmnFlowName("AssignVfModuleBB");
-        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock();
-        ebb1.setBuildingBlock(buildingBlock1);
+        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock1);
         flowsToExecute.add(ebb1);
 
         BuildingBlock buildingBlock2 = new BuildingBlock().setBpmnFlowName("CreateVfModuleBB");
-        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
-        ebb2.setBuildingBlock(buildingBlock2);
+        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock2);
         flowsToExecute.add(ebb2);
 
         BuildingBlock buildingBlock3 = new BuildingBlock().setBpmnFlowName("ActivateVfModuleBB");
-        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock();
-        ebb3.setBuildingBlock(buildingBlock3);
+        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock3);
         flowsToExecute.add(ebb3);
 
         execution.setVariable("flowsToExecute", flowsToExecute);
@@ -272,23 +262,19 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         execution.setVariable("resourceName", EMPTY_STRING);
         List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
         BuildingBlock buildingBlock1 = new BuildingBlock().setBpmnFlowName("AssignServiceInstanceBB");
-        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock();
-        ebb1.setBuildingBlock(buildingBlock1);
+        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock1);
         flowsToExecute.add(ebb1);
 
         BuildingBlock buildingBlock2 = new BuildingBlock().setBpmnFlowName("CreateNetworkCollectionBB");
-        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
-        ebb2.setBuildingBlock(buildingBlock2);
+        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock2);
         flowsToExecute.add(ebb2);
 
         BuildingBlock buildingBlock3 = new BuildingBlock().setBpmnFlowName("AssignNetworkBB");
-        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock();
-        ebb3.setBuildingBlock(buildingBlock3);
+        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock3);
         flowsToExecute.add(ebb3);
 
         BuildingBlock buildingBlock4 = new BuildingBlock().setBpmnFlowName("CreateNetworkBB");
-        ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock();
-        ebb4.setBuildingBlock(buildingBlock4);
+        ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock4);
         flowsToExecute.add(ebb4);
 
         execution.setVariable("flowsToExecute", flowsToExecute);
@@ -312,18 +298,15 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
 
         BuildingBlock buildingBlock1 = new BuildingBlock().setBpmnFlowName("AssignVfModuleBB");
-        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock();
-        ebb1.setBuildingBlock(buildingBlock1);
+        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock1);
         flowsToExecute.add(ebb1);
 
         BuildingBlock buildingBlock2 = new BuildingBlock().setBpmnFlowName("CreateVfModuleBB");
-        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
-        ebb2.setBuildingBlock(buildingBlock2);
+        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock2);
         flowsToExecute.add(ebb2);
 
         BuildingBlock buildingBlock3 = new BuildingBlock().setBpmnFlowName("ActivateVfModuleBB");
-        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock();
-        ebb3.setBuildingBlock(buildingBlock3);
+        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock3);
         flowsToExecute.add(ebb3);
 
         execution.setVariable("flowsToExecute", flowsToExecute);
@@ -344,29 +327,24 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         execution.setVariable("resourceName", "VfModule");
         List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
         BuildingBlock buildingBlock1 = new BuildingBlock().setBpmnFlowName("AssignVfModuleBB");
-        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock();
-        ebb1.setBuildingBlock(buildingBlock1);
+        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock1);
         flowsToExecute.add(ebb1);
 
         BuildingBlock buildingBlock2 = new BuildingBlock().setBpmnFlowName("CreateVfModuleBB");
-        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
-        ebb2.setBuildingBlock(buildingBlock2);
+        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock2);
         flowsToExecute.add(ebb2);
 
         BuildingBlock buildingBlock3 = new BuildingBlock().setBpmnFlowName("ActivateVfModuleBB");
-        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock();
-        ebb3.setBuildingBlock(buildingBlock3);
+        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock3);
         flowsToExecute.add(ebb3);
 
 
         BuildingBlock buildingBlock4 = new BuildingBlock().setBpmnFlowName("ChangeModelVnfBB");
-        ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock();
-        ebb4.setBuildingBlock(buildingBlock4);
+        ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock4);
         flowsToExecute.add(ebb4);
 
         BuildingBlock buildingBlock5 = new BuildingBlock().setBpmnFlowName("ChangeModelServiceInstanceBB");
-        ExecuteBuildingBlock ebb5 = new ExecuteBuildingBlock();
-        ebb5.setBuildingBlock(buildingBlock5);
+        ExecuteBuildingBlock ebb5 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock5);
         flowsToExecute.add(ebb5);
 
         execution.setVariable("flowsToExecute", flowsToExecute);
@@ -389,23 +367,19 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
 
         BuildingBlock buildingBlock1 = new BuildingBlock().setBpmnFlowName("AssignVfModuleBB");
-        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock();
-        ebb1.setBuildingBlock(buildingBlock1);
+        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock1);
         flowsToExecute.add(ebb1);
 
         BuildingBlock buildingBlock2 = new BuildingBlock().setBpmnFlowName("CreateVfModuleBB");
-        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
-        ebb2.setBuildingBlock(buildingBlock2);
+        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock2);
         flowsToExecute.add(ebb2);
 
         BuildingBlock buildingBlock3 = new BuildingBlock().setBpmnFlowName("ActivateVfModuleBB");
-        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock();
-        ebb3.setBuildingBlock(buildingBlock3);
+        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock3);
         flowsToExecute.add(ebb3);
 
         BuildingBlock buildingBlock4 = new BuildingBlock().setBpmnFlowName("AddFabricConfigurationBB");
-        ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock();
-        ebb4.setBuildingBlock(buildingBlock4);
+        ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock4);
         flowsToExecute.add(ebb4);
 
         execution.setVariable("flowsToExecute", flowsToExecute);
@@ -429,18 +403,15 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         execution.setVariable("resourceName", EMPTY_STRING);
         List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
         BuildingBlock buildingBlock1 = new BuildingBlock().setBpmnFlowName("AssignVfModuleBB");
-        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock();
-        ebb1.setBuildingBlock(buildingBlock1);
+        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock1);
         flowsToExecute.add(ebb1);
 
         BuildingBlock buildingBlock2 = new BuildingBlock().setBpmnFlowName("CreateVfModuleBB");
-        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
-        ebb2.setBuildingBlock(buildingBlock2);
+        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock2);
         flowsToExecute.add(ebb2);
 
         BuildingBlock buildingBlock3 = new BuildingBlock().setBpmnFlowName("ActivateVfModuleBB");
-        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock();
-        ebb3.setBuildingBlock(buildingBlock3);
+        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock3);
         flowsToExecute.add(ebb3);
 
         execution.setVariable("flowsToExecute", flowsToExecute);
@@ -461,53 +432,43 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         execution.setVariable("resourceName", EMPTY_STRING);
         List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
         BuildingBlock buildingBlock1 = new BuildingBlock().setBpmnFlowName("VNFCheckPserversLockedFlagActivity");
-        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock();
-        ebb1.setBuildingBlock(buildingBlock1);
+        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock1);
         flowsToExecute.add(ebb1);
 
         BuildingBlock buildingBlock2 = new BuildingBlock().setBpmnFlowName("VNFCheckInMaintFlagActivity");
-        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
-        ebb2.setBuildingBlock(buildingBlock2);
+        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock2);
         flowsToExecute.add(ebb2);
 
         BuildingBlock buildingBlock3 = new BuildingBlock().setBpmnFlowName("VNFSetInMaintFlagActivity");
-        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock();
-        ebb3.setBuildingBlock(buildingBlock3);
+        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock3);
         flowsToExecute.add(ebb3);
 
         BuildingBlock buildingBlock4 = new BuildingBlock().setBpmnFlowName("VNFCheckClosedLoopDisabledFlagActivity");
-        ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock();
-        ebb4.setBuildingBlock(buildingBlock4);
+        ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock4);
         flowsToExecute.add(ebb4);
 
         BuildingBlock buildingBlock5 = new BuildingBlock().setBpmnFlowName("VNFSetClosedLoopDisabledFlagActivity");
-        ExecuteBuildingBlock ebb5 = new ExecuteBuildingBlock();
-        ebb5.setBuildingBlock(buildingBlock5);
+        ExecuteBuildingBlock ebb5 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock5);
         flowsToExecute.add(ebb5);
 
         BuildingBlock buildingBlock6 = new BuildingBlock().setBpmnFlowName("VNFLockActivity");
-        ExecuteBuildingBlock ebb6 = new ExecuteBuildingBlock();
-        ebb6.setBuildingBlock(buildingBlock6);
+        ExecuteBuildingBlock ebb6 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock6);
         flowsToExecute.add(ebb6);
 
         BuildingBlock buildingBlock7 = new BuildingBlock().setBpmnFlowName("VNFUpgradePreCheckActivity");
-        ExecuteBuildingBlock ebb7 = new ExecuteBuildingBlock();
-        ebb7.setBuildingBlock(buildingBlock7);
+        ExecuteBuildingBlock ebb7 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock7);
         flowsToExecute.add(ebb7);
 
         BuildingBlock buildingBlock8 = new BuildingBlock().setBpmnFlowName("VNFQuiesceTrafficActivity");
-        ExecuteBuildingBlock ebb8 = new ExecuteBuildingBlock();
-        ebb8.setBuildingBlock(buildingBlock8);
+        ExecuteBuildingBlock ebb8 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock8);
         flowsToExecute.add(ebb8);
 
         BuildingBlock buildingBlock9 = new BuildingBlock().setBpmnFlowName("VNFStopActivity");
-        ExecuteBuildingBlock ebb9 = new ExecuteBuildingBlock();
-        ebb9.setBuildingBlock(buildingBlock9);
+        ExecuteBuildingBlock ebb9 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock9);
         flowsToExecute.add(ebb9);
 
         BuildingBlock buildingBlock10 = new BuildingBlock().setBpmnFlowName("VNFSnapShotActivity");
-        ExecuteBuildingBlock ebb10 = new ExecuteBuildingBlock();
-        ebb10.setBuildingBlock(buildingBlock10);
+        ExecuteBuildingBlock ebb10 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock10);
         flowsToExecute.add(ebb10);
 
         execution.setVariable("flowsToExecute", flowsToExecute);
@@ -532,33 +493,27 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         execution.setVariable("resourceName", EMPTY_STRING);
         List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
         BuildingBlock buildingBlock1 = new BuildingBlock().setBpmnFlowName("VNFCheckPserversLockedFlagActivity");
-        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock();
-        ebb1.setBuildingBlock(buildingBlock1);
+        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock1);
         flowsToExecute.add(ebb1);
 
         BuildingBlock buildingBlock2 = new BuildingBlock().setBpmnFlowName("VNFCheckInMaintFlagActivity");
-        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
-        ebb2.setBuildingBlock(buildingBlock2);
+        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock2);
         flowsToExecute.add(ebb2);
 
         BuildingBlock buildingBlock3 = new BuildingBlock().setBpmnFlowName("VNFSetInMaintFlagActivity");
-        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock();
-        ebb3.setBuildingBlock(buildingBlock3);
+        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock3);
         flowsToExecute.add(ebb3);
 
         BuildingBlock buildingBlock4 = new BuildingBlock().setBpmnFlowName("VNFCheckClosedLoopDisabledFlagActivity");
-        ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock();
-        ebb4.setBuildingBlock(buildingBlock4);
+        ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock4);
         flowsToExecute.add(ebb4);
 
         BuildingBlock buildingBlock5 = new BuildingBlock().setBpmnFlowName("VNFSetClosedLoopDisabledFlagActivity");
-        ExecuteBuildingBlock ebb5 = new ExecuteBuildingBlock();
-        ebb5.setBuildingBlock(buildingBlock5);
+        ExecuteBuildingBlock ebb5 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock5);
         flowsToExecute.add(ebb5);
 
         BuildingBlock buildingBlock6 = new BuildingBlock().setBpmnFlowName("VNFHealthCheckActivity");
-        ExecuteBuildingBlock ebb6 = new ExecuteBuildingBlock();
-        ebb6.setBuildingBlock(buildingBlock6);
+        ExecuteBuildingBlock ebb6 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock6);
         flowsToExecute.add(ebb6);
 
         execution.setVariable("flowsToExecute", flowsToExecute);

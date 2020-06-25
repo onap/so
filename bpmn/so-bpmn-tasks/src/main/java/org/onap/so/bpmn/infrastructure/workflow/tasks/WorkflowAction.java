@@ -176,32 +176,25 @@ public class WorkflowAction {
             final String bpmnRequest = (String) execution.getVariable(BBConstants.G_BPMN_REQUEST);
             ServiceInstancesRequest sIRequest =
                     new ObjectMapper().readValue(bpmnRequest, ServiceInstancesRequest.class);
-
-            final String requestId = (String) execution.getVariable(BBConstants.G_REQUEST_ID);
-
-            String uri = (String) execution.getVariable(BBConstants.G_URI);
-            boolean isResume = isUriResume(uri);
-
-            final boolean isALaCarte = (boolean) execution.getVariable(BBConstants.G_ALACARTE);
-            Resource resource = getResource(bbInputSetupUtils, isResume, isALaCarte, uri, requestId);
-
-            WorkflowResourceIds workflowResourceIds = populateResourceIdsFromApiHandler(execution);
             RequestDetails requestDetails = sIRequest.getRequestDetails();
+            String uri = (String) execution.getVariable(BBConstants.G_URI);
+            final String requestId = (String) execution.getVariable(BBConstants.G_REQUEST_ID);
+            final boolean aLaCarte = (boolean) execution.getVariable(BBConstants.G_ALACARTE);
+            boolean isResume = isUriResume(uri);
             String requestAction = (String) execution.getVariable(BBConstants.G_ACTION);
+            WorkflowResourceIds workflowResourceIds = populateResourceIdsFromApiHandler(execution);
+            Resource resource = getResource(bbInputSetupUtils, isResume, aLaCarte, uri, requestId);
             String resourceId = getResourceId(resource, requestAction, requestDetails, workflowResourceIds);
             WorkflowType resourceType = resource.getResourceType();
-
             String serviceInstanceId = getServiceInstanceId(execution, resourceId, resourceType);
-
             fillExecution(execution, requestDetails.getRequestInfo().getSuppressRollback(), resourceId, resourceType);
             List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
-
-            if (isRequestMacroServiceResume(isALaCarte, resourceType, requestAction, serviceInstanceId)) {
+            if (isRequestMacroServiceResume(aLaCarte, resourceType, requestAction, serviceInstanceId)) {
                 flowsToExecute = bbInputSetupUtils.loadOriginalFlowExecutionPath(requestId);
                 if (flowsToExecute == null) {
                     buildAndThrowException(execution, "Could not resume Macro flow. Error loading execution path.");
                 }
-            } else if (isALaCarte && isResume) {
+            } else if (aLaCarte && isResume) {
                 flowsToExecute = bbInputSetupUtils.loadOriginalFlowExecutionPath(requestId);
                 if (flowsToExecute == null) {
                     buildAndThrowException(execution,
@@ -215,30 +208,20 @@ public class WorkflowAction {
                 final String apiVersion = (String) execution.getVariable(BBConstants.G_APIVERSION);
                 final String serviceType =
                         Optional.ofNullable((String) execution.getVariable(BBConstants.G_SERVICE_TYPE)).orElse("");
-                if (isALaCarte) {
+                if (aLaCarte) {
                     if (orchFlows == null || orchFlows.isEmpty()) {
                         orchFlows = queryNorthBoundRequestCatalogDb(execution, requestAction, resourceType, true,
                                 cloudOwner, serviceType);
                     }
                     Resource resourceKey = getResourceKey(sIRequest, resourceType);
-                    if (isConfiguration(orchFlows) && !requestAction.equalsIgnoreCase(CREATEINSTANCE)) {
-                        ConfigBuildingBlocksDataObject configBuildingBlocksDataObject =
-                                new ConfigBuildingBlocksDataObject();
-                        configBuildingBlocksDataObject.setsIRequest(sIRequest);
-                        configBuildingBlocksDataObject.setOrchFlows(orchFlows);
-                        configBuildingBlocksDataObject.setRequestId(requestId);
-                        configBuildingBlocksDataObject.setResourceKey(resourceKey);
-                        configBuildingBlocksDataObject.setApiVersion(apiVersion);
-                        configBuildingBlocksDataObject.setResourceId(resourceId);
-                        configBuildingBlocksDataObject.setRequestAction(requestAction);
-                        configBuildingBlocksDataObject.setaLaCarte(true);
-                        configBuildingBlocksDataObject.setVnfType(vnfType);
-                        configBuildingBlocksDataObject.setWorkflowResourceIds(workflowResourceIds);
-                        configBuildingBlocksDataObject.setRequestDetails(requestDetails);
-                        configBuildingBlocksDataObject.setExecution(execution);
-
-                        List<ExecuteBuildingBlock> configBuildingBlocks =
-                                getConfigBuildingBlocks(configBuildingBlocksDataObject);
+                    boolean isConfiguration = isConfiguration(orchFlows);
+                    if (isConfiguration && !requestAction.equalsIgnoreCase(CREATEINSTANCE)) {
+                        List<ExecuteBuildingBlock> configBuildingBlocks = getConfigBuildingBlocks(
+                                new ConfigBuildingBlocksDataObject().setsIRequest(sIRequest).setOrchFlows(orchFlows)
+                                        .setRequestId(requestId).setResourceKey(resourceKey).setApiVersion(apiVersion)
+                                        .setResourceId(resourceId).setRequestAction(requestAction).setaLaCarte(true)
+                                        .setVnfType(vnfType).setWorkflowResourceIds(workflowResourceIds)
+                                        .setRequestDetails(requestDetails).setExecution(execution));
 
                         flowsToExecute.addAll(configBuildingBlocks);
                     }
@@ -249,23 +232,12 @@ public class WorkflowAction {
                             || requestAction.equalsIgnoreCase(REPLACEINSTANCERETAINASSIGNMENTS))
                             && resourceType.equals(WorkflowType.VFMODULE)) {
                         logger.debug("Build a BB list for replacing BB modules");
-
-                        ConfigBuildingBlocksDataObject configBuildingBlocksDataObject =
-                                new ConfigBuildingBlocksDataObject();
-                        configBuildingBlocksDataObject.setsIRequest(sIRequest);
-                        configBuildingBlocksDataObject.setOrchFlows(orchFlows);
-                        configBuildingBlocksDataObject.setRequestId(requestId);
-                        configBuildingBlocksDataObject.setResourceKey(resourceKey);
-                        configBuildingBlocksDataObject.setApiVersion(apiVersion);
-                        configBuildingBlocksDataObject.setResourceId(resourceId);
-                        configBuildingBlocksDataObject.setRequestAction(requestAction);
-                        configBuildingBlocksDataObject.setaLaCarte(true);
-                        configBuildingBlocksDataObject.setVnfType(vnfType);
-                        configBuildingBlocksDataObject.setWorkflowResourceIds(workflowResourceIds);
-                        configBuildingBlocksDataObject.setRequestDetails(requestDetails);
-                        configBuildingBlocksDataObject.setExecution(execution);
-
-                        orchFlows = getVfModuleReplaceBuildingBlocks(configBuildingBlocksDataObject);
+                        orchFlows = getVfModuleReplaceBuildingBlocks(
+                                new ConfigBuildingBlocksDataObject().setsIRequest(sIRequest).setOrchFlows(orchFlows)
+                                        .setRequestId(requestId).setResourceKey(resourceKey).setApiVersion(apiVersion)
+                                        .setResourceId(resourceId).setRequestAction(requestAction).setaLaCarte(true)
+                                        .setVnfType(vnfType).setWorkflowResourceIds(workflowResourceIds)
+                                        .setRequestDetails(requestDetails).setExecution(execution));
                     }
                     for (OrchestrationFlow orchFlow : orchFlows) {
                         ExecuteBuildingBlock ebb = buildExecuteBuildingBlock(orchFlow, requestId, resourceKey,
@@ -347,7 +319,7 @@ public class WorkflowAction {
                     logger.info("Found {}", foundObjects);
 
                     if (orchFlows == null || orchFlows.isEmpty()) {
-                        orchFlows = queryNorthBoundRequestCatalogDb(execution, requestAction, resourceType, isALaCarte,
+                        orchFlows = queryNorthBoundRequestCatalogDb(execution, requestAction, resourceType, aLaCarte,
                                 cloudOwner, serviceType);
                     }
                     boolean vnfReplace = false;
@@ -1466,16 +1438,10 @@ public class WorkflowAction {
             resourceId = workflowResourceIds.getVolumeGroupId();
         }
 
-        ExecuteBuildingBlock executeBuildingBlock = new ExecuteBuildingBlock();
-        executeBuildingBlock.setApiVersion(apiVersion);
-        executeBuildingBlock.setaLaCarte(aLaCarte);
-        executeBuildingBlock.setRequestAction(requestAction);
-        executeBuildingBlock.setResourceId(resourceId);
-        executeBuildingBlock.setVnfType(vnfType);
-        executeBuildingBlock.setWorkflowResourceIds(workflowResourceIds);
-        executeBuildingBlock.setRequestId(requestId);
-        executeBuildingBlock.setBuildingBlock(buildingBlock);
-        executeBuildingBlock.setRequestDetails(requestDetails);
+        ExecuteBuildingBlock executeBuildingBlock = new ExecuteBuildingBlock().setApiVersion(apiVersion)
+                .setaLaCarte(aLaCarte).setRequestAction(requestAction).setResourceId(resourceId).setVnfType(vnfType)
+                .setWorkflowResourceIds(workflowResourceIds).setRequestId(requestId).setBuildingBlock(buildingBlock)
+                .setRequestDetails(requestDetails);
 
         if (resource != null && (isConfiguration || resource.getResourceType().equals(WorkflowType.CONFIGURATION))) {
             ConfigurationResourceKeys configurationResourceKeys = new ConfigurationResourceKeys();

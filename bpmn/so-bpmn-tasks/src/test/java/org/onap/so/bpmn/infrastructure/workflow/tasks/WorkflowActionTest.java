@@ -1647,19 +1647,10 @@ public class WorkflowActionTest extends BaseTaskTest {
         List<OrchestrationFlow> orchFlows = createFlowList("DeactivateVfModuleBB", "DeleteVfModuleBB",
                 "UnassignVfModuleBB", "DeactivateFabricConfigurationBB", "UnassignFabricConfigurationBB");
 
-        ConfigBuildingBlocksDataObject dataObj = new ConfigBuildingBlocksDataObject();
-        dataObj.setsIRequest(sIRequest);
-        dataObj.setOrchFlows(orchFlows);
-        dataObj.setRequestId(requestId);
-        dataObj.setResourceKey(resourceKey);
-        dataObj.setApiVersion(apiVersion);
-        dataObj.setResourceId(resourceId);
-        dataObj.setRequestAction(requestAction);
-        dataObj.setaLaCarte(aLaCarte);
-        dataObj.setVnfType(vnfType);
-        dataObj.setWorkflowResourceIds(workflowResourceIds);
-        dataObj.setRequestDetails(requestDetails);
-        dataObj.setExecution(execution);
+        ConfigBuildingBlocksDataObject dataObj = new ConfigBuildingBlocksDataObject().setsIRequest(sIRequest)
+                .setOrchFlows(orchFlows).setRequestId(requestId).setResourceKey(resourceKey).setApiVersion(apiVersion)
+                .setResourceId(resourceId).setRequestAction(requestAction).setaLaCarte(aLaCarte).setVnfType(vnfType)
+                .setWorkflowResourceIds(workflowResourceIds).setRequestDetails(requestDetails).setExecution(execution);
 
         org.onap.aai.domain.yang.GenericVnf vnf = new org.onap.aai.domain.yang.GenericVnf();
         vnf.setVnfId("vnf0");
@@ -1816,33 +1807,27 @@ public class WorkflowActionTest extends BaseTaskTest {
         List<ExecuteBuildingBlock> executeFlows = new ArrayList<>();
 
         BuildingBlock bb = new BuildingBlock().setBpmnFlowName("AssignNetworkBB").setKey("0");
-        ExecuteBuildingBlock ebb = new ExecuteBuildingBlock();
-        ebb.setBuildingBlock(bb);
+        ExecuteBuildingBlock ebb = new ExecuteBuildingBlock().setBuildingBlock(bb);
         executeFlows.add(ebb);
 
         BuildingBlock bb2 = new BuildingBlock().setBpmnFlowName("AssignNetworkBB").setKey("1");
-        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
-        ebb2.setBuildingBlock(bb2);
+        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock().setBuildingBlock(bb2);
         executeFlows.add(ebb2);
 
         BuildingBlock bb3 = new BuildingBlock().setBpmnFlowName("CreateNetworkBB").setKey("0");
-        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock();
-        ebb3.setBuildingBlock(bb3);
+        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock().setBuildingBlock(bb3);
         executeFlows.add(ebb3);
 
         BuildingBlock bb4 = new BuildingBlock().setBpmnFlowName("CreateNetworkBB").setKey("1");
-        ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock();
-        ebb4.setBuildingBlock(bb4);
+        ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock().setBuildingBlock(bb4);
         executeFlows.add(ebb4);
 
         BuildingBlock bb5 = new BuildingBlock().setBpmnFlowName("ActivateNetworkBB").setKey("0");
-        ExecuteBuildingBlock ebb5 = new ExecuteBuildingBlock();
-        ebb5.setBuildingBlock(bb5);
+        ExecuteBuildingBlock ebb5 = new ExecuteBuildingBlock().setBuildingBlock(bb5);
         executeFlows.add(ebb5);
 
         BuildingBlock bb6 = new BuildingBlock().setBpmnFlowName("ActivateNetworkBB").setKey("1");
-        ExecuteBuildingBlock ebb6 = new ExecuteBuildingBlock();
-        ebb6.setBuildingBlock(bb6);
+        ExecuteBuildingBlock ebb6 = new ExecuteBuildingBlock().setBuildingBlock(bb6);
         executeFlows.add(ebb6);
 
         List<ExecuteBuildingBlock> sorted =
@@ -1856,33 +1841,27 @@ public class WorkflowActionTest extends BaseTaskTest {
         List<ExecuteBuildingBlock> executeFlows = new ArrayList<>();
 
         BuildingBlock bb = new BuildingBlock().setBpmnFlowName("DeactivateNetworkBB").setKey("0");
-        ExecuteBuildingBlock ebb = new ExecuteBuildingBlock();
-        ebb.setBuildingBlock(bb);
+        ExecuteBuildingBlock ebb = new ExecuteBuildingBlock().setBuildingBlock(bb);
         executeFlows.add(ebb);
 
         BuildingBlock bb2 = new BuildingBlock().setBpmnFlowName("DeactivateNetworkBB").setKey("1");
-        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
-        ebb2.setBuildingBlock(bb2);
+        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock().setBuildingBlock(bb2);
         executeFlows.add(ebb2);
 
         BuildingBlock bb3 = new BuildingBlock().setBpmnFlowName("DeleteNetworkBB").setKey("0");
-        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock();
-        ebb3.setBuildingBlock(bb3);
+        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock().setBuildingBlock(bb3);
         executeFlows.add(ebb3);
 
         BuildingBlock bb4 = new BuildingBlock().setBpmnFlowName("DeleteNetworkBB").setKey("1");
-        ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock();
-        ebb4.setBuildingBlock(bb4);
+        ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock().setBuildingBlock(bb4);
         executeFlows.add(ebb4);
 
         BuildingBlock bb5 = new BuildingBlock().setBpmnFlowName("UnassignNetworkBB").setKey("0");
-        ExecuteBuildingBlock ebb5 = new ExecuteBuildingBlock();
-        ebb5.setBuildingBlock(bb5);
+        ExecuteBuildingBlock ebb5 = new ExecuteBuildingBlock().setBuildingBlock(bb5);
         executeFlows.add(ebb5);
 
         BuildingBlock bb6 = new BuildingBlock().setBpmnFlowName("UnassignNetworkBB").setKey("1");
-        ExecuteBuildingBlock ebb6 = new ExecuteBuildingBlock();
-        ebb6.setBuildingBlock(bb6);
+        ExecuteBuildingBlock ebb6 = new ExecuteBuildingBlock().setBuildingBlock(bb6);
         executeFlows.add(ebb6);
 
         List<ExecuteBuildingBlock> sorted =
