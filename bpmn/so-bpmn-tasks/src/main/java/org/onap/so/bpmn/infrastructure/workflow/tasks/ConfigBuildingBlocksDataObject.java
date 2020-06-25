@@ -28,6 +28,7 @@ import java.util.List;
 
 public class ConfigBuildingBlocksDataObject extends BuildingBlockBase {
 
+    private static final long serialVersionUID = 1L;
     private DelegateExecution execution;
     private List<OrchestrationFlow> orchFlows;
     private Resource resourceKey;

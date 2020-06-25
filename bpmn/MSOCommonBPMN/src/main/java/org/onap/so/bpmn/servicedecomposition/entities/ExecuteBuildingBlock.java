@@ -20,14 +20,12 @@
 
 package org.onap.so.bpmn.servicedecomposition.entities;
 
-import java.io.Serializable;
+public class ExecuteBuildingBlock extends BuildingBlockBase {
 
-public class ExecuteBuildingBlock extends BuildingBlockBase implements Serializable {
-
+    private static final long serialVersionUID = 3L;
     private BuildingBlock buildingBlock;
     private ConfigurationResourceKeys configurationResourceKeys;
     private Boolean homing = false;
-    private static final long serialVersionUID = 3L;
 
     public BuildingBlock getBuildingBlock() {
         return buildingBlock;
