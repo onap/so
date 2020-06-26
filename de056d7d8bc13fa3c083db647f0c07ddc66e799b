@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "621a1bdf_37fb77dd",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 866,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-06-26T13:07:35Z",
+      "side": 1,
+      "message": "maybe a little bit clear would be just - \"interfaceNetworkQuantityIsAvailableInCollection\"",
+      "range": {
+        "startLine": 866,
+        "startChar": 16,
+        "endLine": 866,
+        "endChar": 64
+      },
+      "revId": "de056d7d8bc13fa3c083db647f0c07ddc66e799b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "08e96f3a_20df8342",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 912,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-06-26T13:07:35Z",
+      "side": 1,
+      "message": "I would remove this part of code from this method, because it is not related to checking if collectionResourceCustomization should be processed. So, move it to the original place please.",
+      "range": {
+        "startLine": 907,
+        "startChar": 3,
+        "endLine": 912,
+        "endChar": 9
+      },
+      "revId": "de056d7d8bc13fa3c083db647f0c07ddc66e799b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
