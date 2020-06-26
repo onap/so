@@ -308,9 +308,8 @@ public class BBInputSetupTest {
     @Test
     public void testGetExecuteBBFromExecution() throws IOException {
         BuildingBlock bb = new BuildingBlock().setBpmnFlowName("AssignServiceInstanceBB");
-        ExecuteBuildingBlock expected = new ExecuteBuildingBlock();
-        expected.setBuildingBlock(bb);
-        expected.setRequestId("00032ab7-3fb3-42e5-965d-8ea592502017");
+        ExecuteBuildingBlock expected =
+                new ExecuteBuildingBlock().setBuildingBlock(bb).setRequestId("00032ab7-3fb3-42e5-965d-8ea592502017");
         DelegateExecution execution = Mockito.mock(DelegateExecution.class);
         doReturn(expected).when(execution).getVariable(any(String.class));
         ExecuteBuildingBlock actual = SPY_bbInputSetup.getExecuteBBFromExecution(execution);
@@ -322,8 +321,7 @@ public class BBInputSetupTest {
         GeneralBuildingBlock expected = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
                 GeneralBuildingBlock.class);
 
-        ExecuteBuildingBlock executeBB = new ExecuteBuildingBlock();
-        executeBB.setRequestId("requestId");
+        ExecuteBuildingBlock executeBB = new ExecuteBuildingBlock().setRequestId("requestId");
         RequestDetails requestDetails = new RequestDetails();
         ModelInfo modelInfo = new ModelInfo();
         modelInfo.setModelType(ModelType.service);
@@ -351,8 +349,7 @@ public class BBInputSetupTest {
         GeneralBuildingBlock expected = mapper
                 .readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockCMExpected.json"), GeneralBuildingBlock.class);
 
-        ExecuteBuildingBlock executeBB = new ExecuteBuildingBlock();
-        executeBB.setRequestId("requestId");
+        ExecuteBuildingBlock executeBB = new ExecuteBuildingBlock().setRequestId("requestId");
         RequestDetails requestDetails = new RequestDetails();
         requestDetails.setModelInfo(null);
         RequestParameters requestParams = new RequestParameters();
@@ -1006,9 +1003,7 @@ public class BBInputSetupTest {
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
 
         BuildingBlock buildingBlock = new BuildingBlock().setBpmnFlowName(AssignFlows.SERVICE_INSTANCE.toString());
-        ExecuteBuildingBlock executeBB = new ExecuteBuildingBlock();
-        executeBB.setaLaCarte(true);
-        executeBB.setBuildingBlock(buildingBlock);
+        ExecuteBuildingBlock executeBB = new ExecuteBuildingBlock().setaLaCarte(true).setBuildingBlock(buildingBlock);
         RequestDetails requestDetails = new RequestDetails();
         RequestInfo reqInfo = new RequestInfo();
         reqInfo.setInstanceName("serviceInstanceName");
@@ -2055,8 +2050,7 @@ public class BBInputSetupTest {
         Map<ResourceKey, String> lookupKeyMap = prepareLookupKeyMap();
 
         ConfigurationResourceKeys configResourceKeys = prepareConfigurationResourceKeys();
-        executeBB.setConfigurationResourceKeys(configResourceKeys);
-        executeBB.setRequestDetails(requestDetails);
+        executeBB.setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails);
         BuildingBlock buildingBlock = executeBB.getBuildingBlock();
         buildingBlock.setBpmnFlowName("AssignVrfConfigurationBB");
         buildingBlock.setKey("72d9d1cd-f46d-447a-abdb-451d6fb05fa9");
@@ -2236,8 +2230,7 @@ public class BBInputSetupTest {
                 .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_serviceMacro.json"), RequestDetails.class);
         ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
                 ExecuteBuildingBlock.class);
-        executeBB.setConfigurationResourceKeys(configResourceKeys);
-        executeBB.setRequestDetails(requestDetails);
+        executeBB.setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails);
         BuildingBlock buildingBlock = executeBB.getBuildingBlock();
         buildingBlock.setBpmnFlowName(AssignFlows.NETWORK_MACRO.toString())
                 .setKey("ab153b6e-c364-44c0-bef6-1f2982117f04");
@@ -2306,8 +2299,7 @@ public class BBInputSetupTest {
         requestDetails.getRequestParameters().setUserParams(null);
         ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
                 ExecuteBuildingBlock.class);
-        executeBB.setConfigurationResourceKeys(configResourceKeys);
-        executeBB.setRequestDetails(requestDetails);
+        executeBB.setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails);
         BuildingBlock buildingBlock = executeBB.getBuildingBlock();
         buildingBlock.setBpmnFlowName(AssignFlows.NETWORK_MACRO.toString())
                 .setKey("ab153b6e-c364-44c0-bef6-1f2982117f04").setIsVirtualLink(false);
@@ -2352,8 +2344,7 @@ public class BBInputSetupTest {
         requestDetails.getRequestParameters().setUserParams(null);
         ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
                 ExecuteBuildingBlock.class);
-        executeBB.setConfigurationResourceKeys(configResourceKeys);
-        executeBB.setRequestDetails(requestDetails);
+        executeBB.setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails);
         BuildingBlock buildingBlock = executeBB.getBuildingBlock();
         buildingBlock.setBpmnFlowName(AssignFlows.NETWORK_MACRO.toString())
                 .setKey("ab153b6e-c364-44c0-bef6-1f2982117f04").setIsVirtualLink(true);
@@ -2399,8 +2390,7 @@ public class BBInputSetupTest {
         requestDetails.getRequestParameters().setUserParams(null);
         ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
                 ExecuteBuildingBlock.class);
-        executeBB.setConfigurationResourceKeys(configResourceKeys);
-        executeBB.setRequestDetails(requestDetails);
+        executeBB.setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails);
         BuildingBlock buildingBlock = executeBB.getBuildingBlock();
         buildingBlock.setBpmnFlowName(otherFlowName).setKey("ab153b6e-c364-44c0-bef6-1f2982117f04")
                 .setIsVirtualLink(true);
@@ -2472,8 +2462,7 @@ public class BBInputSetupTest {
         aaiNetwork.setModelCustomizationId("modelCustId");
 
         ConfigurationResourceKeys configResourceKeys = prepareConfigurationResourceKeys();
-        executeBB.setConfigurationResourceKeys(configResourceKeys);
-        executeBB.setRequestDetails(requestDetails);
+        executeBB.setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails);
         BuildingBlock buildingBlock = executeBB.getBuildingBlock();
         buildingBlock.setBpmnFlowName("DeleteNetworkBB").setKey("ab153b6e-c364-44c0-bef6-1f2982117f04");
 
@@ -2524,8 +2513,7 @@ public class BBInputSetupTest {
         aaiVnf.setModelCustomizationId("modelCustId");
 
         ConfigurationResourceKeys configResourceKeys = prepareConfigurationResourceKeys();
-        executeBB.setConfigurationResourceKeys(configResourceKeys);
-        executeBB.setRequestDetails(requestDetails);
+        executeBB.setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails);
         BuildingBlock buildingBlock = executeBB.getBuildingBlock();
         buildingBlock.setBpmnFlowName("ControllerExecutionBB").setKey("ab153b6e-c364-44c0-bef6-1f2982117f04");
         buildingBlock.setBpmnScope("VNF");
@@ -2577,8 +2565,7 @@ public class BBInputSetupTest {
         aaiVnf.setModelCustomizationId("modelCustId");
 
         ConfigurationResourceKeys configResourceKeys = prepareConfigurationResourceKeys();
-        executeBB.setConfigurationResourceKeys(configResourceKeys);
-        executeBB.setRequestDetails(requestDetails);
+        executeBB.setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails);
         BuildingBlock buildingBlock = executeBB.getBuildingBlock();
         buildingBlock.setBpmnFlowName("ActivateVnfBB").setKey("ab153b6e-c364-44c0-bef6-1f2982117f04");
 
@@ -2634,8 +2621,7 @@ public class BBInputSetupTest {
         aaiVfModule.setModelCustomizationId("modelCustId");
 
         ConfigurationResourceKeys configResourceKeys = prepareConfigurationResourceKeys();
-        executeBB.setConfigurationResourceKeys(configResourceKeys);
-        executeBB.setRequestDetails(requestDetails);
+        executeBB.setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails);
         BuildingBlock buildingBlock = executeBB.getBuildingBlock();
         buildingBlock.setBpmnFlowName("ControllerExecutionBB").setKey("a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f");
         buildingBlock.setBpmnScope("VfModule");
@@ -2695,8 +2681,7 @@ public class BBInputSetupTest {
         aaiVfModule.setModelCustomizationId("modelCustId");
 
         ConfigurationResourceKeys configResourceKeys = prepareConfigurationResourceKeys();
-        executeBB.setConfigurationResourceKeys(configResourceKeys);
-        executeBB.setRequestDetails(requestDetails);
+        executeBB.setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails);
         BuildingBlock buildingBlock = executeBB.getBuildingBlock();
         buildingBlock.setBpmnFlowName("UnassignVfModuleBB").setKey("a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f");
 
@@ -2757,8 +2742,7 @@ public class BBInputSetupTest {
         aaiVolumeGroup.setModelCustomizationId("modelCustId");
 
         ConfigurationResourceKeys configResourceKeys = prepareConfigurationResourceKeys();
-        executeBB.setConfigurationResourceKeys(configResourceKeys);
-        executeBB.setRequestDetails(requestDetails);
+        executeBB.setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails);
         BuildingBlock buildingBlock = executeBB.getBuildingBlock();
         buildingBlock.setBpmnFlowName("UnassignVolumeGroupBB").setKey("72d9d1cd-f46d-447a-abdb-451d6fb05fa8");
 
@@ -2824,8 +2808,7 @@ public class BBInputSetupTest {
         aaiConfiguration.setModelCustomizationId("modelCustId");
 
         ConfigurationResourceKeys configResourceKeys = prepareConfigurationResourceKeys();
-        executeBB.setConfigurationResourceKeys(configResourceKeys);
-        executeBB.setRequestDetails(requestDetails);
+        executeBB.setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails);
         BuildingBlock buildingBlock = executeBB.getBuildingBlock();
         buildingBlock.setBpmnFlowName("ActivateFabricConfigurationBB").setKey("72d9d1cd-f46d-447a-abdb-451d6fb05fa9");
 
@@ -2893,8 +2876,7 @@ public class BBInputSetupTest {
     @Test
     public void testGetVnfId() {
         String expected = "vnfId";
-        ExecuteBuildingBlock executeBB = new ExecuteBuildingBlock();
-        executeBB.setRequestId("requestId");
+        ExecuteBuildingBlock executeBB = new ExecuteBuildingBlock().setRequestId("requestId");
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
         InfraActiveRequests request = new InfraActiveRequests();
         request.setVnfId(expected);

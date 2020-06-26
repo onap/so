@@ -493,16 +493,11 @@ public class WorkflowActionBBTasks {
 
         WorkflowResourceIds workflowResourceIds = ebb.getWorkflowResourceIds();
         workflowResourceIds.setConfigurationId(configurationId);
-        ExecuteBuildingBlock configBB = new ExecuteBuildingBlock();
-        configBB.setaLaCarte(ebb.isaLaCarte());
-        configBB.setApiVersion(ebb.getApiVersion());
-        configBB.setRequestAction(ebb.getRequestAction());
-        configBB.setVnfType(ebb.getVnfType());
-        configBB.setRequestId(ebb.getRequestId());
-        configBB.setRequestDetails(ebb.getRequestDetails());
-        configBB.setBuildingBlock(buildingBlock);
-        configBB.setWorkflowResourceIds(workflowResourceIds);
-        configBB.setConfigurationResourceKeys(configurationResourceKeys);
+        ExecuteBuildingBlock configBB = new ExecuteBuildingBlock().setaLaCarte(ebb.isaLaCarte())
+                .setApiVersion(ebb.getApiVersion()).setRequestAction(ebb.getRequestAction())
+                .setVnfType(ebb.getVnfType()).setRequestId(ebb.getRequestId())
+                .setRequestDetails(ebb.getRequestDetails()).setBuildingBlock(buildingBlock)
+                .setWorkflowResourceIds(workflowResourceIds).setConfigurationResourceKeys(configurationResourceKeys);
         return configBB;
     }
 
