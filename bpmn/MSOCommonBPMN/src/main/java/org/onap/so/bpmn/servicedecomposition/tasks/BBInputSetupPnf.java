@@ -23,6 +23,7 @@ package org.onap.so.bpmn.servicedecomposition.tasks;
 
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoPnf;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.serviceinstancebeans.Pnfs;
 
@@ -36,6 +37,10 @@ final class BBInputSetupPnf {
         Pnf pnf = new Pnf();
         pnf.setPnfId(pnfId);
         pnf.setPnfName(pnfs.getInstanceName());
+        pnf.setModelInfoPnf(new ModelInfoPnf());
+        pnf.getModelInfoPnf().setModelCustomizationUuid(pnfs.getModelInfo().getModelCustomizationId());
+        pnf.getModelInfoPnf().setModelInvariantUuid(pnfs.getModelInfo().getModelInvariantId());
+        pnf.getModelInfoPnf().setModelUuid(pnfs.getModelInfo().getModelVersionId());
         pnf.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
 
         serviceInstance.getPnfs().add(pnf);
