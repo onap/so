@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4171e903_8f9591b0",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2020-06-29T20:04:58Z",
+      "side": 1,
+      "message": "I would agree with Rahul hat this has potential to break clients. Api changes should be handled with some versioning strategy.\nTo avoid duplication, the internal logic of the method can be extracted to private methods.",
+      "range": {
+        "startLine": 85,
+        "startChar": 12,
+        "endLine": 85,
+        "endChar": 42
+      },
+      "revId": "ccae64cbc67ced227c9c5521cc628ab64e2ae4ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "493d84f5_0167e4c2",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandlerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2020-06-29T20:04:58Z",
+      "side": 1,
+      "message": "Is there a need for some negative test cases?",
+      "range": {
+        "startLine": 370,
+        "startChar": 65,
+        "endLine": 370,
+        "endChar": 72
+      },
+      "revId": "ccae64cbc67ced227c9c5521cc628ab64e2ae4ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
