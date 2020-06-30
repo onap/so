@@ -1,10 +1,10 @@
 package org.onap.so.adapters.tasks.audit;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.Vserver;
-import org.onap.so.adapters.tasks.audit.AuditDataService;
 import org.onap.so.audit.beans.AuditInventory;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
 import org.onap.so.db.request.beans.RequestProcessingData;
@@ -98,5 +97,18 @@ public class AuditDataServiceTest {
         Mockito.verify(requestsDbClient, Mockito.times(1)).getRequestProcessingDataByGroupingIdAndNameAndTag(
                 "testVnfModuleId", "testVfModuleName1", "AuditStackData");
     }
+
+    @Test
+    public void testGetStackDataToRequestDbWhenRequestProcessingDataListIsEmpty() throws Exception {
+
+        Mockito.doReturn(new ArrayList<RequestProcessingData>()).when(requestsDbClient)
+                .getRequestProcessingDataByGroupingIdAndNameAndTag(Mockito.any(), Mockito.any(), Mockito.any());
+        Optional<AAIObjectAuditList> result = auditDataService.getStackDataFromRequestDb(auditInventory);
+        Mockito.verify(requestsDbClient, Mockito.times(1)).getRequestProcessingDataByGroupingIdAndNameAndTag(
+                "testVnfModuleId", "testVfModuleName1", "AuditStackData");
+        assertThat(result, is(Optional.empty()));
+
+    }
+
 
 }

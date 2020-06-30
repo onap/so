@@ -17,6 +17,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 @Component
 public class AuditDataService {
 
+    private static final String AUDIT_STACK_DATA = "AuditStackData";
+
     @Autowired
     private RequestsDbClient requestsDbClient;
 
@@ -30,7 +32,7 @@ public class AuditDataService {
             throws JsonProcessingException {
         List<RequestProcessingData> requestProcessingDataList =
                 requestsDbClient.getRequestProcessingDataByGroupingIdAndNameAndTag(auditInventory.getVfModuleId(),
-                        auditInventory.getHeatStackName(), "AuditStackData");
+                        auditInventory.getHeatStackName(), AUDIT_STACK_DATA);
         if (requestProcessingDataList.isEmpty()) {
             GraphInventoryCommonObjectMapperProvider objectMapper = new GraphInventoryCommonObjectMapperProvider();
             String auditListString = objectMapper.getMapper().writeValueAsString(auditList);;
@@ -39,7 +41,7 @@ public class AuditDataService {
             requestProcessingData.setSoRequestId(auditInventory.getMsoRequestId());
             requestProcessingData.setGroupingId(auditInventory.getVfModuleId());
             requestProcessingData.setName(auditInventory.getHeatStackName());
-            requestProcessingData.setTag("AuditStackData");
+            requestProcessingData.setTag(AUDIT_STACK_DATA);
             requestProcessingData.setValue(auditListString);
 
             requestsDbClient.saveRequestProcessingData(requestProcessingData);
@@ -53,12 +55,11 @@ public class AuditDataService {
      * @throws JsonMappingException
      * @throws JsonParseException
      */
-    public Optional<AAIObjectAuditList> getStackDataFromRequestDb(AuditInventory auditInventory)
-            throws JsonParseException, JsonMappingException, IOException {
+    public Optional<AAIObjectAuditList> getStackDataFromRequestDb(AuditInventory auditInventory) throws IOException {
 
         List<RequestProcessingData> requestProcessingDataList =
                 requestsDbClient.getRequestProcessingDataByGroupingIdAndNameAndTag(auditInventory.getVfModuleId(),
-                        auditInventory.getHeatStackName(), "AuditStackData");
+                        auditInventory.getHeatStackName(), AUDIT_STACK_DATA);
         if (!requestProcessingDataList.isEmpty()) {
             RequestProcessingData requestProcessingData = requestProcessingDataList.get(0);
             String auditListString = requestProcessingData.getValue();
