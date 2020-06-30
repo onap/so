@@ -148,7 +148,7 @@ public class AAIDataRetrieval {
     }
 
     public List<LInterface> getLinterfacesOfVnf(String vnfId) {
-        DSLStartNode startNode = new DSLStartNode(AAIObjectType.GENERIC_VNF, __.key("generic-vnf-id", vnfId));
+        DSLStartNode startNode = new DSLStartNode(AAIObjectType.GENERIC_VNF, __.key("vnf-id", vnfId));
         DSLQueryBuilder<Start, Node> builder = TraversalBuilder.fragment(startNode)
                 .to(__.node(AAIObjectType.VSERVER).to(__.node(AAIObjectType.L_INTERFACE).output()));
         List<LInterface> linterfaces =
