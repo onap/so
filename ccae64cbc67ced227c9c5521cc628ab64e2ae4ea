@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "be09c6e6_62de095f",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-06-30T11:01:39Z",
+      "side": 1,
+      "message": "The old API is added back with deprecation. The common functionality of both API methods is extracted to a private method.",
+      "parentUuid": "4171e903_8f9591b0",
+      "range": {
+        "startLine": 85,
+        "startChar": 12,
+        "endLine": 85,
+        "endChar": 42
+      },
+      "revId": "ccae64cbc67ced227c9c5521cc628ab64e2ae4ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d31f59b2_2d858a04",
         "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandler.java",
         "patchSetId": 3
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "1f263e6f_f41b50b9",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-06-30T11:01:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d31f59b2_2d858a04",
+      "range": {
+        "startLine": 138,
+        "startChar": 2,
+        "endLine": 138,
+        "endChar": 42
+      },
+      "revId": "ccae64cbc67ced227c9c5521cc628ab64e2ae4ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "493d84f5_0167e4c2",
         "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandlerTest.java",
         "patchSetId": 3
@@ -59,6 +107,30 @@
       "writtenOn": "2020-06-29T20:04:58Z",
       "side": 1,
       "message": "Is there a need for some negative test cases?",
+      "range": {
+        "startLine": 370,
+        "startChar": 65,
+        "endLine": 370,
+        "endChar": 72
+      },
+      "revId": "ccae64cbc67ced227c9c5521cc628ab64e2ae4ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4ddaeb5f_1a734856",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandlerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-06-30T11:01:39Z",
+      "side": 1,
+      "message": "As per my knowledge, We are mocking the json response for API handler, since CatalogDbClientTest handles the actual junits for db related queries. Hence negative cases are not needed here.  Rahul can suggest his thoughts as well?",
+      "parentUuid": "493d84f5_0167e4c2",
       "range": {
         "startLine": 370,
         "startChar": 65,
