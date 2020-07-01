@@ -718,17 +718,13 @@ public class BBInputSetupTest {
         requestInfo.setInstanceName("SharansInstanceName");
         requestDetails.setRequestInfo(requestInfo);
         Customer customer = new Customer();
-        String serviceInstanceId = "SharansInstanceId";
-        boolean aLaCarte = true;
+        String serviceInstanceId = null;
+        boolean aLaCarte = false;
         ServiceInstance expected = new ServiceInstance();
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
         Service service = new Service();
         service.setModelUUID("modelUUID");
         String bbName = AssignFlows.SERVICE_INSTANCE.toString();
-
-        doReturn(null).when(SPY_bbInputSetupUtils).getAAIServiceInstanceByName(requestInfo.getInstanceName(), customer);
-        doReturn(null).when(SPY_bbInputSetupUtils).getAAIServiceInstanceById(serviceInstanceId);
-
 
         doReturn(expected).when(SPY_bbInputSetup).createServiceInstance(requestDetails, null, null, lookupKeyMap,
                 serviceInstanceId);
@@ -808,6 +804,35 @@ public class BBInputSetupTest {
         differentService.setModelUUID("modelUUIDDifferent");
 
         doReturn(serviceInstanceAAI).when(SPY_bbInputSetupUtils).getAAIServiceInstanceById(serviceInstanceId);
+
+
+        ServiceInstance actual = SPY_bbInputSetup.getServiceInstanceHelper(requestDetails, customer, null, null,
+                lookupKeyMap, serviceInstanceId, aLaCarte, service, bbName);
+        assertThat(actual, sameBeanAs(expected));
+    }
+
+    @Test
+    public void testGetServiceInstanceHelperCreateScenarioExistingWithName() throws Exception {
+        RequestDetails requestDetails = new RequestDetails();
+        RequestInfo requestInfo = new RequestInfo();
+        requestDetails.setRequestInfo(requestInfo);
+        ServiceSubscription serviceSub = new ServiceSubscription();
+        Customer customer = new Customer();
+        customer.setServiceSubscription(serviceSub);
+        String serviceInstanceId = "SharansInstanceId";
+        boolean aLaCarte = false;
+        Service service = new Service();
+        service.setModelUUID("modelUUID");
+        ServiceInstance expected = new ServiceInstance();
+        org.onap.aai.domain.yang.ServiceInstance serviceInstanceAAI = new org.onap.aai.domain.yang.ServiceInstance();
+        serviceInstanceAAI.setModelVersionId("modelUUIDDifferent");
+        Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
+        String bbName = "ActivateServiceInstanceBB";
+        Service differentService = new Service();
+        differentService.setModelUUID("modelUUIDDifferent");
+
+        doReturn(serviceInstanceAAI).when(SPY_bbInputSetupUtils).getAAIServiceInstanceByIdAndCustomer(Mockito.any(),
+                Mockito.any(), Mockito.any());
 
 
         ServiceInstance actual = SPY_bbInputSetup.getServiceInstanceHelper(requestDetails, customer, null, null,

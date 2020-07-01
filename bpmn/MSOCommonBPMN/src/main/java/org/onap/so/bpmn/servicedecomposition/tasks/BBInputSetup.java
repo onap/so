@@ -1695,31 +1695,48 @@ public class BBInputSetup implements JavaDelegate {
     protected ServiceInstance getServiceInstanceHelper(RequestDetails requestDetails, Customer customer,
             Project project, OwningEntity owningEntity, Map<ResourceKey, String> lookupKeyMap, String serviceInstanceId,
             boolean aLaCarte, Service service, String bbName) throws Exception {
-        if (requestDetails.getRequestInfo().getInstanceName() == null && aLaCarte
-                && bbName.equalsIgnoreCase(AssignFlows.SERVICE_INSTANCE.toString())) {
+        if (aLaCarteInstanceNameIsNull(requestDetails, aLaCarte, bbName)) {
             throw new Exception("Request invalid missing: RequestInfo:InstanceName");
         } else {
-            org.onap.aai.domain.yang.ServiceInstance serviceInstanceAAI = null;
-            if (aLaCarte && bbName.equalsIgnoreCase(AssignFlows.SERVICE_INSTANCE.toString())) {
-                serviceInstanceAAI = bbInputSetupUtils
-                        .getAAIServiceInstanceByName(requestDetails.getRequestInfo().getInstanceName(), customer);
-            }
-            if (serviceInstanceId != null && serviceInstanceAAI == null) {
-                if (customer != null && customer.getServiceSubscription() != null) {
-                    serviceInstanceAAI =
-                            bbInputSetupUtils.getAAIServiceInstanceByIdAndCustomer(customer.getGlobalCustomerId(),
-                                    customer.getServiceSubscription().getServiceType(), serviceInstanceId);
-                } else {
-                    serviceInstanceAAI = bbInputSetupUtils.getAAIServiceInstanceById(serviceInstanceId);
-                }
-            }
-            if (serviceInstanceAAI != null) {
-                lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, serviceInstanceId);
-                return this.getExistingServiceInstance(serviceInstanceAAI);
+            return getServiceInstance(requestDetails, customer, project, owningEntity, lookupKeyMap, serviceInstanceId,
+                    aLaCarte, bbName);
+        }
+    }
+
+    private boolean aLaCarteInstanceNameIsNull(RequestDetails requestDetails, boolean aLaCarte, String bbName) {
+        return requestDetails.getRequestInfo().getInstanceName() == null && aLaCarte
+                && bbName.equalsIgnoreCase(AssignFlows.SERVICE_INSTANCE.toString());
+    }
+
+    private ServiceInstance getServiceInstance(RequestDetails requestDetails, Customer customer, Project project,
+            OwningEntity owningEntity, Map<ResourceKey, String> lookupKeyMap, String serviceInstanceId,
+            boolean aLaCarte, String bbName) throws Exception {
+
+        org.onap.aai.domain.yang.ServiceInstance serviceInstanceAAI;
+        serviceInstanceAAI = getServiceInstanceAAI(requestDetails, customer, serviceInstanceId, aLaCarte, bbName);
+        if (serviceInstanceAAI != null) {
+            lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, serviceInstanceId);
+            return this.getExistingServiceInstance(serviceInstanceAAI);
+        } else {
+            return createServiceInstance(requestDetails, project, owningEntity, lookupKeyMap, serviceInstanceId);
+        }
+    }
+
+    private org.onap.aai.domain.yang.ServiceInstance getServiceInstanceAAI(RequestDetails requestDetails,
+            Customer customer, String serviceInstanceId, boolean aLaCarte, String bbName) throws Exception {
+        if (aLaCarte && bbName.equalsIgnoreCase(AssignFlows.SERVICE_INSTANCE.toString())) {
+            return bbInputSetupUtils.getAAIServiceInstanceByName(requestDetails.getRequestInfo().getInstanceName(),
+                    customer);
+        }
+        if (serviceInstanceId != null) {
+            if (customer != null && customer.getServiceSubscription() != null) {
+                return bbInputSetupUtils.getAAIServiceInstanceByIdAndCustomer(customer.getGlobalCustomerId(),
+                        customer.getServiceSubscription().getServiceType(), serviceInstanceId);
             } else {
-                return createServiceInstance(requestDetails, project, owningEntity, lookupKeyMap, serviceInstanceId);
+                return bbInputSetupUtils.getAAIServiceInstanceById(serviceInstanceId);
             }
         }
+        return null;
     }
 
     protected ServiceInstance createServiceInstance(RequestDetails requestDetails, Project project,
@@ -1747,12 +1764,17 @@ public class BBInputSetup implements JavaDelegate {
     public ServiceInstance getExistingServiceInstance(org.onap.aai.domain.yang.ServiceInstance serviceInstanceAAI)
             throws Exception {
         ServiceInstance serviceInstance = mapperLayer.mapAAIServiceInstanceIntoServiceInstance(serviceInstanceAAI);
-        if (serviceInstanceAAI.getRelationshipList() != null
-                && serviceInstanceAAI.getRelationshipList().getRelationship() != null
-                && !serviceInstanceAAI.getRelationshipList().getRelationship().isEmpty()) {
+        if (serviceInstanceAAIRelationshipListExist(serviceInstanceAAI)) {
             addRelationshipsToSI(serviceInstanceAAI, serviceInstance);
         }
         return serviceInstance;
+    }
+
+    private boolean serviceInstanceAAIRelationshipListExist(
+            org.onap.aai.domain.yang.ServiceInstance serviceInstanceAAI) {
+        return serviceInstanceAAI.getRelationshipList() != null
+                && serviceInstanceAAI.getRelationshipList().getRelationship() != null
+                && !serviceInstanceAAI.getRelationshipList().getRelationship().isEmpty();
     }
 
     protected void populateNetworkCollectionAndInstanceGroupAssign(BBInputSetupParameter parameter) throws Exception {
@@ -1784,13 +1806,15 @@ public class BBInputSetup implements JavaDelegate {
         CollectionResourceCustomization collectionCust = findCatalogNetworkCollection(service, key);
         if (collectionCust != null) {
             CollectionResource collectionResource = collectionCust.getCollectionResource();
-            if (collectionResource != null && collectionResource.getInstanceGroup() != null
-                    && collectionResource.getInstanceGroup().getToscaNodeType() != null
-                    && collectionResource.getInstanceGroup().getToscaNodeType().contains("NetworkCollection")) {
-                return true;
-            }
+            return isNetworkCollection(collectionResource);
         }
         return false;
+    }
+
+    private boolean isNetworkCollection(CollectionResource collectionResource) {
+        return collectionResource != null && collectionResource.getInstanceGroup() != null
+                && collectionResource.getInstanceGroup().getToscaNodeType() != null
+                && collectionResource.getInstanceGroup().getToscaNodeType().contains("NetworkCollection");
     }
 
     protected void mapCatalogNetworkCollectionInstanceGroup(Service service, InstanceGroup instanceGroup, String key) {
@@ -1859,11 +1883,9 @@ public class BBInputSetup implements JavaDelegate {
         AAIResultWrapper aaiConfigurationWrapper = this.bbInputSetupUtils.getAAIResourceDepthOne(aaiResourceUri);
         Optional<org.onap.aai.domain.yang.Configuration> aaiConfigurationOp =
                 aaiConfigurationWrapper.asBean(org.onap.aai.domain.yang.Configuration.class);
-        if (!aaiConfigurationOp.isPresent()) {
-            return null;
-        }
+        return aaiConfigurationOp.map(configuration -> this.mapperLayer.mapAAIConfiguration(configuration))
+                .orElse(null);
 
-        return this.mapperLayer.mapAAIConfiguration(aaiConfigurationOp.get());
     }
 
     protected void mapGenericVnfs(List<AAIResourceUri> list, List<GenericVnf> genericVnfs) {
