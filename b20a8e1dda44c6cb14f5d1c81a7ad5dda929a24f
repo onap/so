@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9aac9d83_a524a146",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1698,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-07-01T16:46:01Z",
+      "side": 1,
+      "message": "The method name is not good, because it checks bbName additionally. Maybe it is not good to extract this condition to separate method.  \nOr remove from method checking bbname and add here.",
+      "range": {
+        "startLine": 1698,
+        "startChar": 12,
+        "endLine": 1698,
+        "endChar": 38
+      },
+      "revId": "b20a8e1dda44c6cb14f5d1c81a7ad5dda929a24f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dfa63722_c1a0d558",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1729,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-07-01T16:46:01Z",
+      "side": 1,
+      "message": "You changed the original logic here. Original logic assumes that this statement can be null, and if it is, we execute next if statement. Your implementation returns null.\n\nGenerally, you should bring back the whole original code in this method.",
+      "range": {
+        "startLine": 1728,
+        "startChar": 12,
+        "endLine": 1729,
+        "endChar": 30
+      },
+      "revId": "b20a8e1dda44c6cb14f5d1c81a7ad5dda929a24f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
