@@ -44,7 +44,9 @@ import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.listener.flowmanipulator.FlowManipulatorListenerRunner;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
+import org.onap.so.bpmn.servicedecomposition.entities.ConfigurationResourceKeys;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
+import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.serviceinstancebeans.ModelInfo;
@@ -53,6 +55,7 @@ import org.springframework.core.env.Environment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyObject;
@@ -527,6 +530,55 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         assertEquals(2, ebbs.size());
     }
 
+    @Test
+    public void postProcessingExecuteBBActivateVfModuleTest() throws CloneNotSupportedException {
+        BuildingBlock bbActivateVfModule = new BuildingBlock().setBpmnFlowName("ActivateVfModuleBB");
+        ExecuteBuildingBlock ebbActivateVfModule = new ExecuteBuildingBlock().setBuildingBlock(bbActivateVfModule);
+
+        WorkflowResourceIds resourceIdsActivateVfModule = new WorkflowResourceIds();
+        resourceIdsActivateVfModule.setServiceInstanceId("test-service-inbstance-id");
+        resourceIdsActivateVfModule.setVnfId("test-vnf-id");
+        resourceIdsActivateVfModule.setVfModuleId("test-vf-module-id");
+        resourceIdsActivateVfModule.setConfigurationId("");
+
+        RequestDetails requestDetails = new RequestDetails();
+
+        ebbActivateVfModule.setApiVersion("7");
+        ebbActivateVfModule.setaLaCarte(true);
+        ebbActivateVfModule.setRequestAction("createInstance");
+        ebbActivateVfModule.setVnfType("test-vnf-type");
+        ebbActivateVfModule.setRequestId("f6c00ae2-a205-4cbd-b055-02e553efde12");
+        ebbActivateVfModule.setRequestDetails(requestDetails);
+        ebbActivateVfModule.setWorkflowResourceIds(resourceIdsActivateVfModule);
+
+        ConfigurationResourceKeys configurationResourceKeys = new ConfigurationResourceKeys();
+        configurationResourceKeys.setCvnfcCustomizationUUID("07d64cd2-4427-4156-b11d-d14b96b3e4cb");
+        configurationResourceKeys.setVfModuleCustomizationUUID("50b61075-6ebb-4aab-a9fc-bedad9a2aa76");
+        configurationResourceKeys.setVnfResourceCustomizationUUID("a1d0e36e-34a9-431b-b5ba-4bbb72f63c7c");
+        configurationResourceKeys.setVnfcName("rdm54bvbgw5001vm018pim001");
+
+        ExecuteBuildingBlock ebbAddFabricConfig =
+                workflowActionBBTasks.getExecuteBBForConfig("AddFabricConfigurationBB", ebbActivateVfModule,
+                        "cc7e12f9-967c-4362-8d14-e5b2bf0608a4", configurationResourceKeys);
+
+        assertEquals("7", ebbAddFabricConfig.getApiVersion());
+        assertTrue(ebbAddFabricConfig.isaLaCarte());
+        assertEquals("createInstance", ebbAddFabricConfig.getRequestAction());
+        assertEquals("test-vnf-type", ebbAddFabricConfig.getVnfType());
+        assertEquals("f6c00ae2-a205-4cbd-b055-02e553efde12", ebbAddFabricConfig.getRequestId());
+        assertEquals(requestDetails, ebbAddFabricConfig.getRequestDetails());
+        assertEquals("cc7e12f9-967c-4362-8d14-e5b2bf0608a4",
+                ebbAddFabricConfig.getWorkflowResourceIds().getConfigurationId());
+        assertEquals("test-service-inbstance-id", ebbAddFabricConfig.getWorkflowResourceIds().getServiceInstanceId());
+        assertEquals("test-vnf-id", ebbAddFabricConfig.getWorkflowResourceIds().getVnfId());
+        assertEquals("test-vf-module-id", ebbAddFabricConfig.getWorkflowResourceIds().getVfModuleId());
+
+        assertThat(ebbAddFabricConfig.getConfigurationResourceKeys()).isEqualTo(configurationResourceKeys);
+        assertThat(ebbAddFabricConfig.getWorkflowResourceIds())
+                .isNotEqualTo(ebbActivateVfModule.getWorkflowResourceIds());
+        assertThat(ebbAddFabricConfig.getWorkflowResourceIds().getConfigurationId())
+                .isNotEqualTo(ebbActivateVfModule.getWorkflowResourceIds().getConfigurationId());
+    }
 
     @Test
     public void checkRetryStatusTest() {
