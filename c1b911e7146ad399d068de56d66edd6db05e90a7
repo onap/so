@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e9b9f37b_05fa8247",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandlerTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 378,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-01T15:12:46Z",
+      "side": 1,
+      "message": "const",
+      "range": {
+        "startLine": 378,
+        "startChar": 48,
+        "endLine": 378,
+        "endChar": 110
+      },
+      "revId": "c1b911e7146ad399d068de56d66edd6db05e90a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e46034bc_14b383fb",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandlerTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 381,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-01T15:12:46Z",
+      "side": 1,
+      "message": "const",
+      "range": {
+        "startLine": 381,
+        "startChar": 33,
+        "endLine": 381,
+        "endChar": 88
+      },
+      "revId": "c1b911e7146ad399d068de56d66edd6db05e90a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "77e94715_cd7637f6",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandlerTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 384,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-01T15:12:46Z",
+      "side": 1,
+      "message": "constatn",
+      "range": {
+        "startLine": 384,
+        "startChar": 48,
+        "endLine": 384,
+        "endChar": 88
+      },
+      "revId": "c1b911e7146ad399d068de56d66edd6db05e90a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6230af16_e9805ff8",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandlerTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-01T15:12:46Z",
+      "side": 1,
+      "message": "constatnt",
+      "range": {
+        "startLine": 386,
+        "startChar": 67,
+        "endLine": 386,
+        "endChar": 115
+      },
+      "revId": "c1b911e7146ad399d068de56d66edd6db05e90a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b3487179_744c5426",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandlerTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-01T15:12:46Z",
+      "side": 1,
+      "message": "its an expensive object, better to pick it from spring context",
+      "range": {
+        "startLine": 397,
+        "startChar": 7,
+        "endLine": 397,
+        "endChar": 49
+      },
+      "revId": "c1b911e7146ad399d068de56d66edd6db05e90a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f1889b0b_b98f40e3",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandlerTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 402,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-01T15:12:46Z",
+      "side": 1,
+      "message": "define as constant at the start of test",
+      "range": {
+        "startLine": 402,
+        "startChar": 35,
+        "endLine": 402,
+        "endChar": 109
+      },
+      "revId": "c1b911e7146ad399d068de56d66edd6db05e90a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fdf38724_b6a358e0",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/resources/__files/catalogdb/WorkflowSpecificationsForService.json",
+        "patchSetId": 5
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-01T15:12:46Z",
+      "side": 1,
+      "message": "will that be case insensitive",
+      "range": {
+        "startLine": 14,
+        "startChar": 37,
+        "endLine": 14,
+        "endChar": 44
+      },
+      "revId": "c1b911e7146ad399d068de56d66edd6db05e90a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
