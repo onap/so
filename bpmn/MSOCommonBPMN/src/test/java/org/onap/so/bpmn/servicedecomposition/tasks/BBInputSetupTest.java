@@ -815,6 +815,26 @@ public class BBInputSetupTest {
         assertThat(actual, sameBeanAs(expected));
     }
 
+    @Test
+    public void testGetServiceInstanceHelperCreateScenarioExistingWithName() throws Exception {
+        RequestDetails requestDetails = new RequestDetails();
+        RequestInfo requestInfo = new RequestInfo();
+        requestDetails.setRequestInfo(requestInfo);
+        ServiceSubscription serviceSub = new ServiceSubscription();
+        Customer customer = new Customer();
+        customer.setServiceSubscription(serviceSub);
+        ServiceInstance expected = new ServiceInstance();
+        expected.setServiceInstanceId("serviceInstanceId");
+        org.onap.aai.domain.yang.ServiceInstance serviceInstanceAAI = new org.onap.aai.domain.yang.ServiceInstance();
+        serviceInstanceAAI.setServiceInstanceId("serviceInstanceId");
+
+        doReturn(serviceInstanceAAI).when(SPY_bbInputSetupUtils).getAAIServiceInstanceByIdAndCustomer(Mockito.any(),
+                Mockito.any(), Mockito.any());
+        ServiceInstance actual = SPY_bbInputSetup.getServiceInstanceHelper(requestDetails, customer, null, null,
+                new HashMap<>(), "SharansInstanceId", false, new Service(), "ActivateServiceInstanceBB");
+        assertThat(actual, sameBeanAs(expected));
+    }
+
     @Test(expected = Exception.class)
     public void testGetServiceInstanceHelperCreateScenarioExistingNoNameButWithIdExceptionThrown() throws Exception {
         RequestDetails requestDetails = new RequestDetails();
