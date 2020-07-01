@@ -140,6 +140,11 @@ public class WorkflowActionTest extends BaseTaskTest {
             "DeleteVfModuleATTBB", "DeactivateVolumeGroupBB", "DeleteVolumeGroupBB", "UnassignVolumeGroupBB",
             "AssignVolumeGroupBB", "ChangeModelVfModuleBB", "CreateVolumeGroupBB", "ActivateVolumeGroupBB",
             "CreateVfModuleBB", "ActivateVfModuleBB", "ChangeModelVnfBB", "ChangeModelServiceInstanceBB");
+    private List<OrchestrationFlow> replaceVfModuleWithFabricOrchFlows = createFlowList("DeleteFabricConfigurationBB",
+            "DeactivateVfModuleBB", "DeleteVfModuleATTBB", "DeactivateVolumeGroupBB", "DeleteVolumeGroupBB",
+            "UnassignVFModuleBB", "UnassignVolumeGroupBB", "AssignVolumeGroupBB", "AssignVfModuleBB",
+            "CreateVfModuleBB", "ActivateVfModuleBB", "AddFabricConfigurationBB", "CreateVolumeGroupBB",
+            "ActivateVolumeGroupBB", "ChangeModelVnfBB", "ChangeModelServiceInstanceBB");
 
     @Before
     public void before() throws Exception {
@@ -1357,6 +1362,74 @@ public class WorkflowActionTest extends BaseTaskTest {
         assertEqualsBulkFlowName(ebbs, "DeactivateVfModuleBB", "DeleteVfModuleATTBB", "UnassignVFModuleBB",
                 "AssignVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB", "ChangeModelVnfBB",
                 "ChangeModelServiceInstanceBB");
+    }
+
+    @Test
+    public void selectExecutionListALaCarteVfModuleWithFabricKeepVolumeGroupReplaceTest() throws Exception {
+        String gAction = "replaceInstance";
+        String resource = "VfModule";
+        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
+        execution.setVariable("requestAction", gAction);
+        String bpmnRequest =
+                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
+        execution.setVariable("bpmnRequest", bpmnRequest);
+        execution.setVariable("aLaCarte", true);
+        execution.setVariable("apiVersion", "7");
+        execution.setVariable("requestUri",
+                "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules/1234");
+        execution.setVariable("vnfId", "b80b16a5-f80d-4ffa-91c8-bd47c7438a3d");
+        execution.setVariable("vfModuleId", "1234");
+
+        org.onap.aai.domain.yang.GenericVnf vnf = new org.onap.aai.domain.yang.GenericVnf();
+        vnf.setVnfId("b80b16a5-f80d-4ffa-91c8-bd47c7438a3d");
+        vnf.setModelCustomizationId("modelCustomizationId");
+        when(bbSetupUtils.getAAIGenericVnf(any())).thenReturn(vnf);
+
+        org.onap.aai.domain.yang.VfModule vfModuleFromAAI = new org.onap.aai.domain.yang.VfModule();
+        vfModuleFromAAI.setModelCustomizationId("modelCustomizationId");
+        vfModuleFromAAI.setVfModuleId("1234");
+        when(bbSetupUtils.getAAIVfModule(any(), any())).thenReturn(vfModuleFromAAI);
+
+        VolumeGroup volumeGroup = new VolumeGroup();
+        volumeGroup.setVolumeGroupId("volumeGroupId");
+        doReturn(Optional.of(volumeGroup)).when(bbSetupUtils)
+                .getRelatedVolumeGroupFromVfModule("b80b16a5-f80d-4ffa-91c8-bd47c7438a3d", "1234");
+
+        VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
+        vfModuleCustomization.setVolumeHeatEnv(new HeatEnvironment());
+        org.onap.so.db.catalog.beans.VfModule vfModule = new org.onap.so.db.catalog.beans.VfModule();
+        vfModule.setVolumeHeatTemplate(new HeatTemplate());
+        vfModuleCustomization.setVfModule(vfModule);
+        when(catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID("9a6d01fd-19a7-490a-9800-460830a12e0b"))
+                .thenReturn(vfModuleCustomization);
+        List<org.onap.aai.domain.yang.Vnfc> vnfcs = new ArrayList<org.onap.aai.domain.yang.Vnfc>();
+        org.onap.aai.domain.yang.Vnfc vnfc = new org.onap.aai.domain.yang.Vnfc();
+        vnfc.setModelInvariantId("modelInvariantId");
+        vnfc.setVnfcName("testVnfcName");
+        vnfcs.add(vnfc);
+        doReturn(vnfcs).when(SPY_workflowAction).getRelatedResourcesInVfModule(any(), any(), any(), any());
+
+        List<org.onap.aai.domain.yang.Configuration> configurations =
+                new ArrayList<org.onap.aai.domain.yang.Configuration>();
+        org.onap.aai.domain.yang.Configuration configuration = new org.onap.aai.domain.yang.Configuration();
+        configuration.setConfigurationId("configurationId");
+        configuration.setModelCustomizationId("modelCustimizationId");
+        configuration.setConfigurationName("testConfigurationName");
+        configurations.add(configuration);
+        doReturn(configurations).when(SPY_workflowAction).getRelatedResourcesInVnfc(any(), any(), any());
+
+        doReturn("testVnfcName").when(SPY_workflowAction).getVnfcNameForConfiguration(any());
+
+        NorthBoundRequest northBoundRequest = new NorthBoundRequest();
+        northBoundRequest.setOrchestrationFlowList(replaceVfModuleWithFabricOrchFlows);
+        when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
+                true, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
+        SPY_workflowAction.selectExecutionList(execution);
+        List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+
+        assertEqualsBulkFlowName(ebbs, "DeleteFabricConfigurationBB", "DeactivateVfModuleBB", "DeleteVfModuleATTBB",
+                "UnassignVFModuleBB", "AssignVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB",
+                "AddFabricConfigurationBB", "ChangeModelVnfBB", "ChangeModelServiceInstanceBB");
     }
 
     @Test

@@ -221,18 +221,6 @@ public class WorkflowAction {
                                 cloudOwner, serviceType);
                     }
                     Resource resourceKey = getResourceKey(sIRequest, resourceType);
-                    if (isConfiguration(orchFlows) && !requestAction.equalsIgnoreCase(CREATEINSTANCE)) {
-                        List<ExecuteBuildingBlock> configBuildingBlocks = getConfigBuildingBlocks(
-                                new ConfigBuildingBlocksDataObject().setsIRequest(sIRequest).setOrchFlows(orchFlows)
-                                        .setRequestId(requestId).setResourceKey(resourceKey).setApiVersion(apiVersion)
-                                        .setResourceId(resourceId).setRequestAction(requestAction).setaLaCarte(true)
-                                        .setVnfType(vnfType).setWorkflowResourceIds(workflowResourceIds)
-                                        .setRequestDetails(requestDetails).setExecution(execution));
-
-                        flowsToExecute.addAll(configBuildingBlocks);
-                    }
-                    orchFlows = orchFlows.stream().filter(item -> !item.getFlowName().contains(FABRIC_CONFIGURATION))
-                            .collect(Collectors.toList());
 
                     if ((requestAction.equalsIgnoreCase(REPLACEINSTANCE)
                             || requestAction.equalsIgnoreCase(REPLACEINSTANCERETAINASSIGNMENTS))
@@ -244,12 +232,48 @@ public class WorkflowAction {
                                         .setResourceId(resourceId).setRequestAction(requestAction).setaLaCarte(true)
                                         .setVnfType(vnfType).setWorkflowResourceIds(workflowResourceIds)
                                         .setRequestDetails(requestDetails).setExecution(execution));
-                    }
-                    for (OrchestrationFlow orchFlow : orchFlows) {
-                        ExecuteBuildingBlock ebb = buildExecuteBuildingBlock(orchFlow, requestId, resourceKey,
-                                apiVersion, resourceId, requestAction, true, vnfType, workflowResourceIds,
-                                requestDetails, false, null, null, false);
-                        flowsToExecute.add(ebb);
+                        for (OrchestrationFlow orchFlow : orchFlows) {
+                            if (orchFlow.getFlowName().contains(CONFIGURATION)) {
+                                List<OrchestrationFlow> configOrchFlows = new ArrayList<OrchestrationFlow>();
+                                configOrchFlows.add(orchFlow);
+                                List<ExecuteBuildingBlock> configBuildingBlocks =
+                                        getConfigBuildingBlocks(new ConfigBuildingBlocksDataObject()
+                                                .setsIRequest(sIRequest).setOrchFlows(configOrchFlows)
+                                                .setRequestId(requestId).setResourceKey(resourceKey)
+                                                .setApiVersion(apiVersion).setResourceId(resourceId)
+                                                .setRequestAction(requestAction).setaLaCarte(true).setVnfType(vnfType)
+                                                .setWorkflowResourceIds(workflowResourceIds)
+                                                .setRequestDetails(requestDetails).setExecution(execution));
+                                flowsToExecute.addAll(configBuildingBlocks);
+                            } else {
+                                ExecuteBuildingBlock ebb = buildExecuteBuildingBlock(orchFlow, requestId, resourceKey,
+                                        apiVersion, resourceId, requestAction, true, vnfType, workflowResourceIds,
+                                        requestDetails, false, null, null, false);
+                                flowsToExecute.add(ebb);
+                            }
+                        }
+                    } else {
+                        if (isConfiguration(orchFlows) && !requestAction.equalsIgnoreCase(CREATEINSTANCE)) {
+                            List<ExecuteBuildingBlock> configBuildingBlocks =
+                                    getConfigBuildingBlocks(new ConfigBuildingBlocksDataObject().setsIRequest(sIRequest)
+                                            .setOrchFlows(orchFlows).setRequestId(requestId).setResourceKey(resourceKey)
+                                            .setApiVersion(apiVersion).setResourceId(resourceId)
+                                            .setRequestAction(requestAction).setaLaCarte(true).setVnfType(vnfType)
+                                            .setWorkflowResourceIds(workflowResourceIds)
+                                            .setRequestDetails(requestDetails).setExecution(execution));
+
+                            flowsToExecute.addAll(configBuildingBlocks);
+                        }
+                        orchFlows =
+                                orchFlows.stream().filter(item -> !item.getFlowName().contains(FABRIC_CONFIGURATION))
+                                        .collect(Collectors.toList());
+
+                        for (OrchestrationFlow orchFlow : orchFlows) {
+                            ExecuteBuildingBlock ebb = buildExecuteBuildingBlock(orchFlow, requestId, resourceKey,
+                                    apiVersion, resourceId, requestAction, true, vnfType, workflowResourceIds,
+                                    requestDetails, false, null, null, false);
+                            flowsToExecute.add(ebb);
+                        }
                     }
                 } else {
                     boolean foundRelated = false;
