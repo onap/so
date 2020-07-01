@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d813e0ef_aec966a5",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandlerTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 378,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-07-01T18:56:04Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "e9b9f37b_05fa8247",
+      "range": {
+        "startLine": 378,
+        "startChar": 48,
+        "endLine": 378,
+        "endChar": 110
+      },
+      "revId": "c1b911e7146ad399d068de56d66edd6db05e90a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e46034bc_14b383fb",
         "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandlerTest.java",
         "patchSetId": 5
@@ -45,6 +69,30 @@
       "revId": "c1b911e7146ad399d068de56d66edd6db05e90a7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3e0ef288_29448696",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandlerTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 381,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-07-01T18:56:04Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "e46034bc_14b383fb",
+      "range": {
+        "startLine": 381,
+        "startChar": 33,
+        "endLine": 381,
+        "endChar": 88
+      },
+      "revId": "c1b911e7146ad399d068de56d66edd6db05e90a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "e33d96e4_9c38d808",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandlerTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 384,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-07-01T18:56:04Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "77e94715_cd7637f6",
+      "range": {
+        "startLine": 384,
+        "startChar": 48,
+        "endLine": 384,
+        "endChar": 88
+      },
+      "revId": "c1b911e7146ad399d068de56d66edd6db05e90a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6230af16_e9805ff8",
         "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandlerTest.java",
         "patchSetId": 5
@@ -91,6 +163,30 @@
       "revId": "c1b911e7146ad399d068de56d66edd6db05e90a7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "96b4febe_5b285543",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandlerTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-07-01T18:56:04Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "6230af16_e9805ff8",
+      "range": {
+        "startLine": 386,
+        "startChar": 67,
+        "endLine": 386,
+        "endChar": 115
+      },
+      "revId": "c1b911e7146ad399d068de56d66edd6db05e90a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "2ed3f277_12746ef9",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandlerTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-07-01T18:56:04Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "b3487179_744c5426",
+      "range": {
+        "startLine": 397,
+        "startChar": 7,
+        "endLine": 397,
+        "endChar": 49
+      },
+      "revId": "c1b911e7146ad399d068de56d66edd6db05e90a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f1889b0b_b98f40e3",
         "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandlerTest.java",
         "patchSetId": 5
@@ -140,6 +260,30 @@
     },
     {
       "key": {
+        "uuid": "dd4eff77_83aacbbe",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandlerTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 402,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-07-01T18:56:04Z",
+      "side": 1,
+      "message": "Defined all the constants required for this specific test case, inside the method scope  .",
+      "parentUuid": "f1889b0b_b98f40e3",
+      "range": {
+        "startLine": 402,
+        "startChar": 35,
+        "endLine": 402,
+        "endChar": 109
+      },
+      "revId": "c1b911e7146ad399d068de56d66edd6db05e90a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fdf38724_b6a358e0",
         "filename": "mso-api-handlers/mso-api-handler-infra/src/test/resources/__files/catalogdb/WorkflowSpecificationsForService.json",
         "patchSetId": 5
@@ -160,6 +304,30 @@
       "revId": "c1b911e7146ad399d068de56d66edd6db05e90a7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6a0b570d_396c98ca",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/resources/__files/catalogdb/WorkflowSpecificationsForService.json",
+        "patchSetId": 5
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-07-01T18:56:04Z",
+      "side": 1,
+      "message": "It is case sensitive since we are mocking the json response here.",
+      "parentUuid": "fdf38724_b6a358e0",
+      "range": {
+        "startLine": 14,
+        "startChar": 37,
+        "endLine": 14,
+        "endChar": 44
+      },
+      "revId": "c1b911e7146ad399d068de56d66edd6db05e90a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
