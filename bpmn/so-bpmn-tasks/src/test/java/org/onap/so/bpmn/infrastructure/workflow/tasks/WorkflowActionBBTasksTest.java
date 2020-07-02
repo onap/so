@@ -54,6 +54,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -173,7 +174,7 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         workflowActionBBTasks.selectBB(execution);
         boolean success = (boolean) execution.getVariable("completed");
         int currentSequence = (int) execution.getVariable("gCurrentSequence");
-        assertEquals(false, success);
+        assertFalse(success);
         assertEquals(1, currentSequence);
     }
 
