@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c9adadc9_096bb84f",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowActionBBTasks.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 495,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-07-02T16:11:55Z",
+      "side": 1,
+      "message": "You do not want workflowResourceIds reference to change ebb.getWorkflowResourceIds object? Or only configuration id?",
+      "range": {
+        "startLine": 493,
+        "startChar": 0,
+        "endLine": 495,
+        "endChar": 64
+      },
+      "revId": "2db4b6c011703e68fd4da3ef231bbc7aeb54b7c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
