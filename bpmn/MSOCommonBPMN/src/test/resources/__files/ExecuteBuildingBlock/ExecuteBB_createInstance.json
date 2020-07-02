@@ -1,0 +1,18 @@
+{
+  "buildingBlock": {
+    "mso-id": "msoId",
+    "bpmn-flow-name": "bbName"
+  },
+  "requestDetails": {},
+  "workflowResourceIds": {
+    "configurationId": "configId",
+    "instanceGroupId": "intanceGroupId",
+    "pnfId": "pnfId"
+  },
+  "requestId": "requestId",
+  "resourceId": "resourceId",
+  "requestAction": "createInstance",
+  "vnfType": "vnfType",
+  "aLaCarte": true,
+  "homing": false
+}

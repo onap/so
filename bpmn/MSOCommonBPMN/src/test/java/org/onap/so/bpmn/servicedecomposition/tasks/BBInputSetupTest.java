@@ -24,39 +24,18 @@
 
 package org.onap.so.bpmn.servicedecomposition.tasks;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.onap.so.bpmn.servicedecomposition.tasks.BaseBBInputSetupTestHelper.prepareConfigurationResourceKeys;
-import static org.onap.so.bpmn.servicedecomposition.tasks.BaseBBInputSetupTestHelper.prepareLookupKeyMap;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
 import org.onap.aaiclient.client.aai.AAIObjectType;
@@ -64,73 +43,35 @@ import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.LineOfBusiness;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.OwningEntity;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Platform;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Project;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.RouteTableReference;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceProxy;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Vnfc;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
-import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
-import org.onap.so.bpmn.servicedecomposition.entities.ConfigurationResourceKeys;
-import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
-import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
-import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
-import org.onap.so.bpmn.servicedecomposition.entities.ServiceModel;
-import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.*;
+import org.onap.so.bpmn.servicedecomposition.entities.*;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
-import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoCollection;
-import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
-import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoInstanceGroup;
-import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoNetwork;
-import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
-import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceProxy;
-import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
+import org.onap.so.bpmn.servicedecomposition.modelinfo.*;
 import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.NoServiceInstanceFoundException;
 import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.ServiceModelNotFoundException;
-import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
-import org.onap.so.db.catalog.beans.CollectionResource;
-import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
-import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
-import org.onap.so.db.catalog.beans.ConfigurationResource;
-import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
-import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
-import org.onap.so.db.catalog.beans.InstanceGroupType;
-import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
-import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
-import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.db.catalog.beans.Service;
-import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
-import org.onap.so.db.catalog.beans.VfModuleCustomization;
-import org.onap.so.db.catalog.beans.VnfResourceCustomization;
-import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
+import org.onap.so.db.catalog.beans.*;
 import org.onap.so.db.request.beans.InfraActiveRequests;
-import org.onap.so.serviceinstancebeans.CloudConfiguration;
-import org.onap.so.serviceinstancebeans.ModelInfo;
-import org.onap.so.serviceinstancebeans.ModelType;
-import org.onap.so.serviceinstancebeans.RelatedInstance;
-import org.onap.so.serviceinstancebeans.RelatedInstanceList;
-import org.onap.so.serviceinstancebeans.RequestDetails;
-import org.onap.so.serviceinstancebeans.RequestInfo;
-import org.onap.so.serviceinstancebeans.RequestParameters;
-import org.onap.so.serviceinstancebeans.Resources;
-import org.onap.so.serviceinstancebeans.SubscriberInfo;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.onap.so.serviceinstancebeans.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import static com.shazam.shazamcrest.MatcherAssert.assertThat;
+import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetup.*;
+import static org.onap.so.bpmn.servicedecomposition.tasks.BaseBBInputSetupTestHelper.prepareConfigurationResourceKeys;
+import static org.onap.so.bpmn.servicedecomposition.tasks.BaseBBInputSetupTestHelper.prepareLookupKeyMap;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BBInputSetupTest {
@@ -255,8 +196,7 @@ public class BBInputSetupTest {
 
     @Test
     public void testGetCustomerAndServiceSubscription() throws JsonParseException, JsonMappingException, IOException {
-        RequestDetails requestDetails = mapper.readValue(
-                new File(RESOURCE_PATH + "RequestDetailsInput_withRelatedInstanceList.json"), RequestDetails.class);
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_withRelatedInstanceList.json");
         SubscriberInfo subscriberInfo = new SubscriberInfo();
         subscriberInfo.setGlobalSubscriberId("globalSubscriberId");
         RequestParameters requestParams = new RequestParameters();
@@ -283,10 +223,10 @@ public class BBInputSetupTest {
 
     }
 
+
     @Test
     public void testSetHomingFlag() throws IOException {
-        GeneralBuildingBlock expected = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
-                GeneralBuildingBlock.class);
+        GeneralBuildingBlock expected = readGeneralBBFromFile("GeneralBuildingBlockExpected.json");
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
         lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, "vnfId");
         GenericVnf genericVnfExpected = new GenericVnf();
@@ -297,8 +237,7 @@ public class BBInputSetupTest {
         GenericVnf genericVnfActual = new GenericVnf();
         genericVnfActual.setVnfId("vnfId");
         genericVnfActual.setCallHoming(false);
-        GeneralBuildingBlock actual = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
-                GeneralBuildingBlock.class);
+        GeneralBuildingBlock actual = readGeneralBBFromFile("GeneralBuildingBlockExpected.json");
         actual.getCustomer().getServiceSubscription().getServiceInstances().get(0).getVnfs().add(genericVnfActual);
 
         SPY_bbInputSetup.setHomingFlag(actual, homing, lookupKeyMap);
@@ -318,8 +257,7 @@ public class BBInputSetupTest {
 
     @Test
     public void testGetGBB() throws Exception {
-        GeneralBuildingBlock expected = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
-                GeneralBuildingBlock.class);
+        GeneralBuildingBlock expected = readGeneralBBFromFile("GeneralBuildingBlockExpected.json");
 
         ExecuteBuildingBlock executeBB = new ExecuteBuildingBlock().setRequestId("requestId");
         RequestDetails requestDetails = new RequestDetails();
@@ -346,8 +284,7 @@ public class BBInputSetupTest {
 
     @Test
     public void testGetGBBCM() throws Exception {
-        GeneralBuildingBlock expected = mapper
-                .readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockCMExpected.json"), GeneralBuildingBlock.class);
+        GeneralBuildingBlock expected = readGeneralBBFromFile("GeneralBuildingBlockCMExpected.json");
 
         ExecuteBuildingBlock executeBB = new ExecuteBuildingBlock().setRequestId("requestId");
         RequestDetails requestDetails = new RequestDetails();
@@ -378,13 +315,45 @@ public class BBInputSetupTest {
     }
 
     @Test
+    public void executeShouldPopulateExecutionProperly() throws Exception {
+        // Given
+        GeneralBuildingBlock expectedGeneralBB = readGeneralBBFromFile("GeneralBuildingBlockExpected.json");
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBB_createInstance.json");
+
+        DelegateExecution execution = new DelegateExecutionFake();
+        execution.setVariable(EXECUTE_BB_VAR_NAME, executeBB);
+
+        Map<ResourceKey, String> expectedLookupKeyMap = new HashMap<>();
+        expectedLookupKeyMap.put(ResourceKey.INSTANCE_GROUP_ID,
+                executeBB.getWorkflowResourceIds().getInstanceGroupId());
+        expectedLookupKeyMap.put(ResourceKey.CONFIGURATION_ID, executeBB.getWorkflowResourceIds().getConfigurationId());
+        expectedLookupKeyMap.put(ResourceKey.PNF, executeBB.getWorkflowResourceIds().getPnfId());
+
+        doReturn(expectedGeneralBB).when(SPY_bbInputSetup).getGBBCM(any(), any(), any(), any(), any());
+
+        // When
+        SPY_bbInputSetup.execute(execution);
+
+        // Then
+        assertEquals("bbName", execution.getVariable(FLOW_VAR_NAME));
+        assertThat(expectedGeneralBB, sameBeanAs(execution.getVariable(GBB_INPUT_VAR_NAME)));
+        verifyLookupKeyMap(expectedLookupKeyMap,
+                (Map<ResourceKey, String>) execution.getVariable(LOOKUP_KEY_MAP_VAR_NAME));
+    }
+
+    private void verifyLookupKeyMap(Map<ResourceKey, String> expectedLookupKeyMap,
+            Map<ResourceKey, String> resultLookupKeyMap) {
+        resultLookupKeyMap.values().removeIf(Objects::isNull);
+
+        assertEquals(expectedLookupKeyMap.size(), resultLookupKeyMap.size());
+        assertEquals(expectedLookupKeyMap, resultLookupKeyMap);
+    }
+
+    @Test
     public void testGetGBBCMAddMembersAction() throws Exception {
-        GeneralBuildingBlock expected = mapper.readValue(
-                new File(RESOURCE_PATH + "GeneralBuildingBlockInstanceGroupExpected.json"), GeneralBuildingBlock.class);
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
-        RequestDetails requestDetails = mapper.readValue(
-                new File(RESOURCE_PATH + "RequestDetailsInput_instanceGroupAddMembers.json"), RequestDetails.class);
+        GeneralBuildingBlock expected = readGeneralBBFromFile("GeneralBuildingBlockInstanceGroupExpected.json");
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_instanceGroupAddMembers.json");
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
         String requestAction = "addMembers";
         String instanceGroupId = "instance-group-001";
@@ -425,12 +394,9 @@ public class BBInputSetupTest {
 
     @Test
     public void testGetGBBALaCarteNonService() throws Exception {
-        GeneralBuildingBlock expected = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
-                GeneralBuildingBlock.class);
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
-        RequestDetails requestDetails = mapper.readValue(
-                new File(RESOURCE_PATH + "RequestDetailsInput_withRelatedInstanceList.json"), RequestDetails.class);
+        GeneralBuildingBlock expected = readGeneralBBFromFile("GeneralBuildingBlockExpected.json");
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_withRelatedInstanceList.json");
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
         String requestAction = "createInstance";
         Service service = Mockito.mock(Service.class);
@@ -458,12 +424,9 @@ public class BBInputSetupTest {
 
     @Test
     public void testGetGBBALaCarteNonServiceIsReplace() throws Exception {
-        GeneralBuildingBlock expected = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
-                GeneralBuildingBlock.class);
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
-        RequestDetails requestDetails = mapper.readValue(
-                new File(RESOURCE_PATH + "RequestDetailsInput_withRelatedInstanceList.json"), RequestDetails.class);
+        GeneralBuildingBlock expected = readGeneralBBFromFile("GeneralBuildingBlockExpected.json");
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_withRelatedInstanceList.json");
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
         String requestAction = "replaceInstance";
         Service service = Mockito.mock(Service.class);
@@ -498,10 +461,8 @@ public class BBInputSetupTest {
 
     @Test
     public void testGetGBBALaCarteNonServiceWithoutServiceModelInfo() throws Exception {
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
-        RequestDetails requestDetails = mapper.readValue(
-                new File(RESOURCE_PATH + "RequestDetailsInput_withRelatedInstanceList.json"), RequestDetails.class);
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_withRelatedInstanceList.json");
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
         lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, "si123");
         String requestAction = "createInstance";
@@ -523,10 +484,8 @@ public class BBInputSetupTest {
 
     @Test
     public void testGetGBBALaCarteNonServiceServiceInstanceNotFoundInAAI() throws Exception {
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
-        RequestDetails requestDetails = mapper.readValue(
-                new File(RESOURCE_PATH + "RequestDetailsInput_withRelatedInstanceList.json"), RequestDetails.class);
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_withRelatedInstanceList.json");
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
         lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, "si123");
         String requestAction = "createInstance";
@@ -546,12 +505,10 @@ public class BBInputSetupTest {
 
     @Test
     public void testGetGBBALaCarteNonServiceWithoutRelatedInstances() throws Exception {
-        GeneralBuildingBlock expected = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
-                GeneralBuildingBlock.class);
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
-        RequestDetails requestDetails = mapper.readValue(
-                new File(RESOURCE_PATH + "RequestDetailsInput_withoutRelatedInstanceList.json"), RequestDetails.class);
+        GeneralBuildingBlock expected = readGeneralBBFromFile("GeneralBuildingBlockExpected.json");
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
+        RequestDetails requestDetails =
+                readRequestDetailsFromFile("RequestDetailsInput_withoutRelatedInstanceList.json");
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
         String requestAction = "createInstance";
         Service service = Mockito.mock(Service.class);
@@ -581,12 +538,9 @@ public class BBInputSetupTest {
 
     @Test
     public void testGetGBBALaCarteService() throws Exception {
-        GeneralBuildingBlock expected = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
-                GeneralBuildingBlock.class);
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
-        RequestDetails requestDetails = mapper.readValue(
-                new File(RESOURCE_PATH + "RequestDetailsInput_withRelatedInstanceList.json"), RequestDetails.class);
+        GeneralBuildingBlock expected = readGeneralBBFromFile("GeneralBuildingBlockExpected.json");
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_withRelatedInstanceList.json");
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
 
         org.onap.so.serviceinstancebeans.Project requestProject = new org.onap.so.serviceinstancebeans.Project();
@@ -626,12 +580,9 @@ public class BBInputSetupTest {
 
     @Test
     public void testGetGBBALaCarteServiceFindServiceByModelVersionId() throws Exception {
-        GeneralBuildingBlock expected = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
-                GeneralBuildingBlock.class);
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
-        RequestDetails requestDetails = mapper.readValue(
-                new File(RESOURCE_PATH + "RequestDetailsInput_withRelatedInstanceList.json"), RequestDetails.class);
+        GeneralBuildingBlock expected = readGeneralBBFromFile("GeneralBuildingBlockExpected.json");
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_withRelatedInstanceList.json");
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
 
         org.onap.so.serviceinstancebeans.Project requestProject = new org.onap.so.serviceinstancebeans.Project();
@@ -673,12 +624,9 @@ public class BBInputSetupTest {
 
     @Test
     public void testGetGBBALaCarteServiceNoProjectNoOE() throws Exception {
-        GeneralBuildingBlock expected = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
-                GeneralBuildingBlock.class);
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
-        RequestDetails requestDetails = mapper.readValue(
-                new File(RESOURCE_PATH + "RequestDetailsInput_withRelatedInstanceList.json"), RequestDetails.class);
+        GeneralBuildingBlock expected = readGeneralBBFromFile("GeneralBuildingBlockExpected.json");
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_withRelatedInstanceList.json");
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
 
         Service service = Mockito.mock(Service.class);
@@ -920,13 +868,9 @@ public class BBInputSetupTest {
 
     @Test
     public void testPopulateGBBWithSIAndAdditionalInfo() throws Exception {
-        GeneralBuildingBlock expected =
-                mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpectedWUserParamsInfo.json"),
-                        GeneralBuildingBlock.class);
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
-        RequestDetails requestDetails = mapper.readValue(
-                new File(RESOURCE_PATH + "RequestDetailsInput_withRelatedInstanceList.json"), RequestDetails.class);
+        GeneralBuildingBlock expected = readGeneralBBFromFile("GeneralBuildingBlockExpectedWUserParamsInfo.json");
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_withRelatedInstanceList.json");
         RequestContext requestContext =
                 mapper.readValue(new File(RESOURCE_PATH + "RequestContextExpected.json"), RequestContext.class);
         ServiceInstance serviceInstance =
@@ -1432,8 +1376,7 @@ public class BBInputSetupTest {
         serviceInstance.getVnfs().add(vnf);
         String vnfType = "vnfType";
         String applicationId = "applicationId";
-        RequestDetails requestDetails =
-                mapper.readValue(new File(RESOURCE_PATH + "RequestDetails_CreateVnf.json"), RequestDetails.class);
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetails_CreateVnf.json");
 
         Service service = mapper.readValue(
                 new File(RESOURCE_PATH + "CatalogDBService_getServiceInstanceNOAAIInput.json"), Service.class);
@@ -1501,8 +1444,7 @@ public class BBInputSetupTest {
         serviceInstance.getVnfs().add(vnf);
         String vnfType = "vnfType";
         String applicationId = "applicationId";
-        RequestDetails requestDetails =
-                mapper.readValue(new File(RESOURCE_PATH + "RequestDetails_CreateVnf.json"), RequestDetails.class);
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetails_CreateVnf.json");
 
         Service service = mapper.readValue(
                 new File(RESOURCE_PATH + "CatalogDBService_getServiceInstanceNOAAIInput.json"), Service.class);
@@ -1578,8 +1520,7 @@ public class BBInputSetupTest {
         vnf.setVnfName("vnfName");
         serviceInstance.getVnfs().add(vnf);
         String vnfType = null;
-        RequestDetails requestDetails =
-                mapper.readValue(new File(RESOURCE_PATH + "RequestDetails_CreateVnf.json"), RequestDetails.class);
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetails_CreateVnf.json");
 
         Service service = mapper.readValue(
                 new File(RESOURCE_PATH + "CatalogDBService_getServiceInstanceNOAAIInput.json"), Service.class);
@@ -2041,12 +1982,9 @@ public class BBInputSetupTest {
         String vnfType = "vnfType";
         String requestAction = "createInstance";
         Service service = Mockito.mock(Service.class);
-        GeneralBuildingBlock gBB = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
-                GeneralBuildingBlock.class);
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
-        RequestDetails requestDetails = mapper
-                .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_serviceMacroVrf.json"), RequestDetails.class);
+        GeneralBuildingBlock gBB = readGeneralBBFromFile("GeneralBuildingBlockExpected.json");
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_serviceMacroVrf.json");
         Map<ResourceKey, String> lookupKeyMap = prepareLookupKeyMap();
 
         ConfigurationResourceKeys configResourceKeys = prepareConfigurationResourceKeys();
@@ -2173,12 +2111,9 @@ public class BBInputSetupTest {
         String vnfType = "vnfType";
         String requestAction = "createInstance";
         Service service = Mockito.mock(Service.class);
-        GeneralBuildingBlock gBB = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
-                GeneralBuildingBlock.class);
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
-        RequestDetails requestDetails = mapper
-                .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_serviceMacro.json"), RequestDetails.class);
+        GeneralBuildingBlock gBB = readGeneralBBFromFile("GeneralBuildingBlockExpected.json");
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_serviceMacro.json");
         requestDetails.getRequestParameters().getUserParams().clear();
         org.onap.aai.domain.yang.GenericVnf aaiVnf = new org.onap.aai.domain.yang.GenericVnf();
         aaiVnf.setModelCustomizationId("modelCustId");
@@ -2199,10 +2134,8 @@ public class BBInputSetupTest {
 
     @Test(expected = Exception.class)
     public void testgetGBBMacroException() throws Exception {
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
-        RequestDetails requestDetails = mapper
-                .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_serviceMacro.json"), RequestDetails.class);
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_serviceMacro.json");
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
         String resourceId = "123";
         String vnfType = "vnfType";
@@ -2221,15 +2154,12 @@ public class BBInputSetupTest {
         String vnfType = "null";
         String requestAction = "createInstance";
         Service service = Mockito.mock(Service.class);
-        GeneralBuildingBlock gBB = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
-                GeneralBuildingBlock.class);
+        GeneralBuildingBlock gBB = readGeneralBBFromFile("GeneralBuildingBlockExpected.json");
         Map<ResourceKey, String> lookupKeyMap = prepareLookupKeyMap();
 
         ConfigurationResourceKeys configResourceKeys = prepareConfigurationResourceKeys();
-        RequestDetails requestDetails = mapper
-                .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_serviceMacro.json"), RequestDetails.class);
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_serviceMacro.json");
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
         executeBB.setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails);
         BuildingBlock buildingBlock = executeBB.getBuildingBlock();
         buildingBlock.setBpmnFlowName(AssignFlows.NETWORK_MACRO.toString())
@@ -2251,12 +2181,9 @@ public class BBInputSetupTest {
         String vnfType = "vnfType";
         String requestAction = "deactivateInstance";
         Service service = Mockito.mock(Service.class);
-        GeneralBuildingBlock gBB = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
-                GeneralBuildingBlock.class);
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
-        RequestDetails requestDetails = mapper
-                .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_serviceMacro.json"), RequestDetails.class);
+        GeneralBuildingBlock gBB = readGeneralBBFromFile("GeneralBuildingBlockExpected.json");
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_serviceMacro.json");
         requestDetails.getRequestParameters().setUserParams(null);
         org.onap.aai.domain.yang.GenericVnf aaiVnf = new org.onap.aai.domain.yang.GenericVnf();
         aaiVnf.setModelCustomizationId("modelCustId");
@@ -2286,19 +2213,16 @@ public class BBInputSetupTest {
         String vnfType = "vnfType";
         String requestAction = "createInstance";
         Service service = Mockito.mock(Service.class);
-        GeneralBuildingBlock gBB = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
-                GeneralBuildingBlock.class);
+        GeneralBuildingBlock gBB = readGeneralBBFromFile("GeneralBuildingBlockExpected.json");
         Map<ResourceKey, String> lookupKeyMap = prepareLookupKeyMap();
         List<NetworkResourceCustomization> networkCustList = new ArrayList<>();
         NetworkResourceCustomization networkCust = Mockito.mock(NetworkResourceCustomization.class);
         networkCustList.add(networkCust);
 
         ConfigurationResourceKeys configResourceKeys = prepareConfigurationResourceKeys();
-        RequestDetails requestDetails = mapper
-                .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_serviceMacro.json"), RequestDetails.class);
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_serviceMacro.json");
         requestDetails.getRequestParameters().setUserParams(null);
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
         executeBB.setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails);
         BuildingBlock buildingBlock = executeBB.getBuildingBlock();
         buildingBlock.setBpmnFlowName(AssignFlows.NETWORK_MACRO.toString())
@@ -2325,8 +2249,7 @@ public class BBInputSetupTest {
         String vnfType = "vnfType";
         String requestAction = "createInstance";
         Service service = Mockito.mock(Service.class);
-        GeneralBuildingBlock gBB = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
-                GeneralBuildingBlock.class);
+        GeneralBuildingBlock gBB = readGeneralBBFromFile("GeneralBuildingBlockExpected.json");
         Map<ResourceKey, String> lookupKeyMap = prepareLookupKeyMap();
         List<NetworkResourceCustomization> networkCustList = new ArrayList<>();
         NetworkResourceCustomization networkCust = Mockito.mock(NetworkResourceCustomization.class);
@@ -2339,11 +2262,9 @@ public class BBInputSetupTest {
         NetworkResourceCustomization networkResourceCustomization = Mockito.mock(NetworkResourceCustomization.class);
 
         ConfigurationResourceKeys configResourceKeys = prepareConfigurationResourceKeys();
-        RequestDetails requestDetails = mapper
-                .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_serviceMacro.json"), RequestDetails.class);
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_serviceMacro.json");
         requestDetails.getRequestParameters().setUserParams(null);
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
         executeBB.setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails);
         BuildingBlock buildingBlock = executeBB.getBuildingBlock();
         buildingBlock.setBpmnFlowName(AssignFlows.NETWORK_MACRO.toString())
@@ -2375,8 +2296,7 @@ public class BBInputSetupTest {
         String vnfType = "vnfType";
         String requestAction = "createInstance";
         Service service = Mockito.mock(Service.class);
-        GeneralBuildingBlock gBB = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
-                GeneralBuildingBlock.class);
+        GeneralBuildingBlock gBB = readGeneralBBFromFile("GeneralBuildingBlockExpected.json");
         Map<ResourceKey, String> lookupKeyMap = prepareLookupKeyMap();
         List<NetworkResourceCustomization> networkCustList = new ArrayList<>();
         NetworkResourceCustomization networkCust = Mockito.mock(NetworkResourceCustomization.class);
@@ -2385,11 +2305,9 @@ public class BBInputSetupTest {
                 Mockito.mock(CollectionNetworkResourceCustomization.class);
 
         ConfigurationResourceKeys configResourceKeys = prepareConfigurationResourceKeys();
-        RequestDetails requestDetails = mapper
-                .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_serviceMacro.json"), RequestDetails.class);
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_serviceMacro.json");
         requestDetails.getRequestParameters().setUserParams(null);
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
         executeBB.setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails);
         BuildingBlock buildingBlock = executeBB.getBuildingBlock();
         buildingBlock.setBpmnFlowName(otherFlowName).setKey("ab153b6e-c364-44c0-bef6-1f2982117f04")
@@ -2410,12 +2328,9 @@ public class BBInputSetupTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testgetGBBMacroNoUserParamsOtherException() throws Exception {
-        GeneralBuildingBlock gBB = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
-                GeneralBuildingBlock.class);
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
-        RequestDetails requestDetails = mapper
-                .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_serviceMacro.json"), RequestDetails.class);
+        GeneralBuildingBlock gBB = readGeneralBBFromFile("GeneralBuildingBlockExpected.json");
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_serviceMacro.json");
         requestDetails.getRequestParameters().setUserParams(null);
         org.onap.aai.domain.yang.GenericVnf aaiVnf = new org.onap.aai.domain.yang.GenericVnf();
         aaiVnf.setModelCustomizationId("modelCustId");
@@ -2442,16 +2357,13 @@ public class BBInputSetupTest {
     public void test_getGBBMacroNoUserParamsExistingService_forCatalogNetwork() throws Exception {
         // given
         String requestAction = "unassignInstance";
-        GeneralBuildingBlock gBB = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
-                GeneralBuildingBlock.class);
+        GeneralBuildingBlock gBB = readGeneralBBFromFile("GeneralBuildingBlockExpected.json");
         L3Network network = new L3Network();
         network.setNetworkId("networkId");
         gBB.getServiceInstance().getNetworks().add(network);
         ServiceInstance serviceInstance = gBB.getServiceInstance();
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
-        RequestDetails requestDetails = mapper
-                .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_serviceMacro.json"), RequestDetails.class);
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_serviceMacro.json");
         requestDetails.getRequestParameters().setUserParams(null);
         Map<ResourceKey, String> lookupKeyMap = prepareLookupKeyMap();
         Service service = Mockito.mock(Service.class);
@@ -2488,16 +2400,13 @@ public class BBInputSetupTest {
     public void test_getGBBMacroNoUserParamsExistingService_forControllerExecutionBB() throws Exception {
         // given
         String requestAction = "unassignInstance";
-        GeneralBuildingBlock gBB = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
-                GeneralBuildingBlock.class);
+        GeneralBuildingBlock gBB = readGeneralBBFromFile("GeneralBuildingBlockExpected.json");
         L3Network network = new L3Network();
         network.setNetworkId("networkId");
         gBB.getServiceInstance().getNetworks().add(network);
         ServiceInstance serviceInstance = gBB.getServiceInstance();
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
-        RequestDetails requestDetails = mapper
-                .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_serviceMacro.json"), RequestDetails.class);
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_serviceMacro.json");
         requestDetails.getRequestParameters().setUserParams(null);
         Map<ResourceKey, String> lookupKeyMap = prepareLookupKeyMap();
         Service service = Mockito.mock(Service.class);
@@ -2540,16 +2449,13 @@ public class BBInputSetupTest {
     public void test_getGBBMacroNoUserParamsExistingService_forActivateVnfBB() throws Exception {
         // given
         String requestAction = "unassignInstance";
-        GeneralBuildingBlock gBB = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
-                GeneralBuildingBlock.class);
+        GeneralBuildingBlock gBB = readGeneralBBFromFile("GeneralBuildingBlockExpected.json");
         L3Network network = new L3Network();
         network.setNetworkId("networkId");
         gBB.getServiceInstance().getNetworks().add(network);
         ServiceInstance serviceInstance = gBB.getServiceInstance();
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
-        RequestDetails requestDetails = mapper
-                .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_serviceMacro.json"), RequestDetails.class);
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_serviceMacro.json");
         requestDetails.getRequestParameters().setUserParams(null);
         Map<ResourceKey, String> lookupKeyMap = prepareLookupKeyMap();
         Service service = Mockito.mock(Service.class);
@@ -2591,16 +2497,13 @@ public class BBInputSetupTest {
     public void test_getGBBMacroNoUserParamsExistingService_forControllerExecutionBB_VFModule() throws Exception {
         // given
         String requestAction = "unassignInstance";
-        GeneralBuildingBlock gBB = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
-                GeneralBuildingBlock.class);
+        GeneralBuildingBlock gBB = readGeneralBBFromFile("GeneralBuildingBlockExpected.json");
         L3Network network = new L3Network();
         network.setNetworkId("networkId");
         gBB.getServiceInstance().getNetworks().add(network);
         ServiceInstance serviceInstance = gBB.getServiceInstance();
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
-        RequestDetails requestDetails = mapper
-                .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_serviceMacro.json"), RequestDetails.class);
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_serviceMacro.json");
         requestDetails.getRequestParameters().setUserParams(null);
         Map<ResourceKey, String> lookupKeyMap = prepareLookupKeyMap();
         Service service = Mockito.mock(Service.class);
@@ -2651,16 +2554,13 @@ public class BBInputSetupTest {
     public void test_getGBBMacroNoUserParamsExistingService_forUnassignVfModuleBB() throws Exception {
         // given
         String requestAction = "unassignInstance";
-        GeneralBuildingBlock gBB = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
-                GeneralBuildingBlock.class);
+        GeneralBuildingBlock gBB = readGeneralBBFromFile("GeneralBuildingBlockExpected.json");
         L3Network network = new L3Network();
         network.setNetworkId("networkId");
         gBB.getServiceInstance().getNetworks().add(network);
         ServiceInstance serviceInstance = gBB.getServiceInstance();
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
-        RequestDetails requestDetails = mapper
-                .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_serviceMacro.json"), RequestDetails.class);
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_serviceMacro.json");
         requestDetails.getRequestParameters().setUserParams(null);
         Map<ResourceKey, String> lookupKeyMap = prepareLookupKeyMap();
         Service service = Mockito.mock(Service.class);
@@ -2710,16 +2610,13 @@ public class BBInputSetupTest {
     public void test_getGBBMacroNoUserParamsExistingService_forUnassignVolumeGroupBB() throws Exception {
         // given
         String requestAction = "unassignInstance";
-        GeneralBuildingBlock gBB = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
-                GeneralBuildingBlock.class);
+        GeneralBuildingBlock gBB = readGeneralBBFromFile("GeneralBuildingBlockExpected.json");
         L3Network network = new L3Network();
         network.setNetworkId("networkId");
         gBB.getServiceInstance().getNetworks().add(network);
         ServiceInstance serviceInstance = gBB.getServiceInstance();
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
-        RequestDetails requestDetails = mapper
-                .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_serviceMacro.json"), RequestDetails.class);
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_serviceMacro.json");
         requestDetails.getRequestParameters().setUserParams(null);
         Map<ResourceKey, String> lookupKeyMap = prepareLookupKeyMap();
         Service service = Mockito.mock(Service.class);
@@ -2774,16 +2671,13 @@ public class BBInputSetupTest {
     public void test_getGBBMacroNoUserParamsExistingService_forActivateFabricConfigurationBB() throws Exception {
         // given
         String requestAction = "unassignInstance";
-        GeneralBuildingBlock gBB = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
-                GeneralBuildingBlock.class);
+        GeneralBuildingBlock gBB = readGeneralBBFromFile("GeneralBuildingBlockExpected.json");
         L3Network network = new L3Network();
         network.setNetworkId("networkId");
         gBB.getServiceInstance().getNetworks().add(network);
         ServiceInstance serviceInstance = gBB.getServiceInstance();
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
-        RequestDetails requestDetails = mapper
-                .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_serviceMacro.json"), RequestDetails.class);
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
+        RequestDetails requestDetails = readRequestDetailsFromFile("RequestDetailsInput_serviceMacro.json");
         requestDetails.getRequestParameters().setUserParams(null);
         Map<ResourceKey, String> lookupKeyMap = prepareLookupKeyMap();
         Service service = Mockito.mock(Service.class);
@@ -2833,8 +2727,7 @@ public class BBInputSetupTest {
 
     @Test
     public void testGetGBBMacroExistingServiceServiceinstancenotFoundInAai() throws Exception {
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
         lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, "si123");
 
@@ -2852,8 +2745,7 @@ public class BBInputSetupTest {
 
     @Test
     public void testGetGBBMacroExistingServiceServiceModelNotFound() throws Exception {
-        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
-                ExecuteBuildingBlock.class);
+        ExecuteBuildingBlock executeBB = readExecuteBBFromFile("ExecuteBuildingBlockSimple.json");
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
         lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, "si123");
         org.onap.aai.domain.yang.ServiceInstance aaiServiceInstance = new org.onap.aai.domain.yang.ServiceInstance();
@@ -3330,4 +3222,17 @@ public class BBInputSetupTest {
         vnfc = SPY_bbInputSetup.getVnfcToConfiguration(vnfcName);
         Assert.assertNotNull(vnfc);
     }
+
+    private ExecuteBuildingBlock readExecuteBBFromFile(String s) throws IOException {
+        return mapper.readValue(new File(RESOURCE_PATH + s), ExecuteBuildingBlock.class);
+    }
+
+    private GeneralBuildingBlock readGeneralBBFromFile(String s) throws IOException {
+        return mapper.readValue(new File(RESOURCE_PATH + s), GeneralBuildingBlock.class);
+    }
+
+    private RequestDetails readRequestDetailsFromFile(String s) throws IOException {
+        return mapper.readValue(new File(RESOURCE_PATH + s), RequestDetails.class);
+    }
+
 }

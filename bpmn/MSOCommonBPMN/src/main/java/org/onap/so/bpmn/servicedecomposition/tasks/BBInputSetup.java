@@ -111,10 +111,10 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 public class BBInputSetup implements JavaDelegate {
 
     private static final Logger logger = LoggerFactory.getLogger(BBInputSetup.class);
-    private static final String FLOW_VAR_NAME = "flowToBeCalled";
-    private static final String LOOKUP_KEY_MAP_VAR_NAME = "lookupKeyMap";
-    private static final String GBB_INPUT_VAR_NAME = "gBBInput";
-    private static final String EXECUTE_BB_VAR_NAME = "buildingBlock";
+    static final String FLOW_VAR_NAME = "flowToBeCalled";
+    static final String LOOKUP_KEY_MAP_VAR_NAME = "lookupKeyMap";
+    static final String GBB_INPUT_VAR_NAME = "gBBInput";
+    static final String EXECUTE_BB_VAR_NAME = "buildingBlock";
     private static final String VOLUME_GROUP = "VolumeGroup";
     private static final String VF_MODULE = "VfModule";
     private static final String NETWORK = "Network";
