@@ -36,6 +36,18 @@ import javax.ws.rs.ext.Provider;
 import org.camunda.bpm.engine.ProcessEngineServices;
 import org.camunda.bpm.engine.variable.impl.VariableMapImpl;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
+import org.onap.so.bpmn.common.adapter.sdnc.SDNCAsyncResponse;
+import org.onap.so.bpmn.core.UrnPropertiesReader;
+import org.onap.so.client.HttpClient;
+import org.onap.so.client.HttpClientFactory;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.ContentType;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.onap.so.bpmn.common.workflow.context.WorkflowContext;
 import org.onap.so.bpmn.common.workflow.context.WorkflowContextHolder;
 import org.onap.so.bpmn.common.workflow.context.WorkflowResponse;
@@ -81,6 +93,144 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
 
     protected static final Logger logger = LoggerFactory.getLogger(WorkflowAsyncResource.class);
     protected static final long DEFAULT_WAIT_TIME = 60000; // default wait time
+
+    @POST
+    @Consumes("application/json")
+    @Path("/services/updateStatus")
+    @Produces("application/json")
+
+    public Response processAsyncResponse(@RequestBody SDNCAsyncResponse response) throws Exception {
+        logger.debug("SDNC RESPONSE recived: \n" + response.toString());
+        if (response != null && response.getResponseCode() != "") {
+            try {
+                String dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.db.endpoint");
+                logger.debug("DB Adapter Endpoint is: " + dbAdapterEndpoint);
+                String serviceId = response.getRequestId();
+                String payload = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\r\n"
+                        + "    		                        xmlns:ns=\"http://org.onap.so/requestsdb\">\r\n"
+                        + "    		                        <soapenv:Header/>\r\n"
+                        + "    		                        <soapenv:Body>\r\n"
+                        + "    		                            <ns:getServiceOperationStatus xmlns:ns=\"http://org.onap.so/requestsdb\">\r\n"
+                        + "    									<serviceId>$serviceId</serviceId>\r\n"
+                        + "    									<operationId></operationId>\r\n"
+                        + "    		                        </ns:getServiceOperationStatus>\r\n"
+                        + "    		                    </soapenv:Body>\r\n"
+                        + "    		                </soapenv:Envelope>";
+                payload = payload.replace("$serviceId", serviceId);
+                HttpPost httpPost = new HttpPost(dbAdapterEndpoint);
+                httpPost.addHeader("Authorization", "Basic YnBlbDpwYXNzd29yZDEk");
+                httpPost.addHeader("Content-type", "application/soap+xml");
+                httpPost.setEntity(new StringEntity(payload, ContentType.APPLICATION_XML));
+                String result = httpPostCall(dbAdapterEndpoint, httpPost);
+                logger.debug("Result returned from request DB: \n" + result);
+                if (validateDBResponse(result)) {
+                    if (response.getResponseCode().equals("200")) {
+                        logger.debug("Domain service SDNC response is success");
+                        updateOperationStatus(result, "SUCCESS", "100");
+                    } else {
+                        logger.debug("Domain service SDNC response is failed");
+                        updateOperationStatus(result, "FAILED", "0");
+                    }
+                } else {
+                    throw new Exception("Result returned from req db is empty or null");
+                }
+            } catch (Exception e) {
+                logger.debug("Exception occured" + e.getMessage());
+                throw new Exception("Exception occured at processAsyncResponse due to " + e.getMessage());
+            }
+        } else {
+            return Response.status(500).entity(response).build();
+        }
+        return Response.status(200).entity(response).build();
+
+    }
+
+    public String getUpdatePayload(String opStatus, String status, String progress) {
+        String userId = "";
+        String payload = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\r\n"
+                + "                        xmlns:ns=\"http://org.onap.so/requestsdb\">\r\n"
+                + "                        <soapenv:Header/>\r\n" + "                        <soapenv:Body>\r\n"
+                + "                            <ns:updateServiceOperationStatus xmlns:ns=\"http://org.onap.so/requestsdb\">\r\n"
+                + "                            <serviceId>$serviceId</serviceId>\r\n"
+                + "                            <operationId>$operationId</operationId>\r\n"
+                + "                            <operationType>$operationType</operationType>\r\n"
+                + "                            <userId>$userId</userId>\r\n"
+                + "                            <result>$result</result>\r\n"
+                + "                            <operationContent>$operationContent</operationContent>\r\n"
+                + "                            <progress>$progress</progress>\r\n"
+                + "                            <reason>$reason</reason>\r\n"
+                + "                        </ns:updateServiceOperationStatus>\r\n"
+                + "                    </soapenv:Body>\r\n" + "                </soapenv:Envelope>";
+
+        payload = payload.replace("$serviceId", getValueByName("serviceId", opStatus));
+        payload = payload.replace("$operationId", getValueByName("operationId", opStatus));
+        payload = payload.replace("$operationType", getValueByName("operation", opStatus));
+        payload = payload.replace("$userId", userId);
+        payload = payload.replace("$result", status);
+        payload = payload.replace("$progress", progress);
+        payload = payload.replace("$reason", "SDNC Asyncresponse Updated as " + status);
+        payload = payload.replace("$operationContent", "Recived SDNC Async Response");
+
+        logger.debug("Before format Outgoing ns:updateServiceOperationStatus Payload: \n" + payload);
+        return payload;
+    }
+
+    public void updateOperationStatus(String opStatus, String status, String progress) {
+        try {
+
+            String dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.db.endpoint");
+            String payload = getUpdatePayload(opStatus, status, progress);
+
+            HttpPost httpPost = new HttpPost(dbAdapterEndpoint);
+            httpPost.addHeader("Authorization", "Basic YnBlbDpwYXNzd29yZDEk");
+            httpPost.addHeader("Content-type", "application/soap+xml");
+            httpPost.setEntity(new StringEntity(payload, ContentType.APPLICATION_XML));
+            String dbresult = httpPostCall(dbAdapterEndpoint, httpPost);
+            logger.debug("Result returned from request DB: \n" + dbresult);
+
+        } catch (Exception e) {
+            logger.error("Exception Occured Processing updateOperationStatus. Exception is:\n" + e);
+        }
+    }
+
+    private boolean validateDBResponse(String xml) {
+        if (xml != null && xml != "" && xml.contains("return")) {
+            return true;
+        }
+        return false;
+    }
+
+    private String getValueByName(String name, String xml) {
+        if (xml != "" && xml.contains(name)) {
+            String start = "<" + name + ">";
+            String end = "</" + name + ">";
+            return xml.substring(xml.indexOf(start), xml.indexOf(end)).replace(start, "");
+        }
+        return "";
+    }
+
+    protected String httpPostCall(String url, HttpPost httpPost) throws Exception {
+        String result = null;
+        String errorMsg;
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        CloseableHttpResponse closeableHttpResponse = httpClient.execute(httpPost);
+        try {
+            result = EntityUtils.toString(closeableHttpResponse.getEntity());
+            logger.debug("result = {}", result);
+            if (closeableHttpResponse.getStatusLine().getStatusCode() != 200) {
+                logger.info("exception: fail for status code = {}",
+                        closeableHttpResponse.getStatusLine().getStatusCode());
+                throw new Exception(result);
+            }
+            closeableHttpResponse.close();
+        } catch (Exception e) {
+            closeableHttpResponse.close();
+            errorMsg = url + ":httpPostWithJSON connect faild";
+            logger.debug("exception: POST_CONNECT_FAILD : {}", errorMsg);
+            throw e;
+        }
+        return result;
+    }
 
     /**
      * Asynchronous JAX-RS method that starts a process instance.
