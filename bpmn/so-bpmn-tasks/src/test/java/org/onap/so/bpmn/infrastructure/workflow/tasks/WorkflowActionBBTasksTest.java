@@ -53,8 +53,7 @@ import org.springframework.core.env.Environment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isA;
@@ -177,7 +176,7 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         workflowActionBBTasks.selectBB(execution);
         boolean success = (boolean) execution.getVariable("completed");
         int currentSequence = (int) execution.getVariable("gCurrentSequence");
-        assertEquals(false, success);
+        assertFalse(success);
         assertEquals(1, currentSequence);
     }
 
