@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8f46d6eb_e9c7d168",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowActionBBTasksTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-07-03T12:42:28Z",
+      "side": 1,
+      "message": "Wildcard imports should not be used.\n\nhttps://rules.sonarsource.com/java/RSPEC-2208",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 56,
+        "endChar": 33
+      },
+      "revId": "dc5f47255a939d92d7f20d6fee7cb85ae71b2200",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
