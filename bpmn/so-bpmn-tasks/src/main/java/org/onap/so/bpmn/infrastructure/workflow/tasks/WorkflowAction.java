@@ -144,6 +144,7 @@ public class WorkflowAction {
     private static final String VOLUMEGROUP_DELETE_PATTERN = "(Un|De)(.*)Volume(.*)";
     private static final String VOLUMEGROUP_CREATE_PATTERN = "(A|C)(.*)Volume(.*)";
     private static final String CONTROLLER = "Controller";
+    private static final String DEFAULT_CLOUD_OWNER = "org.onap.so.cloud-owner";
 
     @Autowired
     protected BBInputSetup bbInputSetup;
@@ -159,10 +160,8 @@ public class WorkflowAction {
     private WorkflowActionExtractResourcesAAI workflowActionUtils;
     @Autowired
     private VrfValidation vrfValidation;
-
     @Autowired
     private Environment environment;
-    private String defaultCloudOwner = "org.onap.so.cloud-owner";
 
     public void setBbInputSetupUtils(BBInputSetupUtils bbInputSetupUtils) {
         this.bbInputSetupUtils = bbInputSetupUtils;
@@ -235,7 +234,7 @@ public class WorkflowAction {
                                         .setRequestDetails(requestDetails).setExecution(execution));
                         for (OrchestrationFlow orchFlow : orchFlows) {
                             if (orchFlow.getFlowName().contains(CONFIGURATION)) {
-                                List<OrchestrationFlow> configOrchFlows = new ArrayList<OrchestrationFlow>();
+                                List<OrchestrationFlow> configOrchFlows = new ArrayList<>();
                                 configOrchFlows.add(orchFlow);
                                 List<ExecuteBuildingBlock> configBuildingBlocks =
                                         getConfigBuildingBlocks(new ConfigBuildingBlocksDataObject()
@@ -287,11 +286,8 @@ public class WorkflowAction {
                         if (sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
                             List<Map<String, Object>> userParams =
                                     sIRequest.getRequestDetails().getRequestParameters().getUserParams();
-                            for (Map<String, Object> params : userParams) {
-                                if (params.containsKey(USERPARAMSERVICE)) {
-                                    containsService = true;
-                                }
-                            }
+                            containsService =
+                                    userParams.stream().anyMatch(param -> param.containsKey(USERPARAMSERVICE));
                             if (containsService) {
                                 traverseUserParamsService(execution, resourceList, sIRequest, requestAction);
                             }
@@ -309,11 +305,8 @@ public class WorkflowAction {
                         if (sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
                             List<Map<String, Object>> userParams =
                                     sIRequest.getRequestDetails().getRequestParameters().getUserParams();
-                            for (Map<String, Object> params : userParams) {
-                                if (params.containsKey(USERPARAMSERVICE)) {
-                                    containsService = true;
-                                }
-                            }
+                            containsService =
+                                    userParams.stream().anyMatch(param -> param.containsKey(USERPARAMSERVICE));
                         }
                         if (containsService) {
                             foundRelated = traverseUserParamsService(execution, resourceList, sIRequest, requestAction);
@@ -341,13 +334,11 @@ public class WorkflowAction {
                     } else {
                         buildAndThrowException(execution, "Current Macro Request is not supported");
                     }
-                    String foundObjects = "";
+                    StringBuilder foundObjects = new StringBuilder();
                     for (WorkflowType type : WorkflowType.values()) {
-                        foundObjects = foundObjects + type + " - " + resourceList.stream()
-                                .filter(x -> type.equals(x.getResourceType())).collect(Collectors.toList()).size()
-                                + "    ";
+                        foundObjects.append(type).append(" - ").append((int) resourceList.stream().filter(x -> type.equals(x.getResourceType())).count()).append("    ");
                     }
-                    logger.info("Found {}", foundObjects);
+                    logger.info("Found {}", foundObjects.toString());
 
                     if (orchFlows == null || orchFlows.isEmpty()) {
                         orchFlows = queryNorthBoundRequestCatalogDb(execution, requestAction, resourceType, isALaCarte,
@@ -367,8 +358,7 @@ public class WorkflowAction {
                     // By default, enable homing at VNF level for CREATEINSTANCE and ASSIGNINSTANCE
                     if (resourceType == WorkflowType.SERVICE
                             && (requestAction.equals(CREATEINSTANCE) || requestAction.equals(ASSIGNINSTANCE))
-                            && !resourceList.stream().filter(x -> WorkflowType.VNF.equals(x.getResourceType()))
-                                    .collect(Collectors.toList()).isEmpty()) {
+                            && resourceList.stream().anyMatch(x -> WorkflowType.VNF.equals(x.getResourceType()))) {
                         execution.setVariable("homing", true);
                         execution.setVariable("calledHoming", false);
                     }
@@ -389,11 +379,7 @@ public class WorkflowAction {
                         sIRequest.getRequestDetails().getRequestParameters().getUserParams();
                 for (Map<String, Object> params : userParams) {
                     if (params.containsKey(HOMINGSOLUTION)) {
-                        if ("none".equals(params.get(HOMINGSOLUTION))) {
-                            execution.setVariable("homing", false);
-                        } else {
-                            execution.setVariable("homing", true);
-                        }
+                        execution.setVariable("homing", !"none".equals(params.get(HOMINGSOLUTION)));
                     }
                 }
             }
@@ -448,7 +434,7 @@ public class WorkflowAction {
             return cloudConfiguration.getCloudOwner();
         }
         logger.warn("cloud owner value not found in request details, it will be set as default");
-        return environment.getProperty(defaultCloudOwner);
+        return environment.getProperty(DEFAULT_CLOUD_OWNER);
     }
 
     protected <T> List<T> getRelatedResourcesInVfModule(String vnfId, String vfModuleId, Class<T> resultClass,
@@ -514,7 +500,7 @@ public class WorkflowAction {
         String vfModuleId = dataObj.getWorkflowResourceIds().getVfModuleId();
 
         String vnfCustomizationUUID = bbInputSetupUtils.getAAIGenericVnf(vnfId).getModelCustomizationId();
-        String vfModuleCustomizationUUID = "";
+        String vfModuleCustomizationUUID;
         org.onap.aai.domain.yang.VfModule aaiVfModule = bbInputSetupUtils.getAAIVfModule(vnfId, vfModuleId);
 
         if (aaiVfModule == null) {
@@ -575,8 +561,7 @@ public class WorkflowAction {
         boolean rebuildVolumeGroups = false;
         if (dataObj.getRequestDetails().getRequestParameters() != null
                 && dataObj.getRequestDetails().getRequestParameters().getRebuildVolumeGroups() != null) {
-            rebuildVolumeGroups =
-                    dataObj.getRequestDetails().getRequestParameters().getRebuildVolumeGroups().booleanValue();
+            rebuildVolumeGroups = dataObj.getRequestDetails().getRequestParameters().getRebuildVolumeGroups();
         }
 
         Optional<VolumeGroup> volumeGroupFromVfModule =
@@ -629,7 +614,7 @@ public class WorkflowAction {
         }
         Relationships relationships = relationshipsOp.get();
         List<AAIResultWrapper> vnfcResultWrappers = relationships.getByType(AAIObjectType.VNFC);
-        if (vnfcResultWrappers.size() > 1 || vnfcResultWrappers.isEmpty()) {
+        if (vnfcResultWrappers.size() != 1) {
             logger.debug("Too many vnfcs or no vnfc found that are related to configuration");
         }
         Optional<Vnfc> vnfcOp = vnfcResultWrappers.get(0).asBean(Vnfc.class);
@@ -667,11 +652,10 @@ public class WorkflowAction {
             logger.debug(pair.getValue0() + ", " + pair.getValue1());
         }
 
-        Arrays.stream(WorkflowType.values()).filter(type -> !type.equals(WorkflowType.SERVICE)).forEach(type -> {
-            resourceList.stream().filter(resource -> type.equals(resource.getResourceType()))
-                    .forEach(resource -> updateWorkflowResourceIds(flowsToExecute, type, resource.getResourceId(),
-                            retrieveAAIResourceId(aaiResourceIds, type), null, serviceInstanceId));
-        });
+        Arrays.stream(WorkflowType.values()).filter(type -> !type.equals(WorkflowType.SERVICE))
+                .forEach(type -> resourceList.stream().filter(resource -> type.equals(resource.getResourceType()))
+                        .forEach(resource -> updateWorkflowResourceIds(flowsToExecute, type, resource.getResourceId(),
+                                retrieveAAIResourceId(aaiResourceIds, type), null, serviceInstanceId)));
     }
 
     private String retrieveAAIResourceId(List<Pair<WorkflowType, String>> aaiResourceIds, WorkflowType resource) {
@@ -688,11 +672,10 @@ public class WorkflowAction {
 
     private void generateResourceIds(List<ExecuteBuildingBlock> flowsToExecute, List<Resource> resourceList,
             String serviceInstanceId) {
-        Arrays.stream(WorkflowType.values()).filter(type -> !type.equals(WorkflowType.SERVICE)).forEach(type -> {
-            resourceList.stream().filter(resource -> type.equals(resource.getResourceType()))
-                    .forEach(resource -> updateWorkflowResourceIds(flowsToExecute, type, resource.getResourceId(), null,
-                            resource.getVirtualLinkKey(), serviceInstanceId));
-        });
+        Arrays.stream(WorkflowType.values()).filter(type -> !type.equals(WorkflowType.SERVICE))
+                .forEach(type -> resourceList.stream().filter(resource -> type.equals(resource.getResourceType()))
+                        .forEach(resource -> updateWorkflowResourceIds(flowsToExecute, type, resource.getResourceId(),
+                                null, resource.getVirtualLinkKey(), serviceInstanceId)));
     }
 
     protected void updateWorkflowResourceIds(List<ExecuteBuildingBlock> flowsToExecute, WorkflowType resourceType,
@@ -947,8 +930,7 @@ public class WorkflowAction {
     }
 
     private boolean isNetworkCollectionInTheResourceList(List<Resource> resourceList) {
-        return !(resourceList.stream().filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType())
-                .collect(Collectors.toList()).isEmpty());
+        return resourceList.stream().anyMatch(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType());
     }
 
     private boolean isVnfCustomizationsInTheService(org.onap.so.db.catalog.beans.Service service) {
@@ -1134,12 +1116,9 @@ public class WorkflowAction {
                                             foundVfModuleOrVG = true;
                                             Resource resource = new Resource(WorkflowType.VFMODULE,
                                                     vfModuleCustomization.getModelCustomizationUUID(), false);
-                                            if (vfModuleCustomization.getVfModule().getIsBase() != null
-                                                    && vfModuleCustomization.getVfModule().getIsBase()) {
-                                                resource.setBaseVfModule(true);
-                                            } else {
-                                                resource.setBaseVfModule(false);
-                                            }
+                                            resource.setBaseVfModule(
+                                                    vfModuleCustomization.getVfModule().getIsBase() != null
+                                                            && vfModuleCustomization.getVfModule().getIsBase());
                                             resourceList.add(resource);
                                             if (vfModule.getModelInfo() != null
                                                     && vfModule.getModelInfo().getModelCustomizationUuid() != null) {
@@ -1429,7 +1408,7 @@ public class WorkflowAction {
                         true, false);
             } else if (orchFlow.getFlowName().contains(VFMODULE) || (orchFlow.getFlowName().contains(CONTROLLER)
                     && (VFMODULE).equalsIgnoreCase(orchFlow.getBpmnScope()))) {
-                List<Resource> vfModuleResourcesSorted = null;
+                List<Resource> vfModuleResourcesSorted;
                 if (requestAction.equals(CREATEINSTANCE) || requestAction.equals(ASSIGNINSTANCE)
                         || requestAction.equals("activateInstance")) {
                     vfModuleResourcesSorted = sortVfModulesByBaseFirst(resourceList.stream()
@@ -1438,10 +1417,10 @@ public class WorkflowAction {
                     vfModuleResourcesSorted = sortVfModulesByBaseLast(resourceList.stream()
                             .filter(x -> WorkflowType.VFMODULE == x.getResourceType()).collect(Collectors.toList()));
                 }
-                for (int i = 0; i < vfModuleResourcesSorted.size(); i++) {
-                    flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId, vfModuleResourcesSorted.get(i),
-                            apiVersion, resourceId, requestAction, false, vnfType, workflowResourceIds, requestDetails,
-                            false, null, null, false));
+                for (Resource resource : vfModuleResourcesSorted) {
+                    flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId, resource, apiVersion, resourceId,
+                            requestAction, false, vnfType, workflowResourceIds, requestDetails, false, null, null,
+                            false));
                 }
             } else if (orchFlow.getFlowName().contains(VOLUMEGROUP)) {
                 if (requestAction.equalsIgnoreCase(REPLACEINSTANCE)
@@ -1477,8 +1456,8 @@ public class WorkflowAction {
                 new BuildingBlock().setBpmnFlowName(orchFlow.getFlowName()).setMsoId(UUID.randomUUID().toString())
                         .setIsVirtualLink(isVirtualLink).setVirtualLinkKey(virtualLinkKey)
                         .setKey(Optional.ofNullable(resource).map(Resource::getResourceId).orElse(""));
-        Optional.ofNullable(orchFlow.getBpmnAction()).ifPresent(action -> buildingBlock.setBpmnAction(action));
-        Optional.ofNullable(orchFlow.getBpmnScope()).ifPresent(scope -> buildingBlock.setBpmnScope(scope));
+        Optional.ofNullable(orchFlow.getBpmnAction()).ifPresent(buildingBlock::setBpmnAction);
+        Optional.ofNullable(orchFlow.getBpmnScope()).ifPresent(buildingBlock::setBpmnScope);
 
         if (resource != null
                 && (orchFlow.getFlowName().contains(VOLUMEGROUP) && (requestAction.equalsIgnoreCase(REPLACEINSTANCE)
@@ -1493,14 +1472,19 @@ public class WorkflowAction {
                 .setRequestDetails(requestDetails);
 
         if (resource != null && (isConfiguration || resource.getResourceType().equals(WorkflowType.CONFIGURATION))) {
-            ConfigurationResourceKeys configurationResourceKeys = new ConfigurationResourceKeys();
-            Optional.ofNullable(vnfcName).ifPresent(name -> configurationResourceKeys.setVnfcName(name));
-            configurationResourceKeys.setCvnfcCustomizationUUID(resource.getCvnfModuleCustomizationId());
-            configurationResourceKeys.setVfModuleCustomizationUUID(resource.getVfModuleCustomizationId());
-            configurationResourceKeys.setVnfResourceCustomizationUUID(resource.getVnfCustomizationId());
+            ConfigurationResourceKeys configurationResourceKeys = getConfigurationResourceKeys(resource, vnfcName);
             executeBuildingBlock.setConfigurationResourceKeys(configurationResourceKeys);
         }
         return executeBuildingBlock;
+    }
+
+    private ConfigurationResourceKeys getConfigurationResourceKeys(Resource resource, String vnfcName) {
+        ConfigurationResourceKeys configurationResourceKeys = new ConfigurationResourceKeys();
+        Optional.ofNullable(vnfcName).ifPresent(configurationResourceKeys::setVnfcName);
+        configurationResourceKeys.setCvnfcCustomizationUUID(resource.getCvnfModuleCustomizationId());
+        configurationResourceKeys.setVfModuleCustomizationUUID(resource.getVfModuleCustomizationId());
+        configurationResourceKeys.setVnfResourceCustomizationUUID(resource.getVnfCustomizationId());
+        return configurationResourceKeys;
     }
 
     protected List<OrchestrationFlow> queryNorthBoundRequestCatalogDb(DelegateExecution execution, String requestAction,
@@ -1511,7 +1495,7 @@ public class WorkflowAction {
     protected List<OrchestrationFlow> queryNorthBoundRequestCatalogDb(DelegateExecution execution, String requestAction,
             WorkflowType resourceName, boolean aLaCarte, String cloudOwner, String serviceType) {
         List<OrchestrationFlow> listToExecute = new ArrayList<>();
-        NorthBoundRequest northBoundRequest = null;
+        NorthBoundRequest northBoundRequest;
         if (serviceType.equalsIgnoreCase(SERVICE_TYPE_TRANSPORT)
                 || serviceType.equalsIgnoreCase(SERVICE_TYPE_BONDING)) {
             northBoundRequest =
@@ -1592,7 +1576,7 @@ public class WorkflowAction {
     }
 
     protected String validateServiceResourceIdInAAI(String generatedResourceId, String instanceName,
-            RequestDetails reqDetails) throws DuplicateNameException, MultipleObjectsFoundException {
+            RequestDetails reqDetails) throws DuplicateNameException {
         String globalCustomerId = reqDetails.getSubscriberInfo().getGlobalSubscriberId();
         String serviceType = reqDetails.getRequestParameters().getSubscriptionServiceType();
         if (instanceName != null) {
@@ -1656,8 +1640,7 @@ public class WorkflowAction {
     }
 
     protected String validateVnfResourceIdInAAI(String generatedResourceId, String instanceName,
-            RequestDetails reqDetails, WorkflowResourceIds workflowResourceIds)
-            throws DuplicateNameException, MultipleObjectsFoundException {
+            RequestDetails reqDetails, WorkflowResourceIds workflowResourceIds) throws DuplicateNameException {
         Optional<GenericVnf> vnf = bbInputSetupUtils
                 .getRelatedVnfByNameFromServiceInstance(workflowResourceIds.getServiceInstanceId(), instanceName);
         if (vnf.isPresent()) {
@@ -1701,8 +1684,7 @@ public class WorkflowAction {
     }
 
     protected String validateVolumeGroupResourceIdInAAI(String generatedResourceId, String instanceName,
-            RequestDetails reqDetails, WorkflowResourceIds workflowResourceIds)
-            throws DuplicateNameException, MultipleObjectsFoundException {
+            RequestDetails reqDetails, WorkflowResourceIds workflowResourceIds) throws DuplicateNameException {
         Optional<VolumeGroup> volumeGroup =
                 bbInputSetupUtils.getRelatedVolumeGroupByNameFromVnf(workflowResourceIds.getVnfId(), instanceName);
         if (volumeGroup.isPresent()) {
@@ -1720,8 +1702,7 @@ public class WorkflowAction {
     }
 
     protected String validateConfigurationResourceIdInAAI(String generatedResourceId, String instanceName,
-            RequestDetails reqDetails, WorkflowResourceIds workflowResourceIds)
-            throws DuplicateNameException, MultipleObjectsFoundException {
+            RequestDetails reqDetails, WorkflowResourceIds workflowResourceIds) throws DuplicateNameException {
         Optional<org.onap.aai.domain.yang.Configuration> configuration =
                 bbInputSetupUtils.getRelatedConfigurationByNameFromServiceInstance(
                         workflowResourceIds.getServiceInstanceId(), instanceName);
