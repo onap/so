@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "749095a9_78f0f45e",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 340,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-07-03T13:58:02Z",
+      "side": 1,
+      "message": "String concatenation \"+\" in a loop. Use SringBuilder:\n\nfoundObjects.append(type).append(\" - \")\n                                .append((int) resourceList.stream().filter(x -\u003e type.equals(x.getResourceType()))\n                                        .count()).append(\"    \");",
+      "range": {
+        "startLine": 339,
+        "startChar": 24,
+        "endLine": 340,
+        "endChar": 115
+      },
+      "revId": "7b87f225ea7da7aeed774e603acecee466cbfdd8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
