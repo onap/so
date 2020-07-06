@@ -946,28 +946,7 @@ public class WorkflowAction {
             org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO =
                     bbInputSetup.getExistingServiceInstance(serviceInstanceAAI);
             resourceList.add(new Resource(WorkflowType.SERVICE, serviceInstanceMSO.getServiceInstanceId(), false));
-            if (serviceInstanceMSO.getVnfs() != null) {
-                for (org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf : serviceInstanceMSO.getVnfs()) {
-                    aaiResourceIds.add(new Pair<>(WorkflowType.VNF, vnf.getVnfId()));
-                    resourceList.add(new Resource(WorkflowType.VNF, vnf.getVnfId(), false));
-                    if (vnf.getVfModules() != null) {
-                        for (VfModule vfModule : vnf.getVfModules()) {
-                            aaiResourceIds.add(new Pair<>(WorkflowType.VFMODULE, vfModule.getVfModuleId()));
-                            Resource resource = new Resource(WorkflowType.VFMODULE, vfModule.getVfModuleId(), false);
-                            resource.setBaseVfModule(vfModule.getModelInfoVfModule().getIsBaseBoolean());
-                            resourceList.add(resource);
-                        }
-                    }
-                    if (vnf.getVolumeGroups() != null) {
-                        for (org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup volumeGroup : vnf
-                                .getVolumeGroups()) {
-                            aaiResourceIds.add(new Pair<>(WorkflowType.VOLUMEGROUP, volumeGroup.getVolumeGroupId()));
-                            resourceList
-                                    .add(new Resource(WorkflowType.VOLUMEGROUP, volumeGroup.getVolumeGroupId(), false));
-                        }
-                    }
-                }
-            }
+            traverseServiceInstanceMSOVnfs(resourceList, aaiResourceIds, serviceInstanceMSO);
             if (serviceInstanceMSO.getNetworks() != null) {
                 for (org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network network : serviceInstanceMSO
                         .getNetworks()) {
@@ -1003,6 +982,38 @@ public class WorkflowAction {
             logger.error("Exception in traverseAAIService", ex);
             buildAndThrowException(execution,
                     "Could not find existing Service Instance or related Instances to execute the request on.");
+        }
+    }
+
+    private void traverseServiceInstanceMSOVnfs(List<Resource> resourceList,
+            List<Pair<WorkflowType, String>> aaiResourceIds,
+            org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO) {
+        if (serviceInstanceMSO.getVnfs() == null) {
+            return;
+        }
+        for (org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf : serviceInstanceMSO.getVnfs()) {
+            aaiResourceIds.add(new Pair<>(WorkflowType.VNF, vnf.getVnfId()));
+            resourceList.add(new Resource(WorkflowType.VNF, vnf.getVnfId(), false));
+            traverseVnfModules(resourceList, aaiResourceIds, vnf);
+            if (vnf.getVolumeGroups() != null) {
+                for (org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup volumeGroup : vnf.getVolumeGroups()) {
+                    aaiResourceIds.add(new Pair<>(WorkflowType.VOLUMEGROUP, volumeGroup.getVolumeGroupId()));
+                    resourceList.add(new Resource(WorkflowType.VOLUMEGROUP, volumeGroup.getVolumeGroupId(), false));
+                }
+            }
+        }
+    }
+
+    private void traverseVnfModules(List<Resource> resourceList, List<Pair<WorkflowType, String>> aaiResourceIds,
+            org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf) {
+        if (vnf.getVfModules() == null) {
+            return;
+        }
+        for (VfModule vfModule : vnf.getVfModules()) {
+            aaiResourceIds.add(new Pair<>(WorkflowType.VFMODULE, vfModule.getVfModuleId()));
+            Resource resource = new Resource(WorkflowType.VFMODULE, vfModule.getVfModuleId(), false);
+            resource.setBaseVfModule(vfModule.getModelInfoVfModule().getIsBaseBoolean());
+            resourceList.add(resource);
         }
     }
 
