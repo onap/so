@@ -23,7 +23,8 @@ package org.onap.so.client.oof;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static org.junit.Assert.assertEquals;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
 import org.onap.so.client.exception.BadResponseException;
@@ -40,8 +41,6 @@ import org.onap.so.client.oof.beans.SubscriberInfo;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class OofClientTestIT extends BaseIntegrationTest {
@@ -150,7 +149,7 @@ public class OofClientTestIT extends BaseIntegrationTest {
                 + "        \"modelName\" : \"modelName\",\n" + "        \"modelVersion\" : \"version\",\n"
                 + "        \"modelCustomizationName\" : \"modelCustomizationName\"\n" + "      }\n" + "    } ]\n"
                 + "  },\n" + "  \"licenseInfo\" : { \n" + "    \"licenseDemands\" : [ ]\n" + "}\n" + "}",
-                oofRequestOutput, false);
+                oofRequestOutput.replace("\r\n", "\n"), false);
     }
 
     @Test

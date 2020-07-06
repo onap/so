@@ -252,5 +252,10 @@
       <version>${grpc.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.onap.so</groupId>
+      <artifactId>so-optimization-clients</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 </project>
