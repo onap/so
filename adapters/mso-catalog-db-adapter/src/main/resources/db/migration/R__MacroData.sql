@@ -918,3 +918,7 @@ VALUES
 UPDATE vnf_recipe
 SET ORCHESTRATION_URI = '/mso/async/services/VnfInPlaceUpdate'
 WHERE NF_ROLE = 'GR-API-DEFAULT' AND ACTION = 'inPlaceSoftwareUpdate';
+
+UPDATE vnf_recipe
+SET ORCHESTRATION_URI = '/mso/async/services/WorkflowActionBB'
+WHERE NF_ROLE = 'GR-API-DEFAULT' AND ACTION = 'inPlaceSoftwareUpdate';
