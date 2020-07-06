@@ -750,6 +750,10 @@ public class BBInputSetup implements JavaDelegate {
                         parameter.getInstanceName(), generatedVnfType, parameter.getInstanceParams());
                 vnf.getVolumeGroups().add(volumeGroup);
                 if (parameter.getIsReplace()) {
+                    if (parameter.getExecuteBB().getOldVolumeGroupName() != null
+                            && !parameter.getExecuteBB().getOldVolumeGroupName().isEmpty()) {
+                        volumeGroup.setVolumeGroupName(parameter.getExecuteBB().getOldVolumeGroupName());
+                    }
                     mapCatalogVolumeGroup(volumeGroup, parameter.getModelInfo(),
                             parameter.getServiceModel().getNewService(), replaceVnfModelCustomizationUUID);
                 } else {
