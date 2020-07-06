@@ -223,16 +223,17 @@ public class WorkflowAction {
                     }
                     Resource resourceKey = getResourceKey(sIRequest, resourceType);
 
+                    ReplaceInstanceRelatedInformation replaceInfo = new ReplaceInstanceRelatedInformation();
                     if ((requestAction.equalsIgnoreCase(REPLACEINSTANCE)
                             || requestAction.equalsIgnoreCase(REPLACEINSTANCERETAINASSIGNMENTS))
                             && resourceType.equals(WorkflowType.VFMODULE)) {
                         logger.debug("Build a BB list for replacing BB modules");
-                        orchFlows = getVfModuleReplaceBuildingBlocks(
-                                new ConfigBuildingBlocksDataObject().setsIRequest(sIRequest).setOrchFlows(orchFlows)
-                                        .setRequestId(requestId).setResourceKey(resourceKey).setApiVersion(apiVersion)
-                                        .setResourceId(resourceId).setRequestAction(requestAction).setaLaCarte(true)
-                                        .setVnfType(vnfType).setWorkflowResourceIds(workflowResourceIds)
-                                        .setRequestDetails(requestDetails).setExecution(execution));
+                        orchFlows = getVfModuleReplaceBuildingBlocks(new ConfigBuildingBlocksDataObject()
+                                .setsIRequest(sIRequest).setOrchFlows(orchFlows).setRequestId(requestId)
+                                .setResourceKey(resourceKey).setApiVersion(apiVersion).setResourceId(resourceId)
+                                .setRequestAction(requestAction).setaLaCarte(true).setVnfType(vnfType)
+                                .setWorkflowResourceIds(workflowResourceIds).setRequestDetails(requestDetails)
+                                .setExecution(execution).setReplaceInformation(replaceInfo));
                         for (OrchestrationFlow orchFlow : orchFlows) {
                             if (orchFlow.getFlowName().contains(CONFIGURATION)) {
                                 List<OrchestrationFlow> configOrchFlows = new ArrayList<OrchestrationFlow>();
@@ -242,14 +243,15 @@ public class WorkflowAction {
                                                 .setsIRequest(sIRequest).setOrchFlows(configOrchFlows)
                                                 .setRequestId(requestId).setResourceKey(resourceKey)
                                                 .setApiVersion(apiVersion).setResourceId(resourceId)
-                                                .setRequestAction(requestAction).setaLaCarte(true).setVnfType(vnfType)
-                                                .setWorkflowResourceIds(workflowResourceIds)
-                                                .setRequestDetails(requestDetails).setExecution(execution));
+                                                .setRequestAction(requestAction).setaLaCarte(true)
+                                                .setVnfType(vnfType).setWorkflowResourceIds(workflowResourceIds)
+                                                .setRequestDetails(requestDetails).setExecution(execution)
+                                                .setReplaceInformation(replaceInfo));
                                 flowsToExecute.addAll(configBuildingBlocks);
                             } else {
                                 ExecuteBuildingBlock ebb = buildExecuteBuildingBlock(orchFlow, requestId, resourceKey,
                                         apiVersion, resourceId, requestAction, true, vnfType, workflowResourceIds,
-                                        requestDetails, false, null, null, false);
+                                        requestDetails, false, null, null, false, replaceInfo);
                                 flowsToExecute.add(ebb);
                             }
                         }
@@ -272,7 +274,7 @@ public class WorkflowAction {
                         for (OrchestrationFlow orchFlow : orchFlows) {
                             ExecuteBuildingBlock ebb = buildExecuteBuildingBlock(orchFlow, requestId, resourceKey,
                                     apiVersion, resourceId, requestAction, true, vnfType, workflowResourceIds,
-                                    requestDetails, false, null, null, false);
+                                    requestDetails, false, null, null, false, replaceInfo);
                             flowsToExecute.add(ebb);
                         }
                     }
@@ -549,10 +551,11 @@ public class WorkflowAction {
                                 + ": VnfcName does not exist or is null while there is a configuration for the vfModule",
                                 new Exception("Vnfc and Configuration do not match"));
                     }
-                    ExecuteBuildingBlock ebb = buildExecuteBuildingBlock(orchFlow, dataObj.getRequestId(),
-                            dataObj.getResourceKey(), dataObj.getApiVersion(), dataObj.getResourceId(),
-                            dataObj.getRequestAction(), dataObj.isaLaCarte(), dataObj.getVnfType(),
-                            dataObj.getWorkflowResourceIds(), dataObj.getRequestDetails(), false, null, vnfcName, true);
+                    ExecuteBuildingBlock ebb =
+                            buildExecuteBuildingBlock(orchFlow, dataObj.getRequestId(), dataObj.getResourceKey(),
+                                    dataObj.getApiVersion(), dataObj.getResourceId(), dataObj.getRequestAction(),
+                                    dataObj.isaLaCarte(), dataObj.getVnfType(), dataObj.getWorkflowResourceIds(),
+                                    dataObj.getRequestDetails(), false, null, vnfcName, true, null);
                     flowsToExecuteConfigs.add(ebb);
                 }
             }
@@ -578,14 +581,16 @@ public class WorkflowAction {
             rebuildVolumeGroups =
                     dataObj.getRequestDetails().getRequestParameters().getRebuildVolumeGroups().booleanValue();
         }
-
+        String volumeGroupName = "";
         Optional<VolumeGroup> volumeGroupFromVfModule =
                 bbInputSetupUtils.getRelatedVolumeGroupFromVfModule(vnfId, vfModuleId);
         if (volumeGroupFromVfModule.isPresent()) {
             String volumeGroupId = volumeGroupFromVfModule.get().getVolumeGroupId();
+            volumeGroupName = volumeGroupFromVfModule.get().getVolumeGroupName();
             logger.debug("Volume group id of the existing volume group is: " + volumeGroupId);
             volumeGroupExisted = true;
             dataObj.getWorkflowResourceIds().setVolumeGroupId(volumeGroupId);
+            dataObj.getReplaceInformation().setOldVolumeGroupName(volumeGroupName);
         }
 
         List<OrchestrationFlow> orchFlows = dataObj.getOrchFlows();
@@ -598,6 +603,7 @@ public class WorkflowAction {
             if (!volumeGroupExisted) {
                 String newVolumeGroupId = UUID.randomUUID().toString();
                 dataObj.getWorkflowResourceIds().setVolumeGroupId(newVolumeGroupId);
+                dataObj.getReplaceInformation().setOldVolumeGroupName(volumeGroupName);
                 logger.debug("newVolumeGroupId: " + newVolumeGroupId);
             }
         }
@@ -1394,7 +1400,7 @@ public class WorkflowAction {
         resourceList.stream().filter(resource -> resource.getResourceType().equals(workflowType))
                 .forEach(resource -> flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId, resource,
                         apiVersion, resourceId, requestAction, false, vnfType, workflowResourceIds, requestDetails,
-                        isVirtualLink, resource.getVirtualLinkKey(), null, isConfiguration)));
+                        isVirtualLink, resource.getVirtualLinkKey(), null, isConfiguration, null)));
     }
 
     protected List<ExecuteBuildingBlock> buildExecuteBuildingBlockList(List<OrchestrationFlow> orchFlows,
@@ -1441,7 +1447,7 @@ public class WorkflowAction {
                 for (int i = 0; i < vfModuleResourcesSorted.size(); i++) {
                     flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId, vfModuleResourcesSorted.get(i),
                             apiVersion, resourceId, requestAction, false, vnfType, workflowResourceIds, requestDetails,
-                            false, null, null, false));
+                            false, null, null, false, null));
                 }
             } else if (orchFlow.getFlowName().contains(VOLUMEGROUP)) {
                 if (requestAction.equalsIgnoreCase(REPLACEINSTANCE)
@@ -1461,8 +1467,9 @@ public class WorkflowAction {
                         requestId, apiVersion, resourceId, requestAction, vnfType, workflowResourceIds, requestDetails,
                         false, true);
             } else {
-                flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId, null, apiVersion, resourceId,
-                        requestAction, false, vnfType, workflowResourceIds, requestDetails, false, null, null, false));
+                flowsToExecute
+                        .add(buildExecuteBuildingBlock(orchFlow, requestId, null, apiVersion, resourceId, requestAction,
+                                false, vnfType, workflowResourceIds, requestDetails, false, null, null, false, null));
             }
         }
         return flowsToExecute;
@@ -1471,7 +1478,8 @@ public class WorkflowAction {
     protected ExecuteBuildingBlock buildExecuteBuildingBlock(OrchestrationFlow orchFlow, String requestId,
             Resource resource, String apiVersion, String resourceId, String requestAction, boolean aLaCarte,
             String vnfType, WorkflowResourceIds workflowResourceIds, RequestDetails requestDetails,
-            boolean isVirtualLink, String virtualLinkKey, String vnfcName, boolean isConfiguration) {
+            boolean isVirtualLink, String virtualLinkKey, String vnfcName, boolean isConfiguration,
+            ReplaceInstanceRelatedInformation replaceInfo) {
 
         BuildingBlock buildingBlock =
                 new BuildingBlock().setBpmnFlowName(orchFlow.getFlowName()).setMsoId(UUID.randomUUID().toString())
@@ -1479,7 +1487,10 @@ public class WorkflowAction {
                         .setKey(Optional.ofNullable(resource).map(Resource::getResourceId).orElse(""));
         Optional.ofNullable(orchFlow.getBpmnAction()).ifPresent(action -> buildingBlock.setBpmnAction(action));
         Optional.ofNullable(orchFlow.getBpmnScope()).ifPresent(scope -> buildingBlock.setBpmnScope(scope));
-
+        String oldVolumeGroupName = "";
+        if (replaceInfo != null) {
+            oldVolumeGroupName = replaceInfo.getOldVolumeGroupName();
+        }
         if (resource != null
                 && (orchFlow.getFlowName().contains(VOLUMEGROUP) && (requestAction.equalsIgnoreCase(REPLACEINSTANCE)
                         || requestAction.equalsIgnoreCase(REPLACEINSTANCERETAINASSIGNMENTS)))) {
@@ -1490,7 +1501,7 @@ public class WorkflowAction {
         ExecuteBuildingBlock executeBuildingBlock = new ExecuteBuildingBlock().setApiVersion(apiVersion)
                 .setaLaCarte(aLaCarte).setRequestAction(requestAction).setResourceId(resourceId).setVnfType(vnfType)
                 .setWorkflowResourceIds(workflowResourceIds).setRequestId(requestId).setBuildingBlock(buildingBlock)
-                .setRequestDetails(requestDetails);
+                .setRequestDetails(requestDetails).setOldVolumeGroupName(oldVolumeGroupName);
 
         if (resource != null && (isConfiguration || resource.getResourceType().equals(WorkflowType.CONFIGURATION))) {
             ConfigurationResourceKeys configurationResourceKeys = new ConfigurationResourceKeys();

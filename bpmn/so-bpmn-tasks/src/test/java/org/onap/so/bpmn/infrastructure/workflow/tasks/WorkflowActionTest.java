@@ -3122,7 +3122,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         ExecuteBuildingBlock result = null;
         try {
             result = workflowAction.buildExecuteBuildingBlock(new OrchestrationFlow(), null, null, null, null, null,
-                    false, null, null, null, false, null, null, true);
+                    false, null, null, null, false, null, null, true, null);
         } catch (NullPointerException e) {
             fail("NullPointerException should not be thrown when 'resource' is null");
         }

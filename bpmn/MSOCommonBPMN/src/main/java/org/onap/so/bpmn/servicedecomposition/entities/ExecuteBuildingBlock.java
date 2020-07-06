@@ -28,6 +28,7 @@ public class ExecuteBuildingBlock extends BuildingBlockBase<ExecuteBuildingBlock
     private BuildingBlock buildingBlock;
     private ConfigurationResourceKeys configurationResourceKeys;
     private Boolean homing = false;
+    private String oldVolumeGroupName;
     private static final long serialVersionUID = 3L;
 
     public BuildingBlock getBuildingBlock() {
@@ -54,6 +55,15 @@ public class ExecuteBuildingBlock extends BuildingBlockBase<ExecuteBuildingBlock
 
     public ExecuteBuildingBlock setConfigurationResourceKeys(ConfigurationResourceKeys configurationResourceKeys) {
         this.configurationResourceKeys = configurationResourceKeys;
+        return this;
+    }
+
+    public String getOldVolumeGroupName() {
+        return oldVolumeGroupName;
+    }
+
+    public ExecuteBuildingBlock setOldVolumeGroupName(String oldVolumeGroupName) {
+        this.oldVolumeGroupName = oldVolumeGroupName;
         return this;
     }
 }
