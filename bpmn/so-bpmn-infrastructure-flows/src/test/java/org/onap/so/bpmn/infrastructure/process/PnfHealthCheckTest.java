@@ -24,6 +24,7 @@ import com.google.protobuf.Struct;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Before;
 import org.junit.Test;
+import org.onap.aaiclient.client.aai.AAIVersion;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.ActionIdentifiers;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.CommonHeader;
 import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceInput;
@@ -31,37 +32,32 @@ import org.onap.so.BaseBPMNTest;
 import org.onap.so.GrpcNettyServer;
 import org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames;
 import org.onap.so.bpmn.mock.FileUtil;
-import org.onap.aaiclient.client.aai.AAIVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.fail;
 import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
 
 /**
- * Basic Integration test for PNFSoftwareUpgrade.bpmn workflow.
+ * Basic Integration test for GenericPnfHealthCheck.bpmn workflow.
  */
-public class PNFSoftwareUpgradeTest extends BaseBPMNTest {
+public class PnfHealthCheckTest extends BaseBPMNTest {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private static final long WORKFLOW_WAIT_TIME = 1000L;
 
-    private static final String TEST_PROCESSINSTANCE_KEY = "PNFSoftwareUpgrade";
+    private static final String TEST_PROCESSINSTANCE_KEY = "GenericPnfHealthCheck";
     private static final AAIVersion VERSION = AAIVersion.LATEST;
-    private static final Map<String, Object> executionVariables = new HashMap();
+    private static final Map<String, Object> executionVariables = new HashMap<>();
     private static final String REQUEST_ID = "50ae41ad-049c-4fe2-9950-539f111120f5";
-    private final String[] actionNames = new String[4];
+    private static final String ACTION_NAME = "healthCheck";
+    private final String CLASS_NAME = getClass().getSimpleName();
     private String requestObject;
     private String responseObject;
 
@@ -69,16 +65,11 @@ public class PNFSoftwareUpgradeTest extends BaseBPMNTest {
     private GrpcNettyServer grpcNettyServer;
 
     @Before
-    public void setUp() throws IOException {
-        actionNames[0] = "preCheck";
-        actionNames[1] = "downloadNESw";
-        actionNames[2] = "activateNESw";
-        actionNames[3] = "postCheck";
-
+    public void setUp() {
         executionVariables.clear();
 
-        requestObject = FileUtil.readResourceFile("request/" + getClass().getSimpleName() + ".json");
-        responseObject = FileUtil.readResourceFile("response/" + getClass().getSimpleName() + ".json");
+        requestObject = FileUtil.readResourceFile("request/" + CLASS_NAME + ".json");
+        responseObject = FileUtil.readResourceFile("response/" + CLASS_NAME + ".json");
 
         executionVariables.put("bpmnRequest", requestObject);
         executionVariables.put("requestId", REQUEST_ID);
@@ -91,7 +82,7 @@ public class PNFSoftwareUpgradeTest extends BaseBPMNTest {
 
         /**
          * Temporary solution to add pnfCorrelationId to context. this value is getting from the request to SO api
-         * handler and then convert to CamudaInput
+         * handler and then convert to CamundaInput
          */
         executionVariables.put(ExecutionVariableNames.PNF_CORRELATION_ID, "PNFDemo");
     }
@@ -120,29 +111,26 @@ public class PNFSoftwareUpgradeTest extends BaseBPMNTest {
         }
 
         // Layout is to reflect the bpmn visual layout
-        assertThat(pi).isEnded().hasPassedInOrder("softwareUpgrade_startEvent", "ServiceTask_042uz7n",
-                "ScriptTask_10klpg8", "ServiceTask_0slpahe", "ExclusiveGateway_0x6h0ni", "ServiceTask_0x5cje8",
-                "ExclusiveGateway_0v3l3wv", "ServiceTask_02lxf48", "ExclusiveGateway_0ch3fef", "ServiceTask_0y2uysu",
-                "ExclusiveGateway_1ny9b1z", "ScriptTask_1igtc83", "CallActivity_0o1mi8u", "softwareUpgrade_endEvent");
+        assertThat(pi).isEnded().hasPassedInOrder("pnfHealthCheck_startEvent", "ServiceTask_042uz7m",
+                "ScriptTask_10klpg9", "ServiceTask_0slpaht", "ExclusiveGateway_0x6h0yi", "ScriptTask_1igtc83",
+                "CallActivity_0o1mi8u", "pnfHealthCheck_endEvent");
 
         List<ExecutionServiceInput> detailedMessages = grpcNettyServer.getDetailedMessages();
         assertThat(detailedMessages.size() == 4);
         int count = 0;
         try {
             for (ExecutionServiceInput eSI : detailedMessages) {
-                for (String action : actionNames) {
-                    if (action.equals(eSI.getActionIdentifiers().getActionName())
-                            && eSI.getCommonHeader().getRequestId().equals(msoRequestId)) {
-                        checkWithActionName(eSI, action);
-                        count++;
-                    }
+                if (ACTION_NAME.equals(eSI.getActionIdentifiers().getActionName())
+                        && eSI.getCommonHeader().getRequestId().equals(msoRequestId)) {
+                    checkWithActionName(eSI, ACTION_NAME);
+                    count++;
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            fail("PNFSoftwareUpgrade request exception", e);
+            fail("PNFHealthCheck request exception", e);
         }
-        assertThat(count == actionNames.length);
+        assertThat(count == 1);
     }
 
     private boolean isProcessInstanceEnded() {
@@ -156,9 +144,9 @@ public class PNFSoftwareUpgradeTest extends BaseBPMNTest {
         ActionIdentifiers actionIdentifiers = executionServiceInput.getActionIdentifiers();
 
         /**
-         * the fields of actionIdentifiers should match the one in the response/PNFSoftwareUpgrade_catalogdb.json.
+         * the fields of actionIdentifiers should match the one in the response/PnfHealthCheck_catalogdb.json.
          */
-        assertThat(actionIdentifiers.getBlueprintName()).isEqualTo("test_pnf_software_upgrade_restconf");
+        assertThat(actionIdentifiers.getBlueprintName()).isEqualTo("test_pnf_health_check_restconf");
         assertThat(actionIdentifiers.getBlueprintVersion()).isEqualTo("1.0.0");
         assertThat(actionIdentifiers.getActionName()).isEqualTo(action);
         assertThat(actionIdentifiers.getMode()).isEqualTo("async");
@@ -177,8 +165,6 @@ public class PNFSoftwareUpgradeTest extends BaseBPMNTest {
                 .isEqualTo("32daaac6-5017-4e1e-96c8-6a27dfbe1421");
         assertThat(propertiesStruct.getFieldsOrThrow("pnf-customization-uuid").getStringValue())
                 .isEqualTo("38dc9a92-214c-11e7-93ae-92361f002680");
-        assertThat(propertiesStruct.getFieldsOrThrow("target-software-version").getStringValue())
-                .isEqualTo("demo-sw-ver2.0.0");
     }
 
     private void mockAai() {
@@ -199,7 +185,7 @@ public class PNFSoftwareUpgradeTest extends BaseBPMNTest {
         wireMockServer.stubFor(
                 get(urlEqualTo("/aai/" + VERSION + "/network/pnfs/pnf/PNFDemo")).willReturn(okJson(aaiPnfEntry)));
 
-        /*
+        /**
          * Post the pnf to AAI
          */
         wireMockServer.stubFor(post(urlEqualTo("/aai/" + VERSION + "/network/pnfs/pnf/PNFDemo")));
@@ -218,8 +204,7 @@ public class PNFSoftwareUpgradeTest extends BaseBPMNTest {
      */
     private void mockCatalogDb() {
 
-        String catalogdbClientResponse =
-                FileUtil.readResourceFile("response/" + getClass().getSimpleName() + "_catalogdb.json");
+        String catalogdbClientResponse = FileUtil.readResourceFile("response/" + CLASS_NAME + "_catalogdb.json");
 
 
         /**
