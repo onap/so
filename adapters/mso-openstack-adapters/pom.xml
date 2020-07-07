@@ -353,5 +353,10 @@
       <artifactId>camunda-external-task-client</artifactId>
       <version>1.1.1</version>
     </dependency>
+    <dependency>
+      <groupId>com.github.seancfoley</groupId>
+      <artifactId>ipaddress</artifactId>
+      <version>2.0.0</version>
+    </dependency>
   </dependencies>
 </project>

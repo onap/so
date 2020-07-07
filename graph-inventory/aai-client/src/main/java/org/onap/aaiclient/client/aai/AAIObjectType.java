@@ -63,6 +63,7 @@ import org.onap.aai.domain.yang.ServiceSubscription;
 import org.onap.aai.domain.yang.SliceProfile;
 import org.onap.aai.domain.yang.SpPartner;
 import org.onap.aai.domain.yang.SriovPf;
+import org.onap.aai.domain.yang.SriovVf;
 import org.onap.aai.domain.yang.Subnet;
 import org.onap.aai.domain.yang.Tenant;
 import org.onap.aai.domain.yang.TunnelXconnect;
@@ -184,6 +185,8 @@ public class AAIObjectType implements AAIObjectBase, GraphInventoryObjectType, S
             new AAIObjectType(AAINamespaceConstants.NETWORK, AggregateRoute.class);
     public static final AAIObjectType L_INTERFACE =
             new AAIObjectType(AAIObjectType.VSERVER.uriTemplate(), LInterface.class);
+    public static final AAIObjectType SRIOV_VF =
+            new AAIObjectType(AAIObjectType.L_INTERFACE.uriTemplate(), SriovVf.class);
     public static final AAIObjectType SUB_L_INTERFACE = new AAIObjectType(AAIObjectType.L_INTERFACE.uriTemplate(),
             "/l-interfaces/l-interface/{sub-interface-name}", "sub-l-interface");
     public static final AAIObjectType IMAGE = new AAIObjectType(AAIObjectType.CLOUD_REGION.uriTemplate(), Image.class);

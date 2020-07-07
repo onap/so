@@ -85,11 +85,13 @@ import org.openstack4j.model.network.IP;
 import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.NetworkType;
 import org.openstack4j.model.network.Port;
+import org.openstack4j.model.network.Subnet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import inet.ipaddr.IPAddressString;
 
 /**
  * This class provides an implementation of {@link HeatBridgeApi}
@@ -259,13 +261,12 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                 extractStackResourceIdsByResourceType(stackResources, HeatBridgeConstants.OS_PORT_RESOURCE_TYPE);
         for (String portId : portIds) {
             Port port = osClient.getPortById(portId);
+            Network network = osClient.getNetworkById(port.getNetworkId());
             LInterface lIf = new LInterface();
             lIf.setInterfaceId(port.getId());
             lIf.setInterfaceName(port.getName());
             lIf.setMacaddr(port.getMacAddress());
-            if (port.getProfile() != null && port.getProfile().get("physical_network") != null) {
-                lIf.setNetworkName((String) port.getProfile().get("physical_network"));
-            }
+            lIf.setNetworkName(network.getName());
             lIf.setIsPortMirrored(false);
             lIf.setIsIpUnnumbered(false);
             lIf.setInMaint(false);
@@ -283,11 +284,15 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             }
             lIf.setL2Multicasting(isL2Multicast);
             updateLInterfaceIps(port, lIf);
-            updateLInterfaceVlan(port, lIf);
+            if (cloudOwner.equals(env.getProperty("mso.cloudOwner.included", ""))) {
+                updateLInterfaceVlan(port, lIf);
+            }
 
             // Update l-interface to the vserver
             transaction.create(AAIUriFactory.createResourceUri(AAIObjectType.L_INTERFACE, cloudOwner, cloudRegionId,
                     tenantId, port.getDeviceId(), lIf.getInterfaceName()), lIf);
+
+            updateSriovPfToPserver(port, lIf);
         }
     }
 
@@ -341,8 +346,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
         Vlan vlan = new Vlan();
         Network network = osClient.getNetworkById(port.getNetworkId());
         if (network.getNetworkType() != null && network.getNetworkType().equals(NetworkType.VLAN)) {
-            vlan.setVlanInterface(network.getName() + network.getProviderSegID());
-
+            vlan.setVlanInterface(port.getName() + network.getProviderSegID());
             vlan.setVlanIdOuter(Long.parseLong(network.getProviderSegID()));
             vlan.setVlanIdInner(0L);
             vlan.setInMaint(false);
@@ -362,17 +366,12 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             SriovVf sriovVf = new SriovVf();
             sriovVf.setPciId(port.getProfile().get(HeatBridgeConstants.OS_PCI_SLOT_KEY).toString());
             sriovVf.setNeutronNetworkId(port.getNetworkId());
-            if (port.getVifDetails() != null) {
-                sriovVf.setVfVlanFilter((String) port.getVifDetails().get(HeatBridgeConstants.OS_VLAN_NETWORK_KEY));
-            }
+            sriovVf.setVfVlanFilter("0");
             sriovVf.setVfVlanAntiSpoofCheck(false);
             sriovVf.setVfMacAntiSpoofCheck(false);
             sriovVfList.add(sriovVf);
 
             lIf.setSriovVfs(sriovVfs);
-
-            // For the given port create sriov-pf for host pserver/p-interface if absent
-            updateSriovPfToPserver(port, lIf);
         }
     }
 
@@ -386,48 +385,59 @@ public class HeatBridgeImpl implements HeatBridgeApi {
      * @param lIf AAI l-interface object
      */
     private void updateSriovPfToPserver(final Port port, final LInterface lIf) {
-        if (port.getProfile() == null || Strings
-                .isNullOrEmpty(port.getProfile().get(HeatBridgeConstants.OS_PHYSICAL_NETWORK_KEY).toString())) {
-            logger.debug("The SRIOV port:" + port.getName() + " is missing physical-network-id, cannot update "
-                    + "sriov-pf object for host pserver: " + port.getHostId());
-            return;
-        }
-        Optional<String> matchingPifName = HeatBridgeUtils.getMatchingPserverPifName(
-                port.getProfile().get(HeatBridgeConstants.OS_PHYSICAL_NETWORK_KEY).toString());
-        if (matchingPifName.isPresent()) {
-            // Update l-interface description
-            String pserverHostName = port.getHostId();
-            lIf.setInterfaceDescription("Attached to SR-IOV port: " + pserverHostName + "::" + matchingPifName.get());
-            try {
-                Optional<PInterface> matchingPIf = resourcesClient.get(PInterface.class,
-                        AAIUriFactory
-                                .createResourceUri(AAIObjectType.P_INTERFACE, pserverHostName, matchingPifName.get())
-                                .depth(Depth.ONE));
-                if (matchingPIf.isPresent()) {
-                    SriovPfs pIfSriovPfs = matchingPIf.get().getSriovPfs();
-                    if (pIfSriovPfs == null) {
-                        pIfSriovPfs = new SriovPfs();
-                    }
-                    // Extract PCI-ID from OS port object
-                    String pfPciId = port.getProfile().get(HeatBridgeConstants.OS_PCI_SLOT_KEY).toString();
+        if (port.getvNicType().equalsIgnoreCase(HeatBridgeConstants.OS_SRIOV_PORT_TYPE)) {
+            if (port.getProfile() == null || Strings
+                    .isNullOrEmpty(port.getProfile().get(HeatBridgeConstants.OS_PHYSICAL_NETWORK_KEY).toString())) {
+                logger.debug("The SRIOV port:" + port.getName() + " is missing physical-network-id, cannot update "
+                        + "sriov-pf object for host pserver: " + port.getHostId());
+                return;
+            }
+            Optional<String> matchingPifName = HeatBridgeUtils.getMatchingPserverPifName(
+                    port.getProfile().get(HeatBridgeConstants.OS_PHYSICAL_NETWORK_KEY).toString());
+            if (matchingPifName.isPresent()) {
+                // Update l-interface description
+                String pserverHostName = port.getHostId();
+                lIf.setInterfaceDescription(
+                        "Attached to SR-IOV port: " + pserverHostName + "::" + matchingPifName.get());
+                try {
+                    Optional<PInterface> matchingPIf = resourcesClient.get(PInterface.class, AAIUriFactory
+                            .createResourceUri(AAIObjectType.P_INTERFACE, pserverHostName, matchingPifName.get())
+                            .depth(Depth.ONE));
+                    if (matchingPIf.isPresent()) {
+                        SriovPfs pIfSriovPfs = matchingPIf.get().getSriovPfs();
+                        if (pIfSriovPfs == null) {
+                            pIfSriovPfs = new SriovPfs();
+                        }
+                        // Extract PCI-ID from OS port object
+                        String pfPciId = port.getProfile().get(HeatBridgeConstants.OS_PCI_SLOT_KEY).toString();
 
-                    List<SriovPf> existingSriovPfs = pIfSriovPfs.getSriovPf();
-                    if (CollectionUtils.isEmpty(existingSriovPfs) || existingSriovPfs.stream()
-                            .noneMatch(existingSriovPf -> existingSriovPf.getPfPciId().equals(pfPciId))) {
-                        // Add sriov-pf object with PCI-ID to AAI
-                        SriovPf sriovPf = new SriovPf();
-                        sriovPf.setPfPciId(pfPciId);
-                        logger.debug("Queuing AAI command to update sriov-pf object to pserver: " + pserverHostName
-                                + "/" + matchingPifName.get());
-                        transaction.create(AAIUriFactory.createResourceUri(AAIObjectType.SRIOV_PF, pserverHostName,
-                                matchingPifName.get(), sriovPf.getPfPciId()), sriovPf);
+                        List<SriovPf> existingSriovPfs = pIfSriovPfs.getSriovPf();
+                        if (CollectionUtils.isEmpty(existingSriovPfs) || existingSriovPfs.stream()
+                                .noneMatch(existingSriovPf -> existingSriovPf.getPfPciId().equals(pfPciId))) {
+                            // Add sriov-pf object with PCI-ID to AAI
+                            SriovPf sriovPf = new SriovPf();
+                            sriovPf.setPfPciId(pfPciId);
+                            logger.debug("Queuing AAI command to update sriov-pf object to pserver: " + pserverHostName
+                                    + "/" + matchingPifName.get());
+
+                            AAIResourceUri sriovPfUri = AAIUriFactory.createResourceUri(AAIObjectType.SRIOV_PF,
+                                    pserverHostName, matchingPifName.get(), sriovPf.getPfPciId());
+
+                            transaction.create(sriovPfUri, sriovPf);
+
+                            AAIResourceUri sriovVfUri = AAIUriFactory.createResourceUri(AAIObjectType.SRIOV_VF,
+                                    cloudOwner, cloudRegionId, tenantId, port.getDeviceId(), lIf.getInterfaceName(),
+                                    port.getProfile().get(HeatBridgeConstants.OS_PCI_SLOT_KEY).toString());
+
+                            transaction.connect(sriovPfUri, sriovVfUri);
+                        }
                     }
+                } catch (WebApplicationException e) {
+                    // Silently log that we failed to update the Pserver p-interface with PCI-ID
+                    logger.error(LoggingAnchor.NINE, MessageEnum.GENERAL_EXCEPTION, pserverHostName,
+                            matchingPifName.get(), cloudOwner, tenantId, "OpenStack", "Heatbridge",
+                            ErrorCode.DataError.getValue(), "Exception - Failed to add sriov-pf object to pserver", e);
                 }
-            } catch (WebApplicationException e) {
-                // Silently log that we failed to update the Pserver p-interface with PCI-ID
-                logger.error(LoggingAnchor.NINE, MessageEnum.GENERAL_EXCEPTION, pserverHostName, matchingPifName.get(),
-                        cloudOwner, tenantId, "OpenStack", "Heatbridge", ErrorCode.DataError.getValue(),
-                        "Exception - Failed to add sriov-pf object to pserver", e);
             }
         }
     }
@@ -437,11 +447,13 @@ public class HeatBridgeImpl implements HeatBridgeApi {
         for (IP ip : port.getFixedIps()) {
             String ipAddress = ip.getIpAddress();
             if (InetAddressValidator.getInstance().isValidInet4Address(ipAddress)) {
+                Subnet subnet = osClient.getSubnetById(ip.getSubnetId());
+                IPAddressString cidr = new IPAddressString(subnet.getCidr());
                 L3InterfaceIpv4AddressList lInterfaceIp = new L3InterfaceIpv4AddressList();
                 lInterfaceIp.setL3InterfaceIpv4Address(ipAddress);
                 lInterfaceIp.setNeutronNetworkId(port.getNetworkId());
                 lInterfaceIp.setNeutronSubnetId(ip.getSubnetId());
-                lInterfaceIp.setL3InterfaceIpv4PrefixLength(32L);
+                lInterfaceIp.setL3InterfaceIpv4PrefixLength(Long.parseLong(cidr.getNetworkPrefixLength().toString()));
                 lInterfaceIps.add(lInterfaceIp);
             }
         }
