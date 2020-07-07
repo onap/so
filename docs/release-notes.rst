@@ -9,6 +9,81 @@ Service Orchestrator Release Notes
 
 The SO provides the highest level of service orchestration in the ONAP architecture. 
 
+
+
+Version: 1.6.4
+-----------------------
+
+:Release Date: 
+
+**Docker Images**
+
+**Dockers released for SO:**
+
+ - onap/so/api-handler-infra
+ - onap/so/bpmn-infra
+ - onap/so/catalog-db-adapter
+ - onap/so/openstack-adapter
+ - onap/so/request-db-adapter
+ - onap/so/sdc-controller
+ - onap/so/sdnc-adapter
+ - onap/so/so-monitoring
+ - onap/so/vfc-adapter
+ - onap/so/vnfm-adapter
+ - onap/so/ve-vnfm-adapter
+ - onap/so/nssmf-adapter
+ - onap/so/appc-orchestrator
+
+**Release Purpose**
+
+The main goal of the Frankfurt maintenance release was to:
+
+	- Appc Orchestraor changes were merged in SO and OOM as part of the release. This also used for the inplace software update flows.
+	- MDONS had an issue in its delete flow that was addressed.
+	- Vnfm-Adapter was unable to communicate with ETSI-Catalog through MSB, as the MSB cert is changed during the RC2 and this impacted the SO and ETSI Catalog DB connectivity.
+
+**New Features**
+--N/A--
+**Epics**
+--N/A--
+**Stories**
+--N/A--
+**Key Issues Addressed**
+
+-  [`SO-2903 <https://jira.onap.org/browse/SO-2903>`__\ ] - Include so-appc-orchestrator with SO OOM
+-  [`SO-2967 <https://jira.onap.org/browse/SO-2967>`__\ ] - Error in Delete MDONS service flow which causes No such property error
+-  [`SO-2982 <https://jira.onap.org/browse/SO-2982>`__\ ] - Vnfm-Adapter unable to communicate with ETSI-Catalog through MSB.
+-  [`SO-3022 <https://jira.onap.org/browse/SO-3022>`__\ ] - Use BB-based VNF-InPlaceUpdate flow for inPlaceSoftwareUpdate requests. 
+
+
+**Security Notes**
+ 
+ Quick Links:
+
+ - `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`_
+ - `Passing Badge information for SO <https://bestpractices.coreinfrastructure.org/en/projects/1702>`_
+
+
+**Known Issues**
+
+
+OJSI Issues
+
+	N/A
+
+**Upgrade Notes**
+
+	N/A
+
+**Deprecation Notes**
+
+	N/A
+
+**Other**
+
+	N/A
+***************************************************************************************
+
 Version: 1.6.3
 -----------------------
 
