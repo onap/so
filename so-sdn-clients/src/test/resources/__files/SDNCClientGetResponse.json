@@ -1,0 +1,27 @@
+{
+  "vnf-topology": {
+    "tenant": "0422ffb57ba042c0800a29dc85ca70f8",
+    "vnf-topology-identifier-structure": {
+      "vnf-id": "66dac89b-2a5b-4cb9-b22e-a7e4488fb3db",
+      "vnf-type": "InfraMSO_vSAMP10a_Service/InfraMSO_vSAMP10a-2 0",
+      "vnf-name": "MSO-DEV-VNF-1806HF1-InfraMSO_vSAMP10a-1XXX-GR_21"
+    },
+    "aic-clli": "AUSTTXGR",
+    "vnf-resource-assignments": {
+      "availability-zones": {
+        "availability-zone": [
+          "AZ-MN02"
+        ],
+        "max-count": 1
+      }
+    },
+    "aic-cloud-region": "mtn6",
+    "onap-model-information": {
+      "model-customization-uuid": "034226ae-879a-46b5-855c-d02babcb6cb6",
+      "model-uuid": "cb79c25f-b30d-4d95-afb5-97be4021f3db",
+      "model-invariant-uuid": "e93d3a7a-446d-486b-ae48-d474a9156064",
+      "model-name": "InfraMSO_vSAMP10a-2",
+      "model-version": "1.0"
+    }
+  }
+}

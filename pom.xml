@@ -29,6 +29,8 @@
     <module>mso-api-handlers</module>
     <module>adapters</module>
     <module>asdc-controller</module>
+    <module>so-optimization-clients</module>
+    <module>so-sdn-clients</module>
     <module>bpmn</module>
     <module>cloudify-client</module>
     <module>cxf-logging</module>

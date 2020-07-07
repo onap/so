@@ -1,0 +1,7 @@
+{
+  "model-name" : "modelName",
+  "model-version" : "modelVersion",
+  "model-customization-uuid" : null,
+  "model-uuid" : "modelUuid",
+  "model-invariant-uuid" : "modelInvariantUuid"
+}

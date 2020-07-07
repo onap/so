@@ -1,0 +1,74 @@
+{
+  "service-information" : {
+    "onap-model-information" : {
+      "model-name" : "serviceModelName",
+      "model-version" : "serviceModelVersion",
+      "model-customization-uuid" : null,
+      "model-uuid" : "serviceModelUuid",
+      "model-invariant-uuid" : "serviceModelInvariantUuid"
+    },
+    "subscriber-name" : null,
+    "subscription-service-type" : "productFamilyId",
+    "service-id" : "serviceInstanceId",
+    "global-customer-id" : "globalCustomerId",
+    "service-instance-id" : "serviceInstanceId"
+  },
+  "vf-module-request-input" : {
+    "aic-clli" : null,
+    "aic-cloud-region" : null,
+    "tenant" : null,
+    "vf-module-input-parameters" : {
+      "param" : [ {
+        "name" : "key1",
+        "value" : "value1"
+      },
+      {
+        "name" : "key2",
+        "value" : "value2"
+      },
+      {
+        "name" : "volume-group-id",
+        "value" : "volumeGroupId"
+      } ]
+    },
+    "vf-module-name" : "testVfModuleName"    
+  },
+  "request-information" : {
+    "request-action" : "CreateVfModuleInstance",
+    "source" : "MSO",
+    "request-id" : "sdncReqId",
+    "order-number" : null,
+    "order-version" : null,
+    "notification-url" : null
+  },
+  "sdnc-request-header" : {
+    "svc-request-id" : "svcRequestId",
+    "svc-notification-url" : "http://localhost:8080",
+    "svc-action" : "assign"
+  },
+  "vf-module-information" : {
+    "onap-model-information" : {
+      "model-name" : "vfModuleModelName",
+      "model-version" : "vfModuleModelVersion",
+      "model-customization-uuid" : "vfModuleModelCustomizationUuid",
+      "model-uuid" : "vfModuleModelUuid",
+      "model-invariant-uuid" : "vfModuleModelInvariantUuid"
+    },
+    "vf-module-id" : "testVfModuleId",
+    "from-preload" : true,
+    "vf-module-type": "vfModuleModelName"
+   
+  },
+  "vnf-information" : {
+    "onap-model-information" : {
+      "model-name" : "vnfModelName",
+      "model-version" : "vnfModelVersion",
+      "model-customization-uuid" : "vnfModelCustomizationUuid",
+      "model-uuid" : "vnfModelUuid",
+      "model-invariant-uuid" : "vnfModelInvariantUuid"
+    },
+    "vnf-id" : "testVnfId",
+    "vnf-type" : "testVnfType",
+    "vnf-name" : "testVnfName"
+  }
+}

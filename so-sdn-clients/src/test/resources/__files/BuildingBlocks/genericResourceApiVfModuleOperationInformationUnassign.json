@@ -1,0 +1,31 @@
+{
+  "service-information" : {    
+    "service-instance-id" : "serviceInstanceId",
+    "service-id" : "serviceInstanceId"
+  },
+  "vf-module-request-input" : {
+    "vf-module-name" : "testVfModuleName",
+     "vf-module-input-parameters" : {}        
+  },
+  "request-information" : {
+    "request-action" : "DeleteVfModuleInstance",
+    "source" : "MSO",
+    "request-id" : "sdncReqId",
+    "order-number" : null,
+    "order-version" : null,
+    "notification-url" : null
+  },
+  "sdnc-request-header" : {
+    "svc-request-id" : "svcRequestId",
+    "svc-notification-url" : "http://localhost:8080",
+    "svc-action" : "unassign"
+  },
+  "vf-module-information" : {    
+    "vf-module-id" : "testVfModuleId",
+    "from-preload": true  
+ },
+  "vnf-information" : {    
+    "vnf-id" : "testVnfId",
+    "vnf-type" : "testVnfType"
+  }
+}

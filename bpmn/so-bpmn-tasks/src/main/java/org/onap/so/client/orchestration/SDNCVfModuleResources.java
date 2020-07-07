@@ -24,6 +24,7 @@ package org.onap.so.client.orchestration;
 
 import java.net.URI;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVfModuleOperationInformation;
+import org.onap.so.bpmn.infrastructure.sdnc.mapper.VfModuleTopologyOperationRequestMapper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -36,7 +37,6 @@ import org.onap.so.client.exception.MapperException;
 import org.onap.so.client.sdnc.SDNCClient;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
-import org.onap.so.client.sdnc.mapper.VfModuleTopologyOperationRequestMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
