@@ -108,7 +108,8 @@ public class CreateAAIInventory {
             if (!CollectionUtils.isEmpty(oobMgtNetNames)) {
                 oobMgtNetIds = heatBridgeClient.extractNetworkIds(oobMgtNetNames);
             }
-            heatBridgeClient.buildAddVserverLInterfacesToAaiAction(stackResources, oobMgtNetIds);
+            heatBridgeClient.buildAddVserverLInterfacesToAaiAction(stackResources, oobMgtNetIds,
+                    cloudInformation.getOwner());
             logger.debug(
                     "Successfully queried neutron resources and built AAI actions to add l-interfaces to vservers.");
 
