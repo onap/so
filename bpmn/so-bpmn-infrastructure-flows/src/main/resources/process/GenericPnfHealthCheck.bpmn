@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1yd8m0g" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.0.0">
+  <bpmn:process id="GenericPnfHealthCheck" name="GenericPnfHealthCheck" isExecutable="true">
+    <bpmn:startEvent id="pnfHealthCheck_startEvent" name="Start Flow">
+      <bpmn:outgoing>SequenceFlow_1ng4b6l</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="ServiceTask_042uz7m" name="PNF Request Dispatcher" camunda:delegateExpression="${GenericPnfDispatcher}">
+      <bpmn:incoming>SequenceFlow_1ng4b6l</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_12ejx4m</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_12ejx4m" sourceRef="ServiceTask_042uz7m" targetRef="ScriptTask_10klpg9" />
+    <bpmn:endEvent id="pnfHealthCheck_endEvent" name="End">
+      <bpmn:incoming>SequenceFlow_0tle5zb</bpmn:incoming>
+      <bpmn:terminateEventDefinition />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1ng4b6l" sourceRef="pnfHealthCheck_startEvent" targetRef="ServiceTask_042uz7m" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0x6h0yi" default="SequenceFlow_0piri91">
+      <bpmn:incoming>SequenceFlow_0j26xlx</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0piri91</bpmn:outgoing>
+      <bpmn:outgoing>Flow_015z1h4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="EndEvent_180lm4y">
+      <bpmn:incoming>SequenceFlow_0piri91</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0fm5he7" errorRef="Error_12cpov5" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0piri91" name="Failure" sourceRef="ExclusiveGateway_0x6h0yi" targetRef="EndEvent_180lm4y" />
+    <bpmn:scriptTask id="ScriptTask_10klpg9" name="Send Response" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_12ejx4m</bpmn:incoming>
+      <bpmn:outgoing>Flow_12uv2m0</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def taskProcessor = new GenericPnfTaskProcessor()
+taskProcessor.sendResponse(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="ScriptTask_1igtc83" name="Prepare Completion" scriptFormat="groovy">
+      <bpmn:incoming>Flow_015z1h4</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0ipc3nt</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def taskProcessor = new GenericPnfTaskProcessor()
+taskProcessor.prepareCompletion(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0ipc3nt" sourceRef="ScriptTask_1igtc83" targetRef="CallActivity_0o1mi8u" />
+    <bpmn:callActivity id="CallActivity_0o1mi8u" name="Complete Process" calledElement="CompleteMsoProcess">
+      <bpmn:extensionElements>
+        <camunda:in source="PnfSwUpgrade_CompleteMsoProcessRequest" target="CompleteMsoProcessRequest" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0ipc3nt</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0tle5zb</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_0tle5zb" sourceRef="CallActivity_0o1mi8u" targetRef="pnfHealthCheck_endEvent" />
+    <bpmn:subProcess id="SubProcess_02p6q4s" name="Subprocess for FalloutHandler" triggeredByEvent="true">
+      <bpmn:startEvent id="StartEvent_149ecdm" name="Catch All Errors">
+        <bpmn:outgoing>SequenceFlow_05haut5</bpmn:outgoing>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_1" />
+      </bpmn:startEvent>
+      <bpmn:scriptTask id="ScriptTask_0gov132" name="Prepare FalloutHandler" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_05haut5</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_09y0mpc</bpmn:outgoing>
+        <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def pnfSwUpgrade = new PNFSoftwareUpgrade()
+pnfSwUpgrade.prepareFalloutHandler(execution)</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:callActivity id="CallActivity_00psvtk" name="Call FalloutHandler" calledElement="FalloutHandler">
+        <bpmn:extensionElements>
+          <camunda:in source="PnfSwUpgrade_FalloutHandlerRequest" target="FalloutHandlerRequest" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>SequenceFlow_09y0mpc</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1tcjlty</bpmn:outgoing>
+      </bpmn:callActivity>
+      <bpmn:endEvent id="EndEvent_1vq2glg" name="End">
+        <bpmn:incoming>SequenceFlow_1tcjlty</bpmn:incoming>
+        <bpmn:terminateEventDefinition id="TerminateEventDefinition_0994ojb" />
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_05haut5" sourceRef="StartEvent_149ecdm" targetRef="ScriptTask_0gov132" />
+      <bpmn:sequenceFlow id="SequenceFlow_09y0mpc" sourceRef="ScriptTask_0gov132" targetRef="CallActivity_00psvtk" />
+      <bpmn:sequenceFlow id="SequenceFlow_1tcjlty" sourceRef="CallActivity_00psvtk" targetRef="EndEvent_1vq2glg" />
+    </bpmn:subProcess>
+    <bpmn:serviceTask id="ServiceTask_0slpaht" name="HealthCheck" camunda:delegateExpression="${ControllerExecutionDE}">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="action">healthCheck</camunda:inputParameter>
+          <camunda:inputParameter name="scope">pnf</camunda:inputParameter>
+          <camunda:inputParameter name="mode">async</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_12uv2m0</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0j26xlx</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0j26xlx" sourceRef="ServiceTask_0slpaht" targetRef="ExclusiveGateway_0x6h0yi" />
+    <bpmn:sequenceFlow id="Flow_015z1h4" name="Success" sourceRef="ExclusiveGateway_0x6h0yi" targetRef="ScriptTask_1igtc83">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("ControllerStatus").equals("Success")}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_12uv2m0" sourceRef="ScriptTask_10klpg9" targetRef="ServiceTask_0slpaht" />
+  </bpmn:process>
+  <bpmn:error id="Error_12cpov5" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="GenericPnfHealthCheck">
+      <bpmndi:BPMNEdge id="Flow_12uv2m0_di" bpmnElement="Flow_12uv2m0">
+        <di:waypoint x="530" y="120" />
+        <di:waypoint x="590" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_015z1h4_di" bpmnElement="Flow_015z1h4">
+        <di:waypoint x="825" y="120" />
+        <di:waypoint x="900" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="842" y="102" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0j26xlx_di" bpmnElement="SequenceFlow_0j26xlx">
+        <di:waypoint x="690" y="120" />
+        <di:waypoint x="775" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0tle5zb_di" bpmnElement="SequenceFlow_0tle5zb">
+        <di:waypoint x="1180" y="120" />
+        <di:waypoint x="1262" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ipc3nt_di" bpmnElement="SequenceFlow_0ipc3nt">
+        <di:waypoint x="1000" y="120" />
+        <di:waypoint x="1080" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0piri91_di" bpmnElement="SequenceFlow_0piri91">
+        <di:waypoint x="800" y="145" />
+        <di:waypoint x="800" y="202" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="793" y="145" width="35" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ng4b6l_di" bpmnElement="SequenceFlow_1ng4b6l">
+        <di:waypoint x="178" y="120" />
+        <di:waypoint x="270" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_12ejx4m_di" bpmnElement="SequenceFlow_12ejx4m">
+        <di:waypoint x="370" y="120" />
+        <di:waypoint x="430" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="pnfHealthCheck_startEvent">
+        <dc:Bounds x="142" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="137" y="145" width="51" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_042uz7n_di" bpmnElement="ServiceTask_042uz7m">
+        <dc:Bounds x="270" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1w3jv30_di" bpmnElement="pnfHealthCheck_endEvent">
+        <dc:Bounds x="1262" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1271" y="145" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0x6h0ni_di" bpmnElement="ExclusiveGateway_0x6h0yi" isMarkerVisible="true">
+        <dc:Bounds x="775" y="95" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_180lm4y_di" bpmnElement="EndEvent_180lm4y">
+        <dc:Bounds x="782" y="202" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_10klpg8_di" bpmnElement="ScriptTask_10klpg9">
+        <dc:Bounds x="430" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1igtc83_di" bpmnElement="ScriptTask_1igtc83">
+        <dc:Bounds x="900" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_0o1mi8u_di" bpmnElement="CallActivity_0o1mi8u">
+        <dc:Bounds x="1080" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_02p6q4s_di" bpmnElement="SubProcess_02p6q4s" isExpanded="true">
+        <dc:Bounds x="370" y="430" width="650" height="190" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1tcjlty_di" bpmnElement="SequenceFlow_1tcjlty">
+        <di:waypoint x="810" y="530" />
+        <di:waypoint x="882" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_09y0mpc_di" bpmnElement="SequenceFlow_09y0mpc">
+        <di:waypoint x="640" y="530" />
+        <di:waypoint x="710" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_05haut5_di" bpmnElement="SequenceFlow_05haut5">
+        <di:waypoint x="478" y="530" />
+        <di:waypoint x="540" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_1r4h504_di" bpmnElement="StartEvent_149ecdm">
+        <dc:Bounds x="442" y="512" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="421" y="553" width="78" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0gov132_di" bpmnElement="ScriptTask_0gov132">
+        <dc:Bounds x="540" y="490" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_00psvtk_di" bpmnElement="CallActivity_00psvtk">
+        <dc:Bounds x="710" y="490" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1vq2glg_di" bpmnElement="EndEvent_1vq2glg">
+        <dc:Bounds x="882" y="512" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="891" y="555" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0slpahe_di" bpmnElement="ServiceTask_0slpaht">
+        <dc:Bounds x="590" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
