@@ -440,7 +440,8 @@ public class SniroHomingV2 {
         if (!candidates.isEmpty()) {
             for (Candidate c : candidates) {
                 org.onap.so.client.sniro.beans.Candidate can = new org.onap.so.client.sniro.beans.Candidate();
-                can.setIdentifierType(c.getIdentifierType());
+                can.setIdentifierType(
+                        org.onap.so.client.sniro.beans.CandidateType.valueOf(c.getIdentifierType().name()));
                 can.setIdentifiers(c.getIdentifiers());
                 can.setCloudOwner(c.getCloudOwner());
                 candidateList.add(can);

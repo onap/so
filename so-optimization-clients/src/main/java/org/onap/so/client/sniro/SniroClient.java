@@ -23,10 +23,9 @@
 package org.onap.so.client.sniro;
 
 import java.util.LinkedHashMap;
-import org.camunda.bpm.engine.delegate.BpmnError;
-import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.client.BaseClient;
 import org.onap.so.client.exception.BadResponseException;
+import org.onap.so.client.sniro.beans.ConductorProperties;
 import org.onap.so.client.sniro.beans.ManagerProperties;
 import org.onap.so.client.sniro.beans.SniroConductorRequest;
 import org.onap.so.client.sniro.beans.SniroManagerRequest;
@@ -57,7 +56,6 @@ public class SniroClient {
      * @param homingRequest
      * @return
      * @throws BadResponseException
-     * @throws BpmnError
      */
     public void postDemands(SniroManagerRequest homingRequest) throws BadResponseException {
         logger.trace("Started Sniro Client Post Demands");
@@ -95,14 +93,13 @@ public class SniroClient {
      */
     public void postRelease(SniroConductorRequest releaseRequest) throws BadResponseException {
         logger.trace("Started Sniro Client Post Release");
-        String url = UrnPropertiesReader.getVariable("sniro.conductor.host")
-                + UrnPropertiesReader.getVariable("sniro.conductor.uri");
+        String url = ConductorProperties.getHost() + ConductorProperties.getUri();
         logger.debug("Post release url: {}", url);
         logger.debug("Post release payload: {}", releaseRequest.toJsonString());
 
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
-        header.set("Authorization", UrnPropertiesReader.getVariable("sniro.conductor.headers.auth"));
+        header.set("Authorization", ConductorProperties.getAuth());
         BaseClient<String, LinkedHashMap<String, Object>> baseClient = new BaseClient<>();
 
         baseClient.setTargetUrl(url);

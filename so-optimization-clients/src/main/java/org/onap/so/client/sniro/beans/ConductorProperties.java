@@ -20,42 +20,40 @@
 
 package org.onap.so.client.sniro.beans;
 
-import java.util.Map;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
+@Component
 @Configuration
-@ConfigurationProperties(prefix = "sniro.conductor")
 public class ConductorProperties {
 
-    private String host;
-    private String uri;
+    private static Environment environment;
 
-    private Map<String, String> headers;
-
-
-    public String getHost() {
-        return host;
+    @Autowired
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
     }
 
-    public void setHost(String host) {
-        this.host = host;
+    public static String getHost() {
+        return getProperty("sniro.conductor.host");
     }
 
-    public String getUri() {
-        return uri;
+    public static String getUri() {
+        return getProperty("sniro.conductor.uri");
     }
 
-    public void setUri(String uri) {
-        this.uri = uri;
+    public static String getAuth() {
+        return getProperty("sniro.conductor.headers.auth");
     }
 
-    public Map<String, String> getHeaders() {
-        return headers;
-    }
-
-    public void setHeaders(Map<String, String> headers) {
-        this.headers = headers;
+    private static String getProperty(String variableName) {
+        if (environment != null) {
+            return environment.getProperty(variableName);
+        } else {
+            return null;
+        }
     }
 
 
