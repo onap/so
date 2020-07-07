@@ -45,6 +45,7 @@ import org.openstack4j.model.compute.Server;
 import org.openstack4j.model.heat.Resource;
 import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.Port;
+import org.openstack4j.model.network.Subnet;
 
 abstract class OpenstackClientImpl implements OpenstackClient {
     @Override
@@ -76,6 +77,11 @@ abstract class OpenstackClientImpl implements OpenstackClient {
     @Override
     public List<Network> listNetworksByFilter(Map<String, String> filterParams) {
         return (List<Network>) getClient().networking().network().list(filterParams);
+    }
+
+    @Override
+    public Subnet getSubnetById(String subnetId) {
+        return getClient().networking().subnet().get(subnetId);
     }
 
     /**
