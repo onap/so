@@ -202,25 +202,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onap.sdnc.northbound</groupId>
-      <artifactId>generic-resource-api-client</artifactId>
-      <version>${sdnc.northbound.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.ws.rs</groupId>
-          <artifactId>jsr311-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>io.swagger</groupId>
-          <artifactId>swagger-annotations</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>io.swagger</groupId>
-          <artifactId>swagger-models</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>ch.vorburger.mariaDB4j</groupId>
       <artifactId>mariaDB4j</artifactId>
       <version>2.2.3</version>
@@ -255,6 +236,11 @@
     <dependency>
       <groupId>org.onap.so</groupId>
       <artifactId>so-optimization-clients</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.so</groupId>
+      <artifactId>so-sdn-clients</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>
