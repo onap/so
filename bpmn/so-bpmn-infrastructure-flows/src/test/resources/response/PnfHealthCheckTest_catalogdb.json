@@ -1,0 +1,39 @@
+{
+  "_embedded": {
+    "pnfResourceCustomization": [
+      {
+        "modelCustomizationUUID": "38dc9a92-214c-11e7-93ae-92361f002680",
+        "modelInstanceName": "PNF routing",
+        "created": "2019-03-08 12:00:29.000",
+        "nfFunction": "routing",
+        "nfType": "routing",
+        "nfRole": "routing",
+        "nfNamingCode": "routing",
+        "multiStageDesign": null,
+        "resourceInput": null,
+        "blueprintName": "test_pnf_health_check_restconf",
+        "blueprintVersion": "1.0.0",
+        "skipPostInstConf": false,
+        "softwareVersion": "1.0.0",
+        "creationTimestamp": "2019-03-08T12:00:29.000+0000",
+        "controllerActor": "cds",
+        "_links": {
+          "self": {
+            "href": "http://localhost:41023/pnfResourceCustomization/38dc9a92-214c-11e7-93ae-92361f002680"
+          },
+          "pnfResourceCustomization": {
+            "href": "http://localhost:41023/pnfResourceCustomization/38dc9a92-214c-11e7-93ae-92361f002680"
+          },
+          "pnfResources": {
+            "href": "http://localhost:41023/pnfResourceCustomization/38dc9a92-214c-11e7-93ae-92361f002680/pnfResources"
+          }
+        }
+      }
+    ]
+  },
+  "_links": {
+    "self": {
+      "href": "http://localhost:41023/pnfResourceCustomization/search/findPnfResourceCustomizationByModelUuid?SERVICE_MODEL_UUID=4df8b6de-2083-11e7-93ae-92361f002676"
+    }
+  }
+}
