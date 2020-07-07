@@ -474,7 +474,7 @@ public class WorkflowActionBBTasks {
         BuildingBlock buildingBlock =
                 new BuildingBlock().setBpmnFlowName(bbName).setMsoId(UUID.randomUUID().toString());
 
-        WorkflowResourceIds workflowResourceIds = ebb.getWorkflowResourceIds();
+        WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds(ebb.getWorkflowResourceIds());
         workflowResourceIds.setConfigurationId(configurationId);
         return new ExecuteBuildingBlock().setaLaCarte(ebb.isaLaCarte()).setApiVersion(ebb.getApiVersion())
                 .setRequestAction(ebb.getRequestAction()).setVnfType(ebb.getVnfType()).setRequestId(ebb.getRequestId())

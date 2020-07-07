@@ -41,13 +41,32 @@ public class WorkflowResourceIds implements Serializable {
     private String configurationId;
     private String instanceGroupId;
 
+
+    public WorkflowResourceIds() {
+        super();
+    }
+
+    public WorkflowResourceIds(WorkflowResourceIds workflowResourceIds) {
+        this.serviceInstanceId = workflowResourceIds.serviceInstanceId;
+        this.pnfId = workflowResourceIds.pnfId;
+        this.vnfId = workflowResourceIds.vnfId;
+        this.networkId = workflowResourceIds.networkId;
+        this.volumeGroupId = workflowResourceIds.volumeGroupId;
+        this.vfModuleId = workflowResourceIds.vfModuleId;
+        this.networkCollectionId = workflowResourceIds.networkCollectionId;
+        this.configurationId = workflowResourceIds.configurationId;
+        this.instanceGroupId = workflowResourceIds.instanceGroupId;
+    }
+
+
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("serviceInstanceId", serviceInstanceId).append("pnfId", pnfId)
                 .append("vnfId", vnfId).append("networkId", networkId).append("volumeGroupId", volumeGroupId)
                 .append("vfModuleId", vfModuleId).append("networkCollectionId", networkCollectionId)
-                .append("configurationId", configurationId).toString();
+                .append("configurationId", configurationId).append("instanceGroupId", instanceGroupId).toString();
     }
+
 
     public String getServiceInstanceId() {
         return serviceInstanceId;
