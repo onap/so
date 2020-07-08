@@ -929,3 +929,13 @@ VALUES
 ('VNFConfigModifyActivity','*','*','*','*','Manual','Abort','*', '*'),
 ('VNFUnsetInMaintFlagActivity','*','*','*','*','Manual','Abort','*', '*'),
 ('VNFUnsetClosedLoopDisabledActivity','*','*','*','*','Manual','Abort','*', '*');
+
+UPDATE orchestration_flow_reference set FLOW_NAME='ControllerExecutionBB', SCOPE='vnf', ACTION='config-assign' WHERE COMPOSITE_ACTION = 'Service-Macro-Create' and FLOW_NAME = 'ConfigAssignVnfBB';
+UPDATE orchestration_flow_reference set FLOW_NAME='ControllerExecutionBB', SCOPE='vnf', ACTION='config-deploy' WHERE COMPOSITE_ACTION = 'Service-Macro-Create' and FLOW_NAME = 'ConfigDeployVnfBB';
+UPDATE orchestration_flow_reference set FLOW_NAME='ControllerExecutionBB', SCOPE='vnf', ACTION='HealthCheck' WHERE COMPOSITE_ACTION = 'VFModule-ScaleOut' and FLOW_NAME = 'GenericVnfHealthCheckBB';
+UPDATE orchestration_flow_reference set FLOW_NAME='ControllerExecutionBB', SCOPE='vfmodule', ACTION='ScaleOutReconfiguration' WHERE COMPOSITE_ACTION = 'VFModule-ScaleOut' and FLOW_NAME = 'GenericVnfHealthCheckBB';
+
+INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID, SCOPE, ACTION) VALUES
+('VFModule-Delete', '1', 'ControllerExecutionBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Delete' and CLOUD_OWNER = 'DEFAULT'), "vnf", "HealthCheck"),
+('VFModule-Delete', '2', 'ControllerExecutionBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Delete' and CLOUD_OWNER = 'DEFAULT'), "vfmodule", "ScaleInReconfiguration"),
+('VFModule-Delete', '6', 'ControllerExecutionBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Delete' and CLOUD_OWNER = 'DEFAULT'), "vnf", "HealthCheck");
