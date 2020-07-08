@@ -1,0 +1,41 @@
+{
+  "_embedded": {
+    "workflow": [
+      {
+        "artifactChecksum": "MANUAL RECORD",
+        "artifactName": "DummyServiceWorkflow",
+        "artifactUUID": "a1fe8726-66d5-3e7f-2212-7e5h662e9255",
+        "body": null,
+        "created": "2020-06-29T08:28:15.000+0000",
+        "description": "Dummy Service Workflow to test custom Service workflow",
+        "id": 4,
+        "name": "Dummy Service Workflow",
+        "operationName": "DummyServiceWorkflow",
+        "pnfResourceWorkflow": null,
+        "resourceTarget": "service",
+        "source": "native",
+        "timeoutMinutes": null,
+        "version": 1.0,
+        "_links": {
+          "self": {
+            "href": "http://localhost:8090/workflow/search/findByResourceTarget?resourceTarget=service"
+          },
+          "workflow": {
+            "href": "http://localhost:8090/workflow/5"
+          },
+          "workflowActivitySpecSequence": {
+            "href": "http://localhost:8090/workflow/5/workflowActivitySpecSequence"
+          }
+        }
+      }
+    ]
+  },
+  "_links": {
+    "self": {
+      "href": "http://localhost:8090/workflow/search/findByResourceTarget?resourceTarget=service"
+    },
+    "workflowActivitySpecSequence": {
+      "href": "http://localhost:8090/workflow/5/workflowActivitySpecSequence"
+    }
+  }
+}
