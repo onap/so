@@ -104,7 +104,7 @@ public class ExecuteBuildingBlockRainyDay {
                 handlingCode = "Abort";
             } else {
                 try {
-                    if (gBBInput.getCustomer().getServiceSubscription() != null) {
+                    if (gBBInput.getCustomer() != null && gBBInput.getCustomer().getServiceSubscription() != null) {
                         serviceType = gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0)
                                 .getModelInfoServiceInstance().getServiceType();
                     }
@@ -119,7 +119,7 @@ public class ExecuteBuildingBlockRainyDay {
                 String vnfType = ASTERISK;
                 String vnfName = ASTERISK;
                 try {
-                    if (gBBInput.getCustomer().getServiceSubscription() != null) {
+                    if (gBBInput.getCustomer() != null && gBBInput.getCustomer().getServiceSubscription() != null) {
                         for (GenericVnf vnf : gBBInput.getCustomer().getServiceSubscription().getServiceInstances()
                                 .get(0).getVnfs()) {
                             if (vnf.getVnfId().equalsIgnoreCase(lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID))) {
@@ -173,7 +173,7 @@ public class ExecuteBuildingBlockRainyDay {
 
                 String serviceRole = ASTERISK;
                 try {
-                    if (gBBInput.getCustomer().getServiceSubscription() != null) {
+                    if (gBBInput.getCustomer() != null && gBBInput.getCustomer().getServiceSubscription() != null) {
                         serviceRole = gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0)
                                 .getModelInfoServiceInstance().getServiceRole();
                     }
