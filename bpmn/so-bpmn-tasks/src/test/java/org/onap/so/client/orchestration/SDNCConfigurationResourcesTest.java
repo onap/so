@@ -35,6 +35,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiGcTopologyOperationInformation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
 import org.onap.so.bpmn.common.data.TestDataSetup;
+import org.onap.so.bpmn.infrastructure.sdnc.mapper.GCTopologyOperationRequestMapper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -45,7 +46,6 @@ import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.MapperException;
 import org.onap.so.client.sdnc.SDNCClient;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
-import org.onap.so.client.sdnc.mapper.GCTopologyOperationRequestMapper;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class SDNCConfigurationResourcesTest extends TestDataSetup {

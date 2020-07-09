@@ -1,0 +1,8 @@
+{
+	"output": {
+		"svc-request-id": "086a7a09-1470-4977-8b3e-307488b8811a",
+		"response-code": "404",
+		"response-message": "invalid input: the service-instance does not have any service data in SDNC",
+		"ack-final-indicator": "Y"
+	}
+}

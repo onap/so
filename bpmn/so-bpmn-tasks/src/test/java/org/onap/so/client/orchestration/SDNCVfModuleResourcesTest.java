@@ -33,6 +33,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVfModuleOperationInformation;
 import org.onap.so.bpmn.common.data.TestDataSetup;
+import org.onap.so.bpmn.infrastructure.sdnc.mapper.VfModuleTopologyOperationRequestMapper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -43,8 +44,7 @@ import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.MapperException;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
-import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
-import org.onap.so.client.sdnc.mapper.VfModuleTopologyOperationRequestMapper;;
+import org.onap.so.client.sdnc.beans.SDNCSvcOperation;;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class SDNCVfModuleResourcesTest extends TestDataSetup {

@@ -1,0 +1,53 @@
+{
+  "service-information" : {
+    "onap-model-information" : {
+      "model-name" : "modelName",
+      "model-version" : "modelVersion",
+      "model-customization-uuid" : null,
+      "model-uuid" : "modelUuid",
+      "model-invariant-uuid" : "modelInvariantUuid"
+    },
+    "subscriber-name" : null,
+    "subscription-service-type" : "productFamilyId",
+    "service-id" : null,
+    "global-customer-id" : "globalCustomerId",
+    "service-instance-id" : null
+  },
+  "network-request-input" : {
+    "aic-clli" : null,
+    "aic-cloud-region" : null,
+    "tenant" : null,
+    "network-input-parameters" : {
+      "param" : [ {
+        "name" : "key1",
+        "value" : "value1"
+      } ]
+    },
+    "network-instance-group-id" : "networkInstanceGroupId"
+  },
+  "request-information" : {
+    "notification-url" : null,
+    "order-version" : null,
+    "request-action" : "CreateNetworkInstance",
+    "source" : "MSO",
+    "request-id" : "sdncReqId",
+    "order-number" : null
+  },
+  "sdnc-request-header" : {
+    "svc-request-id" : "svcRequestId",
+    "svc-notification-url" : null,
+    "svc-action" : "assign"
+  },
+  "network-information" : {
+    "onap-model-information" : {
+      "model-name" : "modelName",
+      "model-version" : "modelVersion",
+      "model-customization-uuid" : "modelCustomizationUUID",
+      "model-uuid" : "modelUuid",
+      "model-invariant-uuid" : "modelInvariantUuid"
+    },
+    "from-preload": null,
+    "network-id" : "TEST_NETWORK_ID",
+    "network-type" : null
+  }
+}

@@ -1,0 +1,34 @@
+{
+    "vnf-preload-list": [
+        {
+            "vnf-name": "GENERIC_VNF_NAME",
+            "vnf-type": "SIMPLE",
+            "preload-data": 
+            {
+                "network-topology-information": 
+                {
+                },
+                "vnf-topology-information": 
+                {
+                    "vnf-topology-identifier": 
+                    {
+                        "service-type": "vCPE",
+                        "vnf-type": "SIMPLE",
+                        "vnf-name": "GENERIC_VNF_NAME",
+                        "generic-vnf-name": "GENERIC_VNF_NAME",
+                        "generic-vnf-type": "SIMPLE"
+                    },
+                    "vnf-parameters": [
+                        {
+                            "hello": "world"
+                        }
+                    ]
+                },
+                "oper-status": 
+                {
+                    "order-status": "PendingAssignment"
+                }
+            }
+        }
+    ]
+}
