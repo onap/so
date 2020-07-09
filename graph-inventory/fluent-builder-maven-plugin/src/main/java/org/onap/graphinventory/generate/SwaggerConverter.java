@@ -125,8 +125,6 @@ public class SwaggerConverter {
             }
         }
 
-        log.debug(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(output));
-
         for (Map.Entry<String, ObjectType> item : output.entrySet()) {
 
             if (item.getValue().getType().equals("plural")) {
@@ -156,7 +154,7 @@ public class SwaggerConverter {
                 Matcher templates = Patterns.urlTemplatePattern.matcher(item.getValue().getPartialUri());
                 List<String> localFields = new ArrayList<>();
                 while (templates.find()) {
-                    localFields.add(templates.group(1));
+                    localFields.add(templates.group(2));
                 }
                 item.getValue().setFields(item.getValue().getFields().stream()
                         .filter(f -> localFields.contains(f.getName())).collect(Collectors.toList()));
@@ -165,6 +163,8 @@ public class SwaggerConverter {
 
         output.values().stream().filter(item -> item.getType().equals("plural"))
                 .forEach(item -> item.getChildren().clear());
+
+        log.debug(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(output));
 
         return output;
     }

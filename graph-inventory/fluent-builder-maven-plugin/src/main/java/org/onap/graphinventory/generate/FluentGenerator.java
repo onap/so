@@ -325,13 +325,8 @@ public class FluentGenerator {
             String value;
             String name;
 
-            if (params.group(2) != null) {
-                name = params.group(2);
-            } else {
-                name = params.group(1);
-            }
             value = params.group(1);
-
+            name = params.group(2);
             name = CaseFormat.LOWER_HYPHEN.to(CaseFormat.LOWER_CAMEL, name);
 
             classFields.add(FieldSpec.builder(String.class, name, Modifier.PUBLIC, Modifier.FINAL)
