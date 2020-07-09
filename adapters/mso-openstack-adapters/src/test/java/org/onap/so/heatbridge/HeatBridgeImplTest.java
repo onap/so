@@ -42,6 +42,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doReturn;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -58,7 +59,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.LInterface;
 import org.onap.aai.domain.yang.PInterface;
@@ -85,6 +88,7 @@ import org.openstack4j.model.network.NetworkType;
 import org.openstack4j.model.network.Port;
 import org.openstack4j.openstack.heat.domain.HeatResource;
 import org.openstack4j.openstack.heat.domain.HeatResource.Resources;
+import org.springframework.core.env.Environment;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 
@@ -104,16 +108,20 @@ public class HeatBridgeImplTest {
 
     @Mock
     private AAIResourcesClient resourcesClient;
+
     @Mock
     private AAISingleTransactionClient transaction;
 
-    private HeatBridgeImpl heatbridge;
+    @Mock
+    private Environment env;
+
+    @InjectMocks
+    private HeatBridgeImpl heatbridge =
+            new HeatBridgeImpl(resourcesClient, cloudIdentity, CLOUD_OWNER, REGION_ID, REGION_ID, TENANT_ID);
 
     @Before
     public void setUp() throws HeatBridgeException, OpenstackClientException, BulkProcessFailed {
-
         when(resourcesClient.beginSingleTransaction()).thenReturn(transaction);
-        heatbridge = new HeatBridgeImpl(resourcesClient, cloudIdentity, CLOUD_OWNER, REGION_ID, REGION_ID, TENANT_ID);
     }
 
     @Ignore
@@ -396,7 +404,6 @@ public class HeatBridgeImplTest {
         verify(transaction, times(2)).createIfNotExists(any(AAIResourceUri.class), any(Optional.class));
     }
 
-    @Ignore
     @Test
     public void testUpdateVserverLInterfacesToAai() throws HeatBridgeException {
         // Arrange
@@ -430,14 +437,57 @@ public class HeatBridgeImplTest {
         PInterface pIf = mock(PInterface.class);
         when(pIf.getInterfaceName()).thenReturn("test-port-id");
         when(resourcesClient.get(eq(PInterface.class), any(AAIResourceUri.class))).thenReturn(Optional.of(pIf));
+        when(env.getProperty("mso.cloudOwner.included", "")).thenReturn("CloudOwner");
 
         // Act
-        heatbridge.buildAddVserverLInterfacesToAaiAction(stackResources, Arrays.asList("1", "2"));
+        heatbridge.buildAddVserverLInterfacesToAaiAction(stackResources, Arrays.asList("1", "2"), "CloudOwner");
 
         // Assert
         verify(transaction, times(5)).create(any(AAIResourceUri.class), any(LInterface.class));
         verify(osClient, times(5)).getPortById(anyString());
         verify(osClient, times(5)).getNetworkById(anyString());
+    }
+
+    @Test
+    public void testUpdateVserverLInterfacesToAai_skipVlans() throws HeatBridgeException {
+        // Arrange
+        List<Resource> stackResources = (List<Resource>) extractTestStackResources();
+        Port port = mock(Port.class);
+        when(port.getId()).thenReturn("test-port-id");
+        when(port.getName()).thenReturn("test-port-name");
+        when(port.getvNicType()).thenReturn(HeatBridgeConstants.OS_SRIOV_PORT_TYPE);
+        when(port.getMacAddress()).thenReturn("78:4f:43:68:e2:78");
+        when(port.getNetworkId()).thenReturn("890a203a-23gg-56jh-df67-731656a8f13a");
+        when(port.getDeviceId()).thenReturn("test-device-id");
+        when(port.getVifDetails()).thenReturn(ImmutableMap.of(HeatBridgeConstants.OS_VLAN_NETWORK_KEY, "2345"));
+        String pfPciId = "0000:08:00.0";
+        when(port.getProfile()).thenReturn(ImmutableMap.of(HeatBridgeConstants.OS_PCI_SLOT_KEY, pfPciId,
+                HeatBridgeConstants.OS_PHYSICAL_NETWORK_KEY, "physical_network_id"));
+
+        Network network = mock(Network.class);
+        when(network.getId()).thenReturn("test-network-id");
+        when(network.getNetworkType()).thenReturn(NetworkType.VLAN);
+        when(network.getProviderSegID()).thenReturn("2345");
+
+        when(osClient.getPortById("212a203a-9764-4f42-84ea-731536a8f13a")).thenReturn(port);
+        when(osClient.getPortById("387e3904-8948-43d1-8635-b6c2042b54da")).thenReturn(port);
+        when(osClient.getPortById("70a09dfd-f1c5-4bc8-bd8f-dc539b8d662a")).thenReturn(port);
+        when(osClient.getPortById("12f88b4d-c8a4-4fbd-bcb4-7e36af02430b")).thenReturn(port);
+        when(osClient.getPortById("c54b9f45-b413-4937-bbe4-3c8a5689cfc9")).thenReturn(port);
+
+        SriovPf sriovPf = new SriovPf();
+        sriovPf.setPfPciId(pfPciId);
+        PInterface pIf = mock(PInterface.class);
+        when(pIf.getInterfaceName()).thenReturn("test-port-id");
+        when(resourcesClient.get(eq(PInterface.class), any(AAIResourceUri.class))).thenReturn(Optional.of(pIf));
+
+        // Act
+        heatbridge.buildAddVserverLInterfacesToAaiAction(stackResources, Arrays.asList("1", "2"), "CloudOwner");
+
+        // Assert
+        verify(transaction, times(5)).create(any(AAIResourceUri.class), any(LInterface.class));
+        verify(osClient, times(5)).getPortById(anyString());
+        verify(osClient, times(0)).getNetworkById(anyString());
     }
 
     private List<? extends Resource> extractTestStackResources() {
@@ -463,4 +513,6 @@ public class HeatBridgeImplTest {
         }
         return content;
     }
+
+
 }

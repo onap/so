@@ -134,8 +134,10 @@ public interface HeatBridgeApi {
      *
      * @param stackResources Openstack Heat stack resource list
      * @param oobMgtNetIds List of OOB network IDs list
+     * @param cloudOwner
      */
-    void buildAddVserverLInterfacesToAaiAction(List<Resource> stackResources, List<String> oobMgtNetIds);
+    void buildAddVserverLInterfacesToAaiAction(List<Resource> stackResources, List<String> oobMgtNetIds,
+            String cloudOwner);
 
     /**
      * Query and build AAI actions for Openstack Compute resources to AAI's pserver and pinterface objects

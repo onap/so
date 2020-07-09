@@ -79,6 +79,7 @@ import org.onap.so.heatbridge.openstack.factory.OpenstackClientFactoryImpl;
 import org.onap.so.heatbridge.utils.HeatBridgeUtils;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
+import org.onap.so.spring.SpringContextHelper;
 import org.openstack4j.model.compute.Server;
 import org.openstack4j.model.heat.Resource;
 import org.openstack4j.model.network.IP;
@@ -87,6 +88,7 @@ import org.openstack4j.model.network.NetworkType;
 import org.openstack4j.model.network.Port;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -109,6 +111,8 @@ public class HeatBridgeImpl implements HeatBridgeApi {
     private String tenantId;
     private AaiHelper aaiHelper = new AaiHelper();
     private CloudIdentity cloudIdentity;
+    private Environment env;
+
 
     public HeatBridgeImpl(AAIResourcesClient resourcesClient, final CloudIdentity cloudIdentity,
             @Nonnull final String cloudOwner, @Nonnull final String cloudRegionId, @Nonnull final String regionId,
@@ -124,7 +128,10 @@ public class HeatBridgeImpl implements HeatBridgeApi {
         this.regionId = regionId;
         this.tenantId = tenantId;
         this.resourcesClient = resourcesClient;
-        this.transaction = resourcesClient.beginSingleTransaction();
+        if (resourcesClient != null)
+            this.transaction = resourcesClient.beginSingleTransaction();
+        if (SpringContextHelper.getAppContext() != null)
+            this.env = SpringContextHelper.getAppContext().getEnvironment();
     }
 
     public HeatBridgeImpl() {
@@ -253,7 +260,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
 
     @Override
     public void buildAddVserverLInterfacesToAaiAction(final List<Resource> stackResources,
-            final List<String> oobMgtNetIds) {
+            final List<String> oobMgtNetIds, String cloudOwner) {
         Objects.requireNonNull(osClient, ERR_MSG_NULL_OS_CLIENT);
         List<String> portIds =
                 extractStackResourceIdsByResourceType(stackResources, HeatBridgeConstants.OS_PORT_RESOURCE_TYPE);
@@ -283,7 +290,9 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             }
             lIf.setL2Multicasting(isL2Multicast);
             updateLInterfaceIps(port, lIf);
-            updateLInterfaceVlan(port, lIf);
+            if (cloudOwner.equals(env.getProperty("mso.cloudOwner.included", ""))) {
+                updateLInterfaceVlan(port, lIf);
+            }
 
             // Update l-interface to the vserver
             transaction.create(AAIUriFactory.createResourceUri(AAIObjectType.L_INTERFACE, cloudOwner, cloudRegionId,
