@@ -20,7 +20,6 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
-import java.util.List;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlockBase;
 import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
@@ -38,6 +37,7 @@ public class ConfigBuildingBlocksDataObject extends BuildingBlockBase<ConfigBuil
     private List<OrchestrationFlow> orchFlows;
     private Resource resourceKey;
     private ServiceInstancesRequest sIRequest;
+    private ReplaceInstanceRelatedInformation replaceInformation;
 
     public ServiceInstancesRequest getsIRequest() {
         return sIRequest;
@@ -72,6 +72,15 @@ public class ConfigBuildingBlocksDataObject extends BuildingBlockBase<ConfigBuil
 
     public ConfigBuildingBlocksDataObject setExecution(DelegateExecution execution) {
         this.execution = execution;
+        return this;
+    }
+
+    public ReplaceInstanceRelatedInformation getReplaceInformation() {
+        return replaceInformation;
+    }
+
+    public ConfigBuildingBlocksDataObject setReplaceInformation(ReplaceInstanceRelatedInformation replaceInformation) {
+        this.replaceInformation = replaceInformation;
         return this;
     }
 
