@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3ac6c76f_90f40e84",
+        "filename": "common/src/main/java/org/onap/so/client/cds/CDSProcessingClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 5597
+      },
+      "writtenOn": "2020-07-10T13:29:18Z",
+      "side": 1,
+      "message": "Could me make it more meaningful? We`re catching 3 types of exceptions in catch statement.\nI think, stating which cause this exception in the log would be super-useful for troubleshooting.",
+      "range": {
+        "startLine": 98,
+        "startChar": 16,
+        "endLine": 98,
+        "endChar": 69
+      },
+      "revId": "995ebb218c34b9c813550ba688db33b2e746bd13",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
