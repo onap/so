@@ -44,7 +44,7 @@ public class DeleteInventoryService {
     public void auditAAIInventory() throws Exception {
         for (int i = 0; i < externalTaskServiceUtils.getMaxClients(); i++) {
             externalTaskServiceUtils.createExternalTaskClient().subscribe("InventoryDelete")
-                    .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", "60000")))
+                    .lockDuration(externalTaskServiceUtils.getLockDurationMedium())
                     .handler(deleteInventory::executeExternalTask).open();
         }
     }
