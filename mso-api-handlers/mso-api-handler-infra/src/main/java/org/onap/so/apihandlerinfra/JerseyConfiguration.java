@@ -45,6 +45,7 @@ import org.onap.so.apihandlerinfra.tenantisolation.CloudOrchestration;
 import org.onap.so.apihandlerinfra.tenantisolation.CloudResourcesOrchestration;
 import org.onap.so.apihandlerinfra.tenantisolation.ModelDistributionRequest;
 import org.onap.so.logging.jaxrs.filter.SOAuditLogContainerFilter;
+import org.onap.so.utils.Components;
 import org.onap.so.web.exceptions.RuntimeExceptionMapper;
 import org.springframework.context.annotation.Configuration;
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
@@ -61,7 +62,7 @@ public class JerseyConfiguration extends ResourceConfig {
 
     @PostConstruct
     public void setUp() {
-        System.setProperty(Constants.Property.PARTNER_NAME, "SO.APIH");
+        System.setProperty(Constants.Property.PARTNER_NAME, Components.APIH.toString());
         register(GlobalHealthcheckHandler.class);
         register(NodeHealthcheckHandler.class);
         register(ServiceInstances.class);

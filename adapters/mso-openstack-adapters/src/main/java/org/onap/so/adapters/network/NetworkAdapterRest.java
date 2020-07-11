@@ -124,7 +124,7 @@ public class NetworkAdapterRest {
             } catch (Exception e) {
                 // problem handling create, send generic failure as sync resp to caller
                 logger.error("{} {} Exception while create network ", MessageEnum.RA_CREATE_NETWORK_EXC,
-                        ErrorCode.BusinessProcesssError.getValue(), e);
+                        ErrorCode.BusinessProcessError.getValue(), e);
                 return Response.serverError().build();
             }
             // send sync response (ACK) to caller
@@ -286,7 +286,7 @@ public class NetworkAdapterRest {
             } catch (Exception e) {
                 // problem handling create, send generic failure as sync resp to caller
                 logger.error("{} {} Exception while delete network ", MessageEnum.RA_DELETE_NETWORK_EXC,
-                        ErrorCode.BusinessProcesssError.getValue(), e);
+                        ErrorCode.BusinessProcessError.getValue(), e);
                 return Response.serverError().build();
             }
             // send sync response (ACK) to caller
@@ -403,7 +403,7 @@ public class NetworkAdapterRest {
             return Response.status(respStatus).entity(new GenericEntity<QueryNetworkResponse>(resp) {}).build();
         } catch (NetworkException e) {
             logger.error("{} {} Exception when query VNF ", MessageEnum.RA_QUERY_VNF_ERR,
-                    ErrorCode.BusinessProcesssError.getValue(), e);
+                    ErrorCode.BusinessProcessError.getValue(), e);
             QueryNetworkError err = new QueryNetworkError();
             err.setMessage(e.getMessage());
             err.setCategory(MsoExceptionCategory.INTERNAL);
@@ -436,7 +436,7 @@ public class NetworkAdapterRest {
             } catch (Exception e) {
                 // problem handling create, send generic failure as sync resp to caller
                 logger.error("{} {} Exception in rollbackNetwork ", MessageEnum.RA_ROLLBACK_NULL,
-                        ErrorCode.BusinessProcesssError.getValue(), e);
+                        ErrorCode.BusinessProcessError.getValue(), e);
                 return Response.serverError().build();
             }
             // send sync response (ACK) to caller
@@ -529,7 +529,7 @@ public class NetworkAdapterRest {
             } catch (Exception e) {
                 // problem handling create, send generic failure as sync resp to caller
                 logger.error("{} {} Exception in updateNetwork ", MessageEnum.RA_UPDATE_NETWORK_ERR,
-                        ErrorCode.BusinessProcesssError.getValue(), e);
+                        ErrorCode.BusinessProcessError.getValue(), e);
                 return Response.serverError().build();
             }
             // send sync response (ACK) to caller

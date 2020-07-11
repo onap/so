@@ -23,17 +23,14 @@ package org.onap.so.adapters.requestsdb.adapters;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.adapters.requestsdb.MsoRequestsDbAdapter;
 import org.onap.so.adapters.requestsdb.RequestStatusType;
 import org.onap.so.adapters.requestsdb.RequestsAdapterBase;
@@ -47,7 +44,6 @@ import org.onap.so.db.request.data.repository.ResourceOperationStatusRepository;
 import org.onap.so.requestsdb.RequestsDbConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.server.LocalServerPort;
-import ch.qos.logback.classic.spi.ILoggingEvent;
 
 public class MSORequestDBImplTest extends RequestsAdapterBase {
 
@@ -441,28 +437,5 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
         ResourceOperationStatus actualResource =
                 dbAdapter.getResourceOperationStatus(serviceId, operationId, "template1");
         assertThat(actualResource, sameBeanAs(expectedResource));
-
-        for (ILoggingEvent logEvent : TestAppender.events)
-            if (logEvent.getLoggerName().equals("org.onap.so.logging.cxf.interceptor.SOAPLoggingInInterceptor")
-                    && logEvent.getMarker().getName().equals("ENTRY")) {
-                Map<String, String> mdc = logEvent.getMDCPropertyMap();
-                assertNotNull(mdc.get(ONAPLogConstants.MDCs.INSTANCE_UUID));
-                assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
-                assertNotNull(mdc.get(ONAPLogConstants.MDCs.INVOCATION_ID));
-                assertEquals("UNKNOWN", mdc.get(ONAPLogConstants.MDCs.PARTNER_NAME));
-                assertEquals("/services/RequestsDbAdapter", mdc.get(ONAPLogConstants.MDCs.SERVICE_NAME));
-                assertEquals("INPROGRESS", mdc.get(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE));
-            } else if (logEvent.getLoggerName().equals("org.onap.so.logging.cxf.interceptor.SOAPLoggingOutInterceptor")
-                    && logEvent.getMarker().getName().equals("EXIT")) {
-                Map<String, String> mdc = logEvent.getMDCPropertyMap();
-                assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
-                assertNotNull(mdc.get(ONAPLogConstants.MDCs.INVOCATION_ID));
-                assertEquals(null, mdc.get(ONAPLogConstants.MDCs.RESPONSE_CODE));
-                assertEquals("UNKNOWN", mdc.get(ONAPLogConstants.MDCs.PARTNER_NAME));
-                assertEquals("/services/RequestsDbAdapter", mdc.get(ONAPLogConstants.MDCs.SERVICE_NAME));
-                assertEquals("COMPLETE", mdc.get(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE));
-            }
     }
-
-
 }

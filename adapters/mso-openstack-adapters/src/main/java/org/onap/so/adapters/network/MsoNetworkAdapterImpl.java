@@ -231,7 +231,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             } catch (MsoException me) {
                 logger.error(
                         "{} {} Exception while querying network {} for CloudSite {} from Tenant {} from OpenStack ",
-                        MessageEnum.RA_QUERY_NETWORK_EXC, ErrorCode.BusinessProcesssError.getValue(), networkName,
+                        MessageEnum.RA_QUERY_NETWORK_EXC, ErrorCode.BusinessProcessError.getValue(), networkName,
                         cloudSiteId, tenantId, me);
                 me.addContext(CREATE_NETWORK_CONTEXT);
                 throw new NetworkException(me);
@@ -570,7 +570,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             } catch (MsoException me) {
                 me.addContext(UPDATE_NETWORK_CONTEXT);
                 logger.error("{} {} Exception - queryNetwork query {} in {}/{} ", MessageEnum.RA_QUERY_NETWORK_EXC,
-                        ErrorCode.BusinessProcesssError.getValue(), networkId, cloudSiteId, tenantId, me);
+                        ErrorCode.BusinessProcessError.getValue(), networkId, cloudSiteId, tenantId, me);
                 throw new NetworkException(me);
             }
 
@@ -578,7 +578,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 String error = String.format("Update Nework: Network %s does not exist in %s/%s", networkId,
                         cloudSiteId, tenantId);
                 logger.error(LoggingAnchor.THREE, MessageEnum.RA_NETWORK_NOT_FOUND,
-                        ErrorCode.BusinessProcesssError.getValue(), error);
+                        ErrorCode.BusinessProcessError.getValue(), error);
                 // Does not exist. Throw an exception (can't update a non-existent network)
                 throw new NetworkException(error, MsoExceptionCategory.USERDATA);
             }
@@ -1114,7 +1114,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 } catch (MsoException me) {
                     me.addContext("RollbackNetwork");
                     logger.error("{} {} Exception - Rollback Network (neutron): {} in {}/{} ",
-                            MessageEnum.RA_DELETE_NETWORK_EXC, ErrorCode.BusinessProcesssError.getValue(), networkId,
+                            MessageEnum.RA_DELETE_NETWORK_EXC, ErrorCode.BusinessProcessError.getValue(), networkId,
                             cloudSiteId, tenantId, me);
                     throw new NetworkException(me);
                 }
@@ -1124,7 +1124,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 } catch (MsoException me) {
                     me.addContext("RollbackNetwork");
                     logger.error("{} {} Exception - Rollback Network (heat): {} in {}/{} ",
-                            MessageEnum.RA_DELETE_NETWORK_EXC, ErrorCode.BusinessProcesssError.getValue(), networkId,
+                            MessageEnum.RA_DELETE_NETWORK_EXC, ErrorCode.BusinessProcessError.getValue(), networkId,
                             cloudSiteId, tenantId, me);
                     throw new NetworkException(me);
                 }
@@ -1272,7 +1272,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             }
         } else {
             String error = "Null pFqdns at start of mergePolicyRefs";
-            logger.error(LoggingAnchor.THREE, MessageEnum.RA_MARSHING_ERROR, ErrorCode.BusinessProcesssError.getValue(),
+            logger.error(LoggingAnchor.THREE, MessageEnum.RA_MARSHING_ERROR, ErrorCode.BusinessProcessError.getValue(),
                     error);
             throw new MsoAdapterException(error);
         }
@@ -1285,7 +1285,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             logger.debug("Json PolicyRefs Data:{}", jsonString);
         } catch (Exception e) {
             String error = "Error creating JsonNode for policyRefs Data";
-            logger.error(LoggingAnchor.THREE, MessageEnum.RA_MARSHING_ERROR, ErrorCode.BusinessProcesssError.getValue(),
+            logger.error(LoggingAnchor.THREE, MessageEnum.RA_MARSHING_ERROR, ErrorCode.BusinessProcessError.getValue(),
                     error, e);
             throw new MsoAdapterException(error);
         }

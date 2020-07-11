@@ -29,14 +29,13 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.onap.logging.filter.base.Constants.HttpHeaders.ONAP_PARTNER_NAME;
 import static org.onap.logging.filter.base.Constants.HttpHeaders.ONAP_REQUEST_ID;
-import static org.onap.so.logger.HttpHeadersConstants.REQUESTOR_ID;
 import static org.onap.logging.filter.base.Constants.HttpHeaders.TRANSACTION_ID;
-import static org.onap.logging.filter.base.Constants.HttpHeaders.CLIENT_ID;
+import static org.onap.so.logger.HttpHeadersConstants.REQUESTOR_ID;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -81,7 +80,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.http.Fault;
-import ch.qos.logback.classic.spi.ILoggingEvent;
 
 public class ServiceInstancesTest extends BaseTest {
 
@@ -116,7 +114,7 @@ public class ServiceInstancesTest extends BaseTest {
         headers.set(TRANSACTION_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
         headers.set(ONAP_REQUEST_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
         headers.set(ONAPLogConstants.MDCs.REQUEST_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
-        headers.set(CLIENT_ID, "VID");
+        headers.set(ONAP_PARTNER_NAME, "VID");
         headers.set(REQUESTOR_ID, "xxxxxx");
         try { // generate one-time port number to avoid RANDOM port number later.
             initialUrl = new URL(createURLWithPort(Constants.ORCHESTRATION_REQUESTS_PATH));
@@ -217,37 +215,6 @@ public class ServiceInstancesTest extends BaseTest {
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
-
-
-
-        for (ILoggingEvent logEvent : TestAppender.events)
-            if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.SOAuditLogContainerFilter")
-                    && logEvent.getMarker() != null && logEvent.getMarker().getName().equals("ENTRY")) {
-                Map<String, String> mdc = logEvent.getMDCPropertyMap();
-                assertNotNull(mdc.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP));
-                assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
-                assertNotNull(mdc.get(ONAPLogConstants.MDCs.INVOCATION_ID));
-                assertEquals("UNKNOWN", mdc.get(ONAPLogConstants.MDCs.PARTNER_NAME));
-                assertEquals("onap/so/infra/serviceInstantiation/v5/serviceInstances",
-                        mdc.get(ONAPLogConstants.MDCs.SERVICE_NAME));
-                assertEquals("INPROGRESS", mdc.get(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE));
-            } else if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.SOAuditLogContainerFilter")
-                    && logEvent.getMarker() != null && logEvent.getMarker().getName().equals("EXIT")) {
-                Map<String, String> mdc = logEvent.getMDCPropertyMap();
-                assertNotNull(mdc.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP));
-                assertNotNull(mdc.get(ONAPLogConstants.MDCs.LOG_TIMESTAMP));
-                assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
-                assertNotNull(mdc.get(ONAPLogConstants.MDCs.INVOCATION_ID));
-                assertEquals("202", mdc.get(ONAPLogConstants.MDCs.RESPONSE_CODE));
-                assertEquals("UNKNOWN", mdc.get(ONAPLogConstants.MDCs.PARTNER_NAME));
-                assertEquals("onap/so/infra/serviceInstantiation/v5/serviceInstances",
-                        mdc.get(ONAPLogConstants.MDCs.SERVICE_NAME));
-                assertEquals("COMPLETE", mdc.get(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE));
-                assertNotNull(mdc.get(ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION));
-                assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
-                assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
-                assertEquals("5.0.0", response.getHeaders().get("X-LatestVersion").get(0));
-            }
     }
 
     @Test
@@ -400,15 +367,6 @@ public class ServiceInstancesTest extends BaseTest {
                                 .withStatus(HttpStatus.SC_NOT_FOUND)));
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatusCode().value());
-
-        for (ILoggingEvent logEvent : TestAppender.events) {
-            if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.SOAuditLogContainerFilter")
-                    && logEvent.getMarker() != null && logEvent.getMarker().getName().equals("ENTRY")) {
-                Map<String, String> mdc = logEvent.getMDCPropertyMap();
-                assertEquals("32807a28-1a14-4b88-b7b3-2950918aa76d", mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
-                assertNotNull(mdc.get("PartnerName"));
-            }
-        }
     }
 
     @Test
@@ -2572,15 +2530,6 @@ public class ServiceInstancesTest extends BaseTest {
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
         assertEquals(response.getHeaders().get(TRANSACTION_ID).get(0), "32807a28-1a14-4b88-b7b3-2950918aa76d");
-
-        for (ILoggingEvent logEvent : TestAppender.events) {
-            if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.SOAuditLogContainerFilter")
-                    && logEvent.getMarker() != null && logEvent.getMarker().getName().equals("ENTRY")) {
-                Map<String, String> mdc = logEvent.getMDCPropertyMap();
-                assertEquals("32807a28-1a14-4b88-b7b3-2950918aa76d", mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
-                assertEquals("VID", mdc.get(ONAPLogConstants.MDCs.PARTNER_NAME));
-            }
-        }
     }
 
     @Test

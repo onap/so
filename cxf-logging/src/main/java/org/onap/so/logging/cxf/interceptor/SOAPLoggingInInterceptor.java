@@ -83,6 +83,7 @@ public class SOAPLoggingInInterceptor extends AbstractSoapInterceptor {
         String invocationId = getValueOrDefault(headers, ONAPLogConstants.Headers.INVOCATION_ID.toLowerCase(),
                 UUID.randomUUID().toString());
         MDC.put(ONAPLogConstants.MDCs.INVOCATION_ID, invocationId);
+        MDC.put(ONAPLogConstants.MDCs.SERVER_INVOCATION_ID, invocationId);
     }
 
     private void setRequestId(Map<String, List<String>> headers) {

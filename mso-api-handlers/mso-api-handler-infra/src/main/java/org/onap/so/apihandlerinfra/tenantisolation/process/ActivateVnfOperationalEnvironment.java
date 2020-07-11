@@ -109,7 +109,7 @@ public class ActivateVnfOperationalEnvironment {
         logger.debug("  aai workloadContext: {}", workloadContext);
         if (!vidWorkloadContext.equals(workloadContext)) {
             ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcesssError)
+                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcessError)
                             .build();
             throw new ValidateException.Builder(
                     " The vid workloadContext did not match from aai record. " + " vid workloadContext:"
@@ -119,7 +119,7 @@ public class ActivateVnfOperationalEnvironment {
         }
         if (ecompOperationalEnvironmentId == null) {
             ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcesssError)
+                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcessError)
                             .build();
             throw new ValidateException.Builder(
                     " The ECOMP OE was not in aai record; the value of relationship.relationship-data key: "
@@ -183,7 +183,7 @@ public class ActivateVnfOperationalEnvironment {
 
             } else {
                 ErrorLoggerInfo errorLoggerInfo =
-                        new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcesssError)
+                        new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcessError)
                                 .build();
                 String dbErrorMessage = " Failure calling SDC: statusCode: " + statusCode + "; messageId: "
                         + jsonResponse.get("messageId") + "; message: " + jsonResponse.get("message");

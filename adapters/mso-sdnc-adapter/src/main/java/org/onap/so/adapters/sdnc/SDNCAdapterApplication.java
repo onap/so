@@ -23,7 +23,9 @@
 package org.onap.so.adapters.sdnc;
 
 import java.util.concurrent.Executor;
+import org.onap.logging.filter.base.Constants;
 import org.onap.logging.filter.spring.MDCTaskDecorator;
+import org.onap.so.utils.Components;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -52,6 +54,7 @@ public class SDNCAdapterApplication {
     }
 
     public static void main(String[] args) {
+        System.setProperty(Constants.Property.PARTNER_NAME, Components.SDNC_ADAPTER.toString());
         SpringApplication.run(SDNCAdapterApplication.class, args);
         System.getProperties().setProperty("server.name", "Springboot");
         setLogsDir();

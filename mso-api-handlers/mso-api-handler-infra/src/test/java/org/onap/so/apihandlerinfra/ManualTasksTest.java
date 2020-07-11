@@ -26,24 +26,13 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static org.onap.logging.filter.base.Constants.HttpHeaders.ECOMP_REQUEST_ID;
-import static org.onap.logging.ref.slf4j.ONAPLogConstants.MDCs.INVOCATION_ID;
-import static org.onap.logging.ref.slf4j.ONAPLogConstants.MDCs.PARTNER_NAME;
-import static org.onap.logging.ref.slf4j.ONAPLogConstants.MDCs.RESPONSE_CODE;
-import static org.onap.logging.ref.slf4j.ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION;
-import static org.onap.logging.ref.slf4j.ONAPLogConstants.MDCs.LOG_TIMESTAMP;
-import static org.onap.logging.ref.slf4j.ONAPLogConstants.MDCs.SERVICE_NAME;
-import static org.onap.logging.ref.slf4j.ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE;
-import static org.onap.logging.filter.base.Constants.HttpHeaders.CLIENT_ID;
+import static org.onap.logging.filter.base.Constants.HttpHeaders.ONAP_PARTNER_NAME;
 import java.io.IOException;
-import java.util.Map;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.junit.Test;
-import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.apihandlerinfra.tasksbeans.RequestDetails;
 import org.onap.so.apihandlerinfra.tasksbeans.RequestInfo;
 import org.onap.so.apihandlerinfra.tasksbeans.TaskRequestReference;
@@ -59,7 +48,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.http.Fault;
-import ch.qos.logback.classic.spi.ILoggingEvent;
 
 
 public class ManualTasksTest extends BaseTest {
@@ -89,7 +77,7 @@ public class ManualTasksTest extends BaseTest {
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
         headers.set(ECOMP_REQUEST_ID, "987654321");
-        headers.set(CLIENT_ID, "VID");
+        headers.set(ONAP_PARTNER_NAME, "VID");
         HttpEntity<TasksRequest> entity = new HttpEntity<TasksRequest>(taskReq, headers);
 
         UriComponentsBuilder builder =
@@ -108,34 +96,6 @@ public class ManualTasksTest extends BaseTest {
         // then
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         assertThat(realResponse, sameBeanAs(expectedResponse));
-
-        for (ILoggingEvent logEvent : TestAppender.events)
-            if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.SOAuditLogContainerFilter")
-                    && logEvent.getMarker() != null && logEvent.getMarker().getName().equals("ENTRY")) {
-                Map<String, String> mdc = logEvent.getMDCPropertyMap();
-                assertNotNull(mdc.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP));
-                assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
-                assertNotNull(mdc.get(INVOCATION_ID));
-                assertEquals("UNKNOWN", mdc.get(PARTNER_NAME));
-                assertEquals("tasks/v1/55/complete", mdc.get(SERVICE_NAME));
-                assertEquals("INPROGRESS", mdc.get(RESPONSE_STATUS_CODE));
-            } else if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.SOAuditLogContainerFilter")
-                    && logEvent.getMarker() != null && logEvent.getMarker().getName().equals("EXIT")) {
-                Map<String, String> mdc = logEvent.getMDCPropertyMap();
-                assertNotNull(mdc.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP));
-                assertNotNull(mdc.get(LOG_TIMESTAMP));
-                assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
-                assertNotNull(mdc.get(INVOCATION_ID));
-                assertEquals("202", mdc.get(RESPONSE_CODE));
-                assertEquals("UNKNOWN", mdc.get(PARTNER_NAME));
-                assertEquals("tasks/v1/55/complete", mdc.get(SERVICE_NAME));
-                assertEquals("COMPLETE", mdc.get(RESPONSE_STATUS_CODE));
-                assertNotNull(mdc.get(RESPONSE_DESCRIPTION));
-                assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
-                assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
-                assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
-                assertEquals("1.0.0", response.getHeaders().get("X-LatestVersion").get(0));
-            }
     }
 
     @Test
@@ -152,7 +112,7 @@ public class ManualTasksTest extends BaseTest {
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
         headers.set(ECOMP_REQUEST_ID, "987654321");
-        headers.set(CLIENT_ID, "VID");
+        headers.set(ONAP_PARTNER_NAME, "VID");
         HttpEntity<String> entity = new HttpEntity<String>(invalidRequest, headers);
 
         UriComponentsBuilder builder =
@@ -189,7 +149,7 @@ public class ManualTasksTest extends BaseTest {
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
         headers.set(ECOMP_REQUEST_ID, "987654321");
-        headers.set(CLIENT_ID, "VID");
+        headers.set(ONAP_PARTNER_NAME, "VID");
         HttpEntity<TasksRequest> entity = new HttpEntity<TasksRequest>(taskReq, headers);
 
         UriComponentsBuilder builder =
@@ -230,7 +190,7 @@ public class ManualTasksTest extends BaseTest {
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
         headers.set(ECOMP_REQUEST_ID, "987654321");
-        headers.set(CLIENT_ID, "VID");
+        headers.set(ONAP_PARTNER_NAME, "VID");
         HttpEntity<TasksRequest> entity = new HttpEntity<TasksRequest>(taskReq, headers);
 
         UriComponentsBuilder builder =

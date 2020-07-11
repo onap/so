@@ -25,7 +25,7 @@ public enum ErrorCode {
     AvailabilityError(200),
     DataError(300),
     SchemaError(400),
-    BusinessProcesssError(500),
+    BusinessProcessError(500),
     UnknownError(900);
 
     private int value;

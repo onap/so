@@ -28,12 +28,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
-import java.util.Map;
 import javax.ws.rs.core.MediaType;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -48,7 +45,6 @@ import org.onap.so.client.grm.beans.ServiceEndPointLookupRequest;
 import org.onap.so.client.grm.beans.ServiceEndPointRequest;
 import org.onap.so.client.grm.exceptions.GRMClientCallFailed;
 import org.slf4j.MDC;
-import ch.qos.logback.classic.spi.ILoggingEvent;
 
 
 public class GRMClientTest extends BaseTest {
@@ -79,36 +75,10 @@ public class GRMClientTest extends BaseTest {
         List<ServiceEndPoint> list = sel.getServiceEndPointList();
         assertEquals(3, list.size());
 
-        boolean foundInvoke = false;
-        boolean foundInvokeReturn = false;
-        for (ILoggingEvent logEvent : TestAppender.events)
-            if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.SOMetricLogClientFilter")
-                    && logEvent.getMarker() != null && logEvent.getMarker().getName().equals("INVOKE")) {
-                Map<String, String> mdc = logEvent.getMDCPropertyMap();
-                assertNotNull(mdc.get(ONAPLogConstants.MDCs.INVOCATION_ID));
-                assertEquals("GRM", mdc.get("TargetEntity"));
-                assertEquals("INPROGRESS", mdc.get(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE));
-                foundInvoke = true;
-            } else if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.SOMetricLogClientFilter")
-                    && logEvent.getMarker() != null && logEvent.getMarker().getName().equals("INVOKE-RETURN")) {
-                Map<String, String> mdc = logEvent.getMDCPropertyMap();
-                assertNotNull(mdc.get(ONAPLogConstants.MDCs.INVOCATION_ID));
-                assertEquals("200", mdc.get(ONAPLogConstants.MDCs.RESPONSE_CODE));
-                assertEquals("COMPLETED", mdc.get(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE));
-                foundInvokeReturn = true;
-            }
-
-        if (!foundInvoke)
-            fail("INVOKE Marker not found");
-
-        if (!foundInvokeReturn)
-            fail("INVOKE RETURN Marker not found");
-
         wireMockServer.verify(postRequestedFor(urlEqualTo("/GRMLWPService/v1/serviceEndPoint/findRunning"))
                 .withHeader(ONAPLogConstants.Headers.INVOCATION_ID.toString(), matching(uuidRegex))
                 .withHeader(ONAPLogConstants.Headers.REQUEST_ID.toString(), matching(uuidRegex))
-                .withHeader(ONAPLogConstants.Headers.PARTNER_NAME.toString(), equalTo("SO")));
-        TestAppender.events.clear();
+                .withHeader(ONAPLogConstants.Headers.PARTNER_NAME.toString(), equalTo("SO.APIH")));
     }
 
     @Test

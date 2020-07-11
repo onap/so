@@ -152,7 +152,7 @@ public class ToscaResourceStructure {
             logger.debug(e.getMessage(), e);
             logger.error(LoggingAnchor.SIX, MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
                     "Exception caught during parser *****LOOK********* " + artifact.getArtifactName(), "ASDC",
-                    "processResourceNotification", ErrorCode.BusinessProcesssError.getValue(),
+                    "processResourceNotification", ErrorCode.BusinessProcessError.getValue(),
                     "Exception in " + "processResourceNotification", e);
 
             throw new ASDCDownloadException("Exception caught when passing the csar file to the parser ", e);

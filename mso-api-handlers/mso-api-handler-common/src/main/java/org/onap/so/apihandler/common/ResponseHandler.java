@@ -98,8 +98,9 @@ public class ResponseHandler {
         if (response != null) {
             responseBody = response.getResponse();
         } else {
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_ERROR_FROM_BPEL_SERVER,
-                    ErrorCode.BusinessProcesssError).targetEntity("Camunda").targetServiceName("parseCamunda").build();
+            ErrorLoggerInfo errorLoggerInfo =
+                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_ERROR_FROM_BPEL_SERVER, ErrorCode.BusinessProcessError)
+                            .targetEntity("Camunda").targetServiceName("parseCamunda").build();
             BPMNFailureException bpmnFailureException =
                     new BPMNFailureException.Builder(String.valueOf(status), status, ErrorNumbers.ERROR_FROM_BPEL)
                             .errorInfo(errorLoggerInfo).build();
@@ -123,8 +124,9 @@ public class ResponseHandler {
                     ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
         }
         if (status != HttpStatus.SC_ACCEPTED) {
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_ERROR_FROM_BPEL_SERVER,
-                    ErrorCode.BusinessProcesssError).targetEntity("BPEL").targetServiceName("parseBpel").build();
+            ErrorLoggerInfo errorLoggerInfo =
+                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_ERROR_FROM_BPEL_SERVER, ErrorCode.BusinessProcessError)
+                            .targetEntity("BPEL").targetServiceName("parseBpel").build();
 
             throw new BPMNFailureException.Builder(String.valueOf(status), status, ErrorNumbers.ERROR_FROM_BPEL)
                     .errorInfo(errorLoggerInfo).build();
@@ -149,9 +151,9 @@ public class ResponseHandler {
                             .build();
         }
         if (status != HttpStatus.SC_NO_CONTENT && status != HttpStatus.SC_ACCEPTED) {
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_ERROR_FROM_BPEL_SERVER,
-                    ErrorCode.BusinessProcesssError).targetEntity("CAMUNDATASK").targetServiceName("parseCamundaTask")
-                            .build();
+            ErrorLoggerInfo errorLoggerInfo =
+                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_ERROR_FROM_BPEL_SERVER, ErrorCode.BusinessProcessError)
+                            .targetEntity("CAMUNDATASK").targetServiceName("parseCamundaTask").build();
 
             throw new BPMNFailureException.Builder(String.valueOf(status), status, ErrorNumbers.ERROR_FROM_BPEL)
                     .errorInfo(errorLoggerInfo).build();

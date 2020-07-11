@@ -122,8 +122,9 @@ public class ResumeOrchestrationRequest {
 
         if (infraActiveRequest == null) {
             logger.error("No infraActiveRequest record found for requestId: {} in requesteDb lookup", requestId);
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND,
-                    ErrorCode.BusinessProcesssError).build();
+            ErrorLoggerInfo errorLoggerInfo =
+                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, ErrorCode.BusinessProcessError)
+                            .build();
             ValidateException validateException = new ValidateException.Builder(
                     "Null response from requestDB when searching by requestId: " + requestId, HttpStatus.SC_NOT_FOUND,
                     ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();

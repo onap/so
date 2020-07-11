@@ -31,7 +31,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.onap.logging.filter.base.Constants.HttpHeaders.ONAP_REQUEST_ID;
 import static org.onap.so.logger.HttpHeadersConstants.REQUESTOR_ID;
-import static org.onap.logging.filter.base.Constants.HttpHeaders.CLIENT_ID;
+import static org.onap.logging.filter.base.Constants.HttpHeaders.ONAP_PARTNER_NAME;
 import static org.onap.logging.filter.base.Constants.HttpHeaders.TRANSACTION_ID;
 import java.io.File;
 import java.io.IOException;
@@ -85,7 +85,7 @@ public class InstanceManagementTest extends BaseTest {
         headers.set(TRANSACTION_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
         headers.set(ONAP_REQUEST_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
         headers.set(ONAPLogConstants.MDCs.REQUEST_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
-        headers.set(CLIENT_ID, "VID");
+        headers.set(ONAP_PARTNER_NAME, "VID");
         headers.set(REQUESTOR_ID, "xxxxxx");
         try { // generate one-time port number to avoid RANDOM port number later.
             initialUrl = new URL(createURLWithPort(Constants.ORCHESTRATION_REQUESTS_PATH));

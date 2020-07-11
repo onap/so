@@ -85,7 +85,7 @@ public class JsonUtil {
             return MAPPER.readValue(jsonstr, type);
         } catch (IOException e) {
             logger.error(LoggingAnchor.THREE, MessageEnum.RA_NS_EXC.toString(),
-                    ErrorCode.BusinessProcesssError.getValue(), UNMARSHAL_FAIL_MSG, e);
+                    ErrorCode.BusinessProcessError.getValue(), UNMARSHAL_FAIL_MSG, e);
             throw new ApplicationException(HttpCode.BAD_REQUEST, UNMARSHAL_FAIL_MSG);
         }
     }
@@ -103,7 +103,7 @@ public class JsonUtil {
             return MAPPER.readValue(jsonstr, type);
         } catch (IOException e) {
             logger.error(LoggingAnchor.THREE, MessageEnum.RA_NS_EXC.toString(),
-                    ErrorCode.BusinessProcesssError.getValue(), UNMARSHAL_FAIL_MSG, e);
+                    ErrorCode.BusinessProcessError.getValue(), UNMARSHAL_FAIL_MSG, e);
             throw new ApplicationException(HttpCode.BAD_REQUEST, UNMARSHAL_FAIL_MSG);
         }
     }
@@ -120,7 +120,7 @@ public class JsonUtil {
             return MAPPER.writeValueAsString(srcObj);
         } catch (IOException e) {
             logger.error(LoggingAnchor.THREE, MessageEnum.RA_NS_EXC.toString(),
-                    ErrorCode.BusinessProcesssError.getValue(), "fail to marshal json", e);
+                    ErrorCode.BusinessProcessError.getValue(), "fail to marshal json", e);
             throw new ApplicationException(HttpCode.BAD_REQUEST, "srcObj marshal failed!");
         }
     }

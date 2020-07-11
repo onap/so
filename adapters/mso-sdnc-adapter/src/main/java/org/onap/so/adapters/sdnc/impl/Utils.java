@@ -99,7 +99,7 @@ public class Utils {
 
         } catch (Exception e) {
             logger.error(LoggingAnchor.FOUR, MessageEnum.RA_ERROR_CREATE_SDNC_REQUEST.toString(), "SDNC",
-                    ErrorCode.BusinessProcesssError.getValue(), "Exception in genSdncReq", e);
+                    ErrorCode.BusinessProcessError.getValue(), "Exception in genSdncReq", e);
         }
         return null;
     }

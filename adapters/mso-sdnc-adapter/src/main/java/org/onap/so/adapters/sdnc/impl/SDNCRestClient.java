@@ -178,7 +178,7 @@ public class SDNCRestClient {
             return (sdncResp);
         } catch (Exception e) {
             logger.error(LoggingAnchor.FOUR, MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC.toString(), "SDNC",
-                    ErrorCode.BusinessProcesssError.getValue(), "Exception processing request to SDNC", e);
+                    ErrorCode.BusinessProcessError.getValue(), "Exception processing request to SDNC", e);
             // default
             sdncResp.setRespCode(HttpURLConnection.HTTP_INTERNAL_ERROR);
             String respMsg = "Error processing request to SDNC. ";
@@ -246,7 +246,7 @@ public class SDNCRestClient {
                     } // is != null
                 } catch (Exception e1) {
                     logger.error(LoggingAnchor.FOUR, MessageEnum.RA_ERROR_GET_RESPONSE_SDNC.toString(), "SDNC",
-                            ErrorCode.BusinessProcesssError.getValue(), "Exception while get SDNC response", e1);
+                            ErrorCode.BusinessProcessError.getValue(), "Exception while get SDNC response", e1);
                 }
             } // con != null
 
@@ -312,7 +312,7 @@ public class SDNCRestClient {
                 headers.put("Authorization", Collections.singletonList(basicAuth));
             } catch (Exception e2) {
                 logger.error(LoggingAnchor.FOUR, MessageEnum.RA_SET_CALLBACK_AUTH_EXC.toString(), CAMUNDA,
-                        ErrorCode.BusinessProcesssError.getValue(),
+                        ErrorCode.BusinessProcessError.getValue(),
                         "Exception - Unable to set authorization in callback request", e2);
 
             }
@@ -322,7 +322,7 @@ public class SDNCRestClient {
 
         } catch (Exception e) {
             error = "Error sending BpelCallback request" + e.getMessage();
-            logger.error("Error {} - {} - {}", ErrorCode.BusinessProcesssError.getValue(),
+            logger.error("Error {} - {} - {}", ErrorCode.BusinessProcessError.getValue(),
                     MessageEnum.RA_CALLBACK_BPEL_EXC.toString(), error, e);
         }
         logger.info(MessageEnum.RA_CALLBACK_BPEL_COMPLETE.name(), CAMUNDA);

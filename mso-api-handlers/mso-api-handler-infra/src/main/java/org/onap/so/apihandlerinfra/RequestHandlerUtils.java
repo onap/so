@@ -157,8 +157,9 @@ public class RequestHandlerUtils extends AbstractRestHandler {
 
         if (response == null) {
 
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
-                    ErrorCode.BusinessProcesssError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+            ErrorLoggerInfo errorLoggerInfo =
+                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.BusinessProcessError)
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
             ClientConnectionException clientException = new ClientConnectionException.Builder(requestClient.getUrl(),
                     HttpStatus.SC_BAD_GATEWAY, ErrorNumbers.SVC_NO_SERVER_RESOURCES).errorInfo(errorLoggerInfo).build();
             updateStatus(currentActiveReq, Status.FAILED, clientException.getMessage());
@@ -223,7 +224,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
         if (camundaJSONResponseBody != null && !camundaJSONResponseBody.isEmpty()) {
 
             ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.BusinessProcesssError)
+                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.BusinessProcessError)
                             .errorSource(requestClient.getUrl()).build();
             BPMNFailureException bpmnException =
                     new BPMNFailureException.Builder(String.valueOf(bpelStatus) + camundaJSONResponseBody, bpelStatus,
@@ -235,7 +236,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
         } else {
 
             ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.BusinessProcesssError)
+                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.BusinessProcessError)
                             .errorSource(requestClient.getUrl()).build();
 
 

@@ -118,7 +118,7 @@ public class VolumeAdapterRest {
             } catch (Exception e) {
                 // problem handling create, send generic failure as sync resp to caller
                 logger.error("{} {} Exception - createVNFVolumes: ", MessageEnum.RA_CREATE_VNF_ERR,
-                        ErrorCode.BusinessProcesssError.getValue(), e);
+                        ErrorCode.BusinessProcessError.getValue(), e);
                 return Response.serverError().build();
             }
             // send sync response (ACK) to caller
@@ -270,7 +270,7 @@ public class VolumeAdapterRest {
             } catch (Exception e) {
                 // problem handling create, send generic failure as sync resp to caller
                 logger.error("{} {} Exception - deleteVNFVolumes: ", MessageEnum.RA_DELETE_VNF_ERR,
-                        ErrorCode.BusinessProcesssError.getValue(), e);
+                        ErrorCode.BusinessProcessError.getValue(), e);
                 return Response.serverError().build();
             }
             // send sync response (ACK) to caller
@@ -367,7 +367,7 @@ public class VolumeAdapterRest {
             } catch (Exception e) {
                 // problem handling create, send generic failure as sync resp to caller
                 logger.error("{} {} Exception - rollbackVNFVolumes: ", MessageEnum.RA_ROLLBACK_VNF_ERR,
-                        ErrorCode.BusinessProcesssError.getValue(), e);
+                        ErrorCode.BusinessProcessError.getValue(), e);
                 return Response.serverError().build();
             }
             // send sync response (ACK) to caller
@@ -463,7 +463,7 @@ public class VolumeAdapterRest {
             } catch (Exception e) {
                 // problem handling create, send generic failure as sync resp to caller
                 logger.error("{} {} Exception - updateVNFVolumes: ", MessageEnum.RA_UPDATE_VNF_ERR,
-                        ErrorCode.BusinessProcesssError.getValue(), e);
+                        ErrorCode.BusinessProcessError.getValue(), e);
                 return Response.serverError().build();
             }
             // send sync response (ACK) to caller
@@ -607,7 +607,7 @@ public class VolumeAdapterRest {
             return Response.status(respStatus).entity(new GenericEntity<QueryVolumeGroupResponse>(qryResp) {}).build();
         } catch (VnfException e) {
             logger.error("{} {} AaiVolumeGroupId: {} VnfException - queryVNFVolumes", MessageEnum.RA_QUERY_VNF_ERR,
-                    ErrorCode.BusinessProcesssError.getValue(), aaiVolumeGroupId, e);
+                    ErrorCode.BusinessProcessError.getValue(), aaiVolumeGroupId, e);
             VolumeGroupExceptionResponse excResp = new VolumeGroupExceptionResponse(e.getMessage(),
                     MsoExceptionCategory.INTERNAL, Boolean.FALSE, null);
             logger.debug("Query queryVNFVolumes exit");

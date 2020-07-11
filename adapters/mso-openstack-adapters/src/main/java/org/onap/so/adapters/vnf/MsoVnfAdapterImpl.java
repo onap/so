@@ -651,7 +651,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 String error = "Create VFModule: Attached heatStack ID Query " + nestedStackId + " in " + cloudOwner
                         + "/" + cloudSiteId + "/" + tenantId + ": " + me;
                 logger.error(LoggingAnchor.NINE, MessageEnum.RA_QUERY_VNF_ERR.toString(), vfModuleName, cloudOwner,
-                        cloudSiteId, tenantId, OPENSTACK, QUERY_STACK, ErrorCode.BusinessProcesssError.getValue(),
+                        cloudSiteId, tenantId, OPENSTACK, QUERY_STACK, ErrorCode.BusinessProcessError.getValue(),
                         "MsoException trying to query nested stack", me);
                 logger.debug("ERROR trying to query nested stack= {}", error);
                 throw new VnfException(me);
@@ -660,8 +660,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 String error = "Create VFModule: Attached heatStack ID DOES NOT EXIST " + nestedStackId + " in "
                         + cloudOwner + "/" + cloudSiteId + "/" + tenantId + " " + USER_ERROR;
                 logger.error(LoggingAnchor.TEN, MessageEnum.RA_QUERY_VNF_ERR.toString(), vfModuleName, cloudOwner,
-                        cloudSiteId, tenantId, error, OPENSTACK, QUERY_STACK,
-                        ErrorCode.BusinessProcesssError.getValue(),
+                        cloudSiteId, tenantId, error, OPENSTACK, QUERY_STACK, ErrorCode.BusinessProcessError.getValue(),
                         "Create VFModule: Attached heatStack ID " + "DOES NOT EXIST");
                 logger.debug(error);
                 throw new VnfException(error, MsoExceptionCategory.USERDATA);
@@ -685,7 +684,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 String error = "Create VFModule: Attached baseHeatStack ID Query " + nestedBaseStackId + " in "
                         + cloudOwner + "/" + cloudSiteId + "/" + tenantId + ": " + me;
                 logger.error(LoggingAnchor.NINE, MessageEnum.RA_QUERY_VNF_ERR.toString(), vfModuleName, cloudOwner,
-                        cloudSiteId, tenantId, OPENSTACK, QUERY_STACK, ErrorCode.BusinessProcesssError.getValue(),
+                        cloudSiteId, tenantId, OPENSTACK, QUERY_STACK, ErrorCode.BusinessProcessError.getValue(),
                         "MsoException trying to query nested base stack", me);
                 logger.debug("ERROR trying to query nested base stack= {}", error);
                 throw new VnfException(me);
@@ -694,8 +693,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 String error = "Create VFModule: Attached base heatStack ID DOES NOT EXIST " + nestedBaseStackId
                         + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId + " " + USER_ERROR;
                 logger.error(LoggingAnchor.TEN, MessageEnum.RA_QUERY_VNF_ERR.toString(), vfModuleName, cloudOwner,
-                        cloudSiteId, tenantId, error, OPENSTACK, QUERY_STACK,
-                        ErrorCode.BusinessProcesssError.getValue(),
+                        cloudSiteId, tenantId, error, OPENSTACK, QUERY_STACK, ErrorCode.BusinessProcessError.getValue(),
                         "Create VFModule: Attached base heatStack ID DOES NOT EXIST");
                 logger.debug("Exception occurred", error);
                 throw new VnfException(error, MsoExceptionCategory.USERDATA);
@@ -827,7 +825,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                                         + VERSION_MAX + " :" + maxVersionVnf + " NOT supported on Cloud: " + cloudSiteId
                                         + " with AIC_Version:" + cloudSiteOpt.get().getCloudVersion();
                                 logger.error(LoggingAnchor.FIVE, MessageEnum.RA_CONFIG_EXC.toString(), error, OPENSTACK,
-                                        ErrorCode.BusinessProcesssError.getValue(), "Exception - setVersion");
+                                        ErrorCode.BusinessProcessError.getValue(), "Exception - setVersion");
                                 logger.debug(error);
                                 throw new VnfException(error, MsoExceptionCategory.USERDATA);
                             }
@@ -1515,7 +1513,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                                     + minVersionVnf + " " + VERSION_MAX + " :" + maxVersionVnf
                                     + " NOT supported on Cloud: " + cloudSiteId + " with AIC_Version:" + aicV;
                             logger.error(LoggingAnchor.FIVE, MessageEnum.RA_CONFIG_EXC.toString(), error, OPENSTACK,
-                                    ErrorCode.BusinessProcesssError.getValue(), "Exception - setVersion");
+                                    ErrorCode.BusinessProcessError.getValue(), "Exception - setVersion");
                             logger.debug(error);
                             throw new VnfException(error, MsoExceptionCategory.USERDATA);
                         }

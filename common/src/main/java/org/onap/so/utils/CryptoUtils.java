@@ -91,7 +91,7 @@ public final class CryptoUtils {
             return CryptoUtils.encrypt(message, CLOUD_KEY);
         } catch (GeneralSecurityException e) {
             logger.error(LoggingAnchor.THREE, MessageEnum.RA_GENERAL_EXCEPTION.toString(),
-                    ErrorCode.BusinessProcesssError.getValue(), "Exception in encryptPassword ", e);
+                    ErrorCode.BusinessProcessError.getValue(), "Exception in encryptPassword ", e);
             return null;
         }
     }
@@ -101,7 +101,7 @@ public final class CryptoUtils {
             return CryptoUtils.decrypt(message, CLOUD_KEY);
         } catch (GeneralSecurityException e) {
             logger.error(LoggingAnchor.THREE, MessageEnum.RA_GENERAL_EXCEPTION.toString(),
-                    ErrorCode.BusinessProcesssError.getValue(), "Exception in encryptPassword ", e);
+                    ErrorCode.BusinessProcessError.getValue(), "Exception in encryptPassword ", e);
             return null;
         }
     }

@@ -295,7 +295,7 @@ public class E2EServiceInstances {
                     msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY, MsoException.ServiceException,
                             "bpelResponse is null", ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
             logger.error(LoggingAnchor.FOUR, MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(),
-                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.BusinessProcesssError.getValue(), "Null response from BPEL");
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.BusinessProcessError.getValue(), "Null response from BPEL");
             logger.debug(END_OF_THE_TRANSACTION + resp.getEntity().toString());
             return resp;
         }
@@ -333,7 +333,7 @@ public class E2EServiceInstances {
                     MsoException.ServiceException, "E2E serviceId " + serviceId + " is not found in DB",
                     ErrorNumbers.SVC_DETAILED_SERVICE_ERROR, null, version);
             logger.error(LoggingAnchor.FOUR, MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(),
-                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.BusinessProcesssError.getValue(),
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.BusinessProcessError.getValue(),
                     "Null response from RequestDB when searching by serviceId");
             logger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
             return resp;
@@ -435,7 +435,7 @@ public class E2EServiceInstances {
                     msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY, MsoException.ServiceException,
                             "bpelResponse is null", ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
             logger.error(LoggingAnchor.FOUR, MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(),
-                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.BusinessProcesssError.getValue(), "Null response from BPEL");
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.BusinessProcessError.getValue(), "Null response from BPEL");
             logger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
             return resp;
         }
@@ -549,7 +549,7 @@ public class E2EServiceInstances {
                     msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY, MsoException.ServiceException,
                             "bpelResponse is null", ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
             logger.error(LoggingAnchor.FOUR, MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(),
-                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.BusinessProcesssError.getValue(), "Null response from BPEL");
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.BusinessProcessError.getValue(), "Null response from BPEL");
             logger.debug(END_OF_THE_TRANSACTION + getBPMNResp.getEntity());
             return getBPMNResp;
         }
@@ -660,7 +660,7 @@ public class E2EServiceInstances {
                     msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY, MsoException.ServiceException,
                             "bpelResponse is null", ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
             logger.error(LoggingAnchor.FOUR, MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(),
-                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.BusinessProcesssError.getValue(), "Null response from BPEL");
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.BusinessProcessError.getValue(), "Null response from BPEL");
             logger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
             return resp;
         }
@@ -760,7 +760,7 @@ public class E2EServiceInstances {
                     msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY, MsoException.ServiceException,
                             "bpelResponse is null", ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
             logger.error(LoggingAnchor.FOUR, MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(),
-                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.BusinessProcesssError.getValue(), "Null response from BPEL");
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.BusinessProcessError.getValue(), "Null response from BPEL");
             logger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
             return resp;
         }
@@ -791,7 +791,7 @@ public class E2EServiceInstances {
                         "Request Failed due to BPEL error with HTTP Status= %1 " + '\n' + camundaJSONResponseBody,
                         ErrorNumbers.SVC_DETAILED_SERVICE_ERROR, variables, version);
                 logger.error(LoggingAnchor.FOUR, MessageEnum.APIH_BPEL_RESPONSE_ERROR.toString(),
-                        requestClient.getUrl(), ErrorCode.BusinessProcesssError.getValue(),
+                        requestClient.getUrl(), ErrorCode.BusinessProcessError.getValue(),
                         "Response from BPEL engine is failed with HTTP Status=" + bpelStatus);
                 logger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
                 return resp;
@@ -800,7 +800,7 @@ public class E2EServiceInstances {
                         "Request Failed due to BPEL error with HTTP Status= %1",
                         ErrorNumbers.SVC_DETAILED_SERVICE_ERROR, variables, version);
                 logger.error("", MessageEnum.APIH_BPEL_RESPONSE_ERROR.toString(), requestClient.getUrl(),
-                        ErrorCode.BusinessProcesssError.getValue(), "Response from BPEL engine is empty");
+                        ErrorCode.BusinessProcessError.getValue(), "Response from BPEL engine is empty");
                 logger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
                 return resp;
             }
