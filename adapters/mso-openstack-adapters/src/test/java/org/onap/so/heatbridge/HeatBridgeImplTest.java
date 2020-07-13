@@ -68,7 +68,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.LInterface;
 import org.onap.aai.domain.yang.PInterface;
 import org.onap.aai.domain.yang.SriovPf;
-import org.onap.aai.domain.yang.Vserver;
 import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.AAISingleTransactionClient;
@@ -263,7 +262,7 @@ public class HeatBridgeImplTest {
 
         // Assert
         ArgumentCaptor<AAIResourceUri> captor = ArgumentCaptor.forClass(AAIResourceUri.class);
-        verify(transaction, times(2)).create(captor.capture(), any(Vserver.class));
+        verify(transaction, times(2)).createIfNotExists(captor.capture(), any(Optional.class));
 
         List<AAIResourceUri> uris = captor.getAllValues();
         assertEquals(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, CLOUD_OWNER, REGION_ID, TENANT_ID,
@@ -307,7 +306,7 @@ public class HeatBridgeImplTest {
 
         // Assert
         ArgumentCaptor<AAIResourceUri> captor = ArgumentCaptor.forClass(AAIResourceUri.class);
-        verify(transaction, times(2)).create(captor.capture(), any(Vserver.class));
+        verify(transaction, times(2)).createIfNotExists(captor.capture(), any(Optional.class));
 
         List<AAIResourceUri> uris = captor.getAllValues();
         assertEquals(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, CLOUD_OWNER, REGION_ID, TENANT_ID,

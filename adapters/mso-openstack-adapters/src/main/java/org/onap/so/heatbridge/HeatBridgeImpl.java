@@ -256,8 +256,8 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             // Build vserver relationships to: image, flavor, pserver, vf-module
             vserver.setRelationshipList(
                     aaiHelper.getVserverRelationshipList(cloudOwner, cloudRegionId, genericVnfId, vfModuleId, server));
-            transaction.create(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner, cloudRegionId,
-                    tenantId, vserver.getVserverId()), vserver);
+            transaction.createIfNotExists(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner,
+                    cloudRegionId, tenantId, vserver.getVserverId()), Optional.of(vserver));
         });
     }
 
