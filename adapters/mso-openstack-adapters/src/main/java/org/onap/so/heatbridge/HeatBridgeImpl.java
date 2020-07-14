@@ -42,6 +42,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.validator.routines.InetAddressValidator;
@@ -483,27 +484,34 @@ public class HeatBridgeImpl implements HeatBridgeApi {
         Objects.requireNonNull(vnfId, "Null vnf-id!");
         Objects.requireNonNull(vfModuleId, "Null vf-module-id!");
         try {
-            Optional<VfModule> vfModule = resourcesClient.get(VfModule.class,
-                    AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId).depth(Depth.ONE));
-            logger.debug("vfModule is present: {}", vfModule.isPresent());
-            if (vfModule.isPresent()) {
+            Optional<VfModule> vfModule = resourcesClient.get(
+                    AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId, NotFoundException.class)
+                            .depth(Depth.ONE))
+                    .asBean(VfModule.class);
 
-                AAIResultWrapper resultWrapper = new AAIResultWrapper(vfModule.get());
-                Optional<Relationships> relationships = resultWrapper.getRelationships();
-                logger.debug("relationships is present: {}", relationships.isPresent());
-                if (relationships.isPresent()) {
-                    List<AAIResourceUri> vserverUris = relationships.get().getRelatedUris(AAIObjectType.VSERVER);
-                    logger.debug("vserverList isEmpty: {}", vserverUris.isEmpty());
-                    createTransactionToDeleteSriovPfFromPserver(vserverUris);
+            AAIResultWrapper resultWrapper = new AAIResultWrapper(vfModule.get());
+            Optional<Relationships> relationships = resultWrapper.getRelationships();
+            logger.debug("VfModule contains relationships in AAI: {}", relationships.isPresent());
+            if (relationships.isPresent()) {
+                List<AAIResourceUri> vserverUris = relationships.get().getRelatedUris(AAIObjectType.VSERVER);
+                logger.debug("VServer contains {} relationships in AAI", vserverUris.size());
+                createTransactionToDeleteSriovPfFromPserver(vserverUris);
 
-                    if (!vserverUris.isEmpty()) {
-                        for (AAIResourceUri vserverUri : vserverUris) {
-                            logger.debug("Deleting Vservers: {}", vserverUri.toString());
+                if (!vserverUris.isEmpty()) {
+                    for (AAIResourceUri vserverUri : vserverUris) {
+                        if (env.getProperty("heatBridgeDryrun", Boolean.class, true)) {
+                            logger.debug("Would delete Vserver: {}", vserverUri.build().toString());
+                        } else {
                             resourcesClient.delete(vserverUri);
                         }
                     }
                 }
             }
+
+        } catch (NotFoundException e) {
+            String msg = "Failed to commit delete heatbridge data transaction";
+            logger.debug(msg + " with error: " + e);
+            throw new HeatBridgeException(msg, e);
         } catch (Exception e) {
             String msg = "Failed to commit delete heatbridge data transaction";
             logger.debug(msg + " with error: " + e);
@@ -526,8 +534,16 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                             if (pciIds.contains(sriovPf.getPfPciId())) {
                                 logger.debug("creating transaction to delete SR-IOV PF: " + pIf.getInterfaceName()
                                         + " from PServer: " + pserverName);
-                                resourcesClient.delete(AAIUriFactory.createResourceUri(AAIObjectType.SRIOV_PF,
-                                        pserverName, pIf.getInterfaceName(), sriovPf.getPfPciId()));
+                                if (env.getProperty("heatBridgeDryrun", Boolean.class, true)) {
+                                    logger.debug("Would delete Sriov Pf: {}",
+                                            AAIUriFactory
+                                                    .createResourceUri(AAIObjectType.SRIOV_PF, pserverName,
+                                                            pIf.getInterfaceName(), sriovPf.getPfPciId())
+                                                    .build().toString());
+                                } else {
+                                    resourcesClient.delete(AAIUriFactory.createResourceUri(AAIObjectType.SRIOV_PF,
+                                            pserverName, pIf.getInterfaceName(), sriovPf.getPfPciId()));
+                                }
                             }
                         }));
             }

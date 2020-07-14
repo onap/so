@@ -47,20 +47,19 @@ public class DeleteAAIInventory {
     @Autowired
     protected Environment env;
 
-    public void heatbridge(CloudInformation cloudInformation, boolean dryrun) {
+    public void heatbridge(CloudInformation cloudInformation) {
         try {
-            if (!dryrun) {
-                logger.debug("Heatbridge delete executing");
+            logger.debug("Heatbridge delete executing");
 
-                CloudSite cloudSite = cloudConfig.getCloudSite(cloudInformation.getRegionId())
-                        .orElseThrow(() -> new MsoCloudSiteNotFound(cloudInformation.getRegionId()));
-                CloudIdentity cloudIdentity = cloudSite.getIdentityService();
-                HeatBridgeApi heatBridgeClient = new HeatBridgeImpl(new AAIResourcesClient(), cloudIdentity,
-                        cloudInformation.getOwner(), cloudInformation.getRegionId(), cloudSite.getRegionId(),
-                        cloudInformation.getTenantId());
-                heatBridgeClient.authenticate();
-                heatBridgeClient.deleteVfModuleData(cloudInformation.getVnfId(), cloudInformation.getVfModuleId());
-            }
+            CloudSite cloudSite = cloudConfig.getCloudSite(cloudInformation.getRegionId())
+                    .orElseThrow(() -> new MsoCloudSiteNotFound(cloudInformation.getRegionId()));
+            CloudIdentity cloudIdentity = cloudSite.getIdentityService();
+            HeatBridgeApi heatBridgeClient =
+                    new HeatBridgeImpl(new AAIResourcesClient(), cloudIdentity, cloudInformation.getOwner(),
+                            cloudInformation.getRegionId(), cloudSite.getRegionId(), cloudInformation.getTenantId());
+            heatBridgeClient.authenticate();
+            heatBridgeClient.deleteVfModuleData(cloudInformation.getVnfId(), cloudInformation.getVfModuleId());
+
         } catch (Exception ex) {
             logger.debug("Heatbrige failed for stackId: " + cloudInformation.getTemplateInstanceId(), ex);
         }

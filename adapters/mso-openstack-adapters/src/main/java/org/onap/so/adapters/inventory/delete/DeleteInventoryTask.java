@@ -60,14 +60,13 @@ public class DeleteInventoryTask extends ExternalTaskUtils {
 
     protected void executeExternalTask(ExternalTask externalTask, ExternalTaskService externalTaskService) {
         mdcSetup.setupMDC(externalTask);
-        boolean inventoryException = false;
         String externalTaskId = externalTask.getId();
         CloudInformation cloudInformation = externalTask.getVariable("cloudInformation");
         boolean success = true;
         if (cloudInformation != null) {
             Integer retryCount = externalTask.getRetries();
             try {
-                deleteInventory.heatbridge(cloudInformation, env.getProperty("heatBridgeDryrun", Boolean.class, true));
+                deleteInventory.heatbridge(cloudInformation);
             } catch (Exception e) {
                 logger.error("Error during inventory of stack", e);
                 success = false;
