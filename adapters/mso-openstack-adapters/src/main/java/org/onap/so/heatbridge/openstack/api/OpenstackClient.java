@@ -42,6 +42,7 @@ import org.openstack4j.model.compute.Server;
 import org.openstack4j.model.heat.Resource;
 import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.Port;
+import org.openstack4j.model.network.Subnet;
 
 public interface OpenstackClient {
 
@@ -92,4 +93,12 @@ public interface OpenstackClient {
      * @return List of filtered Network objects
      */
     List<Network> listNetworksByFilter(Map<String, String> filterParams);
+
+    /**
+     * Get a subnet object by subnet ID
+     * 
+     * @param subnetId Unique UUID of the subnet.
+     * @return Subnet object.
+     */
+    Subnet getSubnetById(String subnetId);
 }

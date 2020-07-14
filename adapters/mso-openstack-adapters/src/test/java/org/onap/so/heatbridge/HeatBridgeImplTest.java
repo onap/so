@@ -49,9 +49,11 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -83,6 +85,7 @@ import org.openstack4j.model.compute.Image;
 import org.openstack4j.model.compute.Server;
 import org.openstack4j.model.compute.Server.Status;
 import org.openstack4j.model.heat.Resource;
+import org.openstack4j.model.network.IP;
 import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.NetworkType;
 import org.openstack4j.model.network.Port;
@@ -415,7 +418,6 @@ public class HeatBridgeImplTest {
         when(port.getMacAddress()).thenReturn("78:4f:43:68:e2:78");
         when(port.getNetworkId()).thenReturn("890a203a-23gg-56jh-df67-731656a8f13a");
         when(port.getDeviceId()).thenReturn("test-device-id");
-        when(port.getVifDetails()).thenReturn(ImmutableMap.of(HeatBridgeConstants.OS_VLAN_NETWORK_KEY, "2345"));
         String pfPciId = "0000:08:00.0";
         when(port.getProfile()).thenReturn(ImmutableMap.of(HeatBridgeConstants.OS_PCI_SLOT_KEY, pfPciId,
                 HeatBridgeConstants.OS_PHYSICAL_NETWORK_KEY, "physical_network_id"));
@@ -445,7 +447,7 @@ public class HeatBridgeImplTest {
         // Assert
         verify(transaction, times(5)).create(any(AAIResourceUri.class), any(LInterface.class));
         verify(osClient, times(5)).getPortById(anyString());
-        verify(osClient, times(5)).getNetworkById(anyString());
+        verify(osClient, times(10)).getNetworkById(anyString());
     }
 
     @Test
@@ -459,7 +461,6 @@ public class HeatBridgeImplTest {
         when(port.getMacAddress()).thenReturn("78:4f:43:68:e2:78");
         when(port.getNetworkId()).thenReturn("890a203a-23gg-56jh-df67-731656a8f13a");
         when(port.getDeviceId()).thenReturn("test-device-id");
-        when(port.getVifDetails()).thenReturn(ImmutableMap.of(HeatBridgeConstants.OS_VLAN_NETWORK_KEY, "2345"));
         String pfPciId = "0000:08:00.0";
         when(port.getProfile()).thenReturn(ImmutableMap.of(HeatBridgeConstants.OS_PCI_SLOT_KEY, pfPciId,
                 HeatBridgeConstants.OS_PHYSICAL_NETWORK_KEY, "physical_network_id"));
@@ -474,6 +475,7 @@ public class HeatBridgeImplTest {
         when(osClient.getPortById("70a09dfd-f1c5-4bc8-bd8f-dc539b8d662a")).thenReturn(port);
         when(osClient.getPortById("12f88b4d-c8a4-4fbd-bcb4-7e36af02430b")).thenReturn(port);
         when(osClient.getPortById("c54b9f45-b413-4937-bbe4-3c8a5689cfc9")).thenReturn(port);
+        when(osClient.getNetworkById(anyString())).thenReturn(network);
 
         SriovPf sriovPf = new SriovPf();
         sriovPf.setPfPciId(pfPciId);
@@ -487,7 +489,7 @@ public class HeatBridgeImplTest {
         // Assert
         verify(transaction, times(5)).create(any(AAIResourceUri.class), any(LInterface.class));
         verify(osClient, times(5)).getPortById(anyString());
-        verify(osClient, times(0)).getNetworkById(anyString());
+        verify(osClient, times(5)).getNetworkById(anyString());
     }
 
     private List<? extends Resource> extractTestStackResources() {

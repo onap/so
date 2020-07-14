@@ -145,7 +145,6 @@ public class AaiHelper {
         vserver.setVserverId(serverId);
         vserver.setVserverName(server.getName());
         vserver.setVserverName2(server.getName());
-        vserver.setProvStatus(server.getStatus().value());
         server.getLinks().stream().filter(link -> link.getRel().equals(HeatBridgeConstants.OS_RESOURCES_SELF_LINK_KEY))
                 .findFirst().ifPresent(link -> vserver.setVserverSelflink(link.getHref()));
         return vserver;
