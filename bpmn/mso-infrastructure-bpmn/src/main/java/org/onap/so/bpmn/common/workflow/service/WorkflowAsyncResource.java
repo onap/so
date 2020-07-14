@@ -45,6 +45,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.core.env.Environment;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -68,12 +69,16 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
     private static final WorkflowContextHolder contextHolder = WorkflowContextHolder.getInstance();
 
     long workflowPollInterval = 1000;
+    private static final String ASYNC_WAIT_TIME = "mso.workflow.async.waitTime";
 
     @Autowired
     private WorkflowProcessor processor;
 
     @Autowired
     private WorkflowContextHolder workflowContext;
+
+    @Autowired
+    private Environment env;
 
     public void setProcessor(WorkflowProcessor processor) {
         this.processor = processor;
@@ -119,7 +124,7 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
     protected WorkflowResponse waitForResponse(Map<String, Object> inputVariables) throws Exception {
         String requestId = getRequestId(inputVariables);
         long currentWaitTime = 0;
-        long waitTime = getWaitTime(inputVariables);
+        long waitTime = getWaitTime();
         logger.debug("WorkflowAsyncResource.waitForResponse using timeout: " + waitTime);
         while (waitTime > currentWaitTime) {
             Thread.sleep(workflowPollInterval);
@@ -185,18 +190,8 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
      * @param inputVariables
      * @return
      */
-    private long getWaitTime(Map<String, Object> inputVariables) {
-        String timeout = inputVariables.get("mso-service-request-timeout") == null ? null
-                : inputVariables.get("mso-service-request-timeout").toString();
-
-        if (timeout != null) {
-            try {
-                return Long.parseLong(timeout) * 1000;
-            } catch (NumberFormatException nex) {
-                logger.debug("Invalid input for mso-service-request-timeout");
-            }
-        }
-        return DEFAULT_WAIT_TIME;
+    private long getWaitTime() {
+        return env.getProperty(ASYNC_WAIT_TIME, Long.class, new Long(DEFAULT_WAIT_TIME));
     }
 
 }
