@@ -146,4 +146,15 @@ public class DSLQueryBuilderTest {
                 "generic-vnf*('vnf-id', 'vnfId') > " + "[ pserver* > complex*, " + "vserver > pserver* > complex* ]",
                 builder.build().get());
     }
+
+    @Test
+    public void selectOutputFilterTest() {
+        DSLQueryBuilder<Output, Output> builder =
+                TraversalBuilder.traversal(new DSLStartNode(AAIObjectType.CLOUD_REGION, __.key("cloud-owner", "att-nc"))
+                        .output("cloud-region-id", "a", "b"));
+        builder.to(__.node(AAIObjectType.PSERVER)).output("x", "y", "z");
+
+        assertEquals("cloud-region{'cloud-region-id', 'a', 'b'}('cloud-owner', 'att-nc') > pserver{'x', 'y', 'z'}",
+                builder.build().toString());
+    }
 }

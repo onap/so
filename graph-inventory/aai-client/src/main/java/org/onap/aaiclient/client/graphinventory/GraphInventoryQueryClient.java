@@ -138,4 +138,8 @@ public abstract class GraphInventoryQueryClient<S, I, Wrapper extends GraphInven
         }
         return clone;
     }
+
+    public GraphInventoryClient getClient() {
+        return this.client;
+    }
 }

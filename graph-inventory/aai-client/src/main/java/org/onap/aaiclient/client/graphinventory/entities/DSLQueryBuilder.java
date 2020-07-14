@@ -24,6 +24,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import org.onap.aaiclient.client.aai.entities.QueryStep;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryObjectName;
@@ -49,6 +50,17 @@ public class DSLQueryBuilder<S, E> {
     }
 
     public DSLQueryBuilder<S, Node> output() {
+        callOnLambda(item -> item.output());
+        return (DSLQueryBuilder<S, Node>) this;
+    }
+
+    public DSLQueryBuilder<S, Node> output(String... fields) {
+        callOnLambda(item -> item.output(fields));
+        return (DSLQueryBuilder<S, Node>) this;
+    }
+
+    protected void callOnLambda(Consumer<DSLNodeBase> consumer) {
+
         Object obj = steps.get(steps.size() - 1);
         if (obj instanceof DSLNodeBase) {
             ((DSLNodeBase) steps.get(steps.size() - 1)).output();
@@ -60,7 +72,7 @@ public class DSLQueryBuilder<S, E> {
                 try {
                     o = f.get(obj);
                     if (o instanceof DSLQueryBuilder && ((DSLQueryBuilder) o).steps.get(0) instanceof DSLNodeBase) {
-                        ((DSLNodeBase) ((DSLQueryBuilder) o).steps.get(0)).output();
+                        consumer.accept(((DSLNodeBase) ((DSLQueryBuilder) o).steps.get(0)));
                     }
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                 }
@@ -68,7 +80,6 @@ public class DSLQueryBuilder<S, E> {
                 break;
             }
         }
-        return (DSLQueryBuilder<S, Node>) this;
     }
 
     @SafeVarargs

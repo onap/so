@@ -26,16 +26,17 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryQueryClient;
 import org.onap.aaiclient.client.graphinventory.entities.DSLQuery;
 import org.onap.aaiclient.client.graphinventory.entities.uri.GraphInventoryUri;
+import com.google.common.collect.ImmutableMap;
 
 public class AAIDSLQueryClient
         extends GraphInventoryQueryClient<AAIDSLQueryClient, DSLQuery, AAIResultWrapper, AAIObjectType> {
 
     public AAIDSLQueryClient() {
-        super(new AAIClient());
+        super(new AAIClient(ImmutableMap.of("X-DslApiVersion", "V2")));
     }
 
     public AAIDSLQueryClient(AAIVersion version) {
-        super(new AAIClient(version));
+        super(new AAIClient(version, ImmutableMap.of("X-DslApiVersion", "V2")));
     }
 
     @Override
@@ -53,5 +54,4 @@ public class AAIDSLQueryClient
     public AAIObjectType createType(String name, String uri) {
         return new AAIFluentTypeReverseLookup().fromName(name, uri);
     }
-
 }
