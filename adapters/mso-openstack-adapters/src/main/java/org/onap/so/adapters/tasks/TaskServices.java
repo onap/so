@@ -70,7 +70,7 @@ public class TaskServices {
     public void auditAddAAIInventory() throws Exception {
         for (int i = 0; i < externalTaskServiceUtils.getMaxClients(); i++) {
             ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
-            client.subscribe("InventoryAddAudit").lockDuration(externalTaskServiceUtils.getLockDuration())
+            client.subscribe("InventoryAddAudit").lockDuration(externalTaskServiceUtils.getLockDurationLong())
                     .handler(auditCreateStack::executeExternalTask).open();
         }
     }
@@ -79,7 +79,7 @@ public class TaskServices {
     public void auditDeleteAAIInventory() throws Exception {
         for (int i = 0; i < externalTaskServiceUtils.getMaxClients(); i++) {
             ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
-            client.subscribe("InventoryDeleteAudit").lockDuration(externalTaskServiceUtils.getLockDuration())
+            client.subscribe("InventoryDeleteAudit").lockDuration(externalTaskServiceUtils.getLockDurationLong())
                     .handler(auditDeleteStack::executeExternalTask).open();
         }
     }

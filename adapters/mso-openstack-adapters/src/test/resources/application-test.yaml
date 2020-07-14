@@ -64,8 +64,6 @@ mso:
   adapters:
     requestDb:
       endpoint: http://localhost:${wiremock.server.port}
-  audit:
-    lock-time: 240000
   logPath: logs
   msb-ip: localhost
   msb-port: ${wiremock.server.port}
