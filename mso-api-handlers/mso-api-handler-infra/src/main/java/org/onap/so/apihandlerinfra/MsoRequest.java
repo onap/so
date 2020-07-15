@@ -154,9 +154,8 @@ public class MsoRequest {
 
 
     // Parse request JSON
-    public void parse(ServiceInstancesRequest sir, HashMap<String, String> instanceIdMap, Actions action,
-            String version, String originalRequestJSON, int reqVersion, Boolean aLaCarteFlag)
-            throws ValidationException, IOException {
+    public void parse(ServiceInstancesRequest sir, Map<String, String> instanceIdMap, Actions action, String version,
+            String originalRequestJSON, int reqVersion, Boolean aLaCarteFlag) throws ValidationException, IOException {
 
         logger.debug("Validating the Service Instance request");
         List<ValidationRule> rules = new ArrayList<>();

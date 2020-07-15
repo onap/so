@@ -22,6 +22,7 @@
 package org.onap.so.apihandlerinfra.validation;
 
 import java.util.HashMap;
+import java.util.Map;
 import org.onap.so.apihandlerinfra.Actions;
 import org.onap.so.serviceinstancebeans.LineOfBusiness;
 import org.onap.so.serviceinstancebeans.OwningEntity;
@@ -34,7 +35,7 @@ import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 
 public class ValidationInformation {
     ServiceInstancesRequest sir;
-    HashMap<String, String> instanceIdMap;
+    Map<String, String> instanceIdMap;
     Actions action;
     int reqVersion;
     String requestScope;
@@ -53,7 +54,7 @@ public class ValidationInformation {
     OwningEntity owningEntity;
     Service userParams;
 
-    public ValidationInformation(ServiceInstancesRequest sir, HashMap<String, String> instanceIdMap, Actions action,
+    public ValidationInformation(ServiceInstancesRequest sir, Map<String, String> instanceIdMap, Actions action,
             int reqVersion, Boolean aLaCarteFlag, RequestParameters requestParameters) {
         this.sir = sir;
         this.instanceIdMap = instanceIdMap;
@@ -71,11 +72,11 @@ public class ValidationInformation {
         this.sir = value;
     }
 
-    public HashMap<String, String> getInstanceIdMap() {
+    public Map<String, String> getInstanceIdMap() {
         return this.instanceIdMap;
     }
 
-    public void setInstanceIdMap(HashMap<String, String> value) {
+    public void setInstanceIdMap(Map<String, String> value) {
         this.instanceIdMap = value;
     }
 

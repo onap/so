@@ -22,6 +22,7 @@
 package org.onap.so.apihandlerinfra.validation;
 
 import java.util.HashMap;
+import java.util.Map;
 import org.onap.so.apihandler.common.CommonConstants;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
@@ -31,6 +32,7 @@ public class InstanceIdMapValidation implements ValidationRule {
 
     private static final String Service_InstanceId = "serviceInstanceId";
     private static final String Vnf_InstanceId = "vnfInstanceId";
+    private static final String PNF_NAME = "pnfName";
     private static final String vfModule_InstanceId = "vfModuleInstanceId";
 
     private static final String volume_Group_InstanceId = "volumeGroupInstanceId";
@@ -39,7 +41,7 @@ public class InstanceIdMapValidation implements ValidationRule {
 
     @Override
     public ValidationInformation validate(ValidationInformation info) throws ValidationException {
-        HashMap<String, String> instanceIdMap = info.getInstanceIdMap();
+        Map<String, String> instanceIdMap = info.getInstanceIdMap();
         ServiceInstancesRequest sir = info.getSir();
         if (instanceIdMap != null) {
             if (instanceIdMap.get(Service_InstanceId) != null) {
@@ -89,6 +91,10 @@ public class InstanceIdMapValidation implements ValidationRule {
                     throw new ValidationException(CommonConstants.INSTANCE_GROUP_INSTANCE_ID, true);
                 }
                 sir.setInstanceGroupId(instanceIdMap.get(CommonConstants.INSTANCE_GROUP_INSTANCE_ID));
+            }
+
+            if (instanceIdMap.get(PNF_NAME) != null) {
+                sir.setPnfName(instanceIdMap.get(PNF_NAME));
             }
         }
         return info;

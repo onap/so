@@ -261,8 +261,8 @@ public class RequestHandlerUtils extends AbstractRestHandler {
         }
     }
 
-    public InfraActiveRequests duplicateCheck(Actions action, HashMap<String, String> instanceIdMap,
-            String instanceName, String requestScope, InfraActiveRequests currentActiveReq) throws ApiException {
+    public InfraActiveRequests duplicateCheck(Actions action, Map<String, String> instanceIdMap, String instanceName,
+            String requestScope, InfraActiveRequests currentActiveReq) throws ApiException {
         InfraActiveRequests dup = null;
         try {
             if (!(instanceName == null && "service".equals(requestScope) && (action == Action.createInstance
@@ -332,7 +332,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
         }
     }
 
-    public void parseRequest(ServiceInstancesRequest sir, HashMap<String, String> instanceIdMap, Actions action,
+    public void parseRequest(ServiceInstancesRequest sir, Map<String, String> instanceIdMap, Actions action,
             String version, String requestJSON, Boolean aLaCarte, String requestId,
             InfraActiveRequests currentActiveReq) throws ValidateException, RequestDbFailureException {
         int reqVersion = Integer.parseInt(version.substring(1));
@@ -354,7 +354,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
     }
 
     public void buildErrorOnDuplicateRecord(InfraActiveRequests currentActiveReq, Actions action,
-            HashMap<String, String> instanceIdMap, String instanceName, String requestScope, InfraActiveRequests dup)
+            Map<String, String> instanceIdMap, String instanceName, String requestScope, InfraActiveRequests dup)
             throws ApiException {
 
         String instance = null;
