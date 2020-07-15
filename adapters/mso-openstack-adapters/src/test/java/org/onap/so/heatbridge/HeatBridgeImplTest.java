@@ -444,7 +444,7 @@ public class HeatBridgeImplTest {
         heatbridge.buildAddVserverLInterfacesToAaiAction(stackResources, Arrays.asList("1", "2"), "CloudOwner");
 
         // Assert
-        verify(transaction, times(5)).create(any(AAIResourceUri.class), any(LInterface.class));
+        verify(transaction, times(15)).createIfNotExists(any(AAIResourceUri.class), any(Optional.class));
         verify(osClient, times(5)).getPortById(anyString());
         verify(osClient, times(10)).getNetworkById(anyString());
     }
@@ -486,7 +486,7 @@ public class HeatBridgeImplTest {
         heatbridge.buildAddVserverLInterfacesToAaiAction(stackResources, Arrays.asList("1", "2"), "CloudOwner");
 
         // Assert
-        verify(transaction, times(5)).create(any(AAIResourceUri.class), any(LInterface.class));
+        verify(transaction, times(5)).createIfNotExists(any(AAIResourceUri.class), any(Optional.class));
         verify(osClient, times(5)).getPortById(anyString());
         verify(osClient, times(5)).getNetworkById(anyString());
     }
