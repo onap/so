@@ -9,6 +9,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2020 Nokia
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nordix
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,7 +27,28 @@
 
 package org.onap.so.apihandlerinfra;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import javax.transaction.Transactional;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandler.common.RequestClientParameter;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
@@ -39,35 +62,13 @@ import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.exceptions.ValidationException;
-import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.serviceinstancebeans.ModelType;
-import org.onap.so.serviceinstancebeans.RequestReferences;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
-import org.onap.so.serviceinstancebeans.ServiceInstancesResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import javax.transaction.Transactional;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.util.HashMap;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Component
 @Path("/onap/so/infra/instanceManagement")
@@ -75,8 +76,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
         description = "Infrastructure API Requests for Instance Management"))
 public class InstanceManagement {
 
-    private static Logger logger = LoggerFactory.getLogger(InstanceManagement.class);
-    private static String uriPrefix = "/instanceManagement/";
+    private static final Logger LOG = LoggerFactory.getLogger(InstanceManagement.class);
+    private static final String URI_PREFIX = "/instanceManagement/";
     private static final String SAVE_TO_DB = "save instance to db";
 
     @Autowired
@@ -102,13 +103,13 @@ public class InstanceManagement {
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
             @PathParam("workflowUuid") String workflowUuid, @Context ContainerRequestContext requestContext)
             throws ApiException {
-        String requestId = requestHandlerUtils.getRequestId(requestContext);
-        HashMap<String, String> instanceIdMap = new HashMap<>();
+        final String requestId = requestHandlerUtils.getRequestId(requestContext);
+        final Map<String, String> instanceIdMap = new HashMap<>();
         instanceIdMap.put("serviceInstanceId", serviceInstanceId);
         instanceIdMap.put("vnfInstanceId", vnfInstanceId);
         instanceIdMap.put("workflowUuid", workflowUuid);
         return processCustomWorkflowRequest(request, Action.inPlaceSoftwareUpdate, instanceIdMap, version, requestId,
-                requestContext);
+                requestContext, true);
     }
 
     @POST
@@ -122,34 +123,61 @@ public class InstanceManagement {
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("pnfName") String pnfName,
             @PathParam("workflowUuid") String workflowUuid, @Context ContainerRequestContext requestContext)
             throws ApiException {
-        String requestId = requestHandlerUtils.getRequestId(requestContext);
-        HashMap<String, String> instanceIdMap = new HashMap<>();
+        final String requestId = requestHandlerUtils.getRequestId(requestContext);
+        final Map<String, String> instanceIdMap = new HashMap<>();
         instanceIdMap.put("serviceInstanceId", serviceInstanceId);
         instanceIdMap.put("pnfName", pnfName);
         instanceIdMap.put("workflowUuid", workflowUuid);
-        return processPNFCustomWorkflowRequest(request, Action.forCustomWorkflow, instanceIdMap, version, requestId,
-                requestContext);
+        return processCustomWorkflowRequest(request, Action.forCustomWorkflow, instanceIdMap, version, requestId,
+                requestContext, false);
     }
 
-    private Response processCustomWorkflowRequest(String requestJSON, Actions action,
-            HashMap<String, String> instanceIdMap, String version, String requestId,
-            ContainerRequestContext requestContext) throws ApiException {
-        String serviceInstanceId;
-        boolean aLaCarte = true;
-        ServiceInstancesRequest sir;
-        String apiVersion = version.substring(1);
+    @POST
+    @Path("/{version:[vV][1]}/serviceInstances/{serviceInstanceId}/workflows/{workflowUuid}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Execute custom Service Level workflow", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Transactional
+    public Response executeServiceLevelCustomWorkflow(String request, @PathParam("version") String version,
+            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("workflowUuid") String workflowUuid,
+            @Context ContainerRequestContext requestContext) throws ApiException {
+        final String requestId = requestHandlerUtils.getRequestId(requestContext);
+        final Map<String, String> instanceIdMap = new HashMap<>();
+        instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+        instanceIdMap.put("workflowUuid", workflowUuid);
+        return processCustomWorkflowRequest(request, Action.forCustomWorkflow, instanceIdMap, version, requestId,
+                requestContext, false);
+    }
 
-        String requestUri = requestHandlerUtils.getRequestUri(requestContext, uriPrefix);
+    private Response processCustomWorkflowRequest(final String requestJSON, final Actions action,
+            final Map<String, String> instanceIdMap, final String version, final String requestId,
+            final ContainerRequestContext requestContext, final boolean aLaCarte) throws ApiException {
+        String pnfName = null;
+        String vnfType = null;
+        String workflowUuid = null;
+        String vnfInstanceId = null;
+        String svcInstanceId = null;
+        final String apiVersion = version.substring(1);
 
-        sir = requestHandlerUtils.convertJsonToServiceInstanceRequest(requestJSON, action, requestId, requestUri);
-        String requestScope = requestHandlerUtils.deriveRequestScope(action, sir, requestUri);
-        InfraActiveRequests currentActiveReq =
-                msoRequest.createRequestObject(sir, action, requestId, Status.IN_PROGRESS, requestJSON, requestScope);
+        if (instanceIdMap != null && !instanceIdMap.isEmpty()) {
+            pnfName = instanceIdMap.get("pnfName");
+            workflowUuid = instanceIdMap.get("workflowUuid");
+            vnfInstanceId = instanceIdMap.get("vnfInstanceId");
+            svcInstanceId = instanceIdMap.get("serviceInstanceId");
+        }
+
+        final String requestUri = requestHandlerUtils.getRequestUri(requestContext, URI_PREFIX);
+        final ServiceInstancesRequest svcInsReq =
+                requestHandlerUtils.convertJsonToServiceInstanceRequest(requestJSON, action, requestId, requestUri);
+        final String requestScope = requestHandlerUtils.deriveRequestScope(action, svcInsReq, requestUri);
+        InfraActiveRequests currentActiveReq = msoRequest.createRequestObject(svcInsReq, action, requestId,
+                Status.IN_PROGRESS, requestJSON, requestScope);
 
         try {
             requestHandlerUtils.validateHeaders(requestContext);
         } catch (ValidationException e) {
-            logger.error("Exception occurred", e);
+            LOG.error("Exception occurred", e);
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_VALIDATION_ERROR, ErrorCode.SchemaError)
                             .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
@@ -160,42 +188,18 @@ public class InstanceManagement {
             throw validateException;
         }
 
-        requestHandlerUtils.parseRequest(sir, instanceIdMap, action, version, requestJSON, aLaCarte, requestId,
+        requestHandlerUtils.parseRequest(svcInsReq, instanceIdMap, action, version, requestJSON, aLaCarte, requestId,
                 currentActiveReq);
         requestHandlerUtils.setInstanceId(currentActiveReq, requestScope, null, instanceIdMap);
 
-        String vnfType = msoRequest.getVnfType(sir, requestScope);
-
-        if (requestScope.equalsIgnoreCase(ModelType.vnf.name()) && vnfType != null) {
+        if (requestScope.equalsIgnoreCase(ModelType.vnf.name())) {
+            vnfType = msoRequest.getVnfType(svcInsReq, requestScope);
             currentActiveReq.setVnfType(vnfType);
         }
 
         checkDuplicateAndBuildError(action, instanceIdMap, requestScope, currentActiveReq);
-
-        ServiceInstancesResponse serviceResponse = new ServiceInstancesResponse();
-
-        RequestReferences referencesResponse = new RequestReferences();
-
-        referencesResponse.setRequestId(requestId);
-
-        serviceResponse.setRequestReferences(referencesResponse);
-        boolean isBaseVfModule = false;
-
-        String workflowUuid = null;
-        if (instanceIdMap != null) {
-            workflowUuid = instanceIdMap.get("workflowUuid");
-        }
-
-        RecipeLookupResult recipeLookupResult = getInstanceManagementWorkflowRecipe(currentActiveReq, workflowUuid);
-
-        String serviceInstanceType = requestHandlerUtils.getServiceType(requestScope, sir, true);
-
-        serviceInstanceId = requestHandlerUtils.setServiceInstanceId(requestScope, sir);
-        String vnfId = "";
-
-        if (sir.getVnfInstanceId() != null) {
-            vnfId = sir.getVnfInstanceId();
-        }
+        final RecipeLookupResult recipeLookupResult =
+                getInstanceManagementWorkflowRecipe(currentActiveReq, workflowUuid);
 
         currentActiveReq = setWorkflowNameAndOperationName(currentActiveReq, workflowUuid);
         saveCurrentActiveRequest(currentActiveReq);
@@ -203,11 +207,11 @@ public class InstanceManagement {
         RequestClientParameter requestClientParameter;
         try {
             requestClientParameter = new RequestClientParameter.Builder().setRequestId(requestId)
-                    .setBaseVfModule(isBaseVfModule).setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
-                    .setRequestAction(action.toString()).setServiceInstanceId(serviceInstanceId).setVnfId(vnfId)
-                    .setServiceType(serviceInstanceType).setVnfType(vnfType)
+                    .setRecipeTimeout(recipeLookupResult.getRecipeTimeout()).setRequestAction(action.toString())
+                    .setServiceInstanceId(svcInstanceId).setVnfId(vnfInstanceId).setVnfType(vnfType)
+                    .setPnfCorrelationId(pnfName).setApiVersion(apiVersion)
                     .setRequestDetails(requestHandlerUtils.mapJSONtoMSOStyle(requestJSON, null, aLaCarte, action))
-                    .setApiVersion(apiVersion).setALaCarte(aLaCarte).setRequestUri(requestUri).build();
+                    .setALaCarte(aLaCarte).setRequestUri(requestUri).build();
         } catch (IOException e) {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.SchemaError)
@@ -232,7 +236,7 @@ public class InstanceManagement {
         }
     }
 
-    private void checkDuplicateAndBuildError(Actions action, HashMap<String, String> instanceIdMap, String requestScope,
+    private void checkDuplicateAndBuildError(Actions action, Map<String, String> instanceIdMap, String requestScope,
             InfraActiveRequests currentActiveReq) throws ApiException {
 
         InfraActiveRequests dup =
@@ -246,74 +250,6 @@ public class InstanceManagement {
             requestHandlerUtils.buildErrorOnDuplicateRecord(currentActiveReq, action, instanceIdMap, null, requestScope,
                     dup);
         }
-    }
-
-    private Response processPNFCustomWorkflowRequest(String requestJSON, Actions action,
-            HashMap<String, String> instanceIdMap, String version, String requestId,
-            ContainerRequestContext requestContext) throws ApiException {
-        boolean aLaCarte = false;
-        ServiceInstancesRequest sir;
-        String apiVersion = version.substring(1);
-
-        String serviceInstanceId = "";
-        String pnfName = "";
-        String workflowUuid = "";
-        if (instanceIdMap != null) {
-            serviceInstanceId = instanceIdMap.get("serviceInstanceId");
-            pnfName = instanceIdMap.get("pnfName");
-            workflowUuid = instanceIdMap.get("workflowUuid");
-        }
-
-        String requestUri = requestHandlerUtils.getRequestUri(requestContext, uriPrefix);
-        sir = requestHandlerUtils.convertJsonToServiceInstanceRequest(requestJSON, action, requestId, requestUri);
-        sir.setServiceInstanceId(serviceInstanceId);
-        sir.setPnfName(pnfName);
-        String requestScope = ModelType.pnf.name();
-        InfraActiveRequests currentActiveReq =
-                msoRequest.createRequestObject(sir, action, requestId, Status.IN_PROGRESS, requestJSON, requestScope);
-
-        try {
-            requestHandlerUtils.validateHeaders(requestContext);
-        } catch (ValidationException e) {
-            logger.error("Exception occurred", e);
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_VALIDATION_ERROR, ErrorCode.SchemaError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-            ValidateException validateException =
-                    new ValidateException.Builder(e.getMessage(), HttpStatus.SC_BAD_REQUEST,
-                            ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
-            requestHandlerUtils.updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
-            throw validateException;
-        }
-
-        requestHandlerUtils.parseRequest(sir, instanceIdMap, action, version, requestJSON, aLaCarte, requestId,
-                currentActiveReq);
-        requestHandlerUtils.setInstanceId(currentActiveReq, requestScope, null, instanceIdMap);
-
-        checkDuplicateAndBuildError(action, instanceIdMap, requestScope, currentActiveReq);
-
-        RecipeLookupResult recipeLookupResult = getInstanceManagementWorkflowRecipe(currentActiveReq, workflowUuid);
-
-        currentActiveReq = setWorkflowNameAndOperationName(currentActiveReq, workflowUuid);
-        saveCurrentActiveRequest(currentActiveReq);
-
-        RequestClientParameter requestClientParameter;
-        try {
-            requestClientParameter = new RequestClientParameter.Builder().setRequestId(requestId)
-                    .setRecipeTimeout(recipeLookupResult.getRecipeTimeout()).setRequestAction(action.toString())
-                    .setServiceInstanceId(serviceInstanceId).setPnfCorrelationId(pnfName)
-                    .setRequestDetails(requestHandlerUtils.mapJSONtoMSOStyle(requestJSON, null, aLaCarte, action))
-                    .setApiVersion(apiVersion).setRequestUri(requestUri).build();
-        } catch (IOException e) {
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.SchemaError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-            throw new ValidateException.Builder("Unable to generate RequestClientParamter object" + e.getMessage(),
-                    HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo)
-                            .build();
-        }
-        return requestHandlerUtils.postBPELRequest(currentActiveReq, requestClientParameter,
-                recipeLookupResult.getOrchestrationURI(), requestScope);
     }
 
     private RecipeLookupResult getInstanceManagementWorkflowRecipe(InfraActiveRequests currentActiveReq,

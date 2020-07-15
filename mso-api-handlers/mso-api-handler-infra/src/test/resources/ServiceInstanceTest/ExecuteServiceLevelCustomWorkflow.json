@@ -1,0 +1,39 @@
+{
+  "requestDetails":{
+    "subscriberInfo":{
+      "globalSubscriberId":"Test"
+    },
+    "requestInfo":{
+      "suppressRollback": false,
+      "productFamilyId": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",
+      "requestorId": "demo",
+      "instanceName":"testInstanceName",
+      "source":"VID"
+    },
+    "cloudConfiguration":{
+      "lcpCloudRegionId": "RegionOne",
+      "tenantId": "7320ec4a5b9d4589ba7c4412ccfd290f",
+      "cloudOwner": "CloudOwner"
+    },
+    "requestParameters":{
+      "subscriptionServiceType": "test",
+      "userParams":[],
+      "aLaCarte": false,
+      "payload": "{\"k1\": \"v1\"}"
+    },
+    "project":{
+      "projectName": "PNFSWUProject"
+    },
+    "owningEntity":{
+      "owningEntityId":"67f2e84c-734d-4e90-a1e4-d2ffa2e75849",
+      "owningEntityName":"OE-Test"
+    },
+    "modelInfo":{
+      "modelVersion": "2.0",
+      "modelVersionId": "d88da85c-d9e8-4f73-b837-3a72a431622b",
+      "modelInvariantId": "fe41489e-1563-46a3-b90a-1db629e4375b",
+      "modelName": "Demo_svc",
+      "modelType": "service"
+    }
+  }
+}
