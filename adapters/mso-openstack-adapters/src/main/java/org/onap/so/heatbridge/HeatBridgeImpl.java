@@ -67,6 +67,7 @@ import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.Relationships;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
 import org.onap.aaiclient.client.graphinventory.exceptions.BulkProcessFailed;
 import org.onap.logging.filter.base.ErrorCode;
@@ -291,14 +292,14 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                 }
             }
             lIf.setL2Multicasting(isL2Multicast);
+
+            transaction.createIfNotExists(AAIUriFactory.createResourceUri(AAIObjectType.L_INTERFACE, cloudOwner,
+                    cloudRegionId, tenantId, port.getDeviceId(), lIf.getInterfaceName()), Optional.of(lIf));
+
             updateLInterfaceIps(port, lIf);
             if (cloudOwner.equals(env.getProperty("mso.cloudOwner.included", ""))) {
                 updateLInterfaceVlan(port, lIf);
             }
-
-            // Update l-interface to the vserver
-            transaction.create(AAIUriFactory.createResourceUri(AAIObjectType.L_INTERFACE, cloudOwner, cloudRegionId,
-                    tenantId, port.getDeviceId(), lIf.getInterfaceName()), lIf);
 
             updateSriovPfToPserver(port, lIf);
         }
@@ -360,26 +361,29 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             vlan.setInMaint(false);
             vlan.setIsIpUnnumbered(false);
             vlan.setIsPrivate(false);
-            Vlans vlans = new Vlans();
-            List<Vlan> vlanList = vlans.getVlan();
-            vlanList.add(vlan);
-            lIf.setVlans(vlans);
+
+            transaction
+                    .createIfNotExists(
+                            AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                                    .cloudRegion(cloudOwner, cloudRegionId).tenant(tenantId).vserver(port.getDeviceId())
+                                    .lInterface(lIf.getInterfaceName()).vlan(vlan.getVlanInterface())),
+                            Optional.of(vlan));
         }
-        // Build sriov-vf to the l-interface
+
         if (port.getvNicType() != null && port.getvNicType().equalsIgnoreCase(HeatBridgeConstants.OS_SRIOV_PORT_TYPE)) {
-            SriovVfs sriovVfs = new SriovVfs();
-            // JAXB does not generate setters for list, however getter ensures its creation.
-            // Thus, all list manipulations must be made on live list.
-            List<SriovVf> sriovVfList = sriovVfs.getSriovVf();
             SriovVf sriovVf = new SriovVf();
             sriovVf.setPciId(port.getProfile().get(HeatBridgeConstants.OS_PCI_SLOT_KEY).toString());
             sriovVf.setNeutronNetworkId(port.getNetworkId());
             sriovVf.setVfVlanFilter("0");
             sriovVf.setVfVlanAntiSpoofCheck(false);
             sriovVf.setVfMacAntiSpoofCheck(false);
-            sriovVfList.add(sriovVf);
 
-            lIf.setSriovVfs(sriovVfs);
+            transaction
+                    .createIfNotExists(
+                            AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                                    .cloudRegion(cloudOwner, cloudRegionId).tenant(tenantId).vserver(port.getDeviceId())
+                                    .lInterface(lIf.getInterfaceName()).sriovVf(sriovVf.getPciId())),
+                            Optional.of(sriovVf));
         }
     }
 
@@ -431,13 +435,15 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                             AAIResourceUri sriovPfUri = AAIUriFactory.createResourceUri(AAIObjectType.SRIOV_PF,
                                     pserverHostName, matchingPifName.get(), sriovPf.getPfPciId());
 
-                            transaction.create(sriovPfUri, sriovPf);
+                            if (!resourcesClient.exists(sriovPfUri)) {
+                                transaction.create(sriovPfUri, sriovPf);
 
-                            AAIResourceUri sriovVfUri = AAIUriFactory.createResourceUri(AAIObjectType.SRIOV_VF,
-                                    cloudOwner, cloudRegionId, tenantId, port.getDeviceId(), lIf.getInterfaceName(),
-                                    port.getProfile().get(HeatBridgeConstants.OS_PCI_SLOT_KEY).toString());
+                                AAIResourceUri sriovVfUri = AAIUriFactory.createResourceUri(AAIObjectType.SRIOV_VF,
+                                        cloudOwner, cloudRegionId, tenantId, port.getDeviceId(), lIf.getInterfaceName(),
+                                        port.getProfile().get(HeatBridgeConstants.OS_PCI_SLOT_KEY).toString());
 
-                            transaction.connect(sriovPfUri, sriovVfUri);
+                                transaction.connect(sriovPfUri, sriovVfUri);
+                            }
                         }
                     }
                 } catch (WebApplicationException e) {
@@ -451,7 +457,6 @@ public class HeatBridgeImpl implements HeatBridgeApi {
     }
 
     private void updateLInterfaceIps(final Port port, final LInterface lIf) {
-        List<L3InterfaceIpv4AddressList> lInterfaceIps = lIf.getL3InterfaceIpv4AddressList();
         for (IP ip : port.getFixedIps()) {
             String ipAddress = ip.getIpAddress();
             if (InetAddressValidator.getInstance().isValidInet4Address(ipAddress)) {
@@ -462,7 +467,12 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                 lInterfaceIp.setNeutronNetworkId(port.getNetworkId());
                 lInterfaceIp.setNeutronSubnetId(ip.getSubnetId());
                 lInterfaceIp.setL3InterfaceIpv4PrefixLength(Long.parseLong(cidr.getNetworkPrefixLength().toString()));
-                lInterfaceIps.add(lInterfaceIp);
+
+                transaction.createIfNotExists(
+                        AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                                .cloudRegion(cloudOwner, cloudRegionId).tenant(tenantId).vserver(port.getDeviceId())
+                                .lInterface(lIf.getInterfaceName()).l3InterfaceIpv4AddressList(ipAddress)),
+                        Optional.of(lInterfaceIp));
             }
         }
     }
