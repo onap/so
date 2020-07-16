@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "92402ce1_91d88623",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/InstanceManagement.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 6004
+      },
+      "writtenOn": "2020-07-16T13:59:30Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "db43acce_c7d2a2b0",
+      "revId": "460fd8c55a0d09ac241991c202d10258ec8fe01f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d7cbf80c_de3fa2be",
         "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/InstanceManagement.java",
         "patchSetId": 1
@@ -33,6 +51,24 @@
       "revId": "460fd8c55a0d09ac241991c202d10258ec8fe01f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "116b3980_ad757108",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/InstanceManagement.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 6004
+      },
+      "writtenOn": "2020-07-16T13:59:30Z",
+      "side": 1,
+      "message": "Yes,but due to dependency of updating status on RequestHandlerUtils(in catch block) required objects needs to be created before validation.",
+      "parentUuid": "d7cbf80c_de3fa2be",
+      "revId": "460fd8c55a0d09ac241991c202d10258ec8fe01f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -59,6 +95,30 @@
     },
     {
       "key": {
+        "uuid": "2e2133e3_f9c4e85a",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/validation/InstanceIdMapValidation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 6004
+      },
+      "writtenOn": "2020-07-16T13:59:30Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "516f6246_77ffa313",
+      "range": {
+        "startLine": 24,
+        "startChar": 7,
+        "endLine": 24,
+        "endChar": 24
+      },
+      "revId": "460fd8c55a0d09ac241991c202d10258ec8fe01f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e884a03f_87e0abdc",
         "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/InstanceManagementTest.java",
         "patchSetId": 1
@@ -82,6 +142,30 @@
     },
     {
       "key": {
+        "uuid": "0ad0417d_1e94a332",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/InstanceManagementTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 6004
+      },
+      "writtenOn": "2020-07-16T13:59:30Z",
+      "side": 1,
+      "message": "This is atmost indentation seems we can achive from onap-eclipse-format.xml forced on SO code base, I tried Google Style but then maven build fails so sticking with SO project specific one.",
+      "parentUuid": "e884a03f_87e0abdc",
+      "range": {
+        "startLine": 212,
+        "startChar": 9,
+        "endLine": 212,
+        "endChar": 13
+      },
+      "revId": "460fd8c55a0d09ac241991c202d10258ec8fe01f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27e3cef2_3fe5c2a0",
         "filename": "mso-api-handlers/mso-api-handler-infra/src/test/resources/ServiceInstanceTest/ExecuteServiceLevelCustomWorkflow.json",
         "patchSetId": 1
@@ -96,6 +180,24 @@
       "revId": "460fd8c55a0d09ac241991c202d10258ec8fe01f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e3a240bc_941823bd",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/resources/ServiceInstanceTest/ExecuteServiceLevelCustomWorkflow.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 6004
+      },
+      "writtenOn": "2020-07-16T13:59:30Z",
+      "side": 1,
+      "message": "As per final discussion we agreed to send userParams : as Empty.",
+      "parentUuid": "27e3cef2_3fe5c2a0",
+      "revId": "460fd8c55a0d09ac241991c202d10258ec8fe01f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -119,6 +221,30 @@
       "revId": "460fd8c55a0d09ac241991c202d10258ec8fe01f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dc4f0fac_a3dd917e",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/resources/ServiceInstanceTest/ExecuteServiceLevelCustomWorkflow.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 6004
+      },
+      "writtenOn": "2020-07-16T13:59:30Z",
+      "side": 1,
+      "message": "At present extending old behaviour as it was before refactoring. In which aLaCarte was explicit overridden and passed, Also from Vnf Junit can find requestParameters doesn\u0027t contain aLaCarte, in code its value was explicitly passsed True. So cant conclude what value will aLaCarte hold on input request for VNF thefore kept existing behaviour.",
+      "parentUuid": "0c78e406_e6d8b1c0",
+      "range": {
+        "startLine": 21,
+        "startChar": 18,
+        "endLine": 21,
+        "endChar": 23
+      },
+      "revId": "460fd8c55a0d09ac241991c202d10258ec8fe01f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
