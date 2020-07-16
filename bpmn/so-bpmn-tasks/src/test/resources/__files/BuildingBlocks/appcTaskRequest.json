@@ -2,6 +2,7 @@
   "ApplicationControllerTaskRequest": {
     "controllerType": "TEST-CONTROLLER-NAME",
     "action": "Lock",
+    "requestorId": "testRequestorId",
     "identityUrl": "IDENTITY-URL-TEST",
     "applicationControllerVnf": {
       "vnfId": "TEST-VNF-ID",

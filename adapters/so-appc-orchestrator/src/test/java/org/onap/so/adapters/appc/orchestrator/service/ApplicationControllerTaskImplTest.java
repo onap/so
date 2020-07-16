@@ -52,6 +52,7 @@ public class ApplicationControllerTaskImplTest {
         request.setNewSoftwareVersion("2.0");
         request.setExistingSoftwareVersion("1.0");
         request.setOperationsTimeout("30");
+        request.setRequestorId("testRequestorId");
         Map<String, String> reqConfigParams = new HashMap<>();
         reqConfigParams.put("name1", "value1");
         reqConfigParams.put("name2", "value2");
@@ -77,13 +78,13 @@ public class ApplicationControllerTaskImplTest {
 
         Mockito.when(applicationControllerClient.vnfCommand(Action.HealthCheck, "testRequestId",
                 request.getApplicationControllerVnf().getVnfId(), Optional.empty(), payload, "testControllerType",
-                listener)).thenReturn(new Status());
+                listener, "testRequestorId")).thenReturn(new Status());
 
         Status status = applicationControllerTaskImpl.execute("testRequestId", request, listener);
 
         Mockito.verify(applicationControllerClient).vnfCommand(Action.HealthCheck, "testRequestId",
                 request.getApplicationControllerVnf().getVnfId(), Optional.empty(), payload, "testControllerType",
-                listener);
+                listener, "testRequestorId");
 
     }
 
@@ -99,13 +100,13 @@ public class ApplicationControllerTaskImplTest {
 
         Mockito.when(applicationControllerClient.vnfCommand(request.getAction(), "testRequestId",
                 request.getApplicationControllerVnf().getVnfId(), Optional.empty(), payload, "testControllerType",
-                listener)).thenReturn(new Status());
+                listener, "testRequestorId")).thenReturn(new Status());
 
         Status status = applicationControllerTaskImpl.execute("testRequestId", request, listener);
 
         Mockito.verify(applicationControllerClient).vnfCommand(request.getAction(), "testRequestId",
                 request.getApplicationControllerVnf().getVnfId(), Optional.empty(), payload, "testControllerType",
-                listener);
+                listener, "testRequestorId");
     }
 
     @Test
@@ -118,13 +119,13 @@ public class ApplicationControllerTaskImplTest {
 
         Mockito.when(applicationControllerClient.vnfCommand(request.getAction(), "testRequestId",
                 request.getApplicationControllerVnf().getVnfId(), Optional.empty(), payload, "testControllerType",
-                listener)).thenReturn(new Status());
+                listener, "testRequestorId")).thenReturn(new Status());
 
         Status status = applicationControllerTaskImpl.execute("testRequestId", request, listener);
 
         Mockito.verify(applicationControllerClient).vnfCommand(request.getAction(), "testRequestId",
                 request.getApplicationControllerVnf().getVnfId(), Optional.empty(), payload, "testControllerType",
-                listener);
+                listener, "testRequestorId");
     }
 
     @Test
@@ -133,13 +134,13 @@ public class ApplicationControllerTaskImplTest {
 
         Mockito.when(applicationControllerClient.vnfCommand(request.getAction(), "testRequestId",
                 request.getApplicationControllerVnf().getVnfId(), Optional.empty(), Optional.empty(),
-                "testControllerType", listener)).thenReturn(new Status());
+                "testControllerType", listener, "testRequestorId")).thenReturn(new Status());
 
         Status status = applicationControllerTaskImpl.execute("testRequestId", request, listener);
 
         Mockito.verify(applicationControllerClient).vnfCommand(request.getAction(), "testRequestId",
                 request.getApplicationControllerVnf().getVnfId(), Optional.empty(), Optional.empty(),
-                "testControllerType", listener);
+                "testControllerType", listener, "testRequestorId");
     }
 
     @Test
@@ -154,13 +155,13 @@ public class ApplicationControllerTaskImplTest {
 
         Mockito.when(applicationControllerClient.vnfCommand(request.getAction(), "testRequestId",
                 request.getApplicationControllerVnf().getVnfId(), Optional.empty(), payload, "testControllerType",
-                listener)).thenReturn(new Status());
+                listener, "testRequestorId")).thenReturn(new Status());
 
         Status status = applicationControllerTaskImpl.execute("testRequestId", request, listener);
 
         Mockito.verify(applicationControllerClient).vnfCommand(request.getAction(), "testRequestId",
                 request.getApplicationControllerVnf().getVnfId(), Optional.empty(), payload, "testControllerType",
-                listener);
+                listener, "testRequestorId");
     }
 
     @Test
@@ -179,13 +180,13 @@ public class ApplicationControllerTaskImplTest {
 
         Mockito.when(applicationControllerClient.vnfCommand(request.getAction(), "testRequestId",
                 request.getApplicationControllerVnf().getVnfId(), Optional.empty(), payload, "testControllerType",
-                listener)).thenReturn(new Status());
+                listener, "testRequestorId")).thenReturn(new Status());
 
         Status status = applicationControllerTaskImpl.execute("testRequestId", request, listener);
 
         Mockito.verify(applicationControllerClient).vnfCommand(request.getAction(), "testRequestId",
                 request.getApplicationControllerVnf().getVnfId(), Optional.empty(), payload, "testControllerType",
-                listener);
+                listener, "testRequestorId");
     }
 
     @Test
@@ -204,13 +205,13 @@ public class ApplicationControllerTaskImplTest {
 
         Mockito.when(applicationControllerClient.vnfCommand(request.getAction(), "testRequestId",
                 request.getApplicationControllerVnf().getVnfId(), Optional.empty(), payload, "testControllerType",
-                listener)).thenReturn(new Status());
+                listener, "testRequestorId")).thenReturn(new Status());
 
         Status status = applicationControllerTaskImpl.execute("testRequestId", request, listener);
 
         Mockito.verify(applicationControllerClient).vnfCommand(request.getAction(), "testRequestId",
                 request.getApplicationControllerVnf().getVnfId(), Optional.empty(), payload, "testControllerType",
-                listener);
+                listener, "testRequestorId");
     }
 
     @Test
@@ -224,13 +225,13 @@ public class ApplicationControllerTaskImplTest {
 
         Mockito.when(applicationControllerClient.vnfCommand(request.getAction(), "testRequestId",
                 request.getApplicationControllerVnf().getVnfId(), Optional.empty(), payload, "testControllerType",
-                listener)).thenReturn(new Status());
+                listener, "testRequestorId")).thenReturn(new Status());
 
         Status status = applicationControllerTaskImpl.execute("testRequestId", request, listener);
 
         Mockito.verify(applicationControllerClient).vnfCommand(request.getAction(), "testRequestId",
                 request.getApplicationControllerVnf().getVnfId(), Optional.empty(), payload, "testControllerType",
-                listener);
+                listener, "testRequestorId");
     }
 
     @Test
@@ -251,13 +252,13 @@ public class ApplicationControllerTaskImplTest {
 
         Mockito.when(applicationControllerClient.vnfCommand(request.getAction(), "testRequestId",
                 request.getApplicationControllerVnf().getVnfId(), Optional.empty(), payload, "testControllerType",
-                listener)).thenReturn(new Status());
+                listener, "testRequestorId")).thenReturn(new Status());
 
         Status status = applicationControllerTaskImpl.execute("testRequestId", request, listener);
 
         Mockito.verify(applicationControllerClient).vnfCommand(request.getAction(), "testRequestId",
                 request.getApplicationControllerVnf().getVnfId(), Optional.empty(), payload, "testControllerType",
-                listener);
+                listener, "testRequestorId");
     }
 
     @Test

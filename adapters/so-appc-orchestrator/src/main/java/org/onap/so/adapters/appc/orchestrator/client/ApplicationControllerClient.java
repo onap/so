@@ -52,7 +52,6 @@ import org.onap.appc.client.lcm.model.ZULU;
 
 @Component
 public class ApplicationControllerClient {
-
     @Autowired
     public Environment env;
 
@@ -117,6 +116,7 @@ public class ApplicationControllerClient {
                 controllerType = DEFAULT_CONTROLLER_TYPE;
             }
             controllerType = controllerType.toUpperCase();
+
             return AppcClientServiceFactoryProvider.getFactory(AppcLifeCycleManagerServiceFactory.class)
                     .createLifeCycleManagerStateful(new ApplicationContext(), getLCMProperties(controllerType));
         } catch (AppcClientException e) {
@@ -128,7 +128,7 @@ public class ApplicationControllerClient {
     }
 
     public Status vnfCommand(Action action, String requestId, String vnfId, Optional<String> vserverId,
-            Optional<String> request, String controllerType, ApplicationControllerCallback listener)
+            Optional<String> request, String controllerType, ApplicationControllerCallback listener, String requestorId)
             throws ApplicationControllerOrchestratorException {
         this.setControllerType(controllerType);
         Status status;
@@ -142,7 +142,7 @@ public class ApplicationControllerClient {
             payload = new Payload(request.get());
 
         }
-        status = runCommand(action, actionIdentifiers, payload, requestId, listener);
+        status = runCommand(action, actionIdentifiers, payload, requestId, listener, requestorId);
         if (appCSupport.getCategoryOf(status).equals(StatusCategory.ERROR)) {
             throw new ApplicationControllerOrchestratorException(status.getMessage(), status.getCode());
         } else {
@@ -152,11 +152,11 @@ public class ApplicationControllerClient {
 
 
     public Status runCommand(Action action, org.onap.appc.client.lcm.model.ActionIdentifiers actionIdentifiers,
-            org.onap.appc.client.lcm.model.Payload payload, String requestID, ApplicationControllerCallback listener)
-            throws ApplicationControllerOrchestratorException {
+            org.onap.appc.client.lcm.model.Payload payload, String requestID, ApplicationControllerCallback listener,
+            String requestorId) throws ApplicationControllerOrchestratorException {
         Status status;
         Object requestObject;
-        requestObject = createRequest(action, actionIdentifiers, payload, requestID);
+        requestObject = createRequest(action, actionIdentifiers, payload, requestID, requestorId);
         appCSupport.logLCMMessage(requestObject);
         LifeCycleManagerStateful client = getAppCClient();
         Method lcmMethod = appCSupport.getAPIMethod(action.name(), client, true);
@@ -194,12 +194,13 @@ public class ApplicationControllerClient {
         return properties;
     }
 
-    public Object createRequest(Action action, ActionIdentifiers identifier, Payload payload, String requestId) {
+    public Object createRequest(Action action, ActionIdentifiers identifier, Payload payload, String requestId,
+            String requestorId) {
         Object requestObject = appCSupport.getInput(action.name());
 
 
         try {
-            CommonHeader commonHeader = buildCommonHeader(requestId);
+            CommonHeader commonHeader = buildCommonHeader(requestId, requestorId);
             requestObject.getClass().getDeclaredMethod("setCommonHeader", CommonHeader.class).invoke(requestObject,
                     commonHeader);
             requestObject.getClass().getDeclaredMethod("setAction", Action.class).invoke(requestObject, action);
@@ -215,12 +216,13 @@ public class ApplicationControllerClient {
         return requestObject;
     }
 
-    private CommonHeader buildCommonHeader(String requestId) {
+    private CommonHeader buildCommonHeader(String requestId, String requestorId) {
         CommonHeader commonHeader = new CommonHeader();
         commonHeader.setApiVer(API_VER);
         commonHeader.setOriginatorId(ORIGINATOR_ID);
         commonHeader.setRequestId(requestId == null ? UUID.randomUUID().toString() : requestId);
         commonHeader.setSubRequestId(UUID.randomUUID().toString());
+        commonHeader.setXOnapRequestorid(requestorId);
         Flags flags = new Flags();
         String flagsMode = "NORMAL";
         Mode mode = Mode.valueOf(flagsMode);

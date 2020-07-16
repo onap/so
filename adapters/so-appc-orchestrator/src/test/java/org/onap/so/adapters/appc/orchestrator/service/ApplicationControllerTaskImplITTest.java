@@ -63,6 +63,7 @@ public class ApplicationControllerTaskImplITTest {
     @Before
     public void setup() {
         request = new ApplicationControllerTaskRequest();
+        request.setRequestorId("testRequestorId");
         request.setBookName("testBookName");
         request.setControllerType("testControllerType");
         request.setFileParameters("testFileParams");

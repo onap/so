@@ -2,6 +2,7 @@
   "ApplicationControllerTaskRequest": {
     "controllerType": "APPC",
     "action": "ConfigModify",
+    "requestorId": "testRequestorId",
     "identityUrl": "IDENTITY-URL-TEST",
     "applicationControllerVnf": {
       "vnfId": "TEST-VNF-ID",

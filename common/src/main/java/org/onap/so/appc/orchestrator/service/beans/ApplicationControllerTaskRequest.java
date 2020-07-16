@@ -11,6 +11,7 @@ public class ApplicationControllerTaskRequest implements Serializable {
     private static final long serialVersionUID = -3150320542857627682L;
 
     private Action action;
+    private String requestorId;
     private String controllerType;
     private String identityUrl;
     private String operationsTimeout;
@@ -108,6 +109,14 @@ public class ApplicationControllerTaskRequest implements Serializable {
 
     public void setNewSoftwareVersion(String newSoftwareVersion) {
         this.newSoftwareVersion = newSoftwareVersion;
+    }
+
+    public String getRequestorId() {
+        return requestorId;
+    }
+
+    public void setRequestorId(String requestorId) {
+        this.requestorId = requestorId;
     }
 
 

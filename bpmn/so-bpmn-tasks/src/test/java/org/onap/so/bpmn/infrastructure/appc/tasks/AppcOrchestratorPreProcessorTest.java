@@ -149,6 +149,7 @@ public class AppcOrchestratorPreProcessorTest extends BaseTaskTest {
     private void fillRequiredAppcExecutionFields() {
         RequestContext context = new RequestContext();
         context.setMsoRequestId("TEST-MSO-ID");
+        context.setRequestorId("testRequestorId");
         execution.setVariable("aicIdentity", "AIC-TEST");
         execution.setVariable("vmIdList", "VM-ID-LIST-TEST");
         execution.setVariable("vserverIdList", "VSERVER-ID-LIST");
@@ -192,6 +193,7 @@ public class AppcOrchestratorPreProcessorTest extends BaseTaskTest {
                 "{\"request_parameters\":{\"host_ip_address\":\"10.10.10.10\"},\"configuration_parameters\":{\"name1\":\"value1\",\"name2\":\"value2\"}}");
         context.setRequestParameters(requestParameters);
         context.setMsoRequestId("TEST-MSO-ID");
+        context.setRequestorId("testRequestorId");
         execution.setVariable("aicIdentity", "AIC-TEST");
         execution.setVariable("vmIdList", "VM-ID-LIST-TEST");
         execution.setVariable("vserverIdList", "VSERVER-ID-LIST");

@@ -111,7 +111,7 @@ public class ApplicationControllerTaskImpl {
 
         status = appcClient.vnfCommand(request.getAction(), msoRequestId,
                 request.getApplicationControllerVnf().getVnfId(), vserverId, payload, request.getControllerType(),
-                listener);
+                listener, request.getRequestorId());
 
         return status;
     }

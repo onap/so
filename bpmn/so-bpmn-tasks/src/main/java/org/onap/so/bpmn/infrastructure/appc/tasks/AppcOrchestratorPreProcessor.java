@@ -78,6 +78,9 @@ public class AppcOrchestratorPreProcessor {
             String identityUrl = execution.getVariable("identityUrl");
             appcTaskRequest.setIdentityUrl(identityUrl);
 
+            String requestorId = gBBInput.getRequestContext().getRequestorId();
+            appcTaskRequest.setRequestorId(requestorId);
+
             if (gBBInput.getRequestContext().getRequestParameters() != null) {
                 String payload = gBBInput.getRequestContext().getRequestParameters().getPayload();
                 if (payload == null) {
