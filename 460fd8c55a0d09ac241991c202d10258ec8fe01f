@@ -1,0 +1,124 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "db43acce_c7d2a2b0",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/InstanceManagement.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-16T12:07:36Z",
+      "side": 1,
+      "message": "add modification block by e///",
+      "revId": "460fd8c55a0d09ac241991c202d10258ec8fe01f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d7cbf80c_de3fa2be",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/InstanceManagement.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-16T12:07:36Z",
+      "side": 1,
+      "message": "I think this validation should happen at start of the method.",
+      "revId": "460fd8c55a0d09ac241991c202d10258ec8fe01f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "516f6246_77ffa313",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/validation/InstanceIdMapValidation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-16T12:07:36Z",
+      "side": 1,
+      "message": "this import is not needed now, applies everhwhr",
+      "range": {
+        "startLine": 24,
+        "startChar": 7,
+        "endLine": 24,
+        "endChar": 24
+      },
+      "revId": "460fd8c55a0d09ac241991c202d10258ec8fe01f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e884a03f_87e0abdc",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/InstanceManagementTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-16T12:07:36Z",
+      "side": 1,
+      "message": "indent",
+      "range": {
+        "startLine": 212,
+        "startChar": 9,
+        "endLine": 212,
+        "endChar": 13
+      },
+      "revId": "460fd8c55a0d09ac241991c202d10258ec8fe01f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "27e3cef2_3fe5c2a0",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/resources/ServiceInstanceTest/ExecuteServiceLevelCustomWorkflow.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-16T12:07:36Z",
+      "side": 1,
+      "message": "question , we discussed that this will contain a param for previous servicemodelid. Am i missing msthing",
+      "revId": "460fd8c55a0d09ac241991c202d10258ec8fe01f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0c78e406_e6d8b1c0",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/resources/ServiceInstanceTest/ExecuteServiceLevelCustomWorkflow.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-16T12:07:36Z",
+      "side": 1,
+      "message": "I see that you are passing aLaCarte as param, does that var is override are this request parsing, pls check",
+      "range": {
+        "startLine": 21,
+        "startChar": 18,
+        "endLine": 21,
+        "endChar": 23
+      },
+      "revId": "460fd8c55a0d09ac241991c202d10258ec8fe01f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
