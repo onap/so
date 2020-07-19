@@ -23,18 +23,20 @@ package org.onap.aaiclient.client.aai;
 import java.net.URI;
 import java.util.Map;
 import java.util.Optional;
-import org.onap.so.client.ResponseExceptionMapper;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryPatchConverter;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryRestClient;
 import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.client.ResponseExceptionMapper;
 
 public class AAIRestClient extends GraphInventoryRestClient {
 
     private final AAIProperties aaiProperties;
+    private final Map<String, String> additionalHeaders;
 
-    protected AAIRestClient(AAIProperties props, URI uri) {
+    protected AAIRestClient(AAIProperties props, URI uri, Map<String, String> additionalHeaders) {
         super(props, uri);
         this.aaiProperties = props;
+        this.additionalHeaders = additionalHeaders;
     }
 
     @Override
@@ -46,6 +48,7 @@ public class AAIRestClient extends GraphInventoryRestClient {
     protected void initializeHeaderMap(Map<String, String> headerMap) {
         headerMap.put("X-FromAppId", aaiProperties.getSystemName());
         headerMap.put("X-TransactionId", requestId);
+        headerMap.putAll(additionalHeaders);
         String auth = aaiProperties.getAuth();
         String key = aaiProperties.getKey();
 

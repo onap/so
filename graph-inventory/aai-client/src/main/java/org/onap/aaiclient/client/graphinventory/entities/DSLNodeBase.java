@@ -22,13 +22,17 @@ package org.onap.aaiclient.client.graphinventory.entities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.onap.aaiclient.client.aai.entities.QueryStep;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryObjectName;
 
 public abstract class DSLNodeBase<T extends DSLNodeBase<?>> implements QueryStep {
 
     protected final String nodeName;
+    protected final Collection<String> fields;
     protected final List<DSLNodeKey> nodeKeys;
     protected final StringBuilder query;
     protected boolean output = false;
@@ -37,6 +41,7 @@ public abstract class DSLNodeBase<T extends DSLNodeBase<?>> implements QueryStep
         this.nodeName = "";
         this.nodeKeys = new ArrayList<>();
         this.query = new StringBuilder();
+        this.fields = new LinkedHashSet<>();
 
     }
 
@@ -44,6 +49,7 @@ public abstract class DSLNodeBase<T extends DSLNodeBase<?>> implements QueryStep
         this.nodeName = name.typeName();
         this.nodeKeys = new ArrayList<>();
         this.query = new StringBuilder();
+        this.fields = new LinkedHashSet<>();
         query.append(nodeName);
     }
 
@@ -51,6 +57,7 @@ public abstract class DSLNodeBase<T extends DSLNodeBase<?>> implements QueryStep
         this.nodeName = name.typeName();
         this.nodeKeys = Arrays.asList(key);
         this.query = new StringBuilder();
+        this.fields = new LinkedHashSet<>();
         query.append(nodeName);
     }
 
@@ -58,12 +65,19 @@ public abstract class DSLNodeBase<T extends DSLNodeBase<?>> implements QueryStep
         this.nodeName = copy.nodeName;
         this.nodeKeys = copy.nodeKeys;
         this.query = new StringBuilder(copy.query);
+        this.fields = copy.fields;
         this.output = copy.output;
     }
 
     public DSLOutputNode output() {
         this.output = true;
 
+        return new DSLOutputNode(this);
+    }
+
+    public DSLOutputNode output(String... fields) {
+        this.output = true;
+        this.fields.addAll(Arrays.asList(fields));
         return new DSLOutputNode(this);
     }
 
@@ -77,7 +91,13 @@ public abstract class DSLNodeBase<T extends DSLNodeBase<?>> implements QueryStep
     public String build() {
         StringBuilder result = new StringBuilder(query);
         if (output) {
-            result.append("*");
+            if (fields.isEmpty()) {
+                result.append("*");
+            } else {
+                String items =
+                        fields.stream().map(item -> String.format("'%s'", item)).collect(Collectors.joining(", "));
+                result.append("{").append(items).append("}");
+            }
         }
         for (DSLNodeKey key : nodeKeys) {
             result.append(key.build());

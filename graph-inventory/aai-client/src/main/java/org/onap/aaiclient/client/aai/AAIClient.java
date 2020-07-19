@@ -21,11 +21,13 @@
 package org.onap.aaiclient.client.aai;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.UriBuilder;
-import org.onap.so.client.RestClient;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryClient;
 import org.onap.aaiclient.client.graphinventory.exceptions.GraphInventoryUriComputationException;
+import org.onap.so.client.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,11 +38,20 @@ public class AAIClient extends GraphInventoryClient {
     protected AAIVersion version;
 
     protected AAIClient() {
-        super(AAIProperties.class);
+        super(AAIProperties.class, new HashMap<String, String>());
     }
 
     protected AAIClient(AAIVersion version) {
-        super(AAIProperties.class);
+        super(AAIProperties.class, new HashMap<String, String>());
+        this.version = version;
+    }
+
+    protected AAIClient(Map<String, String> additionalHeaders) {
+        super(AAIProperties.class, additionalHeaders);
+    }
+
+    protected AAIClient(AAIVersion version, Map<String, String> additionalHeaders) {
+        super(AAIProperties.class, additionalHeaders);
         this.version = version;
     }
 
@@ -54,7 +65,7 @@ public class AAIClient extends GraphInventoryClient {
     protected RestClient createClient(URI uri) {
         try {
 
-            return new AAIRestClient(getRestProperties(), constructPath(uri));
+            return new AAIRestClient(getRestProperties(), constructPath(uri), additionalHeaders);
         } catch (GraphInventoryUriComputationException | NotFoundException e) {
             logger.debug("failed to construct A&AI uri", e);
             throw e;

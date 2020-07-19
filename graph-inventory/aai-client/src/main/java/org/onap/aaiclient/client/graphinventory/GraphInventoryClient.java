@@ -21,20 +21,25 @@
 package org.onap.aaiclient.client.graphinventory;
 
 import java.net.URI;
+import java.util.Map;
+import org.onap.aaiclient.client.graphinventory.entities.uri.GraphInventoryUri;
+import org.onap.aaiclient.client.graphinventory.entities.uri.HttpAwareUri;
 import org.onap.so.client.RestClient;
 import org.onap.so.client.RestProperties;
 import org.onap.so.client.RestPropertiesLoader;
-import org.onap.aaiclient.client.graphinventory.entities.uri.GraphInventoryUri;
-import org.onap.aaiclient.client.graphinventory.entities.uri.HttpAwareUri;
+import com.google.common.collect.ImmutableMap;
 
 public abstract class GraphInventoryClient {
 
     private RestProperties props;
+    protected final Map<String, String> additionalHeaders;
 
-    protected GraphInventoryClient(Class<? extends RestProperties> propertiesClass) {
+    protected GraphInventoryClient(Class<? extends RestProperties> propertiesClass,
+            Map<String, String> additionalHeaders) {
 
         RestProperties props = RestPropertiesLoader.getInstance().getNewImpl(propertiesClass);
         this.props = props;
+        this.additionalHeaders = additionalHeaders;
     }
 
     protected abstract URI constructPath(URI uri);
@@ -64,4 +69,8 @@ public abstract class GraphInventoryClient {
     public abstract GraphInventoryVersion getVersion();
 
     public abstract String getGraphDBName();
+
+    public Map<String, String> getAdditionalHeaders() {
+        return ImmutableMap.copyOf(this.additionalHeaders);
+    }
 }
