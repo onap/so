@@ -484,9 +484,9 @@ public class HeatBridgeImpl implements HeatBridgeApi {
         Objects.requireNonNull(vnfId, "Null vnf-id!");
         Objects.requireNonNull(vfModuleId, "Null vf-module-id!");
         try {
-            Optional<VfModule> vfModule = resourcesClient.get(
-                    AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId, NotFoundException.class)
-                            .depth(Depth.ONE))
+            Optional<VfModule> vfModule = resourcesClient
+                    .get(AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId).depth(Depth.ONE),
+                            NotFoundException.class)
                     .asBean(VfModule.class);
 
             AAIResultWrapper resultWrapper = new AAIResultWrapper(vfModule.get());
