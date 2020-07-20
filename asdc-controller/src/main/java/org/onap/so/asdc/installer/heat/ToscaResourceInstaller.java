@@ -221,6 +221,10 @@ public class ToscaResourceInstaller {
     @Autowired
     protected EtsiResourcePackageProcessor etsiResourcePackageProcessor;
 
+
+    @Autowired
+    HelmMetadataRepository helmMetdataRepo;
+
     protected static final Logger logger = LoggerFactory.getLogger(ToscaResourceInstaller.class);
 
     public boolean isCsarAlreadyDeployed(ToscaResourceStructure toscaResourceStructure)
@@ -1179,6 +1183,9 @@ public class ToscaResourceInstaller {
                 case ASDCConfiguration.HEAT_ARTIFACT:
                     createHeatFileFromArtifact(vfResourceStructure, vfModuleArtifact, toscaResourceStruct);
                     break;
+                case ASDCConfiguration.HELM_TYPE_ARTIFACT:
+                    extractCloudTechnologyArtifact(vfResourceStructure, vfModuleArtifact);
+                    break;
                 case ASDCConfiguration.HEAT_NET:
                 case ASDCConfiguration.OTHER:
                 case ASDCConfiguration.CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT:
@@ -1192,6 +1199,31 @@ public class ToscaResourceInstaller {
 
             }
         }
+    }
+
+    private void extractCloudTechnologyArtifact(VfResourceStructure vfResourceStructure,
+            VfModuleArtifact vfModuleArtifact) {
+        IArtifactInfo iArtifactInfo = vfModuleArtifact.getArtifactInfo();
+        HelmMetadata helmMetadata = helmMetdataRepo.findByArtifactUuid(iArtifactInfo.getArtifactUUID());
+        if (null == helmMetadata) {
+
+            // TODO
+            // save to specific path
+            String artifactURI = "path";
+
+            helmMetadata = new HelmMetadata();
+            helmMetadata.setArtifactUuid(iArtifactInfo.getArtifactUUID());
+            helmMetadata.setArtifactName(iArtifactInfo.getArtifactName());
+            helmMetadata.setArtifactURL(iArtifactInfo.getArtifactURL());
+            helmMetadata.setArtifactChecksum(iArtifactInfo.getArtifactChecksum());
+            helmMetadata.setDescription(iArtifactInfo.getArtifactDescription());
+            helmMetadata.setTimeoutMinutes(iArtifactInfo.getArtifactTimeout());
+            helmMetadata.setVersion(iArtifactInfo.getArtifactVersion());
+            helmMetadata.setArtifactURI(artifactURI);
+        }
+
+        vfModuleArtifact.setHelmMetadata(helmMetadata);
+
     }
 
     protected VfModuleArtifact getHeatEnvArtifactFromGeneratedArtifact(VfResourceStructure vfResourceStructure,

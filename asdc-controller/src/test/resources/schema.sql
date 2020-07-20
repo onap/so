@@ -937,6 +937,7 @@ CREATE TABLE `vf_module` (
   `DESCRIPTION` varchar(1200) DEFAULT NULL,
   `IS_BASE` tinyint(1) NOT NULL,
   `HEAT_TEMPLATE_ARTIFACT_UUID` varchar(200) DEFAULT NULL,
+  `HELM_ARTIFACT_UUID` varchar(200) DEFAULT NULL,
   `VOL_HEAT_TEMPLATE_ARTIFACT_UUID` varchar(200) DEFAULT NULL,
   `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `VNF_RESOURCE_MODEL_UUID` varchar(200) NOT NULL,
@@ -944,6 +945,8 @@ CREATE TABLE `vf_module` (
   KEY `fk_vf_module__vnf_resource1_idx` (`VNF_RESOURCE_MODEL_UUID`),
   KEY `fk_vf_module__heat_template_art_uuid__heat_template1_idx` (`HEAT_TEMPLATE_ARTIFACT_UUID`),
   KEY `fk_vf_module__vol_heat_template_art_uuid__heat_template2_idx` (`VOL_HEAT_TEMPLATE_ARTIFACT_UUID`),
+  KEY `fk_vf_module_cloud_idx` (`HELM_ARTIFACT_UUID`),
+  
   CONSTRAINT `fk_vf_module__heat_template_art_uuid__heat_template1` FOREIGN KEY (`HEAT_TEMPLATE_ARTIFACT_UUID`) REFERENCES `heat_template` (`ARTIFACT_UUID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_vf_module__vnf_resource1` FOREIGN KEY (`VNF_RESOURCE_MODEL_UUID`) REFERENCES `vnf_resource` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_vf_module__vol_heat_template_art_uuid__heat_template2` FOREIGN KEY (`VOL_HEAT_TEMPLATE_ARTIFACT_UUID`) REFERENCES `heat_template` (`ARTIFACT_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -1401,6 +1404,26 @@ CREATE TABLE IF NOT EXISTS `service_artifact`(
   PRIMARY KEY (`ARTIFACT_UUID`),
   CONSTRAINT `fk_service_artifact_service_info1` FOREIGN KEY (`SERVICE_MODEL_UUID`) REFERENCES `service` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+--
+-- Table structure for table `helm_metadata`
+---
+DROP TABLE IF EXISTS `helm_metadata`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `helm_metadata` (
+  `ARTIFACT_UUID` varchar(200) NOT NULL,
+  `ARTIFACT_NAME` varchar(100) NOT NULL,
+  `ARTIFACT_URL` varchar(200) NOT NULL,
+   `ARTIFACT_URI` varchar(200) NOT NULL,
+  `VERSION` varchar(20) NOT NULL,
+  `DESCRIPTION` varchar(1200) DEFAULT NULL,
+   `TIMEOUT_MINUTES` int(11) DEFAULT NULL,
+  `ARTIFACT_CHECKSUM` varchar(200) NOT NULL DEFAULT 'MANUAL RECORD',
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ARTIFACT_UUID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --------START Request DB SCHEMA --------
 CREATE DATABASE requestdb;

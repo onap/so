@@ -81,6 +81,10 @@ public class VfModule implements Serializable {
     @JoinColumn(name = "HEAT_TEMPLATE_ARTIFACT_UUID")
     private HeatTemplate moduleHeatTemplate;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "HELM_ARTIFACT_UUID")
+    private HelmMetadata helmMetadata;
+
     @Column(name = "CREATION_TIMESTAMP", updatable = false)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     @Temporal(TemporalType.TIMESTAMP)
@@ -228,4 +232,14 @@ public class VfModule implements Serializable {
     public void setModuleHeatTemplate(HeatTemplate moduleHeatTemplate) {
         this.moduleHeatTemplate = moduleHeatTemplate;
     }
+
+    public HelmMetadata getHelmMetadata() {
+        return helmMetadata;
+    }
+
+    public void setHelmMetadata(HelmMetadata cloudTechnologyMetadata) {
+        this.helmMetadata = cloudTechnologyMetadata;
+    }
+
+
 }

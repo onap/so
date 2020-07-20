@@ -22,6 +22,7 @@ package org.onap.so.asdc.installer;
 
 
 import java.io.UnsupportedEncodingException;
+import org.onap.so.db.catalog.beans.HelmMetadata;
 import org.onap.so.db.catalog.beans.HeatEnvironment;
 import org.onap.so.db.catalog.beans.HeatFiles;
 import org.onap.so.db.catalog.beans.HeatTemplate;
@@ -39,6 +40,7 @@ public final class VfModuleArtifact {
     private HeatFiles heatFiles;
     private HeatTemplate heatTemplate;
     private HeatEnvironment heatEnvironment;
+    private HelmMetadata helmMetadata;
 
     public VfModuleArtifact(IArtifactInfo artifactinfo, IDistributionClientDownloadResult clientResult)
             throws UnsupportedEncodingException {
@@ -93,6 +95,14 @@ public final class VfModuleArtifact {
 
     public void setHeatEnvironment(HeatEnvironment heatEnvironment) {
         this.heatEnvironment = heatEnvironment;
+    }
+
+    public HelmMetadata getHelmMetadata() {
+        return helmMetadata;
+    }
+
+    public void setHelmMetadata(HelmMetadata cloudTechnologyMetadata) {
+        this.helmMetadata = cloudTechnologyMetadata;
     }
 
 }
