@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.onap.aaiclient.client.graphinventory.entities.DSLNodeKey;
 import org.onap.aaiclient.client.graphinventory.entities.DSLQueryBuilder;
 import org.onap.aaiclient.client.graphinventory.entities.DSLStartNode;
+import org.onap.aaiclient.client.graphinventory.entities.Node;
 import org.onap.aaiclient.client.graphinventory.entities.Output;
 import org.onap.aaiclient.client.graphinventory.entities.Start;
 import org.onap.aaiclient.client.graphinventory.entities.TraversalBuilder;
@@ -149,12 +150,20 @@ public class DSLQueryBuilderTest {
 
     @Test
     public void selectOutputFilterTest() {
-        DSLQueryBuilder<Output, Output> builder =
-                TraversalBuilder.traversal(new DSLStartNode(AAIObjectType.CLOUD_REGION, __.key("cloud-owner", "att-nc"))
+        DSLQueryBuilder<Output, Output> builder = TraversalBuilder
+                .traversal(new DSLStartNode(AAIObjectType.CLOUD_REGION, __.key("cloud-owner", "CloudOwner"))
                         .output("cloud-region-id", "a", "b"));
         builder.to(__.node(AAIObjectType.PSERVER)).output("x", "y", "z");
 
-        assertEquals("cloud-region{'cloud-region-id', 'a', 'b'}('cloud-owner', 'att-nc') > pserver{'x', 'y', 'z'}",
+        assertEquals("cloud-region{'cloud-region-id', 'a', 'b'}('cloud-owner', 'CloudOwner') > pserver{'x', 'y', 'z'}",
                 builder.build().toString());
+    }
+
+    @Test
+    public void selectOutputFilterOnNodeTest() {
+        DSLStartNode node = new DSLStartNode(AAIObjectType.CLOUD_REGION, __.key("cloud-owner", "CloudOwner"));
+        DSLQueryBuilder<Start, Node> builder = TraversalBuilder.fragment(node).output("cloud-region-id");
+
+        assertEquals("cloud-region{'cloud-region-id'}('cloud-owner', 'CloudOwner')", builder.build().toString());
     }
 }
