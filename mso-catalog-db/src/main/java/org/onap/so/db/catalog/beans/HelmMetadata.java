@@ -27,6 +27,9 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.openpojo.business.annotation.BusinessKey;
 
 @Entity
@@ -146,6 +149,31 @@ public class HelmMetadata {
 
     public void setArtifactURI(String artifactURI) {
         this.artifactURI = artifactURI;
+    }
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("artifactUuid", artifactUuid).append("artifactName", artifactName)
+                .append("artifactURL", artifactURL).append("artifactURI", artifactURI)
+                .append("description", description).append("artifactChecksum", artifactChecksum)
+                .append("version", version).append("timeoutMinutes", timeoutMinutes).append("created", created)
+                .toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(artifactUuid).toHashCode();
+    }
+
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof HelmMetadata)) {
+            return false;
+        }
+        HelmMetadata castOther = (HelmMetadata) other;
+        return new EqualsBuilder().append(artifactUuid, castOther.artifactUuid).isEquals();
     }
 
 
