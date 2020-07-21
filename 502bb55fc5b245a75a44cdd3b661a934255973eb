@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "76abdbd5_1167ac16",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/GenericPnfTaskProcessor.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 6004
+      },
+      "writtenOn": "2020-07-21T16:50:16Z",
+      "side": 1,
+      "message": "Copyright E// to be updated..?",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 6,
+        "endChar": 83
+      },
+      "revId": "502bb55fc5b245a75a44cdd3b661a934255973eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6c0111df_c5bfc236",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/bpmn/infrastructure/process/PnfHealthCheckTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 6004
+      },
+      "writtenOn": "2020-07-21T16:50:16Z",
+      "side": 1,
+      "message": "Imports can be Optimize.\nApplies whereever needed.",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 89
+      },
+      "revId": "502bb55fc5b245a75a44cdd3b661a934255973eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e58154e3_9ecf45f2",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/bpmn/infrastructure/process/PnfHealthCheckTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 6004
+      },
+      "writtenOn": "2020-07-21T16:50:16Z",
+      "side": 1,
+      "message": "static missing..\nApplies whereever needed.",
+      "range": {
+        "startLine": 52,
+        "startChar": 4,
+        "endLine": 52,
+        "endChar": 32
+      },
+      "revId": "502bb55fc5b245a75a44cdd3b661a934255973eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0b890e4f_dc2a5de6",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/bpmn/infrastructure/process/PnfHealthCheckTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 6004
+      },
+      "writtenOn": "2020-07-21T16:50:16Z",
+      "side": 1,
+      "message": "Can\u0027t we make use of assertEquals(expected, actual), It can simplify code by avoiding call to (String).isEqualTo(..)..?",
+      "range": {
+        "startLine": 149,
+        "startChar": 0,
+        "endLine": 152,
+        "endChar": 67
+      },
+      "revId": "502bb55fc5b245a75a44cdd3b661a934255973eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2286ca0a_b84fbbe7",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfDispatcher.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 6004
+      },
+      "writtenOn": "2020-07-21T16:50:16Z",
+      "side": 1,
+      "message": "To reduce code redundancy can we make use of throwIfNull(...) in this catch block and like wise other places in class..??",
+      "range": {
+        "startLine": 143,
+        "startChar": 0,
+        "endLine": 145,
+        "endChar": 65
+      },
+      "revId": "502bb55fc5b245a75a44cdd3b661a934255973eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ad1b3c1c_26086e5a",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfDispatcher.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 6004
+      },
+      "writtenOn": "2020-07-21T16:50:16Z",
+      "side": 1,
+      "message": "Same as above..",
+      "range": {
+        "startLine": 160,
+        "startChar": 0,
+        "endLine": 162,
+        "endChar": 114
+      },
+      "revId": "502bb55fc5b245a75a44cdd3b661a934255973eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
