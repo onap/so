@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk:11-jre-slim
 MAINTAINER mc4615@att.com
 EXPOSE 8080
 ENV APP_HOME /home/$USER_NAME/app

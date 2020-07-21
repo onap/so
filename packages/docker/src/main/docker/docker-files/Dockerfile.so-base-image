@@ -1,4 +1,4 @@
-FROM docker.io/openjdk:8-jdk-alpine
+FROM docker.io/openjdk:11.0.6-jre-slim
 
 ARG http_proxy
 ARG https_proxy

@@ -1,4 +1,4 @@
-FROM docker.io/openjdk:8-jdk-alpine
+FROM docker.io/openjdk:11-jre-slim
 
 #Create User so
 RUN addgroup -g 1000 so && adduser -S -u 1000 -G so so
