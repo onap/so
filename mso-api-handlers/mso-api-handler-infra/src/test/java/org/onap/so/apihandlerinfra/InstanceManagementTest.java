@@ -29,10 +29,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.onap.logging.filter.base.Constants.HttpHeaders.ONAP_REQUEST_ID;
-import static org.onap.so.logger.HttpHeadersConstants.REQUESTOR_ID;
 import static org.onap.logging.filter.base.Constants.HttpHeaders.ONAP_PARTNER_NAME;
+import static org.onap.logging.filter.base.Constants.HttpHeaders.ONAP_REQUEST_ID;
 import static org.onap.logging.filter.base.Constants.HttpHeaders.TRANSACTION_ID;
+import static org.onap.so.logger.HttpHeadersConstants.REQUESTOR_ID;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -46,7 +48,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.db.request.beans.InfraActiveRequests;
-import org.onap.so.logger.HttpHeadersConstants;
 import org.onap.so.serviceinstancebeans.RequestReferences;
 import org.onap.so.serviceinstancebeans.ServiceInstancesResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,8 +58,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.util.UriComponentsBuilder;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class InstanceManagementTest extends BaseTest {
 
@@ -200,6 +199,35 @@ public class InstanceManagementTest extends BaseTest {
                 + "/serviceInstances/5df8b6de-2083-11e7-93ae-92361f002676/pnfs/testPnfName/workflows/81526781-e55c-4cb7-adb3-97e09d9c76bf";
         ResponseEntity<String> response =
                 sendRequest(inputStream("/ExecutePNFCustomWorkflow.json"), uri, HttpMethod.POST, headers);
+
+        assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
+
+        ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+    }
+
+    @Test
+    public void executeServiceLevelCustomWorkflow() throws IOException {
+        wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/testingServiceLevelWorkflow"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        wireMockServer.stubFor(get(urlMatching(
+                ".*/workflow/search/findByArtifactUUID[?]artifactUUID=81526781-e55c-4cb7-adb3-97e09d9c76bf"))
+                        .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                                .withBody(getWiremockResponseForCatalogdb("workflow_ServiceLevel_Response.json"))
+                                .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        // expected response
+        ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
+        RequestReferences requestReferences = new RequestReferences();
+        requestReferences.setInstanceId("1882939");
+        requestReferences.setRequestSelfLink(createExpectedSelfLink("v1", "32807a28-1a14-4b88-b7b3-2950918aa76d"));
+        expectedResponse.setRequestReferences(requestReferences);
+        uri = instanceManagementUri + "v1"
+                + "/serviceInstances/5df8b6de-2083-11e7-93ae-92361f002676/workflows/81526781-e55c-4cb7-adb3-97e09d9c76bf";
+        ResponseEntity<String> response =
+                sendRequest(inputStream("/ExecuteServiceLevelCustomWorkflow.json"), uri, HttpMethod.POST, headers);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
 
