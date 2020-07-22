@@ -140,6 +140,29 @@
     },
     {
       "key": {
+        "uuid": "0f3fd5b1_fd03589f",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfDispatcher.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 6004
+      },
+      "writtenOn": "2020-07-22T15:57:35Z",
+      "side": 1,
+      "message": "To avoide null check can we have pnfOptional set to Optional.empty() insted of null..??",
+      "range": {
+        "startLine": 147,
+        "startChar": 8,
+        "endLine": 147,
+        "endChar": 59
+      },
+      "revId": "502bb55fc5b245a75a44cdd3b661a934255973eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ad1b3c1c_26086e5a",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfDispatcher.java",
         "patchSetId": 4
