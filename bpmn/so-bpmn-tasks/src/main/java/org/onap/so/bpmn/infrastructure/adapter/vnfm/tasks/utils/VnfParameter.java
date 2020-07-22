@@ -35,30 +35,18 @@ public class VnfParameter {
     @JsonProperty("vnf-parameter-value")
     private String value;
 
-    /**
-     * @return the name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * @param name the name to set
-     */
     public void setName(final String name) {
         this.name = name;
     }
 
-    /**
-     * @return the value
-     */
     public String getValue() {
         return value;
     }
 
-    /**
-     * @param value the value to set
-     */
     public void setValue(final String value) {
         this.value = value;
     }
@@ -66,10 +54,9 @@ public class VnfParameter {
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((value == null) ? 0 : value.hashCode());
-        return Objects.hash(name, value);
+        int nameResult = prime + ((name == null) ? 0 : name.hashCode());
+        int valueResult = prime + ((value == null) ? 0 : value.hashCode());
+        return Objects.hash(nameResult, valueResult);
     }
 
     @Override
@@ -78,7 +65,6 @@ public class VnfParameter {
             VnfParameter other = (VnfParameter) obj;
             return Objects.equals(name, other.name) && Objects.equals(value, other.value);
         }
-
         return false;
     }
 
@@ -86,5 +72,4 @@ public class VnfParameter {
     public String toString() {
         return "VnfParameter [name=" + name + ", value=" + value + "]";
     }
-
 }
