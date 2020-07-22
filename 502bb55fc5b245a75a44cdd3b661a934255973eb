@@ -71,6 +71,29 @@
     },
     {
       "key": {
+        "uuid": "737e0403_14bab951",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/bpmn/infrastructure/process/PnfHealthCheckTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-07-22T10:45:58Z",
+      "side": 1,
+      "message": "Can we assign the value of getClass().getSimpleName() to a private variable rather than doing the method call multiple times in the class?  Or can we use a const instead? wherever applicable.",
+      "range": {
+        "startLine": 71,
+        "startChar": 63,
+        "endLine": 71,
+        "endChar": 89
+      },
+      "revId": "502bb55fc5b245a75a44cdd3b661a934255973eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0b890e4f_dc2a5de6",
         "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/bpmn/infrastructure/process/PnfHealthCheckTest.java",
         "patchSetId": 4
