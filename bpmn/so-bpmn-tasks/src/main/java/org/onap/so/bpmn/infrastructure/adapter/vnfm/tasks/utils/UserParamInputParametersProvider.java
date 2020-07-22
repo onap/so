@@ -40,12 +40,12 @@ public class UserParamInputParametersProvider extends AbstractInputParametersPro
             final InputParameter inputParameter = new InputParameter();
             final Object additionalParams = userParams.get(ADDITIONAL_PARAMS);
 
-            if (additionalParams != null && additionalParams instanceof String) {
+            if (additionalParams instanceof String) {
                 inputParameter.setAdditionalParams(parseAdditionalParameters(additionalParams.toString()));
             }
 
             final Object extVirtualLinks = userParams.get(EXT_VIRTUAL_LINKS);
-            if (extVirtualLinks != null && extVirtualLinks instanceof String) {
+            if (extVirtualLinks instanceof String) {
                 inputParameter.setExtVirtualLinks(parseExternalVirtualLinks(extVirtualLinks.toString()));
             }
             LOGGER.info("InputParameter found in userParams : {}", inputParameter);

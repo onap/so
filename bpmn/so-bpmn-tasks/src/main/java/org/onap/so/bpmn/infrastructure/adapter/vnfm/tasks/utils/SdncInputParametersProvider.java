@@ -50,11 +50,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class SdncInputParametersProvider extends AbstractInputParametersProvider<GenericVnf> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SdncInputParametersProvider.class);
-
     private static final String VNF_PARAMETERS_PATH = "$..vnf-parameters";
-
     private final SDNCClient sdncClient;
-
     private final ObjectMapper mapper;
 
     @Autowired
@@ -68,34 +65,75 @@ public class SdncInputParametersProvider extends AbstractInputParametersProvider
         final String vnfName = genericVnf.getVnfName();
         final String vnfType = getVnfType(genericVnf);
         final String url = getPreloadVnfsUrl(vnfName, vnfType);
+        final InputParameter inputParameter = parseInputParametersUsingUrl(url);
 
+        if (inputParameter != null)
+            return inputParameter;
+        LOGGER.warn("No input parameters found ...");
+        return NullInputParameter.NULL_INSTANCE;
+    }
+
+    private String getVnfType(final GenericVnf genericVnf) {
+        final ModelInfoGenericVnf modelInfoGenericVnf = genericVnf.getModelInfoGenericVnf();
+        if (modelInfoGenericVnf != null) {
+            return modelInfoGenericVnf.getModelName();
+        }
+        return genericVnf.getVnfType();
+    }
+
+    private String getPreloadVnfsUrl(final String vnfName, final String vnfType) {
+        return PRELOAD_VNFS_URL + vnfName + FORWARD_SLASH + vnfType;
+    }
+
+    private InputParameter parseInputParametersUsingUrl(String url) {
         try {
             LOGGER.debug("Will query sdnc for input parameters using url: {}", url);
             final String jsonResponse = sdncClient.get(url);
             final String json = JsonPathUtil.getInstance().locateResult(jsonResponse, VNF_PARAMETERS_PATH).orElse(null);
+            final InputParameter inputParameter = parseVnfParameters(json);
 
-            try {
-
-                if (json != null) {
-                    final List<VnfParameter> vnfParametersArray =
-                            mapper.readValue(json, new TypeReference<List<VnfParameter>>() {});
-                    final Map<String, String> vnfParametersMap = getVnfParameterMap(vnfParametersArray);
-                    final Map<String, String> additionalParameters = getAdditionalParameters(vnfParametersMap);
-                    final List<ExternalVirtualLink> extVirtualLinks = getExtVirtualLinks(vnfParametersMap);
-                    final InputParameter inputParameter = new InputParameter(additionalParameters, extVirtualLinks);
-                    LOGGER.info("InputParameter found in sdnc response : {}", inputParameter);
-                    return inputParameter;
-                }
-
-            } catch (final IOException exception) {
-                LOGGER.error("Unable to parse vnf parameters : {}", json, exception);
-            }
+            if (inputParameter != null)
+                return inputParameter;
         } catch (final Exception exception) {
             LOGGER.error("Unable to retrieve/parse input parameters using URL: {} ", url, exception);
         }
-        LOGGER.warn("No input parameters found ...");
-        return NullInputParameter.NULL_INSTANCE;
+        return null;
+    }
 
+    private InputParameter parseVnfParameters(String json) {
+        try {
+            if (json != null) {
+                final List<VnfParameter> vnfParametersArray =
+                        mapper.readValue(json, new TypeReference<List<VnfParameter>>() {});
+                final Map<String, String> vnfParametersMap = getVnfParameterMap(vnfParametersArray);
+                final Map<String, String> additionalParameters = getAdditionalParameters(vnfParametersMap);
+                final List<ExternalVirtualLink> extVirtualLinks = getExtVirtualLinks(vnfParametersMap);
+                final InputParameter inputParameter = new InputParameter(additionalParameters, extVirtualLinks);
+                LOGGER.info("InputParameter found in sdnc response : {}", inputParameter);
+                return inputParameter;
+            }
+
+        } catch (final IOException exception) {
+            LOGGER.error("Unable to parse vnf parameters : {}", json, exception);
+        }
+        return null;
+    }
+
+    private Map<String, String> getVnfParameterMap(final List<VnfParameter> array) {
+        if (array != null) {
+            return array.stream().filter(vnfParam -> vnfParam.getName() != null && vnfParam.getValue() != null)
+                    .collect(Collectors.toMap(VnfParameter::getName, VnfParameter::getValue));
+        }
+        return Collections.emptyMap();
+    }
+
+    private Map<String, String> getAdditionalParameters(final Map<String, String> vnfParametersMap) {
+        final String additionalParamsString = vnfParametersMap.get(ADDITIONAL_PARAMS);
+
+        if (additionalParamsString != null && !additionalParamsString.isEmpty()) {
+            return parseAdditionalParameters(additionalParamsString);
+        }
+        return Collections.emptyMap();
     }
 
     private List<ExternalVirtualLink> getExtVirtualLinks(final Map<String, String> vnfParametersMap) {
@@ -106,35 +144,4 @@ public class SdncInputParametersProvider extends AbstractInputParametersProvider
         }
         return Collections.emptyList();
     }
-
-    private Map<String, String> getAdditionalParameters(final Map<String, String> vnfParametersMap) {
-        final String additionalParamsString = vnfParametersMap.get(ADDITIONAL_PARAMS);
-        if (additionalParamsString != null && !additionalParamsString.isEmpty()) {
-            return parseAdditionalParameters(additionalParamsString);
-        }
-        return Collections.emptyMap();
-    }
-
-
-    private Map<String, String> getVnfParameterMap(final List<VnfParameter> array) {
-        if (array != null) {
-            return array.stream().filter(vnfParam -> vnfParam.getName() != null && vnfParam.getValue() != null)
-                    .collect(Collectors.toMap(VnfParameter::getName, VnfParameter::getValue));
-        }
-
-        return Collections.emptyMap();
-    }
-
-    private String getPreloadVnfsUrl(final String vnfName, final String vnfType) {
-        return PRELOAD_VNFS_URL + vnfName + FORWARD_SLASH + vnfType;
-    }
-
-    private String getVnfType(final GenericVnf genericVnf) {
-        final ModelInfoGenericVnf modelInfoGenericVnf = genericVnf.getModelInfoGenericVnf();
-        if (modelInfoGenericVnf != null && modelInfoGenericVnf.getModelName() != null) {
-            return modelInfoGenericVnf.getModelName();
-        }
-        return genericVnf.getVnfType();
-    }
-
 }
