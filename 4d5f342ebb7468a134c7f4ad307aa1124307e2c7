@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "eaa14861_1652b4fd",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/adapter/vnfm/tasks/utils/SdncInputParametersProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 6675
+      },
+      "writtenOn": "2020-07-23T07:51:38Z",
+      "side": 0,
+      "message": "Unnecessary method move? All methods between lines 109 - 139.",
+      "revId": "4d5f342ebb7468a134c7f4ad307aa1124307e2c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
