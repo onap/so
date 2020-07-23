@@ -16,6 +16,24 @@
       "revId": "4d5f342ebb7468a134c7f4ad307aa1124307e2c7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "12dd9d1b_6f1254fa",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/adapter/vnfm/tasks/utils/SdncInputParametersProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-07-23T16:38:35Z",
+      "side": 0,
+      "message": "Yes, it seems that some of the methods was just moved in the order they are invoked. \n\nWhen writing a code, it is good approach to have private methods in order of invoking. \nHowever, in this case, it is not so necessary, and makes this ticket harder to read, because on the first look it seems it has much changes.\n\nPlease bring back the old order, in this way the ticket shows quickly what you really changed.",
+      "parentUuid": "eaa14861_1652b4fd",
+      "revId": "4d5f342ebb7468a134c7f4ad307aa1124307e2c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
