@@ -130,7 +130,7 @@ public class NfSoftwareUpgradeDispatcher implements JavaDelegate {
     }
 
     private Pnf getPnfByPnfName(DelegateExecution delegateExecution, String pnfName) {
-        Optional<Pnf> pnfOptional = null;
+        Optional<Pnf> pnfOptional = Optional.empty();
         try {
             pnfOptional = pnfManagement.getEntryFor(pnfName);
         } catch (IOException e) {
@@ -138,7 +138,7 @@ public class NfSoftwareUpgradeDispatcher implements JavaDelegate {
             exceptionUtil.buildAndThrowWorkflowException(delegateExecution, ERROR_CODE,
                     "Unable to fetch from AAI" + e.getMessage());
         }
-        if (pnfOptional == null || !pnfOptional.isPresent()) {
+        if ( !pnfOptional.isPresent()) {
             exceptionUtil.buildAndThrowWorkflowException(delegateExecution, ERROR_CODE,
                     "AAI entry for PNF: " + pnfName + " does not exist");
         }
