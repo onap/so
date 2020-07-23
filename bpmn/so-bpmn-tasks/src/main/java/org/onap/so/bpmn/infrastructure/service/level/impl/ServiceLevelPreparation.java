@@ -27,7 +27,6 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.List;
 
-
 /**
  * Fetches health check workflow based on the controller_scope. Invoke the corresponding health check workflow after
  * validation.
@@ -35,24 +34,26 @@ import java.util.List;
 @Component("ServiceLevelPreparation")
 public class ServiceLevelPreparation extends AbstractServiceLevelPreparable implements JavaDelegate {
 
-    // Health check parameters to be validated for pnf resource
-    private static final List<String> PNF_HC_PARAMS = Arrays.asList("SERVICE_MODEL_INFO", "SERVICE_INSTANCE_NAME",
-            "PNF_CORRELATION_ID", "MODEL_UUID", "PNF_UUID", "PRC_BLUEPRINT_NAME", "PRC_BLUEPRINT_VERSION",
-            "PRC_CUSTOMIZATION_UUID", "RESOURCE_CUSTOMIZATION_UUID_PARAM", "PRC_INSTANCE_NAME", "PRC_CONTROLLER_ACTOR",
-            "REQUEST_PAYLOAD");
+    private static final List<String> PNF_HC_PARAMS = Arrays.asList(ServiceLevelConstants.SERVICE_INSTANCE_ID,
+            ServiceLevelConstants.RESOURCE_TYPE, ServiceLevelConstants.BPMN_REQUEST, ServiceLevelConstants.PNF_NAME);
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
-        if (execution.hasVariable(RESOURCE_TYPE) && execution.getVariable(RESOURCE_TYPE) != null) {
-            final String controllerScope = (String) execution.getVariable(RESOURCE_TYPE);
+        if (execution.hasVariable(ServiceLevelConstants.RESOURCE_TYPE)
+                && execution.getVariable(ServiceLevelConstants.RESOURCE_TYPE) != null) {
+            final String controllerScope = (String) execution.getVariable(ServiceLevelConstants.RESOURCE_TYPE);
             LOG.debug("Scope retrieved from delegate execution: " + controllerScope);
             final String wflName = fetchWorkflowUsingScope(execution, controllerScope);
-            LOG.debug("Health check workflow fetched for the scope: {}", wflName);
-            validateParamsWithScope(execution, controllerScope, PNF_HC_PARAMS);
-            LOG.info("Parameters validated successfully for {}", wflName);
-            execution.setVariable(WORKFLOW_TO_INVOKE, wflName);
+            LOG.debug("Health check workflow fetched for the scope: {} is: {}", controllerScope, wflName);
+
+            if (ServiceLevelConstants.PNF.equalsIgnoreCase(controllerScope)) {
+                validateParamsWithScope(execution, controllerScope, PNF_HC_PARAMS);
+                LOG.info("Parameters validated successfully for {}", wflName);
+            }
+            execution.setVariable(ServiceLevelConstants.WORKFLOW_TO_INVOKE, wflName);
+            execution.setVariable(ServiceLevelConstants.CONTROLLER_STATUS, ServiceLevelConstants.EMPTY_STRING);
         } else {
-            exceptionBuilder.buildAndThrowWorkflowException(execution, ERROR_CODE,
+            exceptionBuilder.buildAndThrowWorkflowException(execution, ServiceLevelConstants.ERROR_CODE,
                     "Controller scope not found to invoke resource level health check");
         }
     }
@@ -61,14 +62,14 @@ public class ServiceLevelPreparation extends AbstractServiceLevelPreparable impl
     public String fetchWorkflowUsingScope(DelegateExecution execution, final String scope) {
         String wflName = null;
         switch (scope.toLowerCase()) {
-            case "pnf":
-                wflName = GENERIC_PNF_HEALTH_CHECK_WORKFLOW;
+            case ServiceLevelConstants.PNF:
+                wflName = ServiceLevelConstants.GENERIC_PNF_HEALTH_CHECK_WORKFLOW;
                 break;
-            case "vnf":
-                wflName = GENERIC_VNF_HEALTH_CHECK_WORKFLOW;
+            case ServiceLevelConstants.VNF:
+                wflName = ServiceLevelConstants.GENERIC_VNF_HEALTH_CHECK_WORKFLOW;
                 break;
             default:
-                exceptionBuilder.buildAndThrowWorkflowException(execution, ERROR_CODE,
+                exceptionBuilder.buildAndThrowWorkflowException(execution, ServiceLevelConstants.ERROR_CODE,
                         "No valid health check work flow retrieved for the scope: " + scope);
         }
         return wflName;

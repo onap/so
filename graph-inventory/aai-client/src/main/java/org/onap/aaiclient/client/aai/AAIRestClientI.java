@@ -26,6 +26,7 @@ import java.util.Optional;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.Pnf;
 import org.onap.aai.domain.yang.Pserver;
+import org.onap.aai.domain.yang.ServiceInstance;
 
 public interface AAIRestClientI {
 
@@ -40,4 +41,10 @@ public interface AAIRestClientI {
     void createPnf(String pnfId, Pnf pnf);
 
     void updatePnf(String pnfId, Pnf pnf);
+
+    Optional<ServiceInstance> getServiceInstanceById(String serviceInstanceId, String serviceType,
+            String globalSubscriberId);
+
+    void updateServiceInstance(String globalSubscriberId, String serviceType, String serviceInstanceId,
+            ServiceInstance serviceInstance);
 }

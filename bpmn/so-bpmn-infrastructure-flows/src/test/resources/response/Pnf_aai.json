@@ -1,0 +1,42 @@
+{
+  "pnf-name": "PNFDemo",
+  "pnf-id": "27c6e19d-6d9f-4085-98a9-d3fcbaf3a616",
+  "equip-type": "val8",
+  "equip-vendor": "Ericsson",
+  "equip-model": "val6",
+  "ipaddress-v4-oam": "10.10.10.43",
+  "sw-version": "5gDUv18.05.201",
+  "in-maint": false,
+  "serial-number": "6061ZW3",
+  "ipaddress-v6-oam": "2001:0db8:0:0:0:0:1428:57ab",
+  "resource-version": "1595010038094",
+  "nf-role": "gNB",
+  "relationship-list": {
+    "relationship": [
+      {
+        "related-to": "service-instance",
+        "related-link": "/aai/v11/business/customers/customer/ETE_Customer_807c7a02-249c-4db8-9fa9-bee973fe08ce/service-subscriptions/service-subscription/pNF/service-instances/service-instance/5df8b6de-2083-11e7-93ae-92361f002676",
+        "relationship-data": [
+          {
+            "relationship-key": "customer.global-customer-id",
+            "relationship-value": "ETE_Customer_807c7a02-249c-4db8-9fa9-bee973fe08ce"
+          },
+          {
+            "relationship-key": "service-subscription.service-type",
+            "relationship-value": "pNF"
+          },
+          {
+            "relationship-key": "service-instance.service-instance-id",
+            "relationship-value": "5df8b6de-2083-11e7-93ae-92361f002676"
+          }
+        ],
+        "related-to-property": [
+          {
+            "property-key": "service-instance.service-instance-name",
+            "property-value": "Service_Ete_Name123452c4-3d7f-42ce-8188-818fab951269"
+          }
+        ]
+      }
+    ]
+  }
+},

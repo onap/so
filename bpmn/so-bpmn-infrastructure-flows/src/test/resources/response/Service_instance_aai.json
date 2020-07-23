@@ -1,0 +1,35 @@
+{
+  "service-instance-id": "5df8b6de-2083-11e7-93ae-92361f002676",
+  "service-instance-name": "Service_Ete_Name123452c4-3d7f-42ce-8188-818fab951269",
+  "environment-context": "General_Revenue-Bearing",
+  "workload-context": "Production",
+  "model-version-id": "d88da85c-d9e8-4f73-b837-3a72a431622b",
+  "modelInvariantId": "fe41489e-1563-46a3-b90a-1db629e4375b",
+  "resource-version": "1595258335377",
+  "selflink": "restconf/config/GENERIC-RESOURCE-API:services/service/5df8b6de-2083-11e7-93ae-92361f002676/service-data/service-topology/",
+  "orchestration-status": "Assigned",
+  "relationship-list": {
+    "relationship": [
+      {
+        "related-to": "owning-entity",
+        "related-link": "/aai/v11/business/owning-entities/owning-entity/67f2e84c-734d-4e90-a1e4-d2ffa2e75849",
+        "relationship-data": [
+          {
+            "relationship-key": "owning-entity.owning-entity-id",
+            "relationship-value": "67f2e84c-734d-4e90-a1e4-d2ffa2e75849"
+          }
+        ]
+      },
+      {
+        "related-to": "pnf",
+        "related-link": "/aai/v11/network/pnfs/pnf/PNFDemo",
+        "relationship-data": [
+          {
+            "relationship-key": "pnf.pnf-name",
+            "relationship-value": "PNFDemo"
+          }
+        ]
+      }
+    ]
+  }
+}

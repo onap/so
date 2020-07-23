@@ -28,6 +28,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.onap.so.bpmn.infrastructure.service.level.impl.ServiceLevelConstants;
 import org.onap.so.bpmn.infrastructure.service.level.impl.ServiceLevelPreparation;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +39,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.onap.so.bpmn.infrastructure.service.level.AbstractServiceLevelPreparable.RESOURCE_TYPE;
-import static org.onap.so.bpmn.infrastructure.service.level.AbstractServiceLevelPreparable.WORKFLOW_TO_INVOKE;
-
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -50,10 +48,13 @@ public class ServiceLevelPreparationTest {
     private static final String TEST_PNF_SCOPE = "pnf";
     private static final String TEST_PROCESS_KEY = "testProcessKey";
     private static final String PROCESS_KEY_VALUE = "testProcessKeyValue";
-    private static final List<String> PNF_HEALTH_CHECK_PARAMS = Arrays.asList("SERVICE_MODEL_INFO",
-            "SERVICE_INSTANCE_NAME", "PNF_CORRELATION_ID", "MODEL_UUID", "PNF_UUID", "PRC_BLUEPRINT_NAME",
-            "PRC_BLUEPRINT_VERSION", "PRC_CUSTOMIZATION_UUID", "RESOURCE_CUSTOMIZATION_UUID_PARAM", "PRC_INSTANCE_NAME",
-            "PRC_CONTROLLER_ACTOR", "REQUEST_PAYLOAD");
+    private static final String BPMN_REQUEST = "bpmnRequest";
+    private static final String RESOURCE_TYPE = "resourceType";
+    private static final String SERVICE_INSTANCE_ID = "serviceInstanceId";
+    private static final String PNF_NAME = "pnfName";
+    private static final List<String> PNF_HEALTH_CHECK_PARAMS = Arrays.asList(ServiceLevelConstants.SERVICE_INSTANCE_ID,
+            ServiceLevelConstants.RESOURCE_TYPE, ServiceLevelConstants.BPMN_REQUEST, ServiceLevelConstants.PNF_NAME);
+
     private Map<String, String> pnfHealthCheckTestParams = new HashMap<>();
 
     @Autowired
@@ -89,6 +90,9 @@ public class ServiceLevelPreparationTest {
         }
         execution.setVariable(RESOURCE_TYPE, TEST_PNF_SCOPE);
         execution.setVariable(TEST_PROCESS_KEY, PROCESS_KEY_VALUE);
+        execution.setVariable(BPMN_REQUEST, "bpmnRequestValue");
+        execution.setVariable(SERVICE_INSTANCE_ID, "serviceInstanceIdValue");
+        execution.setVariable(PNF_NAME, "PnfDemo");
 
         invalidExecution.setVariables(execution.getVariables());
     }
@@ -97,13 +101,13 @@ public class ServiceLevelPreparationTest {
     public void executePnfUpgradeSuccessTest() throws Exception {
         serviceLevelPrepare.execute(execution);
         // Expect the pnf health check workflow to be set in to execution if validation is successful
-        assertThat(String.valueOf(execution.getVariable(WORKFLOW_TO_INVOKE))).isEqualTo("GenericPnfHealthCheck");
+        assertThat(String.valueOf(execution.getVariable(ServiceLevelConstants.WORKFLOW_TO_INVOKE)))
+                .isEqualTo("GenericPnfHealthCheck");
     }
 
     @Test
     public void validateFailureParamsForPnfTest() throws Exception {
-        invalidExecution.removeVariable("PNF_UUID");
-        invalidExecution.setVariable("PRC_BLUEPRINT_NAME", null);
+        invalidExecution.removeVariable(BPMN_REQUEST);
         // BPMN exception is thrown in case of validation failure or invalid execution
         thrown.expect(BpmnError.class);
         serviceLevelPrepare.validateParamsWithScope(invalidExecution, TEST_PNF_SCOPE, PNF_HEALTH_CHECK_PARAMS);

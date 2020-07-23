@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.infrastructure.service.level;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.onap.so.bpmn.infrastructure.service.level.impl.ServiceLevelConstants;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,15 +33,6 @@ import java.util.List;
  * Abstract class for Service level upgrade Execution, it should be extended for service level upgrade tasks.
  */
 public abstract class AbstractServiceLevelPreparable {
-
-    protected static final String WORKFLOW_TO_INVOKE = "healthCheckWorkflow";
-    protected static final String GENERIC_PNF_HEALTH_CHECK_WORKFLOW = "GenericPnfHealthCheck";
-    protected static final String GENERIC_PNF_SOFTWARE_UPGRADE_WORKFLOW = "GenericPnfSoftwareUpgrade";
-    protected static final String RESOURCE_TYPE = "RESOURCE_TYPE";
-    protected static final int ERROR_CODE = 601;
-
-    // TODO This value needs to be updated once vnf health check workflow is available
-    protected static final String GENERIC_VNF_HEALTH_CHECK_WORKFLOW = "GenericVNFHealthCheck";
 
     protected static final Logger LOG = LoggerFactory.getLogger(AbstractServiceLevelPreparable.class);
 
@@ -61,8 +53,7 @@ public abstract class AbstractServiceLevelPreparable {
      * @param execution Delegate execution obj
      * @param scope Controller scope * Throws workflow exception if validation fails
      */
-    protected void validateParamsWithScope(DelegateExecution execution, final String scope, List<String> params)
-            throws Exception {
+    protected void validateParamsWithScope(DelegateExecution execution, final String scope, List<String> params) {
         List<String> invalidVariables = new ArrayList<>();
         for (String param : params) {
             if (!execution.hasVariable(param) || execution.getVariable(param) == null
@@ -72,7 +63,7 @@ public abstract class AbstractServiceLevelPreparable {
         }
         if (invalidVariables.size() > 0) {
             LOG.error("Validation error for the {} health check attributes: {}", scope, invalidVariables);
-            exceptionBuilder.buildAndThrowWorkflowException(execution, ERROR_CODE,
+            exceptionBuilder.buildAndThrowWorkflowException(execution, ServiceLevelConstants.ERROR_CODE,
                     "Validation of health check workflow parameters failed for the scope: " + scope);
         }
 
