@@ -34,9 +34,11 @@ import java.util.List;
 public abstract class AbstractServiceLevelPreparable {
 
     protected static final String WORKFLOW_TO_INVOKE = "healthCheckWorkflow";
+    protected static final String SOFTWARE_WORKFLOW_TO_INVOKE = "softwareUpgradeWorkflow";
     protected static final String GENERIC_PNF_HEALTH_CHECK_WORKFLOW = "GenericPnfHealthCheck";
-    protected static final String GENERIC_PNF_SOFTWARE_UPGRADE_WORKFLOW = "GenericPnfSoftwareUpgrade";
-    protected static final String RESOURCE_TYPE = "RESOURCE_TYPE";
+    protected static final String PNF_SOFTWARE_UPGRADE_WORKFLOW = "PNFSoftwareUpgrade";
+    protected static final String RESOURCE_TYPE = "resourceType";
+    protected static final String CONTROLLER_STATUS = "ControllerStatus";
     protected static final int ERROR_CODE = 601;
 
     // TODO This value needs to be updated once vnf health check workflow is available
@@ -61,8 +63,7 @@ public abstract class AbstractServiceLevelPreparable {
      * @param execution Delegate execution obj
      * @param scope Controller scope * Throws workflow exception if validation fails
      */
-    protected void validateParamsWithScope(DelegateExecution execution, final String scope, List<String> params)
-            throws Exception {
+    protected void validateParamsWithScope(DelegateExecution execution, final String scope, List<String> params) {
         List<String> invalidVariables = new ArrayList<>();
         for (String param : params) {
             if (!execution.hasVariable(param) || execution.getVariable(param) == null

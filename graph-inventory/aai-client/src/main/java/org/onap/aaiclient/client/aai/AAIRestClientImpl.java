@@ -31,6 +31,7 @@ import javax.ws.rs.core.Response;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.Pnf;
 import org.onap.aai.domain.yang.Pserver;
+import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aaiclient.client.aai.entities.CustomQuery;
 import org.onap.aaiclient.client.aai.entities.Results;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
@@ -96,5 +97,24 @@ public class AAIRestClientImpl implements AAIRestClientI {
     @Override
     public void updatePnf(String pnfId, Pnf pnf) {
         new AAIResourcesClient().update(AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfId), pnf);
+    }
+
+    @Override
+    public Optional<ServiceInstance> getServiceInstanceById(String globalSubscriberId, String serviceType,
+            String serviceInstanceId) {
+        Response response = new AAIResourcesClient().getFullResponse(AAIUriFactory
+                .createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId, serviceType, serviceInstanceId));
+        if (response.getStatus() != 200) {
+            return Optional.empty();
+        } else {
+            return Optional.of(response.readEntity(ServiceInstance.class));
+        }
+    }
+
+    @Override
+    public void updateServiceInstance(String globalSubscriberId, String serviceType, String serviceInstanceId,
+            ServiceInstance serviceInstance) {
+        new AAIResourcesClient().update(AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
+                globalSubscriberId, serviceType, serviceInstanceId), serviceInstance);
     }
 }

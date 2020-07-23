@@ -50,6 +50,10 @@ public class ServiceLevelPreparationTest {
     private static final String TEST_PNF_SCOPE = "pnf";
     private static final String TEST_PROCESS_KEY = "testProcessKey";
     private static final String PROCESS_KEY_VALUE = "testProcessKeyValue";
+    private static final String BPMN_REQUEST = "bpmnRequest";
+    private static final String RESOURCE_TYPE = "resourceType";
+    private static final String SERVICE_INSTANCE_ID = "serviceInstanceId";
+    private static final String PNF_NAME = "pnfName";
     private static final List<String> PNF_HEALTH_CHECK_PARAMS = Arrays.asList("SERVICE_MODEL_INFO",
             "SERVICE_INSTANCE_NAME", "PNF_CORRELATION_ID", "MODEL_UUID", "PNF_UUID", "PRC_BLUEPRINT_NAME",
             "PRC_BLUEPRINT_VERSION", "PRC_CUSTOMIZATION_UUID", "RESOURCE_CUSTOMIZATION_UUID_PARAM", "PRC_INSTANCE_NAME",
@@ -89,6 +93,9 @@ public class ServiceLevelPreparationTest {
         }
         execution.setVariable(RESOURCE_TYPE, TEST_PNF_SCOPE);
         execution.setVariable(TEST_PROCESS_KEY, PROCESS_KEY_VALUE);
+        execution.setVariable(BPMN_REQUEST, "bpmnRequestValue");
+        execution.setVariable(SERVICE_INSTANCE_ID, "serviceInstanceIdValue");
+        execution.setVariable(PNF_NAME, "PnfDemo");
 
         invalidExecution.setVariables(execution.getVariables());
     }

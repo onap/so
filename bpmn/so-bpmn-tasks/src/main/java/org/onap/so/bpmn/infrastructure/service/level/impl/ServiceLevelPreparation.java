@@ -35,11 +35,13 @@ import java.util.List;
 @Component("ServiceLevelPreparation")
 public class ServiceLevelPreparation extends AbstractServiceLevelPreparable implements JavaDelegate {
 
-    // Health check parameters to be validated for pnf resource
-    private static final List<String> PNF_HC_PARAMS = Arrays.asList("SERVICE_MODEL_INFO", "SERVICE_INSTANCE_NAME",
-            "PNF_CORRELATION_ID", "MODEL_UUID", "PNF_UUID", "PRC_BLUEPRINT_NAME", "PRC_BLUEPRINT_VERSION",
-            "PRC_CUSTOMIZATION_UUID", "RESOURCE_CUSTOMIZATION_UUID_PARAM", "PRC_INSTANCE_NAME", "PRC_CONTROLLER_ACTOR",
-            "REQUEST_PAYLOAD");
+    private static final String BPMN_REQUEST = "bpmnRequest";
+    private static final String RESOURCE_TYPE = "resourceType";
+    private static final String SERVICE_INSTANCE_ID = "serviceInstanceId";
+    private static final String PNF_NAME = "pnfName";
+
+    private static final List<String> PNF_HC_PARAMS =
+            Arrays.asList(SERVICE_INSTANCE_ID, RESOURCE_TYPE, BPMN_REQUEST, PNF_NAME);
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
@@ -47,10 +49,14 @@ public class ServiceLevelPreparation extends AbstractServiceLevelPreparable impl
             final String controllerScope = (String) execution.getVariable(RESOURCE_TYPE);
             LOG.debug("Scope retrieved from delegate execution: " + controllerScope);
             final String wflName = fetchWorkflowUsingScope(execution, controllerScope);
-            LOG.debug("Health check workflow fetched for the scope: {}", wflName);
-            validateParamsWithScope(execution, controllerScope, PNF_HC_PARAMS);
-            LOG.info("Parameters validated successfully for {}", wflName);
-            execution.setVariable(WORKFLOW_TO_INVOKE, wflName);
+            LOG.debug("Health check workflow fetched for the scope: {} is: {}", controllerScope, wflName);
+
+            if ("pnf".equalsIgnoreCase(controllerScope)) {
+                validateParamsWithScope(execution, controllerScope, PNF_HC_PARAMS);
+                LOG.info("Parameters validated successfully for {}", wflName);
+                execution.setVariable(WORKFLOW_TO_INVOKE, wflName);
+                execution.setVariable(CONTROLLER_STATUS, "");
+            }
         } else {
             exceptionBuilder.buildAndThrowWorkflowException(execution, ERROR_CODE,
                     "Controller scope not found to invoke resource level health check");
