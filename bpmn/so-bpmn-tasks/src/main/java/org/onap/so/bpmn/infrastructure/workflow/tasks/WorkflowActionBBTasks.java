@@ -334,6 +334,7 @@ public class WorkflowActionBBTasks {
                             && !rollbackFlow.getBuildingBlock().getBpmnFlowName().contains("FabricConfiguration")) {
                         rollbackFlowsFiltered.remove(rollbackFlow);
                     } else if (rollbackFlow.getBuildingBlock().getBpmnFlowName().contains("Delete")
+                            && !rollbackFlow.getBuildingBlock().getBpmnFlowName().contains("FabricConfiguration")
                             && ROLLBACKTOCREATED.equals(handlingCode)) {
                         rollbackFlowsFiltered.remove(rollbackFlow);
                     }

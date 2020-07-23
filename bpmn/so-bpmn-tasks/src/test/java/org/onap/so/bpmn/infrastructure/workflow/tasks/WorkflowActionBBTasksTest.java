@@ -400,6 +400,42 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
     }
 
     @Test
+    public void rollbackExecutionRollbackToCreatedWithFabricTest() {
+        execution.setVariable("isRollback", false);
+        execution.setVariable("handlingCode", "RollbackToCreated");
+        execution.setVariable("requestAction", EMPTY_STRING);
+        execution.setVariable("resourceName", EMPTY_STRING);
+        List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
+
+        BuildingBlock buildingBlock1 = new BuildingBlock().setBpmnFlowName("AssignVfModuleBB");
+        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock1);
+        flowsToExecute.add(ebb1);
+
+        BuildingBlock buildingBlock2 = new BuildingBlock().setBpmnFlowName("CreateVfModuleBB");
+        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock2);
+        flowsToExecute.add(ebb2);
+
+        BuildingBlock buildingBlock3 = new BuildingBlock().setBpmnFlowName("ActivateVfModuleBB");
+        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock3);
+        flowsToExecute.add(ebb3);
+
+        BuildingBlock buildingBlock4 = new BuildingBlock().setBpmnFlowName("AddFabricConfigurationBB");
+        ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock4);
+        flowsToExecute.add(ebb4);
+
+        execution.setVariable("flowsToExecute", flowsToExecute);
+        execution.setVariable("gCurrentSequence", 4);
+
+        workflowActionBBTasks.rollbackExecutionPath(execution);
+        List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+        assertEquals(0, execution.getVariable("gCurrentSequence"));
+        assertEquals(2, ebbs.size());
+        assertEquals("DeleteFabricConfigurationBB", ebbs.get(0).getBuildingBlock().getBpmnFlowName());
+        assertEquals("DeactivateVfModuleBB", ebbs.get(1).getBuildingBlock().getBpmnFlowName());
+
+    }
+
+    @Test
     public void rollbackExecutionRollbackToCreatedTest() {
         execution.setVariable("isRollback", false);
         execution.setVariable("handlingCode", "RollbackToCreated");
