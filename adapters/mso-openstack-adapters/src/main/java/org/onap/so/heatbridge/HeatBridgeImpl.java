@@ -570,9 +570,10 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                 Vserver vserver = vserverWrapper.asBean(Vserver.class).get();
                 List<String> pciIds = HeatBridgeUtils.extractPciIdsFromVServer(vserver);
                 if (CollectionUtils.isNotEmpty(pciIds)) {
-                    List<String> matchingPservers = vserverRelationships.get().getRelatedLinks(AAIObjectType.PSERVER);
+                    List<AAIResourceUri> matchingPservers =
+                            vserverRelationships.get().getRelatedUris(AAIObjectType.PSERVER);
                     if (matchingPservers != null && matchingPservers.size() == 1) {
-                        pserverToPciIdMap.put(matchingPservers.get(0), pciIds);
+                        pserverToPciIdMap.put(matchingPservers.get(0).getURIKeys().get("hostname"), pciIds);
                     }
                 }
             }
