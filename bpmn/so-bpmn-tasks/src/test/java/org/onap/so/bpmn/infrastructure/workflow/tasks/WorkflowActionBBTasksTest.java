@@ -678,7 +678,7 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void getConfigurationId() {
+    public void getConfigurationId() throws Exception {
         org.onap.aai.domain.yang.Vnfc vnfc = new org.onap.aai.domain.yang.Vnfc();
         vnfc.setModelInvariantId("modelInvariantId");
         vnfc.setVnfcName("testVnfcName");

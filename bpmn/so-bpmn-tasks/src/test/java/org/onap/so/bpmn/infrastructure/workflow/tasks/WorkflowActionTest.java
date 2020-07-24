@@ -43,6 +43,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -232,77 +233,6 @@ public class WorkflowActionTest extends BaseTaskTest {
         workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         assertEqualsBulkFlowName(ebbs, "AssignServiceInstanceBB", "ActivateServiceInstanceBB");
-    }
-
-    @Test
-    public void selectExecutionListExceptionAlreadyBuiltTest() throws Exception {
-        DelegateExecution delegateExecution = new DelegateExecutionFake();
-        String gAction = "deleteInstance";
-        String resource = "VfModule";
-        delegateExecution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        delegateExecution.setVariable("requestAction", gAction);
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
-        delegateExecution.setVariable("bpmnRequest", bpmnRequest);
-        delegateExecution.setVariable("aLaCarte", true);
-        delegateExecution.setVariable("apiVersion", "7");
-        delegateExecution.setVariable("requestUri",
-                "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules");
-
-        NorthBoundRequest northBoundRequest = new NorthBoundRequest();
-        List<OrchestrationFlow> orchFlows = createFlowList("DeactivateVfModuleBB", "DeleteVfModuleBB",
-                "UnassignVfModuleBB", "DeactivateFabricConfigurationBB", "UnassignFabricConfigurationBB");
-        northBoundRequest.setOrchestrationFlowList(orchFlows);
-
-        when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
-                true, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
-
-        doAnswer(invocation -> {
-            DelegateExecutionFake execution = invocation.getArgument(0);
-            execution.setVariable("WorkflowException", "exception");
-            execution.setVariable("WorkflowExceptionErrorMessage", "errorMessage");
-            throw new BpmnError("WorkflowException");
-        }).when(exceptionUtil).buildAndThrowWorkflowException(delegateExecution, 7000,
-                "Exception in getConfigBuildingBlock: Multiple relationships exist from VNFC testVnfcName to Configurations");
-
-
-        org.onap.aai.domain.yang.GenericVnf vnf = new org.onap.aai.domain.yang.GenericVnf();
-        vnf.setVnfId("vnf0");
-        vnf.setModelCustomizationId("modelCustomizationId");
-        when(bbSetupUtils.getAAIGenericVnf(any())).thenReturn(vnf);
-
-        org.onap.aai.domain.yang.VfModule vfModule = new org.onap.aai.domain.yang.VfModule();
-        vfModule.setModelCustomizationId("modelCustomizationId");
-        when(bbSetupUtils.getAAIVfModule(any(), any())).thenReturn(vfModule);
-
-        List<org.onap.aai.domain.yang.Vnfc> vnfcs = new ArrayList<org.onap.aai.domain.yang.Vnfc>();
-        org.onap.aai.domain.yang.Vnfc vnfc = new org.onap.aai.domain.yang.Vnfc();
-        vnfc.setModelInvariantId("modelInvariantId");
-        vnfc.setVnfcName("testVnfcName");
-        vnfcs.add(vnfc);
-        doReturn(vnfcs).when(SPY_workflowAction).getRelatedResourcesInVfModule(any(), any(), any(), any());
-
-        List<org.onap.aai.domain.yang.Configuration> configurations =
-                new ArrayList<org.onap.aai.domain.yang.Configuration>();
-        org.onap.aai.domain.yang.Configuration configuration = new org.onap.aai.domain.yang.Configuration();
-        configuration.setConfigurationId("configurationId");
-        configuration.setModelCustomizationId("modelCustimizationId");
-        configuration.setConfigurationName("testConfigurationName");
-        configurations.add(configuration);
-        org.onap.aai.domain.yang.Configuration configuration1 = new org.onap.aai.domain.yang.Configuration();
-        configuration1.setConfigurationId("configurationId");
-        configuration1.setModelCustomizationId("modelCustimizationId");
-        configuration1.setConfigurationName("testConfigurationName");
-        configurations.add(configuration1);
-        doReturn(configurations).when(SPY_workflowAction).getRelatedResourcesInVnfc(any(), any(), any());
-
-        doReturn("testName").when(SPY_workflowAction).getVnfcNameForConfiguration(any());
-
-        thrown.expect(BpmnError.class);
-        SPY_workflowAction.selectExecutionList(delegateExecution);
-        assertEquals(
-                "Exception in getConfigBuildingBlock: Multiple relationships exist from VNFC testVnfcName to Configurations",
-                delegateExecution.getVariable("WorkflowException"));
     }
 
     @Test
@@ -1409,16 +1339,11 @@ public class WorkflowActionTest extends BaseTaskTest {
         vnfcs.add(vnfc);
         doReturn(vnfcs).when(SPY_workflowAction).getRelatedResourcesInVfModule(any(), any(), any(), any());
 
-        List<org.onap.aai.domain.yang.Configuration> configurations =
-                new ArrayList<org.onap.aai.domain.yang.Configuration>();
         org.onap.aai.domain.yang.Configuration configuration = new org.onap.aai.domain.yang.Configuration();
         configuration.setConfigurationId("configurationId");
         configuration.setModelCustomizationId("modelCustimizationId");
         configuration.setConfigurationName("testConfigurationName");
-        configurations.add(configuration);
-        doReturn(configurations).when(SPY_workflowAction).getRelatedResourcesInVnfc(any(), any(), any());
-
-        doReturn("testVnfcName").when(SPY_workflowAction).getVnfcNameForConfiguration(any());
+        doReturn(configuration).when(SPY_workflowAction).getRelatedResourcesInVnfc(any(), any(), any());
 
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
         northBoundRequest.setOrchestrationFlowList(replaceVfModuleWithFabricOrchFlows);
@@ -1669,17 +1594,12 @@ public class WorkflowActionTest extends BaseTaskTest {
         doReturn(vnfcs).when(SPY_workflowAction).getRelatedResourcesInVfModule(anyObject(), anyObject(), anyObject(),
                 anyObject());
 
-        List<org.onap.aai.domain.yang.Configuration> configurations =
-                new ArrayList<org.onap.aai.domain.yang.Configuration>();
         org.onap.aai.domain.yang.Configuration configuration = new org.onap.aai.domain.yang.Configuration();
         configuration.setConfigurationId("configurationId");
         configuration.setModelCustomizationId("modelCustimizationId");
         configuration.setConfigurationName("testConfigurationName");
-        configurations.add(configuration);
-        doReturn(configurations).when(SPY_workflowAction).getRelatedResourcesInVnfc(anyObject(), anyObject(),
+        doReturn(configuration).when(SPY_workflowAction).getRelatedResourcesInVnfc(anyObject(), anyObject(),
                 anyObject());
-
-        doReturn("testName").when(SPY_workflowAction).getVnfcNameForConfiguration(anyObject());
 
         SPY_workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
@@ -1738,6 +1658,81 @@ public class WorkflowActionTest extends BaseTaskTest {
     }
 
     @Test
+    public void getConfigBuildingBlocksTest() throws Exception {
+        String gAction = "deleteInstance";
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES);
+
+        WorkflowType resourceType = WorkflowType.VFMODULE;
+        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
+        execution.setVariable("requestAction", gAction);
+        String bpmnRequest =
+                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
+        execution.setVariable("bpmnRequest", bpmnRequest);
+        execution.setVariable("vnfId", "1234");
+        execution.setVariable("vfModuleId", "vfModuleId1234");
+        execution.setVariable("requestUri",
+                "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules");
+        ServiceInstancesRequest sIRequest = mapper.readValue(bpmnRequest, ServiceInstancesRequest.class);
+        RequestDetails requestDetails = sIRequest.getRequestDetails();
+        String requestAction = "deleteInstance";
+        String requestId = "9c944122-d161-4280-8594-48c06a9d96d5";
+        boolean aLaCarte = true;
+        String apiVersion = "7";
+        String vnfType = "vnfType";
+        String key = "00d15ebb-c80e-43c1-80f0-90c40dde70b0";
+        String resourceId = "d1d35800-783d-42d3-82f6-d654c5054a6e";
+        Resource resourceKey = new Resource(resourceType, key, aLaCarte);
+        WorkflowResourceIds workflowResourceIds = SPY_workflowAction.populateResourceIdsFromApiHandler(execution);
+
+        List<OrchestrationFlow> orchFlows = createFlowList("DeactivateVfModuleBB", "DeleteVfModuleBB",
+                "UnassignVfModuleBB", "DeleteFabricConfigurationBB");
+
+        ConfigBuildingBlocksDataObject dataObj = new ConfigBuildingBlocksDataObject().setsIRequest(sIRequest)
+                .setOrchFlows(orchFlows).setRequestId(requestId).setResourceKey(resourceKey).setApiVersion(apiVersion)
+                .setResourceId(resourceId).setRequestAction(requestAction).setaLaCarte(aLaCarte).setVnfType(vnfType)
+                .setWorkflowResourceIds(workflowResourceIds).setRequestDetails(requestDetails).setExecution(execution);
+
+        org.onap.aai.domain.yang.GenericVnf vnf = new org.onap.aai.domain.yang.GenericVnf();
+        vnf.setVnfId("vnf0");
+        vnf.setModelCustomizationId("modelCustomizationId");
+        when(bbSetupUtils.getAAIGenericVnf(any())).thenReturn(vnf);
+
+        org.onap.aai.domain.yang.VfModule vfModule = new org.onap.aai.domain.yang.VfModule();
+        vfModule.setModelCustomizationId("modelCustomizationId");
+
+        org.onap.aai.domain.yang.Configuration config1 = new org.onap.aai.domain.yang.Configuration();
+        config1.setConfigurationId("config1");
+        org.onap.aai.domain.yang.Configuration config2 = new org.onap.aai.domain.yang.Configuration();
+        config2.setConfigurationId("config2");
+
+        List<org.onap.aai.domain.yang.Vnfc> vnfcs = new ArrayList<org.onap.aai.domain.yang.Vnfc>();
+        org.onap.aai.domain.yang.Vnfc vnfc1 = new org.onap.aai.domain.yang.Vnfc();
+        vnfc1.setVnfcName("zauk53avetd02svm001");
+        org.onap.aai.domain.yang.Vnfc vnfc2 = new org.onap.aai.domain.yang.Vnfc();
+        vnfc2.setVnfcName("zauk53avetd02tvm001");
+        vnfcs.add(vnfc1);
+        vnfcs.add(vnfc2);
+
+        when(bbSetupUtils.getAAIVfModule(any(), any())).thenReturn(vfModule);
+        doReturn(vnfcs).when(SPY_workflowAction).getRelatedResourcesInVfModule(any(), any(),
+                eq(org.onap.aai.domain.yang.Vnfc.class), eq(AAIObjectType.VNFC));
+        doReturn(config1).when(SPY_workflowAction).getRelatedResourcesInVnfc(eq(vnfc1),
+                eq(org.onap.aai.domain.yang.Configuration.class), eq(AAIObjectType.CONFIGURATION));
+        doReturn(config2).when(SPY_workflowAction).getRelatedResourcesInVnfc(eq(vnfc2),
+                eq(org.onap.aai.domain.yang.Configuration.class), eq(AAIObjectType.CONFIGURATION));
+
+        List<ExecuteBuildingBlock> results = SPY_workflowAction.getConfigBuildingBlocks(dataObj);
+
+        assertFalse(results.isEmpty());
+        assertEquals(2, results.size());
+        assertEquals("config1", results.get(0).getWorkflowResourceIds().getConfigurationId());
+        assertEquals("config2", results.get(1).getWorkflowResourceIds().getConfigurationId());
+        assertEquals("zauk53avetd02svm001", results.get(0).getConfigurationResourceKeys().getVnfcName());
+        assertEquals("zauk53avetd02tvm001", results.get(1).getConfigurationResourceKeys().getVnfcName());
+    }
+
+    @Test
     public void selectExecutionListALaCarteVfModuleNoFabricDeleteTest() throws Exception {
         String gAction = "deleteInstance";
         String resource = "VfModule";
@@ -1753,7 +1748,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
         List<OrchestrationFlow> orchFlows = createFlowList("DeactivateVfModuleBB", "DeleteVfModuleBB",
-                "UnassignVfModuleBB", "DeactivateFabricConfigurationBB", "UnassignFabricConfigurationBB");
+                "UnassignVfModuleBB", "DeleteFabricConfigurationBB");
         northBoundRequest.setOrchestrationFlowList(orchFlows);
 
         when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
@@ -1769,20 +1764,9 @@ public class WorkflowActionTest extends BaseTaskTest {
         when(bbSetupUtils.getAAIVfModule(anyObject(), anyObject())).thenReturn(vfModule);
 
         List<org.onap.aai.domain.yang.Vnfc> vnfcs = new ArrayList<org.onap.aai.domain.yang.Vnfc>();
-        org.onap.aai.domain.yang.Vnfc vnfc = new org.onap.aai.domain.yang.Vnfc();
-        vnfc.setModelInvariantId("modelInvariantId");
-        vnfc.setVnfcName("testVnfcName");
-        vnfcs.add(vnfc);
+
         doReturn(vnfcs).when(SPY_workflowAction).getRelatedResourcesInVfModule(anyObject(), anyObject(), anyObject(),
                 anyObject());
-
-        List<org.onap.aai.domain.yang.Configuration> configurations =
-                new ArrayList<org.onap.aai.domain.yang.Configuration>();
-        org.onap.aai.domain.yang.Configuration configuration = new org.onap.aai.domain.yang.Configuration();
-        doReturn(configurations).when(SPY_workflowAction).getRelatedResourcesInVnfc(anyObject(), anyObject(),
-                anyObject());
-
-        doReturn("testName").when(SPY_workflowAction).getVnfcNameForConfiguration(anyObject());
 
         SPY_workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
@@ -1853,10 +1837,9 @@ public class WorkflowActionTest extends BaseTaskTest {
 
         doReturn(configurationResultWrappers).when(SPY_workflowAction).getResultWrappersFromRelationships(anyObject(),
                 anyObject());
-        List<org.onap.aai.domain.yang.Configuration> configurationsList = SPY_workflowAction.getRelatedResourcesInVnfc(
-                vnfc, org.onap.aai.domain.yang.Configuration.class, AAIObjectType.CONFIGURATION);
-        assertEquals(1, configurationsList.size());
-        assertEquals("testConfigurationId", configurationsList.get(0).getConfigurationId());
+        org.onap.aai.domain.yang.Configuration configuration = SPY_workflowAction.getRelatedResourcesInVnfc(vnfc,
+                org.onap.aai.domain.yang.Configuration.class, AAIObjectType.CONFIGURATION);
+        assertEquals("testConfigurationId", configuration.getConfigurationId());
     }
 
     /**

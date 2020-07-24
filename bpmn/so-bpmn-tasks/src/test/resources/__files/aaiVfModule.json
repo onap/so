@@ -1,0 +1,40 @@
+{
+    "automated-assignment": false,
+    "heat-stack-id": "zauk53avetd02_base/5c7a8a55-edb8-458e-a7dc-2dbbc696682e",
+    "is-base-vf-module": true,
+    "model-customization-id": "521d5f9b-0b76-49d3-879e-fce8767f34eb",
+    "model-invariant-id": "f0ac6f78-543f-41ac-81c3-672a4d47001c",
+    "model-version-id": "215ea5bd-f0e0-4560-9f64-9a9716ff6178",
+    "module-index": 0,
+    "orchestration-status": "Active",
+    "relationship-list": {
+        "relationship": [
+            {
+                "related-link": "/aai/v20/network/vnfcs/vnfc/zauk53avetd02svm001",
+                "related-to": "vnfc",
+                "relationship-data": [
+                    {
+                        "relationship-key": "vnfc.vnfc-name",
+                        "relationship-value": "zauk53avetd02svm001"
+                    }
+                ],
+                "relationship-label": "org.onap.relationships.inventory.Uses"
+            },
+            {
+                "related-link": "/aai/v20/network/vnfcs/vnfc/zauk53avetd02tvm001",
+                "related-to": "vnfc",
+                "relationship-data": [
+                    {
+                        "relationship-key": "vnfc.vnfc-name",
+                        "relationship-value": "zauk53avetd02tvm001"
+                    }
+                ],
+                "relationship-label": "org.onap.relationships.inventory.Uses"
+            }
+        ]
+    },
+    "resource-version": "1595304004908",
+    "selflink": "restconf/config/GENERIC-RESOURCE-API:services/service/16b9c65d-70c7-47f0-aa03-7cdb8dfb76be/service-data/vnfs/vnf/9cf22c37-4f39-4fa5-a942-b72efc8f6450/vnf-data/vf-modules/vf-module/2cf0ecd4-737c-4a46-9097-adc2f0088483/vf-module-data/vf-module-topology/",
+    "vf-module-id": "2cf0ecd4-737c-4a46-9097-adc2f0088483",
+    "vf-module-name": "zauk53avetd02_base"
+}

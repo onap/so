@@ -459,11 +459,10 @@ public class WorkflowActionBBTasks {
         }
     }
 
-    protected String getConfigurationId(Vnfc vnfc) {
-        List<Configuration> configurations =
+    protected String getConfigurationId(Vnfc vnfc) throws Exception {
+        Configuration configuration =
                 workflowAction.getRelatedResourcesInVnfc(vnfc, Configuration.class, AAIObjectType.CONFIGURATION);
-        if (!configurations.isEmpty()) {
-            Configuration configuration = configurations.get(0);
+        if (configuration != null) {
             return configuration.getConfigurationId();
         } else {
             return UUID.randomUUID().toString();

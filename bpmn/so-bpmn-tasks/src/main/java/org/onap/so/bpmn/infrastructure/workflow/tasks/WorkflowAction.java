@@ -37,6 +37,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.SerializationUtils;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.javatuples.Pair;
 import org.onap.aai.domain.yang.GenericVnf;
@@ -460,9 +461,8 @@ public class WorkflowAction {
         return vnfcs;
     }
 
-    protected <T> List<T> getRelatedResourcesInVnfc(Vnfc vnfc, Class<T> resultClass, AAIObjectType type) {
-
-        List<T> configurations = new ArrayList<>();
+    protected <T> T getRelatedResourcesInVnfc(Vnfc vnfc, Class<T> resultClass, AAIObjectType type) throws Exception {
+        T configuration = null;
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VNFC, vnfc.getVnfcName());
         AAIResultWrapper vnfcResultsWrapper = bbInputSetupUtils.getAAIResourceDepthOne(uri);
         Optional<Relationships> relationshipsOp = vnfcResultsWrapper.getRelationships();
@@ -472,12 +472,19 @@ public class WorkflowAction {
             Relationships relationships = relationshipsOp.get();
             List<AAIResultWrapper> configurationResultWrappers =
                     this.getResultWrappersFromRelationships(relationships, type);
-            for (AAIResultWrapper configurationResultWrapper : configurationResultWrappers) {
-                Optional<T> configurationOp = configurationResultWrapper.asBean(resultClass);
-                configurationOp.ifPresent(configurations::add);
+            if (configurationResultWrappers.size() > 1) {
+                String multipleRelationshipsError =
+                        "Multiple relationships exist from VNFC " + vnfc.getVnfcName() + " to Configurations";
+                throw new Exception(multipleRelationshipsError);
+            }
+            if (!configurationResultWrappers.isEmpty()) {
+                Optional<T> configurationOp = configurationResultWrappers.get(0).asBean(resultClass);
+                if (configurationOp.isPresent()) {
+                    configuration = configurationOp.get();
+                }
             }
         }
-        return configurations;
+        return configuration;
     }
 
     protected List<AAIResultWrapper> getResultWrappersFromRelationships(Relationships relationships,
@@ -519,33 +526,26 @@ public class WorkflowAction {
         List<org.onap.aai.domain.yang.Vnfc> vnfcs = getRelatedResourcesInVfModule(vnfId, vfModuleId,
                 org.onap.aai.domain.yang.Vnfc.class, AAIObjectType.VNFC);
         for (org.onap.aai.domain.yang.Vnfc vnfc : vnfcs) {
-            List<org.onap.aai.domain.yang.Configuration> configurations = getRelatedResourcesInVnfc(vnfc,
+            WorkflowResourceIds workflowIdsCopy = SerializationUtils.clone(dataObj.getWorkflowResourceIds());
+            org.onap.aai.domain.yang.Configuration configuration = getRelatedResourcesInVnfc(vnfc,
                     org.onap.aai.domain.yang.Configuration.class, AAIObjectType.CONFIGURATION);
-            if (configurations.size() > 1) {
-                String multipleRelationshipsError =
-                        "Multiple relationships exist from VNFC " + vnfc.getVnfcName() + " to Configurations";
-                buildAndThrowException(dataObj.getExecution(), "Exception in getConfigBuildingBlock: ",
-                        new Exception(multipleRelationshipsError));
-            }
-            for (org.onap.aai.domain.yang.Configuration configuration : configurations) {
-                dataObj.getWorkflowResourceIds().setConfigurationId(configuration.getConfigurationId());
-                for (OrchestrationFlow orchFlow : result) {
-                    dataObj.getResourceKey().setVfModuleCustomizationId(vfModuleCustomizationUUID);
-                    dataObj.getResourceKey().setCvnfModuleCustomizationId(vnfc.getModelCustomizationId());
-                    dataObj.getResourceKey().setVnfCustomizationId(vnfCustomizationUUID);
-                    String vnfcName = getVnfcNameForConfiguration(configuration);
-                    if (vnfcName == null || vnfcName.isEmpty()) {
-                        buildAndThrowException(dataObj.getExecution(), "Exception in create execution list "
-                                + ": VnfcName does not exist or is null while there is a configuration for the vfModule",
-                                new Exception("Vnfc and Configuration do not match"));
-                    }
-                    ExecuteBuildingBlock ebb =
-                            buildExecuteBuildingBlock(orchFlow, dataObj.getRequestId(), dataObj.getResourceKey(),
-                                    dataObj.getApiVersion(), dataObj.getResourceId(), dataObj.getRequestAction(),
-                                    dataObj.isaLaCarte(), dataObj.getVnfType(), dataObj.getWorkflowResourceIds(),
-                                    dataObj.getRequestDetails(), false, null, vnfcName, true, null);
-                    flowsToExecuteConfigs.add(ebb);
+            workflowIdsCopy.setConfigurationId(configuration.getConfigurationId());
+            for (OrchestrationFlow orchFlow : result) {
+                dataObj.getResourceKey().setVfModuleCustomizationId(vfModuleCustomizationUUID);
+                dataObj.getResourceKey().setCvnfModuleCustomizationId(vnfc.getModelCustomizationId());
+                dataObj.getResourceKey().setVnfCustomizationId(vnfCustomizationUUID);
+                String vnfcName = vnfc.getVnfcName();
+                if (vnfcName == null || vnfcName.isEmpty()) {
+                    buildAndThrowException(dataObj.getExecution(), "Exception in create execution list "
+                            + ": VnfcName does not exist or is null while there is a configuration for the vfModule",
+                            new Exception("Vnfc and Configuration do not match"));
                 }
+                ExecuteBuildingBlock ebb = buildExecuteBuildingBlock(orchFlow, dataObj.getRequestId(),
+                        dataObj.getResourceKey(), dataObj.getApiVersion(), dataObj.getResourceId(),
+                        dataObj.getRequestAction(), dataObj.isaLaCarte(), dataObj.getVnfType(), workflowIdsCopy,
+                        dataObj.getRequestDetails(), false, null, vnfcName, true, null);
+                flowsToExecuteConfigs.add(ebb);
+
             }
         }
         return flowsToExecuteConfigs;
@@ -611,23 +611,6 @@ public class WorkflowAction {
         }
 
         return orchFlows;
-    }
-
-    protected String getVnfcNameForConfiguration(org.onap.aai.domain.yang.Configuration configuration) {
-        AAIResultWrapper wrapper = new AAIResultWrapper(configuration);
-        Optional<Relationships> relationshipsOp = wrapper.getRelationships();
-        if (!relationshipsOp.isPresent()) {
-            logger.debug("No relationships were found for Configuration in AAI");
-            return null;
-        }
-        Relationships relationships = relationshipsOp.get();
-        List<AAIResultWrapper> vnfcResultWrappers = relationships.getByType(AAIObjectType.VNFC);
-        if (vnfcResultWrappers.size() != 1) {
-            logger.debug("Too many vnfcs or no vnfc found that are related to configuration");
-        }
-        Optional<Vnfc> vnfcOp = vnfcResultWrappers.get(0).asBean(Vnfc.class);
-        return vnfcOp.map(Vnfc::getVnfcName).orElse(null);
-
     }
 
     protected List<Resource> sortVfModulesByBaseFirst(List<Resource> vfModuleResources) {
