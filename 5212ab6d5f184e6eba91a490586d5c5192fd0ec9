@@ -16,6 +16,24 @@
       "revId": "5212ab6d5f184e6eba91a490586d5c5192fd0ec9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4f2d0cfc_f99f6621",
+        "filename": "so-sdn-clients/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 6767
+      },
+      "writtenOn": "2020-07-27T12:49:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f2b4bbb2_c8fe0d3d",
+      "revId": "5212ab6d5f184e6eba91a490586d5c5192fd0ec9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }

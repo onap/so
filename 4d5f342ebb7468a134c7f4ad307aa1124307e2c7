@@ -34,6 +34,24 @@
       "revId": "4d5f342ebb7468a134c7f4ad307aa1124307e2c7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f06a261d_a5315f72",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/adapter/vnfm/tasks/utils/SdncInputParametersProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 6767
+      },
+      "writtenOn": "2020-07-27T12:49:22Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "12dd9d1b_6f1254fa",
+      "revId": "4d5f342ebb7468a134c7f4ad307aa1124307e2c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
