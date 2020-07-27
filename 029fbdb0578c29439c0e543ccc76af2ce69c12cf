@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "46048d55_2d2715de",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-07-27T09:10:14Z",
+      "side": 1,
+      "message": "Hi Rahul, Fetching workflow name from the scope is the only common method i see between the preparation and upgrade classes. Is there any other method you suggest to be abstracted?",
+      "parentUuid": "f8ee199c_df89390c",
+      "range": {
+        "startLine": 47,
+        "startChar": 13,
+        "endLine": 47,
+        "endChar": 36
+      },
+      "revId": "029fbdb0578c29439c0e543ccc76af2ce69c12cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f0eda8d9_119d8acc",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
         "patchSetId": 8
@@ -64,6 +88,29 @@
         "startChar": 32,
         "endLine": 50,
         "endChar": 47
+      },
+      "revId": "029fbdb0578c29439c0e543ccc76af2ce69c12cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "658d8cb7_09f69357",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-07-27T09:10:14Z",
+      "side": 1,
+      "message": "@Rahul, Can you also please confirm what are the exact parameters I needs to be validating here. I added rough list of params for the intial draft.",
+      "range": {
+        "startLine": 52,
+        "startChar": 38,
+        "endLine": 52,
+        "endChar": 51
       },
       "revId": "029fbdb0578c29439c0e543ccc76af2ce69c12cf",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
