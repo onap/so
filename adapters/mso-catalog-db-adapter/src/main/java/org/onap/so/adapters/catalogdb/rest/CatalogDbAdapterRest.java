@@ -655,4 +655,36 @@ public class CatalogDbAdapterRest {
         return Response.status(HttpStatus.SC_NOT_FOUND).header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .build();
     }
+
+    @GET
+    @Path("processingFlags")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Transactional(readOnly = true)
+    public Response getAllProcessingFlags() {
+        return getAllProcessingFlagsImpl();
+    }
+
+    public Response getAllProcessingFlagsImpl() {
+        List<ProcessingFlags> processingFlags = null;
+
+        int respStatus = HttpStatus.SC_OK;
+        try {
+            processingFlags = processingFlagsRepo.findAll();
+            if (processingFlags == null) {
+                logger.debug("ProcessingFlags not found");
+                respStatus = HttpStatus.SC_NOT_FOUND;
+            } else {
+
+                logger.debug("ProcessingFlags processingFlags = {}", processingFlags.toString());
+            }
+            return Response.status(respStatus).entity(processingFlags)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).build();
+        } catch (Exception e) {
+            logger.error("Exception - queryProcesssingFlags", e);
+            CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
+                    CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
+            return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {}).build();
+        }
+    }
 }
