@@ -72,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "30605c40_7e167815",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-27T09:16:31Z",
+      "side": 1,
+      "message": "validateparamswithscope, you send three params , delegateexection, scope, and paramlist and make this abstract, so that it is reusable",
+      "parentUuid": "46048d55_2d2715de",
+      "range": {
+        "startLine": 47,
+        "startChar": 13,
+        "endLine": 47,
+        "endChar": 36
+      },
+      "revId": "029fbdb0578c29439c0e543ccc76af2ce69c12cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f0eda8d9_119d8acc",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
         "patchSetId": 8
@@ -106,6 +130,30 @@
       "writtenOn": "2020-07-27T09:10:14Z",
       "side": 1,
       "message": "@Rahul, Can you also please confirm what are the exact parameters I needs to be validating here. I added rough list of params for the intial draft.",
+      "range": {
+        "startLine": 52,
+        "startChar": 38,
+        "endLine": 52,
+        "endChar": 51
+      },
+      "revId": "029fbdb0578c29439c0e543ccc76af2ce69c12cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "274dae8a_cdf9833a",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-27T09:16:31Z",
+      "side": 1,
+      "message": "you can pick them from genericpnfdispatcher class",
+      "parentUuid": "658d8cb7_09f69357",
       "range": {
         "startLine": 52,
         "startChar": 38,
