@@ -4,21 +4,18 @@
 		"soRequestId": "00032ab7-na18-42e5-965d-8ea592502018",
 		"groupingId": "7d2e8c07-4d10-456d-bddc-37abf38ca714",
 		"name": "requestAction",
-		"value": "assign",
-		"tag": "pincFabricConfigRequest"
+		"value": "assign"
 	},{
 		"id": 2,
 		"soRequestId": "00032ab7-na18-42e5-965d-8ea592502018",
 		"groupingId": "7d2e8c07-4d10-456d-bddc-37abf38ca714",
-		"name": "pincFabricId",
-		"value": "testId",
-		"tag": "pincFabricConfigRequest"
+		"name": "fabricId",
+		"value": "testId"
 	},{
 		"id": 3,
 		"soRequestId": "00032ab7-na18-42e5-965d-8ea592502018",
 		"groupingId": "7d2e8c07-4d10-456d-bddc-37abf38ca715",
 		"name": "requestAction",
-		"value": "unassign",
-		"tag": "pincFabricConfig"
+		"value": "unassign"
 	}
 ]

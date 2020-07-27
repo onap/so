@@ -3,6 +3,5 @@
 	"soRequestId": "00032ab7-na18-42e5-965d-8ea592502018",
 	"groupingId": "7d2e8c07-4d10-456d-bddc-37abf38ca714",
 	"name": "requestAction",
-	"value": "assign",
-	"tag": "pincFabricConfigRequest"
+	"value": "assign"
 }
