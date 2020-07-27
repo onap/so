@@ -21,12 +21,15 @@
 package org.onap.aaiclient.client.aai.entities;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
@@ -53,4 +56,27 @@ public class RelationshipsTest {
 
     }
 
+    @Test
+    public void getByTypeTest() throws IOException {
+        final String content = new String(Files.readAllBytes(Paths.get(AAI_JSON_FILE_LOCATION + "e2e-complex.json")));
+
+        AAIResultWrapper wrapper = new AAIResultWrapper(content);
+        Relationships relationships = wrapper.getRelationships().get();
+
+        Relationships spy = Mockito.spy(relationships);
+        ArgumentCaptor<AAIResourceUri> argument = ArgumentCaptor.forClass(AAIResourceUri.class);
+        doReturn(new AAIResultWrapper("{}")).when(spy).get(argument.capture());
+
+        spy.getByType(AAIObjectType.VCE, uri -> uri.nodesOnly(true));
+
+        assertTrue(argument.getAllValues().stream().allMatch(item -> item.build().toString().contains("nodes-only")));
+
+        argument = ArgumentCaptor.forClass(AAIResourceUri.class);
+
+        doReturn(new AAIResultWrapper("{}")).when(spy).get(argument.capture());
+        spy.getByType(AAIObjectType.VCE);
+
+        assertTrue(argument.getAllValues().stream().allMatch(item -> !item.build().toString().contains("?")));
+
+    }
 }
