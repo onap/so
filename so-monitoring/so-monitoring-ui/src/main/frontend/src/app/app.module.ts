@@ -37,6 +37,7 @@ import { MatFormFieldModule, MatInputModule, MatTableModule, MatTabsModule, MatS
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { RouterModule, Routes } from '@angular/router';
 import { APP_BASE_HREF } from '@angular/common';
+import { OnboardComponent } from './onboard/onboard.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { APP_BASE_HREF } from '@angular/common';
     SidebarComponent,
     TopbarComponent,
     HomeComponent,
-    DetailsComponent
+    DetailsComponent,
+    OnboardComponent,
   ],
   imports: [
     BrowserModule,
