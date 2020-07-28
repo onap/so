@@ -529,6 +529,10 @@ public class WorkflowAction {
             WorkflowResourceIds workflowIdsCopy = SerializationUtils.clone(dataObj.getWorkflowResourceIds());
             org.onap.aai.domain.yang.Configuration configuration = getRelatedResourcesInVnfc(vnfc,
                     org.onap.aai.domain.yang.Configuration.class, AAIObjectType.CONFIGURATION);
+            if (configuration == null) {
+                logger.warn(String.format("No configuration found for VNFC %s in AAI", vnfc.getVnfcName()));
+                continue;
+            }
             workflowIdsCopy.setConfigurationId(configuration.getConfigurationId());
             for (OrchestrationFlow orchFlow : result) {
                 dataObj.getResourceKey().setVfModuleCustomizationId(vfModuleCustomizationUUID);
@@ -545,7 +549,6 @@ public class WorkflowAction {
                         dataObj.getRequestAction(), dataObj.isaLaCarte(), dataObj.getVnfType(), workflowIdsCopy,
                         dataObj.getRequestDetails(), false, null, vnfcName, true, null);
                 flowsToExecuteConfigs.add(ebb);
-
             }
         }
         return flowsToExecuteConfigs;
