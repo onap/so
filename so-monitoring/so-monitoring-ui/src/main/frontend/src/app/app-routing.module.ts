@@ -24,6 +24,8 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { DetailsComponent } from './details/details.component';
+import { OnboardComponent } from './onboard/onboard.component';
+
 
 const routes: Routes = [
   {
@@ -35,6 +37,10 @@ const routes: Routes = [
     // Route to page to show individual process based on ID
     path: 'details/:id',
     component: DetailsComponent
+  },
+  {
+    path: 'onboard',
+    component: OnboardComponent
   }
 ];
 

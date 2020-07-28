@@ -21,7 +21,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { BpmnInfraRequest } from './model/bpmnInfraRequest.model';
 import { catchError } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -37,7 +37,7 @@ import { ActivityInstance } from './model/activityInstance.model';
   providedIn: 'root'
 })
 export class DataService {
-
+  httpOptions:any;
   constructor(private http: HttpClient, private httpErrorHandlerService: HttpErrorHandlerService) { }
 
   // HTTP POST call to running Spring Boot application
@@ -92,4 +92,26 @@ export class DataService {
       catchError(this.httpErrorHandlerService.handleError("GET", url))
     );
   }
+
+  onboardBPMNInfra(formData: any): Observable<Object> {
+    var url = environment.soMonitoringBackendURL + 'workflowPackages/onboard';
+    return this.http.post<any>(url, formData)
+      .pipe(
+        catchError(this.httpErrorHandlerService.handleError("POST", url))
+      );
+  }
+
+  saveServiceRecipe(data: any): Observable<Object> {
+   this.httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+      })
+    };
+    var url = environment.soMonitoringBackendURL + 'serviceRecipes';
+    return this.http.post<any>(url, data, this.httpOptions)
+      .pipe(
+        catchError(this.httpErrorHandlerService.handleError("POST", url))
+      );
+  }
+
 }
