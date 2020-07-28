@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "eac3c2a6_74c1ed96",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-07-28T08:43:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3ce61ffd_65e08310",
+      "range": {
+        "startLine": 22,
+        "startChar": 8,
+        "endLine": 22,
+        "endChar": 66
+      },
+      "revId": "029fbdb0578c29439c0e543ccc76af2ce69c12cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f8ee199c_df89390c",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
         "patchSetId": 8
@@ -96,6 +120,30 @@
     },
     {
       "key": {
+        "uuid": "6f83c164_6f1cc2a0",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-07-28T08:43:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "30605c40_7e167815",
+      "range": {
+        "startLine": 47,
+        "startChar": 13,
+        "endLine": 47,
+        "endChar": 36
+      },
+      "revId": "029fbdb0578c29439c0e543ccc76af2ce69c12cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f0eda8d9_119d8acc",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
         "patchSetId": 8
@@ -116,6 +164,30 @@
       "revId": "029fbdb0578c29439c0e543ccc76af2ce69c12cf",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "317c6c74_58ba7123",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-07-28T08:43:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f0eda8d9_119d8acc",
+      "range": {
+        "startLine": 50,
+        "startChar": 32,
+        "endLine": 50,
+        "endChar": 47
+      },
+      "revId": "029fbdb0578c29439c0e543ccc76af2ce69c12cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -166,6 +238,30 @@
     },
     {
       "key": {
+        "uuid": "27a9df11_cc19d557",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-07-28T08:43:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "274dae8a_cdf9833a",
+      "range": {
+        "startLine": 52,
+        "startChar": 38,
+        "endLine": 52,
+        "endChar": 51
+      },
+      "revId": "029fbdb0578c29439c0e543ccc76af2ce69c12cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b0731ee3_dfea556f",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
         "patchSetId": 8
@@ -189,6 +285,30 @@
     },
     {
       "key": {
+        "uuid": "32ab91e4_a1e71e66",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-07-28T08:43:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b0731ee3_dfea556f",
+      "range": {
+        "startLine": 60,
+        "startChar": 0,
+        "endLine": 62,
+        "endChar": 22
+      },
+      "revId": "029fbdb0578c29439c0e543ccc76af2ce69c12cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4576af4c_ce889732",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
         "patchSetId": 8
@@ -200,6 +320,30 @@
       "writtenOn": "2020-07-24T10:08:22Z",
       "side": 1,
       "message": "i dont knwo if var of this name exist. lets discuss.",
+      "range": {
+        "startLine": 66,
+        "startChar": 65,
+        "endLine": 66,
+        "endChar": 81
+      },
+      "revId": "029fbdb0578c29439c0e543ccc76af2ce69c12cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "00cc625e_80732a63",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-07-28T08:43:39Z",
+      "side": 1,
+      "message": "I am currently expecting this variable on execution obj to get the scope. Lets conclude on this.",
+      "parentUuid": "4576af4c_ce889732",
       "range": {
         "startLine": 66,
         "startChar": 65,
@@ -235,6 +379,30 @@
     },
     {
       "key": {
+        "uuid": "926aa8fc_d69152ec",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-07-28T08:43:39Z",
+      "side": 1,
+      "message": "Handled for pnf case and throwing exception for cases other than pnf and vnf. I presume vnf case will be implemented by Orange.",
+      "parentUuid": "5fe79d26_46ad596a",
+      "range": {
+        "startLine": 70,
+        "startChar": 15,
+        "endLine": 70,
+        "endChar": 46
+      },
+      "revId": "029fbdb0578c29439c0e543ccc76af2ce69c12cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "de78e66c_ce52336c",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
         "patchSetId": 8
@@ -255,6 +423,30 @@
       "revId": "029fbdb0578c29439c0e543ccc76af2ce69c12cf",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f57dd35c_024e2abf",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-07-28T08:43:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "de78e66c_ce52336c",
+      "range": {
+        "startLine": 72,
+        "startChar": 28,
+        "endLine": 72,
+        "endChar": 35
+      },
+      "revId": "029fbdb0578c29439c0e543ccc76af2ce69c12cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -281,6 +473,30 @@
     },
     {
       "key": {
+        "uuid": "4ad3ca33_f0ebc4fe",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-07-28T08:43:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f7b68414_0854cb2c",
+      "range": {
+        "startLine": 92,
+        "startChar": 19,
+        "endLine": 92,
+        "endChar": 47
+      },
+      "revId": "029fbdb0578c29439c0e543ccc76af2ce69c12cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b492c057_0fb1d89c",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
         "patchSetId": 8
@@ -301,6 +517,30 @@
       "revId": "029fbdb0578c29439c0e543ccc76af2ce69c12cf",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5eebd0b0_0f64e60b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-07-28T08:43:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b492c057_0fb1d89c",
+      "range": {
+        "startLine": 109,
+        "startChar": 50,
+        "endLine": 109,
+        "endChar": 52
+      },
+      "revId": "029fbdb0578c29439c0e543ccc76af2ce69c12cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -327,6 +567,30 @@
     },
     {
       "key": {
+        "uuid": "e69df9cd_b34f8d0c",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-07-28T08:43:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bb5917a1_79ee7c84",
+      "range": {
+        "startLine": 111,
+        "startChar": 16,
+        "endLine": 111,
+        "endChar": 21
+      },
+      "revId": "029fbdb0578c29439c0e543ccc76af2ce69c12cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c746eded_4954bd5f",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
         "patchSetId": 8
@@ -350,6 +614,30 @@
     },
     {
       "key": {
+        "uuid": "bde0bf19_baf6590c",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-07-28T08:43:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c746eded_4954bd5f",
+      "range": {
+        "startLine": 113,
+        "startChar": 16,
+        "endLine": 113,
+        "endChar": 17
+      },
+      "revId": "029fbdb0578c29439c0e543ccc76af2ce69c12cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a59700d7_dcd714fb",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
         "patchSetId": 8
@@ -370,6 +658,30 @@
       "revId": "029fbdb0578c29439c0e543ccc76af2ce69c12cf",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ec845be8_27a463f8",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/PrepareServiceUpgradeDE.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-07-28T08:43:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a59700d7_dcd714fb",
+      "range": {
+        "startLine": 137,
+        "startChar": 13,
+        "endLine": 137,
+        "endChar": 20
+      },
+      "revId": "029fbdb0578c29439c0e543ccc76af2ce69c12cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
