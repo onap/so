@@ -11,6 +11,7 @@ SO Developer Information
 
    Building_SO.rst
    Working_with_SO_Docker.rst
+   Working_with_so_monitoring.rst
    Camunda_Cockpit_Community_Edition.rst
    Camunda_Cockpit_Enterprise_Edition.rst
    Camunda_Modeler.rst
