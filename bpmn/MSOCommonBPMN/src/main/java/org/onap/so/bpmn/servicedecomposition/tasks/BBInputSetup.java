@@ -1850,8 +1850,9 @@ public class BBInputSetup implements JavaDelegate {
     }
 
     private void mapRelationship(ServiceInstance serviceInstance, Relationships relationships) {
-        this.mapProject(relationships.getByType(AAIObjectType.PROJECT), serviceInstance);
-        this.mapOwningEntity(relationships.getByType(AAIObjectType.OWNING_ENTITY), serviceInstance);
+        this.mapProject(relationships.getByType(AAIObjectType.PROJECT, uri -> uri.nodesOnly(true)), serviceInstance);
+        this.mapOwningEntity(relationships.getByType(AAIObjectType.OWNING_ENTITY, uri -> uri.nodesOnly(true)),
+                serviceInstance);
         this.mapL3Networks(relationships.getRelatedAAIUris(AAIObjectType.L3_NETWORK), serviceInstance.getNetworks());
         this.mapGenericVnfs(relationships.getRelatedAAIUris(AAIObjectType.GENERIC_VNF), serviceInstance.getVnfs());
         this.mapCollection(relationships.getByType(AAIObjectType.COLLECTION), serviceInstance);
