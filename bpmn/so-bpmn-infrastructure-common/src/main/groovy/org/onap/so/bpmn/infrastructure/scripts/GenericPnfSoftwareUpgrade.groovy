@@ -31,8 +31,8 @@ import org.onap.so.bpmn.common.workflow.context.WorkflowContextHolder
 import org.onap.so.bpmn.core.WorkflowException
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.*
 
-class PNFSoftwareUpgrade extends AbstractServiceTaskProcessor {
-    private static final Logger logger = LoggerFactory.getLogger(PNFSoftwareUpgrade.class)
+class GenericPnfSoftwareUpgrade extends AbstractServiceTaskProcessor {
+    private static final Logger logger = LoggerFactory.getLogger(GenericPnfSoftwareUpgrade.class)
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     String prefix = "PnfSwUpgrade_"

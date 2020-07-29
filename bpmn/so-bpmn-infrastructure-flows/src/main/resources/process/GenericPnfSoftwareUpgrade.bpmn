@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1yd8m0g" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.1.0">
-  <bpmn:process id="PNFSoftwareUpgrade" name="PNFSoftwareUpgrade" isExecutable="true">
+  <bpmn:process id="GenericPnfSoftwareUpgrade" name="GenericPnfSoftwareUpgrade" isExecutable="true">
     <bpmn:startEvent id="softwareUpgrade_startEvent" name="Start Flow">
       <bpmn:outgoing>SequenceFlow_1ng4b6l</bpmn:outgoing>
     </bpmn:startEvent>
@@ -123,7 +123,7 @@
       <bpmn:incoming>SequenceFlow_12ejx4m</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0ks3p41</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
-def pnfSwUpgrade = new PNFSoftwareUpgrade()
+def pnfSwUpgrade = new GenericPnfSoftwareUpgrade()
 pnfSwUpgrade.sendResponse(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_0ks3p41" sourceRef="ScriptTask_10klpg8" targetRef="ServiceTask_0slpahe" />
@@ -131,7 +131,7 @@ pnfSwUpgrade.sendResponse(execution)</bpmn:script>
       <bpmn:incoming>SequenceFlow_1atiydu</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0ipc3nt</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
-def pnfSwUpgrade = new PNFSoftwareUpgrade()
+def pnfSwUpgrade = new GenericPnfSoftwareUpgrade()
 pnfSwUpgrade.prepareCompletion(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_0ipc3nt" sourceRef="ScriptTask_1igtc83" targetRef="CallActivity_0o1mi8u" />
@@ -152,7 +152,7 @@ pnfSwUpgrade.prepareCompletion(execution)</bpmn:script>
         <bpmn:incoming>SequenceFlow_05haut5</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_09y0mpc</bpmn:outgoing>
         <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
-def pnfSwUpgrade = new PNFSoftwareUpgrade()
+def pnfSwUpgrade = new GenericPnfSoftwareUpgrade()
 pnfSwUpgrade.prepareFalloutHandler(execution)</bpmn:script>
       </bpmn:scriptTask>
       <bpmn:callActivity id="CallActivity_00psvtk" name="Call FalloutHandler" calledElement="FalloutHandler">
@@ -173,7 +173,7 @@ pnfSwUpgrade.prepareFalloutHandler(execution)</bpmn:script>
   </bpmn:process>
   <bpmn:error id="Error_12cpov5" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="PNFSoftwareUpgrade">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="GenericPnfSoftwareUpgrade">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="softwareUpgrade_startEvent">
         <dc:Bounds x="162" y="102" width="36" height="36" />
         <bpmndi:BPMNLabel>

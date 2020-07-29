@@ -45,7 +45,7 @@ public class ServiceLevelConstants {
             Map.of(PNF, "GenericPnfHealthCheck", VNF, "GenericVNFHealthCheck");
 
     public static final Map<String, String> DEFAULT_SOFTWARE_UP_WORKFLOWS =
-            Map.of(PNF, "PNFSoftwareUpgrade", VNF, "GenericVnfSoftwareUpgrade");
+            Map.of(PNF, "GenericPnfSoftwareUpgrade", VNF, "GenericVnfSoftwareUpgrade");
 
     // Maps operation name with workflows
     public static final Map<String, Map<String, String>> WORKFLOW_OPERATIONS_MAP = Map.of(HEALTH_CHECK_OPERATION,

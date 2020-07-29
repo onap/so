@@ -145,7 +145,7 @@ public class ServiceLevelUpgradeTest extends BaseBPMNTest {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            fail("PNFSoftwareUpgrade request exception", e);
+            fail("GenericPnfSoftwareUpgrade request exception", e);
         }
         assertThat(count == actionNames.length);
     }
