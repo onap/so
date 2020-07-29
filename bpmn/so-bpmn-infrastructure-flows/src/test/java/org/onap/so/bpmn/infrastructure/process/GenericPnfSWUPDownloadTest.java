@@ -49,15 +49,15 @@ import static org.assertj.core.api.Assertions.fail;
 import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
 
 /**
- * Basic Integration test for PNFSWUPDownloadTest.bpmn workflow.
+ * Basic Integration test for GenericPnfSWUPDownloadTest.bpmn workflow.
  */
-public class PNFSWUPDownloadTest extends BaseBPMNTest {
+public class GenericPnfSWUPDownloadTest extends BaseBPMNTest {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private static final long WORKFLOW_WAIT_TIME = 1000L;
 
-    private static final String TEST_PROCESSINSTANCE_KEY = "PNFSWUPDownload";
+    private static final String TEST_PROCESSINSTANCE_KEY = "GenericPnfSWUPDownload";
     private static final AAIVersion VERSION = AAIVersion.LATEST;
     private static final Map<String, Object> executionVariables = new HashMap();
     private final String[] actionNames = new String[3];
@@ -76,8 +76,8 @@ public class PNFSWUPDownloadTest extends BaseBPMNTest {
 
         executionVariables.clear();
 
-        requestObject = FileUtil.readResourceFile("request/PNFSoftwareUpgradeTest.json");
-        responseObject = FileUtil.readResourceFile("response/PNFSoftwareUpgradeTest.json");
+        requestObject = FileUtil.readResourceFile("request/GenericPnfSoftwareUpgradeTest.json");
+        responseObject = FileUtil.readResourceFile("response/GenericPnfSoftwareUpgradeTest.json");
 
         executionVariables.put("bpmnRequest", requestObject);
 
@@ -136,7 +136,7 @@ public class PNFSWUPDownloadTest extends BaseBPMNTest {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            fail("PNFSWUPDownload request exception", e);
+            fail("GenericPnfSWUPDownload request exception", e);
         }
         assertThat(count == actionNames.length);
     }
@@ -152,7 +152,8 @@ public class PNFSWUPDownloadTest extends BaseBPMNTest {
         ActionIdentifiers actionIdentifiers = executionServiceInput.getActionIdentifiers();
 
         /**
-         * the fields of actionIdentifiers should match the one in the response/PNFSoftwareUpgrade_catalogdb.json.
+         * the fields of actionIdentifiers should match the one in the
+         * response/GenericPnfSoftwareUpgradeTest_catalogdb.json.
          */
         Assertions.assertThat(actionIdentifiers.getBlueprintName()).isEqualTo("test_pnf_software_upgrade_restconf");
         Assertions.assertThat(actionIdentifiers.getBlueprintVersion()).isEqualTo("1.0.0");
@@ -202,7 +203,8 @@ public class PNFSWUPDownloadTest extends BaseBPMNTest {
      */
     private void mockCatalogDb() {
 
-        String catalogdbClientResponse = FileUtil.readResourceFile("response/PNFSoftwareUpgradeTest_catalogdb.json");
+        String catalogdbClientResponse =
+                FileUtil.readResourceFile("response/GenericPnfSoftwareUpgradeTest_catalogdb.json");
 
 
         /**

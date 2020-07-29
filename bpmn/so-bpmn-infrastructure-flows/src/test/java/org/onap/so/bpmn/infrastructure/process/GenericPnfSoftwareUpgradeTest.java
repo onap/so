@@ -50,15 +50,15 @@ import static org.assertj.core.api.Assertions.fail;
 import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
 
 /**
- * Basic Integration test for PNFSoftwareUpgrade.bpmn workflow.
+ * Basic Integration test for GenericPnfSoftwareUpgrade.bpmn workflow.
  */
-public class PNFSoftwareUpgradeTest extends BaseBPMNTest {
+public class GenericPnfSoftwareUpgradeTest extends BaseBPMNTest {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private static final long WORKFLOW_WAIT_TIME = 1000L;
 
-    private static final String TEST_PROCESSINSTANCE_KEY = "PNFSoftwareUpgrade";
+    private static final String TEST_PROCESSINSTANCE_KEY = "GenericPnfSoftwareUpgrade";
     private static final AAIVersion VERSION = AAIVersion.LATEST;
     private static final Map<String, Object> executionVariables = new HashMap();
     private static final String REQUEST_ID = "50ae41ad-049c-4fe2-9950-539f111120f5";
@@ -141,7 +141,7 @@ public class PNFSoftwareUpgradeTest extends BaseBPMNTest {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            fail("PNFSoftwareUpgrade request exception", e);
+            fail("GenericPnfSoftwareUpgrade request exception", e);
         }
         assertThat(count == actionNames.length);
     }
@@ -157,7 +157,8 @@ public class PNFSoftwareUpgradeTest extends BaseBPMNTest {
         ActionIdentifiers actionIdentifiers = executionServiceInput.getActionIdentifiers();
 
         /**
-         * the fields of actionIdentifiers should match the one in the response/PNFSoftwareUpgrade_catalogdb.json.
+         * the fields of actionIdentifiers should match the one in the
+         * response/GenericPnfSoftwareUpgrade_catalogdb.json.
          */
         assertThat(actionIdentifiers.getBlueprintName()).isEqualTo("test_pnf_software_upgrade_restconf");
         assertThat(actionIdentifiers.getBlueprintVersion()).isEqualTo("1.0.0");
