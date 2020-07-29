@@ -1,0 +1,395 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "18b41ce8_f071c66b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/AbstractServiceUpgradeDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-29T17:57:12Z",
+      "side": 1,
+      "message": "nordix",
+      "range": {
+        "startLine": 6,
+        "startChar": 22,
+        "endLine": 6,
+        "endChar": 30
+      },
+      "revId": "f7903d5adef49e740b61af97dffb2aad765aba1a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8167aa00_6284ccf9",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/AbstractServiceUpgradeDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-29T17:57:12Z",
+      "side": 1,
+      "message": "I was thinking that we can implement some common methods here. But as there is no, what is ur say, should we keep it abstract or convert it to interface.",
+      "range": {
+        "startLine": 35,
+        "startChar": 7,
+        "endLine": 35,
+        "endChar": 15
+      },
+      "revId": "f7903d5adef49e740b61af97dffb2aad765aba1a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "12bdc07a_97f86a72",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/AbstractServiceUpgradeDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-29T17:57:12Z",
+      "side": 1,
+      "message": "include pnf_software_upgrade wf name too. coz that class will extend this too.",
+      "range": {
+        "startLine": 38,
+        "startChar": 34,
+        "endLine": 38,
+        "endChar": 49
+      },
+      "revId": "f7903d5adef49e740b61af97dffb2aad765aba1a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2ff3bd4e_b30e15cb",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/AbstractServiceUpgradeDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-29T17:57:12Z",
+      "side": 1,
+      "message": "better to move this to implementing class for flexibility,here lot of parameters are derived in healthcheckdispatcher. So they wont be found at this level and ur validation will always fail.",
+      "range": {
+        "startLine": 43,
+        "startChar": 3,
+        "endLine": 46,
+        "endChar": 31
+      },
+      "revId": "f7903d5adef49e740b61af97dffb2aad765aba1a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6395b7bb_6811975a",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/PrepareServiceUpgradeDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-29T17:57:12Z",
+      "side": 1,
+      "message": "nordix, u can pick it from other files.",
+      "range": {
+        "startLine": 6,
+        "startChar": 22,
+        "endLine": 6,
+        "endChar": 30
+      },
+      "revId": "f7903d5adef49e740b61af97dffb2aad765aba1a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e32af97d_3f820da3",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/PrepareServiceUpgradeDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-29T17:57:12Z",
+      "side": 1,
+      "message": "ServiceLevelPrepare, I am not sure about DE as an postfix. I think there is not going to be any \nBB class. Lets discuss it in a small meet.",
+      "range": {
+        "startLine": 37,
+        "startChar": 13,
+        "endLine": 37,
+        "endChar": 36
+      },
+      "revId": "f7903d5adef49e740b61af97dffb2aad765aba1a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d54ae8e9_270cb8fa",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/PrepareServiceUpgradeDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-29T17:57:12Z",
+      "side": 1,
+      "message": "not sure about this var, you can pick exact var name from serviceleveldispather class , commited in my code",
+      "range": {
+        "startLine": 44,
+        "startChar": 65,
+        "endLine": 44,
+        "endChar": 81
+      },
+      "revId": "f7903d5adef49e740b61af97dffb2aad765aba1a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d4f2d48b_5e59c0cd",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/PrepareServiceUpgradeDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-29T17:57:12Z",
+      "side": 1,
+      "message": "final",
+      "range": {
+        "startLine": 44,
+        "startChar": 8,
+        "endLine": 44,
+        "endChar": 14
+      },
+      "revId": "f7903d5adef49e740b61af97dffb2aad765aba1a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d84dee22_98e4869f",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/PrepareServiceUpgradeDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-29T17:57:12Z",
+      "side": 1,
+      "message": "final",
+      "range": {
+        "startLine": 45,
+        "startChar": 8,
+        "endLine": 45,
+        "endChar": 14
+      },
+      "revId": "f7903d5adef49e740b61af97dffb2aad765aba1a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "63835822_7e6ddb8b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/PrepareServiceUpgradeDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-29T17:57:12Z",
+      "side": 1,
+      "message": "why this, logic should be you should go with any workflow you get. And throw it wflname is null or empty.",
+      "range": {
+        "startLine": 47,
+        "startChar": 13,
+        "endLine": 47,
+        "endChar": 42
+      },
+      "revId": "f7903d5adef49e740b61af97dffb2aad765aba1a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0f493e0c_ce92fcb2",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/PrepareServiceUpgradeDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-29T17:57:12Z",
+      "side": 1,
+      "message": "in case of default throw exception",
+      "range": {
+        "startLine": 75,
+        "startChar": 15,
+        "endLine": 76,
+        "endChar": 39
+      },
+      "revId": "f7903d5adef49e740b61af97dffb2aad765aba1a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b7db9f55_09df3189",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/PrepareServiceUpgradeDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-29T17:57:12Z",
+      "side": 1,
+      "message": "void is fine",
+      "range": {
+        "startLine": 81,
+        "startChar": 11,
+        "endLine": 81,
+        "endChar": 18
+      },
+      "revId": "f7903d5adef49e740b61af97dffb2aad765aba1a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1df3ef11_94fd90fa",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/PrepareServiceUpgradeDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-29T17:57:12Z",
+      "side": 1,
+      "message": "final",
+      "range": {
+        "startLine": 81,
+        "startChar": 72,
+        "endLine": 81,
+        "endChar": 78
+      },
+      "revId": "f7903d5adef49e740b61af97dffb2aad765aba1a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "18a4dc28_636f59bc",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/PrepareServiceUpgradeDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-29T17:57:12Z",
+      "side": 1,
+      "message": "what if scope is null, better do \"pnf\".equals",
+      "range": {
+        "startLine": 84,
+        "startChar": 12,
+        "endLine": 84,
+        "endChar": 29
+      },
+      "revId": "f7903d5adef49e740b61af97dffb2aad765aba1a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0e9eb302_70e3a7a8",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/PrepareServiceUpgradeDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-29T17:57:12Z",
+      "side": 1,
+      "message": "String.of",
+      "range": {
+        "startLine": 87,
+        "startChar": 27,
+        "endLine": 87,
+        "endChar": 55
+      },
+      "revId": "f7903d5adef49e740b61af97dffb2aad765aba1a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ae37ab5e_3807acef",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/PrepareServiceUpgradeDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-29T17:57:12Z",
+      "side": 1,
+      "message": "use , exceptionBuilder.buildAndThrowWorkflowException",
+      "range": {
+        "startLine": 93,
+        "startChar": 15,
+        "endLine": 93,
+        "endChar": 104
+      },
+      "revId": "f7903d5adef49e740b61af97dffb2aad765aba1a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "04a4a0c3_c73c7335",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/PrepareServiceUpgradeDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-07-29T17:57:12Z",
+      "side": 1,
+      "message": "throw exception here only. no need for boolean",
+      "range": {
+        "startLine": 97,
+        "startChar": 0,
+        "endLine": 98,
+        "endChar": 23
+      },
+      "revId": "f7903d5adef49e740b61af97dffb2aad765aba1a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
