@@ -42,6 +42,7 @@
     <project.mso.base.folder>.</project.mso.base.folder>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <java.version>11</java.version>
     <sonar.language>java</sonar.language>
     <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
     <sonar.surefire.reportsPath>${project.build.directory}/surefire-reports</sonar.surefire.reportsPath>
@@ -330,7 +331,7 @@
         <version>4.20</version>
         <configuration>
           <buildId>mso-${project.version}</buildId>
-          <source>1.8</source>
+          <source>11</source>
         </configuration>
       </plugin>
       <plugin>
@@ -1005,8 +1006,8 @@
             <version>3.8.0</version>
             <configuration>
               <forceJavacCompilerUse>true</forceJavacCompilerUse>
-              <source>1.8</source>
-              <target>1.8</target>
+              <source>11</source>
+              <target>11</target>
             </configuration>
           </plugin>
         </plugins>
