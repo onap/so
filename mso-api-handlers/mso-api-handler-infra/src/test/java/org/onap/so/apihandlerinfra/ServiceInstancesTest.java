@@ -115,7 +115,8 @@ public class ServiceInstancesTest extends BaseTest {
         headers.set(ONAP_PARTNER_NAME, "VID");
         headers.set(REQUESTOR_ID, "xxxxxx");
         try { // generate one-time port number to avoid RANDOM port number later.
-            initialUrl = new URL(createURLWithPort(Constants.ORCHESTRATION_REQUESTS_PATH));
+            initialUrl =
+                    new URL(createURLWithPort(Constants.ORCHESTRATION_REQUESTS_PATH, Constants.ORCHESTRATION_PATH));
             initialPort = initialUrl.getPort();
         } catch (MalformedURLException e) {
             e.printStackTrace();

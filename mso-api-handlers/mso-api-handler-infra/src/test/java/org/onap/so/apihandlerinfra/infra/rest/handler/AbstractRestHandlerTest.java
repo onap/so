@@ -61,4 +61,15 @@ public class AbstractRestHandlerTest {
                 restHandler.createResponse("instanceId", "requestId", mockRequestContext);
         assertThat(actualResponse, sameBeanAs(expectedResponse));
     }
+
+    @Test
+    public void test_buildSelfLinkUrl() throws MalformedURLException {
+        String initialLink = "http://some.domain.com:30277/onap/so/infra/serviceInstantiation/v7/serviceInstances";
+        String requestId = "4d0437c3-ee48-4361-a4f7-e1613c82493a";
+        Optional<URL> expectedLink = Optional.of(new URL(
+                "http://some.domain.com:30277/onap/so/infra/orchestrationRequests/v7/4d0437c3-ee48-4361-a4f7-e1613c82493a"));
+        Optional<URL> resultURL = restHandler.buildSelfLinkUrl(initialLink, requestId);
+
+        assertThat(resultURL, sameBeanAs(expectedLink));
+    }
 }

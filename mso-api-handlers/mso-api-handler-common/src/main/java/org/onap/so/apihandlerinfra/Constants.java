@@ -48,6 +48,8 @@ public class Constants {
     public static final String SERVICE_INSTANTIATION_PATH = "/serviceInstantiation";
     public static final String ORCHESTRATION_REQUESTS_PATH = "/orchestrationRequests";
 
+    public static final String ORCHESTRATION_PATH = "/onap/so/infra";
+
     private Constants() {}
 
 }

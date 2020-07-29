@@ -163,12 +163,14 @@ public abstract class AbstractRestHandler {
         try {
             URL aUrl = new URL(url);
             String aPath = aUrl.getPath();
-            if (aPath.indexOf("/v") == -1) {
-                version = aPath.substring(aPath.indexOf("/V"), aPath.indexOf("/V") + 4);
-            } else {
-                version = aPath.substring(aPath.indexOf("/v"), aPath.indexOf("/v") + 4);
-            }
-            String selfLinkPath = Constants.ORCHESTRATION_REQUESTS_PATH.concat(version).concat(requestId);
+            int indexOfVersion = Math.max(aPath.indexOf("/V"), aPath.indexOf("/v"));
+            version = aPath.substring(indexOfVersion, indexOfVersion + 4);
+
+            String pathWithSOAction = aPath.substring(0, indexOfVersion);
+            String pathWithoutSOAction = pathWithSOAction.substring(0, pathWithSOAction.lastIndexOf("/"));
+
+            String selfLinkPath =
+                    pathWithoutSOAction.concat(Constants.ORCHESTRATION_REQUESTS_PATH).concat(version).concat(requestId);
             selfLinkUrl = Optional.of(new URL(aUrl.getProtocol(), aUrl.getHost(), aUrl.getPort(), selfLinkPath));
         } catch (Exception e) {
             selfLinkUrl = Optional.empty(); // ignore
