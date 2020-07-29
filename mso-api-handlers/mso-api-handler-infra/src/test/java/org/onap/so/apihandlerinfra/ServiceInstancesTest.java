@@ -97,6 +97,8 @@ public class ServiceInstancesTest extends BaseTest {
 
     private final String servInstanceuri = "/onap/so/infra/serviceInstantiation/";
     private final String servInstanceUriPrev7 = "/onap/so/infra/serviceInstances/";
+    private final String orchestration_path = "/onap/so/infra";
+
     private String uri;
     private URL selfLink;
     private URL initialUrl;
@@ -115,7 +117,7 @@ public class ServiceInstancesTest extends BaseTest {
         headers.set(ONAP_PARTNER_NAME, "VID");
         headers.set(REQUESTOR_ID, "xxxxxx");
         try { // generate one-time port number to avoid RANDOM port number later.
-            initialUrl = new URL(createURLWithPort(Constants.ORCHESTRATION_REQUESTS_PATH));
+            initialUrl = new URL(createURLWithPort(Constants.ORCHESTRATION_REQUESTS_PATH, orchestration_path));
             initialPort = initialUrl.getPort();
         } catch (MalformedURLException e) {
             e.printStackTrace();
