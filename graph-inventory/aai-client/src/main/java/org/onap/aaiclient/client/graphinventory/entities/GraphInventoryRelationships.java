@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryObjectName;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryObjectType;
@@ -54,6 +55,11 @@ public abstract class GraphInventoryRelationships<Wrapper extends GraphInventory
     public List<Wrapper> getByType(GraphInventoryObjectName type) {
 
         return this.getAll(Optional.of(type));
+    }
+
+    public List<Wrapper> getByType(GraphInventoryObjectName type, UnaryOperator<Uri> func) {
+
+        return this.getAll(Optional.of(type), func);
     }
 
     public List<Wrapper> getAll() {
@@ -99,6 +105,10 @@ public abstract class GraphInventoryRelationships<Wrapper extends GraphInventory
 
 
     protected List<Wrapper> getAll(final Optional<GraphInventoryObjectName> type) {
+        return getAll(type, UnaryOperator.identity());
+    }
+
+    protected List<Wrapper> getAll(final Optional<GraphInventoryObjectName> type, UnaryOperator<Uri> func) {
         List<Uri> relatedLinks;
         if (type.isPresent()) {
             relatedLinks = this.getRelatedUris(type.get());
@@ -107,7 +117,7 @@ public abstract class GraphInventoryRelationships<Wrapper extends GraphInventory
         }
         ArrayList<Wrapper> result = new ArrayList<>();
         for (Uri link : relatedLinks) {
-            result.add(this.get(link));
+            result.add(this.get(func.apply(link)));
         }
         return result;
     }
