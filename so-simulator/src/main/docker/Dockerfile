@@ -1,4 +1,4 @@
-FROM docker.io/openjdk:8-jdk-alpine
+FROM docker.io/onap/integration-java11:7.0.0
 
 #Create User so
 RUN addgroup -g 1000 so && adduser -S -u 1000 -G so so
