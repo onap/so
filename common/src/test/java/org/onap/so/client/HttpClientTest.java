@@ -40,7 +40,7 @@ public class HttpClientTest {
 
     private final HttpClientFactory httpClientFactory = new HttpClientFactory();
     @Rule
-    public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicHttpsPort());
+    public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort().dynamicHttpsPort());
 
     @Test
     public void testPost_success() throws MalformedURLException {
@@ -48,7 +48,7 @@ public class HttpClientTest {
         wireMockRule.stubFor(post(urlEqualTo("/services/sdnc/post"))
                 .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody("")));
 
-        URL url = new URL("http://localhost:" + wireMockConfig().portNumber() + "/services/sdnc/post");
+        URL url = new URL("http://localhost:" + wireMockRule.port() + "/services/sdnc/post");
         HttpClient client = httpClientFactory.newJsonClient(url, ONAPComponents.BPMN);
 
         client.addBasicAuthHeader(
@@ -67,7 +67,7 @@ public class HttpClientTest {
         wireMockRule.stubFor(post(urlEqualTo("/services/sdnc/post"))
                 .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody("")));
 
-        URL url = new URL("http://localhost:" + wireMockConfig().portNumber() + "/services/sdnc/post");
+        URL url = new URL("http://localhost:" + wireMockRule.port() + "/services/sdnc/post");
         HttpClient client = httpClientFactory.newJsonClient(url, ONAPComponents.BPMN);
 
         client.addAdditionalHeader("Accept", "application/json");
@@ -85,7 +85,7 @@ public class HttpClientTest {
         wireMockRule.stubFor(post(urlEqualTo("/services/sdnc/post"))
                 .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody("")));
 
-        URL url = new URL("http://localhost:" + wireMockConfig().portNumber() + "/services/sdnc/post");
+        URL url = new URL("http://localhost:" + wireMockRule.port() + "/services/sdnc/post");
         HttpClient client = httpClientFactory.newJsonClient(url, ONAPComponents.BPMN);
 
         client.addBasicAuthHeader("", "12345");
