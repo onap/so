@@ -67,7 +67,7 @@ public abstract class BaseTest {
     protected WireMockServer wireMockServer;
 
     protected String createURLWithPort(String uri) {
-        return "http://localhost:" + port + uri;
+        return "http://localhost:" + port + Constants.ORCHESTRATION_PATH + uri;
     }
 
     protected String createURLWithPort(String uri, int iPort) {
