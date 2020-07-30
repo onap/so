@@ -1,0 +1,8 @@
+{
+	"pnf-id":"pnfId",
+	"pnf-name":"pnfName",
+	"nf-role":"gNB",
+	"orchestration-status":"INVENTORIED",
+	"cloud-region":null,
+	"model-info-pnf":null
+}

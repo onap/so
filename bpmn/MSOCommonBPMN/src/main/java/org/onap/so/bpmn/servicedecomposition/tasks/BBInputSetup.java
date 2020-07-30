@@ -62,6 +62,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Tenant;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Vnfc;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding;
 import org.onap.so.bpmn.servicedecomposition.entities.ConfigurationResourceKeys;
@@ -1854,6 +1855,7 @@ public class BBInputSetup implements JavaDelegate {
         this.mapOwningEntity(relationships.getByType(AAIObjectType.OWNING_ENTITY), serviceInstance);
         this.mapL3Networks(relationships.getRelatedAAIUris(AAIObjectType.L3_NETWORK), serviceInstance.getNetworks());
         this.mapGenericVnfs(relationships.getRelatedAAIUris(AAIObjectType.GENERIC_VNF), serviceInstance.getVnfs());
+        this.mapPnfs(relationships.getRelatedAAIUris(AAIObjectType.PNF), serviceInstance.getPnfs());
         this.mapCollection(relationships.getByType(AAIObjectType.COLLECTION), serviceInstance);
         this.mapConfigurations(relationships.getRelatedAAIUris(AAIObjectType.CONFIGURATION),
                 serviceInstance.getConfigurations());
@@ -1903,6 +1905,19 @@ public class BBInputSetup implements JavaDelegate {
         }
 
         return genericVnf;
+    }
+
+    protected void mapPnfs(List<AAIResourceUri> list, List<Pnf> pnfs) {
+        for (AAIResourceUri aaiResourceUri : list) {
+            pnfs.add(this.mapPnf(aaiResourceUri));
+        }
+    }
+
+    protected Pnf mapPnf(AAIResourceUri aaiResourceUri) {
+        AAIResultWrapper aaiPnfWrapper = this.bbInputSetupUtils.getAAIResourceDepthOne(aaiResourceUri);
+        Optional<org.onap.aai.domain.yang.Pnf> aaiPnfWrapperOp =
+                aaiPnfWrapper.asBean(org.onap.aai.domain.yang.Pnf.class);
+        return aaiPnfWrapperOp.map(pnf -> this.mapperLayer.mapAAIPnfIntoPnf(pnf)).orElse(null);
     }
 
     protected List<InstanceGroup> mapInstanceGroups(List<AAIResultWrapper> instanceGroups) {
