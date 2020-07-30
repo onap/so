@@ -35,6 +35,7 @@ import org.openstack4j.model.compute.Flavor;
 import org.openstack4j.model.compute.Image;
 import org.openstack4j.model.compute.Server;
 import org.openstack4j.model.heat.Resource;
+import org.openstack4j.model.network.Network;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +72,10 @@ public class CreateAAIInventory {
 
             List<Resource> stackResources =
                     heatBridgeClient.queryNestedHeatStackResources(cloudInformation.getTemplateInstanceId());
+
+            List<Network> osNetworks = heatBridgeClient.getAllOpenstackProviderNetworks(stackResources);
+            heatBridgeClient.buildAddNetworksToAaiAction(cloudInformation.getVnfId(), cloudInformation.getVfModuleId(),
+                    osNetworks);
 
             List<Server> osServers = heatBridgeClient.getAllOpenstackServers(stackResources);
 
