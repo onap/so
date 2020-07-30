@@ -16,7 +16,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <version-swagger-codegen>2.3.1</version-swagger-codegen>
     <gson-fire-version>1.8.2</gson-fire-version>
-    <retrofit-version>2.3.0</retrofit-version>
+    <retrofit-version>2.7.2</retrofit-version>
     <threetenbp-version>1.3.5</threetenbp-version>
     <oltu-version>1.0.1</oltu-version>
     <swagger-core-version>1.5.21</swagger-core-version>
