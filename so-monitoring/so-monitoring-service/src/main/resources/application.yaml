@@ -19,3 +19,5 @@ mso:
 spring:
   main:
     allow-bean-definition-overriding: true
+bpmn: 
+   url: http://so-bpmn-infra.onap:8081/mso/hotmanagement

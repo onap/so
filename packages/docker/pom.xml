@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.onap.so</groupId>
     <artifactId>packages</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.7.0-SNAPSHOT</version>
   </parent>
 
   <packaging>pom</packaging>
@@ -322,7 +322,7 @@
               <name>${docker.image.prefix}/bpmn-infra</name>
               <build>
                 <cleanup>try</cleanup>
-                <dockerFile>docker-files/Dockerfile.so-app</dockerFile>
+                <dockerFile>docker-files/Dockerfile.so-bpmn-infra</dockerFile>
                 <tags>
                   <tag>${project.version}</tag>
                   <tag>${project.version}-${maven.build.timestamp}</tag>
@@ -333,9 +333,9 @@
                     <dependencySets>
                       <dependencySet>
                         <includes>
-                          <include>org.onap.so:mso-infrastructure-bpmn</include>
+                          <include>org.onap.so:mso-infrastructure-bpmn:war</include>
                         </includes>
-                        <outputFileNameMapping>app.jar</outputFileNameMapping>
+                        <outputFileNameMapping>app.war</outputFileNameMapping>
                       </dependencySet>
                     </dependencySets>
                   </inline>
@@ -516,6 +516,7 @@
     <dependency>
       <groupId>org.onap.so</groupId>
       <artifactId>mso-infrastructure-bpmn</artifactId>
+      <type>war</type>
       <version>${project.version}</version>
     </dependency>
     <dependency>
