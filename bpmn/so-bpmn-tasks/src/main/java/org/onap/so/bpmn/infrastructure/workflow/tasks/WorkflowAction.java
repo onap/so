@@ -953,6 +953,7 @@ public class WorkflowAction {
                     bbInputSetup.getExistingServiceInstance(serviceInstanceAAI);
             resourceList.add(new Resource(WorkflowType.SERVICE, serviceInstanceMSO.getServiceInstanceId(), false));
             traverseServiceInstanceMSOVnfs(resourceList, aaiResourceIds, serviceInstanceMSO);
+            traverseServiceInstanceMSOPnfs(resourceList, aaiResourceIds, serviceInstanceMSO);
             if (serviceInstanceMSO.getNetworks() != null) {
                 for (org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network network : serviceInstanceMSO
                         .getNetworks()) {
@@ -1007,6 +1008,18 @@ public class WorkflowAction {
                     resourceList.add(new Resource(WorkflowType.VOLUMEGROUP, volumeGroup.getVolumeGroupId(), false));
                 }
             }
+        }
+    }
+
+    private void traverseServiceInstanceMSOPnfs(List<Resource> resourceList,
+            List<Pair<WorkflowType, String>> aaiResourceIds,
+            org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO) {
+        if (serviceInstanceMSO.getPnfs() == null) {
+            return;
+        }
+        for (org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf pnf : serviceInstanceMSO.getPnfs()) {
+            aaiResourceIds.add(new Pair<>(WorkflowType.PNF, pnf.getPnfId()));
+            resourceList.add(new Resource(WorkflowType.PNF, pnf.getPnfId(), false));
         }
     }
 

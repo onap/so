@@ -52,6 +52,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Tenant;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Vnfc;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
@@ -321,6 +322,10 @@ public class BBInputSetupMapperLayer {
         mapAllLicensesIntoGenericVnf(aaiGenericVnf, genericVnf);
         genericVnf.setOrchestrationStatus(this.mapOrchestrationStatusFromAAI(aaiGenericVnf.getOrchestrationStatus()));
         return genericVnf;
+    }
+
+    protected Pnf mapAAIPnfIntoPnf(org.onap.aai.domain.yang.Pnf aaiPnf) {
+        return modelMapper.map(aaiPnf, Pnf.class);
     }
 
     protected void mapAllLicensesIntoGenericVnf(org.onap.aai.domain.yang.GenericVnf aaiGenericVnf,
