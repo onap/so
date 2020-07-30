@@ -145,6 +145,7 @@ public class WorkflowAction {
     private static final String VOLUMEGROUP_CREATE_PATTERN = "(A|C)(.*)Volume(.*)";
     private static final String CONTROLLER = "Controller";
     private static final String DEFAULT_CLOUD_OWNER = "org.onap.so.cloud-owner";
+    private static final String HOMING = "homing";
 
     @Autowired
     protected BBInputSetup bbInputSetup;
@@ -197,16 +198,12 @@ public class WorkflowAction {
             List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
 
             if (isRequestMacroServiceResume(isALaCarte, resourceType, requestAction, serviceInstanceId)) {
-                flowsToExecute = bbInputSetupUtils.loadOriginalFlowExecutionPath(requestId);
-                if (flowsToExecute == null) {
-                    buildAndThrowException(execution, "Could not resume Macro flow. Error loading execution path.");
-                }
+                String errorMessage = "Could not resume Macro flow. Error loading execution path.";
+                flowsToExecute = loadExecuteBuildingBlocks(execution, requestId, errorMessage);
             } else if (isALaCarte && isResume) {
-                flowsToExecute = bbInputSetupUtils.loadOriginalFlowExecutionPath(requestId);
-                if (flowsToExecute == null) {
-                    buildAndThrowException(execution,
-                            "Could not resume request with request Id: " + requestId + ". No flowsToExecute was found");
-                }
+                String errorMessage =
+                        "Could not resume request with request Id: " + requestId + ". No flowsToExecute was found";
+                flowsToExecute = loadExecuteBuildingBlocks(execution, requestId, errorMessage);
             } else {
                 String vnfType = (String) execution.getVariable(VNF_TYPE);
                 String cloudOwner = getCloudOwner(requestDetails.getCloudConfiguration());
@@ -227,44 +224,19 @@ public class WorkflowAction {
                             || requestAction.equalsIgnoreCase(REPLACEINSTANCERETAINASSIGNMENTS))
                             && resourceType.equals(WorkflowType.VFMODULE)) {
                         logger.debug("Build a BB list for replacing BB modules");
-                        orchFlows = getVfModuleReplaceBuildingBlocks(new ConfigBuildingBlocksDataObject()
-                                .setsIRequest(sIRequest).setOrchFlows(orchFlows).setRequestId(requestId)
-                                .setResourceKey(resourceKey).setApiVersion(apiVersion).setResourceId(resourceId)
-                                .setRequestAction(requestAction).setaLaCarte(true).setVnfType(vnfType)
-                                .setWorkflowResourceIds(workflowResourceIds).setRequestDetails(requestDetails)
-                                .setExecution(execution).setReplaceInformation(replaceInfo));
-                        for (OrchestrationFlow orchFlow : orchFlows) {
-                            if (orchFlow.getFlowName().contains(CONFIGURATION)) {
-                                List<OrchestrationFlow> configOrchFlows = new ArrayList<>();
-                                configOrchFlows.add(orchFlow);
-                                List<ExecuteBuildingBlock> configBuildingBlocks =
-                                        getConfigBuildingBlocks(new ConfigBuildingBlocksDataObject()
-                                                .setsIRequest(sIRequest).setOrchFlows(configOrchFlows)
-                                                .setRequestId(requestId).setResourceKey(resourceKey)
-                                                .setApiVersion(apiVersion).setResourceId(resourceId)
-                                                .setRequestAction(requestAction).setaLaCarte(true).setVnfType(vnfType)
-                                                .setWorkflowResourceIds(workflowResourceIds)
-                                                .setRequestDetails(requestDetails).setExecution(execution)
-                                                .setReplaceInformation(replaceInfo));
-                                flowsToExecute.addAll(configBuildingBlocks);
-                            } else {
-                                ExecuteBuildingBlock ebb = buildExecuteBuildingBlock(orchFlow, requestId, resourceKey,
-                                        apiVersion, resourceId, requestAction, true, vnfType, workflowResourceIds,
-                                        requestDetails, false, null, null, false, replaceInfo);
-                                flowsToExecute.add(ebb);
-                            }
-                        }
+                        ConfigBuildingBlocksDataObject cbbdo = createConfigBuildingBlocksDataObject(execution,
+                                sIRequest, requestId, workflowResourceIds, requestDetails, requestAction, resourceId,
+                                vnfType, orchFlows, apiVersion, resourceKey, replaceInfo);
+                        orchFlows = getVfModuleReplaceBuildingBlocks(cbbdo);
+
+                        createBuildingBlocksForOrchFlows(execution, sIRequest, requestId, workflowResourceIds,
+                                requestDetails, requestAction, resourceId, flowsToExecute, vnfType, orchFlows,
+                                apiVersion, resourceKey, replaceInfo);
                     } else {
                         if (isConfiguration(orchFlows) && !requestAction.equalsIgnoreCase(CREATEINSTANCE)) {
-                            List<ExecuteBuildingBlock> configBuildingBlocks =
-                                    getConfigBuildingBlocks(new ConfigBuildingBlocksDataObject().setsIRequest(sIRequest)
-                                            .setOrchFlows(orchFlows).setRequestId(requestId).setResourceKey(resourceKey)
-                                            .setApiVersion(apiVersion).setResourceId(resourceId)
-                                            .setRequestAction(requestAction).setaLaCarte(true).setVnfType(vnfType)
-                                            .setWorkflowResourceIds(workflowResourceIds)
-                                            .setRequestDetails(requestDetails).setExecution(execution));
-
-                            flowsToExecute.addAll(configBuildingBlocks);
+                            addConfigBuildingBlocksToFlowsToExecuteList(execution, sIRequest, requestId,
+                                    workflowResourceIds, requestDetails, requestAction, resourceId, flowsToExecute,
+                                    vnfType, apiVersion, resourceKey, replaceInfo, orchFlows);
                         }
                         orchFlows =
                                 orchFlows.stream().filter(item -> !item.getFlowName().contains(FABRIC_CONFIGURATION))
@@ -286,10 +258,7 @@ public class WorkflowAction {
                         // SERVICE-MACRO-ASSIGN will always get user params with a
                         // service.
                         if (sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
-                            List<Map<String, Object>> userParams =
-                                    sIRequest.getRequestDetails().getRequestParameters().getUserParams();
-                            containsService =
-                                    userParams.stream().anyMatch(param -> param.containsKey(USERPARAMSERVICE));
+                            containsService = isContainsService(sIRequest);
                             if (containsService) {
                                 traverseUserParamsService(execution, resourceList, sIRequest, requestAction);
                             }
@@ -305,10 +274,7 @@ public class WorkflowAction {
                         // queries the SI and finds a VNF, macro fails.
 
                         if (sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
-                            List<Map<String, Object>> userParams =
-                                    sIRequest.getRequestDetails().getRequestParameters().getUserParams();
-                            containsService =
-                                    userParams.stream().anyMatch(param -> param.containsKey(USERPARAMSERVICE));
+                            containsService = isContainsService(sIRequest);
                         }
                         if (containsService) {
                             foundRelated = traverseUserParamsService(execution, resourceList, sIRequest, requestAction);
@@ -329,7 +295,7 @@ public class WorkflowAction {
                     } else if (resourceType == WorkflowType.SERVICE
                             && "deactivateInstance".equalsIgnoreCase(requestAction)) {
                         resourceList.add(new Resource(WorkflowType.SERVICE, "", false));
-                    } else if (resourceType == WorkflowType.VNF && ("replaceInstance".equalsIgnoreCase(requestAction)
+                    } else if (resourceType == WorkflowType.VNF && (REPLACEINSTANCE.equalsIgnoreCase(requestAction)
                             || ("recreateInstance".equalsIgnoreCase(requestAction)))) {
                         traverseAAIVnf(execution, resourceList, workflowResourceIds.getServiceInstanceId(),
                                 workflowResourceIds.getVnfId(), aaiResourceIds);
@@ -342,15 +308,15 @@ public class WorkflowAction {
                                 (int) resourceList.stream().filter(x -> type.equals(x.getResourceType())).count())
                                 .append("    ");
                     }
-                    logger.info("Found {}", foundObjects.toString());
+                    logger.info("Found {}", foundObjects);
 
                     if (orchFlows == null || orchFlows.isEmpty()) {
                         orchFlows = queryNorthBoundRequestCatalogDb(execution, requestAction, resourceType, isALaCarte,
                                 cloudOwner, serviceType);
                     }
                     boolean vnfReplace = false;
-                    if (resourceType.equals(WorkflowType.VNF) && ("replaceInstance".equalsIgnoreCase(requestAction)
-                            || "replaceInstanceRetainAssignments".equalsIgnoreCase(requestAction))) {
+                    if (resourceType.equals(WorkflowType.VNF) && (REPLACEINSTANCE.equalsIgnoreCase(requestAction)
+                            || REPLACEINSTANCERETAINASSIGNMENTS.equalsIgnoreCase(requestAction))) {
                         vnfReplace = true;
                     }
                     flowsToExecute = buildExecuteBuildingBlockList(orchFlows, resourceList, requestId, apiVersion,
@@ -363,7 +329,7 @@ public class WorkflowAction {
                     if (resourceType == WorkflowType.SERVICE
                             && (requestAction.equals(CREATEINSTANCE) || requestAction.equals(ASSIGNINSTANCE))
                             && resourceList.stream().anyMatch(x -> WorkflowType.VNF.equals(x.getResourceType()))) {
-                        execution.setVariable("homing", true);
+                        execution.setVariable(HOMING, true);
                         execution.setVariable("calledHoming", false);
                     }
                     if (resourceType == WorkflowType.SERVICE && (requestAction.equalsIgnoreCase(ASSIGNINSTANCE)
@@ -379,11 +345,10 @@ public class WorkflowAction {
             // enable it.
             if (sIRequest.getRequestDetails().getRequestParameters() != null
                     && sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
-                List<Map<String, Object>> userParams =
-                        sIRequest.getRequestDetails().getRequestParameters().getUserParams();
+                List<Map<String, Object>> userParams = getListOfUserParams(sIRequest);
                 for (Map<String, Object> params : userParams) {
                     if (params.containsKey(HOMINGSOLUTION)) {
-                        execution.setVariable("homing", !"none".equals(params.get(HOMINGSOLUTION)));
+                        execution.setVariable(HOMING, !"none".equals(params.get(HOMINGSOLUTION)));
                     }
                 }
             }
@@ -403,12 +368,7 @@ public class WorkflowAction {
             if (!isResume) {
                 bbInputSetupUtils.persistFlowExecutionPath(requestId, flowsToExecute);
             }
-            execution.setVariable("flowNames", flowNames);
-            execution.setVariable(BBConstants.G_CURRENT_SEQUENCE, 0);
-            execution.setVariable("retryCount", 0);
-            execution.setVariable("isRollback", false);
-            execution.setVariable("flowsToExecute", flowsToExecute);
-            execution.setVariable("isRollbackComplete", false);
+            setExecutionVariables(execution, flowsToExecute, flowNames);
 
         } catch (Exception ex) {
             if (!(execution.hasVariable("WorkflowException")
@@ -418,6 +378,85 @@ public class WorkflowAction {
                 throw ex;
             }
         }
+    }
+
+    private void setExecutionVariables(DelegateExecution execution, List<ExecuteBuildingBlock> flowsToExecute,
+            List<String> flowNames) {
+        execution.setVariable("flowNames", flowNames);
+        execution.setVariable(BBConstants.G_CURRENT_SEQUENCE, 0);
+        execution.setVariable("retryCount", 0);
+        execution.setVariable("isRollback", false);
+        execution.setVariable("flowsToExecute", flowsToExecute);
+        execution.setVariable("isRollbackComplete", false);
+    }
+
+    private boolean isContainsService(ServiceInstancesRequest sIRequest) {
+        boolean containsService;
+        List<Map<String, Object>> userParams = getListOfUserParams(sIRequest);
+        containsService = userParams.stream().anyMatch(param -> param.containsKey(USERPARAMSERVICE));
+        return containsService;
+    }
+
+    private List<Map<String, Object>> getListOfUserParams(ServiceInstancesRequest sIRequest) {
+        return sIRequest.getRequestDetails().getRequestParameters().getUserParams();
+    }
+
+    private List<ExecuteBuildingBlock> loadExecuteBuildingBlocks(DelegateExecution execution, String requestId,
+            String errorMessage) {
+        List<ExecuteBuildingBlock> flowsToExecute;
+        flowsToExecute = bbInputSetupUtils.loadOriginalFlowExecutionPath(requestId);
+        if (flowsToExecute == null) {
+            buildAndThrowException(execution, errorMessage);
+        }
+        return flowsToExecute;
+    }
+
+    private ConfigBuildingBlocksDataObject createConfigBuildingBlocksDataObject(DelegateExecution execution,
+            ServiceInstancesRequest sIRequest, String requestId, WorkflowResourceIds workflowResourceIds,
+            RequestDetails requestDetails, String requestAction, String resourceId, String vnfType,
+            List<OrchestrationFlow> orchFlows, String apiVersion, Resource resourceKey,
+            ReplaceInstanceRelatedInformation replaceInfo) {
+
+        return new ConfigBuildingBlocksDataObject().setsIRequest(sIRequest).setOrchFlows(orchFlows)
+                .setRequestId(requestId).setResourceKey(resourceKey).setApiVersion(apiVersion).setResourceId(resourceId)
+                .setRequestAction(requestAction).setaLaCarte(true).setVnfType(vnfType)
+                .setWorkflowResourceIds(workflowResourceIds).setRequestDetails(requestDetails).setExecution(execution)
+                .setReplaceInformation(replaceInfo);
+    }
+
+    private void createBuildingBlocksForOrchFlows(DelegateExecution execution, ServiceInstancesRequest sIRequest,
+            String requestId, WorkflowResourceIds workflowResourceIds, RequestDetails requestDetails,
+            String requestAction, String resourceId, List<ExecuteBuildingBlock> flowsToExecute, String vnfType,
+            List<OrchestrationFlow> orchFlows, String apiVersion, Resource resourceKey,
+            ReplaceInstanceRelatedInformation replaceInfo) throws Exception {
+
+        for (OrchestrationFlow orchFlow : orchFlows) {
+            if (orchFlow.getFlowName().contains(CONFIGURATION)) {
+                List<OrchestrationFlow> configOrchFlows = new ArrayList<>();
+                configOrchFlows.add(orchFlow);
+                addConfigBuildingBlocksToFlowsToExecuteList(execution, sIRequest, requestId, workflowResourceIds,
+                        requestDetails, requestAction, resourceId, flowsToExecute, vnfType, apiVersion, resourceKey,
+                        replaceInfo, configOrchFlows);
+            } else {
+                ExecuteBuildingBlock ebb = buildExecuteBuildingBlock(orchFlow, requestId, resourceKey, apiVersion,
+                        resourceId, requestAction, true, vnfType, workflowResourceIds, requestDetails, false, null,
+                        null, false, replaceInfo);
+                flowsToExecute.add(ebb);
+            }
+        }
+    }
+
+    private void addConfigBuildingBlocksToFlowsToExecuteList(DelegateExecution execution,
+            ServiceInstancesRequest sIRequest, String requestId, WorkflowResourceIds workflowResourceIds,
+            RequestDetails requestDetails, String requestAction, String resourceId,
+            List<ExecuteBuildingBlock> flowsToExecute, String vnfType, String apiVersion, Resource resourceKey,
+            ReplaceInstanceRelatedInformation replaceInfo, List<OrchestrationFlow> configOrchFlows) throws Exception {
+
+        ConfigBuildingBlocksDataObject cbbdo = createConfigBuildingBlocksDataObject(execution, sIRequest, requestId,
+                workflowResourceIds, requestDetails, requestAction, resourceId, vnfType, configOrchFlows, apiVersion,
+                resourceKey, replaceInfo);
+        List<ExecuteBuildingBlock> configBuildingBlocks = getConfigBuildingBlocks(cbbdo);
+        flowsToExecute.addAll(configBuildingBlocks);
     }
 
     private Resource getResourceKey(ServiceInstancesRequest sIRequest, WorkflowType resourceType) {
@@ -864,7 +903,7 @@ public class WorkflowAction {
         CollectionNetworkResourceCustomization collectionNetworkResourceCust =
                 getCollectionNetworkResourceCustomization(collectionResourceCustomization, instanceGroup);
         for (int i = 0; i < minNetworks; i++) {
-            if (collectionNetworkResourceCust != null && collectionInstCust != null) {
+            if (collectionNetworkResourceCust != null) {
                 Resource resource = new Resource(WorkflowType.VIRTUAL_LINK,
                         collectionNetworkResourceCust.getModelCustomizationUUID(), false);
                 resource.setVirtualLinkKey(Integer.toString(i));
@@ -1096,7 +1135,7 @@ public class WorkflowAction {
         String vnfCustomizationUUID = "";
         String vfModuleCustomizationUUID = "";
         if (sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
-            List<Map<String, Object>> userParams = sIRequest.getRequestDetails().getRequestParameters().getUserParams();
+            List<Map<String, Object>> userParams = getListOfUserParams(sIRequest);
             for (Map<String, Object> params : userParams) {
                 if (params.containsKey(USERPARAMSERVICE)) {
                     ObjectMapper obj = new ObjectMapper();
@@ -1124,14 +1163,12 @@ public class WorkflowAction {
                                                 && vfModuleCustomization.getVolumeHeatEnv() != null) {
                                             resourceList.add(new Resource(WorkflowType.VOLUMEGROUP,
                                                     vfModuleCustomization.getModelCustomizationUUID(), false));
-                                            foundRelated = true;
                                             foundVfModuleOrVG = true;
                                         }
 
                                         if (vfModuleCustomization.getVfModule() != null
                                                 && vfModuleCustomization.getVfModule().getModuleHeatTemplate() != null
                                                 && vfModuleCustomization.getHeatEnvironment() != null) {
-                                            foundRelated = true;
                                             foundVfModuleOrVG = true;
                                             Resource resource = new Resource(WorkflowType.VFMODULE,
                                                     vfModuleCustomization.getModelCustomizationUUID(), false);
@@ -1748,7 +1785,7 @@ public class WorkflowAction {
     private void fillExecution(DelegateExecution execution, boolean suppressRollback, String resourceId,
             WorkflowType resourceType) {
         execution.setVariable("sentSyncResponse", false);
-        execution.setVariable("homing", false);
+        execution.setVariable(HOMING, false);
         execution.setVariable("calledHoming", false);
         execution.setVariable(BBConstants.G_ISTOPLEVELFLOW, true);
         execution.setVariable("suppressRollback", suppressRollback);
