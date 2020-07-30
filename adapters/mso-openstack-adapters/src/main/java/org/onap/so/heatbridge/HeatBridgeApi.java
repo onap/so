@@ -38,6 +38,7 @@ import org.openstack4j.model.compute.Flavor;
 import org.openstack4j.model.compute.Image;
 import org.openstack4j.model.compute.Server;
 import org.openstack4j.model.heat.Resource;
+import org.openstack4j.model.network.Network;
 
 /**
  * Defines the contract to extract Heat Stack Resources from Openstack and inventory it to AAI. This API is used only to
@@ -88,6 +89,14 @@ public interface HeatBridgeApi {
     List<Server> getAllOpenstackServers(List<Resource> stackResources);
 
     /**
+     * Query the Openstack provider network objects from the list of stack resources
+     *
+     * @param stackResources A list of stack based resources
+     * @return A list of Openstack Network objects
+     */
+    List<Network> getAllOpenstackProviderNetworks(final List<Resource> stackResources);
+
+    /**
      * Extract Openstack Image objects from a a list of Server objects
      *
      * @param servers A list of Openstack Server objects
@@ -102,6 +111,15 @@ public interface HeatBridgeApi {
      * @return A list of Openstack Flavor objects
      */
     List<Flavor> extractOpenstackFlavorsFromServers(List<Server> servers);
+
+    /**
+     * Query and build AAI actions for Openstack Compute resources to AAI's l3-network objects with its subnets
+     *
+     * @param genericVnfId AAI generic-vnf-id
+     * @param vfModuleId AAI vf-module-id
+     * @param networks Openstack Network list
+     */
+    void buildAddNetworksToAaiAction(final String genericVnfId, final String vfModuleId, List<Network> networks);
 
     /**
      * Query and build AAI actions for Openstack Image resources to AAI's image objects

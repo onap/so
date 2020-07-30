@@ -42,6 +42,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.onap.aai.domain.yang.Flavor;
 import org.onap.aai.domain.yang.Image;
+import org.onap.aai.domain.yang.L3Network;
 import org.onap.aai.domain.yang.PInterface;
 import org.onap.aai.domain.yang.Pserver;
 import org.onap.aai.domain.yang.Relationship;
@@ -54,7 +55,9 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.heatbridge.constants.HeatBridgeConstants;
 import org.openstack4j.model.compute.Server;
+import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.Port;
+import org.openstack4j.model.network.Subnet;
 import com.google.common.base.Preconditions;
 
 /**
@@ -129,6 +132,50 @@ public class AaiHelper {
         relationships.add(sriovPfRelationship);
 
         return relationshipList;
+    }
+
+    public Relationship getRelationshipToVfModule(String vnfId, String vfModuleId) {
+        return buildRelationship(AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId));
+    }
+
+    public Relationship getRelationshipToTenant(String cloudOwner, String cloudRegionId, String tenantId) {
+        return buildRelationship(
+                AAIUriFactory.createResourceUri(AAIObjectType.TENANT, cloudOwner, cloudRegionId, tenantId));
+    }
+
+    public org.onap.aai.domain.yang.Subnet buildSubnet(Subnet subnet) {
+        org.onap.aai.domain.yang.Subnet aaiSubnet = new org.onap.aai.domain.yang.Subnet();
+        aaiSubnet.setSubnetId(subnet.getId());
+        aaiSubnet.setDhcpEnabled(subnet.isDHCPEnabled());
+
+        aaiSubnet.setSubnetName(subnet.getName());
+        aaiSubnet.setGatewayAddress(subnet.getGateway());
+        aaiSubnet.setCidrMask(subnet.getCidr());
+        aaiSubnet.setIpVersion(subnet.getIpVersion().name());
+        return aaiSubnet;
+    }
+
+    public L3Network buildNetwork(Network network) {
+        if (network.getId() == null) {
+            return null;
+        }
+        L3Network l3Network = new L3Network();
+        l3Network.setNetworkId(network.getId());
+        l3Network.setIsBoundToVpn(true);
+        l3Network.setIsProviderNetwork(true);
+        l3Network.setIsSharedNetwork(network.isShared());
+
+        // optional fields
+        l3Network.setIsSharedNetwork(network.isShared());
+        l3Network.setIsExternalNetwork(network.isRouterExternal());
+        l3Network.setOperationalStatus(String.valueOf(network.isAdminStateUp()));
+        if (network.getName() != null) {
+            l3Network.setNetworkName(network.getName());
+        }
+        if (network.getProviderPhyNet() != null) {
+            l3Network.setPhysicalNetworkName(network.getProviderPhyNet());
+        }
+        return l3Network;
     }
 
     /**
