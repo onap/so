@@ -39,6 +39,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.LineOfBusiness;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy;
@@ -75,7 +76,6 @@ import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
-import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.VnfcCustomization;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.RequestDetails;
@@ -417,6 +417,17 @@ public class BBInputSetupMapperLayerTest {
                 new File(RESOURCE_PATH + "aaiGenericVnfInput.json"), org.onap.aai.domain.yang.GenericVnf.class);
 
         GenericVnf actual = bbInputSetupMapperLayer.mapAAIGenericVnfIntoGenericVnf(aaiGenericVnf);
+
+        assertThat(actual, sameBeanAs(expected));
+    }
+
+    @Test
+    public void testMapAAIPnfIntoPnf() throws IOException {
+        Pnf expected = mapper.readValue(new File(RESOURCE_PATH + "PnfExpected.json"), Pnf.class);
+        org.onap.aai.domain.yang.Pnf aaiPnf =
+                mapper.readValue(new File(RESOURCE_PATH + "aaiPnfInput.json"), org.onap.aai.domain.yang.Pnf.class);
+
+        Pnf actual = bbInputSetupMapperLayer.mapAAIPnfIntoPnf(aaiPnf);
 
         assertThat(actual, sameBeanAs(expected));
     }

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1a52v2f" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.0.0">
+  <bpmn:collaboration id="Collaboration_0go8wi3">
+    <bpmn:participant id="Participant_1dwc5st" name="SO&#10;Deactivate PNF" processRef="DeactivatePnfBB" />
+    <bpmn:participant id="Participant_0gycee4" name="AAI" />
+    <bpmn:messageFlow id="MessageFlow_0xh6bkn" sourceRef="UpdatePnfOrchestrationStatusToInventoried" targetRef="Participant_0gycee4" />
+  </bpmn:collaboration>
+  <bpmn:process id="DeactivatePnfBB" name="DeactivatePnfBB" isExecutable="true">
+    <bpmn:sequenceFlow id="SequenceFlow_0l6rtzy" sourceRef="UpdatePnfOrchestrationStatusToInventoried" targetRef="PnfInventoried" />
+    <bpmn:sequenceFlow id="SequenceFlow_1fu9o4x" sourceRef="DeactivatePnf_StartEvent" targetRef="UpdatePnfOrchestrationStatusToInventoried" />
+    <bpmn:endEvent id="PnfInventoried" name="Pnf Inventoried">
+      <bpmn:incoming>SequenceFlow_0l6rtzy</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="UpdatePnfOrchestrationStatusToInventoried" name="Update Pnf Orchestration Status to Inventoried" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusInventoriedPnf(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_1fu9o4x</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0l6rtzy</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:startEvent id="DeactivatePnf_StartEvent">
+      <bpmn:outgoing>SequenceFlow_1fu9o4x</bpmn:outgoing>
+    </bpmn:startEvent>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0go8wi3">
+      <bpmndi:BPMNShape id="Participant_1dwc5st_di" bpmnElement="Participant_1dwc5st" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="646" height="391" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1fu9o4x_di" bpmnElement="SequenceFlow_1fu9o4x">
+        <di:waypoint x="255" y="287" />
+        <di:waypoint x="461" y="287" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0l6rtzy_di" bpmnElement="SequenceFlow_0l6rtzy">
+        <di:waypoint x="561" y="287" />
+        <di:waypoint x="722" y="287" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1wfgsdz_di" bpmnElement="PnfInventoried">
+        <dc:Bounds x="722" y="269" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="705" y="312" width="74" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1ix8822_di" bpmnElement="UpdatePnfOrchestrationStatusToInventoried">
+        <dc:Bounds x="461" y="247" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_1g3euow_di" bpmnElement="DeactivatePnf_StartEvent">
+        <dc:Bounds x="219" y="269" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Participant_0gycee4_di" bpmnElement="Participant_0gycee4" isHorizontal="true">
+        <dc:Bounds x="260" y="567" width="502" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="MessageFlow_0xh6bkn_di" bpmnElement="MessageFlow_0xh6bkn">
+        <di:waypoint x="511" y="327" />
+        <di:waypoint x="511" y="567" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
