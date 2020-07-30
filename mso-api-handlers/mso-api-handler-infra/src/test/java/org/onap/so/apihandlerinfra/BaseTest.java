@@ -70,6 +70,10 @@ public abstract class BaseTest {
         return "http://localhost:" + port + uri;
     }
 
+    protected String createURLWithPort(String uri, String orchestrationPath) {
+        return "http://localhost:" + port + orchestrationPath + uri;
+    }
+
     protected String createURLWithPort(String uri, int iPort) {
         return "http://localhost:" + iPort + uri;
     }

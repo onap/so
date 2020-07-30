@@ -71,6 +71,7 @@ public class InstanceManagementTest extends BaseTest {
     private String wiremockPort;
 
     private final String instanceManagementUri = "/onap/so/infra/instanceManagement/";
+    private final String orchestration_path = "/onap/so/infra";
 
     private String uri;
     private URL selfLink;
@@ -92,7 +93,7 @@ public class InstanceManagementTest extends BaseTest {
         headers.set(ONAP_PARTNER_NAME, "VID");
         headers.set(REQUESTOR_ID, "xxxxxx");
         try { // generate one-time port number to avoid RANDOM port number later.
-            initialUrl = new URL(createURLWithPort(Constants.ORCHESTRATION_REQUESTS_PATH));
+            initialUrl = new URL(createURLWithPort(Constants.ORCHESTRATION_REQUESTS_PATH, orchestration_path));
             initialPort = initialUrl.getPort();
         } catch (MalformedURLException e) {
             e.printStackTrace();
