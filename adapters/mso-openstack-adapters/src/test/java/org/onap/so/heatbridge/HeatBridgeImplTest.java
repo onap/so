@@ -85,9 +85,11 @@ import org.openstack4j.model.compute.Server;
 import org.openstack4j.model.compute.Server.Status;
 import org.openstack4j.model.heat.Resource;
 import org.openstack4j.model.network.IP;
+import org.openstack4j.model.network.IPVersionType;
 import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.NetworkType;
 import org.openstack4j.model.network.Port;
+import org.openstack4j.model.network.Subnet;
 import org.openstack4j.openstack.heat.domain.HeatResource;
 import org.openstack4j.openstack.heat.domain.HeatResource.Resources;
 import org.springframework.core.env.Environment;
@@ -447,6 +449,71 @@ public class HeatBridgeImplTest {
         verify(transaction, times(15)).createIfNotExists(any(AAIResourceUri.class), any(Optional.class));
         verify(osClient, times(5)).getPortById(anyString());
         verify(osClient, times(10)).getNetworkById(anyString());
+    }
+
+    @Test
+    public void testUpdateNetworksToAai() throws HeatBridgeException {
+
+        Subnet subnet1 = mock(Subnet.class);
+        when(subnet1.getId()).thenReturn("test-subnet1-id");
+        when(subnet1.getName()).thenReturn("test-subnet-name");
+        when(subnet1.isDHCPEnabled()).thenReturn(true);
+        when(subnet1.getGateway()).thenReturn("test-subnet-gateway");
+        when(subnet1.getCidr()).thenReturn("test-subnet-gateway");
+        when(subnet1.getIpVersion()).thenReturn(IPVersionType.V4);
+
+        Subnet subnet2 = mock(Subnet.class);
+        when(subnet2.getId()).thenReturn("test-subnet2-id");
+        when(subnet2.getName()).thenReturn("test-subnet-name");
+        when(subnet2.isDHCPEnabled()).thenReturn(true);
+        when(subnet2.getGateway()).thenReturn("test-subnet-gateway");
+        when(subnet2.getCidr()).thenReturn("test-subnet-gateway");
+        when(subnet2.getIpVersion()).thenReturn(IPVersionType.V6);
+
+        when(osClient.getSubnetById(subnet1.getId())).thenReturn(subnet1);
+        when(osClient.getSubnetById(subnet2.getId())).thenReturn(subnet2);
+
+        List<String> subnetIds = Arrays.asList(subnet1.getId(), subnet2.getId());
+
+        // Arrange
+        Network network1 = mock(Network.class);
+        when(network1.getId()).thenReturn("test-network1-id");
+        when(network1.isShared()).thenReturn(true);
+        when(network1.isRouterExternal()).thenReturn(true);
+        when(network1.isAdminStateUp()).thenReturn(true);
+        when(network1.getProviderPhyNet()).thenReturn("sriov-network1");
+        when(network1.getName()).thenReturn("network1");
+        when(network1.getSubnets()).thenReturn(subnetIds);
+
+        Network network2 = mock(Network.class);
+        when(network2.getId()).thenReturn("test-network1-id");
+        when(network2.isShared()).thenReturn(true);
+        when(network2.isRouterExternal()).thenReturn(true);
+        when(network2.isAdminStateUp()).thenReturn(true);
+        when(network2.getProviderPhyNet()).thenReturn("sriov-network1");
+        when(network2.getName()).thenReturn("network1");
+        when(network2.getSubnets()).thenReturn(subnetIds);
+
+        String vnfId = "some-uuiid-of-the-vnf";
+        String vfModuleId = "some-uuiid-of-the-vf-module";
+
+        Subnet subnet = mock(Subnet.class);
+
+        List<Network> networks = Arrays.asList(network1, network2);
+
+        // Act #1
+        heatbridge.buildAddNetworksToAaiAction(vnfId, vfModuleId, networks);
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, network1.getId());
+
+        // Assert #1
+        verify(transaction, times(2)).create(any(AAIResourceUri.class), any(org.onap.aai.domain.yang.L3Network.class));
+
+        // Act #2
+        heatbridge.buildAddNetworksToAaiAction(vnfId, vfModuleId, networks);
+
+        // Assert #2
+        verify(transaction, times(4)).create(any(AAIResourceUri.class), any(org.onap.aai.domain.yang.L3Network.class));
+
     }
 
     @Test
