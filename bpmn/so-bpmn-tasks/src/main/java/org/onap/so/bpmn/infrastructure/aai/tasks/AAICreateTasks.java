@@ -260,7 +260,7 @@ public class AAICreateTasks {
     public void createPnf(BuildingBlockExecution execution) {
         try {
             Pnf pnf = extractPojosForBB.extractByKey(execution, ResourceKey.PNF);
-            aaiPnfResources.checkIfPnfExistsInAaiAndCanBeUsed(pnf.getPnfName());
+            aaiPnfResources.checkIfPnfExistsInAaiAndCanBeUsed(pnf);
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             aaiPnfResources.createPnfAndConnectServiceInstance(pnf, serviceInstance);
