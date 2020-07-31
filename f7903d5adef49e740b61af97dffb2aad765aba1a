@@ -94,6 +94,30 @@
     },
     {
       "key": {
+        "uuid": "8247e877_ccfebc41",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/AbstractServiceUpgradeDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-07-31T11:56:56Z",
+      "side": 1,
+      "message": "Hi Rahul, As per your previous review comment, I have taken these parameters from GenericPnfDispatcher class where we are populating these variables under populateExecution() method. I believe this dispatcher class will be invoked before preparation block?",
+      "parentUuid": "2ff3bd4e_b30e15cb",
+      "range": {
+        "startLine": 43,
+        "startChar": 3,
+        "endLine": 46,
+        "endChar": 31
+      },
+      "revId": "f7903d5adef49e740b61af97dffb2aad765aba1a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6395b7bb_6811975a",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/PrepareServiceUpgradeDE.java",
         "patchSetId": 9
