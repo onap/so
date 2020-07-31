@@ -22,6 +22,7 @@ package org.onap.so.client.orchestration;
 
 import com.google.common.base.Strings;
 import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
 import org.onap.aai.domain.yang.RelatedToProperty;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.aai.domain.yang.RelationshipData;
@@ -68,11 +69,39 @@ public class AAIPnfResources {
         injectionHelper.getAaiClient().update(pnfURI, aaiObjectMapper.mapPnf(pnfCopy));
     }
 
-    public void checkIfPnfExistsInAaiAndCanBeUsed(String pnfName) throws Exception {
-        Optional<org.onap.aai.domain.yang.Pnf> pnfFromAai = injectionHelper.getAaiClient()
-                .get(org.onap.aai.domain.yang.Pnf.class, AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfName));
+    public void checkIfPnfExistsInAaiAndCanBeUsed(Pnf pnf) throws Exception {
+        Optional<org.onap.aai.domain.yang.Pnf> pnfFromAai =
+                injectionHelper.getAaiClient().get(org.onap.aai.domain.yang.Pnf.class,
+                        AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnf.getPnfName()));
         if (pnfFromAai.isPresent()) {
             checkIfPnfCanBeUsed(pnfFromAai.get());
+            updatePnfInAAI(pnf, pnfFromAai.get());
+        }
+    }
+
+    private void updatePnfInAAI(Pnf pnf, org.onap.aai.domain.yang.Pnf pnfFromAai) {
+        updatePnfFields(pnf, pnfFromAai);
+        injectionHelper.getAaiClient().update(AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnf.getPnfName()),
+                pnfFromAai);
+        logger.debug("updatePnfInAAI: {}", pnfFromAai);
+    }
+
+    private void updatePnfFields(Pnf pnf, org.onap.aai.domain.yang.Pnf pnfFromAai) {
+        if (pnf.getModelInfoPnf() != null
+                && StringUtils.isNotBlank(pnf.getModelInfoPnf().getModelCustomizationUuid())) {
+            pnfFromAai.setModelCustomizationId(pnf.getModelInfoPnf().getModelCustomizationUuid());
+        }
+        if (pnf.getModelInfoPnf() != null && StringUtils.isNotBlank(pnf.getModelInfoPnf().getModelInvariantUuid())) {
+            pnfFromAai.setModelInvariantId(pnf.getModelInfoPnf().getModelInvariantUuid());
+        }
+        if (pnf.getModelInfoPnf() != null && StringUtils.isNotBlank(pnf.getModelInfoPnf().getModelUuid())) {
+            pnfFromAai.setModelVersionId(pnf.getModelInfoPnf().getModelUuid());
+        }
+        if (pnf.getOrchestrationStatus() != null && StringUtils.isNotBlank(pnf.getOrchestrationStatus().toString())) {
+            pnfFromAai.setOrchestrationStatus(pnf.getOrchestrationStatus().toString());
+        }
+        if (StringUtils.isNotBlank(pnf.getRole())) {
+            pnfFromAai.setNfRole(pnf.getRole());
         }
     }
 
