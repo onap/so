@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cda7e5e8_507016f8",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/client/orchestration/AAIPnfResourcesTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-08-03T15:24:10Z",
+      "side": 1,
+      "message": "I think it should be \"createPnfWithDefaultName\"",
+      "range": {
+        "startLine": 239,
+        "startChar": 16,
+        "endLine": 239,
+        "endChar": 40
+      },
+      "revId": "ccb3b6577acace6f2d57f10dfa4fe0b35288e0f8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
