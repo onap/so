@@ -117,6 +117,15 @@ import org.springframework.core.env.Environment;
 
 public class WorkflowActionTest extends BaseTaskTest {
 
+    private static final String MACRO_ACTIVATE_DELETE_UNASSIGN_JSON = "Macro/ServiceMacroActivateDeleteUnassign.json";
+    private static final String MACRO_ASSIGN_JSON = "Macro/ServiceMacroAssign.json";
+    private static final String MACRO_ASSIGN_NO_CLOUD_JSON = "Macro/ServiceMacroAssignNoCloud.json";
+    private static final String VF_MODULE_CREATE_WITH_FABRIC_JSON = "VfModuleCreateWithFabric.json";
+    private static final String VF_MODULE_REPLACE_REBUILD_VOLUME_GROUPS_JSON =
+            "VfModuleReplaceRebuildVolumeGroups.json";
+    private static final String MACRO_CREATE_NETWORK_COLLECTION_JSON = "Macro/CreateNetworkCollection.json";
+    private static final String MACRO_VNF_MACRO_REPLACE_JSON = "Macro/VnfMacroReplace.json";
+
     @Mock
     protected Environment environment;
     @InjectMocks
@@ -164,13 +173,8 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListALaCarteNetworkCreateTest() throws Exception {
         String gAction = "createInstance";
         String resource = "Network";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/Macro/ServiceMacroAssign.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", true);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(MACRO_ASSIGN_JSON);
+        initExecution(gAction, bpmnRequest, true);
         execution.setVariable("requestUri", "v6/networks/123");
 
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
@@ -189,13 +193,8 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListALaCarteNetworkDeleteTest() throws Exception {
         String gAction = "deleteInstance";
         String resource = "Network";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/Macro/ServiceMacroAssign.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", true);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(MACRO_ASSIGN_JSON);
+        initExecution(gAction, bpmnRequest, true);
         execution.setVariable("requestUri", "v6/networks/123");
 
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
@@ -214,13 +213,8 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListALaCarteServiceCreateTest() throws Exception {
         String gAction = "createInstance";
         String resource = "Service";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/Macro/ServiceMacroAssign.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", true);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(MACRO_ASSIGN_JSON);
+        initExecution(gAction, bpmnRequest, true);
         execution.setVariable("requestUri", "v6/serviceInstances/123");
 
 
@@ -238,14 +232,9 @@ public class WorkflowActionTest extends BaseTaskTest {
     @Test
     public void selectExecutionListDuplicateNameExceptionTest() throws Exception {
         String gAction = "createInstance";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/Macro/ServiceMacroAssign.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", true);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(MACRO_ASSIGN_JSON);
+        initExecution(gAction, bpmnRequest, true);
         execution.setVariable("requestUri", "v6/serviceInstances");
-        execution.setVariable("requestAction", gAction);
 
         doThrow(new DuplicateNameException(
                 "serviceInstance with name (instanceName) and different version id (3c40d244-808e-42ca-b09a-256d83d19d0a) already exists. The name must be unique."))
@@ -264,15 +253,9 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListServiceMacroAssignTest() throws Exception {
         String gAction = "assignInstance";
         String resource = "Service";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/Macro/ServiceMacroAssign.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", false);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(MACRO_ASSIGN_JSON);
+        initExecution(gAction, bpmnRequest, false);
         execution.setVariable("requestUri", "v6/serviceInstances/123");
-
 
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
         List<OrchestrationFlow> orchFlows = createFlowList("AssignServiceInstanceBB", "AssignNetworkBB", "AssignVnfBB",
@@ -318,15 +301,9 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListServiceMacroAssignNoCloudTest() throws Exception {
         String gAction = "assignInstance";
         String resource = "Service";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest = new String(
-                Files.readAllBytes(Paths.get("src/test/resources/__files/Macro/ServiceMacroAssignNoCloud.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", false);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(MACRO_ASSIGN_NO_CLOUD_JSON);
+        initExecution(gAction, bpmnRequest, false);
         execution.setVariable("requestUri", "v6/serviceInstances/123");
-
 
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
         List<OrchestrationFlow> orchFlows = createFlowList("AssignServiceInstanceBB", "AssignNetworkBB", "AssignVnfBB",
@@ -373,15 +350,9 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListServiceMacroActivateTest() throws Exception {
         String gAction = "activateInstance";
         String resource = "Service";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest = new String(Files
-                .readAllBytes(Paths.get("src/test/resources/__files/Macro/ServiceMacroActivateDeleteUnassign.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", false);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(MACRO_ACTIVATE_DELETE_UNASSIGN_JSON);
+        initExecution(gAction, bpmnRequest, false);
         execution.setVariable("requestUri", "v6/serviceInstances/si0");
-
 
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
         List<OrchestrationFlow> orchFlows =
@@ -396,7 +367,6 @@ public class WorkflowActionTest extends BaseTaskTest {
         org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf =
                 new org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf();
         vnf.setVnfId("vnf0");
-
 
         org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule = buildVfModule();
         vnf.getVfModules().add(vfModule);
@@ -427,22 +397,15 @@ public class WorkflowActionTest extends BaseTaskTest {
         assertEquals("testVfModuleId2", ebbs.get(5).getWorkflowResourceIds().getVfModuleId());
         assertEquals("vnf0", ebbs.get(6).getWorkflowResourceIds().getVnfId());
         assertEquals("si0", ebbs.get(7).getWorkflowResourceIds().getServiceInstanceId());
-
     }
 
     @Test
     public void selectExecutionListServiceMacroDeactivateTest() throws Exception {
         String gAction = "deactivateInstance";
         String resource = "Service";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest = new String(Files
-                .readAllBytes(Paths.get("src/test/resources/__files/Macro/ServiceMacroActivateDeleteUnassign.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", false);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(MACRO_ACTIVATE_DELETE_UNASSIGN_JSON);
+        initExecution(gAction, bpmnRequest, false);
         execution.setVariable("requestUri", "v6/serviceInstances/123");
-
 
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
         List<OrchestrationFlow> orchFlows = createFlowList("DeactivateServiceInstanceBB");
@@ -459,15 +422,9 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListServiceMacroEmptyServiceTest() throws Exception {
         String gAction = "createInstance";
         String resource = "Service";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest = new String(Files
-                .readAllBytes(Paths.get("src/test/resources/__files/Macro/ServiceMacroActivateDeleteUnassign.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", false);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(MACRO_ACTIVATE_DELETE_UNASSIGN_JSON);
+        initExecution(gAction, bpmnRequest, false);
         execution.setVariable("requestUri", "v6/serviceInstances/123");
-
 
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
         northBoundRequest.setIsToplevelflow(true);
@@ -491,15 +448,9 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListServiceMacroCreateJustNetworkTest() throws Exception {
         String gAction = "createInstance";
         String resource = "Service";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest = new String(Files
-                .readAllBytes(Paths.get("src/test/resources/__files/Macro/ServiceMacroActivateDeleteUnassign.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", false);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(MACRO_ACTIVATE_DELETE_UNASSIGN_JSON);
+        initExecution(gAction, bpmnRequest, false);
         execution.setVariable("requestUri", "v6/serviceInstances/123");
-
 
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
         northBoundRequest.setIsToplevelflow(true);
@@ -527,15 +478,9 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListServiceMacroCreateWithNetworkCollectionTest() throws Exception {
         String gAction = "createInstance";
         String resource = "Service";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest = new String(Files
-                .readAllBytes(Paths.get("src/test/resources/__files/Macro/ServiceMacroActivateDeleteUnassign.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", false);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(MACRO_ACTIVATE_DELETE_UNASSIGN_JSON);
+        initExecution(gAction, bpmnRequest, false);
         execution.setVariable("requestUri", "v6/serviceInstances/123");
-
 
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
         northBoundRequest.setIsToplevelflow(true);
@@ -622,15 +567,9 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListServiceMacroCreateWithUserParams() throws Exception {
         String gAction = "createInstance";
         String resource = "Service";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/Macro/ServiceMacroAssign.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", false);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(MACRO_ASSIGN_JSON);
+        initExecution(gAction, bpmnRequest, false);
         execution.setVariable("requestUri", "v6/serviceInstances/123");
-
 
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
         List<OrchestrationFlow> orchFlows = createFlowList("AssignServiceInstanceBB", "CreateNetworkCollectionBB",
@@ -704,21 +643,16 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListServiceMacroDeleteTest() throws Exception {
         String gAction = "deleteInstance";
         String resource = "Service";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest = new String(Files
-                .readAllBytes(Paths.get("src/test/resources/__files/Macro/ServiceMacroActivateDeleteUnassign.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", false);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(MACRO_ACTIVATE_DELETE_UNASSIGN_JSON);
+        initExecution(gAction, bpmnRequest, false);
         execution.setVariable("requestUri", "v6/serviceInstances/123");
-
 
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
         List<OrchestrationFlow> orchFlows = createFlowList("DeactivateVfModuleBB", "DeleteVfModuleBB",
-                "DeactivateVolumeGroupBB", "DeleteVolumeGroupBB", "DeactivateVnfBB", "DeactivateNetworkBB",
-                "DeleteNetworkBB", "DeleteNetworkCollectionBB", "DeactivateServiceInstanceBB", "UnassignVfModuleBB",
-                "UnassignVolumeGroupBB", "UnassignVnfBB", "UnassignNetworkBB", "UnassignServiceInstanceBB");
+                "DeactivateVolumeGroupBB", "DeleteVolumeGroupBB", "DeactivateVnfBB", "DeactivatePnfBB",
+                "DeactivateNetworkBB", "DeleteNetworkBB", "DeleteNetworkCollectionBB", "DeactivateServiceInstanceBB",
+                "UnassignVfModuleBB", "UnassignVolumeGroupBB", "UnassignVnfBB", "UnassignNetworkBB",
+                "UnassignServiceInstanceBB");
         northBoundRequest.setOrchestrationFlowList(orchFlows);
 
         ServiceInstance serviceInstanceAAI = new ServiceInstance();
@@ -727,7 +661,10 @@ public class WorkflowActionTest extends BaseTaskTest {
                 new org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance();
         org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf =
                 new org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf pnf =
+                new org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf();
         vnf.setVnfId("vnfId123");
+        pnf.setPnfId("pnfId123");
 
         org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule = buildVfModule();
         vnf.getVfModules().add(vfModule);
@@ -740,6 +677,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         vnf.getVolumeGroups().add(volumeGroup);
 
         serviceInstanceMSO.getVnfs().add(vnf);
+        serviceInstanceMSO.getPnfs().add(pnf);
 
         doReturn(serviceInstanceAAI).when(bbSetupUtils).getAAIServiceInstanceById("123");
         doReturn(serviceInstanceMSO).when(bbInputSetup).getExistingServiceInstance(serviceInstanceAAI);
@@ -749,23 +687,52 @@ public class WorkflowActionTest extends BaseTaskTest {
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         assertEqualsBulkFlowName(ebbs, "DeactivateVfModuleBB", "DeactivateVfModuleBB", "DeleteVfModuleBB",
                 "DeleteVfModuleBB", "DeactivateVolumeGroupBB", "DeleteVolumeGroupBB", "DeactivateVnfBB",
-                "DeactivateServiceInstanceBB", "UnassignVfModuleBB", "UnassignVfModuleBB", "UnassignVolumeGroupBB",
-                "UnassignVnfBB", "UnassignServiceInstanceBB");
+                "DeactivatePnfBB", "DeactivateServiceInstanceBB", "UnassignVfModuleBB", "UnassignVfModuleBB",
+                "UnassignVolumeGroupBB", "UnassignVnfBB", "UnassignServiceInstanceBB");
+    }
+
+    @Test
+    public void selectExecutionListServiceMacroDeleteWithPnfTest() throws Exception {
+        String gAction = "deleteInstance";
+        String resource = "Service";
+        String bpmnRequest = readBpmnRequestFromFile(MACRO_ACTIVATE_DELETE_UNASSIGN_JSON);
+        initExecution(gAction, bpmnRequest, false);
+        execution.setVariable("requestUri", "v6/serviceInstances/123");
+
+        NorthBoundRequest northBoundRequest = new NorthBoundRequest();
+        List<OrchestrationFlow> orchFlows = createFlowList("DeactivateVfModuleBB", "DeleteVfModuleBB",
+                "DeactivateVolumeGroupBB", "DeleteVolumeGroupBB", "DeactivateVnfBB", "DeactivatePnfBB",
+                "DeactivateNetworkBB", "DeleteNetworkBB", "DeleteNetworkCollectionBB", "DeactivateServiceInstanceBB",
+                "UnassignVfModuleBB", "UnassignVolumeGroupBB", "UnassignVnfBB", "UnassignNetworkBB",
+                "UnassignServiceInstanceBB");
+        northBoundRequest.setOrchestrationFlowList(orchFlows);
+
+        ServiceInstance serviceInstanceAAI = new ServiceInstance();
+        serviceInstanceAAI.setServiceInstanceId("aaisi123");
+        org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO =
+                new org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf pnf =
+                new org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf();
+        pnf.setPnfId("pnfId123");
+
+        serviceInstanceMSO.getPnfs().add(pnf);
+
+        doReturn(serviceInstanceAAI).when(bbSetupUtils).getAAIServiceInstanceById("123");
+        doReturn(serviceInstanceMSO).when(bbInputSetup).getExistingServiceInstance(serviceInstanceAAI);
+        when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
+                false, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
+        workflowAction.selectExecutionList(execution);
+        List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+        assertEqualsBulkFlowName(ebbs, "DeactivatePnfBB", "DeactivateServiceInstanceBB", "UnassignServiceInstanceBB");
     }
 
     @Test
     public void selectExecutionListServiceMacroUnassignTest() throws Exception {
         String gAction = "unassignInstance";
         String resource = "Service";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest = new String(Files
-                .readAllBytes(Paths.get("src/test/resources/__files/Macro/ServiceMacroActivateDeleteUnassign.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", false);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(MACRO_ACTIVATE_DELETE_UNASSIGN_JSON);
+        initExecution(gAction, bpmnRequest, false);
         execution.setVariable("requestUri", "v6/serviceInstances/123");
-
 
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
         List<OrchestrationFlow> orchFlows = createFlowList("UnassignVfModuleBB", "UnassignVolumeGroupBB",
@@ -806,15 +773,9 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListServiceMacroDeleteNetworkCollectionTest() throws Exception {
         String gAction = "deleteInstance";
         String resource = "Service";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest = new String(Files
-                .readAllBytes(Paths.get("src/test/resources/__files/Macro/ServiceMacroActivateDeleteUnassign.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", false);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(MACRO_ACTIVATE_DELETE_UNASSIGN_JSON);
+        initExecution(gAction, bpmnRequest, false);
         execution.setVariable("requestUri", "v6/serviceInstances/123");
-
 
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
         List<OrchestrationFlow> orchFlows = createFlowList("DeactivateVfModuleBB", "DeleteVfModuleBB",
@@ -855,13 +816,8 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListVnfMacroRecreateTest() throws Exception {
         String gAction = "recreateInstance";
         String resource = "Vnf";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/Macro/VnfMacroReplace.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", false);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(MACRO_VNF_MACRO_REPLACE_JSON);
+        initExecution(gAction, bpmnRequest, false);
         execution.setVariable("requestUri", "v7/serviceInstances/123/vnfs/1234/recreate");
         execution.setVariable("serviceInstanceId", "123");
         execution.setVariable("vnfId", "1234");
@@ -909,13 +865,8 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListVnfMacroReplaceTest() throws Exception {
         String gAction = "replaceInstance";
         String resource = "Vnf";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/Macro/VnfMacroReplace.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", false);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(MACRO_VNF_MACRO_REPLACE_JSON);
+        initExecution(gAction, bpmnRequest, false);
         execution.setVariable("requestUri", "v7/serviceInstances/123/vnfs/1234/replace");
         execution.setVariable("serviceInstanceId", "123");
         execution.setVariable("vnfId", "1234");
@@ -982,15 +933,9 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListNetworkCollectionMacroCreate() throws Exception {
         String gAction = "createInstance";
         String resource = "NetworkCollection";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest = new String(
-                Files.readAllBytes(Paths.get("src/test/resources/__files/Macro/CreateNetworkCollection.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", false);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(MACRO_CREATE_NETWORK_COLLECTION_JSON);
+        initExecution(gAction, bpmnRequest, false);
         execution.setVariable("requestUri", "v6/serviceInstances/123/networkCollections/123");
-
 
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
         List<OrchestrationFlow> orchFlows = createFlowList("CreateNetworkCollectionBB", "AssignNetworkBB",
@@ -1019,13 +964,8 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListNetworkCollectionMacroDelete() throws Exception {
         String gAction = "deleteInstance";
         String resource = "NetworkCollection";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest = new String(
-                Files.readAllBytes(Paths.get("src/test/resources/__files/Macro/CreateNetworkCollection.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", false);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(MACRO_CREATE_NETWORK_COLLECTION_JSON);
+        initExecution(gAction, bpmnRequest, false);
         execution.setVariable("requestUri", "v6/serviceInstances/123/networkCollections/123");
 
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
@@ -1054,16 +994,10 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListALaCarteVfModuleNoFabricCreateTest() throws Exception {
         String gAction = "createInstance";
         String resource = "VfModule";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", true);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(VF_MODULE_CREATE_WITH_FABRIC_JSON);
+        initExecution(gAction, bpmnRequest, true);
         execution.setVariable("requestUri",
                 "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules");
-
 
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
         List<OrchestrationFlow> orchFlows = createFlowList("AssignVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB",
@@ -1081,13 +1015,8 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListALaCarteVfModuleFabricCreateTest() throws Exception {
         String gAction = "createInstance";
         String resource = "VfModule";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", true);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(VF_MODULE_CREATE_WITH_FABRIC_JSON);
+        initExecution(gAction, bpmnRequest, true);
         execution.setVariable("requestUri",
                 "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules");
 
@@ -1140,13 +1069,8 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListALaCarteVfModuleNoVolumeGroupReplaceTest() throws Exception {
         String gAction = "replaceInstance";
         String resource = "VfModule";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", true);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(VF_MODULE_CREATE_WITH_FABRIC_JSON);
+        initExecution(gAction, bpmnRequest, true);
         execution.setVariable("requestUri",
                 "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules/1234");
 
@@ -1166,13 +1090,8 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListALaCarteVfModuleNoVolumeGroupReplaceRetainAssignmentsTest() throws Exception {
         String gAction = "replaceInstanceRetainAssignments";
         String resource = "VfModule";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", true);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(VF_MODULE_CREATE_WITH_FABRIC_JSON);
+        initExecution(gAction, bpmnRequest, true);
         execution.setVariable("requestUri",
                 "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules/1234");
 
@@ -1191,13 +1110,8 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListALaCarteVfModuleVolumeGroupToNoVolumeGroupReplaceTest() throws Exception {
         String gAction = "replaceInstance";
         String resource = "VfModule";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", true);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(VF_MODULE_CREATE_WITH_FABRIC_JSON);
+        initExecution(gAction, bpmnRequest, true);
         execution.setVariable("requestUri",
                 "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules/1234");
         execution.setVariable("vnfId", "b80b16a5-f80d-4ffa-91c8-bd47c7438a3d");
@@ -1224,13 +1138,8 @@ public class WorkflowActionTest extends BaseTaskTest {
             throws Exception {
         String gAction = "replaceInstanceRetainAssignments";
         String resource = "VfModule";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", true);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(VF_MODULE_CREATE_WITH_FABRIC_JSON);
+        initExecution(gAction, bpmnRequest, true);
         execution.setVariable("requestUri",
                 "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules/1234");
         execution.setVariable("vnfId", "b80b16a5-f80d-4ffa-91c8-bd47c7438a3d");
@@ -1257,13 +1166,8 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListALaCarteVfModuleKeepVolumeGroupReplaceTest() throws Exception {
         String gAction = "replaceInstance";
         String resource = "VfModule";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", true);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(VF_MODULE_CREATE_WITH_FABRIC_JSON);
+        initExecution(gAction, bpmnRequest, true);
         execution.setVariable("requestUri",
                 "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules/1234");
         execution.setVariable("vnfId", "b80b16a5-f80d-4ffa-91c8-bd47c7438a3d");
@@ -1298,13 +1202,8 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListALaCarteVfModuleWithFabricKeepVolumeGroupReplaceTest() throws Exception {
         String gAction = "replaceInstance";
         String resource = "VfModule";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", true);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(VF_MODULE_CREATE_WITH_FABRIC_JSON);
+        initExecution(gAction, bpmnRequest, true);
         execution.setVariable("requestUri",
                 "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules/1234");
         execution.setVariable("vnfId", "b80b16a5-f80d-4ffa-91c8-bd47c7438a3d");
@@ -1361,13 +1260,8 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListALaCarteVfModuleKeepVolumeGroupReplaceRetainAssignmentsTest() throws Exception {
         String gAction = "replaceInstanceRetainAssignments";
         String resource = "VfModule";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", true);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(VF_MODULE_CREATE_WITH_FABRIC_JSON);
+        initExecution(gAction, bpmnRequest, true);
         execution.setVariable("requestUri",
                 "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules/1234");
         execution.setVariable("vnfId", "b80b16a5-f80d-4ffa-91c8-bd47c7438a3d");
@@ -1401,13 +1295,8 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListALaCarteVfModuleNoVolumeGroupToVolumeGroupReplaceTest() throws Exception {
         String gAction = "replaceInstance";
         String resource = "VfModule";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", true);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(VF_MODULE_CREATE_WITH_FABRIC_JSON);
+        initExecution(gAction, bpmnRequest, true);
         execution.setVariable("requestUri",
                 "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules/1234");
         execution.setVariable("vnfId", "b80b16a5-f80d-4ffa-91c8-bd47c7438a3d");
@@ -1438,13 +1327,8 @@ public class WorkflowActionTest extends BaseTaskTest {
             throws Exception {
         String gAction = "replaceInstanceRetainAssignments";
         String resource = "VfModule";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", true);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(VF_MODULE_CREATE_WITH_FABRIC_JSON);
+        initExecution(gAction, bpmnRequest, true);
         execution.setVariable("requestUri",
                 "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules/1234");
         execution.setVariable("vnfId", "b80b16a5-f80d-4ffa-91c8-bd47c7438a3d");
@@ -1474,13 +1358,8 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListALaCarteVfModuleRebuildVolumeGroupReplaceTest() throws Exception {
         String gAction = "replaceInstance";
         String resource = "VfModule";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest = new String(
-                Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleReplaceRebuildVolumeGroups.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", true);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(VF_MODULE_REPLACE_REBUILD_VOLUME_GROUPS_JSON);
+        initExecution(gAction, bpmnRequest, true);
         execution.setVariable("requestUri",
                 "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules/1234");
         execution.setVariable("vnfId", "b80b16a5-f80d-4ffa-91c8-bd47c7438a3d");
@@ -1516,13 +1395,8 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListALaCarteVfModuleRebuildVolumeGroupReplaceRetainAssignmentsTest() throws Exception {
         String gAction = "replaceInstanceRetainAssignments";
         String resource = "VfModule";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest = new String(
-                Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleReplaceRebuildVolumeGroups.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", true);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(VF_MODULE_REPLACE_REBUILD_VOLUME_GROUPS_JSON);
+        initExecution(gAction, bpmnRequest, true);
         execution.setVariable("requestUri",
                 "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules/1234");
         execution.setVariable("vnfId", "b80b16a5-f80d-4ffa-91c8-bd47c7438a3d");
@@ -1559,13 +1433,8 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListALaCarteVfModuleFabricDeleteTest() throws Exception {
         String gAction = "deleteInstance";
         String resource = "VfModule";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", true);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(VF_MODULE_CREATE_WITH_FABRIC_JSON);
+        initExecution(gAction, bpmnRequest, true);
         execution.setVariable("requestUri",
                 "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules");
 
@@ -1612,10 +1481,9 @@ public class WorkflowActionTest extends BaseTaskTest {
         String gAction = "deleteInstance";
         ObjectMapper mapper = new ObjectMapper();
         WorkflowType resourceType = WorkflowType.VFMODULE;
+        String bpmnRequest = readBpmnRequestFromFile(VF_MODULE_CREATE_WITH_FABRIC_JSON);
         execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
         execution.setVariable("requestAction", gAction);
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
         execution.setVariable("bpmnRequest", bpmnRequest);
         execution.setVariable("vnfId", "1234");
         execution.setVariable("vfModuleId", "vfModuleId1234");
@@ -1736,13 +1604,8 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListALaCarteVfModuleNoFabricDeleteTest() throws Exception {
         String gAction = "deleteInstance";
         String resource = "VfModule";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", true);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(VF_MODULE_CREATE_WITH_FABRIC_JSON);
+        initExecution(gAction, bpmnRequest, true);
         execution.setVariable("requestUri",
                 "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules");
 
@@ -1777,13 +1640,8 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListMacroResumeTest() throws Exception {
         String gAction = "createInstance";
         String resource = "Service";
-        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-        execution.setVariable("requestAction", gAction);
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/Macro/ServiceMacroAssign.json")));
-        execution.setVariable("bpmnRequest", bpmnRequest);
-        execution.setVariable("aLaCarte", false);
-        execution.setVariable("apiVersion", "7");
+        String bpmnRequest = readBpmnRequestFromFile(MACRO_ASSIGN_JSON);
+        initExecution(gAction, bpmnRequest, false);
         execution.setVariable("requestUri", "v6/serviceInstances/123");
 
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
@@ -3017,8 +2875,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         doReturn(service).when(catalogDbClient).getServiceByID("3c40d244-808e-42ca-b09a-256d83d19d0a");
         doReturn(collectionResourceCustomization).when(catalogDbClient)
                 .getNetworkCollectionResourceCustomizationByID("123");
-        String bpmnRequest = new String(Files
-                .readAllBytes(Paths.get("src/test/resources/__files/Macro/ServiceMacroActivateDeleteUnassign.json")));
+        String bpmnRequest = readBpmnRequestFromFile(MACRO_ACTIVATE_DELETE_UNASSIGN_JSON);
         ObjectMapper mapper = new ObjectMapper();
         ServiceInstancesRequest sIRequest = mapper.readValue(bpmnRequest, ServiceInstancesRequest.class);
         List<Resource> resourceCounter = new ArrayList<>();
@@ -3193,5 +3050,17 @@ public class WorkflowActionTest extends BaseTaskTest {
         for (int i = 0; i < ebbs.size(); i++) {
             assertEquals(ebbs.get(i).getBuildingBlock().getBpmnFlowName(), flowNames[i]);
         }
+    }
+
+    private void initExecution(String gAction, String bpmnRequest, boolean isAlaCarte) {
+        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
+        execution.setVariable("requestAction", gAction);
+        execution.setVariable("bpmnRequest", bpmnRequest);
+        execution.setVariable("aLaCarte", isAlaCarte);
+        execution.setVariable("apiVersion", "7");
+    }
+
+    private String readBpmnRequestFromFile(String fileName) throws IOException {
+        return new String(Files.readAllBytes(Paths.get("src/test/resources/__files/" + fileName)));
     }
 }

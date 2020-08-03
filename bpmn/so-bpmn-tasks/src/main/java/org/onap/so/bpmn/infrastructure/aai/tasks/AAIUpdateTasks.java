@@ -90,6 +90,13 @@ public class AAIUpdateTasks {
     }
 
     /**
+     * BPMN access method to update status of Pnf to Inventoried in AAI
+     */
+    public void updateOrchestrationStatusInventoriedPnf(BuildingBlockExecution execution) {
+        updateOrchestrationStatusForPnf(execution, OrchestrationStatus.INVENTORIED);
+    }
+
+    /**
      * BPMN access method to update status of Pnf to Active in AAI
      */
     public void updateOrchestrationStatusActivePnf(BuildingBlockExecution execution) {

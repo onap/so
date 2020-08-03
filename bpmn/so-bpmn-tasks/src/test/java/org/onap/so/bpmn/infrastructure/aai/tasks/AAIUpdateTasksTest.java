@@ -161,6 +161,26 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
+    public void updateOrchestrationStatusInventoriedPnfTest() throws Exception {
+        Pnf pnf = preparePnfAndExtractForPnf();
+        doNothing().when(aaiPnfResources).updateOrchestrationStatusPnf(pnf, OrchestrationStatus.INVENTORIED);
+
+        aaiUpdateTasks.updateOrchestrationStatusInventoriedPnf(execution);
+
+        verify(aaiPnfResources, times(1)).updateOrchestrationStatusPnf(pnf, OrchestrationStatus.INVENTORIED);
+    }
+
+    @Test
+    public void updateOrchestrationStatusInventoriedPnfExceptionTest() throws Exception {
+        Pnf pnf = preparePnfAndExtractForPnf();
+        doThrow(RuntimeException.class).when(aaiPnfResources).updateOrchestrationStatusPnf(pnf,
+                OrchestrationStatus.INVENTORIED);
+
+        expectedException.expect(BpmnError.class);
+        aaiUpdateTasks.updateOrchestrationStatusInventoriedPnf(execution);
+    }
+
+    @Test
     public void updateOrchestrationStatusActivePnfTest() throws Exception {
         Pnf pnf = preparePnfAndExtractForPnf();
         doNothing().when(aaiPnfResources).updateOrchestrationStatusPnf(pnf, OrchestrationStatus.ACTIVE);

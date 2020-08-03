@@ -69,6 +69,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.LineOfBusiness;
@@ -1812,6 +1813,29 @@ public class BBInputSetupTest {
         verify(SPY_bbInputSetup, times(1)).mapPlatform(any(), eq(expected));
         verify(SPY_bbInputSetup, times(1)).mapLineOfBusiness(any(), eq(expected));
         verify(SPY_bbInputSetup, times(1)).mapVolumeGroups(any());
+    }
+
+    @Test
+    public void testMapPnfs() throws JsonProcessingException {
+        org.onap.aai.domain.yang.Pnf expectedAAI = new org.onap.aai.domain.yang.Pnf();
+        org.onap.aai.domain.yang.RelationshipList relationshipList = new org.onap.aai.domain.yang.RelationshipList();
+        org.onap.aai.domain.yang.Relationship relationship = new org.onap.aai.domain.yang.Relationship();
+        relationshipList.getRelationship().add(relationship);
+        expectedAAI.setRelationshipList(relationshipList);
+
+        Pnf expected = new Pnf();
+        AAIResourceUri aaiResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.PNF, "pnfId");
+        AAIResultWrapper pnfWrapper =
+                new AAIResultWrapper(new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
+
+        doReturn(pnfWrapper).when(SPY_bbInputSetupUtils).getAAIResourceDepthOne(aaiResourceUri);
+        doReturn(expected).when(bbInputSetupMapperLayer).mapAAIPnfIntoPnf(isA(org.onap.aai.domain.yang.Pnf.class));
+
+        List<Pnf> pnfs = new ArrayList<>();
+
+        SPY_bbInputSetup.mapPnfs(Arrays.asList(aaiResourceUri), pnfs);
+
+        assertEquals(expected, pnfs.get(0));
     }
 
     @Test
