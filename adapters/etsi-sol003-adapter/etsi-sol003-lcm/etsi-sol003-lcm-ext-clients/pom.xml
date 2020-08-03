@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.onap.so.adapters</groupId>
     <artifactId>etsi-sol003-lcm</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.7.1-SNAPSHOT</version>
   </parent>
   <artifactId>etsi-sol003-lcm-ext-clients</artifactId>
   <name>ETSI SOL003 Life Cycle Management Adapter Ext Clients</name>

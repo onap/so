@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.onap.so.monitoring</groupId>
     <artifactId>so-monitoring</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.7.1-SNAPSHOT</version>
   </parent>
   <artifactId>so-monitoring-service</artifactId>
   <name>${project.artifactId}</name>
