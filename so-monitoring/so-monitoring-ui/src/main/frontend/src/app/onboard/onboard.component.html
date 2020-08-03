@@ -1,0 +1,139 @@
+
+<base href="/">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" ng-href="./upload-page.component.scss">
+<div class="completeForm">
+   <div>
+     <h3>Dynamic Deployment for BPMN</h3>
+   </div>
+  <div class="uploadwar onboard-box">
+    
+    
+    <!-- <div>
+      <mat-form-field>
+        <input type="checkbox" (change)="checkDB()" name="dbCheck"/>
+        <label> Save to DB</label><br>
+      </mat-form-field>
+    </div> -->
+   
+    <div class="container width-40p">
+      <div class="container-home">
+       
+
+      </div>
+      <form novalidate
+          [formGroup]="myform"
+          (ngSubmit)="onSubmit()">
+
+          <div>
+            <div>
+              <label style="font-weight: bold">BPMN file: </label>
+              <input class="upload-box" type="file" class="form-control pad-top-not5"
+              formControlName="warFile"
+               (change)="beforeUpload($event)"
+               [(ngModel)]="fileName" placeholder="Upload-BPMN-war" required><br>
+            </div>
+          
+            <div class="pad-top">
+              <input type="checkbox"  formControlName="savetoDB" (change)="checkDB()"  [(ngModel)]="isSavedtoDB" name="dbCheck"/>
+              <label> Save to DB</label><br>
+            </div>
+          </div>
+          <!--save to db form-->
+         <div *ngIf="isChecked">
+        <div class="form-group"
+             [ngClass]="{
+            'has-danger': modelName.invalid && (modelName.dirty || modelName.touched),
+            'has-success': modelName.valid && (modelName.dirty || modelName.touched)
+          }">
+          <label>Model Name</label>
+          <input type="text"
+                 class="form-control"
+                 formControlName="modelName"
+                 required>
+          <div class="form-control-feedback"
+               *ngIf="modelName.errors && (modelName.dirty || modelName.touched)">
+            <p *ngIf="modelName.errors.required">Model Name is required</p>
+          </div>
+
+        </div>
+    
+        <div class="form-group"
+             [ngClass]="{
+            'has-danger': modelVersionId.invalid && (modelVersionId.dirty || modelVersionId.touched),
+            'has-success': modelVersionId.valid && (modelVersionId.dirty || modelVersionId.touched)
+          }">
+          <label>ModelVersionId</label>
+          <input type="text"
+                 class="form-control"
+                 formControlName="modelVersionId"
+                 required>
+          <div class="form-control-feedback"
+               *ngIf="modelVersionId.errors && (modelVersionId.dirty || modelVersionId.touched)">
+            <p *ngIf="modelVersionId.errors.required">ModelVersionId is required</p>
+          </div>
+        </div>
+    
+    
+    
+      <div class="form-group"
+           [ngClass]="{
+            'has-danger': operation.invalid && (operation.dirty || operation.touched),
+            'has-success': operation.valid && (operation.dirty || operation.touched)
+       }">
+        <label>Operation</label>
+        <input type="operation"
+               class="form-control"
+               formControlName="operation"
+               required>
+        <div class="form-control-feedback"
+             *ngIf="operation.errors && (operation.dirty || operation.touched)">
+          <p *ngIf="operation.errors.required">operation is required</p>
+        </div>
+    
+    
+    
+      </div>
+    
+      <div class="form-group"
+           [ngClass]="{
+            'has-danger': orchestrationFlow.invalid && (orchestrationFlow.dirty || orchestrationFlow.touched),
+            'has-success': orchestrationFlow.valid && (orchestrationFlow.dirty || orchestrationFlow.touched)
+       }">
+        <label>OrchestrationFlow</label>
+        <input type="orchestrationFlow"
+               class="form-control"
+               formControlName="orchestrationFlow"
+               required>
+        <div class="form-control-feedback"
+             *ngIf="orchestrationFlow.errors && (orchestrationFlow.dirty || orchestrationFlow.touched)">
+          <p *ngIf="orchestrationFlow.errors.required">orchestrationFlow is required</p>
+        </div>
+      </div>
+    
+ 
+      <div class="form-group"
+           [ngClass]="{
+            'has-danger': modelType.invalid && (modelType.dirty || modelType.touched),
+            'has-success': modelType.valid && (modelType.dirty || modelType.touched)
+          }">
+        <label>ModelType</label>
+        <select class="form-control"
+                formControlName="modelType">
+          <option value="">Please select a Type</option>
+          <option *ngFor="let type of modelTypes"
+                  [value]="type">{{type}}
+          </option>
+        </select>
+      </div>
+    </div>
+      <button type="submit"
+              class="btn btn-primary">Submit
+      </button>
+    
+      <!-- <pre>{{myform.value | json}}</pre> -->
+    </form>
+    </div>`
+</div>
+<ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="large" color="#00285f" type="ball-spin-clockwise-fade-rotating"></ngx-spinner>
+<router-outlet></router-outlet>

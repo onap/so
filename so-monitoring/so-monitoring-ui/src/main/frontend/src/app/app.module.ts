@@ -23,6 +23,9 @@ SPDX-License-Identifier: Apache-2.0
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
+import { FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
@@ -37,6 +40,10 @@ import { MatFormFieldModule, MatInputModule, MatTableModule, MatTabsModule, MatS
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { RouterModule, Routes } from '@angular/router';
 import { APP_BASE_HREF } from '@angular/common';
+import { OnboardComponent } from './onboard/onboard.component';
+
+
+
 
 @NgModule({
   declarations: [
@@ -44,13 +51,15 @@ import { APP_BASE_HREF } from '@angular/common';
     SidebarComponent,
     TopbarComponent,
     HomeComponent,
-    DetailsComponent
+    DetailsComponent,
+    OnboardComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
+    ReactiveFormsModule,
     MatTableModule,
     MatTabsModule,
     BrowserAnimationsModule,
@@ -66,7 +75,7 @@ import { APP_BASE_HREF } from '@angular/common';
     MatSortModule,
     MatIconModule,
     RouterModule.forRoot([]),
-    ReactiveFormsModule
+   
   ],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA

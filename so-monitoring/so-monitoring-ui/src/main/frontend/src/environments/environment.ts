@@ -24,5 +24,8 @@ SPDX-License-Identifier: Apache-2.0
 export const environment = {
   production: false,
 
-  soMonitoringBackendURL: 'http://so-monitoring:30224/so/monitoring/'
+  soMonitoringBackendURL: 'http://159.138.244.79:30227/so/monitoring/',
+  
+  soHotboardingBackendURL: 'http://159.138.244.79:30227/so/monitoring/'
+
 };

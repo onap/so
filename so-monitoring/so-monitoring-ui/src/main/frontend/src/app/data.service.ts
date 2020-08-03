@@ -21,7 +21,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse , HttpHeaders } from '@angular/common/http';
 import { BpmnInfraRequest } from './model/bpmnInfraRequest.model';
 import { catchError } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -32,11 +32,19 @@ import { ProcessInstanceDetail } from './model/processInstance.model';
 import { HttpErrorHandlerService } from './http-error-handler.service';
 import { ActivityInstance } from './model/activityInstance.model';
 
+let headers = new HttpHeaders({
+  'Content-Type': 'application/json'
+});
+let options = {
+  headers: headers
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
+
+  
 
   constructor(private http: HttpClient, private httpErrorHandlerService: HttpErrorHandlerService) { }
 
@@ -91,5 +99,25 @@ export class DataService {
     return this.http.get(url).pipe(
       catchError(this.httpErrorHandlerService.handleError("GET", url))
     );
+  }
+
+  // HTTP POST to return Variable Instance using ProcessInstanceID
+  onboardBPMNInfra(formData: any, saveToDB :boolean): Observable<Object> {
+    
+    var url = environment.soHotboardingBackendURL + 'workflowPackages/onboard';
+    // var url = "http://159.138.244.79:30880/mso/hotmanagement/workflowPackages/onboard";
+    return this.http.post<any>(url, formData , options)
+      .pipe(
+        catchError(this.httpErrorHandlerService.handleError("POST", url))
+      );
+  }
+
+  saveServiceRecipe(data: any): Observable<Object> {
+    var url = environment.soHotboardingBackendURL + 'serviceRecipes';
+    // var url = "http://159.138.244.79:30880/mso/hotmanagement/serviceRecipes";
+    return this.http.post<any>(url, data , options)
+      .pipe(
+        catchError(this.httpErrorHandlerService.handleError("POST", url))
+      );
   }
 }
