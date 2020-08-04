@@ -20,9 +20,7 @@
 
 package org.onap.so.client;
 
-import java.io.FileInputStream;
 import java.net.URI;
-import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
@@ -33,9 +31,7 @@ import javax.ws.rs.client.ClientBuilder;
 public abstract class RestClientSSL extends RestClient {
 
     private static final String TRUE = "true";
-    private static final String SSL_KEY_STORE_KEY = "javax.net.ssl.keyStore";
     private static final String MSO_LOAD_SSL_CLIENT_KEYSTORE_KEY = "mso.load.ssl.client.keystore";
-
 
     protected RestClientSSL(RestProperties props, Optional<URI> path) {
         super(props, path);
@@ -52,9 +48,9 @@ public abstract class RestClientSSL extends RestClient {
         try {
             String loadSSLKeyStore = System.getProperty(RestClientSSL.MSO_LOAD_SSL_CLIENT_KEYSTORE_KEY);
             if (loadSSLKeyStore != null && loadSSLKeyStore.equalsIgnoreCase(TRUE)) {
-                KeyStore ks = getKeyStore();
+                KeyStore ks = KeyStoreLoader.getKeyStore();
                 if (ks != null) {
-                    client = ClientBuilder.newBuilder().keyStore(ks, getSSlKeyStorePassword()).build();
+                    client = ClientBuilder.newBuilder().keyStore(ks, KeyStoreLoader.getSSlKeyStorePassword()).build();
                     logger.info("RestClientSSL not using default SSL context - setting keystore here.");
                     return client;
                 }
@@ -66,24 +62,5 @@ public abstract class RestClientSSL extends RestClient {
             throw new RuntimeException(e);
         }
         return client;
-    }
-
-    private KeyStore getKeyStore() {
-        KeyStore ks = null;
-        char[] password = getSSlKeyStorePassword().toCharArray();
-        try (FileInputStream fis = new FileInputStream(
-                Paths.get(System.getProperty(RestClientSSL.SSL_KEY_STORE_KEY)).normalize().toString())) {
-            ks = KeyStore.getInstance(KeyStore.getDefaultType());
-
-            ks.load(fis, password);
-        } catch (Exception e) {
-            return null;
-        }
-
-        return ks;
-    }
-
-    private String getSSlKeyStorePassword() {
-        return System.getProperty("javax.net.ssl.keyStorePassword");
     }
 }

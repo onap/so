@@ -80,4 +80,14 @@ public class CDSPropertiesImpl implements CDSProperties {
     public int getTimeout() {
         return Integer.parseInt(Objects.requireNonNull(UrnPropertiesReader.getVariable(TIMEOUT)));
     }
+
+    @Override
+    public boolean getUseSSL() {
+        return false;
+    }
+
+    @Override
+    public boolean getUseBasicAuth() {
+        return true;
+    }
 }
