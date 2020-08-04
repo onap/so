@@ -140,6 +140,30 @@
     },
     {
       "key": {
+        "uuid": "558153a6_96ac762a",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/ServiceLevelPrepareImpl.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-08-04T17:00:01Z",
+      "side": 1,
+      "message": "Using this variable in my test class so it was made public.",
+      "parentUuid": "c39228ca_446a2511",
+      "range": {
+        "startLine": 46,
+        "startChar": 4,
+        "endLine": 46,
+        "endChar": 10
+      },
+      "revId": "92890179290ddf9e38bba4b53f75d1593a11c9ed",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d6385fcc_7a26c8b1",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/ServiceLevelPrepareImpl.java",
         "patchSetId": 12
@@ -197,6 +221,30 @@
       "writtenOn": "2020-08-04T14:51:59Z",
       "side": 1,
       "message": "throw exception here",
+      "range": {
+        "startLine": 86,
+        "startChar": 16,
+        "endLine": 86,
+        "endChar": 28
+      },
+      "revId": "92890179290ddf9e38bba4b53f75d1593a11c9ed",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ef2a95d3_2ad9e999",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/ServiceLevelPrepareImpl.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-08-04T17:00:01Z",
+      "side": 1,
+      "message": "As we are invoking exceptionBuilder rather than throwing exception directly, compiler will force to return something outside switch block, even after throwing exception in default case. But logically that would be an unreachable code. To avoid this we have to introduce local variable like before and return it at the end of the method. Can i follow the old approach again?\n\n        String wflName \u003d null;\n        switch(scope.toLowerCase()){\n            case \"pnf\":\n                wflName \u003d  GENERIC_PNF_HEALTH_CHECK_WORKFLOW;\n                break;\n            case \"vnf\":\n                wflName \u003d  GENERIC_VNF_HEALTH_CHECK_WORKFLOW;\n                break;\n            default:\n                exceptionBuilder.buildAndThrowWorkflowException(execution, ERROR_CODE,\n                        \"No valid health check work flow retrieved for the scope: \" + scope);\n        }\n        return wflName;",
+      "parentUuid": "6fa1f7d8_5fdb32c7",
       "range": {
         "startLine": 86,
         "startChar": 16,
