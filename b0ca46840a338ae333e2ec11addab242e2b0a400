@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3df6fb16_3093d7ec",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowAsyncResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2020-08-04T10:41:45Z",
+      "side": 1,
+      "message": "This method is not needed, you can use the workflowAsync response bpmn and pull out the response from it.",
+      "revId": "b0ca46840a338ae333e2ec11addab242e2b0a400",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
