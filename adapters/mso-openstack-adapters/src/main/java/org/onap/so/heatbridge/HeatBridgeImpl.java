@@ -552,6 +552,20 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             Optional<Relationships> relationships = resultWrapper.getRelationships();
             logger.debug("VfModule contains relationships in AAI: {}", relationships.isPresent());
             if (relationships.isPresent()) {
+
+                List<AAIResourceUri> l3NetworkUris = relationships.get().getRelatedUris(AAIObjectType.L3_NETWORK);
+                logger.debug("L3Network contains {} relationships in AAI", l3NetworkUris.size());
+
+                if (!l3NetworkUris.isEmpty()) {
+                    for (AAIResourceUri l3NetworkUri : l3NetworkUris) {
+                        if (env.getProperty("heatBridgeDryrun", Boolean.class, true)) {
+                            logger.debug("Would delete L3Network: {}", l3NetworkUri.build().toString());
+                        } else {
+                            resourcesClient.delete(l3NetworkUri);
+                        }
+                    }
+                }
+
                 List<AAIResourceUri> vserverUris = relationships.get().getRelatedUris(AAIObjectType.VSERVER);
                 logger.debug("VServer contains {} relationships in AAI", vserverUris.size());
                 createTransactionToDeleteSriovPfFromPserver(vserverUris);
