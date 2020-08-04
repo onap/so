@@ -49,11 +49,15 @@ import org.apache.commons.validator.routines.InetAddressValidator;
 import org.onap.aai.domain.yang.Flavor;
 import org.onap.aai.domain.yang.Image;
 import org.onap.aai.domain.yang.L3InterfaceIpv4AddressList;
+import org.onap.aai.domain.yang.L3Network;
 import org.onap.aai.domain.yang.LInterface;
 import org.onap.aai.domain.yang.PInterface;
 import org.onap.aai.domain.yang.Pserver;
+import org.onap.aai.domain.yang.Relationship;
+import org.onap.aai.domain.yang.RelationshipList;
 import org.onap.aai.domain.yang.SriovPf;
 import org.onap.aai.domain.yang.SriovPfs;
+import org.onap.aai.domain.yang.Subnets;
 import org.onap.aai.domain.yang.SriovVf;
 import org.onap.aai.domain.yang.SriovVfs;
 import org.onap.aai.domain.yang.VfModule;
@@ -198,6 +202,16 @@ public class HeatBridgeImpl implements HeatBridgeApi {
     }
 
     @Override
+    public List<Network> getAllOpenstackProviderNetworks(final List<Resource> stackResources) {
+        Objects.requireNonNull(osClient, ERR_MSG_NULL_OS_CLIENT);
+        // Filter Openstack Compute resources
+        List<String> providerNetworkIds =
+                extractStackResourceIdsByResourceType(stackResources, HeatBridgeConstants.OS_NEUTRON_PROVIDERNET);
+        return providerNetworkIds.stream().map(providerNetworkId -> osClient.getNetworkById(providerNetworkId))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<org.openstack4j.model.compute.Image> extractOpenstackImagesFromServers(final List<Server> servers) {
         Objects.requireNonNull(osClient, ERR_MSG_NULL_OS_CLIENT);
         return servers.stream().map(Server::getImage)
@@ -209,6 +223,27 @@ public class HeatBridgeImpl implements HeatBridgeApi {
         Objects.requireNonNull(osClient, ERR_MSG_NULL_OS_CLIENT);
         return servers.stream().map(Server::getFlavor)
                 .filter(distinctByProperty(org.openstack4j.model.compute.Flavor::getId)).collect(Collectors.toList());
+    }
+
+    public void buildAddNetworksToAaiAction(final String genericVnfId, final String vfModuleId,
+            List<Network> networks) {
+        networks.forEach(network -> {
+            L3Network l3Network = aaiHelper.buildNetwork(network);
+            if (l3Network != null) {
+                l3Network.setSubnets(buildSunets(network));
+
+                RelationshipList relationshipList = new RelationshipList();
+                List<Relationship> relationships = relationshipList.getRelationship();
+
+                relationships.add(aaiHelper.getRelationshipToVfModule(genericVnfId, vfModuleId));
+                relationships.add(aaiHelper.getRelationshipToTenant(cloudOwner, cloudRegionId, tenantId));
+
+                l3Network.setRelationshipList(relationshipList);
+                transaction.createIfNotExists(
+                        AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, l3Network.getNetworkId()),
+                        Optional.of(l3Network));
+            }
+        });
     }
 
     @Override
@@ -336,6 +371,20 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             }
         }
         return pserverMap;
+    }
+
+    private Subnets buildSunets(Network network) {
+        Subnets aaiSubnets = new Subnets();
+        List<String> subnetIds = network.getSubnets();
+
+        subnetIds.forEach(subnetId -> {
+            Subnet subnet = osClient.getSubnetById(subnetId);
+            org.onap.aai.domain.yang.Subnet aaiSubnet = aaiHelper.buildSubnet(subnet);
+            if (aaiSubnet != null) {
+                aaiSubnets.getSubnet().add(aaiSubnet);
+            }
+        });
+        return aaiSubnets;
     }
 
     private void createPServerIfNotExists(Map<String, Pserver> serverHostnames) {
