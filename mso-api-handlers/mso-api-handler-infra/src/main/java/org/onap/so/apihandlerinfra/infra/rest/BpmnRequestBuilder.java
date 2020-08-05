@@ -38,6 +38,7 @@ import org.onap.so.apihandlerinfra.infra.rest.exception.CloudConfigurationNotFou
 import org.onap.so.constants.Status;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
+import org.onap.so.logger.HttpHeadersConstants;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.ModelType;
@@ -436,7 +437,7 @@ public class BpmnRequestBuilder {
         RequestInfo requestInfo = new RequestInfo();
         requestInfo.setSuppressRollback(false);
         requestInfo.setSource(MDC.get(ONAPLogConstants.MDCs.PARTNER_NAME));
-        requestInfo.setRequestorId(MDC.get(ONAPLogConstants.MDCs.PARTNER_NAME));
+        requestInfo.setRequestorId(MDC.get(HttpHeadersConstants.REQUESTOR_ID));
         return requestInfo;
     }
 
