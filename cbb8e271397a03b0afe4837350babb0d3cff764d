@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b6548903_9c7b2aeb",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/bpmn/infrastructure/process/ServiceLevelUpgradeTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2020-08-05T10:13:57Z",
+      "side": 1,
+      "message": "Please add the copyright info",
+      "revId": "cbb8e271397a03b0afe4837350babb0d3cff764d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
