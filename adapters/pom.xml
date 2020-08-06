@@ -20,6 +20,7 @@
     <module>mso-requests-db-adapter</module>
     <module>mso-catalog-db-adapter</module>
     <module>mso-vfc-adapter</module>
+    <module>mso-cnf-adapter</module>
     <module>mso-openstack-adapters</module>
     <module>etsi-sol003-adapter</module>
     <module>mso-nssmf-adapter</module>

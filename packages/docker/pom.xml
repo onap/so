@@ -102,6 +102,30 @@
                 </assembly>
               </build>
             </image>
+	     <image>
+              <name>${docker.image.prefix}/mso-cnf-adapter</name>
+              <build>
+                <cleanup>try</cleanup>
+                <dockerFile>docker-files/Dockerfile.mso-cnf-adapter</dockerFile>
+                <tags>
+                  <tag>${project.version}</tag>
+                  <tag>${project.version}-${maven.build.timestamp}</tag>
+                  <tag>${project.docker.latesttag.version}</tag>
+                </tags>
+                <assembly>
+                  <inline>
+                    <dependencySets>
+                      <dependencySet>
+                        <includes>
+                          <include>org.onap.so.adapters:mso-cnf-adapter</include>
+                        </includes>
+                        <outputFileNameMapping>app.jar</outputFileNameMapping>
+                      </dependencySet>
+                    </dependencySets>
+                  </inline>
+                </assembly>
+              </build>
+            </image>
             <image>
               <name>${docker.image.prefix}/catalog-db-adapter</name>
               <build>
@@ -421,7 +445,7 @@
               <goal>push</goal>
             </goals>
             <configuration>
-              <image>${docker.image.prefix}/catalog-db-adapter,${docker.image.prefix}/request-db-adapter,${docker.image.prefix}/sdnc-adapter,${docker.image.prefix}/openstack-adapter,${docker.image.prefix}/vfc-adapter,${docker.image.prefix}/sdc-controller,${docker.image.prefix}/bpmn-infra,${docker.image.prefix}/api-handler-infra,${docker.image.prefix}/so-monitoring,${docker.image.prefix}/so-simulator,${docker.image.prefix}/mso-nssmf-adapter</image>
+              <image>${docker.image.prefix}/catalog-db-adapter,${docker.image.prefix}/request-db-adapter,${docker.image.prefix}/sdnc-adapter,${docker.image.prefix}/openstack-adapter,${docker.image.prefix}/vfc-adapter,${docker.image.prefix}/sdc-controller,${docker.image.prefix}/bpmn-infra,${docker.image.prefix}/api-handler-infra,${docker.image.prefix}/so-monitoring,${docker.image.prefix}/so-simulator,${docker.image.prefix}/mso-nssmf-adapter,${docker.image.prefix}/mso-cnf-adapter</image>
             </configuration>
           </execution>
         </executions>
@@ -447,6 +471,11 @@
     <dependency>
       <groupId>org.onap.so.adapters</groupId>
       <artifactId>mso-catalog-db-adapter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.so.adapters</groupId>
+      <artifactId>mso-cnf-adapter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
