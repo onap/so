@@ -32,7 +32,6 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.apihandler.filters.ResponseUpdater;
 import org.onap.so.apihandlerinfra.Action;
@@ -43,12 +42,14 @@ import org.onap.so.apihandlerinfra.infra.rest.exception.WorkflowEngineConnection
 import org.onap.so.apihandlerinfra.infra.rest.handler.ServiceInstanceRestHandler;
 import org.onap.so.db.catalog.beans.Recipe;
 import org.onap.so.db.request.beans.InfraActiveRequests;
+import org.onap.so.logger.HttpHeadersConstants;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.onap.so.serviceinstancebeans.ServiceInstancesResponse;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -79,7 +80,7 @@ public class ServiceInstance {
             ValidateException {
 
         String requestId = requestHandler.getRequestId(requestContext);
-        String requestorId = "Unknown";
+        String requestorId = MDC.get(HttpHeadersConstants.REQUESTOR_ID);
         String source = MDC.get(ONAPLogConstants.MDCs.PARTNER_NAME);
         String requestURI = requestContext.getUriInfo().getAbsolutePath().toString();
         InfraActiveRequests currentRequest = requestHandler.createInfraActiveRequestForDelete(requestId,
