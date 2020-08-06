@@ -446,11 +446,6 @@
     </dependency>
     <dependency>
       <groupId>org.onap.so.adapters</groupId>
-      <artifactId>etsi-sol002-adapter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onap.so.adapters</groupId>
       <artifactId>mso-catalog-db-adapter</artifactId>
       <version>${project.version}</version>
     </dependency>
