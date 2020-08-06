@@ -222,7 +222,7 @@ public class ApplicationControllerClient {
         commonHeader.setOriginatorId(ORIGINATOR_ID);
         commonHeader.setRequestId(requestId == null ? UUID.randomUUID().toString() : requestId);
         commonHeader.setSubRequestId(UUID.randomUUID().toString());
-        commonHeader.setXOnapRequestorid(requestorId);
+        //commonHeader.setXOnapRequestorid(requestorId);
         Flags flags = new Flags();
         String flagsMode = "NORMAL";
         Mode mode = Mode.valueOf(flagsMode);
