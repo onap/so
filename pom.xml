@@ -242,6 +242,10 @@
           <compilerArgs>
             <arg>-parameters</arg>
           </compilerArgs>
+          <forceJavacCompilerUse>true</forceJavacCompilerUse>
+          <source>11</source>
+          <target>11</target>
+          <release>11</release>
         </configuration>
       </plugin>
       <plugin>
@@ -994,47 +998,6 @@
       <properties>
         <originalClassifier />
       </properties>
-    </profile>
-    <profile>
-      <id>java8</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.8.0</version>
-            <configuration>
-              <forceJavacCompilerUse>true</forceJavacCompilerUse>
-              <source>${java.version}</source>
-              <target>${java.version}</target>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-      <activation>
-        <property>
-          <name>m2e.version</name>
-        </property>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-    </profile>
-    <profile>
-      <id>java11</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.8.0</version>
-            <configuration>
-              <forceJavacCompilerUse>true</forceJavacCompilerUse>
-              <source>11</source>
-              <target>11</target>
-              <release>11</release>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
     </profile>
   </profiles>
 </project>
