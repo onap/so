@@ -1446,7 +1446,8 @@ public class WorkflowAction {
                 addBuildingBlockToExecuteBBList(flowsToExecute, resourceList, WorkflowType.VNF, orchFlow, requestId,
                         apiVersion, resourceId, requestAction, vnfType, workflowResourceIds, requestDetails, false,
                         false);
-            } else if (orchFlow.getFlowName().contains(PNF)) {
+            } else if (orchFlow.getFlowName().contains(PNF) || (orchFlow.getFlowName().contains(CONTROLLER)
+                    && (PNF).equalsIgnoreCase(orchFlow.getBpmnScope()))) {
                 addBuildingBlockToExecuteBBList(flowsToExecute, resourceList, WorkflowType.PNF, orchFlow, requestId,
                         apiVersion, resourceId, requestAction, vnfType, workflowResourceIds, requestDetails, false,
                         false);
