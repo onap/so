@@ -23,18 +23,24 @@ package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 import java.util.Optional;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
+import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.db.catalog.beans.BBNameSelectionReference;
+import org.onap.so.db.catalog.beans.PnfResourceCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import static org.onap.so.client.cds.PayloadConstants.PRC_BLUEPRINT_NAME;
+import static org.onap.so.client.cds.PayloadConstants.PRC_BLUEPRINT_VERSION;
+
 
 @Component
 public class ControllerExecution {
@@ -44,6 +50,8 @@ public class ControllerExecution {
     private static final String SCOPE = "scope";
     private static final String ACTION = "action";
     private static final String BBNAME = "bbName";
+    private static final String MSO_REQUEST_ID = "msoRequestId";
+
     @Autowired
     private ExceptionBuilder exceptionUtil;
     @Autowired
@@ -57,26 +65,43 @@ public class ControllerExecution {
      * @param execution - BuildingBlockExecution object
      */
     public void setControllerActorScopeAction(BuildingBlockExecution execution) {
-        try {
-            GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-            String modelUuid = genericVnf.getModelInfoGenericVnf().getModelCustomizationUuid();
-            VnfResourceCustomization vnfResourceCustomization =
-                    catalogDbClient.getVnfResourceCustomizationByModelCustomizationUUID(modelUuid);
 
-            // Fetching Controller Actor at VNF level if null then Controller Actor is set as "APPC"
-            String controllerActor = Optional.ofNullable(vnfResourceCustomization.getControllerActor()).orElse("APPC");
-            ExecuteBuildingBlock executeBuildingBlock = execution.getVariable(BUILDING_BLOCK);
-            BuildingBlock buildingBlock = executeBuildingBlock.getBuildingBlock();
-            String scope = Optional.ofNullable(buildingBlock.getBpmnScope()).orElseThrow(
-                    () -> new NullPointerException("BPMN Scope is NULL in the orchestration_flow_reference table "));
-            String action = Optional.ofNullable(buildingBlock.getBpmnAction()).orElseThrow(
-                    () -> new NullPointerException("BPMN Action is NULL in the orchestration_flow_reference table "));
+        ExecuteBuildingBlock executeBuildingBlock = execution.getVariable(BUILDING_BLOCK);
+        BuildingBlock buildingBlock = executeBuildingBlock.getBuildingBlock();
+
+        String scope = Optional.ofNullable(buildingBlock.getBpmnScope()).orElseThrow(
+                () -> new NullPointerException("BPMN Scope is NULL in the orchestration_flow_reference table "));
+        String action = Optional.ofNullable(buildingBlock.getBpmnAction()).orElseThrow(
+                () -> new NullPointerException("BPMN Action is NULL in the orchestration_flow_reference table "));
+        String controllerActor;
+
+        try {
+            if (String.valueOf(scope).equals("pnf")) {
+                Pnf pnf = getPnf(execution);
+                String pnfModelUUID = pnf.getModelInfoPnf().getModelCustomizationUuid();
+                PnfResourceCustomization pnfResourceCustomization =
+                        catalogDbClient.getPnfResourceCustomizationByModelCustomizationUUID(pnfModelUUID);
+
+                controllerActor = Optional.ofNullable(pnfResourceCustomization.getControllerActor()).orElse("APPC");
+                execution.setVariable(MSO_REQUEST_ID,
+                        execution.getGeneralBuildingBlock().getRequestContext().getMsoRequestId());
+                execution.setVariable(PRC_BLUEPRINT_VERSION, pnfResourceCustomization.getBlueprintVersion());
+                execution.setVariable(PRC_BLUEPRINT_NAME, pnfResourceCustomization.getBlueprintName());
+            } else {
+                GenericVnf genericVnf = getGenericVnf(execution);
+                String modelUuid = genericVnf.getModelInfoGenericVnf().getModelCustomizationUuid();
+                VnfResourceCustomization vnfResourceCustomization =
+                        catalogDbClient.getVnfResourceCustomizationByModelCustomizationUUID(modelUuid);
+
+                controllerActor = Optional.ofNullable(vnfResourceCustomization.getControllerActor()).orElse("APPC");
+            }
+
             execution.setVariable(SCOPE, scope);
             execution.setVariable(ACTION, action);
             execution.setVariable(CONTROLLER_ACTOR, controllerActor);
+
             logger.debug("Executing Controller Execution for ControllerActor: {}, Scope: {} , Action: {}",
                     controllerActor, scope, action);
-
         } catch (Exception ex) {
             logger.error("An exception occurred while fetching Controller Actor,Scope and Action ", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
@@ -105,5 +130,13 @@ public class ControllerExecution {
 
         }
 
+    }
+
+    private Pnf getPnf(BuildingBlockExecution buildingBlockExecution) throws BBObjectNotFoundException {
+        return extractPojosForBB.extractByKey(buildingBlockExecution, ResourceKey.PNF);
+    }
+
+    private GenericVnf getGenericVnf(BuildingBlockExecution buildingBlockExecution) throws BBObjectNotFoundException {
+        return extractPojosForBB.extractByKey(buildingBlockExecution, ResourceKey.GENERIC_VNF_ID);
     }
 }
