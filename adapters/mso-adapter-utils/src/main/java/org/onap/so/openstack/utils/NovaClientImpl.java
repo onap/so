@@ -37,7 +37,7 @@ import com.woorea.openstack.nova.model.Flavor;
 import com.woorea.openstack.nova.model.Flavors;
 import com.woorea.openstack.nova.model.HostAggregate;
 import com.woorea.openstack.nova.model.HostAggregates;
-import com.woorea.openstack.nova.model.Hypervisors;
+//import com.woorea.openstack.nova.model.Hypervisors;
 import com.woorea.openstack.nova.model.QuotaSet;
 import com.woorea.openstack.nova.model.Server;
 import com.woorea.openstack.nova.model.VolumeAttachment;
@@ -249,16 +249,16 @@ public class NovaClientImpl extends MsoCommonUtils {
         }
     }
 
-    public Hypervisors getHypervisorDetails(String cloudSiteId, String tenantId) throws NovaClientException {
-        Nova novaClient;
-        try {
-            novaClient = client.getNovaClient(cloudSiteId, tenantId);
-            OpenStackRequest<Hypervisors> request = novaClient.hypervisors().listDetail();
-            return executeAndRecordOpenstackRequest(request, false);
-        } catch (MsoException e) {
-            logger.error("Error building Nova Client", e);
-            throw new NovaClientException("Error building Nova Client", e);
-        }
-    }
+//    public Hypervisors getHypervisorDetails(String cloudSiteId, String tenantId) throws NovaClientException {
+//        Nova novaClient;
+//        try {
+//            novaClient = client.getNovaClient(cloudSiteId, tenantId);
+//            OpenStackRequest<Hypervisors> request = novaClient.hypervisors().listDetail();
+//            return executeAndRecordOpenstackRequest(request, false);
+//        } catch (MsoException e) {
+//            logger.error("Error building Nova Client", e);
+//            throw new NovaClientException("Error building Nova Client", e);
+//        }
+//    }
 
 }
