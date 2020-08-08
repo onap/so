@@ -57,7 +57,7 @@ How to Build docker images
 
 SO docker images are built using the "docker" maven profile.  
 
-During the build, the chef-repo and so-docker repositories are cloned from gerrit into the "so" directory structure.  Extra definitions are required in the build environment to make this happen.   You may need to adjust the definition of mso.chef.git.url.prefix to match the way you authenticate yourself when performing git clone.
+During the build, the chef-repo and so-docker repositories are cloned from gerrit into the "so" directory structure.  Extra definitions are required in the build environment to make this happen.   You may need to adjust the definition of mso.chef.git.url.prefix to match the way you authenticate yourself when performing git clone --depth 1.
 
 If you are behind a corporate firewall, you can specify proxy definitions for the constructed docker images.
 

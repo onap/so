@@ -439,7 +439,7 @@ The main goal of the El-Alto release was to improve documentation, UT improvemen
 -  [`SO-2354 <https://jira.onap.org/browse/SO-2354>`__\ ] - vCPE model_customization_id not found on create vfmodule
 -  [`SO-2351 <https://jira.onap.org/browse/SO-2351>`__\ ] - SO Distribution Error on Allotted Resource - duplicate primary
 -  [`SO-2349 <https://jira.onap.org/browse/SO-2349>`__\ ] - Exception in DMAAP Client when PNF_READY event arrives from PRH
--  [`SO-2337 <https://jira.onap.org/browse/SO-2337>`__\ ] - Git clone not working for CSIT filename too long
+-  [`SO-2337 <https://jira.onap.org/browse/SO-2337>`__\ ] - git clone --depth 1 not working for CSIT filename too long
 -  [`SO-2289 <https://jira.onap.org/browse/SO-2289>`__\ ] - CreateVcpeResCustService_simplified workflow used in PnP PNF registration workflow returns an exception in Dmaap listener
 -  [`SO-2229 <https://jira.onap.org/browse/SO-2229>`__\ ] - sdc adapter and openstack container in crash loopback
 -  [`SO-2228 <https://jira.onap.org/browse/SO-2228>`__\ ] - SDC Handler crash loopback
