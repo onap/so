@@ -12,7 +12,7 @@ RUN mkdir -p /app/config
 RUN mkdir -p /app/certificates
 RUN mkdir -p /app/logs
 RUN mkdir -p /app/ca-certificates
-RUN apk update && apk add apache2-utils -y
+RUN apk update && apk add apache2-utils 
 
 COPY maven/app.jar /app
 COPY configs/logging/logback-spring.xml /app
