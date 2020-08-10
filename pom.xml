@@ -52,7 +52,7 @@
     <sonar.cpd.exclusions>**/*</sonar.cpd.exclusions>
     <jacoco.version>0.8.5</jacoco.version>
     <org.apache.maven.user-settings />
-    <openstack.version>1.6.1-SNAPSHOT</openstack.version>
+    <openstack.version>1.6.1</openstack.version>
     <maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>
     <originalClassifier>original</originalClassifier>
     <docker.skip>true</docker.skip>
@@ -74,7 +74,7 @@
     <format.skipValidate>false</format.skipValidate>
     <format.skipExecute>true</format.skipExecute>
     <io.fabric8.version>0.33.0</io.fabric8.version>
-    <appc.client.version>1.8.0-SNAPSHOT</appc.client.version>
+    <appc.client.version>1.7.2</appc.client.version>
     <bowman.client.version>0.8.0</bowman.client.version>
     <aaf.cadi.version>2.1.15</aaf.cadi.version>
   </properties>
