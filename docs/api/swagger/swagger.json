@@ -2,11 +2,14 @@
   "swagger": "2.0",
   "info": {
     "version": "3.1.2",
-    "title": "SO Casablanca APIs"
+    "title": "SO Guilin APIs"
   },
   "tags": [
     {
       "name": "e2eServiceInstances"
+    },
+    {
+      "name": "3gppservices"
     },
     {
       "name": "globalhealthcheck"
@@ -284,6 +287,252 @@
         "responses": {
           "default": {
             "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/onap/so/infra/3gppservices/{version}/allocate": {
+      "post": {
+        "tags": [
+          "3gppservices"
+        ],
+        "summary": "Create a 3GPP Service Instance on a version provided",
+        "description": "",
+        "operationId": "allocate3gppService",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Allocate3gppService"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "pattern": "[vV][1]"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/3gppServiceResponse"
+            }
+          }
+        }
+      }
+    },
+    "/onap/so/infra/3gppservices/{version}/deAllocate": {
+      "delete": {
+        "tags": [
+          "3gppservices"
+        ],
+        "summary": "Terminate/Deallocate a 3GPP Service Instance on a version provided",
+        "description": "",
+        "operationId": "deallocate3gppService",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DeAllocate3gppService"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "pattern": "[vV][1]"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/3gppServiceResponse"
+            }
+          }
+        }
+      }
+    },
+    "/onap/so/infra/3gppservices/{version}/modify": {
+      "put": {
+        "tags": [
+          "3gppservices"
+        ],
+        "summary": "Modify a 3GPP Service Instance on a version provided",
+        "description": "",
+        "operationId": "modify3gppService",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Modify3gppService"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "pattern": "[vV][1]"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/3gppServiceResponse"
+            }
+          }
+        }
+      }
+    },
+    "/onap/so/infra/3gppservices/{version}/activate": {
+      "post": {
+        "tags": [
+          "3gppservices"
+        ],
+        "summary": "Activate a 3GPP Service Instance on a version provided",
+        "description": "",
+        "operationId": "activate3gppService",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/3gppServiceActivation"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "pattern": "[vV][1]"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/3gppServiceResponse"
+            }
+          }
+        }
+      }
+    },
+    "/onap/so/infra/3gppservices/{version}/deActivate": {
+      "post": {
+        "tags": [
+          "3gppservices"
+        ],
+        "summary": "Deactivate a 3GPP Service Instance on a version provided",
+        "description": "",
+        "operationId": "deactivate3gppService",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/3gppServiceActivation"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "pattern": "[vV][1]"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/3gppServiceResponse"
+            }
+          }
+        }
+      }
+    },
+    "/onap/so/infra/3gppservices/{version}/subnetCapabilityQuery": {
+      "get": {
+        "tags": [
+          "3gppservices"
+        ],
+        "summary": "Provides subnet capability based on subnet types",
+        "description": "",
+        "operationId": "querySubnetCapability",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/QuerySubnetCapability"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "pattern": "[vV][1]"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "successful operation with capabilities for the queried subnetTypes",
+            "schema": {
+              "type": "object"
+            }
           }
         }
       }
@@ -2295,6 +2544,162 @@
           "default": {
             "description": "successful operation"
           }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Allocate3gppService": {
+      "description": "This describes the request body for 3gpp service allocation",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Name of the service to allocate",
+          "type": "string"
+        },
+        "modelInvariantUuid": {
+          "description": "Model Invariant UUID corresponding to the service. For E.g :  NSST Model invariant uuid in case of NSSI creation",
+          "type": "string"
+        },
+        "modelUuid": {
+          "description": "Model UUID corresponding to the service. For E.g :  NSST Model uuid in case of NSSI creation",
+          "type": "string"
+        },
+        "globalSubscriberId": {
+          "type": "string"
+        },
+        "subscriptionServiceType": {
+          "description": "Service type for the subscription. For E.G :5G",
+          "type": "string"
+        },
+        "networkType": {
+          "description": "Network type. For E.G :AN/CN/TN",
+          "type": "string"
+        },
+        "additionalProperties": {
+          "description": "Map of additional properties required for service allocation",
+          "type": "object"
+        }
+      }
+    },
+    "DeAllocate3gppService": {
+      "description": "This describes the request body for 3gpp service Termination/Deallocation",
+      "type": "object",
+      "properties": {
+        "serviceInstanceID": {
+          "description": "ID of the service to terminate",
+          "type": "string"
+        },
+        "globalSubscriberId": {
+          "type": "string"
+        },
+        "subscriptionServiceType": {
+          "description": "Service type for the subscription. For E.G :5G",
+          "type": "string"
+        },
+        "networkType": {
+          "description": "Network type. For E.G :AN/CN/TN",
+          "type": "string"
+        },
+        "additionalProperties": {
+          "description": "Map of additional properties required for service deallocation",
+          "type": "object"
+        }
+      }
+    },
+    "Modify3gppService": {
+      "description": "This describes the request body for 3gpp service modification",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Name of the service to modify",
+          "type": "string"
+        },
+        "serviceInstanceID": {
+          "description": "ID of the service to modify",
+          "type": "string"
+        },
+        "globalSubscriberId": {
+          "type": "string"
+        },
+        "subscriptionServiceType": {
+          "description": "Service type for the subscription. For E.G :5G",
+          "type": "string"
+        },
+        "networkType": {
+          "description": "Network type. For E.G :AN/CN/TN",
+          "type": "string"
+        },
+        "additionalProperties": {
+          "description": "Map of additional properties required for service modification",
+          "type": "object"
+        }
+      }
+    },
+    "3gppServiceActivation": {
+      "description": "This describes the request body for 3gpp service activation/deactivation",
+      "type": "object",
+      "properties": {
+        "serviceInstanceID": {
+          "description": "ID of the service to be activated/deactivated",
+          "type": "string"
+        },
+        "globalSubscriberId": {
+          "type": "string"
+        },
+        "subscriptionServiceType": {
+          "description": "Service type for the subscription. For E.G :5G",
+          "type": "string"
+        },
+        "networkType": {
+          "description": "Network type. For E.G :AN/CN/TN",
+          "type": "string"
+        },
+        "additionalProperties": {
+          "description": "Map of additional properties required for service activation/deactivation",
+          "type": "object"
+        }
+      }
+    },
+    "QuerySubnetCapability": {
+      "description": "This describes the subnet capabilities that can be queried",
+      "type": "object",
+      "properties": {
+        "subnetTypes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SubnetTypes"
+          }
+        }
+      }
+    },
+    "SubnetTypes": {
+      "description": "This describes allowed subnet types",
+      "type": "string",
+      "enum": [
+        "AN",
+        "AN-NF",
+        "CN",
+        "TN-FH",
+        "TN-MH",
+        "TN-BH"
+      ]
+    },
+    "3gppServiceResponse": {
+      "description": "This describes the response for 3gpp services",
+      "type": "object",
+      "properties": {
+        "jobId": {
+          "description": "Job ID to be used to identify the status of the job",
+          "type": "string"
+        },
+        "status": {
+          "description": "status of the job",
+          "type": "string"
+        },
+        "statusDescription": {
+          "description": "Description on status in case of erroneous response",
+          "type": "string"
         }
       }
     }
