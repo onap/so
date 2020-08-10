@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2ab88476_7b816b82",
+        "filename": "adapters/mso-openstack-adapters/Deployment/Dockerfile.adapters",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 5597
+      },
+      "writtenOn": "2020-08-10T10:40:15Z",
+      "side": 1,
+      "message": "Shouldn`t we rather use released artifact here, and not the SNAPSHOT one?",
+      "range": {
+        "startLine": 6,
+        "startChar": 4,
+        "endLine": 6,
+        "endChar": 45
+      },
+      "revId": "3a4670b784f2b89b81d1e30deed3db8619713096",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f2917a76_3c2bdc86",
+        "filename": "packages/docker/src/main/docker/docker-files/Dockerfile.so-base-image",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5597
+      },
+      "writtenOn": "2020-08-10T10:40:15Z",
+      "side": 1,
+      "message": "I strictly recommend at least 11.0.7, best 11.0.8 --\u003e there are some significant security improvements related to TLS handling in 11.0.7.",
+      "range": {
+        "startLine": 1,
+        "startChar": 23,
+        "endLine": 1,
+        "endChar": 38
+      },
+      "revId": "3a4670b784f2b89b81d1e30deed3db8619713096",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
