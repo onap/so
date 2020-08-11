@@ -2,6 +2,75 @@
   "comments": [
     {
       "key": {
+        "uuid": "a2115a40_cef8255c",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/AbstractServiceLevelPreparable.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-08-11T10:47:58Z",
+      "side": 1,
+      "message": "As per the discussion we have refactored the PNFSoftwareUpgrade to GenericPnfSoftwareUpgrade. The changes are in review at the moment. Once it gets merged, we need to revert back once again. Why to change it here?",
+      "range": {
+        "startLine": 39,
+        "startChar": 67,
+        "endLine": 39,
+        "endChar": 85
+      },
+      "revId": "ec88af3985639283337f28c760bce26d775aedf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "43391d82_e9ea142a",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/ServiceLevelPostcheck.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-08-11T10:47:58Z",
+      "side": 1,
+      "message": "I believe, Postcheck needs to execute healthcheck on the resources after upgrade. Are we planning to do additonal functionalities here?",
+      "range": {
+        "startLine": 10,
+        "startChar": 16,
+        "endLine": 10,
+        "endChar": 23
+      },
+      "revId": "ec88af3985639283337f28c760bce26d775aedf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7c3e1057_8d08e8ef",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/ServiceLevelPreparation.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-08-11T10:47:58Z",
+      "side": 1,
+      "message": "These variables can be set outside if block so that we can make it generic for vnf case as well.?",
+      "range": {
+        "startLine": 57,
+        "startChar": 16,
+        "endLine": 58,
+        "endChar": 61
+      },
+      "revId": "ec88af3985639283337f28c760bce26d775aedf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0fbdd66b_9cf65b93",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/ServiceLevelRequestDispatcher.java",
         "patchSetId": 6
@@ -18,6 +87,29 @@
         "startChar": 32,
         "endLine": 54,
         "endChar": 41
+      },
+      "revId": "ec88af3985639283337f28c760bce26d775aedf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa0e3e1d_8e49b76f",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/service/level/ServiceLevelPreparationTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-08-11T10:47:58Z",
+      "side": 1,
+      "message": "I can see these parameters are removed on the dev class. It requires changes here as well ?",
+      "range": {
+        "startLine": 57,
+        "startChar": 38,
+        "endLine": 57,
+        "endChar": 61
       },
       "revId": "ec88af3985639283337f28c760bce26d775aedf7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
