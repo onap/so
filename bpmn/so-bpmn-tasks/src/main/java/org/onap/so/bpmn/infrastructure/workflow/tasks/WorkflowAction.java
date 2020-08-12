@@ -737,16 +737,22 @@ public class WorkflowAction {
             throws JsonProcessingException, VrfBondingServiceException {
         String modelUUID = sIRequest.getRequestDetails().getModelInfo().getModelVersionId();
         org.onap.so.db.catalog.beans.Service service = catalogDbClient.getServiceByID(modelUUID);
+
         if (service == null) {
             buildAndThrowException(execution, "Could not find the service model in catalog db.");
         } else {
             resourceList.add(new Resource(WorkflowType.SERVICE, service.getModelUUID(), false));
             RelatedInstance relatedVpnBinding =
                     bbInputSetupUtils.getRelatedInstanceByType(sIRequest.getRequestDetails(), ModelType.vpnBinding);
+            RelatedInstance relatedPnf =
+                    bbInputSetupUtils.getRelatedInstanceByType(sIRequest.getRequestDetails(), ModelType.pnf);
             RelatedInstance relatedLocalNetwork =
                     bbInputSetupUtils.getRelatedInstanceByType(sIRequest.getRequestDetails(), ModelType.network);
+
             if (relatedVpnBinding != null && relatedLocalNetwork != null) {
                 traverseVrfConfiguration(aaiResourceIds, resourceList, service, relatedVpnBinding, relatedLocalNetwork);
+            } else if (relatedPnf != null && relatedLocalNetwork != null) {
+                traverseVrfConfiguration(aaiResourceIds, resourceList, service, relatedPnf, relatedLocalNetwork);
             } else {
                 traverseNetworkCollection(execution, resourceList, service);
             }
@@ -827,6 +833,10 @@ public class WorkflowAction {
         if (isVnfCustomizationsInTheService(service)) {
             buildAndThrowException(execution,
                     "Cannot orchestrate Service-Macro-Create without user params with a vnf. Please update ASDC model for new macro orchestration support or add service_recipe records to route to old macro flows");
+        }
+        if (isPnfCustomizationsInTheService(service)) {
+            buildAndThrowException(execution,
+                    "Cannot orchestrate Service-Macro-Create without user params with a pnf. Please update ASDC model for new macro orchestration support or add service_recipe records to route to old macro flows");
         }
         List<CollectionResourceCustomization> customizations = service.getCollectionResourceCustomizations();
         if (customizations.isEmpty()) {
@@ -943,6 +953,10 @@ public class WorkflowAction {
 
     private boolean isVnfCustomizationsInTheService(org.onap.so.db.catalog.beans.Service service) {
         return !(service.getVnfCustomizations() == null || service.getVnfCustomizations().isEmpty());
+    }
+
+    private boolean isPnfCustomizationsInTheService(org.onap.so.db.catalog.beans.Service service) {
+        return !(service.getPnfCustomizations() == null || service.getPnfCustomizations().isEmpty());
     }
 
     protected void traverseAAIService(DelegateExecution execution, List<Resource> resourceList, String resourceId,
