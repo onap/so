@@ -43,6 +43,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <sonar.language>java</sonar.language>
+    <java.version>11</java.version>
     <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
     <sonar.surefire.reportsPath>${project.build.directory}/surefire-reports</sonar.surefire.reportsPath>
     <sonar.coverage.jacoco.xmlReportPaths>${project.reporting.outputDirectory}/jacoco-ut/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
@@ -242,6 +243,10 @@
           <compilerArgs>
             <arg>-parameters</arg>
           </compilerArgs>
+          <forceJavacCompilerUse>true</forceJavacCompilerUse>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <release>${java.version}</release>
         </configuration>
       </plugin>
       <plugin>
@@ -916,7 +921,7 @@
       <dependency>
         <groupId>org.yaml</groupId>
         <artifactId>snakeyaml</artifactId>
-        <version>1.23</version>
+        <version>1.26</version>
       </dependency>
       <dependency>
         <groupId>javax.interceptor</groupId>
@@ -1005,8 +1010,8 @@
             <version>3.8.0</version>
             <configuration>
               <forceJavacCompilerUse>true</forceJavacCompilerUse>
-              <source>1.8</source>
-              <target>1.8</target>
+              <source>${java.version}</source>
+              <target>${java.version}</target>
             </configuration>
           </plugin>
         </plugins>
@@ -1028,9 +1033,9 @@
             <version>3.8.0</version>
             <configuration>
               <forceJavacCompilerUse>true</forceJavacCompilerUse>
-              <source>11</source>
-              <target>11</target>
-              <release>11</release>
+              <source>${java.version}</source>
+              <target>${java.version}</target>
+              <release>${java.version}</release>
             </configuration>
           </plugin>
         </plugins>
