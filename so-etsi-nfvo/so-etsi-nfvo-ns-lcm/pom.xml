@@ -9,6 +9,7 @@
   <artifactId>so-etsi-nfvo-ns-lcm</artifactId>
   <packaging>pom</packaging>
   <name>SO ETSI NFVO NS LCM Manager</name>
+
   <modules>
     <module>so-etsi-nfvo-ns-lcm-api</module>
     <module>so-etsi-nfvo-ns-lcm-database-service</module>

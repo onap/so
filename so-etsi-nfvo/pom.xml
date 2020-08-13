@@ -10,6 +10,36 @@
   <artifactId>so-etsi-nfvo</artifactId>
   <packaging>pom</packaging>
   <name>SO ETSI NFVO</name>
+
+  <properties>
+    <java.version>11</java.version>
+    <version.java.compiler>11</version.java.compiler>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <version-swagger-codegen>2.3.1</version-swagger-codegen>
+    <gson-fire-version>1.8.2</gson-fire-version>
+    <retrofit-version>2.3.0</retrofit-version>
+    <threetenbp-version>1.3.5</threetenbp-version>
+    <oltu-version>1.0.1</oltu-version>
+    <swagger-core-version>1.5.15</swagger-core-version>
+    <okhttp3-version>3.14.0</okhttp3-version>
+    <okhttp-version>2.7.5</okhttp-version>
+    <okio-version>1.13.0</okio-version>
+    <jaxb-api>2.3.0</jaxb-api>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>${version.java.compiler}</source>
+          <target>${version.java.compiler}</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
   <modules>
     <module>so-etsi-nfvo-ns-lcm</module>
   </modules>
