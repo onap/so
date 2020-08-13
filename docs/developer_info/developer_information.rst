@@ -19,5 +19,7 @@ SO Developer Information
    BPMN_Main_Process_Flows.rst
    BPMN_Subprocess_Process_Flows.rst
    BPMN_Project_Deployment_Strategy.rst
+   Cxf-Logging.rst
    instantiate/index.rst
    FAQs.rst
+
