@@ -4,10 +4,11 @@ info:
   title: SO Guilin APIs
 tags:
   - name: e2eServiceInstances
-  - name: 3gppservices
+  - name: Onap3gppServiceInstances
   - name: globalhealthcheck
   - name: nodehealthcheck
   - name: onapsoinfraorchestrationRequests
+  - name: onapsoinfraorchestrationTasks
   - name: onapsoinfraserviceInstantiation
   - name: onapsoinfratasks
   - name: onapsoinfracloudResources
@@ -95,6 +96,42 @@ paths:
           in: path
           required: true
           type: string
+      responses:
+        default:
+          description: successful operation
+  '/onap/so/infra/e2eServiceInstances/{version}/{serviceId}/{operationType}':
+    post:
+      tags:
+        - e2eServiceInstances
+      summary: >-
+        Activate/Deactivate 5G slice Service on a specified version and
+        serviceId
+      description: ''
+      operationId: activateE2EServiceInstances
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: false
+          schema:
+            type: string
+        - name: version
+          in: path
+          required: true
+          type: string
+          pattern: '[vV][3-5]'
+        - name: serviceId
+          in: path
+          required: true
+          type: string
+        - name: operationType
+          in: path
+          required: true
+          type: string
+          pattern: activate/deactivate
       responses:
         default:
           description: successful operation
@@ -187,7 +224,7 @@ paths:
   '/onap/so/infra/3gppservices/{version}/allocate':
     post:
       tags:
-        - 3gppservices
+        - Onap3gppServiceInstances
       summary: Create a 3GPP Service Instance on a version provided
       description: ''
       operationId: allocate3gppService
@@ -214,7 +251,7 @@ paths:
   '/onap/so/infra/3gppservices/{version}/deAllocate':
     delete:
       tags:
-        - 3gppservices
+        - Onap3gppServiceInstances
       summary: Terminate/Deallocate a 3GPP Service Instance on a version provided
       description: ''
       operationId: deallocate3gppService
@@ -241,7 +278,7 @@ paths:
   '/onap/so/infra/3gppservices/{version}/modify':
     put:
       tags:
-        - 3gppservices
+        - Onap3gppServiceInstances
       summary: Modify a 3GPP Service Instance on a version provided
       description: ''
       operationId: modify3gppService
@@ -268,7 +305,7 @@ paths:
   '/onap/so/infra/3gppservices/{version}/activate':
     post:
       tags:
-        - 3gppservices
+        - Onap3gppServiceInstances
       summary: Activate a 3GPP Service Instance on a version provided
       description: ''
       operationId: activate3gppService
@@ -295,7 +332,7 @@ paths:
   '/onap/so/infra/3gppservices/{version}/deActivate':
     post:
       tags:
-        - 3gppservices
+        - Onap3gppServiceInstances
       summary: Deactivate a 3GPP Service Instance on a version provided
       description: ''
       operationId: deactivate3gppService
@@ -322,7 +359,7 @@ paths:
   '/onap/so/infra/3gppservices/{version}/subnetCapabilityQuery':
     get:
       tags:
-        - 3gppservices
+        - Onap3gppServiceInstances
       summary: Provides subnet capability based on subnet types
       description: ''
       operationId: querySubnetCapability
@@ -435,6 +472,169 @@ paths:
           schema:
             type: string
         - name: requestId
+          in: path
+          required: true
+          type: string
+        - name: version
+          in: path
+          required: true
+          type: string
+          pattern: '[vV][4-7]'
+      responses:
+        default:
+          description: successful operation
+  '/onap/so/infra/orchestrationTasks/{version}':
+    get:
+      tags:
+        - onapsoinfraorchestrationTasks
+      summary: Get all orchestrationTasks
+      description: ''
+      operationId: getAllOrchestrationTasks
+      produces:
+        - application/json
+      parameters:
+        - name: version
+          in: path
+          required: true
+          type: string
+          pattern: '[vV][4-7]'
+      responses:
+        default:
+          description: successful operation
+    post:
+      tags:
+        - onapsoinfraorchestrationTasks
+      summary: Create an orchestrationTask
+      description: ''
+      operationId: createOrchestrationTask
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: false
+          schema:
+            type: string
+        - name: version
+          in: path
+          required: true
+          type: string
+          pattern: '[vV][4-7]'
+      responses:
+        default:
+          description: successful operation
+  '/onap/so/infra/orchestrationTasks/{version}/{taskId}':
+    get:
+      tags:
+        - onapsoinfraorchestrationTasks
+      summary: Get orchestrationTask for a given taskId
+      description: ''
+      operationId: getOrchestrationTask
+      produces:
+        - application/json
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          type: string
+        - name: version
+          in: path
+          required: true
+          type: string
+          pattern: '[vV][4-7]'
+      responses:
+        default:
+          description: successful operation
+    put:
+      tags:
+        - onapsoinfraorchestrationTasks
+      summary: update orchestrationTask for a given taskId
+      description: ''
+      operationId: updateOrchestrationTask
+      produces:
+        - application/json
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          type: string
+        - name: version
+          in: path
+          required: true
+          type: string
+          pattern: '[vV][4-7]'
+        - in: body
+          name: body
+          required: false
+          schema:
+            type: string
+      responses:
+        default:
+          description: successful operation
+    delete:
+      tags:
+        - onapsoinfraorchestrationTasks
+      summary: delete orchestrationTask for a given taskId
+      description: ''
+      operationId: deleteOrchestrationTask
+      produces:
+        - application/json
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          type: string
+        - name: version
+          in: path
+          required: true
+          type: string
+          pattern: '[vV][4-7]'
+      responses:
+        default:
+          description: successful operation
+  '/onap/so/infra/orchestrationTasks/{version}/{taskId}/commit':
+    post:
+      tags:
+        - onapsoinfraorchestrationTasks
+      summary: commit orchestrationTask for a given taskId
+      description: ''
+      operationId: commitOrchestrationTask
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: false
+          schema:
+            type: string
+        - name: taskId
+          in: path
+          required: true
+          type: string
+        - name: version
+          in: path
+          required: true
+          type: string
+          pattern: '[vV][4-7]'
+      responses:
+        default:
+          description: successful operation
+  '/onap/so/infra/orchestrationTasks/{version}/{taskId}/abort':
+    post:
+      tags:
+        - onapsoinfraorchestrationTasks
+      summary: abort orchestrationTask for a given taskId
+      description: ''
+      operationId: abortOrchestrationTask
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: false
+          schema:
+            type: string
+        - name: taskId
           in: path
           required: true
           type: string
@@ -1782,11 +1982,11 @@ definitions:
     type: string
     enum:
       - AN
-      - AN-NF
+      - AN_NF
       - CN
-      - TN-FH
-      - TN-MH
-      - TN-BH
+      - TN_FH
+      - TN_MH
+      - TN_BH
   3gppServiceResponse:
     description: This describes the response for 3gpp services
     type: object
@@ -1799,4 +1999,4 @@ definitions:
         type: string
       statusDescription:
         description: Description on status in case of erroneous response
-        type: string
+        type: object
