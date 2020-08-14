@@ -906,7 +906,7 @@
                   "type":"string"
                },
                {
-                  "name":"body",
+                  "name":"CreateNsRequest",
                   "in":"body",
                   "required":true,
                   "schema":{
@@ -9232,7 +9232,7 @@
                   "type":"string"
                },
                {
-                  "name":"body",
+                  "name":"InstantiateNsRequest",
                   "in":"body",
                   "required":true,
                   "schema":{
@@ -14446,7 +14446,7 @@
                   "type":"string"
                },
                {
-                  "name":"body",
+                  "name":"TerminateNsRequest",
                   "in":"body",
                   "required":true,
                   "schema":{
@@ -14455,7 +14455,8 @@
                      "properties":{
                         "terminationTime":{
                            "description":"Date-time stamp. Representation: String formatted according toas defined by the date-time production in IETF RFC 3339.\n",
-                           "format":"date-time"
+                           "format":"date-time",
+                           "type":"string"
                         }
                      }
                   },

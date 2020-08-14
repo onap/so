@@ -8,4 +8,59 @@
   </parent>
   <artifactId>so-etsi-nfvo-ns-lcm-application</artifactId>
   <name>SO ETSI NFVO NS LCM Application</name>
+
+
+  <build>
+    <finalName>${project.artifactId}-${project.version}</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <mainClass>org.onap.so.etsi.nfvo.ns.lcm.app.Application</mainClass>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>original</id>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemPropertyVariables>
+            <so.log.level>DEBUG</so.log.level>
+          </systemPropertyVariables>
+          <rerunFailingTestsCount>2</rerunFailingTestsCount>
+          <parallel>suites</parallel>
+          <useUnlimitedThreads>false</useUnlimitedThreads>
+          <threadCount>1</threadCount>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.onap.so.etsi.nfvo</groupId>
+      <artifactId>so-etsi-nfvo-ns-lcm-service</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
 </project>
