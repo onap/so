@@ -48,6 +48,29 @@
     },
     {
       "key": {
+        "uuid": "0cdf1dea_cb8538f7",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/ServiceLevelPreparation.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 4023
+      },
+      "writtenOn": "2020-08-14T07:06:31Z",
+      "side": 1,
+      "message": "The compiler is probably doing this anyway, but it\u0027s better to reflect it in the code, probably better to make this \"pnf\" a constant.",
+      "range": {
+        "startLine": 54,
+        "startChar": 16,
+        "endLine": 54,
+        "endChar": 55
+      },
+      "revId": "ec88af3985639283337f28c760bce26d775aedf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7c3e1057_8d08e8ef",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/ServiceLevelPreparation.java",
         "patchSetId": 6
@@ -94,6 +117,52 @@
     },
     {
       "key": {
+        "uuid": "cd6d6bbf_ba283733",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/ServiceLevelRequestDispatcher.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 4023
+      },
+      "writtenOn": "2020-08-14T07:06:31Z",
+      "side": 1,
+      "message": "if this is Java 9 or newer you could use ifPresentOrElse https://docs.oracle.com/javase/9/docs/api/java/util/Optional.html#ifPresentOrElse-java.util.function.Consumer-java.lang.Runnable-",
+      "range": {
+        "startLine": 94,
+        "startChar": 8,
+        "endLine": 98,
+        "endChar": 59
+      },
+      "revId": "ec88af3985639283337f28c760bce26d775aedf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "231609b6_0323fc27",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/ServiceLevelUpgrade.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 4023
+      },
+      "writtenOn": "2020-08-14T07:06:31Z",
+      "side": 1,
+      "message": "I\u0027d change this to a map to get rid of the switch, and use either the strategy pattern with enums or the command pattern with a map, given the you\u0027re simply returning the string command pattern is probably the most suitable.",
+      "range": {
+        "startLine": 23,
+        "startChar": 8,
+        "endLine": 34,
+        "endChar": 23
+      },
+      "revId": "ec88af3985639283337f28c760bce26d775aedf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "aa0e3e1d_8e49b76f",
         "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/service/level/ServiceLevelPreparationTest.java",
         "patchSetId": 6
@@ -110,6 +179,52 @@
         "startChar": 38,
         "endLine": 57,
         "endChar": 61
+      },
+      "revId": "ec88af3985639283337f28c760bce26d775aedf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c80bca4f_d27cf362",
+        "filename": "graph-inventory/aai-client/src/main/java/org/onap/aaiclient/client/aai/AAIRestClientImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 4023
+      },
+      "writtenOn": "2020-08-14T07:06:31Z",
+      "side": 1,
+      "message": "Is the status check here to prevent a potential null variable being returned? if so then something like:\n\nreturn Optional.ofNullable(response.readEntity(ServiceInstance.class));\n\nmight be a bit tidier (single point of return, better usage of the optional API), basically if the parameter to ofNullable is null, then the optional is empty",
+      "range": {
+        "startLine": 107,
+        "startChar": 8,
+        "endLine": 111,
+        "endChar": 9
+      },
+      "revId": "ec88af3985639283337f28c760bce26d775aedf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "15b7da72_cfc2f721",
+        "filename": "graph-inventory/aai-client/src/main/java/org/onap/aaiclient/client/aai/AAIRestClientImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 4023
+      },
+      "writtenOn": "2020-08-14T07:06:31Z",
+      "side": 1,
+      "message": "Given this request to AAI can fail, how are you handling a failure scenario seems this method has no way of handling it, given you want to respect the parent signature you might be able to throw a runtime exception? or at the very least some debug logging might be useful here?",
+      "range": {
+        "startLine": 117,
+        "startChar": 7,
+        "endLine": 118,
+        "endChar": 86
       },
       "revId": "ec88af3985639283337f28c760bce26d775aedf7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
