@@ -23,9 +23,12 @@ package org.onap.so.bpmn.infrastructure.service.level.impl;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.so.bpmn.infrastructure.service.level.AbstractServiceLevelPreparable;
+import org.onap.so.db.catalog.beans.Workflow;
 import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 
 /**
@@ -35,43 +38,57 @@ import java.util.List;
 @Component("ServiceLevelPreparation")
 public class ServiceLevelPreparation extends AbstractServiceLevelPreparable implements JavaDelegate {
 
+    private static final String BPMN_REQUEST = "bpmnRequest";
+    private static final String RESOURCE_TYPE = "resourceType";
+    private static final String SERVICE_INSTANCE_ID = "serviceInstanceId";
+    private static final String PNF_NAME = "pnfName";
+
     // Health check parameters to be validated for pnf resource
-    private static final List<String> PNF_HC_PARAMS = Arrays.asList("SERVICE_MODEL_INFO", "SERVICE_INSTANCE_NAME",
-            "PNF_CORRELATION_ID", "MODEL_UUID", "PNF_UUID", "PRC_BLUEPRINT_NAME", "PRC_BLUEPRINT_VERSION",
-            "PRC_CUSTOMIZATION_UUID", "RESOURCE_CUSTOMIZATION_UUID_PARAM", "PRC_INSTANCE_NAME", "PRC_CONTROLLER_ACTOR",
-            "REQUEST_PAYLOAD");
+    private static final Map<String, List<String>> HEALTH_CHECK_PARAMS_MAP =
+            Map.of(PNF, Arrays.asList(SERVICE_INSTANCE_ID, RESOURCE_TYPE, BPMN_REQUEST, PNF_NAME));
+
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
         if (execution.hasVariable(RESOURCE_TYPE) && execution.getVariable(RESOURCE_TYPE) != null) {
             final String controllerScope = (String) execution.getVariable(RESOURCE_TYPE);
             LOG.debug("Scope retrieved from delegate execution: " + controllerScope);
-            final String wflName = fetchWorkflowUsingScope(execution, controllerScope);
-            LOG.debug("Health check workflow fetched for the scope: {}", wflName);
-            validateParamsWithScope(execution, controllerScope, PNF_HC_PARAMS);
-            LOG.info("Parameters validated successfully for {}", wflName);
-            execution.setVariable(WORKFLOW_TO_INVOKE, wflName);
+            if (VALID_CONTROLLER_SCOPE.contains(controllerScope)) {
+                final String wflName = fetchWorkflowUsingScope(execution, controllerScope);
+                LOG.debug("Health check workflow fetched for the scope: {}", wflName);
+                validateParamsWithScope(execution, controllerScope, HEALTH_CHECK_PARAMS_MAP.get(controllerScope));
+                LOG.info("Parameters validated successfully for {}", wflName);
+                execution.setVariable(HEALTH_CHECK_WORKFLOW_TO_INVOKE, wflName);
+                execution.setVariable(CONTROLLER_STATUS, "");
+            } else {
+                exceptionBuilder.buildAndThrowWorkflowException(execution, ERROR_CODE,
+                        "Invalid Controller scope to prepare resource level health check");
+            }
         } else {
             exceptionBuilder.buildAndThrowWorkflowException(execution, ERROR_CODE,
-                    "Controller scope not found to invoke resource level health check");
+                    "Resource type not found in the execution to invoke resource level health check");
         }
     }
 
     @Override
     public String fetchWorkflowUsingScope(DelegateExecution execution, final String scope) {
-        String wflName = null;
-        switch (scope.toLowerCase()) {
-            case "pnf":
-                wflName = GENERIC_PNF_HEALTH_CHECK_WORKFLOW;
-                break;
-            case "vnf":
-                wflName = GENERIC_VNF_HEALTH_CHECK_WORKFLOW;
-                break;
-            default:
-                exceptionBuilder.buildAndThrowWorkflowException(execution, ERROR_CODE,
-                        "No valid health check work flow retrieved for the scope: " + scope);
+        Optional<String> wflName = Optional.empty();
+        try {
+            List<Workflow> workflows = catalogDbClient.findWorkflowByOperationName(HEALTH_CHECK_OPERATION);
+            if (!workflows.isEmpty()) {
+                wflName = Optional.ofNullable(
+                        workflows.stream().filter(workflow -> workflow.getResourceTarget().equalsIgnoreCase(scope))
+                                .findFirst().get().getName());
+            }
+        } catch (Exception e) {
+            // do nothing and assign the default workflow in finally
+            LOG.error("Error occurred while fetching health check workflow name from CatalogDb {}", e);
+        } finally {
+            if (wflName.isEmpty()) {
+                wflName = Optional.of(DEFAULT_HEALTH_CHECK_WORKFLOWS.get(scope));
+            }
         }
-        return wflName;
+        return wflName.get();
     }
 
 }

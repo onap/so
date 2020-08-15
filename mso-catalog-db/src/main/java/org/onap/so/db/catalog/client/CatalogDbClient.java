@@ -162,6 +162,7 @@ public class CatalogDbClient {
     protected static final String SOURCE = "source";
     protected static final String RESOURCE_TARGET = "resourceTarget";
     protected static final String FLAG = "flag";
+    protected static final String OPERATION_NAME = "operationName";
 
     private static final String TARGET_ENTITY = "SO:CatalogDB";
     private static final String ASTERISK = "*";
@@ -215,6 +216,7 @@ public class CatalogDbClient {
             "/findBBNameSelectionReferenceByControllerActorAndScopeAndAction";
     private String findWorkflowByResourceTarget = "/findByResourceTarget";
     private String findProcessingFlagsByFlag = "/findByFlag";
+    private String findWorkflowByOperationName = "/findByOperationName";
 
     private String serviceURI;
     private String vfModuleURI;
@@ -357,6 +359,7 @@ public class CatalogDbClient {
         findWorkflowByPnfModelUUID = endpoint + WORKFLOW + SEARCH + findWorkflowByPnfModelUUID;
         findWorkflowBySource = endpoint + WORKFLOW + SEARCH + findWorkflowBySource;
         findWorkflowByResourceTarget = endpoint + WORKFLOW + SEARCH + findWorkflowByResourceTarget;
+        findWorkflowByOperationName = endpoint + WORKFLOW + SEARCH + findWorkflowByOperationName;
 
         findVnfResourceCustomizationByModelUuid =
                 endpoint + VNF_RESOURCE_CUSTOMIZATION + SEARCH + findVnfResourceCustomizationByModelUuid;
@@ -1104,6 +1107,11 @@ public class CatalogDbClient {
     public List<Workflow> findWorkflowByResourceTarget(String resourceTarget) {
         return this.getMultipleResources(workflowClient, getUri(UriBuilder.fromUri(findWorkflowByResourceTarget)
                 .queryParam(RESOURCE_TARGET, resourceTarget).build().toString()));
+    }
+
+    public List<Workflow> findWorkflowByOperationName(String operationName) {
+        return this.getMultipleResources(workflowClient, getUri(UriBuilder.fromUri(findWorkflowByOperationName)
+                .queryParam(OPERATION_NAME, operationName).build().toString()));
     }
 
     public ProcessingFlags findProcessingFlagsByFlag(String flag) {

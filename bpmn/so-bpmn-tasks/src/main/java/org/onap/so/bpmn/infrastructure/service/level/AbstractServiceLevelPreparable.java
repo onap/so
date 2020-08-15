@@ -22,30 +22,43 @@ package org.onap.so.bpmn.infrastructure.service.level;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Abstract class for Service level upgrade Execution, it should be extended for service level upgrade tasks.
  */
 public abstract class AbstractServiceLevelPreparable {
 
-    protected static final String WORKFLOW_TO_INVOKE = "healthCheckWorkflow";
-    protected static final String GENERIC_PNF_HEALTH_CHECK_WORKFLOW = "GenericPnfHealthCheck";
-    protected static final String GENERIC_PNF_SOFTWARE_UPGRADE_WORKFLOW = "GenericPnfSoftwareUpgrade";
-    protected static final String RESOURCE_TYPE = "RESOURCE_TYPE";
+    protected static final String HEALTH_CHECK_WORKFLOW_TO_INVOKE = "healthCheckWorkflow";
+    protected static final String SOFTWARE_WORKFLOW_TO_INVOKE = "softwareUpgradeWorkflow";
+    protected static final String HEALTH_CHECK_OPERATION = "ResourceHealthCheck";
+    protected static final String SOFTWARE_UP_OPERATION = "SoftwareUpgrade";
+    protected static final String RESOURCE_TYPE = "resourceType";
+    protected static final String CONTROLLER_STATUS = "ControllerStatus";
     protected static final int ERROR_CODE = 601;
+    protected static final String PNF = "pnf";
+    protected static final String VNF = "vnf";
 
-    // TODO This value needs to be updated once vnf health check workflow is available
-    protected static final String GENERIC_VNF_HEALTH_CHECK_WORKFLOW = "GenericVNFHealthCheck";
+    protected static final Map<String, String> DEFAULT_HEALTH_CHECK_WORKFLOWS =
+            Map.of(PNF, "GenericPnfHealthCheck", VNF, "GenericVNFHealthCheck");
+    protected static final Map<String, String> DEFAULT_SOFTWARE_UP_WORKFLOWS =
+            Map.of(PNF, "GenericPnfSoftwareUpgrade", VNF, "GenericVnfSoftwareUpgrade");
+    protected static final List<String> VALID_CONTROLLER_SCOPE = Arrays.asList(PNF, VNF);
 
     protected static final Logger LOG = LoggerFactory.getLogger(AbstractServiceLevelPreparable.class);
 
     @Autowired
     protected ExceptionBuilder exceptionBuilder;
+
+    @Autowired
+    protected CatalogDbClient catalogDbClient;
 
     /**
      * This method fetches workflow names to be invoked based on the controller scope .
