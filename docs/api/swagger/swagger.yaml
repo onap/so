@@ -14,6 +14,8 @@ tags:
   - name: onapsoinfracloudResources
   - name: onapsoinfracloudResourcesRequests
   - name: onapsoinframodelDistributions
+  - name: onapsoinfraworkflowSpecifications
+  - name: onapsoinfrainstanceManagement
 schemes:
   - http
 paths:
@@ -196,7 +198,7 @@ paths:
         - e2eServiceInstances
       summary: >-
         Find added and deleted resources of target model for the
-        e2eserviceInstance on a given serviceId 
+        e2eserviceInstance on a given serviceId
       description: ''
       operationId: compareModelwithTargetVersion
       consumes:
@@ -1881,6 +1883,65 @@ paths:
       responses:
         default:
           description: successful operation
+  '/onap/so/infra/workflowSpecifications/{version}/workflows':
+    get:
+      tags:
+        - onapsoinfraworkflowSpecifications
+      summary: Retrieve Workflow details based on the filter criteria
+      description: ''
+      operationId: queryWorkflowSpecifications
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: resourceTarget
+          in: query
+          required: false
+          type: string
+        - name: version
+          in: path
+          required: true
+          type: string
+          pattern: '[vV][1]'
+      responses:
+        default:
+          description: List of workflow specifications on successful operation
+          schema:
+            $ref: '#/definitions/RetrievingWorkflowResponse'
+  '/onap/so/infra/instanceManagement/{version}/serviceInstances/{serviceInstanceId}/workflows/{workflow_UUID}':
+    post:
+      tags:
+        - onapsoinfrainstanceManagement
+      summary: Executing service level custom workflow
+      description: ''
+      operationId: executeServiceLevelCustomWorkflow
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: false
+          schema:
+            $ref: '#/definitions/ServiceLevelWorkflowExecution'
+        - name: version
+          in: path
+          required: true
+          type: string
+          pattern: '[vV][1]'
+        - name: serviceInstanceId
+          in: path
+          required: true
+          type: string
+        - name: workflow_UUID
+          in: path
+          required: true
+          type: string
+      responses:
+        default:
+          description: successful operation
 definitions:
   Allocate3gppService:
     description: This describes the request body for 3gpp service allocation
@@ -2000,3 +2061,117 @@ definitions:
       statusDescription:
         description: Description on status in case of erroneous response
         type: object
+  RetrievingWorkflowResponse:
+    description: Response body of fetching workflows using resource target
+    type: object
+    properties:
+      workflowSpecificationList:
+        description: List of Workflow specification data
+        type: array
+        items:
+          $ref: '#/definitions/WorkflowSpecification'
+  WorkflowSpecification:
+    description: This describes workflow specification object
+    type: object
+    properties:
+      artifactInfo:
+        description: 'Attributes related to artifact information '
+        type: object
+        properties:
+          artifactType:
+            description: Type of the artifact to be queried
+            type: string
+          artifactUuid:
+            description: UUID of the artifact
+            type: string
+          artifactName:
+            description: Name of the artifact
+            type: string
+          artifactVersion:
+            description: Artifact's Version
+            type: string
+          artifactDescription:
+            description: ''
+            type: string
+          workflowName:
+            description: Name of the workflow fetched for the resource type
+            type: string
+          operationName:
+            description: Mapped operation name of the corresponding workflow
+            type: string
+          workflowSource:
+            description: ''
+            type: string
+          workflowResourceTarget:
+            description: Type of Resource mapped against the workflow
+            type: string
+  ServiceLevelWorkflowExecution:
+    description: This describes the request body of service level custom workflow execution
+    type: object
+    properties:
+      requestInfo:
+        description: Request object contains source information
+        type: object
+        properties:
+          source:
+            description: Name of the sender
+            type: string
+          suppressRollback:
+            description: Enable/disable rollback suppression
+            type: boolean
+          requestorId:
+            description: Id of the sender
+            type: string
+      modelInfo:
+        description: Parameters related to the service model
+        type: object
+        properties:
+          modelType:
+            description: Type of the model to be executed
+            type: string
+          modelInvariantUuid:
+            description: Model invariant id corresponding to the service
+            type: string
+          modelUuid:
+            description: Model uuid corresponding to the service
+            type: string
+          modelVersionId:
+            description: Model version of the service instance
+            type: string
+          modelName:
+            description: Name of the service
+            type: string
+          modelVersion:
+            description: Version of the service instance
+            type: string
+      requestParameters:
+        description: User parameter object
+        type: object
+        properties:
+          subscriptionServiceType:
+            description: Type of service subscription
+            type: string
+      subscriberInfo:
+        description: Subscriber id information
+        type: object
+        properties:
+          globalSubscriberId:
+            description: Id of the subscriber sending the request
+            type: string
+      project:
+        description: Information about the target project name
+        type: object
+        properties:
+          projectName:
+            description: Name of the target project
+            type: string
+      owningEntity:
+        description: Object describes the entity details
+        type: object
+        properties:
+          owningEntityId:
+            description: Id of the owning Entity
+            type: string
+          owningEntityName:
+            description: Name of the owning Entity
+            type: string
