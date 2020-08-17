@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3be58635_f9a1d46b",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1555,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-08-17T13:11:46Z",
+      "side": 1,
+      "message": "This condition is wrong because it is true for all type of resources not only PNFs (when ControllerExecutionBB is used). Compare it to the condition above for VNFs and implement it in similar way.\n\nAlso please re-use CONTROLLER constant.",
+      "revId": "b4d600020846e2485820974078f945c23451dd9e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
