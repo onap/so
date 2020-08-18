@@ -46,7 +46,7 @@ class CDSProcessingHandler {
         ActionIdentifiers header = request.getActionIdentifiers();
 
         log.info("Processing blueprint({}:{}) for action({})", header.getBlueprintVersion(), header.getBlueprintName(),
-                header.getBlueprintVersion());
+                header.getActionName());
 
         final CountDownLatch finishLatch = new CountDownLatch(1);
 

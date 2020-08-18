@@ -1552,7 +1552,8 @@ public class BBInputSetup implements JavaDelegate {
             }
             parameter.setApplicationId(applicationId);
             this.populateGenericVnf(parameter);
-        } else if (bbName.contains(PNF) || bbName.equals("ControllerExecutionBB")) {
+        } else if (bbName.contains(PNF) || (bbName.contains(CONTROLLER)
+                && (PNF).equalsIgnoreCase(executeBB.getBuildingBlock().getBpmnScope()))) {
             String pnfId = lookupKeyMap.get(ResourceKey.PNF);
             resources.getPnfs().stream()
                     .filter(pnfs -> Objects.equals(key, pnfs.getModelInfo().getModelCustomizationId())).findFirst()
