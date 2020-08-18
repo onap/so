@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "mso.health.enpoints")
+@ConfigurationProperties(prefix = "mso.health.endpoints")
 public class HealthCheck {
 
     private Subsystem subsystem;
