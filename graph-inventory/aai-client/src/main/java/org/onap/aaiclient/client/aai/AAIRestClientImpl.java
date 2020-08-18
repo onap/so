@@ -31,14 +31,18 @@ import javax.ws.rs.core.Response;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.Pnf;
 import org.onap.aai.domain.yang.Pserver;
+import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aaiclient.client.aai.entities.CustomQuery;
 import org.onap.aaiclient.client.aai.entities.Results;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.graphinventory.Format;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AAIRestClientImpl implements AAIRestClientI {
 
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private static final String PSERVER_VNF_QUERY = "pservers-fromVnf";
 
     @Override
@@ -96,5 +100,25 @@ public class AAIRestClientImpl implements AAIRestClientI {
     @Override
     public void updatePnf(String pnfId, Pnf pnf) {
         new AAIResourcesClient().update(AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfId), pnf);
+    }
+
+    @Override
+    public Optional<ServiceInstance> getServiceInstanceById(String globalSubscriberId, String serviceType,
+            String serviceInstanceId) {
+        Response response = new AAIResourcesClient().getFullResponse(AAIUriFactory
+                .createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId, serviceType, serviceInstanceId));
+        return Optional.ofNullable(response.readEntity(ServiceInstance.class));
+    }
+
+    @Override
+    public void updateServiceInstance(String globalSubscriberId, String serviceType, String serviceInstanceId,
+            ServiceInstance serviceInstance) {
+        try {
+            new AAIResourcesClient().update(AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
+                    globalSubscriberId, serviceType, serviceInstanceId), serviceInstance);
+        } catch (Throwable ex) {
+            log.error("Exception happened while updating ServiceInstance, Exception: {}", ex.getLocalizedMessage());
+            throw new RuntimeException(ex);
+        }
     }
 }
