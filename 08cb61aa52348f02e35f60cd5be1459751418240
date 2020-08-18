@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c92988ca_d0a1161d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-08-18T06:57:16Z",
+      "side": 1,
+      "message": "functionality wise it looks fine. I\u0027ll review this change after commit https://gerrit.onap.org/r/c/so/+/110703 merged. Else this will create lot of merge conflicts. Or either of us need to maintain hierarchy for these commits.",
+      "revId": "08cb61aa52348f02e35f60cd5be1459751418240",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
