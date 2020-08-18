@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "f8aefda4_2014a61b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/AbstractServiceLevelPreparable.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-08-18T10:44:30Z",
+      "side": 1,
+      "message": "Depends if this commit is merged before urs, then we \u0027ll change it afterward... If another commit is merged first then i\u0027ll address this comment. If i change it now then my testcases will fail. or i need to make ur commit as parent of this commit",
+      "parentUuid": "a2115a40_cef8255c",
+      "range": {
+        "startLine": 39,
+        "startChar": 67,
+        "endLine": 39,
+        "endChar": 85
+      },
+      "revId": "ec88af3985639283337f28c760bce26d775aedf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "43391d82_e9ea142a",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/ServiceLevelPostcheck.java",
         "patchSetId": 6
@@ -36,6 +60,30 @@
       "writtenOn": "2020-08-11T10:47:58Z",
       "side": 1,
       "message": "I believe, Postcheck needs to execute healthcheck on the resources after upgrade. Are we planning to do additonal functionalities here?",
+      "range": {
+        "startLine": 10,
+        "startChar": 16,
+        "endLine": 10,
+        "endChar": 23
+      },
+      "revId": "ec88af3985639283337f28c760bce26d775aedf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f237eb22_2bf31992",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/ServiceLevelPostcheck.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-08-18T10:44:30Z",
+      "side": 1,
+      "message": "this is just a placeholder for now, we are not doing anything here, not even hc. We can add it afterward as need arises.",
+      "parentUuid": "43391d82_e9ea142a",
       "range": {
         "startLine": 10,
         "startChar": 16,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "8a14418c_2987b809",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/ServiceLevelPreparation.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-08-18T10:44:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0cdf1dea_cb8538f7",
+      "range": {
+        "startLine": 54,
+        "startChar": 16,
+        "endLine": 54,
+        "endChar": 55
+      },
+      "revId": "ec88af3985639283337f28c760bce26d775aedf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7c3e1057_8d08e8ef",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/ServiceLevelPreparation.java",
         "patchSetId": 6
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "c1275331_5c56f70a",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/ServiceLevelPreparation.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-08-18T10:44:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7c3e1057_8d08e8ef",
+      "range": {
+        "startLine": 57,
+        "startChar": 16,
+        "endLine": 58,
+        "endChar": 61
+      },
+      "revId": "ec88af3985639283337f28c760bce26d775aedf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0fbdd66b_9cf65b93",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/ServiceLevelRequestDispatcher.java",
         "patchSetId": 6
@@ -105,6 +201,30 @@
       "writtenOn": "2020-08-11T10:36:58Z",
       "side": 1,
       "message": "Jury is still out on what to do with repeated consts across classes (Enum vs Const Class) but these do seem to be pretty generic.\n\nThere are a few const classes already in the project so maybe there should be a project wide solution.\n\nmso-api-handlers/mso-api-handler-common/src/main/java/org/onap/so/apihandler/common/CommonConstants.java\nbpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/common/BBConstants.java",
+      "range": {
+        "startLine": 47,
+        "startChar": 32,
+        "endLine": 54,
+        "endChar": 41
+      },
+      "revId": "ec88af3985639283337f28c760bce26d775aedf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a7b19f17_ee2171a9",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/ServiceLevelRequestDispatcher.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-08-18T10:44:30Z",
+      "side": 1,
+      "message": "I dont find any constant file for individual wflows, so i created one for servicelevel upgrade.",
+      "parentUuid": "0fbdd66b_9cf65b93",
       "range": {
         "startLine": 47,
         "startChar": 32,
@@ -140,6 +260,30 @@
     },
     {
       "key": {
+        "uuid": "51fb3d68_27c6c4a4",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/ServiceLevelRequestDispatcher.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-08-18T10:44:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cd6d6bbf_ba283733",
+      "range": {
+        "startLine": 94,
+        "startChar": 8,
+        "endLine": 98,
+        "endChar": 59
+      },
+      "revId": "ec88af3985639283337f28c760bce26d775aedf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "231609b6_0323fc27",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/ServiceLevelUpgrade.java",
         "patchSetId": 6
@@ -151,6 +295,30 @@
       "writtenOn": "2020-08-14T07:06:31Z",
       "side": 1,
       "message": "I\u0027d change this to a map to get rid of the switch, and use either the strategy pattern with enums or the command pattern with a map, given the you\u0027re simply returning the string command pattern is probably the most suitable.",
+      "range": {
+        "startLine": 23,
+        "startChar": 8,
+        "endLine": 34,
+        "endChar": 23
+      },
+      "revId": "ec88af3985639283337f28c760bce26d775aedf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "78ad46ef_edd5c226",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/ServiceLevelUpgrade.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-08-18T10:44:30Z",
+      "side": 1,
+      "message": "This method is susceptible to change by an upcoming task, this is just a placeholder to return default values, I\u0027ll keep in mind to use apporpriate DP while implenting during that task",
+      "parentUuid": "231609b6_0323fc27",
       "range": {
         "startLine": 23,
         "startChar": 8,
@@ -186,6 +354,30 @@
     },
     {
       "key": {
+        "uuid": "e0b9108a_747ea76c",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/service/level/ServiceLevelPreparationTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-08-18T10:44:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aa0e3e1d_8e49b76f",
+      "range": {
+        "startLine": 57,
+        "startChar": 38,
+        "endLine": 57,
+        "endChar": 61
+      },
+      "revId": "ec88af3985639283337f28c760bce26d775aedf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c80bca4f_d27cf362",
         "filename": "graph-inventory/aai-client/src/main/java/org/onap/aaiclient/client/aai/AAIRestClientImpl.java",
         "patchSetId": 6
@@ -209,6 +401,30 @@
     },
     {
       "key": {
+        "uuid": "1de6bb02_06b5ef59",
+        "filename": "graph-inventory/aai-client/src/main/java/org/onap/aaiclient/client/aai/AAIRestClientImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-08-18T10:44:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c80bca4f_d27cf362",
+      "range": {
+        "startLine": 107,
+        "startChar": 8,
+        "endLine": 111,
+        "endChar": 9
+      },
+      "revId": "ec88af3985639283337f28c760bce26d775aedf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "15b7da72_cfc2f721",
         "filename": "graph-inventory/aai-client/src/main/java/org/onap/aaiclient/client/aai/AAIRestClientImpl.java",
         "patchSetId": 6
@@ -229,6 +445,30 @@
       "revId": "ec88af3985639283337f28c760bce26d775aedf7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c4ae0ec1_a9a53b18",
+        "filename": "graph-inventory/aai-client/src/main/java/org/onap/aaiclient/client/aai/AAIRestClientImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-08-18T10:44:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "15b7da72_cfc2f721",
+      "range": {
+        "startLine": 117,
+        "startChar": 7,
+        "endLine": 118,
+        "endChar": 86
+      },
+      "revId": "ec88af3985639283337f28c760bce26d775aedf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
