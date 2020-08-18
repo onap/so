@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(value = "true")
-public class InstanceEntity {
+public class MulticloudInstanceRequest {
 
     @JsonProperty(value = "cloud-region")
     private String cloudRegion;
@@ -24,6 +24,9 @@ public class InstanceEntity {
 
     @JsonProperty(value = "override-values")
     private Map<String, String> overrideValues;
+
+    @JsonProperty(value = "release-name")
+    private String vfModuleUuid;
 
     public String getCloudRegion() {
         return cloudRegion;
@@ -71,6 +74,14 @@ public class InstanceEntity {
 
     public void setOverrideValues(Map<String, String> overrideValues) {
         this.overrideValues = overrideValues;
+    }
+
+    public String getVfModuleUuid() {
+        return vfModuleUuid;
+    }
+
+    public void setVfModuleUuid(String vfModuleUuid) {
+        this.vfModuleUuid = vfModuleUuid;
     }
 
 }
