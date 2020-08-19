@@ -27,23 +27,19 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Spy;
+import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.infrastructure.service.level.impl.ServiceLevelConstants;
 import org.onap.so.bpmn.infrastructure.service.level.impl.ServiceLevelPreparation;
 import org.onap.so.client.exception.ExceptionBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.onap.so.db.catalog.beans.Workflow;
+import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {ServiceLevelPreparation.class, ExceptionBuilder.class})
-public class ServiceLevelPreparationTest {
+public class ServiceLevelPreparationTest extends BaseTaskTest {
 
     private static final String TEST_PNF_SCOPE = "pnf";
     private static final String TEST_PROCESS_KEY = "testProcessKey";
@@ -52,19 +48,21 @@ public class ServiceLevelPreparationTest {
     private static final String RESOURCE_TYPE = "resourceType";
     private static final String SERVICE_INSTANCE_ID = "serviceInstanceId";
     private static final String PNF_NAME = "pnfName";
-    private static final List<String> PNF_HEALTH_CHECK_PARAMS = Arrays.asList(ServiceLevelConstants.SERVICE_INSTANCE_ID,
-            ServiceLevelConstants.RESOURCE_TYPE, ServiceLevelConstants.BPMN_REQUEST, ServiceLevelConstants.PNF_NAME);
+    private static final String HEALTH_CHECK_OPERATION = "ResourceHealthCheck";
+    private static final Map<String, List<String>> HEALTH_CHECK_PARAMS_MAP = Map.of(TEST_PNF_SCOPE,
+            Arrays.asList(SERVICE_INSTANCE_ID, RESOURCE_TYPE, BPMN_REQUEST, PNF_NAME), "vnf", Collections.emptyList());
 
-    private Map<String, String> pnfHealthCheckTestParams = new HashMap<>();
-
-    @Autowired
-    private ServiceLevelPreparation serviceLevelPrepare;
-
-    @Autowired
-    private ExceptionBuilder exceptionBuilder;
+    private List<Workflow> workflowList = new ArrayList<>();
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+
+    @InjectMocks
+    ServiceLevelPreparation serviceLevelPrepare;
+
+    @InjectMocks
+    @Spy
+    ExceptionBuilder exceptionBuilder;
 
     private DelegateExecution execution = new DelegateExecutionFake();
     private DelegateExecution invalidExecution = new DelegateExecutionFake();
@@ -72,22 +70,6 @@ public class ServiceLevelPreparationTest {
 
     @Before
     public void setUpPnfUpgradeTest() {
-        pnfHealthCheckTestParams.put("TEST_SERVICE_MODEL_INFO", "d4c6855e-3be2-5dtu-9390-c999a38829bc");
-        pnfHealthCheckTestParams.put("TEST_SERVICE_INSTANCE_NAME", "test_service_id");
-        pnfHealthCheckTestParams.put("TEST_PNF_CORRELATION_ID", "pnfCorrelationId");
-        pnfHealthCheckTestParams.put("TEST_MODEL_UUID", "6bc0b04d-1873-4721-b53d-6615225b2a28");
-        pnfHealthCheckTestParams.put("TEST_PNF_UUID", "c93g70d9-8de3-57f1-7de1-f5690ac2b005");
-        pnfHealthCheckTestParams.put("TEST_PRC_BLUEPRINT_NAME", "serviceUpgrade");
-        pnfHealthCheckTestParams.put("TEST_PRC_BLUEPRINT_VERSION", "1.0.2");
-        pnfHealthCheckTestParams.put("TEST_PRC_CUSTOMIZATION_UUID", "PRC_customizationUuid");
-        pnfHealthCheckTestParams.put("TEST_RESOURCE_CUSTOMIZATION_UUID_PARAM", "9acb3a83-8a52-412c-9a45-901764938144");
-        pnfHealthCheckTestParams.put("TEST_PRC_INSTANCE_NAME", "Demo_pnf");
-        pnfHealthCheckTestParams.put("TEST_PRC_CONTROLLER_ACTOR", "cds");
-        pnfHealthCheckTestParams.put("TEST_REQUEST_PAYLOAD", "test_payload");
-
-        for (String param : PNF_HEALTH_CHECK_PARAMS) {
-            execution.setVariable(param, pnfHealthCheckTestParams.get("TEST_" + param));
-        }
         execution.setVariable(RESOURCE_TYPE, TEST_PNF_SCOPE);
         execution.setVariable(TEST_PROCESS_KEY, PROCESS_KEY_VALUE);
         execution.setVariable(BPMN_REQUEST, "bpmnRequestValue");
@@ -95,14 +77,22 @@ public class ServiceLevelPreparationTest {
         execution.setVariable(PNF_NAME, "PnfDemo");
 
         invalidExecution.setVariables(execution.getVariables());
+
+        Workflow dummyWorkflow = new Workflow();
+        dummyWorkflow.setName("PNFHealthCheck");
+        dummyWorkflow.setOperationName(HEALTH_CHECK_OPERATION);
+        dummyWorkflow.setResourceTarget("pnf");
+        workflowList.add(dummyWorkflow);
+
+        when(catalogDbClient.findWorkflowByOperationName(HEALTH_CHECK_OPERATION)).thenReturn(workflowList);
     }
 
     @Test
     public void executePnfUpgradeSuccessTest() throws Exception {
         serviceLevelPrepare.execute(execution);
         // Expect the pnf health check workflow to be set in to execution if validation is successful
-        assertThat(String.valueOf(execution.getVariable(ServiceLevelConstants.WORKFLOW_TO_INVOKE)))
-                .isEqualTo("GenericPnfHealthCheck");
+        assertThat(String.valueOf(execution.getVariable(ServiceLevelConstants.HEALTH_CHECK_WORKFLOW_TO_INVOKE)))
+                .isEqualTo("PNFHealthCheck");
     }
 
     @Test
@@ -110,7 +100,8 @@ public class ServiceLevelPreparationTest {
         invalidExecution.removeVariable(BPMN_REQUEST);
         // BPMN exception is thrown in case of validation failure or invalid execution
         thrown.expect(BpmnError.class);
-        serviceLevelPrepare.validateParamsWithScope(invalidExecution, TEST_PNF_SCOPE, PNF_HEALTH_CHECK_PARAMS);
+        serviceLevelPrepare.validateParamsWithScope(invalidExecution, TEST_PNF_SCOPE,
+                HEALTH_CHECK_PARAMS_MAP.get(TEST_PNF_SCOPE));
     }
 
     @Test
@@ -127,6 +118,16 @@ public class ServiceLevelPreparationTest {
         thrown.expect(BpmnError.class);
         serviceLevelPrepare.execute(invalidExecution);
 
+    }
+
+    @Test
+    public void validateDefaultWorkflowIsSetWithoutDBData() throws Exception {
+        // Mock empty workflow list in db response
+        when(catalogDbClient.findWorkflowByOperationName(HEALTH_CHECK_OPERATION)).thenReturn(new ArrayList<Workflow>());
+        serviceLevelPrepare.execute(execution);
+        // Expect default workflow gets assigned when workflow name not found in db.
+        assertThat(String.valueOf(execution.getVariable(ServiceLevelConstants.HEALTH_CHECK_WORKFLOW_TO_INVOKE)))
+                .isEqualTo(ServiceLevelConstants.DEFAULT_HEALTH_CHECK_WORKFLOWS.get(TEST_PNF_SCOPE));
     }
 
 }
