@@ -204,4 +204,15 @@ public class CatalogDbClientTest {
                 .queryParam(CatalogDbClient.RESOURCE_TARGET, pnf_resource).build()));
     }
 
+    @Test
+    public final void testFindWorkFlowByOperationName() {
+        final String operationName = "PNFSoftwareUpgrade";
+        doReturn(new ArrayList()).when(catalogDbClient).getMultipleResources(any(), any());
+        catalogDbClient.findWorkflowByOperationName(operationName);
+
+        // verify
+        verify(catalogDbClient).getMultipleResources(any(Client.class), eq(UriBuilder.fromUri("/findByOperationName")
+                .queryParam(CatalogDbClient.OPERATION_NAME, operationName).build()));
+    }
+
 }

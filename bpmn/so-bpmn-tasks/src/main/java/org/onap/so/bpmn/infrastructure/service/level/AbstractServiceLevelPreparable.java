@@ -20,14 +20,15 @@
 
 package org.onap.so.bpmn.infrastructure.service.level;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.bpmn.infrastructure.service.level.impl.ServiceLevelConstants;
 import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Abstract class for Service level upgrade Execution, it should be extended for service level upgrade tasks.
@@ -38,6 +39,9 @@ public abstract class AbstractServiceLevelPreparable {
 
     @Autowired
     protected ExceptionBuilder exceptionBuilder;
+
+    @Autowired
+    protected CatalogDbClient catalogDbClient;
 
     /**
      * This method fetches workflow names to be invoked based on the controller scope .
