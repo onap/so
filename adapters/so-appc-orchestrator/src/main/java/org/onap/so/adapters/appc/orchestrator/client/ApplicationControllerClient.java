@@ -59,9 +59,9 @@ public class ApplicationControllerClient {
 
     private static final String CLIENT_NAME = "MSO";
 
-    private static final String API_VER = "2.00";
-    private static final String ORIGINATOR_ID = "MSO";
-    private static final int FLAGS_TTL = 65000;
+    protected static final String API_VER = "2.00";
+    protected static final String ORIGINATOR_ID = "MSO";
+    protected static final int FLAGS_TTL = 65000;
     private static Logger logger = LoggerFactory.getLogger(ApplicationControllerClient.class);
 
     @Autowired
@@ -216,13 +216,12 @@ public class ApplicationControllerClient {
         return requestObject;
     }
 
-    private CommonHeader buildCommonHeader(String requestId, String requestorId) {
+    protected CommonHeader buildCommonHeader(String requestId, String requestorId) {
         CommonHeader commonHeader = new CommonHeader();
         commonHeader.setApiVer(API_VER);
         commonHeader.setOriginatorId(ORIGINATOR_ID);
         commonHeader.setRequestId(requestId == null ? UUID.randomUUID().toString() : requestId);
         commonHeader.setSubRequestId(UUID.randomUUID().toString());
-        // commonHeader.setXOnapRequestorid(requestorId);
         Flags flags = new Flags();
         String flagsMode = "NORMAL";
         Mode mode = Mode.valueOf(flagsMode);
