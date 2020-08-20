@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1p6whk3" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.1.1">
+  <bpmn:process id="DoAllocateTransportNSSI" name="DoAllocateTransportNSSI" isExecutable="true">
+    <bpmn:startEvent id="Event_0jhljfr" name="Start">
+      <bpmn:outgoing>Flow_1lfjs6n</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_0nch34f" name="End">
+      <bpmn:incoming>Flow_01hnsll</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:scriptTask id="Activity_0r2lmhb" name="Dummy Task" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1lfjs6n</bpmn:incoming>
+      <bpmn:outgoing>Flow_01hnsll</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def nss = new AllocateSliceSubnet()
+nss.dummypreProcessRequest(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1lfjs6n" sourceRef="Event_0jhljfr" targetRef="Activity_0r2lmhb" />
+    <bpmn:sequenceFlow id="Flow_01hnsll" sourceRef="Activity_0r2lmhb" targetRef="Event_0nch34f" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoAllocateTransportNSSI">
+      <bpmndi:BPMNEdge id="Flow_01hnsll_di" bpmnElement="Flow_01hnsll">
+        <di:waypoint x="343" y="120" />
+        <di:waypoint x="405" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lfjs6n_di" bpmnElement="Flow_1lfjs6n">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="243" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0jhljfr_di" bpmnElement="Event_0jhljfr">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="158" y="145" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0nch34f_di" bpmnElement="Event_0nch34f">
+        <dc:Bounds x="405" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="413" y="145" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0r2lmhb_di" bpmnElement="Activity_0r2lmhb">
+        <dc:Bounds x="243" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
