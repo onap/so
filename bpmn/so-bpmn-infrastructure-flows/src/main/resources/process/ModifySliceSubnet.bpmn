@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0fme930" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.1.1">
+  <bpmn:process id="ModifySliceSubnet" name="ModifySliceSubnet" isExecutable="true">
+    <bpmn:startEvent id="Event_05idy03" name="Start">
+      <bpmn:outgoing>Flow_1t0w8dn</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:scriptTask id="Activity_0kd9pxx" name="Preprocess Request" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1t0w8dn</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fzchbl</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def nss = new ModifySliceSubnet()
+nss.preProcessRequest(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_1dzkfh2" name="Send Sync Response" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1q030ul</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ps6iyc</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def nss = new ModifySliceSubnet()
+nss.sendSyncResponse(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:exclusiveGateway id="Gateway_1baxf7k" name="Whether Network type">
+      <bpmn:incoming>Flow_0ps6iyc</bpmn:incoming>
+      <bpmn:outgoing>Flow_15luvlg</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0usuozn</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1dfyoe6</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="Event_103vvkf">
+      <bpmn:incoming>Flow_1b2k523</bpmn:incoming>
+      <bpmn:incoming>Flow_0pklfqu</bpmn:incoming>
+      <bpmn:incoming>Flow_1bbqkjv</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Activity_0ptby3d" name="Update Resource Operation Status">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
+                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">${initResourceOperationStatus}</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
+            <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1grhlet</bpmn:incoming>
+      <bpmn:outgoing>Flow_1q030ul</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1t0w8dn" sourceRef="Event_05idy03" targetRef="Activity_0kd9pxx" />
+    <bpmn:sequenceFlow id="Flow_0fzchbl" sourceRef="Activity_0kd9pxx" targetRef="Activity_1s8ojcr" />
+    <bpmn:sequenceFlow id="Flow_1q030ul" sourceRef="Activity_0ptby3d" targetRef="Activity_1dzkfh2" />
+    <bpmn:sequenceFlow id="Flow_0ps6iyc" sourceRef="Activity_1dzkfh2" targetRef="Gateway_1baxf7k" />
+    <bpmn:sequenceFlow id="Flow_15luvlg" name="Is TN ?" sourceRef="Gateway_1baxf7k" targetRef="Activity_192bdyv">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("networkType") == "TN"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0usuozn" name="Is AN ?" sourceRef="Gateway_1baxf7k" targetRef="Activity_0t1g4mp">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("networkType") == "AN"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:scriptTask id="Activity_1s8ojcr" name="Init Resource Operation Status" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0fzchbl</bpmn:incoming>
+      <bpmn:outgoing>Flow_1grhlet</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def nss = new ModifySliceSubnet()
+nss.prepareInitOperationStatus(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1grhlet" sourceRef="Activity_1s8ojcr" targetRef="Activity_0ptby3d" />
+    <bpmn:callActivity id="Activity_0t1g4mp" name="Call ANModifyNSSI" calledElement="DoModifyAccessNSSI">
+      <bpmn:extensionElements>
+        <camunda:in source="msoRequestId" target="msoRequestId" />
+        <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
+        <camunda:in source="serviceInstanceID" target="serviceInstanceID" />
+        <camunda:in source="nsiId" target="nsiId" />
+        <camunda:in source="networkType" target="networkType" />
+        <camunda:in source="subscriptionServiceType" target="subscriptionServiceType" />
+        <camunda:in source="jobId" target="jobId" />
+        <camunda:in source="sliceParams" target="sliceParams" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="servicename" target="servicename" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0usuozn</bpmn:incoming>
+      <bpmn:outgoing>Flow_1b2k523</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_1b2k523" sourceRef="Activity_0t1g4mp" targetRef="Event_103vvkf" />
+    <bpmn:callActivity id="Activity_0v2hxmv" name="Call CNModifyNSSI" calledElement="DoModifyCoreNSSI">
+      <bpmn:extensionElements>
+        <camunda:in source="msoRequestId" target="msoRequestId" />
+        <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
+        <camunda:in source="serviceInstanceID" target="serviceInstanceID" />
+        <camunda:in source="nsiId" target="nsiId" />
+        <camunda:in source="networkType" target="networkType" />
+        <camunda:in source="subscriptionServiceType" target="subscriptionServiceType" />
+        <camunda:in source="jobId" target="jobId" />
+        <camunda:in source="sliceParams" target="sliceParams" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="servicename" target="servicename" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1dfyoe6</bpmn:incoming>
+      <bpmn:outgoing>Flow_0pklfqu</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="Activity_192bdyv" name="Call TNModifyNSSI" calledElement="DoModifyTransportNSSI">
+      <bpmn:extensionElements>
+        <camunda:in source="msoRequestId" target="msoRequestId" />
+        <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
+        <camunda:in source="serviceInstanceID" target="serviceInstanceID" />
+        <camunda:in source="nsiId" target="nsiId" />
+        <camunda:in source="networkType" target="networkType" />
+        <camunda:in source="subscriptionServiceType" target="subscriptionServiceType" />
+        <camunda:in source="jobId" target="jobId" />
+        <camunda:in source="sliceParams" target="sliceParams" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="servicename" target="servicename" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_15luvlg</bpmn:incoming>
+      <bpmn:outgoing>Flow_1bbqkjv</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_0pklfqu" sourceRef="Activity_0v2hxmv" targetRef="Event_103vvkf" />
+    <bpmn:sequenceFlow id="Flow_1dfyoe6" name="Is CN ?" sourceRef="Gateway_1baxf7k" targetRef="Activity_0v2hxmv">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("networkType") == "CN"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1bbqkjv" sourceRef="Activity_192bdyv" targetRef="Event_103vvkf" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="ModifySliceSubnet">
+      <bpmndi:BPMNEdge id="Flow_0usuozn_di" bpmnElement="Flow_0usuozn">
+        <di:waypoint x="830" y="245" />
+        <di:waypoint x="830" y="140" />
+        <di:waypoint x="920" y="140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="794" y="149" width="37" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15luvlg_di" bpmnElement="Flow_15luvlg">
+        <di:waypoint x="830" y="295" />
+        <di:waypoint x="830" y="380" />
+        <di:waypoint x="920" y="380" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="830" y="365" width="36" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1dfyoe6_di" bpmnElement="Flow_1dfyoe6">
+        <di:waypoint x="855" y="270" />
+        <di:waypoint x="920" y="270" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="865" y="252" width="37" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ps6iyc_di" bpmnElement="Flow_0ps6iyc">
+        <di:waypoint x="740" y="270" />
+        <di:waypoint x="805" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1q030ul_di" bpmnElement="Flow_1q030ul">
+        <di:waypoint x="590" y="270" />
+        <di:waypoint x="640" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fzchbl_di" bpmnElement="Flow_0fzchbl">
+        <di:waypoint x="310" y="270" />
+        <di:waypoint x="340" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1t0w8dn_di" bpmnElement="Flow_1t0w8dn">
+        <di:waypoint x="188" y="270" />
+        <di:waypoint x="210" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1grhlet_di" bpmnElement="Flow_1grhlet">
+        <di:waypoint x="440" y="270" />
+        <di:waypoint x="490" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1b2k523_di" bpmnElement="Flow_1b2k523">
+        <di:waypoint x="1020" y="140" />
+        <di:waypoint x="1110" y="140" />
+        <di:waypoint x="1110" y="252" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0pklfqu_di" bpmnElement="Flow_0pklfqu">
+        <di:waypoint x="1020" y="270" />
+        <di:waypoint x="1092" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1bbqkjv_di" bpmnElement="Flow_1bbqkjv">
+        <di:waypoint x="1020" y="380" />
+        <di:waypoint x="1110" y="380" />
+        <di:waypoint x="1110" y="288" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_1dzkfh2_di" bpmnElement="Activity_1dzkfh2">
+        <dc:Bounds x="640" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1baxf7k_di" bpmnElement="Gateway_1baxf7k" isMarkerVisible="true">
+        <dc:Bounds x="805" y="245" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="787" y="288" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_103vvkf_di" bpmnElement="Event_103vvkf">
+        <dc:Bounds x="1092" y="252" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ptby3d_di" bpmnElement="Activity_0ptby3d">
+        <dc:Bounds x="490" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_05idy03_di" bpmnElement="Event_05idy03">
+        <dc:Bounds x="152" y="252" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="158" y="295" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0kd9pxx_di" bpmnElement="Activity_0kd9pxx">
+        <dc:Bounds x="210" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1s8ojcr_di" bpmnElement="Activity_1s8ojcr">
+        <dc:Bounds x="340" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0t1g4mp_di" bpmnElement="Activity_0t1g4mp">
+        <dc:Bounds x="920" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0v2hxmv_di" bpmnElement="Activity_0v2hxmv">
+        <dc:Bounds x="920" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_192bdyv_di" bpmnElement="Activity_192bdyv">
+        <dc:Bounds x="920" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -22,6 +22,7 @@ package org.onap.so.bpmn.common.scripts
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.db.request.beans.OperationStatus
+import org.onap.so.db.request.beans.ResourceOperationStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.util.UriUtils
@@ -116,4 +117,100 @@ class RequestDBUtil {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
         }
     }
+	
+	/**
+	 * init resource  operation status in requestDB
+	 * @param execution
+	 * @param resourceoperationStatus
+	 */
+	void prepareInitResourceOperationStatus(DelegateExecution execution, final ResourceOperationStatus resourceoperationStatus){
+		logger.debug("start prepareinitResourceOperationStatus")
+		try{
+			def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
+			execution.setVariable("dbAdapterEndpoint", dbAdapterEndpoint)
+			logger.debug("DB Adapter Endpoint is: " + dbAdapterEndpoint)
+
+			String serviceId = resourceoperationStatus.getServiceId()
+			serviceId = UriUtils.encode(serviceId,"UTF-8")
+			String operationId = resourceoperationStatus.getOperationId()
+			String resourceTemplateUUID = resourceoperationStatus.getResourceTemplateUUID()
+			String operType = resourceoperationStatus.getOperType()
+
+			String payload =
+					"""<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                        xmlns:ns="http://org.onap.so/requestsdb">
+                            <soapenv:Header/>
+                            <soapenv:Body>
+                                <ns:initResourceOperationStatus xmlns:ns="http://org.onap.so/requestsdb">
+                                    <serviceId>${MsoUtils.xmlEscape(serviceId)}</serviceId>
+                                    <operationId>${MsoUtils.xmlEscape(operationId)}</operationId>
+                                    <operationType>${MsoUtils.xmlEscape(operType)}</operationType>
+                                    <resourceTemplateUUIDs>${MsoUtils.xmlEscape(resourceTemplateUUID)}</resourceTemplateUUIDs>
+                                </ns:initResourceOperationStatus>
+                            </soapenv:Body>
+                        </soapenv:Envelope>
+                    """
+			execution.setVariable("initResourceOperationStatus", payload)
+
+		}catch(any){
+			String exceptionMessage = "Prepare init ResourceOperationStatus failed. cause - " + any.getMessage()
+			logger.debug(exceptionMessage)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
+		}
+		logger.trace("finished init ResourceOperationStatus")
+	}
+	
+	/**
+	 * update resource operation status in requestDB
+	 * @param execution
+	 * @param resourceoperationStatus
+	 */
+	void prepareUpdateResourceOperationStatus(DelegateExecution execution, final ResourceOperationStatus resourceoperationStatus){
+		logger.debug("start prepareUpdateResourceOperationStatus")
+		try{
+			def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
+			execution.setVariable("dbAdapterEndpoint", dbAdapterEndpoint)
+			logger.debug("DB Adapter Endpoint is: " + dbAdapterEndpoint)
+
+			String serviceId = resourceoperationStatus.getServiceId()
+			serviceId = UriUtils.encode(serviceId,"UTF-8")
+			String operationId = resourceoperationStatus.getOperationId()
+			String resourceTemplateUUID = resourceoperationStatus.getResourceTemplateUUID()
+			String operType = resourceoperationStatus.getOperType()
+			String resourceInstanceID = resourceoperationStatus.getResourceInstanceID()
+			String jobId = resourceoperationStatus.getJobId()
+			String status = resourceoperationStatus.getStatus()
+			String progress = resourceoperationStatus.getProgress()
+			String errorCode = resourceoperationStatus.getErrorCode()?: ""
+			String statusDescription = resourceoperationStatus.getStatusDescription()?: ""
+
+			String payload =
+					"""<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                        xmlns:ns="http://org.onap.so/requestsdb">
+                            <soapenv:Header/>
+                            <soapenv:Body>
+                                <ns:updateResourceOperationStatus xmlns:ns="http://org.onap.so/requestsdb">
+                                    <serviceId>${MsoUtils.xmlEscape(serviceId)}</serviceId>
+                                    <operationId>${MsoUtils.xmlEscape(operationId)}</operationId>
+									<resourceTemplateUUIDs>${MsoUtils.xmlEscape(resourceTemplateUUID)}</resourceTemplateUUIDs>
+                                    <operationType>${MsoUtils.xmlEscape(operType)}</operationType>
+                                    <jobId>${MsoUtils.xmlEscape(jobId)}</jobId>
+                                    <status>${MsoUtils.xmlEscape(status)}</status>
+                                    <progress>${MsoUtils.xmlEscape(progress)}</progress>
+                                    <errorCode>${MsoUtils.xmlEscape(errorCode)}</errorCode>
+									<statusDescription>${MsoUtils.xmlEscape(statusDescription)}</statusDescription>
+                                </ns:updateResourceOperationStatus>
+                            </soapenv:Body>
+                        </soapenv:Envelope>
+                    """
+			execution.setVariable("updateResourceOperationStatus", payload)
+
+		}catch(any){
+			String exceptionMessage = "Prepare update ResourceOperationStatus failed. cause - " + any.getMessage()
+			logger.debug(exceptionMessage)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
+		}
+		logger.trace("finished update ResourceOperationStatus")
+	}
+
 }
