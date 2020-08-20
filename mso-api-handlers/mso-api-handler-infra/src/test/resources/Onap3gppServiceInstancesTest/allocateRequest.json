@@ -1,0 +1,55 @@
+{
+  "name": "eMBB-001",
+  "modelInvariantUuid": "NSST-C-001-HDBNJ-NSSMF-01-A-ZX",
+  "modelUuid": "NSST-C-001-HDBNJ-NSSMF-01-A-ZX-UUID",
+  "globalSubscriberId": "5GCustomer",
+  "subscriptionServiceType": "5G",
+  "networkType": "an/cn/tn",
+  "additionalProperties": {
+    "sliceProfile": {
+      "snssaiList": [
+        "001-100001"
+      ],
+      "sliceProfileId": "ab9af40f13f721b5f13539d87484098",
+      "plmnIdList": [
+        "460-00",
+        "460-01"
+      ],
+      "perfReq": {
+        "perfReqEmbbList ": [
+          {
+            "activityFactor": 50
+          }
+        ]
+      },
+      "maxNumberofUEs": 200,
+      "coverageAreaTAList": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "latency": 2,
+      "resourceSharingLevel": "non-shared"
+    },
+    "endPoints": [
+      {
+        "nodeId": "",
+        "additionalInfo": {
+          "xxx": "xxx"
+        }
+      },
+      {
+        "nodeId": "",
+        "additionalInfo": {
+          "xxx": "xxx"
+        }
+      }
+    ],
+    "nsiInfo": {
+      "nsiId": "NSI-M-001-HDBNJ-NSMF-01-A-ZX",
+      "nsiName": "eMBB-001"
+    },
+    "scriptName": "AN1"
+  }
+}
