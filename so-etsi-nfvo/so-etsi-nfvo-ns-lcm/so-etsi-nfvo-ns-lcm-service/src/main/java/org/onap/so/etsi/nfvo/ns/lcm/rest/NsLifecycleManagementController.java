@@ -1,19 +1,19 @@
 /*-
  * ============LICENSE_START=======================================================
- *  Copyright (C) 2020 Nordix. All rights reserved.
+ *  Copyright (C) 2020 Nordix Foundation.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
@@ -24,12 +24,17 @@ import static org.onap.so.etsi.nfvo.ns.lcm.Constants.HTTP_SERVICETYPE_HEADER_DEF
 import static org.onap.so.etsi.nfvo.ns.lcm.Constants.HTTP_SERVICETYPE_HEADER_PARM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.Constants.NS_LIFE_CYCLE_MANAGEMENT_BASE_URL;
 import static org.slf4j.LoggerFactory.getLogger;
+import java.net.URI;
 import javax.ws.rs.core.MediaType;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.onap.so.etsi.nfvo.ns.lcm.lifecycle.NsLifeCycleManager;
 import org.onap.so.etsi.nfvo.ns.lcm.model.Body;
 import org.onap.so.etsi.nfvo.ns.lcm.model.CreateNsRequest;
 import org.onap.so.etsi.nfvo.ns.lcm.model.InstantiateNsRequest;
+import org.onap.so.etsi.nfvo.ns.lcm.model.NsInstancesNsInstance;
 import org.onap.so.etsi.nfvo.ns.lcm.model.TerminateNsRequest;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -53,6 +58,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class NsLifecycleManagementController {
     private static final Logger logger = getLogger(NsLifecycleManagementController.class);
 
+    private final NsLifeCycleManager nsLifeCycleManager;
+
+    @Autowired
+    public NsLifecycleManagementController(final NsLifeCycleManager nsLifeCycleManager) {
+        this.nsLifeCycleManager = nsLifeCycleManager;
+    }
 
     /**
      * The POST method creates new {@link Body new NS instance resource} request. See Section Number: 6.3.1 for more
@@ -74,7 +85,17 @@ public class NsLifecycleManagementController {
             @RequestBody final CreateNsRequest createNsRequest) {
         logger.info("Received Create NS Request: {}\n with globalCustomerId: {}\n serviceType: {}\n", createNsRequest,
                 globalCustomerId, serviceType);
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("Operation is not supported yet");
+
+        final ImmutablePair<URI, NsInstancesNsInstance> nsInstance =
+                nsLifeCycleManager.createNs(createNsRequest, globalCustomerId, serviceType);
+
+        final URI resourceUri = nsInstance.getLeft();
+        final NsInstancesNsInstance createdNsresponse = nsInstance.getRight();
+
+        logger.info("NS resource created successfully. Resource location: {}, response: {}", resourceUri,
+                createdNsresponse);
+
+        return ResponseEntity.created(resourceUri).body(createdNsresponse);
     }
 
     /**

@@ -1,68 +1,65 @@
 # will be used as entry in DB to say SITE OFF/ON for healthcheck
 security:
-  basic:
-    enabled: false
+   basic:
+      enabled: false
 server:
-    port: 8080
-    tomcat:
-        max-threads: 50
+   port: 8080
+   tomcat:
+      max-threads: 50
 ssl-enable: false
 mso:
-  adapters:
-    requestDb:
-      auth: Basic YnBlbDptc28tZGItMTUwNyE=
-      endpoint: http://localhost:8081
-  logPath: logs
-  site-name: localSite
-  infra-requests:
-    archived:
-      period: 0
+   adapters:
+      requestDb:
+         auth: Basic YnBlbDptc28tZGItMTUwNyE=
+         endpoint: http://localhost:8081
+   logPath: logs
+   site-name: localSite
+   infra-requests:
+      archived:
+         period: 0
 spring:
-  datasource:
-    jdbcUrl: jdbc:mariadb://localhost:3307/requestdb
-    username: root
-    password: password
-    driver-class-name: org.mariadb.jdbc.Driver
-    initialize: true
-    initialization-mode: never
-  flyway:
-    baseline-on-migrate: false
-    url: jdbc:mariadb://localhost:3307/requestdb
-    user: root
-    password: password
-  jpa:   
-    generate-ddl: false
-    show-sql: false
-    hibernate:      
-      ddl-auto: validate
-      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
-      enable-lazy-load-no-trans: true
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-  security:
-    usercredentials:
-    -
-      username: bpel
-      password: '$2a$12$1xyutEZNfjGewIZRfKaE8eZE99f5sYFUmmM80BobI65KNjmcK0JuO'
-      role: BPEL-Client
-    -  
-      username: mso_admin
-      password: '$2a$12$tidKuu.h88E2nuL95pTVY.ZOYMN/1dp29A9b1o.0GFDsVVSYlMkHa'
-      role: ACTUATOR
+   datasource:
+      jdbcUrl: jdbc:mariadb://localhost:3307/requestdb
+      username: root
+      password: password
+      driver-class-name: org.mariadb.jdbc.Driver
+      initialize: true
+      initialization-mode: never
+   flyway:
+      baseline-on-migrate: false
+      url: jdbc:mariadb://localhost:3307/requestdb
+      user: root
+      password: password
+   jpa:
+      generate-ddl: false
+      show-sql: false
+      hibernate:
+         ddl-auto: validate
+         naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+         enable-lazy-load-no-trans: true
+      database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+   security:
+      usercredentials:
+      -  username: bpel
+         password: $2a$12$1xyutEZNfjGewIZRfKaE8eZE99f5sYFUmmM80BobI65KNjmcK0JuO
+         role: BPEL-Client
+      -  username: mso_admin
+         password: $2a$12$tidKuu.h88E2nuL95pTVY.ZOYMN/1dp29A9b1o.0GFDsVVSYlMkHa
+         role: ACTUATOR
 mariaDB4j:
-  dataDir: 
-  port: 3307
-  databaseName: requestdb
-
+   dataDir: null
+   port: 3307
+   databaseName: requestdb
 management:
-  endpoints:
-    web:
-      base-path: /manage
-  server:
-    servlet:
-      context-path: /manage
-  metrics:
-    se-global-registry: false
-    export:
-      prometheus:
-        enabled: true # Whether exporting of metrics to Prometheus is enabled.
-        step: 1m # Step size (i.e. reporting frequency) to use.  
+   endpoints:
+      web:
+         base-path: /manage
+   server:
+      servlet:
+         context-path: /manage
+   metrics:
+      se-global-registry: false
+      export:
+         prometheus:
+            enabled: true # Whether exporting of metrics to Prometheus is enabled.
+            step: 1m # Step size (i.e. reporting frequency) to use.

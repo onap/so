@@ -16,6 +16,11 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.onap.so.etsi.nfvo</groupId>
+      <artifactId>so-etsi-nfvo-ns-lcm-bpmn-flows</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
       <exclusions>
@@ -62,6 +67,11 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

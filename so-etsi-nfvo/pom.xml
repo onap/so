@@ -26,6 +26,7 @@
     <okhttp-version>2.7.5</okhttp-version>
     <okio-version>1.13.0</okio-version>
     <jaxb-api>2.3.0</jaxb-api>
+    <snakeyaml-version>0.11</snakeyaml-version>
   </properties>
 
   <build>
