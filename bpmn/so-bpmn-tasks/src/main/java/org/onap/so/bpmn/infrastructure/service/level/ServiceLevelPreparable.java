@@ -20,32 +20,58 @@
 
 package org.onap.so.bpmn.infrastructure.service.level;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.bpmn.infrastructure.service.level.impl.ServiceLevelConstants;
 import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.db.catalog.beans.Workflow;
+import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * Abstract class for Service level upgrade Execution, it should be extended for service level upgrade tasks.
+ * Parent class for Service level upgrade Execution, it should be extended for service level upgrade tasks.
  */
-public abstract class AbstractServiceLevelPreparable {
+public class ServiceLevelPreparable {
 
-    protected static final Logger LOG = LoggerFactory.getLogger(AbstractServiceLevelPreparable.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(ServiceLevelPreparable.class);
 
     @Autowired
     protected ExceptionBuilder exceptionBuilder;
 
+    @Autowired
+    protected CatalogDbClient catalogDbClient;
+
     /**
-     * This method fetches workflow names to be invoked based on the controller scope .
+     * Fetches workflow names based on the controller scope and operation name.
      *
      * @param scope Controller scope
+     * @param operationName healthcheck/softwareUpgrade
      * @return String value of Workflow name
      */
-    protected abstract String fetchWorkflowUsingScope(DelegateExecution execution, final String scope);
+    protected String fetchWorkflowUsingScope(final String scope, String operationName) {
+        Optional<String> wflName = Optional.empty();
+        try {
+            List<Workflow> workflows = catalogDbClient.findWorkflowByOperationName(operationName);
+            if (!workflows.isEmpty()) {
+                wflName = Optional.ofNullable(
+                        workflows.stream().filter(workflow -> workflow.getResourceTarget().equalsIgnoreCase(scope))
+                                .findFirst().get().getName());
+            }
+        } catch (Exception e) {
+            // do nothing and assign the default workflow in finally
+            LOG.error("Error occurred while fetching workflow name from CatalogDb {}", e);
+        } finally {
+            if (wflName.isEmpty()) {
+                wflName = Optional.of(ServiceLevelConstants.WORKFLOW_OPERATIONS_MAP.get(operationName).get(scope));
+            }
+        }
+        return wflName.get();
+
+    }
 
     /**
      * This method validates the execution parameters to be passed for health check workflow.

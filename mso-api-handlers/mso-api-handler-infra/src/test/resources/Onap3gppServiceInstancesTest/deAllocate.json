@@ -1,0 +1,13 @@
+{
+  "serviceInstanceID": "NSSI-C-001-HDBNJ-NSSMF-01-A-ZX ",
+  "networkType": "an/cn/tn",
+  "globalSubscriberId": "5GCustomer",
+  "subscriptionServiceType": "5G",
+  "additionalProperties": {
+    "snssaiList": [
+      "001-100001"
+    ],
+    "scriptName": "AN1",
+    "nsiId": "NSI-M-001-HDBNJ-NSMF-01-A-ZX"
+  }
+}
