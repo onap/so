@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0kw5q10" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.1.1">
+  <bpmn:process id="DoDeallocateCoreNSSI" name="DoDeallocateCoreNSSI" isExecutable="true">
+    <bpmn:startEvent id="Event_1crwrqh" name="Start">
+      <bpmn:outgoing>Flow_18z4xsh</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_13rdqi4" name="End">
+      <bpmn:incoming>Flow_02opybr</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:scriptTask id="Activity_1lws7va" name="DoDeallocateCoreNSSI" scriptFormat="groovy">
+      <bpmn:incoming>Flow_18z4xsh</bpmn:incoming>
+      <bpmn:outgoing>Flow_02opybr</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def nss = new AllocateSliceSubnet()
+nss.dummypreProcessRequest(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_18z4xsh" sourceRef="Event_1crwrqh" targetRef="Activity_1lws7va" />
+    <bpmn:sequenceFlow id="Flow_02opybr" sourceRef="Activity_1lws7va" targetRef="Event_13rdqi4" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoDeallocateCoreNSSI">
+      <bpmndi:BPMNEdge id="Flow_18z4xsh_di" bpmnElement="Flow_18z4xsh">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="243" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02opybr_di" bpmnElement="Flow_02opybr">
+        <di:waypoint x="343" y="120" />
+        <di:waypoint x="405" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1crwrqh_di" bpmnElement="Event_1crwrqh">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="158" y="145" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_13rdqi4_di" bpmnElement="Event_13rdqi4">
+        <dc:Bounds x="405" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="413" y="145" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1lws7va_di" bpmnElement="Activity_1lws7va">
+        <dc:Bounds x="243" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
