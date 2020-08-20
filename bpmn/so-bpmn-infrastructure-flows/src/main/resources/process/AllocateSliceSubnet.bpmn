@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_04bdlh3" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.1.1">
+  <bpmn:process id="AllocateSliceSubnet" name="AllocateSliceSubnet" isExecutable="true">
+    <bpmn:startEvent id="Event_16inlk9" name="Start">
+      <bpmn:outgoing>Flow_0cmaj9d</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:scriptTask id="Activity_1hyt0pb" name="Preprocess Request" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0cmaj9d</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ou7wr9</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def nss = new AllocateSliceSubnet()
+nss.preProcessRequest(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_1usi32q" name="Send Sync Response" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0ayd6dj</bpmn:incoming>
+      <bpmn:outgoing>Flow_0m5n6md</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def nss = new AllocateSliceSubnet()
+nss.sendSyncResponse(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:exclusiveGateway id="Gateway_15a04ct" name="Whether Network type">
+      <bpmn:incoming>Flow_0m5n6md</bpmn:incoming>
+      <bpmn:outgoing>Flow_1fij4ds</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0g7721r</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1kk0exp</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="Event_18u424w">
+      <bpmn:incoming>Flow_09b50tn</bpmn:incoming>
+      <bpmn:incoming>Flow_189zwjw</bpmn:incoming>
+      <bpmn:incoming>Flow_1coedjo</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Activity_0qlstj2" name="Update Resource Operation Status">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
+                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">${initResourceOperationStatus}</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
+            <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_18cgkru</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ayd6dj</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0cmaj9d" sourceRef="Event_16inlk9" targetRef="Activity_1hyt0pb" />
+    <bpmn:sequenceFlow id="Flow_0ayd6dj" sourceRef="Activity_0qlstj2" targetRef="Activity_1usi32q" />
+    <bpmn:sequenceFlow id="Flow_0m5n6md" sourceRef="Activity_1usi32q" targetRef="Gateway_15a04ct" />
+    <bpmn:sequenceFlow id="Flow_1fij4ds" name="Is CN ?" sourceRef="Gateway_15a04ct" targetRef="CallDoAllocateCoreNSSI">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("networkType") == "CN"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0g7721r" name="Is TN ?" sourceRef="Gateway_15a04ct" targetRef="CallDoAllocateTransportNSSI">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("networkType") == "TN"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1kk0exp" name="Is AN ?" sourceRef="Gateway_15a04ct" targetRef="CallDoAllocateAccessNSSI">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("networkType") == "AN"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_09b50tn" sourceRef="CallDoAllocateAccessNSSI" targetRef="Event_18u424w" />
+    <bpmn:callActivity id="CallDoAllocateAccessNSSI" name="Call ANAllocateNSSI" calledElement="DoAllocateAccessNSSI">
+      <bpmn:extensionElements>
+        <camunda:in source="msoRequestId" target="msoRequestId" />
+        <camunda:in source="modelInvariantUuid" target="modelInvariantUuid" />
+        <camunda:in source="modelUuid" target="modelUuid" />
+        <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
+        <camunda:in source="dummyServiceId" target="dummyServiceId" />
+        <camunda:in source="nsiId" target="nsiId" />
+        <camunda:in source="networkType" target="networkType" />
+        <camunda:in source="subscriptionServiceType" target="subscriptionServiceType" />
+        <camunda:in source="jobId" target="jobId" />
+        <camunda:in source="sliceParams" target="sliceParams" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="servicename" target="servicename" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1kk0exp</bpmn:incoming>
+      <bpmn:outgoing>Flow_09b50tn</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:scriptTask id="Activity_1ydx2rx" name="Init Resource Operation Status" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0ou7wr9</bpmn:incoming>
+      <bpmn:outgoing>Flow_18cgkru</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def nss = new AllocateSliceSubnet()
+nss.prepareInitOperationStatus(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0ou7wr9" sourceRef="Activity_1hyt0pb" targetRef="Activity_1ydx2rx" />
+    <bpmn:sequenceFlow id="Flow_18cgkru" sourceRef="Activity_1ydx2rx" targetRef="Activity_0qlstj2" />
+    <bpmn:sequenceFlow id="Flow_189zwjw" sourceRef="CallDoAllocateTransportNSSI" targetRef="Event_18u424w" />
+    <bpmn:callActivity id="CallDoAllocateCoreNSSI" name="Call CNAllocateNSSI" calledElement="DoAllocateCoreNSSI">
+      <bpmn:extensionElements>
+        <camunda:in source="msoRequestId" target="msoRequestId" />
+        <camunda:in source="modelInvariantUuid" target="modelInvariantUuid" />
+        <camunda:in source="modelUuid" target="modelUuid" />
+        <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
+        <camunda:in source="dummyServiceId" target="dummyServiceId" />
+        <camunda:in source="nsiId" target="nsiId" />
+        <camunda:in source="networkType" target="networkType" />
+        <camunda:in source="subscriptionServiceType" target="subscriptionServiceType" />
+        <camunda:in source="jobId" target="jobId" />
+        <camunda:in source="sliceParams" target="sliceParams" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="servicename" target="servicename" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1fij4ds</bpmn:incoming>
+      <bpmn:outgoing>Flow_1coedjo</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_1coedjo" sourceRef="CallDoAllocateCoreNSSI" targetRef="Event_18u424w" />
+    <bpmn:callActivity id="CallDoAllocateTransportNSSI" name="Call TNAllocateNSSI" calledElement="DoAllocateTransportNSSI">
+      <bpmn:extensionElements>
+        <camunda:in source="msoRequestId" target="msoRequestId" />
+        <camunda:in source="modelInvariantUuid" target="modelInvariantUuid" />
+        <camunda:in source="modelUuid" target="modelUuid" />
+        <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
+        <camunda:in source="dummyServiceId" target="dummyServiceId" />
+        <camunda:in source="nsiId" target="nsiId" />
+        <camunda:in source="networkType" target="networkType" />
+        <camunda:in source="subscriptionServiceType" target="subscriptionServiceType" />
+        <camunda:in source="jobId" target="jobId" />
+        <camunda:in source="sliceParams" target="sliceParams" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="servicename" target="servicename" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0g7721r</bpmn:incoming>
+      <bpmn:outgoing>Flow_189zwjw</bpmn:outgoing>
+    </bpmn:callActivity>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="AllocateSliceSubnet">
+      <bpmndi:BPMNEdge id="Flow_1coedjo_di" bpmnElement="Flow_1coedjo">
+        <di:waypoint x="1080" y="190" />
+        <di:waypoint x="1152" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_189zwjw_di" bpmnElement="Flow_189zwjw">
+        <di:waypoint x="1080" y="290" />
+        <di:waypoint x="1170" y="290" />
+        <di:waypoint x="1170" y="208" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18cgkru_di" bpmnElement="Flow_18cgkru">
+        <di:waypoint x="480" y="190" />
+        <di:waypoint x="550" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ou7wr9_di" bpmnElement="Flow_0ou7wr9">
+        <di:waypoint x="320" y="190" />
+        <di:waypoint x="380" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09b50tn_di" bpmnElement="Flow_09b50tn">
+        <di:waypoint x="1080" y="90" />
+        <di:waypoint x="1170" y="90" />
+        <di:waypoint x="1170" y="172" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kk0exp_di" bpmnElement="Flow_1kk0exp">
+        <di:waypoint x="890" y="165" />
+        <di:waypoint x="890" y="90" />
+        <di:waypoint x="980" y="90" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="911" y="125" width="37" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0g7721r_di" bpmnElement="Flow_0g7721r">
+        <di:waypoint x="890" y="215" />
+        <di:waypoint x="890" y="290" />
+        <di:waypoint x="980" y="290" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="912" y="263" width="36" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1fij4ds_di" bpmnElement="Flow_1fij4ds">
+        <di:waypoint x="915" y="190" />
+        <di:waypoint x="980" y="190" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="921" y="172" width="37" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0m5n6md_di" bpmnElement="Flow_0m5n6md">
+        <di:waypoint x="800" y="190" />
+        <di:waypoint x="865" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ayd6dj_di" bpmnElement="Flow_0ayd6dj">
+        <di:waypoint x="650" y="190" />
+        <di:waypoint x="700" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cmaj9d_di" bpmnElement="Flow_0cmaj9d">
+        <di:waypoint x="188" y="190" />
+        <di:waypoint x="220" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_16inlk9_di" bpmnElement="Event_16inlk9">
+        <dc:Bounds x="152" y="172" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="158" y="215" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1hyt0pb_di" bpmnElement="Activity_1hyt0pb">
+        <dc:Bounds x="220" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1usi32q_di" bpmnElement="Activity_1usi32q">
+        <dc:Bounds x="700" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_15a04ct_di" bpmnElement="Gateway_15a04ct" isMarkerVisible="true">
+        <dc:Bounds x="865" y="165" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="847" y="208" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_18u424w_di" bpmnElement="Event_18u424w">
+        <dc:Bounds x="1152" y="172" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0qlstj2_di" bpmnElement="Activity_0qlstj2">
+        <dc:Bounds x="550" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ezmthy_di" bpmnElement="CallDoAllocateAccessNSSI">
+        <dc:Bounds x="980" y="50" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ydx2rx_di" bpmnElement="Activity_1ydx2rx">
+        <dc:Bounds x="380" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_01669p4_di" bpmnElement="CallDoAllocateCoreNSSI">
+        <dc:Bounds x="980" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_00awuik_di" bpmnElement="CallDoAllocateTransportNSSI">
+        <dc:Bounds x="980" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
