@@ -59,7 +59,7 @@ public class NfvoNsInst {
     @Column(name = "NSD_INVARIANT_ID")
     private String nsdInvariantId;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", columnDefinition = "LONGTEXT")
     private String description;
 
     @Enumerated(EnumType.STRING)

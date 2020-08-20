@@ -18,11 +18,24 @@ spring:
       baseline-on-migrate: false
    datasource:
       hikari:
+         camunda:
+            jdbcUrl: jdbc:h2:mem:example-simple;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+            driver-class-name: org.h2.Driver
+            pool-name: ns-lcm-bpmn-pool
+            registerMbeans: true
          nfvo:
-            jdbcUrl: jdbc:h2:mem:NFVO;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;INIT=CREATe SCHEMA IF NOT EXISTS NFVO;
+            jdbcUrl: jdbc:h2:mem:NFVO;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;INIT=CREATE SCHEMA IF NOT EXISTS NFVO;
             driver-class-name: org.h2.Driver
             pool-name: ns-lcm-bpmn-pool
             registerMbeans: true
    jpa:
       hibernate:
          ddl-auto: none
+logging:
+   level:
+      org.reflections.Reflections: ERROR
+etsi-catalog-manager:
+   base:
+      endpoint: http://modeling-etsicatalog.onap:8806/api
+etsi-so-ns-lcm-manager:
+   endpoint: http://etsi-so-ns-lcm-manager-service:9095

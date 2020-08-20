@@ -47,7 +47,7 @@ public class NfvoJobStatus {
     @Column(name = "STATUS")
     private JobStatusEnum status;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", columnDefinition = "LONGTEXT")
     private String description;
 
     @Column(name = "UPDATED_TIME")

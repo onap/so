@@ -21,6 +21,7 @@ package org.onap.so.etsi.nfvo.ns.lcm.database.beans;
 
 /**
  * @author Waqas Ikram (waqas.ikram@est.tech)
+ *
  */
 public enum JobAction {
     CREATE, INSTANTIATE, TERMINATE, DELETE;
