@@ -60,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "8f0bf9e1_f7996f6a",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/ServiceLevelUpgrade.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-08-20T16:41:15Z",
+      "side": 1,
+      "message": "Done. Since we dont have any abstract methods available, i have made the parent as a normal java class.",
+      "parentUuid": "e8304120_c6eabd44",
+      "range": {
+        "startLine": 47,
+        "startChar": 4,
+        "endLine": 47,
+        "endChar": 13
+      },
+      "revId": "a7000d789c081bc12d30726eb5c87972d8249a60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d55086ae_c571f6fc",
         "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/service/level/ServiceLevelPreparationTest.java",
         "patchSetId": 2
@@ -74,6 +98,24 @@
       "revId": "a7000d789c081bc12d30726eb5c87972d8249a60",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "47b2faa5_2f4cc825",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/service/level/ServiceLevelPreparationTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-08-20T16:41:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d55086ae_c571f6fc",
+      "revId": "a7000d789c081bc12d30726eb5c87972d8249a60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -97,6 +139,30 @@
       "revId": "a7000d789c081bc12d30726eb5c87972d8249a60",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6d36c9a2_af8ac6ab",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/service/level/ServiceLevelPreparationTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-08-20T16:41:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0474ad8a_3a99b5b0",
+      "range": {
+        "startLine": 128,
+        "startChar": 4,
+        "endLine": 128,
+        "endChar": 10
+      },
+      "revId": "a7000d789c081bc12d30726eb5c87972d8249a60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
