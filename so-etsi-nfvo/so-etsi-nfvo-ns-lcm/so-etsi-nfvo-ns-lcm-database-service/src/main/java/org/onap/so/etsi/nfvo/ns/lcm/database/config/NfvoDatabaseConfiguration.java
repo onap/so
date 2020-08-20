@@ -48,10 +48,11 @@ import com.zaxxer.hikari.HikariDataSource;
         basePackages = {"org.onap.so.etsi.nfvo.ns.lcm.database.repository"})
 public class NfvoDatabaseConfiguration {
 
+    private static final String PERSISTENCE_UNIT = "nfvo";
+    private static final String NFVO_DATA_SOURCE_QUALIFIER = "nfvoDataSource";
+
     @Autowired(required = false)
     private MBeanExporter mBeanExporter;
-
-    private static final String NFVO_DATA_SOURCE_QUALIFIER = "nfvoDataSource";
 
     @Bean
     @ConfigurationProperties(prefix = "spring.datasource.hikari.nfvo")
@@ -72,8 +73,8 @@ public class NfvoDatabaseConfiguration {
     @Bean(name = "entityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(final EntityManagerFactoryBuilder builder,
             @Qualifier(NFVO_DATA_SOURCE_QUALIFIER) final DataSource dataSource) {
-        return builder.dataSource(dataSource).packages(NfvoJob.class.getPackage().getName()).persistenceUnit("nfvo")
-                .build();
+        return builder.dataSource(dataSource).packages(NfvoJob.class.getPackage().getName())
+                .persistenceUnit(PERSISTENCE_UNIT).build();
     }
 
     @Primary

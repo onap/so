@@ -8,11 +8,88 @@
   </parent>
   <artifactId>so-etsi-nfvo-ns-lcm-bpmn-flows</artifactId>
   <name>SO ETSI NFVO NS LCM BPMN Flows</name>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemPropertyVariables>
+            <so.log.level>DEBUG</so.log.level>
+          </systemPropertyVariables>
+          <rerunFailingTestsCount>2</rerunFailingTestsCount>
+          <parallel>suites</parallel>
+          <useUnlimitedThreads>false</useUnlimitedThreads>
+          <threadCount>1</threadCount>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
   <dependencies>
+    <dependency>
+      <groupId>org.onap.so.etsi.nfvo</groupId>
+      <artifactId>so-etsi-nfvo-ns-lcm-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.onap.so.etsi.nfvo</groupId>
       <artifactId>so-etsi-nfvo-ns-lcm-database-service</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.so.adapters</groupId>
+      <artifactId>etsi-sol003-pkgm-ext-clients</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.so</groupId>
+      <artifactId>aai-client</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.camunda.bpm.springboot</groupId>
+      <artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
+      <version>${camunda.springboot.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.camunda.bpmn</groupId>
+          <artifactId>camunda-engine-rest-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.shazam</groupId>
+      <artifactId>shazamcrest</artifactId>
+      <version>${snakeyaml-version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-lang3</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.vaadin.external.google</groupId>
+          <artifactId>android-json</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
