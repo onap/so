@@ -33,6 +33,8 @@ INSERT INTO `service_recipe` (`id`, `ACTION`, `VERSION_STR`, `DESCRIPTION`, `ORC
 INSERT INTO `service_recipe` (`id`, `ACTION`, `VERSION_STR`, `DESCRIPTION`, `ORCHESTRATION_URI`, `SERVICE_PARAM_XSD`, `RECIPE_TIMEOUT`, `SERVICE_TIMEOUT_INTERIM`, `CREATION_TIMESTAMP`, `SERVICE_MODEL_UUID`) VALUES (2,'deleteInstance','1','VID_DEFAULT recipe to delete service-instance if no custom BPMN flow is found','/mso/async/services/DeleteGenericALaCarteServiceInstance',NULL,180,NULL,'2017-10-05 18:52:03','48cc36cc-a9fe-11e7-8b4b-0242ac120002');
 INSERT INTO `service_recipe` (`id`, `ACTION`, `VERSION_STR`, `DESCRIPTION`, `ORCHESTRATION_URI`, `SERVICE_PARAM_XSD`, `RECIPE_TIMEOUT`, `SERVICE_TIMEOUT_INTERIM`, `CREATION_TIMESTAMP`, `SERVICE_MODEL_UUID`) VALUES (3,'createInstance','1','DEFAULT recipe to create service-instance if no custom BPMN flow is found','/mso/async/services/CreateGenericALaCarteServiceInstance',NULL,180,NULL,'2017-10-05 18:52:03','48cc3acd-a9fe-11e7-8b4b-0242ac120002');
 INSERT INTO `service_recipe` (`id`, `ACTION`, `VERSION_STR`, `DESCRIPTION`, `ORCHESTRATION_URI`, `SERVICE_PARAM_XSD`, `RECIPE_TIMEOUT`, `SERVICE_TIMEOUT_INTERIM`, `CREATION_TIMESTAMP`, `SERVICE_MODEL_UUID`) VALUES (4,'deleteInstance','1','DEFAULT recipe to delete service-instance if no custom BPMN flow is found','/mso/async/services/DeleteGenericALaCarteServiceInstance',NULL,180,NULL,'2017-10-05 18:52:03','48cc3acd-a9fe-11e7-8b4b-0242ac120002');
+insert into `service_recipe` (`id`, `ACTION`, `VERSION_STR`, `DESCRIPTION`, `ORCHESTRATION_URI`, `SERVICE_PARAM_XSD`, `RECIPE_TIMEOUT`, `SERVICE_TIMEOUT_INTERIM`, `CREATION_TIMESTAMP`, `SERVICE_MODEL_UUID`) values (500,'updateInstance','1.0','Gr api recipe to update service-instance', '/mso/async/services/WorkflowActionBB', NULL, 180, NULL, '2017-10-05 18:52:03', 'd88da85c-d9e8-4f73-b837-3a72a431622b');
+
 
 --
 -- Custom Reciepe for the VoLTE service added temporarily
@@ -59,6 +61,7 @@ INSERT INTO `vnf_components_recipe` (`id`, `VNF_TYPE`, `VNF_COMPONENT_TYPE`, `VF
 INSERT INTO `vnf_components_recipe` (`id`, `VNF_TYPE`, `VNF_COMPONENT_TYPE`, `VF_MODULE_MODEL_UUID`, `ACTION`, `SERVICE_TYPE`, `VERSION`, `DESCRIPTION`, `ORCHESTRATION_URI`, `VNF_COMPONENT_PARAM_XSD`, `RECIPE_TIMEOUT`, `CREATION_TIMESTAMP`) VALUES (10,NULL,'vfModule','VID_DEFAULT','createInstance',NULL,'1','VID_DEFAULT recipe t','/mso/async/services/CreateVfModuleInfra',null,180,'2017-10-05 18:52:03');
 INSERT INTO `vnf_components_recipe` (`id`, `VNF_TYPE`, `VNF_COMPONENT_TYPE`, `VF_MODULE_MODEL_UUID`, `ACTION`, `SERVICE_TYPE`, `VERSION`, `DESCRIPTION`, `ORCHESTRATION_URI`, `VNF_COMPONENT_PARAM_XSD`, `RECIPE_TIMEOUT`, `CREATION_TIMESTAMP`) VALUES (11,NULL,'vfModule','VID_DEFAULT','deleteInstance',NULL,'1','VID_DEFAULT recipe t','/mso/async/services/DeleteVfModuleInfra',null,180,'2017-10-05 18:52:03');
 INSERT INTO `vnf_components_recipe` (`id`, `VNF_TYPE`, `VNF_COMPONENT_TYPE`, `VF_MODULE_MODEL_UUID`, `ACTION`, `SERVICE_TYPE`, `VERSION`, `DESCRIPTION`, `ORCHESTRATION_URI`, `VNF_COMPONENT_PARAM_XSD`, `RECIPE_TIMEOUT`, `CREATION_TIMESTAMP`) VALUES (12,NULL,'vfModule','VID_DEFAULT','updateInstance',NULL,'1','VID_DEFAULT recipe t','/mso/async/services/UpdateVfModuleInfra',null,180,'2017-10-05 18:52:03');
+
 
 --
 -- Default Reciepe for the VNF componnets added start #SO-334, to unblock the VNF operations
