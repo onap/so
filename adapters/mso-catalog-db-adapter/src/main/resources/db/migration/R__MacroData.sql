@@ -944,3 +944,9 @@ INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FL
 ('VFModule-Delete', '1', 'ControllerExecutionBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Delete' and CLOUD_OWNER = 'DEFAULT'), "vnf", "HealthCheck"),
 ('VFModule-Delete', '2', 'ControllerExecutionBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Delete' and CLOUD_OWNER = 'DEFAULT'), "vfmodule", "ScaleInReconfiguration"),
 ('VFModule-Delete', '6', 'ControllerExecutionBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Delete' and CLOUD_OWNER = 'DEFAULT'), "vnf", "HealthCheck");
+
+INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, IS_ALACARTE, MIN_API_VERSION, MAX_API_VERSION, IS_TOPLEVELFLOW, CLOUD_OWNER, SERVICE_TYPE) VALUES
+('VNF-HealthCheck', 'healthCheck', 'Vnf', true, '7','7', true, 'DEFAULT', '*');
+
+INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID, SCOPE, ACTION) VALUES
+('VNF-HealthCheck', '1', 'ControllerExecutionBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-HealthCheck' and CLOUD_OWNER = 'DEFAULT'), "vnf", "HealthCheck");
