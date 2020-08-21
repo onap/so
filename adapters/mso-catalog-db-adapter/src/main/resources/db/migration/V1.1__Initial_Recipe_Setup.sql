@@ -61,6 +61,13 @@ INSERT INTO `vnf_components_recipe` (`id`, `VNF_TYPE`, `VNF_COMPONENT_TYPE`, `VF
 INSERT INTO `vnf_components_recipe` (`id`, `VNF_TYPE`, `VNF_COMPONENT_TYPE`, `VF_MODULE_MODEL_UUID`, `ACTION`, `SERVICE_TYPE`, `VERSION`, `DESCRIPTION`, `ORCHESTRATION_URI`, `VNF_COMPONENT_PARAM_XSD`, `RECIPE_TIMEOUT`, `CREATION_TIMESTAMP`) VALUES (12,NULL,'vfModule','VID_DEFAULT','updateInstance',NULL,'1','VID_DEFAULT recipe t','/mso/async/services/UpdateVfModuleInfra',null,180,'2017-10-05 18:52:03');
 
 --
+-- Recipe for updateInstance (Macro Flow - VNF-Macro-Modify)
+--
+insert into service_recipe(id, ACTION, VERSION_STR, DESCRIPTION, ORCHESTRATION_URI, SERVICE_PARAM_XSD, RECIPE_TIMEOUT, SERVICE_TIMEOUT_INTERIM, CREATION_TIMESTAMP, SERVICE_MODEL_UUID)
+values (500, 'updateInstance', '1.0', 'Gr api recipe to update service-instance', '/mso/async/services/WorkflowActionBB', NULL, 180, NULL, d88da85c-d9e8-4f73-b837-3a72a431622b);
+
+
+--
 -- Default Reciepe for the VNF componnets added start #SO-334, to unblock the VNF operations
 --
 
