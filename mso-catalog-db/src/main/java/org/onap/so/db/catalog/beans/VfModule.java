@@ -98,6 +98,7 @@ public class VfModule implements Serializable {
     @JoinColumn(name = "VNF_RESOURCE_MODEL_UUID")
     private VnfResource vnfResources;
 
+
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("modelUUID", modelUUID).append("modelInvariantUUID", modelInvariantUUID)
@@ -228,4 +229,6 @@ public class VfModule implements Serializable {
     public void setModuleHeatTemplate(HeatTemplate moduleHeatTemplate) {
         this.moduleHeatTemplate = moduleHeatTemplate;
     }
+
+
 }
