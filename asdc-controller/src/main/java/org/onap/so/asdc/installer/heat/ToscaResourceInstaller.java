@@ -89,6 +89,7 @@ import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -220,6 +221,12 @@ public class ToscaResourceInstaller {
 
     @Autowired
     protected EtsiResourcePackageProcessor etsiResourcePackageProcessor;
+
+    @Autowired
+    CnfResourceRepository cnfResourceRepo;
+
+    @Value("${helm.chart.location}")
+    private String helmChartLocation;
 
     protected static final Logger logger = LoggerFactory.getLogger(ToscaResourceInstaller.class);
 
@@ -1179,6 +1186,9 @@ public class ToscaResourceInstaller {
                 case ASDCConfiguration.HEAT_ARTIFACT:
                     createHeatFileFromArtifact(vfResourceStructure, vfModuleArtifact, toscaResourceStruct);
                     break;
+                case ASDCConfiguration.HELM_TYPE_ARTIFACT:
+                    createHelmFromArtifact(vfResourceStructure, vfModuleArtifact);
+                    break;
                 case ASDCConfiguration.HEAT_NET:
                 case ASDCConfiguration.OTHER:
                 case ASDCConfiguration.CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT:
@@ -1192,6 +1202,33 @@ public class ToscaResourceInstaller {
 
             }
         }
+    }
+
+    private void createHelmFromArtifact(VfResourceStructure vfResourceStructure,
+
+            VfModuleArtifact vfModuleArtifact) {
+
+        IArtifactInfo iArtifactInfo = vfModuleArtifact.getArtifactInfo();
+        CnfResource cnfResource = cnfResourceRepo.findByArtifactUuid(iArtifactInfo.getArtifactUUID());
+
+        if (null == cnfResource) {
+
+            String artifactURI = helmChartLocation + iArtifactInfo.getArtifactName();
+
+            cnfResource = new CnfResource();
+            cnfResource.setArtifactUuid(iArtifactInfo.getArtifactUUID());
+            cnfResource.setArtifactName(iArtifactInfo.getArtifactName());
+            cnfResource.setArtifactChecksum(iArtifactInfo.getArtifactChecksum());
+            cnfResource.setDescription(iArtifactInfo.getArtifactDescription());
+            cnfResource.setTimeoutMinutes(iArtifactInfo.getArtifactTimeout());
+            cnfResource.setVersion(iArtifactInfo.getArtifactVersion());
+            cnfResource.setArtifactURI(artifactURI);
+
+        }
+
+        vfModuleArtifact.addCnfResource(cnfResource);
+
+
     }
 
     protected VfModuleArtifact getHeatEnvArtifactFromGeneratedArtifact(VfResourceStructure vfResourceStructure,
@@ -2402,6 +2439,7 @@ public class ToscaResourceInstaller {
             List<HeatFiles> heatFilesList = new ArrayList<>();
             List<HeatTemplate> volumeHeatChildTemplates = new ArrayList<>();
             List<HeatTemplate> heatChildTemplates = new ArrayList<>();
+            Set<CnfResource> cnfResources = new HashSet<>(); 
             HeatTemplate parentHeatTemplate = new HeatTemplate();
             String parentArtifactType = null;
             Set<String> artifacts = new HashSet<>(matchingObject.get().getVfModuleMetadata().getArtifacts());
@@ -2410,7 +2448,7 @@ public class ToscaResourceInstaller {
                 List<HeatTemplate> childNestedHeatTemplates = new ArrayList<>();
 
                 if (artifacts.contains(vfModuleArtifact.getArtifactInfo().getArtifactUUID())) {
-                    checkVfModuleArtifactType(vfModule, vfModuleCustomization, heatFilesList, vfModuleArtifact,
+                    checkVfModuleArtifactType(vfModule, vfModuleCustomization, heatFilesList, cnfResources,vfModuleArtifact,
                             childNestedHeatTemplates, parentHeatTemplate, vfResourceStructure);
                 }
 
@@ -2433,6 +2471,10 @@ public class ToscaResourceInstaller {
                 vfModule.setHeatFiles(heatFilesList);
             }
 
+            if (!cnfResources.isEmpty()) {
+              cnfResourceRepo.saveAll(cnfResources);
+            }
+           
 
             // Set all Child Templates related to HEAT_VOLUME
             if (!volumeHeatChildTemplates.isEmpty()) {
@@ -2455,7 +2497,7 @@ public class ToscaResourceInstaller {
     }
 
     protected void checkVfModuleArtifactType(VfModule vfModule, VfModuleCustomization vfModuleCustomization,
-            List<HeatFiles> heatFilesList, VfModuleArtifact vfModuleArtifact, List<HeatTemplate> nestedHeatTemplates,
+            List<HeatFiles> heatFilesList,Set<CnfResource> cnfResources , VfModuleArtifact vfModuleArtifact, List<HeatTemplate> nestedHeatTemplates,
             HeatTemplate parentHeatTemplate, VfResourceStructure vfResourceStructure) {
         if (vfModuleArtifact.getArtifactInfo().getArtifactType().equals(ASDCConfiguration.HEAT)) {
             vfModuleArtifact.incrementDeployedInDB();
@@ -2481,7 +2523,11 @@ public class ToscaResourceInstaller {
         } else if (vfModuleArtifact.getArtifactInfo().getArtifactType().equals(ASDCConfiguration.HEAT_NESTED)) {
             nestedHeatTemplates.add(vfModuleArtifact.getHeatTemplate());
             vfModuleArtifact.incrementDeployedInDB();
+        } else if (vfModuleArtifact.getArtifactInfo().getArtifactType().equals(ASDCConfiguration.HELM_TYPE_ARTIFACT)) {
+        	cnfResources.addAll(vfModuleArtifact.getCnfResources());
+
         }
+
     }
 
     protected VnfResourceCustomization createVnfResource(IEntityDetails entityDetails,

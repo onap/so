@@ -26,11 +26,6 @@
 package org.onap.so.asdc.client;
 
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -39,10 +34,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
-import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
-import org.onap.sdc.toscaparser.api.elements.Metadata;
-import org.onap.so.asdc.util.ZipParser;
-import org.onap.so.logger.LoggingAnchor;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.sdc.api.IDistributionClient;
 import org.onap.sdc.api.consumer.IDistributionStatusMessage;
@@ -53,6 +45,8 @@ import org.onap.sdc.api.notification.IResourceInstance;
 import org.onap.sdc.api.results.IDistributionClientDownloadResult;
 import org.onap.sdc.api.results.IDistributionClientResult;
 import org.onap.sdc.impl.DistributionClientFactory;
+import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
+import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.sdc.utils.DistributionActionResultEnum;
 import org.onap.sdc.utils.DistributionStatusEnum;
 import org.onap.so.asdc.activity.DeployActivitySpecs;
@@ -70,18 +64,25 @@ import org.onap.so.asdc.installer.heat.ToscaResourceInstaller;
 import org.onap.so.asdc.tenantIsolation.DistributionStatus;
 import org.onap.so.asdc.tenantIsolation.WatchdogDistribution;
 import org.onap.so.asdc.util.ASDCNotificationLogging;
+import org.onap.so.asdc.util.ZipParser;
 import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
 import org.onap.so.db.request.beans.WatchdogDistributionStatus;
 import org.onap.so.db.request.data.repository.WatchdogComponentDistributionStatusRepository;
 import org.onap.so.db.request.data.repository.WatchdogDistributionStatusRepository;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class ASDCController {
@@ -127,6 +128,9 @@ public class ASDCController {
 
     @Autowired
     DeployActivitySpecs deployActivitySpecs;
+
+    @Value("${helm.chart.location}")
+    private String helmChartLocation;
 
     public ASDCController() {
         this("");
@@ -402,6 +406,38 @@ public class ASDCController {
         String filePath =
                 Paths.get(getMsoConfigPath(), "ASDC", artifact.getArtifactVersion(), artifact.getArtifactName())
                         .normalize().toString();
+
+        logger.info("Trying to write artifact UUID: {}, URL: {} to file: {}", artifact.getArtifactUUID(),
+                artifact.getArtifactURL(), filePath);
+
+        // make parent directory
+        File file = new File(filePath);
+        File fileParent = file.getParentFile();
+        if (!fileParent.exists()) {
+            fileParent.mkdirs();
+        }
+
+        byte[] payloadBytes = resultArtifact.getArtifactPayload();
+
+        try (FileOutputStream outFile = new FileOutputStream(filePath)) {
+            logger.info(LoggingAnchor.FOUR, MessageEnum.ASDC_RECEIVE_SERVICE_NOTIF.toString(),
+                    "***WRITE FILE ARTIFACT NAME", "ASDC", artifact.getArtifactName());
+            outFile.write(payloadBytes, 0, payloadBytes.length);
+        } catch (Exception e) {
+            logger.debug("Exception :", e);
+            logger.error(LoggingAnchor.SEVEN, MessageEnum.ASDC_ARTIFACT_DOWNLOAD_FAIL.toString(),
+                    artifact.getArtifactName(), artifact.getArtifactURL(), artifact.getArtifactUUID(),
+                    resultArtifact.getDistributionMessageResult(), ErrorCode.DataError.getValue(),
+                    "ASDC write to file failed");
+        }
+
+    }
+
+
+    private void writeHelmArtifactToFile(IArtifactInfo artifact, IDistributionClientDownloadResult resultArtifact) {
+
+       // helmChartLocation = "/home/girmiti/Documents/check-download/";
+        String filePath = helmChartLocation + artifact.getArtifactName();
 
         logger.info("Trying to write artifact UUID: {}, URL: {} to file: {}", artifact.getArtifactUUID(),
                 artifact.getArtifactURL(), filePath);
@@ -794,6 +830,10 @@ public class ASDCController {
                                     logger.debug(
                                             "Adding workflow artifact to structure: " + artifact.getArtifactName());
                                     resourceStructure.addWorkflowArtifactToStructure(artifact, resultArtifact);
+                                }
+
+                                if (ASDCConfiguration.HELM_TYPE_ARTIFACT.equals(artifact.getArtifactType())) {
+                                    writeHelmArtifactToFile(artifact, resultArtifact);
                                 }
 
                             }

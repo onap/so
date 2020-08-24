@@ -22,11 +22,15 @@ package org.onap.so.asdc.installer;
 
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.onap.sdc.api.notification.IArtifactInfo;
+import org.onap.sdc.api.results.IDistributionClientDownloadResult;
+import org.onap.so.db.catalog.beans.CnfResource;
 import org.onap.so.db.catalog.beans.HeatEnvironment;
 import org.onap.so.db.catalog.beans.HeatFiles;
 import org.onap.so.db.catalog.beans.HeatTemplate;
-import org.onap.sdc.api.notification.IArtifactInfo;
-import org.onap.sdc.api.results.IDistributionClientDownloadResult;
 
 /**
  * The structure that contains the artifactInfo and its associated DownloadedResult.
@@ -39,6 +43,7 @@ public final class VfModuleArtifact {
     private HeatFiles heatFiles;
     private HeatTemplate heatTemplate;
     private HeatEnvironment heatEnvironment;
+    private List<CnfResource> cnfResources;
 
     public VfModuleArtifact(IArtifactInfo artifactinfo, IDistributionClientDownloadResult clientResult)
             throws UnsupportedEncodingException {
@@ -94,5 +99,20 @@ public final class VfModuleArtifact {
     public void setHeatEnvironment(HeatEnvironment heatEnvironment) {
         this.heatEnvironment = heatEnvironment;
     }
+
+	public List<CnfResource> getCnfResources() {
+		return cnfResources;
+	}
+
+	public void setCnfResources(List<CnfResource> cnfResources) {
+		this.cnfResources = cnfResources;
+	}
+	
+	public void addCnfResource(CnfResource cnfResource) {
+		if (cnfResources ==null) {
+			cnfResources= new ArrayList<CnfResource>();
+		}
+		cnfResources.add(cnfResource);
+	}
 
 }

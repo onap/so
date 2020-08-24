@@ -1402,6 +1402,31 @@ CREATE TABLE IF NOT EXISTS `service_artifact`(
   CONSTRAINT `fk_service_artifact_service_info1` FOREIGN KEY (`SERVICE_MODEL_UUID`) REFERENCES `service` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+
+
+--
+	
+-- Table structure for table `cnf_resource`
+---
+DROP TABLE IF EXISTS `cnf_resource`;
+	
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+	
+CREATE TABLE `cnf_resource` (
+  `ARTIFACT_UUID` varchar(200) NOT NULL,
+  `ARTIFACT_NAME` varchar(100) NOT NULL,
+   `ARTIFACT_URI` varchar(200) NOT NULL,
+  `VERSION` varchar(20) NOT NULL,
+  `DESCRIPTION` varchar(1200) DEFAULT NULL,
+   `TIMEOUT_MINUTES` int(11) DEFAULT NULL,
+  `ARTIFACT_CHECKSUM` varchar(200) NOT NULL DEFAULT 'MANUAL RECORD',
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ARTIFACT_UUID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+
 --------START Request DB SCHEMA --------
 CREATE DATABASE requestdb;
 USE requestdb;
