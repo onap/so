@@ -47,4 +47,6 @@ management:
 mso:
   config:
     defaultpath: /app
-
+helm:
+  chart:
+    location: path-shared-volume
