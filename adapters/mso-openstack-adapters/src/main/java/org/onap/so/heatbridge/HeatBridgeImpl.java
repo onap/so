@@ -303,6 +303,8 @@ public class HeatBridgeImpl implements HeatBridgeApi {
         Objects.requireNonNull(osClient, ERR_MSG_NULL_OS_CLIENT);
         List<String> portIds =
                 extractStackResourceIdsByResourceType(stackResources, HeatBridgeConstants.OS_PORT_RESOURCE_TYPE);
+        if (portIds == null)
+            return;
         for (String portId : portIds) {
             Port port = osClient.getPortById(portId);
             Network network = osClient.getNetworkById(port.getNetworkId());
@@ -320,7 +322,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                 lIf.setInterfaceRole(port.getvNicType());
             }
             boolean isL2Multicast = false;
-            if (port.getProfile().get("trusted") != null) {
+            if (port.getProfile() != null && port.getProfile().get("trusted") != null) {
                 String trusted = port.getProfile().get("trusted").toString();
                 if (Boolean.parseBoolean(trusted)) {
                     isL2Multicast = true;
