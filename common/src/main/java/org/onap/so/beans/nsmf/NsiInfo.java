@@ -37,11 +37,11 @@ public class NsiInfo {
         this.nsiName = nsiName;
     }
 
-    public void setNsiId(String nsiId) {
-        this.nsiId = nsiId;
-    }
-
     public String getNsiId() {
         return nsiId;
+    }
+
+    public void setNsiId(String nsiId) {
+        this.nsiId = nsiId;
     }
 }
