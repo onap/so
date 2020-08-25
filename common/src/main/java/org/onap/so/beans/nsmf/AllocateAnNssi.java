@@ -25,11 +25,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AllocateAnNssi {
 
+    @Deprecated
     public final static String URL = "/api/rest/provMns/v1/an/NSS" + "/SliceProfiles";
 
     private String nsstId;
-
-    private String flavorId;
 
     private String nssiId;
 
@@ -49,14 +48,6 @@ public class AllocateAnNssi {
 
     public void setNsstId(String nsstId) {
         this.nsstId = nsstId;
-    }
-
-    public String getFlavorId() {
-        return flavorId;
-    }
-
-    public void setFlavorId(String flavorId) {
-        this.flavorId = flavorId;
     }
 
     public String getNssiId() {

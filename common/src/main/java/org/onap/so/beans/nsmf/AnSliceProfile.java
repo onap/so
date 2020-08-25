@@ -22,40 +22,31 @@ package org.onap.so.beans.nsmf;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Data
 public class AnSliceProfile {
 
-    @JsonProperty("5QI")
-    private String qi;
+    private List<String> sNSSAIList;
+
+    private String sliceProfileId;
 
     private List<String> coverageAreaTAList;
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private int latency;
 
-    public String getQi() {
-        return qi;
-    }
+    private List<String> pLMNIdList;
 
-    public void setQi(String qi) {
-        this.qi = qi;
-    }
+    private PerfReq perfReq;
 
-    public List<String> getCoverageAreaTAList() {
-        return coverageAreaTAList;
-    }
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    private int maxNumberofUEs;
 
-    public void setCoverageAreaTAList(List<String> coverageAreaTAList) {
-        this.coverageAreaTAList = coverageAreaTAList;
-    }
+    private UeMobilityLevel uEMobilityLevel;
 
-    public int getLatency() {
-        return latency;
-    }
+    private ResourceSharingLevel resourceSharingLevel;
 
-    public void setLatency(int latency) {
-        this.latency = latency;
-    }
 }
