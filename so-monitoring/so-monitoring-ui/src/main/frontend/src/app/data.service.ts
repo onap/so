@@ -94,7 +94,7 @@ export class DataService {
   }
 
   onboardBPMNInfra(formData: any): Observable<Object> {
-    var url = environment.soMonitoringBackendURL + 'workflowPackages/onboard';
+    var url = environment.soHotboardingBackendURL + 'workflowPackages/onboard';
     return this.http.post<any>(url, formData)
       .pipe(
         catchError(this.httpErrorHandlerService.handleError("POST", url))
@@ -107,7 +107,7 @@ export class DataService {
         'Content-Type':  'application/json',
       })
     };
-    var url = environment.soMonitoringBackendURL + 'serviceRecipes';
+    var url = environment.soHotboardingBackendURL + 'serviceRecipes';
     return this.http.post<any>(url, data, this.httpOptions)
       .pipe(
         catchError(this.httpErrorHandlerService.handleError("POST", url))
