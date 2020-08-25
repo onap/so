@@ -20,90 +20,17 @@
 
 package org.onap.so.beans.nsmf;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class AllocateTnNssi {
+import lombok.Data;
+import java.io.Serializable;
+import java.util.List;
 
-    public final static String URL = "/api/rest/provMns/v1/tn/NSS" + "/SliceProfiles";
+@Data
+public class AllocateTnNssi implements Serializable {
 
-    private String nsstId;
+    private static final long serialVersionUID = -7069801712339914746L;
 
-    private String flavorId;
+    private List<NetworkSliceInfo> networkSliceInfos;
 
-    private String nssiId;
-
-    private String nssiName;
-
-    private TnSliceProfile sliceProfile;
-
-    private String scriptName;
-
-    private Object extension;
-
-    private NsiInfo nsiInfo;
-
-    public String getNsstId() {
-        return nsstId;
-    }
-
-    public void setNsstId(String nsstId) {
-        this.nsstId = nsstId;
-    }
-
-    public String getFlavorId() {
-        return flavorId;
-    }
-
-    public void setFlavorId(String flavorId) {
-        this.flavorId = flavorId;
-    }
-
-    public String getNssiId() {
-        return nssiId;
-    }
-
-    public void setNssiId(String nssiId) {
-        this.nssiId = nssiId;
-    }
-
-    public String getNssiName() {
-        return nssiName;
-    }
-
-    public void setNssiName(String nssiName) {
-        this.nssiName = nssiName;
-    }
-
-    public TnSliceProfile getSliceProfile() {
-        return sliceProfile;
-    }
-
-    public void setSliceProfile(TnSliceProfile sliceProfile) {
-        this.sliceProfile = sliceProfile;
-    }
-
-    public String getScriptName() {
-        return scriptName;
-    }
-
-    public void setScriptName(String scriptName) {
-        this.scriptName = scriptName;
-    }
-
-    public Object getExtension() {
-        return extension;
-    }
-
-    public void setExtension(Object extension) {
-        this.extension = extension;
-    }
-
-    public NsiInfo getNsiInfo() {
-        return nsiInfo;
-    }
-
-    public void setNsiInfo(NsiInfo nsiInfo) {
-        this.nsiInfo = nsiInfo;
-    }
+    private List<TransportSliceNetwork> transportSliceNetworks;
 }
