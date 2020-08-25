@@ -20,6 +20,7 @@
 
 package org.onap.so.db.catalog.client;
 
+import com.google.common.base.Strings;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -83,7 +84,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-import com.google.common.base.Strings;
 import uk.co.blackpepper.bowman.Client;
 import uk.co.blackpepper.bowman.ClientFactory;
 import uk.co.blackpepper.bowman.Configuration;
@@ -162,6 +162,7 @@ public class CatalogDbClient {
     protected static final String SOURCE = "source";
     protected static final String RESOURCE_TARGET = "resourceTarget";
     protected static final String FLAG = "flag";
+    protected static final String OPERATION_NAME = "operationName";
 
     private static final String TARGET_ENTITY = "SO:CatalogDB";
     private static final String ASTERISK = "*";
@@ -215,6 +216,7 @@ public class CatalogDbClient {
             "/findBBNameSelectionReferenceByControllerActorAndScopeAndAction";
     private String findWorkflowByResourceTarget = "/findByResourceTarget";
     private String findProcessingFlagsByFlag = "/findByFlag";
+    private String findWorkflowByOperationName = "/findByOperationName";
 
     private String serviceURI;
     private String vfModuleURI;
@@ -365,6 +367,7 @@ public class CatalogDbClient {
                 + findBBNameSelectionReferenceByControllerActorAndScopeAndAction;
 
         findProcessingFlagsByFlag = endpoint + PROCESSING_FLAGS + SEARCH + findProcessingFlagsByFlag;
+        findWorkflowByOperationName = endpoint + WORKFLOW + SEARCH + findWorkflowByOperationName;
 
         serviceURI = endpoint + SERVICE + URI_SEPARATOR;
         vfModuleURI = endpoint + VFMODULE + URI_SEPARATOR;
@@ -1104,6 +1107,11 @@ public class CatalogDbClient {
     public List<Workflow> findWorkflowByResourceTarget(String resourceTarget) {
         return this.getMultipleResources(workflowClient, getUri(UriBuilder.fromUri(findWorkflowByResourceTarget)
                 .queryParam(RESOURCE_TARGET, resourceTarget).build().toString()));
+    }
+
+    public List<Workflow> findWorkflowByOperationName(String operationName) {
+        return this.getMultipleResources(workflowClient, getUri(UriBuilder.fromUri(findWorkflowByOperationName)
+                .queryParam(OPERATION_NAME, operationName).build().toString()));
     }
 
     public ProcessingFlags findProcessingFlagsByFlag(String flag) {
