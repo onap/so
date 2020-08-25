@@ -1,4 +1,4 @@
-FROM camunda/camunda-bpm-platform:7.10.0
+FROM camunda/camunda-bpm-platform:7.12.0
 
 RUN rm -r /camunda/webapps/examples /camunda/webapps/docs /camunda/webapps/camunda-invoice
 
