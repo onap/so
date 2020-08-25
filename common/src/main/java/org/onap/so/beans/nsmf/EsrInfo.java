@@ -26,6 +26,7 @@ import java.io.Serializable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EsrInfo implements Serializable {
 
+    private static final long serialVersionUID = -7696600990607396263L;
     private String vendor;
 
     private NetworkType networkType;
