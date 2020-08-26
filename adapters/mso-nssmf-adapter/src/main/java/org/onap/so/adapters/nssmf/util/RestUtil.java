@@ -18,11 +18,9 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.nssmf.rest;
+package org.onap.so.adapters.nssmf.util;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
+import javax.net.ssl.*;
 import javax.ws.rs.core.UriBuilder;
 import java.net.SocketTimeoutException;
 import java.net.URI;
@@ -30,32 +28,29 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.*;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
-import org.onap.aai.domain.yang.EsrSystemInfo;
-import org.onap.aai.domain.yang.EsrSystemInfoList;
-import org.onap.aai.domain.yang.EsrThirdpartySdnc;
-import org.onap.aai.domain.yang.EsrThirdpartySdncList;
+import org.onap.aai.domain.yang.*;
 import org.onap.so.adapters.nssmf.exceptions.ApplicationException;
 import org.onap.so.adapters.nssmf.extclients.aai.AaiServiceProvider;
-import org.onap.so.adapters.nssmf.model.TokenRequest;
-import org.onap.so.adapters.nssmf.model.TokenResponse;
+import org.onap.so.adapters.nssmf.entity.TokenRequest;
+import org.onap.so.adapters.nssmf.entity.TokenResponse;
+import org.onap.so.adapters.nssmf.enums.HttpMethod;
+import org.onap.so.adapters.nssmf.entity.NssmfInfo;
+import org.onap.so.adapters.nssmf.entity.RestResponse;
 import org.onap.so.beans.nsmf.EsrInfo;
+import org.onap.so.beans.nsmf.ServiceInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
-import static org.onap.so.adapters.nssmf.rest.HttpMethod.POST;
+import static org.onap.so.adapters.nssmf.enums.HttpMethod.POST;
 import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.BAD_REQUEST;
 import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.marshal;
 import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.unMarshal;
@@ -77,6 +72,10 @@ public class RestUtil {
     @Autowired
     private AaiServiceProvider aaiSvcProv;
 
+    public void createServiceInstance(ServiceInstance serviceInstance, ServiceInfo serviceInfo) {
+        aaiSvcProv.invokeCreateServiceInstance(serviceInstance, serviceInfo.getGlobalSubscriberId(),
+                serviceInfo.getSubscriptionServiceType(), serviceInfo.getNssiId());
+    }
 
     public NssmfInfo getNssmfHost(EsrInfo esrInfo) throws ApplicationException {
         EsrThirdpartySdncList sdncList = aaiSvcProv.invokeGetThirdPartySdncList();
@@ -112,10 +111,9 @@ public class RestUtil {
         throw new ApplicationException(BAD_REQUEST, "ESR information is improper");
     }
 
-    public RestResponse sendRequest(String url, HttpMethod methodType, String content, EsrInfo esrInfo)
-            throws ApplicationException {
 
-        NssmfInfo nssmfInfo = getNssmfHost(esrInfo);
+    public String getToken(NssmfInfo nssmfInfo) throws ApplicationException {
+
 
         TokenRequest req = new TokenRequest();
         req.setGrantType("password");
@@ -128,13 +126,12 @@ public class RestUtil {
         RestResponse tokenRes = send(nssmfInfo.getUrl() + TOKEN_URL, POST, tokenReq, null);
 
         TokenResponse res = unMarshal(tokenRes.getResponseContent(), TokenResponse.class);
-        String token = res.getAccessToken();
-        Header header = new BasicHeader("X-Auth-Token", token);
-        String nssmfUrl = nssmfInfo.getUrl() + url;
-        return send(nssmfUrl, methodType, content, header);
+
+        return res.getAccessToken();
     }
 
-    private RestResponse send(String url, HttpMethod methodType, String content, Header header) {
+
+    public RestResponse send(String url, HttpMethod methodType, String content, Header header) {
 
         HttpRequestBase req = null;
         HttpResponse res = null;
@@ -168,8 +165,6 @@ public class RestUtil {
             }
             if (null != req) {
                 req.reset();
-            } else {
-                logger.debug("method is NULL:");
             }
             req = null;
 
@@ -201,7 +196,7 @@ public class RestUtil {
         }
     }
 
-    private RestResponse createResponse(int statusCode, String errMsg) {
+    public RestResponse createResponse(int statusCode, String errMsg) {
         RestResponse restResponse = new RestResponse();
         restResponse.setStatus(statusCode);
         restResponse.setResponseContent(errMsg);
@@ -210,7 +205,7 @@ public class RestUtil {
 
     private HttpRequestBase getHttpReq(String url, HttpMethod method, Header header, RequestConfig config,
             String content) throws ApplicationException {
-        HttpRequestBase base = null;
+        HttpRequestBase base;
         switch (method) {
             case POST:
                 HttpPost post = new HttpPost(url);
@@ -229,6 +224,7 @@ public class RestUtil {
                 break;
 
             case PATCH:
+                base = new HttpPatch(url);
                 break;
 
             case DELETE:
@@ -238,6 +234,8 @@ public class RestUtil {
                 }
                 base = delete;
                 break;
+            default:
+                throw new ApplicationException(404, "invalid method: " + method);
 
         }
         base.setConfig(config);
@@ -245,6 +243,14 @@ public class RestUtil {
             base.setHeader(header);
         }
         return base;
+    }
+
+    public RestResponse sendRequest(String allocateUrl, HttpMethod post, String allocateReq, EsrInfo esrInfo)
+            throws ApplicationException {
+        NssmfInfo nssmfInfo = getNssmfHost(esrInfo);
+        Header header = new BasicHeader("X-Auth-Token", getToken(nssmfInfo));
+        String nssmfUrl = nssmfInfo.getUrl() + allocateUrl;
+        return send(nssmfUrl, post, allocateReq, header);
     }
 
     class HttpDeleteWithBody extends HttpEntityEnclosingRequestBase {
@@ -289,7 +295,7 @@ public class RestUtil {
             // HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
             SSLConnectionSocketFactory sslsf =
-                    new SSLConnectionSocketFactory(sc, new String[] {"TLSv1"}, null, new TrustAllHostNameVerifier());
+                    new SSLConnectionSocketFactory(sc, new String[] {"TLSv1"}, null, (s, sslSession) -> true);
             return HttpClients.custom().setSSLSocketFactory(sslsf).build();
         } catch (Exception e) {
             throw new IllegalArgumentException(e);

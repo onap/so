@@ -20,6 +20,7 @@
 
 package org.onap.so.adapters.nssmf;
 
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
