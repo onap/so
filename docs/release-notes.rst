@@ -14,7 +14,7 @@ The SO provides the highest level of service orchestration in the ONAP architect
 Version: 1.6.4
 -----------------------
 
-:Release Date: 
+:Release Date: 27-07-2020
 
 **Docker Images**
 
@@ -87,7 +87,7 @@ OJSI Issues
 Version: 1.6.3
 -----------------------
 
-:Release Date: 
+:Release Date: 20-05-2020
 
 **Docker Images**
 
