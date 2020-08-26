@@ -14,7 +14,8 @@
 		"requestParameters": {
 			
 		},
-		"configurationParameters": []
+		"configurationParameters": [],
+    	"is-helm": false
 	},
 	"orchContext": {
 		"is-rollback-enabled": true

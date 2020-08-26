@@ -178,7 +178,7 @@ public class VnfAdapterVfModuleObjectMapper {
         return msoRequest;
     }
 
-    private Map<String, Object> buildVfModuleParamsMap(RequestContext requestContext, ServiceInstance serviceInstance,
+    public Map<String, Object> buildVfModuleParamsMap(RequestContext requestContext, ServiceInstance serviceInstance,
             GenericVnf genericVnf, VfModule vfModule, String sdncVnfQueryResponse, String sdncVfModuleQueryResponse)
             throws IOException, MissingValueTagException {
 
