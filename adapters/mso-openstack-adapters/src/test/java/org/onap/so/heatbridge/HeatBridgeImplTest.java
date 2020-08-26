@@ -423,6 +423,18 @@ public class HeatBridgeImplTest {
         when(port.getProfile()).thenReturn(ImmutableMap.of(HeatBridgeConstants.OS_PCI_SLOT_KEY, pfPciId,
                 HeatBridgeConstants.OS_PHYSICAL_NETWORK_KEY, "physical_network_id"));
 
+        IP ip = mock(IP.class);
+
+        Set<IP> ipSet = new HashSet<>();
+        ipSet.add(ip);
+        when(ip.getIpAddress()).thenReturn("2606:ae00:2e60:100::226");
+        when(ip.getSubnetId()).thenReturn("testSubnetId");
+        when(port.getFixedIps()).thenAnswer(x -> ipSet);
+
+        Subnet subnet = mock(Subnet.class);
+        when(subnet.getCidr()).thenReturn("169.254.100.0/24");
+        when(osClient.getSubnetById("testSubnetId")).thenReturn(subnet);
+
         Network network = mock(Network.class);
         when(network.getId()).thenReturn("test-network-id");
         when(network.getNetworkType()).thenReturn(NetworkType.VLAN);
@@ -446,8 +458,9 @@ public class HeatBridgeImplTest {
         heatbridge.buildAddVserverLInterfacesToAaiAction(stackResources, Arrays.asList("1", "2"), "CloudOwner");
 
         // Assert
-        verify(transaction, times(15)).createIfNotExists(any(AAIResourceUri.class), any(Optional.class));
+        verify(transaction, times(20)).createIfNotExists(any(AAIResourceUri.class), any(Optional.class));
         verify(osClient, times(5)).getPortById(anyString());
+        verify(osClient, times(5)).getSubnetById("testSubnetId");
         verify(osClient, times(10)).getNetworkById(anyString());
     }
 

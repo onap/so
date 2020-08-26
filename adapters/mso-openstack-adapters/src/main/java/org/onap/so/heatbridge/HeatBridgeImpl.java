@@ -49,6 +49,7 @@ import org.apache.commons.validator.routines.InetAddressValidator;
 import org.onap.aai.domain.yang.Flavor;
 import org.onap.aai.domain.yang.Image;
 import org.onap.aai.domain.yang.L3InterfaceIpv4AddressList;
+import org.onap.aai.domain.yang.L3InterfaceIpv6AddressList;
 import org.onap.aai.domain.yang.L3Network;
 import org.onap.aai.domain.yang.LInterface;
 import org.onap.aai.domain.yang.PInterface;
@@ -524,6 +525,20 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                                 .cloudRegion(cloudOwner, cloudRegionId).tenant(tenantId).vserver(port.getDeviceId())
                                 .lInterface(lIf.getInterfaceName()).l3InterfaceIpv4AddressList(ipAddress)),
                         Optional.of(lInterfaceIp));
+            } else if (InetAddressValidator.getInstance().isValidInet6Address(ipAddress)) {
+                Subnet subnet = osClient.getSubnetById(ip.getSubnetId());
+                IPAddressString cidr = new IPAddressString(subnet.getCidr());
+                L3InterfaceIpv6AddressList ipv6 = new L3InterfaceIpv6AddressList();
+                ipv6.setL3InterfaceIpv6Address(ipAddress);
+                ipv6.setNeutronNetworkId(port.getNetworkId());
+                ipv6.setNeutronSubnetId(ip.getSubnetId());
+                ipv6.setL3InterfaceIpv6PrefixLength(Long.parseLong(cidr.getNetworkPrefixLength().toString()));
+
+                transaction.createIfNotExists(
+                        AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                                .cloudRegion(cloudOwner, cloudRegionId).tenant(tenantId).vserver(port.getDeviceId())
+                                .lInterface(lIf.getInterfaceName()).l3InterfaceIpv6AddressList(ipAddress)),
+                        Optional.of(ipv6));
             }
         }
     }
