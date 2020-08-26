@@ -37,6 +37,7 @@ public class HomingSolution extends JsonWrapper implements Serializable {
     private InventoryType inventoryType;
     private boolean isRehome;
     private String serviceInstanceId; // TODO should start using si object instead
+    private String allottedResourceId;
     private String cloudOwner;
     private String cloudRegionId;
     private String aicClli;
@@ -72,6 +73,14 @@ public class HomingSolution extends JsonWrapper implements Serializable {
 
     public void setServiceInstanceId(String serviceInstanceId) {
         this.serviceInstanceId = serviceInstanceId;
+    }
+
+    public String getAllottedResourceId() {
+        return allottedResourceId;
+    }
+
+    public void setAllottedResourceId(String allottedResourceId) {
+        this.allottedResourceId = allottedResourceId;
     }
 
     public String getCloudOwner() {
