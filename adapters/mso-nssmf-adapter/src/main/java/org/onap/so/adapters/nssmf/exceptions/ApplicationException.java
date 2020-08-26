@@ -20,7 +20,7 @@
 
 package org.onap.so.adapters.nssmf.exceptions;
 
-import org.onap.so.adapters.nssmf.model.ErrorResponse;
+import org.onap.so.adapters.nssmf.entity.ErrorResponse;
 import org.springframework.http.ResponseEntity;
 import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.marshal;
 

@@ -20,6 +20,7 @@
 
 package org.onap.so.adapters.nssmf.rest;
 
+import org.onap.so.adapters.nssmf.entity.RestResponse;
 import org.onap.so.adapters.nssmf.exceptions.ApplicationException;
 import org.onap.so.beans.nsmf.JobStatusRequest;
 import org.onap.so.beans.nsmf.NssiActDeActRequest;
@@ -43,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.assertObjectNotNull;
 
+@Deprecated
 @Controller
 @RequestMapping(value = "/api/rest/provMns/v1", produces = {APPLICATION_JSON}, consumes = {APPLICATION_JSON})
 public class NssmfAdapterRest {
@@ -52,17 +54,6 @@ public class NssmfAdapterRest {
     @Autowired
     private NssmfManager nssmfMgr;
 
-    @PostMapping(value = "/NSS/SliceProfiles")
-    public ResponseEntity allocateNssi(@RequestBody NssiAllocateRequest allocate) {
-        try {
-            logger.info("Nssmi allocate request is invoked");
-            assertObjectNotNull(allocate);
-            RestResponse rsp = getNssmfMgr().allocateNssi(allocate);
-            return buildResponse(rsp);
-        } catch (ApplicationException e) {
-            return e.buildErrorResponse();
-        }
-    }
 
     @PostMapping(value = "/NSS/nssi")
     public ResponseEntity createNssi(@RequestBody NssiCreateRequest create) {
@@ -70,19 +61,6 @@ public class NssmfAdapterRest {
             logger.info("Nssmf create request is invoked");
             assertObjectNotNull(create);
             RestResponse rsp = getNssmfMgr().createNssi(create);
-            return buildResponse(rsp);
-        } catch (ApplicationException e) {
-            return e.buildErrorResponse();
-        }
-    }
-
-    @PostMapping(value = "/NSS/SliceProfiles/{sliceProfileId}")
-    public ResponseEntity deAllocateNssi(@RequestBody NssiDeAllocateRequest deAllocate,
-            @PathVariable("sliceProfileId") final String sliceId) {
-        try {
-            logger.info("Nssmf deallocate request is invoked");
-            assertObjectNotNull(deAllocate);
-            RestResponse rsp = getNssmfMgr().deAllocateNssi(deAllocate, sliceId);
             return buildResponse(rsp);
         } catch (ApplicationException e) {
             return e.buildErrorResponse();
@@ -128,44 +106,6 @@ public class NssmfAdapterRest {
         }
     }
 
-    @PostMapping(value = "/NSS/{snssai}/activation")
-    public ResponseEntity activateNssi(@RequestBody NssiActDeActRequest activate,
-            @PathVariable("snssai") String snssai) {
-        try {
-            logger.info("Nssmf activate request is invoked");
-            assertObjectNotNull(activate);
-            RestResponse rsp = getNssmfMgr().activateNssi(activate, snssai);
-            return buildResponse(rsp);
-        } catch (ApplicationException e) {
-            return e.buildErrorResponse();
-        }
-    }
-
-    @PostMapping(value = "/NSS/{snssai}/deactivation")
-    public ResponseEntity deactivateNssi(@RequestBody NssiActDeActRequest deActivate,
-            @PathVariable("snssai") String snssai) {
-        try {
-            logger.info("Nssmf activate request is invoked");
-            assertObjectNotNull(deActivate);
-            RestResponse rsp = getNssmfMgr().deActivateNssi(deActivate, snssai);
-            return buildResponse(rsp);
-        } catch (ApplicationException e) {
-            return e.buildErrorResponse();
-        }
-    }
-
-    @PostMapping(value = "/NSS/jobs/{jobId}")
-    public ResponseEntity queryJobStatus(@RequestBody JobStatusRequest jobStatusReq,
-            @PathVariable("jobId") String jobId) {
-        try {
-            logger.info("Nssmf query job status request is invoked");
-            assertObjectNotNull(jobStatusReq);
-            RestResponse rsp = getNssmfMgr().queryJobStatus(jobStatusReq, jobId);
-            return buildResponse(rsp);
-        } catch (ApplicationException e) {
-            return e.buildErrorResponse();
-        }
-    }
 
     @GetMapping(value = "/vendor/{vendorName}/type/{networkType}/NSS" + "/SliceProfiles/{sliceProfileId}")
     public ResponseEntity queryNssi(@PathVariable("vendorName") String vendorName,

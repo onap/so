@@ -23,7 +23,9 @@ package org.onap.so.adapters.nssmf.extclients.aai;
 
 import org.onap.aai.domain.yang.EsrSystemInfoList;
 import org.onap.aai.domain.yang.EsrThirdpartySdncList;
+import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aaiclient.client.aai.AAIObjectType;
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,4 +65,12 @@ public class AaiServiceProviderImpl implements AaiServiceProvider {
                 });
     }
 
+
+    @Override
+    public void invokeCreateServiceInstance(ServiceInstance nssiInstance, String globalSubscriberId, String serviceType,
+            String serviceInstanceId) {
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId,
+                serviceType, serviceInstanceId);
+        aaiClientProvider.getAaiClient().create(uri, nssiInstance);
+    }
 }
