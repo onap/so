@@ -8,6 +8,78 @@ Service Orchestrator Release Notes
 
 The SO provides the highest level of service orchestration in the ONAP architecture.
 
+
+
+Version: 5.0.2
+-----------------------
+
+:Release Date: 2020-07-19
+
+**Docker Images**
+
+**Dockers released for SO:**
+
+ - onap/so/api-handler-infra,1.5.4
+ - onap/so/bpmn-infra,1.5.4
+ - onap/so/catalog-db-adapter,1.5.4
+ - onap/so/openstack-adapter,1.5.4
+ - onap/so/request-db-adapter,1.5.4
+ - onap/so/sdc-controller,1.5.4
+ - onap/so/sdnc-adapter,1.5.4
+ - onap/so/so-monitoring,1.5.4
+ - onap/so/vfc-adapter,1.5.4
+ - onap/so/vnfm-adapter,1.5.4
+ - onap/so/vnfm-simulator,1.5.4
+
+**Release Purpose**
+
+The R5 El Alto release of ONAP is a maintenance release, focusing on deployability, technical debt, and auto test case improvements.
+The Key issues fixed are around the gating failure.
+
+**New Features**
+   N/A  
+
+
+**Epics**
+
+	N/A
+
+**Stories**
+
+	N/A
+
+**Key Issues Addressed**
+
+-  [`SO-1605 <https://jira.onap.org/browse/SO-1605>`__\ ] - SO fails on updating Camunda table when DoCreateVfModule for vCPE infra service
+-  [`SO-3046 <https://jira.onap.org/browse/SO-3046>`__\ ] - SO is responding "400" on healthcheck
+-  [`SO-2673 <https://jira.onap.org/browse/SO-2673>`__\ ] - Added prematching to audit filter
+
+**Security Notes**
+
+ Quick Links:
+
+ - `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`_
+ - `Passing Badge information for SO <https://bestpractices.coreinfrastructure.org/en/projects/1702>`_
+
+
+**Known Issues**
+
+	N/A
+
+
+**Upgrade Notes**
+
+	N/A
+
+**Deprecation Notes**
+
+	N/A
+
+**Other**
+
+	N/A
+
+
 Version: 5.0.1
 -----------------------
 
