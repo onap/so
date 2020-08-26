@@ -49,4 +49,6 @@ public class NovaClient extends MsoCommonUtils {
         novaClient.token(keystone.getId());
         return novaClient;
     }
+
+
 }

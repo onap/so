@@ -107,7 +107,7 @@ public class KeystoneV3Authentication {
         return policy;
     }
 
-    protected String findEndpointURL(List<Service> serviceCatalog, String type, String region, String facing) {
+    public String findEndpointURL(List<Service> serviceCatalog, String type, String region, String facing) {
         for (Service service : serviceCatalog) {
             if (type.equals(service.getType())) {
                 for (Service.Endpoint endpoint : service.getEndpoints()) {
