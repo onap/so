@@ -127,13 +127,6 @@ public class NssmfManager {
                 break;
 
             case TRANSPORT:
-                AllocateTnNssi tn = nssmiAllocate.getAllocateTnNssi();
-                assertObjectNotNull(tn);
-                assertObjectNotNull(tn.getNsiInfo());
-                assertObjectNotNull(tn.getNsiInfo().getNsiId());
-                nsiId = tn.getNsiInfo().getNsiId();
-                allocateReq = marshal(tn);
-                allocateUrl = AllocateTnNssi.URL;
                 break;
 
         }

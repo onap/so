@@ -21,10 +21,15 @@
 package org.onap.so.beans.nsmf;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class NssiAllocateRequest {
+public class NssiAllocateRequest implements Serializable {
 
+    private static final long serialVersionUID = -454145891489457960L;
+
+    @NotNull
     private EsrInfo esrInfo;
 
     private AllocateCnNssi allocateCnNssi;
@@ -32,6 +37,8 @@ public class NssiAllocateRequest {
     private AllocateTnNssi allocateTnNssi;
 
     private AllocateAnNssi allocateAnNssi;
+
+    private ServiceInfo serviceInfo;
 
     public EsrInfo getEsrInfo() {
         return esrInfo;
