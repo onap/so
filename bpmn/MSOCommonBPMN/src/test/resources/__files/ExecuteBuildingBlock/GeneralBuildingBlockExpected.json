@@ -33,7 +33,8 @@
             "availability-zone":"$.vnf-topology.vnf-resource-assignments.availability-zones.availability-zone[0]", 
             "xtz-123":"$.vnf-topology.vnf-resource-assignments.availability-zones.availability-zone[0]" 
          } 
-     ]
+     ],
+    "isHelm": false
 	},
 	"orchContext": {
 		"is-rollback-enabled": false

@@ -45,6 +45,7 @@ public class BBInputSetupParameter {
     private String applicationId;
     private boolean isReplace;
     private ServiceModel serviceModel;
+    private boolean isHelm;
 
     private BBInputSetupParameter(Builder builder) {
         this.cloudConfiguration = builder.cloudConfiguration;
@@ -74,6 +75,7 @@ public class BBInputSetupParameter {
         this.applicationId = builder.applicationId;
         this.isReplace = builder.isReplace;
         this.serviceModel = builder.serviceModel;
+        this.isHelm = builder.isHelm;
     }
 
 
@@ -331,6 +333,15 @@ public class BBInputSetupParameter {
         this.serviceModel = serviceModel;
     }
 
+    protected boolean getIsHelm() {
+        return isHelm;
+    }
+
+
+    protected void setIsHelm(boolean isHelm) {
+        this.isHelm = isHelm;
+    }
+
     public static class Builder {
         private CloudConfiguration cloudConfiguration;
         private ConfigurationResourceKeys configurationResourceKeys;
@@ -359,6 +370,7 @@ public class BBInputSetupParameter {
         private String applicationId;
         private boolean isReplace;
         private ServiceModel serviceModel;
+        private boolean isHelm;
 
         public Builder setCloudConfiguration(CloudConfiguration cloudConfiguration) {
             this.cloudConfiguration = cloudConfiguration;
@@ -493,6 +505,15 @@ public class BBInputSetupParameter {
         protected Builder setServiceModel(ServiceModel serviceModel) {
             this.serviceModel = serviceModel;
             return this;
+        }
+
+        protected boolean getIsHelm() {
+            return isHelm;
+        }
+
+
+        protected void setIsHelm(boolean isHelm) {
+            this.isHelm = isHelm;
         }
 
         public BBInputSetupParameter build() {
