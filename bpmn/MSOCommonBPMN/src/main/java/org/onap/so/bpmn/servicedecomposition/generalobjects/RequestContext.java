@@ -57,6 +57,16 @@ public class RequestContext implements Serializable {
     private List<Map<String, String>> configurationParameters = new ArrayList<>();
     @JsonProperty("application-id")
     private String applicationId;
+    @JsonProperty("is-helm")
+    private boolean isHelm;
+
+    public boolean getIsHelm() {
+        return isHelm;
+    }
+
+    public void setIsHelm(boolean isHelm) {
+        this.isHelm = isHelm;
+    }
 
     public String getServiceURI() {
         return serviceURI;
