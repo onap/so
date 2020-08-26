@@ -23,6 +23,7 @@ package org.onap.so.adapters.nssmf.rest;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 
+@Deprecated
 public class TrustAllHostNameVerifier implements HostnameVerifier {
 
     public boolean verify(String hostname, SSLSession session) {

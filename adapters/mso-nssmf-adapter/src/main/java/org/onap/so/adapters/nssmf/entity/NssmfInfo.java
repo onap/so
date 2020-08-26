@@ -18,8 +18,11 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.nssmf.rest;
+package org.onap.so.adapters.nssmf.entity;
 
+import lombok.Data;
+
+@Data
 public class NssmfInfo {
 
     private String url;
@@ -35,60 +38,4 @@ public class NssmfInfo {
     private String userName;
 
     private String password;
-
-    public String getInsecure() {
-        return insecure;
-    }
-
-    public void setInsecure(String insecure) {
-        this.insecure = insecure;
-    }
-
-    public String getCacert() {
-        return cacert;
-    }
-
-    public void setCacert(String cacert) {
-        this.cacert = cacert;
-    }
-
-    public String getIpAddress() {
-        return ipAddress;
-    }
-
-    public void setIpAddress(String ipAddress) {
-        this.ipAddress = ipAddress;
-    }
-
-    public String getPort() {
-        return port;
-    }
-
-    public void setPort(String port) {
-        this.port = port;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

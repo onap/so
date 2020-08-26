@@ -22,11 +22,15 @@ package org.onap.so.adapters.nssmf.extclients.aai;
 
 import org.onap.aai.domain.yang.EsrSystemInfoList;
 import org.onap.aai.domain.yang.EsrThirdpartySdncList;
+import org.onap.aai.domain.yang.ServiceInstance;
 
 public interface AaiServiceProvider {
 
     EsrThirdpartySdncList invokeGetThirdPartySdncList();
 
     EsrSystemInfoList invokeGetThirdPartySdncEsrSystemInfo(String sdncId);
+
+    void invokeCreateServiceInstance(ServiceInstance nssiInstance, String globalSubscriberId, String serviceType,
+            String serviceInstanceId);
 
 }

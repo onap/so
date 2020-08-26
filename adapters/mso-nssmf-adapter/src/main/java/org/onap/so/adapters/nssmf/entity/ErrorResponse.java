@@ -18,37 +18,46 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.nssmf.model;
+package org.onap.so.adapters.nssmf.entity;
 
-public class TokenRequest {
+public class ErrorResponse {
 
-    private String grantType;
+    private int status;
 
-    private String userName;
+    private String error;
 
-    private String value;
+    private String message;
 
-    public String getGrantType() {
-        return grantType;
+    public ErrorResponse(int status, String message) {
+        this.status = status;
+        this.message = message;
+        this.error = "Bad Request";
     }
 
-    public void setGrantType(String grantType) {
-        this.grantType = grantType;
+    public int getStatus() {
+        return status;
     }
 
-    public String getUserName() {
-        return userName;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public String getError() {
+        if (status == 500) {
+            this.error = "Internal Server Error";
+        }
+        return error;
     }
 
-    public String getValue() {
-        return value;
+    public void setError(String error) {
+        this.error = error;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
