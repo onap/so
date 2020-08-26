@@ -26,6 +26,7 @@ import java.io.Serializable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AllocateCnNssi implements Serializable {
 
+    @Deprecated
     public final static String URL = "/api/rest/provMns/v1/NSS/SliceProfiles";
     private static final long serialVersionUID = 4909074863148869163L;
 
