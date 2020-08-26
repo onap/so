@@ -75,7 +75,8 @@
                                  },
                                  "retirementDate":{
                                     "description":"Date-time stamp. Representation: String formatted according toas defined by the date-time production in IETF RFC 3339.\n",
-                                    "format":"date-time"
+                                    "format":"date-time",
+                                    "type":"string"
                                  }
                               }
                            }
@@ -9667,7 +9668,8 @@
                         },
                         "startTime":{
                            "description":"Date-time stamp. Representation: String formatted according toas defined by the date-time production in IETF RFC 3339.\n",
-                           "format":"date-time"
+                           "format":"date-time",
+                           "type":"string"
                         },
                         "nsInstantiationLevelId":{
                            "description":"An identifier that is unique within a NS descriptor. Representation: string of variable length.\n",
@@ -10745,7 +10747,8 @@
                         },
                         "scaleTime":{
                            "description":"Date-time stamp. Representation: String formatted according toas defined by the date-time production in IETF RFC 3339.\n",
-                           "format":"date-time"
+                           "format":"date-time",
+                           "type":"string"
                         }
                      }
                   },
@@ -13113,7 +13116,8 @@
                         },
                         "updateTime":{
                            "description":"Date-time stamp. Representation: String formatted according toas defined by the date-time production in IETF RFC 3339.\n",
-                           "format":"date-time"
+                           "format":"date-time",
+                           "type":"string"
                         }
                      }
                   },
@@ -15175,7 +15179,8 @@
                                  },
                                  "statusEnteredTime":{
                                     "description":"Date-time stamp. Representation: String formatted according toas defined by the date-time production in IETF RFC 3339.\n",
-                                    "format":"date-time"
+                                    "format":"date-time",
+                                    "type":"string"
                                  },
                                  "nsInstanceId":{
                                     "description":"An identifier with the intention of being globally unique.\n",
@@ -15194,7 +15199,8 @@
                                  },
                                  "startTime":{
                                     "description":"Date-time stamp. Representation: String formatted according toas defined by the date-time production in IETF RFC 3339.\n",
-                                    "format":"date-time"
+                                    "format":"date-time",
+                                    "type":"string"
                                  },
                                  "isAutomaticInvocation":{
                                     "description":"Set to true if this NS LCM operation occurrence has been automatically triggered by the NFVO. This occurs in the case of auto-scaling, auto-healing and when a nested NS is modified as a result of an operation on its composite NS. Set to false otherwise.\n",
@@ -15202,14 +15208,7 @@
                                  },
                                  "operationParams":{
                                     "description":"Input parameters of the LCM operation. This attribute shall be formatted according to the request data type of the related LCM operation. The following mapping between lcmOperationType and the data type of this attribute shall apply: - INSTANTIATE: InstantiateNsRequest - SCALE: ScaleNsRequest - UPDATE: UpdateNsRequest - HEAL: HealNsRequest - TERMINATE: TerminateNsRequest This attribute shall be present if this data type is returned in a response to reading an individual resource, and may be present according to the chosen attribute selector parameter if this data type is returned in a response to a query of a container resource.\n",
-                                    "type":"string",
-                                    "enum":[
-                                       "INSTANTIATE",
-                                       "SCALE",
-                                       "UPDATE",
-                                       "HEAL",
-                                       "TERMINATE"
-                                    ]
+                                    "type":"object"
                                  },
                                  "isCancelPending":{
                                     "description":"If the LCM operation occurrence is in \"PROCESSING\" or \"ROLLING_BACK\" state and the operation is being cancelled, this attribute shall be set to true. Otherwise, it shall be set to false.\n",
@@ -16396,7 +16395,8 @@
                         },
                         "statusEnteredTime":{
                            "description":"Date-time stamp. Representation: String formatted according toas defined by the date-time production in IETF RFC 3339.\n",
-                           "format":"date-time"
+                           "format":"date-time",
+                           "type":"string"
                         },
                         "nsInstanceId":{
                            "description":"An identifier with the intention of being globally unique.\n",
@@ -16415,7 +16415,8 @@
                         },
                         "startTime":{
                            "description":"Date-time stamp. Representation: String formatted according toas defined by the date-time production in IETF RFC 3339.\n",
-                           "format":"date-time"
+                           "format":"date-time",
+                           "type":"string"
                         },
                         "isAutomaticInvocation":{
                            "description":"Set to true if this NS LCM operation occurrence has been automatically triggered by the NFVO. This occurs in the case of auto-scaling, auto-healing and when a nested NS is modified as a result of an operation on its composite NS. Set to false otherwise.\n",
@@ -16423,14 +16424,7 @@
                         },
                         "operationParams":{
                            "description":"Input parameters of the LCM operation. This attribute shall be formatted according to the request data type of the related LCM operation. The following mapping between lcmOperationType and the data type of this attribute shall apply: - INSTANTIATE: InstantiateNsRequest - SCALE: ScaleNsRequest - UPDATE: UpdateNsRequest - HEAL: HealNsRequest - TERMINATE: TerminateNsRequest This attribute shall be present if this data type is returned in a response to reading an individual resource, and may be present according to the chosen attribute selector parameter if this data type is returned in a response to a query of a container resource.\n",
-                           "type":"string",
-                           "enum":[
-                              "INSTANTIATE",
-                              "SCALE",
-                              "UPDATE",
-                              "HEAL",
-                              "TERMINATE"
-                           ]
+                           "type":"object"
                         },
                         "isCancelPending":{
                            "description":"If the LCM operation occurrence is in \"PROCESSING\" or \"ROLLING_BACK\" state and the operation is being cancelled, this attribute shall be set to true. Otherwise, it shall be set to false.\n",
@@ -19521,7 +19515,8 @@
                         },
                         "statusEnteredTime":{
                            "description":"Date-time stamp. Representation: String formatted according toas defined by the date-time production in IETF RFC 3339.\n",
-                           "format":"date-time"
+                           "format":"date-time",
+                           "type":"string"
                         },
                         "nsInstanceId":{
                            "description":"An identifier with the intention of being globally unique.\n",
@@ -19540,7 +19535,8 @@
                         },
                         "startTime":{
                            "description":"Date-time stamp. Representation: String formatted according toas defined by the date-time production in IETF RFC 3339.\n",
-                           "format":"date-time"
+                           "format":"date-time",
+                           "type":"string"
                         },
                         "isAutomaticInvocation":{
                            "description":"Set to true if this NS LCM operation occurrence has been automatically triggered by the NFVO. This occurs in the case of auto-scaling, auto-healing and when a nested NS is modified as a result of an operation on its composite NS. Set to false otherwise.\n",
@@ -19548,14 +19544,7 @@
                         },
                         "operationParams":{
                            "description":"Input parameters of the LCM operation. This attribute shall be formatted according to the request data type of the related LCM operation. The following mapping between lcmOperationType and the data type of this attribute shall apply: - INSTANTIATE: InstantiateNsRequest - SCALE: ScaleNsRequest - UPDATE: UpdateNsRequest - HEAL: HealNsRequest - TERMINATE: TerminateNsRequest This attribute shall be present if this data type is returned in a response to reading an individual resource, and may be present according to the chosen attribute selector parameter if this data type is returned in a response to a query of a container resource.\n",
-                           "type":"string",
-                           "enum":[
-                              "INSTANTIATE",
-                              "SCALE",
-                              "UPDATE",
-                              "HEAL",
-                              "TERMINATE"
-                           ]
+                           "type":"object"
                         },
                         "isCancelPending":{
                            "description":"If the LCM operation occurrence is in \"PROCESSING\" or \"ROLLING_BACK\" state and the operation is being cancelled, this attribute shall be set to true. Otherwise, it shall be set to false.\n",
