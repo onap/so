@@ -843,10 +843,190 @@ margin-bottom: 20px;
   },
   "description" : "This describes the subnet capabilities that can be queried"
 };
+        defs["RetrievingWorkflowResponse"] = {
+  "type" : "object",
+  "properties" : {
+    "workflowSpecificationList" : {
+      "type" : "array",
+      "description" : "List of Workflow specification data",
+      "items" : {
+        "$ref" : "#/definitions/WorkflowSpecification"
+      }
+    }
+  },
+  "description" : "Response body of fetching workflows using resource target"
+};
+        defs["ServiceLevelWorkflowExecution"] = {
+  "type" : "object",
+  "properties" : {
+    "requestInfo" : {
+      "$ref" : "#/definitions/ServiceLevelWorkflowExecution_requestInfo"
+    },
+    "modelInfo" : {
+      "$ref" : "#/definitions/ServiceLevelWorkflowExecution_modelInfo"
+    },
+    "requestParameters" : {
+      "$ref" : "#/definitions/ServiceLevelWorkflowExecution_requestParameters"
+    },
+    "subscriberInfo" : {
+      "$ref" : "#/definitions/ServiceLevelWorkflowExecution_subscriberInfo"
+    },
+    "project" : {
+      "$ref" : "#/definitions/ServiceLevelWorkflowExecution_project"
+    },
+    "owningEntity" : {
+      "$ref" : "#/definitions/ServiceLevelWorkflowExecution_owningEntity"
+    }
+  },
+  "description" : "This describes the request body of service level custom workflow execution"
+};
+        defs["ServiceLevelWorkflowExecution_modelInfo"] = {
+  "type" : "object",
+  "properties" : {
+    "modelType" : {
+      "type" : "string",
+      "description" : "Type of the model to be executed"
+    },
+    "modelInvariantUuid" : {
+      "type" : "string",
+      "description" : "Model invariant id corresponding to the service"
+    },
+    "modelUuid" : {
+      "type" : "string",
+      "description" : "Model uuid corresponding to the service"
+    },
+    "modelVersionId" : {
+      "type" : "string",
+      "description" : "Model version of the service instance"
+    },
+    "modelName" : {
+      "type" : "string",
+      "description" : "Name of the service"
+    },
+    "modelVersion" : {
+      "type" : "string",
+      "description" : "Version of the service instance"
+    }
+  },
+  "description" : "Parameters related to the service model"
+};
+        defs["ServiceLevelWorkflowExecution_owningEntity"] = {
+  "type" : "object",
+  "properties" : {
+    "owningEntityId" : {
+      "type" : "string",
+      "description" : "Id of the owning Entity"
+    },
+    "owningEntityName" : {
+      "type" : "string",
+      "description" : "Name of the owning Entity"
+    }
+  },
+  "description" : "Object describes the entity details"
+};
+        defs["ServiceLevelWorkflowExecution_project"] = {
+  "type" : "object",
+  "properties" : {
+    "projectName" : {
+      "type" : "string",
+      "description" : "Name of the target project"
+    }
+  },
+  "description" : "Information about the target project name"
+};
+        defs["ServiceLevelWorkflowExecution_requestInfo"] = {
+  "type" : "object",
+  "properties" : {
+    "source" : {
+      "type" : "string",
+      "description" : "Name of the sender"
+    },
+    "suppressRollback" : {
+      "type" : "boolean",
+      "description" : "Enable/disable rollback suppression"
+    },
+    "requestorId" : {
+      "type" : "string",
+      "description" : "Id of the sender"
+    }
+  },
+  "description" : "Request object contains source information"
+};
+        defs["ServiceLevelWorkflowExecution_requestParameters"] = {
+  "type" : "object",
+  "properties" : {
+    "subscriptionServiceType" : {
+      "type" : "string",
+      "description" : "Type of service subscription"
+    }
+  },
+  "description" : "User parameter object"
+};
+        defs["ServiceLevelWorkflowExecution_subscriberInfo"] = {
+  "type" : "object",
+  "properties" : {
+    "globalSubscriberId" : {
+      "type" : "string",
+      "description" : "Id of the subscriber sending the request"
+    }
+  },
+  "description" : "Subscriber id information"
+};
         defs["SubnetTypes"] = {
   "type" : "string",
   "description" : "This describes allowed subnet types",
   "enum" : [ "AN", "AN_NF", "CN", "TN_FH", "TN_MH", "TN_BH" ]
+};
+        defs["WorkflowSpecification"] = {
+  "type" : "object",
+  "properties" : {
+    "artifactInfo" : {
+      "$ref" : "#/definitions/WorkflowSpecification_artifactInfo"
+    }
+  },
+  "description" : "This describes workflow specification object"
+};
+        defs["WorkflowSpecification_artifactInfo"] = {
+  "type" : "object",
+  "properties" : {
+    "artifactType" : {
+      "type" : "string",
+      "description" : "Type of the artifact to be queried"
+    },
+    "artifactUuid" : {
+      "type" : "string",
+      "description" : "UUID of the artifact"
+    },
+    "artifactName" : {
+      "type" : "string",
+      "description" : "Name of the artifact"
+    },
+    "artifactVersion" : {
+      "type" : "string",
+      "description" : "Artifact's Version"
+    },
+    "artifactDescription" : {
+      "type" : "string",
+      "description" : ""
+    },
+    "workflowName" : {
+      "type" : "string",
+      "description" : "Name of the workflow fetched for the resource type"
+    },
+    "operationName" : {
+      "type" : "string",
+      "description" : "Mapped operation name of the corresponding workflow"
+    },
+    "workflowSource" : {
+      "type" : "string",
+      "description" : ""
+    },
+    "workflowResourceTarget" : {
+      "type" : "string",
+      "description" : "Type of Resource mapped against the workflow"
+    }
+  },
+  "description" : "Attributes related to artifact information "
 };
   </script>
 
@@ -929,6 +1109,10 @@ margin-bottom: 20px;
                     </li>
                     <li data-group="OnapsoinfracloudResourcesRequests" data-name="unlockOrchestrationRequestForReqId" class="">
                       <a href="#api-OnapsoinfracloudResourcesRequests-unlockOrchestrationRequestForReqId">unlockOrchestrationRequestForReqId</a>
+                    </li>
+                  <li class="nav-header" data-group="OnapsoinfrainstanceManagement"><a href="#api-OnapsoinfrainstanceManagement">API Methods - OnapsoinfrainstanceManagement</a></li>
+                    <li data-group="OnapsoinfrainstanceManagement" data-name="executeServiceLevelCustomWorkflow" class="">
+                      <a href="#api-OnapsoinfrainstanceManagement-executeServiceLevelCustomWorkflow">executeServiceLevelCustomWorkflow</a>
                     </li>
                   <li class="nav-header" data-group="OnapsoinframodelDistributions"><a href="#api-OnapsoinframodelDistributions">API Methods - OnapsoinframodelDistributions</a></li>
                     <li data-group="OnapsoinframodelDistributions" data-name="updateModelDistributionStatus" class="">
@@ -1066,6 +1250,10 @@ margin-bottom: 20px;
                   <li class="nav-header" data-group="Onapsoinfratasks"><a href="#api-Onapsoinfratasks">API Methods - Onapsoinfratasks</a></li>
                     <li data-group="Onapsoinfratasks" data-name="queryFilters" class="">
                       <a href="#api-Onapsoinfratasks-queryFilters">queryFilters</a>
+                    </li>
+                  <li class="nav-header" data-group="OnapsoinfraworkflowSpecifications"><a href="#api-OnapsoinfraworkflowSpecifications">API Methods - OnapsoinfraworkflowSpecifications</a></li>
+                    <li data-group="OnapsoinfraworkflowSpecifications" data-name="queryWorkflowSpecifications" class="">
+                      <a href="#api-OnapsoinfraworkflowSpecifications-queryWorkflowSpecifications">queryWorkflowSpecifications</a>
                     </li>
           </ul>
         </nav>
@@ -1449,7 +1637,7 @@ $(document).ready(function() {
                       <article id="api-E2eServiceInstances-compareModelwithTargetVersion-0" data-group="User" data-name="compareModelwithTargetVersion" data-version="0">
                         <div class="pull-left">
                           <h1>compareModelwithTargetVersion</h1>
-                          <p>Find added and deleted resources of target model for the e2eserviceInstance on a given serviceId </p>
+                          <p>Find added and deleted resources of target model for the e2eserviceInstance on a given serviceId</p>
                         </div>
                         <div class="pull-right"></div>
                         <div class="clearfix"></div>
@@ -1536,7 +1724,7 @@ String *body = body_example; //  (optional)
 
 E2eServiceInstancesApi *apiInstance = [[E2eServiceInstancesApi alloc] init];
 
-// Find added and deleted resources of target model for the e2eserviceInstance on a given serviceId 
+// Find added and deleted resources of target model for the e2eserviceInstance on a given serviceId
 [apiInstance compareModelwithTargetVersionWith:serviceId
     version:version
     body:body
@@ -1596,7 +1784,7 @@ namespace Example
 
             try
             {
-                // Find added and deleted resources of target model for the e2eserviceInstance on a given serviceId 
+                // Find added and deleted resources of target model for the e2eserviceInstance on a given serviceId
                 apiInstance.compareModelwithTargetVersion(serviceId, version, body);
             }
             catch (Exception e)
@@ -1658,7 +1846,7 @@ version = version_example # String |
 body = body_example # String |  (optional)
 
 try: 
-    # Find added and deleted resources of target model for the e2eserviceInstance on a given serviceId 
+    # Find added and deleted resources of target model for the e2eserviceInstance on a given serviceId
     api_instance.compare_modelwith_target_version(serviceId, version, body=body)
 except ApiException as e:
     print("Exception when calling E2eServiceInstancesApi->compareModelwithTargetVersion: %s\n" % e)</code></pre>
@@ -7365,6 +7553,366 @@ $(document).ready(function() {
 });
 </script>
 <div id="d2e199_unlockOrchestrationRequestForReqId_body"></div>
+</td>
+</tr>
+
+                            </table>
+
+
+
+                          <h2>Responses</h2>
+                            <h3> Status: default - successful operation </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                            </div>
+
+                        </article>
+                      </div>
+                      <hr>
+                  </section>
+                <section id="api-OnapsoinfrainstanceManagement">
+                  <h1>OnapsoinfrainstanceManagement</h1>
+                    <div id="api-OnapsoinfrainstanceManagement-executeServiceLevelCustomWorkflow">
+                      <article id="api-OnapsoinfrainstanceManagement-executeServiceLevelCustomWorkflow-0" data-group="User" data-name="executeServiceLevelCustomWorkflow" data-version="0">
+                        <div class="pull-left">
+                          <h1>executeServiceLevelCustomWorkflow</h1>
+                          <p>Executing service level custom workflow</p>
+                        </div>
+                        <div class="pull-right"></div>
+                        <div class="clearfix"></div>
+                        <p></p>
+                        <p class="marked"></p>
+                        <p></p>
+                        <br />
+                        <pre class="prettyprint language-html prettyprinted" data-type="post"><code><span class="pln">/onap/so/infra/instanceManagement/{version}/serviceInstances/{serviceInstanceId}/workflows/{workflow_UUID}</span></code></pre>
+                        <p>
+                          <h3>Usage and SDK Samples</h3>
+                        </p>
+                        <ul class="nav nav-tabs nav-tabs-examples">
+                          <li class="active"><a href="#examples-OnapsoinfrainstanceManagement-executeServiceLevelCustomWorkflow-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-OnapsoinfrainstanceManagement-executeServiceLevelCustomWorkflow-0-java">Java</a></li>
+                          <li class=""><a href="#examples-OnapsoinfrainstanceManagement-executeServiceLevelCustomWorkflow-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-OnapsoinfrainstanceManagement-executeServiceLevelCustomWorkflow-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-OnapsoinfrainstanceManagement-executeServiceLevelCustomWorkflow-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-OnapsoinfrainstanceManagement-executeServiceLevelCustomWorkflow-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-OnapsoinfrainstanceManagement-executeServiceLevelCustomWorkflow-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-OnapsoinfrainstanceManagement-executeServiceLevelCustomWorkflow-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-OnapsoinfrainstanceManagement-executeServiceLevelCustomWorkflow-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-OnapsoinfrainstanceManagement-executeServiceLevelCustomWorkflow-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-OnapsoinfrainstanceManagement-executeServiceLevelCustomWorkflow-0-python">Python</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="examples-OnapsoinfrainstanceManagement-executeServiceLevelCustomWorkflow-0-curl">
+                            <pre class="prettyprint"><code class="language-bsh">curl -X POST "http://localhost/onap/so/infra/instanceManagement/{version}/serviceInstances/{serviceInstanceId}/workflows/{workflow_UUID}"</code></pre>
+                          </div>
+                          <div class="tab-pane" id="examples-OnapsoinfrainstanceManagement-executeServiceLevelCustomWorkflow-0-java">
+                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
+import io.swagger.client.auth.*;
+import io.swagger.client.model.*;
+import io.swagger.client.api.OnapsoinfrainstanceManagementApi;
+
+import java.io.File;
+import java.util.*;
+
+public class OnapsoinfrainstanceManagementApiExample {
+
+    public static void main(String[] args) {
+        
+        OnapsoinfrainstanceManagementApi apiInstance = new OnapsoinfrainstanceManagementApi();
+        String version = version_example; // String | 
+        String serviceInstanceId = serviceInstanceId_example; // String | 
+        String workflowUUID = workflowUUID_example; // String | 
+        ServiceLevelWorkflowExecution body = ; // ServiceLevelWorkflowExecution | 
+        try {
+            apiInstance.executeServiceLevelCustomWorkflow(version, serviceInstanceId, workflowUUID, body);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling OnapsoinfrainstanceManagementApi#executeServiceLevelCustomWorkflow");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-OnapsoinfrainstanceManagement-executeServiceLevelCustomWorkflow-0-android">
+                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.api.OnapsoinfrainstanceManagementApi;
+
+public class OnapsoinfrainstanceManagementApiExample {
+
+    public static void main(String[] args) {
+        OnapsoinfrainstanceManagementApi apiInstance = new OnapsoinfrainstanceManagementApi();
+        String version = version_example; // String | 
+        String serviceInstanceId = serviceInstanceId_example; // String | 
+        String workflowUUID = workflowUUID_example; // String | 
+        ServiceLevelWorkflowExecution body = ; // ServiceLevelWorkflowExecution | 
+        try {
+            apiInstance.executeServiceLevelCustomWorkflow(version, serviceInstanceId, workflowUUID, body);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling OnapsoinfrainstanceManagementApi#executeServiceLevelCustomWorkflow");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+  <!--
+  <div class="tab-pane" id="examples-OnapsoinfrainstanceManagement-executeServiceLevelCustomWorkflow-0-groovy">
+  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+  </div> -->
+                            <div class="tab-pane" id="examples-OnapsoinfrainstanceManagement-executeServiceLevelCustomWorkflow-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">String *version = version_example; // 
+String *serviceInstanceId = serviceInstanceId_example; // 
+String *workflowUUID = workflowUUID_example; // 
+ServiceLevelWorkflowExecution *body = ; //  (optional)
+
+OnapsoinfrainstanceManagementApi *apiInstance = [[OnapsoinfrainstanceManagementApi alloc] init];
+
+// Executing service level custom workflow
+[apiInstance executeServiceLevelCustomWorkflowWith:version
+    serviceInstanceId:serviceInstanceId
+    workflowUUID:workflowUUID
+    body:body
+              completionHandler: ^(NSError* error) {
+                            if (error) {
+                                NSLog(@"Error: %@", error);
+                            }
+                        }];
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-OnapsoinfrainstanceManagement-executeServiceLevelCustomWorkflow-0-javascript">
+                              <pre class="prettyprint"><code class="language-js">var SoGuilinApIs = require('so_guilin_ap_is');
+
+var api = new SoGuilinApIs.OnapsoinfrainstanceManagementApi()
+
+var version = version_example; // {String} 
+
+var serviceInstanceId = serviceInstanceId_example; // {String} 
+
+var workflowUUID = workflowUUID_example; // {String} 
+
+var opts = { 
+  'body':  // {ServiceLevelWorkflowExecution} 
+};
+
+var callback = function(error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully.');
+  }
+};
+api.executeServiceLevelCustomWorkflow(version, serviceInstanceId, workflowUUID, opts, callback);
+</code></pre>
+                            </div>
+
+                            <!--<div class="tab-pane" id="examples-OnapsoinfrainstanceManagement-executeServiceLevelCustomWorkflow-0-angular">
+              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+            </div>-->
+                            <div class="tab-pane" id="examples-OnapsoinfrainstanceManagement-executeServiceLevelCustomWorkflow-0-csharp">
+                              <pre class="prettyprint"><code class="language-cs">using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class executeServiceLevelCustomWorkflowExample
+    {
+        public void main()
+        {
+            
+            var apiInstance = new OnapsoinfrainstanceManagementApi();
+            var version = version_example;  // String | 
+            var serviceInstanceId = serviceInstanceId_example;  // String | 
+            var workflowUUID = workflowUUID_example;  // String | 
+            var body = new ServiceLevelWorkflowExecution(); // ServiceLevelWorkflowExecution |  (optional) 
+
+            try
+            {
+                // Executing service level custom workflow
+                apiInstance.executeServiceLevelCustomWorkflow(version, serviceInstanceId, workflowUUID, body);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling OnapsoinfrainstanceManagementApi.executeServiceLevelCustomWorkflow: " + e.Message );
+            }
+        }
+    }
+}
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-OnapsoinfrainstanceManagement-executeServiceLevelCustomWorkflow-0-php">
+                              <pre class="prettyprint"><code class="language-php"><&#63;php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+$api_instance = new Swagger\Client\Api\OnapsoinfrainstanceManagementApi();
+$version = version_example; // String | 
+$serviceInstanceId = serviceInstanceId_example; // String | 
+$workflowUUID = workflowUUID_example; // String | 
+$body = ; // ServiceLevelWorkflowExecution | 
+
+try {
+    $api_instance->executeServiceLevelCustomWorkflow($version, $serviceInstanceId, $workflowUUID, $body);
+} catch (Exception $e) {
+    echo 'Exception when calling OnapsoinfrainstanceManagementApi->executeServiceLevelCustomWorkflow: ', $e->getMessage(), PHP_EOL;
+}
+?></code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-OnapsoinfrainstanceManagement-executeServiceLevelCustomWorkflow-0-perl">
+                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
+use WWW::SwaggerClient::Configuration;
+use WWW::SwaggerClient::OnapsoinfrainstanceManagementApi;
+
+my $api_instance = WWW::SwaggerClient::OnapsoinfrainstanceManagementApi->new();
+my $version = version_example; # String | 
+my $serviceInstanceId = serviceInstanceId_example; # String | 
+my $workflowUUID = workflowUUID_example; # String | 
+my $body = WWW::SwaggerClient::Object::ServiceLevelWorkflowExecution->new(); # ServiceLevelWorkflowExecution | 
+
+eval { 
+    $api_instance->executeServiceLevelCustomWorkflow(version => $version, serviceInstanceId => $serviceInstanceId, workflowUUID => $workflowUUID, body => $body);
+};
+if ($@) {
+    warn "Exception when calling OnapsoinfrainstanceManagementApi->executeServiceLevelCustomWorkflow: $@\n";
+}</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-OnapsoinfrainstanceManagement-executeServiceLevelCustomWorkflow-0-python">
+                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
+import time
+import swagger_client
+from swagger_client.rest import ApiException
+from pprint import pprint
+
+# create an instance of the API class
+api_instance = swagger_client.OnapsoinfrainstanceManagementApi()
+version = version_example # String | 
+serviceInstanceId = serviceInstanceId_example # String | 
+workflowUUID = workflowUUID_example # String | 
+body =  # ServiceLevelWorkflowExecution |  (optional)
+
+try: 
+    # Executing service level custom workflow
+    api_instance.execute_service_level_custom_workflow(version, serviceInstanceId, workflowUUID, body=body)
+except ApiException as e:
+    print("Exception when calling OnapsoinfrainstanceManagementApi->executeServiceLevelCustomWorkflow: %s\n" % e)</code></pre>
+                            </div>
+                          </div>
+
+                          <h2>Parameters</h2>
+
+                            <div class="methodsubtabletitle">Path parameters</div>
+                            <table id="methodsubtable">
+                                <tr>
+                                  <th width="150px">Name</th>
+                                  <th>Description</th>
+                                </tr>
+                                  <tr><td style="width:150px;">version*</td>
+<td>
+
+
+    <div id="d2e199_executeServiceLevelCustomWorkflow_version">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                  <tr><td style="width:150px;">serviceInstanceId*</td>
+<td>
+
+
+    <div id="d2e199_executeServiceLevelCustomWorkflow_serviceInstanceId">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                  <tr><td style="width:150px;">workflow_UUID*</td>
+<td>
+
+
+    <div id="d2e199_executeServiceLevelCustomWorkflow_workflowUUID">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                            </table>
+
+
+                            <div class="methodsubtabletitle">Body parameters</div>
+                            <table id="methodsubtable">
+                              <tr>
+                                <th width="150px">Name</th>
+                                <th>Description</th>
+                              </tr>
+                                <tr><td style="width:150px;">body </td>
+<td>
+
+
+<script>
+$(document).ready(function() {
+  var schemaWrapper = {
+  "in" : "body",
+  "name" : "body",
+  "required" : false,
+  "schema" : {
+    "$ref" : "#/definitions/ServiceLevelWorkflowExecution"
+  }
+};
+  var schema = schemaWrapper.schema;
+  if (schema.$ref != null) {
+    schema = defsParser.$refs.get(schema.$ref);
+  } else {
+    schemaWrapper.definitions = Object.assign({}, defs);
+    $RefParser.dereference(schemaWrapper).catch(function(err) {
+      console.log(err);
+    });
+  }
+
+  var view = new JSONSchemaView(schema,2,{isBodyParam: true});
+  var result = $('#d2e199_executeServiceLevelCustomWorkflow_body');
+  result.empty();
+  result.append(view.render());
+});
+</script>
+<div id="d2e199_executeServiceLevelCustomWorkflow_body"></div>
 </td>
 </tr>
 
@@ -22291,6 +22839,333 @@ except ApiException as e:
                             </ul>
 
                             <div class="tab-content" style='margin-bottom: 10px;'>
+                            </div>
+
+                        </article>
+                      </div>
+                      <hr>
+                  </section>
+                <section id="api-OnapsoinfraworkflowSpecifications">
+                  <h1>OnapsoinfraworkflowSpecifications</h1>
+                    <div id="api-OnapsoinfraworkflowSpecifications-queryWorkflowSpecifications">
+                      <article id="api-OnapsoinfraworkflowSpecifications-queryWorkflowSpecifications-0" data-group="User" data-name="queryWorkflowSpecifications" data-version="0">
+                        <div class="pull-left">
+                          <h1>queryWorkflowSpecifications</h1>
+                          <p>Retrieve Workflow details based on the filter criteria</p>
+                        </div>
+                        <div class="pull-right"></div>
+                        <div class="clearfix"></div>
+                        <p></p>
+                        <p class="marked"></p>
+                        <p></p>
+                        <br />
+                        <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/onap/so/infra/workflowSpecifications/{version}/workflows</span></code></pre>
+                        <p>
+                          <h3>Usage and SDK Samples</h3>
+                        </p>
+                        <ul class="nav nav-tabs nav-tabs-examples">
+                          <li class="active"><a href="#examples-OnapsoinfraworkflowSpecifications-queryWorkflowSpecifications-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-OnapsoinfraworkflowSpecifications-queryWorkflowSpecifications-0-java">Java</a></li>
+                          <li class=""><a href="#examples-OnapsoinfraworkflowSpecifications-queryWorkflowSpecifications-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-OnapsoinfraworkflowSpecifications-queryWorkflowSpecifications-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-OnapsoinfraworkflowSpecifications-queryWorkflowSpecifications-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-OnapsoinfraworkflowSpecifications-queryWorkflowSpecifications-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-OnapsoinfraworkflowSpecifications-queryWorkflowSpecifications-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-OnapsoinfraworkflowSpecifications-queryWorkflowSpecifications-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-OnapsoinfraworkflowSpecifications-queryWorkflowSpecifications-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-OnapsoinfraworkflowSpecifications-queryWorkflowSpecifications-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-OnapsoinfraworkflowSpecifications-queryWorkflowSpecifications-0-python">Python</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="examples-OnapsoinfraworkflowSpecifications-queryWorkflowSpecifications-0-curl">
+                            <pre class="prettyprint"><code class="language-bsh">curl -X GET "http://localhost/onap/so/infra/workflowSpecifications/{version}/workflows?resourceTarget="</code></pre>
+                          </div>
+                          <div class="tab-pane" id="examples-OnapsoinfraworkflowSpecifications-queryWorkflowSpecifications-0-java">
+                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
+import io.swagger.client.auth.*;
+import io.swagger.client.model.*;
+import io.swagger.client.api.OnapsoinfraworkflowSpecificationsApi;
+
+import java.io.File;
+import java.util.*;
+
+public class OnapsoinfraworkflowSpecificationsApiExample {
+
+    public static void main(String[] args) {
+        
+        OnapsoinfraworkflowSpecificationsApi apiInstance = new OnapsoinfraworkflowSpecificationsApi();
+        String version = version_example; // String | 
+        String resourceTarget = resourceTarget_example; // String | 
+        try {
+            RetrievingWorkflowResponse result = apiInstance.queryWorkflowSpecifications(version, resourceTarget);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling OnapsoinfraworkflowSpecificationsApi#queryWorkflowSpecifications");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-OnapsoinfraworkflowSpecifications-queryWorkflowSpecifications-0-android">
+                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.api.OnapsoinfraworkflowSpecificationsApi;
+
+public class OnapsoinfraworkflowSpecificationsApiExample {
+
+    public static void main(String[] args) {
+        OnapsoinfraworkflowSpecificationsApi apiInstance = new OnapsoinfraworkflowSpecificationsApi();
+        String version = version_example; // String | 
+        String resourceTarget = resourceTarget_example; // String | 
+        try {
+            RetrievingWorkflowResponse result = apiInstance.queryWorkflowSpecifications(version, resourceTarget);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling OnapsoinfraworkflowSpecificationsApi#queryWorkflowSpecifications");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+  <!--
+  <div class="tab-pane" id="examples-OnapsoinfraworkflowSpecifications-queryWorkflowSpecifications-0-groovy">
+  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+  </div> -->
+                            <div class="tab-pane" id="examples-OnapsoinfraworkflowSpecifications-queryWorkflowSpecifications-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">String *version = version_example; // 
+String *resourceTarget = resourceTarget_example; //  (optional)
+
+OnapsoinfraworkflowSpecificationsApi *apiInstance = [[OnapsoinfraworkflowSpecificationsApi alloc] init];
+
+// Retrieve Workflow details based on the filter criteria
+[apiInstance queryWorkflowSpecificationsWith:version
+    resourceTarget:resourceTarget
+              completionHandler: ^(RetrievingWorkflowResponse output, NSError* error) {
+                            if (output) {
+                                NSLog(@"%@", output);
+                            }
+                            if (error) {
+                                NSLog(@"Error: %@", error);
+                            }
+                        }];
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-OnapsoinfraworkflowSpecifications-queryWorkflowSpecifications-0-javascript">
+                              <pre class="prettyprint"><code class="language-js">var SoGuilinApIs = require('so_guilin_ap_is');
+
+var api = new SoGuilinApIs.OnapsoinfraworkflowSpecificationsApi()
+
+var version = version_example; // {String} 
+
+var opts = { 
+  'resourceTarget': resourceTarget_example // {String} 
+};
+
+var callback = function(error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+};
+api.queryWorkflowSpecifications(version, opts, callback);
+</code></pre>
+                            </div>
+
+                            <!--<div class="tab-pane" id="examples-OnapsoinfraworkflowSpecifications-queryWorkflowSpecifications-0-angular">
+              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+            </div>-->
+                            <div class="tab-pane" id="examples-OnapsoinfraworkflowSpecifications-queryWorkflowSpecifications-0-csharp">
+                              <pre class="prettyprint"><code class="language-cs">using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class queryWorkflowSpecificationsExample
+    {
+        public void main()
+        {
+            
+            var apiInstance = new OnapsoinfraworkflowSpecificationsApi();
+            var version = version_example;  // String | 
+            var resourceTarget = resourceTarget_example;  // String |  (optional) 
+
+            try
+            {
+                // Retrieve Workflow details based on the filter criteria
+                RetrievingWorkflowResponse result = apiInstance.queryWorkflowSpecifications(version, resourceTarget);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling OnapsoinfraworkflowSpecificationsApi.queryWorkflowSpecifications: " + e.Message );
+            }
+        }
+    }
+}
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-OnapsoinfraworkflowSpecifications-queryWorkflowSpecifications-0-php">
+                              <pre class="prettyprint"><code class="language-php"><&#63;php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+$api_instance = new Swagger\Client\Api\OnapsoinfraworkflowSpecificationsApi();
+$version = version_example; // String | 
+$resourceTarget = resourceTarget_example; // String | 
+
+try {
+    $result = $api_instance->queryWorkflowSpecifications($version, $resourceTarget);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling OnapsoinfraworkflowSpecificationsApi->queryWorkflowSpecifications: ', $e->getMessage(), PHP_EOL;
+}
+?></code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-OnapsoinfraworkflowSpecifications-queryWorkflowSpecifications-0-perl">
+                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
+use WWW::SwaggerClient::Configuration;
+use WWW::SwaggerClient::OnapsoinfraworkflowSpecificationsApi;
+
+my $api_instance = WWW::SwaggerClient::OnapsoinfraworkflowSpecificationsApi->new();
+my $version = version_example; # String | 
+my $resourceTarget = resourceTarget_example; # String | 
+
+eval { 
+    my $result = $api_instance->queryWorkflowSpecifications(version => $version, resourceTarget => $resourceTarget);
+    print Dumper($result);
+};
+if ($@) {
+    warn "Exception when calling OnapsoinfraworkflowSpecificationsApi->queryWorkflowSpecifications: $@\n";
+}</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-OnapsoinfraworkflowSpecifications-queryWorkflowSpecifications-0-python">
+                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
+import time
+import swagger_client
+from swagger_client.rest import ApiException
+from pprint import pprint
+
+# create an instance of the API class
+api_instance = swagger_client.OnapsoinfraworkflowSpecificationsApi()
+version = version_example # String | 
+resourceTarget = resourceTarget_example # String |  (optional)
+
+try: 
+    # Retrieve Workflow details based on the filter criteria
+    api_response = api_instance.query_workflow_specifications(version, resourceTarget=resourceTarget)
+    pprint(api_response)
+except ApiException as e:
+    print("Exception when calling OnapsoinfraworkflowSpecificationsApi->queryWorkflowSpecifications: %s\n" % e)</code></pre>
+                            </div>
+                          </div>
+
+                          <h2>Parameters</h2>
+
+                            <div class="methodsubtabletitle">Path parameters</div>
+                            <table id="methodsubtable">
+                                <tr>
+                                  <th width="150px">Name</th>
+                                  <th>Description</th>
+                                </tr>
+                                  <tr><td style="width:150px;">version*</td>
+<td>
+
+
+    <div id="d2e199_queryWorkflowSpecifications_version">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                            </table>
+
+
+
+
+                            <div class="methodsubtabletitle">Query parameters</div>
+                            <table id="methodsubtable">
+                              <tr>
+                                <th width="150px">Name</th>
+                                <th>Description</th>
+                              </tr>
+                                <tr><td style="width:150px;">resourceTarget</td>
+<td>
+
+
+    <div id="d2e199_queryWorkflowSpecifications_resourceTarget">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+
+            </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                            </table>
+
+                          <h2>Responses</h2>
+                            <h3> Status: default - List of workflow specifications on successful operation </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-queryWorkflowSpecifications-default-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-queryWorkflowSpecifications-default-schema">
+                                  <div id='responses-queryWorkflowSpecifications-default-schema-default' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "List of workflow specifications on successful operation",
+  "schema" : {
+    "$ref" : "#/definitions/RetrievingWorkflowResponse"
+  }
+};
+                                        var schema = schemaWrapper.schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = defs;
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-queryWorkflowSpecifications-default-schema-data').val(stringify(schema));
+                                        var result = $('#responses-queryWorkflowSpecifications-default-schema-default');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-queryWorkflowSpecifications-default-schema-data' type='hidden' value=''></input>
+                                </div>
                             </div>
 
                         </article>
