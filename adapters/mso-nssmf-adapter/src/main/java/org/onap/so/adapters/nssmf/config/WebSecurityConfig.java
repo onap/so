@@ -18,24 +18,20 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.nssmf.rest;
+package org.onap.so.adapters.nssmf.config;
 
-public enum HttpMethod {
-    GET, POST, PUT, DELETE, PATCH;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
-    public static HttpMethod fromString(String s) {
-        if (s == null)
-            return null;
-        if (("get").equalsIgnoreCase(s))
-            return GET;
-        if (("post").equalsIgnoreCase(s))
-            return POST;
-        if (("put").equalsIgnoreCase(s))
-            return PUT;
-        if (("delete").equalsIgnoreCase(s))
-            return DELETE;
-        if (("patch").equalsIgnoreCase(s))
-            return PATCH;
-        throw new IllegalArgumentException("Invalid value for HTTP Method: " + s);
+@EnableWebSecurity
+@Configuration
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable();
     }
+
 }

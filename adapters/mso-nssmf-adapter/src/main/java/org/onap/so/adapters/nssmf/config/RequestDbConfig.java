@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.nssmf;
+package org.onap.so.adapters.nssmf.config;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
