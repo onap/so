@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0nlt5gi" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.1.1">
+  <bpmn:process id="DoHandleOofRequest" name="DoHandleOofRequest" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_1jorico</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1fbzzqg" sourceRef="Activity_0tki17o" targetRef="Activity_08ozlfa" />
+    <bpmn:scriptTask id="Activity_08ozlfa" name="Call Oof Adapter" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1fbzzqg</bpmn:incoming>
+      <bpmn:outgoing>Flow_013jfci</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.common.scripts.*
+def oofHandler = new DoHandleOofRequest()
+oofHandler .callOofAdapter(execution)
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1jorico" sourceRef="StartEvent_1" targetRef="Activity_0tki17o" />
+    <bpmn:scriptTask id="Activity_0tki17o" name="Preprocess Request" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1jorico</bpmn:incoming>
+      <bpmn:outgoing>Flow_1fbzzqg</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.common.scripts.*
+def oofHandler = new DoHandleOofRequest()
+oofHandler .preProcessRequest(execution)
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:subProcess id="Activity_02ru8n9" name="Sub-process for FalloutHandler and Rollback" triggeredByEvent="true">
+      <bpmn:startEvent id="Event_1r00tca">
+        <bpmn:outgoing>Flow_072knve</bpmn:outgoing>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_1sy4yh2" />
+      </bpmn:startEvent>
+      <bpmn:endEvent id="Event_1rwmekw">
+        <bpmn:incoming>Flow_0ykpxpc</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:scriptTask id="Activity_11rvko0" name="Handle Unexpected Error" scriptFormat="groovy">
+        <bpmn:incoming>Flow_072knve</bpmn:incoming>
+        <bpmn:outgoing>Flow_0ykpxpc</bpmn:outgoing>
+        <bpmn:script>import org.onap.so.bpmn.common.scripts.*
+ExceptionUtil ex = new ExceptionUtil()
+ex.processJavaException(execution)</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="Flow_0ykpxpc" sourceRef="Activity_11rvko0" targetRef="Event_1rwmekw" />
+      <bpmn:sequenceFlow id="Flow_072knve" sourceRef="Event_1r00tca" targetRef="Activity_11rvko0" />
+    </bpmn:subProcess>
+    <bpmn:callActivity id="Activity_1yq993l" name="Receive Async Callback" camunda:modelerTemplate="receiveWorkflowMessage" calledElement="ReceiveWorkflowMessage">
+      <bpmn:extensionElements>
+        <camunda:in source="true" target="isDebugLogEnabled" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="messageType" target="RCVWFMSG_messageType" />
+        <camunda:in source="correlator" target="RCVWFMSG_correlator" />
+        <camunda:in source="timeout" target="RCVWFMSG_timeout" />
+        <camunda:out source="WorkflowResponse" target="asyncCallbackResponse" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_013jfci</bpmn:incoming>
+      <bpmn:outgoing>Flow_1nmoiqi</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_013jfci" sourceRef="Activity_08ozlfa" targetRef="Activity_1yq993l" />
+    <bpmn:endEvent id="Event_179tp7r" name="End event">
+      <bpmn:incoming>Flow_1nmoiqi</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1nmoiqi" sourceRef="Activity_1yq993l" targetRef="Event_179tp7r" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoHandleOofRequest">
+      <bpmndi:BPMNEdge id="Flow_1jorico_di" bpmnElement="Flow_1jorico">
+        <di:waypoint x="218" y="130" />
+        <di:waypoint x="270" y="130" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1fbzzqg_di" bpmnElement="Flow_1fbzzqg">
+        <di:waypoint x="370" y="130" />
+        <di:waypoint x="450" y="130" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_013jfci_di" bpmnElement="Flow_013jfci">
+        <di:waypoint x="550" y="130" />
+        <di:waypoint x="641" y="130" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1nmoiqi_di" bpmnElement="Flow_1nmoiqi">
+        <di:waypoint x="741" y="127" />
+        <di:waypoint x="832" y="127" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="182" y="112" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="154" y="142" width="87" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1nfzvjq_di" bpmnElement="Activity_0tki17o">
+        <dc:Bounds x="270" y="90" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0wi75kt_di" bpmnElement="Activity_08ozlfa">
+        <dc:Bounds x="450" y="90" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1yq993l_di" bpmnElement="Activity_1yq993l">
+        <dc:Bounds x="641" y="87" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_179tp7r_di" bpmnElement="Event_179tp7r">
+        <dc:Bounds x="832" y="109" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="826" y="152" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_02ru8n9_di" bpmnElement="Activity_02ru8n9" isExpanded="true">
+        <dc:Bounds x="160" y="420" width="781" height="196" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0ykpxpc_di" bpmnElement="Flow_0ykpxpc">
+        <di:waypoint x="554" y="524" />
+        <di:waypoint x="828" y="524" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_072knve_di" bpmnElement="Flow_072knve">
+        <di:waypoint x="226" y="524" />
+        <di:waypoint x="454" y="524" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1r00tca_di" bpmnElement="Event_1r00tca">
+        <dc:Bounds x="190" y="506" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1rwmekw_di" bpmnElement="Event_1rwmekw">
+        <dc:Bounds x="828" y="506" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_11rvko0_di" bpmnElement="Activity_11rvko0">
+        <dc:Bounds x="454" y="484" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
