@@ -18,28 +18,19 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.nssmf.service;
+package org.onap.so.adapters.nssmf.annotation;
 
-import org.onap.so.adapters.nssmf.annotation.ServiceLogger;
-import org.onap.so.beans.nsmf.*;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 
-@Service
-@ServiceLogger
-public interface NssmfManagerService {
-    ResponseEntity allocateNssi(NssmfAdapterNBIRequest allocateRequest);
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    ResponseEntity deAllocateNssi(NssmfAdapterNBIRequest allocateRequest, String sliceProfileId);
+@Target({ElementType.METHOD, ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ServiceLogger {
 
-    ResponseEntity activateNssi(NssmfAdapterNBIRequest deActRequest, String snssai);
+    String value() default "";
 
-    ResponseEntity deActivateNssi(NssmfAdapterNBIRequest nssiDeActivate, String snssai);
-
-    ResponseEntity queryJobStatus(NssmfAdapterNBIRequest jobReq, String jobId);
-
-    ResponseEntity queryNSSISelectionCapability(NssmfAdapterNBIRequest nbiRequest);
-
-    ResponseEntity querySubnetCapability(NssmfAdapterNBIRequest nbiRequest);
-
+    boolean ignore() default false;
 }
