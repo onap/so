@@ -18,46 +18,24 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.nssmf.model;
+package org.onap.so.adapters.nssmf.enums;
 
-public class ErrorResponse {
+public enum HttpMethod {
+    GET, POST, PUT, DELETE, PATCH;
 
-    private int status;
-
-    private String error;
-
-    private String message;
-
-    public ErrorResponse(int status, String message) {
-        this.status = status;
-        this.message = message;
-        this.error = "Bad Request";
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    public String getError() {
-        if (status == 500) {
-            this.error = "Internal Server Error";
-        }
-        return error;
-    }
-
-    public void setError(String error) {
-        this.error = error;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
+    public static HttpMethod fromString(String s) {
+        if (s == null)
+            return null;
+        if (("get").equalsIgnoreCase(s))
+            return GET;
+        if (("post").equalsIgnoreCase(s))
+            return POST;
+        if (("put").equalsIgnoreCase(s))
+            return PUT;
+        if (("delete").equalsIgnoreCase(s))
+            return DELETE;
+        if (("patch").equalsIgnoreCase(s))
+            return PATCH;
+        throw new IllegalArgumentException("Invalid value for HTTP Method: " + s);
     }
 }

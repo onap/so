@@ -22,10 +22,12 @@ package org.onap.so.adapters.nssmf.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import org.onap.so.adapters.nssmf.enums.ActionType;
 import org.onap.so.adapters.nssmf.exceptions.ApplicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.onap.logging.filter.base.ErrorCode;
+import org.springframework.stereotype.Component;
 import static org.onap.so.logger.LoggingAnchor.THREE;
 import static org.onap.so.logger.MessageEnum.RA_NS_EXC;
 
@@ -44,6 +46,8 @@ public class NssmfAdapterUtil {
     public static class StatusDesc {
 
         public static final String ALLOCATE_NSS_SUCCESS = "Allocating nss is " + "successful";
+
+        public static final String MODIFY_NSS_SUCCESS = "Modify nss is " + "successful";
 
         public static final String CREATE_NSS_SUCCESS = "Creating nss is " + "successful";
 
@@ -91,4 +95,29 @@ public class NssmfAdapterUtil {
         }
     }
 
+
+    public static String getStatusDesc(ActionType actionType) {
+        String desc = "";
+        switch (actionType) {
+            case ALLOCATE:
+                desc = StatusDesc.ALLOCATE_NSS_SUCCESS;
+                break;
+            case DEALLOCATE:
+                desc = StatusDesc.DEALLOCATE_NSS_SUCCESS;
+                break;
+            case ACTIVATE:
+                desc = StatusDesc.ACTIVATE_NSS_SUCCESS;
+                break;
+            case DEACTIVATE:
+                desc = StatusDesc.DEACTIVATE_NSS_SUCCESS;
+                break;
+            case MODIFY:
+                desc = StatusDesc.MODIFY_NSS_SUCCESS;
+                break;
+            default:
+                break;
+        }
+
+        return desc;
+    }
 }

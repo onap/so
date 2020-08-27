@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.nssmf.rest;
+package org.onap.so.adapters.nssmf.enums;
 
 import org.onap.so.adapters.nssmf.exceptions.ApplicationException;
 

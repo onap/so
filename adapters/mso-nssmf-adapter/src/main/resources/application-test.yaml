@@ -1,0 +1,60 @@
+
+aai:
+  auth: 2A11B07DB6214A839394AA1EC5844695F5114FC407FF5422625FB00175A3DCB8A1FF745F22867EFA72D5369D599BBD88DA8BED4233CF5586
+  endpoint: https://aai.onap:30233
+logging:
+  path: logs
+
+spring:
+  datasource:
+    jdbcUrl: jdbc:mariadb://49.232.146.162:8989/requestdb
+    username: root
+    password: 123456
+    driver-class-name: org.mariadb.jdbc.Driver
+    initialization-mode: always
+    jpa:
+      generate-ddl: false
+      show-sql: false
+      hibernate:
+        ddl-auto: none
+        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+        enable-lazy-load-no-trans: true
+      database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+  security:
+    usercredentials:
+      - username: bpel
+        password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+        role: BPEL-Client
+      - username: mso_admin
+        password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+        role: ACTUATOR
+server:
+  port: 8080
+  tomcat:
+    max-threads: 50
+
+mso:
+  key: 07a7159d3bf51a0e53be7a8f89699be7
+  site-name: localSite
+  logPath: ./logs/nssmf
+  adapters:
+    requestDb:
+      endpoint: https://so-request-db-adapter.onap:8083
+      auth: Basic YnBlbDpwYXNzd29yZDEk
+  infra:
+    endpoint: https://so.onap:8080
+    auth: Basic SW5mcmFQb3J0YWxDbGllbnQ6cGFzc3dvcmQxJA==
+
+#Actuator
+management:
+  endpoints:
+    web:
+      base-path: /manage
+      exposure:
+        include: "*"
+  metrics:
+    se-global-registry: false
+    export:
+      prometheus:
+        enabled: true # Whether exporting of metrics to Prometheus is enabled.
+        step: 1m # Step size (i.e. reporting frequency) to use.

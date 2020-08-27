@@ -18,27 +18,16 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.nssmf.model;
+package org.onap.so.adapters.nssmf.entity;
 
-public class TokenResponse {
+import lombok.Data;
 
-    private String accessToken;
+@Data
+public class TokenRequest {
 
-    private int expires;
+    private String grantType;
 
-    public String getAccessToken() {
-        return accessToken;
-    }
+    private String userName;
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public int getExpires() {
-        return expires;
-    }
-
-    public void setExpires(int expires) {
-        this.expires = expires;
-    }
+    private String value;
 }
