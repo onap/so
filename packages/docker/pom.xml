@@ -271,6 +271,30 @@
               </build>
             </image>
             <image>
+              <name>${docker.image.prefix}/so-oof-adapter</name>
+              <build>
+                <cleanup>try</cleanup>
+                <dockerFile>docker-files/Dockerfile.so-app</dockerFile>
+                <tags>
+                  <tag>${project.version}</tag>
+                  <tag>${project.version}-${maven.build.timestamp}</tag>
+                  <tag>${project.docker.latesttag.version}</tag>
+                </tags>
+                <assembly>
+                  <inline>
+                    <dependencySets>
+                      <dependencySet>
+                        <includes>
+                          <include>org.onap.so.adapters:mso-oof-adapter</include>
+                        </includes>
+                        <outputFileNameMapping>app.jar</outputFileNameMapping>
+                      </dependencySet>
+                    </dependencySets>
+                  </inline>
+                </assembly>
+              </build>
+            </image>
+            <image>
               <name>${docker.image.prefix}/so-appc-orchestrator</name>
               <build>
                 <cleanup>try</cleanup>
@@ -342,7 +366,7 @@
                 </assembly>
               </build>
             </image>
-            <image>
+            <!--image>
               <name>${docker.image.prefix}/api-handler-infra</name>
               <build>
                 <cleanup>try</cleanup>
@@ -437,7 +461,7 @@
                   </inline>
                 </assembly>
               </build>
-            </image>
+            </image-->
           </images>
         </configuration>
 
@@ -469,7 +493,7 @@
               <goal>push</goal>
             </goals>
             <configuration>
-              <image>${docker.image.prefix}/catalog-db-adapter,${docker.image.prefix}/request-db-adapter,${docker.image.prefix}/sdnc-adapter,${docker.image.prefix}/openstack-adapter,${docker.image.prefix}/vfc-adapter,${docker.image.prefix}/sdc-controller,${docker.image.prefix}/bpmn-infra,${docker.image.prefix}/api-handler-infra,${docker.image.prefix}/so-monitoring,${docker.image.prefix}/so-simulator,${docker.image.prefix}/mso-nssmf-adapter,${docker.image.prefix}/mso-cnf-adapter,${docker.image.prefix}/so-etsi-nfvo-ns-lcm</image>
+              <image>${docker.image.prefix}/catalog-db-adapter,${docker.image.prefix}/request-db-adapter,${docker.image.prefix}/sdnc-adapter,${docker.image.prefix}/openstack-adapter,${docker.image.prefix}/vfc-adapter,${docker.image.prefix}/sdc-controller,${docker.image.prefix}/bpmn-infra,${docker.image.prefix}/api-handler-infra,${docker.image.prefix}/so-monitoring,${docker.image.prefix}/so-simulator,${docker.image.prefix}/mso-nssmf-adapter,${docker.image.prefix}/so-oof-adapter,${docker.image.prefix}/mso-cnf-adapter,${docker.image.prefix}/so-etsi-nfvo-ns-lcm</image>
             </configuration>
           </execution>
         </executions>
@@ -525,6 +549,11 @@
     <dependency>
       <groupId>org.onap.so.adapters</groupId>
       <artifactId>mso-nssmf-adapter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.so.adapters</groupId>
+      <artifactId>mso-oof-adapter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

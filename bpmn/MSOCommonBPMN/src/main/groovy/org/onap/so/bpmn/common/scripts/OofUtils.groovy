@@ -22,42 +22,28 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import static org.onap.so.bpmn.common.scripts.GenericUtils.*
+
+import javax.ws.rs.core.UriBuilder
+
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
-import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.util.OofInfraUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.bpmn.core.domain.AllottedResource
 import org.onap.so.bpmn.core.domain.HomingSolution
 import org.onap.so.bpmn.core.domain.ModelInfo
 import org.onap.so.bpmn.core.domain.Resource
-import org.onap.so.bpmn.core.domain.AllottedResource
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.ServiceInstance
 import org.onap.so.bpmn.core.domain.Subscriber
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.client.HttpClient
-import org.onap.so.client.HttpClientFactory
 import org.onap.so.db.catalog.beans.CloudSite
 import org.onap.so.db.catalog.beans.HomingInstance
-import org.onap.logging.filter.base.ONAPComponents;
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
-import org.springframework.http.ResponseEntity
-import org.springframework.http.client.BufferingClientHttpRequestFactory
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.util.UriComponentsBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
-import javax.ws.rs.core.UriBuilder
-
-import static org.onap.so.bpmn.common.scripts.GenericUtils.*
+import com.fasterxml.jackson.databind.ObjectMapper
 
 class OofUtils {
     private static final Logger logger = LoggerFactory.getLogger( OofUtils.class);
@@ -530,10 +516,11 @@ class OofUtils {
         return UriBuilder.fromPath("").host(msbHost).port(msbPort).scheme("http").build().toString()
     }
 
-    public String buildSelectNSTRequest(String requestId, Map<String, Object> profileInfo) {
+    public String buildSelectNSTRequest(String requestId,String messageType, Map<String, Object> profileInfo) {
         def transactionId = requestId
         logger.debug( "transactionId is: " + transactionId)
-        String callbackUrl = "http://0.0.0.0:9000/callback/"
+		String correlator = requestId
+        String callbackUrl = UrnPropertiesReader.getVariable("mso.adapters.oof.callback.endpoint") + "/" + messageType + "/" + correlator
         ObjectMapper objectMapper = new ObjectMapper()
         String json = objectMapper.writeValueAsString(profileInfo)
         StringBuilder response = new StringBuilder()
@@ -554,11 +541,12 @@ class OofUtils {
         return response.toString()
     }
 
-    public String buildSelectNSIRequest(String requestId, String nstInfo, Map<String, Object> profileInfo){
+    public String buildSelectNSIRequest(String requestId, String nstInfo,String messageType, Map<String, Object> profileInfo){
 
         def transactionId = requestId
         logger.debug( "transactionId is: " + transactionId)
-        String callbackUrl = "http://0.0.0.0:9000/callback/"
+		String correlator = requestId
+        String callbackUrl = UrnPropertiesReader.getVariable("mso.adapters.oof.callback.endpoint") + "/" + messageType + "/" + correlator
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(profileInfo);
         StringBuilder response = new StringBuilder();

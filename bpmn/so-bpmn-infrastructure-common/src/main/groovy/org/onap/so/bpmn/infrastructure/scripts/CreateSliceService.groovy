@@ -178,60 +178,36 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
         logger.debug("Finish preProcessRequest")
     }
 
-    public void getNSTSelection(DelegateExecution execution) {
-        logger.debug("Start getNSTSelection")
+    public void prepareSelectNSTRequest(DelegateExecution execution) {
+        logger.debug("Start prepareSelectNSTRequest")
         String requestId = execution.getVariable("msoRequestId")
+	String messageType = "NSTSelectionResponse"
         Map<String, Object> serviceProfile = execution.getVariable("serviceProfile")
-        String oofUrl = UrnPropertiesReader.getVariable("mso.oof.endpoint", execution)
-
-        def authHeader = ""
-        String basicAuth = UrnPropertiesReader.getVariable("mso.oof.auth", execution)
-        String msokey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
-
-        String basicAuthValue = utils.encrypt(basicAuth, msokey)
-        if (basicAuthValue != null) {
-            logger.debug( "Obtained BasicAuth username and password for OOF: " + basicAuthValue)
-            try {
-                authHeader = utils.getBasicAuth(basicAuthValue, msokey)
-                execution.setVariable("BasicAuthHeaderValue", authHeader)
-            } catch (Exception ex) {
-                logger.debug( "Unable to encode username and password string: " + ex)
-                exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Internal Error - Unable to " +
-                        "encode username and password string")
-            }
-        } else {
-            logger.debug( "Unable to obtain BasicAuth - BasicAuth value null")
-            exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Internal Error - BasicAuth " +
-                    "value null")
-        }
-
-        URL requestUrl = new URL(oofUrl + "/api/oof/v1/selection/nst")
-        String oofRequest = oofUtils.buildSelectNSTRequest(requestId, serviceProfile)
-        HttpClient httpClient = new HttpClientFactory().newJsonClient(requestUrl, ONAPComponents.OOF)
-        httpClient.addAdditionalHeader("Authorization", authHeader)
-        Response httpResponse = httpClient.post(oofRequest)
-
-        int responseCode = httpResponse.getStatus()
-        logger.debug("OOF sync response code is: " + responseCode)
-
-        if(responseCode != 200){
-            exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from OOF.")
-        }
-
-        Map<String, Object> nstSolution
-        try {
-            Map<String, Object> resMap = httpResponse.readEntity(Map.class)
-            List<Map<String, Object>> nstSolutions = (List<Map<String, Object>>) resMap.get("solutions")
-            nstSolution = nstSolutions.get(0)
-            execution.setVariable("nstSolution", nstSolution)
-        } catch (Exception ex) {
-            logger.debug( "Failed to get NST solution suggested by OOF.")
-            exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Failed to get NST solution suggested by OOF.")
-        }
-
-        logger.debug("Finish getNSTSelection")
+		execution.setVariable("nstSelectionUrl", "/api/oof/v1/selection/nst")
+		execution.setVariable("nstSelection_messageType",messageType)
+		execution.setVariable("nstSelection_correlator",requestId)
+		String timeout = UrnPropertiesReader.getVariable("mso.adapters.oof.timeout", execution);
+		execution.setVariable("nstSelection_timeout",timeout)
+        String oofRequest = oofUtils.buildSelectNSTRequest(requestId,messageType, serviceProfile)
+        execution.setVariable("nstSelection_oofRequest",oofRequest)
+        logger.debug("Finish prepareSelectNSTRequest")
 
     }
+	
+	public void processNSTSolutions(DelegateExecution execution) {
+		Map<String, Object> nstSolution
+		try {
+			logger.debug("Start processing NSTSolutions")
+			Map<String, Object> resMap = objectMapper.readValue(execution.getVariable("nstSelection_oofResponse"),Map.class)
+			List<Map<String, Object>> nstSolutions = (List<Map<String, Object>>) resMap.get("solutions")
+			nstSolution = nstSolutions.get(0)
+			execution.setVariable("nstSolution", nstSolution)
+		} catch (Exception ex) {
+			logger.debug( "Failed to get NST solution suggested by OOF.")
+			exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Failed to get NST solution suggested by OOF.")
+		}
+
+	}
 
     public void prepareDecomposeService(DelegateExecution execution) {
         logger.debug("Start prepareDecomposeService")
