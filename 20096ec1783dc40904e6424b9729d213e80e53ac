@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a46df2a0_a96c85ef",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/Onap3gppServiceInstances.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 242,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2020-08-28T12:30:21Z",
+      "side": 1,
+      "message": "At this points its better to insert the request in the request db\ncheck for duplication of the input requests\nWe do not want to have same requests sent twice (even from multiple clients too )",
+      "revId": "20096ec1783dc40904e6424b9729d213e80e53ac",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b6b5855b_75adcaa1",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/Onap3gppServiceInstances.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2020-08-28T12:30:21Z",
+      "side": 1,
+      "message": "You want to continue with a malformed request string ???",
+      "revId": "20096ec1783dc40904e6424b9729d213e80e53ac",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aab03b2d_61da84c5",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/Onap3gppServiceInstances.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2020-08-28T12:30:21Z",
+      "side": 1,
+      "message": "Not a good idea to return the response directly to the user.\nIt surely will require some processing before we want to respond back.",
+      "revId": "20096ec1783dc40904e6424b9729d213e80e53ac",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ccc4b70d_aaa122b4",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/Onap3gppServiceInstances.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 301,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2020-08-28T12:30:21Z",
+      "side": 1,
+      "message": "same as above.. \nSuggest to have a entry and check for duplicates",
+      "revId": "20096ec1783dc40904e6424b9729d213e80e53ac",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dc7f046c_4108e832",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/Onap3gppServiceInstances.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 323,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2020-08-28T12:30:21Z",
+      "side": 1,
+      "message": "Is this tested for negative scenarios..\n\nThere are a lot of scenarios where this request could fail and I dont see that are handled well.\n\nPlease check and clarify.",
+      "revId": "20096ec1783dc40904e6424b9729d213e80e53ac",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
