@@ -335,7 +335,6 @@ public class OrchestrationRequestsTest extends BaseTest {
 
         Map<String, List<String>> orchestrationMap = new HashMap<>();
         orchestrationMap.put("modelType", values);
-        List<GetOrchestrationResponse> testResponses = new ArrayList<>();
 
         List<InfraActiveRequests> requests = requestsDbClient.getOrchestrationFiltersFromInfraActive(orchestrationMap);
         HttpHeaders headers = new HttpHeaders();
@@ -427,7 +426,6 @@ public class OrchestrationRequestsTest extends BaseTest {
     public void testUnlockOrchestrationRequest_Valid_Status()
             throws JsonParseException, JsonMappingException, IOException, ValidationException {
         setupTestUnlockOrchestrationRequest_Valid_Status("5ffbabd6-b793-4377-a1ab-082670fbc7ac", "PENDING");
-        ObjectMapper mapper = new ObjectMapper();
         String requestJSON =
                 new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/Request.json")));
         HttpHeaders headers = new HttpHeaders();
@@ -480,7 +478,6 @@ public class OrchestrationRequestsTest extends BaseTest {
         actualProcessingData = orchReq.mapRequestProcessingData(processingData);
         assertThat(actualProcessingData, sameBeanAs(expectedDataList));
     }
-
 
     public void setupTestGetOrchestrationRequest() throws Exception {
         // For testGetOrchestrationRequest
