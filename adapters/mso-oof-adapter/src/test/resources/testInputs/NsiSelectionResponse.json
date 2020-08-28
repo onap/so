@@ -1,0 +1,20 @@
+{
+  "transactionId": "s4r0f1ee-6c54-4b01-90e6-d701748f0851",
+  "requestId": "r500f1ee-6c54-4b01-90e6-d701748f0851",
+  "requestStatus": "completed",
+  "solutions": [
+    {
+      "existingNSI": false,
+      "newNSISolution": {
+        "sliceProfiles": [
+            {
+                "domainType":"CN"
+            }
+        ],
+        "matchLevel": {
+            "blob": "content"
+          }
+      }
+    }
+  ]
+}

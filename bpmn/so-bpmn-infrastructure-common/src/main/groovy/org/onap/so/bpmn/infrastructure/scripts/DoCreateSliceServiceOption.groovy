@@ -64,38 +64,16 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
     }
 
 
-    void getNSIOptionfromOOF(DelegateExecution execution) {
+    void prepareSelectNSIRequest(DelegateExecution execution) {
 
         String urlString = UrnPropertiesReader.getVariable("mso.oof.endpoint", execution)
         logger.debug( "get NSI option OOF Url: " + urlString)
 
         boolean isNSISuggested = true
         execution.setVariable("isNSISuggested",isNSISuggested)
-
-        //Prepare auth for OOF - Begin
-        def authHeader = ""
-        String basicAuth = UrnPropertiesReader.getVariable("mso.oof.auth", execution)
-        String msokey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
-
-        String basicAuthValue = utils.encrypt(basicAuth, msokey)
-        if (basicAuthValue != null) {
-            logger.debug( "Obtained BasicAuth username and password for OOF: " + basicAuthValue)
-            try {
-                authHeader = utils.getBasicAuth(basicAuthValue, msokey)
-                execution.setVariable("BasicAuthHeaderValue", authHeader)
-            } catch (Exception ex) {
-                logger.debug( "Unable to encode username and password string: " + ex)
-                exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Internal Error - Unable to " +
-                        "encode username and password string")
-            }
-        } else {
-            logger.debug( "Unable to obtain BasicAuth - BasicAuth value null")
-            exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Internal Error - BasicAuth " +
-                    "value null")
-        }
-        //Prepare auth for OOF - End
-
         String requestId = execution.getVariable("msoRequestId")
+		String messageType = "NSISelectionResponse"
+		
         Map<String, Object> profileInfo = execution.getVariable("serviceProfile")
         Map<String, Object> nstSolution = execution.getVariable("nstSolution")
         logger.debug("Get NST selection from OOF: " + nstSolution.toString())
@@ -104,36 +82,21 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
             "modelVersionId":"${nstSolution.UUID}",
             "modelName":"${nstSolution.NSTName}"
          }"""
-
-        String oofRequest = oofUtils.buildSelectNSIRequest(requestId, nstInfo, profileInfo)
-        logger.debug("Sending request to OOF: " + oofRequest)
-
-        //send request to get NSI option - Begin
-        URL url = new URL(urlString+"/api/oof/selection/nsi/v1")
-        HttpClient httpClient = new HttpClientFactory().newJsonClient(url, ONAPComponents.OOF)
-        httpClient.addAdditionalHeader("Authorization", authHeader)
-        Response httpResponse = httpClient.post(oofRequest)
-
-        processOOFResponse(httpResponse, execution)
-
-        //解析sliceProfile
-        logger.debug("start parseServiceProfile")
-        parseServiceProfile(execution)
-        logger.debug("end parseServiceProfile")
+		
+		 execution.setVariable("nsiSelectionUrl", "/api/oof/selection/nsi/v1")
+		 execution.setVariable("nsiSelection_messageType",messageType)
+		 execution.setVariable("nsiSelection_correlator",requestId)
+		 String timeout = UrnPropertiesReader.getVariable("mso.adapters.oof.timeout", execution);
+		 execution.setVariable("nsiSelection_timeout",timeout)
+		 String oofRequest = oofUtils.buildSelectNSIRequest(requestId, nstInfo,messageType, profileInfo)
+		 execution.setVariable("nsiSelection_oofRequest",oofRequest)
+		 logger.debug("Sending request to OOF: " + oofRequest)
     }
 
-    private void processOOFResponse(Response httpResponse, DelegateExecution execution) {
+    void processOOFResponse(Response httpResponse, DelegateExecution execution) {
         int responseCode = httpResponse.getStatus()
-        logger.debug("OOF sync response code is: " + responseCode)
-
-        if (responseCode != 200) {
-            exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from OOF.")
-            logger.debug("Info: No NSI suggested by OOF")
-        }
-
         SliceTaskParams sliceTaskParams = execution.getVariable("sliceTaskParams")
-        if (httpResponse.hasEntity()) {
-            String OOFResponse = httpResponse.readEntity(String.class)
+            String OOFResponse = execution.getVariable("nsiSelection_oofResponse")
             logger.debug("NSI OOFResponse is: " + OOFResponse)
             execution.setVariable("OOFResponse", OOFResponse)
             //This needs to be changed to derive a value when we add policy to decide the solution options.
@@ -154,8 +117,11 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
             }
             execution.setVariable("sliceTaskParams", sliceTaskParams)
             logger.debug("sliceTaskParams: "+sliceTaskParams.convertToJson())
-        }
         logger.debug("*** Completed options Call to OOF ***")
+		//解析sliceProfile
+		logger.debug("start parseServiceProfile")
+		parseServiceProfile(execution)
+		logger.debug("end parseServiceProfile")
     }
 
     private boolean hasSharedNSIsolutions( Map solutions){
