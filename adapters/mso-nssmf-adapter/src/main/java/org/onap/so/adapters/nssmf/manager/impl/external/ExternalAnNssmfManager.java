@@ -31,8 +31,6 @@ import org.onap.so.beans.nsmf.DeAllocateNssi;
 import org.onap.so.beans.nsmf.NssiResponse;
 import org.onap.so.beans.nsmf.NssmfAdapterNBIRequest;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.marshal;
@@ -40,8 +38,6 @@ import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.unMarshal;
 
 
 public class ExternalAnNssmfManager extends ExternalNssmfManager {
-
-    private static final Logger logger = LoggerFactory.getLogger(ExternalAnNssmfManager.class);
 
     @Override
     protected String doWrapExtAllocateReqBody(NssmfAdapterNBIRequest nbiRequest) throws ApplicationException {

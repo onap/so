@@ -30,8 +30,6 @@ import org.onap.so.adapters.nssmf.exceptions.ApplicationException;
 import org.onap.so.adapters.nssmf.util.NssmfAdapterUtil;
 import org.onap.so.beans.nsmf.*;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import static java.lang.String.valueOf;
 import static org.onap.so.adapters.nssmf.enums.JobStatus.*;
 import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.StatusDesc.*;
@@ -39,8 +37,6 @@ import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.marshal;
 import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.unMarshal;
 
 public abstract class ExternalNssmfManager extends BaseNssmfManager {
-
-    private static final Logger logger = LoggerFactory.getLogger(ExternalNssmfManager.class);
 
     @Override
     protected String wrapAllocateReqBody(NssmfAdapterNBIRequest nbiRequest) throws ApplicationException {
@@ -112,19 +108,6 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
         return sendExternalRequest(content);
     }
 
-    protected void createStatus(JobStatus jobStatus) throws ApplicationException {
-        if (valueOf(restResponse.getStatus()).startsWith("2")) {
-            logger.info("save segment and operaton info -> begin");
-            NssiResponse response = unMarshal(restResponse.getResponseContent(), NssiResponse.class);
-            ResourceOperationStatus status = new ResourceOperationStatus(serviceInfo.getNsiId(), response.getJobId(),
-                    serviceInfo.getServiceUuid());
-            status.setResourceInstanceID(response.getNssiId());
-
-            updateDbStatus(status, restResponse.getStatus(), jobStatus, NssmfAdapterUtil.getStatusDesc(actionType));
-            logger.info("save segment and operaton info -> end");
-        }
-    }
-
     @Override
     protected String getApiVersion() {
         return "v1";
@@ -165,9 +148,7 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
         status.setErrorCode(valueOf(rspStatus));
         status.setStatus(jobStatus.toString());
         status.setStatusDescription(description);
-        logger.info("Updating DB status");
         repository.save(status);
-        logger.info("Updating successful");
     }
 
     @Override

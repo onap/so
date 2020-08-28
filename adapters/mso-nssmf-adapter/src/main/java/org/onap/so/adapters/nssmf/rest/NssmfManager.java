@@ -142,9 +142,6 @@ public class NssmfManager {
 
         }
 
-        /**
-         * 内部的，调用 workflow 外部的，访问第三方api
-         */
         RestResponse rsp = restUtil.sendRequest(allocateUrl, POST, allocateReq, nssmiAllocate.getEsrInfo());
         assertObjectNotNull(rsp);
 

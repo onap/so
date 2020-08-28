@@ -21,6 +21,7 @@
 package org.onap.so.adapters.nssmf.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.onap.so.adapters.nssmf.annotation.ServiceLogger;
 import org.onap.so.adapters.nssmf.config.NssmfAdapterConfig;
 import org.onap.so.adapters.nssmf.enums.ActionType;
 import org.onap.so.adapters.nssmf.exceptions.ApplicationException;
@@ -37,6 +38,7 @@ import org.springframework.stereotype.Service;
 
 
 @Service
+@ServiceLogger
 public class NssmfManagerServiceImpl implements NssmfManagerService {
 
     @Autowired

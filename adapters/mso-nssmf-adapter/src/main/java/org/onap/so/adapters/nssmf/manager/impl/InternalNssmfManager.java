@@ -24,19 +24,14 @@ import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.onap.so.adapters.nssmf.consts.NssmfAdapterConsts;
 import org.onap.so.adapters.nssmf.entity.RestResponse;
-import org.onap.so.adapters.nssmf.enums.JobStatus;
 import org.onap.so.adapters.nssmf.enums.SelectionType;
 import org.onap.so.adapters.nssmf.exceptions.ApplicationException;
 import org.onap.so.beans.nsmf.*;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import static org.onap.so.adapters.nssmf.enums.JobStatus.PROCESSING;
 import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.marshal;
 
 public abstract class InternalNssmfManager extends BaseNssmfManager {
-
-    private static final Logger logger = LoggerFactory.getLogger(InternalNssmfManager.class);
 
     @Override
     protected String wrapAllocateReqBody(NssmfAdapterNBIRequest nbiRequest) throws ApplicationException {
