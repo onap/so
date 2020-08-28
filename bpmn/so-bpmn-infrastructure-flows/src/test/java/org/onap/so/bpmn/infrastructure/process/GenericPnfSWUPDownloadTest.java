@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.infrastructure.process;
 
 import com.google.protobuf.Struct;
+import org.assertj.core.api.Assertions;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,45 +44,42 @@ import java.util.UUID;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.assertj.core.api.Assertions.fail;
 import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
 
 /**
- * Basic Integration test for PNFSoftwareUpgrade.bpmn workflow.
+ * Basic Integration test for GenericPnfSWUPDownloadTest.bpmn workflow.
  */
-public class PNFSoftwareUpgradeTest extends BaseBPMNTest {
+public class GenericPnfSWUPDownloadTest extends BaseBPMNTest {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private static final long WORKFLOW_WAIT_TIME = 1000L;
 
-    private static final String TEST_PROCESSINSTANCE_KEY = "PNFSoftwareUpgrade";
+    private static final String TEST_PROCESSINSTANCE_KEY = "GenericPnfSWUPDownload";
     private static final AAIVersion VERSION = AAIVersion.LATEST;
     private static final Map<String, Object> executionVariables = new HashMap();
-    private static final String REQUEST_ID = "50ae41ad-049c-4fe2-9950-539f111120f5";
-    private final String[] actionNames = new String[4];
-    private String requestObject;
+    private final String[] actionNames = new String[3];
     private String responseObject;
+    private String requestObject;
 
     @Autowired
     private GrpcNettyServer grpcNettyServer;
 
     @Before
     public void setUp() throws IOException {
+
         actionNames[0] = "preCheck";
         actionNames[1] = "downloadNESw";
-        actionNames[2] = "activateNESw";
-        actionNames[3] = "postCheck";
+        actionNames[2] = "postCheck";
 
         executionVariables.clear();
 
-        requestObject = FileUtil.readResourceFile("request/" + getClass().getSimpleName() + ".json");
-        responseObject = FileUtil.readResourceFile("response/" + getClass().getSimpleName() + ".json");
+        requestObject = FileUtil.readResourceFile("request/GenericPnfSoftwareUpgradeTest.json");
+        responseObject = FileUtil.readResourceFile("response/GenericPnfSoftwareUpgradeTest.json");
 
         executionVariables.put("bpmnRequest", requestObject);
-        executionVariables.put("requestId", REQUEST_ID);
 
         /**
          * This variable indicates that the flow was invoked asynchronously. It's injected by {@link WorkflowProcessor}.
@@ -101,7 +99,6 @@ public class PNFSoftwareUpgradeTest extends BaseBPMNTest {
     public void workflow_validInput_expectedOutput() throws InterruptedException {
 
         mockCatalogDb();
-        mockRequestDb();
         mockAai();
 
         final String msoRequestId = UUID.randomUUID().toString();
@@ -120,27 +117,26 @@ public class PNFSoftwareUpgradeTest extends BaseBPMNTest {
         }
 
         // Layout is to reflect the bpmn visual layout
-        assertThat(pi).isEnded().hasPassedInOrder("softwareUpgrade_startEvent", "ServiceTask_042uz7n",
-                "ScriptTask_10klpg8", "ServiceTask_0slpahe", "ExclusiveGateway_0x6h0ni", "ServiceTask_0x5cje8",
-                "ExclusiveGateway_0v3l3wv", "ServiceTask_02lxf48", "ExclusiveGateway_0ch3fef", "ServiceTask_0y2uysu",
-                "ExclusiveGateway_1ny9b1z", "ScriptTask_1igtc83", "CallActivity_0o1mi8u", "softwareUpgrade_endEvent");
+        assertThat(pi).isEnded().hasPassedInOrder("download_StartEvent", "ServiceTask_1mpt2eq", "ServiceTask_1nl90ao",
+                "ExclusiveGateway_1rj84ne", "ServiceTask_0yavde3", "ExclusiveGateway_1ja7grm", "ServiceTask_1wxo7xz",
+                "ExclusiveGateway_08lusga", "download_EndEvent");
 
         List<ExecutionServiceInput> detailedMessages = grpcNettyServer.getDetailedMessages();
-        assertThat(detailedMessages.size() == 4);
+        assertThat(detailedMessages.size() == 3);
         int count = 0;
         try {
             for (ExecutionServiceInput eSI : detailedMessages) {
                 for (String action : actionNames) {
                     if (action.equals(eSI.getActionIdentifiers().getActionName())
                             && eSI.getCommonHeader().getRequestId().equals(msoRequestId)) {
-                        checkWithActionName(eSI, action);
+                        checkWithActionName(eSI, action, msoRequestId);
                         count++;
                     }
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            fail("PNFSoftwareUpgrade request exception", e);
+            fail("GenericPnfSWUPDownload request exception", e);
         }
         assertThat(count == actionNames.length);
     }
@@ -150,34 +146,36 @@ public class PNFSoftwareUpgradeTest extends BaseBPMNTest {
                 .singleResult() == null;
     }
 
-    private void checkWithActionName(ExecutionServiceInput executionServiceInput, String action) {
+    private void checkWithActionName(ExecutionServiceInput executionServiceInput, String action, String msoRequestId) {
 
         logger.info("Checking the " + action + " request");
         ActionIdentifiers actionIdentifiers = executionServiceInput.getActionIdentifiers();
 
         /**
-         * the fields of actionIdentifiers should match the one in the response/PNFSoftwareUpgrade_catalogdb.json.
+         * the fields of actionIdentifiers should match the one in the
+         * response/GenericPnfSoftwareUpgradeTest_catalogdb.json.
          */
-        assertThat(actionIdentifiers.getBlueprintName()).isEqualTo("test_pnf_software_upgrade_restconf");
-        assertThat(actionIdentifiers.getBlueprintVersion()).isEqualTo("1.0.0");
-        assertThat(actionIdentifiers.getActionName()).isEqualTo(action);
-        assertThat(actionIdentifiers.getMode()).isEqualTo("async");
+        Assertions.assertThat(actionIdentifiers.getBlueprintName()).isEqualTo("test_pnf_software_upgrade_restconf");
+        Assertions.assertThat(actionIdentifiers.getBlueprintVersion()).isEqualTo("1.0.0");
+        Assertions.assertThat(actionIdentifiers.getActionName()).isEqualTo(action);
+        Assertions.assertThat(actionIdentifiers.getMode()).isEqualTo("async");
 
         CommonHeader commonHeader = executionServiceInput.getCommonHeader();
-        assertThat(commonHeader.getOriginatorId()).isEqualTo("SO");
+        Assertions.assertThat(commonHeader.getOriginatorId()).isEqualTo("SO");
+        Assertions.assertThat(commonHeader.getRequestId()).isEqualTo(msoRequestId);
 
         Struct payload = executionServiceInput.getPayload();
         Struct requeststruct = payload.getFieldsOrThrow(action + "-request").getStructValue();
 
-        assertThat(requeststruct.getFieldsOrThrow("resolution-key").getStringValue()).isEqualTo("PNFDemo");
+        Assertions.assertThat(requeststruct.getFieldsOrThrow("resolution-key").getStringValue()).isEqualTo("PNFDemo");
         Struct propertiesStruct = requeststruct.getFieldsOrThrow(action + "-properties").getStructValue();
 
-        assertThat(propertiesStruct.getFieldsOrThrow("pnf-name").getStringValue()).isEqualTo("PNFDemo");
-        assertThat(propertiesStruct.getFieldsOrThrow("service-model-uuid").getStringValue())
+        Assertions.assertThat(propertiesStruct.getFieldsOrThrow("pnf-name").getStringValue()).isEqualTo("PNFDemo");
+        Assertions.assertThat(propertiesStruct.getFieldsOrThrow("service-model-uuid").getStringValue())
                 .isEqualTo("32daaac6-5017-4e1e-96c8-6a27dfbe1421");
-        assertThat(propertiesStruct.getFieldsOrThrow("pnf-customization-uuid").getStringValue())
+        Assertions.assertThat(propertiesStruct.getFieldsOrThrow("pnf-customization-uuid").getStringValue())
                 .isEqualTo("38dc9a92-214c-11e7-93ae-92361f002680");
-        assertThat(propertiesStruct.getFieldsOrThrow("target-software-version").getStringValue())
+        Assertions.assertThat(propertiesStruct.getFieldsOrThrow("target-software-version").getStringValue())
                 .isEqualTo("demo-sw-ver2.0.0");
     }
 
@@ -198,19 +196,6 @@ public class PNFSoftwareUpgradeTest extends BaseBPMNTest {
          */
         wireMockServer.stubFor(
                 get(urlEqualTo("/aai/" + VERSION + "/network/pnfs/pnf/PNFDemo")).willReturn(okJson(aaiPnfEntry)));
-
-        /*
-         * Post the pnf to AAI
-         */
-        wireMockServer.stubFor(post(urlEqualTo("/aai/" + VERSION + "/network/pnfs/pnf/PNFDemo")));
-    }
-
-    private void mockRequestDb() {
-        /**
-         * Update Request DB
-         */
-        wireMockServer.stubFor(put(urlEqualTo("/infraActiveRequests/" + REQUEST_ID)));
-
     }
 
     /**
@@ -219,7 +204,7 @@ public class PNFSoftwareUpgradeTest extends BaseBPMNTest {
     private void mockCatalogDb() {
 
         String catalogdbClientResponse =
-                FileUtil.readResourceFile("response/" + getClass().getSimpleName() + "_catalogdb.json");
+                FileUtil.readResourceFile("response/GenericPnfSoftwareUpgradeTest_catalogdb.json");
 
 
         /**

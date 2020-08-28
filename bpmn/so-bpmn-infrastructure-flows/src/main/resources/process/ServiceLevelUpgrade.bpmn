@@ -55,14 +55,14 @@
       <bpmn:incoming>Flow_1b392qs</bpmn:incoming>
       <bpmn:outgoing>Flow_1v0mxe7</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
-def pnfSwUpgrade = new PNFSoftwareUpgrade()
+def pnfSwUpgrade = new GenericPnfSoftwareUpgrade()
 pnfSwUpgrade.sendResponse(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_1n4rk7m" name="Prepare Completion" scriptFormat="groovy">
       <bpmn:incoming>Flow_0l67uzl</bpmn:incoming>
       <bpmn:outgoing>Flow_0frhsd0</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
-def pnfSwUpgrade = new PNFSoftwareUpgrade()
+def pnfSwUpgrade = new GenericPnfSoftwareUpgrade()
 pnfSwUpgrade.prepareCompletion(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:callActivity id="Activity_1lz38px" name="Complete Process" calledElement="CompleteMsoProcess">
@@ -78,7 +78,7 @@ pnfSwUpgrade.prepareCompletion(execution)</bpmn:script>
         <bpmn:incoming>Flow_0iayg6u</bpmn:incoming>
         <bpmn:outgoing>Flow_0lb7zv5</bpmn:outgoing>
         <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
-def pnfSwUpgrade = new PNFSoftwareUpgrade()
+def pnfSwUpgrade = new GenericPnfSoftwareUpgrade()
 pnfSwUpgrade.prepareFalloutHandler(execution)</bpmn:script>
       </bpmn:scriptTask>
       <bpmn:callActivity id="Activity_0ai3z2q" name="Call FalloutHandler" calledElement="FalloutHandler">

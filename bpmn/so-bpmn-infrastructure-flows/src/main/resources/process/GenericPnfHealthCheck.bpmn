@@ -56,7 +56,7 @@ taskProcessor.prepareCompletion(execution)</bpmn:script>
         <bpmn:incoming>SequenceFlow_05haut5</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_09y0mpc</bpmn:outgoing>
         <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
-def pnfSwUpgrade = new PNFSoftwareUpgrade()
+def pnfSwUpgrade = new GenericPnfSoftwareUpgrade()
 pnfSwUpgrade.prepareFalloutHandler(execution)</bpmn:script>
       </bpmn:scriptTask>
       <bpmn:callActivity id="CallActivity_00psvtk" name="Call FalloutHandler" calledElement="FalloutHandler">
