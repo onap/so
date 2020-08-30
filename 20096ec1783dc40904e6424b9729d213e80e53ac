@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e135902a_cfe242ee",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/Onap3gppServiceInstances.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 242,
+      "author": {
+        "id": 2725
+      },
+      "writtenOn": "2020-08-30T17:52:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a46df2a0_a96c85ef",
+      "revId": "20096ec1783dc40904e6424b9729d213e80e53ac",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b6b5855b_75adcaa1",
         "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/Onap3gppServiceInstances.java",
         "patchSetId": 6
@@ -30,6 +48,24 @@
       "writtenOn": "2020-08-28T12:30:21Z",
       "side": 1,
       "message": "You want to continue with a malformed request string ???",
+      "revId": "20096ec1783dc40904e6424b9729d213e80e53ac",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "152c74c0_269ba7c3",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/Onap3gppServiceInstances.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 2725
+      },
+      "writtenOn": "2020-08-30T17:52:07Z",
+      "side": 1,
+      "message": "\u003e You want to continue with a malformed request string ???\n\nUpdated to check for valid request String",
+      "parentUuid": "b6b5855b_75adcaa1",
       "revId": "20096ec1783dc40904e6424b9729d213e80e53ac",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "16e5b13d_41821305",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/Onap3gppServiceInstances.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 2725
+      },
+      "writtenOn": "2020-08-30T17:52:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aab03b2d_61da84c5",
+      "revId": "20096ec1783dc40904e6424b9729d213e80e53ac",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ccc4b70d_aaa122b4",
         "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/Onap3gppServiceInstances.java",
         "patchSetId": 6
@@ -70,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "62e7acbc_056a69fd",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/Onap3gppServiceInstances.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 301,
+      "author": {
+        "id": 2725
+      },
+      "writtenOn": "2020-08-30T17:52:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ccc4b70d_aaa122b4",
+      "revId": "20096ec1783dc40904e6424b9729d213e80e53ac",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "dc7f046c_4108e832",
         "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/Onap3gppServiceInstances.java",
         "patchSetId": 6
@@ -81,6 +153,24 @@
       "writtenOn": "2020-08-28T12:30:21Z",
       "side": 1,
       "message": "Is this tested for negative scenarios..\n\nThere are a lot of scenarios where this request could fail and I dont see that are handled well.\n\nPlease check and clarify.",
+      "revId": "20096ec1783dc40904e6424b9729d213e80e53ac",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4499bfe5_d857fcda",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/Onap3gppServiceInstances.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 323,
+      "author": {
+        "id": 2725
+      },
+      "writtenOn": "2020-08-30T17:52:07Z",
+      "side": 1,
+      "message": "All the possible exceptions are handled",
+      "parentUuid": "dc7f046c_4108e832",
       "revId": "20096ec1783dc40904e6424b9729d213e80e53ac",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
