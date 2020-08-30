@@ -26,23 +26,23 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PerfReq {
 
-    private List<PerfReqEmbbList> perfReqEmbbList;
+    private List<PerfReqEmbb> perfReqEmbbList;
 
-    private List<PerfReqUrllcList> perfReqUrllcList;
+    private List<PerfReqUrllc> perfReqUrllcList;
 
-    public List<PerfReqEmbbList> getPerfReqEmbbList() {
+    public List<PerfReqEmbb> getPerfReqEmbbList() {
         return perfReqEmbbList;
     }
 
-    public void setPerfReqEmbbList(List<PerfReqEmbbList> perfReqEmbbList) {
+    public void setPerfReqEmbbList(List<PerfReqEmbb> perfReqEmbbList) {
         this.perfReqEmbbList = perfReqEmbbList;
     }
 
-    public List<PerfReqUrllcList> getPerfReqUrllcList() {
+    public List<PerfReqUrllc> getPerfReqUrllcList() {
         return perfReqUrllcList;
     }
 
-    public void setPerfReqUrllcList(List<PerfReqUrllcList> perfReqUrllcList) {
+    public void setPerfReqUrllcList(List<PerfReqUrllc> perfReqUrllcList) {
         this.perfReqUrllcList = perfReqUrllcList;
     }
 }

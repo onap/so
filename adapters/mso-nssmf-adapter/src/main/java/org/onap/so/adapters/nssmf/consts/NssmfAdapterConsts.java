@@ -50,7 +50,7 @@ public class NssmfAdapterConsts {
     private final static String EXTERNAL_TN_DEALLOCATE_URL =
             "/api/rest/provMns/{apiVersion}/tn/NSS/SliceProfiles/{sliceProfileId}";
 
-    private final static String EXTERNAL_AN_DEALLOCATE_URL = "/ObjectManagement/NSS/SliceProfiles/{SliceProfileId}";
+    private final static String EXTERNAL_AN_DEALLOCATE_URL = "/ObjectManagement/NSS/SliceProfiles/{sliceProfileId}";
 
     private final static String INTERNAL_DEALLOCATE_URL = "/onap/so/infra/3gppservices/{apiVersion}/deAllocate";
 

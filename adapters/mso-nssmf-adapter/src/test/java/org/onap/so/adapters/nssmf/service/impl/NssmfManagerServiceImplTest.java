@@ -191,9 +191,9 @@ public class NssmfManagerServiceImplTest {
         List<String> plmn = new LinkedList<>();
         plmn.add("460-00");
         plmn.add("460-01");
-        PerfReqEmbbList embb = new PerfReqEmbbList();
+        PerfReqEmbb embb = new PerfReqEmbb();
         embb.setActivityFactor(50);
-        List<PerfReqEmbbList> embbList = new LinkedList<>();
+        List<PerfReqEmbb> embbList = new LinkedList<>();
         embbList.add(embb);
         PerfReq perfReq = new PerfReq();
         perfReq.setPerfReqEmbbList(embbList);

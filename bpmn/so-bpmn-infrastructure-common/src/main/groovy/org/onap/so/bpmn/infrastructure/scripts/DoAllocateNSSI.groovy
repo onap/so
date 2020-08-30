@@ -15,8 +15,8 @@ import org.onap.so.beans.nsmf.NetworkType
 import org.onap.so.beans.nsmf.NsiInfo
 import org.onap.so.beans.nsmf.NssiAllocateRequest
 import org.onap.so.beans.nsmf.PerfReq
-import org.onap.so.beans.nsmf.PerfReqEmbbList
-import org.onap.so.beans.nsmf.PerfReqUrllcList
+import org.onap.so.beans.nsmf.PerfReqEmbb
+import org.onap.so.beans.nsmf.PerfReqUrllc
 import org.onap.so.beans.nsmf.ResourceSharingLevel
 import org.onap.so.beans.nsmf.SliceTaskParams
 import org.onap.so.beans.nsmf.TnSliceProfile
@@ -411,20 +411,20 @@ class DoAllocateNSSI extends org.onap.so.bpmn.common.scripts.AbstractServiceTask
                 execution.setVariable("esrInfo",esrInfo)
 
 
-                PerfReqEmbbList perfReqEmbb = new PerfReqEmbbList()
+                PerfReqEmbb perfReqEmbb = new PerfReqEmbb()
                 perfReqEmbb.setActivityFactor(sliceProfileCn.get("activityFactor"))
                 perfReqEmbb.setAreaTrafficCapDL(sliceProfileCn.get("areaTrafficCapDL"))
                 perfReqEmbb.setAreaTrafficCapUL(sliceProfileCn.get("areaTrafficCapUL"))
                 perfReqEmbb.setExpDataRateDL(sliceProfileCn.get("expDataRateDL"))
                 perfReqEmbb.setExpDataRateUL(sliceProfileCn.get("expDataRateUL"))
 
-                List<PerfReqEmbbList> listPerfReqEmbbList = new ArrayList<>()
+                List<PerfReqEmbb> listPerfReqEmbbList = new ArrayList<>()
                 listPerfReqEmbbList.add(perfReqEmbb)
 
                 PerfReq perfReq = new PerfReq()
                 perfReq.setPerfReqEmbbList(listPerfReqEmbbList)
 
-                PerfReqUrllcList perfReqUrllc = new PerfReqUrllcList()
+                PerfReqUrllc perfReqUrllc = new PerfReqUrllc()
                 perfReqUrllc.setConnDensity(0)
                 perfReqUrllc.setTrafficDensity(0)
                 perfReqUrllc.setExpDataRate(0)
@@ -436,7 +436,7 @@ class DoAllocateNSSI extends org.onap.so.bpmn.common.scripts.AbstractServiceTask
                 perfReqUrllc.setPayloadSize("0")
                 perfReqUrllc.setServiceAreaDimension("")
 
-                List<PerfReqUrllcList> perfReqUrllcList = new ArrayList<>()
+                List<PerfReqUrllc> perfReqUrllcList = new ArrayList<>()
                 perfReqUrllcList.add(perfReqUrllc)
                 perfReq.setPerfReqUrllcList(perfReqUrllcList)
 
@@ -558,20 +558,20 @@ class DoAllocateNSSI extends org.onap.so.bpmn.common.scripts.AbstractServiceTask
                 execution.setVariable("esrInfo",esrInfo)
 
 
-                PerfReqEmbbList perfReqEmbb = new PerfReqEmbbList()
+                PerfReqEmbb perfReqEmbb = new PerfReqEmbb()
                 perfReqEmbb.setActivityFactor(sliceProfileCn.get("activityFactor"))
                 perfReqEmbb.setAreaTrafficCapDL(sliceProfileCn.get("areaTrafficCapDL"))
                 perfReqEmbb.setAreaTrafficCapUL(sliceProfileCn.get("areaTrafficCapUL"))
                 perfReqEmbb.setExpDataRateDL(sliceProfileCn.get("expDataRateDL"))
                 perfReqEmbb.setExpDataRateUL(sliceProfileCn.get("expDataRateUL"))
 
-                List<PerfReqEmbbList> listPerfReqEmbbList = new ArrayList<>()
+                List<PerfReqEmbb> listPerfReqEmbbList = new ArrayList<>()
                 listPerfReqEmbbList.add(perfReqEmbb)
 
                 PerfReq perfReq = new PerfReq()
                 perfReq.setPerfReqEmbbList(listPerfReqEmbbList)
 
-                PerfReqUrllcList perfReqUrllc = new PerfReqUrllcList()
+                PerfReqUrllc perfReqUrllc = new PerfReqUrllc()
                 perfReqUrllc.setConnDensity(0)
                 perfReqUrllc.setTrafficDensity(0)
                 perfReqUrllc.setExpDataRate(0)
@@ -583,7 +583,7 @@ class DoAllocateNSSI extends org.onap.so.bpmn.common.scripts.AbstractServiceTask
                 perfReqUrllc.setPayloadSize("0")
                 perfReqUrllc.setServiceAreaDimension("")
 
-                List<PerfReqUrllcList> perfReqUrllcList = new ArrayList<>()
+                List<PerfReqUrllc> perfReqUrllcList = new ArrayList<>()
                 perfReqUrllcList.add(perfReqUrllc)
                 perfReq.setPerfReqUrllcList(perfReqUrllcList)
 
