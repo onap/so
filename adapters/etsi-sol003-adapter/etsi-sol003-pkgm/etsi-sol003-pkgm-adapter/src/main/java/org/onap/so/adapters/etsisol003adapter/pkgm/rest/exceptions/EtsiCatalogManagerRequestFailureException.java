@@ -36,6 +36,10 @@ public class EtsiCatalogManagerRequestFailureException extends RuntimeException 
         super(message);
     }
 
+    public EtsiCatalogManagerRequestFailureException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
+
     @Override
     public synchronized Throwable fillInStackTrace() {
         return this;

@@ -105,5 +105,10 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.onap.so.adapters</groupId>
+      <artifactId>etsi-sol003-pkgm-adapter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 </project>

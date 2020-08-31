@@ -24,38 +24,26 @@ package org.onap.so.adapters.etsisol003adapter.lcm.extclients;
 
 import static com.google.common.base.Splitter.on;
 import static com.google.common.collect.Iterables.filter;
-import static com.google.common.io.ByteStreams.toByteArray;
 import static java.lang.String.format;
-import static org.apache.http.HttpHeaders.ACCEPT;
-import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.onap.so.adapters.etsisol003adapter.lcm.NvfmAdapterUtils.abortOperation;
 import static org.onap.so.adapters.etsisol003adapter.lcm.NvfmAdapterUtils.child;
 import static org.onap.so.adapters.etsisol003adapter.lcm.NvfmAdapterUtils.childElement;
 import static org.onap.so.adapters.etsisol003adapter.lcm.NvfmAdapterUtils.children;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import javax.net.ssl.SSLContext;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.onap.so.utils.CryptoUtils;
+import org.onap.so.adapters.etsisol003adapter.pkgm.extclients.etsicatalog.EtsiCatalogServiceProviderImpl;
+import org.onap.so.adapters.etsisol003adapter.pkgm.rest.exceptions.EtsiCatalogManagerRequestFailureException;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
 import com.google.common.io.ByteStreams;
@@ -63,21 +51,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 @Component
-public class SdcPackageProvider {
-    private static final String GET_PACKAGE_URL = "%s/sdc/v1/catalog/resources/%s/toscaModel";
-    @Value("${sdc.toscametapath:TOSCA-Metadata/TOSCA.meta}")
-    private List<String> toscaMetaPaths;
+public class EtsiPackageProvider {
+    private static final String TOCSA_METADATA_FILE_PATH = "TOSCA-Metadata/TOSCA.meta";
     private static final String TOSCA_VNFD_KEY = "Entry-Definitions";
-    private static Logger logger = getLogger(SdcPackageProvider.class);
+    private static Logger logger = getLogger(EtsiPackageProvider.class);
 
-    @Value("${sdc.username}")
-    private String sdcUsername;
-    @Value("${sdc.password}")
-    private String sdcPassword;
-    @Value("${sdc.key}")
-    private String sdcKey;
-    @Value("${sdc.endpoint}")
-    private String baseUrl;
+    @Autowired
+    private EtsiCatalogServiceProviderImpl etsiCatalogServiceProviderImpl;
 
     public String getVnfdId(final String csarId) {
         return getVnfNodeProperty(csarId, "descriptor_id");
@@ -133,35 +113,25 @@ public class SdcPackageProvider {
     }
 
     private byte[] getPackage(final String csarId) {
-        final String SERVICE_NAME = "vnfm-adapter";
-        try (CloseableHttpClient client = HttpClients.custom().setSSLContext(SSLContext.getDefault()).build()) {
-            final HttpGet httpget = new HttpGet(format(GET_PACKAGE_URL, baseUrl, csarId));
-            httpget.setHeader(ACCEPT, APPLICATION_OCTET_STREAM_VALUE);
-            httpget.setHeader("X-ECOMP-InstanceID", SERVICE_NAME);
-            httpget.setHeader("X-FromAppId", SERVICE_NAME);
-            final String auth = sdcUsername + ":" + CryptoUtils.decrypt(sdcPassword, sdcKey);
-            final byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.ISO_8859_1));
-            final String authHeader = "Basic " + new String(encodedAuth);
-            httpget.setHeader(AUTHORIZATION, authHeader);
-            logger.debug("Fetching from SDC: " + httpget);
-            final CloseableHttpResponse response = client.execute(httpget);
-            final HttpEntity entity = response.getEntity();
-            final InputStream is = entity.getContent();
-            return toByteArray(is);
-        } catch (final Exception e) {
-            throw abortOperation("Unable to download " + csarId + " package from SDC", e);
+        final Optional<byte[]> optional = etsiCatalogServiceProviderImpl.getVnfPackageContent(csarId);
+        try {
+            if (optional.isPresent()) {
+                return optional.get();
+            }
+        } catch (final Exception exception) {
+            logger.error("Unable to retrieve package from ETSI Catalog Manager using pkgId: {}", csarId);
+            throw new EtsiCatalogManagerRequestFailureException("Value is not present", exception);
         }
+        logger.error("Unable to retrieve package from ETSI Catalog Manager using pkgId: {}", csarId);
+        throw new EtsiCatalogManagerRequestFailureException("Value is not present");
     }
 
     private String getVnfdLocation(final InputStream stream) throws IOException {
-        final Iterator<String> pathIterator = toscaMetaPaths.iterator();
-        while (pathIterator.hasNext()) {
-            final String toscaMetadata = new String(getFileInZip(stream, pathIterator.next()).toByteArray());
-            if (!toscaMetadata.isEmpty()) {
-                final String toscaVnfdLine =
-                        filter(on("\n").split(toscaMetadata), line -> line.contains(TOSCA_VNFD_KEY)).iterator().next();
-                return toscaVnfdLine.replace(TOSCA_VNFD_KEY + ":", "").trim();
-            }
+        final String toscaMetadata = new String(getFileInZip(stream, TOCSA_METADATA_FILE_PATH).toByteArray());
+        if (!toscaMetadata.isEmpty()) {
+            final String toscaVnfdLine =
+                    filter(on("\n").split(toscaMetadata), line -> line.contains(TOSCA_VNFD_KEY)).iterator().next();
+            return toscaVnfdLine.replace(TOSCA_VNFD_KEY + ":", "").trim();
         }
         throw abortOperation("Unable to find valid Tosca Path");
     }
