@@ -26,7 +26,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
+import org.onap.so.adapters.etsisol003adapter.lcm.extclients.vnfm.VnfmRestTemplateConfiguration;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -99,7 +99,7 @@ public class Sol003LcnControllerTest {
     @LocalServerPort
     private int port;
     @Autowired
-    @Qualifier(CONFIGURABLE_REST_TEMPLATE)
+    @Qualifier(VnfmRestTemplateConfiguration.SOL003_LCM_REST_TEMPLATE)
     private RestTemplate testRestTemplate;
     private MockRestServiceServer mockRestServer;
 

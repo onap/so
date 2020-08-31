@@ -20,7 +20,6 @@
 
 package org.onap.so.adapters.etsisol003adapter.lcm.extclients.vnfm;
 
-import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -83,7 +82,7 @@ public class VnfmServiceProviderConfiguration extends AbstractServiceProviderCon
     @Value("${vnfmadapter.temp.vnfm.oauth.endpoint:#{null}}")
     private String oauthEndpoint;
 
-    @Qualifier(CONFIGURABLE_REST_TEMPLATE)
+    @Qualifier(VnfmRestTemplateConfiguration.SOL003_LCM_REST_TEMPLATE)
     @Autowired
     private RestTemplate defaultRestTemplate;
 

@@ -24,7 +24,7 @@ import java.util.Map;
 import org.onap.aai.domain.yang.EsrVnfm;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.Relationship;
-import org.onap.so.adapters.etsisol003adapter.lcm.extclients.SdcPackageProvider;
+import org.onap.so.adapters.etsisol003adapter.lcm.extclients.EtsiPackageProvider;
 import org.onap.so.adapters.etsisol003adapter.lcm.extclients.aai.AaiHelper;
 import org.onap.so.adapters.etsisol003adapter.lcm.extclients.aai.AaiServiceProvider;
 import org.onap.so.adapters.etsisol003adapter.lcm.extclients.aai.OamIpAddressSource;
@@ -60,12 +60,12 @@ public class LifecycleManager {
     private final AaiHelper aaiHelper;
     private final VnfmHelper vnfmHelper;
     private final JobManager jobManager;
-    private final SdcPackageProvider packageProvider;
+    private final EtsiPackageProvider packageProvider;
 
     @Autowired
     LifecycleManager(final AaiServiceProvider aaiServiceProvider, final AaiHelper aaiHelper,
             final VnfmHelper vnfmHelper, final VnfmServiceProvider vnfmServiceProvider, final JobManager jobManager,
-            final SdcPackageProvider packageProvider) {
+            final EtsiPackageProvider packageProvider) {
         this.aaiServiceProvider = aaiServiceProvider;
         this.vnfmServiceProvider = vnfmServiceProvider;
         this.aaiHelper = aaiHelper;

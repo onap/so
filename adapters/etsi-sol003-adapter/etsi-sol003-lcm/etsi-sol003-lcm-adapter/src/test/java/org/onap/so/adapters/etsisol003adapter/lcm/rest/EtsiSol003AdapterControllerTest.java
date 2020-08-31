@@ -27,7 +27,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
-import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
+import org.onap.so.adapters.etsisol003adapter.lcm.extclients.vnfm.VnfmRestTemplateConfiguration;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
@@ -54,7 +54,8 @@ import org.onap.aai.domain.yang.RelationshipList;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.AAIVersion;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
-import org.onap.so.adapters.etsisol003adapter.lcm.extclients.SdcPackageProvider;
+import org.onap.so.adapters.etsisol003adapter.lcm.extclients.EtsiPackageProvider;
+import org.onap.so.adapters.etsisol003adapter.lcm.extclients.vnfm.VnfmRestTemplateConfiguration;
 import org.onap.so.adapters.etsisol003adapter.lcm.extclients.vnfm.model.InlineResponse200;
 import org.onap.so.adapters.etsisol003adapter.lcm.extclients.vnfm.model.InlineResponse2001;
 import org.onap.so.adapters.etsisol003adapter.lcm.extclients.vnfm.model.InlineResponse201;
@@ -106,7 +107,7 @@ public class EtsiSol003AdapterControllerTest {
     @LocalServerPort
     private int port;
     @Autowired
-    @Qualifier(CONFIGURABLE_REST_TEMPLATE)
+    @Qualifier(VnfmRestTemplateConfiguration.SOL003_LCM_REST_TEMPLATE)
     private RestTemplate testRestTemplate;
     private MockRestServiceServer mockRestServer;
 
@@ -114,7 +115,7 @@ public class EtsiSol003AdapterControllerTest {
     AAIResourcesClient aaiResourcesClient;
 
     @MockBean
-    SdcPackageProvider sdcPackageProvider;
+    EtsiPackageProvider etsiPackageProvider;
 
     @Autowired
     EtsiSol003AdapterController controller;
