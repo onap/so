@@ -823,9 +823,16 @@ public class ServiceInstances extends AbstractRestHandler {
 
         sir = requestHandlerUtils.convertJsonToServiceInstanceRequest(requestJSON, action, requestId, requestUri);
         action = handleReplaceInstance(action, sir);
-        requestValidatorListenerRunner.runValidations(requestUri, instanceIdMap, sir, queryParams, action);
 
         String requestScope = requestHandlerUtils.deriveRequestScope(action, sir, requestUri);
+        try {
+            requestValidatorListenerRunner.runValidations(requestUri, instanceIdMap, sir, queryParams, action);
+        } catch (ApiException e) {
+            msoRequest.createErrorRequestRecord(Status.FAILED, requestId, e.getMessage(), action, requestScope,
+                    requestJSON, sir.getServiceInstanceId());
+            throw e;
+        }
+
         InfraActiveRequests currentActiveReq =
                 msoRequest.createRequestObject(sir, action, requestId, Status.IN_PROGRESS, requestJSON, requestScope);
         if (sir.getRequestDetails().getRequestParameters() != null) {
