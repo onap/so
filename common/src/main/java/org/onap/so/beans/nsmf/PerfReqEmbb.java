@@ -23,7 +23,7 @@ package org.onap.so.beans.nsmf;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PerfReqEmbbList {
+public class PerfReqEmbb {
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private int expDataRateDL;
@@ -36,6 +36,9 @@ public class PerfReqEmbbList {
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private int areaTrafficCapUL;
+
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    private int overallUserDensity;
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private int activityFactor;
@@ -70,6 +73,14 @@ public class PerfReqEmbbList {
 
     public void setAreaTrafficCapUL(int areaTrafficCapUL) {
         this.areaTrafficCapUL = areaTrafficCapUL;
+    }
+
+    public int getOverallUserDensity() {
+        return overallUserDensity;
+    }
+
+    public void setOverallUserDensity(int overallUserDensity) {
+        this.overallUserDensity = overallUserDensity;
     }
 
     public int getActivityFactor() {

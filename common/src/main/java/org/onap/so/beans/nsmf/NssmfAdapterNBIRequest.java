@@ -24,15 +24,14 @@ import lombok.Data;
 import java.io.Serializable;
 
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 public class NssmfAdapterNBIRequest implements Serializable {
 
     private static final long serialVersionUID = -454145891489457960L;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private EsrInfo esrInfo;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private ServiceInfo serviceInfo;
 
     private AllocateCnNssi allocateCnNssi;

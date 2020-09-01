@@ -54,7 +54,7 @@ import org.onap.so.beans.nsmf.NssiAllocateRequest;
 import org.onap.so.beans.nsmf.NssiDeAllocateRequest;
 import org.onap.so.beans.nsmf.NssiResponse;
 import org.onap.so.beans.nsmf.PerfReq;
-import org.onap.so.beans.nsmf.PerfReqEmbbList;
+import org.onap.so.beans.nsmf.PerfReqEmbb;
 import org.onap.so.db.request.data.repository.ResourceOperationStatusRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -289,7 +289,7 @@ public class NssmfAdapterRestTest {
         assertEquals(all.getAllocateCnNssi().getSliceProfile().getResourceSharingLevel(), NON_SHARED);
         assertNotNull(all.getAllocateCnNssi().getSliceProfile().getPerfReq());
         assertNotNull(all.getAllocateCnNssi().getSliceProfile().getPerfReq().getPerfReqEmbbList());
-        PerfReqEmbbList embb =
+        PerfReqEmbb embb =
                 all.getAllocateCnNssi().getSliceProfile().getPerfReq().getPerfReqEmbbList().iterator().next();
         assertNotNull(embb);
         assertEquals(embb.getActivityFactor(), 50);
@@ -302,9 +302,9 @@ public class NssmfAdapterRestTest {
         List<String> plmn = new LinkedList<>();
         plmn.add("460-00");
         plmn.add("460-01");
-        PerfReqEmbbList embb = new PerfReqEmbbList();
+        PerfReqEmbb embb = new PerfReqEmbb();
         embb.setActivityFactor(50);
-        List<PerfReqEmbbList> embbList = new LinkedList<>();
+        List<PerfReqEmbb> embbList = new LinkedList<>();
         embbList.add(embb);
         PerfReq perfReq = new PerfReq();
         perfReq.setPerfReqEmbbList(embbList);

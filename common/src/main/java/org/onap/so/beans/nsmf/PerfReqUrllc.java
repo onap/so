@@ -23,7 +23,7 @@ package org.onap.so.beans.nsmf;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PerfReqUrllcList {
+public class PerfReqUrllc {
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private int e2eLatency;

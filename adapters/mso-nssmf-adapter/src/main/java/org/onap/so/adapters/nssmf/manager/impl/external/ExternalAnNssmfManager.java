@@ -41,7 +41,9 @@ public class ExternalAnNssmfManager extends ExternalNssmfManager {
 
     @Override
     protected String doWrapExtAllocateReqBody(NssmfAdapterNBIRequest nbiRequest) throws ApplicationException {
-        return marshal(nbiRequest.getAllocateAnNssi().getSliceProfile());
+        Map<String, Object> request = new HashMap<>();
+        request.put("attributeListIn", nbiRequest.getAllocateAnNssi().getSliceProfile());
+        return marshal(request);
     }
 
     @Override

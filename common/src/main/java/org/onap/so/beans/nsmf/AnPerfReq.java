@@ -21,31 +21,27 @@
 package org.onap.so.beans.nsmf;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Data;
-import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Data
-public class AnSliceProfile {
+public class AnPerfReq {
 
-    private List<String> sNSSAIList;
+    private PerfReqEmbb perfReqEmbb;
 
-    private String sliceProfileId;
+    private PerfReqUrllc perfReqUrllc;
 
-    private List<Integer> coverageAreaTAList;
+    public PerfReqEmbb getPerfReqEmbb() {
+        return perfReqEmbb;
+    }
 
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-    private int latency;
+    public void setPerfReqEmbb(PerfReqEmbb perfReqEmbb) {
+        this.perfReqEmbb = perfReqEmbb;
+    }
 
-    private List<String> pLMNIdList;
+    public PerfReqUrllc getPerfReqUrllc() {
+        return perfReqUrllc;
+    }
 
-    private AnPerfReq perfReq;
-
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-    private long maxNumberofUEs;
-
-    private UeMobilityLevel uEMobilityLevel;
-
-    private ResourceSharingLevel resourceSharingLevel;
-
+    public void setPerfReqUrllc(PerfReqUrllc perfReqUrllc) {
+        this.perfReqUrllc = perfReqUrllc;
+    }
 }
