@@ -21,5 +21,6 @@ SO Developer Information
    BPMN_Project_Deployment_Strategy.rst
    BPMN-INFRA_Workflow_Understanding.rst
    Mso_Openstack_Adapter.rst
+   Cxf_Logging.rst
    instantiate/index.rst
    FAQs.rst
