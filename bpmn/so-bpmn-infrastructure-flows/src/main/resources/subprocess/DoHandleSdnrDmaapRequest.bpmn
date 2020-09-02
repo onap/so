@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1347ugu" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.7.1">
+  <bpmn:process id="DoHandleSdnrDmaapRequest" name="CallSdnrForSliceSubnetActions" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_05aj74g</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:callActivity id="Activity_1930vdf" name="Receive Async Callback" camunda:modelerTemplate="receiveWorkflowMessage" calledElement="ReceiveWorkflowMessage">
+      <bpmn:extensionElements>
+        <camunda:in source="true" target="isDebugLogEnabled" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="messageType" target="RCVWFMSG_messageType" />
+        <camunda:in source="correlator" target="RCVWFMSG_correlator" />
+        <camunda:in source="timeout" target="RCVWFMSG_timeout" />
+        <camunda:out source="WorkflowResponse" target="asyncCallbackResponse" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ujhb0b</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ygvrm7</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_0ygvrm7" sourceRef="Activity_1930vdf" targetRef="Event_0axmcg1" />
+    <bpmn:endEvent id="Event_0axmcg1">
+      <bpmn:incoming>Flow_0ygvrm7</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_05aj74g" sourceRef="StartEvent_1" targetRef="Activity_0se24pv" />
+    <bpmn:subProcess id="Activity_1br4yea" name="Sub-process for FalloutHandler and Rollback" triggeredByEvent="true">
+      <bpmn:startEvent id="Event_06b1eun">
+        <bpmn:outgoing>Flow_1if0x9d</bpmn:outgoing>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_0y90o3x" />
+      </bpmn:startEvent>
+      <bpmn:endEvent id="Event_1q3xxjf">
+        <bpmn:incoming>Flow_04gv65b</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:scriptTask id="Activity_0k6o70p" name="Handle Unexpected Error" scriptFormat="groovy">
+        <bpmn:incoming>Flow_1if0x9d</bpmn:incoming>
+        <bpmn:outgoing>Flow_04gv65b</bpmn:outgoing>
+        <bpmn:script>import org.onap.so.bpmn.common.scripts.*
+ExceptionUtil ex = new ExceptionUtil()
+ex.processJavaException(execution)</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="Flow_1if0x9d" sourceRef="Event_06b1eun" targetRef="Activity_0k6o70p" />
+      <bpmn:sequenceFlow id="Flow_04gv65b" sourceRef="Activity_0k6o70p" targetRef="Event_1q3xxjf" />
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_1ujhb0b" sourceRef="Activity_0se24pv" targetRef="Activity_1930vdf" />
+    <bpmn:serviceTask id="Activity_0se24pv" name="send request to SDNR" camunda:class="org.onap.so.client.sdnc.common.SendRequestToSdnr">
+      <bpmn:incoming>Flow_05aj74g</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ujhb0b</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoHandleSdnrDmaapRequest">
+      <bpmndi:BPMNEdge id="Flow_05aj74g_di" bpmnElement="Flow_05aj74g">
+        <di:waypoint x="308" y="120" />
+        <di:waypoint x="350" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ygvrm7_di" bpmnElement="Flow_0ygvrm7">
+        <di:waypoint x="581" y="118" />
+        <di:waypoint x="622" y="118" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ujhb0b_di" bpmnElement="Flow_1ujhb0b">
+        <di:waypoint x="450" y="120" />
+        <di:waypoint x="481" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="272" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1930vdf_di" bpmnElement="Activity_1930vdf">
+        <dc:Bounds x="481" y="78" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0axmcg1_di" bpmnElement="Event_0axmcg1">
+        <dc:Bounds x="622" y="100" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1f7ncbf_di" bpmnElement="Activity_0se24pv">
+        <dc:Bounds x="350" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1br4yea_di" bpmnElement="Activity_1br4yea" isExpanded="true">
+        <dc:Bounds x="140" y="310" width="781" height="196" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_04gv65b_di" bpmnElement="Flow_04gv65b">
+        <di:waypoint x="534" y="414" />
+        <di:waypoint x="808" y="414" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1if0x9d_di" bpmnElement="Flow_1if0x9d">
+        <di:waypoint x="206" y="414" />
+        <di:waypoint x="434" y="414" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_06b1eun_di" bpmnElement="Event_06b1eun">
+        <dc:Bounds x="170" y="396" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1q3xxjf_di" bpmnElement="Event_1q3xxjf">
+        <dc:Bounds x="808" y="396" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0k6o70p_di" bpmnElement="Activity_0k6o70p">
+        <dc:Bounds x="434" y="374" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
+
+
