@@ -193,6 +193,12 @@ public class BBInputSetup implements JavaDelegate {
             execution.setVariable(GBB_INPUT_VAR_NAME, outputBB);
             execution.setVariable(LOOKUP_KEY_MAP_VAR_NAME, lookupKeyMap);
 
+            if (outputBB.getRequestContext().getIsHelm()) {
+                execution.setVariable("isHelm", true);
+            } else {
+                execution.setVariable("isHelm", false);
+            }
+
             BuildingBlockExecution gBuildingBlockExecution = new DelegateExecutionImpl(execution);
             execution.setVariable("gBuildingBlockExecution", gBuildingBlockExecution);
             execution.setVariable("RetryCount", 1);
@@ -431,7 +437,8 @@ public class BBInputSetup implements JavaDelegate {
 
     protected void mapCatalogInstanceGroup(InstanceGroup instanceGroup, ModelInfo modelInfo, Service service) {
         // @TODO: this will populate the instanceGroup model info.
-        // Dependent on MSO-5821 653458 US - MSO - Enhance Catalog DB Schema & Adapter to support VNF Groups
+        // Dependent on MSO-5821 653458 US - MSO - Enhance Catalog DB Schema & Adapter
+        // to support VNF Groups
     }
 
     protected void populateConfiguration(BBInputSetupParameter parameter) {
@@ -612,6 +619,10 @@ public class BBInputSetup implements JavaDelegate {
                     mapCatalogVfModule(vfModule, parameter.getModelInfo(),
                             parameter.getServiceModel().getCurrentService(), vnfModelCustomizationUUID);
                 }
+            }
+            if (vfModule.getModelInfoVfModule() != null && vfModule.getModelInfoVfModule().getModelName() != null
+                    && vfModule.getModelInfoVfModule().getModelName().contains("helm")) {
+                parameter.setIsHelm(true);
             }
         } else {
             logger.debug("Related VNF instance Id not found: {}",
@@ -1018,7 +1029,6 @@ public class BBInputSetup implements JavaDelegate {
             if (requestDetails.getOwningEntity() != null)
                 owningEntity = mapperLayer.mapRequestOwningEntity(requestDetails.getOwningEntity());
 
-
             Service service =
                     bbInputSetupUtils.getCatalogServiceByModelUUID(requestDetails.getModelInfo().getModelVersionId());
             if (service == null) {
@@ -1094,6 +1104,7 @@ public class BBInputSetup implements JavaDelegate {
         RequestContext requestContext = mapperLayer.mapRequestContext(parameter.getRequestDetails());
         requestContext.setAction(parameter.getRequestAction());
         requestContext.setMsoRequestId(parameter.getExecuteBB().getRequestId());
+        requestContext.setIsHelm(parameter.getIsHelm());
         org.onap.aai.domain.yang.CloudRegion aaiCloudRegion =
                 bbInputSetupUtils.getCloudRegion(parameter.getRequestDetails().getCloudConfiguration());
         CloudRegion cloudRegion =

@@ -1,29 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.1.2">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
   <bpmn:process id="CreateVfModuleBB" name="CreateVfModuleBB" isExecutable="true">
     <bpmn:startEvent id="CreateVfModuleBB_Start">
       <bpmn:outgoing>SequenceFlow_1xr6chl</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:serviceTask id="QueryVfModule" name="&#10;SDNC&#10;Get&#10;(vf module)&#10;" camunda:expression="${SDNCQueryTasks.queryVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_1s4rpyp</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_15hn8si</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1ig2ix4</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_1xr6chl" sourceRef="CreateVfModuleBB_Start" targetRef="QueryVnf" />
     <bpmn:endEvent id="CreateVfModuleBB_End">
       <bpmn:incoming>SequenceFlow_1vbwdaw</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:serviceTask id="CreateVfModule" name="Prepare Request" camunda:expression="${VnfAdapterCreateTasks.createVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
-      <bpmn:incoming>SequenceFlow_15hn8si</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_16g4dz0</bpmn:outgoing>
+      <bpmn:incoming>NoHelm</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0dehck5</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="SequenceFlow_15hn8si" sourceRef="QueryVfModule" targetRef="CreateVfModule" />
     <bpmn:sequenceFlow id="SequenceFlow_1s4rpyp" sourceRef="QueryVnf" targetRef="QueryVfModule" />
     <bpmn:serviceTask id="QueryVnf" name="&#10;SDNC&#10;Get&#10;(vnf)&#10;" camunda:expression="${SDNCQueryTasks.queryVnf(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_1xr6chl</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1s4rpyp</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="SequenceFlow_16g4dz0" sourceRef="CreateVfModule" targetRef="VnfAdapter" />
-    <bpmn:sequenceFlow id="SequenceFlow_0ecr393" sourceRef="VnfAdapter" targetRef="ServiceTask_01zrt6x" />
     <bpmn:callActivity id="VnfAdapter" name="Vnf Adapter" calledElement="VnfAdapter">
       <bpmn:extensionElements>
         <camunda:in source="gBuildingBlockExecution" target="gBuildingBlockExecution" />
@@ -35,8 +32,8 @@
         <camunda:out source="oamManagementV6Address" target="oamManagementV6Address" />
         <camunda:out source="contrailNetworkPolicyFqdnList" target="contrailNetworkPolicyFqdnList" />
       </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_16g4dz0</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0ecr393</bpmn:outgoing>
+      <bpmn:incoming>SequenceFlow_0dehck5</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0uetprw</bpmn:outgoing>
     </bpmn:callActivity>
     <bpmn:serviceTask id="UpdateVfModuleStatus" name="&#10;AAI&#10;Update&#10;(vf module)&#10;" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusCreatedVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_0rds4rj</bpmn:incoming>
@@ -80,7 +77,8 @@
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_15do1tu" sourceRef="UpdateVfModuleContrailServiceInstanceFqdn" targetRef="UpdateVfModuleHeatStackId" />
     <bpmn:serviceTask id="ServiceTask_01zrt6x" name="&#10;Create&#10;Cloud&#10;Variable&#10;" camunda:expression="${CreateVFModule.createInventoryVariable(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
-      <bpmn:incoming>SequenceFlow_0ecr393</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1mg8eym</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0uetprw</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1io8r33</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_1io8r33" sourceRef="ServiceTask_01zrt6x" targetRef="ServiceTask_00d84m7" />
@@ -89,6 +87,23 @@
       <bpmn:outgoing>SequenceFlow_1yn8o6d</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_1yn8o6d" sourceRef="ServiceTask_00d84m7" targetRef="CreateNetworkPolicies" />
+    <bpmn:exclusiveGateway id="CheckIfIsHelm" name="Check If Is Helm">
+      <bpmn:incoming>SequenceFlow_1ig2ix4</bpmn:incoming>
+      <bpmn:outgoing>YesHelm</bpmn:outgoing>
+      <bpmn:outgoing>NoHelm</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="CnfAdapter" name="Cnf Adapter" camunda:expression="${CnfAdapterCreateTasks.createInstance(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>YesHelm</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1mg8eym</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="YesHelm" name="Yes Helm" sourceRef="CheckIfIsHelm" targetRef="CnfAdapter">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${execution.getVariable("isHelm")}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1mg8eym" sourceRef="CnfAdapter" targetRef="ServiceTask_01zrt6x" />
+    <bpmn:sequenceFlow id="SequenceFlow_1ig2ix4" sourceRef="QueryVfModule" targetRef="CheckIfIsHelm" />
+    <bpmn:sequenceFlow id="NoHelm" name="No Helm" sourceRef="CheckIfIsHelm" targetRef="CreateVfModule" />
+    <bpmn:sequenceFlow id="SequenceFlow_0dehck5" sourceRef="CreateVfModule" targetRef="VnfAdapter" />
+    <bpmn:sequenceFlow id="SequenceFlow_0uetprw" sourceRef="VnfAdapter" targetRef="ServiceTask_01zrt6x" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CreateVfModuleBB">
@@ -102,31 +117,24 @@
         <dc:Bounds x="513" y="66" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1xr6chl_di" bpmnElement="SequenceFlow_1xr6chl">
-        <di:waypoint x="192" y="106" />
-        <di:waypoint x="313" y="106" />
+        <di:waypoint xsi:type="dc:Point" x="192" y="106" />
+        <di:waypoint xsi:type="dc:Point" x="313" y="106" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="156" y="91" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_0qdq7wj_di" bpmnElement="CreateVfModuleBB_End">
-        <dc:Bounds x="1215" y="293" width="36" height="36" />
+        <dc:Bounds x="1300" y="450" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1136" y="333" width="0" height="0" />
+          <dc:Bounds x="1176" y="446" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_1dgenhy_di" bpmnElement="CreateVfModule">
-        <dc:Bounds x="709" y="66" width="100" height="80" />
+        <dc:Bounds x="794" y="66" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_15hn8si_di" bpmnElement="SequenceFlow_15hn8si">
-        <di:waypoint x="613" y="106" />
-        <di:waypoint x="709" y="106" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="519" y="91" width="90" height="0" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1s4rpyp_di" bpmnElement="SequenceFlow_1s4rpyp">
-        <di:waypoint x="413" y="106" />
-        <di:waypoint x="513" y="106" />
+        <di:waypoint xsi:type="dc:Point" x="413" y="106" />
+        <di:waypoint xsi:type="dc:Point" x="513" y="106" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="321" y="91" width="90" height="0" />
         </bpmndi:BPMNLabel>
@@ -134,124 +142,166 @@
       <bpmndi:BPMNShape id="ServiceTask_1frb5h2_di" bpmnElement="QueryVnf">
         <dc:Bounds x="313" y="66" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_16g4dz0_di" bpmnElement="SequenceFlow_16g4dz0">
-        <di:waypoint x="809" y="106" />
-        <di:waypoint x="887" y="106" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="751" y="91" width="0" height="0" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0ecr393_di" bpmnElement="SequenceFlow_0ecr393">
-        <di:waypoint x="987" y="107" />
-        <di:waypoint x="1091" y="107" />
-        <di:waypoint x="1091" y="209" />
-        <di:waypoint x="680" y="209" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="534" y="194" width="0" height="0" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="CallActivity_1i1pfzb_di" bpmnElement="VnfAdapter">
-        <dc:Bounds x="887" y="66" width="100" height="80" />
+        <dc:Bounds x="959" y="66" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_0fpfn71_di" bpmnElement="UpdateVfModuleStatus">
-        <dc:Bounds x="1039" y="271" width="100" height="80" />
+        <dc:Bounds x="1124" y="428" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_04k1b85_di" bpmnElement="UpdateVfModuleHeatStackId">
-        <dc:Bounds x="874" y="271" width="100" height="80" />
+        <dc:Bounds x="959" y="428" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="SubProcess_1getwnf_di" bpmnElement="SubProcess_1getwnf" isExpanded="true">
-        <dc:Bounds x="233" y="439" width="231" height="135" />
+        <dc:Bounds x="202" y="556" width="231" height="135" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_1c8o652_di" bpmnElement="StartEvent_1c8o652">
-        <dc:Bounds x="272" y="497" width="36" height="36" />
+        <dc:Bounds x="241" y="614" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="148" y="533" width="0" height="0" />
+          <dc:Bounds x="72" y="606" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_1emam1w_di" bpmnElement="EndEvent_1emam1w">
-        <dc:Bounds x="409" y="497" width="36" height="36" />
+        <dc:Bounds x="378" y="614" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="285" y="533" width="0" height="0" />
+          <dc:Bounds x="209" y="606" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0gcots6_di" bpmnElement="SequenceFlow_0gcots6">
-        <di:waypoint x="308" y="515" />
-        <di:waypoint x="409" y="515" />
+        <di:waypoint xsi:type="dc:Point" x="277" y="632" />
+        <di:waypoint xsi:type="dc:Point" x="378" y="632" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="262" y="494" width="0" height="0" />
+          <dc:Bounds x="186" y="567" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0rds4rj_di" bpmnElement="SequenceFlow_0rds4rj">
-        <di:waypoint x="974" y="311" />
-        <di:waypoint x="1039" y="311" />
+        <di:waypoint xsi:type="dc:Point" x="1059" y="468" />
+        <di:waypoint xsi:type="dc:Point" x="1124" y="468" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="910" y="296" width="0" height="0" />
+          <dc:Bounds x="950" y="409" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1vbwdaw_di" bpmnElement="SequenceFlow_1vbwdaw">
-        <di:waypoint x="1139" y="311" />
-        <di:waypoint x="1180" y="311" />
-        <di:waypoint x="1180" y="311" />
-        <di:waypoint x="1215" y="311" />
+        <di:waypoint xsi:type="dc:Point" x="1224" y="468" />
+        <di:waypoint xsi:type="dc:Point" x="1265" y="468" />
+        <di:waypoint xsi:type="dc:Point" x="1265" y="468" />
+        <di:waypoint xsi:type="dc:Point" x="1300" y="468" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1098" y="311" width="0" height="0" />
+          <dc:Bounds x="1138" y="424" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_1v8zx4s_di" bpmnElement="CreateNetworkPolicies">
-        <dc:Bounds x="239" y="271" width="100" height="80" />
+        <dc:Bounds x="324" y="428" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0xqhep5_di" bpmnElement="SequenceFlow_0xqhep5">
-        <di:waypoint x="339" y="311" />
-        <di:waypoint x="392" y="311" />
+        <di:waypoint xsi:type="dc:Point" x="424" y="468" />
+        <di:waypoint xsi:type="dc:Point" x="477" y="468" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="269" y="296" width="0" height="0" />
+          <dc:Bounds x="309" y="409" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_015ayw5_di" bpmnElement="UpdateVnfIpv4OamAddress">
-        <dc:Bounds x="392" y="271" width="100" height="80" />
+        <dc:Bounds x="477" y="428" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1yo6mvv_di" bpmnElement="SequenceFlow_1yo6mvv">
-        <di:waypoint x="492" y="311" />
-        <di:waypoint x="561" y="311" />
+        <di:waypoint xsi:type="dc:Point" x="577" y="468" />
+        <di:waypoint xsi:type="dc:Point" x="646" y="468" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="430" y="296" width="0" height="0" />
+          <dc:Bounds x="470" y="409" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_0mlfsc9_di" bpmnElement="UpdateVnfManagementV6Address">
-        <dc:Bounds x="561" y="271" width="100" height="80" />
+        <dc:Bounds x="646" y="428" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1i03uy2_di" bpmnElement="SequenceFlow_1i03uy2">
-        <di:waypoint x="661" y="311" />
-        <di:waypoint x="709" y="311" />
+        <di:waypoint xsi:type="dc:Point" x="746" y="468" />
+        <di:waypoint xsi:type="dc:Point" x="794" y="468" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="588" y="296" width="0" height="0" />
+          <dc:Bounds x="628" y="409" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_0wctnhw_di" bpmnElement="UpdateVfModuleContrailServiceInstanceFqdn">
-        <dc:Bounds x="709" y="271" width="100" height="80" />
+        <dc:Bounds x="794" y="428" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_15do1tu_di" bpmnElement="SequenceFlow_15do1tu">
-        <di:waypoint x="809" y="311" />
-        <di:waypoint x="874" y="311" />
+        <di:waypoint xsi:type="dc:Point" x="894" y="468" />
+        <di:waypoint xsi:type="dc:Point" x="959" y="468" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="745" y="286" width="0" height="0" />
+          <dc:Bounds x="785" y="399" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_01zrt6x_di" bpmnElement="ServiceTask_01zrt6x">
-        <dc:Bounds x="580" y="169" width="100" height="80" />
+        <dc:Bounds x="665" y="326" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1io8r33_di" bpmnElement="SequenceFlow_1io8r33">
-        <di:waypoint x="580" y="209" />
-        <di:waypoint x="478" y="209" />
+        <di:waypoint xsi:type="dc:Point" x="665" y="366" />
+        <di:waypoint xsi:type="dc:Point" x="563" y="366" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="569" y="297" width="90" height="20" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_00d84m7_di" bpmnElement="ServiceTask_00d84m7">
-        <dc:Bounds x="378" y="169" width="100" height="80" />
+        <dc:Bounds x="463" y="326" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1yn8o6d_di" bpmnElement="SequenceFlow_1yn8o6d">
-        <di:waypoint x="378" y="209" />
-        <di:waypoint x="170" y="209" />
-        <di:waypoint x="170" y="306" />
-        <di:waypoint x="239" y="306" />
+        <di:waypoint xsi:type="dc:Point" x="463" y="366" />
+        <di:waypoint xsi:type="dc:Point" x="255" y="366" />
+        <di:waypoint xsi:type="dc:Point" x="255" y="463" />
+        <di:waypoint xsi:type="dc:Point" x="324" y="463" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="225" y="361" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1g3vemz_di" bpmnElement="CheckIfIsHelm" isMarkerVisible="true">
+        <dc:Bounds x="690.2114427860697" y="81.35572139303483" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="673" y="48" width="84" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0tag50w_di" bpmnElement="CnfAdapter">
+        <dc:Bounds x="665" y="166" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0q1janp_di" bpmnElement="YesHelm">
+        <di:waypoint xsi:type="dc:Point" x="715" y="131" />
+        <di:waypoint xsi:type="dc:Point" x="715" y="166" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="730" y="136" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1mg8eym_di" bpmnElement="SequenceFlow_1mg8eym">
+        <di:waypoint xsi:type="dc:Point" x="715" y="246" />
+        <di:waypoint xsi:type="dc:Point" x="715" y="326" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="846" y="291.5" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ig2ix4_di" bpmnElement="SequenceFlow_1ig2ix4">
+        <di:waypoint xsi:type="dc:Point" x="613" y="106" />
+        <di:waypoint xsi:type="dc:Point" x="691" y="106" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="652" y="85" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1g7zahc_di" bpmnElement="NoHelm">
+        <di:waypoint xsi:type="dc:Point" x="740" y="106" />
+        <di:waypoint xsi:type="dc:Point" x="794" y="106" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="767" y="85" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0dehck5_di" bpmnElement="SequenceFlow_0dehck5">
+        <di:waypoint xsi:type="dc:Point" x="894" y="106" />
+        <di:waypoint xsi:type="dc:Point" x="959" y="106" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="926.5" y="85" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0uetprw_di" bpmnElement="SequenceFlow_0uetprw">
+        <di:waypoint xsi:type="dc:Point" x="1009" y="146" />
+        <di:waypoint xsi:type="dc:Point" x="1009" y="366" />
+        <di:waypoint xsi:type="dc:Point" x="765" y="366" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1024" y="228" width="0" height="12" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
