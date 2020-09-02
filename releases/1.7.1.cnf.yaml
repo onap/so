@@ -1,0 +1,9 @@
+---
+distribution_type: 'container'
+container_release_tag: '1.7.1'
+project: 'so'
+log_dir: 'so-maven-docker-stage-master/437/'
+ref: '96f7bcf737cc10a3258b5c8cf11b5cc5fd1ee65c'
+containers:
+    - name: 'so/mso-cnf-adapter'
+      version: '1.7.1-20200827T0421'
