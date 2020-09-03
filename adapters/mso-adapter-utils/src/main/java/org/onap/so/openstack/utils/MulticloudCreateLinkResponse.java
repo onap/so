@@ -21,11 +21,11 @@
 package org.onap.so.openstack.utils;
 
 import java.io.Serializable;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

@@ -32,7 +32,6 @@
     <module>so-optimization-clients</module>
     <module>so-sdn-clients</module>
     <module>bpmn</module>
-    <module>cloudify-client</module>
     <module>cxf-logging</module>
     <module>so-monitoring</module>
     <module>so-simulator</module>

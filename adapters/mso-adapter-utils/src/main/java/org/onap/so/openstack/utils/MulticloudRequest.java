@@ -21,12 +21,12 @@
 package org.onap.so.openstack.utils;
 
 import java.io.Serializable;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.woorea.openstack.heat.model.CreateStackParam;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"generic-vnf-id", "vf-module-id", "vf-module-model-invariant-id", "vf-module-model-version-id",
