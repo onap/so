@@ -451,7 +451,7 @@ public class MsoRequest {
     }
 
     public void createErrorRequestRecord(Status status, String requestId, String errorMessage, Actions action,
-            String requestScope, String requestJSON) {
+            String requestScope, String requestJSON, String serviceInstanceId) {
         try {
             InfraActiveRequests request = new InfraActiveRequests(requestId);
             Timestamp startTimeStamp = new Timestamp(System.currentTimeMillis());
@@ -463,6 +463,9 @@ public class MsoRequest {
             request.setRequestAction(action.toString());
             request.setRequestScope(requestScope);
             request.setRequestBody(requestJSON);
+            if (serviceInstanceId != null) {
+                request.setServiceInstanceId(serviceInstanceId);
+            }
             Timestamp endTimeStamp = new Timestamp(System.currentTimeMillis());
             request.setEndTime(endTimeStamp);
             request.setRequestUrl(MDC.get(LogConstants.HTTP_URL));
