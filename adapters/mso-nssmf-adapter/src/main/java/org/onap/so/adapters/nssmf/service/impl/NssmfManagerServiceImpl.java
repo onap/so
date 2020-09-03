@@ -106,7 +106,7 @@ public class NssmfManagerServiceImpl implements NssmfManagerService {
     public ResponseEntity queryNSSISelectionCapability(NssmfAdapterNBIRequest nbiRequest) {
         EsrInfo esrInfo = nbiRequest.getEsrInfo();
         try {
-            return buildResponse(buildNssmfManager(esrInfo, ActionType.QUERY_JOB_STATUS, null)
+            return buildResponse(buildNssmfManager(esrInfo, ActionType.QUERY_NSSI_SELECTION_CAPABILITY, null)
                     .queryNSSISelectionCapability(nbiRequest));
         } catch (ApplicationException e) {
             return e.buildErrorResponse();
@@ -118,7 +118,7 @@ public class NssmfManagerServiceImpl implements NssmfManagerService {
         EsrInfo esrInfo = nbiRequest.getEsrInfo();
         try {
             return buildResponse(
-                    buildNssmfManager(esrInfo, ActionType.QUERY_JOB_STATUS, null).querySubnetCapability(nbiRequest));
+                    buildNssmfManager(esrInfo, ActionType.QUERY_SUB_NET_CAPABILITY, null).querySubnetCapability(nbiRequest));
         } catch (ApplicationException e) {
             return e.buildErrorResponse();
         }
