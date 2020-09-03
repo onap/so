@@ -1,8 +1,10 @@
 package org.onap.so.utils;
 
 import java.security.GeneralSecurityException;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import org.camunda.bpm.client.ExternalTaskClient;
 import org.camunda.bpm.client.interceptor.ClientRequestInterceptor;
 import org.camunda.bpm.client.interceptor.auth.BasicAuthProvider;
@@ -75,7 +77,20 @@ public class ExternalTaskServiceUtils {
     @ScheduledLogging
     @Scheduled(fixedDelay = 30000)
     public void checkAllClientsActive() {
-        getClients().stream().filter(client -> !client.isActive()).forEach(ExternalTaskClient::start);
+        try {
+            logger.debug("Executing scheduled task to check and restart external task clients"); // TODO remove
+                                                                                                 // eventually
+            List<ExternalTaskClient> inactiveClients =
+                    getClients().stream().filter(client -> !client.isActive()).collect(Collectors.toList());
+
+            inactiveClients.forEach(c -> {
+                logger.debug("External Task Client found to be inactive. Restarting Client.");
+                c.start();
+            });
+        } catch (Exception e) {
+            logger.error("Exception occured in checkAllClientsActive", e);
+        }
+
     }
 
     protected Set<ExternalTaskClient> getClients() {
