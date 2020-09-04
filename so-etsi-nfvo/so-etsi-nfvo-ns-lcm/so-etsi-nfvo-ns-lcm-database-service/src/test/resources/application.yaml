@@ -25,10 +25,6 @@ spring:
       generate-ddl: true
       hibernate:
          ddl-auto: create
-         
-logging:
-   level:
-      org.flywaydb: DEBUG
 hibernate:
    dialect: org.hibernate.dialect.H2Dialect
    hbm2ddl:

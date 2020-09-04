@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.Test;
@@ -31,7 +32,11 @@ import org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobAction;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobStatusEnum;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoJob;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoJobStatus;
+import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoNfInst;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoNsInst;
+import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NsLcmOpOcc;
+import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NsLcmOpType;
+import org.onap.so.etsi.nfvo.ns.lcm.database.beans.OperationStateEnum;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.State;
 import org.onap.so.etsi.nfvo.ns.lcm.database.service.DatabaseServiceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,4 +117,60 @@ public class DatabaseServiceProviderTest {
         assertTrue(databaseServiceProvider.isNsInstExists(DUMMY_NAME));
     }
 
+    @Test
+    public void testAddNfInst_StoredInDatabase_ableTofindByQuery() {
+
+        final NfvoNsInst nsInst = new NfvoNsInst().name(DUMMY_NAME).nsdId(RANDOM_ID).status(State.NOT_INSTANTIATED)
+                .nsdInvariantId(RANDOM_ID).statusUpdatedTime(CURRENT_DATE_TIME);
+
+        databaseServiceProvider.saveNfvoNsInst(nsInst);
+
+        final NfvoNfInst nfInst = new NfvoNfInst().nfvoNsInst(nsInst).name(DUMMY_NAME).vnfdId(RANDOM_ID)
+                .status(State.NOT_INSTANTIATED).createTime(CURRENT_DATE_TIME).lastUpdateTime(CURRENT_DATE_TIME);
+        databaseServiceProvider.saveNfvoNfInst(nfInst);
+
+        final Optional<NfvoNfInst> actual = databaseServiceProvider.getNfvoNfInstByNfInstId(nfInst.getNfInstId());
+        final NfvoNfInst actualNfvoNfInst = actual.get();
+        assertEquals(nsInst.getNsInstId(), actualNfvoNfInst.getNsInst().getNsInstId());
+        assertEquals(nfInst.getNfInstId(), actualNfvoNfInst.getNfInstId());
+        assertEquals(nfInst.getName(), actualNfvoNfInst.getName());
+        assertEquals(nfInst.getVnfdId(), actualNfvoNfInst.getVnfdId());
+        assertEquals(nfInst.getStatus(), actualNfvoNfInst.getStatus());
+        assertEquals(nfInst.getCreateTime(), actualNfvoNfInst.getCreateTime());
+        assertEquals(nfInst.getLastUpdateTime(), actualNfvoNfInst.getLastUpdateTime());
+
+
+        List<NfvoNfInst> nfvoNfInstList = databaseServiceProvider.getNfvoNfInstByNsInstId(nsInst.getNsInstId());
+        assertFalse(nfvoNfInstList.isEmpty());
+        assertEquals(nsInst.getNsInstId(), nfvoNfInstList.get(0).getNsInst().getNsInstId());
+
+        nfvoNfInstList = databaseServiceProvider.getNfvoNfInstByNsInstIdAndNfName(nsInst.getNsInstId(), DUMMY_NAME);
+
+        assertFalse(nfvoNfInstList.isEmpty());
+        assertEquals(nsInst.getNsInstId(), nfvoNfInstList.get(0).getNsInst().getNsInstId());
+        assertEquals(DUMMY_NAME, nfvoNfInstList.get(0).getName());
+    }
+
+    @Test
+    public void testAddNsLcmOpOcc_StoredInDatabase_ableTofindByQuery() {
+
+        final NfvoNsInst nsInst = new NfvoNsInst().name(DUMMY_NAME).nsdId(RANDOM_ID).status(State.NOT_INSTANTIATED)
+                .nsdInvariantId(RANDOM_ID).statusUpdatedTime(CURRENT_DATE_TIME);
+
+        databaseServiceProvider.saveNfvoNsInst(nsInst);
+
+        final NsLcmOpOcc nsLcmOpOcc = new NsLcmOpOcc().nfvoNsInst(nsInst).operationState(OperationStateEnum.PROCESSING)
+                .isCancelPending(false).isAutoInnovation(false).operation(NsLcmOpType.INSTANTIATE)
+                .startTime(CURRENT_DATE_TIME).stateEnteredTime(CURRENT_DATE_TIME).operationParams("");
+
+
+        databaseServiceProvider.addNSLcmOpOcc(nsLcmOpOcc);
+
+        final Optional<NsLcmOpOcc> actual = databaseServiceProvider.getNsLcmOpOcc(nsLcmOpOcc.getId());
+        final NsLcmOpOcc actualLcmOpOcc = actual.get();
+        assertEquals(nsLcmOpOcc.getId(), actualLcmOpOcc.getId());
+
+        assertEquals(nsInst.getNsInstId(), actualLcmOpOcc.getNfvoNsInst().getNsInstId());
+
+    }
 }

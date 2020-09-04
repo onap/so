@@ -198,7 +198,7 @@ public class CreateNsTask extends AbstractNetworkServiceTask {
     public void setCreateNsResponse(final DelegateExecution execution) {
         logger.info("Executing setCreateNsResponse  ...");
         final String nsInstId = (String) execution.getVariable(NS_INSTANCE_ID_PARAM_NAME);
-        final Optional<NfvoNsInst> optional = databaseServiceProvider.getNfvoNsInstByNsInstId(nsInstId);
+        final Optional<NfvoNsInst> optional = databaseServiceProvider.getNfvoNsInst(nsInstId);
 
         if (optional.isPresent()) {
             final NfvoNsInst nfvoNsInst = optional.get();
