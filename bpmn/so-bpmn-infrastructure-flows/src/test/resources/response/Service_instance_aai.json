@@ -29,6 +29,16 @@
             "relationship-value": "PNFDemo"
           }
         ]
+      },
+      {
+        "related-to": "pnf",
+        "related-link": "/aai/v11/network/pnfs/pnf/PNFDemo1",
+        "relationship-data": [
+          {
+            "relationship-key": "pnf.pnf-name",
+            "relationship-value": "PNFDemo1"
+          }
+        ]
       }
     ]
   }

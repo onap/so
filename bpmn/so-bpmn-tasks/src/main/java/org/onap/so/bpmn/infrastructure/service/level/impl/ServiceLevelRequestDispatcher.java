@@ -23,6 +23,7 @@ package org.onap.so.bpmn.infrastructure.service.level.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
+import org.onap.aai.domain.yang.Relationship;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aaiclient.client.aai.AAIRestClientI;
 import org.onap.aaiclient.client.aai.AAIRestClientImpl;
@@ -34,7 +35,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.*;
 
 /**
@@ -83,21 +88,18 @@ public class ServiceLevelRequestDispatcher implements JavaDelegate {
         Optional<ServiceInstance> optionalSi =
                 restClient.getServiceInstanceById(serviceInstanceId, serviceType, globalSubscriberId);
 
-        if (!optionalSi.isPresent()) {
-
-        }
-
         optionalSi.ifPresentOrElse(serviceInstance -> {
-            final String pnfName = serviceInstance.getRelationshipList().getRelationship().stream()
-                    .filter(x -> x.getRelatedTo().contains("pnf")).findFirst().get().getRelationshipData().stream()
-                    .filter(data -> data.getRelationshipKey().contains("pnf.pnf-name")).findFirst().get()
-                    .getRelationshipValue();
-            if (pnfName == null || pnfName.isEmpty()) {
+            final List<String> pnfNameList = serviceInstance.getRelationshipList().getRelationship().stream()
+                    .filter(x -> x.getRelatedTo().contains("pnf")).flatMap(x -> x.getRelationshipData().stream())
+                    .filter(data -> data.getRelationshipKey().contains("pnf.pnf-name"))
+                    .map(x -> x.getRelationshipValue()).collect(Collectors.toList());
+            if (pnfNameList == null || pnfNameList.size() == 0) {
                 logger.warn(
                         "Unable to find the PNF for service instance id: " + serviceInstance.getServiceInstanceId());
                 return;
             }
-            delegateExecution.setVariable(ServiceLevelConstants.PNF_NAME, pnfName);
+            delegateExecution.setVariable(ServiceLevelConstants.PNF_NAME_LIST, pnfNameList);
+            delegateExecution.setVariable(ServiceLevelConstants.PNF_SIZE, pnfNameList.size());
             delegateExecution.setVariable(ServiceLevelConstants.RESOURCE_TYPE, ServiceLevelConstants.PNF);
         }, () -> {
             throwExceptionWithWarn(delegateExecution, "Unable to find the service instance: " + serviceInstanceId);

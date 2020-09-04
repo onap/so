@@ -23,6 +23,7 @@ package org.onap.so.bpmn.infrastructure.service.level;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import jline.internal.Log;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.bpmn.infrastructure.service.level.impl.ServiceLevelConstants;
 import org.onap.so.client.exception.ExceptionBuilder;
@@ -35,15 +36,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Parent class for Service level upgrade Execution, it should be extended for service level upgrade tasks.
  */
-public class ServiceLevelPreparable {
+public class ServiceLevel {
 
-    protected static final Logger LOG = LoggerFactory.getLogger(ServiceLevelPreparable.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(ServiceLevel.class);
 
     @Autowired
     protected ExceptionBuilder exceptionBuilder;
 
     @Autowired
     protected CatalogDbClient catalogDbClient;
+
+    private static final String PNF_NAME_LIST = "pnfNameList";
+
+    private static final String PNF_COUNTER = "pnfCounter";
 
     /**
      * Fetches workflow names based on the controller scope and operation name.
@@ -93,6 +98,22 @@ public class ServiceLevelPreparable {
                     "Validation of health check workflow parameters failed for the scope: " + scope);
         }
 
+    }
+
+    /**
+     * This method set correct value of pnf name for health check and software upgrade workflow.
+     *
+     * @param delegateExecution Delegate execution obj
+     */
+    public void pnfCounterExecution(DelegateExecution delegateExecution) {
+        LOG.debug("Running execute block for activity id: {}, name: {}", delegateExecution.getCurrentActivityId(),
+                delegateExecution.getCurrentActivityName());
+
+        final List<String> pnfNameList = (List<String>) delegateExecution.getVariable(PNF_NAME_LIST);
+        final int pnfCounter = (int) delegateExecution.getVariable(PNF_COUNTER);
+
+        delegateExecution.setVariable(ServiceLevelConstants.PNF_NAME, pnfNameList.get(pnfCounter));
+        delegateExecution.setVariable(PNF_COUNTER, pnfCounter + 1);
     }
 
 }
