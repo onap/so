@@ -33,6 +33,7 @@ import org.onap.so.beans.nsmf.NssmfAdapterNBIRequest;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.marshal;
 import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.unMarshal;
 
@@ -49,13 +50,17 @@ public class ExternalAnNssmfManager extends ExternalNssmfManager {
     @Override
     protected void doAfterRequest() throws ApplicationException {
         if (ActionType.ALLOCATE.equals(actionType) || ActionType.DEALLOCATE.equals(actionType)) {
-            @SuppressWarnings("unchecked")
-            Map<String, String> response = unMarshal(restResponse.getResponseContent(), Map.class);
-
-            String nssiId = response.get("nSSId");
+            String nssiId;
+            if (ActionType.ALLOCATE.equals(actionType)) {
+                @SuppressWarnings("unchecked")
+                Map<String, String> response = unMarshal(restResponse.getResponseContent(), Map.class);
+                nssiId = response.get("href");
+            } else {
+                nssiId = this.bodyParams.get("nssiId");
+            }
 
             NssiResponse resp = new NssiResponse();
-            resp.setJobId(nssiId);
+            resp.setJobId(UUID.randomUUID().toString());
             resp.setNssiId(nssiId);
 
             RestResponse returnRsp = new RestResponse();

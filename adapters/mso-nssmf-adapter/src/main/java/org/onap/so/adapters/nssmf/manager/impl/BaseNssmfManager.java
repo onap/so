@@ -63,6 +63,8 @@ public abstract class BaseNssmfManager implements NssmfManager {
 
     private Map<String, String> params = new HashMap<>(); // request params
 
+    protected Map<String, String> bodyParams = new HashMap<>(); // request body params
+
     @Override
     public RestResponse allocateNssi(NssmfAdapterNBIRequest nbiRequest) throws ApplicationException {
 
@@ -100,6 +102,9 @@ public abstract class BaseNssmfManager implements NssmfManager {
         this.params.put("sliceProfileId", sliceId);
 
         this.urlHandler();
+
+        this.bodyParams.clear();
+        this.bodyParams.put("nssiId", nbiRequest.getDeAllocateNssi().getNssiId());
 
         String reqBody = wrapDeAllocateReqBody(nbiRequest.getDeAllocateNssi());
 
