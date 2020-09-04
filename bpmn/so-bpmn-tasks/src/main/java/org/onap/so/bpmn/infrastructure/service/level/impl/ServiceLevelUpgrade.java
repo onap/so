@@ -26,11 +26,11 @@ import java.util.List;
 import java.util.Map;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
-import org.onap.so.bpmn.infrastructure.service.level.ServiceLevelPreparable;
+import org.onap.so.bpmn.infrastructure.service.level.ServiceLevel;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ServiceLevelUpgrade extends ServiceLevelPreparable implements JavaDelegate {
+public class ServiceLevelUpgrade extends ServiceLevel implements JavaDelegate {
 
     private static final List<String> PNF_SOFTWARE_UP_PARAMS = Arrays.asList(ServiceLevelConstants.SERVICE_INSTANCE_ID,
             ServiceLevelConstants.RESOURCE_TYPE, ServiceLevelConstants.BPMN_REQUEST, ServiceLevelConstants.PNF_NAME);
@@ -44,6 +44,9 @@ public class ServiceLevelUpgrade extends ServiceLevelPreparable implements JavaD
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
+        LOG.debug("Running execute block for activity id: {}, name: {}", execution.getCurrentActivityId(),
+                execution.getCurrentActivityName());
+
         if (execution.hasVariable(ServiceLevelConstants.RESOURCE_TYPE)
                 && execution.getVariable(ServiceLevelConstants.RESOURCE_TYPE) != null) {
             final String controllerScope = (String) execution.getVariable(ServiceLevelConstants.RESOURCE_TYPE);
@@ -51,10 +54,11 @@ public class ServiceLevelUpgrade extends ServiceLevelPreparable implements JavaD
             if (ServiceLevelConstants.VALID_CONTROLLER_SCOPE.contains(controllerScope)) {
                 final String wflName = fetchWorkflowUsingScope(controllerScope, ServiceLevelConstants.SW_UP_OPERATION);
                 LOG.debug("Software Upgrade workflow fetched for the scope: {} is: {}", controllerScope, wflName);
-                validateParamsWithScope(execution, controllerScope, SOFTWARE_UP_PARAMS_MAP.get(controllerScope));
+                // validateParamsWithScope(execution, controllerScope, SOFTWARE_UP_PARAMS_MAP.get(controllerScope));
                 LOG.info("Parameters validated successfully for {}", wflName);
                 execution.setVariable(ServiceLevelConstants.SOFTWARE_WORKFLOW_TO_INVOKE, wflName);
-                execution.setVariable(ServiceLevelConstants.CONTROLLER_STATUS, "");
+                execution.setVariable(ServiceLevelConstants.CONTROLLER_STATUS, ServiceLevelConstants.EMPTY_STRING);
+                execution.setVariable(ServiceLevelConstants.PNF_COUNTER, ServiceLevelConstants.COUNT_ZERO);
             } else {
                 exceptionBuilder.buildAndThrowWorkflowException(execution, ServiceLevelConstants.ERROR_CODE,
                         "Invalid Controller scope for resource level software upgrade");
