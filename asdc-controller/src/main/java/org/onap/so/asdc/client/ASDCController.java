@@ -754,82 +754,87 @@ public class ASDCController {
             }
             // process NsstResource
             this.processNsstNotification(iNotif, toscaResourceStructure);
-            for (IResourceInstance resource : iNotif.getResources()) {
+            if (!iNotif.getResources().isEmpty()) {
+                for (IResourceInstance resource : iNotif.getResources()) {
 
-                String resourceType = resource.getResourceType();
-                boolean hasVFResource = false;
+                    String resourceType = resource.getResourceType();
+                    boolean hasVFResource = false;
 
-                logger.info("Processing Resource Type: {}, Model UUID: {}", resourceType, resource.getResourceUUID());
+                    logger.info("Processing Resource Type: {}, Model UUID: {}", resourceType,
+                            resource.getResourceUUID());
 
-                resourceStructure = getResourceStructure(iNotif, resource, resourceType);
+                    resourceStructure = getResourceStructure(iNotif, resource, resourceType);
 
-                try {
-
-                    if (!this.checkResourceAlreadyDeployed(resourceStructure, serviceDeployed)) {
-                        logger.debug("Processing Resource Type: " + resourceType + " and Model UUID: "
-                                + resourceStructure.getResourceInstance().getResourceUUID());
-
-
-                        if ("VF".equals(resourceType)) {
-                            hasVFResource = true;
-                            for (IArtifactInfo artifact : resource.getArtifacts()) {
-                                IDistributionClientDownloadResult resultArtifact =
-                                        this.downloadTheArtifact(artifact, iNotif.getDistributionID());
-                                if (resultArtifact == null) {
-                                    continue;
-                                }
-
-                                if (ASDCConfiguration.VF_MODULES_METADATA.equals(artifact.getArtifactType())) {
-                                    logger.debug("VF_MODULE_ARTIFACT: "
-                                            + new String(resultArtifact.getArtifactPayload(), StandardCharsets.UTF_8));
-                                    logger.debug(ASDCNotificationLogging
-                                            .dumpVfModuleMetaDataList(((VfResourceStructure) resourceStructure)
-                                                    .decodeVfModuleArtifact(resultArtifact.getArtifactPayload())));
-                                }
-                                if (!ASDCConfiguration.WORKFLOW.equals(artifact.getArtifactType())) {
-                                    resourceStructure.addArtifactToStructure(distributionClient, artifact,
-                                            resultArtifact);
-                                } else {
-                                    writeArtifactToFile(artifact, resultArtifact);
-                                    logger.debug(
-                                            "Adding workflow artifact to structure: " + artifact.getArtifactName());
-                                    resourceStructure.addWorkflowArtifactToStructure(artifact, resultArtifact);
-                                }
-
-                            }
-
-                            // Deploy VF resource and artifacts
-                            logger.debug("Preparing to deploy Service: {}", iNotif.getServiceUUID());
-
-
-                            this.deployResourceStructure(resourceStructure, toscaResourceStructure);
-                            serviceDeployed = true;
-                        }
-                    }
-
-                } catch (ArtifactInstallerException e) {
-                    deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
-                    errorMessage = e.getMessage();
-                    logger.error("Exception occurred", e);
-                }
-
-                if (!hasVFResource) {
-
-                    logger.debug("No resources found for Service: " + iNotif.getServiceUUID());
-
-                    logger.debug("Preparing to deploy Service: {}", iNotif.getServiceUUID());
                     try {
-                        this.deployResourceStructure(resourceStructure, toscaResourceStructure);
-                        serviceDeployed = true;
+
+                        if (!this.checkResourceAlreadyDeployed(resourceStructure, serviceDeployed)) {
+                            logger.debug("Processing Resource Type: " + resourceType + " and Model UUID: "
+                                    + resourceStructure.getResourceInstance().getResourceUUID());
+
+
+                            if ("VF".equals(resourceType)) {
+                                hasVFResource = true;
+                                for (IArtifactInfo artifact : resource.getArtifacts()) {
+                                    IDistributionClientDownloadResult resultArtifact =
+                                            this.downloadTheArtifact(artifact, iNotif.getDistributionID());
+                                    if (resultArtifact == null) {
+                                        continue;
+                                    }
+
+                                    if (ASDCConfiguration.VF_MODULES_METADATA.equals(artifact.getArtifactType())) {
+                                        logger.debug("VF_MODULE_ARTIFACT: " + new String(
+                                                resultArtifact.getArtifactPayload(), StandardCharsets.UTF_8));
+                                        logger.debug(ASDCNotificationLogging
+                                                .dumpVfModuleMetaDataList(((VfResourceStructure) resourceStructure)
+                                                        .decodeVfModuleArtifact(resultArtifact.getArtifactPayload())));
+                                    }
+                                    if (!ASDCConfiguration.WORKFLOW.equals(artifact.getArtifactType())) {
+                                        resourceStructure.addArtifactToStructure(distributionClient, artifact,
+                                                resultArtifact);
+                                    } else {
+                                        writeArtifactToFile(artifact, resultArtifact);
+                                        logger.debug(
+                                                "Adding workflow artifact to structure: " + artifact.getArtifactName());
+                                        resourceStructure.addWorkflowArtifactToStructure(artifact, resultArtifact);
+                                    }
+
+                                }
+
+                                // Deploy VF resource and artifacts
+                                logger.debug("Preparing to deploy Service: {}", iNotif.getServiceUUID());
+
+
+                                this.deployResourceStructure(resourceStructure, toscaResourceStructure);
+                                serviceDeployed = true;
+                            }
+                        }
+
                     } catch (ArtifactInstallerException e) {
                         deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
                         errorMessage = e.getMessage();
                         logger.error("Exception occurred", e);
                     }
-                }
-            }
 
-            this.sendCsarDeployNotification(resourceStructure, toscaResourceStructure, deployStatus, errorMessage);
+                    if (!hasVFResource) {
+
+                        logger.debug("No resources found for Service: " + iNotif.getServiceUUID());
+
+                        logger.debug("Preparing to deploy Service: {}", iNotif.getServiceUUID());
+                        try {
+                            this.deployResourceStructure(resourceStructure, toscaResourceStructure);
+                            serviceDeployed = true;
+                        } catch (ArtifactInstallerException e) {
+                            deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
+                            errorMessage = e.getMessage();
+                            logger.error("Exception occurred", e);
+                        }
+                    }
+                }
+
+                this.sendCsarDeployNotification(resourceStructure, toscaResourceStructure, deployStatus, errorMessage);
+            } else {
+                 logger.error("Service Model contains no resources.");
+            }
 
         } catch (ASDCDownloadException | UnsupportedEncodingException e) {
             logger.error(LoggingAnchor.SIX, MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
