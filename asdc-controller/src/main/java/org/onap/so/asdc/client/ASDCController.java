@@ -754,6 +754,12 @@ public class ASDCController {
             }
             // process NsstResource
             this.processNsstNotification(iNotif, toscaResourceStructure);
+
+            if (iNotif.getResources().isEmpty()) {
+                logger.error("Service Model contains no resources.");
+                return;
+            }
+
             for (IResourceInstance resource : iNotif.getResources()) {
 
                 String resourceType = resource.getResourceType();
