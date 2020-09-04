@@ -33,6 +33,7 @@ import org.onap.so.beans.nsmf.NssmfAdapterNBIRequest;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.marshal;
 import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.unMarshal;
 
@@ -48,29 +49,34 @@ public class ExternalAnNssmfManager extends ExternalNssmfManager {
 
     @Override
     protected void doAfterRequest() throws ApplicationException {
-        if (ActionType.ALLOCATE.equals(actionType) || ActionType.DEALLOCATE.equals(actionType)) {
+        String nssiId;
+
+        if (ActionType.ALLOCATE.equals(actionType)) {
             @SuppressWarnings("unchecked")
             Map<String, String> response = unMarshal(restResponse.getResponseContent(), Map.class);
-
-            String nssiId = response.get("nSSId");
-
-            NssiResponse resp = new NssiResponse();
-            resp.setJobId(nssiId);
-            resp.setNssiId(nssiId);
-
-            RestResponse returnRsp = new RestResponse();
-
-            returnRsp.setStatus(202);
-            returnRsp.setResponseContent(marshal(resp));
-            restResponse = returnRsp;
-
-            ResourceOperationStatus status =
-                    new ResourceOperationStatus(serviceInfo.getNsiId(), nssiId, serviceInfo.getServiceUuid());
-            status.setResourceInstanceID(nssiId);
-
-            updateDbStatus(status, restResponse.getStatus(), JobStatus.FINISHED,
-                    NssmfAdapterUtil.getStatusDesc(actionType));
+            nssiId = response.get("href");
+        } else if (ActionType.DEALLOCATE.equals(actionType)) {
+            nssiId = this.bodyParams.get("nssiId");
+        } else {
+            return;
         }
+
+        NssiResponse resp = new NssiResponse();
+        resp.setNssiId(nssiId);
+        resp.setJobId(UUID.randomUUID().toString());
+
+        RestResponse returnRsp = new RestResponse();
+        returnRsp.setStatus(202);
+        returnRsp.setResponseContent(marshal(resp));
+
+        restResponse = returnRsp;
+
+        ResourceOperationStatus status =
+                new ResourceOperationStatus(serviceInfo.getNsiId(), nssiId, serviceInfo.getServiceUuid());
+        status.setResourceInstanceID(nssiId);
+
+        updateDbStatus(status, restResponse.getStatus(), JobStatus.FINISHED,
+                NssmfAdapterUtil.getStatusDesc(actionType));
         // todo
     }
 
