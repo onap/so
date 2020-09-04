@@ -8,4 +8,11 @@
   </parent>
   <artifactId>so-etsi-nfvo-ns-lcm-bpmn-flows</artifactId>
   <name>SO ETSI NFVO NS LCM BPMN Flows</name>
+  <dependencies>
+    <dependency>
+      <groupId>org.onap.so.etsi.nfvo</groupId>
+      <artifactId>so-etsi-nfvo-ns-lcm-database-service</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
 </project>
