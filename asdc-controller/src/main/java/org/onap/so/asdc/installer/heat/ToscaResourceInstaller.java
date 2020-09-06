@@ -2472,7 +2472,9 @@ public class ToscaResourceInstaller {
             }
 
             if (!cnfResources.isEmpty()) {
-                cnfResourceRepo.saveAll(cnfResources);
+                List<CnfResource> cnfs = new ArrayList<>();
+                cnfs.addAll(cnfResources);
+                vfModule.setCnfResources(cnfs);
             }
 
 

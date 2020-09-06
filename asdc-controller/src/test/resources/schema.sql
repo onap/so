@@ -1002,6 +1002,25 @@ CREATE TABLE `vf_module_to_heat_files` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `vf_module_to_cnf_resources`
+--
+
+DROP TABLE IF EXISTS `vf_module_to_cnf_resources`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `vf_module_to_cnf_resources` (
+  `VF_MODULE_MODEL_UUID` varchar(200) NOT NULL,
+  `CNF_ARTIFACT_UUID` varchar(200) NOT NULL,
+  PRIMARY KEY (`VF_MODULE_MODEL_UUID`,`CNF_ARTIFACT_UUID`),
+  KEY `fk_vf_module_to_cnf_resources_cnf_resources__artifact_uuid1_idx` (`CNF_ARTIFACT_UUID`),
+  CONSTRAINT `fk_vf_module_to_cnf_resources_cnf_resources_artifact_uuid1` FOREIGN KEY (`CNF_ARTIFACT_UUID`) REFERENCES `cnf_resource` (`ARTIFACT_UUID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_vf_module_to_cnf_resources__vf_module__model_uuid1` FOREIGN KEY (`VF_MODULE_MODEL_UUID`) REFERENCES `vf_module` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='il fait ce qu''il dit';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+
+--
 -- Table structure for table `vnf_components`
 --
 
@@ -1685,7 +1704,6 @@ create table if not exists model (
 	CONSTRAINT uk1_model UNIQUE (`MODEL_TYPE`, `MODEL_VERSION_ID`),
 	FOREIGN KEY (`RECIPE`) REFERENCES `model_recipe` (`MODEL_ID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 
 
 

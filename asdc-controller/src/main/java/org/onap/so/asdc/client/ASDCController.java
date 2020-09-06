@@ -436,7 +436,6 @@ public class ASDCController {
 
     private void writeHelmArtifactToFile(IArtifactInfo artifact, IDistributionClientDownloadResult resultArtifact) {
 
-        // helmChartLocation = "/home/girmiti/Documents/check-download/";
         String filePath = helmChartLocation + artifact.getArtifactName();
 
         logger.info("Trying to write artifact UUID: {}, URL: {} to file: {}", artifact.getArtifactUUID(),

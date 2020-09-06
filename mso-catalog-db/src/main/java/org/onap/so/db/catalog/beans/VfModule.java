@@ -98,6 +98,10 @@ public class VfModule implements Serializable {
     @JoinColumn(name = "VNF_RESOURCE_MODEL_UUID")
     private VnfResource vnfResources;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "vf_module_to_cnf_resources", joinColumns = @JoinColumn(name = "VF_MODULE_MODEL_UUID"),
+            inverseJoinColumns = @JoinColumn(name = "CNF_ARTIFACT_UUID"))
+    private List<CnfResource> cnfResources;
 
     @Override
     public String toString() {
@@ -229,6 +233,16 @@ public class VfModule implements Serializable {
     public void setModuleHeatTemplate(HeatTemplate moduleHeatTemplate) {
         this.moduleHeatTemplate = moduleHeatTemplate;
     }
+
+    @LinkedResource
+    public List<CnfResource> getCnfResources() {
+        return cnfResources;
+    }
+
+    public void setCnfResources(List<CnfResource> cnfResources) {
+        this.cnfResources = cnfResources;
+    }
+
 
 
 }
