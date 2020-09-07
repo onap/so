@@ -22,7 +22,7 @@ spring:
             pool-name: ns-lcm-bpmn-pool
             registerMbeans: true
          nfvo:
-            jdbcUrl: jdbc:h2:mem:nfvo;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS nfvo;
+            jdbcUrl: jdbc:h2:mem:nfvo;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;INIT=CREATE SCHEMA IF NOT EXISTS nfvo;
             driver-class-name: org.h2.Driver
             pool-name: ns-lcm-bpmn-pool
             registerMbeans: true
