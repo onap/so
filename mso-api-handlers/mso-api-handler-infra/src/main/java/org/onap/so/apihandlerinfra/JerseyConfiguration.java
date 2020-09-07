@@ -64,6 +64,7 @@ public class JerseyConfiguration extends ResourceConfig {
         register(GlobalHealthcheckHandler.class);
         register(NodeHealthcheckHandler.class);
         register(ServiceInstances.class);
+        register(Onap3gppServiceInstances.class);
         register(TasksHandler.class);
         register(CloudOrchestration.class);
         register(CloudResourcesOrchestration.class);
