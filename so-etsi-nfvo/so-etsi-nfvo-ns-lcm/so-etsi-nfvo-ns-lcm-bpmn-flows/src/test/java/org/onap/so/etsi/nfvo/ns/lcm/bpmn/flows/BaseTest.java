@@ -60,6 +60,10 @@ public abstract class BaseTest {
     protected static final String GLOBAL_CUSTOMER_ID = UUID.randomUUID().toString();
     protected static final String NSD_INVARIANT_ID = UUID.randomUUID().toString();
     protected static final String SERVICE_TYPE = "NetworkService";
+    protected static final String UUID_REGEX =
+            "[0-9a-zA-Z]{8}\\-[0-9a-zA-Z]{4}\\-[0-9a-zA-Z]{4}\\-[0-9a-zA-Z]{4}\\-[0-9a-zA-Z]{12}";
+    protected static final String RANDOM_JOB_ID = UUID.randomUUID().toString();
+
     protected static final Logger logger = getLogger(BaseTest.class);
 
     private static final long TIME_OUT_IN_SECONDS = 60;

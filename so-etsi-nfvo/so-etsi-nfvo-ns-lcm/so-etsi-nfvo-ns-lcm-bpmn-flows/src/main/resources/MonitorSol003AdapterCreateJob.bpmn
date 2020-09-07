@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_12gnsyw" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.4.1">
+  <bpmn:process id="MonitorSol003AdapterCreateJob" name="MonitorSol003AdapterCreateJob" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>SequenceFlow_1x3tbl0</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="EndEvent_0rf1gde">
+      <bpmn:incoming>SequenceFlow_1543qy7</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:subProcess id="SubProcess_19j0v63">
+      <bpmn:incoming>SequenceFlow_1x3tbl0</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1v4yr3f</bpmn:outgoing>
+      <bpmn:startEvent id="StartEvent_01r97z2">
+        <bpmn:outgoing>SequenceFlow_0s1plu9</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:exclusiveGateway id="ExclusiveGateway_1hkl6yy" default="SequenceFlow_1vmxw9g">
+        <bpmn:incoming>SequenceFlow_153a3kp</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1vmxw9g</bpmn:outgoing>
+        <bpmn:outgoing>SequenceFlow_0is7myf</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:intermediateCatchEvent id="IntermediateCatchEvent_1besn3n" name="Wait between checks" camunda:asyncAfter="true">
+        <bpmn:incoming>SequenceFlow_1vmxw9g</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_0etw572</bpmn:outgoing>
+        <bpmn:timerEventDefinition id="TimerEventDefinition_0qgh11t">
+          <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT15S</bpmn:timeDuration>
+        </bpmn:timerEventDefinition>
+      </bpmn:intermediateCatchEvent>
+      <bpmn:endEvent id="EndEvent_1ohsce9">
+        <bpmn:incoming>SequenceFlow_0is7myf</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_0s1plu9" sourceRef="StartEvent_01r97z2" targetRef="ServiceTask_17jlnng" />
+      <bpmn:sequenceFlow id="SequenceFlow_0etw572" sourceRef="IntermediateCatchEvent_1besn3n" targetRef="ServiceTask_17jlnng" />
+      <bpmn:serviceTask id="ServiceTask_17jlnng" name="&#10;Get Current Operation Status&#10;" camunda:asyncAfter="true" camunda:expression="${MonitorSol003AdapterCreateJobTask.getCurrentOperationStatus(execution)}">
+        <bpmn:incoming>SequenceFlow_0etw572</bpmn:incoming>
+        <bpmn:incoming>SequenceFlow_0s1plu9</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_153a3kp</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:sequenceFlow id="SequenceFlow_1vmxw9g" sourceRef="ExclusiveGateway_1hkl6yy" targetRef="IntermediateCatchEvent_1besn3n" />
+      <bpmn:sequenceFlow id="SequenceFlow_0is7myf" sourceRef="ExclusiveGateway_1hkl6yy" targetRef="EndEvent_1ohsce9">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${MonitorSol003AdapterCreateJobTask.hasOperationFinished(execution)}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="SequenceFlow_153a3kp" sourceRef="ServiceTask_17jlnng" targetRef="ExclusiveGateway_1hkl6yy" />
+    </bpmn:subProcess>
+    <bpmn:endEvent id="EndEvent_1w3t3t0" name="Timeout Exception">
+      <bpmn:incoming>SequenceFlow_0bcgtzj</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_0fjecl3" />
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="BoundaryEvent_0xiabzp" name="Overall Wait" attachedToRef="SubProcess_19j0v63">
+      <bpmn:outgoing>SequenceFlow_1i1o9sh</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_10kqw61">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT3H</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1v4yr3f" sourceRef="SubProcess_19j0v63" targetRef="ServiceTask_1gms128" />
+    <bpmn:sequenceFlow id="SequenceFlow_1i1o9sh" sourceRef="BoundaryEvent_0xiabzp" targetRef="ServiceTask_1s87b92" />
+    <bpmn:sequenceFlow id="SequenceFlow_1x3tbl0" sourceRef="StartEvent_1" targetRef="SubProcess_19j0v63" />
+    <bpmn:serviceTask id="ServiceTask_1s87b92" name="&#10;Time Out Log Failure&#10;" camunda:asyncAfter="true" camunda:expression="${MonitorSol003AdapterCreateJobTask.timeOutLogFailue(execution)}">
+      <bpmn:incoming>SequenceFlow_1i1o9sh</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0bcgtzj</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0bcgtzj" sourceRef="ServiceTask_1s87b92" targetRef="EndEvent_1w3t3t0" />
+    <bpmn:serviceTask id="ServiceTask_1gms128" name="&#10;Check if operation was successful&#10;" camunda:asyncAfter="true" camunda:expression="${MonitorSol003AdapterCreateJobTask.checkIfOperationWasSuccessful(execution)}">
+      <bpmn:incoming>SequenceFlow_1v4yr3f</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1543qy7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1543qy7" sourceRef="ServiceTask_1gms128" targetRef="EndEvent_0rf1gde" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="MonitorSol003AdapterCreateJob">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="161" y="330" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0rf1gde_di" bpmnElement="EndEvent_0rf1gde">
+        <dc:Bounds x="1102" y="100" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_19j0v63_di" bpmnElement="SubProcess_19j0v63" isExpanded="true">
+        <dc:Bounds x="301" y="248" width="523" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1w3t3t0_di" bpmnElement="EndEvent_1w3t3t0">
+        <dc:Bounds x="1102" y="322" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1095" y="282" width="49" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_0xiabzp_di" bpmnElement="BoundaryEvent_0xiabzp">
+        <dc:Bounds x="806" y="322" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="794" y="361" width="61" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1v4yr3f_di" bpmnElement="SequenceFlow_1v4yr3f">
+        <di:waypoint x="563" y="248" />
+        <di:waypoint x="563" y="118" />
+        <di:waypoint x="923" y="118" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1i1o9sh_di" bpmnElement="SequenceFlow_1i1o9sh">
+        <di:waypoint x="842" y="340" />
+        <di:waypoint x="923" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_01r97z2_di" bpmnElement="StartEvent_01r97z2">
+        <dc:Bounds x="330" y="306" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1hkl6yy_di" bpmnElement="ExclusiveGateway_1hkl6yy" isMarkerVisible="true">
+        <dc:Bounds x="609" y="299" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_1besn3n_di" bpmnElement="IntermediateCatchEvent_1besn3n">
+        <dc:Bounds x="550" y="378" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="537" y="421" width="66" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1ohsce9_di" bpmnElement="EndEvent_1ohsce9">
+        <dc:Bounds x="722" y="306" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1x3tbl0_di" bpmnElement="SequenceFlow_1x3tbl0">
+        <di:waypoint x="197" y="348" />
+        <di:waypoint x="301" y="348" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_17jlnng_di" bpmnElement="ServiceTask_17jlnng">
+        <dc:Bounds x="425" y="284" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0s1plu9_di" bpmnElement="SequenceFlow_0s1plu9">
+        <di:waypoint x="366" y="324" />
+        <di:waypoint x="425" y="324" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0etw572_di" bpmnElement="SequenceFlow_0etw572">
+        <di:waypoint x="550" y="396" />
+        <di:waypoint x="486" y="396" />
+        <di:waypoint x="486" y="367" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1vmxw9g_di" bpmnElement="SequenceFlow_1vmxw9g">
+        <di:waypoint x="634" y="349" />
+        <di:waypoint x="634" y="396" />
+        <di:waypoint x="586" y="396" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0is7myf_di" bpmnElement="SequenceFlow_0is7myf">
+        <di:waypoint x="659" y="324" />
+        <di:waypoint x="722" y="324" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_153a3kp_di" bpmnElement="SequenceFlow_153a3kp">
+        <di:waypoint x="525" y="324" />
+        <di:waypoint x="609" y="324" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1s87b92_di" bpmnElement="ServiceTask_1s87b92">
+        <dc:Bounds x="923" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0bcgtzj_di" bpmnElement="SequenceFlow_0bcgtzj">
+        <di:waypoint x="1023" y="340" />
+        <di:waypoint x="1102" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1gms128_di" bpmnElement="ServiceTask_1gms128">
+        <dc:Bounds x="923" y="78" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1543qy7_di" bpmnElement="SequenceFlow_1543qy7">
+        <di:waypoint x="1023" y="118" />
+        <di:waypoint x="1102" y="118" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

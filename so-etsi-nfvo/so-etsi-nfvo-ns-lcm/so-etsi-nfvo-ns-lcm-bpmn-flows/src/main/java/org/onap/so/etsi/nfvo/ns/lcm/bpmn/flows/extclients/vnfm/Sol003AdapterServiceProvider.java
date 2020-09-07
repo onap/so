@@ -17,21 +17,18 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows;
 
-/**
- * @author Waqas Ikram (waqas.ikram@est.tech)
- *
- */
-public class Constants {
+package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.extclients.vnfm;
 
-    public static final String TENANT_ID = "ns-workflow-engine-tenant";
-    public static final String NS_WORKFLOW_ENGINE = "NS-WORKFLOW-ENGINE";
-    public static final String CREATE_NS_WORKFLOW_NAME = "CreateNs";
-    public static final String INSTANTIATE_NS_WORKFLOW_NAME = "InstantiateNs";
-    public static final String GET_NS_OCCURRENCE_OPERATION_STATUS_NAME = "GetNsOccurrenceOperationStatus";
+import java.util.Optional;
+import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.CreateVnfRequest;
+import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.CreateVnfResponse;
+import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.QueryJobResponse;
 
+public interface Sol003AdapterServiceProvider {
 
-    private Constants() {}
+    Optional<CreateVnfResponse> invokeCreateInstantiationRequest(final String vnfId, final CreateVnfRequest request);
+
+    Optional<QueryJobResponse> getInstantiateOperationJobStatus(final String jobId);
 
 }

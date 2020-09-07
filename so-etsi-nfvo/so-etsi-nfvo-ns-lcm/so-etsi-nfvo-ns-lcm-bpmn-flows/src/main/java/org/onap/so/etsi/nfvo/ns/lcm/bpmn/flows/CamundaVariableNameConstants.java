@@ -43,6 +43,10 @@ public class CamundaVariableNameConstants {
     public static final String NETWORK_SERVICE_DESCRIPTOR_PARAM_NAME = "NetworkServiceDescriptor";
     public static final String VNF_CREATE_INSTANTIATE_REQUESTS = "vnfCreateInstantiateRequests";
 
+    public static final String NF_INST_ID_PARAM_NAME = "NF_INST_ID";
+    public static final String CREATE_VNF_RESPONSE_PARAM_NAME = "createVnfResponse";
+    public static final String OPERATION_STATUS_PARAM_NAME = "operationStatus";
+
     private CamundaVariableNameConstants() {}
 
 }

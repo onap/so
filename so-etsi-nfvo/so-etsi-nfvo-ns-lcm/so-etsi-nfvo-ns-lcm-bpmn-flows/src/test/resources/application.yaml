@@ -43,6 +43,7 @@ etsi-catalog-manager:
 so-etsi-ns-lcm-workflow-engine:
    requesttimeout:
       timeoutInSeconds: 10
+
 logging:
    level:
       org.reflections.Reflections: ERROR

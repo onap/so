@@ -24,7 +24,6 @@ package org.onap.so.adapters.etsisol003adapter.lcm.extclients;
 
 import static com.google.common.base.Splitter.on;
 import static com.google.common.collect.Iterables.filter;
-import static java.lang.String.format;
 import static org.onap.so.adapters.etsisol003adapter.lcm.NvfmAdapterUtils.abortOperation;
 import static org.onap.so.adapters.etsisol003adapter.lcm.NvfmAdapterUtils.child;
 import static org.onap.so.adapters.etsisol003adapter.lcm.NvfmAdapterUtils.childElement;
@@ -113,8 +112,8 @@ public class EtsiPackageProvider {
     }
 
     private byte[] getPackage(final String csarId) {
-        final Optional<byte[]> optional = etsiCatalogServiceProviderImpl.getVnfPackageContent(csarId);
         try {
+            final Optional<byte[]> optional = etsiCatalogServiceProviderImpl.getVnfPackageContent(csarId);
             if (optional.isPresent()) {
                 return optional.get();
             }
