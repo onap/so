@@ -24,7 +24,6 @@ package org.onap.so.adapters.etsisol003adapter.lcm.extclients;
 
 import static com.google.common.base.Splitter.on;
 import static com.google.common.collect.Iterables.filter;
-import static java.lang.String.format;
 import static org.onap.so.adapters.etsisol003adapter.lcm.NvfmAdapterUtils.abortOperation;
 import static org.onap.so.adapters.etsisol003adapter.lcm.NvfmAdapterUtils.child;
 import static org.onap.so.adapters.etsisol003adapter.lcm.NvfmAdapterUtils.childElement;
@@ -115,15 +114,18 @@ public class EtsiPackageProvider {
     private byte[] getPackage(final String csarId) {
         final Optional<byte[]> optional = etsiCatalogServiceProviderImpl.getVnfPackageContent(csarId);
         try {
-            if (optional.isPresent()) {
-                return optional.get();
-            }
+            return optional.orElseThrow(() -> {
+                final String message = "Unable to retrieve package from ETSI Catalog Manager using pkgId: " + csarId
+                        + " Value is not present";
+                logger.error(message);
+                throw new EtsiCatalogManagerRequestFailureException(message);
+            });
         } catch (final Exception exception) {
-            logger.error("Unable to retrieve package from ETSI Catalog Manager using pkgId: {}", csarId);
-            throw new EtsiCatalogManagerRequestFailureException("Value is not present", exception);
+            final String message = "Unable to retrieve package from ETSI Catalog Manager using pkgId: " + csarId;
+            logger.error(message);
+            throw new EtsiCatalogManagerRequestFailureException(message, exception);
         }
-        logger.error("Unable to retrieve package from ETSI Catalog Manager using pkgId: {}", csarId);
-        throw new EtsiCatalogManagerRequestFailureException("Value is not present");
+
     }
 
     private String getVnfdLocation(final InputStream stream) throws IOException {
