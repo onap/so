@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.google.common.base.Optional;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * Manages lifecycle operations towards the VNFMs.
@@ -152,15 +153,16 @@ public class LifecycleManager {
         }
     }
 
-    private InlineResponse201 sendCreateRequestToVnfm(final CreateVnfRequest aaiRequest, final GenericVnf genericVnf,
-            final String vnfIdInAai, final EsrVnfm vnfm) {
-        logger.debug("Sending a create request to SVNFM " + aaiRequest);
+    private InlineResponse201 sendCreateRequestToVnfm(final CreateVnfRequest createVnfRequest,
+            final GenericVnf genericVnf, final String vnfIdInAai, final EsrVnfm vnfm) {
+        logger.debug("Sending a create request to SVNFM {}", createVnfRequest);
         final org.onap.so.adapters.etsisol003adapter.lcm.extclients.vnfm.model.CreateVnfRequest vnfmRequest =
                 new org.onap.so.adapters.etsisol003adapter.lcm.extclients.vnfm.model.CreateVnfRequest();
 
-        final String vnfdId = packageProvider.getVnfdId(genericVnf.getModelVersionId());
+        final String pkgId = getPackageId(createVnfRequest, genericVnf);
+        final String vnfdId = packageProvider.getVnfdId(pkgId);
         vnfmRequest.setVnfdId(vnfdId);
-        vnfmRequest.setVnfInstanceName(aaiRequest.getName().replaceAll(" ", "_"));
+        vnfmRequest.setVnfInstanceName(createVnfRequest.getName().replaceAll(" ", "_"));
         vnfmRequest.setVnfInstanceDescription(vnfIdInAai);
 
         final Optional<InlineResponse201> optionalResponse = vnfmServiceProvider.createVnf(vnfm, vnfmRequest);
@@ -172,6 +174,15 @@ public class LifecycleManager {
             logger.error(errorMessage, exception);
             throw new VnfmRequestFailureException(errorMessage, exception);
         }
+    }
+
+    private String getPackageId(final CreateVnfRequest createVnfRequest, final GenericVnf genericVnf) {
+        if (isNotBlank(createVnfRequest.getPkgId())) {
+            logger.info("Found createVnfRequest pkgId: {}", createVnfRequest.getPkgId());
+            return createVnfRequest.getPkgId();
+        }
+        logger.info("Found genericVnf modelVersionId: {}", genericVnf.getModelVersionId());
+        return genericVnf.getModelVersionId();
     }
 
     private void createNotificationSubscription(final EsrVnfm vnfm, final String vnfId) {
