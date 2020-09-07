@@ -168,6 +168,9 @@ definitions:
         description: The name to be applied to the VNF.
       tenant:
         $ref: '#/definitions/Tenant'
+      pkgId:
+        type: string
+        description: An identifier for the vnf package.
       additionalParams:
         type: object
         description: >-
