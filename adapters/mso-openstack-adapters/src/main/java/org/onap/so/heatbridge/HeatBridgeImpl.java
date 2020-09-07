@@ -508,13 +508,14 @@ public class HeatBridgeImpl implements HeatBridgeApi {
         }
     }
 
-    private void updateLInterfaceIps(final Port port, final LInterface lIf) {
+    protected void updateLInterfaceIps(final Port port, final LInterface lIf) {
         for (IP ip : port.getFixedIps()) {
             String ipAddress = ip.getIpAddress();
             if (InetAddressValidator.getInstance().isValidInet4Address(ipAddress)) {
                 Subnet subnet = osClient.getSubnetById(ip.getSubnetId());
                 IPAddressString cidr = new IPAddressString(subnet.getCidr());
                 L3InterfaceIpv4AddressList lInterfaceIp = new L3InterfaceIpv4AddressList();
+                lInterfaceIp.setIsFloating(false);
                 lInterfaceIp.setL3InterfaceIpv4Address(ipAddress);
                 lInterfaceIp.setNeutronNetworkId(port.getNetworkId());
                 lInterfaceIp.setNeutronSubnetId(ip.getSubnetId());
@@ -529,6 +530,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                 Subnet subnet = osClient.getSubnetById(ip.getSubnetId());
                 IPAddressString cidr = new IPAddressString(subnet.getCidr());
                 L3InterfaceIpv6AddressList ipv6 = new L3InterfaceIpv6AddressList();
+                ipv6.setIsFloating(false);
                 ipv6.setL3InterfaceIpv6Address(ipAddress);
                 ipv6.setNeutronNetworkId(port.getNetworkId());
                 ipv6.setNeutronSubnetId(ip.getSubnetId());

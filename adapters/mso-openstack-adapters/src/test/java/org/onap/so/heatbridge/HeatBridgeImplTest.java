@@ -32,9 +32,12 @@
  */
 package org.onap.so.heatbridge;
 
+import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -65,6 +68,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.aai.domain.yang.L3InterfaceIpv6AddressList;
 import org.onap.aai.domain.yang.LInterface;
 import org.onap.aai.domain.yang.PInterface;
 import org.onap.aai.domain.yang.SriovPf;
@@ -73,6 +77,8 @@ import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.AAISingleTransactionClient;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
 import org.onap.aaiclient.client.graphinventory.exceptions.BulkProcessFailed;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.heatbridge.constants.HeatBridgeConstants;
@@ -93,8 +99,11 @@ import org.openstack4j.model.network.Subnet;
 import org.openstack4j.openstack.heat.domain.HeatResource;
 import org.openstack4j.openstack.heat.domain.HeatResource.Resources;
 import org.springframework.core.env.Environment;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
+import inet.ipaddr.IPAddressString;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -526,6 +535,54 @@ public class HeatBridgeImplTest {
         // Assert #2
         verify(transaction, times(4)).createIfNotExists(any(AAIResourceUri.class), any(Optional.class));
 
+    }
+
+    @Test
+    public void testUpdateLInterfaceIps()
+            throws HeatBridgeException, JsonParseException, JsonMappingException, IOException {
+
+        Port port = mock(Port.class);
+        when(port.getNetworkId()).thenReturn("890a203a-23gg-56jh-df67-731656a8f13a");
+        when(port.getDeviceId()).thenReturn("test-device-id");
+
+        IP ip = mock(IP.class);
+
+        Set<IP> ipSet = new HashSet<>();
+        ipSet.add(ip);
+        when(ip.getIpAddress()).thenReturn("2606:ae00:2e60:100::226");
+        when(ip.getSubnetId()).thenReturn("testSubnetId");
+        when(port.getFixedIps()).thenAnswer(x -> ipSet);
+
+        Subnet subnet = mock(Subnet.class);
+        when(subnet.getCidr()).thenReturn("169.254.100.0/24");
+        when(osClient.getSubnetById("testSubnetId")).thenReturn(subnet);
+
+        LInterface lIf = new LInterface();
+        lIf.setInterfaceName("test-port-name");
+
+        // Act
+        heatbridge.updateLInterfaceIps(port, lIf);
+
+        L3InterfaceIpv6AddressList ipv6 = new L3InterfaceIpv6AddressList();
+        ipv6.setIsFloating(false);
+        ipv6.setL3InterfaceIpv6Address("2606:ae00:2e60:100::226");
+        ipv6.setNeutronNetworkId(port.getNetworkId());
+        ipv6.setNeutronSubnetId(ip.getSubnetId());
+        ipv6.setL3InterfaceIpv6PrefixLength(Long.parseLong("24"));
+
+        ArgumentCaptor<Optional> argument = ArgumentCaptor.forClass(Optional.class);
+
+        // Assert
+        verify(transaction).createIfNotExists(
+                eq(AAIUriFactory.createResourceUri(
+                        AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion("CloudOwner", "RegionOne")
+                                .tenant("7320ec4a5b9d4589ba7c4412ccfd290f").vserver("test-device-id")
+                                .lInterface("test-port-name").l3InterfaceIpv6AddressList("2606:ae00:2e60:100::226"))),
+                argument.capture());
+
+        assertTrue(argument.getValue().isPresent());
+
+        assertThat((L3InterfaceIpv6AddressList) argument.getValue().get(), sameBeanAs(ipv6));
     }
 
     @Test
