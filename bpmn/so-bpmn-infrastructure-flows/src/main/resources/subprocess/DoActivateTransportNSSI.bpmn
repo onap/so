@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wio50w" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.1.1">
+  <bpmn:process id="DoActivateTransportNSSI" name="DoActivateTransportNSSI" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1nbljfd" name="Create Activate/Deactivate TN NSSMF Work Flow">
+      <bpmn:outgoing>SequenceFlow_03s744c</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:subProcess id="SubProcess_1yv9i68" name="Sub-process for FalloutHandler and Rollback" triggeredByEvent="true">
+      <bpmn:startEvent id="StartEvent_1omdx56">
+        <bpmn:outgoing>SequenceFlow_1w67v6s</bpmn:outgoing>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_06xcioh" />
+      </bpmn:startEvent>
+      <bpmn:endEvent id="EndEvent_1jx3026">
+        <bpmn:incoming>SequenceFlow_08mlzwz</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:scriptTask id="ScriptTask_1swzdpw" name="Handle Unexpected Error" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_1w67v6s</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_08mlzwz</bpmn:outgoing>
+        <bpmn:script>import org.onap.so.bpmn.common.scripts.*
+ExceptionUtil ex = new ExceptionUtil()
+ex.processJavaException(execution)</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="SequenceFlow_1w67v6s" sourceRef="StartEvent_1omdx56" targetRef="ScriptTask_1swzdpw" />
+      <bpmn:sequenceFlow id="SequenceFlow_08mlzwz" sourceRef="ScriptTask_1swzdpw" targetRef="EndEvent_1jx3026" />
+    </bpmn:subProcess>
+    <bpmn:endEvent id="EndEvent_05h01gx" name="End">
+      <bpmn:incoming>Flow_1032bi1</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:scriptTask id="ScriptTask_1ssh2l9" name="Prepare Update Resource Oper Status((finish)" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0kixzdj</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1qv8qw1</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def runScript = new DoActivateTnNssi()
+runScript.prepareUpdateJobStatus(execution,"finished","100","Activate or Deactivate successfully")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_03s744c" sourceRef="StartEvent_1nbljfd" targetRef="ScriptTask_1tc44ge" />
+    <bpmn:sequenceFlow id="SequenceFlow_1qv8qw1" sourceRef="ScriptTask_1ssh2l9" targetRef="Activity_0nhxd67" />
+    <bpmn:scriptTask id="ScriptTask_19uxoi8" name="Update AAI Status" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1jdb2oq</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0kixzdj</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def actionType = execution.getVariable("actionType")
+execution.setVariable("orchestrationStatus", actionType)
+def runScript = new DoActivateTnNssi()
+runScript.updateAAIOrchStatus(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0kixzdj" sourceRef="ScriptTask_19uxoi8" targetRef="ScriptTask_1ssh2l9" />
+    <bpmn:scriptTask id="Activity_1tw8eyy" name="PreProcess SDNC Activate or Deactivate TN NSSI Request" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_07e12rt</bpmn:incoming>
+      <bpmn:outgoing>Flow_0cpctye</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def runScript = new DoActivateTnNssi()
+runScript.preprocessSdncActOrDeactTnNssiRequest(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0cpctye" sourceRef="Activity_1tw8eyy" targetRef="Activity_0p20esb" />
+    <bpmn:callActivity id="Activity_0p20esb" name="Call SDNC Adapter: Activate/Deactivate TN NSSI" calledElement="sdncAdapter">
+      <bpmn:extensionElements>
+        <camunda:in source="DCVFM_assignSDNCRequest" target="sdncAdapterWorkflowRequest" />
+        <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
+        <camunda:in source="mso-request-id" target="mso-request-id" />
+        <camunda:in source="mso-service-instance-id" target="mso-service-instance-id" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:out source="sdncAdapterResponse" target="DCVFM_assignSDNCAdapterResponse" />
+        <camunda:out source="SDNCA_SuccessIndicator" target="SDNCA_SuccessIndicator" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0cpctye</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fuabjs</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_0fuabjs" sourceRef="Activity_0p20esb" targetRef="Activity_0phv8e5" />
+    <bpmn:scriptTask id="Activity_0phv8e5" name="Postprocess SDNC Activate/Deactivate TN NSSI  Request" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0fuabjs</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1jdb2oq</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+
+String response = execution.getVariable("DCVFM_assignSDNCAdapterResponse")
+
+def runScript = new DoActivateTnNssi()
+runScript.validateSDNCResponse(execution, response)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1jdb2oq" sourceRef="Activity_0phv8e5" targetRef="ScriptTask_19uxoi8" />
+    <bpmn:scriptTask id="ScriptTask_1tc44ge" name="PreProcess Incoming Request" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_03s744c</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_07e12rt</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def runScript = new DoActivateTnNssi()
+runScript.preProcessRequest(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_07e12rt" sourceRef="ScriptTask_1tc44ge" targetRef="Activity_1tw8eyy" />
+    <bpmn:serviceTask id="Activity_0nhxd67" name="Update Resource Operation Status">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
+                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">${updateResourceOperationStatus}</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
+            <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1qv8qw1</bpmn:incoming>
+      <bpmn:outgoing>Flow_1032bi1</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1032bi1" sourceRef="Activity_0nhxd67" targetRef="EndEvent_05h01gx" />
+  </bpmn:process>
+  <bpmn:message id="Message_0c4b2r5" name="SliceServiceTask" />
+  <bpmn:error id="Error_03akl5v" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
+  <bpmn:error id="Error_0p2naox" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoActivateTransportNSSI">
+      <bpmndi:BPMNEdge id="SequenceFlow_07e12rt_di" bpmnElement="SequenceFlow_07e12rt">
+        <di:waypoint x="385" y="121" />
+        <di:waypoint x="509" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jdb2oq_di" bpmnElement="SequenceFlow_1jdb2oq">
+        <di:waypoint x="1080" y="121" />
+        <di:waypoint x="1220" y="121" />
+        <di:waypoint x="1220" y="210" />
+        <di:waypoint x="335" y="210" />
+        <di:waypoint x="335" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fuabjs_di" bpmnElement="Flow_0fuabjs">
+        <di:waypoint x="850" y="121" />
+        <di:waypoint x="959" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cpctye_di" bpmnElement="Flow_0cpctye">
+        <di:waypoint x="630" y="121" />
+        <di:waypoint x="729" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0kixzdj_di" bpmnElement="SequenceFlow_0kixzdj">
+        <di:waypoint x="385" y="350" />
+        <di:waypoint x="530" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1qv8qw1_di" bpmnElement="SequenceFlow_1qv8qw1">
+        <di:waypoint x="630" y="350" />
+        <di:waypoint x="740" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_03s744c_di" bpmnElement="SequenceFlow_03s744c">
+        <di:waypoint x="214" y="121" />
+        <di:waypoint x="285" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1032bi1_di" bpmnElement="Flow_1032bi1">
+        <di:waypoint x="840" y="350" />
+        <di:waypoint x="1002" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_1nbljfd_di" bpmnElement="StartEvent_1nbljfd">
+        <dc:Bounds x="178" y="103" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="163" y="146" width="81" height="53" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0nhxd67_di" bpmnElement="Activity_0nhxd67">
+        <dc:Bounds x="740" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_1yv9i68_di" bpmnElement="SubProcess_1yv9i68" isExpanded="true">
+        <dc:Bounds x="685" y="1080" width="781" height="196" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_08mlzwz_di" bpmnElement="SequenceFlow_08mlzwz">
+        <di:waypoint x="1079" y="1184" />
+        <di:waypoint x="1353" y="1184" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1w67v6s_di" bpmnElement="SequenceFlow_1w67v6s">
+        <di:waypoint x="751" y="1184" />
+        <di:waypoint x="979" y="1184" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_1omdx56_di" bpmnElement="StartEvent_1omdx56">
+        <dc:Bounds x="715" y="1166" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1jx3026_di" bpmnElement="EndEvent_1jx3026">
+        <dc:Bounds x="1353" y="1166" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1swzdpw_di" bpmnElement="ScriptTask_1swzdpw">
+        <dc:Bounds x="979" y="1144" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_05h01gx_di" bpmnElement="EndEvent_05h01gx">
+        <dc:Bounds x="1002" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1010" y="375" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1ssh2l9_di" bpmnElement="ScriptTask_1ssh2l9">
+        <dc:Bounds x="530" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_19uxoi8_di" bpmnElement="ScriptTask_19uxoi8">
+        <dc:Bounds x="285" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1tw8eyy_di" bpmnElement="Activity_1tw8eyy">
+        <dc:Bounds x="509" y="74" width="121" height="94" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0p20esb_di" bpmnElement="Activity_0p20esb">
+        <dc:Bounds x="729" y="74" width="121" height="94" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0phv8e5_di" bpmnElement="Activity_0phv8e5">
+        <dc:Bounds x="959" y="74" width="121" height="94" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1tc44ge_di" bpmnElement="ScriptTask_1tc44ge">
+        <dc:Bounds x="285" y="81" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
