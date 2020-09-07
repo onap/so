@@ -33,11 +33,14 @@ import org.onap.so.beans.nsmf.NssmfAdapterNBIRequest;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.marshal;
 import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.unMarshal;
 
 
 public class ExternalAnNssmfManager extends ExternalNssmfManager {
+
+    private Map<String, String> bodyParams = new HashMap<>(); // request body params
 
     @Override
     protected String doWrapExtAllocateReqBody(NssmfAdapterNBIRequest nbiRequest) throws ApplicationException {
@@ -49,13 +52,17 @@ public class ExternalAnNssmfManager extends ExternalNssmfManager {
     @Override
     protected void doAfterRequest() throws ApplicationException {
         if (ActionType.ALLOCATE.equals(actionType) || ActionType.DEALLOCATE.equals(actionType)) {
-            @SuppressWarnings("unchecked")
-            Map<String, String> response = unMarshal(restResponse.getResponseContent(), Map.class);
-
-            String nssiId = response.get("nSSId");
+            String nssiId;
+            if (ActionType.ALLOCATE.equals(actionType)) {
+                @SuppressWarnings("unchecked")
+                Map<String, String> response = unMarshal(restResponse.getResponseContent(), Map.class);
+                nssiId = response.get("href");
+            } else {
+                nssiId = this.bodyParams.get("nssiId");
+            }
 
             NssiResponse resp = new NssiResponse();
-            resp.setJobId(nssiId);
+            resp.setJobId(UUID.randomUUID().toString());
             resp.setNssiId(nssiId);
 
             RestResponse returnRsp = new RestResponse();
@@ -82,6 +89,9 @@ public class ExternalAnNssmfManager extends ExternalNssmfManager {
 
     @Override
     protected String doWrapDeAllocateReqBody(DeAllocateNssi deAllocateNssi) throws ApplicationException {
+        this.bodyParams.clear();
+        this.bodyParams.put("nssiId", deAllocateNssi.getNssiId());
+
         Map<String, String> request = new HashMap<>();
         request.put("nSSId", deAllocateNssi.getNssiId());
         return marshal(request);
