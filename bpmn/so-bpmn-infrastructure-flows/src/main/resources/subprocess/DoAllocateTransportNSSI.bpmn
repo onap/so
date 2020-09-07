@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wio50w" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.1.1">
+  <bpmn:process id="DoAllocateTransportNSSI" name="DoAllocateTransportNSSI" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1nbljfd" name="Create Allocate TN NSSMF Work Flow">
+      <bpmn:outgoing>SequenceFlow_03s744c</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:intermediateCatchEvent id="IntermediateCatchEvent_0vilb24" name="OOF TN NSSI Selection">
+      <bpmn:outgoing>SequenceFlow_1fk37v7</bpmn:outgoing>
+      <bpmn:linkEventDefinition id="LinkEventDefinition_197u5pe" name="OofTnNssiSelect" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:scriptTask id="ScriptTask_1tc44ge" name="PreProcess Incoming Request" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_03s744c</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_07e12rt</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def css= new TnAllocateNssi()
+css.preProcessRequest(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="ScriptTask_1jgtb0y" name="Process OOF Selection" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1cv0wop</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_197cm2e</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def css = new TnAllocateNssi()
+css.processOofSelection(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0elbczl" name="Use Existing TN NSSI?" default="SequenceFlow_038lb9m">
+      <bpmn:incoming>SequenceFlow_197cm2e</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_12t5exy</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_038lb9m</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:scriptTask id="ScriptTask_0l3d1ai" name="Process Decomposition" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1t19ips</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0jrclmc</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def css = new TnAllocateNssi()
+css.processDecomposition(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_18eld2o" name="Is Allocation Successful?" default="SequenceFlow_1c6ka9h">
+      <bpmn:incoming>SequenceFlow_0mlrlbv</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1c6ka9h</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0n4xku8</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="EndEvent_0x406rw">
+      <bpmn:incoming>SequenceFlow_1c6ka9h</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0mlneuw" errorRef="Error_03akl5v" />
+    </bpmn:endEvent>
+    <bpmn:subProcess id="SubProcess_1yv9i68" name="Sub-process for FalloutHandler and Rollback" triggeredByEvent="true">
+      <bpmn:startEvent id="StartEvent_1omdx56">
+        <bpmn:outgoing>SequenceFlow_1w67v6s</bpmn:outgoing>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_06xcioh" />
+      </bpmn:startEvent>
+      <bpmn:endEvent id="EndEvent_1jx3026">
+        <bpmn:incoming>SequenceFlow_08mlzwz</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:scriptTask id="ScriptTask_1swzdpw" name="Handle Unexpected Error" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_1w67v6s</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_08mlzwz</bpmn:outgoing>
+        <bpmn:script>import org.onap.so.bpmn.common.scripts.*
+ExceptionUtil ex = new ExceptionUtil()
+ex.processJavaException(execution)</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="SequenceFlow_1w67v6s" sourceRef="StartEvent_1omdx56" targetRef="ScriptTask_1swzdpw" />
+      <bpmn:sequenceFlow id="SequenceFlow_08mlzwz" sourceRef="ScriptTask_1swzdpw" targetRef="EndEvent_1jx3026" />
+    </bpmn:subProcess>
+    <bpmn:endEvent id="EndEvent_05h01gx" name="End">
+      <bpmn:incoming>SequenceFlow_11rbv41</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:scriptTask id="ScriptTask_1xxag1o" name="Prepare Init Service Operation Status" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_07e12rt</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0t094g7</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def css = new TnAllocateNssi()
+css.prepareInitServiceOperationStatus(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_1ex8ke9" name="Goto OOF TN NSSI Selection">
+      <bpmn:incoming>SequenceFlow_0jrclmc</bpmn:incoming>
+      <bpmn:linkEventDefinition id="LinkEventDefinition_0de65en" name="OofTnNssiSelect" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:scriptTask id="ScriptTask_1ssh2l9" name="Prepare Update Resource Oper Status((finish)" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0kixzdj</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1qv8qw1</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+execution.setVariable("operationProgress", "100")
+execution.setVariable("operationResult", "finished")
+execution.setVariable("operationReason", "TNAllocateNssi completed")
+def css = new TnAllocateNssi()
+css.prepareUpdateResourceOperationStatus(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="ServiceTask_0kd6p6p" name="Update Service Operation Status">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${CSSOS_dbAdapterEndpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:script scriptFormat="groovy">execution.getVariable("CSSOS_headerMap")</camunda:script>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">${CSSOS_updateServiceOperStatusRequest}</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:outputParameter name="CSSOS_dbResponseCode">${statusCode}</camunda:outputParameter>
+            <camunda:outputParameter name="CSSOS_dbResponse">${response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0t094g7</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_046irye</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:callActivity id="CallActivity_1bnkmaz" name="Call Decompose Service" calledElement="DecomposeService">
+      <bpmn:extensionElements>
+        <camunda:in source="msoRequestId" target="msoRequestId" />
+        <camunda:in source="tnNssiId" target="serviceInstanceId" />
+        <camunda:in source="serviceModelInfo" target="serviceModelInfo" />
+        <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
+        <camunda:out source="serviceDecomposition" target="sliceServiceDecomposition" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0q7yc2c</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1t19ips</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:scriptTask id="ScriptTask_0o2r07o" name="Prepare&#10;Decompose&#10;Service&#10;" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_046irye</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0q7yc2c</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def dcsi= new TnAllocateNssi()
+dcsi.prepareDecomposeService(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="ScriptTask_08wim95" name="Prepare OOF TN NSSI Selection" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1fk37v7</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0h2oree</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def css = new TnAllocateNssi()
+css.prepareOofSelection(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:intermediateCatchEvent id="IntermediateCatchEvent_0pkvfun" name="Allocate TN NSSI">
+      <bpmn:outgoing>SequenceFlow_1bevt3a</bpmn:outgoing>
+      <bpmn:linkEventDefinition id="LinkEventDefinition_1vlfclx" name="TnAllocateNssi" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_0ktwpki" name="Goto Allocate TN NSSI">
+      <bpmn:incoming>SequenceFlow_12t5exy</bpmn:incoming>
+      <bpmn:linkEventDefinition id="LinkEventDefinition_16f2ri9" name="TnAllocateNssi" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:endEvent id="EndEvent_1oouvuh" name="End">
+      <bpmn:incoming>Flow_0wx6dks</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="ServiceTask_0esr949" name="Update Service Operation Status">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${CSSOS_dbAdapterEndpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:script scriptFormat="groovy">execution.getVariable("CSSOS_headerMap")</camunda:script>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">${CSSOS_updateServiceOperStatusRequest}</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:outputParameter name="CSSOS_dbResponseCode">${statusCode}</camunda:outputParameter>
+            <camunda:outputParameter name="CSSOS_dbResponse">${response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1qv8qw1</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_11rbv41</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:callActivity id="CallActivity_0cxst1i" name="Call DoCreateTnNssiInstance&#10;" calledElement="DoCreateTnNssiInstance">
+      <bpmn:extensionElements>
+        <camunda:in source="msoRequestId" target="msoRequestId" />
+        <camunda:in source="tnNssiId" target="sliceServiceInstanceId" />
+        <camunda:in source="modelInvariantUuid" target="modelInvariantUuid" />
+        <camunda:in source="modelUuid" target="modelUuid" />
+        <camunda:in source="serviceInstanceName" target="sliceServiceInstanceName" />
+        <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
+        <camunda:in source="subscriptionServiceType" target="subscriptionServiceType" />
+        <camunda:in source="operationId" target="operationId" />
+        <camunda:in source="sliceProfile" target="sliceProfile" />
+        <camunda:in source="transportSliceNetworks" target="transportSliceNetworks" />
+        <camunda:in source="nsiInfo" target="nsiInfo" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:out source="rollbackData" target="rollbackData" />
+        <camunda:out source="rolledBack" target="rolledBack" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1bevt3a</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0mlrlbv</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_03s744c" sourceRef="StartEvent_1nbljfd" targetRef="ScriptTask_1tc44ge" />
+    <bpmn:sequenceFlow id="SequenceFlow_07e12rt" sourceRef="ScriptTask_1tc44ge" targetRef="ScriptTask_1xxag1o" />
+    <bpmn:sequenceFlow id="SequenceFlow_1cv0wop" sourceRef="Activity_187hs2t" targetRef="ScriptTask_1jgtb0y" />
+    <bpmn:sequenceFlow id="SequenceFlow_197cm2e" sourceRef="ScriptTask_1jgtb0y" targetRef="ExclusiveGateway_0elbczl" />
+    <bpmn:sequenceFlow id="SequenceFlow_12t5exy" name="No" sourceRef="ExclusiveGateway_0elbczl" targetRef="IntermediateThrowEvent_0ktwpki">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("oofTnNssi") == null}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_038lb9m" name="Yes" sourceRef="ExclusiveGateway_0elbczl" targetRef="Activity_1mh10j4" />
+    <bpmn:sequenceFlow id="SequenceFlow_1t19ips" sourceRef="CallActivity_1bnkmaz" targetRef="ScriptTask_0l3d1ai" />
+    <bpmn:sequenceFlow id="SequenceFlow_0mlrlbv" sourceRef="CallActivity_0cxst1i" targetRef="ExclusiveGateway_18eld2o" />
+    <bpmn:sequenceFlow id="SequenceFlow_1c6ka9h" name="No" sourceRef="ExclusiveGateway_18eld2o" targetRef="EndEvent_0x406rw" />
+    <bpmn:sequenceFlow id="SequenceFlow_0n4xku8" name="Yes" sourceRef="ExclusiveGateway_18eld2o" targetRef="ScriptTask_19uxoi8">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("WorkflowException") == null}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_11rbv41" sourceRef="ServiceTask_0esr949" targetRef="EndEvent_05h01gx" />
+    <bpmn:sequenceFlow id="SequenceFlow_0t094g7" sourceRef="ScriptTask_1xxag1o" targetRef="ServiceTask_0kd6p6p" />
+    <bpmn:sequenceFlow id="SequenceFlow_1qv8qw1" sourceRef="ScriptTask_1ssh2l9" targetRef="ServiceTask_0esr949" />
+    <bpmn:sequenceFlow id="SequenceFlow_0q7yc2c" sourceRef="ScriptTask_0o2r07o" targetRef="CallActivity_1bnkmaz" />
+    <bpmn:sequenceFlow id="SequenceFlow_0h2oree" sourceRef="ScriptTask_08wim95" targetRef="Activity_187hs2t" />
+    <bpmn:sequenceFlow id="SequenceFlow_1bevt3a" sourceRef="IntermediateCatchEvent_0pkvfun" targetRef="CallActivity_0cxst1i" />
+    <bpmn:sequenceFlow id="SequenceFlow_1fk37v7" sourceRef="IntermediateCatchEvent_0vilb24" targetRef="ScriptTask_08wim95" />
+    <bpmn:sequenceFlow id="SequenceFlow_046irye" sourceRef="ServiceTask_0kd6p6p" targetRef="ScriptTask_0o2r07o" />
+    <bpmn:sequenceFlow id="SequenceFlow_0jrclmc" sourceRef="ScriptTask_0l3d1ai" targetRef="IntermediateThrowEvent_1ex8ke9" />
+    <bpmn:scriptTask id="ScriptTask_19uxoi8" name="Update AAI Status" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0n4xku8</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0kixzdj</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+execution.setVariable("orchestrationStatus", "deactivated")
+def css = new TnAllocateNssi()
+css.updateAAIOrchStatus(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0kixzdj" sourceRef="ScriptTask_19uxoi8" targetRef="ScriptTask_1ssh2l9" />
+    <bpmn:scriptTask id="Activity_1mh10j4" name="Prepare Update Resource Oper Status(finish)" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_038lb9m</bpmn:incoming>
+      <bpmn:outgoing>Flow_1853sgs</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+execution.setVariable("operationProgress", "100")
+execution.setVariable("operationResult", "finished")
+execution.setVariable("operationReason", "TN NSSI Allocate completed")
+def css = new TnAllocateNssi()
+css.prepareResourceServiceOperationStatus(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1853sgs" sourceRef="Activity_1mh10j4" targetRef="Activity_1c2cktb" />
+    <bpmn:serviceTask id="Activity_1c2cktb" name="Update Service Operation Status">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${CSSOS_dbAdapterEndpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:script scriptFormat="groovy">execution.getVariable("CSSOS_headerMap")</camunda:script>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">${CSSOS_updateServiceOperStatusRequest}</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:outputParameter name="CSSOS_dbResponseCode">${statusCode}</camunda:outputParameter>
+            <camunda:outputParameter name="CSSOS_dbResponse">${response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1853sgs</bpmn:incoming>
+      <bpmn:outgoing>Flow_0wx6dks</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0wx6dks" sourceRef="Activity_1c2cktb" targetRef="EndEvent_1oouvuh" />
+    <bpmn:callActivity id="Activity_187hs2t" name="Handle TN NSSI Selection OOF request" calledElement="DoHandleOofRequest">
+      <bpmn:extensionElements>
+        <camunda:in source="nstSelectionUrl" target="apiPath" />
+        <camunda:in source="nstSelection_correlator" target="correlator" />
+        <camunda:in source="nstSelection_messageType" target="messageType" />
+        <camunda:in source="nstSelection_timeout" target="timeout" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:out source="asyncCallbackResponse" target="nstSelection_oofResponse" />
+        <camunda:in source="nstSelection_oofRequest" target="oofRequest" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0h2oree</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1cv0wop</bpmn:outgoing>
+    </bpmn:callActivity>
+  </bpmn:process>
+  <bpmn:message id="Message_0c4b2r5" name="SliceServiceTask" />
+  <bpmn:error id="Error_03akl5v" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
+  <bpmn:error id="Error_0p2naox" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoAllocateTransportNSSI">
+      <bpmndi:BPMNEdge id="Flow_0wx6dks_di" bpmnElement="Flow_0wx6dks">
+        <di:waypoint x="1460" y="500" />
+        <di:waypoint x="1562" y="500" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1853sgs_di" bpmnElement="Flow_1853sgs">
+        <di:waypoint x="1270" y="500" />
+        <di:waypoint x="1360" y="500" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0kixzdj_di" bpmnElement="SequenceFlow_0kixzdj">
+        <di:waypoint x="770" y="680" />
+        <di:waypoint x="860" y="680" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0jrclmc_di" bpmnElement="SequenceFlow_0jrclmc">
+        <di:waypoint x="1420" y="121" />
+        <di:waypoint x="1532" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_046irye_di" bpmnElement="SequenceFlow_046irye">
+        <di:waypoint x="745" y="121" />
+        <di:waypoint x="850" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1fk37v7_di" bpmnElement="SequenceFlow_1fk37v7">
+        <di:waypoint x="214" y="330" />
+        <di:waypoint x="320" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1bevt3a_di" bpmnElement="SequenceFlow_1bevt3a">
+        <di:waypoint x="228" y="680" />
+        <di:waypoint x="320" y="680" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0h2oree_di" bpmnElement="SequenceFlow_0h2oree">
+        <di:waypoint x="420" y="330" />
+        <di:waypoint x="540" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0q7yc2c_di" bpmnElement="SequenceFlow_0q7yc2c">
+        <di:waypoint x="950" y="121" />
+        <di:waypoint x="1090" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1qv8qw1_di" bpmnElement="SequenceFlow_1qv8qw1">
+        <di:waypoint x="960" y="680" />
+        <di:waypoint x="1050" y="680" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0t094g7_di" bpmnElement="SequenceFlow_0t094g7">
+        <di:waypoint x="568" y="121" />
+        <di:waypoint x="645" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_11rbv41_di" bpmnElement="SequenceFlow_11rbv41">
+        <di:waypoint x="1150" y="680" />
+        <di:waypoint x="1252" y="680" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0n4xku8_di" bpmnElement="SequenceFlow_0n4xku8">
+        <di:waypoint x="538" y="680" />
+        <di:waypoint x="670" y="680" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="585" y="662" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1c6ka9h_di" bpmnElement="SequenceFlow_1c6ka9h">
+        <di:waypoint x="513" y="705" />
+        <di:waypoint x="513" y="762" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="522" y="705" width="14" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0mlrlbv_di" bpmnElement="SequenceFlow_0mlrlbv">
+        <di:waypoint x="420" y="680" />
+        <di:waypoint x="488" y="680" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1t19ips_di" bpmnElement="SequenceFlow_1t19ips">
+        <di:waypoint x="1190" y="121" />
+        <di:waypoint x="1320" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_038lb9m_di" bpmnElement="SequenceFlow_038lb9m">
+        <di:waypoint x="1090" y="355" />
+        <di:waypoint x="1090" y="500" />
+        <di:waypoint x="1170" y="500" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1100" y="413" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_12t5exy_di" bpmnElement="SequenceFlow_12t5exy">
+        <di:waypoint x="1115" y="330" />
+        <di:waypoint x="1292" y="330" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1183" y="313" width="14" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_197cm2e_di" bpmnElement="SequenceFlow_197cm2e">
+        <di:waypoint x="890" y="330" />
+        <di:waypoint x="1065" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1cv0wop_di" bpmnElement="SequenceFlow_1cv0wop">
+        <di:waypoint x="640" y="330" />
+        <di:waypoint x="790" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_07e12rt_di" bpmnElement="SequenceFlow_07e12rt">
+        <di:waypoint x="385" y="121" />
+        <di:waypoint x="468" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_03s744c_di" bpmnElement="SequenceFlow_03s744c">
+        <di:waypoint x="214" y="121" />
+        <di:waypoint x="285" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_1nbljfd_di" bpmnElement="StartEvent_1nbljfd">
+        <dc:Bounds x="178" y="103" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="158" y="146" width="86" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_0vilb24_di" bpmnElement="IntermediateCatchEvent_0vilb24">
+        <dc:Bounds x="178" y="312" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="162" y="355" width="71" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1tc44ge_di" bpmnElement="ScriptTask_1tc44ge">
+        <dc:Bounds x="285" y="81" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1jgtb0y_di" bpmnElement="ScriptTask_1jgtb0y">
+        <dc:Bounds x="790" y="290" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0elbczl_di" bpmnElement="ExclusiveGateway_0elbczl" isMarkerVisible="true">
+        <dc:Bounds x="1065" y="305" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1050" y="276" width="79" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_18eld2o_di" bpmnElement="ExclusiveGateway_18eld2o" isMarkerVisible="true">
+        <dc:Bounds x="488" y="655" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="482.5" y="617.5" width="61" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0x406rw_di" bpmnElement="EndEvent_0x406rw">
+        <dc:Bounds x="495" y="762" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0o2r07o_di" bpmnElement="ScriptTask_0o2r07o">
+        <dc:Bounds x="850" y="81" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_1bnkmaz_di" bpmnElement="CallActivity_1bnkmaz">
+        <dc:Bounds x="1090" y="81" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0l3d1ai_di" bpmnElement="ScriptTask_0l3d1ai">
+        <dc:Bounds x="1320" y="81" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_1ex8ke9_di" bpmnElement="IntermediateThrowEvent_1ex8ke9">
+        <dc:Bounds x="1532" y="103" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1522" y="144" width="74" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_187hs2t_di" bpmnElement="Activity_187hs2t">
+        <dc:Bounds x="540" y="290" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_1yv9i68_di" bpmnElement="SubProcess_1yv9i68" isExpanded="true">
+        <dc:Bounds x="685" y="1080" width="781" height="196" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_08mlzwz_di" bpmnElement="SequenceFlow_08mlzwz">
+        <di:waypoint x="1079" y="1184" />
+        <di:waypoint x="1353" y="1184" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1w67v6s_di" bpmnElement="SequenceFlow_1w67v6s">
+        <di:waypoint x="751" y="1184" />
+        <di:waypoint x="979" y="1184" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_1omdx56_di" bpmnElement="StartEvent_1omdx56">
+        <dc:Bounds x="715" y="1166" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1jx3026_di" bpmnElement="EndEvent_1jx3026">
+        <dc:Bounds x="1353" y="1166" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1swzdpw_di" bpmnElement="ScriptTask_1swzdpw">
+        <dc:Bounds x="979" y="1144" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_05h01gx_di" bpmnElement="EndEvent_05h01gx">
+        <dc:Bounds x="1252" y="662" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1260" y="705" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1xxag1o_di" bpmnElement="ScriptTask_1xxag1o">
+        <dc:Bounds x="468" y="81" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1ssh2l9_di" bpmnElement="ScriptTask_1ssh2l9">
+        <dc:Bounds x="860" y="640" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0kd6p6p_di" bpmnElement="ServiceTask_0kd6p6p">
+        <dc:Bounds x="645" y="81" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_08wim95_di" bpmnElement="ScriptTask_08wim95">
+        <dc:Bounds x="320" y="290" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_0pkvfun_di" bpmnElement="IntermediateCatchEvent_0pkvfun">
+        <dc:Bounds x="192" y="662" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="173" y="705" width="86" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_0ktwpki_di" bpmnElement="IntermediateThrowEvent_0ktwpki">
+        <dc:Bounds x="1292" y="312" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1280" y="353" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1oouvuh_di" bpmnElement="EndEvent_1oouvuh">
+        <dc:Bounds x="1562" y="482" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1570" y="525" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0esr949_di" bpmnElement="ServiceTask_0esr949">
+        <dc:Bounds x="1050" y="640" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_0cxst1i_di" bpmnElement="CallActivity_0cxst1i">
+        <dc:Bounds x="320" y="640" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_19uxoi8_di" bpmnElement="ScriptTask_19uxoi8">
+        <dc:Bounds x="670" y="640" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1mh10j4_di" bpmnElement="Activity_1mh10j4">
+        <dc:Bounds x="1170" y="460" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1c2cktb_di" bpmnElement="Activity_1c2cktb">
+        <dc:Bounds x="1360" y="460" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
