@@ -56,6 +56,12 @@
                 \t%thread
                 \t%n" />
 
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${errorPattern}</pattern>
+        </encoder>
+    </appender>
+
     <appender name="Audit" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
             <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
@@ -186,11 +192,12 @@
         <appender-ref ref="asyncMetric" />
     </logger>
 
-    <root level="WARN">
+    <root level="INFO">
         <appender-ref ref="asyncDebug" />
         <appender-ref ref="asyncError" />
         <appender-ref ref="asyncAudit" />
         <appender-ref ref="asyncMetric" />
+        <appender-ref ref="STDOUT" />
     </root>
 
 </configuration>
