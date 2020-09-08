@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0le3oyh" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.7.2">
+  <bpmn:process id="QueryJobStatus" name="QueryJobStatus" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Start">
+      <bpmn:outgoing>Flow_16nxw2f</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:scriptTask id="Activity_0cd23fy" name="Preprocess Request" scriptFormat="groovy">
+      <bpmn:incoming>Flow_16nxw2f</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qhl0m8</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def qjs= new QueryJobStatus()
+qjs.preProcessRequest(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="Activity_1aivult" name="Query Job Status">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${NSSMF_AdapterEndpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="content-type">application/json</camunda:entry>
+                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">${NSSMF_AdapterRequest}</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:outputParameter name="NSSMF_ResponseCode">${statusCode}</camunda:outputParameter>
+            <camunda:outputParameter name="NSSMF_Response">${response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0qhl0m8</bpmn:incoming>
+      <bpmn:incoming>Flow_1qqqckj</bpmn:incoming>
+      <bpmn:outgoing>Flow_18di8yy</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_16nxw2f" sourceRef="StartEvent_1" targetRef="Activity_0cd23fy" />
+    <bpmn:sequenceFlow id="Flow_0qhl0m8" sourceRef="Activity_0cd23fy" targetRef="Activity_1aivult" />
+    <bpmn:scriptTask id="Activity_16hyg49" name="Check Job Status" scriptFormat="groovy">
+      <bpmn:incoming>Flow_18di8yy</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ct1kfw</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def qjs= new QueryJobStatus()
+qjs.checkJobStatus(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:exclusiveGateway id="Gateway_1ruy0j9" name="Is Completed?">
+      <bpmn:incoming>Flow_0ct1kfw</bpmn:incoming>
+      <bpmn:outgoing>Flow_1x9fug6</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1qqqckj</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_18di8yy" sourceRef="Activity_1aivult" targetRef="Activity_16hyg49" />
+    <bpmn:sequenceFlow id="Flow_0ct1kfw" sourceRef="Activity_16hyg49" targetRef="Gateway_1ruy0j9" />
+    <bpmn:scriptTask id="Activity_0rtwx97" name="Update JobStatus details" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1x9fug6</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qqltc9</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def qjs= new QueryJobStatus()
+qjs.updateJobStatusDetails(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1x9fug6" name="yes" sourceRef="Gateway_1ruy0j9" targetRef="Activity_0rtwx97">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("JobStatusCompleted") == "TRUE"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_0p00z2s" name="End">
+      <bpmn:incoming>Flow_0qqltc9</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0qqltc9" sourceRef="Activity_0rtwx97" targetRef="Event_0p00z2s" />
+    <bpmn:sequenceFlow id="Flow_1qqqckj" name="No" sourceRef="Gateway_1ruy0j9" targetRef="Activity_1aivult">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("JobStatusCompleted") == "FALSE"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="QueryJobStatus">
+      <bpmndi:BPMNEdge id="Flow_1qqqckj_di" bpmnElement="Flow_1qqqckj">
+        <di:waypoint x="880" y="152" />
+        <di:waypoint x="880" y="280" />
+        <di:waypoint x="550" y="280" />
+        <di:waypoint x="550" y="167" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="892" y="163" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qqltc9_di" bpmnElement="Flow_0qqltc9">
+        <di:waypoint x="1100" y="127" />
+        <di:waypoint x="1152" y="127" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1x9fug6_di" bpmnElement="Flow_1x9fug6">
+        <di:waypoint x="905" y="127" />
+        <di:waypoint x="1000" y="127" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="944" y="109" width="17" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ct1kfw_di" bpmnElement="Flow_0ct1kfw">
+        <di:waypoint x="780" y="127" />
+        <di:waypoint x="855" y="127" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18di8yy_di" bpmnElement="Flow_18di8yy">
+        <di:waypoint x="600" y="127" />
+        <di:waypoint x="680" y="127" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qhl0m8_di" bpmnElement="Flow_0qhl0m8">
+        <di:waypoint x="410" y="127" />
+        <di:waypoint x="500" y="127" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16nxw2f_di" bpmnElement="Flow_16nxw2f">
+        <di:waypoint x="215" y="127" />
+        <di:waypoint x="310" y="127" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="109" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="186" y="152" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0cd23fy_di" bpmnElement="Activity_0cd23fy">
+        <dc:Bounds x="310" y="87" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1aivult_di" bpmnElement="Activity_1aivult">
+        <dc:Bounds x="500" y="87" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_16hyg49_di" bpmnElement="Activity_16hyg49">
+        <dc:Bounds x="680" y="87" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1ruy0j9_di" bpmnElement="Gateway_1ruy0j9" isMarkerVisible="true">
+        <dc:Bounds x="855" y="102" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="844" y="83" width="72" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0rtwx97_di" bpmnElement="Activity_0rtwx97">
+        <dc:Bounds x="1000" y="87" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0p00z2s_di" bpmnElement="Event_0p00z2s">
+        <dc:Bounds x="1152" y="109" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1160" y="152" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

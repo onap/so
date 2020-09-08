@@ -1,0 +1,25 @@
+{
+  "AN": {
+    "latency": "5",
+    "maxNumberofUEs": "100",
+    "maxThroughput": "150",
+    "terminalDensity": "50"
+  },
+  "CN": {
+    "latency": "10",
+    "maxThroughput": "50",
+    "maxNumberofConns": "100"
+  },
+  "TN_FH": {
+    "latency": "10",
+    "maxThroughput": "100"
+  },
+  "TN_MH": {
+    "latency": "5",
+    "maxThroughput": "50"
+  },
+  "TN_BH": {
+    "latency": "10",
+    "maxThroughput": "100"
+  }
+}
