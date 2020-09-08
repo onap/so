@@ -39,6 +39,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 import javax.ws.rs.core.MediaType;
 import org.apache.http.HttpStatus;
@@ -336,6 +337,36 @@ public class RequestHandlerUtilsTest extends BaseTest {
         String basicAuth = headers.getFirst(HttpHeaders.AUTHORIZATION);
         String expectedBasicAuth = "Basic dXNlcjpwYXNzd29yZA==";
         assertEquals(expectedBasicAuth, basicAuth);
+    }
+
+    @Test
+    public void getServiceInstanceIdForValidationErrorTest() {
+        ServiceInstancesRequest sir = new ServiceInstancesRequest();
+        String requestScope = "vnf";
+        HashMap<String, String> instanceIdMap = new HashMap<String, String>();
+        instanceIdMap.put("serviceInstanceId", "testServiceInstanceId");
+        String serviceInstanceId =
+                requestHandlerUtils.getServiceInstanceIdForValidationError(sir, instanceIdMap, requestScope).get();
+        assertEquals("testServiceInstanceId", serviceInstanceId);
+    }
+
+    @Test
+    public void getServiceInstanceIdForValidationErrorInstanceGroupTest() throws Exception {
+        ServiceInstancesRequest sir =
+                mapper.readValue(inputStream("/CreateInstanceGroup.json"), ServiceInstancesRequest.class);
+        String requestScope = "instanceGroup";
+        String serviceInstanceId =
+                requestHandlerUtils.getServiceInstanceIdForValidationError(sir, null, requestScope).get();
+        assertEquals("ddcbbf3d-f2c1-4ca0-8852-76a807285efc", serviceInstanceId);
+    }
+
+    @Test
+    public void getServiceInstanceIdForInstanceGroupTest() throws Exception {
+        ServiceInstancesRequest sir =
+                mapper.readValue(inputStream("/CreateInstanceGroup.json"), ServiceInstancesRequest.class);
+        String requestScope = "instanceGroup";
+        String serviceInstanceId = requestHandlerUtils.getServiceInstanceIdForInstanceGroup(requestScope, sir).get();
+        assertEquals("ddcbbf3d-f2c1-4ca0-8852-76a807285efc", serviceInstanceId);
     }
 
 }

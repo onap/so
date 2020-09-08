@@ -518,20 +518,16 @@ public class RequestHandlerUtils extends AbstractRestHandler {
     }
 
     protected String setServiceInstanceId(String requestScope, ServiceInstancesRequest sir) {
+        String serviceInstanceId = null;
         if (sir.getServiceInstanceId() != null) {
-            return sir.getServiceInstanceId();
-        } else if (requestScope.equalsIgnoreCase(ModelType.instanceGroup.toString())) {
-            RelatedInstanceList[] relatedInstances = sir.getRequestDetails().getRelatedInstanceList();
-            if (relatedInstances != null) {
-                for (RelatedInstanceList relatedInstanceList : relatedInstances) {
-                    RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
-                    if (relatedInstance.getModelInfo().getModelType() == ModelType.service) {
-                        return relatedInstance.getInstanceId();
-                    }
-                }
+            serviceInstanceId = sir.getServiceInstanceId();
+        } else {
+            Optional<String> serviceInstanceIdForInstance = getServiceInstanceIdForInstanceGroup(requestScope, sir);
+            if (serviceInstanceIdForInstance.isPresent()) {
+                serviceInstanceId = serviceInstanceIdForInstance.get();
             }
         }
-        return null;
+        return serviceInstanceId;
     }
 
     private String requestScopeFromUri(String requestUri) {
@@ -914,6 +910,30 @@ public class RequestHandlerUtils extends AbstractRestHandler {
         }
 
         return null;
+    }
+
+    protected Optional<String> getServiceInstanceIdForValidationError(ServiceInstancesRequest sir,
+            HashMap<String, String> instanceIdMap, String requestScope) {
+        if (instanceIdMap != null && !instanceIdMap.isEmpty() && instanceIdMap.get("serviceInstanceId") != null) {
+            return Optional.of(instanceIdMap.get("serviceInstanceId"));
+        } else {
+            return getServiceInstanceIdForInstanceGroup(requestScope, sir);
+        }
+    }
+
+    protected Optional<String> getServiceInstanceIdForInstanceGroup(String requestScope, ServiceInstancesRequest sir) {
+        if (requestScope.equalsIgnoreCase(ModelType.instanceGroup.toString())) {
+            RelatedInstanceList[] relatedInstances = sir.getRequestDetails().getRelatedInstanceList();
+            if (relatedInstances != null) {
+                for (RelatedInstanceList relatedInstanceList : relatedInstances) {
+                    RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
+                    if (relatedInstance.getModelInfo().getModelType() == ModelType.service) {
+                        return Optional.ofNullable(relatedInstance.getInstanceId());
+                    }
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     private RecipeLookupResult getDefaultVnfUri(ServiceInstancesRequest sir, Actions action) {

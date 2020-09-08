@@ -829,7 +829,8 @@ public class ServiceInstances extends AbstractRestHandler {
             requestValidatorListenerRunner.runValidations(requestUri, instanceIdMap, sir, queryParams, action);
         } catch (ApiException e) {
             msoRequest.createErrorRequestRecord(Status.FAILED, requestId, e.getMessage(), action, requestScope,
-                    requestJSON, sir.getServiceInstanceId());
+                    requestJSON, requestHandlerUtils
+                            .getServiceInstanceIdForValidationError(sir, instanceIdMap, requestScope).orElse(null));
             throw e;
         }
 
