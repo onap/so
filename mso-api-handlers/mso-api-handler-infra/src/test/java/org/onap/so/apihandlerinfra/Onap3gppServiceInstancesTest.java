@@ -49,12 +49,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.onap.so.apihandlerinfra.exceptions.ApiException;
+import org.onap.so.apihandlerinfra.onap3gppserviceinstancebeans.QuerySubnetCapability;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class Onap3gppServiceInstancesTest extends BaseTest {
 
     private String onap3gppServicesUri = "/onap/so/infra/onap3gppServiceInstances/";
 
     private final ObjectMapper mapper = new ObjectMapper();
+
+    @Autowired
+    private Onap3gppServiceInstances objUnderTest;
 
     @Before
     public void init() throws JsonProcessingException {
@@ -176,6 +182,17 @@ public class Onap3gppServiceInstancesTest extends BaseTest {
         assertEquals(expectedResponse, actualResponse);
     }
 
+    @Test
+    public void getSliceSubnetCapabilitiesTest() throws IOException, ApiException {
+        String request = "{\"subnetTypes\":[\"AN\"]}";
+        QuerySubnetCapability subnetCapabilityRequest = mapper.readValue(request, QuerySubnetCapability.class);
+        String expectedResponse =
+                "{\"AN\":{\"latency\":\"5\",\"maxNumberofUEs\":\"100\",\"maxThroughput\":\"150\",\"terminalDensity\":\"50\"}}";
+        Response response = objUnderTest.getSliceSubnetCapabilities(subnetCapabilityRequest, "v1");
+        String actualResponse = (String) response.getEntity();
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(expectedResponse, actualResponse);
+    }
 }
 
 
