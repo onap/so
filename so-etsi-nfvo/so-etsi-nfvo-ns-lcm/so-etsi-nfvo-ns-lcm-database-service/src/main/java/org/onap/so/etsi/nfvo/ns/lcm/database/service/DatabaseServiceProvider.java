@@ -81,6 +81,12 @@ public class DatabaseServiceProvider {
         return nfvoNsInstRepository.existsNfvoNsInstByName(name);
     }
 
+    public boolean isNsInstExists(final String nsInstId, final String nfName) {
+        logger.info("Checking if NfvoNfInst entry exists in database using nsInstId: {} and nfName: {}", nsInstId,
+                nfName);
+        return nfvoNfInstRepository.findByNsInstNsInstIdAndName(nsInstId, nfName).isEmpty();
+    }
+
     public boolean saveNfvoNsInst(final NfvoNsInst nfvoNsInst) {
         logger.info("Saving NfvoNsInst: {} to database", nfvoNsInst);
         return nfvoNsInstRepository.save(nfvoNsInst) != null;
@@ -116,6 +122,11 @@ public class DatabaseServiceProvider {
         return nfvoNfInstRepository.findByNsInstNsInstIdAndName(nsInstId, name);
     }
 
+    public Optional<NfvoNfInst> getNfvoNfInst(final String nfInstId) {
+        logger.info("Querying database for NfvoNfInst using nfInstId: {}", nfInstId);
+        return nfvoNfInstRepository.findByNfInstId(nfInstId);
+    }
+
     public boolean addNSLcmOpOcc(final NsLcmOpOcc nsLcmOpOcc) {
         logger.info("Adding NSLcmOpOcc: {} to database", nsLcmOpOcc);
         return nsLcmOpOccRepository.save(nsLcmOpOcc) != null;
@@ -125,7 +136,6 @@ public class DatabaseServiceProvider {
         logger.info("Querying database for NsLcmOpOcc using id: {}", id);
         return nsLcmOpOccRepository.findById(id);
     }
-
 
 
 }

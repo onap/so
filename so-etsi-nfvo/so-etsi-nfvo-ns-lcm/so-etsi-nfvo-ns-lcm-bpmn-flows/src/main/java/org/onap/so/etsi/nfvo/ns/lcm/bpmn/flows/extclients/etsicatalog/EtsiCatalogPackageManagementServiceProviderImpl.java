@@ -24,6 +24,8 @@ import java.util.Optional;
 import org.onap.so.adapters.etsisol003adapter.pkgm.extclients.etsicatalog.model.NsdInfo;
 import org.onap.so.adapters.etsisol003adapter.pkgm.extclients.etsicatalog.model.VnfPkgInfo;
 import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.exceptions.EtsiCatalogManagerRequestFailureException;
+import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.nsd.NetworkServiceDescriptor;
+import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.nsd.NetworkServiceDescriptorParser;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,12 +45,15 @@ public class EtsiCatalogPackageManagementServiceProviderImpl implements EtsiCata
 
     private final HttpRestServiceProvider httpServiceProvider;
     private final EtsiCatalogUrlProvider etsiCatalogUrlProvider;
+    private final NetworkServiceDescriptorParser networkServiceDescriptorParser;
 
     @Autowired
     public EtsiCatalogPackageManagementServiceProviderImpl(final EtsiCatalogUrlProvider etsiCatalogUrlProvider,
-            @Qualifier(ETSI_CATALOG_SERVICE_PROVIDER_BEAN) final HttpRestServiceProvider httpServiceProvider) {
+            @Qualifier(ETSI_CATALOG_SERVICE_PROVIDER_BEAN) final HttpRestServiceProvider httpServiceProvider,
+            final NetworkServiceDescriptorParser networkServiceDescriptorParser) {
         this.etsiCatalogUrlProvider = etsiCatalogUrlProvider;
         this.httpServiceProvider = httpServiceProvider;
+        this.networkServiceDescriptorParser = networkServiceDescriptorParser;
     }
 
     @Override
@@ -78,6 +83,25 @@ public class EtsiCatalogPackageManagementServiceProviderImpl implements EtsiCata
             return Optional.empty();
         } catch (final Exception restProcessingException) {
             logger.error("Caught exception while getting VNF package model for: {}", vnfPkgId, restProcessingException);
+            throw new EtsiCatalogManagerRequestFailureException("Internal Server Error Occurred.",
+                    restProcessingException);
+        }
+    }
+
+    @Override
+    public Optional<NetworkServiceDescriptor> getNetworkServiceDescriptor(final String nsdId) {
+        try {
+            final ResponseEntity<byte[]> response = httpServiceProvider
+                    .getHttpResponse(etsiCatalogUrlProvider.getNsPackageContentUrl(nsdId), byte[].class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                if (response.hasBody()) {
+                    return networkServiceDescriptorParser.parse(response.getBody());
+                }
+                logger.error("Received response without body ...");
+            }
+            return Optional.empty();
+        } catch (final Exception restProcessingException) {
+            logger.error("Caught exception while getting NS package content for: {}", nsdId, restProcessingException);
             throw new EtsiCatalogManagerRequestFailureException("Internal Server Error Occurred.",
                     restProcessingException);
         }

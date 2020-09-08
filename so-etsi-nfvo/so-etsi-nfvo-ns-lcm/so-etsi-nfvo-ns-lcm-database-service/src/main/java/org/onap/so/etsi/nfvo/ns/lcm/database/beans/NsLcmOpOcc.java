@@ -65,7 +65,7 @@ public class NsLcmOpOcc {
     @Column(name = "IS_AUTO_INNOVATION")
     private boolean isAutoInnovation;
 
-    @Column(name = "OPERATION_PARAMS")
+    @Column(name = "OPERATION_PARAMS", columnDefinition = "LONGTEXT")
     private String operationParams;
 
     @Column(name = "IS_CANCEL_PENDING")

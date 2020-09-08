@@ -22,6 +22,7 @@ package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.extclients.etsicatalog;
 import java.util.Optional;
 import org.onap.so.adapters.etsisol003adapter.pkgm.extclients.etsicatalog.model.NsdInfo;
 import org.onap.so.adapters.etsisol003adapter.pkgm.extclients.etsicatalog.model.VnfPkgInfo;
+import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.nsd.NetworkServiceDescriptor;
 
 /**
  * @author Waqas Ikram (waqas.ikram@est.tech)
@@ -32,5 +33,7 @@ public interface EtsiCatalogPackageManagementServiceProvider {
     Optional<NsdInfo> getNSPackageModel(final String nsdId);
 
     Optional<VnfPkgInfo> getVnfPkgInfo(final String vnfPkgId);
+
+    Optional<NetworkServiceDescriptor> getNetworkServiceDescriptor(final String nsdId);
 
 }

@@ -25,6 +25,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.onap.so.etsi.nfvo.ns.lcm.EtsiSoNsLcmManagerUrlProvider;
 import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.service.JobExecutorService;
 import org.onap.so.etsi.nfvo.ns.lcm.model.CreateNsRequest;
+import org.onap.so.etsi.nfvo.ns.lcm.model.InstantiateNsRequest;
 import org.onap.so.etsi.nfvo.ns.lcm.model.NsInstancesNsInstance;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +63,15 @@ public class NsLifeCycleManager {
 
         return ImmutablePair.of(etsiSoNsLcmManagerUrlProvider.getCreatedNsResourceUri(nsInstanceResponse.getId()),
                 nsInstanceResponse);
+    }
+
+    public URI instantiateNs(final String nsInstanceId, final InstantiateNsRequest instantiateNsRequest) {
+        logger.info("Will execute Instantiate Ns for InstantiateNsRequest: {} and nsInstanceId: {}",
+                instantiateNsRequest, nsInstanceId);
+        final String nsLcmOpOccId = jobExecutorService.runInstantiateNsJob(nsInstanceId, instantiateNsRequest);
+
+        return etsiSoNsLcmManagerUrlProvider.getInstantiatedOccUri(nsLcmOpOccId);
+
     }
 
 }

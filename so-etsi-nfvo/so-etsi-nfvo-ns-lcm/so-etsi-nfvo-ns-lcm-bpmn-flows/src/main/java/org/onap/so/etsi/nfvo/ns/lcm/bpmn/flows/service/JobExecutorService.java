@@ -21,12 +21,19 @@ package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.service;
 
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.CREATE_NS_REQUEST_PARAM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.GLOBAL_CUSTOMER_ID_PARAM_NAME;
+import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.INSTANTIATE_NS_REQUEST_PARAM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.JOB_ID_PARAM_NAME;
+import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.NS_INSTANCE_ID_PARAM_NAME;
+import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.OCC_ID_PARAM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.SERVICE_TYPE_PARAM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.Constants.CREATE_NS_WORKFLOW_NAME;
+import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.Constants.INSTANTIATE_NS_WORKFLOW_NAME;
+import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobAction.INSTANTIATE;
 import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobStatusEnum.ERROR;
 import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobStatusEnum.FINISHED;
 import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobStatusEnum.FINISHED_WITH_ERROR;
+import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobStatusEnum.IN_PROGRESS;
+import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobStatusEnum.STARTING;
 import static org.slf4j.LoggerFactory.getLogger;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -35,19 +42,25 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.GsonProvider;
 import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.exceptions.NsRequestProcessingException;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobAction;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobStatusEnum;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoJob;
+import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NsLcmOpOcc;
+import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NsLcmOpType;
+import org.onap.so.etsi.nfvo.ns.lcm.database.beans.OperationStateEnum;
 import org.onap.so.etsi.nfvo.ns.lcm.database.service.DatabaseServiceProvider;
 import org.onap.so.etsi.nfvo.ns.lcm.model.CreateNsRequest;
 import org.onap.so.etsi.nfvo.ns.lcm.model.InlineResponse400;
+import org.onap.so.etsi.nfvo.ns.lcm.model.InstantiateNsRequest;
 import org.onap.so.etsi.nfvo.ns.lcm.model.NsInstancesNsInstance;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.google.common.collect.ImmutableSet;
+import com.google.gson.Gson;
 
 /**
  * @author Waqas Ikram (waqas.ikram@est.tech)
@@ -69,13 +82,16 @@ public class JobExecutorService {
     private final DatabaseServiceProvider databaseServiceProvider;
     private final WorkflowExecutorService workflowExecutorService;
     private final WorkflowQueryService workflowQueryService;
+    private Gson gson;
 
     @Autowired
     public JobExecutorService(final DatabaseServiceProvider databaseServiceProvider,
-            final WorkflowExecutorService workflowExecutorService, final WorkflowQueryService workflowQueryService) {
+            final WorkflowExecutorService workflowExecutorService, final WorkflowQueryService workflowQueryService,
+            final GsonProvider gsonProvider) {
         this.databaseServiceProvider = databaseServiceProvider;
         this.workflowExecutorService = workflowExecutorService;
         this.workflowQueryService = workflowQueryService;
+        gson = gsonProvider.getGson();
     }
 
     public NsInstancesNsInstance runCreateNsJob(final CreateNsRequest createNsRequest, final String globalCustomerId,
@@ -130,6 +146,50 @@ public class JobExecutorService {
         return optional.get();
     }
 
+    public String runInstantiateNsJob(final String nsInstanceId, final InstantiateNsRequest instantiateNsRequest) {
+
+        final NfvoJob newJob = new NfvoJob().startTime(LocalDateTime.now()).jobType("NS").jobAction(INSTANTIATE)
+                .resourceId(nsInstanceId).status(STARTING).progress(0);
+        databaseServiceProvider.addJob(newJob);
+        logger.info("New job created in database :\n{}", newJob);
+
+        final LocalDateTime currentDateTime = LocalDateTime.now();
+        final NsLcmOpOcc newNsLcmOpOcc = new NsLcmOpOcc().id(nsInstanceId).operation(NsLcmOpType.INSTANTIATE)
+                .operationState(OperationStateEnum.PROCESSING).stateEnteredTime(currentDateTime)
+                .startTime(currentDateTime).isAutoInnovation(false).isCancelPending(false)
+                .operationParams(gson.toJson(instantiateNsRequest));
+        databaseServiceProvider.addNSLcmOpOcc(newNsLcmOpOcc);
+        logger.info("New NSLcmOpOcc created in database :\n{}", newNsLcmOpOcc);
+
+        workflowExecutorService.executeWorkflow(newJob.getJobId(), INSTANTIATE_NS_WORKFLOW_NAME,
+                getVariables(nsInstanceId, newJob.getJobId(), newNsLcmOpOcc.getId(), instantiateNsRequest));
+
+        final ImmutableSet<JobStatusEnum> jobFinishedStates =
+                ImmutableSet.of(FINISHED, ERROR, FINISHED_WITH_ERROR, IN_PROGRESS);
+        final ImmutablePair<String, JobStatusEnum> immutablePair =
+                waitForJobToFinish(newJob.getJobId(), jobFinishedStates);
+
+        if (immutablePair.getRight() == null) {
+            final String message = "Failed to Instantiate NS for request: \n" + instantiateNsRequest;
+            logger.error(message);
+            throw new NsRequestProcessingException(message);
+        }
+
+        final JobStatusEnum finalJobStatus = immutablePair.getRight();
+
+        if (IN_PROGRESS.equals(finalJobStatus) || FINISHED.equals(finalJobStatus)) {
+            logger.info("Instantiation Job status: {}", finalJobStatus);
+
+
+            return newNsLcmOpOcc.getId();
+        }
+
+        final String message = "Received unexpected Job Status: " + finalJobStatus
+                + " Failed to instantiate NS for request: \n" + instantiateNsRequest;
+        logger.error(message);
+        throw new NsRequestProcessingException(message);
+    }
+
     private ImmutablePair<String, JobStatusEnum> waitForJobToFinish(final String jobId,
             final ImmutableSet<JobStatusEnum> jobFinishedStates) {
         try {
@@ -176,6 +236,16 @@ public class JobExecutorService {
         variables.put(CREATE_NS_REQUEST_PARAM_NAME, createNsRequest);
         variables.put(GLOBAL_CUSTOMER_ID_PARAM_NAME, globalCustomerId);
         variables.put(SERVICE_TYPE_PARAM_NAME, serviceType);
+        return variables;
+    }
+
+    private Map<String, Object> getVariables(final String nsInstanceId, final String jobId, final String occId,
+            final InstantiateNsRequest instantiateNsRequest) {
+        final Map<String, Object> variables = new HashMap<>();
+        variables.put(NS_INSTANCE_ID_PARAM_NAME, nsInstanceId);
+        variables.put(JOB_ID_PARAM_NAME, jobId);
+        variables.put(OCC_ID_PARAM_NAME, occId);
+        variables.put(INSTANTIATE_NS_REQUEST_PARAM_NAME, instantiateNsRequest);
         return variables;
     }
 

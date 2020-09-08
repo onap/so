@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1uf6nd9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.0.0">
+  <bpmn:process id="CreateInstantiateVnf" name="CreateInstantiateVnf" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_02bjz2v</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Activity_19rmtjr" name="Create NF Instance (VNF) record in DB" camunda:expression="${CreateInstantiateVnfTask.createNfInstanceInDb(execution)}">
+      <bpmn:incoming>Flow_123uagz</bpmn:incoming>
+      <bpmn:outgoing>Flow_03p6ifi</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_02bjz2v" sourceRef="StartEvent_1" targetRef="Activity_1cluqgp" />
+    <bpmn:endEvent id="Event_14qdixj">
+      <bpmn:incoming>Flow_0srinh7</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_03p6ifi" sourceRef="Activity_19rmtjr" targetRef="Activity_0rto3n3" />
+    <bpmn:serviceTask id="Activity_0rto3n3" name="Create Generic VNF and Connect to Service Instance in AAI" camunda:expression="${CreateInstantiateVnfTask.createGenericVnfInAai(execution)}">
+      <bpmn:incoming>Flow_03p6ifi</bpmn:incoming>
+      <bpmn:outgoing>Flow_1c3kc4e</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1c3kc4e" sourceRef="Activity_0rto3n3" targetRef="ServiceTask_0iry5yw" />
+    <bpmn:serviceTask id="Activity_1cluqgp" name="Check If NF Instance (VNF) exists in DB" camunda:expression="${CreateInstantiateVnfTask.checkIfNfInstanceExistsInDb(execution)}">
+      <bpmn:incoming>Flow_02bjz2v</bpmn:incoming>
+      <bpmn:outgoing>Flow_123uagz</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_123uagz" sourceRef="Activity_1cluqgp" targetRef="Activity_19rmtjr" />
+    <bpmn:serviceTask id="ServiceTask_0iry5yw" name="&#10;Invoke VNFM Adaptor&#10;" camunda:asyncAfter="true" camunda:expression="${CreateInstantiateVnfTask.invokeCreateInstantiationRequest(execution)}">
+      <bpmn:incoming>Flow_1c3kc4e</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0xzptc2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:callActivity id="CallActivity_1yilxx3" name="Monitor Sol003 adapter  Instantiation Job" calledElement="MonitorSol003AdapterCreateJob">
+      <bpmn:extensionElements>
+        <camunda:in source="createVnfResponse" target="createVnfResponse" />
+        <camunda:in source="jobId" target="jobId" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0xzptc2</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_053tvct</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="CallActivity_0p84lpt" name="Monitor Sol003 adapter Create Node Status" calledElement="MonitorSol003AdapterCreateNodeStatus">
+      <bpmn:extensionElements>
+        <camunda:in source="NF_INST_ID" target="NF_INST_ID" />
+        <camunda:in source="createVnfResponse" target="createVnfResponse" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_053tvct</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0h7yluk</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_0xzptc2" sourceRef="ServiceTask_0iry5yw" targetRef="CallActivity_1yilxx3" />
+    <bpmn:sequenceFlow id="SequenceFlow_053tvct" sourceRef="CallActivity_1yilxx3" targetRef="CallActivity_0p84lpt" />
+    <bpmn:sequenceFlow id="SequenceFlow_0h7yluk" sourceRef="CallActivity_0p84lpt" targetRef="Activity_0g3dip7" />
+    <bpmn:serviceTask id="Activity_0g3dip7" name="Update NF Instance (VNF) Status to INSTANTIATED" camunda:expression="${CreateInstantiateVnfTask.updateNfInstanceStatusToInstantiated(execution)}">
+      <bpmn:incoming>SequenceFlow_0h7yluk</bpmn:incoming>
+      <bpmn:outgoing>Flow_0srinh7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0srinh7" sourceRef="Activity_0g3dip7" targetRef="Event_14qdixj" />
+    <bpmn:subProcess id="Activity_0qtgdm9" name="Error Handling" triggeredByEvent="true">
+      <bpmn:startEvent id="Event_08zcwc2" name="error">
+        <bpmn:outgoing>Flow_06q1m6i</bpmn:outgoing>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_1ppvn77" />
+      </bpmn:startEvent>
+      <bpmn:endEvent id="Event_1wkm29u" name="end">
+        <bpmn:incoming>Flow_0anjylz</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:serviceTask id="Activity_0ltxcii" name="Update NF Instance (VNF) Status to FAILED" camunda:asyncBefore="true" camunda:expression="${CreateInstantiateVnfTask.updateNfInstanceStatusToFailed(execution)}">
+        <bpmn:incoming>Flow_06q1m6i</bpmn:incoming>
+        <bpmn:outgoing>Flow_0anjylz</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:sequenceFlow id="Flow_06q1m6i" sourceRef="Event_08zcwc2" targetRef="Activity_0ltxcii" />
+      <bpmn:sequenceFlow id="Flow_0anjylz" sourceRef="Activity_0ltxcii" targetRef="Event_1wkm29u" />
+    </bpmn:subProcess>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CreateInstantiateVnf">
+      <bpmndi:BPMNEdge id="SequenceFlow_0h7yluk_di" bpmnElement="SequenceFlow_0h7yluk">
+        <di:waypoint x="1030" y="117" />
+        <di:waypoint x="1080" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_053tvct_di" bpmnElement="SequenceFlow_053tvct">
+        <di:waypoint x="880" y="117" />
+        <di:waypoint x="930" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0xzptc2_di" bpmnElement="SequenceFlow_0xzptc2">
+        <di:waypoint x="740" y="117" />
+        <di:waypoint x="780" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_123uagz_di" bpmnElement="Flow_123uagz">
+        <di:waypoint x="350" y="117" />
+        <di:waypoint x="380" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1c3kc4e_di" bpmnElement="Flow_1c3kc4e">
+        <di:waypoint x="610" y="117" />
+        <di:waypoint x="640" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03p6ifi_di" bpmnElement="Flow_03p6ifi">
+        <di:waypoint x="480" y="117" />
+        <di:waypoint x="510" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02bjz2v_di" bpmnElement="Flow_02bjz2v">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="250" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0srinh7_di" bpmnElement="Flow_0srinh7">
+        <di:waypoint x="1180" y="117" />
+        <di:waypoint x="1232" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_19rmtjr_di" bpmnElement="Activity_19rmtjr">
+        <dc:Bounds x="380" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0rto3n3_di" bpmnElement="Activity_0rto3n3">
+        <dc:Bounds x="510" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1cluqgp_di" bpmnElement="Activity_1cluqgp">
+        <dc:Bounds x="250" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0iry5yw_di" bpmnElement="ServiceTask_0iry5yw">
+        <dc:Bounds x="640" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_1yilxx3_di" bpmnElement="CallActivity_1yilxx3">
+        <dc:Bounds x="780" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_0p84lpt_di" bpmnElement="CallActivity_0p84lpt">
+        <dc:Bounds x="930" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_14qdixj_di" bpmnElement="Event_14qdixj">
+        <dc:Bounds x="1232" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0g3dip7_di" bpmnElement="Activity_0g3dip7">
+        <dc:Bounds x="1080" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0qtgdm9_di" bpmnElement="Activity_0qtgdm9" isExpanded="true">
+        <dc:Bounds x="430" y="270" width="438" height="130" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_06q1m6i_di" bpmnElement="Flow_06q1m6i">
+        <di:waypoint x="488" y="333" />
+        <di:waypoint x="580" y="333" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0anjylz_di" bpmnElement="Flow_0anjylz">
+        <di:waypoint x="680" y="333" />
+        <di:waypoint x="812" y="333" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_08zcwc2_di" bpmnElement="Event_08zcwc2">
+        <dc:Bounds x="452" y="315" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="458" y="358" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1wkm29u_di" bpmnElement="Event_1wkm29u">
+        <dc:Bounds x="812" y="315" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="822" y="357" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ltxcii_di" bpmnElement="Activity_0ltxcii">
+        <dc:Bounds x="580" y="293" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
