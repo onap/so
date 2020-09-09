@@ -22,7 +22,7 @@ public class InstanceRequest {
     @JsonProperty("cloud-region")
     private String cloudRegion;
     @JsonProperty("labels")
-    private Labels labels;
+    private Map<String, String> labels;
     @JsonProperty(value = "override-values")
     private Map<String, String> overrideValues;
 
@@ -67,12 +67,12 @@ public class InstanceRequest {
     }
 
     @JsonProperty("labels")
-    public Labels getLabels() {
+    public Map<String, String> getLabels() {
         return labels;
     }
 
     @JsonProperty("labels")
-    public void setLabels(Labels labels) {
+    public void setLabels(Map<String, String> labels) {
         this.labels = labels;
     }
 
