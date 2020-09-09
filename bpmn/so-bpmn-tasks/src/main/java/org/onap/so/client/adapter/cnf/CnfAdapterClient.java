@@ -34,6 +34,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -75,11 +76,32 @@ public class CnfAdapterClient {
         }
     }
 
+    @Retryable(value = {HttpServerErrorException.class}, maxAttempts = 3, backoff = @Backoff(delay = 3000))
+    public InstanceResponse healthcheck() throws CnfAdapterClientException {
+        try {
+            // String uri = env.getRequiredProperty("mso.cnf.adapter.endpoint"); //TODO: This needs to be added as well
+            // for configuration
+            String uri = "https://localhost:32780"; // TODO: What is the correct uri?
+            String endpoint = UriBuilder.fromUri(uri).path("/api/cnf-adapter/v1/healthcheck").build().toString();
+            HttpEntity<?> entity = new HttpEntity<>(getHttpHeaders());
+            ResponseEntity<InstanceResponse> result =
+                    restTemplate.exchange(endpoint, HttpMethod.GET, entity, InstanceResponse.class);
+            return result.getBody();
+        } catch (HttpClientErrorException e) {
+            logger.error("Error Calling CNF Adapter, e");
+            if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
+                throw new EntityNotFoundException(e.getResponseBodyAsString());
+            }
+            throw e;
+        }
+    }
+
     protected HttpHeaders getHttpHeaders() {
         HttpHeaders headers = new HttpHeaders();
-        List<org.springframework.http.MediaType> acceptableMediaTypes = new ArrayList<>();
-        acceptableMediaTypes.add(org.springframework.http.MediaType.APPLICATION_JSON);
+        List<MediaType> acceptableMediaTypes = new ArrayList<>();
+        acceptableMediaTypes.add(MediaType.APPLICATION_JSON);
         headers.setAccept(acceptableMediaTypes);
+        headers.setContentType(MediaType.APPLICATION_JSON);
         /*
          * try { String userCredentials = CryptoUtils.decrypt(env.getRequiredProperty("mso.cnf.adapter.auth"),
          * env.getRequiredProperty("mso.msoKey")); if (userCredentials != null) { headers.add(HttpHeaders.AUTHORIZATION,

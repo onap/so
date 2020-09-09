@@ -11,18 +11,18 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
         "override-values"})
 public class InstanceRequest {
 
-    @JsonProperty("rb-name")
+    @JsonProperty("modelInvariantId")
     private String rbName;
-    @JsonProperty("rb-version")
+    @JsonProperty("modelVersionId")
     private String rbVersion;
-    @JsonProperty("profile-name")
+    @JsonProperty("k8sRBProfileName")
     private String profileName;
-    @JsonProperty("release-name")
-    private String releaseName;
-    @JsonProperty("cloud-region")
+    @JsonProperty("vfModuleUUID")
+    private String vfModuleUUID;
+    @JsonProperty("cloudRegionId")
     private String cloudRegion;
     @JsonProperty("labels")
-    private Labels labels;
+    private Map<String, String> labels;
     @JsonProperty(value = "override-values")
     private Map<String, String> overrideValues;
 
@@ -67,21 +67,21 @@ public class InstanceRequest {
     }
 
     @JsonProperty("labels")
-    public Labels getLabels() {
+    public Map<String, String> getLabels() {
         return labels;
     }
 
     @JsonProperty("labels")
-    public void setLabels(Labels labels) {
+    public void setLabels(Map<String, String> labels) {
         this.labels = labels;
     }
 
-    public String getReleaseName() {
-        return releaseName;
+    public String getVfModuleUUID() {
+        return vfModuleUUID;
     }
 
-    public void setReleaseName(String releaseName) {
-        this.releaseName = releaseName;
+    public void setVfModuleUUID(String vfModuleUUID) {
+        this.vfModuleUUID = vfModuleUUID;
     }
 
     public Map<String, String> getOverrideValues() {
