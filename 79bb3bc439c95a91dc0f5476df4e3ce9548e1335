@@ -22,6 +22,30 @@
       "revId": "79bb3bc439c95a91dc0f5476df4e3ce9548e1335",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "18a3cdbc_c0d7e550",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/ServiceLevelUpgrade.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-09-09T10:17:21Z",
+      "side": 1,
+      "message": "Commented it temporarily, work under progress for this.",
+      "parentUuid": "ecaf20a8_ed65a78c",
+      "range": {
+        "startLine": 57,
+        "startChar": 19,
+        "endLine": 57,
+        "endChar": 42
+      },
+      "revId": "79bb3bc439c95a91dc0f5476df4e3ce9548e1335",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
