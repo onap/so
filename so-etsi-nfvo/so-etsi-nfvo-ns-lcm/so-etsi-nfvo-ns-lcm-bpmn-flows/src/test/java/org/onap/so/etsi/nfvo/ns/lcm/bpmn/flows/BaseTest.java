@@ -19,6 +19,7 @@
  */
 package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows;
 
+import static org.camunda.bpm.engine.history.HistoricProcessInstance.STATE_ACTIVE;
 import static org.slf4j.LoggerFactory.getLogger;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -134,9 +135,16 @@ public abstract class BaseTest {
 
 
     public boolean isProcessEndedByProcessInstanceId(final String processInstanceId) {
+        return !isProcessInstanceActive(processInstanceId) && isProcessInstanceEnded(processInstanceId);
+    }
+
+    private boolean isProcessInstanceActive(final String processInstanceId) {
         final HistoricProcessInstance processInstance = getHistoricProcessInstance(processInstanceId);
-        return processInstance != null
-                && !HistoricProcessInstance.STATE_ACTIVE.equalsIgnoreCase(processInstance.getState());
+        return processInstance != null && STATE_ACTIVE.equalsIgnoreCase(processInstance.getState());
+    }
+
+    private boolean isProcessInstanceEnded(final String processInstanceId) {
+        return runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult() == null;
     }
 
 }
