@@ -41,21 +41,18 @@ public class NsLcmControllerExceptionHandler {
                 .body(getInlineResponse400(nsRequestProcessingException));
     }
 
-    private InlineResponse400 getInlineResponse400(final NsRequestProcessingException nsRequestProcessingException) {
-
-        if (nsRequestProcessingException.getProblemDetails() != null) {
-            return nsRequestProcessingException.getProblemDetails();
-        }
-
-        return new InlineResponse400().status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .detail(nsRequestProcessingException.getMessage());
-
-    }
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<InlineResponse400> handleNsRequestProcessingException(final Exception exception) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new InlineResponse400()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value()).detail(exception.getMessage()));
+    }
+
+    private InlineResponse400 getInlineResponse400(final NsRequestProcessingException nsRequestProcessingException) {
+        if (nsRequestProcessingException.getProblemDetails() != null) {
+            return nsRequestProcessingException.getProblemDetails();
+        }
+        return new InlineResponse400().status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .detail(nsRequestProcessingException.getMessage());
     }
 
 }

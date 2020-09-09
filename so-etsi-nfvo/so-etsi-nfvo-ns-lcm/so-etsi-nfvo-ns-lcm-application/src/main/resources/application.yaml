@@ -65,5 +65,5 @@ so:
 etsi-catalog-manager:
    base:
       endpoint: http://modeling-etsicatalog.onap:8806/api
-etsi-so-ns-lcm-manager:
-   endpoint: http://so-etsi-nfvo-ns-lcm:9095
+so-etsi-nfvo-ns-lcm:
+   endpoint: http://so-etsi-nfvo-ns-lcm.onap:9095

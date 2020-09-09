@@ -125,7 +125,10 @@ public class NsLifecycleManagementController {
     public ResponseEntity<?> instantiateNs(@PathVariable("nsInstanceId") final String nsInstanceId,
             @RequestBody final InstantiateNsRequest instantiateNsRequest) {
         logger.debug("Received instantiate NS request: {}\n with nsInstanceId: {}", instantiateNsRequest, nsInstanceId);
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("Operation is not supported yet");
+        final URI resourceUri = nsLifeCycleManager.instantiateNs(nsInstanceId, instantiateNsRequest);
+        logger.info("{} Ns Instantiation started successfully. Resource Operation Occurrence uri: {}", nsInstanceId,
+                resourceUri);
+        return ResponseEntity.accepted().location(resourceUri).build();
     }
 
     /**
