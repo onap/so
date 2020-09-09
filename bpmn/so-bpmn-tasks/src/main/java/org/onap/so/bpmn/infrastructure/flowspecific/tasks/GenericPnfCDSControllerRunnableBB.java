@@ -22,17 +22,22 @@ import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerRunnable;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
+import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.cds.AbstractCDSProcessingBBUtils;
+import org.onap.so.client.cds.ConfigureInstanceParamsForPnf;
 import org.onap.so.client.cds.beans.AbstractCDSPropertiesBean;
 import org.onap.so.client.cds.PayloadConstants;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.client.exception.PayloadGenerationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import static org.onap.so.client.cds.PayloadConstants.PRC_BLUEPRINT_NAME;
 import static org.onap.so.client.cds.PayloadConstants.PRC_BLUEPRINT_VERSION;
@@ -54,13 +59,16 @@ public class GenericPnfCDSControllerRunnableBB implements ControllerRunnable<Bui
     private AbstractCDSProcessingBBUtils abstractCDSProcessingBBUtils;
     private ExtractPojosForBB extractPojosForBB;
     private ExceptionBuilder exceptionBuilder;
+    private ConfigureInstanceParamsForPnf configureInstanceParamsForPnf;
 
     @Autowired
     public GenericPnfCDSControllerRunnableBB(AbstractCDSProcessingBBUtils abstractCDSProcessingBBUtils,
-            ExtractPojosForBB extractPojosForBB, ExceptionBuilder exceptionBuilder) {
+            ExtractPojosForBB extractPojosForBB, ExceptionBuilder exceptionBuilder,
+            ConfigureInstanceParamsForPnf configureInstanceParamsForPnf) {
         this.abstractCDSProcessingBBUtils = abstractCDSProcessingBBUtils;
         this.extractPojosForBB = extractPojosForBB;
         this.exceptionBuilder = exceptionBuilder;
+        this.configureInstanceParamsForPnf = configureInstanceParamsForPnf;
     }
 
     @Override
@@ -115,6 +123,7 @@ public class GenericPnfCDSControllerRunnableBB implements ControllerRunnable<Bui
         String resolutionKey = null;
         try {
             final Pnf pnf = getPnf(execution);
+            final String modelCustomizationUuid = pnf.getModelInfoPnf().getModelCustomizationUuid();
             final ServiceInstance serviceInstance = getServiceInstance(execution);
             resolutionKey = pnf.getPnfName();
 
@@ -123,10 +132,17 @@ public class GenericPnfCDSControllerRunnableBB implements ControllerRunnable<Bui
                     pnfObject);
             setExecutionVariable("pnf-id", pnf.getPnfId(), pnfObject);
             setExecutionVariable("pnf-name", resolutionKey, pnfObject);
-            setExecutionVariable("pnf-customization-uuid", pnf.getModelInfoPnf().getModelCustomizationUuid(),
-                    pnfObject);
+            setExecutionVariable("pnf-customization-uuid", modelCustomizationUuid, pnfObject);
 
-        } catch (BBObjectNotFoundException exception) {
+            final GeneralBuildingBlock generalBuildingBlock = execution.getGeneralBuildingBlock();
+
+            List<Map<String, Object>> userParamsFromRequest =
+                    generalBuildingBlock.getRequestContext().getRequestParameters().getUserParams();
+            if (userParamsFromRequest != null && userParamsFromRequest.size() != 0) {
+                configureInstanceParamsForPnf.populateInstanceParams(pnfObject, userParamsFromRequest,
+                        modelCustomizationUuid);
+            }
+        } catch (BBObjectNotFoundException | PayloadGenerationException exception) {
             logger.error("An exception occurred when creating payload for CDS request", exception);
             exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, exception);
         }
