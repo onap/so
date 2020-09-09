@@ -36,7 +36,7 @@ public class EtsiSoNsLcmManagerUrlProvider {
 
     @Autowired
     public EtsiSoNsLcmManagerUrlProvider(
-            @Value("${etsi-so-ns-lcm-manager.endpoint}") final String etsiNsLcmManagerEndpoint) {
+            @Value("${so-etsi-nfvo-ns-lcm.endpoint:http://so-etsi-nfvo-ns-lcm.onap:9095}") final String etsiNsLcmManagerEndpoint) {
         this.etsiNsLcmManagerEndpoint = etsiNsLcmManagerEndpoint;
     }
 

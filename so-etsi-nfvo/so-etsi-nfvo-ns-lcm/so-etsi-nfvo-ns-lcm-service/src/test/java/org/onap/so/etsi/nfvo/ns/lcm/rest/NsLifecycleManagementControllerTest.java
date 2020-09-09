@@ -69,11 +69,16 @@ import com.google.gson.Gson;
 @SpringBootTest(classes = TestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class NsLifecycleManagementControllerTest {
+    private static final String EXPECTED_BASE_URL =
+            "http://so-etsi-nfvo-ns-lcm.onap:9095/so/so-etsi-nfvo-ns-lcm/v1/api/nslcm/v1";
+    private static final String RANDOM_NS_LCM_OP_OCC_ID = UUID.randomUUID().toString();
     private static final String RANDOM_NS_INST_ID = UUID.randomUUID().toString();
     private static final String SERVICE_TYPE = "NetworkService";
     private static final String GLOBAL_CUSTOMER_ID = UUID.randomUUID().toString();
-    private static final String EXPECTED_LOCATION_URL = "http://etsi-so-ns-lcm-manager-service:9095"
-            + "/so/so-etsi-nfvo-ns-lcm/v1/" + "api/nslcm/v1/ns_instances/" + RANDOM_NS_INST_ID;
+    private static final String EXPECTED_CREATE_REQ_LOCATION_URL =
+            EXPECTED_BASE_URL + "/ns_instances/" + RANDOM_NS_INST_ID;
+    private static final String EXPECTED_INSTANTIATE_REQ_LOCATION_URL =
+            EXPECTED_BASE_URL + "/ns_lcm_op_occs/" + RANDOM_NS_LCM_OP_OCC_ID;
 
     @LocalServerPort
     private int port;
@@ -115,7 +120,7 @@ public class NsLifecycleManagementControllerTest {
         assertTrue(httpHeaders.containsKey(HttpHeaders.LOCATION));
         final List<String> actual = httpHeaders.get(HttpHeaders.LOCATION);
         assertEquals(1, actual.size());
-        assertEquals(EXPECTED_LOCATION_URL, actual.get(0));
+        assertEquals(EXPECTED_CREATE_REQ_LOCATION_URL, actual.get(0));
     }
 
     @Test
@@ -177,11 +182,39 @@ public class NsLifecycleManagementControllerTest {
 
     @Test
     public void testInstantiateNs_ValidInstantiateNsRequest() {
-        final String baseUrl = getNsLcmBaseUrl() + "/ns_instances/" + UUID.randomUUID().toString() + "/instantiate";
-        final HttpEntity<?> request = new HttpEntity<>(getInstantiateNsRequest());
+
+        final InstantiateNsRequest instantiateNsRequest = getInstantiateNsRequest();
+        when(mockedJobExecutorService.runInstantiateNsJob(eq(RANDOM_NS_INST_ID), eq(instantiateNsRequest)))
+                .thenReturn(RANDOM_NS_LCM_OP_OCC_ID);
+
+        final String baseUrl = getNsLcmBaseUrl() + "/ns_instances/" + RANDOM_NS_INST_ID + "/instantiate";
+        final HttpEntity<?> request = new HttpEntity<>(instantiateNsRequest);
         final ResponseEntity<Void> responseEntity =
                 testRestTemplate.exchange(baseUrl, HttpMethod.POST, request, Void.class);
-        assertEquals(HttpStatus.NOT_IMPLEMENTED, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
+
+        final HttpHeaders httpHeaders = responseEntity.getHeaders();
+        assertTrue(httpHeaders.containsKey(HttpHeaders.LOCATION));
+        final List<String> actual = httpHeaders.get(HttpHeaders.LOCATION);
+        assertEquals(1, actual.size());
+        assertEquals(EXPECTED_INSTANTIATE_REQ_LOCATION_URL, actual.get(0));
+    }
+
+    @Test
+    public void testInstantiateNs_instantiateNsRequest_nsRequestProcessingExceptionThrown_returnInlineResponse400() {
+        final String message = "Unable to process request";
+        final InstantiateNsRequest instantiateNsRequest = getInstantiateNsRequest();
+        when(mockedJobExecutorService.runInstantiateNsJob(eq(RANDOM_NS_INST_ID), eq(instantiateNsRequest)))
+                .thenThrow(new NsRequestProcessingException(message, new InlineResponse400().detail(message)));
+
+        final String baseUrl = getNsLcmBaseUrl() + "/ns_instances/" + RANDOM_NS_INST_ID + "/instantiate";
+        final HttpEntity<?> request = new HttpEntity<>(instantiateNsRequest);
+        final ResponseEntity<InlineResponse400> responseEntity =
+                testRestTemplate.exchange(baseUrl, HttpMethod.POST, request, InlineResponse400.class);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+        assertTrue(responseEntity.hasBody());
+        assertNotNull(responseEntity.getBody());
     }
 
     @Test
