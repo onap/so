@@ -72,7 +72,7 @@
 	"aggregateRoutes": {
 		"aggregateRoute": [
 			{
-				"routeId": "routeId",
+				"aggRouteId": "routeId",
 				"networkStartAddress": "10.80.12.0",
 				"cidrMask": "23",
 				"ipVersion": "4"
