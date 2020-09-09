@@ -21,28 +21,14 @@
 package org.onap.so.openstack.utils;
 
 import java.util.Map;
-import org.onap.so.cloud.authentication.AuthenticationMethodFactory;
 import org.onap.so.db.catalog.beans.CloudIdentity;
-import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.openstack.beans.MsoTenant;
 import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
 import org.onap.so.openstack.exceptions.MsoException;
-import org.onap.so.utils.CryptoUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.woorea.openstack.keystone.v3.model.Token;
-import com.woorea.openstack.base.client.OpenStackConnectException;
-import com.woorea.openstack.base.client.OpenStackResponseException;
-import com.woorea.openstack.keystone.v3.Keystone;
-import com.woorea.openstack.keystone.v3.api.TokensResource.Authenticate;
-import com.woorea.openstack.keystone.v3.model.Authentication;
-import com.woorea.openstack.keystone.v3.model.Authentication.Identity;
 
 @Component
 public class MsoKeystoneV3Utils extends MsoTenantUtils {
-
-    @Autowired
-    private AuthenticationMethodFactory authenticationMethodFactory;
 
     @Override
     public String createTenant(String tenantName, String cloudSiteId, Map<String, String> metadata, boolean backout)
@@ -69,24 +55,6 @@ public class MsoKeystoneV3Utils extends MsoTenantUtils {
     @Override
     public String getKeystoneUrl(String regionId, CloudIdentity cloudIdentity) throws MsoException {
         return cloudIdentity.getIdentityUrl();
-    }
-
-    public Token getKeystoneToken(CloudSite cloudSite) throws MsoException {
-        try {
-            CloudIdentity cloudIdentity = cloudSite.getIdentityService();
-
-            Keystone keystone = new Keystone(cloudIdentity.getIdentityUrl());
-
-            Authentication auth = authenticationMethodFactory.getAuthenticationForV3(cloudIdentity);
-
-            Authenticate authenticate = keystone.tokens().authenticate(auth);
-            return executeAndRecordOpenstackRequest(authenticate);
-
-        } catch (OpenStackResponseException e) {
-            throw keystoneErrorToMsoException(e, "TokenAuth");
-        } catch (OpenStackConnectException e) {
-            throw keystoneErrorToMsoException(e, "TokenAuth");
-        }
     }
 
 }
