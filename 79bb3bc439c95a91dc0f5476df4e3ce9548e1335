@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ecaf20a8_ed65a78c",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/level/impl/ServiceLevelUpgrade.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 6070
+      },
+      "writtenOn": "2020-09-09T10:10:47Z",
+      "side": 1,
+      "message": "We are not validating the parameters now? Any reason we removed this functionality.",
+      "range": {
+        "startLine": 57,
+        "startChar": 19,
+        "endLine": 57,
+        "endChar": 42
+      },
+      "revId": "79bb3bc439c95a91dc0f5476df4e3ce9548e1335",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
