@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0misy4e" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.7.1">
+  <bpmn:process id="DoModifyRanNfNssi" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_0f9s9j7</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:scriptTask id="Activity_0bbh5uy" name="preprocess request" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0f9s9j7</bpmn:incoming>
+      <bpmn:outgoing>Flow_1kdh0gl</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def nss = new DoModifyRanNfNssi()
+nss.preProcessRequest(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0f9s9j7" sourceRef="StartEvent_1" targetRef="Activity_0bbh5uy" />
+    <bpmn:sequenceFlow id="Flow_1kdh0gl" sourceRef="Activity_0bbh5uy" targetRef="Activity_1rs1l5c" />
+    <bpmn:scriptTask id="Activity_1rs1l5c" name="prepare SDNR request" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1kdh0gl</bpmn:incoming>
+      <bpmn:outgoing>Flow_0n0zzp4</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def nss = new DoModifyRanNfNssi()
+nss.createSdnrRequest(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:callActivity id="Activity_1jpoqws" name="call sdnr for RAN NF NSSI creation" calledElement="DoHandleSdnrDmaapRequest">
+      <bpmn:extensionElements>
+        <camunda:in source="createNSSI_sdnrRequest" target="sdnrRequest" />
+        <camunda:out source="asyncCallbackResponse" target="SDNR_asyncCallbackResponse" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="createNSSI_correlator" target="correlator" />
+        <camunda:in source="createNSSI_messageType" target="messageType" />
+        <camunda:in source="createNSSI_timeout" target="timeout" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0n0zzp4</bpmn:incoming>
+      <bpmn:outgoing>Flow_1b0cez1</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:scriptTask id="Activity_03xcmka" name="process SDNR response" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1b0cez1</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ngijid</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def nss = new DoModifyRanNfNssi()
+nss.processSdnrResponse(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0n0zzp4" sourceRef="Activity_1rs1l5c" targetRef="Activity_1jpoqws" />
+    <bpmn:sequenceFlow id="Flow_1b0cez1" sourceRef="Activity_1jpoqws" targetRef="Activity_03xcmka" />
+    <bpmn:sequenceFlow id="Flow_1ngijid" sourceRef="Activity_03xcmka" targetRef="Event_086qr2t" />
+    <bpmn:endEvent id="Event_086qr2t">
+      <bpmn:incoming>Flow_1ngijid</bpmn:incoming>
+    </bpmn:endEvent>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoModifyRanNfNssi">
+      <bpmndi:BPMNEdge id="Flow_1ngijid_di" bpmnElement="Flow_1ngijid">
+        <di:waypoint x="730" y="100" />
+        <di:waypoint x="772" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1b0cez1_di" bpmnElement="Flow_1b0cez1">
+        <di:waypoint x="590" y="100" />
+        <di:waypoint x="630" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0n0zzp4_di" bpmnElement="Flow_0n0zzp4">
+        <di:waypoint x="460" y="100" />
+        <di:waypoint x="490" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kdh0gl_di" bpmnElement="Flow_1kdh0gl">
+        <di:waypoint x="320" y="100" />
+        <di:waypoint x="360" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0f9s9j7_di" bpmnElement="Flow_0f9s9j7">
+        <di:waypoint x="188" y="100" />
+        <di:waypoint x="220" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="82" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0bbh5uy_di" bpmnElement="Activity_0bbh5uy">
+        <dc:Bounds x="220" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1rs1l5c_di" bpmnElement="Activity_1rs1l5c">
+        <dc:Bounds x="360" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1jpoqws_di" bpmnElement="Activity_1jpoqws">
+        <dc:Bounds x="490" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_03xcmka_di" bpmnElement="Activity_03xcmka">
+        <dc:Bounds x="630" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_086qr2t_di" bpmnElement="Event_086qr2t">
+        <dc:Bounds x="772" y="82" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
