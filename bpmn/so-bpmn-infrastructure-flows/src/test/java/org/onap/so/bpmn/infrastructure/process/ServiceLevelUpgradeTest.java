@@ -62,7 +62,8 @@ public class ServiceLevelUpgradeTest extends BaseBPMNTest {
     private static final Map<String, Object> executionVariables = new HashMap();
     private static final String REQUEST_ID = "50ae41ad-049c-4fe2-9950-539f111120f5";
     private static final String SERVICE_INSTANCE_ID = "5df8b6de-2083-11e7-93ae-92361f002676";
-    private final String[] actionNames = new String[5];
+    private final String[] actionNames = new String[10];
+    private final String[] pnfNames = new String[10];
     private final String CLASSNAME = getClass().getSimpleName();
     private String requestObject;
     private String responseObject;
@@ -73,10 +74,26 @@ public class ServiceLevelUpgradeTest extends BaseBPMNTest {
     @Before
     public void setUp() throws IOException {
         actionNames[0] = "healthCheck";
-        actionNames[1] = "preCheck";
-        actionNames[2] = "downloadNESw";
-        actionNames[3] = "activateNESw";
-        actionNames[4] = "postCheck";
+        actionNames[1] = "healthCheck";
+        actionNames[2] = "preCheck";
+        actionNames[3] = "downloadNESw";
+        actionNames[4] = "activateNESw";
+        actionNames[5] = "postCheck";
+        actionNames[6] = "preCheck";
+        actionNames[7] = "downloadNESw";
+        actionNames[8] = "activateNESw";
+        actionNames[9] = "postCheck";
+
+        pnfNames[0] = "PNFDemo";
+        pnfNames[1] = "PNFDemo1";
+        pnfNames[2] = "PNFDemo";
+        pnfNames[3] = "PNFDemo";
+        pnfNames[4] = "PNFDemo";
+        pnfNames[5] = "PNFDemo";
+        pnfNames[6] = "PNFDemo1";
+        pnfNames[7] = "PNFDemo1";
+        pnfNames[8] = "PNFDemo1";
+        pnfNames[9] = "PNFDemo1";
 
         executionVariables.clear();
 
@@ -125,22 +142,22 @@ public class ServiceLevelUpgradeTest extends BaseBPMNTest {
         }
 
         // Layout is to reflect the bpmn visual layout
-        assertThat(pi).isEnded().hasPassedInOrder("Event_02mc8tr", "Activity_18vue7u", "Activity_0qgmx7a",
-                "Activity_09bqns0", "Activity_0n17xou", "Gateway_1nr51kr", "Activity_0snmatn", "Activity_1q4o9fx",
-                "Gateway_02fectw", "Activity_1hp67qz", "Gateway_18ch73t", "Activity_0ft7fa2", "Gateway_1vq11i7",
-                "Activity_1n4rk7m", "Activity_1lz38px", "Event_12983th");
+        assertThat(pi).isEnded().hasPassedInOrder("Event_02mc8tr", "Activity_18vue7u", "Activity_09bqns0",
+                "Activity_02vp5np", "Activity_0n17xou", "Gateway_1nr51kr", "Activity_0snmatn", "Activity_0e6w886",
+                "Activity_1q4o9fx", "Gateway_02fectw", "Activity_1hp67qz", "Gateway_18ch73t", "Activity_0ft7fa2",
+                "Gateway_1vq11i7", "Activity_1n4rk7m", "Activity_1lz38px", "Event_12983th");
 
         List<ExecutionServiceInput> detailedMessages = grpcNettyServer.getDetailedMessages();
         assertThat(detailedMessages.size() == 5);
         int count = 0;
+        String action = "";
         try {
             for (ExecutionServiceInput eSI : detailedMessages) {
-                for (String action : actionNames) {
-                    if (action.equals(eSI.getActionIdentifiers().getActionName())
-                            && eSI.getCommonHeader().getRequestId().equals(msoRequestId)) {
-                        checkWithActionName(eSI, action);
-                        count++;
-                    }
+                action = actionNames[count];
+                if (action.equals(eSI.getActionIdentifiers().getActionName())
+                        && eSI.getCommonHeader().getRequestId().equals(msoRequestId)) {
+                    checkWithActionName(eSI, action, pnfNames[count]);
+                    count++;
                 }
             }
         } catch (Exception e) {
@@ -155,7 +172,8 @@ public class ServiceLevelUpgradeTest extends BaseBPMNTest {
                 .singleResult() == null;
     }
 
-    private void checkWithActionName(ExecutionServiceInput executionServiceInput, String action) {
+    private void checkWithActionName(final ExecutionServiceInput executionServiceInput, final String action,
+            final String pnfName) {
 
         logger.info("Checking the " + action + " request");
         ActionIdentifiers actionIdentifiers = executionServiceInput.getActionIdentifiers();
@@ -174,10 +192,10 @@ public class ServiceLevelUpgradeTest extends BaseBPMNTest {
         Struct payload = executionServiceInput.getPayload();
         Struct requeststruct = payload.getFieldsOrThrow(action + "-request").getStructValue();
 
-        assertThat(requeststruct.getFieldsOrThrow("resolution-key").getStringValue()).isEqualTo("PNFDemo");
+        assertThat(requeststruct.getFieldsOrThrow("resolution-key").getStringValue()).isEqualTo(pnfName);
         Struct propertiesStruct = requeststruct.getFieldsOrThrow(action + "-properties").getStructValue();
 
-        assertThat(propertiesStruct.getFieldsOrThrow("pnf-name").getStringValue()).isEqualTo("PNFDemo");
+        assertThat(propertiesStruct.getFieldsOrThrow("pnf-name").getStringValue()).isEqualTo(pnfName);
         assertThat(propertiesStruct.getFieldsOrThrow("service-model-uuid").getStringValue())
                 .isEqualTo("d88da85c-d9e8-4f73-b837-3a72a431622b");
         assertThat(propertiesStruct.getFieldsOrThrow("pnf-customization-uuid").getStringValue())
@@ -188,24 +206,41 @@ public class ServiceLevelUpgradeTest extends BaseBPMNTest {
 
         final String sIUrl =
                 "/business/customers/customer/5df8b6de-2083-11e7-93ae-92361f002676/service-subscriptions/service-subscription/pNF/service-instances/service-instance/ETE_Customer_807c7a02-249c-4db8-9fa9-bee973fe08ce";
-        final String aaiPnfEntry = FileUtil.readResourceFile("response/Pnf_aai.json");
+        final String aaiPnfDemoEntry = FileUtil.readResourceFile("response/PnfDemo_aai.json");
+        final String aaiPnfDemo1Entry = FileUtil.readResourceFile("response/PnfDemo1_aai.json");
         final String aaiServiceInstanceEntry = FileUtil.readResourceFile("response/Service_instance_aai.json");
 
         /**
-         * PUT the PNF correlation ID to AAI.
+         * PUT the PNF correlation ID PnfDemo to AAI.
          */
         wireMockServer.stubFor(put(urlEqualTo("/aai/" + VERSION + "/network/pnfs/pnf/PNFDemo")));
 
         /**
-         * Get the PNF entry from AAI.
+         * PUT the PNF correlation ID PnfDemo1 to AAI.
          */
-        wireMockServer.stubFor(
-                get(urlEqualTo("/aai/" + VERSION + "/network/pnfs/pnf/PNFDemo")).willReturn(okJson(aaiPnfEntry)));
+        wireMockServer.stubFor(put(urlEqualTo("/aai/" + VERSION + "/network/pnfs/pnf/PNFDemo1")));
 
         /**
-         * Post the pnf to AAI
+         * Get the PNF entry PnfDemo from AAI.
+         */
+        wireMockServer.stubFor(
+                get(urlEqualTo("/aai/" + VERSION + "/network/pnfs/pnf/PNFDemo")).willReturn(okJson(aaiPnfDemoEntry)));
+
+        /**
+         * Get the PNF entry PnfDemo1 from AAI.
+         */
+        wireMockServer.stubFor(
+                get(urlEqualTo("/aai/" + VERSION + "/network/pnfs/pnf/PNFDemo1")).willReturn(okJson(aaiPnfDemo1Entry)));
+
+        /**
+         * Post the pnf PnfDemo to AAI
          */
         wireMockServer.stubFor(post(urlEqualTo("/aai/" + VERSION + "/network/pnfs/pnf/PNFDemo")));
+
+        /**
+         * Post the pnf PnfDemo1 to AAI
+         */
+        wireMockServer.stubFor(post(urlEqualTo("/aai/" + VERSION + "/network/pnfs/pnf/PNFDemo1")));
 
         /**
          * Get the Service Instance to AAI.

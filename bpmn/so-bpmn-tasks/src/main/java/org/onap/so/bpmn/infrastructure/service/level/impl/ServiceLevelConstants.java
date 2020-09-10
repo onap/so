@@ -38,6 +38,10 @@ public class ServiceLevelConstants {
     public static final String SW_UP_OPERATION = "ResourceSoftwareUpgrade";
     public static final String CONTROLLER_STATUS = "ControllerStatus";
     public static final int ERROR_CODE = 601;
+    public static final String PNF_COUNTER = "pnfCounter";
+    public static final int COUNT_ZERO = 0;
+    public static final String PNF_NAME_LIST = "pnfNameList";
+    public static final String PNF_SIZE = "pnfSize";
 
     // TODO GenericVNFHealthCheck and GenericVnfSoftwareUpgrade workflow names should be updated once the workflow is
     // implemented.
