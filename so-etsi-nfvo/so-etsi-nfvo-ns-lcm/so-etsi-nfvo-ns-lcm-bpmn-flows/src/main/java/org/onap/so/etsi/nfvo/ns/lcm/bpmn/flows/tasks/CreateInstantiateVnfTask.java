@@ -219,16 +219,4 @@ public class CreateInstantiateVnfTask extends AbstractNetworkServiceTask {
         databaseServiceProvider.saveNfvoNfInst(nfvoNfInst);
     }
 
-    private NfvoNsInst getNfvoNsInst(final DelegateExecution execution, final String nsInstId) {
-        logger.info("Getting NfvoNsInst to update with nsInstId: {}", nsInstId);
-        final Optional<NfvoNsInst> optionalNfvoNsInst = databaseServiceProvider.getNfvoNsInst(nsInstId);
-
-        if (!optionalNfvoNsInst.isPresent()) {
-            final String message = "Unable to find NS Instance in datababse using id: " + nsInstId;
-            abortOperation(execution, message);
-        }
-
-        return optionalNfvoNsInst.get();
-    }
-
 }

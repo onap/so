@@ -127,6 +127,16 @@ public class DatabaseServiceProvider {
         return nfvoNfInstRepository.findByNfInstId(nfInstId);
     }
 
+    public boolean isNfInstExists(final String nfInstId) {
+        logger.info("Checking if NfvoNfInst entry exists in database using nfInstId: {}", nfInstId);
+        return nfvoNfInstRepository.findByNfInstId(nfInstId).isPresent();
+    }
+
+    public void deleteNfvoNfInst(final String nfInstId) {
+        logger.info("Deleting NfvoNfInst with nfInstId: {} from database", nfInstId);
+        nfvoNfInstRepository.deleteById(nfInstId);
+    }
+
     public boolean addNSLcmOpOcc(final NsLcmOpOcc nsLcmOpOcc) {
         logger.info("Adding NSLcmOpOcc: {} to database", nsLcmOpOcc);
         return nsLcmOpOccRepository.save(nsLcmOpOcc) != null;

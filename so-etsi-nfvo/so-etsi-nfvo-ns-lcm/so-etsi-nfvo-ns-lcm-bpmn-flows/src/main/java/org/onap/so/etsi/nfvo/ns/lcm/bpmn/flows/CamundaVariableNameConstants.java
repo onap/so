@@ -31,7 +31,6 @@ public class CamundaVariableNameConstants {
     public static final String GLOBAL_CUSTOMER_ID_PARAM_NAME = "globalCustomerId";
     public static final String SERVICE_TYPE_PARAM_NAME = "serviceType";
 
-
     public static final String NS_PACKAGE_MODEL_PARAM_NAME = "NSPackageModel";
     public static final String CREATE_NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME =
             "CreateNsWorkflowProcessingException";
@@ -46,6 +45,11 @@ public class CamundaVariableNameConstants {
     public static final String NF_INST_ID_PARAM_NAME = "NF_INST_ID";
     public static final String CREATE_VNF_RESPONSE_PARAM_NAME = "createVnfResponse";
     public static final String OPERATION_STATUS_PARAM_NAME = "operationStatus";
+
+    public static final String TERMINATE_NS_REQUEST_PARAM_NAME = "terminateNsRequest";
+    public static final String NFVO_NF_INST_IDS_PARAM_NAME = "nfvoNfInstIds";
+    public static final String DELETE_VNF_RESPONSE_PARAM_NAME = "deleteVnfResponse";
+    public static final String TERMINATE_VNF_VNFID_PARAM_NAME = "vnfId";
 
     private CamundaVariableNameConstants() {}
 

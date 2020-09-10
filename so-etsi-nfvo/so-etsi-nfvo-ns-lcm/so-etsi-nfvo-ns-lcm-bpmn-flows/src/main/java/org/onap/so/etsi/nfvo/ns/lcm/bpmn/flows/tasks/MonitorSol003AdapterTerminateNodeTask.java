@@ -17,37 +17,39 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-package org.onap.so.etsi.nfvo.ns.lcm;
+package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.tasks;
 
-import java.net.URI;
+import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.extclients.aai.AaiServiceProvider;
+import org.onap.so.etsi.nfvo.ns.lcm.database.service.DatabaseServiceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 
 /**
  * @author Waqas Ikram (waqas.ikram@est.tech)
+ * @author Andrew Lamb (andrew.a.lamb@est.tech)
  *
  */
-@Configuration
-public class EtsiSoNsLcmManagerUrlProvider {
+@Component
+public class MonitorSol003AdapterTerminateNodeTask extends MonitorSol003AdapterNodeTask {
 
-    private final String etsiNsLcmManagerEndpoint;
+    public static final String DELETE_VNF_NODE_STATUS = "deleteVnfNodeStatus";
+    public static final String VNF_ASSIGNED = "Assigned";
 
     @Autowired
-    public EtsiSoNsLcmManagerUrlProvider(
-            @Value("${so-etsi-nfvo-ns-lcm.endpoint:http://so-etsi-nfvo-ns-lcm.onap:9095}") final String etsiNsLcmManagerEndpoint) {
-        this.etsiNsLcmManagerEndpoint = etsiNsLcmManagerEndpoint;
+    public MonitorSol003AdapterTerminateNodeTask(final DatabaseServiceProvider databaseServiceProvider,
+            final AaiServiceProvider aaiServiceProvider) {
+        super(databaseServiceProvider, aaiServiceProvider);
     }
 
-    public URI getCreatedNsResourceUri(final String nsInstanceId) {
-        return URI.create(etsiNsLcmManagerEndpoint + Constants.NS_LIFE_CYCLE_MANAGEMENT_BASE_URL + "/ns_instances/"
-                + nsInstanceId);
+    @Override
+    public String getNodeStatusVariableName() {
+        return DELETE_VNF_NODE_STATUS;
     }
 
-    public URI getNsLcmOpOccUri(final String nsLcmOpOccId) {
-        return URI.create(etsiNsLcmManagerEndpoint + Constants.NS_LIFE_CYCLE_MANAGEMENT_BASE_URL + "/ns_lcm_op_occs/"
-                + nsLcmOpOccId);
+    @Override
+    public boolean isOrchestrationStatusValid(final String orchestrationStatus) {
+        return VNF_ASSIGNED.equalsIgnoreCase(orchestrationStatus);
     }
 
 }

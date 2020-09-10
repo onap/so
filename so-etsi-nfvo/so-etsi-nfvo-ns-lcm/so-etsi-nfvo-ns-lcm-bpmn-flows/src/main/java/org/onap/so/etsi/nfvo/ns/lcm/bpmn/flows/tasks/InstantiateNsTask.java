@@ -55,6 +55,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
+ * @author Waqas Ikram (waqas.ikram@est.tech)
  * @author Andrew Lamb (andrew.a.lamb@est.tech)
  *
  */
@@ -272,50 +273,6 @@ public class InstantiateNsTask extends AbstractNetworkServiceTask {
         setJobStatusToError(execution, "Instantiate NS workflow process failed");
     }
 
-
-    public void updateNsLcmOpOccStatusToCompleted(final DelegateExecution execution) {
-        logger.info("Executing updateNsLcmOpOccStatusToCompleted ...");
-        final String occId = (String) execution.getVariable(OCC_ID_PARAM_NAME);
-
-        final Optional<NsLcmOpOcc> optional = databaseServiceProvider.getNsLcmOpOcc(occId);
-
-        if (!optional.isPresent()) {
-            final String message = "Unable to find record for NSLcmOpOcc in database using id: " + occId;
-            logger.error(message);
-            abortOperation(execution, message);
-        }
-
-        final NsLcmOpOcc nsLcmOpOcc = optional.get();
-        final OperationStateEnum operationStateCompleted = OperationStateEnum.COMPLETED;
-        logger.info("Setting operation state to {} for id: {}", operationStateCompleted, occId);
-        nsLcmOpOcc.setOperationState(operationStateCompleted);
-        databaseServiceProvider.addNSLcmOpOcc(nsLcmOpOcc);
-
-        logger.info("Finished executing updateNsLcmOpOccStatusToCompleted ...");
-
-    }
-
-    public void updateNsLcmOpOccStatusToFailed(final DelegateExecution execution) {
-        logger.info("Executing updateNsLcmOpOccStatusToFailed ...");
-        final String occId = (String) execution.getVariable(OCC_ID_PARAM_NAME);
-
-        final Optional<NsLcmOpOcc> optional = databaseServiceProvider.getNsLcmOpOcc(occId);
-
-        if (optional.isPresent()) {
-            final NsLcmOpOcc nsLcmOpOcc = optional.get();
-            final OperationStateEnum operationStateFailed = OperationStateEnum.FAILED;
-            logger.info("Setting operation state to {} for id: {}", operationStateFailed, occId);
-            nsLcmOpOcc.setOperationState(operationStateFailed);
-
-            databaseServiceProvider.addNSLcmOpOcc(nsLcmOpOcc);
-        } else {
-            logger.error("Unable to find record for NSLcmOpOcc in database using id: {}", occId);
-        }
-
-        logger.info("Finished executing updateNsLcmOpOccStatusToFailed ...");
-
-    }
-
     private NsdInfo getNsdInfo(final DelegateExecution execution, final String nsPackageId) {
         try {
             final Optional<NsdInfo> optional =
@@ -394,23 +351,5 @@ public class InstantiateNsTask extends AbstractNetworkServiceTask {
         return Collections.emptyMap();
 
     }
-
-    private NfvoNsInst getNfvoNsInst(final DelegateExecution execution) {
-        final String nsInstId = (String) execution.getVariable(NS_INSTANCE_ID_PARAM_NAME);
-        return getNfvoNsInst(execution, nsInstId);
-    }
-
-    private NfvoNsInst getNfvoNsInst(final DelegateExecution execution, final String nsInstId) {
-        logger.info("Getting NfvoNsInst to update with nsInstId: {}", nsInstId);
-        final Optional<NfvoNsInst> optionalNfvoNsInst = databaseServiceProvider.getNfvoNsInst(nsInstId);
-
-        if (!optionalNfvoNsInst.isPresent()) {
-            final String message = "Unable to find NS Instance in database using id: " + nsInstId;
-            abortOperation(execution, message);
-        }
-
-        return optionalNfvoNsInst.get();
-    }
-
 
 }

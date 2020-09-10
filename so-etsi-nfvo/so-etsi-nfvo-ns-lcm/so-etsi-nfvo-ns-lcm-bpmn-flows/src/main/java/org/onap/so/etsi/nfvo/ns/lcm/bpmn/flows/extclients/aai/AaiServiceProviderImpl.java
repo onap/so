@@ -80,4 +80,11 @@ public class AaiServiceProviderImpl implements AaiServiceProvider {
         return aaiClientProvider.getAaiClient().get(GenericVnf.class,
                 AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId));
     }
+
+    @Override
+    public void deleteGenericVnf(final String vnfId) {
+        logger.info("Deleting GenericVnf with id: {} from AAI.", vnfId);
+        final AAIResourceUri aaiResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId);
+        aaiClientProvider.getAaiClient().delete(aaiResourceUri);
+    }
 }

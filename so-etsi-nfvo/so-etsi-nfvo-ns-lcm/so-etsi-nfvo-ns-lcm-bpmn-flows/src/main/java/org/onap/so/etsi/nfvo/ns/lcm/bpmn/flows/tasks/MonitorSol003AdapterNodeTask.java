@@ -57,7 +57,7 @@ public abstract class MonitorSol003AdapterNodeTask extends AbstractNetworkServic
             final Optional<GenericVnf> aaiGenericVnfOptional = aaiServiceProvider.getGenericVnf(vnfId);
 
             if (!aaiGenericVnfOptional.isPresent()) {
-                abortOperation(execution, "Unable to invoke Sol003 adapter for create and instantiate vnfId" + vnfId);
+                abortOperation(execution, "Unable to find generic vnf in A&AI using vnfId" + vnfId);
             }
             final GenericVnf genericVnf = aaiGenericVnfOptional.get();
             final String orchestrationStatus = genericVnf.getOrchestrationStatus();
@@ -88,5 +88,9 @@ public abstract class MonitorSol003AdapterNodeTask extends AbstractNetworkServic
         final String message = "Node operation time out";
         LOGGER.error(message);
         abortOperation(execution, message);
+    }
+
+    AaiServiceProvider getAaiServiceProvider() {
+        return aaiServiceProvider;
     }
 }
