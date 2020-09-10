@@ -1,16 +1,25 @@
 package org.onap.aaiclient.client.graphinventory;
 
+import java.util.Collections;
 import java.util.List;
 
 public interface GraphInventoryFluentTypeBase {
 
     public interface Info {
-        String getPartialUri();
+        default String getPartialUri() {
+            return "";
+        }
 
-        List<String> getPaths();
+        default List<String> getPaths() {
+            return Collections.emptyList();
+        }
     }
 
-    Object[] values();
+    default Object[] values() {
+        return new Object[] {};
+    }
 
-    String uriTemplate();
+    default String uriTemplate() {
+        return "";
+    }
 }

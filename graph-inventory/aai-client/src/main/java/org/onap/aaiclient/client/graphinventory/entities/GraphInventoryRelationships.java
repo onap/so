@@ -36,7 +36,7 @@ import org.onap.so.jsonpath.JsonPathUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public abstract class GraphInventoryRelationships<Wrapper extends GraphInventoryResultWrapper<?>, Uri extends GraphInventorySingleResourceUri<?, ?, ?, ?>, Type extends GraphInventoryObjectType> {
+public abstract class GraphInventoryRelationships<Wrapper extends GraphInventoryResultWrapper<?>, Uri extends GraphInventorySingleResourceUri<?, ?, ?, ?, ?, ?>, Type extends GraphInventoryObjectType> {
 
     protected final ObjectMapper mapper;
     protected Map<String, Object> map;

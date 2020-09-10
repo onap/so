@@ -34,7 +34,7 @@ import org.onap.aaiclient.client.graphinventory.exceptions.BulkProcessFailed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInventoryResourceUri<?, ?>, SingleUri extends GraphInventorySingleResourceUri<?, ?, ?, ?>, EdgeLabel extends GraphInventoryEdgeLabel> {
+public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInventoryResourceUri<?, ?>, SingleUri extends GraphInventorySingleResourceUri<?, ?, ?, ?, ?, ?>, EdgeLabel extends GraphInventoryEdgeLabel> {
 
     protected static Logger logger = LoggerFactory.getLogger(GraphInventoryTransactionClient.class);
 

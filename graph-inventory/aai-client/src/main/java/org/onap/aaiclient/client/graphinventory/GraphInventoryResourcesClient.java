@@ -33,8 +33,6 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import org.onap.aai.domain.yang.Relationship;
-import org.onap.so.client.RestClient;
-import org.onap.so.client.RestProperties;
 import org.onap.aaiclient.client.graphinventory.entities.GraphInventoryEdgeLabel;
 import org.onap.aaiclient.client.graphinventory.entities.GraphInventoryResultWrapper;
 import org.onap.aaiclient.client.graphinventory.entities.uri.GraphInventoryPluralResourceUri;
@@ -42,8 +40,10 @@ import org.onap.aaiclient.client.graphinventory.entities.uri.GraphInventoryResou
 import org.onap.aaiclient.client.graphinventory.entities.uri.GraphInventorySingleResourceUri;
 import org.onap.aaiclient.client.graphinventory.entities.uri.HttpAwareUri;
 import org.onap.aaiclient.client.graphinventory.exceptions.GraphInventoryMultipleItemsException;
+import org.onap.so.client.RestClient;
+import org.onap.so.client.RestProperties;
 
-public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInventoryResourceUri<?, ?>, SingleUri extends GraphInventorySingleResourceUri<?, ?, ?, ?>, PluralUri extends GraphInventoryPluralResourceUri<?, ?>, EdgeLabel extends GraphInventoryEdgeLabel, Wrapper extends GraphInventoryResultWrapper, TransactionalClient, SingleTransactionClient> {
+public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInventoryResourceUri<?, ?>, SingleUri extends GraphInventorySingleResourceUri<?, ?, ?, ?, ?, ?>, PluralUri extends GraphInventoryPluralResourceUri<?, ?>, EdgeLabel extends GraphInventoryEdgeLabel, Wrapper extends GraphInventoryResultWrapper, TransactionalClient, SingleTransactionClient> {
 
     protected GraphInventoryClient client;
 
@@ -101,7 +101,7 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
      * @return
      */
     public void connect(SingleUri uriA, SingleUri uriB) {
-        GraphInventorySingleResourceUri<?, ?, ?, ?> uriAClone = (SingleUri) uriA.clone();
+        GraphInventorySingleResourceUri<?, ?, ?, ?, ?, ?> uriAClone = (SingleUri) uriA.clone();
         RestClient giRC = client.createClient(uriAClone.relationshipAPI());
         giRC.put(this.buildRelationship(uriB));
     }
@@ -115,7 +115,7 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
      * @return
      */
     public void connect(SingleUri uriA, SingleUri uriB, EdgeLabel label) {
-        GraphInventorySingleResourceUri<?, ?, ?, ?> uriAClone = (SingleUri) uriA.clone();
+        GraphInventorySingleResourceUri<?, ?, ?, ?, ?, ?> uriAClone = (SingleUri) uriA.clone();
         RestClient giRC = client.createClient(uriAClone.relationshipAPI());
         giRC.put(this.buildRelationship(uriB, label));
     }
@@ -128,7 +128,7 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
      * @return
      */
     public void disconnect(SingleUri uriA, SingleUri uriB) {
-        GraphInventorySingleResourceUri<?, ?, ?, ?> uriAClone = (SingleUri) uriA.clone();
+        GraphInventorySingleResourceUri<?, ?, ?, ?, ?, ?> uriAClone = (SingleUri) uriA.clone();
         RestClient giRC = client.createClient(uriAClone.relationshipAPI());
         giRC.delete(this.buildRelationship(uriB));
     }
@@ -140,7 +140,7 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
      * @return
      */
     public void delete(SingleUri uri) {
-        GraphInventorySingleResourceUri<?, ?, ?, ?> clone = (SingleUri) uri.clone();
+        GraphInventorySingleResourceUri<?, ?, ?, ?, ?, ?> clone = (SingleUri) uri.clone();
         RestClient giRC = client.createClient(clone);
         Map<String, Object> result = giRC.get(new GenericType<Map<String, Object>>() {}).orElseThrow(
                 () -> new NotFoundException(clone.build() + " does not exist in " + client.getGraphDBName()));
