@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1ejx57e" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.1.1">
+  <bpmn:process id="Process_1nmtzzp" isExecutable="true">
+    <bpmn:startEvent id="Event_0fbqt56" name="Modify Core NSSI Flow">
+      <bpmn:outgoing>Flow_0e007rx</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:scriptTask id="Activity_0tf735w" name="Get Network Service Instance" scriptFormat="groovy">
+      <bpmn:incoming>Flow_06j2avj</bpmn:incoming>
+      <bpmn:outgoing>Flow_1mqjtfk</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def mcnssi= new DoModifyCoreNSSI()
+        mcnssi.getNetworkServiceInstance(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_1ce41n6" name="Get constitute VNF from Network Service Instance" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1mqjtfk</bpmn:incoming>
+      <bpmn:outgoing>Flow_184tfp7</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def mcnssi= new DoModifyCoreNSSI()
+        mcnssi.getConstituteVNFFromNetworkServiceInst(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1mqjtfk" sourceRef="Activity_0tf735w" targetRef="Activity_1ce41n6" />
+    <bpmn:scriptTask id="Activity_02skgkj" name="Get NSSI associated profiles" scriptFormat="groovy">
+      <bpmn:incoming>Flow_184tfp7</bpmn:incoming>
+      <bpmn:outgoing>Flow_0s31teg</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def mcnssi= new DoModifyCoreNSSI()
+        mcnssi.getNSSIAssociatedProfiles(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_184tfp7" sourceRef="Activity_1ce41n6" targetRef="Activity_02skgkj" />
+    <bpmn:exclusiveGateway id="Gateway_1hadnun" name="Is Slice Profile Instance has to be created" default="Flow_1pls2hu">
+      <bpmn:incoming>Flow_0s31teg</bpmn:incoming>
+      <bpmn:outgoing>Flow_1pls2hu</bpmn:outgoing>
+      <bpmn:outgoing>Flow_03gf14v</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0s31teg" sourceRef="Activity_02skgkj" targetRef="Gateway_1hadnun" />
+    <bpmn:intermediateThrowEvent id="Event_1243wg1" name="Goto Slice Profile Instance has to be created">
+      <bpmn:incoming>Flow_1pls2hu</bpmn:incoming>
+      <bpmn:linkEventDefinition id="LinkEventDefinition_14qnw6y" name="SliceProfileInstanceHasToBeCreated" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_1pls2hu" name="yes" sourceRef="Gateway_1hadnun" targetRef="Event_1243wg1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{(execution.getVariable("isCreateSliceProfileInstance" )  == true)}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:intermediateThrowEvent id="Event_1gjhrcq" name="Goto Slice profile instance has to be deleted">
+      <bpmn:incoming>Flow_03gf14v</bpmn:incoming>
+      <bpmn:linkEventDefinition id="LinkEventDefinition_0ecwvhj" name="SliceProfileInstanceHasToBeDeleted" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_03gf14v" name="no" sourceRef="Gateway_1hadnun" targetRef="Event_1gjhrcq" />
+    <bpmn:scriptTask id="Activity_0oph5am" name="Update Service Operation Status" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0l7hcnf</bpmn:incoming>
+      <bpmn:incoming>Flow_0lrenyo</bpmn:incoming>
+      <bpmn:outgoing>Flow_0yq24um</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def mcnssi= new DoDeallocateCoreNSSI()
+        mcnssi.updateServiceOperationStatus(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:endEvent id="Event_1p0mogo" name="End">
+      <bpmn:incoming>Flow_0yq24um</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0yq24um" sourceRef="Activity_0oph5am" targetRef="Event_1p0mogo" />
+    <bpmn:intermediateCatchEvent id="Event_0z9mer1" name="Slice Profile Instance has to be created">
+      <bpmn:outgoing>Flow_1xysykm</bpmn:outgoing>
+      <bpmn:linkEventDefinition id="LinkEventDefinition_0fbskyk" name="SliceProfileInstanceHasToBeCreated" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:intermediateCatchEvent id="Event_0m2jn7c" name="Slice profile instance has to be deleted">
+      <bpmn:outgoing>Flow_11vf6ik</bpmn:outgoing>
+      <bpmn:linkEventDefinition id="LinkEventDefinition_1lptuqv" name="SliceProfileInstanceHasToBeDeleted" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:scriptTask id="Activity_0ouov98" name="Calculate S-NSSAI" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1xysykm</bpmn:incoming>
+      <bpmn:outgoing>Flow_1nxaeez</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def mcnssi= new DoModifyCoreNSSI()
+        mcnssi.calculateSNSSAI(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1xysykm" sourceRef="Event_0z9mer1" targetRef="Activity_0ouov98" />
+    <bpmn:scriptTask id="Activity_00t4mmi" name="Invoke PUT Service Instance API" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1nxaeez</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ccqmju</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def mcnssi= new ModifyCoreNSSI()
+        mcnssi.invokePUTServiceInstance(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1nxaeez" sourceRef="Activity_0ouov98" targetRef="Activity_00t4mmi" />
+    <bpmn:scriptTask id="Activity_1q02wiz" name="Create a slice profile instance" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0ccqmju</bpmn:incoming>
+      <bpmn:outgoing>Flow_1fdpbsx</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def mcnssi= new ModifyCoreNSSI()
+        mcnssi.createSliceProfileInstance(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0ccqmju" sourceRef="Activity_00t4mmi" targetRef="Activity_1q02wiz" />
+    <bpmn:scriptTask id="Activity_1josmor" name="Associate slice profile instance the same with the NSSI" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1fdpbsx</bpmn:incoming>
+      <bpmn:outgoing>Flow_0l7hcnf</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def mcnssi= new ModifyCoreNSSI()
+        mcnssi.associateSliceProfileInstanceWithNSSI(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1fdpbsx" sourceRef="Activity_1q02wiz" targetRef="Activity_1josmor" />
+    <bpmn:scriptTask id="Activity_0j4c22q" name="Calculate S-NSSAI" scriptFormat="groovy">
+      <bpmn:incoming>Flow_11vf6ik</bpmn:incoming>
+      <bpmn:outgoing>Flow_1oeokwy</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def mcnssi= new DoModifyCoreNSSI()
+        mcnssi.calculateSNSSAI(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_11vf6ik" sourceRef="Event_0m2jn7c" targetRef="Activity_0j4c22q" />
+    <bpmn:scriptTask id="Activity_0c4wmiz" name="Invoke PUT Service Instance API" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1oeokwy</bpmn:incoming>
+      <bpmn:outgoing>Flow_15fi92t</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def mcnssi= new ModifyCoreNSSI()
+        mcnssi.invokePUTServiceInstance(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1oeokwy" sourceRef="Activity_0j4c22q" targetRef="Activity_0c4wmiz" />
+    <bpmn:scriptTask id="Activity_1iegufd" name="Remove the NSSI to slice instance association" scriptFormat="groovy">
+      <bpmn:incoming>Flow_15fi92t</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wtv1zj</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def mcnssi= new ModifyCoreNSSI()
+        mcnssi.removeNSSIToSliceInstanceAssociation(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_15fi92t" sourceRef="Activity_0c4wmiz" targetRef="Activity_1iegufd" />
+    <bpmn:scriptTask id="Activity_010nkjp" name="Delete the slice profile instance" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1wtv1zj</bpmn:incoming>
+      <bpmn:outgoing>Flow_0lrenyo</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def mcnssi= new ModifyCoreNSSI()
+        mcnssi.deleteSliceProfileInstance(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1wtv1zj" sourceRef="Activity_1iegufd" targetRef="Activity_010nkjp" />
+    <bpmn:sequenceFlow id="Flow_0l7hcnf" sourceRef="Activity_1josmor" targetRef="Activity_0oph5am" />
+    <bpmn:sequenceFlow id="Flow_0lrenyo" sourceRef="Activity_010nkjp" targetRef="Activity_0oph5am" />
+    <bpmn:scriptTask id="Activity_0klj7y1" name="PreProcess Incoming Request" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0e007rx</bpmn:incoming>
+      <bpmn:outgoing>Flow_06j2avj</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+        def mcnssi= new DoModifyCoreNSSI()
+        mcnssi.preProcessRequest(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0e007rx" sourceRef="Event_0fbqt56" targetRef="Activity_0klj7y1" />
+    <bpmn:sequenceFlow id="Flow_06j2avj" sourceRef="Activity_0klj7y1" targetRef="Activity_0tf735w" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1nmtzzp">
+      <bpmndi:BPMNEdge id="Flow_0lrenyo_di" bpmnElement="Flow_0lrenyo">
+        <di:waypoint x="890" y="600" />
+        <di:waypoint x="930" y="600" />
+        <di:waypoint x="930" y="540" />
+        <di:waypoint x="970" y="540" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0l7hcnf_di" bpmnElement="Flow_0l7hcnf">
+        <di:waypoint x="890" y="430" />
+        <di:waypoint x="930" y="430" />
+        <di:waypoint x="930" y="500" />
+        <di:waypoint x="970" y="500" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wtv1zj_di" bpmnElement="Flow_1wtv1zj">
+        <di:waypoint x="730" y="600" />
+        <di:waypoint x="790" y="600" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15fi92t_di" bpmnElement="Flow_15fi92t">
+        <di:waypoint x="560" y="600" />
+        <di:waypoint x="630" y="600" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1oeokwy_di" bpmnElement="Flow_1oeokwy">
+        <di:waypoint x="380" y="600" />
+        <di:waypoint x="460" y="600" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11vf6ik_di" bpmnElement="Flow_11vf6ik">
+        <di:waypoint x="218" y="600" />
+        <di:waypoint x="280" y="600" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1fdpbsx_di" bpmnElement="Flow_1fdpbsx">
+        <di:waypoint x="730" y="430" />
+        <di:waypoint x="790" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ccqmju_di" bpmnElement="Flow_0ccqmju">
+        <di:waypoint x="560" y="430" />
+        <di:waypoint x="630" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1nxaeez_di" bpmnElement="Flow_1nxaeez">
+        <di:waypoint x="390" y="430" />
+        <di:waypoint x="460" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xysykm_di" bpmnElement="Flow_1xysykm">
+        <di:waypoint x="218" y="430" />
+        <di:waypoint x="290" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0yq24um_di" bpmnElement="Flow_0yq24um">
+        <di:waypoint x="1070" y="520" />
+        <di:waypoint x="1132" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03gf14v_di" bpmnElement="Flow_03gf14v">
+        <di:waypoint x="1010" y="175" />
+        <di:waypoint x="1010" y="252" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1019" y="190" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1pls2hu_di" bpmnElement="Flow_1pls2hu">
+        <di:waypoint x="1035" y="150" />
+        <di:waypoint x="1132" y="150" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1049" y="132" width="17" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0s31teg_di" bpmnElement="Flow_0s31teg">
+        <di:waypoint x="910" y="150" />
+        <di:waypoint x="985" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_184tfp7_di" bpmnElement="Flow_184tfp7">
+        <di:waypoint x="720" y="150" />
+        <di:waypoint x="810" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mqjtfk_di" bpmnElement="Flow_1mqjtfk">
+        <di:waypoint x="540" y="150" />
+        <di:waypoint x="620" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0e007rx_di" bpmnElement="Flow_0e007rx">
+        <di:waypoint x="218" y="150" />
+        <di:waypoint x="280" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06j2avj_di" bpmnElement="Flow_06j2avj">
+        <di:waypoint x="380" y="150" />
+        <di:waypoint x="440" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0fbqt56_di" bpmnElement="Event_0fbqt56">
+        <dc:Bounds x="182" y="132" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="158" y="175" width="89" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0oph5am_di" bpmnElement="Activity_0oph5am">
+        <dc:Bounds x="970" y="480" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1p0mogo_di" bpmnElement="Event_1p0mogo">
+        <dc:Bounds x="1132" y="502" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1140" y="478" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0z9mer1_di" bpmnElement="Event_0z9mer1">
+        <dc:Bounds x="182" y="412" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="162" y="455" width="90" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0m2jn7c_di" bpmnElement="Event_0m2jn7c">
+        <dc:Bounds x="182" y="582" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="155" y="625" width="90" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ouov98_di" bpmnElement="Activity_0ouov98">
+        <dc:Bounds x="290" y="390" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_00t4mmi_di" bpmnElement="Activity_00t4mmi">
+        <dc:Bounds x="460" y="390" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1q02wiz_di" bpmnElement="Activity_1q02wiz">
+        <dc:Bounds x="630" y="390" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1josmor_di" bpmnElement="Activity_1josmor">
+        <dc:Bounds x="790" y="390" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0j4c22q_di" bpmnElement="Activity_0j4c22q">
+        <dc:Bounds x="280" y="560" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0c4wmiz_di" bpmnElement="Activity_0c4wmiz">
+        <dc:Bounds x="460" y="560" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1iegufd_di" bpmnElement="Activity_1iegufd">
+        <dc:Bounds x="630" y="560" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_010nkjp_di" bpmnElement="Activity_010nkjp">
+        <dc:Bounds x="790" y="560" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1243wg1_di" bpmnElement="Event_1243wg1">
+        <dc:Bounds x="1132" y="132" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1113" y="173" width="90" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1hadnun_di" bpmnElement="Gateway_1hadnun" isMarkerVisible="true">
+        <dc:Bounds x="985" y="125" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="966" y="86" width="90" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1gjhrcq_di" bpmnElement="Event_1gjhrcq">
+        <dc:Bounds x="992" y="252" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="973" y="293" width="90" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_02skgkj_di" bpmnElement="Activity_02skgkj">
+        <dc:Bounds x="810" y="110" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ce41n6_di" bpmnElement="Activity_1ce41n6">
+        <dc:Bounds x="620" y="110" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0tf735w_di" bpmnElement="Activity_0tf735w">
+        <dc:Bounds x="440" y="110" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0klj7y1_di" bpmnElement="Activity_0klj7y1">
+        <dc:Bounds x="280" y="110" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
