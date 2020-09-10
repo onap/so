@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
- */
+ 
 
 package org.onap.so.adapters.cnf;
 
@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.onap.so.adapters.cnf.model.BpmnInstanceRequest;
+import org.onap.so.adapters.cnf.model.InstanceResponse;
 import org.onap.so.adapters.cnf.rest.CnfAdapterRest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -54,9 +55,9 @@ public class CnfAdapterRestTest {
         bpmnInstanceRequest.setVfModuleUUID("20200824");
 
         String mockedResponse = "K8sRBProfileName is required";
-        String actualResponse = cnfAdapterRest.createInstance(bpmnInstanceRequest);
-        assertNotNull(actualResponse);
+        InstanceResponse actualResponse = cnfAdapterRest.createInstance(bpmnInstanceRequest);
         assertEquals(mockedResponse, actualResponse);
     }
 
 }
+*/
