@@ -1,0 +1,1012 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0rh5ux5" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.1.1">
+  <bpmn:process id="DoActivateAccessNSSI" name="DoActivateAccessNSSI" isExecutable="true">
+    <bpmn:startEvent id="Event_055gbp2" name="Start">
+      <bpmn:outgoing>Flow_0rh43xe</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0rh43xe" sourceRef="Event_055gbp2" targetRef="Activity_1fv6ljk" />
+    <bpmn:sequenceFlow id="Flow_14z4acw" sourceRef="Activity_1fv6ljk" targetRef="Activity_089t9fj" />
+    <bpmn:exclusiveGateway id="Gateway_12oq1sa" name="Should update AN NF SP status?" default="Flow_0523saw">
+      <bpmn:incoming>Flow_00yl2jk</bpmn:incoming>
+      <bpmn:outgoing>Flow_00fb28f</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0523saw</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_00yl2jk" sourceRef="Activity_1atych2" targetRef="Gateway_12oq1sa" />
+    <bpmn:sequenceFlow id="Flow_00fb28f" sourceRef="Gateway_12oq1sa" targetRef="Activity_0iluozh">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("shouldChangeAN_NF_SPStatus") == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:intermediateThrowEvent id="Event_1n5z71a" name="Goto TN NSSI Activation">
+      <bpmn:incoming>Flow_0mtkhmv</bpmn:incoming>
+      <bpmn:linkEventDefinition id="LinkEventDefinition_0x6han6" name="TNNSSIActivation" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:intermediateCatchEvent id="Event_0kkeo9m" name="TN NSSI Activation">
+      <bpmn:outgoing>Flow_1q7frye</bpmn:outgoing>
+      <bpmn:linkEventDefinition id="LinkEventDefinition_0j5y3mw" name="TNNSSIActivation" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:intermediateThrowEvent id="Event_09ey569" name="Goto AN NSSI Activation">
+      <bpmn:incoming>Flow_1b6vtso</bpmn:incoming>
+      <bpmn:linkEventDefinition id="LinkEventDefinition_05qiudr" name="AN_NSSI_Activation" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_0523saw" sourceRef="Gateway_12oq1sa" targetRef="Event_0rzo7gj" />
+    <bpmn:intermediateThrowEvent id="Event_0rzo7gj" name="Check TN NSSI Activation">
+      <bpmn:incoming>Flow_0523saw</bpmn:incoming>
+      <bpmn:linkEventDefinition id="LinkEventDefinition_0s7s95j" name="TNNSSIActivation" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_1cnfilb" sourceRef="Event_1azfo77" targetRef="Activity_1j0xkqc" />
+    <bpmn:endEvent id="Event_0gx3ps0" name="End">
+      <bpmn:incoming>Flow_1876ml0</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_10f44ab" sourceRef="Activity_089t9fj" targetRef="Activity_19myg2v" />
+    <bpmn:exclusiveGateway id="Gateway_0xcg677" name="shouldChangeSPStatus?" default="Flow_0g9k299">
+      <bpmn:incoming>Flow_0uxerfg</bpmn:incoming>
+      <bpmn:outgoing>Flow_00vt4gf</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0g9k299</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0uxerfg" sourceRef="Activity_19myg2v" targetRef="Gateway_0xcg677" />
+    <bpmn:sequenceFlow id="Flow_00vt4gf" name="Yes" sourceRef="Gateway_0xcg677" targetRef="Activity_1atych2">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("shouldChangeSPStatus") == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0g9k299" name="No" sourceRef="Gateway_0xcg677" targetRef="Event_0ocuo1o" />
+    <bpmn:exclusiveGateway id="Gateway_0nr3me0" name="Shoud updateTN FH SP status" default="Flow_10b15um">
+      <bpmn:incoming>Flow_1yd57bl</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zjaac9</bpmn:outgoing>
+      <bpmn:outgoing>Flow_10b15um</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1yd57bl" sourceRef="Activity_1fzg56b" targetRef="Gateway_0nr3me0" />
+    <bpmn:sequenceFlow id="Flow_1q7frye" sourceRef="Event_0kkeo9m" targetRef="Activity_1fzg56b" />
+    <bpmn:sequenceFlow id="Flow_0zjaac9" name="Yes" sourceRef="Gateway_0nr3me0" targetRef="Activity_0gtw2p7">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("shouldChangeTN_FH_SPStatus") == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_10b15um" sourceRef="Gateway_0nr3me0" targetRef="Event_1nqpg0o" />
+    <bpmn:intermediateCatchEvent id="Event_0j998yp" name="TN MH NSSI Activation">
+      <bpmn:outgoing>Flow_0wvzz2r</bpmn:outgoing>
+      <bpmn:linkEventDefinition id="LinkEventDefinition_1jmgd64" name="TNMHNSSIActivation" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:intermediateThrowEvent id="Event_1nqpg0o" name="Call TN MH NSSI Activation">
+      <bpmn:incoming>Flow_10b15um</bpmn:incoming>
+      <bpmn:linkEventDefinition id="LinkEventDefinition_1fw9349" name="TNMHNSSIActivation" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:intermediateThrowEvent id="Event_0ki3ncn" name="GotoTN MH NSSI Activation">
+      <bpmn:incoming>Flow_1qszzfv</bpmn:incoming>
+      <bpmn:linkEventDefinition id="LinkEventDefinition_1hh8o8h" name="TNMHNSSIActivation" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:intermediateThrowEvent id="Event_1djcl9x" name="Ca AN NSSI Activation">
+      <bpmn:incoming>Flow_00clpwn</bpmn:incoming>
+      <bpmn:linkEventDefinition id="LinkEventDefinition_02qbzt2" name="AN_NSSI_Activation" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:exclusiveGateway id="Gateway_0cemhjv" name="Shoud updateTN MH SP status" default="Flow_00clpwn">
+      <bpmn:incoming>Flow_0q02qno</bpmn:incoming>
+      <bpmn:outgoing>Flow_00clpwn</bpmn:outgoing>
+      <bpmn:outgoing>Flow_147tw7h</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0q02qno" sourceRef="Activity_068a0cy" targetRef="Gateway_0cemhjv" />
+    <bpmn:sequenceFlow id="Flow_00clpwn" sourceRef="Gateway_0cemhjv" targetRef="Event_1djcl9x" />
+    <bpmn:sequenceFlow id="Flow_0wvzz2r" sourceRef="Event_0j998yp" targetRef="Activity_068a0cy" />
+    <bpmn:sequenceFlow id="Flow_147tw7h" sourceRef="Gateway_0cemhjv" targetRef="Activity_02vl5kt">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("shouldChangeTN_MH_SPStatus") == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:scriptTask id="Activity_089t9fj" name="Fetch Related NSSIs and Slice profile" scriptFormat="groovy">
+      <bpmn:incoming>Flow_14z4acw</bpmn:incoming>
+      <bpmn:outgoing>Flow_10f44ab</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def activator = new DoActivateAccessNSSI()
+activator.getRelatedInstances(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_1fv6ljk" name="Preprocess request" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0rh43xe</bpmn:incoming>
+      <bpmn:outgoing>Flow_14z4acw</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def activator = new DoActivateAccessNSSI()
+activator.preProcessRequest(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_19myg2v" name="Check AN Slice profile status" scriptFormat="groovy">
+      <bpmn:incoming>Flow_10f44ab</bpmn:incoming>
+      <bpmn:outgoing>Flow_0uxerfg</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def activator = new DoActivateAccessNSSI()
+activator.getSPOrchStatus(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_1atych2" name="Check Orchestration status of AN NF sliceprofile" scriptFormat="groovy">
+      <bpmn:incoming>Flow_00vt4gf</bpmn:incoming>
+      <bpmn:outgoing>Flow_00yl2jk</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def activator = new DoActivateAccessNSSI()
+activator.getAnNfSPOrchStatus(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_0iluozh" name="Prepare RAN NF NSSI activation request" scriptFormat="groovy">
+      <bpmn:incoming>Flow_00fb28f</bpmn:incoming>
+      <bpmn:outgoing>Flow_1gxv9id</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def activator = new DoActivateAccessNSSI()
+activator.prepareSdnrActivationRequest(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:callActivity id="Activity_0u2aqld" name="Call SDNR subprocess" calledElement="DoHandleSdnrDmaapRequest">
+      <bpmn:extensionElements>
+        <camunda:in source="sdnrRequest" target="sdnrRequest" />
+        <camunda:in source="SDNR_messageType" target="messageType" />
+        <camunda:in source="SDNR_timeout" target="timeout" />
+        <camunda:in source="msoRequestId" target="correlator" />
+        <camunda:out source="asyncCallbackResponse" target="SDNR_Response" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1gxv9id</bpmn:incoming>
+      <bpmn:outgoing>Flow_0o7xomf</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_1gxv9id" sourceRef="Activity_0iluozh" targetRef="Activity_0u2aqld" />
+    <bpmn:scriptTask id="Activity_1hr68mt" name="Process sdnr response" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0o7xomf</bpmn:incoming>
+      <bpmn:outgoing>Flow_1myzbqw</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def activator = new DoActivateAccessNSSI()
+activator.processSdnrResponse(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:exclusiveGateway id="Gateway_1xwu5f0" name="Is Success response" default="Flow_1v4zg98">
+      <bpmn:incoming>Flow_1myzbqw</bpmn:incoming>
+      <bpmn:outgoing>Flow_1yrel0t</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1v4zg98</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="Event_0yfi3mj" name="ActivationWorkflowError">
+      <bpmn:incoming>Flow_1v4zg98</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1n2vwxe" errorRef="Error_1beg2za" />
+    </bpmn:endEvent>
+    <bpmn:scriptTask id="Activity_03sbng2" name="Update Job status" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1sroz8o</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rizzsm</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def activator = new DoActivateAccessNSSI()
+activator..prepareUpdateJobStatus(execution,"processing","40","AN NF NSSI activation completed")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="Activity_08yj5gq" name="Update Resource Operation Status">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
+                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">${updateResourceOperationStatus}</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
+            <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0rizzsm</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mtkhmv</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1yrel0t" name="Yes" sourceRef="Gateway_1xwu5f0" targetRef="Activity_09e5oh6">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("isANactivationSuccess") == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1v4zg98" sourceRef="Gateway_1xwu5f0" targetRef="Event_0yfi3mj" />
+    <bpmn:sequenceFlow id="Flow_0rizzsm" sourceRef="Activity_03sbng2" targetRef="Activity_08yj5gq" />
+    <bpmn:sequenceFlow id="Flow_0o7xomf" sourceRef="Activity_0u2aqld" targetRef="Activity_1hr68mt" />
+    <bpmn:sequenceFlow id="Flow_1myzbqw" sourceRef="Activity_1hr68mt" targetRef="Gateway_1xwu5f0" />
+    <bpmn:sequenceFlow id="Flow_1sroz8o" sourceRef="Activity_09e5oh6" targetRef="Activity_03sbng2" />
+    <bpmn:subProcess id="Activity_1aesimf" name="Sub-process for FalloutHandler and Rollback" triggeredByEvent="true">
+      <bpmn:startEvent id="Event_156ogc4">
+        <bpmn:outgoing>Flow_0tw7xsp</bpmn:outgoing>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_06h72ej" errorRef="Error_1beg2za" />
+      </bpmn:startEvent>
+      <bpmn:endEvent id="Event_1n2qjvx">
+        <bpmn:incoming>Flow_0y0r82m</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:scriptTask id="Activity_1eedm9e" name="Handle Unexpected Error" scriptFormat="groovy">
+        <bpmn:incoming>Flow_1bqk5yt</bpmn:incoming>
+        <bpmn:outgoing>Flow_0y0r82m</bpmn:outgoing>
+        <bpmn:script>import org.onap.so.bpmn.common.scripts.*
+ExceptionUtil ex = new ExceptionUtil()
+ex.processJavaException(execution)</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:serviceTask id="Activity_1szd5yp" name="Update Resource Operation Status">
+        <bpmn:extensionElements>
+          <camunda:connector>
+            <camunda:inputOutput>
+              <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
+              <camunda:inputParameter name="headers">
+                <camunda:map>
+                  <camunda:entry key="content-type">application/soap+xml</camunda:entry>
+                  <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
+                </camunda:map>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="payload">${updateResourceOperationStatus}</camunda:inputParameter>
+              <camunda:inputParameter name="method">POST</camunda:inputParameter>
+              <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
+              <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
+            </camunda:inputOutput>
+            <camunda:connectorId>http-connector</camunda:connectorId>
+          </camunda:connector>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_075rb1i</bpmn:incoming>
+        <bpmn:outgoing>Flow_1bqk5yt</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:scriptTask id="Activity_0lpw3j7" name="Update Job status" scriptFormat="groovy">
+        <bpmn:incoming>Flow_0tw7xsp</bpmn:incoming>
+        <bpmn:outgoing>Flow_075rb1i</bpmn:outgoing>
+        <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def activator = new DoActivateAccessNSSI()
+activator.prepareUpdateJobStatus(execution,"failed","0","AN NSSI activation Failed")</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="Flow_0y0r82m" sourceRef="Activity_1eedm9e" targetRef="Event_1n2qjvx" />
+      <bpmn:sequenceFlow id="Flow_075rb1i" sourceRef="Activity_0lpw3j7" targetRef="Activity_1szd5yp" />
+      <bpmn:sequenceFlow id="Flow_0tw7xsp" sourceRef="Event_156ogc4" targetRef="Activity_0lpw3j7" />
+      <bpmn:sequenceFlow id="Flow_1bqk5yt" sourceRef="Activity_1szd5yp" targetRef="Activity_1eedm9e" />
+    </bpmn:subProcess>
+    <bpmn:subProcess id="Activity_0hioign" name="Sub-process for FalloutHandler and Rollback" triggeredByEvent="true">
+      <bpmn:scriptTask id="Activity_1f3cipf" name="Handle Unexpected Error" scriptFormat="groovy">
+        <bpmn:incoming>Flow_0cvs8zk</bpmn:incoming>
+        <bpmn:outgoing>Flow_01jdnrt</bpmn:outgoing>
+        <bpmn:script>import org.onap.so.bpmn.common.scripts.*
+ExceptionUtil ex = new ExceptionUtil()
+ex.processJavaException(execution)</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:endEvent id="Event_18qzt1n">
+        <bpmn:incoming>Flow_01jdnrt</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:startEvent id="Event_0lvvn7i">
+        <bpmn:outgoing>Flow_0cvs8zk</bpmn:outgoing>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_0c93dlp" />
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="Flow_01jdnrt" sourceRef="Activity_1f3cipf" targetRef="Event_18qzt1n" />
+      <bpmn:sequenceFlow id="Flow_0cvs8zk" sourceRef="Event_0lvvn7i" targetRef="Activity_1f3cipf" />
+    </bpmn:subProcess>
+    <bpmn:scriptTask id="Activity_09e5oh6" name="Update RAN NF NSSI  and SP status" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1yrel0t</bpmn:incoming>
+      <bpmn:outgoing>Flow_1sroz8o</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def activator = new DoActivateAccessNSSI()
+activator.updateAnNfStatus(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0mtkhmv" sourceRef="Activity_08yj5gq" targetRef="Event_1n5z71a" />
+    <bpmn:scriptTask id="Activity_1fzg56b" name="Check TN FH Slice profile status" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1q7frye</bpmn:incoming>
+      <bpmn:outgoing>Flow_1yd57bl</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def activator = new DoActivateAccessNSSI()
+activator.getTnFhSPOrchStatus(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_0gtw2p7" name="Handle TN FH NSSI Activation" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0zjaac9</bpmn:incoming>
+      <bpmn:outgoing>Flow_0heuc95</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def activator = new DoActivateAccessNSSI()
+activator.doTnFhNssiActivation(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_07cr1m2" name="Prepare job status query" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0heuc95</bpmn:incoming>
+      <bpmn:outgoing>Flow_1w3h345</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+
+String jobId = execution.getVariable("TN_FH_jobId")
+String networkType="tn"
+String nssiid=execution.getVariable("tnFhNssiId")
+
+def def activator = new DoActivateAccessNSSI()
+activator.prepareQueryJobStatus(execution, jobId,networkType, nssiid)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:callActivity id="Activity_03hbxfi" name="QueryJobStatus" calledElement="QueryJobStatus">
+      <bpmn:extensionElements>
+        <camunda:in source="tn_esrInfo" target="esrInfo" />
+        <camunda:in source="tn_responseId" target="responseId" />
+        <camunda:in source="TN_FH_jobId" target="jobId" />
+        <camunda:in source="tn_serviceInfo" target="serviceInfo" />
+        <camunda:out source="responseDescriptor" target="tn_responseDescriptor" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1w3h345</bpmn:incoming>
+      <bpmn:outgoing>Flow_16pqv7g</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:scriptTask id="Activity_0br2i5b" name="Validate jobstatus" scriptFormat="groovy">
+      <bpmn:incoming>Flow_16pqv7g</bpmn:incoming>
+      <bpmn:outgoing>Flow_1i0s8nu</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+
+String responseDescriptor = execution.getVariable("tn_responseDescriptor")
+
+def activator = new DoActivateAccessNSSI()
+activator.validateJobStatus(execution, responseDescriptor)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:exclusiveGateway id="Gateway_1ot96tc" name="Is Job complete?" default="Flow_0ajre96">
+      <bpmn:incoming>Flow_1i0s8nu</bpmn:incoming>
+      <bpmn:outgoing>Flow_0bukcmf</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0ajre96</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1w3h345" sourceRef="Activity_07cr1m2" targetRef="Activity_03hbxfi" />
+    <bpmn:sequenceFlow id="Flow_16pqv7g" sourceRef="Activity_03hbxfi" targetRef="Activity_0br2i5b" />
+    <bpmn:sequenceFlow id="Flow_1i0s8nu" sourceRef="Activity_0br2i5b" targetRef="Gateway_1ot96tc" />
+    <bpmn:sequenceFlow id="Flow_0heuc95" sourceRef="Activity_0gtw2p7" targetRef="Activity_07cr1m2" />
+    <bpmn:sequenceFlow id="Flow_0bukcmf" name="Yes" sourceRef="Gateway_1ot96tc" targetRef="Activity_1xirwg3">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("isSuccess") == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0ajre96" sourceRef="Gateway_1ot96tc" targetRef="Event_0uco28x" />
+    <bpmn:endEvent id="Event_0uco28x" name="ActivationWorkflowError">
+      <bpmn:incoming>Flow_0ajre96</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0p0lfhq" errorRef="Error_1beg2za" />
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Activity_1t28p4r" name="Update Resource Operation Status">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
+                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">${updateResourceOperationStatus}</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
+            <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ldkgyg</bpmn:incoming>
+      <bpmn:outgoing>Flow_1qszzfv</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1ldkgyg" sourceRef="Activity_1o0a55b" targetRef="Activity_1t28p4r" />
+    <bpmn:sequenceFlow id="Flow_1qszzfv" sourceRef="Activity_1t28p4r" targetRef="Event_0ki3ncn" />
+    <bpmn:scriptTask id="Activity_1o0a55b" name="Update Job status" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1b95clk</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ldkgyg</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def activator = new DoActivateAccessNSSI()
+activator.prepareUpdateJobStatus(execution,"processing","60","TN FH NSSI activation completed")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_068a0cy" name="Check TN MH Slice profile status" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0wvzz2r</bpmn:incoming>
+      <bpmn:outgoing>Flow_0q02qno</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def activator = new DoActivateAccessNSSI()
+activator.getTnMhSPOrchStatus(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:intermediateCatchEvent id="Event_1azfo77" name="AN NSSI Activation">
+      <bpmn:outgoing>Flow_1cnfilb</bpmn:outgoing>
+      <bpmn:linkEventDefinition id="LinkEventDefinition_05vnzdd" name="AN_NSSI_Activation" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:scriptTask id="Activity_02vl5kt" name="Handle TN MH NSSI Activation" scriptFormat="groovy">
+      <bpmn:incoming>Flow_147tw7h</bpmn:incoming>
+      <bpmn:outgoing>Flow_1s0xcf5</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+
+def activator = new DoActivateAccessNSSI()
+activator.doTnMhNssiActivation(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_1kszh5k" name="Prepare job status query" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1s0xcf5</bpmn:incoming>
+      <bpmn:outgoing>Flow_0sqsq1x</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+
+String jobId = execution.getVariable("TN_MH_jobId")
+String networkType="tn"
+String nssiid=execution.getVariable("tnMhNssiId")
+
+def def activator = new DoActivateAccessNSSI()
+activator.prepareQueryJobStatus(execution, jobId,networkType, nssiid)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:callActivity id="Activity_09jt4b0" name="QueryJobStatus" calledElement="QueryJobStatus">
+      <bpmn:extensionElements>
+        <camunda:in source="tn_esrInfo" target="esrInfo" />
+        <camunda:in source="tn_responseId" target="responseId" />
+        <camunda:in source="TN_MH_jobId" target="jobId" />
+        <camunda:in source="tn_serviceInfo" target="serviceInfo" />
+        <camunda:out source="responseDescriptor" target="tn_responseDescriptor" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0sqsq1x</bpmn:incoming>
+      <bpmn:outgoing>Flow_0b7aq1k</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:scriptTask id="Activity_1su25xm" name="Validate jobstatus" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0b7aq1k</bpmn:incoming>
+      <bpmn:outgoing>Flow_0to1idt</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+
+String responseDescriptor = execution.getVariable("tn_responseDescriptor")
+
+def activator = new DoActivateAccessNSSI()
+activator.validateJobStatus(execution, responseDescriptor)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:exclusiveGateway id="Gateway_114io6q" name="Is Job complete?" default="Flow_0rzuxa0">
+      <bpmn:incoming>Flow_0to1idt</bpmn:incoming>
+      <bpmn:outgoing>Flow_1i4cc7e</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0rzuxa0</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="Event_08ecfyj" name="ActivationWorkflowError">
+      <bpmn:incoming>Flow_0rzuxa0</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0ptrcor" errorRef="Error_1beg2za" />
+    </bpmn:endEvent>
+    <bpmn:scriptTask id="Activity_0ftm8b6" name="Update Job status" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0k5cyz7</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wx5w6i</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def activator = new DoActivateAccessNSSI()
+activator.prepareUpdateJobStatus(execution,"processing","80","TN MH NSSI activation completed")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="Activity_1xnstqr" name="Update Resource Operation Status">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
+                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">${updateResourceOperationStatus}</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
+            <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1wx5w6i</bpmn:incoming>
+      <bpmn:outgoing>Flow_1b6vtso</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0sqsq1x" sourceRef="Activity_1kszh5k" targetRef="Activity_09jt4b0" />
+    <bpmn:sequenceFlow id="Flow_0b7aq1k" sourceRef="Activity_09jt4b0" targetRef="Activity_1su25xm" />
+    <bpmn:sequenceFlow id="Flow_0to1idt" sourceRef="Activity_1su25xm" targetRef="Gateway_114io6q" />
+    <bpmn:sequenceFlow id="Flow_1i4cc7e" name="Yes" sourceRef="Gateway_114io6q" targetRef="Activity_0xmezab">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("isSuccess") == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0rzuxa0" sourceRef="Gateway_114io6q" targetRef="Event_08ecfyj" />
+    <bpmn:sequenceFlow id="Flow_1wx5w6i" sourceRef="Activity_0ftm8b6" targetRef="Activity_1xnstqr" />
+    <bpmn:sequenceFlow id="Flow_1s0xcf5" sourceRef="Activity_02vl5kt" targetRef="Activity_1kszh5k" />
+    <bpmn:sequenceFlow id="Flow_1b6vtso" sourceRef="Activity_1xnstqr" targetRef="Event_09ey569" />
+    <bpmn:sequenceFlow id="Flow_1b95clk" sourceRef="Activity_1xirwg3" targetRef="Activity_1o0a55b" />
+    <bpmn:scriptTask id="Activity_1xirwg3" name="Update TN FH SP and NSSI Orch Status" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0bukcmf</bpmn:incoming>
+      <bpmn:outgoing>Flow_1b95clk</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def activator = new DoActivateAccessNSSI()
+activator.updateTNFHStatus(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_0xmezab" name="Update TN FH SP and NSSI Orch Status" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1i4cc7e</bpmn:incoming>
+      <bpmn:outgoing>Flow_0k5cyz7</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+
+def activator = new DoActivateAccessNSSI()
+activator.updateTNFHStatus(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0k5cyz7" sourceRef="Activity_0xmezab" targetRef="Activity_0ftm8b6" />
+    <bpmn:scriptTask id="Activity_1j0xkqc" name="Check Orch status for AN NSSI activation" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1cnfilb</bpmn:incoming>
+      <bpmn:outgoing>Flow_0cblklk</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+
+def activator = new DoActivateAccessNSSI()
+activator.updateANStatus(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_0huy5ph" name="Update Job status" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0cblklk</bpmn:incoming>
+      <bpmn:outgoing>Flow_06nfip0</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def activator = new DoActivateAccessNSSI()
+activator.prepareUpdateJobStatus(execution,"finished","100","AN NSSI activation completed")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="Activity_1tbardv" name="Update Resource Operation Status">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
+                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">${updateResourceOperationStatus}</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
+            <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_06nfip0</bpmn:incoming>
+      <bpmn:outgoing>Flow_1876ml0</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_06nfip0" sourceRef="Activity_0huy5ph" targetRef="Activity_1tbardv" />
+    <bpmn:sequenceFlow id="Flow_0cblklk" sourceRef="Activity_1j0xkqc" targetRef="Activity_0huy5ph" />
+    <bpmn:sequenceFlow id="Flow_1876ml0" sourceRef="Activity_1tbardv" targetRef="Event_0gx3ps0" />
+    <bpmn:intermediateThrowEvent id="Event_0ocuo1o" name="Goto AN NSSI activation">
+      <bpmn:incoming>Flow_0g9k299</bpmn:incoming>
+      <bpmn:linkEventDefinition id="LinkEventDefinition_1h9r8pc" name="AN_NSSI_Activation" />
+    </bpmn:intermediateThrowEvent>
+  </bpmn:process>
+  <bpmn:error id="Error_1beg2za" name="ActivationWorkflowError" errorCode="2500" />
+  <bpmn:error id="Error_0vgjqok" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoActivateAccessNSSI">
+      <bpmndi:BPMNEdge id="Flow_1876ml0_di" bpmnElement="Flow_1876ml0">
+        <di:waypoint x="660" y="940" />
+        <di:waypoint x="712" y="940" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cblklk_di" bpmnElement="Flow_0cblklk">
+        <di:waypoint x="350" y="940" />
+        <di:waypoint x="390" y="940" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06nfip0_di" bpmnElement="Flow_06nfip0">
+        <di:waypoint x="490" y="940" />
+        <di:waypoint x="560" y="940" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0k5cyz7_di" bpmnElement="Flow_0k5cyz7">
+        <di:waypoint x="1330" y="690" />
+        <di:waypoint x="1410" y="690" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1b95clk_di" bpmnElement="Flow_1b95clk">
+        <di:waypoint x="1320" y="450" />
+        <di:waypoint x="1410" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1b6vtso_di" bpmnElement="Flow_1b6vtso">
+        <di:waypoint x="1680" y="690" />
+        <di:waypoint x="1742" y="690" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1s0xcf5_di" bpmnElement="Flow_1s0xcf5">
+        <di:waypoint x="580" y="690" />
+        <di:waypoint x="640" y="690" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wx5w6i_di" bpmnElement="Flow_1wx5w6i">
+        <di:waypoint x="1510" y="690" />
+        <di:waypoint x="1580" y="690" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rzuxa0_di" bpmnElement="Flow_0rzuxa0">
+        <di:waypoint x="1140" y="715" />
+        <di:waypoint x="1140" y="762" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1i4cc7e_di" bpmnElement="Flow_1i4cc7e">
+        <di:waypoint x="1165" y="690" />
+        <di:waypoint x="1230" y="690" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1168" y="672" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0to1idt_di" bpmnElement="Flow_0to1idt">
+        <di:waypoint x="1070" y="690" />
+        <di:waypoint x="1115" y="690" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0b7aq1k_di" bpmnElement="Flow_0b7aq1k">
+        <di:waypoint x="900" y="690" />
+        <di:waypoint x="970" y="690" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0sqsq1x_di" bpmnElement="Flow_0sqsq1x">
+        <di:waypoint x="740" y="690" />
+        <di:waypoint x="800" y="690" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qszzfv_di" bpmnElement="Flow_1qszzfv">
+        <di:waypoint x="1680" y="450" />
+        <di:waypoint x="1732" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ldkgyg_di" bpmnElement="Flow_1ldkgyg">
+        <di:waypoint x="1510" y="450" />
+        <di:waypoint x="1580" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ajre96_di" bpmnElement="Flow_0ajre96">
+        <di:waypoint x="1130" y="475" />
+        <di:waypoint x="1130" y="522" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bukcmf_di" bpmnElement="Flow_0bukcmf">
+        <di:waypoint x="1155" y="450" />
+        <di:waypoint x="1220" y="450" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1158" y="432" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0heuc95_di" bpmnElement="Flow_0heuc95">
+        <di:waypoint x="580" y="450" />
+        <di:waypoint x="630" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1i0s8nu_di" bpmnElement="Flow_1i0s8nu">
+        <di:waypoint x="1060" y="450" />
+        <di:waypoint x="1105" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16pqv7g_di" bpmnElement="Flow_16pqv7g">
+        <di:waypoint x="890" y="450" />
+        <di:waypoint x="960" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1w3h345_di" bpmnElement="Flow_1w3h345">
+        <di:waypoint x="730" y="450" />
+        <di:waypoint x="790" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mtkhmv_di" bpmnElement="Flow_0mtkhmv">
+        <di:waypoint x="2110" y="230" />
+        <di:waypoint x="2152" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sroz8o_di" bpmnElement="Flow_1sroz8o">
+        <di:waypoint x="1800" y="230" />
+        <di:waypoint x="1870" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1myzbqw_di" bpmnElement="Flow_1myzbqw">
+        <di:waypoint x="1500" y="230" />
+        <di:waypoint x="1565" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0o7xomf_di" bpmnElement="Flow_0o7xomf">
+        <di:waypoint x="1340" y="230" />
+        <di:waypoint x="1400" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rizzsm_di" bpmnElement="Flow_0rizzsm">
+        <di:waypoint x="1970" y="230" />
+        <di:waypoint x="2010" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1v4zg98_di" bpmnElement="Flow_1v4zg98">
+        <di:waypoint x="1590" y="255" />
+        <di:waypoint x="1590" y="302" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yrel0t_di" bpmnElement="Flow_1yrel0t">
+        <di:waypoint x="1615" y="230" />
+        <di:waypoint x="1700" y="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1649" y="212" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gxv9id_di" bpmnElement="Flow_1gxv9id">
+        <di:waypoint x="1180" y="230" />
+        <di:waypoint x="1240" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_147tw7h_di" bpmnElement="Flow_147tw7h">
+        <di:waypoint x="435" y="690" />
+        <di:waypoint x="480" y="690" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wvzz2r_di" bpmnElement="Flow_0wvzz2r">
+        <di:waypoint x="198" y="690" />
+        <di:waypoint x="240" y="690" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00clpwn_di" bpmnElement="Flow_00clpwn">
+        <di:waypoint x="410" y="715" />
+        <di:waypoint x="410" y="800" />
+        <di:waypoint x="482" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0q02qno_di" bpmnElement="Flow_0q02qno">
+        <di:waypoint x="340" y="690" />
+        <di:waypoint x="385" y="690" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10b15um_di" bpmnElement="Flow_10b15um">
+        <di:waypoint x="410" y="475" />
+        <di:waypoint x="410" y="560" />
+        <di:waypoint x="482" y="560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zjaac9_di" bpmnElement="Flow_0zjaac9">
+        <di:waypoint x="435" y="450" />
+        <di:waypoint x="480" y="450" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="449" y="432" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1q7frye_di" bpmnElement="Flow_1q7frye">
+        <di:waypoint x="198" y="450" />
+        <di:waypoint x="240" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yd57bl_di" bpmnElement="Flow_1yd57bl">
+        <di:waypoint x="340" y="450" />
+        <di:waypoint x="385" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0g9k299_di" bpmnElement="Flow_0g9k299">
+        <di:waypoint x="690" y="205" />
+        <di:waypoint x="690" y="100" />
+        <di:waypoint x="752" y="100" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="698" y="150" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00vt4gf_di" bpmnElement="Flow_00vt4gf">
+        <di:waypoint x="715" y="230" />
+        <di:waypoint x="800" y="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="749" y="212" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0uxerfg_di" bpmnElement="Flow_0uxerfg">
+        <di:waypoint x="620" y="230" />
+        <di:waypoint x="665" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10f44ab_di" bpmnElement="Flow_10f44ab">
+        <di:waypoint x="480" y="230" />
+        <di:waypoint x="520" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1cnfilb_di" bpmnElement="Flow_1cnfilb">
+        <di:waypoint x="198" y="940" />
+        <di:waypoint x="250" y="940" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0523saw_di" bpmnElement="Flow_0523saw">
+        <di:waypoint x="990" y="205" />
+        <di:waypoint x="990" y="130" />
+        <di:waypoint x="1062" y="130" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00fb28f_di" bpmnElement="Flow_00fb28f">
+        <di:waypoint x="1015" y="230" />
+        <di:waypoint x="1080" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00yl2jk_di" bpmnElement="Flow_00yl2jk">
+        <di:waypoint x="900" y="230" />
+        <di:waypoint x="965" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14z4acw_di" bpmnElement="Flow_14z4acw">
+        <di:waypoint x="340" y="230" />
+        <di:waypoint x="380" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rh43xe_di" bpmnElement="Flow_0rh43xe">
+        <di:waypoint x="198" y="230" />
+        <di:waypoint x="240" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_055gbp2_di" bpmnElement="Event_055gbp2">
+        <dc:Bounds x="162" y="212" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="168" y="255" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_12oq1sa_di" bpmnElement="Gateway_12oq1sa" isMarkerVisible="true">
+        <dc:Bounds x="965" y="205" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="945" y="265" width="90" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1v7p5kl_di" bpmnElement="Event_1n5z71a">
+        <dc:Bounds x="2152" y="212" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2137" y="255" width="71" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_01vyapf_di" bpmnElement="Event_0kkeo9m">
+        <dc:Bounds x="162" y="432" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="157" y="475" width="48" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1u3s42m_di" bpmnElement="Event_09ey569">
+        <dc:Bounds x="1742" y="672" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1728" y="715" width="71" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_01fudey_di" bpmnElement="Event_0rzo7gj">
+        <dc:Bounds x="1062" y="112" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1042" y="155" width="78" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0gx3ps0_di" bpmnElement="Event_0gx3ps0">
+        <dc:Bounds x="712" y="922" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="720" y="965" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0xcg677_di" bpmnElement="Gateway_0xcg677" isMarkerVisible="true">
+        <dc:Bounds x="665" y="205" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="647" y="262" width="86" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0nr3me0_di" bpmnElement="Gateway_0nr3me0" isMarkerVisible="true">
+        <dc:Bounds x="385" y="425" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="370" y="395" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0j998yp_di" bpmnElement="Event_0j998yp">
+        <dc:Bounds x="162" y="672" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="150" y="715" width="64" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_05lm9ln_di" bpmnElement="Event_1nqpg0o">
+        <dc:Bounds x="482" y="542" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="457" y="585" width="86" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0wv22e3_di" bpmnElement="Event_0ki3ncn">
+        <dc:Bounds x="1732" y="432" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1706" y="475" width="88" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1djcl9x_di" bpmnElement="Event_1djcl9x">
+        <dc:Bounds x="482" y="782" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="469" y="825" width="62" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0cemhjv_di" bpmnElement="Gateway_0cemhjv" isMarkerVisible="true">
+        <dc:Bounds x="385" y="665" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="368" y="635" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_00e6sqq_di" bpmnElement="Activity_089t9fj">
+        <dc:Bounds x="380" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_147vycg_di" bpmnElement="Activity_1fv6ljk">
+        <dc:Bounds x="240" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1465ih9_di" bpmnElement="Activity_19myg2v">
+        <dc:Bounds x="520" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_16l1ykw_di" bpmnElement="Activity_1atych2">
+        <dc:Bounds x="800" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_10uophi_di" bpmnElement="Activity_0iluozh">
+        <dc:Bounds x="1080" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0u2aqld_di" bpmnElement="Activity_0u2aqld">
+        <dc:Bounds x="1240" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1hr68mt_di" bpmnElement="Activity_1hr68mt">
+        <dc:Bounds x="1400" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1xwu5f0_di" bpmnElement="Gateway_1xwu5f0" isMarkerVisible="true">
+        <dc:Bounds x="1565" y="205" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1564" y="175" width="54" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0yfi3mj_di" bpmnElement="Event_0yfi3mj">
+        <dc:Bounds x="1572" y="302" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1607" y="286" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_03sbng2_di" bpmnElement="Activity_03sbng2">
+        <dc:Bounds x="1870" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_08yj5gq_di" bpmnElement="Activity_08yj5gq">
+        <dc:Bounds x="2010" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1aesimf_di" bpmnElement="Activity_1aesimf" isExpanded="true">
+        <dc:Bounds x="210" y="1130" width="770" height="170" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1bqk5yt_di" bpmnElement="Flow_1bqk5yt">
+        <di:waypoint x="630" y="1234" />
+        <di:waypoint x="710" y="1234" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tw7xsp_di" bpmnElement="Flow_0tw7xsp">
+        <di:waypoint x="278" y="1234" />
+        <di:waypoint x="380" y="1234" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_075rb1i_di" bpmnElement="Flow_075rb1i">
+        <di:waypoint x="480" y="1234" />
+        <di:waypoint x="530" y="1234" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0y0r82m_di" bpmnElement="Flow_0y0r82m">
+        <di:waypoint x="810" y="1234" />
+        <di:waypoint x="892" y="1234" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_156ogc4_di" bpmnElement="Event_156ogc4">
+        <dc:Bounds x="242" y="1216" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1n2qjvx_di" bpmnElement="Event_1n2qjvx">
+        <dc:Bounds x="892" y="1216" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1eedm9e_di" bpmnElement="Activity_1eedm9e">
+        <dc:Bounds x="710" y="1194" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1szd5yp_di" bpmnElement="Activity_1szd5yp">
+        <dc:Bounds x="530" y="1194" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0lpw3j7_di" bpmnElement="Activity_0lpw3j7">
+        <dc:Bounds x="380" y="1194" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0hioign_di" bpmnElement="Activity_0hioign" isExpanded="true">
+        <dc:Bounds x="320" y="1420" width="440" height="140" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0cvs8zk_di" bpmnElement="Flow_0cvs8zk">
+        <di:waypoint x="408" y="1481" />
+        <di:waypoint x="473" y="1481" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_01jdnrt_di" bpmnElement="Flow_01jdnrt">
+        <di:waypoint x="573" y="1481" />
+        <di:waypoint x="672" y="1481" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_1f3cipf_di" bpmnElement="Activity_1f3cipf">
+        <dc:Bounds x="473" y="1441" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_18qzt1n_di" bpmnElement="Event_18qzt1n">
+        <dc:Bounds x="672" y="1463" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0lvvn7i_di" bpmnElement="Event_0lvvn7i">
+        <dc:Bounds x="372" y="1463" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1u5yry2_di" bpmnElement="Activity_09e5oh6">
+        <dc:Bounds x="1700" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ng1vyl_di" bpmnElement="Activity_1fzg56b">
+        <dc:Bounds x="240" y="410" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1vabe3f_di" bpmnElement="Activity_0gtw2p7">
+        <dc:Bounds x="480" y="410" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_07cr1m2_di" bpmnElement="Activity_07cr1m2">
+        <dc:Bounds x="630" y="410" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_03hbxfi_di" bpmnElement="Activity_03hbxfi">
+        <dc:Bounds x="790" y="410" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0br2i5b_di" bpmnElement="Activity_0br2i5b">
+        <dc:Bounds x="960" y="410" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1ot96tc_di" bpmnElement="Gateway_1ot96tc" isMarkerVisible="true">
+        <dc:Bounds x="1105" y="425" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1088" y="395" width="84" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0h9nwqd_di" bpmnElement="Event_0uco28x">
+        <dc:Bounds x="1112" y="522" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1088" y="565" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1t28p4r_di" bpmnElement="Activity_1t28p4r">
+        <dc:Bounds x="1580" y="410" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_03o12kw_di" bpmnElement="Activity_1o0a55b">
+        <dc:Bounds x="1410" y="410" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1hkx6j5_di" bpmnElement="Activity_068a0cy">
+        <dc:Bounds x="240" y="650" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_18xtkyi_di" bpmnElement="Event_1azfo77">
+        <dc:Bounds x="162" y="922" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="156" y="965" width="48" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wvru6z_di" bpmnElement="Activity_02vl5kt">
+        <dc:Bounds x="480" y="650" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1kszh5k_di" bpmnElement="Activity_1kszh5k">
+        <dc:Bounds x="640" y="650" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_09jt4b0_di" bpmnElement="Activity_09jt4b0">
+        <dc:Bounds x="800" y="650" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1su25xm_di" bpmnElement="Activity_1su25xm">
+        <dc:Bounds x="970" y="650" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_114io6q_di" bpmnElement="Gateway_114io6q" isMarkerVisible="true">
+        <dc:Bounds x="1115" y="665" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1098" y="641" width="84" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_08ecfyj_di" bpmnElement="Event_08ecfyj">
+        <dc:Bounds x="1122" y="762" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1098" y="805" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ftm8b6_di" bpmnElement="Activity_0ftm8b6">
+        <dc:Bounds x="1410" y="650" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1xnstqr_di" bpmnElement="Activity_1xnstqr">
+        <dc:Bounds x="1580" y="650" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_15f8u0i_di" bpmnElement="Activity_1xirwg3">
+        <dc:Bounds x="1220" y="410" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0xmezab_di" bpmnElement="Activity_0xmezab">
+        <dc:Bounds x="1230" y="650" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17abdcy_di" bpmnElement="Activity_1j0xkqc">
+        <dc:Bounds x="250" y="900" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0huy5ph_di" bpmnElement="Activity_0huy5ph">
+        <dc:Bounds x="390" y="900" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1tbardv_di" bpmnElement="Activity_1tbardv">
+        <dc:Bounds x="560" y="900" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0kp0sqc_di" bpmnElement="Event_0ocuo1o">
+        <dc:Bounds x="752" y="82" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="735" y="125" width="71" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
