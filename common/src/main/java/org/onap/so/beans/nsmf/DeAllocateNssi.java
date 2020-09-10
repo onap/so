@@ -25,7 +25,6 @@ import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DeAllocateNssi {
-
     @Deprecated
     public final static String URL = "/api/rest/provMns/v1/NSS" + "/SliceProfiles/%s";
 
@@ -41,6 +40,16 @@ public class DeAllocateNssi {
     private String scriptName;
 
     private String extension;
+
+    private String sliceProfileId;
+
+    public String getSliceProfileId() {
+        return sliceProfileId;
+    }
+
+    public void setSliceProfileId(String sliceProfileId) {
+        this.sliceProfileId = sliceProfileId;
+    }
 
     public String getNsiId() {
         return nsiId;
