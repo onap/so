@@ -20,6 +20,7 @@
 
 package org.onap.so.beans.nsmf;
 
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -32,6 +33,10 @@ public class ActDeActNssi {
     private String nsiId;
 
     private String nssiId;
+
+    private String sliceProfileId;
+
+    private List<String> snssaiList;
 
     public String getNsiId() {
         return nsiId;
@@ -47,5 +52,21 @@ public class ActDeActNssi {
 
     public void setNssiId(String nssiId) {
         this.nssiId = nssiId;
+    }
+
+    public String getSliceProfileId() {
+        return sliceProfileId;
+    }
+
+    public void setSliceProfileId(String sliceProfileId) {
+        this.sliceProfileId = sliceProfileId;
+    }
+
+    public List<String> getSnssaiList() {
+        return snssaiList;
+    }
+
+    public void setSnssaiList(List<String> snssaiList) {
+        this.snssaiList = snssaiList;
     }
 }
