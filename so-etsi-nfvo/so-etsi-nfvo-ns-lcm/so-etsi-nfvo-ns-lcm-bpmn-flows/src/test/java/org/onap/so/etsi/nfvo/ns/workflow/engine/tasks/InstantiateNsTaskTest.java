@@ -28,6 +28,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.onap.aaiclient.client.aai.AAIVersion.V19;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.NETWORK_SERVICE_DESCRIPTOR_PARAM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.extclients.etsicatalog.EtsiCatalogServiceProviderConfiguration.ETSI_CATALOG_REST_TEMPLATE_BEAN;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.extclients.vnfm.Sol003AdapterConfiguration.SOL003_ADAPTER_REST_TEMPLATE_BEAN;
@@ -54,6 +55,8 @@ import org.hamcrest.text.MatchesPattern;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onap.aaiclient.client.aai.entities.Results;
+import org.onap.aaiclient.client.graphinventory.entities.Resource;
 import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.CreateVnfResponse;
 import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.OperationStatusRetrievalStatusEnum;
 import org.onap.so.adapters.etsisol003adapter.pkgm.extclients.etsicatalog.model.NsdInfo;
@@ -78,6 +81,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
 /**
@@ -286,8 +291,9 @@ public class InstantiateNsTaskTest extends BaseTest {
         return new File(path).getAbsolutePath();
     }
 
-    private void mockAAIEndpoints(final String nsdId) {
-        final String modelEndpoint = "/aai/v[0-9]+/network/generic-vnfs/generic-vnf/" + UUID_REGEX;
+    private void mockAAIEndpoints(final String nsdId) throws JsonProcessingException {
+        final String modelEndpoint = "/aai/" + V19 + "/network/generic-vnfs/generic-vnf/" + UUID_REGEX;
+
         wireMockServer.stubFor(
                 get(urlMatching(modelEndpoint + "\\?resultIndex=0&resultSize=1&format=count")).willReturn(notFound()));
 
@@ -297,23 +303,25 @@ public class InstantiateNsTaskTest extends BaseTest {
         wireMockServer.stubFor(get(urlMatching(modelEndpoint)).willReturn(ok())
                 .willReturn(okJson("{\"orchestration-status\": \"Created\"}")));
 
-        final String resourceType = "service-instance";
-        final String resourceLink = "/aai/v20/business/customers/customer/" + GLOBAL_CUSTOMER_ID
-                + "/service-subscriptions/service-subscription/NetworkService/service-instances/service-instance/"
-                + nsdId;
-
-        final String body = "{\n" + "  \"results\": [{\n" + "    \"resource-type\": \"" + resourceType + "\",\n"
-                + "    \"resource-link\": \"" + resourceLink + "\"\n" + "  }]\n" + "}";
+        wireMockServer.stubFor(get(urlMatching("/aai/" + V19 + "/nodes/service-instances/service-instance/.*"))
+                .willReturn(okJson(getResourceResultsResponseAsJson(nsdId))));
 
         wireMockServer.stubFor(
-                get(urlMatching("/aai/v[0-9]+/nodes/service-instances/service-instance/" + nsdId + "\\?format=pathed"))
-                        .willReturn(okJson(body)));
-
-        wireMockServer
-                .stubFor(put(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/" + CLOUD_OWNER
-                        + "/" + CLOUD_REGION + "/tenants/tenant/" + TENANT_ID + "/relationship-list/relationship"))
+                put(urlMatching("/aai/" + V19 + "/cloud-infrastructure/cloud-regions/cloud-region/" + CLOUD_OWNER + "/"
+                        + CLOUD_REGION + "/tenants/tenant/" + TENANT_ID + "/relationship-list/relationship"))
                                 .willReturn(ok()));
 
+    }
+
+    private String getResourceResultsResponseAsJson(final String nsdId) throws JsonProcessingException {
+        final Resource resource = new Resource();
+        resource.setResourceType("service-instance");
+        resource.setResourceLink("/aai/" + V19 + "/business/customers/customer/" + GLOBAL_CUSTOMER_ID
+                + "/service-subscriptions/service-subscription/NetworkService/service-instances/service-instance/"
+                + nsdId);
+        final Results<Resource> results = new Results<>();
+        results.getResult().add(resource);
+        return new ObjectMapper().writeValueAsString(results);
     }
 
 }
