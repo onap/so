@@ -25,10 +25,20 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TnSliceProfile {
 
+    private String sliceProfileId;
+
     private String bandwidth;
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private int latency;
+
+    public String getSliceProfileId() {
+        return sliceProfileId;
+    }
+
+    public void setSliceProfileId(String sliceProfileId) {
+        this.sliceProfileId = sliceProfileId;
+    }
 
     public String getBandwidth() {
         return bandwidth;
