@@ -69,9 +69,10 @@ export class OnboardComponent implements OnInit {
       let data = this.myform.value;
       this.saveServiceRecipes(JSON.stringify(data));
       this.myform.reset();
-    }
-    if(this.fileList.length > 0) {
+    } else if(this.fileList.length > 0) {
       this.handleUpload();
+    } else {
+      this.popup.error("Please fill valid data.");
     }
   }
 
@@ -82,6 +83,8 @@ export class OnboardComponent implements OnInit {
       if(file.name.includes(".war")) {
         this.fileName = file.name;
         this.fileList = this.fileList.concat(file);
+      } else {
+        this.popup.error("Invalid file format.");
       }
     }
     return false;
@@ -92,13 +95,16 @@ export class OnboardComponent implements OnInit {
       .subscribe((data: any) => {
         console.log(JSON.stringify(data));
         if(data != null) {
-          if(data.errMsg) {
+          if (data.id && data.id != "") {
+            this.popup.info("Data stored in database.");
+          } else if(data.errMsg) {
             this.popup.error(data.errMsg);
           }
         }
         this.spinner.hide();
       },error => {
         console.log(error);
+        this.popup.error("Unable to store bpmn data, Error code:" + error.status);
         this.spinner.hide();
     });
   }
@@ -114,17 +120,20 @@ export class OnboardComponent implements OnInit {
     });
     this.data.onboardBPMNInfra(formData)
       .subscribe((data: any) => {
+        this.spinner.hide();
         console.log(JSON.stringify(data));
         if(data != null) {
-          if(data.result == true) {
+          if(data.result == "true") {
             this.popup.info(data.message);
+          } else if(data.errMsg) {
+            this.popup.error(data.errMsg);
           } else {
             this.popup.error(data.message);
           }
         }
-        this.spinner.hide();
       },error => {
         console.log(error);
+        this.popup.error("Unable to upload bpmn file, Error code:" + error.status);
         this.spinner.hide();
     });
   }
