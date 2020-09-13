@@ -1,3 +1,23 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * ONAP - SO
+ * ================================================================================
+ * Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
 package org.onap.so.adapters.cnf.rest;
 
 import java.io.File;
@@ -20,12 +40,15 @@ import org.onap.so.adapters.cnf.model.ConfigTemplateEntity;
 import org.onap.so.adapters.cnf.model.ConfigurationEntity;
 import org.onap.so.adapters.cnf.model.ConfigurationRollbackEntity;
 import org.onap.so.adapters.cnf.model.ConnectivityInfo;
+import org.onap.so.adapters.cnf.model.InstanceResponse;
 import org.onap.so.adapters.cnf.model.MulticloudInstanceRequest;
 import org.onap.so.adapters.cnf.model.ProfileEntity;
 import org.onap.so.adapters.cnf.model.ResourceBundleEntity;
 import org.onap.so.adapters.cnf.model.Tag;
+import org.onap.so.adapters.cnf.service.CnfAdapterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,6 +66,9 @@ public class CnfAdapterRest {
     private static final Logger logger = LoggerFactory.getLogger(CnfAdapterRest.class);
     private final CloseableHttpClient httpClient = HttpClients.createDefault();
 
+    @Autowired
+    private CnfAdapterService cnfAdapterService;
+
     @ResponseBody
     @RequestMapping(value = {"/api/cnf-adapter/v1/healthcheck"}, method = RequestMethod.GET,
             produces = "application/json")
@@ -51,7 +77,7 @@ public class CnfAdapterRest {
         logger.info("health check called.");
 
         // TODO
-        HttpGet req = new HttpGet("http://172.17.0.2:31770/v1/healthcheck");
+        HttpGet req = new HttpGet("http://multicloud-k8s:9015/v1/healthcheck");
         try (CloseableHttpResponse response = httpClient.execute(req)) {
             logger.info("response:" + response.getEntity());
             return EntityUtils.toString(response.getEntity());
@@ -67,7 +93,7 @@ public class CnfAdapterRest {
 
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
-        HttpPost post = new HttpPost("http://172.17.0.2:31770/v1/rb/definition");
+        HttpPost post = new HttpPost("http://multicloud-k8s:9015/v1/rb/definition");
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         String requestBody = objectMapper.writeValueAsString(rB);
@@ -91,7 +117,7 @@ public class CnfAdapterRest {
 
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
-        HttpGet req = new HttpGet("http://172.17.0.2:31770/v1/rb/definition/" + rbName + "/" + rbVersion);
+        HttpGet req = new HttpGet("http://multicloud-k8s:9015/v1/rb/definition/" + rbName + "/" + rbVersion);
         try (CloseableHttpResponse response = httpClient.execute(req)) {
             logger.info("response:" + response.getEntity());
             return EntityUtils.toString(response.getEntity());
@@ -108,7 +134,7 @@ public class CnfAdapterRest {
 
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
-        HttpDelete req = new HttpDelete("http://172.17.0.2:31770/v1/rb/definition/" + rbName + "/" + rbVersion);
+        HttpDelete req = new HttpDelete("http://multicloud-k8s:9015/v1/rb/definition/" + rbName + "/" + rbVersion);
 
         try (CloseableHttpResponse response = httpClient.execute(req)) {
             logger.info("response:" + response.getEntity());
@@ -126,7 +152,7 @@ public class CnfAdapterRest {
 
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
-        HttpGet req = new HttpGet("http://172.17.0.2:31770/v1/rb/definition/" + rbName);
+        HttpGet req = new HttpGet("http://multicloud-k8s:9015/v1/rb/definition/" + rbName);
 
         try (CloseableHttpResponse response = httpClient.execute(req)) {
             logger.info("response:" + response.getEntity());
@@ -144,7 +170,7 @@ public class CnfAdapterRest {
 
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
-        HttpGet req = new HttpGet("http://172.17.0.2:31770/v1/rb/definition");
+        HttpGet req = new HttpGet("http://multicloud-k8s:9015/v1/rb/definition");
 
         try (CloseableHttpResponse response = httpClient.execute(req)) {
             logger.info("response:" + response.getEntity());
@@ -172,7 +198,7 @@ public class CnfAdapterRest {
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
         HttpPost post =
-                new HttpPost("http://172.17.0.2:31770/v1/rb/definition/" + rbName + "/" + rbVersion + "/content");
+                new HttpPost("http://multicloud-k8s:9015/v1/rb/definition/" + rbName + "/" + rbVersion + "/content");
         post.setHeader("Content-Type", "multipart/form-data");
         logger.info(String.valueOf(post));
         post.setEntity(entity);
@@ -195,7 +221,7 @@ public class CnfAdapterRest {
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
         HttpPost post =
-                new HttpPost("http://172.17.0.2:31770/v1/rb/definition/" + rbName + "/" + rbVersion + "/profile");
+                new HttpPost("http://multicloud-k8s:9015/v1/rb/definition/" + rbName + "/" + rbVersion + "/profile");
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(fE);
         StringEntity requestEntity = new StringEntity(requestBody, ContentType.APPLICATION_JSON);
@@ -219,7 +245,7 @@ public class CnfAdapterRest {
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
         HttpGet req = new HttpGet(
-                "http://172.17.0.2:31770/v1/rb/definition/" + rbName + "/" + rbVersion + "/profile/" + prName);
+                "http://multicloud-k8s:9015/v1/rb/definition/" + rbName + "/" + rbVersion + "/profile/" + prName);
 
         try (CloseableHttpResponse response = httpClient.execute(req)) {
             logger.info("response:" + response.getEntity());
@@ -237,7 +263,8 @@ public class CnfAdapterRest {
 
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
-        HttpGet req = new HttpGet("http://172.17.0.2:31770/v1/rb/definition/" + rbName + "/" + rbVersion + "/profile");
+        HttpGet req =
+                new HttpGet("http://multicloud-k8s:9015/v1/rb/definition/" + rbName + "/" + rbVersion + "/profile");
 
         try (CloseableHttpResponse response = httpClient.execute(req)) {
             logger.info("response:" + response.getEntity());
@@ -256,7 +283,7 @@ public class CnfAdapterRest {
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
         HttpDelete req = new HttpDelete(
-                "http://172.17.0.2:31770/v1/rb/definition/" + rbName + "/" + rbVersion + "/profile/" + prName);
+                "http://multicloud-k8s:9015/v1/rb/definition/" + rbName + "/" + rbVersion + "/profile/" + prName);
 
         try (CloseableHttpResponse response = httpClient.execute(req)) {
             logger.info("response:" + response.getEntity());
@@ -284,7 +311,7 @@ public class CnfAdapterRest {
 
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
-        HttpPost post = new HttpPost("http://172.17.0.2:31770/v1/rb/definition/" + rbName + "/" + rbVersion
+        HttpPost post = new HttpPost("http://multicloud-k8s:9015/v1/rb/definition/" + rbName + "/" + rbVersion
                 + "/profile/" + prName + "/content");
         post.setHeader("Content-Type", "multipart/form-data");
 
@@ -300,41 +327,11 @@ public class CnfAdapterRest {
 
     @ResponseBody
     @RequestMapping(value = {"/api/cnf-adapter/v1/v1/instance"}, method = RequestMethod.POST,
-            produces = "application/json")
-    public String createInstance(@RequestBody BpmnInstanceRequest bpmnInstanceRequest) throws Exception {
+            produces = "application/json", consumes = "application/json")
+    public InstanceResponse createInstance(@RequestBody BpmnInstanceRequest bpmnInstanceRequest) {
 
-        logger.info("create Instance called.");
-
-        MulticloudInstanceRequest multicloudInstanceRequest = new MulticloudInstanceRequest();
-
-        if (bpmnInstanceRequest.getK8sRBProfileName() != null) {
-            multicloudInstanceRequest.setCloudRegion(bpmnInstanceRequest.getCloudRegionId());
-            multicloudInstanceRequest.setLabels(bpmnInstanceRequest.getLabels());
-            multicloudInstanceRequest.setOverrideValues(bpmnInstanceRequest.getOverrideValues());
-            multicloudInstanceRequest.setProfileName(bpmnInstanceRequest.getK8sRBProfileName());
-            multicloudInstanceRequest.setRbName(bpmnInstanceRequest.getModelInvariantId());
-            multicloudInstanceRequest.setRbVersion(bpmnInstanceRequest.getModelVersionId());
-            multicloudInstanceRequest.setVfModuleUuid(bpmnInstanceRequest.getVfModuleUUID());
-        } else {
-
-            logger.info("K8sRBProfileName is required");
-            return "K8sRBProfileName is required";
-        }
-
-        // TODO
-        // Below URL should be changed as appropriate multicloud URL.
-        HttpPost post = new HttpPost("http://172.17.0.2:31770/v1/instance");
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        String requestBody = objectMapper.writeValueAsString(multicloudInstanceRequest);
-        StringEntity requestEntity = new StringEntity(requestBody, ContentType.APPLICATION_JSON);
-        post.setEntity(requestEntity);
-
-        try (CloseableHttpClient httpClient = HttpClients.createDefault();
-                CloseableHttpResponse response = httpClient.execute(post)) {
-            logger.info("response:" + response.getEntity());
-            return EntityUtils.toString(response.getEntity());
-        }
+        logger.info("CnfAdapterRest create Instance called.");
+        return cnfAdapterService.createInstance(bpmnInstanceRequest);
     }
 
     // This api is not enabled in multicloud project ,but this is required in
@@ -349,7 +346,7 @@ public class CnfAdapterRest {
 
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
-        HttpPut post = new HttpPut("http://172.17.0.2:31770/v1/instance/" + instanceId);
+        HttpPut post = new HttpPut("http://multicloud-k8s:9015/v1/instance/" + instanceId);
         ObjectMapper objectMapper = new ObjectMapper();
 
         String requestBody = objectMapper.writeValueAsString(iE);
@@ -372,7 +369,7 @@ public class CnfAdapterRest {
 
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
-        HttpGet req = new HttpGet("http://172.17.0.2:31770/v1/instance/" + instanceId);
+        HttpGet req = new HttpGet("http://multicloud-k8s:9015/v1/instance/" + instanceId);
 
         try (CloseableHttpResponse response = httpClient.execute(req)) {
             logger.info("response:" + response.getEntity());
@@ -389,7 +386,7 @@ public class CnfAdapterRest {
 
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
-        HttpGet req = new HttpGet("http://172.17.0.2:31770/v1/instance/" + instanceId + "/status");
+        HttpGet req = new HttpGet("http://multicloud-k8s:9015/v1/instance/" + instanceId + "/status");
 
         try (CloseableHttpResponse response = httpClient.execute(req)) {
             logger.info("response:" + response.getEntity());
@@ -408,8 +405,8 @@ public class CnfAdapterRest {
 
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
-        HttpGet req = new HttpGet("http://172.17.0.2:31770/v1/instance?rb-name=" + rbName + "&rb-version=" + rbVersion
-                + "&profile-name=" + profileName);
+        HttpGet req = new HttpGet("http://multicloud-k8s:9015/v1/instance?rb-name=" + rbName + "&rb-version="
+                + rbVersion + "&profile-name=" + profileName);
 
         try (CloseableHttpResponse response = httpClient.execute(req)) {
             logger.info("response:" + response.getEntity());
@@ -426,7 +423,7 @@ public class CnfAdapterRest {
 
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
-        HttpDelete req = new HttpDelete("http://172.17.0.2:31770/v1/instance/" + instanceID);
+        HttpDelete req = new HttpDelete("http://multicloud-k8s:9015/v1/instance/" + instanceID);
 
         try (CloseableHttpResponse response = httpClient.execute(req)) {
             logger.info("response:" + response.getEntity());
@@ -446,8 +443,8 @@ public class CnfAdapterRest {
 
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
-        HttpPost post = new HttpPost(
-                "http://172.17.0.2:31770/v1/definition/" + rbName + "/" + rbVersion + "/profile/" + prName + "/config");
+        HttpPost post = new HttpPost("http://multicloud-k8s:9015/v1/definition/" + rbName + "/" + rbVersion
+                + "/profile/" + prName + "/config");
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(cE);
         StringEntity requestEntity = new StringEntity(requestBody, ContentType.APPLICATION_JSON);
@@ -471,7 +468,7 @@ public class CnfAdapterRest {
 
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
-        HttpGet req = new HttpGet("http://172.17.0.2:31770/v1/definition/" + rbName + "/" + rbVersion + "/profile/"
+        HttpGet req = new HttpGet("http://multicloud-k8s:9015/v1/definition/" + rbName + "/" + rbVersion + "/profile/"
                 + prName + "/config/" + cfgName);
 
         try (CloseableHttpResponse response = httpClient.execute(req)) {
@@ -492,7 +489,7 @@ public class CnfAdapterRest {
 
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
-        HttpDelete req = new HttpDelete("http://172.17.0.2:31770/v1/definition/" + rbName + "/" + rbVersion
+        HttpDelete req = new HttpDelete("http://multicloud-k8s:9015/v1/definition/" + rbName + "/" + rbVersion
                 + "/profile/" + prName + "/config/" + cfgName);
 
         try (CloseableHttpResponse response = httpClient.execute(req)) {
@@ -514,7 +511,7 @@ public class CnfAdapterRest {
 
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
-        HttpPut post = new HttpPut("http://172.17.0.2:31770/v1/definition/" + rbName + "/" + rbVersion + "/profile/"
+        HttpPut post = new HttpPut("http://multicloud-k8s:9015/v1/definition/" + rbName + "/" + rbVersion + "/profile/"
                 + prName + "/config/" + cfgName);
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(cE);
@@ -537,8 +534,8 @@ public class CnfAdapterRest {
 
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
-        HttpPost post = new HttpPost("http://172.17.0.2:31770/v1/definition/" + rbName + "/" + rbVersion + "/profile/"
-                + prName + "/config/tagit");
+        HttpPost post = new HttpPost("http://multicloud-k8s:9015/v1/definition/" + rbName + "/" + rbVersion
+                + "/profile/" + prName + "/config/tagit");
 
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(tag);
@@ -561,7 +558,7 @@ public class CnfAdapterRest {
 
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
-        HttpPost post = new HttpPost("http://172.17.0.2:31770/v1/connectivity-info");
+        HttpPost post = new HttpPost("http://multicloud-k8s:9015/v1/connectivity-info");
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(cIE);
         StringEntity requestEntity = new StringEntity(requestBody, ContentType.APPLICATION_JSON);
@@ -583,7 +580,7 @@ public class CnfAdapterRest {
 
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
-        HttpGet req = new HttpGet("http://172.17.0.2:31770/v1/connectivity-info/" + connName);
+        HttpGet req = new HttpGet("http://multicloud-k8s:9015/v1/connectivity-info/" + connName);
 
         try (CloseableHttpResponse response = httpClient.execute(req)) {
             logger.info("response:" + response.getEntity());
@@ -600,7 +597,7 @@ public class CnfAdapterRest {
 
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
-        HttpDelete req = new HttpDelete("http://172.17.0.2:31770/v1/connectivity-info/" + connName);
+        HttpDelete req = new HttpDelete("http://multicloud-k8s:9015/v1/connectivity-info/" + connName);
 
         try (CloseableHttpResponse response = httpClient.execute(req)) {
             logger.info("response:" + response.getEntity());
@@ -620,7 +617,7 @@ public class CnfAdapterRest {
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
         HttpPost post = new HttpPost(
-                "http://172.17.0.2:31770/v1/rb/definition/" + rbName + "/" + rbVersion + "/config-template");
+                "http://multicloud-k8s:9015/v1/rb/definition/" + rbName + "/" + rbVersion + "/config-template");
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(tE);
         StringEntity requestEntity = new StringEntity(requestBody, ContentType.APPLICATION_JSON);
@@ -643,8 +640,8 @@ public class CnfAdapterRest {
 
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
-        HttpGet req = new HttpGet(
-                "http://172.17.0.2:31770/v1/rb/definition/" + rbName + "/" + rbVersion + "/config-template/" + tName);
+        HttpGet req = new HttpGet("http://multicloud-k8s:9015/v1/rb/definition/" + rbName + "/" + rbVersion
+                + "/config-template/" + tName);
 
         try (CloseableHttpResponse response = httpClient.execute(req)) {
             logger.info("response:" + response.getEntity());
@@ -662,8 +659,8 @@ public class CnfAdapterRest {
 
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
-        HttpDelete req = new HttpDelete(
-                "http://172.17.0.2:31770/v1/rb/definition/" + rbName + "/" + rbVersion + "/config-template/" + tName);
+        HttpDelete req = new HttpDelete("http://multicloud-k8s:9015/v1/rb/definition/" + rbName + "/" + rbVersion
+                + "/config-template/" + tName);
 
         try (CloseableHttpResponse response = httpClient.execute(req)) {
             logger.info("response:" + response.getEntity());
@@ -692,7 +689,7 @@ public class CnfAdapterRest {
 
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
-        HttpPost post = new HttpPost("http://172.17.0.2:31770/v1/rb/definition/" + rbName + "/" + rbVersion
+        HttpPost post = new HttpPost("http://multicloud-k8s:9015/v1/rb/definition/" + rbName + "/" + rbVersion
                 + "/config-template/" + tName + "/content");
         post.setHeader("Content-Type", "multipart/form-data");
 
@@ -716,8 +713,8 @@ public class CnfAdapterRest {
 
         // TODO
         // Below URL should be changed as appropriate multicloud URL.
-        HttpPost post = new HttpPost("http://172.17.0.2:31770/v1/definition/" + rbName + "/" + rbVersion + "/profile/"
-                + prName + "/config/rollback");
+        HttpPost post = new HttpPost("http://multicloud-k8s:9015/v1/definition/" + rbName + "/" + rbVersion
+                + "/profile/" + prName + "/config/rollback");
 
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(rE);
