@@ -38,14 +38,14 @@
  #     naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
  #     enable-lazy-load-no-trans: true
 server:
-  port: 9013
+  port: 9012
   tomcat:
     max-threads: 50
 
 #mso:
  # key: 07a7159d3bf51a0e53be7a8f89699be7
  # site-name: localSite
-#  logPath: ./logs/nssmf
+#  logPath: ./logs/cnf
  # msb-ip: msb-iag.{{ include "common.namespace" . }}
  # msb-port: 80
  # adapters:
