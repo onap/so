@@ -209,13 +209,13 @@ public class JobExecutorService {
 
                 final NfvoJob nfvoJob = optional.get();
                 currentJobStatus = nfvoJob.getStatus();
-                logger.debug("Received job status response: \n ", nfvoJob);
+                logger.info("Received job status response: \n ", nfvoJob);
                 if (jobFinishedStates.contains(nfvoJob.getStatus())) {
                     logger.info("Job finished \n {}", currentJobStatus);
                     return ImmutablePair.of(nfvoJob.getProcessInstanceId(), currentJobStatus);
                 }
 
-                logger.debug("Haven't received one of finish state {} yet, will try again in {} seconds",
+                logger.info("Haven't received one of finish state {} yet, will try again in {} seconds",
                         jobFinishedStates, SLEEP_TIME_IN_SECONDS);
                 TimeUnit.SECONDS.sleep(SLEEP_TIME_IN_SECONDS);
 

@@ -42,7 +42,7 @@ etsi-catalog-manager:
       endpoint: http://modeling-etsicatalog.onap:8806/api
 so-etsi-ns-lcm-workflow-engine:
    requesttimeout:
-      timeoutInSeconds: 10
+      timeoutInSeconds: 60
 
 logging:
    level:
