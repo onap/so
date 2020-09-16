@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.1.1">
+  <bpmn:process id="DoCreateTnNssiInstance" name="DoCreateTnNssiInstance" isExecutable="true">
+    <bpmn:startEvent id="allocateTnNssi_StartEvent" name="allocateTnNssi_StartEvent">
+      <bpmn:outgoing>SequenceFlow_1qo2pln</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1qo2pln" sourceRef="allocateTnNssi_StartEvent" targetRef="PreprocessIncomingRequest_task" />
+    <bpmn:sequenceFlow id="SequenceFlow_0khtova" sourceRef="PreprocessIncomingRequest_task" targetRef="instantiate_NSTask" />
+    <bpmn:scriptTask id="PreprocessIncomingRequest_task" name="Preprocess Incoming Request" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1qo2pln</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0khtova</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def dcsi = new DoCreateTnNssiInstance()
+dcsi.preProcessRequest(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="instantiate_NSTask" name="create Service Instance in AAI" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0khtova</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0g5bwvl</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def dcsi = new DoCreateTnNssiInstance()
+dcsi.createServiceInstance(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1uiz85h" sourceRef="Activity_16luyg1" targetRef="Event_1rsf7yb" />
+    <bpmn:sequenceFlow id="SequenceFlow_0g5bwvl" sourceRef="instantiate_NSTask" targetRef="Activity_08tw2di" />
+    <bpmn:scriptTask id="ScriptTask_18rzwzb" name="Create Allottedsource in AAI" scriptFormat="groovy">
+      <bpmn:incoming>Flow_106ei42</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_17u69c4</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def dcsi = new DoCreateTnNssiInstance()
+dcsi.createAllottedResource(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_17u69c4" sourceRef="ScriptTask_18rzwzb" targetRef="Event_1a9swwa" />
+    <bpmn:intermediateCatchEvent id="Event_0l9vk9p" name="Start SDNC Operation">
+      <bpmn:outgoing>Flow_1c8zr59</bpmn:outgoing>
+      <bpmn:linkEventDefinition id="LinkEventDefinition_0uwmpn2" name="SdncOperation" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:scriptTask id="Activity_0eh82ds" name="PreProcess SDNC Allocate TN NSSI Request" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1c8zr59</bpmn:incoming>
+      <bpmn:outgoing>Flow_0pko5tm</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def dcsi = new DoCreateTnNssiInstance()
+dcsi.preprocessSdncAllocateTnNssiRequest(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:callActivity id="Activity_1fs2182" name="Call SDNC Adapter: Allocate TN NSSI" calledElement="sdncAdapter">
+      <bpmn:extensionElements>
+        <camunda:in source="TNNSSMF_SDNCRequest" target="sdncAdapterWorkflowRequest" />
+        <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
+        <camunda:in source="mso-request-id" target="mso-request-id" />
+        <camunda:in source="mso-service-instance-id" target="mso-service-instance-id" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:out source="sdncAdapterResponse" target="TNNSSMF_SDNCAdapterResponse" />
+        <camunda:out source="SDNCA_SuccessIndicator" target="SDNCA_SuccessIndicator" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0pko5tm</bpmn:incoming>
+      <bpmn:outgoing>Flow_11kadz7</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:scriptTask id="Activity_16luyg1" name="Postprocess SDNC Allocate TN NSSI  Request" scriptFormat="groovy">
+      <bpmn:incoming>Flow_11kadz7</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1uiz85h</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+
+String response = execution.getVariable("TNNSSMF_SDNCAdapterResponse")
+
+def dcsi = new DoCreateTnNssiInstance()
+dcsi.validateSDNCResponse(execution, response, "allocate")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1c8zr59" name="" sourceRef="Event_0l9vk9p" targetRef="Activity_0eh82ds" />
+    <bpmn:sequenceFlow id="Flow_0pko5tm" name="" sourceRef="Activity_0eh82ds" targetRef="Activity_1fs2182" />
+    <bpmn:sequenceFlow id="Flow_11kadz7" name="" sourceRef="Activity_1fs2182" targetRef="Activity_16luyg1" />
+    <bpmn:endEvent id="Event_1rsf7yb">
+      <bpmn:incoming>SequenceFlow_1uiz85h</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:intermediateThrowEvent id="Event_1a9swwa" name="Goto SDNC operation">
+      <bpmn:incoming>SequenceFlow_17u69c4</bpmn:incoming>
+      <bpmn:linkEventDefinition id="LinkEventDefinition_1skl6p7" name="SdncOperation" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:scriptTask id="Activity_08tw2di" name="create Slice Profile in AAI" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0g5bwvl</bpmn:incoming>
+      <bpmn:outgoing>Flow_106ei42</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def dcsi = new DoCreateTnNssiInstance()
+dcsi.createSliceProfile(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_106ei42" sourceRef="Activity_08tw2di" targetRef="ScriptTask_18rzwzb" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoCreateTnNssiInstance">
+      <bpmndi:BPMNEdge id="Flow_11kadz7_di" bpmnElement="Flow_11kadz7">
+        <di:waypoint x="610" y="375" />
+        <di:waypoint x="719" y="375" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0pko5tm_di" bpmnElement="Flow_0pko5tm">
+        <di:waypoint x="420" y="375" />
+        <di:waypoint x="489" y="375" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1c8zr59_di" bpmnElement="Flow_1c8zr59">
+        <di:waypoint x="211" y="375" />
+        <di:waypoint x="299" y="375" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_17u69c4_di" bpmnElement="SequenceFlow_17u69c4">
+        <di:waypoint x="930" y="129" />
+        <di:waypoint x="1102" y="129" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0g5bwvl_di" bpmnElement="SequenceFlow_0g5bwvl">
+        <di:waypoint x="574" y="129" />
+        <di:waypoint x="650" y="129" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1uiz85h_di" bpmnElement="SequenceFlow_1uiz85h">
+        <di:waypoint x="840" y="375" />
+        <di:waypoint x="972" y="375" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="631" y="108" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0khtova_di" bpmnElement="SequenceFlow_0khtova">
+        <di:waypoint x="393" y="129" />
+        <di:waypoint x="474" y="129" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="436" y="108" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1qo2pln_di" bpmnElement="SequenceFlow_1qo2pln">
+        <di:waypoint x="211" y="129" />
+        <di:waypoint x="251" y="129" />
+        <di:waypoint x="251" y="129" />
+        <di:waypoint x="293" y="129" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="266" y="123" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_106ei42_di" bpmnElement="Flow_106ei42">
+        <di:waypoint x="750" y="129" />
+        <di:waypoint x="830" y="129" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="allocateTnNssi_StartEvent">
+        <dc:Bounds x="175" y="111" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="153" y="147" width="86" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_03j6ogo_di" bpmnElement="PreprocessIncomingRequest_task">
+        <dc:Bounds x="293" y="89" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1qmmew8_di" bpmnElement="instantiate_NSTask">
+        <dc:Bounds x="474" y="89" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0l9vk9p_di" bpmnElement="Event_0l9vk9p">
+        <dc:Bounds x="175" y="357" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="165" y="400" width="58" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0eh82ds_di" bpmnElement="Activity_0eh82ds">
+        <dc:Bounds x="299" y="328" width="121" height="94" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1fs2182_di" bpmnElement="Activity_1fs2182">
+        <dc:Bounds x="489" y="328" width="121" height="94" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_16luyg1_di" bpmnElement="Activity_16luyg1">
+        <dc:Bounds x="719" y="328" width="121" height="94" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1rsf7yb_di" bpmnElement="Event_1rsf7yb">
+        <dc:Bounds x="972" y="357" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1a9swwa_di" bpmnElement="Event_1a9swwa">
+        <dc:Bounds x="1102" y="111" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1093" y="154" width="59" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_18rzwzb_di" bpmnElement="ScriptTask_18rzwzb">
+        <dc:Bounds x="830" y="89" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_08tw2di_di" bpmnElement="Activity_08tw2di">
+        <dc:Bounds x="650" y="89" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
