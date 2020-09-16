@@ -32,6 +32,7 @@ import org.junit.Test;
 import org.onap.aaiclient.client.aai.AAIObjectPlurals;
 import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
 
 public class AAISimpleUriTest {
@@ -43,7 +44,14 @@ public class AAISimpleUriTest {
         AAIPluralResourceUri uri =
                 AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test1").relatedTo(AAIObjectPlurals.PSERVER);
         String uriOutput = uri.build().toString();
-        assertEquals("/network/generic-vnfs/generic-vnf/test1/related-to/pservers", uriOutput);
+
+        String expected = "/network/generic-vnfs/generic-vnf/test1/related-to/pservers";
+        assertEquals(expected, uriOutput);
+
+        uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test1")
+                .relatedTo(Types.PSERVERS.getFragment());
+        uriOutput = uri.build().toString();
+        assertEquals(expected, uriOutput);
     }
 
     @Test
@@ -51,7 +59,17 @@ public class AAISimpleUriTest {
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test1")
                 .relatedTo(AAIObjectType.PSERVER, "test2");
         String uriOutput = uri.build().toString();
-        assertEquals("/network/generic-vnfs/generic-vnf/test1/related-to/pservers/pserver/test2", uriOutput);
+
+        String expected = "/network/generic-vnfs/generic-vnf/test1/related-to/pservers/pserver/test2";
+        assertEquals(expected, uriOutput);
+
+        uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test1")
+                .relatedTo(Types.PSERVER.getFragment("test2"));
+
+        uriOutput = uri.build().toString();
+
+        assertEquals(expected, uriOutput);
+
     }
 
     @Test

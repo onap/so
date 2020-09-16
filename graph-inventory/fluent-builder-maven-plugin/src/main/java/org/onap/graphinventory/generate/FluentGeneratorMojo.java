@@ -34,13 +34,17 @@ public class FluentGeneratorMojo extends AbstractMojo {
     private String pluralClass;
     @Parameter
     private String nameClass;
+    @Parameter
+    private String singleFragmentClass;
+    @Parameter
+    private String pluralFragmentClass;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
 
         try {
             new FluentGenerator(getLog(), destination, destinationClasspath, swaggerLocation, builderName,
                     singularBuilderClass, pluralBuilderClass, topLevelBuilderClass, baseBuilderClass, singularClass,
-                    pluralClass, nameClass).run();
+                    pluralClass, nameClass, singleFragmentClass, pluralFragmentClass).run();
         } catch (JsonProcessingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

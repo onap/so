@@ -39,11 +39,13 @@ public class FluentGenerator {
     private final String pluralClass;
     private final String builderName;
     private final String nameClass;
+    private final String singleFragmentClass;
+    private final String pluralFragmentClass;
 
     public FluentGenerator(Log log, String location, String destinationClasspath, String swaggerLocation,
             String builderName, String singularBuilderClass, String pluralBuilderClass, String topLevelBuilderClass,
-            String baseBuilderClass, String singularClass, String pluralClass, String nameClass)
-            throws JsonProcessingException {
+            String baseBuilderClass, String singularClass, String pluralClass, String nameClass,
+            String singleFragmentClass, String pluralFragmentClass) throws JsonProcessingException {
 
         this.location = location;
         this.CLASSPATH = destinationClasspath;
@@ -55,6 +57,8 @@ public class FluentGenerator {
         this.singularClass = singularClass;
         this.pluralClass = pluralClass;
         this.nameClass = nameClass;
+        this.singleFragmentClass = singleFragmentClass;
+        this.pluralFragmentClass = pluralFragmentClass;
         doc = new SwaggerConverter(log).getDoc(swaggerLocation);
     }
 
@@ -241,7 +245,8 @@ public class FluentGenerator {
     }
 
     protected TypeSpec createTypes() {
-        List<FieldSpec> params = doc.values().stream().filter(item -> item.getType().equals("singular"))
+        List<FieldSpec> params = doc.values().stream()
+                .filter(item -> item.getType().equals("singular") || item.getType().equals("plural"))
                 .sorted(Comparator.comparing(item -> item.getName())).map(item -> {
                     ClassName nameType =
                             ClassName.get(CLASSPATH, CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_CAMEL, item.getName()))
@@ -274,6 +279,18 @@ public class FluentGenerator {
                         "\"" + oType.getPaths().stream().collect(Collectors.joining("\", \"")) + "\"")
                 .build());
 
+        if (oType.getType().equals("plural")) {
+            Pair<String, String> path = splitClasspath(this.pluralFragmentClass);
+            ClassName fragmentClass = ClassName.get(path.getLeft(), path.getRight());
+            path = splitClasspath(this.baseBuilderClass);
+            ClassName baseClass = ClassName.get(path.getLeft(), path.getRight());
+
+            classFields.add(FieldSpec.builder(fragmentClass, "fragment")
+                    .addModifiers(Modifier.PRIVATE, Modifier.FINAL, Modifier.STATIC)
+                    .initializer("new $T(new $L(new $T(){}))", fragmentClass, upperCamel(oType.getName()), baseClass)
+                    .build());
+        }
+
         ClassName superInterface;
         String name;
         if (oType.getType().equals("plural")) {
@@ -294,6 +311,34 @@ public class FluentGenerator {
                 .addModifiers(Modifier.PUBLIC).addAnnotation(Override.class).addStatement("return Info.paths").build());
         methods.add(MethodSpec.methodBuilder("getPartialUri").returns(String.class).addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class).addStatement("return Info.partialUri").build());
+
+        if (oType.getType().equals("plural")) {
+            Pair<String, String> path = splitClasspath(this.pluralFragmentClass);
+            ClassName fragmentClass = ClassName.get(path.getLeft(), path.getRight());
+            methods.add(MethodSpec.methodBuilder("getFragment").returns(fragmentClass).addModifiers(Modifier.PUBLIC)
+                    .addStatement("return fragment").build());
+        } else if (oType.getType().equals("singular")) {
+            Pair<String, String> path = splitClasspath(this.singleFragmentClass);
+            ClassName fragmentClass = ClassName.get(path.getLeft(), path.getRight());
+            path = splitClasspath(this.baseBuilderClass);
+            ClassName baseClass = ClassName.get(path.getLeft(), path.getRight());
+            List<ParameterSpec> typeParams = new ArrayList<>();
+
+            for (ObjectField oF : oType.getFields()) {
+                if (oF.getType().equals("string")) {
+                    typeParams.add(ParameterSpec.builder(String.class, lowerCamel(makeValidJavaVariable(oF.getName())))
+                            .build());
+                } else if (oF.getType().equals("integer")) {
+                    typeParams.add(
+                            ParameterSpec.builder(int.class, lowerCamel(makeValidJavaVariable(oF.getName()))).build());
+                }
+            }
+            methods.add(MethodSpec.methodBuilder("getFragment").returns(fragmentClass).addParameters(typeParams)
+                    .addModifiers(Modifier.PUBLIC)
+                    .addStatement("return new $T(new $L(new $T(){}, $L))", fragmentClass, upperCamel(oType.getName()),
+                            baseClass, typeParams.stream().map(item -> item.name).collect(Collectors.joining(", ")))
+                    .build());
+        }
         if (!oType.getType().equals("top level")) {
             classFields.add(FieldSpec.builder(String.class, "name")
                     .addModifiers(Modifier.PRIVATE, Modifier.FINAL, Modifier.STATIC).initializer("$S", name).build());

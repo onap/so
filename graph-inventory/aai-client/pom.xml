@@ -101,6 +101,8 @@
               <singularClass>org.onap.aaiclient.client.aai.AAIObjectType</singularClass>
               <pluralClass>org.onap.aaiclient.client.aai.AAIObjectPlurals</pluralClass>
               <nameClass>org.onap.aaiclient.client.aai.AAIObjectName</nameClass>
+              <singleFragmentClass>org.onap.aaiclient.client.aai.entities.uri.AAISingleFragment</singleFragmentClass>
+              <pluralFragmentClass>org.onap.aaiclient.client.aai.entities.uri.AAIPluralFragment</pluralFragmentClass>
             </configuration>
           </execution>
         </executions>

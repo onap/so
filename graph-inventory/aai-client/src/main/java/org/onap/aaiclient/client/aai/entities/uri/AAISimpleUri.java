@@ -26,7 +26,8 @@ import org.onap.aaiclient.client.aai.AAIObjectPlurals;
 import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.graphinventory.entities.uri.SimpleUri;
 
-public class AAISimpleUri extends SimpleUri<AAIResourceUri, AAIPluralResourceUri, AAIObjectType, AAIObjectPlurals>
+public class AAISimpleUri extends
+        SimpleUri<AAIResourceUri, AAIPluralResourceUri, AAIObjectType, AAIObjectPlurals, AAISingleFragment, AAIPluralFragment>
         implements AAIResourceUri {
 
     private static final long serialVersionUID = -6397024057188453229L;
@@ -68,6 +69,18 @@ public class AAISimpleUri extends SimpleUri<AAIResourceUri, AAIPluralResourceUri
     public AAISimplePluralUri relatedTo(AAIObjectPlurals plural) {
         this.internalURI.path(relatedTo);
         return new AAISimplePluralUri(this, plural);
+    }
+
+    @Override
+    public AAISimpleUri relatedTo(AAISingleFragment fragment) {
+        this.internalURI.path(relatedTo);
+        return new AAISimpleUri(this, fragment.get().build(), fragment.get().values());
+    }
+
+    @Override
+    public AAISimplePluralUri relatedTo(AAIPluralFragment fragment) {
+        this.internalURI.path(relatedTo);
+        return new AAISimplePluralUri(this, fragment.get().build());
     }
 
 }

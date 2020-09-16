@@ -27,9 +27,11 @@ import java.net.URI;
 import javax.ws.rs.core.UriBuilder;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryObjectPlurals;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryObjectType;
+import org.onap.aaiclient.client.graphinventory.GraphInventoryPluralFragment;
+import org.onap.aaiclient.client.graphinventory.GraphInventorySingleFragment;
 
-public abstract class SimpleUri<T extends GraphInventorySingleResourceUri<?, ?, ?, ?>, PT extends GraphInventoryPluralResourceUri<?, ?>, S extends GraphInventoryObjectType, P extends GraphInventoryObjectPlurals>
-        extends SimpleBaseUri<T, T, S> implements GraphInventorySingleResourceUri<T, PT, S, P> {
+public abstract class SimpleUri<T extends GraphInventorySingleResourceUri<?, ?, ?, ?, ?, ?>, PT extends GraphInventoryPluralResourceUri<?, ?>, S extends GraphInventoryObjectType, P extends GraphInventoryObjectPlurals, SF extends GraphInventorySingleFragment<?>, PF extends GraphInventoryPluralFragment<?>>
+        extends SimpleBaseUri<T, T, S> implements GraphInventorySingleResourceUri<T, PT, S, P, SF, PF> {
 
     private static final long serialVersionUID = -337701171277616439L;
     protected static final String relationshipAPI = "/relationship-list/relationship";

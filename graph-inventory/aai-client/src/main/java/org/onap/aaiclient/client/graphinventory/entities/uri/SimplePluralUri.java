@@ -28,7 +28,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryObjectPlurals;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryObjectType;
 
-public abstract class SimplePluralUri<T extends GraphInventoryPluralResourceUri<?, ?>, Parent extends GraphInventorySingleResourceUri<?, ?, ?, ?>, PT extends GraphInventoryObjectPlurals, OT extends GraphInventoryObjectType>
+public abstract class SimplePluralUri<T extends GraphInventoryPluralResourceUri<?, ?>, Parent extends GraphInventorySingleResourceUri<?, ?, ?, ?, ?, ?>, PT extends GraphInventoryObjectPlurals, OT extends GraphInventoryObjectType>
         extends SimpleBaseUri<T, Parent, PT> implements GraphInventoryPluralResourceUri<T, PT>, Serializable {
 
     private static final long serialVersionUID = -337701171277616439L;

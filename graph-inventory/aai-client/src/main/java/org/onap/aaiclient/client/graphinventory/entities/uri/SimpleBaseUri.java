@@ -22,7 +22,7 @@ import org.onap.aaiclient.client.graphinventory.entities.uri.parsers.UriParserSp
 import org.onap.aaiclient.client.graphinventory.exceptions.IncorrectNumberOfUriKeys;
 import org.springframework.web.util.UriUtils;
 
-public abstract class SimpleBaseUri<T extends GraphInventoryResourceUri<?, ?>, Parent extends GraphInventorySingleResourceUri<?, ?, ?, ?>, S extends GraphInventoryObjectBase>
+public abstract class SimpleBaseUri<T extends GraphInventoryResourceUri<?, ?>, Parent extends GraphInventorySingleResourceUri<?, ?, ?, ?, ?, ?>, S extends GraphInventoryObjectBase>
         implements GraphInventoryResourceUri<T, S> {
 
     private static final long serialVersionUID = -1011069933894179423L;
