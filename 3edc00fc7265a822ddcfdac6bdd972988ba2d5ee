@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a8768595_cad94a7e",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoActivateCoreNSSI.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2020-09-16T17:05:17Z",
+      "side": 1,
+      "message": "no tab character according to the code style guide\n\n2.3.1 Whitespace characters\nAside from the line terminator sequence, the ASCII horizontal space character (0x20) is the only whitespace character that appears anywhere in a source file. This implies that:\n\nAll other whitespace characters in string and character literals are escaped.\nTab characters are not used for indentation.",
+      "range": {
+        "startLine": 71,
+        "startChar": 0,
+        "endLine": 91,
+        "endChar": 10
+      },
+      "revId": "3edc00fc7265a822ddcfdac6bdd972988ba2d5ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9ed0d0ce_c0e6b853",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/groovy/org/onap/so/bpmn/infrastructure/scripts/DoActivateCoreNSSITest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2020-09-16T17:05:17Z",
+      "side": 1,
+      "message": "according to the code style,the tab characters are not used for indention. Please replace it with space\n\n2.3.1 Whitespace characters\nAside from the line terminator sequence, the ASCII horizontal space character (0x20) is the only whitespace character that appears anywhere in a source file. This implies that:\n\nAll other whitespace characters in string and character literals are escaped.\nTab characters are not used for indentation.",
+      "range": {
+        "startLine": 48,
+        "startChar": 1,
+        "endLine": 54,
+        "endChar": 8
+      },
+      "revId": "3edc00fc7265a822ddcfdac6bdd972988ba2d5ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
