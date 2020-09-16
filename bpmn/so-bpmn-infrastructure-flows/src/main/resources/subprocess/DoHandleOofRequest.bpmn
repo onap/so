@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0nlt5gi" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.1.1">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0nlt5gi" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.4.1">
   <bpmn:process id="DoHandleOofRequest" name="DoHandleOofRequest" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>Flow_1jorico</bpmn:outgoing>
@@ -10,8 +10,7 @@
       <bpmn:outgoing>Flow_013jfci</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.common.scripts.*
 def oofHandler = new DoHandleOofRequest()
-oofHandler .callOofAdapter(execution)
-</bpmn:script>
+oofHandler.callOofAdapter(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1jorico" sourceRef="StartEvent_1" targetRef="Activity_0tki17o" />
     <bpmn:scriptTask id="Activity_0tki17o" name="Preprocess Request" scriptFormat="groovy">
@@ -19,8 +18,7 @@ oofHandler .callOofAdapter(execution)
       <bpmn:outgoing>Flow_1fbzzqg</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.common.scripts.*
 def oofHandler = new DoHandleOofRequest()
-oofHandler .preProcessRequest(execution)
-</bpmn:script>
+oofHandler .preProcessRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:subProcess id="Activity_02ru8n9" name="Sub-process for FalloutHandler and Rollback" triggeredByEvent="true">
       <bpmn:startEvent id="Event_1r00tca">

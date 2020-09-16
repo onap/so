@@ -79,7 +79,7 @@ class DoHandleOofRequest extends AbstractServiceTaskProcessor {
 		oofRequestPayload.setApiPath(apiPath)
 		oofRequestPayload.setRequestDetails(requestDetails)
 		ObjectMapper objectMapper = new ObjectMapper()
-	        String requestJson = objectMapper.writeValueAsString(oofRequestPayload)
+		String requestJson = objectMapper.writeValueAsString(oofRequestPayload)
 		execution.setVariable("oofRequestPayload", requestJson)
 	}
 	
