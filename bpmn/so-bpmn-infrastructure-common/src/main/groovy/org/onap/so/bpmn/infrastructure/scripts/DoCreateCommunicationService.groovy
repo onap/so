@@ -158,11 +158,11 @@ class DoCreateCommunicationService extends AbstractServiceTaskProcessor{
             String sNSSAI_id = generateNSSAI(serviceInstanceId)
 
             execution.setVariable("sNSSAI_id", sNSSAI_id)
-            // 创建service
+            // create communication service
             String serviceInstanceName = execution.getVariable("serviceInstanceName")
             String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
             String csServiceType = execution.getVariable("csServiceType")
-            String aaiServiceRole = "communication-service" //待确定
+            String aaiServiceRole = "communication-service"
 
             String oStatus = "processing"
             String uuiRequest = execution.getVariable("uuiRequest")
