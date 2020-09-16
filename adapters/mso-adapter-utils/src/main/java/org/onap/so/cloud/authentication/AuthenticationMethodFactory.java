@@ -90,4 +90,31 @@ public final class AuthenticationMethodFactory {
         return v3Auth;
     }
 
+    public final com.woorea.openstack.keystone.v3.model.Authentication getAuthenticationForV3ByName(
+            CloudIdentity cloudIdentity, String name) {
+        Identity identity = new Identity();
+        Password password = new Password();
+        User user = new User();
+        Domain userDomain = new Domain();
+        Scope scope = new Scope();
+        Project project = new Project();
+        Project.Domain projectDomain = new Project.Domain();
+        userDomain.setName(cloudIdentity.getUserDomainName());
+        projectDomain.setName(cloudIdentity.getProjectDomainName());
+        user.setName(cloudIdentity.getMsoId());
+        user.setPassword(CryptoUtils.decryptCloudConfigPassword(cloudIdentity.getMsoPass()));
+        user.setDomain(userDomain);
+        password.setUser(user);
+        project.setDomain(projectDomain);
+        project.setName(name);
+        scope.setProject(project);
+        identity.setPassword(password);
+        identity.setMethods(Collections.singletonList("password"));
+        com.woorea.openstack.keystone.v3.model.Authentication v3Auth =
+                new com.woorea.openstack.keystone.v3.model.Authentication();
+        v3Auth.setIdentity(identity);
+        v3Auth.setScope(scope);
+        return v3Auth;
+    }
+
 }
