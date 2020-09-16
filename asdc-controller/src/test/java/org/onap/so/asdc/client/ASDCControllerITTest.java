@@ -320,33 +320,6 @@ public class ASDCControllerITTest extends BaseTest {
         }
     }
 
-    private ArtifactInfoImpl constructPnfServiceArtifact() {
-        ArtifactInfoImpl artifactInfo = new ArtifactInfoImpl();
-        artifactInfo.setArtifactType(ASDCConfiguration.TOSCA_CSAR);
-        artifactInfo.setArtifactURL("/download/service-pnfservice.csar");
-        artifactInfo.setArtifactName("service-pnfservice.csar");
-        artifactInfo.setArtifactVersion("1.0");
-        artifactInfo.setArtifactUUID(artifactUuid);
-        return artifactInfo;
-    }
-
-    /**
-     * Construct the PnfResourceInfo based on the resource-Test140Pnf-template.yml from
-     * service-Testservice140-csar.csar.
-     */
-    private ResourceInfoImpl constructPnfResourceInfo() {
-        ResourceInfoImpl resourceInfo = new ResourceInfoImpl();
-        resourceInfo.setResourceInstanceName("PNF CDS Test");
-        resourceInfo.setResourceInvariantUUID("17d9d183-cee5-4a46-b5c4-6d5203f7d2e8");
-        resourceInfo.setResoucreType("PNF");
-        resourceInfo.setCategory("Application L4+");
-        resourceInfo.setSubcategory("Firewall");
-        resourceInfo.setResourceUUID("aa5d0562-80e7-43e9-af74-3085e57ab09f");
-        resourceInfo.setResourceCustomizationUUID("9f01263a-eaf7-4d98-a37b-3785f751903e");
-        resourceInfo.setResourceVersion("1.0");
-        return resourceInfo;
-    }
-
     /**
      * Testing with the service-Svc140-VF-csar.csar.
      */
@@ -479,6 +452,144 @@ public class ASDCControllerITTest extends BaseTest {
         }
     }
 
+    /**
+     * Test with service-pnfservice.csar.
+     */
+    @Test
+    public void treatNotification_ValidPnfResource_With_Software_Version_ExpectedOutput() {
+
+        /**
+         * service UUID/invariantUUID from global metadata in service-PnfServiceTestCds-template.yml.
+         */
+        String serviceUuid = "888d93bd-ef31-4ab8-9d9e-3935e9a71845";// "77cf276e-905c-43f6-8d54-dda474be2f2e";
+        String serviceInvariantUuid = "e5c5fd11-392f-4aa7-aeeb-b340c596d4bd";// "913e6776-4bc3-49b9-b399-b5bb4690f0c7";
+
+        initMockAaiServer(serviceUuid, serviceInvariantUuid);
+
+        NotificationDataImpl notificationData = new NotificationDataImpl();
+        notificationData.setServiceUUID(serviceUuid);
+        notificationData.setDistributionID(distributionId);
+        notificationData.setServiceInvariantUUID(serviceInvariantUuid);
+        notificationData.setServiceVersion("1.0");
+
+        ResourceInfoImpl resourceInfo = constructPnfResourceInfoWithSWV();
+        List<ResourceInfoImpl> resourceInfoList = new ArrayList<>();
+        resourceInfoList.add(resourceInfo);
+        notificationData.setResources(resourceInfoList);
+
+        ArtifactInfoImpl artifactInfo = constructPnfServiceArtifactWithSWV();
+        List<ArtifactInfoImpl> artifactInfoList = new ArrayList<>();
+        artifactInfoList.add(artifactInfo);
+        notificationData.setServiceArtifacts(artifactInfoList);
+
+        try {
+            asdcController.treatNotification(notificationData);
+
+            logger.info("Checking the database for PNF ingestion");
+
+            /**
+             * Check the tosca csar entity, it should be the same as provided from NotficationData.
+             */
+            ToscaCsar toscaCsar = toscaCsarRepository.findById(artifactUuid)
+                    .orElseThrow(() -> new EntityNotFoundException("Tosca csar: " + artifactUuid + " not found"));
+            assertEquals("tosca csar UUID", artifactUuid, toscaCsar.getArtifactUUID());
+            assertEquals("tosca csar name", "service-Testserviceforpnf-csar.csar", toscaCsar.getName());
+            assertEquals("tosca csar version", "1.0", toscaCsar.getVersion());
+            assertNull("tosca csar descrption", toscaCsar.getDescription());
+            assertEquals("tosca csar checksum", "MANUAL_RECORD", toscaCsar.getArtifactChecksum());
+            assertEquals("toscar csar URL", "/download/service-Testserviceforpnf-csar.csar", toscaCsar.getUrl());
+
+            /**
+             * Check the service entity, it should be the same as global metadata information in
+             * service-Testservice140-template.yml inside csar.
+             */
+            Service service = serviceRepository.findById(serviceUuid)
+                    .orElseThrow(() -> new EntityNotFoundException("Service: " + serviceUuid + " not found"));
+
+            /**
+             * Check PNF resource, it should be the same as metadata in the topology template in
+             * service-PnfServiceTestCds-template.yml OR global metadata in the resource-PnfServiceTestCds-template.yml
+             */
+            String pnfResourceKey = "72a2c44c-bb8a-4086-824b-0662d40bcd68";
+
+            /**
+             * Check PNF resource customization, it should be the same as metadata in the topology template in
+             * service-PnfServiceTestCds-template.yml OR global metadata in the resource-PnfServiceTestCds-template.yml
+             */
+            String pnfCustomizationKey = "96642e60-17cd-48c1-875d-b00b08fdb37b";// "9f01263a-eaf7-4d98-a37b-3785f751903e";
+            PnfResourceCustomization pnfCustomization = pnfCustomizationRepository.findById(pnfCustomizationKey)
+                    .orElseThrow(() -> new EntityNotFoundException(
+                            "PNF resource customization: " + pnfCustomizationKey + " not found"));
+            assertEquals("model customizationUUID", pnfCustomizationKey, pnfCustomization.getModelCustomizationUUID());
+            assertEquals("model instance name", "VSP_WithPNFD 1", pnfCustomization.getModelInstanceName());
+            assertEquals("NF type", "", pnfCustomization.getNfType());
+            assertEquals("NF Role", "", pnfCustomization.getNfRole());
+            assertEquals("NF function", "", pnfCustomization.getNfFunction());
+            assertEquals("NF naming code", "", pnfCustomization.getNfNamingCode());
+            assertEquals("PNF resource model UUID", pnfResourceKey, pnfCustomization.getPnfResources().getModelUUID());
+            assertEquals("Multi stage design", "", pnfCustomization.getMultiStageDesign());
+            assertNull("resource input", pnfCustomization.getResourceInput());
+            assertEquals("cds blueprint name(sdnc_model_name property)", "pm_control",
+                    pnfCustomization.getBlueprintName());
+            assertEquals("cds blueprint version(sdnc_model_version property)", "1.0.0",
+                    pnfCustomization.getBlueprintVersion());
+            assertEquals("software version", "4.0.0", pnfCustomization.getSoftwareVersions());
+            assertTrue("skip post instantiation configuration", pnfCustomization.isSkipPostInstConf());
+            assertEquals("controller actor", "SO-REF-DATA", pnfCustomization.getControllerActor());
+
+            /**
+             * Check the pnf resource customization with service mapping
+             */
+            List<PnfResourceCustomization> pnfCustList = service.getPnfCustomizations();
+            assertEquals("PNF resource customization entity", 1, pnfCustList.size());
+            assertEquals(pnfCustomizationKey, pnfCustList.get(0).getModelCustomizationUUID());
+
+            /**
+             * Check the watchdog for component distribution status
+             */
+            List<WatchdogComponentDistributionStatus> distributionList =
+                    watchdogCDStatusRepository.findByDistributionId(this.distributionId);
+            assertNotNull(distributionList);
+            assertEquals(1, distributionList.size());
+            WatchdogComponentDistributionStatus distributionStatus = distributionList.get(0);
+            assertEquals("COMPONENT_DONE_OK", distributionStatus.getComponentDistributionStatus());
+            assertEquals("SO", distributionStatus.getComponentName());
+
+
+        } catch (Exception e) {
+            logger.info(e.getMessage(), e);
+            fail(e.getMessage());
+        }
+    }
+
+
+    private ArtifactInfoImpl constructPnfServiceArtifact() {
+        ArtifactInfoImpl artifactInfo = new ArtifactInfoImpl();
+        artifactInfo.setArtifactType(ASDCConfiguration.TOSCA_CSAR);
+        artifactInfo.setArtifactURL("/download/service-pnfservice.csar");
+        artifactInfo.setArtifactName("service-pnfservice.csar");
+        artifactInfo.setArtifactVersion("1.0");
+        artifactInfo.setArtifactUUID(artifactUuid);
+        return artifactInfo;
+    }
+
+    /**
+     * Construct the PnfResourceInfo based on the resource-Test140Pnf-template.yml from
+     * service-Testservice140-csar.csar.
+     */
+    private ResourceInfoImpl constructPnfResourceInfo() {
+        ResourceInfoImpl resourceInfo = new ResourceInfoImpl();
+        resourceInfo.setResourceInstanceName("PNF CDS Test");
+        resourceInfo.setResourceInvariantUUID("17d9d183-cee5-4a46-b5c4-6d5203f7d2e8");
+        resourceInfo.setResoucreType("PNF");
+        resourceInfo.setCategory("Application L4+");
+        resourceInfo.setSubcategory("Firewall");
+        resourceInfo.setResourceUUID("aa5d0562-80e7-43e9-af74-3085e57ab09f");
+        resourceInfo.setResourceCustomizationUUID("9f01263a-eaf7-4d98-a37b-3785f751903e");
+        resourceInfo.setResourceVersion("1.0");
+        return resourceInfo;
+    }
+
     private ArtifactInfoImpl constructVnfServiceArtifact() {
         ArtifactInfoImpl artifactInfo = new ArtifactInfoImpl();
         artifactInfo.setArtifactType(ASDCConfiguration.TOSCA_CSAR);
@@ -503,6 +614,33 @@ public class ASDCControllerITTest extends BaseTest {
         resourceInfo.setResourceCustomizationUUID("ca1c8455-8ce2-4a76-a037-3f4cf01cffa0");
         resourceInfo.setResourceVersion("1.0");
         resourceInfo.setArtifacts(Collections.EMPTY_LIST);
+        return resourceInfo;
+    }
+
+    private ArtifactInfoImpl constructPnfServiceArtifactWithSWV() {
+        ArtifactInfoImpl artifactInfo = new ArtifactInfoImpl();
+        artifactInfo.setArtifactType(ASDCConfiguration.TOSCA_CSAR);
+        artifactInfo.setArtifactURL("/download/service-Testserviceforpnf-csar.csar");// service-pnfservice.csar");
+        artifactInfo.setArtifactName("service-Testserviceforpnf-csar.csar");// "service-pnfservice.csar");
+        artifactInfo.setArtifactVersion("1.0");
+        artifactInfo.setArtifactUUID(artifactUuid);
+        return artifactInfo;
+    }
+
+    /**
+     * Construct the PnfResourceInfo based on the resource-Test140Pnf-template.yml from
+     * service-Testservice140-csar.csar.
+     */
+    private ResourceInfoImpl constructPnfResourceInfoWithSWV() {
+        ResourceInfoImpl resourceInfo = new ResourceInfoImpl();
+        resourceInfo.setResourceInstanceName("PNF CDS Test");
+        resourceInfo.setResourceInvariantUUID("bf150ca9-b8d3-4450-b50a-d80382a12462");// "17d9d183-cee5-4a46-b5c4-6d5203f7d2e8");
+        resourceInfo.setResoucreType("PNF");
+        resourceInfo.setCategory("Application L4+");
+        resourceInfo.setSubcategory("Firewall");
+        resourceInfo.setResourceUUID("72a2c44c-bb8a-4086-824b-0662d40bcd68");// "aa5d0562-80e7-43e9-af74-3085e57ab09f");
+        resourceInfo.setResourceCustomizationUUID("96642e60-17cd-48c1-875d-b00b08fdb37b");// "9f01263a-eaf7-4d98-a37b-3785f751903e");
+        resourceInfo.setResourceVersion("1.0");
         return resourceInfo;
     }
 }

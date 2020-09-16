@@ -88,6 +88,9 @@ public class PnfResourceCustomization implements Serializable {
     @Column(name = "CONTROLLER_ACTOR")
     private String controllerActor;
 
+    @Column(name = "SOFTWARE_VERSIONS")
+    private String softwareVersions;
+
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
@@ -95,7 +98,8 @@ public class PnfResourceCustomization implements Serializable {
                 .append("nfFunction", nfFunction).append("nfType", nfType).append("nfRole", nfRole)
                 .append("nfNamingCode", nfNamingCode).append("multiStageDesign", multiStageDesign)
                 .append("pnfResources", pnfResources).append("blueprintName", blueprintName)
-                .append("blueprintVersion", blueprintVersion).append("controllerActor", controllerActor).toString();
+                .append("blueprintVersion", blueprintVersion).append("controllerActor", controllerActor)
+                .append("softwareVersions", softwareVersions).toString();
     }
 
     @Override
@@ -233,5 +237,13 @@ public class PnfResourceCustomization implements Serializable {
 
     public void setControllerActor(String controllerActor) {
         this.controllerActor = controllerActor;
+    }
+
+    public String getSoftwareVersions() {
+        return softwareVersions;
+    }
+
+    public void setSoftwareVersions(String softwareVersions) {
+        this.softwareVersions = softwareVersions;
     }
 }
