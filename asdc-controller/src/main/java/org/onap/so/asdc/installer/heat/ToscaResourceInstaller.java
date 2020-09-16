@@ -46,6 +46,7 @@ import org.onap.sdc.api.notification.IResourceInstance;
 import org.onap.sdc.api.notification.IStatusData;
 import org.onap.sdc.tosca.parser.api.IEntityDetails;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
+import org.onap.sdc.tosca.parser.elements.EntityDetails;
 import org.onap.sdc.tosca.parser.elements.queries.EntityQuery;
 import org.onap.sdc.tosca.parser.elements.queries.EntityQuery.EntityQueryBuilder;
 import org.onap.sdc.tosca.parser.elements.queries.TopologyTemplateQuery;
@@ -132,6 +133,8 @@ public class ToscaResourceInstaller {
     private static final String CDS_MODEL_NAME = "cds_model_name";
 
     private static final String CDS_MODEL_VERSION = "cds_model_version";
+
+    private static final String DEFAULT_SOFTWARE_VERSION = "default_software_version";
 
     @Autowired
     protected ServiceRepository serviceRepo;
@@ -932,6 +935,7 @@ public class ToscaResourceInstaller {
         pnfResourceCustomization.setBlueprintVersion(getStringValue(properties.get(SDNC_MODEL_VERSION)));
         pnfResourceCustomization.setSkipPostInstConf(getBooleanValue(properties.get(SKIP_POST_INST_CONF)));
         pnfResourceCustomization.setControllerActor(getStringValue(properties.get(CONTROLLER_ACTOR)));
+        pnfResourceCustomization.setDefaultSoftwareVersion(getStringValue(properties.get(DEFAULT_SOFTWARE_VERSION)));
         pnfResourceCustomization.setPnfResources(pnfResource);
         return pnfResourceCustomization;
     }
