@@ -42,6 +42,7 @@ import org.onap.so.db.catalog.beans.CloudSite
 import org.onap.so.db.catalog.beans.HomingInstance
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import com.google.gson.JsonObject
 
 import com.fasterxml.jackson.databind.ObjectMapper
 
@@ -571,5 +572,82 @@ class OofUtils {
         response.append("\n  }\n")
         return response.toString()
     }
+/**
+* Method to create select NSSI request
+* @param requestId - mso-request-id
+* @param messageType - Message type for callback correlation
+* @param UUID - UUID of NSST
+* @param invariantUUID - Invariant UUID of NSST
+* @param name - name of the NSST model
+* @param profileInfo - A JSON object containing slice profile parameters
+* @return
+*/
+public String buildSelectNSSIRequest(String requestId, String messageType, String UUID,String invariantUUID,
+String name, Map<String, Object> profileInfo){
 
+def transactionId = requestId
+logger.debug( "transactionId is: " + transactionId)
+String correlator = requestId
+String callbackUrl = UrnPropertiesReader.getVariable("mso.adapters.oof.callback.endpoint") + "/" + messageType + "/" + correlator
+ObjectMapper objectMapper = new ObjectMapper();
+String profileJson = objectMapper.writeValueAsString(profileInfo);
+
+//Prepare requestInfo object
+JsonObject requestInfo = new JsonObject()
+requestInfo.addProperty("transactionId", transactionId)
+requestInfo.addProperty("requestId", requestId)
+requestInfo.addProperty("callbackUrl", callbackUrl)
+requestInfo.addProperty("sourceId","SO" )
+requestInfo.addProperty("timeout", 600)
+requestInfo.addProperty("numSolutions", 1)
+
+//Prepare serviceInfo object
+JsonObject nsstInfo = new JsonObject()
+nsstInfo.addProperty("UUID", UUID)
+nsstInfo.addProperty("invariantUUID", invariantUUID)
+nsstInfo.addProperty("name", name)
+
+JsonObject json = new JsonObject()
+json.add("requestInfo", requestInfo)
+json.add("NSSTInfo", nsstInfo)
+json.addProperty("sliceProfile", profileJson)
+return json.toString()
+}
+/**
+* Method to create NSI/NSSI termination request
+* (OOF response will be synchronous in G-Release)
+* @param requestId - mso-request-id
+* @param nxlId        - NSI/NSSI Id to be terminated
+* @param messageType - Message type for callback correlation
+* @param serviceInstanceId - NSI/NSSI Id related to nxlId
+* @return
+*/
+public String buildTerminateNxiRequest(String requestId,String nxlId, String nxlType, String messageType, String serviceInstanceId) {
+def transactionId = requestId
+logger.debug( "transactionId is: " + transactionId)
+String correlator = requestId
+String callbackUrl = UrnPropertiesReader.getVariable("mso.adapters.oof.callback.endpoint") + "/" + messageType + "/" + correlator
+//Prepare Terminate Nxl Json
+JsonObject json = new JsonObject()
+json.addProperty("type", nxlType)
+json.addProperty("NxIId", nxlId)
+ 
+//Prepare requestInfo object
+JsonObject requestInfo = new JsonObject()
+requestInfo.addProperty("transactionId", transactionId)
+requestInfo.addProperty("requestId", requestId)
+requestInfo.addProperty("callbackUrl", callbackUrl)
+requestInfo.addProperty("sourceId","SO" )
+requestInfo.addProperty("timeout", 600)
+ 
+//Prepare addtnlArgs object
+JsonObject addtnlArgs = new JsonObject()
+addtnlArgs.addProperty("serviceInstanceId", serviceInstanceId)
+ 
+requestInfo.add("addtnlArgs", addtnlArgs)
+json.add("requestInfo", requestInfo)
+ 
+return json.toString()
+ 
+}
 }
