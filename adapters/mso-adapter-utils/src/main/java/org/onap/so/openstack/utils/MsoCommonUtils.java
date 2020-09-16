@@ -97,7 +97,7 @@ public class MsoCommonUtils {
      * openstack-java-sdk classname of the OpenStackRequest<T> parameter).
      */
 
-    protected <T> T executeAndRecordOpenstackRequest(OpenStackRequest<T> request) {
+    public <T> T executeAndRecordOpenstackRequest(OpenStackRequest<T> request) {
         return executeAndRecordOpenstackRequest(request, true);
     }
 
@@ -174,7 +174,7 @@ public class MsoCommonUtils {
      * Convert an Openstack Exception on a Keystone call to an MsoException. This method supports both
      * OpenstackResponseException and OpenStackConnectException.
      */
-    protected MsoException keystoneErrorToMsoException(OpenStackBaseException e, String context) {
+    public MsoException keystoneErrorToMsoException(OpenStackBaseException e, String context) {
         MsoException me = null;
 
         if (e instanceof OpenStackResponseException) {
@@ -455,15 +455,16 @@ public class MsoCommonUtils {
      */
     protected KeystoneAuthHolder getKeystoneAuthHolder(String cloudSiteId, String tenantId, String serviceName)
             throws MsoException {
-        CloudSite cloudSite =
-                cloudConfig.getCloudSite(cloudSiteId).orElseThrow(() -> new MsoCloudSiteNotFound(cloudSiteId));
-        String cloudId = cloudSite.getId();
-        String region = cloudSite.getRegionId();
-        CloudIdentity cloudIdentity = cloudSite.getIdentityService();
-        MsoTenantUtils tenantUtils =
-                tenantUtilsFactory.getTenantUtilsByServerType(cloudIdentity.getIdentityServerType());
-        String keystoneUrl = tenantUtils.getKeystoneUrl(cloudId, cloudIdentity);
+        CloudIdentity cloudIdentity = null;
         try {
+            CloudSite cloudSite =
+                    cloudConfig.getCloudSite(cloudSiteId).orElseThrow(() -> new MsoCloudSiteNotFound(cloudSiteId));
+            String cloudId = cloudSite.getId();
+            String region = cloudSite.getRegionId();
+            cloudIdentity = cloudSite.getIdentityService();
+            MsoTenantUtils tenantUtils =
+                    tenantUtilsFactory.getTenantUtilsByServerType(cloudIdentity.getIdentityServerType());
+            String keystoneUrl = tenantUtils.getKeystoneUrl(cloudId, cloudIdentity);
             if (ServerType.KEYSTONE.equals(cloudIdentity.getIdentityServerType())) {
                 Access access = getKeystone(tenantId, cloudIdentity, keystoneUrl);
                 try {
