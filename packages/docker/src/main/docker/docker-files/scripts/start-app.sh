@@ -81,8 +81,9 @@ if [ -z "${ACTIVE_PROFILE}" ]; then
 	export ACTIVE_PROFILE="basic"
 fi
 
-jvmargs="${JVM_ARGS} -Dspring.profiles.active=${ACTIVE_PROFILE} -Djava.security.egd=file:/dev/./urandom -Dlogs_dir=${LOG_PATH} -Dlogging.config=/app/logback-spring.xml $jksargs -Dspring.config.additional-location=$CONFIG_PATH ${SSL_DEBUG} ${DISABLE_SNI}"
+jvmargs="${JVM_ARGS} -Dspring.profiles.active=${ACTIVE_PROFILE} -Djava.security.egd=file:/dev/./urandom -Dlogs_dir=${LOG_PATH} $jksargs -Dspring.config.additional-location=$CONFIG_PATH ${SSL_DEBUG} ${DISABLE_SNI}"
 
+cmd_line_argument="--logging.config=/app/logback-spring.xml"
 
 read_properties(){
     while IFS="=" read -r key value; do
@@ -97,15 +98,14 @@ read_properties(){
 	EOF
 }
 
-
-
 if [ -n "${AAF_SSL_CERTS_ENABLED}" ]; then
 read_properties "$(head -n 4 /app/certs/.passphrases)"
 fi
 
 echo "JVM Arguments: ${jvmargs}"
+echo "Command line arguments: ${cmd_line_argument}"
 
-java ${jvmargs} -jar app.jar
+java ${jvmargs} -jar app.jar ${cmd_line_argument}
 rc=$?
 
 echo "Application exiting with status code $rc"
