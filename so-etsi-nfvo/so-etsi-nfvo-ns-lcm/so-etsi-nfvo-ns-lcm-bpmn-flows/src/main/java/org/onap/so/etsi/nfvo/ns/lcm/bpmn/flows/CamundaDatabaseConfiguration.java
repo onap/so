@@ -27,8 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Profile;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import com.zaxxer.hikari.HikariConfig;
@@ -40,8 +39,10 @@ import com.zaxxer.hikari.HikariDataSource;
  */
 @Configuration
 @EnableTransactionManagement
-@Profile({"!test"})
+@EnableJpaRepositories(entityManagerFactoryRef = "entityManagerFactory", transactionManagerRef = "transactionManager")
 public class CamundaDatabaseConfiguration {
+
+    private static final String CAMUNDA_DATA_SOURCE_BEAN_NAME = "camundaBpmDataSource";
 
     private static final Logger logger = getLogger(CamundaDatabaseConfiguration.class);
 
@@ -51,17 +52,16 @@ public class CamundaDatabaseConfiguration {
     @Bean
     @ConfigurationProperties(prefix = "spring.datasource.hikari.camunda")
     public HikariConfig camundaDbConfig() {
-        logger.debug("Creating HikariConfig bean ... ");
+        logger.debug("Creating Camunda HikariConfig bean ... ");
         return new HikariConfig();
     }
 
-    @Primary
-    @Bean(name = "dataSource")
-    public DataSource dataSource() {
+    @Bean(name = CAMUNDA_DATA_SOURCE_BEAN_NAME)
+    public DataSource camundaDataSource() {
         if (mBeanExporter != null) {
-            mBeanExporter.addExcludedBean("dataSource");
+            mBeanExporter.addExcludedBean(CAMUNDA_DATA_SOURCE_BEAN_NAME);
         }
-        logger.debug("Creating HikariDataSource bean ... ");
+        logger.debug("Creating Camunda HikariDataSource bean ... ");
         final HikariConfig hikariConfig = this.camundaDbConfig();
         return new HikariDataSource(hikariConfig);
     }
