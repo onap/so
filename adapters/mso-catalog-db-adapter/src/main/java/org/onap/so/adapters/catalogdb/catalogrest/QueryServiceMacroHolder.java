@@ -37,10 +37,11 @@ public class QueryServiceMacroHolder extends CatalogQuery {
             + "\t\t\"modelUuid\"          : <SERVICE_MODEL_UUID>,\n"
             + "\t\t\"modelInvariantUuid\" : <SERVICE_MODEL_INVARIANT_ID>,\n"
             + "\t\t\"modelVersion\"       : <SERVICE_MODEL_VERSION>\n" + "\t},\n"
-            + "\t\"serviceType\"        : <SERVICE_TYPE>,\n" + "\t\"serviceRole\"        : <SERVICE_ROLE>,\n"
-            + "\t\"environmentContext\" : <ENVIRONMENT_CONTEXT>,\n" + "\t\"resourceOrder\"      : <RESOURCE_ORDER>,\n"
-            + "\t\"workloadContext\"    : <WORKLOAD_CONTEXT>,\n" + "<_SERVICEVNFS_>,\n" + "<_SERVICENETWORKS_>,\n"
-            + "<_SERVICEINFO_>,\n" + "<_SERVICEPROXY_>,\n" + "<_SERVICEALLOTTEDRESOURCES_>\n" + "\t}}";
+            + "\t\"serviceCategory\"    : <SERVICE_CATEGORY>,\n" + "\t\"serviceType\"        : <SERVICE_TYPE>,\n"
+            + "\t\"serviceRole\"        : <SERVICE_ROLE>,\n" + "\t\"environmentContext\" : <ENVIRONMENT_CONTEXT>,\n"
+            + "\t\"resourceOrder\"      : <RESOURCE_ORDER>,\n" + "\t\"workloadContext\"    : <WORKLOAD_CONTEXT>,\n"
+            + "<_SERVICEVNFS_>,\n" + "<_SERVICENETWORKS_>,\n" + "<_SERVICEINFO_>,\n" + "<_SERVICEPROXY_>,\n"
+            + "<_SERVICEALLOTTEDRESOURCES_>\n" + "\t}}";
 
     public QueryServiceMacroHolder() {
         super();
@@ -80,6 +81,7 @@ public class QueryServiceMacroHolder extends CatalogQuery {
         put(valueMap, "SERVICE_MODEL_VERSION", service.getModelVersion());
         put(valueMap, "SERVICE_TYPE", service.getServiceType());
         put(valueMap, "SERVICE_ROLE", service.getServiceRole());
+        put(valueMap, "SERVICE_CATEGORY", service.getCategory());
         put(valueMap, "ENVIRONMENT_CONTEXT", service.getEnvironmentContext());
         put(valueMap, "WORKLOAD_CONTEXT", service.getWorkloadContext());
         put(valueMap, "RESOURCE_ORDER", service.getResourceOrder());

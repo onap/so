@@ -184,7 +184,7 @@ class CreateCommunicationService extends AbstractServiceTaskProcessor {
         logger.debug(Prefix + "prepareInitOperationStatus Start")
 
         String serviceId = execution.getVariable("serviceInstanceId")
-        // 生成 operationId
+        //operationId is generated
         String operationId = execution.getVariable("operationId")
         logger.debug("Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId)
 
@@ -370,20 +370,23 @@ class CreateCommunicationService extends AbstractServiceTaskProcessor {
 
 
             for (String e2eInput in e2eInputs) {
-                if (jsonUtil.getJsonValue(e2eInput, "type") == "integer") {
+                key = jsonUtil.getJsonValue(e2eInput, "name")
+                String type = jsonUtil.getJsonValue(e2eInput, "type")
+                if (type == "integer") {
                     def temp
-                    key = jsonUtil.getJsonValue(e2eInput, "name")
                     value = csInputMap.containsKey(key) ? csInputMap.getOrDefault(key, 0) : (isBlank(temp = jsonUtil.getJsonValue(e2eInput, "default")) ? 0 : temp)
 
                     e2eInputMap.put(key, value as Integer)
-                } else {
-                    e2eInputMap.put(key = jsonUtil.getJsonValue(e2eInput, "name"), csInputMap.containsKey(key)
+                } else if(type == "string") {
+                    e2eInputMap.put(key, csInputMap.containsKey(key)
                             ? csInputMap.getOrDefault(key, null) : (jsonUtil.getJsonValue(e2eInput, "default")))
+
                 }
             }
 
+            //TODO
             e2eInputMap.put("sNSSAI", execution.getVariable("sNSSAI_id"))
-	    e2eInputMap.put("sST", execution.getVariable("csServiceType"))
+	        e2eInputMap.put("sST", execution.getVariable("csServiceType"))
             execution.setVariable("e2eInputMap", e2eInputMap)
             execution.setVariable("e2eServiceType", e2eServiceDecomposition.getServiceType())
             execution.setVariable("e2eModelInvariantUuid", e2eServiceDecomposition.getModelInfo().getModelInvariantUuid())
