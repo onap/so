@@ -23,7 +23,10 @@ package org.onap.so.adapters.tasks.inventory;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
+import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.cloud.CloudConfig;
 import org.onap.so.cloud.resource.beans.CloudInformation;
 import org.onap.so.db.catalog.beans.CloudIdentity;
@@ -54,6 +57,16 @@ public class CreateAAIInventory {
 
     @Autowired
     protected Environment env;
+
+    public void relateVfModuleToTenant(CloudInformation cloudInformation) {
+        AAIResourceUri tenantURI = AAIUriFactory.createResourceUri(AAIObjectType.TENANT, cloudInformation.getOwner(), cloudInformation.getRegionId(), cloudInformation.getTenantId());
+        AAIResourceUri vfModuleURI = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, cloudInformation.getVnfId(), cloudInformation.getVfModuleId());
+        try {
+            aaiClient.connect(tenantURI, vfModuleURI);
+        } catch (Exception ex) {
+            logger.debug("Failed to link vf-module: {} to tenant: {}",vfModuleURI,tenantURI, ex);
+        }
+    }
 
     public void heatbridge(CloudInformation cloudInformation) {
         try {
