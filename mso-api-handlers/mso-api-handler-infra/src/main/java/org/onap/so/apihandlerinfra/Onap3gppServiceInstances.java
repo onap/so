@@ -23,6 +23,11 @@ package org.onap.so.apihandlerinfra;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.UUID;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -54,6 +59,7 @@ import org.onap.so.apihandlerinfra.onap3gppserviceinstancebeans.Allocate3gppServ
 import org.onap.so.apihandlerinfra.onap3gppserviceinstancebeans.DeAllocate3gppService;
 import org.onap.so.apihandlerinfra.onap3gppserviceinstancebeans.Modify3gppService;
 import org.onap.so.apihandlerinfra.onap3gppserviceinstancebeans.QuerySubnetCapability;
+import org.onap.so.apihandlerinfra.onap3gppserviceinstancebeans.SubnetTypes;
 import org.onap.so.constants.Status;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ServiceRecipe;
@@ -70,6 +76,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -238,8 +245,8 @@ public class Onap3gppServiceInstances {
     public Response getSliceSubnetCapabilities(QuerySubnetCapability request, @PathParam("version") String version)
             throws ApiException {
         logger.debug("Request received {}", request);
-        String subnetType = null;
-        return getSubnetCapabilities(subnetType, version);
+        List<SubnetTypes> subnetTypes = request.getSubnetTypes();
+        return getSubnetCapabilities(subnetTypes, version);
     }
 
     /**
@@ -577,8 +584,28 @@ public class Onap3gppServiceInstances {
     }
 
     // To be implemented for fetching Subnet capabilities
-    private Response getSubnetCapabilities(String subnetType, String version) throws ApiException {
-        return null;
+    private Response getSubnetCapabilities(List<SubnetTypes> subnetTypes, String version) throws ApiException {
+        ObjectMapper oMapper = new ObjectMapper();
+        InputStream inputStream = TypeReference.class.getResourceAsStream("/subnetCapability.json");
+        Map<String, Object> subnetCapability = new HashMap<>();
+        try {
+            subnetCapability = oMapper.readValue(inputStream, Map.class);
+        } catch (Exception e) {
+            logger.debug("Exception while reading subnet capability value from json", e);
+        }
+        Map<String, Object> responseMap = new HashMap<>();
+        for (SubnetTypes value : subnetTypes) {
+            if (subnetCapability.containsKey(value.toString())) {
+                responseMap.put(value.toString(), subnetCapability.get(value.toString()));
+            }
+        }
+        String response = null;
+        try {
+            response = oMapper.writeValueAsString(responseMap);
+        } catch (JsonProcessingException e) {
+            logger.debug("Exception while converting subnet capability object to String {}", e);
+        }
+        return builder.buildResponse(HttpStatus.SC_OK, null, response, version);
     }
 
     /**

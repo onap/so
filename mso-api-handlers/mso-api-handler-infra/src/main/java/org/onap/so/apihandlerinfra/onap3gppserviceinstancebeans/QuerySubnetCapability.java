@@ -22,26 +22,26 @@ package org.onap.so.apihandlerinfra.onap3gppserviceinstancebeans;
 
 
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Model class for slice subnet capability query
  */
 public class QuerySubnetCapability {
 
-    private SubnetTypes subnetType;
+    @JsonProperty("subnetTypes")
+    private List<SubnetTypes> subnetTypes;
 
-    public SubnetTypes getSubnetType() {
-        return subnetType;
+    public List<SubnetTypes> getSubnetTypes() {
+        return subnetTypes;
     }
 
-    public void setSubnetType(SubnetTypes subnetType) {
-        this.subnetType = subnetType;
+    public void setSubnetTypes(List<SubnetTypes> subnetTypes) {
+        this.subnetTypes = subnetTypes;
     }
 
     @Override
     public String toString() {
-        return "QuerySubnetCapability [subnetType=" + subnetType + "]";
+        return "QuerySubnetCapability [subnetType=" + subnetTypes + "]";
     }
-
 }
-
