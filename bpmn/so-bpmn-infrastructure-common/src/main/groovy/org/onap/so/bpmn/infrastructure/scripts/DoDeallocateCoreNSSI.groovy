@@ -12,6 +12,7 @@ import org.onap.aai.domain.yang.GenericVnf
 import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.aai.domain.yang.Tenant
 import org.onap.aai.domain.yang.VfModule
+import org.onap.aaiclient.client.aai.AAIClient
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
@@ -30,6 +31,7 @@ import org.onap.so.client.HttpClientFactory
 import org.onap.so.db.request.beans.OperationStatus
 import org.onap.so.requestsdb.RequestsDbConstant
 import org.onap.so.serviceinstancebeans.CloudConfiguration
+import org.onap.so.serviceinstancebeans.LineOfBusiness
 import org.onap.so.serviceinstancebeans.ModelInfo
 import org.onap.so.serviceinstancebeans.ModelType
 import org.onap.so.serviceinstancebeans.OwningEntity
@@ -89,19 +91,18 @@ class DoDeallocateCoreNSSI extends AbstractServiceTaskProcessor {
         String basicAuth = UrnPropertiesReader.getVariable("mso.oof.auth", execution)
         String msokey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
 
-        String basicAuthValue = utils.encrypt(basicAuth, msokey)
+        String basicAuthValue = encryptBasicAuth(basicAuth, msokey)
         if (basicAuthValue != null) {
-            logger.debug( "Obtained BasicAuth username and password for OOF: " + basicAuthValue)
-            try {
-                authHeader = utils.getBasicAuth(basicAuthValue, msokey)
-                execution.setVariable("BasicAuthHeaderValue", authHeader)
-            } catch (Exception ex) {
-                logger.debug( "Unable to encode username and password string: " + ex)
-                exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Internal Error - Unable to " +
-                        "encode username and password string")
+            String responseAuthHeader = getAuthHeader(execution, basicAuthValue, msokey)
+            String errorCode = jsonUtil.getJsonValue(responseAuthHeader, "errorCode")
+            if(errorCode == null || errorCode.isEmpty()) { // No error
+                authHeader = responseAuthHeader
+            }
+            else {
+                exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(errorCode), jsonUtil.getJsonValue(responseAuthHeader, "errorMessage"))
             }
         } else {
-            logger.debug( "Unable to obtain BasicAuth - BasicAuth value null")
+            LOGGER.error( "Unable to obtain BasicAuth - BasicAuth value null")
             exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Internal Error - BasicAuth " +
                     "value null")
         }
@@ -109,30 +110,112 @@ class DoDeallocateCoreNSSI extends AbstractServiceTaskProcessor {
         //Prepare send request to OOF
         String oofRequest = buildOOFRequest(execution)
 
-        URL url = new URL(urlString+"/api/oof/terminate/nxi/v1")
-        HttpClient httpClient = new HttpClientFactory().newJsonClient(url, ONAPComponents.OOF)
-        httpClient.addAdditionalHeader("Authorization", authHeader)
-        httpClient.addAdditionalHeader("Accept", "application/json")
-        httpClient.addAdditionalHeader("Content-Type", "application/json")
-
-        Response httpResponse = httpClient.post(oofRequest)
-
-        int responseCode = httpResponse.getStatus()
-        logger.debug("OOF sync response code is: " + responseCode)
-
-        if(responseCode != 202){ // Accepted
-            exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from OOF.")
-        }
-
-        if(httpResponse.hasEntity()){
-            String OOFResponse = httpResponse.readEntity(Boolean.class)
-            String isTerminateNSSI = jsonUtil.getJsonValue(OOFResponse, "terminateResponse")
+        String callOOFResponse = callOOF(urlString, authHeader, oofRequest)
+        String errorCode = jsonUtil.getJsonValue(callOOFResponse, "errorCode")
+        if(errorCode == null || errorCode.isEmpty()) { // No error
+            String oofResponse = callOOFResponse
+            String isTerminateNSSI = jsonUtil.getJsonValue(oofResponse, "terminateResponse")
 
             execution.setVariable("isTerminateNSSI", Boolean.parseBoolean(isTerminateNSSI))
         }
+        else {
+            LOGGER.error(jsonUtil.getJsonValue(callOOFResponse, "errorMessage"))
+            exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(errorCode), jsonUtil.getJsonValue(callOOFResponse, "errorMessage"))
+        }
+
 
         LOGGER.trace("${PREFIX} Exit executeTerminateNSSIQuery")
     }
+
+
+    /**
+     * Executes sync call to OOF
+     * @return OOF response
+     */
+    String callOOF(String urlString, String authHeader, String oofRequest) {
+        String errorCode = ""
+        String errorMessage = ""
+        String response = ""
+
+        try {
+            URL url = new URL(urlString + "/api/oof/terminate/nxi/v1")
+            HttpClient httpClient = new HttpClientFactory().newJsonClient(url, ONAPComponents.OOF)
+            httpClient.addAdditionalHeader("Authorization", authHeader)
+            httpClient.addAdditionalHeader("Accept", "application/json")
+            httpClient.addAdditionalHeader("Content-Type", "application/json")
+
+            Response httpResponse = httpClient.post(oofRequest)
+
+            int responseCode = httpResponse.getStatus()
+            LOGGER.debug("OOF sync response code is: " + responseCode)
+
+            if (responseCode != 202) { // Accepted
+                errorCode = responseCode
+                errorMessage = "Received a Bad Sync Response from OOF."
+
+                response =  "{\n" +
+                        " \"errorCode\": \"${errorCode}\",\n" +
+                        " \"errorMessage\": \"${errorMessage}\"\n" +
+                        "}"
+                //exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from OOF.")
+            }
+
+            if (httpResponse.hasEntity()) {
+                response = httpResponse.readEntity(String.class)
+            }
+            else {
+                errorCode = 500
+                errorMessage = "No response received from OOF."
+
+                response =  "{\n" +
+                        " \"errorCode\": \"${errorCode}\",\n" +
+                        " \"errorMessage\": \"${errorMessage}\"\n" +
+                        "}"
+            }
+        }
+        catch(Exception e) {
+            errorCode = 400
+            errorMessage = e.getMessage()
+
+            response =  "{\n" +
+                    " \"errorCode\": \"${errorCode}\",\n" +
+                    " \"errorMessage\": \"${errorMessage}\"\n" +
+                    "}"
+        }
+
+
+        return response
+    }
+
+
+    String encryptBasicAuth(String basicAuth, String msoKey) {
+        return utils.encrypt(basicAuth, msoKey)
+    }
+
+
+    String getAuthHeader(DelegateExecution execution, String basicAuthValue, String msokey) {
+        String response = ""
+        String errorCode = ""
+        String errorMessage = ""
+
+        LOGGER.debug("Obtained BasicAuth username and password for OOF: " + basicAuthValue)
+        try {
+            response = utils.getBasicAuth(basicAuthValue, msokey)
+        } catch (Exception ex) {
+            LOGGER.error("Unable to encode username and password string: ", ex)
+
+            errorCode = "401"
+            errorMessage = "Internal Error - Unable to encode username and password string"
+
+            response =  "{\n" +
+                    " \"errorCode\": \"${errorCode}\",\n" +
+                    " \"errorMessage\": \"${errorMessage}\"\n" +
+                    "}"
+        }
+
+        return response
+    }
+
 
 
     /**
@@ -177,7 +260,7 @@ class DoDeallocateCoreNSSI extends AbstractServiceTaskProcessor {
         String serviceType = currentNSSI['serviceType']
         String nssiId = currentNSSI['nssiId']
 
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nssiId) //AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId, serviceType, nssiId)
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nssiId)
         Optional<ServiceInstance> nssiOpt = client.get(ServiceInstance.class, nssiUri)
 
         if (nssiOpt.isPresent()) {
@@ -251,28 +334,49 @@ class DoDeallocateCoreNSSI extends AbstractServiceTaskProcessor {
      * @param execution
      */
     void deleteServiceOrder(DelegateExecution execution) {
-        // TO DO: Unit test
         LOGGER.trace("${PREFIX} Start deleteServiceOrder")
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
         try {
             //url:/nbi/api/v4/serviceOrder/"
-            def nbiEndpointUrl = UrnPropertiesReader.getVariable("nbi.endpoint.url", execution) // ???
+            def nbiEndpointUrl = UrnPropertiesReader.getVariable("nbi.endpoint.url", execution)
 
             ServiceInstance networkServiceInstance = (ServiceInstance)currentNSSI['networkServiceInstance']
 
-            String url = String.format("${nbiEndpointUrl}/api/v4/serviceOrder/%s", networkServiceInstance.getServiceInstanceId()) // Service Order ID = Network Service Instance ID ???
+            String url = String.format("${nbiEndpointUrl}/api/v4/serviceOrder/%s", networkServiceInstance.getServiceInstanceId()) // Service Order ID = Network Service Instance ID
 
             String msoKey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
             String basicAuth =  UrnPropertiesReader.getVariable("mso.infra.endpoint.auth", execution)
-            String basicAuthValue = utils.encrypt(basicAuth, msoKey)
-            String encodeString = utils.getBasicAuth(basicAuthValue, msoKey)
 
-            HttpClient httpClient = getHttpClientFactory().newJsonClient(new URL(url), ONAPComponents.EXTERNAL)
-            httpClient.addAdditionalHeader("Authorization", encodeString)
-            httpClient.addAdditionalHeader("Accept", "application/json")
-            Response httpResponse = httpClient.delete() // check http code ???
+            String basicAuthValue = encryptBasicAuth(basicAuth, msoKey)
+            def authHeader = ""
+            if (basicAuthValue != null) {
+                String responseAuthHeader = getAuthHeader(execution, basicAuthValue, msoKey)
+                String errorCode = jsonUtil.getJsonValue(responseAuthHeader, "errorCode")
+                if(errorCode == null || errorCode.isEmpty()) { // No error
+                    authHeader = responseAuthHeader
+                }
+                else {
+                    exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(errorCode), jsonUtil.getJsonValue(responseAuthHeader, "errorMessage"))
+                }
+            } else {
+                LOGGER.error( "Unable to obtain BasicAuth - BasicAuth value null")
+                exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Internal Error - BasicAuth " +
+                        "value null")
+            }
+
+            String callDeleteServiceOrderResponse = callDeleteServiceOrder(execution, url, authHeader)
+            String errorCode = jsonUtil.getJsonValue(callDeleteServiceOrderResponse, "errorCode")
+            String deleteServcieResponse = ""
+
+            if(errorCode == null || errorCode.isEmpty()) { // No error
+                deleteServcieResponse = callDeleteServiceOrderResponse // check the response ???
+            }
+            else {
+                LOGGER.error(jsonUtil.getJsonValue(callDeleteServiceOrderResponse, "errorMessage"))
+                exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(errorCode), jsonUtil.getJsonValue(callDeleteServiceOrderResponse, "errorMessage"))
+            }
         } catch (any) {
             String msg = "Exception in DoDeallocateCoreNSSI.deleteServiceOrder. " + any.getCause()
             LOGGER.error(msg)
@@ -280,6 +384,43 @@ class DoDeallocateCoreNSSI extends AbstractServiceTaskProcessor {
         }
 
         LOGGER.trace("${PREFIX} Exit deleteServiceOrder")
+    }
+
+
+    String callDeleteServiceOrder(DelegateExecution execution, String urlString, String authHeader) {
+        String errorCode = ""
+        String errorMessage = ""
+        String response = ""
+
+        try {
+            HttpClient httpClient = getHttpClientFactory().newJsonClient(new URL(urlString), ONAPComponents.EXTERNAL)
+            httpClient.addAdditionalHeader("Authorization", authHeader)
+            httpClient.addAdditionalHeader("Accept", "application/json")
+            Response httpResponse = httpClient.delete()
+
+            if (httpResponse.hasEntity()) {
+                response = httpResponse.readEntity(String.class)
+            }
+            else {
+                errorCode = 500
+                errorMessage = "No response received."
+
+                response =  "{\n" +
+                        " \"errorCode\": \"${errorCode}\",\n" +
+                        " \"errorMessage\": \"${errorMessage}\"\n" +
+                        "}"
+            }
+        }
+        catch (any) {
+            String msg = "Exception in DoDeallocateCoreNSSI.deleteServiceOrder. " + any.getCause()
+
+            response =  "{\n" +
+                    " \"errorCode\": \"7000\",\n" +
+                    " \"errorMessage\": \"${msg}\"\n" +
+                    "}"
+        }
+
+        return response
     }
 
 
@@ -298,12 +439,12 @@ class DoDeallocateCoreNSSI extends AbstractServiceTaskProcessor {
         AAIResultWrapper wrapper = client.get(networkServiceInstanceUri);
         Optional<Relationships> relationships = wrapper.getRelationships()
         if (relationships.isPresent()) {
-            for (AAIResourceUri constituteVnfUri : relationships.get().getRelatedAAIUris(AAIObjectType.GENERIC_VNF)) {  // ???
-                execution.setVariable("constituteVnfUri", constituteVnfUri)
+            for (AAIResourceUri constituteVnfUri : relationships.get().getRelatedAAIUris(AAIObjectType.GENERIC_VNF)) {
+                currentNSSI['constituteVnfUri'] = constituteVnfUri
                 Optional<GenericVnf> constituteVnfOpt = client.get(GenericVnf.class, constituteVnfUri)
                 if(constituteVnfOpt.isPresent()) {
                     GenericVnf constituteVnf = constituteVnfOpt.get()
-                    execution.setVariable("constituteVnf", constituteVnf)
+                    currentNSSI['constituteVnf'] = constituteVnf
                 }
                 else {
                     String msg = String.format("No constitute VNF found for Network Service Instance %s in AAI", ((ServiceInstance)currentNSSI['networkServiceInstance']).getServiceInstanceId())
@@ -344,7 +485,7 @@ class DoDeallocateCoreNSSI extends AbstractServiceTaskProcessor {
             exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
         }
         else {
-            execution.setVariable("associatedProfiles", associatedProfiles)
+            currentNSSI['associatedProfiles'] =  associatedProfiles
         }
 
         LOGGER.trace("${PREFIX} Exit getNSSIAssociatedProfiles")
@@ -358,21 +499,24 @@ class DoDeallocateCoreNSSI extends AbstractServiceTaskProcessor {
     void calculateSNSSAI(DelegateExecution execution) {
         LOGGER.trace("${PREFIX} Start calculateSNSSAI")
 
-        List<SliceProfile> associatedProfiles = (List<SliceProfile>)execution.getVariable("associatedProfiles")
-
         def currentNSSI = execution.getVariable("currentNSSI")
+
+        List<SliceProfile> associatedProfiles = (List<SliceProfile>)currentNSSI['associatedProfiles']
 
         String currentSNSSAI = currentNSSI['S-NSSAI']
 
         List<String> snssais = new ArrayList<>()
 
         for(SliceProfile associatedProfile:associatedProfiles) {
-            if(!associatedProfile.getSNssai().equals(currentNSSI)) { // not current S-NSSAI
+            if(!associatedProfile.getSNssai().equals(currentSNSSAI)) { // not current S-NSSAI
                 snssais.add(associatedProfile.getSNssai())
+            }
+            else {
+                currentNSSI['sliceProfileS-NSSAI'] = associatedProfile
             }
         }
 
-        execution.setVariable("S-NSSAIs", snssais)
+        currentNSSI['S-NSSAIs'] = snssais
 
         LOGGER.trace("${PREFIX} Exit calculateSNSSAI")
     }
@@ -393,26 +537,48 @@ class DoDeallocateCoreNSSI extends AbstractServiceTaskProcessor {
 
             ServiceInstance networkServiceInstance = (ServiceInstance)currentNSSI['networkServiceInstance']
 
-            GenericVnf constituteVnf = (GenericVnf)execution.getVariable("constituteVnf")
+            GenericVnf constituteVnf = (GenericVnf)currentNSSI['constituteVnf']
 
-            String url = String.format("${nsmfЕndpoint}/serviceInstantiation/v7/serviceInstances/%s/vnfs/%s", networkServiceInstance.getServiceInstanceId(), constituteVnf.getVnfId()) // ???
+            String url = String.format("${nsmfЕndpoint}/serviceInstantiation/v7/serviceInstances/%s/vnfs/%s", networkServiceInstance.getServiceInstanceId(), constituteVnf.getVnfId())
 
             String msoKey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
             String basicAuth =  UrnPropertiesReader.getVariable("mso.infra.endpoint.auth", execution)
-            String basicAuthValue = utils.encrypt(basicAuth, msoKey)
-            String encodeString = utils.getBasicAuth(basicAuthValue, msoKey)
 
-            HttpClient httpClient = getHttpClientFactory().newJsonClient(new URL(url), ONAPComponents.EXTERNAL)
-            httpClient.addAdditionalHeader("Authorization", encodeString)
-            httpClient.addAdditionalHeader("Accept", "application/json")
+            def authHeader = ""
+            String basicAuthValue = encryptBasicAuth(basicAuth, msoKey) //utils.encrypt(basicAuth, msoKey)
+            String responseAuthHeader = getAuthHeader(execution, basicAuthValue, msoKey) //utils.getBasicAuth(basicAuthValue, msoKey)
 
-            RequestDetails requestDetails = prepareRequestDetails(execution)
-            ObjectMapper mapper = new ObjectMapper()
-            String requestDetailsStr = mapper.writeValueAsString(requestDetails)
+            String errorCode = jsonUtil.getJsonValue(responseAuthHeader, "errorCode")
+            if(errorCode == null || errorCode.isEmpty()) { // No error
+                authHeader = responseAuthHeader
+            }
+            else {
+                exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(errorCode), jsonUtil.getJsonValue(responseAuthHeader, "errorMessage"))
+            }
 
-            Response httpResponse = httpClient.put(requestDetailsStr) // check http code ???
+            def requestDetails = ""
+            String prepareRequestDetailsResponse = prepareRequestDetails(execution)
+            errorCode = jsonUtil.getJsonValue(prepareRequestDetailsResponse, "errorCode")
+            if(errorCode == null || errorCode.isEmpty()) { // No error
+                requestDetails = prepareRequestDetailsResponse
+            }
+            else {
+                exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(errorCode), jsonUtil.getJsonValue(prepareRequestDetailsResponse, "errorMessage"))
+            }
+
+            String callPUTServiceInstanceResponse = callPUTServiceInstance(url, authHeader, requestDetails)
+            String putServiceInstanceResponse = ""
+
+            if(errorCode == null || errorCode.isEmpty()) { // No error
+                putServiceInstanceResponse = callPUTServiceInstanceResponse // check the response ???
+            }
+            else {
+                LOGGER.error(jsonUtil.getJsonValue(callPUTServiceInstanceResponse, "errorMessage"))
+                exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(errorCode), jsonUtil.getJsonValue(callPUTServiceInstanceResponse, "errorMessage"))
+            }
+
         } catch (any) {
-            String msg = "Exception in DoDeallocateCoreNSSI.deleteServiceOrder. " + any.getCause()
+            String msg = "Exception in DoDeallocateCoreNSSI.invokePUTServiceInstance. " + any.getCause()
             LOGGER.error(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
@@ -421,19 +587,67 @@ class DoDeallocateCoreNSSI extends AbstractServiceTaskProcessor {
     }
 
 
+    String callPUTServiceInstance(String url, String authHeader, String requestDetailsStr) {
+        String errorCode = ""
+        String errorMessage = ""
+        String response
+
+        try {
+            HttpClient httpClient = getHttpClientFactory().newJsonClient(new URL(url), ONAPComponents.EXTERNAL)
+            httpClient.addAdditionalHeader("Authorization", authHeader)
+            httpClient.addAdditionalHeader("Accept", "application/json")
+
+            Response httpResponse = httpClient.put(requestDetailsStr) // check http code ???
+
+
+            if (httpResponse.hasEntity()) {
+                response = httpResponse.readEntity(String.class)
+            }
+            else {
+                errorCode = 500
+                errorMessage = "No response received."
+
+                response =  "{\n" +
+                        " \"errorCode\": \"${errorCode}\",\n" +
+                        " \"errorMessage\": \"${errorMessage}\"\n" +
+                        "}"
+            }
+        }
+        catch (any) {
+            String msg = "Exception in DoDeallocateCoreNSSI.invokePUTServiceInstance. " + any.getCause()
+            LOGGER.error(msg)
+
+            response =  "{\n" +
+                    " \"errorCode\": \"7000\",\n" +
+                    " \"errorMessage\": \"${msg}\"\n" +
+                    "}"
+
+        }
+
+        return response
+
+    }
+
+
     /**
      * Prepare model info
      * @param execution
      * @param requestDetails
-     * @return
+     * @return ModelInfo
      */
-    private ModelInfo prepareModelInfo(DelegateExecution execution) {
+    ModelInfo prepareModelInfo(DelegateExecution execution) {
+
+        def currentNSSI = execution.getVariable("currentNSSI")
+        ServiceInstance networkServiceInstance = (ServiceInstance)currentNSSI['networkServiceInstance']
+
         ModelInfo modelInfo = new ModelInfo()
 
         modelInfo.setModelType(ModelType.service)
         modelInfo.setModelInvariantId(networkServiceInstance.getModelInvariantId())
 
-        AAIResourceUri modelVerUrl = AAIUriFactory.createResourceUri(AAIObjectType.MODEL_VER, networkServiceInstance.getModelInvariantId()) // model of Network Service Instance ???
+        AAIResourcesClient client = getAAIClient()
+
+        AAIResourceUri modelVerUrl = AAIUriFactory.createResourceUri(AAIObjectType.MODEL_VER, networkServiceInstance.getModelInvariantId(), networkServiceInstance.getModelVersionId())
         Optional<ModelVer> modelVerOpt = client.get(ModelVer.class, modelVerUrl)
 
         if (modelVerOpt.isPresent()) {
@@ -442,37 +656,30 @@ class DoDeallocateCoreNSSI extends AbstractServiceTaskProcessor {
             modelInfo.setModelVersion(modelVerOpt.get().getModelVersion())
         }
 
-
         return modelInfo
     }
 
 
     /**
-     * Prepares RequestDetails object
+     * Prepares subscriber info
      * @param execution
-     * @return
+     * @return SubscriberInfo
      */
-    private RequestDetails prepareRequestDetails(DelegateExecution execution) {
-        RequestDetails requestDetails = new RequestDetails()
-
+    SubscriberInfo prepareSubscriberInfo(DelegateExecution execution) {
         def currentNSSI = execution.getVariable("currentNSSI")
 
         String globalSubscriberId = currentNSSI['globalSubscriberId']
 
-        ServiceInstance networkServiceInstance = (ServiceInstance)currentNSSI['networkServiceInstance']
+        String subscriberName = currentNSSI['subscriberName']
 
-
-        AAIResourcesClient client = getAAIClient()
-
-        // Model Info
-        requestDetails.setModelInfo(prepareModelInfo(execution))
-
-        // Subscriber Info
         SubscriberInfo subscriberInfo = new SubscriberInfo()
         subscriberInfo.setGlobalSubscriberId(globalSubscriberId)
+        subscriberInfo.setSubscriberName(subscriberName)
+
+        /*
+        AAIResourcesClient client = getAAIClient()
 
         Customer customer = null
-        ServiceSubscription serviceSubscription = null
 
         AAIResourceUri networkServiceInstanceUri = currentNSSI['networkServiceInstanceUri']
         AAIResultWrapper wrapper = client.get(networkServiceInstanceUri)
@@ -482,8 +689,9 @@ class DoDeallocateCoreNSSI extends AbstractServiceTaskProcessor {
             if(!(serviceSubscriptionRelatedAAIUris == null || serviceSubscriptionRelatedAAIUris.isEmpty())) {
                 AAIResourceUri serviceSubscriptionUri = serviceSubscriptionRelatedAAIUris.get(0) // Many-To-One relation
                 Optional<ServiceSubscription> serviceSubscriptionOpt = client.get(ServiceSubscription.class, serviceSubscriptionUri)
+
                 if(serviceSubscriptionOpt.isPresent()) {
-                    serviceSubscription = serviceSubscriptionOpt.get()
+                    currentNSSI['serviceSubscription'] = serviceSubscriptionOpt.get()
                 }
 
                 wrapper = client.get(serviceSubscriptionUri)
@@ -500,69 +708,81 @@ class DoDeallocateCoreNSSI extends AbstractServiceTaskProcessor {
                 }
             }
 
-        }
-        requestDetails.setSubscriberInfo(subscriberInfo)
+        } */
 
-        // Request Info
+        return subscriberInfo
+    }
+
+
+    /**
+     * Prepares Request Info
+     * @param execution
+     * @return RequestInfo
+     */
+    RequestInfo prepareRequestInfo(DelegateExecution execution, ServiceInstance networkServiceInstance) {
+        def currentNSSI = execution.getVariable("currentNSSI")
+
+        String serviceId = currentNSSI['serviceId']
+
         RequestInfo requestInfo = new RequestInfo()
+
         requestInfo.setInstanceName(networkServiceInstance.getServiceInstanceName())
+        requestInfo.setSource("VID")
+        requestInfo.setProductFamilyId(serviceId)
+        requestInfo.setRequestorId("NBI")
 
-        /* No found data to provide ???
-        requestInfo.setSource()
-        requestInfo.setSuppressRollback()
-        requestInfo.setRequestorId()
-        requestInfo.setProductFamilyId()
-        */
-
-        requestDetails.setRequestInfo(requestInfo)
+        return requestInfo
+    }
 
 
-        // Request Parameters
-        RequestParameters requestParameters = new RequestParameters()
+    /**
+     * Prepares Model Info
+     * @param networkServiceInstance
+     * @param modelInfo
+     * @return ModelInfo
+     */
+    ModelInfo prepareServiceModelInfo(ServiceInstance networkServiceInstance, ModelInfo modelInfo) {
 
-        // No found data to provide ??? requestParameters.setaLaCarte()
-        requestParameters.setSubscriptionServiceType(serviceSubscription.getServiceType())
-
-        // User params
-        List<Map<String, Object>> userParams = new ArrayList<>()
-        // Service
-        Service service = new Service()
-        // Model Info
         ModelInfo serviceModelInfo = new ModelInfo()
         serviceModelInfo.setModelType(ModelType.service)
         serviceModelInfo.setModelInvariantId(networkServiceInstance.getModelInvariantId())
 
-        serviceModelInfo.setModelVersionId(modelInfo.get().getModelVersionId())
-        serviceModelInfo.setModelName(modelInfo.get().getModelName())
-        serviceModelInfo.setModelVersion(modelInfo.get().getModelVersion())
+        serviceModelInfo.setModelVersionId(modelInfo.getModelVersionId())
+        serviceModelInfo.setModelName(modelInfo.getModelName())
+        serviceModelInfo.setModelVersion(modelInfo.getModelVersion())
 
-        service.setModelInfo(serviceModelInfo)
+        return serviceModelInfo
+    }
 
-        // Resources
-        Resources resources = new Resources()
 
-        CloudRegion cloudRegion = null
-        AAIResourceUri cloudRegionRelatedAAIUri = null
-        // VNFs
-        List<Vnfs> vnfs = new ArrayList<>()
-        // VNF
-        Vnfs vnf = new Vnfs()
+    /**
+     * Prepares Cloud configuration
+     * @param execution
+     * @return CloudConfiguration
+     */
+    CloudConfiguration prepareCloudConfiguration(DelegateExecution execution) {
+        def currentNSSI = execution.getVariable("currentNSSI")
 
-        // Cloud configuration
         CloudConfiguration cloudConfiguration = new CloudConfiguration()
 
-        AAIResourceUri constituteVnfUri = (AAIResourceUri)execution.getVariable("constituteVnfUri")
-        wrapper = client.get(constituteVnfUri)
-        Optional<Relationships> constituteVnfOps = wrapper.getRelationships()
-        if(constituteVnfOps.isPresent()) {
-            List<AAIResourceUri> cloudRegionRelatedAAIUris = serviceSubscriptionRelationshipsOps.get().getRelatedAAIUris(AAIObjectType.CLOUD_REGION)
-            if(!(cloudRegionRelatedAAIUris == null || cloudRegionRelatedAAIUris.isEmpty())) {
-                cloudRegionRelatedAAIUri = cloudRegionRelatedAAIUris.get(0)
+        AAIResourcesClient client = getAAIClient()
+
+        AAIResourceUri constituteVnfUri = currentNSSI['constituteVnfUri']
+        AAIResultWrapper wrapper = client.get(constituteVnfUri)
+        Optional<Relationships> cloudRegionRelationshipsOps = wrapper.getRelationships()
+
+        if(cloudRegionRelationshipsOps.isPresent()) {
+            List<AAIResourceUri> cloudRegionRelatedAAIUris = cloudRegionRelationshipsOps.get().getRelatedAAIUris(AAIObjectType.CLOUD_REGION)
+            if (!(cloudRegionRelatedAAIUris == null || cloudRegionRelatedAAIUris.isEmpty())) {
+                AAIResourceUri cloudRegionRelatedAAIUri = cloudRegionRelatedAAIUris.get(0)
+                currentNSSI['cloudRegionRelatedAAIUri'] = cloudRegionRelatedAAIUri
+
                 Optional<CloudRegion> cloudRegionrOpt = client.get(CloudRegion.class, cloudRegionRelatedAAIUris.get(0))
-                if(cloudRegionrOpt.isPresent()) {
+                CloudRegion cloudRegion = null
+                if (cloudRegionrOpt.isPresent()) {
                     cloudRegion = cloudRegionrOpt.get()
                     cloudConfiguration.setLcpCloudRegionId(cloudRegion.getCloudRegionId())
-                    for(Tenant tenant:cloudRegion.getTenants()) {
+                    for (Tenant tenant : cloudRegion.getTenants().getTenant()) {
                         cloudConfiguration.setTenantId(tenant.getTenantId())
                         break // only one is required
                     }
@@ -572,18 +792,30 @@ class DoDeallocateCoreNSSI extends AbstractServiceTaskProcessor {
             }
         }
 
-        vnf.setCloudConfiguration(cloudConfiguration)
+        return cloudConfiguration
+    }
 
-        // VF Modules
-        GenericVnf constituteVnf = execution.getVariable("constituteVnf")
+
+    /**
+     * Prepares a list of VF Modules
+     * @param execution
+     * @param constituteVnf
+     * @return List<VfModules>
+     */
+    List<VfModules> prepareVfModules(DelegateExecution execution, GenericVnf constituteVnf) {
+
+        AAIResourcesClient client = getAAIClient()
+
         List<VfModules> vfModuless = new ArrayList<>()
-        for(VfModule vfModule:constituteVnf.getVfModules()) {
+        for (VfModule vfModule : constituteVnf.getVfModules().getVfModule()) {
             VfModules vfmodules = new VfModules()
 
             ModelInfo vfModuleModelInfo = new ModelInfo()
             vfModuleModelInfo.setModelInvariantUuid(vfModule.getModelInvariantId())
+            vfModuleModelInfo.setModelCustomizationId(vfModule.getModelCustomizationId())
 
-            AAIResourceUri vfModuleUrl = AAIUriFactory.createResourceUri(AAIObjectType.MODEL_VER, vfModule.getModelInvariantId()) // ???
+            AAIResourceUri vfModuleUrl = AAIUriFactory.createResourceUri(AAIObjectType.MODEL_VER, vfModule.getModelInvariantId(), vfModule.getModelVersionId())
+
             Optional<ModelVer> vfModuleModelVerOpt = client.get(ModelVer.class, vfModuleUrl)
 
             if (vfModuleModelVerOpt.isPresent()) {
@@ -599,12 +831,28 @@ class DoDeallocateCoreNSSI extends AbstractServiceTaskProcessor {
 
             vfModuless.add(vfmodules)
         }
-        vnf.setVfModules(vfModuless)
 
-        // Model Info
+        return vfModuless
+    }
+
+
+    /**
+     * prepares VNF Model Info
+     * @param execution
+     * @param constituteVnf
+     * @return ModelInfo
+     */
+    ModelInfo prepareVNFModelInfo(DelegateExecution execution, GenericVnf constituteVnf) {
         ModelInfo vnfModelInfo = new ModelInfo()
+
+        AAIResourcesClient client = getAAIClient()
+
         vnfModelInfo.setModelInvariantUuid(constituteVnf.getModelInvariantId())
-        AAIResourceUri vnfModelUrl = AAIUriFactory.createResourceUri(AAIObjectType.MODEL_VER, constituteVnf.getModelInvariantId()) // ???
+        vnfModelInfo.setModelCustomizationId(constituteVnf.getModelCustomizationId())
+        vnfModelInfo.setModelInstanceName(constituteVnf.getVnfName())
+
+        AAIResourceUri vnfModelUrl = AAIUriFactory.createResourceUri(AAIObjectType.MODEL_VER, constituteVnf.getModelInvariantId(), constituteVnf.getModelVersionId())
+
         Optional<ModelVer> vnfModelVerOpt = client.get(ModelVer.class, vnfModelUrl)
 
         if (vnfModelVerOpt.isPresent()) {
@@ -612,84 +860,276 @@ class DoDeallocateCoreNSSI extends AbstractServiceTaskProcessor {
             vnfModelInfo.setModelName(vnfModelVerOpt.get().getModelName())
             vnfModelInfo.setModelVersion(vnfModelVerOpt.get().getModelVersion())
 
-            // No model customization ID
             // No model instance name
         }
 
-        vnf.setModelInfo(vnfModelInfo)
+        return vnfModelInfo
+    }
 
-        // Instance name
-        vnf.setInstanceName(constituteVnf.getVnfInstanceId())
 
-        // Instance params
+    List<Map<String, Object>> prepareInstanceParams(DelegateExecution execution) {
+        def currentNSSI = execution.getVariable("currentNSSI")
+
         List<Map<String, Object>> instanceParams = new ArrayList<>()
-        Map<String, Object> supporrtedNSSAIMap = new HashMap<>()
+        Map<String, Object> instanceParamsMap = new HashMap<>()
 
         // Supported S-NSSAI
-        List<String> snssais = ( List<String>)execution.getVariable("S-NSSAIs")
-        supporrtedNSSAIMap.put("supporrtedNSSAI", snssais) // remaining S-NSSAIs ??? there is no status for each s-nssai
-        instanceParams.add(supporrtedNSSAIMap)
+        List<String> snssais = (List<String>) currentNSSI['S-NSSAIs']
+
+        ServiceInstance nssi = (ServiceInstance) currentNSSI['nssi']
+
+        String orchStatus = nssi.getOrchestrationStatus()
+
+
+        List<Map<String, String>> snssaiList = new ArrayList<>()
+
+        for(String snssai:snssais) {
+           Map<String, String> snssaisMap = new HashMap<>()
+            snssaisMap.put("snssai", snssai)
+            snssaisMap.put("status", orchStatus)
+            snssaiList.add(snssaisMap)
+        }
+
+    //    Map<String, List<Map<String, String>>> supportedNssaiDetails = new HashMap<>()
+    //    supportedNssaiDetails.put("sNssai", supportedNssaiDetails)
+
+        ObjectMapper mapper = new ObjectMapper()
+
+        String supportedNssaiDetailsStr = mapper.writeValueAsString(snssaiList)
+
+
+        instanceParamsMap.put("k8s-rb-profile-name", "default") // ???
+        instanceParamsMap.put("config-type", "day2") // ???
+        instanceParamsMap.put("supportedNssai", supportedNssaiDetailsStr)
+        instanceParams.add(instanceParamsMap)
 
         // No other instance params, e.g. config-type
 
-        vnf.setInstanceParams(instanceParams)
+        return instanceParams
+    }
+
+    /**
+     * Prepares Resources
+     * @param execution
+     * @return Resources
+     */
+    Resources prepareResources(DelegateExecution execution) {
+        def currentNSSI = execution.getVariable("currentNSSI")
+
+        Resources resources = new Resources()
+
+        // VNFs
+        List<Vnfs> vnfs = new ArrayList<>()
+        // VNF
+        Vnfs vnf = new Vnfs()
+
+        // Line of Business
+        LineOfBusiness lob = new LineOfBusiness()
+        lob.setLineOfBusinessName("VNF")
+        vnf.setLineOfBusiness(lob)
+
+        // Product family ID
+        GenericVnf constituteVnf = (GenericVnf)currentNSSI['constituteVnf']
+        vnf.setProductFamilyId(constituteVnf.getServiceId())
+
+        // Cloud configuration
+        vnf.setCloudConfiguration(prepareCloudConfiguration(execution))
+
+        // VF Modules
+        vnf.setVfModules(prepareVfModules(execution, constituteVnf))
+
+        // Model Info
+        vnf.setModelInfo(prepareVNFModelInfo(execution, constituteVnf))
+
+        // Instance name
+        vnf.setInstanceName(constituteVnf.getVnfName())
+
+        // Instance params
+        vnf.setInstanceParams(prepareInstanceParams(execution))
 
         // No platform data
 
         vnfs.add(vnf)
         resources.setVnfs(vnfs)
 
-        service.setResources(resources)
+        return resources
+    }
 
+
+    /**
+     * Prepare Service
+     * @return Service
+     */
+    Service prepareService(DelegateExecution execution, ServiceInstance networkServiceInstance, ModelInfo modelInfo) {
+        Service service = new Service()
+
+        // Model Info
+        service.setModelInfo(prepareServiceModelInfo(networkServiceInstance, modelInfo))
+
+        service.setInstanceName(networkServiceInstance.getServiceInstanceName())
+
+        // Resources
+        service.setResources(prepareResources(execution))
+
+        return service
+
+    }
+
+
+    /**
+     * Prepares request parameters
+     * @param execution
+     * @return RequestParameters
+     */
+    RequestParameters prepareRequestParameters(DelegateExecution execution, ServiceInstance networkServiceInstance, ModelInfo modelInfo) {
+        def currentNSSI = execution.getVariable("currentNSSI")
+
+        RequestParameters requestParameters = new RequestParameters()
+
+        ServiceSubscription serviceSubscription = (ServiceSubscription)currentNSSI['serviceSubscription']
+
+        if(serviceSubscription != null) {
+            requestParameters.setSubscriptionServiceType(serviceSubscription.getServiceType())
+        }
+
+        // User params
+        List<Map<String, Object>> userParams = new ArrayList<>()
+
+        Map<String, Object> userParam = new HashMap<>()
+        userParam.put("Homing_Solution", "none")
+        userParams.add(userParam)
+
+        // Service
         Map<String, Object> serviceMap = new HashMap<>()
-        serviceMap.put("service", service)
+        serviceMap.put("service", prepareService(execution, networkServiceInstance, modelInfo))
         userParams.add(serviceMap)
         requestParameters.setUserParams(userParams)
 
         // No other user params
 
-        requestDetails.setRequestParameters(requestParameters)
+        return requestParameters
+    }
 
-        // No other request params
 
-        // Cloud configuration
-        requestDetails.setCloudConfiguration(cloudConfiguration)
+    /**
+     * Prepare Owning Entity
+     * @param execution
+     * @return OwningEntity
+     */
+    OwningEntity prepareOwningEntity(DelegateExecution execution) {
+        def currentNSSI = execution.getVariable("currentNSSI")
 
-        // Owning entity
+        AAIResourcesClient client = getAAIClient()
+
+        AAIResourceUri networkServiceInstanceUri = (AAIResourceUri)currentNSSI['networkServiceInstanceUri']
+
         OwningEntity owningEntity = new OwningEntity()
-        wrapper = client.get(networkServiceInstanceUri)
+        AAIResultWrapper wrapper = client.get(networkServiceInstanceUri)
         Optional<Relationships> owningEntityRelationshipsOps = wrapper.getRelationships()
-        if(owningEntityRelationshipsOps.isPresent()) {
+        if (owningEntityRelationshipsOps.isPresent()) {
             List<AAIResourceUri> owningEntityRelatedAAIUris = owningEntityRelationshipsOps.get().getRelatedAAIUris(AAIObjectType.OWNING_ENTITY)
 
-            if(!(owningEntityRelatedAAIUris == null || owningEntityRelatedAAIUris.isEmpty())) {
+            if (!(owningEntityRelatedAAIUris == null || owningEntityRelatedAAIUris.isEmpty())) {
                 Optional<org.onap.aai.domain.yang.OwningEntity> owningEntityOpt = client.get(org.onap.aai.domain.yang.OwningEntity.class, owningEntityRelatedAAIUris.get(0)) // Many-To-One relation
-                if(owningEntityOpt.isPresent()) {
+                if (owningEntityOpt.isPresent()) {
                     owningEntity.setOwningEntityId(owningEntityOpt.get().getOwningEntityId())
                     owningEntity.setOwningEntityName(owningEntityOpt.get().getOwningEntityName())
-                    requestDetails.setOwningEntity(owningEntity)
+
                 }
             }
         }
 
-        // Project
+        return owningEntity
+    }
+
+
+    /**
+     * Prepares Project
+     * @param execution
+     * @return Project
+     */
+    Project prepareProject(DelegateExecution execution) {
+        def currentNSSI = execution.getVariable("currentNSSI")
+
+        AAIResourcesClient client = getAAIClient()
+
         Project project = new Project()
-        if(cloudRegionRelatedAAIUri != null) {
-            wrapper = client.get(cloudRegionRelatedAAIUri)
+
+        AAIResourceUri cloudRegionRelatedAAIUri = (AAIResourceUri)currentNSSI['cloudRegionRelatedAAIUri']
+
+        if (cloudRegionRelatedAAIUri != null) {
+            AAIResultWrapper wrapper = client.get(cloudRegionRelatedAAIUri)
             Optional<Relationships> cloudRegionOps = wrapper.getRelationships()
-            if(cloudRegionOps.isPresent()) {
+            if (cloudRegionOps.isPresent()) {
                 List<AAIResourceUri> projectAAIUris = cloudRegionOps.get().getRelatedAAIUris(AAIObjectType.PROJECT)
                 if (!(projectAAIUris == null || projectAAIUris.isEmpty())) {
                     Optional<org.onap.aai.domain.yang.Project> projectOpt = client.get(org.onap.aai.domain.yang.Project.class, projectAAIUris.get(0))
-                    if(projectOpt.isPresent()) {
+                    if (projectOpt.isPresent()) {
                         project.setProjectName(projectOpt.get().getProjectName())
                     }
                 }
             }
         }
-        requestDetails.setProject(project)
 
-        return requestDetails
+        return project
+    }
+
+
+    /**
+     * Prepares RequestDetails object
+     * @param execution
+     * @return
+     */
+     String prepareRequestDetails(DelegateExecution execution) {
+         String errorCode = ""
+         String errorMessage = ""
+         String response
+
+        RequestDetails requestDetails = new RequestDetails()
+
+        def currentNSSI = execution.getVariable("currentNSSI")
+
+        ServiceInstance networkServiceInstance = (ServiceInstance)currentNSSI['networkServiceInstance']
+
+         try {
+             // Model Info
+             ModelInfo modelInfo = prepareModelInfo(execution)
+             requestDetails.setModelInfo(modelInfo)
+
+             // Subscriber Info
+             requestDetails.setSubscriberInfo(prepareSubscriberInfo(execution))
+
+             // Request Info
+             requestDetails.setRequestInfo(prepareRequestInfo(execution, networkServiceInstance))
+
+             // Request Parameters
+             requestDetails.setRequestParameters(prepareRequestParameters(execution, networkServiceInstance, modelInfo))
+
+             // Cloud configuration
+             requestDetails.setCloudConfiguration(prepareCloudConfiguration(execution))
+
+             // Owning entity
+             requestDetails.setOwningEntity(prepareOwningEntity(execution))
+
+             // Project
+             requestDetails.setProject(prepareProject(execution))
+
+             ObjectMapper mapper = new ObjectMapper()
+
+             response = mapper.writeValueAsString(requestDetails)
+         }
+         catch (any) {
+             String msg = "Exception in DoDeallocateCoreNSSI.prepareRequestDetails. " + any.getCause()
+             LOGGER.error(msg)
+
+             response =  "{\n" +
+                     " \"errorCode\": \"7000\",\n" +
+                     " \"errorMessage\": \"${msg}\"\n" +
+                     "}"
+
+         }
+
+         return response
     }
 
 
@@ -704,14 +1144,14 @@ class DoDeallocateCoreNSSI extends AbstractServiceTaskProcessor {
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
-        String nssiId = currentNSSI['nssiServiceInstanceId']
+        String nssiId = currentNSSI['nssiId']
         String nsiId = currentNSSI['nsiId']
 
         AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nssiId)
         AAIResourceUri nsiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nsiId)
 
         try {
-            getAAIClient().disconnect(nssiUri, nsiUri)
+            client.disconnect(nssiUri, nsiUri)
         }catch(Exception e){
             exceptionUtil.buildAndThrowWorkflowException(execution, 25000, "Exception occured while NSSI association with NSI disconnect call: " + e.getMessage())
         }
@@ -733,7 +1173,7 @@ class DoDeallocateCoreNSSI extends AbstractServiceTaskProcessor {
 
         ServiceInstance nssi = (ServiceInstance)currentNSSI['nssi']
 
-        String nssiId = currentNSSI['nssiServiceInstanceId']
+        String nssiId = currentNSSI['nssiId']
         AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nssiId)
 
         List<SliceProfile> associatedProfiles = nssi.getSliceProfiles().getSliceProfile()
@@ -763,20 +1203,14 @@ class DoDeallocateCoreNSSI extends AbstractServiceTaskProcessor {
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
-        ServiceInstance nssi = (ServiceInstance)currentNSSI['nssi']
+        SliceProfile sliceProfileContainsSNSSAI = (SliceProfile)currentNSSI['sliceProfileS-NSSAI']
 
-        List<SliceProfile> associatedProfiles = nssi.getSliceProfiles().getSliceProfile()
+        String globalSubscriberId = currentNSSI['globalSubscriberId']
+        String serviceType = currentNSSI['serviceType']
+        String nssiId = currentNSSI['nssiId']
 
-        String currentSNSSAI = currentNSSI['S-NSSAI']
-
-        AAIResourceUri sliceProfileUri = null
-
-        for(SliceProfile associatedProfile:associatedProfiles) {
-            if(!associatedProfile.getSNssai().equals(currentNSSI)) { // not current S-NSSAI
-                sliceProfileUri = AAIUriFactory.createResourceUri(AAIObjectType.SLICE_PROFILE, associatedProfile.getProfileId())
-                break
-            }
-        }
+        // global-customer-id, service-type, service-instance-id, profile-id
+        AAIResourceUri sliceProfileUri = AAIUriFactory.createResourceUri(AAIObjectType.SLICE_PROFILE, globalSubscriberId, serviceType, nssiId, sliceProfileContainsSNSSAI.getProfileId())
 
         try {
             getAAIClient().delete(sliceProfileUri)
@@ -799,7 +1233,7 @@ class DoDeallocateCoreNSSI extends AbstractServiceTaskProcessor {
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
-        String nssiId = currentNSSI['nssiServiceInstanceId']
+        String nssiId = currentNSSI['nssiId']
         AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nssiId)
 
         try {
