@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1p1suc9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.4.1">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1p1suc9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.7.2">
   <bpmn:process id="DoDeleteSliceServiceV1" name="DoDeleteSliceServiceV1" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1" name="start">
       <bpmn:outgoing>SequenceFlow_0ep5het</bpmn:outgoing>
@@ -23,12 +23,11 @@ ddss.getNSIFromAAI(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Task_1u755sr" name="Query NSSI List From AAI" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_1rgfzzy</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_05si1me</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1aa2ek0</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def ddss= new DoDeleteSliceService()
 ddss.getNSSIListFromAAI(execution)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:sequenceFlow id="SequenceFlow_05si1me" sourceRef="Task_1u755sr" targetRef="Task_1iomfas" />
     <bpmn:exclusiveGateway id="ExclusiveGateway_1ogbunu" name="Is all NSSI finished?">
       <bpmn:incoming>SequenceFlow_15z9iio</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1c4fjbv</bpmn:outgoing>
@@ -40,7 +39,6 @@ ddss.getNSSIListFromAAI(execution)</bpmn:script>
     <bpmn:sequenceFlow id="SequenceFlow_1c4fjbv" name="yes" sourceRef="ExclusiveGateway_1ogbunu" targetRef="EndEvent_0jaitqv">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{(execution.getVariable("isAllNSSIFinished" )  == true)}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_01o2qpv" sourceRef="Task_1iomfas" targetRef="Task_1qqljvu" />
     <bpmn:sequenceFlow id="SequenceFlow_0c58sw3" sourceRef="Task_1rc7mcw" targetRef="ScriptTask_159855t" />
     <bpmn:sequenceFlow id="SequenceFlow_0926ghe" name="no" sourceRef="ExclusiveGateway_1ogbunu" targetRef="Task_1iomfas">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{(execution.getVariable("isAllNSSIFinished" )  == false)}</bpmn:conditionExpression>
@@ -55,8 +53,8 @@ ddss.preProcessRequest(execution)</bpmn:script>
     <bpmn:sequenceFlow id="SequenceFlow_0npmman" sourceRef="Task_0etki1p" targetRef="Task_13k9usx" />
     <bpmn:scriptTask id="Task_1iomfas" name="Get Current NSSI" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_0926ghe</bpmn:incoming>
-      <bpmn:incoming>SequenceFlow_05si1me</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_01o2qpv</bpmn:outgoing>
+      <bpmn:incoming>SequenceFlow_1252rbf</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_17tvomo</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def ddss= new DoDeleteSliceService()
 ddss.getCurrentNSSI(execution)</bpmn:script>
@@ -69,14 +67,6 @@ def ddss= new DoDeleteSliceService()
 ddss.parseNextNSSI(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_15z9iio" sourceRef="ScriptTask_159855t" targetRef="ExclusiveGateway_1ogbunu" />
-    <bpmn:sequenceFlow id="SequenceFlow_0q83qg3" sourceRef="Task_1qqljvu" targetRef="Task_1rc7mcw" />
-    <bpmn:scriptTask id="Task_1qqljvu" name="Query Slice Profile From AAI" scriptFormat="groovy">
-      <bpmn:incoming>SequenceFlow_01o2qpv</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0q83qg3</bpmn:outgoing>
-      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
-def ddss= new DoDeleteSliceService()
-ddss.querySliceProfileFromAAI(execution)</bpmn:script>
-    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_029u1wr" sourceRef="Task_13k9usx" targetRef="Task_1ujnqtj" />
     <bpmn:scriptTask id="Task_13k9usx" name="Query E2ESlice Serive From AAI" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_0npmman</bpmn:incoming>
@@ -93,30 +83,84 @@ ddss.queryE2ESliceSeriveFromAAI(execution)</bpmn:script>
         <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
       </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_0q83qg3</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_17tvomo</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0c58sw3</bpmn:outgoing>
     </bpmn:callActivity>
+    <bpmn:scriptTask id="Task_1iuls9p" name="Terminate NSI Query" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1aa2ek0</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1252rbf</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def dss= new DeleteSliceService()
+dss.terminateNSIQuery(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_17tvomo" sourceRef="Task_1iomfas" targetRef="Task_1rc7mcw" />
+    <bpmn:sequenceFlow id="SequenceFlow_1aa2ek0" sourceRef="Task_1u755sr" targetRef="Task_1iuls9p" />
+    <bpmn:sequenceFlow id="SequenceFlow_1252rbf" sourceRef="Task_1iuls9p" targetRef="Task_1iomfas" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoDeleteSliceServiceV1">
+      <bpmndi:BPMNEdge id="Flow_1252rbf_di" bpmnElement="SequenceFlow_1252rbf">
+        <di:waypoint x="1150" y="140" />
+        <di:waypoint x="1200" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1aa2ek0_di" bpmnElement="SequenceFlow_1aa2ek0">
+        <di:waypoint x="1000" y="140" />
+        <di:waypoint x="1050" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17tvomo_di" bpmnElement="SequenceFlow_17tvomo">
+        <di:waypoint x="1300" y="140" />
+        <di:waypoint x="1370" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_029u1wr_di" bpmnElement="SequenceFlow_029u1wr">
+        <di:waypoint x="530" y="140" />
+        <di:waypoint x="600" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_15z9iio_di" bpmnElement="SequenceFlow_15z9iio">
+        <di:waypoint x="1640" y="140" />
+        <di:waypoint x="1715" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0npmman_di" bpmnElement="SequenceFlow_0npmman">
+        <di:waypoint x="370" y="140" />
+        <di:waypoint x="430" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0926ghe_di" bpmnElement="SequenceFlow_0926ghe">
+        <di:waypoint x="1740" y="165" />
+        <di:waypoint x="1740" y="260" />
+        <di:waypoint x="1250" y="260" />
+        <di:waypoint x="1250" y="180" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1489" y="242" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0c58sw3_di" bpmnElement="SequenceFlow_0c58sw3">
+        <di:waypoint x="1470" y="140" />
+        <di:waypoint x="1540" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1c4fjbv_di" bpmnElement="SequenceFlow_1c4fjbv">
+        <di:waypoint x="1765" y="140" />
+        <di:waypoint x="1802" y="140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1771" y="118" width="17" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1rgfzzy_di" bpmnElement="SequenceFlow_1rgfzzy">
+        <di:waypoint x="850" y="140" />
+        <di:waypoint x="900" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1qkgvvu_di" bpmnElement="SequenceFlow_1qkgvvu">
+        <di:waypoint x="700" y="140" />
+        <di:waypoint x="750" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ep5het_di" bpmnElement="SequenceFlow_0ep5het">
+        <di:waypoint x="188" y="140" />
+        <di:waypoint x="270" y="140" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="152" y="122" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="159" y="165" width="22" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0ep5het_di" bpmnElement="SequenceFlow_0ep5het">
-        <di:waypoint x="188" y="140" />
-        <di:waypoint x="270" y="140" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1qkgvvu_di" bpmnElement="SequenceFlow_1qkgvvu">
-        <di:waypoint x="700" y="140" />
-        <di:waypoint x="750" y="140" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1rgfzzy_di" bpmnElement="SequenceFlow_1rgfzzy">
-        <di:waypoint x="850" y="140" />
-        <di:waypoint x="900" y="140" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_1bj6tw4_di" bpmnElement="Task_1ujnqtj">
         <dc:Bounds x="600" y="100" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -126,79 +170,35 @@ ddss.queryE2ESliceSeriveFromAAI(execution)</bpmn:script>
       <bpmndi:BPMNShape id="ScriptTask_01fp1vt_di" bpmnElement="Task_1u755sr">
         <dc:Bounds x="900" y="100" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_05si1me_di" bpmnElement="SequenceFlow_05si1me">
-        <di:waypoint x="1000" y="140" />
-        <di:waypoint x="1040" y="140" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ExclusiveGateway_1ogbunu_di" bpmnElement="ExclusiveGateway_1ogbunu" isMarkerVisible="true">
-        <dc:Bounds x="1555" y="115" width="50" height="50" />
+        <dc:Bounds x="1715" y="115" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1560" y="85" width="52" height="27" />
+          <dc:Bounds x="1720" y="85" width="52" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_0jaitqv_di" bpmnElement="EndEvent_0jaitqv">
-        <dc:Bounds x="1692" y="122" width="36" height="36" />
+        <dc:Bounds x="1802" y="122" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1700" y="168" width="20" height="14" />
+          <dc:Bounds x="1810" y="168" width="20" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1c4fjbv_di" bpmnElement="SequenceFlow_1c4fjbv">
-        <di:waypoint x="1605" y="140" />
-        <di:waypoint x="1692" y="140" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1630" y="118" width="17" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_01o2qpv_di" bpmnElement="SequenceFlow_01o2qpv">
-        <di:waypoint x="1140" y="140" />
-        <di:waypoint x="1170" y="140" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0c58sw3_di" bpmnElement="SequenceFlow_0c58sw3">
-        <di:waypoint x="1400" y="140" />
-        <di:waypoint x="1420" y="140" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0926ghe_di" bpmnElement="SequenceFlow_0926ghe">
-        <di:waypoint x="1580" y="165" />
-        <di:waypoint x="1580" y="260" />
-        <di:waypoint x="1090" y="260" />
-        <di:waypoint x="1090" y="180" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1329" y="242" width="13" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_0icszw6_di" bpmnElement="Task_0etki1p">
         <dc:Bounds x="270" y="100" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0npmman_di" bpmnElement="SequenceFlow_0npmman">
-        <di:waypoint x="370" y="140" />
-        <di:waypoint x="430" y="140" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_1obnwrr_di" bpmnElement="Task_1iomfas">
-        <dc:Bounds x="1040" y="100" width="100" height="80" />
+        <dc:Bounds x="1200" y="100" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_159855t_di" bpmnElement="ScriptTask_159855t">
-        <dc:Bounds x="1420" y="100" width="100" height="80" />
+        <dc:Bounds x="1540" y="100" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_15z9iio_di" bpmnElement="SequenceFlow_15z9iio">
-        <di:waypoint x="1520" y="140" />
-        <di:waypoint x="1555" y="140" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0q83qg3_di" bpmnElement="SequenceFlow_0q83qg3">
-        <di:waypoint x="1270" y="140" />
-        <di:waypoint x="1300" y="140" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ScriptTask_0y9ppnc_di" bpmnElement="Task_1qqljvu">
-        <dc:Bounds x="1170" y="100" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_029u1wr_di" bpmnElement="SequenceFlow_029u1wr">
-        <di:waypoint x="530" y="140" />
-        <di:waypoint x="600" y="140" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_0f9rjq4_di" bpmnElement="Task_13k9usx">
         <dc:Bounds x="430" y="100" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="CallActivity_18qkiat_di" bpmnElement="Task_1rc7mcw">
-        <dc:Bounds x="1300" y="100" width="100" height="80" />
+        <dc:Bounds x="1370" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1iuls9p_di" bpmnElement="Task_1iuls9p">
+        <dc:Bounds x="1050" y="100" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

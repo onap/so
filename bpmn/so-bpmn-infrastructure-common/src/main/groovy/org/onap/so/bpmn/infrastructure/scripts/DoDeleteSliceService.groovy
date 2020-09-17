@@ -25,16 +25,20 @@ import org.onap.aai.domain.yang.AllottedResource
 import org.onap.aai.domain.yang.AllottedResources
 import org.onap.aai.domain.yang.Relationship
 import org.onap.aai.domain.yang.ServiceInstance
-import org.onap.aai.domain.yang.SliceProfiles
+import org.onap.aai.domain.yang.ServiceProfile
+import org.onap.aai.domain.yang.ServiceProfiles
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
+import org.onap.so.bpmn.common.scripts.OofUtils
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.HttpClient
+import org.onap.so.client.HttpClientFactory
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
+import javax.ws.rs.core.Response
 import javax.ws.rs.NotFoundException
 
 import static org.apache.commons.lang3.StringUtils.isBlank
@@ -52,6 +56,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank
 class DoDeleteSliceService extends AbstractServiceTaskProcessor {
     private final String PREFIX ="DoDeleteSliceService"
     ExceptionUtil exceptionUtil = new ExceptionUtil()
+    OofUtils oofUtils = new OofUtils()
     private static final Logger LOGGER = LoggerFactory.getLogger( DoDeleteSliceService.class)
 
     @Override
@@ -96,17 +101,47 @@ class DoDeleteSliceService extends AbstractServiceTaskProcessor {
     {
         LOGGER.trace(" *****${PREFIX} Start queryE2ESliceSeriveFromAAI *****")
         String serviceInstanceId = execution.getVariable("serviceInstanceId")
-
+        try
+        {
         String errorMsg = "query e2e slice service from aai failed"
         AAIResultWrapper wrapper = queryAAI(execution, AAIObjectType.SERVICE_INSTANCE, serviceInstanceId, errorMsg)
         Optional<ServiceInstance> si =wrapper.asBean(ServiceInstance.class)
         if(si.isPresent())
         {
             String snssai = si.get()?.getEnvironmentContext()
+            ServiceProfiles serviceProfiles = si.get()?.getServiceProfiles()
+            ServiceProfile serviceProfile = serviceProfiles.getServiceProfile().get(0)
+            String serviceProfileId = serviceProfile ? serviceProfile.getProfileId() : ""
             execution.setVariable("snssai", snssai ?: "")
-            LOGGER.info("serviceInstanceId: ${serviceInstanceId}, snssai: ${snssai}")
+            execution.setVariable("serviceProfileId",serviceProfileId)
+            List<ServiceInstance> sliceProfileList = []
+            List<Relationship> relationshipList = si.get().getRelationshipList().getRelationship()
+            for (Relationship relationship : relationshipList) {
+                String relatedTo = relationship.getRelatedTo()
+                if (relatedTo.toLowerCase() == "service-instance") {
+                    String relatioshipurl = relationship.getRelatedLink()
+                    String instanceId = relatioshipurl.substring(relatioshipurl.lastIndexOf("/") + 1, relatioshipurl.length())
+                    AAIResultWrapper wrapper1 = queryAAI(execution, AAIObjectType.SERVICE_INSTANCE, instanceId, errorMsg)                           
+                    Optional<ServiceInstance> serviceInstance = wrapper1.asBean(ServiceInstance.class)
+                    if (serviceInstance.isPresent()) {
+                        ServiceInstance instance = serviceInstance.get()
+                        if ("slice-profile-instance".equalsIgnoreCase(instance.getServiceRole())) {
+                            sliceProfileList.add(instance)
+                        }
+                    }
+                }
+            }
+            execution.setVariable("sliceProfileList",sliceProfileList)
+            LOGGER.info("serviceInstanceId: ${serviceInstanceId}, snssai: ${snssai}, sliceProfileList: ${sliceProfileList}")
         }
         LOGGER.trace(" *****${PREFIX} Exit queryE2ESliceSeriveFromAAI *****")
+        }
+        catch (any)
+        {
+            String msg = "query E2E slice service from aai failed! cause-"+any.getCause()
+            LOGGER.error(any.printStackTrace())
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
+        }
     }
 
     /**
@@ -169,7 +204,15 @@ class DoDeleteSliceService extends AbstractServiceTaskProcessor {
                     if (relatedTo == "service-instance")
                     {
                         String relatedLink = relationship.getRelatedLink()?:""
-                        String nssiId = relatedLink ? relatedLink.substring(relatedLink.lastIndexOf("/") + 1,relatedLink.length()) : ""
+                        String instanceId = relatedLink ? relatedLink.substring(relatedLink.lastIndexOf("/") + 1,relatedLink.length()) : ""
+                        AAIResultWrapper wrapper1 = queryAAI(execution, AAIObjectType.SERVICE_INSTANCE, instanceId, errorMsg)
+                        Optional<ServiceInstance> serviceInstance = wrapper1.asBean(ServiceInstance.class)
+                        if (serviceInstance.isPresent()) {
+                            ServiceInstance instance = serviceInstance.get()
+                            if ("nssi".equalsIgnoreCase(instance.getServiceRole())) {
+                                nssiId = instance.getServiceInstanceId()
+                            }
+                        }
                         nssiIdList.add(nssiId)
                         msg+="${nssiId}, "
                     }
@@ -227,12 +270,24 @@ class DoDeleteSliceService extends AbstractServiceTaskProcessor {
     {
         LOGGER.trace(" *****${PREFIX} Start getCurrentNSSI *****")
         List<ServiceInstance> nssiInstanceList = execution.getVariable("nssiInstanceList")
+        List<ServiceInstance> sliceProfileList = execution.getVariable("sliceProfileList")
         int currentIndex = execution.getVariable("currentNSSIIndex") as int
+        String profileId = ""
         ServiceInstance nssi = nssiInstanceList?.get(currentIndex)
+        for(ServiceInstance sliceProfileInstance : sliceProfileList) {
+            if(sliceProfileInstance.getWorkloadContext().equalsIgnoreCase(nssi.getWorkloadContext()))
+            {
+                profileId = sliceProfileInstance.getServiceInstanceId()
+            }
+        }
         def currentNSSI = [:]
         currentNSSI['nssiServiceInstanceId'] = nssi?.getServiceInstanceId()
         currentNSSI['modelInvariantId'] = nssi?.getModelInvariantId()
         currentNSSI['modelVersionId'] = nssi?.getModelVersionId()
+        currentNSSI['nssiName'] = nssi?.getServiceInstanceName()
+        currentNSSI['sST'] = nssi?.getServiceType()
+        currentNSSI['PLMNIdList'] = nssi?.getServiceInstanceLocationId()
+        currentNSSI['profileId'] =  profileId
         currentNSSI['snssai'] = execution.getVariable("snssai") ?: ""
         currentNSSI['nsiServiceInstanceId'] = execution.getVariable("nsiId") ?: ""
         currentNSSI['operationId'] = execution.getVariable("operationId") ?: ""
@@ -271,30 +326,6 @@ class DoDeleteSliceService extends AbstractServiceTaskProcessor {
         LOGGER.trace(" *****${PREFIX} Exit parseNextNSSI *****")
     }
 
-
-    /**
-     * query sliceProfile from AAI
-     * save profileId
-     * @param execution
-     */
-    void querySliceProfileFromAAI(DelegateExecution execution)
-    {
-        LOGGER.trace(" *****${PREFIX} Start querySliceProfileFromAAI *****")
-        def currentNSSI = execution.getVariable("currentNSSI")
-        String nssiId = currentNSSI['nssiServiceInstanceId']
-        String errorMsg = "query slice profile failed"
-        AAIResultWrapper wrapper = queryAAI(execution, AAIObjectType.SLICE_PROFILE_ALL, nssiId, errorMsg)
-        Optional<SliceProfiles> sliceProfiles =wrapper.asBean(SliceProfiles.class)
-        if(sliceProfiles.isPresent())
-        {
-            String profileId = sliceProfiles.get().getSliceProfile()?.get(0)?.getProfileId()
-            currentNSSI['profileId'] =  profileId ?: ""
-            LOGGER.info("nssiId: ${nssiId}, profileId: ${profileId}")
-        }
-        execution.setVariable("currentNSSI", currentNSSI)
-        LOGGER.trace(" *****${PREFIX} Exit querySliceProfileFromAAI *****")
-    }
-
     /**
      * query AAI
      * @param execution
@@ -317,4 +348,57 @@ class DoDeleteSliceService extends AbstractServiceTaskProcessor {
         return wrapper
     }
 
+    void terminateNSIQuery(DelegateExecution execution)
+    {
+        logger.debug("Start terminateNSIQuery")
+        
+        String requestId = execution.getVariable("msoRequestId")
+        String nxlId = currentNSSI['nsiServiceInstanceId']
+        String nxlType = "NSI"
+        String messageType = "nsiTerminationResponse"
+        String serviceInstanceId = execution.getVariable("serviceInstanceId")
+        
+        def authHeader = ""
+        String basicAuth = UrnPropertiesReader.getVariable("mso.oof.auth", execution)
+        String msokey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
+
+        String basicAuthValue = utils.encrypt(basicAuth, msokey)
+        if (basicAuthValue != null) {
+            logger.debug( "Obtained BasicAuth username and password for OOF: " + basicAuthValue)
+            try {
+                authHeader = utils.getBasicAuth(basicAuthValue, msokey)
+                execution.setVariable("BasicAuthHeaderValue", authHeader)
+            } catch (Exception ex) {
+                logger.debug( "Unable to encode username and password string: " + ex)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Internal Error - Unable to " +
+                        "encode username and password string")
+            }
+        } else {
+            logger.debug( "Unable to obtain BasicAuth - BasicAuth value null")
+            exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Internal Error - BasicAuth " +
+                    "value null")
+        }
+
+        URL requestUrl = new URL(oofUrl + "/api/oof/terminate/nxi/v1")
+        String oofRequest = oofUtils.buildTerminateNxiRequest(requestId, nxlId, nxlType, messageType, serviceInstanceId)
+        HttpClient httpClient = new HttpClientFactory().newJsonClient(requestUrl, ONAPComponents.OOF)
+        httpClient.addAdditionalHeader("Authorization", authHeader)
+        Response httpResponse = httpClient.post(oofRequest)
+
+        int responseCode = httpResponse.getStatus()
+        logger.debug("OOF sync response code is: " + responseCode)
+
+        if(responseCode != 200){
+            exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from OOF.")
+        }       
+        try {
+            Map<String, String> resMap = httpResponse.readEntity(Map.class)
+            boolean terminateResponse = resMap.get("terminateResponse")
+            execution.setVariable("terminateNSI", terminateResponse)
+        } catch (Exception ex) {
+            logger.debug( "Failed to get terminate Response suggested by OOF.")
+            exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Failed to get terminate Response suggested by OOF.")
+        }
+        logger.debug("Finish terminateNSIQuery")
+    }
 }
