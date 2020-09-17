@@ -19,11 +19,14 @@
  */
 package org.onap.so.etsi.nfvo.ns.lcm.database.config;
 
+import static org.slf4j.LoggerFactory.getLogger;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoJob;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.flyway.FlywayDataSource;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
@@ -47,6 +50,7 @@ import com.zaxxer.hikari.HikariDataSource;
 @EnableJpaRepositories(entityManagerFactoryRef = "entityManagerFactory",
         basePackages = {"org.onap.so.etsi.nfvo.ns.lcm.database.repository"})
 public class NfvoDatabaseConfiguration {
+    private static final Logger logger = getLogger(NfvoDatabaseConfiguration.class);
 
     private static final String PERSISTENCE_UNIT = "nfvo";
     private static final String NFVO_DATA_SOURCE_QUALIFIER = "nfvoDataSource";
@@ -57,14 +61,18 @@ public class NfvoDatabaseConfiguration {
     @Bean
     @ConfigurationProperties(prefix = "spring.datasource.hikari.nfvo")
     public HikariConfig nfvoDbConfig() {
+        logger.debug("Creating NFVO HikariConfig bean ... ");
         return new HikariConfig();
     }
 
+    @Primary
+    @FlywayDataSource
     @Bean(name = NFVO_DATA_SOURCE_QUALIFIER)
     public DataSource dataSource() {
         if (mBeanExporter != null) {
             mBeanExporter.addExcludedBean(NFVO_DATA_SOURCE_QUALIFIER);
         }
+        logger.debug("Creating NFVO HikariDataSource bean ... ");
         final HikariConfig hikariConfig = this.nfvoDbConfig();
         return new HikariDataSource(hikariConfig);
     }
