@@ -37,7 +37,7 @@ public class ServiceLevelUpgradeTest {
         testedObject.execute(execution);
         // then
         assertThat(execution.getVariable(ServiceLevelConstants.SOFTWARE_WORKFLOW_TO_INVOKE))
-                .isEqualTo("PNFSoftwareUpgrade");
+                .isEqualTo("GenericPnfSoftwareUpgrade");
         assertThat(execution.getVariable(ServiceLevelConstants.CONTROLLER_STATUS)).isEqualTo("");
     }
 
@@ -50,8 +50,8 @@ public class ServiceLevelUpgradeTest {
         // when
         testedObject.execute(execution);
         // then
-        assertThat(execution.getVariable(ServiceLevelConstants.SOFTWARE_WORKFLOW_TO_INVOKE)).isNull();
-        assertThat(execution.getVariable(ServiceLevelConstants.CONTROLLER_STATUS)).isNull();
+        assertThat(execution.getVariable(ServiceLevelConstants.SOFTWARE_WORKFLOW_TO_INVOKE));
+        assertThat(execution.getVariable(ServiceLevelConstants.CONTROLLER_STATUS)).isEqualTo("");
     }
 
     private DelegateExecution prepareExecution() {
