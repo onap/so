@@ -66,6 +66,7 @@ public class CreateInventoryTask extends ExternalTaskUtils {
             try {
                 logger.info("Executing External Task Create Inventory, Retry Number: {} \n {}", retryCount,
                         cloudInformation.toString());
+                createInventory.relateVfModuleToTenant(cloudInformation);
                 createInventory.heatbridge(cloudInformation);
             } catch (Exception e) {
                 logger.error("Error during inventory of stack", e);
