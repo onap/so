@@ -971,8 +971,10 @@ public class ASDCController {
     private void processNsstNotification(INotificationData iNotif, ToscaResourceStructure toscaResourceStructure) {
         Metadata serviceMetadata = toscaResourceStructure.getServiceMetadata();
         try {
-            if (serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY).equalsIgnoreCase("NSST")) {
-
+            String category = serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY);
+            boolean isNeedInital = (category.contains("NSST") || category.equalsIgnoreCase("TN Network Requirement"))
+                    && iNotif.getResources().isEmpty();
+            if (isNeedInital) {
                 String artifactContent = null;
                 List<IArtifactInfo> serviceArtifacts = iNotif.getServiceArtifacts();
                 Optional<IArtifactInfo> artifactOpt = serviceArtifacts.stream()
@@ -986,14 +988,18 @@ public class ASDCController {
                     artifactContent = zipParserInstance.parseJsonForZip(filePath);
                     logger.debug(
                             "serviceArtifact parsing success! serviceArtifactUUID: " + artifactInfo.getArtifactUUID());
+
+                    ResourceStructure resourceStructure = new VfResourceStructure(iNotif, new ResourceInstance());
+                    resourceStructure.setResourceType(ResourceType.OTHER);
+                    toscaInstaller.installNsstService(toscaResourceStructure, (VfResourceStructure) resourceStructure,
+                            artifactContent);
                 } else {
                     logger.debug("serviceArtifact is null");
+                    toscaInstaller.installNsstService(toscaResourceStructure, null, null);
                 }
-                ResourceStructure resourceStructure = new VfResourceStructure(iNotif, new ResourceInstance());
-                resourceStructure.setResourceType(ResourceType.OTHER);
-                toscaInstaller.installTheNsstService(toscaResourceStructure, (VfResourceStructure) resourceStructure,
-                        artifactContent);
+
             }
+
         } catch (IOException e) {
             logger.error("serviceArtifact parse failure for service uuid:  "
                     + serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY));

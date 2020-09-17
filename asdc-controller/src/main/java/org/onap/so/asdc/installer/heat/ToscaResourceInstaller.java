@@ -2870,7 +2870,15 @@ public class ToscaResourceInstaller {
         List<Input> serviceInputs = sdcCsarHelper.getServiceInputs();
         if (!serviceInputs.isEmpty()) {
             serviceInputList = new ArrayList<>();
-            serviceInputs.forEach(input -> {
+            List<Input> filterList;
+            filterList = serviceInputs.stream()
+                    .filter(input -> !SKIP_POST_INST_CONF.equals(input.getName())
+                            && !CDS_MODEL_NAME.equalsIgnoreCase(input.getName())
+                            && !CDS_MODEL_VERSION.equalsIgnoreCase(input.getName())
+                            && !CONTROLLER_ACTOR.equalsIgnoreCase(input.getName()))
+                    .collect(Collectors.toList());
+
+            filterList.forEach(input -> {
                 Map<String, Object> serviceInputMap = new HashMap<>();
                 serviceInputMap.put("name", input.getName());
                 serviceInputMap.put("type", input.getType());
@@ -2894,7 +2902,7 @@ public class ToscaResourceInstaller {
     }
 
     @Transactional(rollbackFor = {ArtifactInstallerException.class})
-    public void installTheNsstService(ToscaResourceStructure toscaResourceStruct, VfResourceStructure vfResourceStruct,
+    public void installNsstService(ToscaResourceStructure toscaResourceStruct, VfResourceStructure vfResourceStruct,
             String artifactContent) {
         createToscaCsar(toscaResourceStruct);
         createService(toscaResourceStruct, vfResourceStruct);
@@ -2925,6 +2933,10 @@ public class ToscaResourceInstaller {
     }
 
     private void createServiceInfo(ToscaResourceStructure toscaResourceStruct, Service service) {
+        if (!service.getServiceInfos().isEmpty()) {
+            return;
+        }
+
         List<ServiceInfo> serviceInfos = new ArrayList<>();
 
         ServiceInfo serviceInfo = new ServiceInfo();
@@ -2945,42 +2957,67 @@ public class ToscaResourceInstaller {
         ISdcCsarHelper helper = toscaResourceStruct.getSdcCsarHelper();
         String typeName = helper.getServiceSubstitutionMappingsTypeName();
         Optional<NodeTemplate> nodeTemplate = helper.getServiceNodeTemplates().stream().findAny();
-        List<Object> serviceProperties = new ArrayList<>();
-        Map<String, Object> servicePropertiesMap;
+
         if (nodeTemplate.isPresent()) {
+            String serviceUUID = nodeTemplate.get().getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID);
             LinkedHashMap<String, Object> customDef = nodeTemplate.get().getCustomDef();
-            Optional<String> machKey =
-                    customDef.keySet().stream().filter(key -> key.equalsIgnoreCase(typeName)).findFirst();
-            if (machKey.isPresent()) {
-                Object obj = customDef.get(machKey.get());
-                try {
-                    if (obj instanceof Map) {
-                        Object properties = ((HashMap) obj).get("properties");
-                        if (null != properties) {
-                            for (Object propertyName : ((Map) properties).keySet()) {
-                                servicePropertiesMap = new HashMap<>();
-                                servicePropertiesMap.put("name", propertyName);
-                                Object object = ((Map) properties).get(propertyName);
-                                for (Object entry : ((Map) object).entrySet()) {
-                                    servicePropertiesMap.put((String) ((Map.Entry) entry).getKey(),
-                                            ((Map.Entry) entry).getValue());
-                                }
-                                servicePropertiesMap.remove("description");
-                                serviceProperties.add(servicePropertiesMap);
-                            }
-                            propertiesJson = objectMapper.writeValueAsString(serviceProperties);
-                            propertiesJson = propertiesJson.replace("\"", "\\\"");
-                        }
-                    }
-                } catch (JsonProcessingException e) {
-                    logger.error("serviceProperties could not be deserialized for service uuid:  "
-                            + nodeTemplate.get().getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
-                }
+            List<Object> serviceProperties = getPropertiesFromCustomDef(customDef, typeName);
+
+            try {
+                propertiesJson = objectMapper.writeValueAsString(serviceProperties);
+                propertiesJson = propertiesJson.replace("\"", "\\\"");
+            } catch (JsonProcessingException e) {
+                logger.error("serviceProperties could not be deserialized for service uuid:  " + serviceUUID);
+            } catch (Exception ex) {
+                logger.error("service properties parsing failed. service uuid:" + serviceUUID);
             }
+
         } else {
             logger.debug("ServiceNodeTemplates is null");
         }
         return propertiesJson;
+    }
+
+    private static List<Object> getPropertiesFromCustomDef(LinkedHashMap<String, Object> customDef,
+            final String typeName) {
+        Optional<String> machKey =
+                customDef.keySet().stream().filter(key -> key.equalsIgnoreCase(typeName)).findFirst();
+        Map<String, Object> servicePropertiesMap;
+        List<Object> serviceProperties = new ArrayList<>();
+
+        if (machKey.isPresent()) {
+            Object obj = customDef.get(machKey.get());
+            if (obj instanceof Map) {
+                Object properties = ((HashMap) obj).get("properties");
+                if (null != properties) {
+                    for (Object propertyName : ((Map) properties).keySet()) {
+                        if (propertyName.toString().split("_").length >= 2) {
+                            continue;
+                        }
+
+                        servicePropertiesMap = new HashMap<>();
+                        servicePropertiesMap.put("name", propertyName);
+                        Object object = ((Map) properties).get(propertyName);
+                        for (Object entry : ((Map) object).entrySet()) {
+                            servicePropertiesMap.put((String) ((Map.Entry) entry).getKey(),
+                                    ((Map.Entry) entry).getValue());
+                        }
+
+                        String type = servicePropertiesMap.get("type").toString();
+                        if (type.split("\\.").length >= 2) {
+                            List<Object> subProperties = getPropertiesFromCustomDef(customDef, type);
+                            if (subProperties.size() > 0) {
+                                serviceProperties.addAll(subProperties);
+                            }
+                            continue;
+                        }
+                        servicePropertiesMap.remove("description");
+                        serviceProperties.add(servicePropertiesMap);
+                    }
+                }
+            }
+        }
+        return serviceProperties;
     }
 }
 

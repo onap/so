@@ -181,7 +181,7 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
     public void prepareSelectNSTRequest(DelegateExecution execution) {
         logger.debug("Start prepareSelectNSTRequest")
         String requestId = execution.getVariable("msoRequestId")
-	String messageType = "NSTSelectionResponse"
+	    String messageType = "NSTSelectionResponse"
         Map<String, Object> serviceProfile = execution.getVariable("serviceProfile")
 		execution.setVariable("nstSelectionUrl", "/api/oof/v1/selection/nst")
 		execution.setVariable("nstSelection_messageType",messageType)
