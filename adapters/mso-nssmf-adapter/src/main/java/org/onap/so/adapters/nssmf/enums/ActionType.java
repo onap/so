@@ -20,26 +20,37 @@
 
 package org.onap.so.adapters.nssmf.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum ActionType {
-    ALLOCATE,
+    ALLOCATE("allocate"),
 
-    DEALLOCATE,
+    DEALLOCATE("deallocate"),
 
-    CREATE,
+    CREATE("create"),
 
-    TERMINATE,
+    TERMINATE("terminate"),
 
-    ACTIVATE,
+    ACTIVATE("activate"),
 
-    DEACTIVATE,
+    DEACTIVATE("deactivate"),
 
-    QUERY_JOB_STATUS,
+    QUERY_JOB_STATUS("query_job_status"),
 
-    MODIFY_BY_ID,
+    MODIFY_BY_ID("modify_by_id"),
 
-    MODIFY,
+    MODIFY("modify"),
 
-    QUERY_NSSI_SELECTION_CAPABILITY,
+    QUERY_NSSI_SELECTION_CAPABILITY("query_nssi_selection_capability"),
 
-    QUERY_SUB_NET_CAPABILITY
+    QUERY_SUB_NET_CAPABILITY("query_sub_net_capability"),
+    ;
+
+    private String type;
+
+
+    ActionType(String type) {
+        this.type = type;
+    }
 }

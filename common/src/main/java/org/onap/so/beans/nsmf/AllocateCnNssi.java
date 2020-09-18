@@ -21,9 +21,12 @@
 package org.onap.so.beans.nsmf;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Data;
 import java.io.Serializable;
+import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Data
 public class AllocateCnNssi implements Serializable {
 
     @Deprecated
@@ -46,67 +49,5 @@ public class AllocateCnNssi implements Serializable {
 
     private NsiInfo nsiInfo;
 
-    public NsiInfo getNsiInfo() {
-        return nsiInfo;
-    }
-
-    public void setNsiInfo(NsiInfo nsiInfo) {
-        this.nsiInfo = nsiInfo;
-    }
-
-    public String getNsstId() {
-        return nsstId;
-    }
-
-    public void setNsstId(String nsstId) {
-        this.nsstId = nsstId;
-    }
-
-    public String getScriptName() {
-        return scriptName;
-    }
-
-    public void setScriptName(String scriptName) {
-        this.scriptName = scriptName;
-    }
-
-    public CnSliceProfile getSliceProfile() {
-        return sliceProfile;
-    }
-
-    public void setSliceProfile(CnSliceProfile sliceProfile) {
-        this.sliceProfile = sliceProfile;
-    }
-
-    public String getFlavorId() {
-        return flavorId;
-    }
-
-    public void setFlavorId(String flavorId) {
-        this.flavorId = flavorId;
-    }
-
-    public String getNssiId() {
-        return nssiId;
-    }
-
-    public void setNssiId(String nssiId) {
-        this.nssiId = nssiId;
-    }
-
-    public String getNssiName() {
-        return nssiName;
-    }
-
-    public void setNssiName(String nssiName) {
-        this.nssiName = nssiName;
-    }
-
-    public void setExtension(Object extension) {
-        this.extension = extension;
-    }
-
-    public Object getExtension() {
-        return extension;
-    }
+    private Map<String, Object> endPoint;
 }

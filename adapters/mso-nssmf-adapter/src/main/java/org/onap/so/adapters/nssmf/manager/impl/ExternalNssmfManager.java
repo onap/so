@@ -92,8 +92,13 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
 
     private RestResponse doResponseStatus(ResourceOperationStatus status) throws ApplicationException {
         RestResponse restResponse = sendRequest(null);
-        ResponseDescriptor rspDesc =
-                unMarshal(restResponse.getResponseContent(), JobStatusResponse.class).getResponseDescriptor();
+        JobStatusResponse jobStatusResponse = unMarshal(restResponse.getResponseContent(), JobStatusResponse.class);
+
+        ResponseDescriptor rspDesc =jobStatusResponse.getResponseDescriptor();
+        rspDesc.setNssiId(status.getResourceInstanceID());
+
+        jobStatusResponse.setResponseDescriptor(rspDesc);
+        restResponse.setResponseContent(marshal(jobStatusResponse));
         updateRequestDbJobStatus(rspDesc, status, restResponse);
         return restResponse;
     }
@@ -144,7 +149,7 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
     }
 
     protected void updateDbStatus(ResourceOperationStatus status, int rspStatus, JobStatus jobStatus,
-            String description) {
+                                  String description) {
         status.setErrorCode(valueOf(rspStatus));
         status.setStatus(jobStatus.toString());
         status.setStatusDescription(description);

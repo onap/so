@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.2.3">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.4.1">
   <bpmn:process id="DoCreateSliceServiceInstance" name="DoCreateSliceServiceInstance" isExecutable="true">
     <bpmn:startEvent id="createNS_StartEvent" name="createNS_StartEvent">
       <bpmn:outgoing>SequenceFlow_1qo2pln</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="SequenceFlow_1qo2pln" sourceRef="createNS_StartEvent" targetRef="PreprocessIncomingRequest_task" />
-    <bpmn:sequenceFlow id="SequenceFlow_0khtova" sourceRef="PreprocessIncomingRequest_task" targetRef="instantiate_NSTask" />
+    <bpmn:sequenceFlow id="SequenceFlow_0khtova" sourceRef="PreprocessIncomingRequest_task" targetRef="ScriptTask_1g378se" />
     <bpmn:scriptTask id="Task_09nzhwk" name="Create service profile" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_17u69c4</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1uiz85h</bpmn:outgoing>
@@ -21,7 +21,7 @@ def dcsi = new DoCreateSliceServiceInstance()
 dcsi.preProcessRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="instantiate_NSTask" name="create Slice Service in AAI" scriptFormat="groovy">
-      <bpmn:incoming>SequenceFlow_0khtova</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_11gmz7e</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0g5bwvl</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcsi = new DoCreateSliceServiceInstance()
@@ -40,6 +40,27 @@ def dcsi = new DoCreateSliceServiceInstance()
 dcsi.createAllottedResource(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_17u69c4" sourceRef="ScriptTask_18rzwzb" targetRef="Task_09nzhwk" />
+    <bpmn:scriptTask id="ScriptTask_1g378se" name="Prepare ServiceProfile&#10;Decompose Service&#10;" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0khtova</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1wafqwa</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def dcsi= new CreateSliceService()
+dcsi.prepareDecomposeService(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:callActivity id="CallActivity_0svmkxh" name="Call Decompose Service" calledElement="DecomposeService">
+      <bpmn:extensionElements>
+        <camunda:in source="msoRequestId" target="msoRequestId" />
+        <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
+        <camunda:in source="serviceModelInfo" target="serviceModelInfo" />
+        <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
+        <camunda:out source="serviceDecomposition" target="serviceProfileDecomposition" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1wafqwa</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_11gmz7e</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_1wafqwa" sourceRef="ScriptTask_1g378se" targetRef="CallActivity_0svmkxh" />
+    <bpmn:sequenceFlow id="SequenceFlow_11gmz7e" sourceRef="CallActivity_0svmkxh" targetRef="instantiate_NSTask" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoCreateSliceServiceInstance">
@@ -60,43 +81,57 @@ dcsi.createAllottedResource(execution)</bpmn:script>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0khtova_di" bpmnElement="SequenceFlow_0khtova">
         <di:waypoint x="393" y="129" />
-        <di:waypoint x="474" y="129" />
+        <di:waypoint x="440" y="129" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="436" y="108" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_1dw39hg_di" bpmnElement="Task_09nzhwk">
-        <dc:Bounds x="851" y="89" width="100" height="80" />
+        <dc:Bounds x="1120" y="89" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_03j6ogo_di" bpmnElement="PreprocessIncomingRequest_task">
         <dc:Bounds x="293" y="89" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_1qmmew8_di" bpmnElement="instantiate_NSTask">
-        <dc:Bounds x="474" y="89" width="100" height="80" />
+        <dc:Bounds x="790" y="89" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_15pcuuc_di" bpmnElement="EndEvent_1x6k78c">
-        <dc:Bounds x="1049" y="111" width="36" height="36" />
+        <dc:Bounds x="1292" y="111" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="412" y="617" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1uiz85h_di" bpmnElement="SequenceFlow_1uiz85h">
-        <di:waypoint x="951" y="129" />
-        <di:waypoint x="1049" y="129" />
+        <di:waypoint x="1220" y="129" />
+        <di:waypoint x="1292" y="129" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="631" y="108" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0g5bwvl_di" bpmnElement="SequenceFlow_0g5bwvl">
-        <di:waypoint x="574" y="129" />
-        <di:waypoint x="658" y="129" />
+        <di:waypoint x="890" y="129" />
+        <di:waypoint x="960" y="129" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_18rzwzb_di" bpmnElement="ScriptTask_18rzwzb">
-        <dc:Bounds x="658" y="89" width="100" height="80" />
+        <dc:Bounds x="960" y="89" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_17u69c4_di" bpmnElement="SequenceFlow_17u69c4">
-        <di:waypoint x="758" y="129" />
-        <di:waypoint x="851" y="129" />
+        <di:waypoint x="1060" y="129" />
+        <di:waypoint x="1120" y="129" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1g378se_di" bpmnElement="ScriptTask_1g378se">
+        <dc:Bounds x="440" y="89" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_0svmkxh_di" bpmnElement="CallActivity_0svmkxh">
+        <dc:Bounds x="610" y="89" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1wafqwa_di" bpmnElement="SequenceFlow_1wafqwa">
+        <di:waypoint x="540" y="129" />
+        <di:waypoint x="610" y="129" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_11gmz7e_di" bpmnElement="SequenceFlow_11gmz7e">
+        <di:waypoint x="710" y="129" />
+        <di:waypoint x="790" y="129" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
