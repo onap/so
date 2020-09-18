@@ -17,36 +17,40 @@
  # limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.so.beans.nsmf;
+package org.onap.so.beans.nsmf.oof;
 
-import lombok.Data;
-import java.io.Serializable;
-import java.util.List;
+import lombok.Getter;
+import org.onap.so.beans.nsmf.NetworkType;
 
-@Data
-public class ServiceInfo implements Serializable {
+@Getter
+public enum SubnetType {
+    AN("AN", NetworkType.ACCESS),
 
-    private static final long serialVersionUID = 7895110339097615695L;
+    AN_NF("AN-NF", NetworkType.ACCESS),
 
-    private String serviceInvariantUuid;
+    CN("CN", NetworkType.CORE),
 
-    private String serviceUuid;
+    TN_FH("TN-FH", NetworkType.TRANSPORT),
 
-    private String globalSubscriberId;
+    TN_MH("TN-MH", NetworkType.TRANSPORT),
 
-    private String subscriptionServiceType;
+    TN_BH("TN-BH", NetworkType.TRANSPORT),;
 
-    private String serviceType;
+    private NetworkType networkType;
 
-    private String nsiId;
+    private String subnetType;
 
-    private String nssiId;
+    SubnetType(String subnetType, NetworkType networkType) {
+        this.subnetType = subnetType;
+        this.networkType = networkType;
+    }
 
-    private String sST;
-
-    private String nssiName;
-
-    private String pLMNIdList;
-
-    private String actionType;
+    public static NetworkType getNetworkType(String subnetType) {
+        for (SubnetType type : SubnetType.values()) {
+            if (type.subnetType.equalsIgnoreCase(subnetType)) {
+                return type.networkType;
+            }
+        }
+        return null;
+    }
 }
