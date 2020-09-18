@@ -160,45 +160,6 @@ class CreateSliceServiceTest extends MsoGroovyTest {
     }
 
     @Test
-    void testPrepareDecomposeService() {
-        when(mockExecution.getVariable("uuiRequest")).thenReturn(uuiRequest)
-        when(mockExecution.getVariable("serviceProfile")).thenReturn(serviceProfile)
-        CreateSliceService sliceService = new CreateSliceService()
-        sliceService.prepareDecomposeService(mockExecution)
-
-        String serviceModelInfoExcept = """{
-            "modelInvariantUuid":"123456",
-            "modelUuid":"123456",
-            "modelVersion":""
-            }"""
-        Mockito.verify(mockExecution, times(1)).setVariable(eq("ssServiceModelInfo"), captor.capture())
-        String serviceModelInfo = captor.getValue()
-        assertEquals(serviceModelInfoExcept.replaceAll("\\s+", ""),
-                serviceModelInfo.replaceAll("\\s+", ""))
-    }
-
-    @Test
-    void testProcessDecomposition() {
-        when(mockExecution.getVariable("uuiRequest")).thenReturn(uuiRequest)
-        when(mockExecution.getVariable("serviceProfile")).thenReturn(serviceProfile)
-        when(mockExecution.getVariable("nstSolution")).thenReturn(nstSolution)
-
-        CreateSliceService sliceService = new CreateSliceService()
-        sliceService.processDecomposition(mockExecution)
-
-        Mockito.verify(mockExecution, times(1)).setVariable(eq("subscriptionServiceType"), captor.capture())
-        assertEquals(captor.getValue(), "5G")
-        Mockito.verify(mockExecution, times(1)).setVariable(eq("serviceType"), captor.capture())
-        assertEquals(captor.getValue(), "embb")
-        Mockito.verify(mockExecution, times(1)).setVariable(eq("resourceSharingLevel"), captor.capture())
-        assertEquals(captor.getValue(), "shared")
-        Mockito.verify(mockExecution, times(1)).setVariable(eq("nstModelUuid"), captor.capture())
-        assertEquals(captor.getValue(), "aaaaaa")
-        Mockito.verify(mockExecution, times(1)).setVariable(eq("nstModelInvariantUuid"), captor.capture())
-        assertEquals(captor.getValue(), "bbbbbb")
-    }
-
-    @Test
     void testPrepareCreateOrchestrationTask() {
         when(mockExecution.getVariable("serviceInstanceId")).thenReturn("123456")
         when(mockExecution.getVariable("serviceInstanceName")).thenReturn("test")

@@ -2,19 +2,19 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ # Copyright (c) 2020, CMCC Technologies Co., Ltd.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License")
+ # you may not use this file except in compliance with the License.
+ # You may obtain a copy of the License at
+ #
+ #       http://www.apache.org/licenses/LICENSE-2.0
+ #
+ # Unless required by applicable law or agreed to in writing, software
+ # distributed under the License is distributed on an "AS IS" BASIS,
+ # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
  * ============LICENSE_END=========================================================
  */
 
@@ -22,21 +22,22 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.onap.aai.domain.yang.ServiceInstance
-import org.onap.so.client.HttpClient
-import org.onap.so.client.HttpClientFactory
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-
-import javax.ws.rs.core.Response
+import org.onap.so.beans.nsmf.EsrInfo
+import org.onap.so.beans.nsmf.NssmfAdapterNBIRequest
+import org.onap.so.beans.nsmf.SliceTaskParamsAdapter
+import org.onap.so.beans.nsmf.oof.TemplateInfo
+import org.onap.so.bpmn.common.scripts.NssmfAdapterUtils
+import org.onap.so.bpmn.core.domain.ServiceDecomposition
 
 import static org.apache.commons.lang3.StringUtils.*
 import org.springframework.web.util.UriUtils
 import groovy.json.JsonSlurper
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.logging.filter.base.ONAPComponents
 import org.onap.so.beans.nsmf.SliceTaskParams
 import org.onap.so.db.request.beans.OrchestrationTask
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
@@ -59,8 +60,10 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
     JsonSlurper jsonSlurper = new JsonSlurper()
     ObjectMapper objectMapper = new ObjectMapper()
     OofUtils oofUtils = new OofUtils()
-    private static final Logger logger = LoggerFactory.getLogger(CreateSliceService.class)
+    NssmfAdapterUtils nssmfAdapterUtils = new NssmfAdapterUtils(httpClientFactory, jsonUtil)
+    AAIResourcesClient client = getAAIClient()
 
+    private static final Logger logger = LoggerFactory.getLogger(CreateSliceService.class)
 
     public void preProcessRequest(DelegateExecution execution) {
         logger.debug("Start preProcessRequest")
@@ -150,7 +153,7 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
 
             logger.debug("User Input Parameters map: " + inputMap.toString())
             String uuiRequest = inputMap.get("UUIRequest")
-            Map uuiReqMap = jsonSlurper.parseText(uuiRequest)
+            Map uuiReqMap = jsonSlurper.parseText(uuiRequest) as Map
             Map<String, Object> serviceObject = (Map<String, Object>) uuiReqMap.get("service")
             Map<String, Object> parameterObject = (Map<String, Object>) serviceObject.get("parameters")
             Map<String, Object> requestInputs = (Map<String, Object>) parameterObject.get("requestInputs")
@@ -162,7 +165,8 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
 
             execution.setVariable("serviceInputParams", inputMap)
             execution.setVariable("uuiRequest", uuiRequest)
-            execution.setVariable("serviceProfile", serviceProfile)
+            execution.setVariable("se" +
+                    "rviceProfile", serviceProfile)
 
             //TODO
             //execution.setVariable("serviceInputParams", jsonUtil.getJsonValue(siRequest, "requestDetails.requestParameters.userParams"))
@@ -178,169 +182,10 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
         logger.debug("Finish preProcessRequest")
     }
 
-    public void prepareSelectNSTRequest(DelegateExecution execution) {
-        logger.debug("Start prepareSelectNSTRequest")
-        String requestId = execution.getVariable("msoRequestId")
-	    String messageType = "NSTSelectionResponse"
-        Map<String, Object> serviceProfile = execution.getVariable("serviceProfile")
-		execution.setVariable("nstSelectionUrl", "/api/oof/v1/selection/nst")
-		execution.setVariable("nstSelection_messageType",messageType)
-		execution.setVariable("nstSelection_correlator",requestId)
-		String timeout = UrnPropertiesReader.getVariable("mso.adapters.oof.timeout", execution);
-		execution.setVariable("nstSelection_timeout",timeout)
-        String oofRequest = oofUtils.buildSelectNSTRequest(requestId,messageType, serviceProfile)
-        execution.setVariable("nstSelection_oofRequest",oofRequest)
-        logger.debug("Finish prepareSelectNSTRequest")
-
-    }
-	
-	public void processNSTSolutions(DelegateExecution execution) {
-		Map<String, Object> nstSolution
-		try {
-			logger.debug("Start processing NSTSolutions")
-			Map<String, Object> resMap = objectMapper.readValue(execution.getVariable("nstSelection_oofResponse"),Map.class)
-			List<Map<String, Object>> nstSolutions = (List<Map<String, Object>>) resMap.get("solutions")
-			nstSolution = nstSolutions.get(0)
-			execution.setVariable("nstSolution", nstSolution)
-		} catch (Exception ex) {
-			logger.debug( "Failed to get NST solution suggested by OOF.")
-			exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Failed to get NST solution suggested by OOF.")
-		}
-
-	}
-
-    public void prepareDecomposeService(DelegateExecution execution) {
-        logger.debug("Start prepareDecomposeService")
-        String uuiRequest = execution.getVariable("uuiRequest")
-        String ssModelInvariantUuid = jsonUtil.getJsonValue(uuiRequest, "service.serviceInvariantUuid")
-        String ssModelUuid = jsonUtil.getJsonValue(uuiRequest, "service.serviceUuid")
-        String ssServiceModelInfo = """{
-            "modelInvariantUuid":"${ssModelInvariantUuid}",
-            "modelUuid":"${ssModelUuid}",
-            "modelVersion":""
-             }"""
-        execution.setVariable("ssServiceModelInfo", ssServiceModelInfo)
-
-        logger.debug("Finish prepareDecomposeService")
-    }
-
-    public void processDecomposition(DelegateExecution execution) {
-        logger.debug("Start processDecomposition")
-        String uuiRequest = execution.getVariable("uuiRequest")
-        Map<String, Object> serviceProfile = execution.getVariable("serviceProfile")
-        Map<String, Object> nstSolution = execution.getVariable("nstSolution")
-
-        Map uuiReqMap = jsonSlurper.parseText(uuiRequest)
-        Map<String, Object> serviceObject = (Map<String, Object>) uuiReqMap.get("service")
-        String subscriptionServiceType = serviceObject.get("serviceType")
-
-        String serviceType = (String) serviceProfile.get("sST")
-        String resourceSharingLevel = (String) serviceProfile.get("resourceSharingLevel")
-        String nstModelUuid = (String) nstSolution.get("UUID")
-        String nstModelInvariantUuid = (String) nstSolution.get("invariantUUID")
-
-        execution.setVariable("subscriptionServiceType", subscriptionServiceType)
-        execution.setVariable("serviceType", serviceType)
-        execution.setVariable("resourceSharingLevel", resourceSharingLevel)
-        execution.setVariable("nstModelUuid", nstModelUuid)
-        execution.setVariable("nstModelInvariantUuid", nstModelInvariantUuid)
-
-        logger.debug("Finish processDecomposition")
-    }
-
-    public void prepareCreateOrchestrationTask(DelegateExecution execution) {
-        logger.debug("Start createOrchestrationTask")
-        String taskId = execution.getBusinessKey()
-        execution.setVariable("orchestrationTaskId", taskId)
-        logger.debug("BusinessKey: " + taskId)
-        String serviceInstanceId = execution.getVariable("serviceInstanceId")
-        String serviceInstanceName = execution.getVariable("serviceInstanceName")
-        String taskName = "SliceServiceTask"
-        String taskStatus = "Planning"
-        String isManual = "false"
-        String requestMethod = "POST"
-        execution.setVariable("CSSOT_taskId", taskId)
-        execution.setVariable("CSSOT_name", taskName)
-        execution.setVariable("CSSOT_status", taskStatus)
-        execution.setVariable("CSSOT_isManual", isManual)
-        execution.setVariable("CSSOT_requestMethod", requestMethod)
-
-        Map<String, Object> serviceProfile = execution.getVariable("serviceProfile")
-
-        SliceTaskParams sliceTaskParams = new SliceTaskParams()
-        sliceTaskParams.setServiceId(serviceInstanceId)
-        sliceTaskParams.setServiceName(serviceInstanceName)
-        sliceTaskParams.setServiceProfile(serviceProfile)
-        execution.setVariable("sliceTaskParams", sliceTaskParams)
-
-        String paramJson = sliceTaskParams.convertToJson()
-        execution.setVariable("CSSOT_paramJson", paramJson)
-        logger.debug("CSSOT_paramJson: " + paramJson)
-
-        logger.debug("Finish createOrchestrationTask")
-    }
-
-    public void prepareUpdateOrchestrationTask(DelegateExecution execution) {
-        logger.debug("Start prepareUpdateOrchestrationTask")
-        String requestMethod = "PUT"
-        String taskStatus = execution.getVariable("taskStatus")
-        SliceTaskParams sliceTaskParams = execution.getVariable("sliceTaskParams")
-        String paramJson = sliceTaskParams.convertToJson()
-        execution.setVariable("CSSOT_status", taskStatus)
-        execution.setVariable("CSSOT_paramJson", paramJson)
-        execution.setVariable("CSSOT_requestMethod", requestMethod)
-        logger.debug("Finish prepareUpdateOrchestrationTask")
-    }
-
-    public void prepareGetUserOptions(DelegateExecution execution) {
-        logger.debug("Start prepareGetUserOptions")
-        String requestMethod = "GET"
-        execution.setVariable("taskAction", "commit")
-        String taskAction = execution.getVariable("taskAction")
-        logger.debug("task action is: " + taskAction)
-        if (!"commit".equals(taskAction) && !"abort".equals(taskAction)) {
-            String msg = "Unknown task action: " + taskAction
-            logger.debug(msg)
-            exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-        }
-        execution.setVariable("CSSOT_requestMethod", requestMethod)
-        logger.debug("Finish prepareGetUserOptions")
-    }
-
-    public void processUserOptions(DelegateExecution execution) {
-        logger.debug("Start processUserOptions")
-        String response = execution.getVariable("CSSOT_dbResponse")
-        OrchestrationTask orchestrationTask = objectMapper.readValue(response, OrchestrationTask.class)
-        String paramJson = orchestrationTask.getParams()
-        logger.debug("paramJson: " + paramJson)
-        SliceTaskParams sliceTaskParams = new SliceTaskParams()
-        sliceTaskParams.convertFromJson(paramJson)
-        execution.setVariable("sliceTaskParams", sliceTaskParams)
-        logger.debug("Finish processUserOptions")
-    }
-
-    public void updateAAIOrchStatus(DelegateExecution execution) {
-        logger.debug("Start updateAAIOrchStatus")
-        String serviceInstanceId = execution.getVariable("serviceInstanceId")
-        String orchStatus = execution.getVariable("orchestrationStatus")
-
-        try {
-            ServiceInstance si = ServiceInstance si = new ServiceInstance()
-            si.setOrchestrationStatus(orchStatus)
-            AAIResourcesClient client = new AAIResourcesClient()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
-            client.update(uri, si)
-        } catch (BpmnError e) {
-            throw e
-        } catch (Exception ex) {
-            String msg = "Exception in CreateSliceService.updateAAIOrchStatus " + ex.getMessage()
-            logger.info(msg)
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-        }
-
-        logger.debug("Finish updateAAIOrchStatus")
-    }
-
+    /**
+     *
+     * @param execution
+     */
     public void prepareInitServiceOperationStatus(DelegateExecution execution) {
         logger.debug("Start prepareInitServiceOperationStatus")
         try{
@@ -396,6 +241,187 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
         logger.debug("Finish prepareInitServiceOperationStatus")
     }
 
+    /**
+     * prepare create OrchestrationTask
+     * @param execution
+     */
+    public void prepareCreateOrchestrationTask(DelegateExecution execution) {
+        logger.debug("Start createOrchestrationTask")
+        String taskId = execution.getBusinessKey()
+        execution.setVariable("orchestrationTaskId", taskId)
+        logger.debug("BusinessKey: " + taskId)
+        String serviceInstanceId = execution.getVariable("serviceInstanceId")
+        String serviceInstanceName = execution.getVariable("serviceInstanceName")
+        String taskName = "SliceServiceTask"
+        String taskStatus = "Planning"
+        String isManual = "false"
+        String requestMethod = "POST"
+        execution.setVariable("CSSOT_taskId", taskId)
+        execution.setVariable("CSSOT_name", taskName)
+        execution.setVariable("CSSOT_status", taskStatus)
+        execution.setVariable("CSSOT_isManual", isManual)
+        execution.setVariable("CSSOT_requestMethod", requestMethod)
+
+        Map<String, Object> serviceProfile = execution.getVariable("serviceProfile") as Map<String, Object>
+
+        SliceTaskParamsAdapter sliceTaskParams = new SliceTaskParamsAdapter()
+        sliceTaskParams.setServiceId(serviceInstanceId)
+        sliceTaskParams.setServiceName(serviceInstanceName)
+        sliceTaskParams.setServiceProfile(serviceProfile)
+
+        execution.setVariable("sliceTaskParams", sliceTaskParams)
+
+        //todo:----------------------------------------
+//        String paramJson = sliceTaskParams.convertToJson()
+//        execution.setVariable("CSSOT_paramJson", paramJson)
+        /*-------------------------------------------*/
+
+        logger.debug("Finish createOrchestrationTask")
+    }
+
+    /**
+     *  send sync response to csmf
+     * @param execution
+     */
+    public void sendSyncResponse(DelegateExecution execution) {
+        logger.debug("Start sendSyncResponse")
+        try {
+            String operationId = execution.getVariable("operationId")
+            String serviceInstanceId = execution.getVariable("serviceInstanceId")
+            // RESTResponse for API Handler (APIH) Reply Task
+            String createServiceRestRequest = """
+                {
+                   "service": {
+                        "serviceId":"${serviceInstanceId}",
+                        "operationId":"${operationId}"
+                   }
+                }
+                """.trim()
+
+            logger.debug("sendSyncResponse to APIH:" + "\n" + createServiceRestRequest)
+            sendWorkflowResponse(execution, 202, createServiceRestRequest)
+            execution.setVariable("sentSyncResponse", true)
+        } catch (Exception e) {
+            String msg = "Exceptuion in sendSyncResponse:" + e.getMessage()
+            logger.debug(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+        logger.debug("Finish sendSyncResponse")
+    }
+
+    public void prepareSelectNSTRequest(DelegateExecution execution) {
+        logger.debug("Start prepareSelectNSTRequest")
+        String requestId = execution.getVariable("msoRequestId")
+        String messageType = "NSTSelectionResponse"
+        Map<String, Object> serviceProfile = execution.getVariable("serviceProfile") as Map<String, Object>
+        execution.setVariable("nstSelectionUrl", "/api/oof/v1/selection/nst")
+        execution.setVariable("nstSelection_messageType", messageType)
+        execution.setVariable("nstSelection_correlator", requestId)
+        String timeout = UrnPropertiesReader.getVariable("mso.adapters.oof.timeout", execution);
+        execution.setVariable("nstSelection_timeout", timeout)
+        String oofRequest = oofUtils.buildSelectNSTRequest(requestId, messageType, serviceProfile)
+        execution.setVariable("nstSelection_oofRequest", oofRequest)
+        logger.debug("Finish prepareSelectNSTRequest")
+
+    }
+
+    /**
+     * process async response of oof, put the {@solutions} at {@nstSolution}
+     * @param execution
+     */
+    public void processNSTSolutions(DelegateExecution execution) {
+        Map<String, Object> nstSolution
+        try {
+            logger.debug("Start processing NSTSolutions")
+            Map<String, Object> resMap =
+                    objectMapper.readValue(execution.getVariable("nstSelection_oofResponse") as String,
+                            Map.class)
+
+            List<Map<String, Object>> nstSolutions = (List<Map<String, Object>>) resMap.get("solutions")
+            nstSolution = nstSolutions.get(0)
+            execution.setVariable("nstSolution", nstSolution)
+
+            //set nst info into sliceTaskParams
+            SliceTaskParamsAdapter sliceTaskParams =
+                    execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+            TemplateInfo nstInfo = new TemplateInfo()
+            nstInfo.setUUID(nstSolution.get("UUID") as String)
+            nstInfo.setInvariantUUID(nstSolution.get("invariantUUID") as String)
+            nstInfo.setName(nstSolution.get("name") as String)
+
+            sliceTaskParams.setNSTInfo(nstInfo)
+
+            execution.setVariable("sliceTaskParams", sliceTaskParams)
+
+        } catch (Exception ex) {
+            logger.debug( "Failed to get NST solution suggested by OOF.")
+            exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Failed to get NST solution suggested by OOF.")
+        }
+
+    }
+
+    public void prepareUpdateOrchestrationTask(DelegateExecution execution) {
+        logger.debug("Start prepareUpdateOrchestrationTask")
+        String requestMethod = "PUT"
+        String taskStatus = execution.getVariable("taskStatus")
+        SliceTaskParams sliceTaskParams = execution.getVariable("sliceTaskParams")
+        String paramJson = sliceTaskParams.convertToJson()
+        execution.setVariable("CSSOT_status", taskStatus)
+        execution.setVariable("CSSOT_paramJson", paramJson)
+        execution.setVariable("CSSOT_requestMethod", requestMethod)
+        logger.debug("Finish prepareUpdateOrchestrationTask")
+    }
+
+
+    public void prepareGetUserOptions(DelegateExecution execution) {
+        logger.debug("Start prepareGetUserOptions")
+        String requestMethod = "GET"
+        execution.setVariable("taskAction", "commit")
+        String taskAction = execution.getVariable("taskAction")
+        logger.debug("task action is: " + taskAction)
+        if (!"commit".equals(taskAction) && !"abort".equals(taskAction)) {
+            String msg = "Unknown task action: " + taskAction
+            logger.debug(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+        }
+        execution.setVariable("CSSOT_requestMethod", requestMethod)
+        logger.debug("Finish prepareGetUserOptions")
+    }
+
+    public void processUserOptions(DelegateExecution execution) {
+        logger.debug("Start processUserOptions")
+        String response = execution.getVariable("CSSOT_dbResponse")
+        OrchestrationTask orchestrationTask = objectMapper.readValue(response, OrchestrationTask.class)
+        String paramJson = orchestrationTask.getParams()
+        logger.debug("paramJson: " + paramJson)
+        SliceTaskParams sliceTaskParams = new SliceTaskParams()
+        sliceTaskParams.convertFromJson(paramJson)
+        execution.setVariable("sliceTaskParams", sliceTaskParams)
+        logger.debug("Finish processUserOptions")
+    }
+
+    public void updateAAIOrchStatus(DelegateExecution execution) {
+        logger.debug("Start updateAAIOrchStatus")
+        String serviceInstanceId = execution.getVariable("serviceInstanceId")
+        String orchStatus = execution.getVariable("orchestrationStatus")
+
+        try {
+            ServiceInstance si = new ServiceInstance()
+            si.setOrchestrationStatus(orchStatus)
+            AAIResourcesClient client = new AAIResourcesClient()
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
+            client.update(uri, si)
+        } catch (BpmnError e) {
+            throw e
+        } catch (Exception ex) {
+            String msg = "Exception in CreateSliceService.updateAAIOrchStatus " + ex.getMessage()
+            logger.info(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+
+        logger.debug("Finish updateAAIOrchStatus")
+    }
+
     public void prepareUpdateServiceOperationStatus(DelegateExecution execution) {
         logger.debug("Start preUpdateServiceOperationStatus")
         try{
@@ -438,23 +464,7 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
         logger.debug("Finish preUpdateServiceOperationStatus")
     }
 
-    public void sendSyncResponse(DelegateExecution execution) {
-        logger.debug("Start sendSyncResponse")
-        try {
-            String operationId = execution.getVariable("operationId")
-            String serviceInstanceId = execution.getVariable("serviceInstanceId")
-            // RESTResponse for API Handler (APIH) Reply Task
-            String createServiceRestRequest = """{"service":{"serviceId":"${serviceInstanceId}","operationId":"${operationId}"}}""".trim()
-            logger.debug("sendSyncResponse to APIH:" + "\n" + createServiceRestRequest)
-            sendWorkflowResponse(execution, 202, createServiceRestRequest)
-            execution.setVariable("sentSyncResponse", true)
-        } catch (Exception e) {
-            String msg = "Exceptuion in sendSyncResponse:" + e.getMessage()
-            logger.debug(msg)
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-        }
-        logger.debug("Finish sendSyncResponse")
-    }
+
 
     public void prepareCompletionRequest (DelegateExecution execution) {
         logger.trace("Start prepareCompletionRequest")
