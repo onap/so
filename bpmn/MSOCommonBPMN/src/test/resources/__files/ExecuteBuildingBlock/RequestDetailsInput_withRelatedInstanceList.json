@@ -15,5 +15,14 @@
 				"modelUuid":"modelUUID"
 			}
 		}
+	},
+	{
+		"relatedInstance":{
+			"instanceId":"instanceId",	
+			"modelInfo": {
+				"modelType": "vnf",
+				"modelCustomizationId": "my-test-uuid"
+			}
+		}
 	}]
 }

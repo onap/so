@@ -1337,6 +1337,10 @@ public class BBInputSetupTest {
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
         lookupKeyMap.put(ResourceKey.CONFIGURATION_ID, "configurationId");
         String bbName = AssignFlows.FABRIC_CONFIGURATION.toString();
+
+        ServiceModel serviceModel = new ServiceModel();
+        serviceModel.setCurrentService(service);
+
         ConfigurationResourceKeys configResourceKeys = prepareConfigurationResourceKeys();
         configResourceKeys.setVnfcName(vnfcName);
         Vnfc vnfc = new Vnfc();
@@ -1348,7 +1352,8 @@ public class BBInputSetupTest {
         BBInputSetupParameter parameter = new BBInputSetupParameter.Builder().setRequestId(REQUEST_ID)
                 .setModelInfo(modelInfo).setService(service).setBbName(bbName).setServiceInstance(serviceInstance)
                 .setLookupKeyMap(lookupKeyMap).setResourceId(resourceId).setInstanceName(instanceName)
-                .setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails).build();
+                .setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails)
+                .setServiceModel(serviceModel).build();
         SPY_bbInputSetup.populateConfiguration(parameter);
         verify(SPY_bbInputSetup, times(1)).mapCatalogConfiguration(configuration, modelInfo, service,
                 configResourceKeys);
@@ -1370,6 +1375,52 @@ public class BBInputSetupTest {
                 configResourceKeys);
         SPY_bbInputSetup.populateConfiguration(parameter);
         verify(SPY_bbInputSetup, times(1)).mapCatalogConfiguration(configuration2, modelInfo, service,
+                configResourceKeys);
+    }
+
+    @Test
+    public void testPopulateConfigurationReplace() throws JsonParseException, JsonMappingException, IOException {
+        String instanceName = "configurationName";
+        ModelInfo modelInfo = new ModelInfo();
+        modelInfo.setModelCustomizationUuid("72d9d1cd-f46d-447a-abdb-451d6fb05fa9");
+
+        ServiceInstance serviceInstance = new ServiceInstance();
+        Configuration configuration = new Configuration();
+        configuration.setConfigurationId("configurationId");
+        configuration.setConfigurationName("configurationName");
+        serviceInstance.getConfigurations().add(configuration);
+        String resourceId = "configurationId";
+        String vnfcName = "vnfcName";
+        // Mock service
+        Service service = mapper.readValue(
+                new File(RESOURCE_PATH + "CatalogDBService_getServiceInstanceNOAAIInput.json"), Service.class);
+        ConfigurationResourceCustomization configurationCust = new ConfigurationResourceCustomization();
+        configurationCust.setModelCustomizationUUID("72d9d1cd-f46d-447a-abdb-451d6fb05fa9");
+        service.getConfigurationCustomizations().add(configurationCust);
+        Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
+        lookupKeyMap.put(ResourceKey.CONFIGURATION_ID, "configurationId");
+        String bbName = AssignFlows.FABRIC_CONFIGURATION.toString();
+
+        ServiceModel serviceModel = new ServiceModel();
+        serviceModel.setNewService(service);
+
+        ConfigurationResourceKeys configResourceKeys = prepareConfigurationResourceKeys();
+        configResourceKeys.setVnfcName(vnfcName);
+        Vnfc vnfc = new Vnfc();
+        vnfc.setVnfcName(vnfcName);
+        RequestDetails requestDetails = mapper.readValue(
+                new File(RESOURCE_PATH + "RequestDetailsInput_withRelatedInstanceList.json"), RequestDetails.class);
+        doNothing().when(SPY_bbInputSetup).mapCatalogConfiguration(configuration, modelInfo, service,
+                configResourceKeys);
+        doReturn(vnfc).when(SPY_bbInputSetup).getVnfcToConfiguration(vnfcName);
+        BBInputSetupParameter parameter = new BBInputSetupParameter.Builder().setRequestId(REQUEST_ID)
+                .setModelInfo(modelInfo).setService(service).setBbName(bbName).setServiceInstance(serviceInstance)
+                .setLookupKeyMap(lookupKeyMap).setResourceId(resourceId).setInstanceName(instanceName)
+                .setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails)
+                .setServiceModel(serviceModel).setIsReplace(true).build();
+        SPY_bbInputSetup.populateConfiguration(parameter);
+        configResourceKeys.setVnfResourceCustomizationUUID("my-test-uuid");
+        verify(SPY_bbInputSetup, times(1)).mapCatalogConfiguration(configuration, modelInfo, service,
                 configResourceKeys);
     }
 
@@ -1420,6 +1471,9 @@ public class BBInputSetupTest {
         vnfc.setVnfcName(vnfcName);
         RequestDetails requestDetails = new RequestDetails();
 
+        ServiceModel serviceModel = new ServiceModel();
+        serviceModel.setCurrentService(service);
+
         CvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization =
                 new CvnfcConfigurationCustomization();
         ConfigurationResource configurationResource = new ConfigurationResource();
@@ -1432,7 +1486,8 @@ public class BBInputSetupTest {
         BBInputSetupParameter parameter = new BBInputSetupParameter.Builder().setRequestId(REQUEST_ID)
                 .setModelInfo(modelInfo).setService(service).setBbName(bbName).setServiceInstance(serviceInstance)
                 .setLookupKeyMap(lookupKeyMap).setResourceId(resourceId).setInstanceName(instanceName)
-                .setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails).build();
+                .setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails)
+                .setServiceModel(serviceModel).build();
         SPY_bbInputSetup.populateConfiguration(parameter);
         verify(SPY_bbInputSetup, times(1)).mapCatalogConfiguration(configuration, modelInfo, service,
                 configResourceKeys);
@@ -1462,6 +1517,10 @@ public class BBInputSetupTest {
         lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, "genericVnfId");
         String bbName = AssignFlows.VNF.toString();
 
+
+        ServiceModel serviceModel = new ServiceModel();
+        serviceModel.setCurrentService(service);
+
         Platform expectedPlatform = new Platform();
         LineOfBusiness expectedLineOfBusiness = new LineOfBusiness();
         String resourceId = "123";
@@ -1481,7 +1540,8 @@ public class BBInputSetupTest {
                 .setLineOfBusiness(lineOfBusiness).setService(service).setBbName(bbName)
                 .setServiceInstance(serviceInstance).setLookupKeyMap(lookupKeyMap)
                 .setRelatedInstanceList(requestDetails.getRelatedInstanceList()).setResourceId(resourceId)
-                .setVnfType(vnfType).setProductFamilyId(requestDetails.getRequestInfo().getProductFamilyId()).build();
+                .setVnfType(vnfType).setProductFamilyId(requestDetails.getRequestInfo().getProductFamilyId())
+                .setServiceModel(serviceModel).build();
         SPY_bbInputSetup.populateGenericVnf(parameter);
 
         lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, null);
