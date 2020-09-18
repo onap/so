@@ -18,7 +18,7 @@ oofHandler.callOofAdapter(execution)</bpmn:script>
       <bpmn:outgoing>Flow_1fbzzqg</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.common.scripts.*
 def oofHandler = new DoHandleOofRequest()
-oofHandler .preProcessRequest(execution)</bpmn:script>
+oofHandler.preProcessRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:subProcess id="Activity_02ru8n9" name="Sub-process for FalloutHandler and Rollback" triggeredByEvent="true">
       <bpmn:startEvent id="Event_1r00tca">
