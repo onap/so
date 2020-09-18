@@ -21,9 +21,11 @@
 package org.onap.so.beans.nsmf;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Data;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Data
 public class ResponseDescriptor {
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
@@ -43,43 +45,7 @@ public class ResponseDescriptor {
 
     private List<ResponseHistory> responseHistoryList;
 
-    public int getProgress() {
-        return progress;
-    }
+    private String nssiId;
 
-    public void setProgress(int progress) {
-        this.progress = progress;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getStatusDescription() {
-        return statusDescription;
-    }
-
-    public void setStatusDescription(String statusDescription) {
-        this.statusDescription = statusDescription;
-    }
-
-    public String getResponseId() {
-        return responseId;
-    }
-
-    public void setResponseId(String responseId) {
-        this.responseId = responseId;
-    }
-
-    public List<ResponseHistory> getResponseHistoryList() {
-        return responseHistoryList;
-    }
-
-    public void setResponseHistoryList(List<ResponseHistory> responseHistoryList) {
-        this.responseHistoryList = responseHistoryList;
-    }
+    private String endPointId;
 }
