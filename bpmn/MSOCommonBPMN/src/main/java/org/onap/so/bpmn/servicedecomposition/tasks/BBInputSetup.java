@@ -443,6 +443,17 @@ public class BBInputSetup implements JavaDelegate {
 
     protected void populateConfiguration(BBInputSetupParameter parameter) {
         Configuration configuration = null;
+        String replaceVnfModelCustomizationUUID = "";
+        if (parameter.getRelatedInstanceList() != null) {
+            for (RelatedInstanceList relatedInstList : parameter.getRelatedInstanceList()) {
+                RelatedInstance relatedInstance = relatedInstList.getRelatedInstance();
+                if (relatedInstance.getModelInfo().getModelType().equals(ModelType.vnf)) {
+                    if (parameter.getIsReplace()) {
+                        replaceVnfModelCustomizationUUID = relatedInstance.getModelInfo().getModelCustomizationId();
+                    }
+                }
+            }
+        }
         for (Configuration configurationTemp : parameter.getServiceInstance().getConfigurations()) {
             if (parameter.getLookupKeyMap().get(ResourceKey.CONFIGURATION_ID) != null
                     && configurationTemp.getConfigurationId()
@@ -465,8 +476,17 @@ public class BBInputSetup implements JavaDelegate {
         if (configuration != null && parameter.getBbName().contains("Fabric")) {
             Vnfc vnfc = getVnfcToConfiguration(parameter.getConfigurationResourceKeys().getVnfcName());
             configuration.setVnfc(vnfc);
-            this.mapCatalogConfiguration(configuration, parameter.getModelInfo(), parameter.getService(),
-                    parameter.getConfigurationResourceKeys());
+            if (!parameter.getBbName().contains("Delete")) {
+                if (parameter.getIsReplace()) {
+                    parameter.getConfigurationResourceKeys()
+                            .setVnfResourceCustomizationUUID(replaceVnfModelCustomizationUUID);
+                    mapCatalogConfiguration(configuration, parameter.getModelInfo(),
+                            parameter.getServiceModel().getNewService(), parameter.getConfigurationResourceKeys());
+                } else {
+                    mapCatalogConfiguration(configuration, parameter.getModelInfo(),
+                            parameter.getServiceModel().getCurrentService(), parameter.getConfigurationResourceKeys());
+                }
+            }
         } else if (configuration != null && parameter.getBbName().contains("Vrf")) {
             configuration.setModelInfoConfiguration(mapperLayer.mapCatalogConfigurationToConfiguration(
                     findConfigurationResourceCustomization(parameter.getModelInfo(), parameter.getService()), null));
