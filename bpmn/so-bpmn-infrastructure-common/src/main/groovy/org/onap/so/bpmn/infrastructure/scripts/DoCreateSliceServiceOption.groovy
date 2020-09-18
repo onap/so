@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- # Copyright (c) 2019, CMCC Technologies Co., Ltd.
+ # Copyright (c) 2020, CMCC Technologies Co., Ltd.
  #
  # Licensed under the Apache License, Version 2.0 (the "License")
  # you may not use this file except in compliance with the License.
@@ -20,37 +20,36 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import groovy.json.JsonSlurper
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.logging.filter.base.ONAPComponents
+import org.onap.so.beans.nsmf.AnSliceProfile
+import org.onap.so.beans.nsmf.CnSliceProfile
+import org.onap.so.beans.nsmf.EsrInfo
+import org.onap.so.beans.nsmf.NetworkType
+import org.onap.so.beans.nsmf.NssmfAdapterNBIRequest
 import org.onap.so.beans.nsmf.SliceTaskParams
+import org.onap.so.beans.nsmf.SliceTaskParamsAdapter
+import org.onap.so.beans.nsmf.TnSliceProfile
+import org.onap.so.beans.nsmf.oof.SubnetCapability
+import org.onap.so.beans.nsmf.oof.SubnetType
+import org.onap.so.beans.nsmf.oof.TemplateInfo
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
+import org.onap.so.bpmn.common.scripts.NssmfAdapterUtils
 import org.onap.so.bpmn.common.scripts.OofUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.bpmn.core.domain.AllottedResource
+import org.onap.so.bpmn.core.domain.ModelInfo
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
-import org.onap.so.bpmn.core.domain.ServiceProxy
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.client.HttpClient
-import org.onap.so.client.HttpClientFactory
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.AAIResourcesClient
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import javax.ws.rs.NotFoundException
-import javax.ws.rs.core.Response
-
-import static org.apache.commons.lang3.StringUtils.isBlank
+import org.springframework.http.ResponseEntity
 
 class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
 
-    private static final Logger logger = LoggerFactory.getLogger( DoCreateSliceServiceOption.class)
+    private static final Logger logger = LoggerFactory.getLogger(DoCreateSliceServiceOption.class)
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
 
@@ -58,426 +57,528 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
 
     OofUtils oofUtils = new OofUtils()
 
-    ObjectMapper objectMapper = new ObjectMapper()
+    private static final ObjectMapper objectMapper = new ObjectMapper()
+
+    private NssmfAdapterUtils nssmfAdapterUtils = new NssmfAdapterUtils(httpClientFactory, jsonUtil)
+
+    private static final String QUERY_SUB_NET_CAPABILITY = "/api/rest/provMns/v1/NSS/subnetCapabilityQuery"
+
+    private static final String QUERY_NSSI_SELECTION_CAPABILITY = "/api/rest/provMns/v1/NSS/NSSISelectionCapability"
 
     void preProcessRequest (DelegateExecution execution) {
     }
 
+    /**
+     * prepare the params for decompose nst
+     * @param execution
+     */
+    public void prepareDecomposeNST(DelegateExecution execution) {
 
-    void prepareSelectNSIRequest(DelegateExecution execution) {
+        SliceTaskParamsAdapter sliceTaskParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
 
-        String urlString = UrnPropertiesReader.getVariable("mso.oof.endpoint", execution)
-        logger.debug( "get NSI option OOF Url: " + urlString)
-
-        boolean isNSISuggested = true
-        execution.setVariable("isNSISuggested",isNSISuggested)
-        String requestId = execution.getVariable("msoRequestId")
-		String messageType = "NSISelectionResponse"
-		
-        Map<String, Object> profileInfo = execution.getVariable("serviceProfile")
-        Map<String, Object> nstSolution = execution.getVariable("nstSolution")
-        logger.debug("Get NST selection from OOF: " + nstSolution.toString())
-        String nstInfo = """{
-            "modelInvariantId":"${nstSolution.invariantUUID}",
-            "modelVersionId":"${nstSolution.UUID}",
-            "modelName":"${nstSolution.NSTName}"
-         }"""
-		
-		 execution.setVariable("nsiSelectionUrl", "/api/oof/selection/nsi/v1")
-		 execution.setVariable("nsiSelection_messageType",messageType)
-		 execution.setVariable("nsiSelection_correlator",requestId)
-		 String timeout = UrnPropertiesReader.getVariable("mso.adapters.oof.timeout", execution);
-		 execution.setVariable("nsiSelection_timeout",timeout)
-		 String oofRequest = oofUtils.buildSelectNSIRequest(requestId, nstInfo,messageType, profileInfo)
-		 execution.setVariable("nsiSelection_oofRequest",oofRequest)
-		 logger.debug("Sending request to OOF: " + oofRequest)
-    }
-
-    void processOOFResponse(Response httpResponse, DelegateExecution execution) {
-        int responseCode = httpResponse.getStatus()
-        SliceTaskParams sliceTaskParams = execution.getVariable("sliceTaskParams")
-            String OOFResponse = execution.getVariable("nsiSelection_oofResponse")
-            logger.debug("NSI OOFResponse is: " + OOFResponse)
-            execution.setVariable("OOFResponse", OOFResponse)
-            //This needs to be changed to derive a value when we add policy to decide the solution options.
-            Map OOFResponseObject = new JsonSlurper().parseText(OOFResponse)
-            Map solutions = OOFResponseObject.get("solutions")
-
-            String resourceSharingLevel = execution.getVariable("resourceSharingLevel")
-            Boolean isSharable = resourceSharingLevel.equals("shared")
-
-            if (solutions != null) {
-                if (isSharable && hasSharedNSIsolutions(solutions)) {
-                    //sharedNSISolution
-                    processSharedNSISolutions(solutions, execution)
-                }
-                else if(solutions.containsKey("newNSISolutions")) {
-                    processNewNSISolutions(solutions, execution)
-                }
-            }
-            execution.setVariable("sliceTaskParams", sliceTaskParams)
-            logger.debug("sliceTaskParams: "+sliceTaskParams.convertToJson())
-        logger.debug("*** Completed options Call to OOF ***")
-		//解析sliceProfile
-		logger.debug("start parseServiceProfile")
-		parseServiceProfile(execution)
-		logger.debug("end parseServiceProfile")
-    }
-
-    private boolean hasSharedNSIsolutions( Map solutions){
-        if(solutions.containsKey("sharedNSISolutions")){
-            List sharedNSIsolutions = solutions.get("sharedNSISolutions")
-            if (sharedNSIsolutions != null && !sharedNSIsolutions.isEmpty()) {
-                return  true
-            }
-        }
-        return false
-    }
-
-    private void processNewNSISolutions(Map solutions, DelegateExecution execution) {
-        int index = 0
-        List<Map> newNSISolutions = solutions.get("newNSISolutions")
-        List<Map> NSSImap = new ArrayList<>()
-        if (newNSISolutions != null && newNSISolutions.size() > 0) {
-            NSSImap = newNSISolutions.get(index).get("NSSISolutions") as List<Map>
-            for (Map nssi : NSSImap) {
-                Map oofSliceProfile = nssi.get("sliceProfile")
-                String domain = oofSliceProfile.getOrDefault("domainType","")
-                logger.debug("OOF newNSISolutions SliceProfile: " +oofSliceProfile.toString()+",domain:${domain}")
-                if(null != domain){
-                    //TODO
-//                    def nssiSolution = nssi.get("NSSISolution") as Map<String, ?>
-//                    String nssiName = nssiSolution.getOrDefault("NSSIName", "")
-//                    String nssiId = nssiSolution.getOrDefault("NSSIId", "")
-//                    saveNSSIId(nssi, sliceTaskParams)
-                    Map<String, Object> sliceProfile = getSliceProfile(domain, execution, oofSliceProfile)
-                    saveSliceProfile(execution, domain, sliceProfile)
-
-                }
-            }
-        }
-    }
-
-    private void processSharedNSISolutions(Map solutions, DelegateExecution execution) {
-        String nsiName, nsiInstanceId, nssiId, nssiName
-        SliceTaskParams sliceTaskParams = execution.getVariable("sliceTaskParams")
-
-        Map sharedNSIsolution = ((List) solutions.get("sharedNSISolutions"))?.get(0)
-        nsiInstanceId = sharedNSIsolution.getOrDefault("NSIId", "")
-        nsiName = sharedNSIsolution.getOrDefault("NSIName", "")
-        sliceTaskParams.setSuggestNsiId(nsiInstanceId)
-        sliceTaskParams.setSuggestNsiName(nsiName)
-
-        //Temporary modification
-        List NSSIs = sharedNSIsolution.get("NSSIs")
-        for(Map nssi : NSSIs){
-            Map oofSliceProfile = ((List)nssi.get("sliceProfile"))?.get(0)
-            String domain = oofSliceProfile.getOrDefault("domainType","")
-            nssiId = nssi.getOrDefault("NSSIId","")
-            nssiName = nssi.getOrDefault("NSSIName","")
-            saveNSSIId(domain, nssiId, nssiName,execution)
-            Map<String, Object> sliceProfile = getSliceProfile(domain, execution, oofSliceProfile)
-            saveSliceProfile(execution, domain, sliceProfile)
-            logger.debug("OOF sharedNSISolution SliceProfile:"+oofSliceProfile.toString()+",domain:${domain}")
-            logger.debug("OOF sharedNSISolution nsiInstanceId:${nsiInstanceId}, nsiName:${nsiName}, nssiId:${nssiId}, nssiName:${nssiName}")
-        }
-    }
-
-    private void parseServiceProfile(DelegateExecution execution) {
-        logger.debug("Start parseServiceProfile")
-        String serviceType = execution.getVariable("serviceType")
-        Map<String, Object> serviceProfile = execution.getVariable("serviceProfile")
-        SliceTaskParams sliceTaskParams = execution.getVariable("sliceTaskParams")
-        // set sliceProfile for three domains
-        if(!sliceTaskParams.getSliceProfileAn()){
-            Map<String, Object> sliceProfileAn = getSliceProfile( "AN", execution,null)
-            saveSliceProfile(execution,"AN",sliceProfileAn)
-        }
-
-        if(!sliceTaskParams.getSliceProfileTn()){
-            Map<String, Object> sliceProfileTn = getSliceProfile( "TN", execution,null)
-            saveSliceProfile(execution,"TN",sliceProfileTn)
-        }
-
-        if(!sliceTaskParams.getSliceProfileCn()){
-            Map<String, Object> sliceProfileCn = getSliceProfile( "CN", execution,null, )
-           saveSliceProfile(execution,"CN",sliceProfileCn)
-        }
-
-        logger.debug("Finish parseServiceProfile")
-    }
-
-    private void saveSliceProfile(DelegateExecution execution, String domain, Map<String, Object> sliceProfile){
-        SliceTaskParams sliceTaskParams = execution.getVariable("sliceTaskParams")
-        if(domain.equalsIgnoreCase("AN")){
-            execution.setVariable("sliceProfileAn", sliceProfile)
-            sliceTaskParams.setSliceProfileAn(sliceProfile)
-            logger.debug("sliceProfileAn: " + sliceProfile)
-        }
-        else if(domain.equalsIgnoreCase("TN")){
-            execution.setVariable("sliceProfileTn", sliceProfile)
-            sliceTaskParams.setSliceProfileTn(sliceProfile)
-            logger.debug("sliceProfileTn: " + sliceProfile)
-        }
-        else if(domain.equalsIgnoreCase("CN")){
-            execution.setVariable("sliceProfileCn", sliceProfile)
-            sliceTaskParams.setSliceProfileCn(sliceProfile)
-            logger.debug("sliceProfileCn: " + sliceProfile)
-        }
-    }
-
-    private void saveNSSIId(String domain, String nssiId, String nssiName, DelegateExecution execution) {
-        SliceTaskParams sliceTaskParams = execution.getVariable("sliceTaskParams")
-        if(domain.equalsIgnoreCase("AN")){
-            sliceTaskParams.setAnSuggestNssiId(nssiId)
-            sliceTaskParams.setAnSuggestNssiName(nssiName)
-        }
-        else if(domain.equalsIgnoreCase("CN")){
-            sliceTaskParams.setCnSuggestNssiId(nssiId)
-            sliceTaskParams.setCnSuggestNssiName(nssiName)
-        }
-        else if(domain.equalsIgnoreCase("TN")){
-            sliceTaskParams.setTnSuggestNssiId(nssiId)
-            sliceTaskParams.setTnSuggestNssiName(nssiName)
-        }
-    }
-
-    private Map getSliceProfile(String domain, DelegateExecution execution, Map<String, Object> oofSliceProfile) {
-        String profileMapStr
-        Map<String, Object> serviceProfile = execution.getVariable("serviceProfile")
-        Integer domainLatency = (Integer) serviceProfile.get("latency")/3
-
-        if(domain.equalsIgnoreCase("AN")){
-            profileMapStr = """ {
-                    "latency": ${domainLatency}, 
-                    "sNSSAI": "sNSSAI", 
-                    "uEMobilityLevel": "uEMobilityLevel", 
-                    "coverageAreaTAList": "coverageAreaTAList", 
-                    "5QI": 100
-                }"""
-        }
-        else if(domain.equalsIgnoreCase("TN")){
-            profileMapStr =""" {
-                    "latency":${domainLatency},
-                    "sNSSAI":"sNSSAI", 
-                    "e2eLatency":"latency", 
-                    "bandwidth": 100
-                }"""
-        }
-        else if(domain.equalsIgnoreCase("CN")){
-            profileMapStr = """ {
-                    "areaTrafficCapDL":"areaTrafficCapDL",
-                    "maxNumberofUEs":"maxNumberofUEs",
-                    "latency":${domainLatency},
-                    "expDataRateUL":"expDataRateUL", 
-                    "sNSSAI":"sNSSAI", 
-                    "areaTrafficCapUL":"areaTrafficCapUL",
-                    "uEMobilityLevel":"uEMobilityLevel", 
-                    "expDataRateDL":"expDataRateDL",  
-                    "activityFactor":"activityFactor",
-                    "resourceSharingLevel":"resourceSharingLevel"
-                }"""
-        }
-
-	    logger.debug("Profile map for " + domain + " : " + profileMapStr)
-        Map<String, Object> profileMaps = objectMapper.readValue(profileMapStr.trim().replaceAll(" ", ""), new TypeReference<Map<String, String>>(){})
-        Map<String, Object> sliceProfile = [:]
-        for (Map.Entry<String, String> profileMap : profileMaps) {
-            String key = profileMap.key
-            String value = profileMaps.get(key)
-            if(null != oofSliceProfile && oofSliceProfile.keySet().contains(key)){
-                sliceProfile.put(key, oofSliceProfile.get(key))
-                logger.debug("Get from oof, key:${key}, value: ${oofSliceProfile.get(key)}")
-            }
-            else if(serviceProfile.keySet().contains(value)){
-                sliceProfile.put(key, serviceProfile.get(value))
-            }
-            else{
-                sliceProfile.put(key, profileMaps.get(key))
-            }
-        }
-        return sliceProfile
-    }
-
-    void processDecomposition(DelegateExecution execution){
-        logger.debug("Start processDecomposition")
-
-        ServiceDecomposition serviceDecomposition= execution.getVariable("serviceDecomposition")
-        SliceTaskParams sliceTaskParams = execution.getVariable("sliceTaskParams")
-        String nstName = serviceDecomposition.getModelInfo().getModelName()
-        String nstId = serviceDecomposition.getModelInfo().getModelUuid()
-        sliceTaskParams.setNstName(nstName)
-        sliceTaskParams.setNstId(nstId)
-
-        logger.debug("End processDecomposition")
-    }
-
-
-    void prepareNSTDecompose(DelegateExecution execution) {
-
-        String modelUuid = execution.getVariable("nstModelUuid")
-        String modelInvariantUuid = execution.getVariable("nstModelInvariantUuid")
+        String modelUuid = sliceTaskParams.getNSTInfo().getUUID()
+        String modelInvariantUuid = sliceTaskParams.getNSTInfo().getInvariantUUID()
 
         String serviceModelInfo = """{
             "modelInvariantUuid":"${modelInvariantUuid}",
             "modelUuid":"${modelUuid}",
             "modelVersion":""
              }"""
-        execution.setVariable("serviceModelInfo", serviceModelInfo)
+        execution.setVariable("nstServiceModelInfo", serviceModelInfo)
     }
 
-    void prepareNSSTDecompose(DelegateExecution execution) {
-        Boolean isMoreNSSTtoProcess = false
-        Integer maxNSST = execution.getVariable("maxNSST")
-        Integer currentNSST=execution.getVariable("currentNSST")
-        List<String> nsstModelUUIDList = new ArrayList<>()
-        nsstModelUUIDList = execution.getVariable("nsstModelUUIDList")
-        String modelUuid = nsstModelUUIDList.get(currentNSST)
+    /**
+     * process the result of NST Decomposition
+     * @param execution
+     */
+    public void processDecompositionNST(DelegateExecution execution) {
+
+        List<TemplateInfo> nsstInfos = new ArrayList<>()
+        ServiceDecomposition nstServiceDecomposition =
+                execution.getVariable("nstServiceDecomposition") as ServiceDecomposition
+        //todo:
+        List<AllottedResource> allottedResources = nstServiceDecomposition.getAllottedResources()
+        for (AllottedResource allottedResource : allottedResources) {
+            TemplateInfo nsstInfo = new TemplateInfo()
+            nsstInfo.setUUID(allottedResource.getProvidingServiceModelUuid())
+            nsstInfo.setInvariantUUID(allottedResource.getProvidingServiceModelInvariantUuid())
+            nsstInfo.setName(allottedResource.getProvidingServiceModelName())
+            nsstInfos.add(nsstInfo)
+        }
+        execution.setVariable("nsstInfos", nsstInfos)
+
+        execution.setVariable("maxNsstIndex", allottedResources.size() - 1)
+        execution.setVariable("currentNsstIndex", 0)
+
+        List<ServiceDecomposition> nsstServiceDecompositions = new ArrayList<>()
+        execution.setVariable("nsstServiceDecompositions", nsstServiceDecompositions)
+    }
+
+    /**
+     * prepare the params for decompose nsst
+     * @param execution
+     */
+    public void prepareDecomposeNSST(DelegateExecution execution) {
+
+        List<TemplateInfo> nsstInfos = execution.getVariable("nsstInfos") as List<TemplateInfo>
+        int index = execution.getVariable("currentNsstIndex") as Integer
+
+        String modelUuid = nsstInfos.get(index).getUUID()
+        String modelInvariantUuid = nsstInfos.get(index).getInvariantUUID()
+
         String serviceModelInfo = """{
-            "modelInvariantUuid":"",
+            "modelInvariantUuid":"${modelInvariantUuid}",
             "modelUuid":"${modelUuid}",
             "modelVersion":""
              }"""
-        execution.setVariable("serviceModelInfo", serviceModelInfo)
-        currentNSST=currentNSST+1
-        if(currentNSST<maxNSST)
-            isMoreNSSTtoProcess=true
-        execution.setVariable("isMoreNSSTtoProcess",isMoreNSSTtoProcess)
-        execution.setVariable("maxNSST",maxNSST)
-        execution.setVariable("currentNSST",currentNSST)
-    }
-
-
-    void prepareNSSTlistfromNST(DelegateExecution execution) {
-        //Need to update this part from decomposition.
-        logger.trace("Enter prepareNSSTlistfromNST()")
-        Boolean isMoreNSSTtoProcess = false
-        ServiceDecomposition serviceDecomposition= execution.getVariable("serviceDecomposition")
-        SliceTaskParams sliceTaskParams = execution.getVariable("sliceTaskParams")
-        String nstName = serviceDecomposition.getModelInfo().getModelName()
-        sliceTaskParams.setNstName(nstName)
-        String nstId = serviceDecomposition.getModelInfo().getModelUuid()
-        sliceTaskParams.setNstId(nstId)
-        execution.setVariable("sliceTaskParams",sliceTaskParams)
-
-        List<ServiceProxy> proxyList = serviceDecomposition.getServiceProxy()
-        List<String> nsstModelUUIDList = new ArrayList<>()
-        for(ServiceProxy serviceProxy:proxyList)
-            nsstModelUUIDList.add(serviceProxy.getSourceModelUuid())
-        execution.setVariable("nsstModelUUIDList",nsstModelUUIDList)
-        Integer maxNSST = nsstModelUUIDList.size()
-        Integer currentNSST=0
-        execution.setVariable("maxNSST",maxNSST)
-        execution.setVariable("currentNSST",currentNSST)
-        if(currentNSST<maxNSST)
-            isMoreNSSTtoProcess=true
-        execution.setVariable("isMoreNSSTtoProcess",isMoreNSSTtoProcess)
-        logger.trace("Exit prepareNSSTlistfromNST()")
+        execution.setVariable("nsstServiceModelInfo", serviceModelInfo)
 
     }
 
-    void getNSSTOption(DelegateExecution execution) {
-        ServiceDecomposition serviceDecomposition= execution.getVariable("serviceDecomposition")
-        String urlString = UrnPropertiesReader.getVariable("mso.oof.endpoint", execution)
-        String globalSubscriberId = execution.getVariable("globalSubscriberId")
-        String serviceType = execution.getVariable("subscriptionServiceType")
-        String nssiInstanceId =""
-        String nssiName =""
-        SliceTaskParams sliceTaskParams = execution.getVariable("sliceTaskParams")
-        logger.debug( "get NSI option OOF Url: " + urlString)
-        boolean isNSISuggested = false
-        execution.setVariable("isNSISuggested",isNSISuggested)
+    /**
+     * process the result of NSST Decomposition
+     * @param execution
+     */
+    public void processDecompositionNSST(DelegateExecution execution) {
 
-        //Prepare auth for OOF - Begin
-        def authHeader = ""
-        String basicAuth = UrnPropertiesReader.getVariable("mso.oof.auth", execution)
-        String msokey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
+        List<ServiceDecomposition> nsstServiceDecompositions =
+                execution.getVariable("nsstServiceDecompositions") as List<ServiceDecomposition>
 
-        String basicAuthValue = utils.encrypt(basicAuth, msokey)
-        if (basicAuthValue != null) {
-            logger.debug( "Obtained BasicAuth username and password for OOF: " + basicAuthValue)
-            try {
-                authHeader = utils.getBasicAuth(basicAuthValue, msokey)
-                execution.setVariable("BasicAuthHeaderValue", authHeader)
-            } catch (Exception ex) {
-                logger.debug( "Unable to encode username and password string: " + ex)
-                exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Internal Error - Unable to " +
-                        "encode username and password string")
-            }
+        ServiceDecomposition nsstServiceDecomposition =
+                execution.getVariable("nsstServiceDecomposition") as ServiceDecomposition
+
+        nsstServiceDecompositions.add(nsstServiceDecomposition)
+
+        execution.setVariable("nsstServiceDecompositions", nsstServiceDecompositions)
+
+
+
+
+        int num = execution.getVariable("maxNsstIndex") as Integer
+        int index = execution.getVariable("currentNsstIndex") as Integer
+
+        execution.setVariable("currentNsstIndex", index + 1)
+
+        if (index >= num) {
+            execution.setVariable("nsstHandleContinue", false)
         } else {
-            logger.debug( "Unable to obtain BasicAuth - BasicAuth value null")
-            exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Internal Error - BasicAuth " +
-                    "value null")
+            execution.setVariable("nsstHandleContinue", true)
         }
-        //Prepare auth for OOF - End
-        //Prepare send request to OOF - Begin
+
+    }
+
+    /**
+     * set nsst info to sliceTaskParams by type
+     * @param execution
+     */
+    public void handleNsstByType(DelegateExecution execution) {
+        //todo: set to sliceTaskParams by type
+
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
+        List<ServiceDecomposition> nsstServiceDecompositions =
+                execution.getVariable("nsstServiceDecompositions") as List<ServiceDecomposition>
+
+        List<SubnetCapability> subnetCapabilities = new ArrayList<>()
+
+
+
+        for (ServiceDecomposition serviceDecomposition : nsstServiceDecompositions) {
+            //todo:
+            SubnetCapability subnetCapability = new SubnetCapability()
+
+            handleByType(execution, serviceDecomposition, sliceParams, subnetCapability)
+
+            subnetCapabilities.add(subnetCapability)
+        }
+
+        execution.setVariable("sliceTaskParams", sliceParams)
+        execution.setVariable("subnetCapabilities", subnetCapabilities)
+    }
+
+    private void handleByType(DelegateExecution execution, ServiceDecomposition serviceDecomposition,
+                              SliceTaskParamsAdapter sliceParams, SubnetCapability subnetCapability) {
+        //todo:
+        String domainType = ""
+        ModelInfo modelInfo = serviceDecomposition.getModelInfo()
+        String vendor = serviceDecomposition.getServiceRole()
+        SubnetType subnetType
+
+        switch (domainType) {
+            case "tn_bh":
+                subnetType = SubnetType.TN_BH
+                sliceParams.tnBHSliceTaskInfo.vendor = vendor
+                sliceParams.tnBHSliceTaskInfo.subnetType = subnetType
+                sliceParams.tnBHSliceTaskInfo.networkType = subnetType.networkType
+                sliceParams.tnBHSliceTaskInfo.NSSTInfo.UUID = modelInfo.getModelUuid()
+                sliceParams.tnBHSliceTaskInfo.NSSTInfo.invariantUUID = modelInfo.getModelInvariantUuid()
+                sliceParams.tnBHSliceTaskInfo.NSSTInfo.name = modelInfo.getModelName()
+
+                break
+            case "tn_mh":
+                subnetType = SubnetType.TN_MH
+                sliceParams.tnMHSliceTaskInfo.vendor = vendor
+                sliceParams.tnMHSliceTaskInfo.subnetType = subnetType
+                sliceParams.tnMHSliceTaskInfo.networkType = subnetType.networkType
+                sliceParams.tnMHSliceTaskInfo.NSSTInfo.UUID = modelInfo.getModelUuid()
+                sliceParams.tnMHSliceTaskInfo.NSSTInfo.invariantUUID = modelInfo.getModelInvariantUuid()
+                sliceParams.tnMHSliceTaskInfo.NSSTInfo.name = modelInfo.getModelName()
+
+                break
+            case "an_nf":
+                subnetType = SubnetType.AN_NF
+                sliceParams.anSliceTaskInfo.vendor = vendor
+                sliceParams.anSliceTaskInfo.subnetType = subnetType
+                sliceParams.anSliceTaskInfo.networkType = subnetType.networkType
+                sliceParams.anSliceTaskInfo.NSSTInfo.UUID = modelInfo.getModelUuid()
+                sliceParams.anSliceTaskInfo.NSSTInfo.invariantUUID = modelInfo.getModelInvariantUuid()
+                sliceParams.anSliceTaskInfo.NSSTInfo.name = modelInfo.getModelName()
+                break
+            case "cn":
+                subnetType = SubnetType.CN
+                sliceParams.cnSliceTaskInfo.vendor = vendor
+                sliceParams.cnSliceTaskInfo.subnetType = subnetType
+                sliceParams.cnSliceTaskInfo.networkType = subnetType.networkType
+                sliceParams.cnSliceTaskInfo.NSSTInfo.UUID = modelInfo.getModelUuid()
+                sliceParams.cnSliceTaskInfo.NSSTInfo.invariantUUID = modelInfo.getModelInvariantUuid()
+                sliceParams.cnSliceTaskInfo.NSSTInfo.name = modelInfo.getModelName()
+                break
+            default:
+                subnetType = null
+                break
+
+        //todo
+
+        }
+        if (subnetType == null) {
+            //todo: throw error
+            return
+        }
+        String response = querySubnetCapability(execution, vendor, subnetType)
+        ResponseEntity responseEntity = objectMapper.readValue(response, ResponseEntity.class)
+
+        Map<String, Object> result = responseEntity.getBody() as Map
+        for (Map.Entry<String, Object> entry : result.entrySet()) {
+            subnetCapability.setDomainType(entry.getKey())
+            subnetCapability.setCapabilityDetails(entry.getValue())
+        }
+    }
+
+    /**
+     * query Subnet Capability of TN AN CN
+     * @param execution
+     */
+    private String querySubnetCapability(DelegateExecution execution, String vendor, SubnetType subnetType) {
+
+        String strRequest = objectMapper.writeValueAsString(buildQuerySubnetCapRequest(vendor, subnetType))
+
+        String response = nssmfAdapterUtils.sendPostRequestNSSMF(execution, QUERY_SUB_NET_CAPABILITY, strRequest)
+        return response
+    }
+
+    /**
+     * build request body for querying Subnet Capability
+     * @param vendor
+     * @param subnetTypes
+     * @param networkType
+     * @return
+     */
+    private static String buildQuerySubnetCapRequest(String vendor, SubnetType subnetType) {
+        NssmfAdapterNBIRequest request = new NssmfAdapterNBIRequest()
+
+        List<String> subnetTypes =  new ArrayList<>()
+        subnetTypes.add(subnetType.subnetType)
+        Map<String, Object> paramMap = new HashMap()
+        paramMap.put("subnetTypes", subnetTypes)
+
+        request.setSubnetCapabilityQuery(objectMapper.writeValueAsString(paramMap))
+
+        EsrInfo esrInfo = new EsrInfo()
+        esrInfo.setVendor(vendor)
+        esrInfo.setNetworkType(subnetType.networkType)
+
+        request.setEsrInfo(esrInfo)
+
+        String strRequest = objectMapper.writeValueAsString(request)
+
+        return strRequest
+    }
+
+    /**
+     * todo: need rewrite
+     * prepare select nsi request
+     * @param execution
+     */
+    public void preNSIRequest(DelegateExecution execution) {
+
+        String urlString = UrnPropertiesReader.getVariable("mso.oof.endpoint", execution)
+        logger.debug( "get NSI option OOF Url: " + urlString)
+
+
         String requestId = execution.getVariable("msoRequestId")
-        Map<String, Object> profileInfo = execution.getVariable("serviceProfile")
-        String nsstModelInvariantUuid = serviceDecomposition.getModelInfo().getModelInvariantUuid()
-        String nsstModelUuid = serviceDecomposition.getModelInfo().getModelUuid()
-        String nsstInfo = """"NSSTInfo": {
-        "invariantUUID":"${nsstModelInvariantUuid}",
-        "UUID":"${nsstModelUuid}"
-         }"""
-        String oofRequest = oofUtils.buildSelectNSSIRequest(execution, requestId, nsstInfo ,profileInfo)
+        String messageType = "NSISelectionResponse"
 
+        execution.setVariable("nsiSelectionUrl", "/api/oof/selection/nsi/v1")
+        execution.setVariable("nsiSelection_messageType", messageType)
+        execution.setVariable("nsiSelection_correlator", requestId)
+        String timeout = UrnPropertiesReader.getVariable("mso.adapters.oof.timeout", execution)
+        execution.setVariable("nsiSelection_timeout", timeout)
 
-        URL url = new URL(urlString+"/api/oof/v1/selectnssi")
-        HttpClient httpClient = new HttpClientFactory().newJsonClient(url, ONAPComponents.OOF)
-        httpClient.addAdditionalHeader("Authorization", authHeader)
-        Response httpResponse = httpClient.post(oofRequest)
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
 
-        int responseCode = httpResponse.getStatus()
-        logger.debug("OOF sync response code is: " + responseCode)
+        Map<String, Object> profileInfo = sliceParams.getServiceProfile()
+        TemplateInfo nstInfo = sliceParams.getNSTInfo()
 
-        if(responseCode != 200){
-            exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from OOF.")
-        }
+        List<TemplateInfo> nsstInfos = execution.getVariable("nsstInfos") as List<TemplateInfo>
 
-        if(httpResponse.hasEntity()){
-            String OOFResponse = httpResponse.readEntity(String.class)
-            execution.setVariable("OOFResponse", OOFResponse)
-            nssiInstanceId = jsonUtil.getJsonValue(OOFResponse, "NSSIIInfo.NSSIID")
-            nssiName = jsonUtil.getJsonValue(OOFResponse, "NSSIInfo.NSSIName")
-            execution.setVariable("nssiInstanceId",nssiInstanceId)
-            execution.setVariable("nssiName",nssiName)
-        }
-        if(isBlank(nssiInstanceId)){
-            logger.debug( "There is no valid NSST suggested by OOF.")
-        }else
-        {
-            try {
-                AAIResourcesClient resourceClient = new AAIResourcesClient()
-                AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId, serviceType, nssiInstanceId)
-                AAIResultWrapper wrapper = resourceClient.get(serviceInstanceUri, NotFoundException.class)
-                Optional<org.onap.aai.domain.yang.ServiceInstance> si = wrapper.asBean(org.onap.aai.domain.yang.ServiceInstance.class)
-                org.onap.aai.domain.yang.ServiceInstance nssi = si.get()
+        List<SubnetCapability> subnetCapabilities =
+                execution.getVariable("subnetCapabilities") as List<SubnetCapability>
 
-                String domain = nssi.getEnvironmentContext().toString().toUpperCase()
-                switch (domain) {
-                    case "AN":
-                        sliceTaskParams.setAnSuggestNssiId(nssi.getServiceInstanceId())
-                        sliceTaskParams.setAnSuggestNssiName(nssi.getServiceInstanceName())
-                        break
-                    case "CN":
-                        sliceTaskParams.setCnSuggestNssiId(nssi.getServiceInstanceId())
-                        sliceTaskParams.setCnSuggestNssiName(nssi.getServiceInstanceName())
-                        break
-                    case "TN":
-                        sliceTaskParams.setTnSuggestNssiId(nssi.getServiceInstanceId())
-                        sliceTaskParams.setTnSuggestNssiName(nssi.getServiceInstanceName())
-                        break
-                    default:
-                        break
-                }
-            }catch(NotFoundException e)
-            {
-                logger.debug("NSSI Service Instance not found in AAI: " + nssiInstanceId)
-            }catch(Exception e)
-            {
-                logger.debug("NSSI Service Instance not found in AAI: " + nssiInstanceId)
+        String oofRequest = oofUtils.buildSelectNSIRequest(requestId, nstInfo, nsstInfos,
+                messageType, profileInfo, subnetCapabilities, timeout as Integer)
+
+        execution.setVariable("nsiSelection_oofRequest", oofRequest)
+        logger.debug("Sending request to OOF: " + oofRequest)
+    }
+
+    /**
+     * todo: need rewrite
+     * process select nsi response
+     * @param execution
+     */
+    public void processNSIResp(DelegateExecution execution) {
+
+        SliceTaskParamsAdapter sliceTaskParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
+        String OOFResponse = execution.getVariable("nsiSelection_oofResponse")
+        logger.debug("NSI OOFResponse is: " + OOFResponse)
+        execution.setVariable("OOFResponse", OOFResponse)
+        //This needs to be changed to derive a value when we add policy to decide the solution options.
+
+        Map<String, Object> resMap = objectMapper.readValue(OOFResponse, Map.class)
+        List<Map<String, Object>> nsiSolutions = (List<Map<String, Object>>) resMap.get("solutions")
+        Map<String, Object> solution = nsiSolutions.get(0)
+
+        String resourceSharingLevel = execution.getVariable("resourceSharingLevel")
+        Boolean isSharable = resourceSharingLevel == "shared"
+
+        if (solution != null) {
+            if (isSharable && solution.get("existingNSI")) {
+                //sharedNSISolution
+                processSharedNSI(solution, sliceTaskParams)
+            }
+            else if(solution.containsKey("newNSISolution")) {
+                processNewNSI(solution, sliceTaskParams)
             }
         }
-        logger.debug("Prepare NSSI option completed ")
+        execution.setVariable("sliceTaskParams", sliceTaskParams)
+        //logger.debug("sliceTaskParams: " + sliceTaskParams.convertToJson())
+        logger.debug("*** Completed options Call to OOF ***")
     }
+
+    private void processSharedNSI(Map<String, Object> solution, SliceTaskParamsAdapter sliceParams) {
+        Map<String, Object> sharedNSISolution = solution.get("sharedNSISolution") as Map
+
+        String nsiId = sharedNSISolution.get("NSIId")
+        String nsiName = sharedNSISolution.get("NSIName")
+        sliceParams.setSuggestNsiId(nsiId)
+        sliceParams.setSuggestNsiName(nsiName)
+    }
+
+    private void processNewNSI(Map<String, Object> solution, SliceTaskParamsAdapter sliceParams) {
+        Map<String, Object> newNSISolution = solution.get("newNSISolution") as Map
+        List<Map> sliceProfiles = newNSISolution.get("sliceProfiles") as List<Map>
+        for (Map sliceProfile : sliceProfiles) {
+            String domainType = sliceProfile.get("domainType")
+            switch (domainType.toLowerCase()) {
+                case "tn-bh":
+                    sliceParams.tnBHSliceTaskInfo.sliceProfile = sliceProfile as TnSliceProfile
+                    break
+                case "an-nf":
+                    sliceParams.anSliceTaskInfo.sliceProfile = sliceProfile as AnSliceProfile
+                    break
+                case "cn":
+                    sliceParams.cnSliceTaskInfo.sliceProfile = sliceProfile as CnSliceProfile
+                    break
+                default:
+                    break
+            }
+
+            //todo
+
+        }
+    }
+
+    /**
+     * get NSSI Selection Capability for AN
+     * @param execution
+     */
+    public void getNSSISelectionCap4AN(DelegateExecution execution) {
+
+        def vendor = execution.getVariable("vendor") as String
+
+        String strRequest = buildNSSISelectionReq(vendor, NetworkType.ACCESS)
+
+        String response = nssmfAdapterUtils.sendPostRequestNSSMF(execution, QUERY_NSSI_SELECTION_CAPABILITY, strRequest)
+
+        Map<String, Object> resMap = objectMapper.readValue(response, Map.class)
+
+        String selection = resMap.get("selection")
+
+
+        if ("NSMF".equalsIgnoreCase(selection)) {
+            execution.setVariable("NEED_AN_NSSI_SELECTION", true)
+        }
+    }
+
+    /**
+     * get NSSI Selection Capability for TN
+     * @param execution
+     */
+    public void getNSSISelectionCap4TN(DelegateExecution execution) {
+
+        def vendor = execution.getVariable("vendor") as String
+
+        String strRequest = buildNSSISelectionReq(vendor, NetworkType.TRANSPORT)
+
+        String response = nssmfAdapterUtils.sendPostRequestNSSMF(execution, QUERY_NSSI_SELECTION_CAPABILITY, strRequest)
+
+        Map<String, Object> resMap = objectMapper.readValue(response, Map.class)
+
+        String selection = resMap.get("selection")
+
+        if ("NSMF".equalsIgnoreCase(selection)) {
+            execution.setVariable("NEED_TN_NSSI_SELECTION", true)
+        }
+    }
+
+    /**
+     * get NSSI Selection Capability for CN
+     * @param execution
+     */
+    public void getNSSISelectionCap4CN(DelegateExecution execution) {
+
+        def vendor = execution.getVariable("vendor") as String
+
+        String strRequest = buildNSSISelectionReq(vendor, NetworkType.CORE)
+
+        String response = nssmfAdapterUtils.sendPostRequestNSSMF(execution, QUERY_NSSI_SELECTION_CAPABILITY, strRequest)
+
+        Map<String, Object> resMap = objectMapper.readValue(response, Map.class)
+
+        String selection = resMap.get("selection")
+
+        if ("NSMF".equalsIgnoreCase(selection)) {
+            execution.setVariable("NEED_CN_NSSI_SELECTION", true)
+        }
+    }
+
+    /**
+     * build NSSI Selection Capability Request body to nssmf adapter
+     * @param vendor
+     * @param networkType
+     * @return
+     */
+    private static String buildNSSISelectionReq(String vendor, NetworkType networkType) {
+        NssmfAdapterNBIRequest request = new NssmfAdapterNBIRequest()
+        EsrInfo esrInfo = new EsrInfo()
+        esrInfo.setVendor(vendor)
+        esrInfo.setNetworkType(networkType)
+        request.setEsrInfo(esrInfo)
+
+        return objectMapper.writeValueAsString(request)
+    }
+
+    /**
+     * if exist nssi need to select?
+     * @param execution
+     */
+    public void handleNssiSelect(DelegateExecution execution) {
+
+        SliceTaskParamsAdapter sliceTaskParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
+        //todo
+    }
+
+    /**
+     * todo: need rewrite
+     * prepare select nssi request
+     * @param execution
+     */
+    public void preNSSIRequest(DelegateExecution execution) {
+
+        String urlString = UrnPropertiesReader.getVariable("mso.oof.endpoint", execution)
+        logger.debug( "get NSI option OOF Url: " + urlString)
+
+        boolean isNSISuggested = true
+        execution.setVariable("isNSISuggested", isNSISuggested)
+        String requestId = execution.getVariable("msoRequestId")
+        String messageType = "NSISelectionResponse"
+
+        Map<String, Object> profileInfo = execution.getVariable("serviceProfile") as Map
+        Map<String, Object> nstSolution = execution.getVariable("nstSolution") as Map
+        logger.debug("Get NST selection from OOF: " + nstSolution.toString())
+        String nstInfo = """{
+            "modelInvariantId":"${nstSolution.invariantUUID}",
+            "modelVersionId":"${nstSolution.UUID}",
+            "modelName":"${nstSolution.NSTName}"
+         }"""
+
+        execution.setVariable("nsiSelectionUrl", "/api/oof/selection/nsi/v1")
+        execution.setVariable("nsiSelection_messageType", messageType)
+        execution.setVariable("nsiSelection_correlator", requestId)
+        String timeout = UrnPropertiesReader.getVariable("mso.adapters.oof.timeout", execution)
+        execution.setVariable("nsiSelection_timeout", timeout)
+
+        //todo
+        String oofRequest = oofUtils.buildSelectNSIRequest(requestId, nstInfo, messageType, profileInfo)
+
+        execution.setVariable("nsiSelection_oofRequest", oofRequest)
+        logger.debug("Sending request to OOF: " + oofRequest)
+    }
+
+    /**
+     * process select nssi response
+     * todo: unfinished
+     * @param execution
+     */
+    public void processNSSIResp(DelegateExecution execution) {
+
+        SliceTaskParams sliceTaskParams = execution.getVariable("sliceTaskParams") as SliceTaskParams
+        String OOFResponse = execution.getVariable("nsiSelection_oofResponse")
+        logger.debug("NSI OOFResponse is: " + OOFResponse)
+        execution.setVariable("OOFResponse", OOFResponse)
+        //This needs to be changed to derive a value when we add policy to decide the solution options.
+
+        Map<String, Object> resMap = objectMapper.readValue(OOFResponse, Map.class)
+        List<Map<String, Object>> nsiSolutions = (List<Map<String, Object>>) resMap.get("solutions")
+        Map<String, Object> solutions = nsiSolutions.get(0)
+
+        String resourceSharingLevel = execution.getVariable("resourceSharingLevel")
+        Boolean isSharable = resourceSharingLevel == "shared"
+
+        if (solutions != null) {
+            if (isSharable && solutions.get("existingNSI")) {
+                //sharedNSISolution
+                //processSharedNSISolutions(solutions, execution)
+            }
+            else if(solutions.containsKey("newNSISolution")) {
+                //processNewNSISolutions(solutions, execution)
+            }
+        }
+        execution.setVariable("sliceTaskParams", sliceTaskParams)
+        logger.debug("sliceTaskParams: "+sliceTaskParams.convertToJson())
+        logger.debug("*** Completed options Call to OOF ***")
+
+        logger.debug("start parseServiceProfile")
+        //parseServiceProfile(execution)
+        logger.debug("end parseServiceProfile")
+    }
+
+
 }
