@@ -22,6 +22,11 @@
 
 package org.onap.so.bpmn.common.scripts
 
+import org.onap.so.beans.nsmf.oof.NsiReqBody
+import org.onap.so.beans.nsmf.oof.RequestInfo
+import org.onap.so.beans.nsmf.oof.SubnetCapability
+import org.onap.so.beans.nsmf.oof.TemplateInfo
+
 import static org.onap.so.bpmn.common.scripts.GenericUtils.*
 
 import javax.ws.rs.core.UriBuilder
@@ -650,4 +655,35 @@ json.add("requestInfo", requestInfo)
 return json.toString()
  
 }
+
+    public String buildSelectNSIRequest(String requestId, TemplateInfo nstInfo, List<TemplateInfo> nsstInfo,
+                                        String messageType, Map<String, Object> serviceProfile,
+                                        List<SubnetCapability> subnetCapabilities, Integer timeOut){
+
+        def transactionId = requestId
+        logger.debug( "transactionId is: " + transactionId)
+
+        String callbackUrl = UrnPropertiesReader.getVariable("mso.adapters.oof.callback.endpoint") + "/" + messageType + "/" + correlator
+
+        NsiReqBody nsiReqBody = new NsiReqBody()
+
+        RequestInfo requestInfo = new RequestInfo()
+        requestInfo.setRequestId(requestId)
+        requestInfo.setTransactionId(transactionId)
+        requestInfo.setCallbackUrl(callbackUrl)
+        requestInfo.setSourceId("so")
+        requestInfo.setTimeout(timeOut)
+        //requestInfo.setNumSolutions()
+
+        nsiReqBody.setRequestInfo(requestInfo)
+        nsiReqBody.setNSTInfo(nstInfo)
+        nsiReqBody.setServiceProfile(serviceProfile)
+        nsiReqBody.setSubnetCapabilities(subnetCapabilities)
+        nsiReqBody.setNSSTInfo(nsstInfo)
+
+
+        ObjectMapper objectMapper = new ObjectMapper()
+
+        return objectMapper.writeValueAsString(nsiReqBody)
+    }
 }

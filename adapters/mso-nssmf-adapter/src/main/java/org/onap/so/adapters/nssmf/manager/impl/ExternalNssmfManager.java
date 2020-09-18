@@ -79,8 +79,6 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
         }
     }
 
-
-
     @Override
     protected String wrapActDeActReqBody(ActDeActNssi actDeActNssi) throws ApplicationException {
         return marshal(actDeActNssi);
@@ -92,8 +90,12 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
 
     private RestResponse doResponseStatus(ResourceOperationStatus status) throws ApplicationException {
         RestResponse restResponse = sendRequest(null);
-        ResponseDescriptor rspDesc =
-                unMarshal(restResponse.getResponseContent(), JobStatusResponse.class).getResponseDescriptor();
+        JobStatusResponse jobStatusResponse =
+                unMarshal(restResponse.getResponseContent(), JobStatusResponse.class);
+        ResponseDescriptor rspDesc =jobStatusResponse.getResponseDescriptor();
+        rspDesc.setNssiId(status.getResourceInstanceID());
+        jobStatusResponse.setResponseDescriptor(rspDesc);
+        restResponse.setResponseContent(marshal(jobStatusResponse));
         updateRequestDbJobStatus(rspDesc, status, restResponse);
         return restResponse;
     }
@@ -112,7 +114,6 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
     protected String getApiVersion() {
         return "v1";
     }
-
 
     // external
     protected RestResponse sendExternalRequest(String content) throws ApplicationException {
@@ -144,7 +145,7 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
     }
 
     protected void updateDbStatus(ResourceOperationStatus status, int rspStatus, JobStatus jobStatus,
-            String description) {
+                                  String description) {
         status.setErrorCode(valueOf(rspStatus));
         status.setStatus(jobStatus.toString());
         status.setStatusDescription(description);

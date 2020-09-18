@@ -21,8 +21,11 @@
 package org.onap.so.beans.nsmf;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Data;
+import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Data
 public class AllocateAnNssi {
 
     @Deprecated
@@ -42,59 +45,5 @@ public class AllocateAnNssi {
 
     private NsiInfo nsiInfo;
 
-    public String getNsstId() {
-        return nsstId;
-    }
-
-    public void setNsstId(String nsstId) {
-        this.nsstId = nsstId;
-    }
-
-    public String getNssiId() {
-        return nssiId;
-    }
-
-    public void setNssiId(String nssiId) {
-        this.nssiId = nssiId;
-    }
-
-    public String getNssiName() {
-        return nssiName;
-    }
-
-    public void setNssiName(String nssiName) {
-        this.nssiName = nssiName;
-    }
-
-    public AnSliceProfile getSliceProfile() {
-        return sliceProfile;
-    }
-
-    public void setSliceProfile(AnSliceProfile sliceProfile) {
-        this.sliceProfile = sliceProfile;
-    }
-
-    public String getScriptName() {
-        return scriptName;
-    }
-
-    public void setScriptName(String scriptName) {
-        this.scriptName = scriptName;
-    }
-
-    public Object getExtension() {
-        return extension;
-    }
-
-    public void setExtension(Object extension) {
-        this.extension = extension;
-    }
-
-    public NsiInfo getNsiInfo() {
-        return nsiInfo;
-    }
-
-    public void setNsiInfo(NsiInfo nsiInfo) {
-        this.nsiInfo = nsiInfo;
-    }
+    private Map<String, Object> endPoint;
 }
