@@ -144,7 +144,7 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
     }
 
     protected void updateDbStatus(ResourceOperationStatus status, int rspStatus, JobStatus jobStatus,
-            String description) {
+                                  String description) {
         status.setErrorCode(valueOf(rspStatus));
         status.setStatus(jobStatus.toString());
         status.setStatusDescription(description);

@@ -2,19 +2,19 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ # Copyright (c) 2020, CMCC Technologies Co., Ltd.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License")
+ # you may not use this file except in compliance with the License.
+ # You may obtain a copy of the License at
+ #
+ #       http://www.apache.org/licenses/LICENSE-2.0
+ #
+ # Unless required by applicable law or agreed to in writing, software
+ # distributed under the License is distributed on an "AS IS" BASIS,
+ # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
  * ============LICENSE_END=========================================================
  */
 
@@ -23,19 +23,29 @@ package org.onap.so.bpmn.infrastructure.scripts
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.Relationship
-import org.onap.aai.domain.yang.RelationshipList
 import org.onap.aai.domain.yang.ServiceInstance
-import org.onap.so.beans.nsmf.SliceTaskParams
-import org.onap.so.bpmn.common.scripts.ExceptionUtil
-import org.onap.so.bpmn.common.scripts.NssmfAdapterUtils
-import org.onap.so.bpmn.core.domain.ServiceDecomposition
-import org.onap.so.bpmn.core.domain.ServiceProxy
-import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.aai.domain.yang.SliceProfile
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.beans.nsmf.AllocateAnNssi
+import org.onap.so.beans.nsmf.AllocateCnNssi
+import org.onap.so.beans.nsmf.AllocateTnNssi
+import org.onap.so.beans.nsmf.AnSliceProfile
+import org.onap.so.beans.nsmf.CnSliceProfile
+import org.onap.so.beans.nsmf.EsrInfo
+import org.onap.so.beans.nsmf.NssiResponse
+import org.onap.so.beans.nsmf.NssmfAdapterNBIRequest
+import org.onap.so.beans.nsmf.ResponseDescriptor
+import org.onap.so.beans.nsmf.ServiceInfo
+import org.onap.so.beans.nsmf.SliceTaskInfo
+import org.onap.so.beans.nsmf.SliceTaskParamsAdapter
+import org.onap.so.beans.nsmf.TnSliceProfile
+import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
+import org.onap.so.bpmn.common.scripts.ExceptionUtil
+import org.onap.so.bpmn.core.json.JsonUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -43,15 +53,15 @@ import javax.ws.rs.NotFoundException
 
 import static org.apache.commons.lang3.StringUtils.isBlank
 
-class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor{
+class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
-    private static final Logger logger = LoggerFactory.getLogger( DoAllocateNSIandNSSI.class);
+    private static final Logger logger = LoggerFactory.getLogger(DoAllocateNSIandNSSI.class);
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
 
     JsonUtils jsonUtil = new JsonUtils()
 
-    private NssmfAdapterUtils nssmfAdapterUtils = new NssmfAdapterUtils(httpClientFactory, jsonUtil)
+    AAIResourcesClient client = getAAIClient()
 
     /**
      * Pre Process the BPMN Flow Request
@@ -72,86 +82,154 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
         logger.trace("Exit preProcessRequest")
     }
 
+    /**
+     * Process NSI options
+     * @param execution
+     */
     void retriveSliceOption(DelegateExecution execution) {
         logger.trace("Enter retriveSliceOption() of DoAllocateNSIandNSSI")
-        String uuiRequest = execution.getVariable("uuiRequest")
-        boolean isNSIOptionAvailable = false
-        List<String> nssiAssociated = new ArrayList<>()
-        SliceTaskParams sliceParams = execution.getVariable("sliceTaskParams")
-        try
-        {
-            Map<String, Object> nstSolution = execution.getVariable("nstSolution") as Map
-            String modelUuid = nstSolution.get("UUID")
-            String modelInvariantUuid = nstSolution.get("invariantUUID")
-            String serviceModelInfo = """{
-            "modelInvariantUuid":"${modelInvariantUuid}",
-            "modelUuid":"${modelUuid}",
-            "modelVersion":""
-             }"""
-            execution.setVariable("serviceModelInfo", serviceModelInfo)
-            //Params sliceParams = new Gson().fromJson(params, new TypeToken<Params>() {}.getType());
-            execution.setVariable("sliceParams", sliceParams)
-        }catch (Exception ex) {
-            logger.debug( "Unable to get the task information from request DB: " + ex)
-            exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Unable to get task information from request DB.")
-        }
 
-        if(isBlank(sliceParams.getSuggestNsiId()))
-        {
-            isNSIOptionAvailable=false
+        boolean isNSIOptionAvailable
+
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
+        if(isBlank(sliceParams.getSuggestNsiId())) {
+            isNSIOptionAvailable = false
         }
-        else
-        {
-            isNSIOptionAvailable=true
-            execution.setVariable('nsiServiceInstanceId',sliceParams.getSuggestNsiId())
-            execution.setVariable('nsiServiceInstanceName',sliceParams.getSuggestNsiName())
+        else {
+            isNSIOptionAvailable = true
+            execution.setVariable('nsiServiceInstanceId', sliceParams.getSuggestNsiId())
+            execution.setVariable('nsiServiceInstanceName', sliceParams.getSuggestNsiName())
         }
-        execution.setVariable("isNSIOptionAvailable",isNSIOptionAvailable)
+        execution.setVariable("isNSIOptionAvailable", isNSIOptionAvailable)
         logger.trace("Exit retriveSliceOption() of DoAllocateNSIandNSSI")
     }
 
+
+    /**
+     * create nsi instance in aai
+     * @param execution
+     */
+    void createNSIinAAI(DelegateExecution execution) {
+        logger.debug("Enter CreateNSIinAAI in DoAllocateNSIandNSSI()")
+
+        String sliceInstanceId = UUID.randomUUID().toString()
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
+        //set new nsiId to sliceParams suggestNsiId
+        sliceParams.setSuggestNsiId(sliceInstanceId)
+
+        ServiceInstance nsi = new ServiceInstance()
+
+
+        String sliceInstanceName = "nsi_"+execution.getVariable("sliceServiceInstanceName")
+        String serviceType = execution.getVariable("serviceType")
+        String serviceStatus = "deactivated"
+        String modelInvariantUuid = sliceParams.getNSTInfo().invariantUUID
+        String modelUuid = sliceParams.getNSTInfo().UUID
+
+        String uuiRequest = execution.getVariable("uuiRequest")
+        String serviceInstanceLocationid = jsonUtil.getJsonValue(uuiRequest, "service.parameters.requestInputs.plmnIdList")
+        String serviceRole = "nsi"
+
+        execution.setVariable("sliceInstanceId", sliceInstanceId)
+        nsi.setServiceInstanceId(sliceInstanceId)
+        nsi.setServiceInstanceName(sliceInstanceName)
+        nsi.setServiceType(serviceType)
+        nsi.setOrchestrationStatus(serviceStatus)
+        nsi.setModelInvariantId(modelInvariantUuid)
+        nsi.setModelVersionId(modelUuid)
+        nsi.setServiceInstanceLocationId(serviceInstanceLocationid)
+        nsi.setServiceRole(serviceRole)
+        String msg
+        try {
+
+            AAIResourceUri nsiServiceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
+                    execution.getVariable("globalSubscriberId"),
+                    execution.getVariable("subscriptionServiceType"),
+                    sliceInstanceId)
+            client.create(nsiServiceUri, nsi)
+
+            execution.setVariable("nsiServiceUri", nsiServiceUri)
+
+        } catch (BpmnError e) {
+            throw e
+        } catch (Exception ex) {
+            msg = "Exception in DoCreateSliceServiceInstance.instantiateSliceService. " + ex.getMessage()
+            logger.info(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+
+        logger.debug("Exit CreateNSIinAAI in DoAllocateNSIandNSSI()")
+    }
+
+
+    /**
+     * create relationship between nsi and service profile instance
+     * @param execution
+     */
+    void createRelationship(DelegateExecution execution) {
+        //relation ship
+        String allottedResourceId = execution.getVariable("allottedResourceId")
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
+        AAIResourceUri nsiServiceUri = execution.getVariable("nsiServiceUri") as AAIResourceUri
+        logger.info("Creating Allotted resource relationship, nsiServiceUri: " + nsiServiceUri)
+
+        AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceUri(
+                AAIObjectType.ALLOTTED_RESOURCE,
+                execution.getVariable("globalSubscriberId"),
+                execution.getVariable("subscriptionServiceType"),
+                sliceParams.suggestNsiId,
+                allottedResourceId)
+
+        client.connect(allottedResourceUri, nsiServiceUri)
+    }
+
+    /**
+     *
+     * @param execution
+     */
     void updateRelationship(DelegateExecution execution) {
         logger.debug("Enter update relationship in DoAllocateNSIandNSSI()")
+        //todo: allottedResourceId
         String allottedResourceId = execution.getVariable("allottedResourceId")
         //Need to check whether nsi exist : Begin
-        org.onap.aai.domain.yang.ServiceInstance nsiServiceInstance = new org.onap.aai.domain.yang.ServiceInstance()
-        SliceTaskParams sliceParams = execution.getVariable("sliceParams")
-        String nsiServiceInstanceID = sliceParams.getSuggestNsiId()
 
-        AAIResourcesClient resourceClient = new AAIResourcesClient()
-        AAIResourceUri nsiServiceuri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("subscriptionServiceType"), nsiServiceInstanceID)
-        //AAIResourceUri nsiServiceuri = AAIUriFactory.createResourceUri(AAIObjectType.QUERY_ALLOTTED_RESOURCE, execution.getVariable("globalSubscriberId"), execution.getVariable("serviceType"), nsiServiceInstanceID)
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
+        String nsiServiceInstanceID = sliceParams.getSuggestNsiId()
+        //sliceParams.setServiceId(nsiServiceInstanceID)
+
+        AAIResourceUri nsiServiceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
+                execution.getVariable("globalSubscriberId"),
+                execution.getVariable("subscriptionServiceType"),
+                nsiServiceInstanceID)
 
         try {
-            AAIResultWrapper wrapper = resourceClient.get(nsiServiceuri, NotFoundException.class)
-            Optional<org.onap.aai.domain.yang.ServiceInstance> si = wrapper.asBean(org.onap.aai.domain.yang.ServiceInstance.class)
-            nsiServiceInstance = si.get()
-            //allottedResourceId=nsiServiceInstance.getAllottedResources().getAllottedResource().get(0).getId()
-
-//            if(resourceClient.exists(nsiServiceuri)){
-//                execution.setVariable("nsi_resourceLink", nsiServiceuri.build().toString())
-//            }else{
-//                exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service instance was not found in aai to " +
-//                        "associate for service :"+serviceInstanceId)
-//            }
-
-        AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.ALLOTTED_RESOURCE, execution.getVariable("globalSubscriberId"), execution.getVariable("subscriptionServiceType"), execution.getVariable("sliceServiceInstanceId"), allottedResourceId)
-        getAAIClient().connect(allottedResourceUri,nsiServiceuri)
-
-        List<String> nssiAssociated = new ArrayList<>()
-        RelationshipList relationshipList = nsiServiceInstance.getRelationshipList()
-        List<Relationship> relationships = relationshipList.getRelationship()
-        for(Relationship relationship in relationships)
-        {
-            if(relationship.getRelatedTo().equalsIgnoreCase("service-instance"))
-            {
-                String NSSIassociated = relationship.getRelatedLink().substring(relationship.getRelatedLink().lastIndexOf("/") + 1);
-                if(!NSSIassociated.equals(nsiServiceInstanceID))
-                    nssiAssociated.add(NSSIassociated)
+            AAIResultWrapper wrapper = client.get(nsiServiceUri, NotFoundException.class)
+            Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
+            //todo: if exists
+            if (!si.ifPresent()) {
+                String msg = "NSI suggested in the option doesn't exist. " + nsiServiceInstanceID
+                logger.debug(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
             }
-        }
-        execution.setVariable("nssiAssociated",nssiAssociated)
-        execution.setVariable("nsiServiceInstanceName",nsiServiceInstance.getServiceInstanceName())
+
+            AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceUri(
+                    AAIObjectType.ALLOTTED_RESOURCE,
+                    execution.getVariable("globalSubscriberId"),
+                    execution.getVariable("subscriptionServiceType"),
+                    sliceParams.suggestNsiId, //nsiId
+                    allottedResourceId)
+
+            client.connect(allottedResourceUri, nsiServiceUri)
+
+            execution.setVariable("sliceTaskParams", sliceParams)
         }catch(BpmnError e) {
             throw e
         }catch (Exception ex){
@@ -162,201 +240,486 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
         logger.debug("Exit update relationship in DoAllocateNSIandNSSI()")
     }
 
-    void prepareNssiModelInfo(DelegateExecution execution){
-        logger.trace("Enter prepareNssiModelInfo in DoAllocateNSIandNSSI()")
-        List<String> nssiAssociated = new ArrayList<>()
-        Map<String, Object> nssiMap = new HashMap<>()
-        nssiAssociated=execution.getVariable("nssiAssociated")
-        for(String nssiID in nssiAssociated)
-        {
-            try {
-                AAIResourcesClient resourceClient = new AAIResourcesClient()
-                AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("subscriptionServiceType"), nssiID)
-                AAIResultWrapper wrapper = resourceClient.get(serviceInstanceUri, NotFoundException.class)
-                Optional<org.onap.aai.domain.yang.ServiceInstance> si = wrapper.asBean(org.onap.aai.domain.yang.ServiceInstance.class)
-                org.onap.aai.domain.yang.ServiceInstance nssi = si.get()
-                nssiMap.put(nssi.getEnvironmentContext(),"""{
-                    "serviceInstanceId":"${nssi.getServiceInstanceId()}",
-                    "modelUuid":"${nssi.getModelVersionId()}"
-                     }""")
+    /**
+     * create RAN Slice Profile Instance
+     * @param execution
+     */
+    void createAnSliceProfileInstance(DelegateExecution execution) {
 
-            }catch(NotFoundException e)
-            {
-                logger.debug("NSSI Service Instance not found in AAI: " + nssiID)
-            }catch(Exception e)
-            {
-                logger.debug("NSSI Service Instance not found in AAI: " + nssiID)
-            }
-            execution.setVariable("nssiMap",nssiMap)
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
+        String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+        String serviceInstanceId = UUID.randomUUID().toString()
+        execution.setVariable("ranSliceProfileInstanceId", serviceInstanceId) //todo:
 
-        }
-        logger.trace("Exit prepareNssiModelInfo in DoAllocateNSIandNSSI()")
+        String serviceType = ""
+        String serviceRole = "slice-profile"
+        String oStatus = "deactivated"
+
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+        SliceTaskInfo<AnSliceProfile> sliceTaskInfo = sliceParams.anSliceTaskInfo
+        sliceTaskInfo.setSliceInstanceId(serviceInstanceId)
+
+        // create slice profile
+        ServiceInstance rspi = new ServiceInstance()
+        rspi.setServiceInstanceName(sliceTaskInfo.NSSTInfo.name)
+        rspi.setServiceType(serviceType)
+        rspi.setServiceRole(serviceRole)
+        rspi.setOrchestrationStatus(oStatus)
+        rspi.setModelInvariantId(sliceTaskInfo.NSSTInfo.invariantUUID)
+        rspi.setModelVersionId(sliceTaskInfo.NSSTInfo.UUID)
+        rspi.setInputParameters(uuiRequest)
+        rspi.setWorkloadContext(useInterval)
+        rspi.setEnvironmentContext(sNSSAI_id)
+
+        //timestamp format YYYY-MM-DD hh:mm:ss
+        rspi.setCreatedAt(new Date(System.currentTimeMillis()).format("yyyy-MM-dd HH:mm:ss", TimeZone.getDefault()))
+
+        execution.setVariable("communicationServiceInstance", rspi)
+
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
+                globalSubscriberId,
+                subscriptionServiceType,
+                serviceInstanceId)
+        client.create(uri, rspi)
+
+        execution.setVariable("sliceTaskParams", sliceParams)
     }
 
-    void createNSIinAAI(DelegateExecution execution) {
-        logger.debug("Enter CreateNSIinAAI in DoAllocateNSIandNSSI()")
-        ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
-        org.onap.aai.domain.yang.ServiceInstance nsi = new ServiceInstance();
-        String sliceInstanceId = UUID.randomUUID().toString()
-        execution.setVariable("sliceInstanceId",sliceInstanceId)
-        nsi.setServiceInstanceId(sliceInstanceId)
-        String sliceInstanceName = "nsi_"+execution.getVariable("sliceServiceInstanceName")
-        nsi.setServiceInstanceName(sliceInstanceName)
-        String serviceType = execution.getVariable("serviceType")
-        nsi.setServiceType(serviceType)
-        String serviceStatus = "deactivated"
-        nsi.setOrchestrationStatus(serviceStatus)
-        String modelInvariantUuid = serviceDecomposition.getModelInfo().getModelInvariantUuid()
-        String modelUuid = serviceDecomposition.getModelInfo().getModelUuid()
-        nsi.setModelInvariantId(modelInvariantUuid)
-        nsi.setModelVersionId(modelUuid)
-        String uuiRequest = execution.getVariable("uuiRequest")
-        String serviceInstanceLocationid = jsonUtil.getJsonValue(uuiRequest, "service.parameters.requestInputs.plmnIdList")
-        nsi.setServiceInstanceLocationId(serviceInstanceLocationid)
-        //String snssai = jsonUtil.getJsonValue(uuiRequest, "service.requestInputs.snssai")
-        //nsi.setEnvironmentContext(snssai)
-        String serviceRole = "nsi"
-        nsi.setServiceRole(serviceRole)
-        String msg = ""
-        try {
+    /**
+     * create An Slice Profile
+     * @param execution
+     */
+    void createAnSliceProfile(DelegateExecution execution) {
 
-            AAIResourcesClient client = new AAIResourcesClient()
-            AAIResourceUri nsiServiceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("subscriptionServiceType"), sliceInstanceId)
-            client.create(nsiServiceUri, nsi)
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
+        String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+        //String serviceInstanceId = execution.getVariable("ranSliceProfileInstanceId")
 
-            Relationship relationship = new Relationship()
-            logger.info("Creating Allotted resource relationship, nsiServiceUri: " + nsiServiceUri.build().toString())
-            relationship.setRelatedLink(nsiServiceUri.build().toString())
-            AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.ALLOTTED_RESOURCE,
-                    execution.getVariable("globalSubscriberId"),execution.getVariable("subscriptionServiceType"),
-                    execution.getVariable("sliceServiceInstanceId"), execution.getVariable("allottedResourceId")).relationshipAPI()
-            client.create(allottedResourceUri, relationship)
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+        SliceTaskInfo<AnSliceProfile> sliceTaskInfo = sliceParams.anSliceTaskInfo
+        AnSliceProfile anSliceProfile = sliceTaskInfo.sliceProfile
 
-        } catch (BpmnError e) {
-            throw e
-        } catch (Exception ex) {
-            msg = "Exception in DoCreateSliceServiceInstance.instantiateSliceService. " + ex.getMessage()
-            logger.info(msg)
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-        }
-        Map<String, Object> nssiMap = new HashMap<>()
-        List<ServiceProxy> serviceProxyList = serviceDecomposition.getServiceProxy()
-        List<String> nsstModelInfoList = new ArrayList<>()
-        for(ServiceProxy serviceProxy : serviceProxyList)
-        {
-            //String nsstModelUuid = serviceProxy.getModelInfo().getModelUuid()
-            String nsstModelUuid = serviceProxy.getSourceModelUuid()
-            //String nsstModelInvariantUuid = serviceProxy.getModelInfo().getModelInvariantUuid()
-            String nsstServiceModelInfo = """{
-            "modelInvariantUuid":"",
-            "modelUuid":"${nsstModelUuid}",
-            "modelVersion":""
-             }"""
-            nsstModelInfoList.add(nsstServiceModelInfo)
-        }
-        int currentIndex=0
-        int maxIndex=nsstModelInfoList.size()
-        if(maxIndex < 1)
-        {
-            msg = "Exception in DoAllocateNSIandNSSI. There is no NSST associated with NST "
-            logger.info(msg)
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-        }
-        execution.setVariable("nsstModelInfoList",nsstModelInfoList)
-        execution.setVariable("currentIndex",currentIndex)
-        execution.setVariable("maxIndex",maxIndex)
-        execution.setVariable('nsiServiceInstanceId',sliceInstanceId)
-        execution.setVariable("nsiServiceInstanceName",sliceInstanceName)
-        logger.debug("Exit CreateNSIinAAI in DoAllocateNSIandNSSI()")
+        String profileId = UUID.randomUUID().toString()
+        anSliceProfile.setSliceProfileId(profileId)
+
+        SliceProfile sliceProfile = new SliceProfile()
+        sliceProfile.setProfileId(profileId)
+        sliceProfile.setCoverageAreaTAList(anSliceProfile.coverageAreaTAList as String)
+        //todo:...
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SLICE_PROFILE,
+                globalSubscriberId,
+                subscriptionServiceType,
+                sliceTaskInfo.sliceInstanceId,
+                profileId
+        )
+        client.create(uri, sliceProfile)
+        execution.setVariable("sliceTaskParams", sliceParams)
     }
 
-    void getOneNsstInfo(DelegateExecution execution){
-        List<String> nsstModelInfoList = new ArrayList<>()
-        nsstModelInfoList = execution.getVariable("nsstModelInfoList")
-        int currentIndex = execution.getVariable("currentIndex")
-        int maxIndex = execution.getVariable("maxIndex")
-        boolean isMoreNSSTtoProcess = true
-        String nsstServiceModelInfo = nsstModelInfoList.get(currentIndex)
-        execution.setVariable("serviceModelInfo", nsstServiceModelInfo)
-        execution.setVariable("currentIndex", currentIndex)
-        currentIndex = currentIndex+1
-        if(currentIndex <= maxIndex )
-            isMoreNSSTtoProcess = false
-        execution.setVariable("isMoreNSSTtoProcess", isMoreNSSTtoProcess)
-    }
+    /**
+     * prepare AllocateAnNssi
+     * @param execution
+     */
+    void prepareAllocateAnNssi(DelegateExecution execution) {
 
-    void createNSSTMap(DelegateExecution execution){
-        ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
-        String modelUuid= serviceDecomposition.getModelInfo().getModelUuid()
-        String content = serviceDecomposition.getServiceInfo().getServiceArtifact().get(0).getContent()
-        //String nsstID = jsonUtil.getJsonValue(content, "metadata.id")
-        //String vendor = jsonUtil.getJsonValue(content, "metadata.vendor")
-        //String type = jsonUtil.getJsonValue(content, "metadata.type")
-        String domain = jsonUtil.getJsonValue(content, "metadata.domainType")
+        //todo:
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+        SliceTaskInfo<AnSliceProfile> sliceTaskInfo = sliceParams.anSliceTaskInfo
 
-        Map<String, Object> nssiMap = execution.getVariable("nssiMap")
-        String servicename = execution.getVariable("sliceServiceInstanceName")
-        String nsiname = "nsi_"+servicename
-        nssiMap.put(domain,"""{
-                    "serviceInstanceId":"",
-                    "modelUuid":"${modelUuid}"
-                     }""")
-        execution.setVariable("nssiMap",nssiMap)
-    }
+        NssmfAdapterNBIRequest nbiRequest = new NssmfAdapterNBIRequest()
 
-    void prepareNSSIList(DelegateExecution execution){
-        logger.trace("Enter prepareNSSIList in DoAllocateNSIandNSSI()")
-        Map<String, Object> nssiMap = new HashMap<>()
-        Boolean isMoreNSSI = false
-        nssiMap = execution.getVariable("nssiMap")
-        List<String> keys=new ArrayList<String>(nssiMap.values())
-        List<String> nsstSequence = execution.getVariable("nsstSequence")
-        Integer currentIndex=0;
-        execution.setVariable("currentNssiIndex",currentIndex)
-        Integer maxIndex=keys.size()
-        execution.setVariable("maxIndex",maxIndex)
-        if(maxIndex>0)
-            isMoreNSSI=true
-        execution.setVariable("isMoreNSSI",isMoreNSSI)
-        logger.trace("Exit prepareNSSIList in DoAllocateNSIandNSSI()")
+        AllocateAnNssi allocateAnNssi = new AllocateAnNssi()
+        allocateAnNssi.nsstId = sliceTaskInfo.NSSTInfo.UUID
+        allocateAnNssi.nssiId = sliceTaskInfo.NSSTInfo.UUID
+        allocateAnNssi.nssiName = sliceTaskInfo.NSSTInfo.name
+        allocateAnNssi.sliceProfile = sliceTaskInfo.sliceProfile
+        allocateAnNssi.nsiInfo.nsiId = sliceParams.suggestNsiId
+
+        EsrInfo esrInfo = new EsrInfo()
+        //todo: vendor and network
+        esrInfo.setVendor(sliceTaskInfo.getVendor())
+        esrInfo.setNetworkType(sliceTaskInfo.getNetworkType())
+
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
+        String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+
+        //todo: service info
+        ServiceInfo serviceInfo = new ServiceInfo()
+        serviceInfo.globalSubscriberId = globalSubscriberId
+        serviceInfo.subscriptionServiceType = subscriptionServiceType
+        serviceInfo.nsiId = sliceParams.suggestNsiId
+        serviceInfo.serviceInvariantUuid = sliceTaskInfo.NSSTInfo.invariantUUID
+        serviceInfo.serviceUuid = sliceTaskInfo.NSSTInfo.UUID
+
+        nbiRequest.setServiceInfo(serviceInfo)
+        nbiRequest.setEsrInfo(esrInfo)
+        nbiRequest.setAllocateAnNssi(allocateAnNssi)
+
+        execution.setVariable("AnAllocateNssiNbiRequest", nbiRequest)
+        execution.setVariable("anBHSliceTaskInfo", sliceTaskInfo)
     }
 
 
-    void getOneNSSIInfo(DelegateExecution execution){
-        logger.trace("Enter getOneNSSIInfo in DoAllocateNSIandNSSI()")
+    /**
+     * create RAN Slice Profile Instance
+     * @param execution
+     */
+    void createCnSliceProfileInstance(DelegateExecution execution) {
 
-        //ServiceDecomposition serviceDecompositionObj = execution.getVariable("serviceDecompositionObj")
-        Map<String, Object> nssiMap=execution.getVariable("nssiMap")
-        List<String> nsstSequence = execution.getVariable("nsstSequence")
-        String currentNSST= nsstSequence.get(execution.getVariable("currentNssiIndex"))
-        boolean isNSSIOptionAvailable = false
-        String nsstInput=nssiMap.get(currentNSST)
-        execution.setVariable("nsstInput",nsstInput)
-        String modelUuid = jsonUtil.getJsonValue(nsstInput, "modelUuid")
-        String nssiInstanceId = jsonUtil.getJsonValue(nsstInput, "serviceInstanceId")
-        String nssiserviceModelInfo = """{
-            "modelInvariantUuid":"",
-            "modelUuid":"${modelUuid}",
-            "modelVersion":""
-             }"""
-        Integer currentIndex = execution.getVariable("currentNssiIndex")
-        currentIndex=currentIndex+1;
-        execution.setVariable("currentNssiIndex",currentIndex)
-        execution.setVariable("nssiserviceModelInfo",nssiserviceModelInfo)
-        execution.setVariable("nssiInstanceId",nssiInstanceId)
-        logger.trace("Exit getOneNSSIInfo in DoAllocateNSIandNSSI()")
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
+        String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+        String serviceInstanceId = UUID.randomUUID().toString()
+        execution.setVariable("cnSliceProfileInstanceId", serviceInstanceId) //todo:
+
+        String serviceType = ""
+        String serviceRole = "slice-profile"
+        String oStatus = "deactivated"
+
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+        SliceTaskInfo<CnSliceProfile> sliceTaskInfo = sliceParams.cnSliceTaskInfo
+        sliceTaskInfo.setSliceInstanceId(serviceInstanceId)
+
+        // create slice profile
+        ServiceInstance rspi = new ServiceInstance()
+        rspi.setServiceInstanceName(sliceTaskInfo.NSSTInfo.name)
+        rspi.setServiceType(serviceType)
+        rspi.setServiceRole(serviceRole)
+        rspi.setOrchestrationStatus(oStatus)
+        rspi.setModelInvariantId(sliceTaskInfo.NSSTInfo.invariantUUID)
+        rspi.setModelVersionId(sliceTaskInfo.NSSTInfo.UUID)
+        rspi.setInputParameters(uuiRequest)
+        rspi.setWorkloadContext(useInterval)
+        rspi.setEnvironmentContext(sNSSAI_id)
+
+        //timestamp format YYYY-MM-DD hh:mm:ss
+        rspi.setCreatedAt(new Date(System.currentTimeMillis()).format("yyyy-MM-dd HH:mm:ss", TimeZone.getDefault()))
+
+        execution.setVariable("communicationServiceInstance", rspi)
+
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
+                globalSubscriberId,
+                subscriptionServiceType,
+                serviceInstanceId)
+        client.create(uri, rspi)
+        execution.setVariable("sliceTaskParams", sliceParams)
     }
 
-    void updateCurrentIndex(DelegateExecution execution){
+    /**
+     * create An Slice Profile
+     * @param execution
+     */
+    void createCnSliceProfile(DelegateExecution execution) {
 
-        logger.trace("Enter updateCurrentIndex in DoAllocateNSIandNSSI()")
-        Integer currentIndex = execution.getVariable("currentNssiIndex")
-        Integer maxIndex = execution.getVariable("maxIndex")
-        if(currentIndex>=maxIndex)
-        {
-            Boolean isMoreNSSI=false
-            execution.setVariable("isMoreNSSI",isMoreNSSI)
-        }
-        logger.trace("Exit updateCurrentIndex in DoAllocateNSIandNSSI()")
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
+        String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+        //String serviceInstanceId = execution.getVariable("ranSliceProfileInstanceId")
+
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
+        SliceTaskInfo<CnSliceProfile> sliceTaskInfo = sliceParams.cnSliceTaskInfo
+        CnSliceProfile cnSliceProfile = sliceTaskInfo.sliceProfile
+
+        String profileId = UUID.randomUUID().toString()
+        cnSliceProfile.setSliceProfileId(profileId)
+
+        SliceProfile sliceProfile = new SliceProfile()
+        sliceProfile.setProfileId(profileId)
+        sliceProfile.setCoverageAreaTAList(cnSliceProfile.coverageAreaTAList as String)
+        //todo:...
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SLICE_PROFILE,
+                globalSubscriberId,
+                subscriptionServiceType,
+                sliceTaskInfo.sliceInstanceId,
+                profileId
+        )
+        client.create(uri, sliceProfile)
+        execution.setVariable("sliceTaskParams", sliceParams)
     }
+
+    /**
+     * prepare AllocateCnNssi
+     * @param execution
+     */
+    void prepareAllocateCnNssi(DelegateExecution execution) {
+
+        //todo:
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+        SliceTaskInfo<CnSliceProfile> sliceTaskInfo = sliceParams.cnSliceTaskInfo
+
+        NssmfAdapterNBIRequest nbiRequest = new NssmfAdapterNBIRequest()
+
+        AllocateCnNssi allocateCnNssi = new AllocateCnNssi()
+        allocateCnNssi.nsstId = sliceTaskInfo.NSSTInfo.UUID
+        allocateCnNssi.nssiId = sliceTaskInfo.NSSTInfo.UUID
+        allocateCnNssi.nssiName = sliceTaskInfo.NSSTInfo.name
+        allocateCnNssi.sliceProfile = sliceTaskInfo.sliceProfile
+        allocateCnNssi.nsiInfo.nsiId = sliceParams.suggestNsiId
+
+        EsrInfo esrInfo = new EsrInfo()
+        //todo: vendor and network
+        esrInfo.setVendor(sliceTaskInfo.getVendor())
+        esrInfo.setNetworkType(sliceTaskInfo.getNetworkType())
+
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
+        String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+
+        //todo: service info
+        ServiceInfo serviceInfo = new ServiceInfo()
+        serviceInfo.globalSubscriberId = globalSubscriberId
+        serviceInfo.subscriptionServiceType = subscriptionServiceType
+        serviceInfo.nsiId = sliceParams.suggestNsiId
+        serviceInfo.serviceInvariantUuid = sliceTaskInfo.NSSTInfo.invariantUUID
+        serviceInfo.serviceUuid = sliceTaskInfo.NSSTInfo.UUID
+
+        nbiRequest.setServiceInfo(serviceInfo)
+        nbiRequest.setEsrInfo(esrInfo)
+        nbiRequest.setAllocateCnNssi(allocateCnNssi)
+
+        execution.setVariable("CnAllocateNssiNbiRequest", nbiRequest)
+        execution.setVariable("cnSliceTaskInfo", sliceTaskInfo)
+    }
+
+
+    /**
+     * create TN Slice Profile Instance
+     * @param execution
+     */
+    void createTnBHSliceProfileInstance(DelegateExecution execution) {
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
+        String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+
+        String serviceType = ""
+        String serviceRole = "slice-profile"
+        String oStatus = "deactivated"
+
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
+        SliceTaskInfo<TnSliceProfile> sliceTaskInfo = sliceParams.tnBHSliceTaskInfo
+        String serviceInstanceId = UUID.randomUUID().toString()
+
+        sliceTaskInfo.setSliceInstanceId(serviceInstanceId)
+        //execution.setVariable("cnSliceProfileInstanceId", serviceInstanceId) //todo:
+
+        // create slice profile
+        ServiceInstance rspi = new ServiceInstance()
+        rspi.setServiceInstanceName(sliceTaskInfo.NSSTInfo.name)
+        rspi.setServiceType(serviceType)
+        rspi.setServiceRole(serviceRole)
+        rspi.setOrchestrationStatus(oStatus)
+        rspi.setModelInvariantId(sliceTaskInfo.NSSTInfo.invariantUUID)
+        rspi.setModelVersionId(sliceTaskInfo.NSSTInfo.UUID)
+        rspi.setInputParameters(uuiRequest)
+        rspi.setWorkloadContext(useInterval)
+        rspi.setEnvironmentContext(sNSSAI_id)
+
+        //timestamp format YYYY-MM-DD hh:mm:ss
+        rspi.setCreatedAt(new Date(System.currentTimeMillis()).format("yyyy-MM-dd HH:mm:ss", TimeZone.getDefault()))
+
+        execution.setVariable("communicationServiceInstance", rspi)
+
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
+                globalSubscriberId,
+                subscriptionServiceType,
+                serviceInstanceId)
+        client.create(uri, rspi)
+
+        execution.setVariable("sliceTaskParams", sliceParams)
+    }
+
+    /**
+     * create An Slice Profile
+     * @param execution
+     */
+    void createTnBHSliceProfile(DelegateExecution execution) {
+
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
+        String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
+        SliceTaskInfo<TnSliceProfile> sliceTaskInfo = sliceParams.tnBHSliceTaskInfo
+
+        TnSliceProfile tnSliceProfile = sliceTaskInfo.sliceProfile
+        String profileId = UUID.randomUUID().toString()
+        tnSliceProfile.setSliceProfileId(profileId)
+
+        SliceProfile sliceProfile = new SliceProfile()
+        sliceProfile.setProfileId(profileId)
+        //todo:...
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SLICE_PROFILE,
+                globalSubscriberId,
+                subscriptionServiceType,
+                sliceTaskInfo.sliceInstanceId,
+                profileId
+        )
+        client.create(uri, sliceProfile)
+
+        execution.setVariable("sliceTaskParams", sliceParams)
+    }
+
+    /**
+     * prepare AllocateCnNssi
+     * @param execution
+     */
+    void prepareAllocateTnBHNssi(DelegateExecution execution) {
+
+        //todo:
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+        SliceTaskInfo<TnSliceProfile> sliceTaskInfo = sliceParams.tnBHSliceTaskInfo
+
+        NssmfAdapterNBIRequest nbiRequest = new NssmfAdapterNBIRequest()
+
+        AllocateTnNssi allocateTnNssi = new AllocateTnNssi()
+        //todo: AllocateTnNssi
+        allocateTnNssi.setTransportSliceNetworks()
+        allocateTnNssi.setNetworkSliceInfos()
+
+
+        //allocateTnNssi.networkSliceInfos
+
+        EsrInfo esrInfo = new EsrInfo()
+        esrInfo.setVendor(sliceTaskInfo.getVendor())
+        esrInfo.setNetworkType(sliceTaskInfo.getNetworkType())
+
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
+        String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+
+        ServiceInfo serviceInfo = new ServiceInfo()
+        serviceInfo.globalSubscriberId = globalSubscriberId
+        serviceInfo.subscriptionServiceType = subscriptionServiceType
+        serviceInfo.nsiId = sliceParams.suggestNsiId
+        serviceInfo.serviceInvariantUuid = sliceTaskInfo.NSSTInfo.invariantUUID
+        serviceInfo.serviceUuid = sliceTaskInfo.NSSTInfo.UUID
+
+        nbiRequest.setServiceInfo(serviceInfo)
+        nbiRequest.setEsrInfo(esrInfo)
+        nbiRequest.setAllocateTnNssi(allocateTnNssi)
+
+        execution.setVariable("TnBHAllocateNssiNbiRequest", nbiRequest)
+        execution.setVariable("tnBHSliceTaskInfo", sliceTaskInfo)
+    }
+
+    /**
+     * Update relationship between
+     * 1. NSI and NSSI
+     * 2. Slice Profile and Service Profile
+     * 3. SliceProfile and NSSI
+     * 4. sliceProfile and endpoint
+     *
+     * @param execution
+     */
+    public void updateAnRelationship(DelegateExecution execution) {
+        //todo:
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
+        ResponseDescriptor result = execution.getVariable("anNssiAllocateResult") as ResponseDescriptor
+        String nssiId = result.getNssiId()
+        String endPointId = result.getEndPointId()
+        String nsiId = sliceParams.getSuggestNsiId()
+        String sliceProfileInstanceId = sliceParams.anSliceTaskInfo.sliceInstanceId
+        String serviceProfileInstanceId = sliceParams.serviceId
+        //nsi id
+
+        updateRelationship(execution, nsiId, nssiId)
+
+        updateRelationship(execution, serviceProfileInstanceId, sliceProfileInstanceId)
+
+        updateRelationship(execution, sliceProfileInstanceId, nssiId)
+
+        updateRelationship(execution, sliceProfileInstanceId, endPointId)
+
+    }
+
+
+    /**
+     * Update relationship between
+     * 1. NSI and NSSI
+     * 2. Slice Profile and Service Profile
+     * 3. SliceProfile and NSSI
+     *
+     * @param execution
+     */
+    public void updateCnRelationship(DelegateExecution execution) {
+        //todo:
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
+        NssiResponse result = execution.getVariable("cnNssiAllocateResult") as NssiResponse
+        String nssiId = result.getNssiId()
+        String nsiId = sliceParams.getSuggestNsiId()
+        String sliceProfileInstanceId = sliceParams.cnSliceTaskInfo.sliceInstanceId
+        String serviceProfileInstanceId = sliceParams.serviceId
+        //nsi id
+
+        updateRelationship(execution, nsiId, nssiId)
+
+        updateRelationship(execution, serviceProfileInstanceId, sliceProfileInstanceId)
+
+        updateRelationship(execution,sliceProfileInstanceId, nssiId)
+
+
+    }
+
+    /**
+     * Update relationship between
+     * 1. NSI and NSSI
+     * 2. Slice Profile and Service Profile
+     * 3. SliceProfile and NSSI
+     *
+     * @param execution
+     */
+    public void updateTnBHRelationship(DelegateExecution execution) {
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
+        NssiResponse result = execution.getVariable("tnBHNssiAllocateResult") as NssiResponse
+        String nssiId = result.getNssiId()
+        String nsiId = sliceParams.getSuggestNsiId()
+        String sliceProfileInstanceId = sliceParams.tnBHSliceTaskInfo.sliceInstanceId
+        String serviceProfileInstanceId = sliceParams.serviceId
+        //nsi id
+
+        updateRelationship(execution, nsiId, nssiId)
+
+        updateRelationship(execution, serviceProfileInstanceId, sliceProfileInstanceId)
+
+        updateRelationship(execution,sliceProfileInstanceId, nssiId)
+    }
+
+    /**
+     * sourceId -> targetId
+     * @param execution
+     * @param sourceId
+     * @param targetId
+     */
+    void updateRelationship(DelegateExecution execution, String sourceId, String targetId) {
+        //relation ship
+        Relationship relationship = new Relationship()
+
+        AAIResourceUri nsiServiceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
+                execution.getVariable("globalSubscriberId"),
+                execution.getVariable("subscriptionServiceType"),
+                targetId)
+
+        logger.info("Creating Allotted resource relationship, nsiServiceUri: " + nsiServiceUri)
+
+        relationship.setRelatedLink(nsiServiceUri.build().toString())
+
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
+                execution.getVariable("globalSubscriberId"),
+                execution.getVariable("subscriptionServiceType"),
+                sourceId).relationshipAPI()
+        client.create(uri, relationship)
+    }
+
 }
