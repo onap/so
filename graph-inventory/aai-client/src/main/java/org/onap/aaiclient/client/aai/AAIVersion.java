@@ -33,7 +33,9 @@ public enum AAIVersion implements GraphInventoryVersion {
     V17("v17"),
     V18("v18"),
     V19("v19"),
-    V20("v20");
+    V20("v20"),
+    V21("v21"),
+    V22("v22");
 
     public static final AAIVersion LATEST = AAIVersion.values()[AAIVersion.values().length - 1];
     private final String value;

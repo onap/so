@@ -54,9 +54,9 @@ public class DeleteAAIInventory {
             CloudSite cloudSite = cloudConfig.getCloudSite(cloudInformation.getRegionId())
                     .orElseThrow(() -> new MsoCloudSiteNotFound(cloudInformation.getRegionId()));
             CloudIdentity cloudIdentity = cloudSite.getIdentityService();
-            HeatBridgeApi heatBridgeClient =
-                    new HeatBridgeImpl(new AAIResourcesClient(), cloudIdentity, cloudInformation.getOwner(),
-                            cloudInformation.getRegionId(), cloudSite.getRegionId(), cloudInformation.getTenantId());
+            HeatBridgeApi heatBridgeClient = new HeatBridgeImpl(new AAIResourcesClient(), cloudIdentity,
+                    cloudInformation.getOwner(), cloudInformation.getRegionId(), cloudSite.getRegionId(),
+                    cloudInformation.getTenantId(), cloudInformation.getNodeType());
             heatBridgeClient.authenticate();
             heatBridgeClient.deleteVfModuleData(cloudInformation.getVnfId(), cloudInformation.getVfModuleId());
 

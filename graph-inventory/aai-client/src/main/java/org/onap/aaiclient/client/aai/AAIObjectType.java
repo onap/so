@@ -20,7 +20,12 @@
 
 package org.onap.aaiclient.client.aai;
 
-import com.google.common.base.CaseFormat;
+import java.io.Serializable;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 import org.onap.aai.annotations.Metadata;
 import org.onap.aai.domain.yang.AggregateRoute;
 import org.onap.aai.domain.yang.AllottedResource;
@@ -41,6 +46,7 @@ import org.onap.aai.domain.yang.Image;
 import org.onap.aai.domain.yang.InstanceGroup;
 import org.onap.aai.domain.yang.L3Network;
 import org.onap.aai.domain.yang.LInterface;
+import org.onap.aai.domain.yang.LagInterface;
 import org.onap.aai.domain.yang.LineOfBusiness;
 import org.onap.aai.domain.yang.LogicalLink;
 import org.onap.aai.domain.yang.ModelVer;
@@ -69,6 +75,7 @@ import org.onap.aai.domain.yang.Tenant;
 import org.onap.aai.domain.yang.TunnelXconnect;
 import org.onap.aai.domain.yang.Vce;
 import org.onap.aai.domain.yang.VfModule;
+import org.onap.aai.domain.yang.VlanRange;
 import org.onap.aai.domain.yang.VlanTag;
 import org.onap.aai.domain.yang.Vnfc;
 import org.onap.aai.domain.yang.VolumeGroup;
@@ -82,12 +89,7 @@ import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
-import java.io.Serializable;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
+import com.google.common.base.CaseFormat;
 
 public class AAIObjectType implements AAIObjectBase, GraphInventoryObjectType, Serializable {
 
@@ -192,6 +194,8 @@ public class AAIObjectType implements AAIObjectBase, GraphInventoryObjectType, S
     public static final AAIObjectType IMAGE = new AAIObjectType(AAIObjectType.CLOUD_REGION.uriTemplate(), Image.class);
     public static final AAIObjectType FLAVOR =
             new AAIObjectType(AAIObjectType.CLOUD_REGION.uriTemplate(), Flavor.class);
+
+    public static final AAIObjectType VLAN_RANGE = new AAIObjectType(CLOUD_REGION.uriTemplate(), VlanRange.class);
     public static final AAIObjectType UNKNOWN = new AAIObjectType("", "", "unknown") {
 
         private static final long serialVersionUID = 9208984071038447607L;
@@ -233,6 +237,11 @@ public class AAIObjectType implements AAIObjectBase, GraphInventoryObjectType, S
             AAIObjectType.SERVICE_INSTANCE.uriTemplate(), "/communication-service-profiles", "communicationProfiles");
     public static final AAIObjectType QUERY_ALLOTTED_RESOURCE =
             new AAIObjectType(AAIObjectType.SERVICE_INSTANCE.uriTemplate(), "?depth=2", "service-Instance");
+
+    public static final AAIObjectType LAG_INTERFACE =
+            new AAIObjectType(AAIObjectType.PSERVER.uriTemplate(), LagInterface.class);
+
+
 
     private final String uriTemplate;
     private final String parentUri;

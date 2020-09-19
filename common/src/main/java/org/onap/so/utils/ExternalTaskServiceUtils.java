@@ -78,13 +78,9 @@ public class ExternalTaskServiceUtils {
     @Scheduled(fixedDelay = 30000)
     public void checkAllClientsActive() {
         try {
-            logger.debug("Executing scheduled task to check and restart external task clients"); // TODO remove
-                                                                                                 // eventually
             List<ExternalTaskClient> inactiveClients =
                     getClients().stream().filter(client -> !client.isActive()).collect(Collectors.toList());
-
             inactiveClients.forEach(c -> {
-                logger.debug("External Task Client found to be inactive. Restarting Client.");
                 c.start();
             });
         } catch (Exception e) {
