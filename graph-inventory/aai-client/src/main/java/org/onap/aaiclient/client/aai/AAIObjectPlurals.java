@@ -76,6 +76,8 @@ public class AAIObjectPlurals implements AAIObjectBase, GraphInventoryObjectPlur
             new AAIObjectPlurals(AAIObjectType.PNF, AAINamespaceConstants.NETWORK, "/pnfs");
     public static final AAIObjectPlurals PROJECT =
             new AAIObjectPlurals(AAIObjectType.PROJECT, AAINamespaceConstants.BUSINESS, "/projects");
+    public static final AAIObjectPlurals VSERVER =
+            new AAIObjectPlurals(AAIObjectType.VSERVER, AAIObjectType.TENANT.uriTemplate(), "/vservers");
 
     private final String uriTemplate;
     private final String partialUri;
