@@ -32,6 +32,8 @@
  */
 package org.onap.so.heatbridge;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,22 +62,31 @@ import org.onap.aai.domain.yang.SriovPf;
 import org.onap.aai.domain.yang.SriovPfs;
 import org.onap.aai.domain.yang.Subnets;
 import org.onap.aai.domain.yang.SriovVf;
-import org.onap.aai.domain.yang.SriovVfs;
 import org.onap.aai.domain.yang.VfModule;
 import org.onap.aai.domain.yang.Vlan;
-import org.onap.aai.domain.yang.Vlans;
 import org.onap.aai.domain.yang.Vserver;
-import org.onap.aaiclient.client.aai.AAIObjectType;
+import org.onap.aaiclient.client.aai.AAIDSLQueryClient;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.AAISingleTransactionClient;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.Relationships;
+import org.onap.aaiclient.client.aai.entities.Results;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
+import org.onap.aaiclient.client.graphinventory.Format;
+import org.onap.aaiclient.client.graphinventory.entities.DSLQuery;
+import org.onap.aaiclient.client.graphinventory.entities.DSLQueryBuilder;
+import org.onap.aaiclient.client.graphinventory.entities.DSLStartNode;
+import org.onap.aaiclient.client.graphinventory.entities.Node;
+import org.onap.aaiclient.client.graphinventory.entities.Start;
+import org.onap.aaiclient.client.graphinventory.entities.TraversalBuilder;
+import org.onap.aaiclient.client.graphinventory.entities.__;
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
 import org.onap.aaiclient.client.graphinventory.exceptions.BulkProcessFailed;
 import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.cloud.resource.beans.NodeType;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.ServerType;
 import org.onap.so.heatbridge.constants.HeatBridgeConstants;
@@ -97,6 +108,8 @@ import org.openstack4j.model.network.Subnet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -111,21 +124,34 @@ public class HeatBridgeImpl implements HeatBridgeApi {
     private static final String ERR_MSG_NULL_OS_CLIENT =
             "Initialization error: Null openstack client. Authenticate with Keystone first.";
     private static final String OOB_MGT_NETWORK_IDENTIFIER = "Management";
+
+    protected static final String DIRECT = "direct";
+    protected static final String PCI_SLOT = "pci_slot";
+    protected static final String OVSNET = "ovsnet";
+    protected static final String SRIOV = "SRIOV";
+    protected static final String RESOURCE_LINK = "resource-link";
+
+    protected static final Object PRIVATE_VLANS = "private_vlans";
+    protected static final Object PUBLIC_VLANS = "public_vlans";
+
+    protected ObjectMapper mapper = new ObjectMapper();
+
     private OpenstackClient osClient;
     private AAIResourcesClient resourcesClient;
+    private AAIDSLQueryClient aaiDSLClient;
     private AAISingleTransactionClient transaction;
     private String cloudOwner;
     private String cloudRegionId;
     private String regionId;
     private String tenantId;
+    private NodeType nodeType;
     private AaiHelper aaiHelper = new AaiHelper();
     private CloudIdentity cloudIdentity;
     private Environment env;
 
-
     public HeatBridgeImpl(AAIResourcesClient resourcesClient, final CloudIdentity cloudIdentity,
             @Nonnull final String cloudOwner, @Nonnull final String cloudRegionId, @Nonnull final String regionId,
-            @Nonnull final String tenantId) {
+            @Nonnull final String tenantId, @Nonnull final NodeType nodeType) {
         Objects.requireNonNull(cloudOwner, "Null cloud-owner value!");
         Objects.requireNonNull(cloudRegionId, "Null cloud-region identifier!");
         Objects.requireNonNull(tenantId, "Null tenant identifier!");
@@ -137,6 +163,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
         this.regionId = regionId;
         this.tenantId = tenantId;
         this.resourcesClient = resourcesClient;
+        this.nodeType = nodeType;
         if (resourcesClient != null)
             this.transaction = resourcesClient.beginSingleTransaction();
         if (SpringContextHelper.getAppContext() != null)
@@ -202,6 +229,11 @@ public class HeatBridgeImpl implements HeatBridgeApi {
         return serverIds.stream().map(serverId -> osClient.getServerById(serverId)).collect(Collectors.toList());
     }
 
+
+    protected Server getOpenstackServerById(String deviceId) {
+        return osClient.getServerById(deviceId);
+    }
+
     @Override
     public List<Network> getAllOpenstackProviderNetworks(final List<Resource> stackResources) {
         Objects.requireNonNull(osClient, ERR_MSG_NULL_OS_CLIENT);
@@ -253,8 +285,8 @@ public class HeatBridgeImpl implements HeatBridgeApi {
         for (org.openstack4j.model.compute.Image image : images) {
             Image aaiImage = aaiHelper.buildImage(image);
             try {
-                AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.IMAGE, cloudOwner, cloudRegionId,
-                        aaiImage.getImageId());
+                AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                        .cloudRegion(cloudOwner, cloudRegionId).image(aaiImage.getImageId()));
                 if (!resourcesClient.exists(uri)) {
                     transaction.create(uri, aaiImage);
                     logger.debug("Queuing AAI command to add image: " + aaiImage.getImageId());
@@ -274,8 +306,8 @@ public class HeatBridgeImpl implements HeatBridgeApi {
         for (org.openstack4j.model.compute.Flavor flavor : flavors) {
             Flavor aaiFlavor = aaiHelper.buildFlavor(flavor);
             try {
-                AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.FLAVOR, cloudOwner, cloudRegionId,
-                        aaiFlavor.getFlavorId());
+                AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                        .cloudRegion(cloudOwner, cloudRegionId).flavor(aaiFlavor.getFlavorId()));
                 transaction.createIfNotExists(uri, Optional.of(aaiFlavor));
             } catch (WebApplicationException e) {
                 throw new HeatBridgeException(
@@ -293,20 +325,24 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             // Build vserver relationships to: image, flavor, pserver, vf-module
             vserver.setRelationshipList(
                     aaiHelper.getVserverRelationshipList(cloudOwner, cloudRegionId, genericVnfId, vfModuleId, server));
-            transaction.createIfNotExists(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner,
-                    cloudRegionId, tenantId, vserver.getVserverId()), Optional.of(vserver));
+            transaction.createIfNotExists(
+                    AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                            .cloudRegion(cloudOwner, cloudRegionId).tenant(tenantId).vserver(vserver.getVserverId())),
+                    Optional.of(vserver));
         });
     }
 
     @Override
     public void buildAddVserverLInterfacesToAaiAction(final List<Resource> stackResources,
-            final List<String> oobMgtNetIds, String cloudOwner) {
+            final List<String> oobMgtNetIds, String cloudOwner) throws HeatBridgeException {
         Objects.requireNonNull(osClient, ERR_MSG_NULL_OS_CLIENT);
         List<String> portIds =
                 extractStackResourceIdsByResourceType(stackResources, HeatBridgeConstants.OS_PORT_RESOURCE_TYPE);
+
         if (portIds == null)
             return;
         for (String portId : portIds) {
+            boolean isL2Multicast = false;
             Port port = osClient.getPortById(portId);
             Network network = osClient.getNetworkById(port.getNetworkId());
             LInterface lIf = new LInterface();
@@ -317,12 +353,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             lIf.setIsPortMirrored(false);
             lIf.setIsIpUnnumbered(false);
             lIf.setInMaint(false);
-            if (oobMgtNetIds != null && oobMgtNetIds.contains(port.getNetworkId())) {
-                lIf.setInterfaceRole(OOB_MGT_NETWORK_IDENTIFIER);
-            } else {
-                lIf.setInterfaceRole(port.getvNicType());
-            }
-            boolean isL2Multicast = false;
+
             if (port.getProfile() != null && port.getProfile().get("trusted") != null) {
                 String trusted = port.getProfile().get("trusted").toString();
                 if (Boolean.parseBoolean(trusted)) {
@@ -330,16 +361,43 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                 }
             }
             lIf.setL2Multicasting(isL2Multicast);
+            lIf.setInterfaceType(getInterfaceType(nodeType, port.getvNicType()));
+            lIf.setRelationshipList(new RelationshipList());
 
-            transaction.createIfNotExists(AAIUriFactory.createResourceUri(AAIObjectType.L_INTERFACE, cloudOwner,
-                    cloudRegionId, tenantId, port.getDeviceId(), lIf.getInterfaceName()), Optional.of(lIf));
+            if (oobMgtNetIds != null && oobMgtNetIds.contains(port.getNetworkId())) {
+                lIf.setInterfaceRole(OOB_MGT_NETWORK_IDENTIFIER);
+            } else {
+                lIf.setInterfaceRole(port.getvNicType());
+            }
+
+            // Update l-interface to the vserver
+            transaction.createIfNotExists(
+                    AAIUriFactory.createResourceUri(
+                            AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(cloudOwner, cloudRegionId)
+                                    .tenant(tenantId).vserver(port.getDeviceId()).lInterface(lIf.getInterfaceName())),
+                    Optional.of(lIf));
 
             updateLInterfaceIps(port, lIf);
+
             if (cloudOwner.equals(env.getProperty("mso.cloudOwner.included", ""))) {
-                updateLInterfaceVlan(port, lIf);
+                Server server = getOpenstackServerById(port.getDeviceId());
+                updateLInterfaceVlan(port, lIf, server.getHypervisorHostname());
             }
 
             updateSriovPfToPserver(port, lIf);
+        }
+    }
+
+    protected String getInterfaceType(NodeType nodeType, String nicType) {
+        logger.debug("nicType: " + nicType + "nodeType: " + nodeType);
+        if (DIRECT.equalsIgnoreCase(nicType)) {
+            return SRIOV;
+        } else {
+            if (nodeType == NodeType.GREENFIELD) {
+                return NodeType.GREENFIELD.getNetworkTechnologyName();
+            } else {
+                return NodeType.BROWNFIELD.getNetworkTechnologyName();
+            }
         }
     }
 
@@ -356,8 +414,10 @@ public class HeatBridgeImpl implements HeatBridgeApi {
         for (String portId : portIds) {
             Port port = osClient.getPortById(portId);
             if (port.getvNicType().equalsIgnoreCase(HeatBridgeConstants.OS_SRIOV_PORT_TYPE)) {
-                createPServerPInterfaceIfNotExists(serverHostnames.get(port.getHostId()).getHostname(),
-                        aaiHelper.buildPInterface(port));
+                Pserver foundServer = serverHostnames.get(port.getHostId());
+                if (foundServer != null) {
+                    createPServerPInterfaceIfNotExists(foundServer.getHostname(), aaiHelper.buildPInterface(port));
+                }
             }
         }
     }
@@ -369,6 +429,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             for (Server server : osServers) {
                 Pserver pserver = aaiHelper.buildPserver(server);
                 if (pserver != null) {
+                    logger.debug("Adding Pserver: " + server.getHost());
                     pserverMap.put(server.getHost(), pserver);
                 }
             }
@@ -392,18 +453,21 @@ public class HeatBridgeImpl implements HeatBridgeApi {
 
     private void createPServerIfNotExists(Map<String, Pserver> serverHostnames) {
         for (Pserver pserver : serverHostnames.values()) {
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, pserver.getHostname());
+            AAIResourceUri uri = AAIUriFactory
+                    .createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().pserver(pserver.getHostname()));
             resourcesClient.createIfNotExists(uri, Optional.of(pserver));
         }
     }
 
     private void createPServerPInterfaceIfNotExists(String pserverHostname, PInterface pInterface) {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.P_INTERFACE, pserverHostname,
-                pInterface.getInterfaceName());
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                .pserver(pserverHostname).pInterface(pInterface.getInterfaceName()));
         resourcesClient.createIfNotExists(uri, Optional.of(pInterface));
     }
 
-    private void updateLInterfaceVlan(final Port port, final LInterface lIf) {
+    private void updateLInterfaceVlan(final Port port, final LInterface lIf, final String hostName)
+            throws HeatBridgeException {
+        // add back all vlan logic
         Vlan vlan = new Vlan();
         Network network = osClient.getNetworkById(port.getNetworkId());
         if (network.getNetworkType() != null && network.getNetworkType().equals(NetworkType.VLAN)) {
@@ -413,7 +477,6 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             vlan.setInMaint(false);
             vlan.setIsIpUnnumbered(false);
             vlan.setIsPrivate(false);
-
             transaction
                     .createIfNotExists(
                             AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
@@ -421,6 +484,32 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                                     .lInterface(lIf.getInterfaceName()).vlan(vlan.getVlanInterface())),
                             Optional.of(vlan));
         }
+
+        if (nodeType == NodeType.GREENFIELD) {
+            validatePhysicalNetwork(port, network);
+            processOVS(lIf, hostName, NodeType.GREENFIELD.getInterfaceName());
+        } else {
+            processOVS(lIf, hostName, NodeType.BROWNFIELD.getInterfaceName());
+        }
+
+        List<String> privateVlans = (ArrayList<String>) port.getProfile().get(PRIVATE_VLANS);
+        List<String> publicVlans = (ArrayList<String>) port.getProfile().get(PUBLIC_VLANS);
+        List<String> vlans = null;
+        if (publicVlans != null && !publicVlans.isEmpty()) {
+            vlans = publicVlans.stream().filter(publicVlan -> !Strings.isNullOrEmpty(publicVlan))
+                    .collect(Collectors.toList());
+        } else {
+            vlans = new ArrayList<>();
+        }
+
+        if (privateVlans != null && !privateVlans.isEmpty()) {
+            List<String> temp = privateVlans.stream().filter(privateVlan -> !Strings.isNullOrEmpty(privateVlan))
+                    .collect(Collectors.toList());
+            vlans.addAll(temp);
+        }
+        vlans.stream().forEach(vlanLocal -> logger.debug("Vlan Id: {}", vlanLocal));
+
+        processVlanTag(lIf, vlans);
 
         if (port.getvNicType() != null && port.getvNicType().equalsIgnoreCase(HeatBridgeConstants.OS_SRIOV_PORT_TYPE)) {
             SriovVf sriovVf = new SriovVf();
@@ -437,6 +526,49 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                                     .lInterface(lIf.getInterfaceName()).sriovVf(sriovVf.getPciId())),
                             Optional.of(sriovVf));
         }
+    }
+
+    protected String createVlanTagUri(String vlanIdOuter) throws HeatBridgeException {
+        int vlanOuterInt = Integer.parseInt(vlanIdOuter);
+        DSLQueryBuilder<Start, Node> builder = TraversalBuilder
+                .fragment(new DSLStartNode(Types.CLOUD_REGION, __.key("cloud-owner", cloudOwner),
+                        __.key("cloud-region-id", cloudRegionId)))
+                .to(__.node(Types.VLAN_RANGE))
+                .to(__.node(Types.VLAN_TAG, __.key("vlan-id-outer", vlanOuterInt)).output());
+        String results = getAAIDSLClient().query(Format.PATHED, new DSLQuery(builder.build()));
+        Optional<String> vlanTagURI = findLinkedURI(results);
+        if (vlanTagURI.isPresent())
+            return vlanTagURI.get();
+        else
+            throw new HeatBridgeException("Cannot find VlanTag Related Link " + vlanIdOuter);
+    }
+
+
+    protected void processVlanTag(LInterface lInterface, List<String> vlanTags) throws HeatBridgeException {
+        for (String vlanTag : vlanTags) {
+            Relationship vlanTagRelationship = new Relationship();
+            vlanTagRelationship.setRelatedLink(createVlanTagUri(vlanTag));
+            lInterface.getRelationshipList().getRelationship().add(vlanTagRelationship);
+        }
+    }
+
+    protected void validatePhysicalNetwork(Port neutronPort, Network network) throws HeatBridgeException {
+        String physicalNetworkType = network.getProviderPhyNet();
+        if (!OVSNET.equalsIgnoreCase(physicalNetworkType)) {
+            String exceptionMessage = String.format(
+                    "The OVS-DPDK port is expected to have a physical network of type ovsnet but was found to have %s instead.",
+                    physicalNetworkType);
+            throw new HeatBridgeException(exceptionMessage);
+        }
+    }
+
+    protected void processOVS(LInterface lInterface, String hostName, String interfaceName) {
+        Relationship lagRelationship = new Relationship();
+        lagRelationship.setRelatedLink(AAIUriFactory
+                .createResourceUri(
+                        AAIFluentTypeBuilder.cloudInfrastructure().pserver(hostName).lagInterface(interfaceName))
+                .build().toString());
+        lInterface.getRelationshipList().getRelationship().add(lagRelationship);
     }
 
     /**
@@ -464,9 +596,11 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                 lIf.setInterfaceDescription(
                         "Attached to SR-IOV port: " + pserverHostName + "::" + matchingPifName.get());
                 try {
-                    Optional<PInterface> matchingPIf = resourcesClient.get(PInterface.class, AAIUriFactory
-                            .createResourceUri(AAIObjectType.P_INTERFACE, pserverHostName, matchingPifName.get())
-                            .depth(Depth.ONE));
+                    Optional<PInterface> matchingPIf = resourcesClient.get(PInterface.class,
+                            AAIUriFactory
+                                    .createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                                            .pserver(pserverHostName).pInterface(matchingPifName.get()))
+                                    .depth(Depth.ONE));
                     if (matchingPIf.isPresent()) {
                         SriovPfs pIfSriovPfs = matchingPIf.get().getSriovPfs();
                         if (pIfSriovPfs == null) {
@@ -484,16 +618,18 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                             logger.debug("Queuing AAI command to update sriov-pf object to pserver: " + pserverHostName
                                     + "/" + matchingPifName.get());
 
-                            AAIResourceUri sriovPfUri = AAIUriFactory.createResourceUri(AAIObjectType.SRIOV_PF,
-                                    pserverHostName, matchingPifName.get(), sriovPf.getPfPciId());
+                            AAIResourceUri sriovPfUri = AAIUriFactory.createResourceUri(
+                                    AAIFluentTypeBuilder.cloudInfrastructure().pserver(pserverHostName)
+                                            .pInterface(matchingPifName.get()).sriovPf(sriovPf.getPfPciId()));
+
 
                             if (!resourcesClient.exists(sriovPfUri)) {
                                 transaction.create(sriovPfUri, sriovPf);
 
-                                AAIResourceUri sriovVfUri = AAIUriFactory.createResourceUri(AAIObjectType.SRIOV_VF,
-                                        cloudOwner, cloudRegionId, tenantId, port.getDeviceId(), lIf.getInterfaceName(),
-                                        port.getProfile().get(HeatBridgeConstants.OS_PCI_SLOT_KEY).toString());
-
+                                AAIResourceUri sriovVfUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder
+                                        .cloudInfrastructure().cloudRegion(cloudOwner, cloudRegionId).tenant(tenantId)
+                                        .vserver(port.getDeviceId()).lInterface(lIf.getInterfaceName()).sriovVf(
+                                                port.getProfile().get(HeatBridgeConstants.OS_PCI_SLOT_KEY).toString()));
                                 transaction.connect(sriovPfUri, sriovVfUri);
                             }
                         }
@@ -562,17 +698,16 @@ public class HeatBridgeImpl implements HeatBridgeApi {
         Objects.requireNonNull(vnfId, "Null vnf-id!");
         Objects.requireNonNull(vfModuleId, "Null vf-module-id!");
         try {
-            Optional<VfModule> vfModule = resourcesClient
-                    .get(AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId).depth(Depth.ONE),
-                            NotFoundException.class)
-                    .asBean(VfModule.class);
+            Optional<VfModule> vfModule = resourcesClient.get(AAIUriFactory
+                    .createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId).vfModule(vfModuleId))
+                    .depth(Depth.ONE), NotFoundException.class).asBean(VfModule.class);
 
             AAIResultWrapper resultWrapper = new AAIResultWrapper(vfModule.get());
             Optional<Relationships> relationships = resultWrapper.getRelationships();
             logger.debug("VfModule contains relationships in AAI: {}", relationships.isPresent());
             if (relationships.isPresent()) {
 
-                List<AAIResourceUri> l3NetworkUris = relationships.get().getRelatedUris(AAIObjectType.L3_NETWORK);
+                List<AAIResourceUri> l3NetworkUris = relationships.get().getRelatedUris(Types.L3_NETWORK);
                 logger.debug("L3Network contains {} relationships in AAI", l3NetworkUris.size());
 
                 if (!l3NetworkUris.isEmpty()) {
@@ -585,13 +720,13 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                     }
                 }
 
-                List<AAIResourceUri> vserverUris = relationships.get().getRelatedUris(AAIObjectType.VSERVER);
+                List<AAIResourceUri> vserverUris = relationships.get().getRelatedUris(Types.VSERVER);
                 logger.debug("VServer contains {} relationships in AAI", vserverUris.size());
                 createTransactionToDeleteSriovPfFromPserver(vserverUris);
 
                 if (!vserverUris.isEmpty()) {
                     for (AAIResourceUri vserverUri : vserverUris) {
-                        if (env.getProperty("heatBridgeDryrun", Boolean.class, true)) {
+                        if (env.getProperty("heatBridgeDryrun", Boolean.class, false)) {
                             logger.debug("Would delete Vserver: {}", vserverUri.build().toString());
                         } else {
                             resourcesClient.delete(vserverUri);
@@ -617,7 +752,8 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             String pserverName = entry.getKey();
             List<String> pciIds = entry.getValue();
             Optional<Pserver> pserver = resourcesClient.get(Pserver.class,
-                    AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, pserverName).depth(Depth.TWO));
+                    AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().pserver(pserverName))
+                            .depth(Depth.TWO));
             if (pserver.isPresent()) {
                 // For each pserver/p-interface match sriov-vfs by pic-id and delete them.
                 pserver.get().getPInterfaces().getPInterface().stream().filter(
@@ -626,15 +762,15 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                             if (pciIds.contains(sriovPf.getPfPciId())) {
                                 logger.debug("creating transaction to delete SR-IOV PF: " + pIf.getInterfaceName()
                                         + " from PServer: " + pserverName);
-                                if (env.getProperty("heatBridgeDryrun", Boolean.class, true)) {
+                                if (env.getProperty("heatBridgeDryrun", Boolean.class, false)) {
                                     logger.debug("Would delete Sriov Pf: {}",
-                                            AAIUriFactory
-                                                    .createResourceUri(AAIObjectType.SRIOV_PF, pserverName,
-                                                            pIf.getInterfaceName(), sriovPf.getPfPciId())
-                                                    .build().toString());
+                                            AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                                                    .pserver(pserverName).pInterface(pIf.getInterfaceName())
+                                                    .sriovPf(sriovPf.getPfPciId())).build());
                                 } else {
-                                    resourcesClient.delete(AAIUriFactory.createResourceUri(AAIObjectType.SRIOV_PF,
-                                            pserverName, pIf.getInterfaceName(), sriovPf.getPfPciId()));
+                                    resourcesClient.delete(AAIUriFactory.createResourceUri(
+                                            AAIFluentTypeBuilder.cloudInfrastructure().pserver(pserverName)
+                                                    .pInterface(pIf.getInterfaceName()).sriovPf(sriovPf.getPfPciId())));
                                 }
                             }
                         }));
@@ -648,12 +784,11 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             AAIResultWrapper vserverWrapper = resourcesClient.get(vserverUri.depth(Depth.TWO));
             Optional<Relationships> vserverRelationships = vserverWrapper.getRelationships();
             if (vserverRelationships.isPresent()
-                    && CollectionUtils.isNotEmpty(vserverRelationships.get().getRelatedLinks(AAIObjectType.PSERVER))) {
+                    && CollectionUtils.isNotEmpty(vserverRelationships.get().getRelatedLinks(Types.PSERVER))) {
                 Vserver vserver = vserverWrapper.asBean(Vserver.class).get();
                 List<String> pciIds = HeatBridgeUtils.extractPciIdsFromVServer(vserver);
                 if (CollectionUtils.isNotEmpty(pciIds)) {
-                    List<AAIResourceUri> matchingPservers =
-                            vserverRelationships.get().getRelatedUris(AAIObjectType.PSERVER);
+                    List<AAIResourceUri> matchingPservers = vserverRelationships.get().getRelatedUris(Types.PSERVER);
                     if (matchingPservers != null && matchingPservers.size() == 1) {
                         pserverToPciIdMap.put(matchingPservers.get(0).getURIKeys().get("hostname"), pciIds);
                     }
@@ -666,5 +801,29 @@ public class HeatBridgeImpl implements HeatBridgeApi {
     private <T> Predicate<T> distinctByProperty(Function<? super T, Object> keyExtractor) {
         Map<Object, Boolean> map = new ConcurrentHashMap<>();
         return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
+
+    protected Optional<String> findLinkedURI(String jsonResultsString) {
+        Results<Map<String, String>> results;
+        try {
+            results = mapper.readValue(jsonResultsString, new TypeReference<Results<Map<String, String>>>() {});
+            if (results.getResult().size() == 1) {
+                return Optional.of(results.getResult().get(0).get(RESOURCE_LINK));
+            } else if (results.getResult().isEmpty()) {
+                return Optional.empty();
+            } else {
+                throw new IllegalStateException("more than one result returned");
+            }
+        } catch (IOException e) {
+            logger.error("Error retrieving URI from Results JSON", e);
+            return Optional.empty();
+        }
+    }
+
+    protected AAIDSLQueryClient getAAIDSLClient() {
+        if (aaiDSLClient == null) {
+            aaiDSLClient = new AAIDSLQueryClient();
+        }
+        return aaiDSLClient;
     }
 }

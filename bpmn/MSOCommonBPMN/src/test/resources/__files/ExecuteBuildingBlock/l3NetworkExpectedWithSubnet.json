@@ -53,8 +53,7 @@
 		}
 	],
 	"aggregate-routes": [
-		{
-			"route-id": "routeId",
+		{			
 			"network-start-address": "10.80.12.0",
 			"cidr-mask": "23",
 			"ip-version": "4"

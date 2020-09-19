@@ -252,6 +252,9 @@ public class AaiHelper {
                     .filter(link -> link.getRel().equals(HeatBridgeConstants.OS_RESOURCES_SELF_LINK_KEY)).findFirst()
                     .ifPresent(link -> aaiImage.setImageSelflink(link.getHref()));
         }
+        if (aaiImage.getImageSelflink() == null || aaiImage.getImageSelflink().isEmpty()) {
+            aaiImage.setImageSelflink("NA");
+        }
         return aaiImage;
     }
 

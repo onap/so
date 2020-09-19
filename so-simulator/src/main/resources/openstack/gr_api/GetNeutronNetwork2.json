@@ -24,7 +24,8 @@
             ],
             "physical_network": "sriovnet1",
             "pci_slot": "0000:5e:05.6",
-            "pci_vendor_info": "8086:154c"
+            "pci_vendor_info": "8086:154c",
+            "host_id": "50197c55fc934e7b3947e17db762f0839320f94983df774d84991ad2"
         },
         "fixed_ips": [
             {
