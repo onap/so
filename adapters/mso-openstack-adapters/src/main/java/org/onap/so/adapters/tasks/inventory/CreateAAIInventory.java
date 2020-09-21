@@ -64,9 +64,9 @@ public class CreateAAIInventory {
 
             List<String> oobMgtNetNames = new ArrayList<>();
 
-            HeatBridgeApi heatBridgeClient =
-                    new HeatBridgeImpl(new AAIResourcesClient(), cloudIdentity, cloudInformation.getOwner(),
-                            cloudInformation.getRegionId(), cloudSite.getRegionId(), cloudInformation.getTenantId());
+            HeatBridgeApi heatBridgeClient = new HeatBridgeImpl(new AAIResourcesClient(), cloudIdentity,
+                    cloudInformation.getOwner(), cloudInformation.getRegionId(), cloudSite.getRegionId(),
+                    cloudInformation.getTenantId(), cloudInformation.getNodeType());
 
             heatBridgeClient.authenticate();
 
@@ -119,8 +119,8 @@ public class CreateAAIInventory {
                     "Successfully queried neutron resources and built AAI actions to add l-interfaces to vservers.");
 
             // Update AAI
-            logger.debug("Current Dry Run Value: {}", env.getProperty("heatBridgeDryrun", Boolean.class, true));
-            heatBridgeClient.submitToAai(env.getProperty("heatBridgeDryrun", Boolean.class, true));
+            logger.debug("Current Dry Run Value: {}", env.getProperty("heatBridgeDryrun", Boolean.class, false));
+            heatBridgeClient.submitToAai(env.getProperty("heatBridgeDryrun", Boolean.class, false));
         } catch (Exception ex) {
             logger.debug("Heatbrige failed for stackId: " + cloudInformation.getTemplateInstanceId(), ex);
         }

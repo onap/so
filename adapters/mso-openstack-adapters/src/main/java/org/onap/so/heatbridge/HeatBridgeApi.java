@@ -155,7 +155,7 @@ public interface HeatBridgeApi {
      * @param cloudOwner
      */
     void buildAddVserverLInterfacesToAaiAction(List<Resource> stackResources, List<String> oobMgtNetIds,
-            String cloudOwner);
+            String cloudOwner) throws HeatBridgeException;
 
     /**
      * Query and build AAI actions for Openstack Compute resources to AAI's pserver and pinterface objects
