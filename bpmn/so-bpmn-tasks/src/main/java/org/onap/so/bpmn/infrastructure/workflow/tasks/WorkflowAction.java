@@ -50,12 +50,13 @@ import org.onap.aai.domain.yang.Vnfc;
 import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.aai.domain.yang.VpnBinding;
 import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
-import org.onap.aaiclient.client.aai.AAIObjectType;
+import org.onap.aaiclient.client.aai.AAIObjectName;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.Relationships;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.so.bpmn.common.BBConstants;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.utils.WorkflowResourceIdsUtils;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
@@ -485,16 +486,17 @@ public class WorkflowAction {
     }
 
     protected <T> List<T> getRelatedResourcesInVfModule(String vnfId, String vfModuleId, Class<T> resultClass,
-            AAIObjectType type) {
+            AAIObjectName name) {
         List<T> vnfcs = new ArrayList<>();
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId);
+        AAIResourceUri uri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId).vfModule(vfModuleId));
         AAIResultWrapper vfModuleResultsWrapper = bbInputSetupUtils.getAAIResourceDepthOne(uri);
         Optional<Relationships> relationshipsOp = vfModuleResultsWrapper.getRelationships();
         if (!relationshipsOp.isPresent()) {
             logger.debug("No relationships were found for vfModule in AAI");
         } else {
             Relationships relationships = relationshipsOp.get();
-            List<AAIResultWrapper> vnfcResultWrappers = relationships.getByType(type);
+            List<AAIResultWrapper> vnfcResultWrappers = relationships.getByType(name);
             for (AAIResultWrapper vnfcResultWrapper : vnfcResultWrappers) {
                 Optional<T> vnfcOp = vnfcResultWrapper.asBean(resultClass);
                 vnfcOp.ifPresent(vnfcs::add);
@@ -503,9 +505,9 @@ public class WorkflowAction {
         return vnfcs;
     }
 
-    protected <T> T getRelatedResourcesInVnfc(Vnfc vnfc, Class<T> resultClass, AAIObjectType type) throws Exception {
+    protected <T> T getRelatedResourcesInVnfc(Vnfc vnfc, Class<T> resultClass, AAIObjectName name) throws Exception {
         T configuration = null;
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VNFC, vnfc.getVnfcName());
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().vnfc(vnfc.getVnfcName()));
         AAIResultWrapper vnfcResultsWrapper = bbInputSetupUtils.getAAIResourceDepthOne(uri);
         Optional<Relationships> relationshipsOp = vnfcResultsWrapper.getRelationships();
         if (!relationshipsOp.isPresent()) {
@@ -513,7 +515,7 @@ public class WorkflowAction {
         } else {
             Relationships relationships = relationshipsOp.get();
             List<AAIResultWrapper> configurationResultWrappers =
-                    this.getResultWrappersFromRelationships(relationships, type);
+                    this.getResultWrappersFromRelationships(relationships, name);
             if (configurationResultWrappers.size() > 1) {
                 String multipleRelationshipsError =
                         "Multiple relationships exist from VNFC " + vnfc.getVnfcName() + " to Configurations";
@@ -530,8 +532,8 @@ public class WorkflowAction {
     }
 
     protected List<AAIResultWrapper> getResultWrappersFromRelationships(Relationships relationships,
-            AAIObjectType type) {
-        return relationships.getByType(type);
+            AAIObjectName name) {
+        return relationships.getByType(name);
     }
 
     protected boolean isConfiguration(List<OrchestrationFlow> orchFlows) {
@@ -565,12 +567,12 @@ public class WorkflowAction {
             vfModuleCustomizationUUID = aaiVfModule.getModelCustomizationId();
         }
 
-        List<org.onap.aai.domain.yang.Vnfc> vnfcs = getRelatedResourcesInVfModule(vnfId, vfModuleId,
-                org.onap.aai.domain.yang.Vnfc.class, AAIObjectType.VNFC);
+        List<org.onap.aai.domain.yang.Vnfc> vnfcs =
+                getRelatedResourcesInVfModule(vnfId, vfModuleId, org.onap.aai.domain.yang.Vnfc.class, Types.VNFC);
         for (org.onap.aai.domain.yang.Vnfc vnfc : vnfcs) {
             WorkflowResourceIds workflowIdsCopy = SerializationUtils.clone(dataObj.getWorkflowResourceIds());
-            org.onap.aai.domain.yang.Configuration configuration = getRelatedResourcesInVnfc(vnfc,
-                    org.onap.aai.domain.yang.Configuration.class, AAIObjectType.CONFIGURATION);
+            org.onap.aai.domain.yang.Configuration configuration =
+                    getRelatedResourcesInVnfc(vnfc, org.onap.aai.domain.yang.Configuration.class, Types.CONFIGURATION);
             if (configuration == null) {
                 logger.warn(String.format("No configuration found for VNFC %s in AAI", vnfc.getVnfcName()));
                 continue;
@@ -813,7 +815,7 @@ public class WorkflowAction {
                 new AAICommonObjectMapperProvider().getMapper().writeValueAsString(aaiLocalNetwork)).getRelationships();
         if (relationshipsOp.isPresent()) {
             List<AAIResultWrapper> configurationsRelatedToLocalNetwork =
-                    relationshipsOp.get().getByType(AAIObjectType.CONFIGURATION);
+                    relationshipsOp.get().getByType(Types.CONFIGURATION);
             if (configurationsRelatedToLocalNetwork.size() > 1) {
                 throw new VrfBondingServiceException(
                         "Network: " + aaiLocalNetwork.getNetworkId() + " has more than 1 configuration related to it");

@@ -20,6 +20,17 @@
 
 package org.onap.so.adapters.nssmf;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.marshal;
+import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.unMarshal;
+import static org.onap.so.beans.nsmf.NetworkType.CORE;
+import static org.onap.so.beans.nsmf.ResourceSharingLevel.NON_SHARED;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.LinkedList;
@@ -56,19 +67,9 @@ import org.onap.so.beans.nsmf.NssiResponse;
 import org.onap.so.beans.nsmf.PerfReq;
 import org.onap.so.beans.nsmf.PerfReqEmbb;
 import org.onap.so.db.request.data.repository.ResourceOperationStatusRepository;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.marshal;
-import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.unMarshal;
-import static org.onap.so.beans.nsmf.NetworkType.CORE;
-import static org.onap.so.beans.nsmf.ResourceSharingLevel.NON_SHARED;
 
 @RunWith(SpringRunner.class)
 public class NssmfAdapterRestTest {
@@ -281,7 +282,7 @@ public class NssmfAdapterRestTest {
     //
     @Test
     public void testAllocateJsonSerDeSer() throws Exception {
-        assertEquals(marshal(allocateNssi()), ALLOCATE);
+        JSONAssert.assertEquals(marshal(allocateNssi()), ALLOCATE, false);
         NssiAllocateRequest all = unMarshal(ALLOCATE, NssiAllocateRequest.class);
         assertNotNull(all);
         assertNotNull(all.getAllocateCnNssi());

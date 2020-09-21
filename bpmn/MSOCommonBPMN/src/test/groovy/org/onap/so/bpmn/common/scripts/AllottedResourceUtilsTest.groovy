@@ -20,30 +20,26 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import org.camunda.bpm.engine.delegate.DelegateExecution
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertTrue
+import static org.mockito.ArgumentMatchers.any
+import static org.mockito.Mockito.atLeastOnce
+import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.spy
+import static org.mockito.Mockito.verify
+import static org.mockito.Mockito.when
+import javax.ws.rs.core.UriBuilder
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
-import org.mockito.Mockito
 import org.mockito.internal.stubbing.answers.DoesNothing
 import org.onap.aai.domain.yang.AllottedResource
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-import javax.ws.rs.core.UriBuilder
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertTrue
-import static org.mockito.ArgumentMatchers.any
-import static org.mockito.ArgumentMatchers.anyObject
-import static org.mockito.ArgumentMatchers.isA
-import static org.mockito.Mockito.atLeastOnce
-import static org.mockito.Mockito.doNothing
-import static org.mockito.Mockito.doThrow
-import static org.mockito.Mockito.mock
-import static org.mockito.Mockito.spy
-import static org.mockito.Mockito.verify
-import static org.mockito.Mockito.when
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 
 
 class AllottedResourceUtilsTest extends MsoGroovyTest{
@@ -67,7 +63,7 @@ class AllottedResourceUtilsTest extends MsoGroovyTest{
         expectedAllottedResource.setId("ID")
         expectedAllottedResource.setResourceVersion("1.2")
         when(client.get(any(AAIResourceUri.class))).thenReturn(new AAIResultWrapper(expectedAllottedResource))
-        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.ALLOTTED_RESOURCE, allottedResourceId)
+        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(Types.ALLOTTED_RESOURCE.getFragment(allottedResourceId))
         when(allottedResourceUtils.setExecutionVariables(mockExecution,expectedAllottedResource,resourceUri)).thenAnswer(new DoesNothing())
         boolean allottedResource = allottedResourceUtils.ifExistsAR(mockExecution,allottedResourceId)
         assertTrue(allottedResource)
@@ -79,7 +75,7 @@ class AllottedResourceUtilsTest extends MsoGroovyTest{
 
         AllottedResource expectedAllottedResource = new AllottedResource()
         expectedAllottedResource.setId("ID")
-        AAIResourceUri uri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.ALLOTTED_RESOURCE, UriBuilder.fromPath(ALLOTTED_RESOURSE_URI).build())
+        AAIResourceUri uri = AAIUriFactory.createResourceFromExistingURI(Types.ALLOTTED_RESOURCE, UriBuilder.fromPath(ALLOTTED_RESOURSE_URI).build())
         when(client.get(AllottedResource.class, uri)).thenReturn(Optional.of(expectedAllottedResource))
         Optional<AllottedResource> allottedResource = allottedResourceUtils.getARbyLink(mockExecution, ALLOTTED_RESOURSE_URI,"")
         assertEquals(expectedAllottedResource.getId(),allottedResource.get().getId())

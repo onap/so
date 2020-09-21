@@ -17,10 +17,10 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.CloudRegion;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.catalog.data.repository.NetworkTechnologyReferenceRepository;
@@ -94,7 +94,8 @@ public class CloudRegionRestImplTest {
     public void createCloudRegionTest() {
         when(catalogDbClientMock.getCloudSite("region1")).thenReturn(null);
         when(catalogDbClientMock.postCloudSite(cloudSite)).thenReturn(cloudSite);
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, "bob", "region1");
+        AAIResourceUri uri = AAIUriFactory
+                .createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion("bob", "region1"));
         cloudRestImpl.createCloudRegion(cloudSite);
         ArgumentCaptor<AAIResourceUri> actualURI = ArgumentCaptor.forClass(AAIResourceUri.class);
         ArgumentCaptor<Optional<Object>> actualCloudRegion = ArgumentCaptor.forClass(Optional.class);

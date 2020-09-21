@@ -22,25 +22,24 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import org.onap.so.logger.LoggingAnchor
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
-import org.onap.logging.filter.base.ErrorCode
-
 import static org.apache.commons.lang3.StringUtils.isBlank;
-
 import javax.ws.rs.NotFoundException
 import javax.ws.rs.core.UriBuilder
-
 import org.apache.commons.lang.StringUtils
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.AllottedResource
-import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.client.PreconditionFailedException
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
+import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.client.PreconditionFailedException
+import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -115,7 +114,7 @@ class AllottedResourceUtils {
 	public boolean ifExistsAR(DelegateExecution execution, String allottedResourceId) {
 		logger.trace("ifExistsAR ")
 		try {
-			AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.ALLOTTED_RESOURCE, allottedResourceId)
+			AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(Types.ALLOTTED_RESOURCE.getFragment(allottedResourceId))
             AAIResultWrapper wrapper = getAAIClient().get(resourceUri)
             Optional<AllottedResource> allottedResource = wrapper.asBean(AllottedResource.class)
             if(allottedResource.isPresent()) {
@@ -150,7 +149,7 @@ class AllottedResourceUtils {
 		Optional<AllottedResource> allottedResource = Optional.empty()
 		try {
 			logger.debug("GET AR Aai Path is: \n" + link)
-			AAIResourceUri uri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.ALLOTTED_RESOURCE, UriBuilder.fromPath(link).build())
+			AAIResourceUri uri = AAIUriFactory.createResourceFromExistingURI(Types.ALLOTTED_RESOURCE, UriBuilder.fromPath(link).build())
 			allottedResource = getAAIClient().get(AllottedResource.class,uri);
 			if(allottedResource.isPresent()) {
 				if (!isBlank(role)) {
@@ -193,7 +192,7 @@ class AllottedResourceUtils {
 			allottedResource.setOrchestrationStatus(status)
 			logger.debug('AAI AR URI: ' + aaiARPath)
 
-			AAIResourceUri uri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.ALLOTTED_RESOURCE, UriBuilder.fromPath(aaiARPath).build())
+			AAIResourceUri uri = AAIUriFactory.createResourceFromExistingURI(Types.ALLOTTED_RESOURCE, UriBuilder.fromPath(aaiARPath).build())
 			getAAIClient().update(uri,allottedResource)
 		}catch(Exception e){
 			logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
@@ -208,7 +207,7 @@ class AllottedResourceUtils {
 		logger.trace(" deleteAR - aaiARPath:" + aaiARPath)
 		try {
 
-			AAIResourceUri uri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.ALLOTTED_RESOURCE, UriBuilder.fromPath(aaiARPath).build())
+			AAIResourceUri uri = AAIUriFactory.createResourceFromExistingURI(Types.ALLOTTED_RESOURCE, UriBuilder.fromPath(aaiARPath).build())
 			getAAIClient().delete(uri);
 		}catch(NotFoundException ex){
 			logger.debug("  Delete AR Received a Not Found (404) Response")

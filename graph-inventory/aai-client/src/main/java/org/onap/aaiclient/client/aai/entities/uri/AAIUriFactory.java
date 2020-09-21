@@ -21,29 +21,43 @@
 package org.onap.aaiclient.client.aai.entities.uri;
 
 import java.net.URI;
+import org.onap.aaiclient.client.aai.AAIObjectName;
 import org.onap.aaiclient.client.aai.AAIObjectPlurals;
 import org.onap.aaiclient.client.aai.AAIObjectType;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 
 
 public class AAIUriFactory {
 
+
+    public static final AAIFluentTypeReverseLookup reverseLookup = new AAIFluentTypeReverseLookup();
+
     /**
      * values are filled into the URI template specified in {@link AAIObjectType} in order <br>
-     * There are two special lookups performed on certain types when a single value is specified: <br>
-     * Service Instance and AllottedResources <br>
-     * These can be retrieved without all their required keys but an HTTP call is required to do so
-     * 
+     *
      * @param type
      * @param values
      * @return
      */
     public static AAIResourceUri createResourceUri(AAIObjectType type, Object... values) {
-        if (AAIObjectType.SERVICE_INSTANCE.equals(type)) {
-            return new ServiceInstanceUri(values);
-        } else if (AAIObjectType.ALLOTTED_RESOURCE.equals(type)) {
-            return new AllottedResourceLookupUri(values);
+        return new AAISimpleUri(type, values);
+    }
+
+    /**
+     * These can be retrieved without all their required keys but an HTTP call is required to do so
+     *
+     * @param type
+     * @param values
+     * @return
+     */
+    public static AAIResourceUri createResourceUri(AAISingleFragment fragment) {
+
+        if (Types.SERVICE_INSTANCE.typeName().equals(fragment.get().build().typeName())) {
+            return new ServiceInstanceUri(fragment);
+        } else if (Types.ALLOTTED_RESOURCE.typeName().equals(fragment.get().build().typeName())) {
+            return new AllottedResourceLookupUri(fragment);
         } else {
-            return new AAISimpleUri(type, values);
+            return null;
         }
     }
 
@@ -51,13 +65,16 @@ public class AAIUriFactory {
         return new AAISimpleUri(uri.build(), uri.values());
     }
 
-    public static NodesSingleUri createNodesUri(AAIObjectType type, Object... values) {
+    protected static NodesSingleUri createNodesUri(AAIObjectType type, Object... values) {
         return new NodesSingleUri(type, values);
-
     }
 
-    public static NodesPluralUri createNodesUri(AAIObjectPlurals type) {
-        return new NodesPluralUri(type);
+    public static NodesSingleUri createNodesUri(AAISingleFragment fragment) {
+        return new NodesSingleUri(fragment.get().build(), fragment.get().values());
+    }
+
+    public static NodesPluralUri createNodesUri(AAIPluralFragment fragment) {
+        return new NodesPluralUri(fragment.get().build());
 
     }
 
@@ -68,7 +85,8 @@ public class AAIUriFactory {
      * @param uri
      * @return
      */
-    public static AAISimpleUri createResourceFromExistingURI(AAIObjectType type, URI uri) {
+    public static AAISimpleUri createResourceFromExistingURI(AAIObjectName name, URI uri) {
+        AAIObjectType type = reverseLookup.fromName(name.typeName(), uri.toString());
         return new AAISimpleUri(type, uri);
     }
 
@@ -81,20 +99,19 @@ public class AAIUriFactory {
      * @param childValues
      * @return
      */
-    public static AAISimpleUri createResourceFromParentURI(AAIResourceUri parentUri, AAIObjectType childType,
-            Object... childValues) {
+    public static AAISimpleUri createResourceFromParentURI(AAIResourceUri parentUri, AAISingleFragment fragment) {
 
-        return new AAISimpleUri(parentUri, childType, childValues);
+        return new AAISimpleUri(parentUri, fragment.get().build(), fragment.get().values());
     }
 
-    public static AAISimplePluralUri createResourceFromParentURI(AAIResourceUri parentUri, AAIObjectPlurals childType) {
+    public static AAISimplePluralUri createResourceFromParentURI(AAIResourceUri parentUri, AAIPluralFragment fragment) {
 
-        return new AAISimplePluralUri(parentUri, childType);
+        return new AAISimplePluralUri(parentUri, fragment.get().build());
     }
 
     public static AAISimplePluralUri createResourceUri(AAIFluentPluralType uri) {
 
-        return new AAISimplePluralUri(uri.build());
+        return new AAISimplePluralUri(uri.build(), uri.values());
 
     }
 

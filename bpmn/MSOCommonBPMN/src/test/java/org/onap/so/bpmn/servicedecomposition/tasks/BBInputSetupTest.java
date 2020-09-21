@@ -59,7 +59,6 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
@@ -69,12 +68,12 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.LineOfBusiness;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.OwningEntity;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Platform;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Project;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.RouteTableReference;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
@@ -1830,7 +1829,8 @@ public class BBInputSetupTest {
         expectedAAI.setRelationshipList(relationshipList);
 
         Configuration expected = new Configuration();
-        AAIResourceUri aaiResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, "configurationId");
+        AAIResourceUri aaiResourceUri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().configuration("configurationId"));
         AAIResultWrapper configurationWrapper =
                 new AAIResultWrapper(new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
 
@@ -1854,7 +1854,8 @@ public class BBInputSetupTest {
         expectedAAI.setRelationshipList(relationshipList);
 
         GenericVnf expected = new GenericVnf();
-        AAIResourceUri aaiResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "vnfId");
+        AAIResourceUri aaiResourceUri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("vnfId"));
         AAIResultWrapper vnfWrapper =
                 new AAIResultWrapper(new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
 
@@ -1884,7 +1885,7 @@ public class BBInputSetupTest {
         expectedAAI.setRelationshipList(relationshipList);
 
         Pnf expected = new Pnf();
-        AAIResourceUri aaiResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.PNF, "pnfId");
+        AAIResourceUri aaiResourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf("pnfId"));
         AAIResultWrapper pnfWrapper =
                 new AAIResultWrapper(new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
 
@@ -2008,7 +2009,8 @@ public class BBInputSetupTest {
         List<L3Network> l3Networks = new ArrayList<>();
         AAIResultWrapper l3NetworksWrapper =
                 new AAIResultWrapper(new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
-        AAIResourceUri aaiResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, "networkId");
+        AAIResourceUri aaiResourceUri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Network("networkId"));
 
         doReturn(l3NetworksWrapper).when(SPY_bbInputSetupUtils).getAAIResourceDepthTwo(aaiResourceUri);
         doReturn(expected).when(bbInputSetupMapperLayer).mapAAIL3Network(isA(org.onap.aai.domain.yang.L3Network.class));
@@ -3422,7 +3424,7 @@ public class BBInputSetupTest {
 
         String vnfcName = "vnfcName";
         org.onap.aai.domain.yang.Configuration expectedAAI = new org.onap.aai.domain.yang.Configuration();
-        AAIResourceUri aaiResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VNFC, vnfcName);
+        AAIResourceUri aaiResourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().vnfc(vnfcName));
         AAIResultWrapper configurationWrapper =
                 new AAIResultWrapper(new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
 

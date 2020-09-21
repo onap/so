@@ -41,11 +41,12 @@ import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
-import org.onap.aaiclient.client.aai.AAIObjectPlurals
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -142,7 +143,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
         try {
             def vnfId = execution.getVariable('vnfId')
 
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId).depth(Depth.ONE)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId)).depth(Depth.ONE)
             try {
                 Optional<GenericVnf> genericVnf = getAAIClient().get(GenericVnf.class,uri)
 
@@ -514,7 +515,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 
                     // Query AAI for this network policy FQDN
 
-					AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+					AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkPolicies())
                     uri.queryParam("network-policy-fqdn", fqdn)
 
                     try {
@@ -530,7 +531,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 
                             // Retrieve the resource version for this network policy
                             try {
-                                AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, networkPolicyId)
+                                AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkPolicy(networkPolicyId))
                                 getAAIClient().delete(delUri)
                                 execution.setVariable("DDVFMV_aaiDeleteNetworkPolicyReturnCode", 200)
                                 logger.debug(" ***** AAI delete network policy Response Code, NetworkPolicy #" + counting + " : " + 200)

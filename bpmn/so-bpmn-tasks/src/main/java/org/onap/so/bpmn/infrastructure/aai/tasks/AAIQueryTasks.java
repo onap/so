@@ -32,15 +32,15 @@ import org.onap.aai.domain.yang.RouteTableReference;
 import org.onap.aai.domain.yang.RouteTargets;
 import org.onap.aai.domain.yang.Subnet;
 import org.onap.aai.domain.yang.VpnBinding;
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
+import org.onap.aaiclient.client.aai.entities.Relationships;
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
-import org.onap.aaiclient.client.aai.AAIObjectType;
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
-import org.onap.aaiclient.client.aai.entities.Relationships;
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.AAINetworkResources;
 import org.slf4j.Logger;
@@ -76,8 +76,7 @@ public class AAIQueryTasks {
             if (!networkRelationships.isPresent()) {
                 throw (new Exception(ERROR_MSG));
             }
-            List<AAIResourceUri> netBindingsUriList =
-                    networkRelationships.get().getRelatedAAIUris(AAIObjectType.VPN_BINDING);
+            List<AAIResourceUri> netBindingsUriList = networkRelationships.get().getRelatedUris(Types.VPN_BINDING);
 
             List<org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding> mappedVpnBindings = new ArrayList<>();
             if (netBindingsUriList != null && !netBindingsUriList.isEmpty()) {
@@ -115,8 +114,7 @@ public class AAIQueryTasks {
             if (!networkRelationships.isPresent()) {
                 throw (new Exception(ERROR_MSG));
             }
-            List<AAIResourceUri> netBindingsUriList =
-                    networkRelationships.get().getRelatedAAIUris(AAIObjectType.VPN_BINDING);
+            List<AAIResourceUri> netBindingsUriList = networkRelationships.get().getRelatedUris(Types.VPN_BINDING);
             List<org.onap.so.openstack.beans.RouteTarget> routeTargets = new ArrayList<>();
             for (AAIResourceUri netBindingUri : netBindingsUriList) {
                 logger.info("Get Route Targests");
@@ -168,8 +166,7 @@ public class AAIQueryTasks {
             if (!networkRelationships.isPresent()) {
                 throw (new Exception(ERROR_MSG));
             }
-            List<AAIResourceUri> netPoliciesUriList =
-                    networkRelationships.get().getRelatedAAIUris(AAIObjectType.NETWORK_POLICY);
+            List<AAIResourceUri> netPoliciesUriList = networkRelationships.get().getRelatedUris(Types.NETWORK_POLICY);
 
             if (!netPoliciesUriList.isEmpty()) {
                 for (AAIResourceUri netPolicyUri : netPoliciesUriList) {
@@ -201,7 +198,7 @@ public class AAIQueryTasks {
                 throw (new Exception(ERROR_MSG));
             }
             List<AAIResourceUri> routeTableUriList =
-                    networkRelationships.get().getRelatedAAIUris(AAIObjectType.ROUTE_TABLE_REFERENCE);
+                    networkRelationships.get().getRelatedUris(Types.ROUTE_TABLE_REFERENCE);
 
             if (!routeTableUriList.isEmpty()) {
                 for (AAIResourceUri routeTableUri : routeTableUriList) {
@@ -241,7 +238,7 @@ public class AAIQueryTasks {
             if (!networkRelationships.isPresent()) {
                 throw (new Exception(ERROR_MSG));
             }
-            List<AAIResourceUri> subnetsUriList = networkRelationships.get().getRelatedAAIUris(AAIObjectType.SUBNET);
+            List<AAIResourceUri> subnetsUriList = networkRelationships.get().getRelatedUris(Types.SUBNET);
 
             if (!subnetsUriList.isEmpty()) {
                 for (AAIResourceUri subnetUri : subnetsUriList) {

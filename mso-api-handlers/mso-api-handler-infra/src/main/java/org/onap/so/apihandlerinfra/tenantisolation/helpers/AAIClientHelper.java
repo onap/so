@@ -27,13 +27,13 @@ import java.io.StringWriter;
 import java.util.Map;
 import javax.ws.rs.NotFoundException;
 import org.onap.aai.domain.yang.OperationalEnvironment;
-import org.onap.so.apihandlerinfra.tenantisolation.exceptions.AAIClientCallFailed;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
+import org.onap.so.apihandlerinfra.tenantisolation.exceptions.AAIClientCallFailed;
 import org.springframework.stereotype.Component;
 
 
@@ -50,7 +50,8 @@ public class AAIClientHelper {
      */
     public AAIResultWrapper getAaiOperationalEnvironment(String id) {
 
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.OPERATIONAL_ENVIRONMENT, id);
+        AAIResourceUri uri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().operationalEnvironment(id));
         uri.depth(Depth.ZERO);
         AAIResourcesClient client = this.getClient();
         return client.get(uri, NotFoundException.class);
@@ -65,7 +66,8 @@ public class AAIClientHelper {
      */
     public void updateAaiOperationalEnvironment(String id, OperationalEnvironment aaiRequest) {
 
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.OPERATIONAL_ENVIRONMENT, id);
+        AAIResourceUri uri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().operationalEnvironment(id));
         AAIResourcesClient client = this.getClient();
         client.update(uri, aaiRequest);
 
@@ -75,8 +77,8 @@ public class AAIClientHelper {
     public void updateAaiOperationalEnvironment(String operationalEnvironmentId, Map<String, String> payload)
             throws AAIClientCallFailed {
         try {
-            AAIResourceUri uri =
-                    AAIUriFactory.createResourceUri(AAIObjectType.OPERATIONAL_ENVIRONMENT, operationalEnvironmentId);
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(
+                    AAIFluentTypeBuilder.cloudInfrastructure().operationalEnvironment(operationalEnvironmentId));
             AAIResourcesClient aaiClient = this.getClient();
             aaiClient.update(uri, payload);
         } catch (Exception ex) {
@@ -92,8 +94,8 @@ public class AAIClientHelper {
      */
     public void createOperationalEnvironment(OperationalEnvironment operationalEnvironment) {
 
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.OPERATIONAL_ENVIRONMENT,
-                operationalEnvironment.getOperationalEnvironmentId());
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                .operationalEnvironment(operationalEnvironment.getOperationalEnvironmentId()));
         AAIResourcesClient client = this.getClient();
         client.create(uri, operationalEnvironment);
     }
@@ -107,10 +109,10 @@ public class AAIClientHelper {
      */
     public void createRelationship(String managingEcompOperationalEnvironmentId, String vnfOperationalEnvironmentId) {
 
-        AAIResourceUri ecompEnvUri = AAIUriFactory.createResourceUri(AAIObjectType.OPERATIONAL_ENVIRONMENT,
-                managingEcompOperationalEnvironmentId);
-        AAIResourceUri vnfEnvUri =
-                AAIUriFactory.createResourceUri(AAIObjectType.OPERATIONAL_ENVIRONMENT, vnfOperationalEnvironmentId);
+        AAIResourceUri ecompEnvUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                .operationalEnvironment(managingEcompOperationalEnvironmentId));
+        AAIResourceUri vnfEnvUri = AAIUriFactory.createResourceUri(
+                AAIFluentTypeBuilder.cloudInfrastructure().operationalEnvironment(vnfOperationalEnvironmentId));
         AAIResourcesClient client = this.getClient();
         client.connect(vnfEnvUri, ecompEnvUri);
 

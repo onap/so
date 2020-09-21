@@ -19,6 +19,8 @@ import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.Relationships
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.logging.filter.base.ONAPComponents
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -88,7 +90,7 @@ class DoModifyCoreNSSI extends AbstractServiceTaskProcessor {
         String serviceType = currentNSSI['serviceType']
         String nssiId = currentNSSI['nssiServiceInstanceId']
 
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nssiId) //AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId, serviceType, nssiId)
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId)) //AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(nssiId))
         Optional<ServiceInstance> nssiOpt = client.get(ServiceInstance.class, nssiUri)
 
         if (nssiOpt.isPresent()) {
@@ -101,7 +103,7 @@ class DoModifyCoreNSSI extends AbstractServiceTaskProcessor {
             AAIResultWrapper wrapper = client.get(nssiUri);
             Optional<Relationships> relationships = wrapper.getRelationships()
             if (relationships.isPresent()) {
-                for(AAIResourceUri networkServiceInstanceUri: relationships.get().getRelatedAAIUris(AAIObjectType.SERVICE_INSTANCE)){ // ???
+                for(AAIResourceUri networkServiceInstanceUri: relationships.get().getRelatedUris(Types.SERVICE_INSTANCE)){ // ???
                     Optional<ServiceInstance> networkServiceInstanceOpt = client.get(ServiceInstance.class, networkServiceInstanceUri)
                     if(networkServiceInstanceOpt.isPresent()) {
                         ServiceInstance networkServiceInstance = networkServiceInstanceOpt.get()
@@ -151,7 +153,7 @@ class DoModifyCoreNSSI extends AbstractServiceTaskProcessor {
         AAIResultWrapper wrapper = client.get(networkServiceInstanceUri);
         Optional<Relationships> relationships = wrapper.getRelationships()
         if (relationships.isPresent()) {
-            for (AAIResourceUri constituteVnfUri : relationships.get().getRelatedAAIUris(AAIObjectType.GENERIC_VNF)) {  // ???
+            for (AAIResourceUri constituteVnfUri : relationships.get().getRelatedUris(Types.GENERIC_VNF)) {  // ???
                 execution.setVariable("constituteVnfUri", constituteVnfUri)
                 Optional<GenericVnf> constituteVnfOpt = client.get(GenericVnf.class, constituteVnfUri)
                 if(constituteVnfOpt.isPresent()) {
@@ -294,7 +296,7 @@ class DoModifyCoreNSSI extends AbstractServiceTaskProcessor {
         modelInfo.setModelType(ModelType.service)
         modelInfo.setModelInvariantId(networkServiceInstance.getModelInvariantId())
 
-        AAIResourceUri modelVerUrl = AAIUriFactory.createResourceUri(AAIObjectType.MODEL_VER, networkServiceInstance.getModelInvariantId()) // model of Network Service Instance ???
+        AAIResourceUri modelVerUrl = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.serviceDesignAndCreation().model("missing").modelVer(networkServiceInstance.getModelInvariantId())) // model of Network Service Instance ???
         Optional<ModelVer> modelVerOpt = client.get(ModelVer.class, modelVerUrl)
 
         if (modelVerOpt.isPresent()) {
@@ -339,7 +341,7 @@ class DoModifyCoreNSSI extends AbstractServiceTaskProcessor {
         AAIResultWrapper wrapper = client.get(networkServiceInstanceUri)
         Optional<Relationships> serviceSubscriptionRelationshipsOps = wrapper.getRelationships()
         if(serviceSubscriptionRelationshipsOps.isPresent()) {
-            List<AAIResourceUri> serviceSubscriptionRelatedAAIUris = serviceSubscriptionRelationshipsOps.get().getRelatedAAIUris(AAIObjectType.SERVICE_SUBSCRIPTION)
+            List<AAIResourceUri> serviceSubscriptionRelatedAAIUris = serviceSubscriptionRelationshipsOps.get().getRelatedUris(Types.SERVICE_SUBSCRIPTION)
             if(!(serviceSubscriptionRelatedAAIUris == null || serviceSubscriptionRelatedAAIUris.isEmpty())) {
                 AAIResourceUri serviceSubscriptionUri = serviceSubscriptionRelatedAAIUris.get(0) // Many-To-One relation
                 Optional<ServiceSubscription> serviceSubscriptionOpt = client.get(ServiceSubscription.class, serviceSubscriptionUri)
@@ -350,7 +352,7 @@ class DoModifyCoreNSSI extends AbstractServiceTaskProcessor {
                 wrapper = client.get(serviceSubscriptionUri)
                 Optional<Relationships> customerRelationshipsOps = wrapper.getRelationships()
                 if(customerRelationshipsOps.isPresent()) {
-                    List<AAIResourceUri> customerRelatedAAIUris = customerRelationshipsOps.get().getRelatedAAIUris(AAIObjectType.CUSTOMER)
+                    List<AAIResourceUri> customerRelatedAAIUris = customerRelationshipsOps.get().getRelatedUris(Types.CUSTOMER)
                     if(!(customerRelatedAAIUris == null || customerRelatedAAIUris.isEmpty())) {
                         Optional<Customer> customerOpt = client.get(Customer.class, customerRelatedAAIUris.get(0)) // Many-To-One relation
                         if(customerOpt.isPresent()) {
@@ -416,7 +418,7 @@ class DoModifyCoreNSSI extends AbstractServiceTaskProcessor {
         wrapper = client.get(constituteVnfUri)
         Optional<Relationships> constituteVnfOps = wrapper.getRelationships()
         if(constituteVnfOps.isPresent()) {
-            List<AAIResourceUri> cloudRegionRelatedAAIUris = serviceSubscriptionRelationshipsOps.get().getRelatedAAIUris(AAIObjectType.CLOUD_REGION)
+            List<AAIResourceUri> cloudRegionRelatedAAIUris = serviceSubscriptionRelationshipsOps.get().getRelatedUris(Types.CLOUD_REGION)
             if(!(cloudRegionRelatedAAIUris == null || cloudRegionRelatedAAIUris.isEmpty())) {
                 cloudRegionRelatedAAIUri = cloudRegionRelatedAAIUris.get(0)
                 Optional<CloudRegion> cloudRegionrOpt = client.get(CloudRegion.class, cloudRegionRelatedAAIUris.get(0))
@@ -444,7 +446,7 @@ class DoModifyCoreNSSI extends AbstractServiceTaskProcessor {
             ModelInfo vfModuleModelInfo = new ModelInfo()
             vfModuleModelInfo.setModelInvariantUuid(vfModule.getModelInvariantId())
 
-            AAIResourceUri vfModuleUrl = AAIUriFactory.createResourceUri(AAIObjectType.MODEL_VER, vfModule.getModelInvariantId()) // ???
+            AAIResourceUri vfModuleUrl = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.serviceDesignAndCreation().model("missing").modelVer(vfModule.getModelInvariantId())) // ???
             Optional<ModelVer> vfModuleModelVerOpt = client.get(ModelVer.class, vfModuleUrl)
 
             if (vfModuleModelVerOpt.isPresent()) {
@@ -465,7 +467,7 @@ class DoModifyCoreNSSI extends AbstractServiceTaskProcessor {
         // Model Info
         ModelInfo vnfModelInfo = new ModelInfo()
         vnfModelInfo.setModelInvariantUuid(constituteVnf.getModelInvariantId())
-        AAIResourceUri vnfModelUrl = AAIUriFactory.createResourceUri(AAIObjectType.MODEL_VER, constituteVnf.getModelInvariantId()) // ???
+        AAIResourceUri vnfModelUrl = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.serviceDesignAndCreation().model("missing").modelVer(constituteVnf.getModelInvariantId())) // ???
         Optional<ModelVer> vnfModelVerOpt = client.get(ModelVer.class, vnfModelUrl)
 
         if (vnfModelVerOpt.isPresent()) {
@@ -521,7 +523,7 @@ class DoModifyCoreNSSI extends AbstractServiceTaskProcessor {
         wrapper = client.get(networkServiceInstanceUri)
         Optional<Relationships> owningEntityRelationshipsOps = wrapper.getRelationships()
         if(owningEntityRelationshipsOps.isPresent()) {
-            List<AAIResourceUri> owningEntityRelatedAAIUris = owningEntityRelationshipsOps.get().getRelatedAAIUris(AAIObjectType.OWNING_ENTITY)
+            List<AAIResourceUri> owningEntityRelatedAAIUris = owningEntityRelationshipsOps.get().getRelatedUris(Types.OWNING_ENTITY)
 
             if(!(owningEntityRelatedAAIUris == null || owningEntityRelatedAAIUris.isEmpty())) {
                 Optional<org.onap.aai.domain.yang.OwningEntity> owningEntityOpt = client.get(org.onap.aai.domain.yang.OwningEntity.class, owningEntityRelatedAAIUris.get(0)) // Many-To-One relation
@@ -539,7 +541,7 @@ class DoModifyCoreNSSI extends AbstractServiceTaskProcessor {
             wrapper = client.get(cloudRegionRelatedAAIUri)
             Optional<Relationships> cloudRegionOps = wrapper.getRelationships()
             if(cloudRegionOps.isPresent()) {
-                List<AAIResourceUri> projectAAIUris = cloudRegionOps.get().getRelatedAAIUris(AAIObjectType.PROJECT)
+                List<AAIResourceUri> projectAAIUris = cloudRegionOps.get().getRelatedUris(Types.PROJECT)
                 if (!(projectAAIUris == null || projectAAIUris.isEmpty())) {
                     Optional<org.onap.aai.domain.yang.Project> projectOpt = client.get(org.onap.aai.domain.yang.Project.class, projectAAIUris.get(0))
                     if(projectOpt.isPresent()) {
@@ -587,7 +589,7 @@ class DoModifyCoreNSSI extends AbstractServiceTaskProcessor {
 
         try {
             AAIResourcesClient client = getAAIClient()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SLICE_PROFILE, sliceProfileID)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("missing").serviceSubscription("missing").serviceInstance("missing").sliceProfile(sliceProfileID))
             client.create(uri, sliceProfile)
 
             execution.setVariable("createdSliceProfile", sliceProfile)
@@ -612,8 +614,8 @@ class DoModifyCoreNSSI extends AbstractServiceTaskProcessor {
 
         String nssiId = currentNSSI['nssiServiceInstanceId']
 
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nssiId)
-        AAIResourceUri sliceProfileUri = AAIUriFactory.createResourceUri(AAIObjectType.SLICE_PROFILE, sliceProfileID)
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+        AAIResourceUri sliceProfileUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("missing").serviceSubscription("missing").serviceInstance("missing").sliceProfile(sliceProfileID))
 
         try {
             SliceProfile createdSliceProfile = (SliceProfile)execution.getVariable("createdSliceProfile")
@@ -646,7 +648,7 @@ class DoModifyCoreNSSI extends AbstractServiceTaskProcessor {
         ServiceInstance nssi = (ServiceInstance)execution.getVariable("nssi")
 
         String nssiId = currentNSSI['nssiServiceInstanceId']
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nssiId)
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
 
         List<SliceProfile> associatedProfiles = nssi.getSliceProfiles().getSliceProfile()
 
@@ -685,7 +687,7 @@ class DoModifyCoreNSSI extends AbstractServiceTaskProcessor {
 
         for(SliceProfile associatedProfile:associatedProfiles) {
             if(!associatedProfile.getSNssai().equals(currentNSSI)) { // not current S-NSSAI
-                sliceProfileUri = AAIUriFactory.createResourceUri(AAIObjectType.SLICE_PROFILE, associatedProfile.getProfileId())
+                sliceProfileUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("missing").serviceSubscription("missing").serviceInstance("missing").sliceProfile(associatedProfile.getProfileId()))
                 break
             }
         }

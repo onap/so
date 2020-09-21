@@ -3,10 +3,10 @@ package org.onap.so.simulator.scenarios.openstack;
 import java.io.InputStream;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -29,8 +29,9 @@ public class CreateAAInventory extends AbstractTestAction {
                 InputStream vserverFile =
                         new ClassPathResource("openstack/gr_api/CreateAAIInventory.json").getInputStream();
                 Vserver vserver = aaiMapper.getMapper().readValue(vserverFile, Vserver.class);
-                AAIResourceUri vserverURI = AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, "cloudOwner",
-                        "regionOne", "0422ffb57ba042c0800a29dc85ca70f8", vServerId);
+                AAIResourceUri vserverURI = AAIUriFactory.createResourceUri(
+                        AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion("cloudOwner", "regionOne")
+                                .tenant("0422ffb57ba042c0800a29dc85ca70f8").vserver(vServerId));
                 aaiResourceClient.create(vserverURI, vserver);
             }
         } catch (Exception e) {

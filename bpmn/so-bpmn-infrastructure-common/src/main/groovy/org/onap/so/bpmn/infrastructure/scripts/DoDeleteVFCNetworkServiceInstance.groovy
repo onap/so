@@ -32,6 +32,8 @@ import org.onap.so.client.HttpClientFactory
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.onap.logging.filter.base.ONAPComponents;
@@ -121,8 +123,8 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
         String globalSubscriberId = execution.getVariable("globalSubscriberId")
         String serviceType = execution.getVariable("serviceType")
         String serviceId = execution.getVariable("serviceId")
-        AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId, serviceType, serviceId)
-        AAIResourceUri nsServiceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId, serviceType, nsInstanceId)
+        AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(serviceId))
+        AAIResourceUri nsServiceInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(nsInstanceId))
         try {
             getAAIClient().disconnect(serviceInstanceUri, nsServiceInstanceUri)
         }catch(Exception e){

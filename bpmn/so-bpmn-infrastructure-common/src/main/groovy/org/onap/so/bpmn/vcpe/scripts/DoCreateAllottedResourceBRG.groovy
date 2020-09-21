@@ -27,16 +27,17 @@ import javax.ws.rs.core.UriBuilder
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.AllottedResource
+import org.onap.aaiclient.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
+import org.onap.logging.filter.base.ErrorCode
 import org.onap.so.bpmn.common.scripts.*
 import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.AAIResourcesClient
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-import org.onap.logging.filter.base.ErrorCode
 import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
@@ -168,7 +169,7 @@ public class DoCreateAllottedResourceBRG extends AbstractServiceTaskProcessor{
 			String serviceInstanceId = execution.getVariable('serviceInstanceId')
 
 			AAIResourcesClient resourceClient = new AAIResourcesClient()
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
 
 			if(resourceClient.exists(uri)){
 				execution.setVariable("CSI_resourceLink", uri.build().toString())
@@ -230,7 +231,7 @@ public class DoCreateAllottedResourceBRG extends AbstractServiceTaskProcessor{
 			String serviceInstanceId = execution.getVariable('parentServiceInstanceId')
 
 			AAIResourcesClient resourceClient = new AAIResourcesClient()
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
 
 				//just to make sure the serviceInstance exists
 				if (resourceClient.exists(uri)) {
@@ -265,7 +266,7 @@ public class DoCreateAllottedResourceBRG extends AbstractServiceTaskProcessor{
 
 			AAIResourceUri siResourceLink= execution.getVariable("PSI_resourceLink")
 
-			AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceFromParentURI(siResourceLink, AAIObjectType.ALLOTTED_RESOURCE, allottedResourceId)
+			AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceFromParentURI(siResourceLink, Types.ALLOTTED_RESOURCE.getFragment(allottedResourceId))
 
 			execution.setVariable("aaiARPath", allottedResourceUri.build().toString());
 			String arType = execution.getVariable("allottedResourceType")
@@ -283,7 +284,7 @@ public class DoCreateAllottedResourceBRG extends AbstractServiceTaskProcessor{
 			resource.setModelInvariantId(modelInvariantId)
 			resource.setModelVersionId(modelVersionId)
 			getAAIClient().create(allottedResourceUri, resource)
-			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.SERVICE_INSTANCE, UriBuilder.fromPath(CSI_resourceLink).build())
+			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceFromExistingURI(Types.SERVICE_INSTANCE, UriBuilder.fromPath(CSI_resourceLink).build())
 			getAAIClient().connect(allottedResourceUri,serviceInstanceUri)
 		}catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Exception in createAaiAR " + ex.getMessage())

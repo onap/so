@@ -30,6 +30,8 @@ import org.onap.so.bpmn.core.WorkflowException
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
 import org.onap.logging.filter.base.ErrorCode
 import org.onap.so.logger.MessageEnum
@@ -134,7 +136,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 		try {
 			def vnfId = execution.getVariable('UAAIGenVnf_vnfId')
 
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId))
 			uri.depth(Depth.ONE)
 			try {
 				Optional<GenericVnf> genericVnf = getAAIClient().get(GenericVnf.class,uri)
@@ -223,7 +225,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			payload.setManagementV6Address(managementV6AddressEntry)
 			payload.setOrchestrationStatus(orchestrationStatusEntry)
 
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId))
 
 			try {
 				getAAIClient().update(uri,payload)
