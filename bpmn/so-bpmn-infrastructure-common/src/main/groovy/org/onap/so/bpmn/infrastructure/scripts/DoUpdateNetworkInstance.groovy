@@ -37,6 +37,7 @@ import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
 import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
@@ -328,7 +329,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
             String serviceInstanceId = execution.getVariable('serviceInstanceId')
 
             AAIResourcesClient resourceClient = new AAIResourcesClient()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
 
             if(!resourceClient.exists(uri)){
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Service Instance not found in aai")
@@ -361,7 +362,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
             String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
             AaiUtil aaiUtil = new AaiUtil(this)
 
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, Defaults.CLOUD_OWNER.toString(), cloudRegion)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(Defaults.CLOUD_OWNER.toString(), cloudRegion))
             def queryCloudRegionRequest = aaiUtil.createAaiUri(uri)
 
             execution.setVariable(Prefix + "queryCloudRegionRequest", queryCloudRegionRequest)
@@ -409,7 +410,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
             execution.setVariable(Prefix + "networkId", networkId)
 
             AAIResourcesClient client = new AAIResourcesClient()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId).depth(Depth.ONE)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Network(networkId)).depth(Depth.ONE)
             AAIResultWrapper network = client.get(uri, NotFoundException.class)
 
             execution.setVariable(Prefix + "aaiIdReturnCode", "200")
@@ -442,7 +443,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
             String networkId   = utils.getNodeText(networkRequest, "network-id")
 
             AAIResourcesClient client = new AAIResourcesClient()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId).depth(Depth.ONE)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Network(networkId)).depth(Depth.ONE)
             AAIResultWrapper network = client.get(uri, NotFoundException.class)
 
             execution.setVariable(Prefix + "aaiRequeryIdReturnCode", "200")
@@ -483,7 +484,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
             // get variables
             AAIResultWrapper queryIdAAIResponse = execution.getVariable(Prefix + "requeryIdAAIResponse")
             if(queryIdAAIResponse.getRelationships().isPresent()){
-                List<AAIResourceUri> uris = queryIdAAIResponse.getRelationships().get().getRelatedAAIUris(AAIObjectType.VPN_BINDING)
+                List<AAIResourceUri> uris = queryIdAAIResponse.getRelationships().get().getRelatedUris(Types.VPN_BINDING)
 
                 logger.debug(Prefix + "vpnCount - " + uris.size())
 
@@ -555,7 +556,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
             // get variables
             AAIResultWrapper queryIdAAIResponse = execution.getVariable(Prefix + "requeryIdAAIResponse")
             if(queryIdAAIResponse.getRelationships().isPresent()){
-                List<AAIResourceUri> uris = queryIdAAIResponse.getRelationships().get().getRelatedAAIUris(AAIObjectType.NETWORK_POLICY)
+                List<AAIResourceUri> uris = queryIdAAIResponse.getRelationships().get().getRelatedUris(Types.NETWORK_POLICY)
 
                 execution.setVariable(Prefix + "networkPolicyCount", uris.size())
                 logger.debug(Prefix + "networkPolicyCount - " + uris.size())
@@ -620,7 +621,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
         try {
             AAIResultWrapper queryIdAAIResponse = execution.getVariable(Prefix + "requeryIdAAIResponse")
             if(queryIdAAIResponse.getRelationships().isPresent()){
-                List<AAIResourceUri> uris = queryIdAAIResponse.getRelationships().get().getRelatedAAIUris(AAIObjectType.ROUTE_TABLE_REFERENCE)
+                List<AAIResourceUri> uris = queryIdAAIResponse.getRelationships().get().getRelatedUris(Types.ROUTE_TABLE_REFERENCE)
 
                 execution.setVariable(Prefix + "networkTableRefCount", uris.size())
                 logger.debug(Prefix + "networkTableRefCount - " + uris.size())
@@ -717,7 +718,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
             }
 
             AAIResourcesClient client = new AAIResourcesClient()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Network(networkId))
             client.update(uri, l3Network)
 
             List<Subnet> subnets = oldL3Network.getSubnets().getSubnet()
@@ -734,7 +735,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
                     subnet.setOrchestrationStatus("Active")
                 }
 
-                AAIResourceUri subUri = AAIUriFactory.createResourceUri(AAIObjectType.SUBNET, networkId, subnetId)
+                AAIResourceUri subUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Network(networkId).subnet(subnetId))
                 client.update(subUri, subnet)
             }
 

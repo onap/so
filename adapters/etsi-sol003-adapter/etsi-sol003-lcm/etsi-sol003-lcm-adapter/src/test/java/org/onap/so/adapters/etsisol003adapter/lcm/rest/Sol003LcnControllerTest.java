@@ -54,6 +54,7 @@ import org.onap.aai.domain.yang.RelationshipData;
 import org.onap.aai.domain.yang.RelationshipList;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
+import org.onap.aaiclient.client.aai.entities.uri.AAIBaseResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.adapters.etsisol003adapter.lcm.extclients.aai.AaiHelper;
 import org.onap.so.adapters.etsisol003adapter.lcm.extclients.aai.OamIpAddressSource;
@@ -385,7 +386,7 @@ public class Sol003LcnControllerTest {
         genericVnf.getRelationshipList().getRelationship().add(relationshipToVserver);
     }
 
-    private class AaiResourceUriMatcher extends BaseMatcher<AAIResourceUri> {
+    private class AaiResourceUriMatcher extends BaseMatcher<AAIBaseResourceUri<?, ?>> {
 
         final String uriAsString;
 
@@ -395,12 +396,12 @@ public class Sol003LcnControllerTest {
 
         @Override
         public boolean matches(final Object item) {
-            if (item instanceof AAIResourceUri) {
+            if (item instanceof AAIBaseResourceUri<?, ?>) {
                 if (uriAsString.endsWith("...")) {
-                    return ((AAIResourceUri) item).build().toString()
+                    return ((AAIBaseResourceUri<?, ?>) item).build().toString()
                             .startsWith(uriAsString.substring(0, uriAsString.indexOf("...")));
                 }
-                return ((AAIResourceUri) item).build().toString().equals(uriAsString);
+                return ((AAIBaseResourceUri<?, ?>) item).build().toString().equals(uriAsString);
             }
             return false;
         }

@@ -45,7 +45,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public abstract class HttpLookupUri extends AAISimpleUri implements HttpAwareUri {
 
     private transient Optional<String> cachedValue = Optional.empty();
-    private final AAIObjectType aaiType;
+    protected final AAIObjectType aaiType;
 
     protected HttpLookupUri(AAIObjectType type, Object... values) {
         super(type, values);

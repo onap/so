@@ -1,5 +1,6 @@
 package org.onap.aaiclient.client.aai.entities.uri;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,7 +21,7 @@ public class AAIFluentTypeReverseLookup {
                     (Class<? extends GraphInventoryFluentType.Info>) Class
                             .forName("org.onap.aaiclient.client.generated.fluentbuilders." + className + "$Info");
 
-            GraphInventoryFluentType.Info type = clazz.newInstance();
+            GraphInventoryFluentType.Info type = clazz.getConstructor().newInstance();
 
             Optional<String> parentTemplate = findParentPath(type, uri);
             if (parentTemplate.isPresent()) {
@@ -29,7 +30,8 @@ public class AAIFluentTypeReverseLookup {
                 // fallback to enum lookup
                 return AAIObjectType.fromTypeName(name);
             }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException
+                | InvocationTargetException | NoSuchMethodException | SecurityException e) {
         }
         return AAIObjectType.UNKNOWN;
     }

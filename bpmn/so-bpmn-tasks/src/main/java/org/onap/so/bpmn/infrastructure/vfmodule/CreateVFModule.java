@@ -1,6 +1,14 @@
 package org.onap.so.bpmn.infrastructure.vfmodule;
 
 import java.util.Optional;
+import org.onap.aaiclient.client.aai.AAIResourcesClient;
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
+import org.onap.aaiclient.client.aai.entities.Relationships;
+import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -8,14 +16,6 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
-import org.onap.aaiclient.client.aai.AAIObjectPlurals;
-import org.onap.aaiclient.client.aai.AAIObjectType;
-import org.onap.aaiclient.client.aai.AAIResourcesClient;
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
-import org.onap.aaiclient.client.aai.entities.Relationships;
-import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.cloud.resource.beans.CloudInformation;
 import org.onap.so.cloud.resource.beans.NodeType;
@@ -60,15 +60,15 @@ public class CreateVFModule {
     }
 
     protected NodeType getNodeType(CloudRegion cloudRegion) {
-        AAIResourceUri cloudRegionUri = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION,
-                cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId());
+        AAIResourceUri cloudRegionUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                .cloudRegion(cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId()));
         AAIResourcesClient client = getAAIClient();
         Optional<Relationships> relationships = client.get(cloudRegionUri).getRelationships();
         if (relationships.isPresent()) {
             AAIPluralResourceUri networkTechsGreenfieldUri = AAIUriFactory
-                    .createResourceUri(AAIObjectType.CLOUD_REGION, cloudRegion.getCloudOwner(),
-                            cloudRegion.getLcpCloudRegionId())
-                    .relatedTo(AAIObjectPlurals.NETWORK_TECHNOLOGY)
+                    .createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                            .cloudRegion(cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId()))
+                    .relatedTo(Types.NETWORK_TECHNOLOGIES.getFragment())
                     .queryParam("network-technology-name", NodeType.GREENFIELD.getNetworkTechnologyName());
 
             AAIResultWrapper networkTechsGreenfield = client.get(networkTechsGreenfieldUri);

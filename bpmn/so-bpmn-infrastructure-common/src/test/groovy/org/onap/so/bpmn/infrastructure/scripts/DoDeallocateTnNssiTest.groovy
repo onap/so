@@ -29,11 +29,14 @@ import org.mockito.Mockito
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 
 import static org.junit.Assert.assertNotNull
 import static org.mockito.ArgumentMatchers.eq
 import static org.mockito.Mockito.*
+
 
 class DoDeallocateTnNssiTest extends MsoGroovyTest {
     @Before
@@ -124,7 +127,7 @@ class DoDeallocateTnNssiTest extends MsoGroovyTest {
         when(mockExecution.getVariable("globalSubscriberId")).thenReturn("5GCustomer")
         when(mockExecution.getVariable("subscriptionServiceType")).thenReturn("5G")
 
-        AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, "5GCustomer", "5G", "5ad89cf9-0569-4a93-9306-d8324321e2be")
+        AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("5GCustomer").serviceSubscription("5G").serviceInstance("5ad89cf9-0569-4a93-9306-d8324321e2be"))
         DoDeallocateTnNssi obj = spy(DoDeallocateTnNssi.class)
         when(obj.getAAIClient()).thenReturn(client)
         doNothing().when(client).delete(serviceInstanceUri)

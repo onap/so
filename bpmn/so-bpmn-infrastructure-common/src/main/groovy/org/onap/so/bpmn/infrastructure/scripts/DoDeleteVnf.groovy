@@ -40,6 +40,8 @@ import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -104,14 +106,14 @@ class DoDeleteVnf extends AbstractServiceTaskProcessor {
 		try {
 
 			AAIResourcesClient resourceClient = new AAIResourcesClient()
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, execution.getVariable('vnfId'))
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(execution.getVariable('vnfId')))
 
 			if(resourceClient.exists(uri)){
 				execution.setVariable("GENGV_FoundIndicator", true)
 				AAIResultWrapper wrapper = resourceClient.get(uri.depth(Depth.ONE))
 				if(wrapper.getRelationships().isPresent()){
-					List<AAIResourceUri> relationships = wrapper.getRelationships().get().getRelatedAAIUris(AAIObjectType.CLOUD_REGION)
-					relationships.addAll(wrapper.getRelationships().get().getRelatedAAIUris(AAIObjectType.L3_NETWORK))
+					List<AAIResourceUri> relationships = wrapper.getRelationships().get().getRelatedUris(Types.CLOUD_REGION)
+					relationships.addAll(wrapper.getRelationships().get().getRelatedUris(Types.L3_NETWORK))
 					if(!relationships.isEmpty()){
 						execution.setVariable("DoDVNF_vnfInUse", true)
 					}else{
@@ -148,7 +150,7 @@ class DoDeleteVnf extends AbstractServiceTaskProcessor {
 			String vnfId = execution.getVariable("DoDVNF_vnfId")
 
 			AAIResourcesClient resourceClient = new AAIResourcesClient();
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId))
 			resourceClient.delete(uri)
 
 			logger.trace("COMPLETED deleteVnf")

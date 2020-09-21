@@ -25,6 +25,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.junit.Test;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 
 public class AAIURITest {
 
@@ -33,8 +34,9 @@ public class AAIURITest {
     @Test
     public void verifyTemplateReplacement() {
         final String id = "test1";
-        AAIResourceUri aaiUri = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, id);
-        String manualReplace = AAIObjectType.CONFIGURATION.toString().replaceAll("\\{configuration-id\\}", id);
+        AAIResourceUri aaiUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().configuration(id));
+        String manualReplace =
+                AAIFluentTypeBuilder.network().configuration(id).uriTemplate().replaceAll("\\{configuration-id\\}", id);
         assertEquals("uri template replaced", aaiUri.build(), UriBuilder.fromPath(manualReplace).build());
 
     }

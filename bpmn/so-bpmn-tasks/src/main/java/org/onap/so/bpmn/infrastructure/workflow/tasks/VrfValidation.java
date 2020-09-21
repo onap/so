@@ -23,10 +23,10 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks;
 import java.util.List;
 import java.util.Optional;
 import org.onap.aai.domain.yang.L3Network;
-import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
+import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -143,7 +143,7 @@ public class VrfValidation {
         AAIResultWrapper networkWrapper = new AAIResultWrapper(aaiLocalNetwork);
         if (networkWrapper.getRelationships().isPresent()) {
             List<AAIResourceUri> vpnBindingUris =
-                    networkWrapper.getRelationships().get().getRelatedUris(AAIObjectType.VPN_BINDING);
+                    networkWrapper.getRelationships().get().getRelatedUris(Types.VPN_BINDING);
             if (!vpnBindingUris.isEmpty()) {
                 Optional<org.onap.aai.domain.yang.VpnBinding> vpnBindingOp =
                         bbInputSetupUtils.getAAIResourceDepthOne(vpnBindingUris.get(0))

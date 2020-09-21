@@ -20,37 +20,33 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import static org.apache.commons.lang3.StringUtils.*
+import org.camunda.bpm.engine.delegate.BpmnError
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.ServiceInstance
-import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-import org.onap.so.beans.nsmf.EsrInfo
-import org.onap.so.beans.nsmf.NssmfAdapterNBIRequest
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
+import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.beans.nsmf.SliceTaskParams
 import org.onap.so.beans.nsmf.SliceTaskParamsAdapter
 import org.onap.so.beans.nsmf.oof.TemplateInfo
-import org.onap.so.bpmn.common.scripts.NssmfAdapterUtils
-import org.onap.so.bpmn.core.domain.ServiceDecomposition
-
-import static org.apache.commons.lang3.StringUtils.*
-import org.springframework.web.util.UriUtils
-import groovy.json.JsonSlurper
-import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.so.beans.nsmf.SliceTaskParams
-import org.onap.so.db.request.beans.OrchestrationTask
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
+import org.onap.so.bpmn.common.scripts.MsoUtils
+import org.onap.so.bpmn.common.scripts.NssmfAdapterUtils
 import org.onap.so.bpmn.common.scripts.OofUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.db.request.beans.OrchestrationTask
 import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.web.util.UriUtils
+import com.fasterxml.jackson.databind.ObjectMapper
+import groovy.json.JsonSlurper
 
 public class CreateSliceService extends AbstractServiceTaskProcessor {
     String Prefix = "CRESS_"
@@ -409,7 +405,7 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
             ServiceInstance si = new ServiceInstance()
             si.setOrchestrationStatus(orchStatus)
             AAIResourcesClient client = new AAIResourcesClient()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
             client.update(uri, si)
         } catch (BpmnError e) {
             throw e

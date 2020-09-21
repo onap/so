@@ -32,20 +32,19 @@ import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.aai.domain.yang.ServiceInstances
 import org.onap.aai.domain.yang.v13.Metadata
 import org.onap.aai.domain.yang.v13.Metadatum
+import org.onap.aaiclient.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.common.recipe.ResourceInput
 import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
-import org.onap.so.bpmn.core.domain.ModelInfo
-import org.onap.so.bpmn.core.domain.ResourceType
-import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.onap.aaiclient.client.aai.AAIObjectPlurals
-import org.onap.aaiclient.client.aai.AAIResourcesClient
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.bpmn.core.domain.ModelInfo
+import org.onap.so.bpmn.core.json.JsonUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -142,8 +141,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
         AAIResourcesClient client = new AAIResourcesClient()
 
         // think how AAI queried for PNF name using the name
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE_METADATA,
-                customerId, serviceType, serId)
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(customerId).serviceSubscription(serviceType).serviceInstance(serId).metadata())
         logger.debug("uri for pnf get:" + uri.toString())
 
         Metadata metadata = client.get(uri).asBean(Metadata.class).get()
@@ -294,7 +292,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
         AAIResourcesClient client = new AAIResourcesClient()
         logger.info("sending request to resolve vpn-name:" + vpnName)
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(new AAIObjectPlurals("/nodes", "/service-instances", "queryByName")).queryParam("service-instance-name", parentServiceName)
+        AAIResourceUri uri = AAIUriFactory.createNodesUri(Types.SERVICE_INSTANCES.getFragment()).queryParam("service-instance-name", parentServiceName)
         Optional<ServiceInstances> serviceInstancesOpt = client.get(ServiceInstances.class, uri)
 
         if(serviceInstancesOpt.isPresent()) {

@@ -49,6 +49,7 @@ import org.onap.aaiclient.client.aai.entities.singletransaction.SingleTransactio
 import org.onap.aaiclient.client.aai.entities.singletransaction.SingleTransactionResponse;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryPatchConverter;
 import org.skyscreamer.jsonassert.JSONAssert;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -60,9 +61,12 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 public class AAISingleTransactionClientTest {
 
     private final static String AAI_JSON_FILE_LOCATION = "src/test/resources/__files/aai/singletransaction/";
-    AAIResourceUri uriA = AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, "pserver-hostname");
-    AAIResourceUri uriB = AAIUriFactory.createResourceUri(AAIObjectType.COMPLEX, "my-complex");
-    AAIResourceUri uriC = AAIUriFactory.createResourceUri(AAIObjectType.COMPLEX, "my-complex2");
+    AAIResourceUri uriA =
+            AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().pserver("pserver-hostname"));
+    AAIResourceUri uriB =
+            AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().complex("my-complex"));
+    AAIResourceUri uriC =
+            AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().complex("my-complex2"));
 
     ObjectMapper mapper;
 

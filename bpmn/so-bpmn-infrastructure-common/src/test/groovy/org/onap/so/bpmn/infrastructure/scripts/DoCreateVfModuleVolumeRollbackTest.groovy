@@ -20,20 +20,18 @@
 
 package org.onap.so.bpmn.infrastructure.scripts;
 
-import org.junit.Before;
-import org.junit.Test
-import org.onap.aai.domain.yang.VfModule
-import org.onap.aai.domain.yang.VolumeGroup
-import org.onap.aai.domain.yang.VolumeGroups;
-import org.onap.so.bpmn.common.scripts.MsoGroovyTest
-import org.onap.aaiclient.client.aai.AAIObjectPlurals
-import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-import org.onap.so.constants.Defaults
-
 import static org.mockito.Mockito.spy
 import static org.mockito.Mockito.when;
+import org.junit.Before;
+import org.junit.Test
+import org.onap.aai.domain.yang.VolumeGroup
+import org.onap.aai.domain.yang.VolumeGroups;
+import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
+import org.onap.so.bpmn.common.scripts.MsoGroovyTest
+import org.onap.so.constants.Defaults
 
 public class DoCreateVfModuleVolumeRollbackTest extends MsoGroovyTest {
 
@@ -51,7 +49,7 @@ public class DoCreateVfModuleVolumeRollbackTest extends MsoGroovyTest {
         String cloudRegionId = "cloudRegionId"
         when(mockExecution.getVariable("DCVFMODVOLRBK_volumeGroupName")).thenReturn(volumeGroupName)
         when(mockExecution.getVariable("DCVFMODVOLRBK_lcpCloudRegionId")).thenReturn(cloudRegionId)
-        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegionId).queryParam("volume-group-name", volumeGroupName)
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(Defaults.CLOUD_OWNER.toString(), cloudRegionId).volumeGroups()).queryParam("volume-group-name", volumeGroupName)
         VolumeGroup volumeGroup = new VolumeGroup();
         volumeGroup.setVolumeGroupId("volumeGroupId")
         VolumeGroups groups = new VolumeGroups();

@@ -27,11 +27,11 @@ import java.util.Map;
 import java.util.Optional;
 import org.onap.aai.domain.yang.OwningEntities;
 import org.onap.aai.domain.yang.OwningEntity;
-import org.onap.aaiclient.client.aai.AAIObjectPlurals;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,18 +40,20 @@ public class AAICreateResources {
     private static final Logger logger = LoggerFactory.getLogger(AAICreateResources.class);
 
     public void createAAIProject(String projectName, String serviceInstance) {
-        AAIResourceUri projectURI = AAIUriFactory.createResourceUri(AAIObjectType.PROJECT, projectName);
+        AAIResourceUri projectURI =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().project(projectName));
         AAIResourceUri serviceInstanceURI =
-                AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstance);
+                AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstance));
         AAIResourcesClient aaiRC = new AAIResourcesClient();
         aaiRC.createIfNotExists(projectURI, Optional.empty()).connect(projectURI, serviceInstanceURI);
 
     }
 
     public void createAAIOwningEntity(String owningEntityId, String owningEntityName, String serviceInstance) {
-        AAIResourceUri owningEntityURI = AAIUriFactory.createResourceUri(AAIObjectType.OWNING_ENTITY, owningEntityId);
+        AAIResourceUri owningEntityURI =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().owningEntity(owningEntityId));
         AAIResourceUri serviceInstanceURI =
-                AAIUriFactory.createNodesUri(AAIObjectType.SERVICE_INSTANCE, serviceInstance);
+                AAIUriFactory.createNodesUri(Types.SERVICE_INSTANCE.getFragment(serviceInstance));
         Map<String, String> hashMap = new HashMap<>();
         hashMap.put("owning-entity-name", owningEntityName);
         AAIResourcesClient aaiRC = new AAIResourcesClient();
@@ -59,7 +61,8 @@ public class AAICreateResources {
     }
 
     public boolean existsOwningEntity(String owningEntityId) {
-        AAIResourceUri owningEntityURI = AAIUriFactory.createResourceUri(AAIObjectType.OWNING_ENTITY, owningEntityId);
+        AAIResourceUri owningEntityURI =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().owningEntity(owningEntityId));
         AAIResourcesClient aaiRC = new AAIResourcesClient();
         return aaiRC.exists(owningEntityURI);
     }
@@ -67,8 +70,10 @@ public class AAICreateResources {
     protected OwningEntities getOwningEntityName(String owningEntityName) {
 
         AAIResourcesClient aaiRC = new AAIResourcesClient();
-        return aaiRC.get(OwningEntities.class, AAIUriFactory.createResourceUri(AAIObjectPlurals.OWNING_ENTITY)
-                .queryParam("owning-entity-name", owningEntityName)).orElseGet(() -> {
+        return aaiRC.get(OwningEntities.class,
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().owningEntities())
+                        .queryParam("owning-entity-name", owningEntityName))
+                .orElseGet(() -> {
                     logger.debug("No Owning Entity matched by name");
                     return null;
                 });
@@ -91,31 +96,35 @@ public class AAICreateResources {
     }
 
     public void connectOwningEntityandServiceInstance(String owningEntityId, String serviceInstance) {
-        AAIResourceUri owningEntityURI = AAIUriFactory.createResourceUri(AAIObjectType.OWNING_ENTITY, owningEntityId);
+        AAIResourceUri owningEntityURI =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().owningEntity(owningEntityId));
         AAIResourceUri serviceInstanceURI =
-                AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstance);
+                AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstance));
         AAIResourcesClient aaiRC = new AAIResourcesClient();
         aaiRC.connect(owningEntityURI, serviceInstanceURI);
     }
 
     public void createAAIPlatform(String platformName, String vnfId) {
-        AAIResourceUri platformURI = AAIUriFactory.createResourceUri(AAIObjectType.PLATFORM, platformName);
-        AAIResourceUri genericVnfURI = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId);
+        AAIResourceUri platformURI =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().platform(platformName));
+        AAIResourceUri genericVnfURI =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId));
         AAIResourcesClient aaiRC = new AAIResourcesClient();
         aaiRC.createIfNotExists(platformURI, Optional.empty()).connect(platformURI, genericVnfURI);
     }
 
     public void createAAILineOfBusiness(String lineOfBusiness, String vnfId) {
         AAIResourceUri lineOfBusinessURI =
-                AAIUriFactory.createResourceUri(AAIObjectType.LINE_OF_BUSINESS, lineOfBusiness);
-        AAIResourceUri genericVnfURI = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId);
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().lineOfBusiness(lineOfBusiness));
+        AAIResourceUri genericVnfURI =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId));
         AAIResourcesClient aaiRC = new AAIResourcesClient();
         aaiRC.createIfNotExists(lineOfBusinessURI, Optional.empty()).connect(lineOfBusinessURI, genericVnfURI);
     }
 
     public void createAAIServiceInstance(String globalCustomerId, String serviceType, String serviceInstanceId) {
-        AAIResourceUri serviceInstanceURI = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                globalCustomerId, serviceType, serviceInstanceId);
+        AAIResourceUri serviceInstanceURI = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                .customer(globalCustomerId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId));
         AAIResourcesClient aaiRC = new AAIResourcesClient();
         aaiRC.createIfNotExists(serviceInstanceURI, Optional.empty());
     }

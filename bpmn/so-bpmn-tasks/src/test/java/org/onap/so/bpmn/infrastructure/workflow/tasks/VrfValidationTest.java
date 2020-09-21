@@ -41,10 +41,10 @@ import org.onap.aai.domain.yang.RouteTargets;
 import org.onap.aai.domain.yang.Subnet;
 import org.onap.aai.domain.yang.Subnets;
 import org.onap.aai.domain.yang.VpnBinding;
-import org.onap.so.bpmn.BaseTaskTest;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
+import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
@@ -205,7 +205,7 @@ public class VrfValidationTest extends BaseTaskTest {
         AAIResultWrapper networkWrapper = new AAIResultWrapper(l3Network);
         if (networkWrapper.getRelationships().isPresent()) {
             List<AAIResourceUri> vpnBindingUris =
-                    networkWrapper.getRelationships().get().getRelatedUris(AAIObjectType.VPN_BINDING);
+                    networkWrapper.getRelationships().get().getRelatedUris(Types.VPN_BINDING);
             VpnBinding vpnBinding = new VpnBinding();
             vpnBinding.setRouteTargets(new RouteTargets());
             vpnBinding.getRouteTargets().getRouteTarget().add(new RouteTarget());

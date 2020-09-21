@@ -23,9 +23,7 @@ package org.onap.aaiclient.client.graphinventory.entities.uri.parsers;
 import static org.junit.Assert.assertEquals;
 import java.util.Map;
 import org.junit.Test;
-import org.onap.aaiclient.client.aai.AAIObjectType;
-import org.onap.aaiclient.client.graphinventory.entities.uri.parsers.UriParser;
-import org.onap.aaiclient.client.graphinventory.entities.uri.parsers.UriParserSpringImpl;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 
 public class UriParserSpringImplTest {
 
@@ -33,7 +31,8 @@ public class UriParserSpringImplTest {
 
     @Test
     public void reverseTemplate() {
-        final UriParser parser = new UriParserSpringImpl(AAIObjectType.SERVICE_INSTANCE.toString());
+        final UriParser parser = new UriParserSpringImpl(
+                AAIFluentTypeBuilder.business().customer("").serviceSubscription("").serviceInstance("").uriTemplate());
         final String uri =
                 "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3";
 

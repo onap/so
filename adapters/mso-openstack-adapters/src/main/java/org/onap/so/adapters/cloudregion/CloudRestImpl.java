@@ -5,12 +5,11 @@ import java.util.Optional;
 import org.onap.aai.domain.yang.CloudRegion;
 import org.onap.aai.domain.yang.Complex;
 import org.onap.aai.domain.yang.NetworkTechnologies;
-import org.onap.aaiclient.client.aai.AAIObjectPlurals;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.NetworkTechnologyReference;
 import org.onap.so.db.catalog.client.CatalogDbClient;
@@ -68,11 +67,12 @@ public class CloudRestImpl {
             if (complex.isPresent()) {
                 cloudRegion.setComplexName(complex.get().getComplexName());
             }
-            AAIResourceUri cloudRegionURI = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION,
-                    cloudRegion.getCloudOwner(), cloudRegion.getCloudRegionId());
+            AAIResourceUri cloudRegionURI = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                    .cloudRegion(cloudRegion.getCloudOwner(), cloudRegion.getCloudRegionId()));
             getAaiClient().createIfNotExists(cloudRegionURI, Optional.of(cloudRegion));
             if (complex.isPresent()) {
-                AAIResourceUri complexURI = AAIUriFactory.createResourceUri(AAIObjectType.COMPLEX, cloudSite.getClli());
+                AAIResourceUri complexURI = AAIUriFactory
+                        .createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().complex(cloudSite.getClli()));
                 getAaiClient().connect(cloudRegionURI, complexURI);
             }
             createCloudRegionNetworkTechnologyRelationship(cloudSite, cloudRegionURI);
@@ -88,18 +88,21 @@ public class CloudRestImpl {
     }
 
     protected Optional<Complex> retrieveComplex(CloudSite cloudSite) {
-        AAIResourceUri complexURI = AAIUriFactory.createResourceUri(AAIObjectType.COMPLEX, cloudSite.getClli());
+        AAIResourceUri complexURI = AAIUriFactory
+                .createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().complex(cloudSite.getClli()));
         return getAaiClient().get(Complex.class, complexURI);
     }
 
     protected void linkCloudAndTechnology(String networkTechnologyName, AAIResourceUri cloudRegionURI) {
-        AAIPluralResourceUri technologyPluralUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_TECHNOLOGY)
-                .queryParam("network-technology-name", networkTechnologyName);
+        AAIPluralResourceUri technologyPluralUri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().networkTechnologies())
+                        .queryParam("network-technology-name", networkTechnologyName);
         Optional<NetworkTechnologies> networkTechnology =
                 getAaiClient().get(NetworkTechnologies.class, technologyPluralUri);
         if (networkTechnology.isPresent()) {
-            AAIResourceUri networkTechnologyURI = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_TECHNOLOGY,
-                    networkTechnology.get().getNetworkTechnology().get(0).getNetworkTechnologyId());
+            AAIResourceUri networkTechnologyURI =
+                    AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().networkTechnology(
+                            networkTechnology.get().getNetworkTechnology().get(0).getNetworkTechnologyId()));
             getAaiClient().connect(cloudRegionURI, networkTechnologyURI);
         }
     }

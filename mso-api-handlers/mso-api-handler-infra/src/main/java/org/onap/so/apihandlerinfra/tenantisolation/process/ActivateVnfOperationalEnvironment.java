@@ -26,11 +26,11 @@ import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.json.JSONObject;
 import org.onap.aai.domain.yang.OperationalEnvironment;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.Relationships;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
@@ -94,8 +94,7 @@ public class ActivateVnfOperationalEnvironment {
         Optional<Relationships> optRelationships = wrapper.getRelationships();
         if (optRelationships.isPresent()) {
             Relationships relationships = optRelationships.get();
-            List<AAIResourceUri> operationalEnvironments =
-                    relationships.getRelatedAAIUris(AAIObjectType.OPERATIONAL_ENVIRONMENT);
+            List<AAIResourceUri> operationalEnvironments = relationships.getRelatedUris(Types.OPERATIONAL_ENVIRONMENT);
             if (!operationalEnvironments.isEmpty()) {
                 ecompOperationalEnvironmentId = operationalEnvironments.get(0).getURIKeys().get(
                         AAIFluentTypeBuilder.Types.OPERATIONAL_ENVIRONMENT.getUriParams().operationalEnvironmentId);
