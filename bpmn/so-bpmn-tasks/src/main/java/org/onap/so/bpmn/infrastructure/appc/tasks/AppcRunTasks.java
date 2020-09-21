@@ -30,11 +30,11 @@ import java.util.Map;
 import java.util.Optional;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.Relationships;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.appc.client.lcm.model.Action;
 import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
@@ -251,7 +251,7 @@ public class AppcRunTasks {
             return;
         }
         Relationships relationships = aaiRW.getRelationships().get();
-        List<AAIResourceUri> vserverUris = relationships.getRelatedAAIUris(AAIObjectType.VSERVER);
+        List<AAIResourceUri> vserverUris = relationships.getRelatedUris(Types.VSERVER);
         JSONArray vserverIds = new JSONArray();
         JSONArray vserverSelfLinks = new JSONArray();
         if (vserverUris != null) {

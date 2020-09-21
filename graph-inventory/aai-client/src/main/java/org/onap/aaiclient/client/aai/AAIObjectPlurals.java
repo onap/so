@@ -22,62 +22,11 @@ package org.onap.aaiclient.client.aai;
 
 import java.io.Serializable;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryObjectPlurals;
-import org.onap.so.constants.Defaults;
 import com.google.common.base.CaseFormat;
 
 public class AAIObjectPlurals implements AAIObjectBase, GraphInventoryObjectPlurals, Serializable {
 
     private static final long serialVersionUID = 5312713297525740746L;
-
-    public static final AAIObjectPlurals CUSTOMER =
-            new AAIObjectPlurals(AAIObjectType.CUSTOMER, AAINamespaceConstants.BUSINESS, "/customers");
-    public static final AAIObjectPlurals GENERIC_VNF =
-            new AAIObjectPlurals(AAIObjectType.GENERIC_VNF, AAINamespaceConstants.NETWORK, "/generic-vnfs");
-    public static final AAIObjectPlurals PORT_GROUP =
-            new AAIObjectPlurals(AAIObjectType.PORT_GROUP, AAIObjectType.VCE.uriTemplate(), "/port-groups");
-    public static final AAIObjectPlurals PSERVER =
-            new AAIObjectPlurals(AAIObjectType.PSERVER, AAINamespaceConstants.CLOUD_INFRASTRUCTURE, "/pservers");
-    public static final AAIObjectPlurals P_INTERFACE =
-            new AAIObjectPlurals(AAIObjectType.P_INTERFACE, AAIObjectType.PSERVER.uriTemplate(), "/p-interfaces");
-    public static final AAIObjectPlurals L3_NETWORK =
-            new AAIObjectPlurals(AAIObjectType.L3_NETWORK, AAINamespaceConstants.NETWORK, "/l3-networks");
-    public static final AAIObjectPlurals NETWORK_POLICY =
-            new AAIObjectPlurals(AAIObjectType.NETWORK_POLICY, AAINamespaceConstants.NETWORK, "/network-policies");
-    public static final AAIObjectPlurals VPN_BINDING =
-            new AAIObjectPlurals(AAIObjectType.VPN_BINDING, AAINamespaceConstants.NETWORK, "/vpn-bindings");
-    public static final AAIObjectPlurals SERVICE_SUBSCRIPTION = new AAIObjectPlurals(AAIObjectType.SERVICE_SUBSCRIPTION,
-            AAIObjectType.CUSTOMER.uriTemplate(), "/service-subscriptions");
-    public static final AAIObjectPlurals SERVICE_INSTANCE = new AAIObjectPlurals(AAIObjectType.SERVICE_INSTANCE,
-            AAIObjectType.SERVICE_SUBSCRIPTION.uriTemplate(), "/service-instances");
-    public static final AAIObjectPlurals OWNING_ENTITY =
-            new AAIObjectPlurals(AAIObjectType.OWNING_ENTITY, AAINamespaceConstants.BUSINESS, "/owning-entities");
-    public static final AAIObjectPlurals VOLUME_GROUP = new AAIObjectPlurals(AAIObjectType.VOLUME_GROUP,
-            AAIObjectType.CLOUD_REGION.uriTemplate(), "/volume-groups");
-    public static final AAIObjectPlurals AVAILIBILITY_ZONE = new AAIObjectPlurals(AAIObjectType.AVAILIBILITY_ZONE,
-            AAIObjectType.CLOUD_REGION.uriTemplate(), "/availability-zones");
-    public static final AAIObjectPlurals VF_MODULE =
-            new AAIObjectPlurals(AAIObjectType.VF_MODULE, AAIObjectType.GENERIC_VNF.uriTemplate(), "/vf-modules");
-    public static final AAIObjectPlurals CONFIGURATION =
-            new AAIObjectPlurals(AAIObjectType.CONFIGURATION, AAINamespaceConstants.NETWORK, "/configurations");
-    public static final AAIObjectPlurals DEFAULT_TENANT =
-            new AAIObjectPlurals(AAIObjectType.DEFAULT_TENANT, AAINamespaceConstants.CLOUD_INFRASTRUCTURE
-                    + "/cloud-regions/cloud-region/" + Defaults.CLOUD_OWNER + "/AAIAIC25", "/tenants");
-    public static final AAIObjectPlurals NETWORK_TECHNOLOGY = new AAIObjectPlurals(AAIObjectType.NETWORK_TECHNOLOGY,
-            AAINamespaceConstants.CLOUD_INFRASTRUCTURE, "/network-technologies");
-    public static final AAIObjectPlurals LOGICAL_LINK =
-            new AAIObjectPlurals(AAIObjectType.LOGICAL_LINK, AAINamespaceConstants.NETWORK, "/logical-links");
-    public static final AAIObjectPlurals L_INTERFACE =
-            new AAIObjectPlurals(AAIObjectType.L_INTERFACE, AAIObjectType.VSERVER.uriTemplate(), "/l-interfaces");
-    public static final AAIObjectPlurals SUB_L_INTERFACE =
-            new AAIObjectPlurals(AAIObjectType.L_INTERFACE, AAIObjectType.L_INTERFACE.uriTemplate(), "/l-interfaces");
-    public static final AAIObjectPlurals INSTANCE_GROUP =
-            new AAIObjectPlurals(AAIObjectType.INSTANCE_GROUP, AAINamespaceConstants.NETWORK, "/instance-groups");
-    public static final AAIObjectPlurals PNF =
-            new AAIObjectPlurals(AAIObjectType.PNF, AAINamespaceConstants.NETWORK, "/pnfs");
-    public static final AAIObjectPlurals PROJECT =
-            new AAIObjectPlurals(AAIObjectType.PROJECT, AAINamespaceConstants.BUSINESS, "/projects");
-    public static final AAIObjectPlurals VSERVER =
-            new AAIObjectPlurals(AAIObjectType.VSERVER, AAIObjectType.TENANT.uriTemplate(), "/vservers");
 
     private final String uriTemplate;
     private final String partialUri;

@@ -37,8 +37,9 @@ import org.onap.aai.domain.yang.LInterfaces;
 import org.onap.aai.domain.yang.Vlan;
 import org.onap.aai.domain.yang.Vlans;
 import org.onap.aai.domain.yang.Vserver;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.so.objects.audit.AAIObjectAudit;
 import org.onap.so.objects.audit.AAIObjectAuditList;
 import org.onap.so.openstack.utils.MsoHeatUtils;
@@ -260,10 +261,12 @@ public class HeatStackAudit {
         Vserver vServerShallow = new Vserver();
         BeanUtils.copyProperties(vServer, vServerShallow);
         aaiObjectAudit.setAaiObject(vServerShallow);
-        aaiObjectAudit.setAaiObjectType(AAIObjectType.VSERVER.typeName());
-        aaiObjectAudit.setResourceURI(AAIUriFactory
-                .createResourceUri(AAIObjectType.VSERVER, cloudOwner, cloudRegion, tenantId, vServer.getVserverId())
-                .build());
+        aaiObjectAudit.setAaiObjectType(Types.VSERVER.typeName());
+        aaiObjectAudit
+                .setResourceURI(AAIUriFactory
+                        .createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                                .cloudRegion(cloudOwner, cloudRegion).tenant(tenantId).vserver(vServer.getVserverId()))
+                        .build());
 
         return aaiObjectAudit;
     }

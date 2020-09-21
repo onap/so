@@ -29,8 +29,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Map;
 import org.junit.Test;
-import org.onap.aaiclient.client.aai.AAIObjectPlurals;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
@@ -41,14 +39,14 @@ public class AAISimpleUriTest {
 
     @Test
     public void relatedToTestPlural() {
-        AAIPluralResourceUri uri =
-                AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test1").relatedTo(AAIObjectPlurals.PSERVER);
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"))
+                .relatedTo(Types.PSERVERS.getFragment());
         String uriOutput = uri.build().toString();
 
         String expected = "/network/generic-vnfs/generic-vnf/test1/related-to/pservers";
         assertEquals(expected, uriOutput);
 
-        uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test1")
+        uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"))
                 .relatedTo(Types.PSERVERS.getFragment());
         uriOutput = uri.build().toString();
         assertEquals(expected, uriOutput);
@@ -56,14 +54,14 @@ public class AAISimpleUriTest {
 
     @Test
     public void relatedToTestSingular() {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test1")
-                .relatedTo(AAIObjectType.PSERVER, "test2");
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"))
+                .relatedTo(Types.PSERVER.getFragment("test2"));
         String uriOutput = uri.build().toString();
 
         String expected = "/network/generic-vnfs/generic-vnf/test1/related-to/pservers/pserver/test2";
         assertEquals(expected, uriOutput);
 
-        uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test1")
+        uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"))
                 .relatedTo(Types.PSERVER.getFragment("test2"));
 
         uriOutput = uri.build().toString();
@@ -74,7 +72,7 @@ public class AAISimpleUriTest {
 
     @Test
     public void cloneTestSingular() {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test1");
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"));
         AAIResourceUri cloned = uri.clone();
         assertEquals("/network/generic-vnfs/generic-vnf/test1", cloned.build().toString());
 
@@ -85,31 +83,31 @@ public class AAISimpleUriTest {
 
     @Test
     public void cloneTestPlural() {
-        AAISimplePluralUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF);
+        AAISimplePluralUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnfs());
         AAISimplePluralUri cloned = uri.clone();
         assertEquals("/network/generic-vnfs", cloned.build().toString());
     }
 
     @Test
     public void cloneTestWithRelatedTo() {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test1")
-                .relatedTo(AAIObjectType.PSERVER, "test2");
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"))
+                .relatedTo(Types.PSERVER.getFragment("test2"));
         String uriOutput = uri.clone().build().toString();
         assertEquals("/network/generic-vnfs/generic-vnf/test1/related-to/pservers/pserver/test2", uriOutput);
     }
 
     @Test
     public void cloneTestPluralWithRelatedTo() {
-        AAIPluralResourceUri uri =
-                AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test1").relatedTo(AAIObjectPlurals.PSERVER);
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"))
+                .relatedTo(Types.PSERVERS.getFragment());
         String uriOutput = uri.clone().build().toString();
         assertEquals("/network/generic-vnfs/generic-vnf/test1/related-to/pservers", uriOutput);
     }
 
     @Test
     public void getKeysTest() {
-        AAIResourceUri uri =
-                AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, "cloud1", "cloud2", "tenant1", "vserver1");
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                .cloudRegion("cloud1", "cloud2").tenant("tenant1").vserver("vserver1"));
         Map<String, String> keys = uri.getURIKeys();
         System.out.println(keys);
         System.out.println(uri.build());
@@ -118,8 +116,8 @@ public class AAISimpleUriTest {
 
     @Test
     public void getEncodedKeyTest() {
-        AAIResourceUri uri =
-                AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, "test1", "my value", "test3");
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("test1")
+                .serviceSubscription("my value").serviceInstance("test3"));
         Map<String, String> keys = uri.getURIKeys();
 
         assertEquals("my value", keys.get("service-type"));
@@ -127,7 +125,7 @@ public class AAISimpleUriTest {
 
     @Test
     public void serializeTest() throws IOException, ClassNotFoundException {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test1");
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"));
 
         uri.depth(Depth.ONE);
         uri.limit(1);

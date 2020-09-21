@@ -22,11 +22,12 @@ package org.onap.so.bpmn.infrastructure.pnf.management;
 
 import java.util.Optional;
 import org.onap.aai.domain.yang.Pnf;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.AAIRestClientImpl;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -52,8 +53,8 @@ public class PnfManagementImpl implements PnfManagement {
     @Override
     public void createRelation(String serviceInstanceId, String pnfName) {
         AAIResourceUri serviceInstanceURI =
-                AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId);
-        AAIResourceUri pnfUri = AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfName);
+                AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId));
+        AAIResourceUri pnfUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(pnfName));
         new AAIResourcesClient().connect(serviceInstanceURI, pnfUri);
     }
 }

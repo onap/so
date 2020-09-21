@@ -23,16 +23,16 @@
 package org.onap.so.client.orchestration;
 
 import java.util.Optional;
+import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
-import org.onap.aaiclient.client.aai.AAIObjectPlurals;
-import org.onap.aaiclient.client.aai.AAIObjectType;
-import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,23 +48,23 @@ public class AAIVfModuleResources {
     private AAIObjectMapper aaiObjectMapper;
 
     public void createVfModule(VfModule vfModule, GenericVnf vnf) {
-        AAIResourceUri vfModuleURI =
-                AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnf.getVnfId(), vfModule.getVfModuleId());
+        AAIResourceUri vfModuleURI = AAIUriFactory.createResourceUri(
+                AAIFluentTypeBuilder.network().genericVnf(vnf.getVnfId()).vfModule(vfModule.getVfModuleId()));
         vfModule.setOrchestrationStatus(OrchestrationStatus.INVENTORIED);
         injectionHelper.getAaiClient().createIfNotExists(vfModuleURI,
                 Optional.of(aaiObjectMapper.mapVfModule(vfModule)));
     }
 
     public void deleteVfModule(VfModule vfModule, GenericVnf vnf) {
-        AAIResourceUri vfModuleURI =
-                AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnf.getVnfId(), vfModule.getVfModuleId());
+        AAIResourceUri vfModuleURI = AAIUriFactory.createResourceUri(
+                AAIFluentTypeBuilder.network().genericVnf(vnf.getVnfId()).vfModule(vfModule.getVfModuleId()));
         injectionHelper.getAaiClient().delete(vfModuleURI);
     }
 
     public void updateOrchestrationStatusVfModule(VfModule vfModule, GenericVnf vnf,
             OrchestrationStatus orchestrationStatus) {
-        AAIResourceUri vfModuleURI =
-                AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnf.getVnfId(), vfModule.getVfModuleId());
+        AAIResourceUri vfModuleURI = AAIUriFactory.createResourceUri(
+                AAIFluentTypeBuilder.network().genericVnf(vnf.getVnfId()).vfModule(vfModule.getVfModuleId()));
         VfModule copiedVfModule = vfModule.shallowCopyId();
 
         vfModule.setOrchestrationStatus(orchestrationStatus);
@@ -74,8 +74,8 @@ public class AAIVfModuleResources {
     }
 
     public void updateHeatStackIdVfModule(VfModule vfModule, GenericVnf vnf) {
-        AAIResourceUri vfModuleURI =
-                AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnf.getVnfId(), vfModule.getVfModuleId());
+        AAIResourceUri vfModuleURI = AAIUriFactory.createResourceUri(
+                AAIFluentTypeBuilder.network().genericVnf(vnf.getVnfId()).vfModule(vfModule.getVfModuleId()));
         VfModule copiedVfModule = vfModule.shallowCopyId();
 
         copiedVfModule.setHeatStackId(vfModule.getHeatStackId());
@@ -84,8 +84,8 @@ public class AAIVfModuleResources {
     }
 
     public void updateContrailServiceInstanceFqdnVfModule(VfModule vfModule, GenericVnf vnf) {
-        AAIResourceUri vfModuleURI =
-                AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnf.getVnfId(), vfModule.getVfModuleId());
+        AAIResourceUri vfModuleURI = AAIUriFactory.createResourceUri(
+                AAIFluentTypeBuilder.network().genericVnf(vnf.getVnfId()).vfModule(vfModule.getVfModuleId()));
         VfModule copiedVfModule = vfModule.shallowCopyId();
 
         copiedVfModule.setContrailServiceInstanceFqdn(vfModule.getContrailServiceInstanceFqdn());
@@ -94,24 +94,25 @@ public class AAIVfModuleResources {
     }
 
     public void changeAssignVfModule(VfModule vfModule, GenericVnf vnf) {
-        AAIResourceUri vfModuleURI =
-                AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnf.getVnfId(), vfModule.getVfModuleId());
+        AAIResourceUri vfModuleURI = AAIUriFactory.createResourceUri(
+                AAIFluentTypeBuilder.network().genericVnf(vnf.getVnfId()).vfModule(vfModule.getVfModuleId()));
         org.onap.aai.domain.yang.VfModule aaiVfModule = aaiObjectMapper.mapVfModule(vfModule);
         injectionHelper.getAaiClient().update(vfModuleURI, aaiVfModule);
     }
 
     public void connectVfModuleToVolumeGroup(GenericVnf vnf, VfModule vfModule, VolumeGroup volumeGroup,
             CloudRegion cloudRegion) {
-        AAIResourceUri vfModuleURI =
-                AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnf.getVnfId(), vfModule.getVfModuleId());
-        AAIResourceUri volumeGroupURI = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP,
-                cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
+        AAIResourceUri vfModuleURI = AAIUriFactory.createResourceUri(
+                AAIFluentTypeBuilder.network().genericVnf(vnf.getVnfId()).vfModule(vfModule.getVfModuleId()));
+        AAIResourceUri volumeGroupURI = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                .cloudRegion(cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId())
+                .volumeGroup(volumeGroup.getVolumeGroupId()));
         injectionHelper.getAaiClient().connect(vfModuleURI, volumeGroupURI);
     }
 
     public boolean checkNameInUse(VfModule vfModule) {
         boolean nameInUse = false;
-        AAIPluralResourceUri vfModuleUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VF_MODULE)
+        AAIPluralResourceUri vfModuleUri = AAIUriFactory.createNodesUri(Types.VF_MODULES.getFragment())
                 .queryParam("vf-module-name", vfModule.getVfModuleName());
         AAIPluralResourceUri vfModuleUriWithCustomization = vfModuleUri.clone().queryParam("model-customization-id",
                 vfModule.getModelInfoVfModule().getModelCustomizationUUID());

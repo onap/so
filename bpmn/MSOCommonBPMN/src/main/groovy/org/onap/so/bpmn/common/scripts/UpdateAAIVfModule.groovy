@@ -30,6 +30,8 @@ import org.onap.so.bpmn.core.WorkflowException
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -106,7 +108,7 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 			def vnfId = execution.getVariable('UAAIVfMod_vnfId')
 			def vfModuleId = execution.getVariable('UAAIVfMod_vfModuleId')
 			try {
-				AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId);
+				AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId).vfModule(vfModuleId));
 				Optional<org.onap.aai.domain.yang.VfModule> vfModule = getAAIClient().get(org.onap.aai.domain.yang.VfModule.class, resourceUri)
 				if (vfModule.isPresent()) {
 					execution.setVariable('UAAIVfMod_getVfModuleResponseCode', 200)
@@ -185,7 +187,7 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 			payload.setContrailServiceInstanceFqdn(contrailServiceInstanceFqdnEntry)
 
             try {
-                AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId)
+                AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId).vfModule(vfModuleId))
                 getAAIClient().update(resourceUri, payload)
 				execution.setVariable('UAAIVfMod_updateVfModuleResponseCode', 200)
 				execution.setVariable('UAAIVfMod_updateVfModuleResponse', "Success")

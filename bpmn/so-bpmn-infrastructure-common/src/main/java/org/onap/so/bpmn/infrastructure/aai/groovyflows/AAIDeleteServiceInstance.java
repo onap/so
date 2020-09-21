@@ -22,11 +22,11 @@ package org.onap.so.bpmn.infrastructure.aai.groovyflows;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
-import org.onap.so.bpmn.common.scripts.ExceptionUtil;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
+import org.onap.so.bpmn.common.scripts.ExceptionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +42,7 @@ public class AAIDeleteServiceInstance implements JavaDelegate {
         try {
             String serviceInstanceId = (String) execution.getVariable("serviceInstanceId");
             AAIResourceUri serviceInstanceURI =
-                    AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId);
+                    AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId));
             AAIResourcesClient aaiRC = new AAIResourcesClient();
             aaiRC.delete(serviceInstanceURI);
             execution.setVariable("GENDS_SuccessIndicator", true);

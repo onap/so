@@ -20,12 +20,20 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import static org.apache.commons.lang3.StringUtils.isBlank
+import javax.ws.rs.NotFoundException
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.Relationship
 import org.onap.aai.domain.yang.RelationshipData
 import org.onap.aai.domain.yang.RelationshipList
 import org.onap.aai.domain.yang.ServiceInstance
+import org.onap.aaiclient.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
@@ -33,18 +41,9 @@ import org.onap.so.bpmn.common.scripts.RequestDBUtil
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.AAIResourcesClient
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.db.request.beans.OperationStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import javax.ws.rs.NotFoundException
-
-import static org.apache.commons.lang3.StringUtils.isBlank
 
 class ActivateCommunicationService extends AbstractServiceTaskProcessor {
 
@@ -130,8 +129,7 @@ class ActivateCommunicationService extends AbstractServiceTaskProcessor {
 
         //check the cms status
         try {
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                    globalSubscriberId, subscriptionServiceType, serviceInstanceId)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(serviceInstanceId))
 
             if (!client.exists(uri)) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai")
@@ -394,8 +392,7 @@ class ActivateCommunicationService extends AbstractServiceTaskProcessor {
             // create service
             ServiceInstance csi = new ServiceInstance()
             csi.setOrchestrationStatus(orchestrationStatus)
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                    globalSubscriberId, subscriptionServiceType, serviceInstanceId)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(serviceInstanceId))
             client.update(uri, csi)
 
         } catch (BpmnError e) {

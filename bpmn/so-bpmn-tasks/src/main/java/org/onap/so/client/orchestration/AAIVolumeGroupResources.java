@@ -22,15 +22,15 @@
 
 package org.onap.so.client.orchestration;
 
+import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
-import org.onap.aaiclient.client.aai.AAIObjectPlurals;
-import org.onap.aaiclient.client.aai.AAIObjectType;
-import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,16 +46,18 @@ public class AAIVolumeGroupResources {
     private AAIObjectMapper aaiObjectMapper;
 
     public void createVolumeGroup(VolumeGroup volumeGroup, CloudRegion cloudRegion) {
-        AAIResourceUri uriVolumeGroup = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP,
-                cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
+        AAIResourceUri uriVolumeGroup = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                .cloudRegion(cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId())
+                .volumeGroup(volumeGroup.getVolumeGroupId()));
         volumeGroup.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
         injectionHelper.getAaiClient().create(uriVolumeGroup, aaiObjectMapper.mapVolumeGroup(volumeGroup));
     }
 
     public void updateOrchestrationStatusVolumeGroup(VolumeGroup volumeGroup, CloudRegion cloudRegion,
             OrchestrationStatus orchestrationStatus) {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, cloudRegion.getCloudOwner(),
-                cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                .cloudRegion(cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId())
+                .volumeGroup(volumeGroup.getVolumeGroupId()));
         VolumeGroup copiedVolumeGroup = volumeGroup.shallowCopyId();
 
         volumeGroup.setOrchestrationStatus(orchestrationStatus);
@@ -65,29 +67,34 @@ public class AAIVolumeGroupResources {
 
     public void connectVolumeGroupToVnf(GenericVnf genericVnf, VolumeGroup volumeGroup, CloudRegion cloudRegion) {
         AAIResourceUri uriGenericVnf =
-                AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, genericVnf.getVnfId());
-        AAIResourceUri uriVolumeGroup = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP,
-                cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(genericVnf.getVnfId()));
+        AAIResourceUri uriVolumeGroup = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                .cloudRegion(cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId())
+                .volumeGroup(volumeGroup.getVolumeGroupId()));
         injectionHelper.getAaiClient().connect(uriGenericVnf, uriVolumeGroup);
     }
 
     public void connectVolumeGroupToTenant(VolumeGroup volumeGroup, CloudRegion cloudRegion) {
-        AAIResourceUri uriTenant = AAIUriFactory.createResourceUri(AAIObjectType.TENANT, cloudRegion.getCloudOwner(),
-                cloudRegion.getLcpCloudRegionId(), cloudRegion.getTenantId());
-        AAIResourceUri uriVolumeGroup = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP,
-                cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
+        AAIResourceUri uriTenant = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                .cloudRegion(cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId())
+                .tenant(cloudRegion.getTenantId()));
+        AAIResourceUri uriVolumeGroup = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                .cloudRegion(cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId())
+                .volumeGroup(volumeGroup.getVolumeGroupId()));
         injectionHelper.getAaiClient().connect(uriTenant, uriVolumeGroup);
     }
 
     public void deleteVolumeGroup(VolumeGroup volumeGroup, CloudRegion cloudRegion) {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, cloudRegion.getCloudOwner(),
-                cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                .cloudRegion(cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId())
+                .volumeGroup(volumeGroup.getVolumeGroupId()));
         injectionHelper.getAaiClient().delete(uri);
     }
 
     public void updateHeatStackIdVolumeGroup(VolumeGroup volumeGroup, CloudRegion cloudRegion) {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, cloudRegion.getCloudOwner(),
-                cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                .cloudRegion(cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId())
+                .volumeGroup(volumeGroup.getVolumeGroupId()));
         VolumeGroup copiedVolumeGroup = volumeGroup.shallowCopyId();
 
         copiedVolumeGroup.setHeatStackId(volumeGroup.getHeatStackId());
@@ -95,7 +102,7 @@ public class AAIVolumeGroupResources {
     }
 
     public boolean checkNameInUse(VolumeGroup volumeGroup) {
-        AAIPluralResourceUri volumeGroupUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VOLUME_GROUP)
+        AAIPluralResourceUri volumeGroupUri = AAIUriFactory.createNodesUri(Types.VOLUME_GROUPS.getFragment())
                 .queryParam("volume-group-name", volumeGroup.getVolumeGroupName());
         return injectionHelper.getAaiClient().exists(volumeGroupUri);
     }
