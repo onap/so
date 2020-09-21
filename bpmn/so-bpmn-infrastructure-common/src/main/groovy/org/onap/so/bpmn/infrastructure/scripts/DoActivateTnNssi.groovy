@@ -29,6 +29,8 @@ import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.RequestDBUtil
@@ -36,6 +38,7 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.db.request.beans.ResourceOperationStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+
 
 public class DoActivateTnNssi extends AbstractServiceTaskProcessor {
     String Prefix = "TNACT_"
@@ -124,7 +127,7 @@ public class DoActivateTnNssi extends AbstractServiceTaskProcessor {
             ServiceInstance si = new ServiceInstance()
             si.setOrchestrationStatus(orchStatus)
             AAIResourcesClient client = getAAIClient()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, tnNssiId)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(tnNssiId))
             client.update(uri, si)
         } catch (BpmnError e) {
             throw e

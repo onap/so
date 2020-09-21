@@ -54,6 +54,8 @@ import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.AAIEdgeLabel
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.ServiceProxy
 import org.onap.so.bpmn.core.json.JsonUtils
@@ -125,7 +127,7 @@ class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
             si.setEnvironmentContext(environmentContext)
             si.setWorkloadContext(workloadContext)
             logger.debug("AAI service Instance Request Payload : "+si.toString())
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), serviceType, serviceInstanceId)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(serviceType).serviceInstance(serviceInstanceId))
             Response response = getAAIClient().create(uri, si)
             if(response.getStatus()!=200) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, response.getStatus(), "AAI instance creation failed")
@@ -353,8 +355,7 @@ class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
             ServiceInstance si = execution.getVariable("nssiServiceInstance")
             si.setOrchestrationStatus("activated")
 
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                    globalCustId, serviceType, networkServiceInstanceId)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalCustId).serviceSubscription(serviceType).serviceInstance(networkServiceInstanceId))
             try {
                 getAAIClient().update(uri, si)
             } catch (Exception e) {
@@ -364,10 +365,10 @@ class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
             }
 
             //URI for NSSI
-            AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nssiId);
+            AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId));
 
             //URI for Network Service Instance
-            AAIResourceUri networkServiceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, networkServiceInstanceId)
+            AAIResourceUri networkServiceInstanceUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(networkServiceInstanceId))
 
             // Update Relationship in AAI
             Response response = getAAIClient().connect(nssiUri, networkServiceInstanceUri, AAIEdgeLabel.COMPOSED_OF);

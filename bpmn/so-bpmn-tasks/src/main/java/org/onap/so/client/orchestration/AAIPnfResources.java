@@ -20,24 +20,25 @@
 
 package org.onap.so.client.orchestration;
 
-import com.google.common.base.Strings;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.onap.aai.domain.yang.RelatedToProperty;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.aai.domain.yang.RelationshipData;
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
-import org.onap.aaiclient.client.aai.AAIObjectType;
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import com.google.common.base.Strings;
 
 @Component
 public class AAIPnfResources {
@@ -51,16 +52,16 @@ public class AAIPnfResources {
     private AAIObjectMapper aaiObjectMapper;
 
     public void createPnfAndConnectServiceInstance(Pnf pnf, ServiceInstance serviceInstance) {
-        AAIResourceUri pnfURI = AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnf.getPnfName());
+        AAIResourceUri pnfURI = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(pnf.getPnfName()));
         pnf.setOrchestrationStatus(OrchestrationStatus.INVENTORIED);
-        AAIResourceUri serviceInstanceURI =
-                AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstance.getServiceInstanceId());
+        AAIResourceUri serviceInstanceURI = AAIUriFactory
+                .createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstance.getServiceInstanceId()));
         injectionHelper.getAaiClient().createIfNotExists(pnfURI, Optional.of(aaiObjectMapper.mapPnf(pnf)))
                 .connect(pnfURI, serviceInstanceURI);
     }
 
     public void updateOrchestrationStatusPnf(Pnf pnf, OrchestrationStatus orchestrationStatus) {
-        AAIResourceUri pnfURI = AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnf.getPnfName());
+        AAIResourceUri pnfURI = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(pnf.getPnfName()));
 
         Pnf pnfCopy = pnf.shallowCopyId();
 
@@ -72,7 +73,7 @@ public class AAIPnfResources {
     public void checkIfPnfExistsInAaiAndCanBeUsed(Pnf pnf) throws Exception {
         Optional<org.onap.aai.domain.yang.Pnf> pnfFromAai =
                 injectionHelper.getAaiClient().get(org.onap.aai.domain.yang.Pnf.class,
-                        AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnf.getPnfName()));
+                        AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(pnf.getPnfName())));
         if (pnfFromAai.isPresent()) {
             checkIfPnfCanBeUsed(pnfFromAai.get());
             updatePnfInAAI(pnf, pnfFromAai.get());
@@ -81,8 +82,8 @@ public class AAIPnfResources {
 
     private void updatePnfInAAI(Pnf pnf, org.onap.aai.domain.yang.Pnf pnfFromAai) {
         updatePnfFields(pnf, pnfFromAai);
-        injectionHelper.getAaiClient().update(AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnf.getPnfName()),
-                pnfFromAai);
+        injectionHelper.getAaiClient().update(
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(pnf.getPnfName())), pnfFromAai);
         logger.debug("updatePnfInAAI: {}", pnfFromAai);
     }
 

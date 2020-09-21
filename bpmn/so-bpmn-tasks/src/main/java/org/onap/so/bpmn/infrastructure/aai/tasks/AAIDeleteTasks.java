@@ -27,6 +27,9 @@ import java.util.List;
 import java.util.Optional;
 import org.onap.aai.domain.yang.NetworkPolicies;
 import org.onap.aai.domain.yang.NetworkPolicy;
+import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
@@ -38,9 +41,6 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
-import org.onap.aaiclient.client.aai.AAIObjectPlurals;
-import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.AAIConfigurationResources;
 import org.onap.so.client.orchestration.AAIInstanceGroupResources;
@@ -279,7 +279,8 @@ public class AAIDeleteTasks {
                 if (fqdnCount > 0) {
                     for (int i = 0; i < fqdnCount; i++) {
                         String fqdn = fqdnList[i];
-                        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY);
+                        AAIPluralResourceUri uri =
+                                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkPolicies());
                         uri.queryParam(networkPolicyFqdnParam, fqdn);
                         Optional<NetworkPolicies> oNetPolicies = aaiNetworkResources.getNetworkPolicies(uri);
                         if (oNetPolicies.isPresent()) {

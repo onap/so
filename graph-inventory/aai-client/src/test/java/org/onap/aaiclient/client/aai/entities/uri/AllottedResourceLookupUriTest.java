@@ -29,6 +29,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import javax.ws.rs.core.UriBuilder;
 import org.junit.Test;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.aaiclient.client.graphinventory.exceptions.GraphInventoryPayloadException;
 import org.onap.aaiclient.client.graphinventory.exceptions.GraphInventoryUriNotFoundException;
 
@@ -38,7 +39,7 @@ public class AllottedResourceLookupUriTest {
     public void oneKey()
             throws IOException, URISyntaxException, GraphInventoryUriNotFoundException, GraphInventoryPayloadException {
 
-        AllottedResourceLookupUri instance = new AllottedResourceLookupUri("key1");
+        AllottedResourceLookupUri instance = new AllottedResourceLookupUri(Types.ALLOTTED_RESOURCE.getFragment("key1"));
         AllottedResourceLookupUri spy = spy(instance);
         doReturn(
                 "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3/allotted-resources/allotted-resource/key4")

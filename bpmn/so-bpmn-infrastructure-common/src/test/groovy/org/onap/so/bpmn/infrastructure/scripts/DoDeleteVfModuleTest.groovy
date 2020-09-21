@@ -20,15 +20,14 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule
+import static com.github.tomakehurst.wiremock.client.WireMock.*
+import static org.mockito.Mockito.*
+import javax.ws.rs.NotFoundException
 import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.repository.ProcessDefinition
-import org.junit.Assert
 import org.junit.Before
-import org.junit.Ignore
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
@@ -40,21 +39,13 @@ import org.mockito.runners.MockitoJUnitRunner
 import org.onap.aai.domain.yang.NetworkPolicies
 import org.onap.aai.domain.yang.NetworkPolicy
 import org.onap.aai.domain.yang.VfModule
-import org.onap.aai.domain.yang.VfModules
-import org.onap.so.bpmn.common.scripts.MsoGroovyTest
-import org.onap.so.bpmn.common.scripts.utils.XmlComparator
-import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.bpmn.mock.FileUtil
-import org.onap.aaiclient.client.aai.AAIObjectPlurals
-import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-
-import javax.ws.rs.NotFoundException
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*
-import static org.mockito.Mockito.*
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.so.bpmn.common.scripts.MsoGroovyTest
+import org.onap.so.bpmn.common.scripts.utils.XmlComparator
+import org.onap.so.bpmn.mock.FileUtil
 
 @RunWith(MockitoJUnitRunner.class)
 class DoDeleteVfModuleTest extends MsoGroovyTest{
@@ -105,7 +96,7 @@ class DoDeleteVfModuleTest extends MsoGroovyTest{
         NetworkPolicy networkPolicy = new NetworkPolicy()
         networkPolicy.setNetworkPolicyId("NP1")
         networkPolicies.getNetworkPolicy().add(networkPolicy)
-        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkPolicies())
         uri.queryParam("network-policy-fqdn", "test")
         when(client.get(NetworkPolicies.class, uri)).thenReturn(Optional.of(networkPolicies))
         doDeleteVfModule.deleteNetworkPoliciesFromAAI(mockExecution)
@@ -121,10 +112,10 @@ class DoDeleteVfModuleTest extends MsoGroovyTest{
         NetworkPolicy networkPolicy = new NetworkPolicy()
         networkPolicy.setNetworkPolicyId("NP1")
         networkPolicies.getNetworkPolicy().add(networkPolicy)
-        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkPolicies())
         uri.queryParam("network-policy-fqdn", "test")
         when(client.get(NetworkPolicies.class, uri)).thenReturn(Optional.of(networkPolicies))
-        AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, "NP1")
+        AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkPolicy("NP1"))
         doThrow(new NotFoundException(("Not Found !"))).when(client).delete(delUri)
         doDeleteVfModule.deleteNetworkPoliciesFromAAI(mockExecution)
         Mockito.verify(client).delete(delUri)
@@ -135,7 +126,7 @@ class DoDeleteVfModuleTest extends MsoGroovyTest{
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
         when(mockExecution.getVariable("vnfId")).thenReturn("12345")
         when(mockExecution.getVariable("vfModuleId")).thenReturn("module-0")
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE,"12345","module-0")
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("12345").vfModule("module-0"))
         VfModule vfModule = new VfModule()
         vfModule.setOrchestrationStatus("Created")
         when(client.get(VfModule.class, uri)).thenReturn(Optional.of(vfModule))

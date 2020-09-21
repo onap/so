@@ -19,29 +19,27 @@
  */
 package org.onap.so.bpmn.infrastructure.scripts
 
-import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
-import org.junit.Before
-import org.junit.Test
-import org.mockito.ArgumentCaptor
-import org.mockito.Captor
-import org.mockito.Mockito
-import org.onap.so.bpmn.common.scripts.MsoGroovyTest
-import org.onap.so.bpmn.core.WorkflowException
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-
-import javax.ws.rs.NotFoundException
-
 import static org.junit.Assert.assertNotNull
 import static org.mockito.ArgumentMatchers.eq
 import static org.mockito.Mockito.doNothing
 import static org.mockito.Mockito.spy
 import static org.mockito.Mockito.times
 import static org.mockito.Mockito.when
-import static org.mockito.Mockito.when
-import static org.mockito.Mockito.when
+import javax.ws.rs.NotFoundException
+import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
+import org.junit.Before
+import org.junit.Test
+import org.mockito.ArgumentCaptor
+import org.mockito.Captor
+import org.mockito.Mockito
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
+import org.onap.so.bpmn.common.scripts.MsoGroovyTest
+import org.onap.so.bpmn.core.WorkflowException
 
 class DeleteSliceServiceTest extends MsoGroovyTest {
     @Before
@@ -86,7 +84,7 @@ class DeleteSliceServiceTest extends MsoGroovyTest {
         when(mockExecution.getVariable("progress")).thenReturn("100")
         when(mockExecution.getVariable("operationContent")).thenReturn("NSMF completes slicing service termination.")
 
-        AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, "5GCustomer", "5G", "5ad89cf9-0569-4a93-9306-d8324321e2be")
+        AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("5GCustomer").serviceSubscription("5G").serviceInstance("5ad89cf9-0569-4a93-9306-d8324321e2be"))
         DeleteSliceService obj = spy(DeleteSliceService.class)
         when(obj.getAAIClient()).thenReturn(client)
         doNothing().when(client).delete(serviceInstanceUri)
@@ -104,8 +102,8 @@ class DeleteSliceServiceTest extends MsoGroovyTest {
         when(mockExecution.getVariable("serviceType")).thenReturn("5G")
 
         AAIResultWrapper wrapper = new AAIResultWrapper(mockQuerySliceServiceProfile())
-        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_PROFILE_ALL, "5GCustomer", "5G", "5ad89cf9-0569-4a93-9306-d8324321e2be")
-        AAIResourceUri profileUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_PROFILE, "5GCustomer", "5G", "5ad89cf9-0569-4a93-9306-d8324321e2be", "5G-2222222")
+        AAIPluralResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("5GCustomer").serviceSubscription("5G").serviceInstance("5ad89cf9-0569-4a93-9306-d8324321e2be").serviceProfiles())
+        AAIResourceUri profileUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("5GCustomer").serviceSubscription("5G").serviceInstance("5ad89cf9-0569-4a93-9306-d8324321e2be").serviceProfile("5G-2222222"))
 
         DeleteSliceService obj = spy(DeleteSliceService.class)
         when(obj.getAAIClient()).thenReturn(client)

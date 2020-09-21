@@ -23,7 +23,12 @@
 package org.onap.so.apihandlerinfra;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -34,14 +39,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.onap.so.apihandlerinfra.e2eserviceinstancebeans.*;
+import org.apache.http.HttpStatus;
+import org.json.JSONObject;
 import org.onap.aai.domain.yang.v16.ServiceInstance;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
-import org.apache.http.HttpStatus;
-import org.json.JSONObject;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.apihandler.camundabeans.CamundaResponse;
 import org.onap.so.apihandler.common.CamundaClient;
@@ -53,6 +57,7 @@ import org.onap.so.apihandlerinfra.e2eserviceinstancebeans.CompareModelsRequest;
 import org.onap.so.apihandlerinfra.e2eserviceinstancebeans.E2EServiceInstanceDeleteRequest;
 import org.onap.so.apihandlerinfra.e2eserviceinstancebeans.E2EServiceInstanceRequest;
 import org.onap.so.apihandlerinfra.e2eserviceinstancebeans.E2EServiceInstanceScaleRequest;
+import org.onap.so.apihandlerinfra.e2eserviceinstancebeans.E2ESliceServiceActivateRequest;
 import org.onap.so.apihandlerinfra.e2eserviceinstancebeans.GetE2EServiceInstanceResponse;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.BPMNFailureException;
@@ -380,8 +385,9 @@ public class E2EServiceInstances {
             // TODO Get the service template model version uuid from AAI.
             String modelVersionId = null;
             AAIResourcesClient client = new AAIResourcesClient();
-            AAIResourceUri url = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                    e2eActReq.getGlobalSubscriberId(), e2eActReq.getServiceType(), instanceIdMap.get(SERVICE_ID));
+            AAIResourceUri url = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                    .customer(e2eActReq.getGlobalSubscriberId()).serviceSubscription(e2eActReq.getServiceType())
+                    .serviceInstance(instanceIdMap.get(SERVICE_ID)));
             Optional<ServiceInstance> serviceInstanceOpt = client.get(ServiceInstance.class, url);
             if (serviceInstanceOpt.isPresent()) {
                 modelVersionId = serviceInstanceOpt.get().getModelVersionId();
@@ -469,8 +475,9 @@ public class E2EServiceInstances {
             // TODO Get the service template model version uuid from AAI.
             String modelVersionId = null;
             AAIResourcesClient client = new AAIResourcesClient();
-            AAIResourceUri url = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                    e2eDelReq.getGlobalSubscriberId(), e2eDelReq.getServiceType(), instanceIdMap.get(SERVICE_ID));
+            AAIResourceUri url = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                    .customer(e2eDelReq.getGlobalSubscriberId()).serviceSubscription(e2eDelReq.getServiceType())
+                    .serviceInstance(instanceIdMap.get(SERVICE_ID)));
             Optional<ServiceInstance> serviceInstanceOpt = client.get(ServiceInstance.class, url);
             if (serviceInstanceOpt.isPresent()) {
                 modelVersionId = serviceInstanceOpt.get().getModelVersionId();

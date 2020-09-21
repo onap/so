@@ -29,9 +29,9 @@ import org.onap.aai.domain.yang.L3Network;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.VfModule;
 import org.onap.aai.domain.yang.VolumeGroup;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.apihandlerinfra.infra.rest.exception.AAIEntityNotFound;
 import org.onap.so.apihandlerinfra.infra.rest.exception.CloudConfigurationNotFoundException;
@@ -278,13 +278,13 @@ public class BpmnRequestBuilder {
         String cloudOwner = null;
         String lcpRegionId = null;
         if (relationshipsOpt.isPresent()) {
-            tenantId = relationshipsOpt.get().getRelatedUris(AAIObjectType.TENANT).stream().findFirst()
+            tenantId = relationshipsOpt.get().getRelatedUris(Types.TENANT).stream().findFirst()
                     .map(item -> item.getURIKeys().get(AAIFluentTypeBuilder.Types.TENANT.getUriParams().tenantId))
                     .orElse(null);
-            cloudOwner = relationshipsOpt.get().getRelatedUris(AAIObjectType.TENANT).stream().findFirst().map(
+            cloudOwner = relationshipsOpt.get().getRelatedUris(Types.TENANT).stream().findFirst().map(
                     item -> item.getURIKeys().get(AAIFluentTypeBuilder.Types.CLOUD_REGION.getUriParams().cloudOwner))
                     .orElse(null);
-            lcpRegionId = relationshipsOpt.get().getRelatedUris(AAIObjectType.TENANT).stream().findFirst().map(
+            lcpRegionId = relationshipsOpt.get().getRelatedUris(Types.TENANT).stream().findFirst().map(
                     item -> item.getURIKeys().get(AAIFluentTypeBuilder.Types.CLOUD_REGION.getUriParams().cloudRegionId))
                     .orElse(null);
         }
@@ -323,13 +323,13 @@ public class BpmnRequestBuilder {
         String cloudOwner = null;
         String lcpRegionId = null;
         if (relationshipsOpt.isPresent()) {
-            tenantId = relationshipsOpt.get().getRelatedUris(AAIObjectType.TENANT).stream().findFirst()
+            tenantId = relationshipsOpt.get().getRelatedUris(Types.TENANT).stream().findFirst()
                     .map(item -> item.getURIKeys().get(AAIFluentTypeBuilder.Types.TENANT.getUriParams().tenantId))
                     .orElse(null);
-            cloudOwner = relationshipsOpt.get().getRelatedUris(AAIObjectType.TENANT).stream().findFirst().map(
+            cloudOwner = relationshipsOpt.get().getRelatedUris(Types.TENANT).stream().findFirst().map(
                     item -> item.getURIKeys().get(AAIFluentTypeBuilder.Types.CLOUD_REGION.getUriParams().cloudOwner))
                     .orElse(null);
-            lcpRegionId = relationshipsOpt.get().getRelatedUris(AAIObjectType.TENANT).stream().findFirst().map(
+            lcpRegionId = relationshipsOpt.get().getRelatedUris(Types.TENANT).stream().findFirst().map(
                     item -> item.getURIKeys().get(AAIFluentTypeBuilder.Types.CLOUD_REGION.getUriParams().cloudRegionId))
                     .orElse(null);
         }

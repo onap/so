@@ -43,17 +43,18 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.Complex;
-import org.onap.so.client.RestClient;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.CustomQuery;
 import org.onap.aaiclient.client.aai.entities.Results;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.aaiclient.client.graphinventory.Format;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryClient;
 import org.onap.aaiclient.client.graphinventory.GraphInventorySubgraphType;
 import org.onap.aaiclient.client.graphinventory.entities.Pathed;
 import org.onap.aaiclient.client.graphinventory.entities.ResourceAndUrl;
+import org.onap.so.client.RestClient;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -112,7 +113,7 @@ public class AAIQueryClientTest {
         doReturn(getJson("single-query-result.json")).when(aaiQueryClient).query(eq(Format.RESOURCE_AND_URL),
                 any(CustomQuery.class));
         List<Complex> result = aaiQueryClient.querySingleResource(
-                new CustomQuery(Arrays.asList(AAIUriFactory.createNodesUri(AAIObjectType.COMPLEX, "test"))),
+                new CustomQuery(Arrays.asList(AAIUriFactory.createNodesUri(Types.COMPLEX.getFragment("test")))),
                 Complex.class);
         assertEquals(2, result.size());
         assertEquals("complex-id-15100-jc689q2", result.get(1).getPhysicalLocationId());
@@ -123,11 +124,10 @@ public class AAIQueryClientTest {
         doReturn(getJson("single-query-result.json")).when(aaiQueryClient).query(eq(Format.RESOURCE_AND_URL),
                 any(CustomQuery.class));
         List<ResourceAndUrl<AAIResultWrapper>> result = aaiQueryClient.getResourceAndUrl(
-                new CustomQuery(Arrays.asList(AAIUriFactory.createNodesUri(AAIObjectType.COMPLEX, "test"))));
+                new CustomQuery(Arrays.asList(AAIUriFactory.createNodesUri(Types.COMPLEX.getFragment("test")))));
         assertEquals(2, result.size());
 
-        assertEquals(1,
-                result.get(1).getWrapper().getRelationships().get().getRelatedUris(AAIObjectType.PSERVER).size());
+        assertEquals(1, result.get(1).getWrapper().getRelationships().get().getRelatedUris(Types.PSERVER).size());
     }
 
     @Test
@@ -138,7 +138,7 @@ public class AAIQueryClientTest {
 
 
         List<Pathed> results = aaiQueryClient.queryPathed(
-                new CustomQuery(Arrays.asList(AAIUriFactory.createNodesUri(AAIObjectType.COMPLEX, "test"))));
+                new CustomQuery(Arrays.asList(AAIUriFactory.createNodesUri(Types.COMPLEX.getFragment("test")))));
 
         assertEquals(2, results.size());
         assertEquals("service-instance", results.get(1).getResourceType());

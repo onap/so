@@ -36,6 +36,8 @@ import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.Relationships
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.logging.filter.base.ONAPComponents
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -103,7 +105,7 @@ import javax.ws.rs.core.Response
 
         String nssiId = currentNSSI['nssiId']
 
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nssiId)
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
         Optional<ServiceInstance> nssiOpt = client.get(ServiceInstance.class, nssiUri)
 
         if (nssiOpt.isPresent()) {
@@ -139,7 +141,7 @@ import javax.ws.rs.core.Response
         Optional<Relationships> relationships = wrapper.getRelationships()
 
         if (relationships.isPresent()) {
-            for (AAIResourceUri networkServiceInstanceUri : relationships.get().getRelatedAAIUris(AAIObjectType.SERVICE_INSTANCE)) {
+            for (AAIResourceUri networkServiceInstanceUri : relationships.get().getRelatedUris(Types.SERVICE_INSTANCE)) {
                 Optional<ServiceInstance> networkServiceInstanceOpt = client.get(ServiceInstance.class, networkServiceInstanceUri)
                 if (networkServiceInstanceOpt.isPresent()) {
                     networkServiceInstance = networkServiceInstanceOpt.get()
@@ -187,7 +189,7 @@ import javax.ws.rs.core.Response
         AAIResultWrapper wrapper = client.get(networkServiceInstanceUri);
         Optional<Relationships> relationships = wrapper.getRelationships()
         if (relationships.isPresent()) {
-            for (AAIResourceUri constituteVnfUri : relationships.get().getRelatedAAIUris(AAIObjectType.GENERIC_VNF)) {
+            for (AAIResourceUri constituteVnfUri : relationships.get().getRelatedUris(Types.GENERIC_VNF)) {
                 currentNSSI['constituteVnfUri'] = constituteVnfUri
                 Optional<GenericVnf> constituteVnfOpt = client.get(GenericVnf.class, constituteVnfUri)
                 if(constituteVnfOpt.isPresent()) {
@@ -407,7 +409,7 @@ import javax.ws.rs.core.Response
 
         AAIResourcesClient client = getAAIClient()
 
-        AAIResourceUri modelVerUrl = AAIUriFactory.createResourceUri(AAIObjectType.MODEL_VER, networkServiceInstance.getModelInvariantId(), networkServiceInstance.getModelVersionId())
+        AAIResourceUri modelVerUrl = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.serviceDesignAndCreation().model(networkServiceInstance.getModelInvariantId()).modelVer(networkServiceInstance.getModelVersionId()))
         Optional<ModelVer> modelVerOpt = client.get(ModelVer.class, modelVerUrl)
 
         if (modelVerOpt.isPresent()) {
@@ -445,7 +447,7 @@ import javax.ws.rs.core.Response
         AAIResultWrapper wrapper = client.get(networkServiceInstanceUri)
         Optional<Relationships> serviceSubscriptionRelationshipsOps = wrapper.getRelationships()
         if(serviceSubscriptionRelationshipsOps.isPresent()) {
-            List<AAIResourceUri> serviceSubscriptionRelatedAAIUris = serviceSubscriptionRelationshipsOps.get().getRelatedAAIUris(AAIObjectType.SERVICE_SUBSCRIPTION)
+            List<AAIResourceUri> serviceSubscriptionRelatedAAIUris = serviceSubscriptionRelationshipsOps.get().getRelatedUris(Types.SERVICE_SUBSCRIPTION)
             if(!(serviceSubscriptionRelatedAAIUris == null || serviceSubscriptionRelatedAAIUris.isEmpty())) {
                 AAIResourceUri serviceSubscriptionUri = serviceSubscriptionRelatedAAIUris.get(0) // Many-To-One relation
                 Optional<ServiceSubscription> serviceSubscriptionOpt = client.get(ServiceSubscription.class, serviceSubscriptionUri)
@@ -457,7 +459,7 @@ import javax.ws.rs.core.Response
                 wrapper = client.get(serviceSubscriptionUri)
                 Optional<Relationships> customerRelationshipsOps = wrapper.getRelationships()
                 if(customerRelationshipsOps.isPresent()) {
-                    List<AAIResourceUri> customerRelatedAAIUris = customerRelationshipsOps.get().getRelatedAAIUris(AAIObjectType.CUSTOMER)
+                    List<AAIResourceUri> customerRelatedAAIUris = customerRelationshipsOps.get().getRelatedUris(Types.CUSTOMER)
                     if(!(customerRelatedAAIUris == null || customerRelatedAAIUris.isEmpty())) {
                         Optional<Customer> customerOpt = client.get(Customer.class, customerRelatedAAIUris.get(0)) // Many-To-One relation
                         if(customerOpt.isPresent()) {
@@ -532,7 +534,7 @@ import javax.ws.rs.core.Response
         Optional<Relationships> cloudRegionRelationshipsOps = wrapper.getRelationships()
 
         if(cloudRegionRelationshipsOps.isPresent()) {
-            List<AAIResourceUri> cloudRegionRelatedAAIUris = cloudRegionRelationshipsOps.get().getRelatedAAIUris(AAIObjectType.CLOUD_REGION)
+            List<AAIResourceUri> cloudRegionRelatedAAIUris = cloudRegionRelationshipsOps.get().getRelatedUris(Types.CLOUD_REGION)
             if (!(cloudRegionRelatedAAIUris == null || cloudRegionRelatedAAIUris.isEmpty())) {
                 AAIResourceUri cloudRegionRelatedAAIUri = cloudRegionRelatedAAIUris.get(0)
                 currentNSSI['cloudRegionRelatedAAIUri'] = cloudRegionRelatedAAIUri
@@ -574,7 +576,7 @@ import javax.ws.rs.core.Response
             vfModuleModelInfo.setModelInvariantUuid(vfModule.getModelInvariantId())
             vfModuleModelInfo.setModelCustomizationId(vfModule.getModelCustomizationId())
 
-            AAIResourceUri vfModuleUrl = AAIUriFactory.createResourceUri(AAIObjectType.MODEL_VER, vfModule.getModelInvariantId(), vfModule.getModelVersionId())
+            AAIResourceUri vfModuleUrl = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.serviceDesignAndCreation().model(vfModule.getModelInvariantId()).modelVer(vfModule.getModelVersionId()))
 
             Optional<ModelVer> vfModuleModelVerOpt = client.get(ModelVer.class, vfModuleUrl)
 
@@ -609,7 +611,7 @@ import javax.ws.rs.core.Response
         vnfModelInfo.setModelCustomizationId(constituteVnf.getModelCustomizationId())
         vnfModelInfo.setModelInstanceName(constituteVnf.getVnfName())
 
-        AAIResourceUri vnfModelUrl = AAIUriFactory.createResourceUri(AAIObjectType.MODEL_VER, constituteVnf.getModelInvariantId(), constituteVnf.getModelVersionId())
+        AAIResourceUri vnfModelUrl = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.serviceDesignAndCreation().model(constituteVnf.getModelInvariantId()).modelVer(constituteVnf.getModelVersionId()))
 
         Optional<ModelVer> vnfModelVerOpt = client.get(ModelVer.class, vnfModelUrl)
 
@@ -779,7 +781,7 @@ import javax.ws.rs.core.Response
         AAIResultWrapper wrapper = client.get(networkServiceInstanceUri)
         Optional<Relationships> owningEntityRelationshipsOps = wrapper.getRelationships()
         if (owningEntityRelationshipsOps.isPresent()) {
-            List<AAIResourceUri> owningEntityRelatedAAIUris = owningEntityRelationshipsOps.get().getRelatedAAIUris(AAIObjectType.OWNING_ENTITY)
+            List<AAIResourceUri> owningEntityRelatedAAIUris = owningEntityRelationshipsOps.get().getRelatedUris(Types.OWNING_ENTITY)
 
             if (!(owningEntityRelatedAAIUris == null || owningEntityRelatedAAIUris.isEmpty())) {
                 Optional<org.onap.aai.domain.yang.OwningEntity> owningEntityOpt = client.get(org.onap.aai.domain.yang.OwningEntity.class, owningEntityRelatedAAIUris.get(0)) // Many-To-One relation
@@ -813,7 +815,7 @@ import javax.ws.rs.core.Response
             AAIResultWrapper wrapper = client.get(cloudRegionRelatedAAIUri)
             Optional<Relationships> cloudRegionOps = wrapper.getRelationships()
             if (cloudRegionOps.isPresent()) {
-                List<AAIResourceUri> projectAAIUris = cloudRegionOps.get().getRelatedAAIUris(AAIObjectType.PROJECT)
+                List<AAIResourceUri> projectAAIUris = cloudRegionOps.get().getRelatedUris(Types.PROJECT)
                 if (!(projectAAIUris == null || projectAAIUris.isEmpty())) {
                     Optional<org.onap.aai.domain.yang.Project> projectOpt = client.get(org.onap.aai.domain.yang.Project.class, projectAAIUris.get(0))
                     if (projectOpt.isPresent()) {
@@ -928,7 +930,7 @@ import javax.ws.rs.core.Response
         ServiceInstance nssi = (ServiceInstance)currentNSSI['nssi']
 
         String nssiId = currentNSSI['nssiId']
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nssiId)
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
 
         List<SliceProfile> associatedProfiles = nssi.getSliceProfiles().getSliceProfile()
 
@@ -964,7 +966,7 @@ import javax.ws.rs.core.Response
         String nssiId = currentNSSI['nssiId']
 
         // global-customer-id, service-type, service-instance-id, profile-id
-        AAIResourceUri sliceProfileUri = AAIUriFactory.createResourceUri(AAIObjectType.SLICE_PROFILE, globalSubscriberId, serviceType, nssiId, sliceProfileContainsSNSSAI.getProfileId())
+        AAIResourceUri sliceProfileUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(nssiId).sliceProfile(sliceProfileContainsSNSSAI.getProfileId()))
 
         try {
             getAAIClient().delete(sliceProfileUri)

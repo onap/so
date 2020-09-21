@@ -25,6 +25,14 @@ package org.onap.so.bpmn.infrastructure.scripts
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.GenericVnf
+import org.onap.aaiclient.client.aai.AAIObjectType;
+import org.onap.aaiclient.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
+import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
 import org.onap.logging.filter.base.ErrorCode
 import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.CatalogDbUtils
@@ -37,12 +45,6 @@ import org.onap.so.bpmn.common.scripts.VfModuleBase
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils;
-import org.onap.aaiclient.client.aai.AAIObjectType;
-import org.onap.aaiclient.client.aai.AAIResourcesClient
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
-import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
 import org.onap.so.constants.Defaults
 import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.MessageEnum
@@ -273,7 +275,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 				}
 
 				try{
-					AAIResourceUri serviceInstanceURI = AAIUriFactory.create(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId,serviceType,serviceInstanceId)
+					AAIResourceUri serviceInstanceURI = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId))
 					AAIResourcesClient aaiRC = new AAIResourcesClient()
 					AAIResultWrapper aaiRW = aaiRC.get(serviceInstanceURI)
 					Map<String, Object> aaiJson = aaiRW.asMap()
@@ -411,7 +413,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 			// Prepare AA&I url
 			AaiUtil aaiUtil = new AaiUtil(this)
 
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, Defaults.CLOUD_OWNER.toString(), cloudRegion)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(Defaults.CLOUD_OWNER.toString(), cloudRegion))
 			def queryCloudRegionRequest = aaiUtil.createAaiUri(uri)
 
 			execution.setVariable(prefix + "queryCloudRegionRequest", queryCloudRegionRequest)
@@ -1018,7 +1020,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 
 		try {
 			def vnfId = execution.getVariable('DOUPVfMod_vnfId')
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId).depth(Depth.ONE)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId)).depth(Depth.ONE)
 
 			try {
 				Optional<GenericVnf> genericVnf = getAAIClient().get(GenericVnf.class,uri)

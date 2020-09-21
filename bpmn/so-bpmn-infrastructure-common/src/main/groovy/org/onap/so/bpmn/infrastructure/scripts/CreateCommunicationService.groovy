@@ -20,12 +20,16 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import groovy.json.JsonSlurper
+import static org.apache.commons.lang3.StringUtils.isBlank
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONObject
 import org.onap.aai.domain.yang.Relationship
 import org.onap.aai.domain.yang.ServiceInstance
+import org.onap.aaiclient.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
@@ -36,16 +40,11 @@ import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.ServiceInfo
 import org.onap.so.bpmn.core.domain.ServiceProxy
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.AAIResourcesClient
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.db.request.beans.OperationStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.util.UriUtils
-
-import static org.apache.commons.lang3.StringUtils.isBlank
+import groovy.json.JsonSlurper
 
 /**
  * This groovy class supports the <class>DoCreateCommunicationService.bpmn</class> process.
@@ -538,10 +537,7 @@ class CreateCommunicationService extends AbstractServiceTaskProcessor {
         String msg
         try {
             String serviceInstanceId = execution.getVariable("serviceInstanceId")
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                    execution.getVariable("globalSubscriberId"),
-                    execution.getVariable("subscriptionServiceType"),
-                    serviceInstanceId).relationshipAPI()
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(serviceInstanceId)).relationshipAPI()
             client.create(uri, relationship)
 
         } catch (BpmnError e) {
@@ -633,8 +629,7 @@ class CreateCommunicationService extends AbstractServiceTaskProcessor {
             // create service
             ServiceInstance csi = new ServiceInstance()
             csi.setOrchestrationStatus(orchestrationStatus)
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                    globalSubscriberId, subscriptionServiceType, serviceInstanceId)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(serviceInstanceId))
             client.update(uri, csi)
             logger.debug(Prefix + "updateFinishStatusInAAI update communication service status to deactivated")
 

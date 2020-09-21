@@ -42,11 +42,12 @@ import org.onap.aai.domain.yang.NetworkPolicies
 import org.onap.aai.domain.yang.NetworkPolicy
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 import org.onap.so.bpmn.core.WorkflowException
-import org.onap.aaiclient.client.aai.AAIObjectPlurals
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
@@ -106,7 +107,7 @@ class DoDeleteVfModuleFromVnfTest extends MsoGroovyTest {
         List fqdnList = new ArrayList()
         fqdnList.add("test")
         when(mockExecution.getVariable("DDVFMV_contrailNetworkPolicyFqdnList")).thenReturn(fqdnList)
-        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkPolicies())
         uri.queryParam("network-policy-fqdn", "test")
         NetworkPolicies networkPolicies = new NetworkPolicies();
         NetworkPolicy networkPolicy = new NetworkPolicy();
@@ -114,7 +115,7 @@ class DoDeleteVfModuleFromVnfTest extends MsoGroovyTest {
         networkPolicies.getNetworkPolicy().add(networkPolicy)
         when(client.get(NetworkPolicies.class, uri)).thenReturn(Optional.of(networkPolicies))
 
-        AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, networkPolicy.getNetworkPolicyId())
+        AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkPolicy(networkPolicy.getNetworkPolicyId()))
         doNothing().when(client).delete(delUri)
         deleteVfModuleFromVnf.deleteNetworkPoliciesFromAAI(mockExecution)
 
@@ -128,7 +129,7 @@ class DoDeleteVfModuleFromVnfTest extends MsoGroovyTest {
         List fqdnList = new ArrayList()
         fqdnList.add("test")
         when(mockExecution.getVariable("DDVFMV_contrailNetworkPolicyFqdnList")).thenReturn(fqdnList)
-        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkPolicies())
         uri.queryParam("network-policy-fqdn", "test")
         when(client.get(NetworkPolicies.class, uri)).thenReturn(Optional.empty())
         deleteVfModuleFromVnf.deleteNetworkPoliciesFromAAI(mockExecution)
@@ -142,7 +143,7 @@ class DoDeleteVfModuleFromVnfTest extends MsoGroovyTest {
     void testQueryAAIForVfModule() {
         ExecutionEntity mockExecution = setupMock()
         when(mockExecution.getVariable("vnfId")).thenReturn("12345")
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "12345").depth(Depth.ONE)
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("12345")).depth(Depth.ONE)
         GenericVnf genericVnf = new GenericVnf()
         genericVnf.setVnfId("test1")
         when(client.get(GenericVnf.class, uri)).thenReturn(Optional.of(genericVnf))
@@ -156,7 +157,7 @@ class DoDeleteVfModuleFromVnfTest extends MsoGroovyTest {
     void testQueryAAIForVfModuleNotFound() {
         ExecutionEntity mockExecution = setupMock()
         when(mockExecution.getVariable("vnfId")).thenReturn("12345")
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "12345").depth(Depth.ONE)
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("12345")).depth(Depth.ONE)
         when(client.get(GenericVnf.class, uri)).thenReturn(Optional.empty())
         deleteVfModuleFromVnf.queryAAIForVfModule(mockExecution)
         Mockito.verify(mockExecution, atLeastOnce()).setVariable("DDVMFV_getVnfResponseCode", 404)

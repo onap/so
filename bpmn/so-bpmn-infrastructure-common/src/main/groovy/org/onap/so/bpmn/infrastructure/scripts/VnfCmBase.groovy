@@ -32,6 +32,7 @@ import org.onap.aaiclient.client.aai.entities.Relationships
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.appc.client.lcm.model.Action
 import org.onap.appc.client.lcm.model.ActionIdentifiers
 import org.onap.appc.client.lcm.model.Flags
@@ -218,7 +219,7 @@ public abstract class VnfCmBase extends AbstractServiceTaskProcessor {
             logger.debug("cloudRegionId is: {}", cloudRegionId)
 			
 			AAIResourcesClient client = new AAIResourcesClient()
-			AAIResourceUri genericVnfUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+			AAIResourceUri genericVnfUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId))
 			// Check if this VNF exists
 			if (!client.exists(genericVnfUri)) {
                 logger.debug("VNF with vnfId {} does not exist in A&AI", vnfId)
@@ -243,7 +244,7 @@ public abstract class VnfCmBase extends AbstractServiceTaskProcessor {
 				Relationships relationships = aaiRW.getRelationships().get()
 				if (relationships != null) {
 						
-					List<AAIResourceUri> vserverUris = relationships.getRelatedAAIUris(AAIObjectType.VSERVER)
+					List<AAIResourceUri> vserverUris = relationships.getRelatedUris(Types.VSERVER)
 					JSONArray vserverIds = new JSONArray()
 					JSONArray vserverSelfLinks = new JSONArray()
 				
@@ -436,7 +437,7 @@ public abstract class VnfCmBase extends AbstractServiceTaskProcessor {
 			def vnfId = execution.getVariable("vnfId")
             logger.debug("vnfId is: {}", vnfId)
 			AAIResourcesClient client = new AAIResourcesClient()
-			AAIResourceUri genericVnfUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+			AAIResourceUri genericVnfUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId))
 			AAIResultWrapper aaiRW = client.get(genericVnfUri)
 			Map<String, Object> result = aaiRW.asMap()
 			boolean isClosedLoopDisabled = result.getOrDefault("is-closed-loop-disabled", false)
@@ -488,7 +489,7 @@ public abstract class VnfCmBase extends AbstractServiceTaskProcessor {
 			def transactionLoggingUuid = UUID.randomUUID().toString()
 			def vnfId = execution.getVariable("vnfId")
 			AAIResourcesClient client = new AAIResourcesClient()
-			AAIResourceUri genericVnfUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+			AAIResourceUri genericVnfUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId))
 			
 			Map<String, Boolean> request = new HashMap<>()
 			request.put("is-closed-loop-disabled", setDisabled)

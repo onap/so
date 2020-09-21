@@ -27,6 +27,8 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -111,7 +113,7 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 			def vnfId = execution.getVariable('CAAIVfModVG_vnfId')
 			def vfModuleId = execution.getVariable('CAAIVfModVG_vfModuleId')
 			try {
-				AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId);
+				AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId).vfModule(vfModuleId));
 				Optional<org.onap.aai.domain.yang.VfModule> vfModule = getAAIClient().get(org.onap.aai.domain.yang.VfModule.class, resourceUri)
 				if(vfModule.isPresent()){
 					execution.setVariable('CAAIVfModVG_getVfModuleResponseCode', 200)
@@ -164,8 +166,8 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 			def volumeGroupId = execution.getVariable('CAAIVfModVG_volumeGroupId')
 
 			try {
-				AAIResourceUri vfModuleUri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId,vfModuleId);
-				AAIResourceUri volumeGroupUri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, cloudOwner, aicCloudRegion,volumeGroupId);
+				AAIResourceUri vfModuleUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId).vfModule(vfModuleId));
+				AAIResourceUri volumeGroupUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(cloudOwner, aicCloudRegion).volumeGroup(volumeGroupId));
 				logger.debug("Creating relationship between Vf Module: " + vfModuleUri.build().toString() + " and Volume Group: " + volumeGroupUri.build().toString())
 				getAAIClient().connect(vfModuleUri,volumeGroupUri)
 				execution.setVariable('CAAIVfModVG_updateVfModuleResponseCode', 200)

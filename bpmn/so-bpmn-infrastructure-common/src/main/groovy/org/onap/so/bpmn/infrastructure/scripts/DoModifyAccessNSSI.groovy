@@ -51,6 +51,8 @@ import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import javax.ws.rs.NotFoundException
 
 class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
@@ -588,8 +590,7 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 		Map<String,ServiceInstance> relatedInstances = new HashMap<>()
 		
 		AAIResourcesClient client = new AAIResourcesClient()
-		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-				globalSubscriberId, subscriptionServiceType, instanceId)
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(instanceId))
 		if (!client.exists(uri)) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai : ${instanceId}")
 		}
@@ -605,8 +606,7 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 						relatioshipurl.substring(relatioshipurl.lastIndexOf("/") + 1, relatioshipurl.length())
 
 				AAIResourcesClient client01 = new AAIResourcesClient()
-				AAIResourceUri uri01 = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-						globalSubscriberId, subscriptionServiceType, serviceInstanceId)
+				AAIResourceUri uri01 = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(serviceInstanceId))
 				if (!client.exists(uri01)) {
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2500,
 							"Service Instance was not found in aai: ${serviceInstanceId} related to ${instanceId}")
@@ -631,8 +631,7 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 		String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
 		ServiceInstance serviceInstance = new ServiceInstance()
 		AAIResourcesClient client = new AAIResourcesClient()
-		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-				globalSubscriberId, subscriptionServiceType, instanceId)
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(instanceId))
 		if (!client.exists(uri)) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai : ${instanceId}")
 		}
@@ -646,7 +645,7 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 	}
 	private void deleteServiceInstanceInAAI(DelegateExecution execution,String instanceId) {
 		try {
-			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("serviceType"), instanceId)
+			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("serviceType")).serviceInstance(instanceId))
 			getAAIClient().delete(serviceInstanceUri)
 			logger.debug("${Prefix} Exited deleteServiceInstance")
 		}catch(Exception e){

@@ -33,6 +33,8 @@ import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.logging.filter.base.ONAPComponents
 import org.onap.so.beans.nsmf.DeAllocateNssi
 import org.onap.so.beans.nsmf.EsrInfo
@@ -53,6 +55,7 @@ import org.slf4j.LoggerFactory
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.JsonObject
+
 
 /**
  * Internal AN NSSMF to handle NSSI Deallocation
@@ -274,8 +277,7 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
 
 		AAIResourcesClient client = new AAIResourcesClient()
-		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-				globalSubscriberId, subscriptionServiceType, anNfNssiId)
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(anNfNssiId))
 		if (!client.exists(uri)) {
 			logger.debug("AN NF Service Instance was not found in aai : ${anNfNssiId}")
 		}else {
@@ -294,8 +296,7 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
 
 		AAIResourcesClient client = new AAIResourcesClient()
-		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-				globalSubscriberId, subscriptionServiceType, anNfNssiId)
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(anNfNssiId))
 		if (!client.exists(uri)) {
 			logger.debug("AN NF Service Instance was not found in aai : ${anNfNssiId}")
 		}else {
@@ -455,8 +456,7 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		Map<String,ServiceInstance> relatedInstances = new HashMap<>()
 
 		AAIResourcesClient client = getAAIClient()
-		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-				globalSubscriberId, subscriptionServiceType, instanceId)
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(instanceId))
 		if (!client.exists(uri)) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai : ${instanceId}")
 		}
@@ -470,8 +470,7 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 				String relatioshipurl = relationship.getRelatedLink()
 				String serviceInstanceId =
 						relatioshipurl.substring(relatioshipurl.lastIndexOf("/") + 1, relatioshipurl.length())
-				uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-						globalSubscriberId, subscriptionServiceType, serviceInstanceId)
+				uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(serviceInstanceId))
 				if (!client.exists(uri)) {
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2500,
 							"Service Instance was not found in aai: ${serviceInstanceId} related to ${instanceId}")
@@ -545,7 +544,7 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 	
 	private void deleteServiceInstanceInAAI(DelegateExecution execution,String instanceId) {
 		try {
-			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("serviceType"), instanceId)
+			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("serviceType")).serviceInstance(instanceId))
 			getAAIClient().delete(serviceInstanceUri)
 			logger.debug("${Prefix} Exited deleteServiceInstance")
 		}catch(Exception e){

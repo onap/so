@@ -100,6 +100,7 @@
                 <source>${project.basedir}/target/generated-sources/vnfmadapter/src/gen/java/main</source>
                 <source>${project.basedir}/target/generated-sources/sol003-vnf-lcn/src/gen/java/main</source>
                 <source>${project.basedir}/target/generated-sources/sol003-vnf-grant/src/gen/java/main</source>
+                <source>${project.basedir}/target/generated-sources/etsisol003adapter/src/gen/java/main</source>
               </sources>
             </configuration>
           </execution>

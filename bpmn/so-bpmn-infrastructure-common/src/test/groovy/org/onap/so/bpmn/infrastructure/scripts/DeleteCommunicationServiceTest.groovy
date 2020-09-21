@@ -19,29 +19,29 @@
  */
 package org.onap.so.bpmn.infrastructure.scripts
 
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertNotNull
+import static org.mockito.Mockito.*
+import javax.ws.rs.NotFoundException
+import javax.ws.rs.core.Response
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
+import org.onap.aaiclient.client.aai.AAIObjectType
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.logging.filter.base.ONAPComponents
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-
-import javax.ws.rs.NotFoundException
-import javax.ws.rs.core.Response
-
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertNotNull
-import static org.mockito.ArgumentMatchers.eq
-import static org.mockito.Mockito.*
 
 class DeleteCommunicationServiceTest extends MsoGroovyTest {
 
@@ -96,7 +96,7 @@ class DeleteCommunicationServiceTest extends MsoGroovyTest {
         when(mockExecution.getVariable("globalSubscriberId")).thenReturn("5GCustomer")
         when(mockExecution.getVariable("serviceType")).thenReturn("5G")
 
-        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, "5GCustomer", "5G", "5ad89cf9-0569-4a93-9306-d8324321e2be")
+        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("5GCustomer").serviceSubscription("5G").serviceInstance("5ad89cf9-0569-4a93-9306-d8324321e2be"))
         DeleteCommunicationService obj = spy(DeleteCommunicationService.class)
 
         AAIResultWrapper wrapper = new AAIResultWrapper(mockQueryCommunicationServiceReturn())
@@ -126,8 +126,8 @@ class DeleteCommunicationServiceTest extends MsoGroovyTest {
         when(mockExecution.getVariable("serviceType")).thenReturn("5G")
 
         AAIResultWrapper wrapper = new AAIResultWrapper(mockQueryCommunicationServiceProfile())
-        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.COMMUNICATION_PROFILE_ALL, "5GCustomer", "5G", "5ad89cf9-0569-4a93-9306-d8324321e2be")
-        AAIResourceUri profileUri = AAIUriFactory.createResourceUri(AAIObjectType.COMMUNICATION_SERVICE_PROFILE, "5GCustomer", "5G", "5ad89cf9-0569-4a93-9306-d8324321e2be", "5G-111111")
+        AAIPluralResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("5GCustomer").serviceSubscription("5G").serviceInstance("5ad89cf9-0569-4a93-9306-d8324321e2be").communicationServiceProfiles())
+        AAIResourceUri profileUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("5GCustomer").serviceSubscription("5G").serviceInstance("5ad89cf9-0569-4a93-9306-d8324321e2be").communicationServiceProfile("5G-111111"))
 
         DeleteCommunicationService obj = spy(DeleteCommunicationService.class)
         when(obj.getAAIClient()).thenReturn(client)
@@ -162,7 +162,7 @@ class DeleteCommunicationServiceTest extends MsoGroovyTest {
         when(mockExecution.getVariable("globalSubscriberId")).thenReturn("5GCustomer")
         when(mockExecution.getVariable("serviceType")).thenReturn("5G")
 
-        AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, "5GCustomer", "5G", "5ad89cf9-0569-4a93-9306-d8324321e2be")
+        AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("5GCustomer").serviceSubscription("5G").serviceInstance("5ad89cf9-0569-4a93-9306-d8324321e2be"))
         DeleteCommunicationService obj = spy(DeleteCommunicationService.class)
         when(obj.getAAIClient()).thenReturn(client)
         doNothing().when(client).delete(serviceInstanceUri)

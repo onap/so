@@ -38,17 +38,17 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.aaiclient.client.aai.AAIResourcesClient;
+import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
-import org.onap.aaiclient.client.aai.AAIObjectPlurals;
-import org.onap.aaiclient.client.aai.AAIResourcesClient;
-import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 
@@ -163,7 +163,7 @@ public class AAIVfModuleResourcesTest extends TestDataSetup {
 
     @Test
     public void checkNameInUseTrueTest() throws Exception {
-        AAIPluralResourceUri vfModuleUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VF_MODULE)
+        AAIPluralResourceUri vfModuleUri = AAIUriFactory.createNodesUri(Types.VF_MODULES.getFragment())
                 .queryParam("vf-module-name", vfModule.getVfModuleName());
         AAIPluralResourceUri vfModuleUriWithCustomization = vfModuleUri.clone().queryParam("model-customization-id",
                 vfModule.getModelInfoVfModule().getModelCustomizationUUID());
@@ -175,7 +175,7 @@ public class AAIVfModuleResourcesTest extends TestDataSetup {
 
     @Test
     public void checkNameInUseFalseIsResumeTest() throws Exception {
-        AAIPluralResourceUri vfModuleUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VF_MODULE)
+        AAIPluralResourceUri vfModuleUri = AAIUriFactory.createNodesUri(Types.VF_MODULES.getFragment())
                 .queryParam("vf-module-name", vfModule.getVfModuleName());
         AAIPluralResourceUri vfModuleUriWithCustomization = vfModuleUri.clone().queryParam("model-customization-id",
                 vfModule.getModelInfoVfModule().getModelCustomizationUUID());
@@ -186,7 +186,7 @@ public class AAIVfModuleResourcesTest extends TestDataSetup {
 
     @Test
     public void checkNameInUseFalseTest() throws Exception {
-        AAIPluralResourceUri vfModuleUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VF_MODULE)
+        AAIPluralResourceUri vfModuleUri = AAIUriFactory.createNodesUri(Types.VF_MODULES.getFragment())
                 .queryParam("vf-module-name", vfModule.getVfModuleName());
         AAIPluralResourceUri vfModuleUriWithCustomization = vfModuleUri.clone().queryParam("model-customization-id",
                 vfModule.getModelInfoVfModule().getModelCustomizationUUID());

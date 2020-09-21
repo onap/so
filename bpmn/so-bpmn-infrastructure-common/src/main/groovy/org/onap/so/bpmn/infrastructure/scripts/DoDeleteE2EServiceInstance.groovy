@@ -52,6 +52,8 @@ import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.onap.logging.filter.base.ONAPComponents;
@@ -176,7 +178,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
             String globalSubscriberId = execution.getVariable('globalSubscriberId')
             String serviceType = execution.getVariable('serviceType')
             AAIResourcesClient resourceClient = new AAIResourcesClient()
-            AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId, serviceType, serviceInstanceId)
+            AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId))
             if (!resourceClient.exists(serviceInstanceUri)) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai")
             }
@@ -658,7 +660,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
             String serviceInstanceId = execution.getVariable("serviceInstanceId")
 
             AAIResourcesClient resourceClient = new AAIResourcesClient()
-            AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalCustId, serviceType, serviceInstanceId)
+            AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalCustId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId))
             resourceClient.delete(serviceInstanceUri)
 
             logger.trace("Exited deleteServiceInstance")
