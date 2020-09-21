@@ -32,6 +32,8 @@ import org.onap.aaiclient.client.aai.*
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -360,7 +362,7 @@ public class VnfConfigUpdate extends VnfCmBase {
 			def vnfId = execution.getVariable("vnfId")
             logger.debug("vnfId is: {}", vnfId)
 			AAIResourcesClient client = new AAIResourcesClient()
-			AAIResourceUri genericVnfUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+			AAIResourceUri genericVnfUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId))
 			AAIResultWrapper aaiRW = client.get(genericVnfUri)
 			Map<String, Object> result = aaiRW.asMap()
 			boolean isClosedLoopDisabled = result.getOrDefault("is-closed-loop-disabled", false)
@@ -412,7 +414,7 @@ public class VnfConfigUpdate extends VnfCmBase {
 			def transactionLoggingUuid = UUID.randomUUID().toString()
 			def vnfId = execution.getVariable("vnfId")
 			AAIResourcesClient client = new AAIResourcesClient()
-			AAIResourceUri genericVnfUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+			AAIResourceUri genericVnfUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId))
 
 			Map<String, Boolean> request = new HashMap<>()
 			request.put("is-closed-loop-disabled", setDisabled)

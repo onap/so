@@ -20,31 +20,6 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.ExpectedException
-import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
-import org.mockito.Captor
-import org.mockito.Mockito
-import org.mockito.MockitoAnnotations
-import org.mockito.runners.MockitoJUnitRunner
-import org.onap.aai.domain.yang.GenericVnf
-import org.onap.aai.domain.yang.Volume
-import org.onap.aai.domain.yang.VolumeGroup
-import org.onap.aai.domain.yang.VolumeGroups
-import org.onap.so.bpmn.common.scripts.MsoGroovyTest
-import org.onap.so.bpmn.core.RollbackData
-import org.onap.aaiclient.client.aai.AAIObjectPlurals
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-import org.onap.so.constants.Defaults
-
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
 import static org.mockito.ArgumentMatchers.anyObject
@@ -52,6 +27,26 @@ import static org.mockito.Mockito.spy
 import static org.mockito.Mockito.times
 import static org.mockito.Mockito.verify
 import static org.mockito.Mockito.when
+import org.camunda.bpm.engine.delegate.BpmnError
+import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
+import org.junit.Before
+import org.junit.Test
+import org.mockito.ArgumentCaptor
+import org.mockito.Captor
+import org.mockito.Mockito
+import org.mockito.MockitoAnnotations
+import org.onap.aai.domain.yang.GenericVnf
+import org.onap.aai.domain.yang.VolumeGroup
+import org.onap.aai.domain.yang.VolumeGroups
+import org.onap.aaiclient.client.aai.AAIObjectType
+import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
+import org.onap.so.bpmn.common.scripts.MsoGroovyTest
+import org.onap.so.bpmn.core.RollbackData
+import org.onap.so.constants.Defaults
 
 
 class DoCreateVfModuleVolumeV2Test extends MsoGroovyTest {
@@ -161,7 +156,7 @@ class DoCreateVfModuleVolumeV2Test extends MsoGroovyTest {
 		String lcpCloudRegionId = "lcpCloudRegionId"
 		when(mockExecution.getVariable(volumeGroupName)).thenReturn(volumeGroupName)
 		when(mockExecution.getVariable(lcpCloudRegionId)).thenReturn(lcpCloudRegionId)
-		AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), lcpCloudRegionId).queryParam("volume-group-name", volumeGroupName)
+		AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(Defaults.CLOUD_OWNER.toString(), lcpCloudRegionId).volumeGroups()).queryParam("volume-group-name", volumeGroupName)
 		VolumeGroups volumeGroups = new VolumeGroups();
 		VolumeGroup volumeGroup = new  VolumeGroup()
 		volumeGroup.setVolumeGroupId("volumeGroupId")
@@ -177,7 +172,7 @@ class DoCreateVfModuleVolumeV2Test extends MsoGroovyTest {
 		String lcpCloudRegionId = "lcpCloudRegionId"
 		when(mockExecution.getVariable(volumeGroupName)).thenReturn(volumeGroupName)
 		when(mockExecution.getVariable(lcpCloudRegionId)).thenReturn(lcpCloudRegionId)
-		AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), lcpCloudRegionId).queryParam("volume-group-name", volumeGroupName)
+		AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(Defaults.CLOUD_OWNER.toString(), lcpCloudRegionId).volumeGroups()).queryParam("volume-group-name", volumeGroupName)
 		when(client.get(VolumeGroup.class,uri)).thenReturn(Optional.empty())
 		thrown.expect(BpmnError.class)
 		doCreateVfModuleVolumeV2.callRESTQueryAAIVolGrpName(mockExecution,null)
@@ -215,7 +210,7 @@ class DoCreateVfModuleVolumeV2Test extends MsoGroovyTest {
 	void testcallRESTQueryAAIGenericVnf(){
 		String vnfId = "vnfId"
 		when(mockExecution.getVariable(vnfId)).thenReturn(vnfId)
-		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId))
 		GenericVnf genericVnf = new GenericVnf()
 		genericVnf.setVnfId(vnfId)
 		when(client.get(GenericVnf.class,uri)).thenReturn(Optional.of(genericVnf))
@@ -227,7 +222,7 @@ class DoCreateVfModuleVolumeV2Test extends MsoGroovyTest {
 	void testcallRESTQueryAAIGenericVnf_NotFound(){
 		String vnfId = "vnfId"
 		when(mockExecution.getVariable(vnfId)).thenReturn(vnfId)
-		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId))
 		when(client.get(GenericVnf.class,uri)).thenReturn(Optional.empty())
 		thrown.expect(BpmnError.class)
 		doCreateVfModuleVolumeV2.callRESTQueryAAIGenericVnf(mockExecution,null)

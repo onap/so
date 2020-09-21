@@ -20,16 +20,18 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import static org.apache.commons.lang3.StringUtils.isBlank
+import javax.ws.rs.NotFoundException
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.Relationship
 import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.aai.domain.yang.SliceProfile
-import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.so.beans.nsmf.AllocateAnNssi
 import org.onap.so.beans.nsmf.AllocateCnNssi
 import org.onap.so.beans.nsmf.AllocateTnNssi
@@ -43,17 +45,12 @@ import org.onap.so.beans.nsmf.ServiceInfo
 import org.onap.so.beans.nsmf.SliceTaskInfo
 import org.onap.so.beans.nsmf.SliceTaskParamsAdapter
 import org.onap.so.beans.nsmf.TnSliceProfile
-import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import javax.ws.rs.NotFoundException
-
-import static org.apache.commons.lang3.StringUtils.isBlank
-
-class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
+class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor{
 
     private static final Logger logger = LoggerFactory.getLogger(DoAllocateNSIandNSSI.class);
 
@@ -146,10 +143,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         String msg
         try {
 
-            AAIResourceUri nsiServiceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                    execution.getVariable("globalSubscriberId"),
-                    execution.getVariable("subscriptionServiceType"),
-                    sliceInstanceId)
+            AAIResourceUri nsiServiceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(sliceInstanceId))
             client.create(nsiServiceUri, nsi)
 
             execution.setVariable("nsiServiceUri", nsiServiceUri)
@@ -179,12 +173,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         AAIResourceUri nsiServiceUri = execution.getVariable("nsiServiceUri") as AAIResourceUri
         logger.info("Creating Allotted resource relationship, nsiServiceUri: " + nsiServiceUri)
 
-        AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceUri(
-                AAIObjectType.ALLOTTED_RESOURCE,
-                execution.getVariable("globalSubscriberId"),
-                execution.getVariable("subscriptionServiceType"),
-                sliceParams.suggestNsiId,
-                allottedResourceId)
+        AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(sliceParams.suggestNsiId).allottedResource(allottedResourceId))
 
         client.connect(allottedResourceUri, nsiServiceUri)
     }
@@ -205,10 +194,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         String nsiServiceInstanceID = sliceParams.getSuggestNsiId()
         //sliceParams.setServiceId(nsiServiceInstanceID)
 
-        AAIResourceUri nsiServiceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                execution.getVariable("globalSubscriberId"),
-                execution.getVariable("subscriptionServiceType"),
-                nsiServiceInstanceID)
+        AAIResourceUri nsiServiceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(nsiServiceInstanceID))
 
         try {
             AAIResultWrapper wrapper = client.get(nsiServiceUri, NotFoundException.class)
@@ -220,12 +206,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
             }
 
-            AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceUri(
-                    AAIObjectType.ALLOTTED_RESOURCE,
-                    execution.getVariable("globalSubscriberId"),
-                    execution.getVariable("subscriptionServiceType"),
-                    sliceParams.suggestNsiId, //nsiId
-                    allottedResourceId)
+            AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(sliceParams.suggestNsiId).allottedResource(allottedResourceId))
 
             client.connect(allottedResourceUri, nsiServiceUri)
 
@@ -277,10 +258,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         execution.setVariable("communicationServiceInstance", rspi)
 
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                globalSubscriberId,
-                subscriptionServiceType,
-                serviceInstanceId)
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(serviceInstanceId))
         client.create(uri, rspi)
 
         execution.setVariable("sliceTaskParams", sliceParams)
@@ -308,11 +286,11 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         sliceProfile.setProfileId(profileId)
         sliceProfile.setCoverageAreaTAList(anSliceProfile.coverageAreaTAList as String)
         //todo:...
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SLICE_PROFILE,
-                globalSubscriberId,
-                subscriptionServiceType,
-                sliceTaskInfo.sliceInstanceId,
-                profileId
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(
+            AAIFluentTypeBuilder.business().customer(globalSubscriberId)
+            .serviceSubscription(subscriptionServiceType)
+            .serviceInstance(sliceTaskInfo.sliceInstanceId)
+            .sliceProfile(profileId)
         )
         client.create(uri, sliceProfile)
         execution.setVariable("sliceTaskParams", sliceParams)
@@ -400,10 +378,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         execution.setVariable("communicationServiceInstance", rspi)
 
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                globalSubscriberId,
-                subscriptionServiceType,
-                serviceInstanceId)
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(serviceInstanceId))
         client.create(uri, rspi)
         execution.setVariable("sliceTaskParams", sliceParams)
     }
@@ -431,12 +406,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         sliceProfile.setProfileId(profileId)
         sliceProfile.setCoverageAreaTAList(cnSliceProfile.coverageAreaTAList as String)
         //todo:...
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SLICE_PROFILE,
-                globalSubscriberId,
-                subscriptionServiceType,
-                sliceTaskInfo.sliceInstanceId,
-                profileId
-        )
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(sliceTaskInfo.sliceInstanceId).sliceProfile(profileId))
         client.create(uri, sliceProfile)
         execution.setVariable("sliceTaskParams", sliceParams)
     }
@@ -524,10 +494,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         execution.setVariable("communicationServiceInstance", rspi)
 
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                globalSubscriberId,
-                subscriptionServiceType,
-                serviceInstanceId)
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(serviceInstanceId))
         client.create(uri, rspi)
 
         execution.setVariable("sliceTaskParams", sliceParams)
@@ -554,12 +521,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         SliceProfile sliceProfile = new SliceProfile()
         sliceProfile.setProfileId(profileId)
         //todo:...
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SLICE_PROFILE,
-                globalSubscriberId,
-                subscriptionServiceType,
-                sliceTaskInfo.sliceInstanceId,
-                profileId
-        )
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(sliceTaskInfo.sliceInstanceId).sliceProfile(profileId))
         client.create(uri, sliceProfile)
 
         execution.setVariable("sliceTaskParams", sliceParams)
@@ -706,19 +668,13 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         //relation ship
         Relationship relationship = new Relationship()
 
-        AAIResourceUri nsiServiceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                execution.getVariable("globalSubscriberId"),
-                execution.getVariable("subscriptionServiceType"),
-                targetId)
+        AAIResourceUri nsiServiceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(targetId))
 
         logger.info("Creating Allotted resource relationship, nsiServiceUri: " + nsiServiceUri)
 
         relationship.setRelatedLink(nsiServiceUri.build().toString())
 
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                execution.getVariable("globalSubscriberId"),
-                execution.getVariable("subscriptionServiceType"),
-                sourceId).relationshipAPI()
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(sourceId).relationshipAPI())
         client.create(uri, relationship)
     }
 

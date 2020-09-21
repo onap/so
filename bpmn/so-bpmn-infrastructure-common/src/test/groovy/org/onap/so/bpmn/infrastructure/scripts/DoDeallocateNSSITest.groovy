@@ -38,6 +38,8 @@ import org.onap.so.client.HttpClientFactory
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 
 import javax.ws.rs.core.Response
 
@@ -137,7 +139,7 @@ class DoDeallocateNSSITest extends MsoGroovyTest {
         currentNSSI.put("serviceType","5G")
         when(mockExecution.getVariable("currentNSSI")).thenReturn(currentNSSI)
 
-        AAIResourceUri profileUri = AAIUriFactory.createResourceUri(AAIObjectType.SLICE_PROFILE, "5GCustomer", "5G", "5G-999", "ddf57704-fe8d-417b-882d-2f2a12ddb225")
+        AAIResourceUri profileUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("5GCustomer").serviceSubscription("5G").serviceInstance("5G-999").sliceProfile("ddf57704-fe8d-417b-882d-2f2a12ddb225"))
         DoDeallocateNSSI obj = spy(DoDeallocateNSSI.class)
         when(obj.getAAIClient()).thenReturn(client)
         when(client.exists(profileUri)).thenReturn(true)

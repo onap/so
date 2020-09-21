@@ -41,12 +41,12 @@ import org.onap.aai.domain.yang.LInterfaces;
 import org.onap.aai.domain.yang.VfModule;
 import org.onap.aai.domain.yang.VfModules;
 import org.onap.aai.domain.yang.Vserver;
-import org.onap.aaiclient.client.aai.AAIObjectPlurals;
 import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.so.objects.audit.AAIObjectAudit;
 import org.onap.so.objects.audit.AAIObjectAuditList;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -70,35 +70,43 @@ public class AuditVServerTest extends AuditVServer {
     private String cloudRegion = "cloudRegion";
     private String tenantId = "tenantId";
 
-    private AAIResourceUri vserverURI = AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner, cloudRegion,
-            tenantId, "3a4c2ca5-27b3-4ecc-98c5-06804867c4db");
+    private AAIResourceUri vserverURI = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+            .cloudRegion(cloudOwner, cloudRegion).tenant(tenantId).vserver("3a4c2ca5-27b3-4ecc-98c5-06804867c4db"));
 
-    private AAIResourceUri vserverURI2 = AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner, cloudRegion,
-            tenantId, "3a4c2ca5-27b3-4ecc-98c5-06804867c4dz");
+    private AAIResourceUri vserverURI2 = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+            .cloudRegion(cloudOwner, cloudRegion).tenant(tenantId).vserver("3a4c2ca5-27b3-4ecc-98c5-06804867c4dz"));
 
-    private AAIResourceUri ssc_1_trusted_port_0_uri = AAIUriFactory.createResourceUri(AAIObjectType.L_INTERFACE,
-            cloudOwner, cloudRegion, tenantId, "3a4c2ca5-27b3-4ecc-98c5-06804867c4db", "ssc_1_trusted_port_0");
+    private AAIResourceUri ssc_1_trusted_port_0_uri = AAIUriFactory.createResourceUri(
+            AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(cloudOwner, cloudRegion).tenant(tenantId)
+                    .vserver("3a4c2ca5-27b3-4ecc-98c5-06804867c4db").lInterface("ssc_1_trusted_port_0"));
 
-    private AAIResourceUri ssc_1_service1_port_0_uri = AAIUriFactory.createResourceUri(AAIObjectType.L_INTERFACE,
-            cloudOwner, cloudRegion, tenantId, "3a4c2ca5-27b3-4ecc-98c5-06804867c4db", "ssc_1_service1_port_0");
+    private AAIResourceUri ssc_1_service1_port_0_uri = AAIUriFactory.createResourceUri(
+            AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(cloudOwner, cloudRegion).tenant(tenantId)
+                    .vserver("3a4c2ca5-27b3-4ecc-98c5-06804867c4db").lInterface("ssc_1_service1_port_0"));
 
-    private AAIResourceUri ssc_1_mgmt_port_1_uri = AAIUriFactory.createResourceUri(AAIObjectType.L_INTERFACE,
-            cloudOwner, cloudRegion, tenantId, "3a4c2ca5-27b3-4ecc-98c5-06804867c4db", "ssc_1_mgmt_port_1");
+    private AAIResourceUri ssc_1_mgmt_port_1_uri = AAIUriFactory
+            .createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(cloudOwner, cloudRegion)
+                    .tenant(tenantId).vserver("3a4c2ca5-27b3-4ecc-98c5-06804867c4db").lInterface("ssc_1_mgmt_port_1"));
 
-    private AAIResourceUri ssc_1_mgmt_port_0_uri = AAIUriFactory.createResourceUri(AAIObjectType.L_INTERFACE,
-            cloudOwner, cloudRegion, tenantId, "3a4c2ca5-27b3-4ecc-98c5-06804867c4db", "ssc_1_mgmt_port_0");
+    private AAIResourceUri ssc_1_mgmt_port_0_uri = AAIUriFactory
+            .createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(cloudOwner, cloudRegion)
+                    .tenant(tenantId).vserver("3a4c2ca5-27b3-4ecc-98c5-06804867c4db").lInterface("ssc_1_mgmt_port_0"));
 
-    private AAIResourceUri ssc_1_service2_port_0_uri = AAIUriFactory.createResourceUri(AAIObjectType.L_INTERFACE,
-            cloudOwner, cloudRegion, tenantId, "3a4c2ca5-27b3-4ecc-98c5-06804867c4db", "ssc_1_service2_port_0");
+    private AAIResourceUri ssc_1_service2_port_0_uri = AAIUriFactory.createResourceUri(
+            AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(cloudOwner, cloudRegion).tenant(tenantId)
+                    .vserver("3a4c2ca5-27b3-4ecc-98c5-06804867c4db").lInterface("ssc_1_service2_port_0"));
 
-    private AAIResourceUri ssc_1_int_ha_port_0_uri = AAIUriFactory.createResourceUri(AAIObjectType.L_INTERFACE,
-            cloudOwner, cloudRegion, tenantId, "3a4c2ca5-27b3-4ecc-98c5-06804867c4db", "ssc_1_int_ha_port_0");
+    private AAIResourceUri ssc_1_int_ha_port_0_uri = AAIUriFactory.createResourceUri(
+            AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(cloudOwner, cloudRegion).tenant(tenantId)
+                    .vserver("3a4c2ca5-27b3-4ecc-98c5-06804867c4db").lInterface("ssc_1_int_ha_port_0"));
 
-    private AAIResourceUri test_port_1_uri = AAIUriFactory.createResourceUri(AAIObjectType.L_INTERFACE, cloudOwner,
-            cloudRegion, tenantId, "3a4c2ca5-27b3-4ecc-98c5-06804867c4dz", "test_port_1");
+    private AAIResourceUri test_port_1_uri = AAIUriFactory
+            .createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(cloudOwner, cloudRegion)
+                    .tenant(tenantId).vserver("3a4c2ca5-27b3-4ecc-98c5-06804867c4dz").lInterface("test_port_1"));
 
-    private AAIResourceUri test_port_2_uri = AAIUriFactory.createResourceUri(AAIObjectType.L_INTERFACE, cloudOwner,
-            cloudRegion, tenantId, "3a4c2ca5-27b3-4ecc-98c5-06804867c4dz", "test_port_2");
+    private AAIResourceUri test_port_2_uri = AAIUriFactory
+            .createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(cloudOwner, cloudRegion)
+                    .tenant(tenantId).vserver("3a4c2ca5-27b3-4ecc-98c5-06804867c4dz").lInterface("test_port_2"));
 
     private AAIResourceUri service2_sub_1_uri =
             AAIUriFactory.createResourceUri(AAIObjectType.SUB_L_INTERFACE, cloudOwner, cloudRegion, tenantId,
@@ -368,17 +376,20 @@ public class AuditVServerTest extends AuditVServer {
         Vserver vserver = new Vserver();
         vserver.setVserverId("testVserverId");
         obj1.setAaiObject(vserver);
-        obj1.setResourceURI(AAIUriFactory
-                .createResourceUri(AAIObjectType.VSERVER, cloudOwner, cloudRegion, tenantId, "testVserverId").build());
+        obj1.setResourceURI(
+                AAIUriFactory
+                        .createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                                .cloudRegion(cloudOwner, cloudRegion).tenant(tenantId).vserver("testVserverId"))
+                        .build());
         auditList.getAuditList().add(obj1);
 
-        doReturn(false).when(aaiResourcesMock).exists(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner,
-                cloudRegion, tenantId, "testVserverId"));
+        doReturn(false).when(aaiResourcesMock).exists(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder
+                .cloudInfrastructure().cloudRegion(cloudOwner, cloudRegion).tenant(tenantId).vserver("testVserverId")));
 
         auditNova.auditVservers(auditList);
 
-        Mockito.verify(aaiResourcesMock).exists(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner,
-                cloudRegion, tenantId, "testVserverId"));
+        Mockito.verify(aaiResourcesMock).exists(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder
+                .cloudInfrastructure().cloudRegion(cloudOwner, cloudRegion).tenant(tenantId).vserver("testVserverId")));
 
         Assert.assertEquals(false, auditList.getAuditList().get(0).isDoesObjectExist());
     }
@@ -392,8 +403,8 @@ public class AuditVServerTest extends AuditVServer {
         AAIResultWrapper wrapper = new AAIResultWrapper(vfModule);
 
         doReturn(Optional.of(wrapper)).when(aaiResourcesMock).getFirstWrapper(VfModules.class, VfModule.class,
-                AAIUriFactory.createResourceUri(AAIObjectPlurals.VF_MODULE, "genericVnfId").queryParam("vf-module-name",
-                        "vfModuleName"));
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("genericVnfId").vfModules())
+                        .queryParam("vf-module-name", "vfModuleName"));
 
         Optional<AAIObjectAuditList> auditList =
                 auditNova.auditVserversThroughRelationships("genericVnfId", "vfModuleName");
@@ -410,11 +421,12 @@ public class AuditVServerTest extends AuditVServer {
         AAIResultWrapper vserverWrapper = new AAIResultWrapper(new Vserver());
 
         doReturn(Optional.of(wrapper)).when(aaiResourcesMock).getFirstWrapper(VfModules.class, VfModule.class,
-                AAIUriFactory.createResourceUri(AAIObjectPlurals.VF_MODULE, "genericVnfId").queryParam("vf-module-name",
-                        "vfModuleName"));
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("genericVnfId").vfModules())
+                        .queryParam("vf-module-name", "vfModuleName"));
 
-        doReturn(vserverWrapper).when(aaiResourcesMock).get(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER,
-                "cloud-owner", "cloud-region-id", "tenant-id", "VUSCHGA1"));
+        doReturn(vserverWrapper).when(aaiResourcesMock)
+                .get(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                        .cloudRegion("cloud-owner", "cloud-region-id").tenant("tenant-id").vserver("VUSCHGA1")));
 
         Optional<AAIObjectAuditList> auditList =
                 auditNova.auditVserversThroughRelationships("genericVnfId", "vfModuleName");

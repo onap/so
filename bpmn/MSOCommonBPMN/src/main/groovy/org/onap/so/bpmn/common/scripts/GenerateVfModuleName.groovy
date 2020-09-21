@@ -41,6 +41,8 @@ import org.onap.so.client.HttpClient
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
 import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.so.logger.MessageEnum
@@ -85,7 +87,7 @@ public class GenerateVfModuleName extends AbstractServiceTaskProcessor{
 			def personaModelId = execution.getVariable('personaModelId')
 
 			AaiUtil aaiUtil = new AaiUtil(this)
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId))
 			uri.depth(Depth.ONE)
 			String endPoint = aaiUtil.createAaiUri(uri)
 

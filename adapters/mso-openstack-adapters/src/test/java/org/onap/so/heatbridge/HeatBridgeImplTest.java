@@ -45,7 +45,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.doReturn;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -66,20 +65,17 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.L3InterfaceIpv6AddressList;
 import org.onap.aai.domain.yang.LInterface;
 import org.onap.aai.domain.yang.PInterface;
 import org.onap.aai.domain.yang.SriovPf;
 import org.onap.aaiclient.client.aai.AAIDSLQueryClient;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.AAISingleTransactionClient;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
-import org.onap.aaiclient.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
 import org.onap.aaiclient.client.graphinventory.exceptions.BulkProcessFailed;
 import org.onap.so.cloud.resource.beans.NodeType;
 import org.onap.so.db.catalog.beans.CloudIdentity;
@@ -105,7 +101,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
-import inet.ipaddr.IPAddressString;
 
 
 @RunWith(MockitoJUnitRunner.Silent.class)
@@ -202,10 +197,10 @@ public class HeatBridgeImplTest {
         verify(transaction, times(2)).createIfNotExists(captor.capture(), any(Optional.class));
 
         List<AAIResourceUri> uris = captor.getAllValues();
-        assertEquals(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, CLOUD_OWNER, REGION_ID, TENANT_ID,
-                server1.getId()), uris.get(0));
-        assertEquals(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, CLOUD_OWNER, REGION_ID, TENANT_ID,
-                server2.getId()), uris.get(1));
+        assertEquals(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                .cloudRegion(CLOUD_OWNER, REGION_ID).tenant(TENANT_ID).vserver(server1.getId())), uris.get(0));
+        assertEquals(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                .cloudRegion(CLOUD_OWNER, REGION_ID).tenant(TENANT_ID).vserver(server2.getId())), uris.get(1));
 
     }
 
@@ -246,10 +241,10 @@ public class HeatBridgeImplTest {
         verify(transaction, times(2)).createIfNotExists(captor.capture(), any(Optional.class));
 
         List<AAIResourceUri> uris = captor.getAllValues();
-        assertEquals(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, CLOUD_OWNER, REGION_ID, TENANT_ID,
-                server1.getId()), uris.get(0));
-        assertEquals(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, CLOUD_OWNER, REGION_ID, TENANT_ID,
-                server2.getId()), uris.get(1));
+        assertEquals(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                .cloudRegion(CLOUD_OWNER, REGION_ID).tenant(TENANT_ID).vserver(server1.getId())), uris.get(0));
+        assertEquals(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                .cloudRegion(CLOUD_OWNER, REGION_ID).tenant(TENANT_ID).vserver(server2.getId())), uris.get(1));
     }
 
     @Test

@@ -1,10 +1,10 @@
 package org.onap.so.simulator.actions.aai;
 
 import org.onap.aai.domain.yang.L3Network;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.consol.citrus.actions.AbstractTestAction;
@@ -23,7 +23,8 @@ public class ProcessNetwork extends AbstractTestAction {
 
             if (context.getVariable("action").equals("assign")) {
                 String networkId = context.getVariable("generatedNetworkId");
-                AAIResourceUri networkURI = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId);
+                AAIResourceUri networkURI =
+                        AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Network(networkId));
                 L3Network network = new L3Network();
                 network.setNetworkId(networkId);
                 network.setNetworkName(context.getVariable("networkName"));
@@ -33,7 +34,8 @@ public class ProcessNetwork extends AbstractTestAction {
                 aaiResourceClient.create(networkURI, network);
             } else if (context.getVariable("action").equals("delete")) {
                 String networkId = context.getVariable("networkId");
-                AAIResourceUri networkURI = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId);
+                AAIResourceUri networkURI =
+                        AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Network(networkId));
                 aaiResourceClient.delete(networkURI);
             }
         } catch (Exception e) {

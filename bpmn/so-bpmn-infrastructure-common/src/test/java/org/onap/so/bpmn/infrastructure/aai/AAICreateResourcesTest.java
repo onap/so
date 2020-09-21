@@ -35,12 +35,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AAICreateResourcesTest {
@@ -87,7 +87,8 @@ public class AAICreateResourcesTest {
 
         aaiCreateResources.createAAIProject(projectName, serviceInstanceId);
 
-        AAIResourceUri projectURI = AAIUriFactory.createResourceUri(AAIObjectType.PROJECT, projectName);
+        AAIResourceUri projectURI =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().project(projectName));
 
         verify(aaiResourcesClient, times(1)).createIfNotExists(projectURI, Optional.empty());
         verify(aaiResourcesClient, times(1)).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
@@ -103,7 +104,8 @@ public class AAICreateResourcesTest {
 
         HashMap<String, String> owningEntityMap = new HashMap<>();
         owningEntityMap.put("owning-entity-name", owningEntityName);
-        AAIResourceUri owningEntityURI = AAIUriFactory.createResourceUri(AAIObjectType.OWNING_ENTITY, owningEntityId);
+        AAIResourceUri owningEntityURI =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().owningEntity(owningEntityId));
 
         verify(aaiResourcesClient, times(1)).createIfNotExists(owningEntityURI, Optional.of(owningEntityMap));
         verify(aaiResourcesClient, times(1)).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
@@ -115,7 +117,8 @@ public class AAICreateResourcesTest {
 
         boolean expectedBoolean = aaiCreateResources.existsOwningEntity(owningEntityId);
 
-        AAIResourceUri owningEntityURI = AAIUriFactory.createResourceUri(AAIObjectType.OWNING_ENTITY, owningEntityId);
+        AAIResourceUri owningEntityURI =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().owningEntity(owningEntityId));
 
         verify(aaiResourcesClient, times(1)).exists(owningEntityURI);
         assertTrue(expectedBoolean);
@@ -138,7 +141,8 @@ public class AAICreateResourcesTest {
 
         aaiCreateResources.createAAIPlatform(platformName, vnfId);
 
-        AAIResourceUri platformURI = AAIUriFactory.createResourceUri(AAIObjectType.PLATFORM, platformName);
+        AAIResourceUri platformURI =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().platform(platformName));
 
         verify(aaiResourcesClient, times(1)).createIfNotExists(platformURI, Optional.empty());
         verify(aaiResourcesClient, times(1)).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
@@ -153,7 +157,7 @@ public class AAICreateResourcesTest {
         aaiCreateResources.createAAILineOfBusiness(lineOfBusiness, vnfId);
 
         AAIResourceUri lineOfBusinessURI =
-                AAIUriFactory.createResourceUri(AAIObjectType.LINE_OF_BUSINESS, lineOfBusiness);
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().lineOfBusiness(lineOfBusiness));
 
         verify(aaiResourcesClient, times(1)).createIfNotExists(lineOfBusinessURI, Optional.empty());
         verify(aaiResourcesClient, times(1)).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
@@ -166,8 +170,8 @@ public class AAICreateResourcesTest {
 
         aaiCreateResources.createAAIServiceInstance(globalCustomerId, serviceType, serviceInstanceId);
 
-        AAIResourceUri serviceInstanceURI = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                globalCustomerId, serviceType, serviceInstanceId);
+        AAIResourceUri serviceInstanceURI = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                .customer(globalCustomerId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId));
 
         verify(aaiResourcesClient, times(1)).createIfNotExists(serviceInstanceURI, Optional.empty());
     }
@@ -180,7 +184,7 @@ public class AAICreateResourcesTest {
 
         Optional<GenericVnf> actualVnf = aaiCreateResources.getVnfInstance(vnfId);
 
-        AAIResourceUri vnfURI = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId);
+        AAIResourceUri vnfURI = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId));
 
         verify(aaiResourcesClient, times(1)).get(vnfURI);
         assertEquals(actualVnf, aaiResultWrapper.asBean(GenericVnf.class));
@@ -192,7 +196,7 @@ public class AAICreateResourcesTest {
 
         Optional<GenericVnf> actualVnf = aaiCreateResources.getVnfInstance(vnfId);
 
-        AAIResourceUri vnfURI = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId);
+        AAIResourceUri vnfURI = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId));
 
         verify(aaiResourcesClient, times(1)).get(vnfURI);
         assertEquals(actualVnf, Optional.empty());

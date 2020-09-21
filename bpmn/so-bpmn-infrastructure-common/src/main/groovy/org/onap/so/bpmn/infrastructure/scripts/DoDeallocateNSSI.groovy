@@ -19,34 +19,26 @@
  */
 package org.onap.so.bpmn.infrastructure.scripts
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.logging.filter.base.ONAPComponents
+import org.json.JSONObject
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.so.beans.nsmf.DeAllocateNssi
-import org.onap.so.beans.nsmf.ServiceInfo
 import org.onap.so.beans.nsmf.EsrInfo
-import org.onap.so.beans.nsmf.JobStatusRequest
-import org.onap.so.beans.nsmf.JobStatusResponse
 import org.onap.so.beans.nsmf.NetworkType
-import org.onap.so.beans.nsmf.NssiDeAllocateRequest
 import org.onap.so.beans.nsmf.NssiResponse
+import org.onap.so.beans.nsmf.ServiceInfo
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.NssmfAdapterUtils
 import org.onap.so.bpmn.common.scripts.RequestDBUtil
-import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.domain.ServiceArtifact
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.client.HttpClient
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.db.request.beans.OperationStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.json.JSONObject
-import javax.ws.rs.core.Response
 
 
 class DoDeallocateNSSI extends AbstractServiceTaskProcessor
@@ -322,7 +314,8 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
         try
         {
             LOGGER.debug("delete nssiServiceInstanceId:${nssiServiceInstanceId}, profileId:${profileId}")
-            AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.SLICE_PROFILE, globalSubscriberId, serviceType, nssiServiceInstanceId, profileId)
+            AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(
+                AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(nssiServiceInstanceId).sliceProfile(profileId))
             if (!getAAIClient().exists(resourceUri)) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai")
             }

@@ -31,6 +31,7 @@ import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.logging.filter.base.ErrorCode
 import org.onap.so.bpmn.common.scripts.AaiUtil;
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor;
@@ -197,7 +198,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 
 		AaiUtil aaiUtil = new AaiUtil(this)
 
-		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, Defaults.CLOUD_OWNER.toString(), cloudRegion)
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(Defaults.CLOUD_OWNER.toString(), cloudRegion))
 		def queryCloudRegionRequest = aaiUtil.createAaiUri(uri)
 
 		execution.setVariable("DELVfModVol_queryCloudRegionRequest", queryCloudRegionRequest)
@@ -240,7 +241,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		String cloudRegion = execution.getVariable('DELVfModVol_aicCloudRegion')
 
         try {
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion, volumeGroupId)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(Defaults.CLOUD_OWNER.toString(), cloudRegion).volumeGroup(volumeGroupId))
             AAIResultWrapper volumeGroupWrapper = getAAIClient().get(uri)
 
             if (!volumeGroupWrapper.isEmpty()) {
@@ -249,7 +250,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
                 def heatStackId = volumeGroupOp.get().getHeatStackId() ?: ""
                 execution.setVariable('DELVfModVol_volumeGroupHeatStackId', heatStackId)
 
-                if ( volumeGroupWrapper.getRelationships().isPresent() && !volumeGroupWrapper.getRelationships().get().getRelatedAAIUris(AAIObjectType.VF_MODULE).isEmpty()) {
+                if ( volumeGroupWrapper.getRelationships().isPresent() && !volumeGroupWrapper.getRelationships().get().getRelatedUris(Types.VF_MODULE).isEmpty()) {
                     logger.debug('Volume Group ' + volumeGroupId + ' currently in use')
                     exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Volume Group ${volumeGroupId} currently in use - found vf-module relationship.")
                 }
@@ -283,7 +284,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	 */
 	private String getTenantIdFromVolumeGroup(AAIResultWrapper wrapper) {
         if(wrapper.getRelationships().isPresent()) {
-            List<AAIResourceUri> tenantURIList = wrapper.getRelationships().get().getRelatedAAIUris(AAIObjectType.TENANT)
+            List<AAIResourceUri> tenantURIList = wrapper.getRelationships().get().getRelatedUris(Types.TENANT)
             if(!tenantURIList.isEmpty()){
                 return tenantURIList.get(0).getURIKeys().get(AAIFluentTypeBuilder.Types.TENANT.getUriParams().tenantId)
             }
@@ -356,7 +357,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 
         ExceptionUtil exceptionUtil = new ExceptionUtil()
         try {
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion, groupId)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(Defaults.CLOUD_OWNER.toString(), cloudRegion).volumeGroup(groupId))
             getAAIClient().delete(uri)
             logger.debug("Volume group $groupId deleted.")
         }catch(NotFoundException e){

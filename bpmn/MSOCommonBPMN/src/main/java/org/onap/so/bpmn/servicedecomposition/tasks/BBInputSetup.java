@@ -35,12 +35,12 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.javatuples.Pair;
 import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.Relationships;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
@@ -54,6 +54,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.LineOfBusiness;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.OwningEntity;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Platform;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Project;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.RouteTableReference;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
@@ -62,7 +63,6 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Tenant;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Vnfc;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding;
 import org.onap.so.bpmn.servicedecomposition.entities.ConfigurationResourceKeys;
@@ -496,7 +496,7 @@ public class BBInputSetup implements JavaDelegate {
     }
 
     protected Vnfc getVnfcToConfiguration(String vnfcName) {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VNFC, vnfcName);
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().vnfc(vnfcName));
         Optional<org.onap.aai.domain.yang.Vnfc> vnfcOp =
                 bbInputSetupUtils.getAAIResourceDepthOne(uri).asBean(org.onap.aai.domain.yang.Vnfc.class);
         if (vnfcOp.isPresent()) {
@@ -1883,15 +1883,13 @@ public class BBInputSetup implements JavaDelegate {
     }
 
     private void mapRelationship(ServiceInstance serviceInstance, Relationships relationships) {
-        this.mapProject(relationships.getByType(AAIObjectType.PROJECT, uri -> uri.nodesOnly(true)), serviceInstance);
-        this.mapOwningEntity(relationships.getByType(AAIObjectType.OWNING_ENTITY, uri -> uri.nodesOnly(true)),
-                serviceInstance);
-        this.mapL3Networks(relationships.getRelatedAAIUris(AAIObjectType.L3_NETWORK), serviceInstance.getNetworks());
-        this.mapGenericVnfs(relationships.getRelatedAAIUris(AAIObjectType.GENERIC_VNF), serviceInstance.getVnfs());
-        this.mapPnfs(relationships.getRelatedAAIUris(AAIObjectType.PNF), serviceInstance.getPnfs());
-        this.mapCollection(relationships.getByType(AAIObjectType.COLLECTION), serviceInstance);
-        this.mapConfigurations(relationships.getRelatedAAIUris(AAIObjectType.CONFIGURATION),
-                serviceInstance.getConfigurations());
+        this.mapProject(relationships.getByType(Types.PROJECT, uri -> uri.nodesOnly(true)), serviceInstance);
+        this.mapOwningEntity(relationships.getByType(Types.OWNING_ENTITY, uri -> uri.nodesOnly(true)), serviceInstance);
+        this.mapL3Networks(relationships.getRelatedUris(Types.L3_NETWORK), serviceInstance.getNetworks());
+        this.mapGenericVnfs(relationships.getRelatedUris(Types.GENERIC_VNF), serviceInstance.getVnfs());
+        this.mapPnfs(relationships.getRelatedUris(Types.PNF), serviceInstance.getPnfs());
+        this.mapCollection(relationships.getByType(Types.COLLECTION), serviceInstance);
+        this.mapConfigurations(relationships.getRelatedUris(Types.CONFIGURATION), serviceInstance.getConfigurations());
     }
 
     protected void mapConfigurations(List<AAIResourceUri> relatedAAIUris, List<Configuration> configurations) {
@@ -1930,11 +1928,10 @@ public class BBInputSetup implements JavaDelegate {
         Optional<Relationships> relationshipsOp = aaiGenericVnfWrapper.getRelationships();
         if (relationshipsOp.isPresent()) {
             Relationships relationships = relationshipsOp.get();
-            this.mapPlatform(relationships.getByType(AAIObjectType.PLATFORM), genericVnf);
-            this.mapLineOfBusiness(relationships.getByType(AAIObjectType.LINE_OF_BUSINESS), genericVnf);
-            genericVnf.getVolumeGroups().addAll(mapVolumeGroups(relationships.getByType(AAIObjectType.VOLUME_GROUP)));
-            genericVnf.getInstanceGroups()
-                    .addAll(mapInstanceGroups(relationships.getByType(AAIObjectType.INSTANCE_GROUP)));
+            this.mapPlatform(relationships.getByType(Types.PLATFORM), genericVnf);
+            this.mapLineOfBusiness(relationships.getByType(Types.LINE_OF_BUSINESS), genericVnf);
+            genericVnf.getVolumeGroups().addAll(mapVolumeGroups(relationships.getByType(Types.VOLUME_GROUP)));
+            genericVnf.getInstanceGroups().addAll(mapInstanceGroups(relationships.getByType(Types.INSTANCE_GROUP)));
         }
 
         return genericVnf;
@@ -2041,8 +2038,7 @@ public class BBInputSetup implements JavaDelegate {
     }
 
     private void setInstanceGroupForCollection(Collection collection, Relationships relationships) {
-        List<InstanceGroup> instanceGroupsList =
-                mapInstanceGroups(relationships.getByType(AAIObjectType.INSTANCE_GROUP));
+        List<InstanceGroup> instanceGroupsList = mapInstanceGroups(relationships.getByType(Types.INSTANCE_GROUP));
         if (!instanceGroupsList.isEmpty()) {
             collection.setInstanceGroup(instanceGroupsList.get(0));
         }
@@ -2079,9 +2075,8 @@ public class BBInputSetup implements JavaDelegate {
         Optional<Relationships> relationshipsOp = aaiNetworkWrapper.getRelationships();
         if (relationshipsOp.isPresent()) {
             Relationships relationships = relationshipsOp.get();
-            this.mapNetworkPolicies(relationships.getByType(AAIObjectType.NETWORK_POLICY),
-                    network.getNetworkPolicies());
-            mapRouteTableReferences(relationships.getByType(AAIObjectType.ROUTE_TABLE_REFERENCE),
+            this.mapNetworkPolicies(relationships.getByType(Types.NETWORK_POLICY), network.getNetworkPolicies());
+            mapRouteTableReferences(relationships.getByType(Types.ROUTE_TABLE_REFERENCE),
                     network.getContrailNetworkRouteTableReferences());
         }
 

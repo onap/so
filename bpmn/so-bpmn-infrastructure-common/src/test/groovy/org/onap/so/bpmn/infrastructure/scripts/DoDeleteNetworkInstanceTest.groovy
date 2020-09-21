@@ -45,6 +45,8 @@ import org.onap.so.bpmn.core.WorkflowException
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
 import org.onap.so.constants.Defaults
 
@@ -1609,7 +1611,7 @@ String sdncAdapterWorkflowFormattedResponse_404 =
             Relationship relationship = new Relationship();
             relationship.setRelatedTo("vf-module")
             l3Network.getRelationshipList().getRelationship().add(relationship)
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId).depth(Depth.ALL)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Network(networkId)).depth(Depth.ALL)
             when(client.get(L3Network.class,uri)).thenReturn(Optional.of(l3Network))
 
 			doDeleteNetworkInstance.callRESTQueryAAI(mockExecution)
@@ -1643,7 +1645,7 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			DoDeleteNetworkInstance doDeleteNetworkInstance = spy(DoDeleteNetworkInstance.class)
 			when(doDeleteNetworkInstance.getAAIClient()).thenReturn(client)
 			L3Network l3Network = getL3Network()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId).depth(Depth.ALL)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Network(networkId)).depth(Depth.ALL)
 			when(client.get(L3Network.class,uri)).thenReturn(Optional.of(l3Network))
 			doDeleteNetworkInstance.callRESTQueryAAI(mockExecution)
 
@@ -1681,7 +1683,7 @@ String sdncAdapterWorkflowFormattedResponse_404 =
         relationship.setRelatedLink("http://localhost:18080/cloud-regions/cloud-region/" + Defaults.CLOUD_OWNER.toString() + "/lcpCloudRegion/")
         relationshipList.getRelationship().add(relationship)
         l3Network.setRelationshipList(relationshipList)
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId).depth(Depth.ALL)
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Network(networkId)).depth(Depth.ALL)
         when(client.get(L3Network.class,uri)).thenReturn(Optional.of(l3Network))
         doDeleteNetworkInstance.callRESTQueryAAI(mockExecution)
 

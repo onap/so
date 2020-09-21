@@ -39,7 +39,6 @@ import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -78,12 +77,12 @@ import org.onap.aai.domain.yang.ServiceInstances;
 import org.onap.aai.domain.yang.VfModule;
 import org.onap.aai.domain.yang.VfModules;
 import org.onap.aai.domain.yang.VolumeGroup;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.Relationships;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
@@ -1584,11 +1583,11 @@ public class WorkflowActionTest extends BaseTaskTest {
 
         when(bbSetupUtils.getAAIVfModule(any(), any())).thenReturn(vfModule);
         doReturn(vnfcs).when(SPY_workflowAction).getRelatedResourcesInVfModule(any(), any(),
-                eq(org.onap.aai.domain.yang.Vnfc.class), eq(AAIObjectType.VNFC));
+                eq(org.onap.aai.domain.yang.Vnfc.class), eq(Types.VNFC));
         doReturn(config1).when(SPY_workflowAction).getRelatedResourcesInVnfc(eq(vnfc1),
-                eq(org.onap.aai.domain.yang.Configuration.class), eq(AAIObjectType.CONFIGURATION));
+                eq(org.onap.aai.domain.yang.Configuration.class), eq(Types.CONFIGURATION));
         doReturn(config2).when(SPY_workflowAction).getRelatedResourcesInVnfc(eq(vnfc2),
-                eq(org.onap.aai.domain.yang.Configuration.class), eq(AAIObjectType.CONFIGURATION));
+                eq(org.onap.aai.domain.yang.Configuration.class), eq(Types.CONFIGURATION));
 
         List<ExecuteBuildingBlock> results = SPY_workflowAction.getConfigBuildingBlocks(dataObj);
 
@@ -1659,11 +1658,11 @@ public class WorkflowActionTest extends BaseTaskTest {
 
         when(bbSetupUtils.getAAIVfModule(any(), any())).thenReturn(vfModule);
         doReturn(vnfcs).when(SPY_workflowAction).getRelatedResourcesInVfModule(any(), any(),
-                eq(org.onap.aai.domain.yang.Vnfc.class), eq(AAIObjectType.VNFC));
+                eq(org.onap.aai.domain.yang.Vnfc.class), eq(Types.VNFC));
         doReturn(config1).when(SPY_workflowAction).getRelatedResourcesInVnfc(eq(vnfc1),
-                eq(org.onap.aai.domain.yang.Configuration.class), eq(AAIObjectType.CONFIGURATION));
+                eq(org.onap.aai.domain.yang.Configuration.class), eq(Types.CONFIGURATION));
         doReturn(config2).when(SPY_workflowAction).getRelatedResourcesInVnfc(eq(vnfc2),
-                eq(org.onap.aai.domain.yang.Configuration.class), eq(AAIObjectType.CONFIGURATION));
+                eq(org.onap.aai.domain.yang.Configuration.class), eq(Types.CONFIGURATION));
 
         List<ExecuteBuildingBlock> results = SPY_workflowAction.getConfigBuildingBlocks(dataObj);
 
@@ -1763,13 +1762,13 @@ public class WorkflowActionTest extends BaseTaskTest {
         List<AAIResultWrapper> configurationResultWrappers = new ArrayList<AAIResultWrapper>();
         configurationResultWrappers.add(configurationWrapper);
 
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VNFC, vnfc.getVnfcName());
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().vnfc(vnfc.getVnfcName()));
         when(bbSetupUtils.getAAIResourceDepthOne(uri)).thenReturn(vfncWrapper);
 
         doReturn(configurationResultWrappers).when(SPY_workflowAction).getResultWrappersFromRelationships(anyObject(),
                 anyObject());
         org.onap.aai.domain.yang.Configuration configuration = SPY_workflowAction.getRelatedResourcesInVnfc(vnfc,
-                org.onap.aai.domain.yang.Configuration.class, AAIObjectType.CONFIGURATION);
+                org.onap.aai.domain.yang.Configuration.class, Types.CONFIGURATION);
         assertEquals("testConfigurationId", configuration.getConfigurationId());
     }
 
