@@ -1,9 +1,9 @@
 package org.onap.so.simulator.actions.aai;
 
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.consol.citrus.actions.AbstractTestAction;
@@ -23,8 +23,8 @@ public class DeleteVServers extends AbstractTestAction {
             String cloudRegion = context.getVariable("cloudRegion");
             String cloudOwner = context.getVariable("cloudOwner");
             String tenantId = context.getVariable("tenantId");
-            AAIResourceUri vserverURI = AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner, cloudRegion,
-                    tenantId, vserverId);
+            AAIResourceUri vserverURI = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                    .cloudRegion(cloudOwner, cloudRegion).tenant(tenantId).vserver(vserverId));
             aaiResourceClient.delete(vserverURI);
             logger.error("Delete Vservers in AAI: {}", vserverURI);
         } catch (Exception e) {

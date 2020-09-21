@@ -41,10 +41,11 @@ import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.VfModule;
 import org.onap.aai.domain.yang.VolumeGroup;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
 import org.onap.so.constants.Status;
 import org.onap.so.db.request.client.RequestsDbClient;
@@ -104,7 +105,7 @@ public class BpmnRequestBuilderTest {
         GenericVnf vnf = provider.getMapper().readValue(new File(RESOURCE_PATH + "Vnf.json"), GenericVnf.class);
 
         doReturn(Optional.of(vnf)).when(aaiResourcesClient).get(GenericVnf.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "vnfId"));
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("vnfId")));
 
         ServiceInstancesRequest expectedRequest =
                 mapper.readValue(new File(RESOURCE_PATH + "ExpectedVnfRequest.json"), ServiceInstancesRequest.class);
@@ -117,11 +118,11 @@ public class BpmnRequestBuilderTest {
         GenericVnf vnf = provider.getMapper().readValue(new File(RESOURCE_PATH + "Vnf.json"), GenericVnf.class);
 
         doReturn(Optional.of(vnf)).when(aaiResourcesClient).get(GenericVnf.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "vnfId"));
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("vnfId")));
         VfModule vfModule = provider.getMapper().readValue(new File(RESOURCE_PATH + "VfModule.json"), VfModule.class);
 
-        doReturn(Optional.of(vfModule)).when(aaiResourcesClient).get(VfModule.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, "vnfId", "vfModuleId"));
+        doReturn(Optional.of(vfModule)).when(aaiResourcesClient).get(VfModule.class, AAIUriFactory
+                .createResourceUri(AAIFluentTypeBuilder.network().genericVnf("vnfId").vfModule("vfModuleId")));
 
         ServiceInstancesRequest expectedRequest = mapper
                 .readValue(new File(RESOURCE_PATH + "ExpectedVfModuleRequest.json"), ServiceInstancesRequest.class);
@@ -135,13 +136,13 @@ public class BpmnRequestBuilderTest {
         GenericVnf vnf = provider.getMapper().readValue(new File(RESOURCE_PATH + "Vnf.json"), GenericVnf.class);
 
         doReturn(Optional.of(vnf)).when(aaiResourcesClient).get(GenericVnf.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "vnfId"));
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("vnfId")));
         VolumeGroup volumeGroup =
                 provider.getMapper().readValue(new File(RESOURCE_PATH + "VolumeGroup.json"), VolumeGroup.class);
         AAIResultWrapper wrapper = new AAIResultWrapper(volumeGroup);
         doReturn(wrapper).when(aaiResourcesClient)
-                .get(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "vnfId")
-                        .relatedTo(AAIObjectType.VOLUME_GROUP, "volumeGroupId"));
+                .get(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("vnfId"))
+                        .relatedTo(Types.VOLUME_GROUP.getFragment("volumeGroupId")));
 
         ServiceInstancesRequest expectedRequest = mapper
                 .readValue(new File(RESOURCE_PATH + "ExpectedVolumeGroupRequest.json"), ServiceInstancesRequest.class);
@@ -157,7 +158,7 @@ public class BpmnRequestBuilderTest {
         GenericVnf vnf = provider.getMapper().readValue(new File(RESOURCE_PATH + "Vnf.json"), GenericVnf.class);
 
         doReturn(Optional.of(vnf)).when(aaiResourcesClient).get(GenericVnf.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId));
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId)));
 
         CloudConfiguration result = reqBuilder.getCloudConfigurationVfModuleReplace(vnfId, vfModuleId);
         assertEquals("0422ffb57ba042c0800a29dc85ca70f8", result.getTenantId());

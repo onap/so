@@ -37,16 +37,16 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.aaiclient.client.aai.AAIResourcesClient;
+import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
-import org.onap.aaiclient.client.aai.AAIObjectPlurals;
-import org.onap.aaiclient.client.aai.AAIResourcesClient;
-import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 
@@ -155,7 +155,7 @@ public class AAIVolumeGroupResourcesTest extends TestDataSetup {
 
     @Test
     public void checkNameInUseTrueTest() {
-        AAIPluralResourceUri volumeGroupUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VOLUME_GROUP)
+        AAIPluralResourceUri volumeGroupUri = AAIUriFactory.createNodesUri(Types.VOLUME_GROUPS.getFragment())
                 .queryParam("volume-group-name", "testVolumeGroupName1");
         doReturn(true).when(MOCK_aaiResourcesClient).exists(eq(volumeGroupUri));
         boolean nameInUse = aaiVolumeGroupResources.checkNameInUse(volumeGroup);
@@ -164,7 +164,7 @@ public class AAIVolumeGroupResourcesTest extends TestDataSetup {
 
     @Test
     public void checkNameInUseFalseTest() {
-        AAIPluralResourceUri volumeGroupUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VOLUME_GROUP)
+        AAIPluralResourceUri volumeGroupUri = AAIUriFactory.createNodesUri(Types.VOLUME_GROUPS.getFragment())
                 .queryParam("volume-group-name", "testVolumeGroupName1");
         doReturn(false).when(MOCK_aaiResourcesClient).exists(eq(volumeGroupUri));
         boolean nameInUse = aaiVolumeGroupResources.checkNameInUse(volumeGroup);

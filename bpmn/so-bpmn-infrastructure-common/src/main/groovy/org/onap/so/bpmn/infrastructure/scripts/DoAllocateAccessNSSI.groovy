@@ -47,6 +47,8 @@ import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.ServiceInstance
 import org.onap.so.bpmn.core.domain.ServiceProxy
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.aaiclient.client.aai.AAINamespaceConstants
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aai.domain.yang.NetworkPolicy
@@ -549,7 +551,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		try {
 	
 			AAIResourcesClient client = new AAIResourcesClient()
-			AAIResourceUri nssiServiceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("subscriptionServiceType"), execution.getVariable("RANServiceInstanceId"))
+			AAIResourceUri nssiServiceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(execution.getVariable("RANServiceInstanceId")))
 			client.create(nssiServiceUri, ANServiceInstance)
 	
 		} catch (BpmnError e) {
@@ -630,10 +632,10 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		try {
 	
 			AAIResourcesClient client = new AAIResourcesClient()
-			AAIResourceUri nssiServiceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("subscriptionServiceType"), execution.getVariable("RANServiceInstanceId"))
+			AAIResourceUri nssiServiceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(execution.getVariable("RANServiceInstanceId")))
 			client.create(nssiServiceUri, ANServiceInstance)
 	
-			AAIResourceUri nssiServiceUri1 = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("subscriptionServiceType"), execution.getVariable("RANNFServiceInstanceId"))
+			AAIResourceUri nssiServiceUri1 = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(execution.getVariable("RANNFServiceInstanceId")))
 			client.create(nssiServiceUri1, ANNFServiceInstance)
 	
 		} catch (BpmnError e) {

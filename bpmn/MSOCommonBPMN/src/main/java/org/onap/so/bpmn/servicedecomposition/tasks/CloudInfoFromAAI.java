@@ -24,14 +24,14 @@ package org.onap.so.bpmn.servicedecomposition.tasks;
 
 import java.util.List;
 import java.util.Optional;
+import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
+import org.onap.aaiclient.client.aai.entities.Relationships;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
-import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
-import org.onap.aaiclient.client.aai.AAIObjectType;
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
-import org.onap.aaiclient.client.aai.entities.Relationships;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,8 +88,8 @@ public class CloudInfoFromAAI {
 
     protected Optional<CloudRegion> getRelatedCloudRegionAndTenant(Relationships relationships) {
         CloudRegion cloudRegion = new CloudRegion();
-        List<AAIResultWrapper> cloudRegions = relationships.getByType(AAIObjectType.CLOUD_REGION);
-        List<AAIResultWrapper> tenants = relationships.getByType(AAIObjectType.TENANT);
+        List<AAIResultWrapper> cloudRegions = relationships.getByType(Types.CLOUD_REGION);
+        List<AAIResultWrapper> tenants = relationships.getByType(Types.TENANT);
         if (!cloudRegions.isEmpty()) {
             AAIResultWrapper cloudRegionWrapper = cloudRegions.get(0);
             Optional<org.onap.aai.domain.yang.CloudRegion> aaiCloudRegionOp =

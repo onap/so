@@ -22,7 +22,8 @@ package org.onap.aaiclient.client.aai.entities.uri;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import org.onap.aaiclient.client.aai.AAIObjectType;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 
 public class AAISimpleUriFromParentUriTest {
 
@@ -30,10 +31,10 @@ public class AAISimpleUriFromParentUriTest {
     @Test
     public void appendChildren() {
 
-        AAIResourceUri parentUri =
-                AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, "key1", "key2", "key3");
+        AAIResourceUri parentUri = AAIUriFactory.createResourceUri(
+                AAIFluentTypeBuilder.business().customer("key1").serviceSubscription("key2").serviceInstance("key3"));
 
-        AAIResourceUri uri = new AAISimpleUri(parentUri, AAIObjectType.ALLOTTED_RESOURCE, "key4");
+        AAIResourceUri uri = new AAISimpleUri(parentUri, Types.ALLOTTED_RESOURCE.getFragment("").get().build(), "key4");
 
         assertEquals("path appended",
                 "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3/allotted-resources/allotted-resource/key4",

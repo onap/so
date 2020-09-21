@@ -22,21 +22,21 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import org.onap.so.logger.LoggingAnchor
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
+import org.onap.logging.filter.base.ErrorCode
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor;
 import org.onap.so.bpmn.common.scripts.ExceptionUtil;
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.WorkflowException
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
@@ -324,7 +324,7 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		ExceptionUtil exceptionUtil = new ExceptionUtil()
 		try {
 
-			AAIResourceUri uri = AAIUriFactory.createNodesUri(AAIObjectType.SERVICE_INSTANCE,serviceInstanceId)
+			AAIResourceUri uri = AAIUriFactory.createNodesUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
 			if(getAAIClient().exists(uri)){
 				logger.debug('Service instance ' + serviceInstanceId + ' found in AAI.')
 			}else{

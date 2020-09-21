@@ -46,6 +46,14 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.RouteTableReference;
 import org.onap.aai.domain.yang.VpnBinding;
+import org.onap.aaiclient.client.aai.AAIResourcesClient;
+import org.onap.aaiclient.client.aai.entities.AAIEdgeLabel;
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
+import org.onap.aaiclient.client.aai.entities.Relationships;
+import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
@@ -55,15 +63,6 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
-import org.onap.aaiclient.client.aai.AAIObjectPlurals;
-import org.onap.aaiclient.client.aai.AAIObjectType;
-import org.onap.aaiclient.client.aai.AAIResourcesClient;
-import org.onap.aaiclient.client.aai.entities.AAIEdgeLabel;
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
-import org.onap.aaiclient.client.aai.entities.Relationships;
-import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 
@@ -167,7 +166,8 @@ public class AAINetworkResourcesTest extends TestDataSetup {
                 new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "queryAaiVpnBinding.json")));
         AAIResultWrapper aaiResultWrapper = new AAIResultWrapper(content);
         Optional<VpnBinding> oVpnBinding = Optional.empty();
-        AAIResourceUri aaiUri = AAIUriFactory.createResourceUri(AAIObjectType.VPN_BINDING, "ModelInvariantUUID");
+        AAIResourceUri aaiUri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().vpnBinding("ModelInvariantUUID"));
 
         doReturn(aaiResultWrapper).when(MOCK_aaiResourcesClient).get(isA(AAIResourceUri.class));
         oVpnBinding = aaiNetworkResources.getVpnBinding(aaiUri);
@@ -186,7 +186,7 @@ public class AAINetworkResourcesTest extends TestDataSetup {
         AAIResultWrapper aaiResultWrapper = new AAIResultWrapper(content);
         Optional<org.onap.aai.domain.yang.NetworkPolicy> oNetPolicy = Optional.empty();
         AAIResourceUri netPolicyUri =
-                AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, "ModelInvariantUUID");
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkPolicy("ModelInvariantUUID"));
 
         doReturn(aaiResultWrapper).when(MOCK_aaiResourcesClient).get(isA(AAIResourceUri.class));
         oNetPolicy = aaiNetworkResources.getNetworkPolicy(netPolicyUri);
@@ -204,7 +204,8 @@ public class AAINetworkResourcesTest extends TestDataSetup {
                 new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "queryAaiNetworkPolicies.json")));
         AAIResultWrapper aaiResultWrapper = new AAIResultWrapper(content);
         Optional<org.onap.aai.domain.yang.NetworkPolicies> oNetPolicies = Optional.empty();
-        AAIPluralResourceUri netPoliciesUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY);
+        AAIPluralResourceUri netPoliciesUri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkPolicies());
 
         doReturn(aaiResultWrapper).when(MOCK_aaiResourcesClient).get(isA(AAIPluralResourceUri.class));
         oNetPolicies = aaiNetworkResources.getNetworkPolicies(netPoliciesUri);
@@ -222,8 +223,8 @@ public class AAINetworkResourcesTest extends TestDataSetup {
                 new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "queryAaiNetworkTableRefs.json")));
         AAIResultWrapper aaiResultWrapper = new AAIResultWrapper(content);
         Optional<RouteTableReference> oRtref = Optional.empty();
-        AAIResourceUri rTRefUri =
-                AAIUriFactory.createResourceUri(AAIObjectType.ROUTE_TABLE_REFERENCE, "ModelInvariantUUID");
+        AAIResourceUri rTRefUri = AAIUriFactory
+                .createResourceUri(AAIFluentTypeBuilder.network().routeTableReference("ModelInvariantUUID"));
 
         doReturn(aaiResultWrapper).when(MOCK_aaiResourcesClient).get(isA(AAIResourceUri.class));
         oRtref = aaiNetworkResources.getRouteTable(rTRefUri);
@@ -310,41 +311,45 @@ public class AAINetworkResourcesTest extends TestDataSetup {
     public void connectNetworkToNetworkCollectionInstanceGroupTest() throws Exception {
         aaiNetworkResources.connectNetworkToNetworkCollectionInstanceGroup(network, instanceGroup);
         verify(MOCK_aaiResourcesClient, times(1)).connect(
-                eq(AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId())),
-                eq(AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, network.getNetworkId())));
+                eq(AAIUriFactory
+                        .createResourceUri(AAIFluentTypeBuilder.network().instanceGroup(instanceGroup.getId()))),
+                eq(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Network(network.getNetworkId()))));
     }
 
     @Test
     public void connectNetworkToNetworkCollectionServiceInstanceTest() throws Exception {
         aaiNetworkResources.connectNetworkToNetworkCollectionServiceInstance(network, serviceInstance);
         verify(MOCK_aaiResourcesClient, times(1)).connect(any(AAIResourceUri.class),
-                eq(AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, network.getNetworkId())));
+                eq(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Network(network.getNetworkId()))));
     }
 
     @Test
     public void connectNetworkToCloudRegionTest() throws Exception {
         aaiNetworkResources.connectNetworkToCloudRegion(network, cloudRegion);
         verify(MOCK_aaiResourcesClient, times(1)).connect(
-                eq(AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, network.getNetworkId())),
-                eq(AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, cloudRegion.getCloudOwner(),
-                        cloudRegion.getLcpCloudRegionId())));
+                eq(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Network(network.getNetworkId()))),
+                eq(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                        .cloudRegion(cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId()))));
     }
 
     @Test
     public void connectNetworkToTenantTest() throws Exception {
         aaiNetworkResources.connectNetworkToTenant(network, cloudRegion);
         verify(MOCK_aaiResourcesClient, times(1)).connect(
-                eq(AAIUriFactory.createResourceUri(AAIObjectType.TENANT, cloudRegion.getCloudOwner(),
-                        cloudRegion.getLcpCloudRegionId(), cloudRegion.getTenantId())),
-                eq(AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, network.getNetworkId())));
+                eq(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                        .cloudRegion(cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId())
+                        .tenant(cloudRegion.getTenantId()))),
+                (eq(AAIUriFactory
+                        .createResourceUri(AAIFluentTypeBuilder.network().l3Network(network.getNetworkId())))));
     }
 
     @Test
     public void connectNetworkCollectionInstanceGroupToNetworkCollectionTest() throws Exception {
         aaiNetworkResources.connectNetworkCollectionInstanceGroupToNetworkCollection(instanceGroup, collection);
         verify(MOCK_aaiResourcesClient, times(1)).connect(
-                eq(AAIUriFactory.createResourceUri(AAIObjectType.COLLECTION, collection.getId())),
-                eq(AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId())));
+                eq(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().collection(collection.getId()))),
+                eq(AAIUriFactory
+                        .createResourceUri(AAIFluentTypeBuilder.network().instanceGroup(instanceGroup.getId()))));
     }
 
     @Test
@@ -384,9 +389,10 @@ public class AAINetworkResourcesTest extends TestDataSetup {
     public void connectInstanceGroupToCloudRegionTest() throws Exception {
         aaiNetworkResources.connectInstanceGroupToCloudRegion(instanceGroup, cloudRegion);
         verify(MOCK_aaiResourcesClient, times(1)).connect(
-                eq(AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId())),
-                eq(AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, cloudRegion.getCloudOwner(),
-                        cloudRegion.getLcpCloudRegionId())),
+                eq(AAIUriFactory
+                        .createResourceUri(AAIFluentTypeBuilder.network().instanceGroup(instanceGroup.getId()))),
+                eq(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                        .cloudRegion(cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId()))),
                 eq(AAIEdgeLabel.USES));
     }
 
@@ -396,8 +402,8 @@ public class AAINetworkResourcesTest extends TestDataSetup {
                 new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "aaiSubnetsMapped_to_aai.json")));
         AAIResultWrapper aaiResultWrapper = new AAIResultWrapper(content);
         Optional<org.onap.aai.domain.yang.Subnet> oSubnet = Optional.empty();
-        AAIResourceUri subnetUri =
-                AAIUriFactory.createResourceUri(AAIObjectType.SUBNET, "ModelInvariantUUID", "serviceModelVersionId");
+        AAIResourceUri subnetUri = AAIUriFactory.createResourceUri(
+                AAIFluentTypeBuilder.network().l3Network("ModelInvariantUUID").subnet("serviceModelVersionId"));
 
         doReturn(aaiResultWrapper).when(MOCK_aaiResourcesClient).get(isA(AAIResourceUri.class));
         oSubnet = aaiNetworkResources.getSubnet(subnetUri);
@@ -429,8 +435,8 @@ public class AAINetworkResourcesTest extends TestDataSetup {
 
     @Test
     public void checkInstanceGroupNameInUseTrueTest() throws Exception {
-        AAIPluralResourceUri uri =
-                AAIUriFactory.createResourceUri(AAIObjectPlurals.L3_NETWORK).queryParam("network-name", "networkName");
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Networks())
+                .queryParam("network-name", "networkName");
         doReturn(true).when(MOCK_aaiResourcesClient).exists(eq(uri));
         boolean nameInUse = aaiNetworkResources.checkNetworkNameInUse("networkName");
         assertTrue(nameInUse);
@@ -438,8 +444,8 @@ public class AAINetworkResourcesTest extends TestDataSetup {
 
     @Test
     public void checkInstanceGroupNameInUseFalseTest() throws Exception {
-        AAIPluralResourceUri uri =
-                AAIUriFactory.createResourceUri(AAIObjectPlurals.L3_NETWORK).queryParam("network-name", "networkName");
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Networks())
+                .queryParam("network-name", "networkName");
         doReturn(false).when(MOCK_aaiResourcesClient).exists(eq(uri));
         boolean nameInUse = aaiNetworkResources.checkNetworkNameInUse("networkName");
         assertFalse(nameInUse);

@@ -24,9 +24,9 @@ package org.onap.so.adapters.nssmf.extclients.aai;
 import org.onap.aai.domain.yang.EsrSystemInfoList;
 import org.onap.aai.domain.yang.EsrThirdpartySdncList;
 import org.onap.aai.domain.yang.ServiceInstance;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,8 @@ public class AaiServiceProviderImpl implements AaiServiceProvider {
     @Override
     public EsrThirdpartySdncList invokeGetThirdPartySdncList() {
         return aaiClientProvider.getAaiClient()
-                .get(EsrThirdpartySdncList.class, AAIUriFactory.createResourceUri(AAIObjectType.THIRDPARTY_SDNC_LIST))
+                .get(EsrThirdpartySdncList.class,
+                        AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.externalSystem().esrThirdpartySdncList()))
                 .orElseGet(() -> {
                     logger.debug("No VNFMs in AAI");
                     return null;
@@ -58,7 +59,8 @@ public class AaiServiceProviderImpl implements AaiServiceProvider {
     public EsrSystemInfoList invokeGetThirdPartySdncEsrSystemInfo(String sdncId) {
         return aaiClientProvider.getAaiClient()
                 .get(EsrSystemInfoList.class,
-                        AAIUriFactory.createResourceUri(AAIObjectType.THIRDPARTY_SDNC_SYSTEM_INFO_LIST, sdncId))
+                        AAIUriFactory
+                                .createResourceUri(AAIFluentTypeBuilder.externalSystem().esrThirdpartySdnc((sdncId))))
                 .orElseGet(() -> {
                     logger.debug("VNFM not found in AAI");
                     return null;
@@ -69,8 +71,8 @@ public class AaiServiceProviderImpl implements AaiServiceProvider {
     @Override
     public void invokeCreateServiceInstance(ServiceInstance nssiInstance, String globalSubscriberId, String serviceType,
             String serviceInstanceId) {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId,
-                serviceType, serviceInstanceId);
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                .customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId));
         aaiClientProvider.getAaiClient().create(uri, nssiInstance);
     }
 }
