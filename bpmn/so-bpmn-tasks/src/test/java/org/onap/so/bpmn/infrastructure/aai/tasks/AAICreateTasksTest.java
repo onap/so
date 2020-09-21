@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import com.google.common.base.Strings;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Rule;
@@ -300,6 +301,22 @@ public class AAICreateTasksTest extends BaseTaskTest {
         verify(aaiServiceInstanceResources, times(1)).existsOwningEntity(serviceInstance.getOwningEntity());
         verify(aaiServiceInstanceResources, times(1))
                 .createOwningEntityandConnectServiceInstance(serviceInstance.getOwningEntity(), serviceInstance);
+    }
+
+    @Test
+    public void createOwningEntityShouldThrowExceptionWhenNameAndIDAreNull() {
+        boolean catchedBpmnError = false;
+        serviceInstance.getOwningEntity().setOwningEntityName(null);
+        serviceInstance.getOwningEntity().setOwningEntityId(null);
+
+        try {
+            aaiCreateTasks.createOwningEntity(execution);
+        } catch (BpmnError err) {
+            catchedBpmnError = true;
+        }
+
+        assertTrue(catchedBpmnError);
+        assertEquals(execution.getVariable("ErrorCreateOEAAI"), aaiCreateTasks.EXCEPTION_NAME_AND_ID_ARE_NULL);
     }
 
     @Test
