@@ -35,6 +35,8 @@ import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import javax.ws.rs.NotFoundException
 import static org.junit.Assert.assertEquals
 import static org.mockito.ArgumentMatchers.isA
@@ -65,8 +67,8 @@ class DoCreateVFCNetworkServiceInstanceTest extends MsoGroovyTest {
         when(mockExecution.getVariable("serviceId")).thenReturn("SER12345")
         doNothing().when(client).connect(isA(AAIResourceUri.class),isA(AAIResourceUri.class))
         doCreateVFCNetworkServiceInstance.addNSRelationship(mockExecution);
-        AAIResourceUri nsUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,"MSO_dev","MSO-dev-service-type","NS12345")
-        AAIResourceUri relatedServiceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,"MSO_dev","MSO-dev-service-type","SER12345")
+        AAIResourceUri nsUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("MSO_dev").serviceSubscription("MSO-dev-service-type").serviceInstance("NS12345"))
+        AAIResourceUri relatedServiceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("MSO_dev").serviceSubscription("MSO-dev-service-type").serviceInstance("SER12345"))
         Mockito.verify(client).connect(nsUri,relatedServiceUri)
     }
 

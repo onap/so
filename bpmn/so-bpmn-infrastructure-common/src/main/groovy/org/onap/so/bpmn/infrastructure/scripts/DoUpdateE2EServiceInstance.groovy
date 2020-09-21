@@ -41,6 +41,8 @@ import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.springframework.web.util.UriUtils;
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -315,7 +317,7 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			org.onap.aai.domain.yang.ServiceInstance si = execution.getVariable("serviceInstanceData")
 
             AAIResourcesClient client = new AAIResourcesClient()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
 			client.update(uri, si)
 
 		} catch (BpmnError e) {

@@ -24,22 +24,20 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.VfModule;
 import org.onap.aai.domain.yang.VfModules;
 import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.aai.domain.yang.VolumeGroups;
-import org.onap.aaiclient.client.aai.AAIObjectPlurals;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AAIDataRetrievalTest {
@@ -52,7 +50,8 @@ public class AAIDataRetrievalTest {
     @Test
     public void getVfModulesOfVnfTest() {
         VfModules vfModules = getVfModules();
-        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VF_MODULE, "vnfId");
+        AAIPluralResourceUri uri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("vnfId").vfModules());
         doReturn(Optional.of(vfModules)).when(aaiResourcesClient).get(VfModules.class, uri);
         List<VfModule> vfModulesList = aaiDataRetrieval.getVfModulesOfVnf("vnfId");
         assertEquals("vfm1", vfModulesList.get(0).getVfModuleId());
@@ -64,7 +63,8 @@ public class AAIDataRetrievalTest {
     @Test
     public void getVfModulesOfVnfWhenNoneTest() {
         VfModules vfModules = new VfModules();
-        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VF_MODULE, "vnfId");
+        AAIPluralResourceUri uri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("vnfId").vfModules());
         doReturn(Optional.of(vfModules)).when(aaiResourcesClient).get(VfModules.class, uri);
         List<VfModule> vfModulesList = aaiDataRetrieval.getVfModulesOfVnf("vnfId");
         assertEquals(true, vfModulesList.isEmpty());
@@ -76,8 +76,8 @@ public class AAIDataRetrievalTest {
     @Test
     public void getVolumeGroupsOfVnfTest() throws Exception {
         VolumeGroups volumeGroups = getVolumeGroups();
-        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "vnfId")
-                .relatedTo(AAIObjectPlurals.VOLUME_GROUP);
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("vnfId"))
+                .relatedTo(Types.VOLUME_GROUPS.getFragment());
         doReturn(Optional.of(volumeGroups)).when(aaiResourcesClient).get(VolumeGroups.class, uri);
         List<VolumeGroup> volumeGroupList = aaiDataRetrieval.getVolumeGroupsOfVnf("vnfId");
         assertEquals("vg1", volumeGroupList.get(0).getVolumeGroupId());
@@ -88,8 +88,8 @@ public class AAIDataRetrievalTest {
     @Test
     public void getVolumeGroupsOfVnfWhenNoneTest() throws Exception {
         VolumeGroups volumeGroups = new VolumeGroups();
-        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "vnfId")
-                .relatedTo(AAIObjectPlurals.VOLUME_GROUP);
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("vnfId"))
+                .relatedTo(Types.VOLUME_GROUPS.getFragment());
         doReturn(Optional.of(volumeGroups)).when(aaiResourcesClient).get(VolumeGroups.class, uri);
         List<VolumeGroup> volumeGroupList = aaiDataRetrieval.getVolumeGroupsOfVnf("vnfId");
         assertEquals(true, volumeGroupList.isEmpty());

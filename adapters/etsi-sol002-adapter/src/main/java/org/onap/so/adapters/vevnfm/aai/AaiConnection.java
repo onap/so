@@ -25,11 +25,22 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import org.apache.logging.log4j.util.Strings;
-import org.onap.aai.domain.yang.*;
-import org.onap.aaiclient.client.aai.AAIObjectType;
+import org.onap.aai.domain.yang.EsrSystemInfo;
+import org.onap.aai.domain.yang.EsrSystemInfoList;
+import org.onap.aai.domain.yang.EsrVnfm;
+import org.onap.aai.domain.yang.EsrVnfmList;
+import org.onap.aai.domain.yang.GenericVnf;
+import org.onap.aai.domain.yang.GenericVnfs;
+import org.onap.aai.domain.yang.RelatedToProperty;
+import org.onap.aai.domain.yang.Relationship;
+import org.onap.aai.domain.yang.RelationshipData;
+import org.onap.aai.domain.yang.RelationshipList;
+import org.onap.aai.domain.yang.Vserver;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
+import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
 import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
 import org.slf4j.Logger;
@@ -104,7 +115,7 @@ public class AaiConnection {
     }
 
     private List<EsrSystemInfo> receiveVnfmInternal() {
-        final AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VNFM_LIST);
+        final AAIPluralResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.externalSystem().esrVnfmList());
         final Optional<EsrVnfmList> response = getResourcesClient().get(EsrVnfmList.class, resourceUri);
 
         if (response.isPresent()) {
@@ -127,7 +138,7 @@ public class AaiConnection {
 
     private List<EsrSystemInfo> receiveVnfmServiceUrl(final String vnfmId) {
         final Optional<EsrVnfm> response = getResourcesClient().get(EsrVnfm.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.VNFM, vnfmId).depth(Depth.ONE));
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.externalSystem().esrVnfm(vnfmId)).depth(Depth.ONE));
 
         if (response.isPresent()) {
             final EsrVnfm esrVnfm = response.get();
@@ -143,8 +154,8 @@ public class AaiConnection {
     }
 
     public String receiveGenericVnfId(final String href) {
-        final AAIResourceUri resourceUri =
-                AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNFS).queryParam(SELFLINK, href);
+        final AAIPluralResourceUri resourceUri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnfs()).queryParam(SELFLINK, href);
         final Optional<GenericVnfs> response = getResourcesClient().get(GenericVnfs.class, resourceUri);
 
         if (response.isPresent()) {
@@ -165,7 +176,7 @@ public class AaiConnection {
     }
 
     public String receiveVserverName(final String genericId) {
-        final AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, genericId);
+        final AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(genericId));
         final Optional<GenericVnf> response = getResourcesClient().get(GenericVnf.class, resourceUri);
 
         if (response.isPresent()) {
@@ -199,7 +210,7 @@ public class AaiConnection {
     private String receiveVserverNameFromParams(final String cloudOwner, final String cloudId, final String tenantId,
             final String vserverId) {
         final AAIResourceUri resourceUri =
-                AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner, cloudId, tenantId, vserverId);
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(cloudOwner, cloudId).tenant(tenantId).vserver(vserverId));
         final Optional<Vserver> response = getResourcesClient().get(Vserver.class, resourceUri);
 
         if (response.isPresent()) {

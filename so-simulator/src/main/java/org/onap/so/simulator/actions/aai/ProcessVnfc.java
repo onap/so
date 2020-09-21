@@ -1,18 +1,12 @@
 package org.onap.so.simulator.actions.aai;
 
-import java.io.InputStream;
-import java.util.List;
 import org.onap.aai.domain.yang.Vnfc;
-import org.onap.aai.domain.yang.Vserver;
-import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
-import org.onap.aaiclient.client.aai.entities.Relationships;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
 import com.consol.citrus.actions.AbstractTestAction;
 import com.consol.citrus.context.TestContext;
 
@@ -38,7 +32,8 @@ public class ProcessVnfc extends AbstractTestAction {
                     && context.getVariable("serviceAction").equals("assign")
                     && context.getVariable("vfModuleName").equals("nc_dummy_id")) {
 
-                AAIResourceUri vnfcURI = AAIUriFactory.createResourceUri(AAIObjectType.VNFC, "ssc_server_1");
+                AAIResourceUri vnfcURI =
+                        AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().vnfc("ssc_server_1"));
                 Vnfc vnfc = new Vnfc();
                 vnfc.setVnfcName("ssc_server_1");
                 vnfc.setNfcNamingCode("oamfw");
@@ -60,8 +55,8 @@ public class ProcessVnfc extends AbstractTestAction {
                 } else {
                     aaiResourceClient.get(vnfcURI);
                 }
-                AAIResourceUri vfModuleURI = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE,
-                        context.getVariable("vnfId"), context.getVariable("vfModuleId"));
+                AAIResourceUri vfModuleURI = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network()
+                        .genericVnf(context.getVariable("vnfId")).vfModule(context.getVariable("vfModuleId")));
                 logger.debug("creating VNFC edge to vf module");
                 aaiResourceClient.connect(vfModuleURI, vnfcURI);
             }

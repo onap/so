@@ -28,6 +28,8 @@ import org.onap.aai.domain.yang.GenericVnf
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
 import org.onap.logging.filter.base.ErrorCode
 import org.onap.so.logger.MessageEnum
@@ -83,7 +85,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 
 		try {
 			AaiUtil aaiUriUtil = new AaiUtil(this)
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId))
 			uri.depth(Depth.ONE)
             Optional<GenericVnf> genericVnf = getAAIClient().get(GenericVnf.class, uri)
 
@@ -109,7 +111,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 
 		try {
 			String vnfId = execution.getVariable("DAAIVfMod_vnfId")
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId))
             getAAIClient().delete(uri)
 			execution.setVariable("DAAIVfMod_deleteGenericVnfResponseCode", 200)
 			execution.setVariable("DAAIVfMod_deleteGenericVnfResponse", "Vnf Deleted")
@@ -126,7 +128,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 			String vnfId = execution.getVariable("DAAIVfMod_vnfId")
 			String vfModuleId = execution.getVariable("DAAIVfMod_vfModuleId")
 
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId).vfModule(vfModuleId))
 
             getAAIClient().delete(uri)
 			execution.setVariable("DAAIVfMod_deleteVfModuleResponseCode", 200)

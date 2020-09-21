@@ -29,6 +29,8 @@ import org.onap.aai.domain.yang.VolumeGroup
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.constants.Defaults
 import org.onap.logging.filter.base.ErrorCode
 import org.onap.so.logger.LoggingAnchor
@@ -74,7 +76,7 @@ public class ConfirmVolumeGroupName extends AbstractServiceTaskProcessor{
         execution.setVariable("CVGN_volumeGroupName", volumeGroupName)
         execution.setVariable("CVGN_aicCloudRegion", aicCloudRegion)
 
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), aicCloudRegion, volumeGroupId)
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(Defaults.CLOUD_OWNER.toString(), aicCloudRegion).volumeGroup(volumeGroupId))
         execution.setVariable("CVGN_volumeGroupGetEndpoint", uri)
     }
 

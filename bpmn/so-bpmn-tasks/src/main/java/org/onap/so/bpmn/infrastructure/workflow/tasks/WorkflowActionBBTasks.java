@@ -20,12 +20,23 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import javax.persistence.EntityNotFoundException;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.onap.aai.domain.yang.*;
-import org.onap.aaiclient.client.aai.AAIObjectType;
+import org.onap.aai.domain.yang.GenericVnf;
+import org.onap.aai.domain.yang.InstanceGroup;
+import org.onap.aai.domain.yang.L3Network;
+import org.onap.aai.domain.yang.ServiceInstance;
+import org.onap.aai.domain.yang.VfModule;
+import org.onap.aai.domain.yang.Vnfc;
+import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.aaiclient.client.aai.entities.Configuration;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
 import org.onap.so.bpmn.common.listener.db.RequestsDbListenerRunner;
 import org.onap.so.bpmn.common.listener.flowmanipulator.FlowManipulatorListenerRunner;
@@ -48,13 +59,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import javax.persistence.EntityNotFoundException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class WorkflowActionBBTasks {
@@ -421,8 +427,7 @@ public class WorkflowActionBBTasks {
             String vnfCustomizationUUID = bbInputSetupUtils.getAAIGenericVnf(vnfId).getModelCustomizationId();
             String vfModuleCustomizationUUID =
                     bbInputSetupUtils.getAAIVfModule(vnfId, vfModuleId).getModelCustomizationId();
-            List<Vnfc> vnfcs =
-                    workflowAction.getRelatedResourcesInVfModule(vnfId, vfModuleId, Vnfc.class, AAIObjectType.VNFC);
+            List<Vnfc> vnfcs = workflowAction.getRelatedResourcesInVfModule(vnfId, vfModuleId, Vnfc.class, Types.VNFC);
             logger.debug("Vnfc Size: {}", vnfcs.size());
             for (Vnfc vnfc : vnfcs) {
                 String modelCustomizationId = vnfc.getModelCustomizationId();
@@ -461,7 +466,7 @@ public class WorkflowActionBBTasks {
 
     protected String getConfigurationId(Vnfc vnfc) throws Exception {
         Configuration configuration =
-                workflowAction.getRelatedResourcesInVnfc(vnfc, Configuration.class, AAIObjectType.CONFIGURATION);
+                workflowAction.getRelatedResourcesInVnfc(vnfc, Configuration.class, Types.CONFIGURATION);
         if (configuration != null) {
             return configuration.getConfigurationId();
         } else {

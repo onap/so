@@ -43,6 +43,8 @@ import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -149,7 +151,7 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
         try {
             String parentServiceId = "";
             AAIResourcesClient resourceClient = new AAIResourcesClient();
-            AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.ALLOTTED_RESOURCE, globalCustId, serviceType, serviceInstanceId, allotedResourceId)
+            AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalCustId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId).allottedResource(allotedResourceId))
             AAIResultWrapper aaiResult = resourceClient.get(serviceInstanceUri, NotFoundException.class)
             Optional<AllottedResource> si = aaiResult.asBean(AllottedResource.class)
             if((si.present) && (null != si.get().getRelationshipList()) && (null != si.get().getRelationshipList().getRelationship())) {

@@ -20,12 +20,23 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 
+import static org.apache.commons.lang3.StringUtils.isBlank
+import javax.ws.rs.NotFoundException
+import javax.ws.rs.core.Response
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.aai.domain.yang.Relationship
-import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.aai.domain.yang.CommunicationServiceProfile
 import org.onap.aai.domain.yang.CommunicationServiceProfiles
+import org.onap.aai.domain.yang.Relationship
+import org.onap.aai.domain.yang.ServiceInstance
+import org.onap.aaiclient.client.aai.AAIObjectName
+import org.onap.aaiclient.client.aai.AAIObjectType
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.logging.filter.base.ONAPComponents
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -35,20 +46,9 @@ import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
-import org.onap.so.client.HttpClientFactory
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.AAIResourcesClient
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.db.request.beans.OperationStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import javax.ws.rs.NotFoundException
-import javax.ws.rs.core.Response
-
-import static org.apache.commons.lang3.StringUtils.isBlank
 
 class DeleteCommunicationService extends AbstractServiceTaskProcessor {
     private final String PREFIX ="DeleteCommunicationService"
@@ -147,7 +147,7 @@ class DeleteCommunicationService extends AbstractServiceTaskProcessor {
         String serviceInstanceId = execution.getVariable("serviceInstanceId")
 
         String errorMsg = "query communication service from aai failed"
-        AAIResultWrapper wrapper = queryAAI(execution, AAIObjectType.SERVICE_INSTANCE, serviceInstanceId, errorMsg)
+        AAIResultWrapper wrapper = queryAAI(execution, Types.SERVICE_INSTANCE, serviceInstanceId, errorMsg)
         Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
         if(si.isPresent())
         {
@@ -177,16 +177,16 @@ class DeleteCommunicationService extends AbstractServiceTaskProcessor {
     /**
      * query AAI
      * @param execution
-     * @param aaiObjectType
+     * @param aaiObjectName
      * @param instanceId
      * @return AAIResultWrapper
      */
-    private AAIResultWrapper queryAAI(DelegateExecution execution, AAIObjectType aaiObjectType, String instanceId, String errorMsg)
+    private AAIResultWrapper queryAAI(DelegateExecution execution, AAIObjectName aaiObjectName, String instanceId, String errorMsg)
     {
         String globalSubscriberId = execution.getVariable("globalSubscriberId")
         String serviceType = execution.getVariable("serviceType")
 
-        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(aaiObjectType, globalSubscriberId, serviceType, instanceId)
+        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(instanceId))
         if (!getAAIClient().exists(resourceUri)) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 2500, errorMsg)
         }
@@ -310,7 +310,7 @@ class DeleteCommunicationService extends AbstractServiceTaskProcessor {
         String profileId
         try
         {
-            AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.COMMUNICATION_PROFILE_ALL, globalSubscriberId, serviceType, serviceInstanceId)
+            AAIPluralResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId).communicationServiceProfiles())
             AAIResultWrapper wrapper = getAAIClient().get(resourceUri, NotFoundException.class)
             Optional<CommunicationServiceProfiles> csProfilesOpt = wrapper.asBean(CommunicationServiceProfiles.class)
             if(csProfilesOpt.isPresent()){
@@ -318,7 +318,7 @@ class DeleteCommunicationService extends AbstractServiceTaskProcessor {
                 CommunicationServiceProfile csProfile = csProfiles.getCommunicationServiceProfile().get(0)
                 profileId = csProfile ? csProfile.getProfileId() : ""
             }
-            resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.COMMUNICATION_SERVICE_PROFILE, globalSubscriberId, serviceType, serviceInstanceId, profileId)
+            resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId).communicationServiceProfile(profileId))
             if (!getAAIClient().exists(resourceUri)) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "communication service profile was not found in aai")
             }
@@ -344,7 +344,7 @@ class DeleteCommunicationService extends AbstractServiceTaskProcessor {
         try
         {
             LOGGER.debug("start delete communication service from AAI")
-            AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("serviceType"), execution.getVariable("serviceInstanceId"))
+            AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("serviceType")).serviceInstance(execution.getVariable("serviceInstanceId")))
             getAAIClient().delete(serviceInstanceUri)
 
             execution.setVariable("progress", "100")

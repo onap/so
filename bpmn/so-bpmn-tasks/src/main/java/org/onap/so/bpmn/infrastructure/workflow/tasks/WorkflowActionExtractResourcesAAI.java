@@ -23,12 +23,12 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks;
 import java.util.List;
 import java.util.Optional;
 import org.onap.aai.domain.yang.VpnBinding;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
-import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.Relationships;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
+import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class WorkflowActionExtractResourcesAAI {
     protected BBInputSetupUtils bbInputSetupUtils;
 
     public Optional<Configuration> extractRelationshipsConfiguration(Relationships relationships) {
-        List<AAIResultWrapper> configurations = relationships.getByType(AAIObjectType.CONFIGURATION);
+        List<AAIResultWrapper> configurations = relationships.getByType(Types.CONFIGURATION);
         for (AAIResultWrapper configWrapper : configurations) {
             Optional<Configuration> config = configWrapper.asBean(Configuration.class);
             if (config.isPresent()) {
@@ -53,7 +53,7 @@ public class WorkflowActionExtractResourcesAAI {
     }
 
     public Optional<VpnBinding> extractRelationshipsVpnBinding(Relationships relationships) {
-        List<AAIResourceUri> configurations = relationships.getRelatedUris(AAIObjectType.VPN_BINDING);
+        List<AAIResourceUri> configurations = relationships.getRelatedUris(Types.VPN_BINDING);
         for (AAIResourceUri vpnBindingUri : configurations) {
             AAIResultWrapper vpnBindingWrapper = bbInputSetupUtils.getAAIResourceDepthOne(vpnBindingUri);
             Optional<VpnBinding> vpnBinding = vpnBindingWrapper.asBean(VpnBinding.class);
@@ -65,7 +65,7 @@ public class WorkflowActionExtractResourcesAAI {
     }
 
     public Optional<Relationships> extractRelationshipsVnfc(Relationships relationships) {
-        List<AAIResultWrapper> vnfcs = relationships.getByType(AAIObjectType.VNFC);
+        List<AAIResultWrapper> vnfcs = relationships.getByType(Types.VNFC);
         for (AAIResultWrapper vnfcWrapper : vnfcs) {
             if (vnfcWrapper.getRelationships().isPresent()) {
                 return vnfcWrapper.getRelationships();

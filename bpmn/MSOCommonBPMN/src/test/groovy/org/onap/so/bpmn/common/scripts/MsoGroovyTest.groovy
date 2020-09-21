@@ -31,16 +31,15 @@ import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnitRunner
 import org.onap.aai.domain.yang.GenericVnf
-import org.onap.so.bpmn.mock.FileUtil
-import org.onap.so.client.HttpClient
-import org.onap.aaiclient.client.aai.AAIObjectPlurals
-import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
+import org.onap.so.bpmn.mock.FileUtil
+import org.onap.so.client.HttpClient
 import org.onap.so.constants.Defaults
 
 @RunWith(MockitoJUnitRunner.Silent.class)
@@ -111,8 +110,8 @@ abstract class MsoGroovyTest {
     }
 	
     protected Optional<GenericVnf> mockAAIGenericVnf(String vnfId,String file){
-        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
-        AAIResourceUri resourceUriDepthOne = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId).depth(Depth.ONE)
+        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId))
+        AAIResourceUri resourceUriDepthOne = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId)).depth(Depth.ONE)
         Optional<GenericVnf> genericVnf = getAAIObjectFromJson(GenericVnf.class,file);
         when(client.get(GenericVnf.class, resourceUri)).thenReturn(genericVnf)
         when(client.get(GenericVnf.class, resourceUriDepthOne)).thenReturn(genericVnf)
@@ -120,8 +119,8 @@ abstract class MsoGroovyTest {
     }
 
     protected Optional<GenericVnf> mockAAIGenericVnfByName(String vnfName){
-        AAIPluralResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName)
-        AAIPluralResourceUri resourceUriDepthOne = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName).depth(Depth.ONE)
+        AAIPluralResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnfs()).queryParam("vnf-name", vnfName)
+        AAIPluralResourceUri resourceUriDepthOne = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnfs()).queryParam("vnf-name", vnfName).depth(Depth.ONE)
         Optional<GenericVnf> genericVnf = getAAIObjectFromJson(GenericVnf.class,"__files/aai/GenericVnf.json");
         when(client.get(GenericVnf.class, resourceUri)).thenReturn(genericVnf)
         when(client.get(GenericVnf.class, resourceUriDepthOne)).thenReturn(genericVnf)
@@ -129,21 +128,21 @@ abstract class MsoGroovyTest {
     }
 
     protected void mockAAIGenericVnfNotFound(String vnfId){
-        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId).depth(Depth.ONE)
-        AAIResourceUri resourceUriDepthOne = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId).depth(Depth.ONE)
+        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId)).depth(Depth.ONE)
+        AAIResourceUri resourceUriDepthOne = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId)).depth(Depth.ONE)
         when(client.get(GenericVnf.class, resourceUri)).thenReturn(Optional.empty())
         when(client.get(GenericVnf.class, resourceUriDepthOne)).thenReturn(Optional.empty())
     }
 
     protected void mockAAIGenericVnfByNameNotFound(String vnfName){
-        AAIPluralResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName)
-        AAIPluralResourceUri resourceUriDepthOne = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName).depth(Depth.ONE)
+        AAIPluralResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnfs()).queryParam("vnf-name", vnfName)
+        AAIPluralResourceUri resourceUriDepthOne = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnfs()).queryParam("vnf-name", vnfName).depth(Depth.ONE)
         when(client.get(GenericVnf.class, resourceUri)).thenReturn(Optional.empty())
         when(client.get(GenericVnf.class, resourceUriDepthOne)).thenReturn(Optional.empty())
     }
 
     protected AAIResultWrapper mockVolumeGroupWrapper(String region, String volumeGroupId, String file){
-        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP,CLOUD_OWNER, region,volumeGroupId)
+        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(CLOUD_OWNER, region).volumeGroup(volumeGroupId))
         String json = FileUtil.readResourceFile(file)
         AAIResultWrapper resultWrapper = new AAIResultWrapper(json)
         when(client.get(resourceUri)).thenReturn(resultWrapper)

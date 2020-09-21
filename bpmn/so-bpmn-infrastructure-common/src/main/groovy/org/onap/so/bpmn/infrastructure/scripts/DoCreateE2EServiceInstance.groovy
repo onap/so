@@ -22,40 +22,36 @@
  */
 package org.onap.so.bpmn.infrastructure.scripts
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
-
-import org.onap.so.logger.LoggingAnchor
-import org.onap.logging.filter.base.ErrorCode
-
 import static org.apache.commons.lang3.StringUtils.*
-
 import javax.ws.rs.NotFoundException
-
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.Relationship
 import org.onap.aai.domain.yang.ServiceInstance
-import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
-import org.onap.so.bpmn.common.scripts.ExceptionUtil
-import org.onap.so.bpmn.common.scripts.MsoUtils
-import org.onap.so.bpmn.core.RollbackData
-import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.bpmn.core.domain.Resource
-import org.onap.so.bpmn.core.domain.ServiceDecomposition
-import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.so.bpmn.infrastructure.workflow.service.ServicePluginFactory
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
+import org.onap.so.bpmn.common.scripts.ExceptionUtil
+import org.onap.so.bpmn.common.scripts.MsoUtils
+import org.onap.so.bpmn.core.RollbackData
+import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.bpmn.core.domain.Resource
+import org.onap.so.bpmn.core.domain.ServiceDecomposition
+import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.bpmn.infrastructure.workflow.service.ServicePluginFactory
+import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
 import org.springframework.web.util.UriUtils
-import org.onap.so.bpmn.core.UrnPropertiesReader
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 
 /**
  * This groovy class supports the <class>DoCreateServiceInstance.bpmn</class> process.
@@ -272,7 +268,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			org.onap.aai.domain.yang.ServiceInstance si = execution.getVariable("serviceInstanceData")
 
 			AAIResourcesClient client = new AAIResourcesClient()
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("serviceType"), serviceInstanceId)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("serviceType")).serviceInstance(serviceInstanceId))
 			client.create(uri, si)
 
 		} catch (BpmnError e) {
@@ -345,7 +341,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		try {
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			AAIResourcesClient client = new AAIResourcesClient()
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("serviceType"), serviceInstanceId).relationshipAPI()
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("serviceType")).serviceInstance(serviceInstanceId)).relationshipAPI()
 			client.create(uri, relationship)
 
 		} catch (BpmnError e) {
@@ -402,7 +398,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			String serviceType = execution.getVariable('subscriptionServiceType')
 
 			AAIResourcesClient resourceClient = new AAIResourcesClient()
-			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId, serviceType, serviceInstanceId)
+			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId))
 			AAIResultWrapper wrapper = resourceClient.get(serviceInstanceUri, NotFoundException.class)
 
 			Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)

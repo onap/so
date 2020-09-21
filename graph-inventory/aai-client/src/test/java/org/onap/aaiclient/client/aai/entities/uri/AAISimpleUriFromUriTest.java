@@ -24,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 import javax.ws.rs.core.UriBuilder;
 import org.junit.Test;
 import org.onap.aaiclient.client.aai.AAIObjectType;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 
 public class AAISimpleUriFromUriTest {
 
@@ -66,10 +67,11 @@ public class AAISimpleUriFromUriTest {
     @Test
     public void beforeBuildEquality() {
 
-        AAIResourceUri uri = new AAISimpleUri(AAIObjectType.VCE,
+        AAIResourceUri uri = new AAISimpleUri(AAIFluentTypeBuilder.network().vce("").build(),
                 UriBuilder.fromUri("/network/vces/vce/a9f%20%20ec18e-1ea3-40e4-a6c0-a89b3de07053").build());
 
-        AAIResourceUri uri2 = new AAISimpleUri(AAIObjectType.VCE, "a9f  ec18e-1ea3-40e4-a6c0-a89b3de07053");
+        AAIResourceUri uri2 = new AAISimpleUri(AAIFluentTypeBuilder.network().vce("").build(),
+                "a9f  ec18e-1ea3-40e4-a6c0-a89b3de07053");
         assertEquals("are equal", uri2, uri);
 
     }

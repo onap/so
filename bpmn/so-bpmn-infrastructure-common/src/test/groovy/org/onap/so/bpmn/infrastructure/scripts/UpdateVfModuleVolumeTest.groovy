@@ -42,6 +42,8 @@ import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.constants.Defaults
 
 import javax.ws.rs.core.UriBuilder
@@ -75,7 +77,7 @@ class UpdateVfModuleVolumeTest extends MsoGroovyTest{
 
         UpdateVfModuleVolume obj = spy(UpdateVfModuleVolume.class)
         when(obj.getAAIClient()).thenReturn(client)
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), aicCloudRegion, volumeGroupId)
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(Defaults.CLOUD_OWNER.toString(), aicCloudRegion).volumeGroup(volumeGroupId))
         VolumeGroup volumeGroup = new VolumeGroup();
         volumeGroup.setVolumeGroupId(volumeGroupId)
 
@@ -94,7 +96,7 @@ class UpdateVfModuleVolumeTest extends MsoGroovyTest{
 
         UpdateVfModuleVolume obj = spy(UpdateVfModuleVolume.class)
         when(obj.getAAIClient()).thenReturn(client)
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), aicCloudRegion, volumeGroupId)
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(Defaults.CLOUD_OWNER.toString(), aicCloudRegion).volumeGroup(volumeGroupId))
         VolumeGroup volumeGroup = new VolumeGroup();
         volumeGroup.setVolumeGroupId(volumeGroupId)
 
