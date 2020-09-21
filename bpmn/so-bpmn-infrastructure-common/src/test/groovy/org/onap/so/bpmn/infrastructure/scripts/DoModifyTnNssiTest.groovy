@@ -29,11 +29,14 @@ import org.mockito.Mockito
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 
 import static org.junit.Assert.assertNotNull
 import static org.mockito.ArgumentMatchers.eq
 import static org.mockito.Mockito.*
+
 
 class DoModifyTnNssiTest extends MsoGroovyTest {
     @Before
@@ -80,7 +83,7 @@ class DoModifyTnNssiTest extends MsoGroovyTest {
         when(mockExecution.getVariable("modelUuid")).thenReturn("36a3a8ea-49a6-4ac8-b06c-89a54544b9b6")
         when(mockExecution.getVariable("sliceProfile")).thenReturn(mockSliceProfile())
 
-        AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, "5GCustomer", "5G", "5ad89cf9-0569-4a93-9306-d8324321e2be")
+        AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("5GCustomer").serviceSubscription("5G").serviceInstance("5ad89cf9-0569-4a93-9306-d8324321e2be"))
         DoModifyTnNssi obj = spy(DoModifyTnNssi.class)
         when(obj.getAAIClient()).thenReturn(client)
 

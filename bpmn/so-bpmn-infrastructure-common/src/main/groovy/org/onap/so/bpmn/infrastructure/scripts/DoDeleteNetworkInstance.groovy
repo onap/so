@@ -32,6 +32,7 @@ import org.onap.aaiclient.client.aai.entities.Relationships
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
 import org.onap.logging.filter.base.ErrorCode
 import org.onap.logging.filter.base.ONAPComponents;
@@ -256,7 +257,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
         ExceptionUtil exceptionUtil = new ExceptionUtil()
         Boolean isVfRelationshipExist = false
         try {
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId).depth(Depth.ALL)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Network(networkId)).depth(Depth.ALL)
             Optional<L3Network> l3Network = getAAIClient().get(L3Network.class,uri);
             AAIResultWrapper wrapper = getAAIClient().get(uri);
             Optional<Relationships> relationships = wrapper.getRelationships()
@@ -266,13 +267,13 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
                 execution.setVariable(Prefix + "queryAAIResponse", l3Network.get())
                 execution.setVariable(Prefix + "isAAIGood", true)
                 if (relationships.isPresent()){
-                    if(!relationships.get().getRelatedAAIUris(AAIObjectType.VF_MODULE).isEmpty()){
+                    if(!relationships.get().getRelatedUris(Types.VF_MODULE).isEmpty()){
                         execution.setVariable(Prefix + "isVfRelationshipExist", true)
                         isVfRelationshipExist = true
                         String relationshipMessage = "AAI Query Success Response but 'vf-module' relationship exist, not allowed to delete: network Id: " + networkId
                         exceptionUtil.buildWorkflowException(execution, 2500, relationshipMessage)
                     }else{
-                        List<AAIResourceUri> tenantURIList = relationships.get().getRelatedAAIUris(AAIObjectType.TENANT)
+                        List<AAIResourceUri> tenantURIList = relationships.get().getRelatedUris(Types.TENANT)
                         for(AAIResourceUri tenantURI: tenantURIList){
                             if(execution.getVariable(Prefix + "tenantId") == null) {
                                 String tenantId = tenantURI.getURIKeys().get(AAIFluentTypeBuilder.Types.TENANT.getUriParams().tenantId)
@@ -280,7 +281,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
                                 logger.debug(" Get AAI getTenantId()  : " + tenantId)
                             }
                         }
-                        List<AAIResourceUri> cloudRegionURIList = relationships.get().getRelatedAAIUris(AAIObjectType.CLOUD_REGION)
+                        List<AAIResourceUri> cloudRegionURIList = relationships.get().getRelatedUris(Types.CLOUD_REGION)
                         for(AAIResourceUri tenantURI: cloudRegionURIList){
                             if(execution.getVariable(Prefix + "lcpCloudRegion") == null) {
                                 String lcpCloudRegion = tenantURI.getURIKeys().get(AAIFluentTypeBuilder.Types.CLOUD_REGION.getUriParams().cloudRegionId)
@@ -322,7 +323,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
             // Prepare AA&I url
             AaiUtil aaiUtil = new AaiUtil(this)
 
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, Defaults.CLOUD_OWNER.toString(), cloudRegion)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(Defaults.CLOUD_OWNER.toString(), cloudRegion))
             def queryCloudRegionRequest = aaiUtil.createAaiUri(uri)
 
             execution.setVariable(Prefix + "queryCloudRegionRequest", queryCloudRegionRequest)

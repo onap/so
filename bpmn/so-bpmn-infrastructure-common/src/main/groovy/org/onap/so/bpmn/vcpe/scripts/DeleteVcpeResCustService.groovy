@@ -31,6 +31,7 @@ import org.onap.aaiclient.client.aai.entities.Relationships
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.logging.filter.base.ErrorCode
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -205,7 +206,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 			String serviceInstanceId = execution.getVariable('serviceInstanceId')
 
 			AAIResourcesClient resourceClient = new AAIResourcesClient()
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
 
 			if(resourceClient.exists(uri)){
 				AAIResultWrapper wrapper = resourceClient.get(uri, NotFoundException.class)
@@ -217,13 +218,13 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 
 				if(relationships.isPresent()){
 
-					List<AAIResourceUri> vnfUris = relationships.get().getRelatedAAIUris(AAIObjectType.GENERIC_VNF)
+					List<AAIResourceUri> vnfUris = relationships.get().getRelatedUris(Types.GENERIC_VNF)
 					for(AAIResourceUri u:vnfUris){
 						Map<String, String> keys = u.getURIKeys()
 						String vnfId = keys.get(AAIFluentTypeBuilder.Types.GENERIC_VNF.getUriParams().vnfId)
 						relatedVnfIdList.add(vnfId)
 					}
-					List<AAIResourceUri> arUris = relationships.get().getRelatedAAIUris(AAIObjectType.ALLOTTED_RESOURCE)
+					List<AAIResourceUri> arUris = relationships.get().getRelatedUris(Types.ALLOTTED_RESOURCE)
 					for(AAIResourceUri u:arUris){
 						String ar = resourceClient.get(u).getJson()
 

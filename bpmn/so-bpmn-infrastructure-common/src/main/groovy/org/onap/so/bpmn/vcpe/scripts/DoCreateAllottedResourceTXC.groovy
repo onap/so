@@ -22,25 +22,25 @@
 
 package org.onap.so.bpmn.vcpe.scripts
 
-import org.onap.so.logger.LoggingAnchor
+import static org.apache.commons.lang3.StringUtils.isBlank
+import javax.ws.rs.core.UriBuilder
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.AllottedResource
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
+import org.onap.logging.filter.base.ErrorCode
 import org.onap.so.bpmn.common.scripts.*;
 import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import javax.ws.rs.core.UriBuilder
-import static org.apache.commons.lang3.StringUtils.isBlank
 
 /**
  * This groovy class supports the <class>DoCreateAllottedResourceTXC.bpmn</class> process.
@@ -206,7 +206,7 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 
 			AAIResourceUri siResourceLink= execution.getVariable("PSI_resourceLink")
 
-			AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceFromParentURI(siResourceLink, AAIObjectType.ALLOTTED_RESOURCE, allottedResourceId)
+			AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceFromParentURI(siResourceLink, Types.ALLOTTED_RESOURCE.getFragment(allottedResourceId))
 
 			execution.setVariable("aaiARPath", allottedResourceUri.build().toString());
 			String arType = execution.getVariable("allottedResourceType")
@@ -224,7 +224,7 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 			resource.setModelInvariantId(modelInvariantId)
 			resource.setModelVersionId(modelVersionId)
 			getAAIClient().create(allottedResourceUri, resource)
-			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.SERVICE_INSTANCE, UriBuilder.fromPath(CSI_resourceLink).build())
+			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceFromExistingURI(Types.SERVICE_INSTANCE, UriBuilder.fromPath(CSI_resourceLink).build())
 			getAAIClient().connect(allottedResourceUri,serviceInstanceUri)
 
 		}catch (Exception ex) {

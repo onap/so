@@ -27,12 +27,13 @@ import org.onap.aai.domain.yang.LInterface;
 import org.onap.aai.domain.yang.VfModule;
 import org.onap.aai.domain.yang.VfModules;
 import org.onap.aai.domain.yang.Vserver;
-import org.onap.aaiclient.client.aai.AAIObjectPlurals;
 import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
 import org.onap.so.objects.audit.AAIObjectAudit;
 import org.onap.so.objects.audit.AAIObjectAuditList;
@@ -49,20 +50,20 @@ public class AuditVServer extends AbstractAudit {
     public void auditVservers(AAIObjectAuditList aaiObjectAuditList) {
 
         aaiObjectAuditList.getAuditList().forEach(aaiObjectAudit -> {
-            boolean vserverExist = getAaiClient().exists(AAIUriFactory
-                    .createResourceFromExistingURI(AAIObjectType.VSERVER, aaiObjectAudit.getResourceURI()));
+            boolean vserverExist = getAaiClient().exists(
+                    AAIUriFactory.createResourceFromExistingURI(Types.VSERVER, aaiObjectAudit.getResourceURI()));
             aaiObjectAudit.setDoesObjectExist(vserverExist);
         });
     }
 
     public Optional<AAIObjectAuditList> auditVserversThroughRelationships(String genericVnfId, String vfModuleName) {
         AAIObjectAuditList auditList = new AAIObjectAuditList();
-        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VF_MODULE, genericVnfId)
-                .queryParam("vf-module-name", vfModuleName);
+        AAIPluralResourceUri uri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(genericVnfId).vfModules())
+                        .queryParam("vf-module-name", vfModuleName);
         Optional<AAIResultWrapper> wrapper = getAaiClient().getFirstWrapper(VfModules.class, VfModule.class, uri);
         if (wrapper.isPresent() && wrapper.get().getRelationships().isPresent()) {
-            List<AAIResourceUri> relatedVservers =
-                    wrapper.get().getRelationships().get().getRelatedUris(AAIObjectType.VSERVER);
+            List<AAIResourceUri> relatedVservers = wrapper.get().getRelationships().get().getRelatedUris(Types.VSERVER);
             if (!relatedVservers.isEmpty()) {
                 relatedVservers.forEach(vserverUri -> {
                     Optional<Vserver> vserver = getAaiClient().get(vserverUri).asBean(Vserver.class);
@@ -70,7 +71,7 @@ public class AuditVServer extends AbstractAudit {
                     BeanUtils.copyProperties(vserver, vServerShallow);
                     AAIObjectAudit vServerAudit = new AAIObjectAudit();
                     vServerAudit.setAaiObject(vServerShallow);
-                    vServerAudit.setAaiObjectType(AAIObjectType.VSERVER.typeName());
+                    vServerAudit.setAaiObjectType(Types.VSERVER.typeName());
                     vServerAudit.setDoesObjectExist(true);
                     auditList.getAuditList().add(vServerAudit);
                 });
@@ -103,8 +104,8 @@ public class AuditVServer extends AbstractAudit {
             String cloudRegion) {
         AAIObjectAuditList auditList = new AAIObjectAuditList();
         AAIObjectAudit vServerAudit = new AAIObjectAudit();
-        AAIResourceUri vserverURI = AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner, cloudRegion,
-                tenantId, vServer.getVserverId());
+        AAIResourceUri vserverURI = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                .cloudRegion(cloudOwner, cloudRegion).tenant(tenantId).vserver(vServer.getVserverId()));
         Vserver vServerShallow = new Vserver();
         BeanUtils.copyProperties(vServer, vServerShallow, "LInterfaces");
         boolean vServerExists = getAaiClient().exists(vserverURI);
@@ -112,7 +113,7 @@ public class AuditVServer extends AbstractAudit {
         vServerAudit.setAaiObject(vServerShallow);
         vServerAudit.setDoesObjectExist(vServerExists);
         vServerAudit.setResourceURI(vserverURI.build());
-        vServerAudit.setAaiObjectType(AAIObjectType.VSERVER.typeName());
+        vServerAudit.setAaiObjectType(Types.VSERVER.typeName());
         auditList.getAuditList().add(vServerAudit);
         if (vServer.getLInterfaces() != null) {
             vServer.getLInterfaces().getLInterface().stream().forEach(lInterface -> auditList.getAuditList().addAll(
@@ -126,8 +127,9 @@ public class AuditVServer extends AbstractAudit {
             String cloudOwner, String cloudRegion) {
         AAIObjectAuditList auditList = new AAIObjectAuditList();
         AAIObjectAudit lInterfaceAudit = new AAIObjectAudit();
-        AAIResourceUri linterfaceURI = AAIUriFactory.createResourceUri(AAIObjectType.L_INTERFACE, cloudOwner,
-                cloudRegion, tenantId, vServerId, lInterface.getInterfaceName());
+        AAIResourceUri linterfaceURI = AAIUriFactory
+                .createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(cloudOwner, cloudRegion)
+                        .tenant(tenantId).vserver(vServerId).lInterface(lInterface.getInterfaceName()));
         Optional<LInterface> queriedLInterface = getAaiClient().get(LInterface.class, linterfaceURI);
         if (queriedLInterface.isPresent()) {
             lInterfaceAudit.setDoesObjectExist(true);
@@ -135,7 +137,7 @@ public class AuditVServer extends AbstractAudit {
         }
         lInterfaceAudit.setAaiObject(lInterface);
         lInterfaceAudit.setResourceURI(linterfaceURI.build());
-        lInterfaceAudit.setAaiObjectType(AAIObjectType.L_INTERFACE.typeName());
+        lInterfaceAudit.setAaiObjectType(Types.L_INTERFACE.typeName());
         auditList.getAuditList().add(lInterfaceAudit);
         logger.info("l-interface id:{} name: {} exists: {} ", lInterface.getInterfaceId(),
                 lInterface.getInterfaceName(), lInterfaceAudit.isDoesObjectExist());

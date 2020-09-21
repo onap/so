@@ -64,12 +64,12 @@ import org.onap.aai.domain.yang.ServiceInstances;
 import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.aai.domain.yang.VolumeGroups;
 import org.onap.aai.domain.yang.VpnBinding;
-import org.onap.aaiclient.client.aai.AAIObjectPlurals;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
@@ -179,8 +179,10 @@ public class BBInputSetupUtilsTest {
         Optional<CloudRegion> expected = Optional.of(new CloudRegion());
 
         doReturn(expected).when(MOCK_aaiResourcesClient).get(CloudRegion.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, cloudConfig.getCloudOwner(),
-                        cloudConfig.getLcpCloudRegionId()).depth(Depth.TWO));
+                AAIUriFactory
+                        .createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                                .cloudRegion(cloudConfig.getCloudOwner(), cloudConfig.getLcpCloudRegionId()))
+                        .depth(Depth.TWO));
 
         assertThat(bbInputSetupUtils.getCloudRegion(cloudConfig), sameBeanAs(expected.get()));
     }
@@ -208,7 +210,7 @@ public class BBInputSetupUtilsTest {
         expected.get().setId(instanceGroupId);
 
         doReturn(expected).when(MOCK_aaiResourcesClient).get(InstanceGroup.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroupId));
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().instanceGroup(instanceGroupId)));
 
         assertThat(bbInputSetupUtils.getAAIInstanceGroup(instanceGroupId), sameBeanAs(expected.get()));
     }
@@ -225,7 +227,7 @@ public class BBInputSetupUtilsTest {
         expected.get().setGlobalCustomerId(globalSubscriberId);
 
         doReturn(expected).when(MOCK_aaiResourcesClient).get(org.onap.aai.domain.yang.Customer.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.CUSTOMER, globalSubscriberId));
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId)));
 
         assertThat(bbInputSetupUtils.getAAICustomer(globalSubscriberId), sameBeanAs(expected.get()));
     }
@@ -244,8 +246,8 @@ public class BBInputSetupUtilsTest {
 
         expected.get().setServiceType(subscriptionServiceType);
         doReturn(expected).when(MOCK_aaiResourcesClient).get(org.onap.aai.domain.yang.ServiceSubscription.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_SUBSCRIPTION, globalSubscriberId,
-                        subscriptionServiceType));
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId)
+                        .serviceSubscription(subscriptionServiceType)));
 
         assertThat(bbInputSetupUtils.getAAIServiceSubscription(globalSubscriberId, subscriptionServiceType),
                 sameBeanAs(expected.get()));
@@ -286,9 +288,12 @@ public class BBInputSetupUtilsTest {
         ServiceInstance expected = new ServiceInstance();
         expected.setServiceInstanceId(serviceInstanceId);
 
-        doReturn(Optional.of(expected)).when(MOCK_aaiResourcesClient).get(ServiceInstance.class, AAIUriFactory
-                .createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalCustomerId, serviceType, serviceInstanceId)
-                .depth(Depth.TWO));
+        doReturn(Optional.of(expected)).when(MOCK_aaiResourcesClient)
+                .get(ServiceInstance.class,
+                        AAIUriFactory
+                                .createResourceUri(AAIFluentTypeBuilder.business().customer(globalCustomerId)
+                                        .serviceSubscription(serviceType).serviceInstance(serviceInstanceId))
+                                .depth(Depth.TWO));
 
         assertThat(bbInputSetupUtils.getAAIServiceInstanceByIdAndCustomer(globalCustomerId, serviceType,
                 serviceInstanceId), sameBeanAs(expected));
@@ -320,8 +325,8 @@ public class BBInputSetupUtilsTest {
         serviceInstances.getServiceInstance().add(expectedServiceInstance);
 
         AAIPluralResourceUri expectedUri = AAIUriFactory
-                .createResourceUri(AAIObjectPlurals.SERVICE_INSTANCE, customer.getGlobalCustomerId(),
-                        customer.getServiceSubscription().getServiceType())
+                .createResourceUri(AAIFluentTypeBuilder.business().customer(customer.getGlobalCustomerId())
+                        .serviceSubscription(customer.getServiceSubscription().getServiceType()).serviceInstances())
                 .queryParam("service-instance-name", serviceInstanceName).depth(Depth.TWO);
         bbInputSetupUtils.getAAIServiceInstanceByName(serviceInstanceName, customer);
 
@@ -402,14 +407,15 @@ public class BBInputSetupUtilsTest {
                 mapper.readValue(new File(RESOURCE_PATH + "aaiGenericVnfInput.json"), GenericVnf.class);
 
         doReturn(Optional.of(expectedAaiVnf)).when(MOCK_aaiResourcesClient).get(isA(Class.class),
-                eq(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId).depth(Depth.ONE)));
+                eq(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId)).depth(Depth.ONE)));
 
         assertThat(bbInputSetupUtils.getAAIGenericVnf(vnfId), sameBeanAs(expectedAaiVnf));
     }
 
     @Test
     public void getAAIResourceDepthOneTest() {
-        AAIResourceUri aaiResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "anyVnfId");
+        AAIResourceUri aaiResourceUri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("anyVnfId"));
         AAIResourceUri expectedUri = aaiResourceUri.clone().depth(Depth.ONE);
         AAIResourceUri aaiResourceUriClone = aaiResourceUri.clone();
 
@@ -421,7 +427,8 @@ public class BBInputSetupUtilsTest {
 
     @Test
     public void getAAIResourceDepthTwoTest() {
-        AAIResourceUri aaiResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "anyVnfId");
+        AAIResourceUri aaiResourceUri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("anyVnfId"));
         AAIResourceUri expectedUri = aaiResourceUri.clone().depth(Depth.TWO);
         AAIResourceUri aaiResourceUriClone = aaiResourceUri.clone();
 
@@ -516,8 +523,8 @@ public class BBInputSetupUtilsTest {
         vnf.setVnfId(vnfId);
         vnf.setVnfName(vnfName);
         doReturn(Optional.of(vnf)).when(MOCK_aaiResourcesClient).getOne(GenericVnfs.class, GenericVnf.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
-                        .relatedTo(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName));
+                AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
+                        .relatedTo(Types.GENERIC_VNFS.getFragment()).queryParam("vnf-name", vnfName));
         Optional<GenericVnf> actual =
                 this.bbInputSetupUtils.getRelatedVnfByNameFromServiceInstance(serviceInstanceId, vnfName);
         assertTrue(actual.isPresent());
@@ -545,8 +552,8 @@ public class BBInputSetupUtilsTest {
         volumeGroup.setVolumeGroupId(volumeGroupId);
         volumeGroup.setVolumeGroupName(volumeGroupName);
         doReturn(Optional.of(volumeGroup)).when(MOCK_aaiResourcesClient).getOne(VolumeGroups.class, VolumeGroup.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
-                        .relatedTo(AAIObjectPlurals.VOLUME_GROUP).queryParam("volume-group-name", volumeGroupName));
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId))
+                        .relatedTo(Types.VOLUME_GROUPS.getFragment()).queryParam("volume-group-name", volumeGroupName));
         Optional<VolumeGroup> actual =
                 this.bbInputSetupUtils.getRelatedVolumeGroupByNameFromVnf(vnfId, volumeGroupName);
         assertEquals(volumeGroup.getVolumeGroupId(), actual.get().getVolumeGroupId());
@@ -572,8 +579,10 @@ public class BBInputSetupUtilsTest {
         volumeGroup.setVolumeGroupId("id123");
         volumeGroup.setVolumeGroupName("name123");
         doReturn(Optional.of(volumeGroup)).when(MOCK_aaiResourcesClient).getOne(VolumeGroups.class, VolumeGroup.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, "vnf-id123", "vf-module-id123")
-                        .relatedTo(AAIObjectPlurals.VOLUME_GROUP)
+                AAIUriFactory
+                        .createResourceUri(
+                                AAIFluentTypeBuilder.network().genericVnf("vnf-id123").vfModule("vf-module-id123"))
+                        .relatedTo(Types.VOLUME_GROUPS.getFragment())
                         .queryParam("volume-group-name", "volume-group-name123"));
         Optional<VolumeGroup> actual = this.bbInputSetupUtils.getRelatedVolumeGroupByNameFromVfModule("vnf-id123",
                 "vf-module-id123", "volume-group-name123");
@@ -620,8 +629,10 @@ public class BBInputSetupUtilsTest {
         VolumeGroup volumeGroup = new VolumeGroup();
         volumeGroup.setVolumeGroupId("id123");
         doReturn(Optional.of(volumeGroup)).when(MOCK_aaiResourcesClient).getOne(VolumeGroups.class, VolumeGroup.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, "vnf-id123", "vf-module-id123")
-                        .relatedTo(AAIObjectPlurals.VOLUME_GROUP));
+                AAIUriFactory
+                        .createResourceUri(
+                                AAIFluentTypeBuilder.network().genericVnf("vnf-id123").vfModule("vf-module-id123"))
+                        .relatedTo(Types.VOLUME_GROUPS.getFragment()));
         Optional<VolumeGroup> actual =
                 this.bbInputSetupUtils.getRelatedVolumeGroupFromVfModule("vnf-id123", "vf-module-id123");
         assertTrue(actual.isPresent());
@@ -679,8 +690,8 @@ public class BBInputSetupUtilsTest {
         configuration.setConfigurationId("id123");
         doReturn(Optional.of(configuration)).when(MOCK_aaiResourcesClient).getOne(Configurations.class,
                 Configuration.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, "service-instance-id123")
-                        .relatedTo(AAIObjectPlurals.CONFIGURATION)
+                AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment("service-instance-id123"))
+                        .relatedTo(Types.CONFIGURATIONS.getFragment())
                         .queryParam("configuration-name", "configuration-name123"));
         Optional<Configuration> actual = this.bbInputSetupUtils
                 .getRelatedConfigurationByNameFromServiceInstance("service-instance-id123", "configuration-name123");
@@ -690,8 +701,8 @@ public class BBInputSetupUtilsTest {
 
     @Test
     public void existsAAIVfModuleGloballyByNameTest() {
-        AAIPluralResourceUri expectedUri =
-                AAIUriFactory.createNodesUri(AAIObjectPlurals.VF_MODULE).queryParam("vf-module-name", "testVfModule");
+        AAIPluralResourceUri expectedUri = AAIUriFactory.createNodesUri(Types.VF_MODULES.getFragment())
+                .queryParam("vf-module-name", "testVfModule");
         bbInputSetupUtils.existsAAIVfModuleGloballyByName("testVfModule");
 
         verify(MOCK_aaiResourcesClient, times(1)).exists(expectedUri);
@@ -699,8 +710,9 @@ public class BBInputSetupUtilsTest {
 
     @Test
     public void existsAAIConfigurationGloballyByNameTest() {
-        AAIPluralResourceUri expectedUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.CONFIGURATION)
-                .queryParam("configuration-name", "testConfig");
+        AAIPluralResourceUri expectedUri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().configurations())
+                        .queryParam("configuration-name", "testConfig");
         bbInputSetupUtils.existsAAIConfigurationGloballyByName("testConfig");
 
         verify(MOCK_aaiResourcesClient, times(1)).exists(expectedUri);
@@ -708,8 +720,8 @@ public class BBInputSetupUtilsTest {
 
     @Test
     public void existsAAINetworksGloballyByNameTest() {
-        AAIPluralResourceUri expectedUri =
-                AAIUriFactory.createResourceUri(AAIObjectPlurals.L3_NETWORK).queryParam("network-name", "testNetwork");
+        AAIPluralResourceUri expectedUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Networks())
+                .queryParam("network-name", "testNetwork");
         bbInputSetupUtils.existsAAINetworksGloballyByName("testNetwork");
 
         verify(MOCK_aaiResourcesClient, times(1)).exists(expectedUri);
@@ -717,7 +729,7 @@ public class BBInputSetupUtilsTest {
 
     @Test
     public void existsAAIVolumeGroupGloballyByNameTest() {
-        AAIPluralResourceUri expectedUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VOLUME_GROUP)
+        AAIPluralResourceUri expectedUri = AAIUriFactory.createNodesUri(Types.VOLUME_GROUPS.getFragment())
                 .queryParam("volume-group-name", "testVoumeGroup");
 
         bbInputSetupUtils.existsAAIVolumeGroupGloballyByName("testVoumeGroup");

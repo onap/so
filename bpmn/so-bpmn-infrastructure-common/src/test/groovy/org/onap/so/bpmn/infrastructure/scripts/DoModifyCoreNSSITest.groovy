@@ -180,7 +180,7 @@ class DoModifyCoreNSSITest extends MsoGroovyTest  {
         currentNSSI.put("nssiId", nssiId)
         currentNSSI.put("sliceProfileId", sliceProfileId)
 
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SLICE_PROFILE, globalSubscriberId, serviceType, nssiId, sliceProfileId)
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(nssiId).sliceProfile(sliceProfileId))
 
         SliceProfile sliceProfile = new SliceProfile()
         sliceProfile.setProfileId(sliceProfileId)
@@ -213,8 +213,8 @@ class DoModifyCoreNSSITest extends MsoGroovyTest  {
         String globalSubscriberId = "globalSubscriberId"
         String serviceType = "serviceType"
 
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nssiId)
-        AAIResourceUri sliceProfileUri = AAIUriFactory.createResourceUri(AAIObjectType.SLICE_PROFILE, globalSubscriberId, serviceType, nssiId, sliceProfileId)
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+        AAIResourceUri sliceProfileUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(nssiId).sliceProfile(sliceProfileId))
 
         currentNSSI.put("globalSubscriberId", globalSubscriberId)
         currentNSSI.put("serviceType", serviceType)

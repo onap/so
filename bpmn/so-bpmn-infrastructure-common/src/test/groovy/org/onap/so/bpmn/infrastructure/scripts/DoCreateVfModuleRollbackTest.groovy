@@ -43,11 +43,12 @@ import org.onap.so.bpmn.common.scripts.utils.XmlComparator
 import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.mock.FileUtil
-import org.onap.aaiclient.client.aai.AAIObjectPlurals
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.aaiclient.client.graphinventory.exceptions.GraphInventoryUriComputationException
 
 import javax.ws.rs.NotFoundException
@@ -169,7 +170,7 @@ class DoCreateVfModuleRollbackTest extends MsoGroovyTest{
         fqdnList.add("test")
         when(mockExecution.getVariable(prefix + "createdNetworkPolicyFqdnList")).thenReturn(fqdnList)
 
-        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkPolicies())
         uri.queryParam("network-policy-fqdn", "test")
         NetworkPolicies networkPolicies = new NetworkPolicies();
         NetworkPolicy networkPolicy = new NetworkPolicy();
@@ -177,7 +178,7 @@ class DoCreateVfModuleRollbackTest extends MsoGroovyTest{
         networkPolicies.getNetworkPolicy().add(networkPolicy)
         when(client.get(NetworkPolicies.class, uri)).thenReturn(Optional.of(networkPolicies))
 
-        AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, networkPolicy.getNetworkPolicyId())
+        AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkPolicy(networkPolicy.getNetworkPolicyId()))
         doNothing().when(client).delete(delUri)
 
         doCreateVfModuleRollback.deleteNetworkPoliciesFromAAI(mockExecution)
@@ -199,7 +200,7 @@ class DoCreateVfModuleRollbackTest extends MsoGroovyTest{
         fqdnList.add("test")
         when(mockExecution.getVariable(prefix + "createdNetworkPolicyFqdnList")).thenReturn(fqdnList)
 
-        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkPolicies())
         uri.queryParam("network-policy-fqdn", "test")
         NetworkPolicies networkPolicies = new NetworkPolicies();
         NetworkPolicy networkPolicy = new NetworkPolicy();
@@ -207,7 +208,7 @@ class DoCreateVfModuleRollbackTest extends MsoGroovyTest{
         networkPolicies.getNetworkPolicy().add(networkPolicy)
         when(client.get(NetworkPolicies.class, uri)).thenReturn(Optional.of(networkPolicies))
 
-        AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, networkPolicy.getNetworkPolicyId())
+        AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkPolicy(networkPolicy.getNetworkPolicyId()))
         doThrow(new NotFoundException("Not Found!")).when(client).delete(delUri)
 
         doCreateVfModuleRollback.deleteNetworkPoliciesFromAAI(mockExecution)
@@ -229,7 +230,7 @@ class DoCreateVfModuleRollbackTest extends MsoGroovyTest{
         fqdnList.add("test")
         when(mockExecution.getVariable(prefix + "createdNetworkPolicyFqdnList")).thenReturn(fqdnList)
 
-        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkPolicies())
         uri.queryParam("network-policy-fqdn", "test")
         NetworkPolicies networkPolicies = new NetworkPolicies();
         NetworkPolicy networkPolicy = new NetworkPolicy();
@@ -237,7 +238,7 @@ class DoCreateVfModuleRollbackTest extends MsoGroovyTest{
         networkPolicies.getNetworkPolicy().add(networkPolicy)
         when(client.get(NetworkPolicies.class, uri)).thenReturn(Optional.of(networkPolicies))
 
-        AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, networkPolicy.getNetworkPolicyId())
+        AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkPolicy(networkPolicy.getNetworkPolicyId()))
         doThrow(new GraphInventoryUriComputationException("Error!")).when(client).delete(delUri)
         try {
             doCreateVfModuleRollback.deleteNetworkPoliciesFromAAI(mockExecution)

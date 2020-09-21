@@ -35,6 +35,11 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.aaiclient.client.aai.AAIResourcesClient;
+import org.onap.aaiclient.client.aai.entities.AAIEdgeLabel;
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
@@ -44,11 +49,6 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceProxy;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding;
-import org.onap.aaiclient.client.aai.AAIObjectType;
-import org.onap.aaiclient.client.aai.AAIResourcesClient;
-import org.onap.aaiclient.client.aai.entities.AAIEdgeLabel;
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 
@@ -204,7 +204,8 @@ public class AAIConfigurationResourcesTest extends TestDataSetup {
 
     @Test
     public void getConfigurationTest() {
-        AAIResourceUri aaiResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, "configurationId");
+        AAIResourceUri aaiResourceUri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().configuration("configurationId"));
         doReturn(Optional.of(new org.onap.aai.domain.yang.Configuration())).when(MOCK_aaiResourcesClient)
                 .get(org.onap.aai.domain.yang.Configuration.class, aaiResourceUri);
         aaiConfigurationResources.getConfiguration("configurationId");
@@ -213,7 +214,8 @@ public class AAIConfigurationResourcesTest extends TestDataSetup {
 
     @Test
     public void deleteConfigurationTest() {
-        AAIResourceUri aaiResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, "configurationId");
+        AAIResourceUri aaiResourceUri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().configuration("configurationId"));
         doNothing().when(MOCK_aaiResourcesClient).delete(aaiResourceUri);
         aaiConfigurationResources.deleteConfiguration("configurationId");
         verify(MOCK_aaiResourcesClient, times(1)).delete(aaiResourceUri);

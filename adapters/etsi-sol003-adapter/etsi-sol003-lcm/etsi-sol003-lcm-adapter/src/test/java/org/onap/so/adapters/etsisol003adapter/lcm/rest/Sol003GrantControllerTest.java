@@ -43,7 +43,7 @@ import org.onap.aai.domain.yang.Relationship;
 import org.onap.aai.domain.yang.RelationshipData;
 import org.onap.aai.domain.yang.RelationshipList;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIBaseResourceUri;
 import org.onap.so.adapters.etsisol003adapter.lcm.grant.model.GrantRequest;
 import org.onap.so.adapters.etsisol003adapter.lcm.grant.model.GrantRequest.OperationEnum;
 import org.onap.so.adapters.etsisol003adapter.lcm.grant.model.GrantsAddResources;
@@ -224,7 +224,7 @@ public class Sol003GrantControllerTest {
                         "/network/generic-vnfs?selflink=http%3A%2F%2Fvnfm%3A8080%2Fvnfs%2FmyTestVnfIdOnVnfm")));
     }
 
-    private class AaiResourceUriMatcher extends BaseMatcher<AAIResourceUri> {
+    private class AaiResourceUriMatcher extends BaseMatcher<AAIBaseResourceUri<?, ?>> {
 
         final String uriAsString;
 
@@ -234,12 +234,12 @@ public class Sol003GrantControllerTest {
 
         @Override
         public boolean matches(final Object item) {
-            if (item instanceof AAIResourceUri) {
+            if (item instanceof AAIBaseResourceUri) {
                 if (uriAsString.endsWith("...")) {
-                    return ((AAIResourceUri) item).build().toString()
+                    return ((AAIBaseResourceUri<?, ?>) item).build().toString()
                             .startsWith(uriAsString.substring(0, uriAsString.indexOf("...")));
                 }
-                return ((AAIResourceUri) item).build().toString().equals(uriAsString);
+                return ((AAIBaseResourceUri<?, ?>) item).build().toString().equals(uriAsString);
             }
             return false;
         }

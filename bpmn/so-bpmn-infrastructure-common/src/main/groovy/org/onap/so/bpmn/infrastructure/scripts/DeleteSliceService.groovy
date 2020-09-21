@@ -20,28 +20,27 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import static org.apache.commons.lang3.StringUtils.isBlank
+import javax.ws.rs.NotFoundException
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.ServiceProfile
 import org.onap.aai.domain.yang.ServiceProfiles
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.RequestDBUtil
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.AAIResourcesClient
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.db.request.beans.OperationStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import javax.ws.rs.NotFoundException
-
-import static org.apache.commons.lang3.StringUtils.isBlank
 
 class DeleteSliceService extends AbstractServiceTaskProcessor {
 
@@ -122,7 +121,7 @@ class DeleteSliceService extends AbstractServiceTaskProcessor {
         LOGGER.trace("${PREFIX} Start deleteSliceServiceInstance")
         try {
 
-            AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("serviceType"), execution.getVariable("serviceInstanceId"))
+            AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("serviceType")).serviceInstance(execution.getVariable("serviceInstanceId")))
             getAAIClient().delete(serviceInstanceUri)
 
             execution.setVariable("progress", "100")
@@ -169,7 +168,7 @@ class DeleteSliceService extends AbstractServiceTaskProcessor {
 
         try
         {
-            AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_PROFILE_ALL, globalSubscriberId, serviceType, serviceInstanceId)
+            AAIPluralResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId).serviceProfiles())
             AAIResultWrapper wrapper = getAAIClient().get(resourceUri, NotFoundException.class)
             Optional<ServiceProfiles> serviceProfilesOpt =wrapper.asBean(ServiceProfiles.class)
             if(serviceProfilesOpt.isPresent()){
@@ -177,7 +176,7 @@ class DeleteSliceService extends AbstractServiceTaskProcessor {
                 ServiceProfile serviceProfile = serviceProfiles.getServiceProfile().get(0)
                 profileId = serviceProfile ? serviceProfile.getProfileId() : ""
             }
-            resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_PROFILE, globalSubscriberId, serviceType, serviceInstanceId, profileId)
+            resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId).serviceProfile(profileId))
             if (!getAAIClient().exists(resourceUri)) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai")
             }

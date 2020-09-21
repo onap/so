@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.onap.aai.domain.yang.Vserver;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.Relationships;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.appc.client.lcm.model.Action;
 import org.onap.so.appc.orchestrator.service.beans.ApplicationControllerTaskRequest;
 import org.onap.so.appc.orchestrator.service.beans.ApplicationControllerVm;
@@ -186,7 +186,7 @@ public class AppcOrchestratorPreProcessor {
         if (aaiRW != null && aaiRW.getRelationships().isPresent()) {
             Relationships relationships = aaiRW.getRelationships().get();
             if (relationships != null) {
-                List<AAIResourceUri> vserverUris = relationships.getRelatedAAIUris(AAIObjectType.VSERVER);
+                List<AAIResourceUri> vserverUris = relationships.getRelatedUris(Types.VSERVER);
                 ArrayList<String> vserverIds = new ArrayList<String>();
                 ArrayList<String> vserverSelfLinks = new ArrayList<String>();
                 for (AAIResourceUri j : vserverUris) {

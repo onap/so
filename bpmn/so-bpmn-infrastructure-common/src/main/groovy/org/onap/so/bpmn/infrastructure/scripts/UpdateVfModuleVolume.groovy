@@ -33,6 +33,7 @@ import org.onap.aaiclient.client.aai.entities.Relationships
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.logging.filter.base.ErrorCode
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
@@ -185,7 +186,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 		try {
 			def volumeGroupId = execution.getVariable('UPDVfModVol_volumeGroupId')
 			def aicCloudRegion = execution.getVariable('UPDVfModVol_aicCloudRegion')
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(),aicCloudRegion,volumeGroupId)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(Defaults.CLOUD_OWNER.toString(), aicCloudRegion).volumeGroup(volumeGroupId))
 			AAIResultWrapper wrapper =  getAAIClient().get(uri)
 			Optional<VolumeGroup> volumeGroup = wrapper.asBean(VolumeGroup.class)
 			if(volumeGroup.isPresent()){
@@ -193,7 +194,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 				execution.setVariable('UPDVfModVol_volumeGroupHeatStackId', heatStackId)
 				Optional<Relationships> relationships = wrapper.getRelationships()
 				if(relationships.isPresent()){
-					List<AAIResourceUri> resourceUriList = relationships.get().getRelatedAAIUris(AAIObjectType.TENANT)
+					List<AAIResourceUri> resourceUriList = relationships.get().getRelatedUris(Types.TENANT)
 					if(CollectionUtils.isNotEmpty(resourceUriList)){
 						AAIResourceUri tenantUri = resourceUriList.get(0)
 						String volumeGroupTenantId = tenantUri.getURIKeys().get(AAIFluentTypeBuilder.Types.TENANT.getUriParams().tenantId)

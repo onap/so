@@ -32,6 +32,14 @@ import org.json.JSONArray
 import org.json.JSONObject
 import org.onap.aai.domain.yang.GenericVnf
 import org.onap.aai.domain.yang.NetworkPolicy
+import org.onap.aaiclient.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
+import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
 import org.onap.logging.filter.base.ErrorCode
 import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.so.bpmn.common.scripts.AaiUtil
@@ -51,14 +59,6 @@ import org.onap.so.bpmn.core.json.DecomposeJsonUtil
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
-import org.onap.aaiclient.client.aai.AAIObjectPlurals
-import org.onap.aaiclient.client.aai.AAIObjectType;
-import org.onap.aaiclient.client.aai.AAIResourcesClient
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
-import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
-import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
 import org.onap.so.constants.Defaults
 import org.onap.so.db.catalog.beans.HomingInstance
 import org.onap.so.logger.LoggingAnchor
@@ -303,7 +303,7 @@ public class DoCreateVfModule extends VfModuleBase {
 				}
 
 				try{
-					AAIResourceUri serviceInstanceURI = AAIUriFactory.create(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId,serviceType,serviceInstanceId)
+					AAIResourceUri serviceInstanceURI = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId))
 					AAIResourcesClient aaiRC = new AAIResourcesClient()
 					AAIResultWrapper aaiRW = aaiRC.get(serviceInstanceURI)
 					Map<String, Object> aaiJson = aaiRW.asMap()
@@ -690,7 +690,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			def vfModuleId = execution.getVariable('DCVFM_vfModuleId')
 
 			AaiUtil aaiUriUtil = new AaiUtil(this)
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId).depth(Depth.ONE)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId)).depth(Depth.ONE)
 			String endPoint = aaiUriUtil.createAaiUri(uri)
 
 			try {
@@ -774,7 +774,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			def vfModuleName = execution.getVariable('DCVFM_vfModuleName')
 
 			AaiUtil aaiUriUtil = new AaiUtil(this)
-			AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VF_MODULE, vnfId).queryParam("vf-module-name",vfModuleName)
+			AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId).vfModules()).queryParam("vf-module-name",vfModuleName)
 			String endPoint = aaiUriUtil.createAaiUri(uri)
 
 			HttpClient client = httpClientFactory.newXmlClient(new URL(endPoint), ONAPComponents.AAI)
@@ -909,7 +909,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			String serviceOperation = ""
 			if (element.equals("vnf")) {
 				AAIResourcesClient resourceClient = new AAIResourcesClient()
-				AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, execution.getVariable('DCVFM_vnfId'))
+				AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(execution.getVariable('DCVFM_vnfId')))
 				AAIResultWrapper wrapper = resourceClient.get(uri)
 
 				Optional<GenericVnf> vnf = wrapper.asBean(GenericVnf.class)
@@ -1792,7 +1792,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			// Prepare AA&I url
 			AaiUtil aaiUtil = new AaiUtil(this)
 
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, Defaults.CLOUD_OWNER.toString(), cloudRegion)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(Defaults.CLOUD_OWNER.toString(), cloudRegion))
 			def queryCloudRegionRequest = aaiUtil.createAaiUri(uri)
 
 			execution.setVariable("DCVFM_queryCloudRegionRequest", queryCloudRegionRequest)
@@ -1923,7 +1923,7 @@ public class DoCreateVfModule extends VfModuleBase {
 					String fqdn = fqdnList[i]
 
 					// Query AAI for this network policy FQDN
-					AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+					AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkPolicies())
 					uri.queryParam("network-policy-fqdn", fqdn)
 
 					AAIResourcesClient resourceClient = new AAIResourcesClient()
@@ -1944,8 +1944,8 @@ public class DoCreateVfModule extends VfModuleBase {
 						policy.setNetworkPolicyId(networkPolicyId)
 						policy.setNetworkPolicyFqdn(fqdn)
 						policy.setHeatStackId(execution.getVariable("DCVFM_heatStackId"))
-						
-						AAIResourceUri netUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, networkPolicyId)
+
+						AAIResourceUri netUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkPolicy(networkPolicyId))
 						resourceClient.create(netUri, policy)
 
 						rollbackData.put("VFMODULE", "rollbackCreateNetworkPoliciesAAI", "true")

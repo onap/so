@@ -30,6 +30,7 @@ import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.logging.filter.base.ErrorCode
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -109,7 +110,7 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 			String vnfName = execution.getVariable("vnfName")
 			if (vnfName.equals("") || vnfName.equals("null")) {
 				AAIResourcesClient resourceClient = new AAIResourcesClient()
-				AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, execution.getVariable("vnfId"))
+				AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(execution.getVariable("vnfId")))
 				if(resourceClient.exists(uri)){
 					exceptionUtil.buildWorkflowException(execution, 5000, "Generic Vnf Already Exist.")
 				}
@@ -281,7 +282,7 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 			String serviceInstanceId = execution.getVariable('DoCVNF_serviceInstanceId')
 
 			AAIResourcesClient resourceClient = new AAIResourcesClient()
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
 
 			if(resourceClient.exists(uri)){
 				Map<String, String> keys = uri.getURIKeys()
@@ -355,10 +356,10 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 			payload.put("nf-naming-code", nfNamingCode);
 
 			AAIResourcesClient resourceClient = new AAIResourcesClient();
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId))
 			resourceClient.create(uri, payload)
 
-			AAIResourceUri siUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalCustId, serviceType, serviceInstanceId)
+			AAIResourceUri siUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalCustId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId))
 			resourceClient.connect(uri, siUri)
 
 		}catch(Exception ex) {

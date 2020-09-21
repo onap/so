@@ -28,18 +28,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.so.bpmn.BaseTaskTest;
-import org.onap.so.bpmn.common.InjectionHelper;
-import org.onap.so.bpmn.common.data.TestDataSetup;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
-import org.onap.aaiclient.client.aai.AAIObjectType;
-import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
-import org.onap.so.client.aai.mapper.AAIObjectMapper;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 
 public class AAICollectionResourcesTest extends BaseTaskTest {
@@ -65,7 +58,8 @@ public class AAICollectionResourcesTest extends BaseTaskTest {
 
         assertEquals(OrchestrationStatus.INVENTORIED, networkCollection.getOrchestrationStatus());
         verify(MOCK_aaiResourcesClient, times(1)).create(
-                eq(AAIUriFactory.createResourceUri(AAIObjectType.COLLECTION, networkCollection.getId())),
+                eq(AAIUriFactory
+                        .createResourceUri(AAIFluentTypeBuilder.network().collection(networkCollection.getId()))),
                 isA(org.onap.aai.domain.yang.Collection.class));
     }
 
@@ -74,15 +68,16 @@ public class AAICollectionResourcesTest extends BaseTaskTest {
         doReturn(new org.onap.aai.domain.yang.Collection()).when(MOCK_aaiObjectMapper).mapCollection(networkCollection);
         aaiCollectionResources.updateCollection(networkCollection);
         verify(MOCK_aaiResourcesClient, times(1)).update(
-                eq(AAIUriFactory.createResourceUri(AAIObjectType.COLLECTION, networkCollection.getId())),
+                eq(AAIUriFactory
+                        .createResourceUri(AAIFluentTypeBuilder.network().collection(networkCollection.getId()))),
                 isA(org.onap.aai.domain.yang.Collection.class));
     }
 
     @Test
     public void deleteCollectionTest() throws Exception {
         aaiCollectionResources.deleteCollection(networkCollection);
-        verify(MOCK_aaiResourcesClient, times(1))
-                .delete(eq(AAIUriFactory.createResourceUri(AAIObjectType.COLLECTION, networkCollection.getId())));
+        verify(MOCK_aaiResourcesClient, times(1)).delete(eq(
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().collection(networkCollection.getId()))));
     }
 
 }

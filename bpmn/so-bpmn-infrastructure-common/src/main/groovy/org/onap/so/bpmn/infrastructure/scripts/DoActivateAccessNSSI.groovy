@@ -19,7 +19,6 @@
  */
 
 package org.onap.so.bpmn.infrastructure.scripts
-
 import static org.apache.commons.lang3.StringUtils.isBlank
 
 import javax.ws.rs.NotFoundException
@@ -33,6 +32,8 @@ import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.beans.nsmf.ActDeActNssi
 import org.onap.so.beans.nsmf.EsrInfo
 import org.onap.so.beans.nsmf.ServiceInfo
@@ -48,6 +49,7 @@ import org.slf4j.LoggerFactory
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.JsonObject
+
 
 /**
  * Internal AN NSSMF to handle NSSI Activation/Deactivation
@@ -421,8 +423,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 
 		try {
 			AAIResourcesClient client = new AAIResourcesClient()
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-					globalSubscriberId, subscriptionServiceType, serviceId)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(serviceId))
 			if (!client.exists(uri)) {
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai")
 			}
@@ -488,8 +489,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		Map<String,ServiceInstance> relatedInstances = new HashMap<>()
 		
 		AAIResourcesClient client = getAAIClient()
-		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-				globalSubscriberId, subscriptionServiceType, instanceId)
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(instanceId))
 		if (!client.exists(uri)) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai : ${instanceId}")
 		}
@@ -504,8 +504,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 				String relatioshipurl = relationship.getRelatedLink()
 				String serviceInstanceId =
 						relatioshipurl.substring(relatioshipurl.lastIndexOf("/") + 1, relatioshipurl.length())
-				uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-						globalSubscriberId, subscriptionServiceType, serviceInstanceId)
+				uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(serviceInstanceId))
 				if (!client.exists(uri)) {
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2500,
 							"Service Instance was not found in aai: ${serviceInstanceId} related to ${instanceId}")

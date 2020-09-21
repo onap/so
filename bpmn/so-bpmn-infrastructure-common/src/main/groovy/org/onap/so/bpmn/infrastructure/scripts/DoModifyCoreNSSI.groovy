@@ -39,6 +39,8 @@ import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.Relationships
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.logging.filter.base.ONAPComponents
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -77,7 +79,6 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
     private JsonUtils jsonUtil = new JsonUtils()
 
     private static final Logger LOGGER = LoggerFactory.getLogger( DoModifyCoreNSSI.class)
-
 
     /**
      * Creates Slice Profile Instance
@@ -118,7 +119,7 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
 
         try {
             AAIResourcesClient client = getAAIClient()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SLICE_PROFILE, globalSubscriberId, serviceType, nssiId,  sliceProfileID)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(nssiId).sliceProfile(sliceProfileID))
             client.create(uri, sliceProfile)
 
             currentNSSI['createdSliceProfile'] = sliceProfile
@@ -145,8 +146,9 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
         String serviceType = currentNSSI['serviceType']
         String nssiId = currentNSSI['nssiId']
 
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nssiId)
-        AAIResourceUri sliceProfileUri = AAIUriFactory.createResourceUri(AAIObjectType.SLICE_PROFILE, globalSubscriberId, serviceType, nssiId, sliceProfileID)
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+        AAIResourceUri sliceProfileUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(nssiId).sliceProfile(sliceProfileID))
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
 
         try {
             SliceProfile createdSliceProfile = (SliceProfile)currentNSSI['createdSliceProfile']

@@ -35,6 +35,8 @@ import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
 import org.springframework.web.util.UriUtils
 import org.onap.so.logger.MessageEnum
@@ -123,7 +125,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 
 
 			try {
-				AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+				AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId))
 				AAIResourcesClient resourceClient = new AAIResourcesClient()
 				AAIResultWrapper wrapper = resourceClient.get(uri.depth(Depth.ONE), NotFoundException.class)
 				GenericVnf responseData = wrapper.asBean(GenericVnf.class).get()
@@ -167,7 +169,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 			def vnfName = genericVnf.getVnfName()
 			execution.setVariable('PUAAIVfMod_vnfName', vnfName)
 
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId).vfModule(vfModuleId))
 			AAIResourcesClient resourceClient = new AAIResourcesClient()
 
 
@@ -224,7 +226,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 			vfModule.setOrchestrationStatus(orchestrationStatus)
 
 			AAIResourcesClient client = new AAIResourcesClient()
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId).vfModule(vfModuleId))
 			client.update(uri, vfModule)
 			execution.setVariable('PUAAIVfMod_updateVfModuleResponseCode', 200)
 			// Set the output for this flow.  The updated VfModule is an output, the generic VNF name, and for

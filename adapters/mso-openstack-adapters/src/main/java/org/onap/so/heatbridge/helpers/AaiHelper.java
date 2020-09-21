@@ -50,9 +50,9 @@ import org.onap.aai.domain.yang.RelationshipData;
 import org.onap.aai.domain.yang.RelationshipList;
 import org.onap.aai.domain.yang.SriovVf;
 import org.onap.aai.domain.yang.Vserver;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.so.heatbridge.constants.HeatBridgeConstants;
 import org.openstack4j.model.compute.Server;
 import org.openstack4j.model.network.Network;
@@ -82,39 +82,39 @@ public class AaiHelper {
 
         // vserver to pserver relationship
         if (!StringUtils.isEmpty(server.getHypervisorHostname())) {
-            Relationship pserverRelationship = buildRelationship(
-                    AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, server.getHypervisorHostname()));
+            Relationship pserverRelationship = buildRelationship(AAIUriFactory.createResourceUri(
+                    AAIFluentTypeBuilder.cloudInfrastructure().pserver(server.getHypervisorHostname())));
             relationships.add(pserverRelationship);
         }
 
         // vserver to generic-vnf relationship
-        Relationship genericVnfRelationship =
-                buildRelationship(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, genericVnfId));
+        Relationship genericVnfRelationship = buildRelationship(
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(genericVnfId)));
         relationships.add(genericVnfRelationship);
 
         // vserver to vnfc relationship
         if (!StringUtils.isEmpty(server.getName())) {
-            Relationship vnfcRelationship =
-                    buildRelationship(AAIUriFactory.createResourceUri(AAIObjectType.VNFC, server.getName()));
+            Relationship vnfcRelationship = buildRelationship(
+                    AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().vnfc(server.getName())));
             relationships.add(vnfcRelationship);
         }
 
         // vserver to vf-module relationship
-        Relationship vfModuleRelationship =
-                buildRelationship(AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, genericVnfId, vfModuleId));
+        Relationship vfModuleRelationship = buildRelationship(AAIUriFactory
+                .createResourceUri(AAIFluentTypeBuilder.network().genericVnf(genericVnfId).vfModule(vfModuleId)));
         relationships.add(vfModuleRelationship);
 
         // vserver to image relationship
         if (server.getImage() != null) {
-            Relationship imageRel = buildRelationship(AAIUriFactory.createResourceUri(AAIObjectType.IMAGE, cloudOwner,
-                    cloudRegionId, server.getImage().getId()));
+            Relationship imageRel = buildRelationship(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder
+                    .cloudInfrastructure().cloudRegion(cloudOwner, cloudRegionId).image(server.getImage().getId())));
             relationships.add(imageRel);
         }
 
         // vserver to flavor relationship
         if (server.getFlavor() != null) {
-            Relationship flavorRel = buildRelationship(AAIUriFactory.createResourceUri(AAIObjectType.FLAVOR, cloudOwner,
-                    cloudRegionId, server.getFlavor().getId()));
+            Relationship flavorRel = buildRelationship(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder
+                    .cloudInfrastructure().cloudRegion(cloudOwner, cloudRegionId).flavor(server.getFlavor().getId())));
             relationships.add(flavorRel);
         }
 
@@ -127,20 +127,21 @@ public class AaiHelper {
         List<Relationship> relationships = relationshipList.getRelationship();
 
         // sriov-vf to sriov-pf relationship
-        Relationship sriovPfRelationship = buildRelationship(
-                AAIUriFactory.createResourceUri(AAIObjectType.SRIOV_PF, pserverName, pIfName, pfPciId));
+        Relationship sriovPfRelationship = buildRelationship(AAIUriFactory.createResourceUri(
+                AAIFluentTypeBuilder.cloudInfrastructure().pserver(pserverName).pInterface(pIfName).sriovPf(pfPciId)));
         relationships.add(sriovPfRelationship);
 
         return relationshipList;
     }
 
     public Relationship getRelationshipToVfModule(String vnfId, String vfModuleId) {
-        return buildRelationship(AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId));
+        return buildRelationship(
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId).vfModule(vfModuleId)));
     }
 
     public Relationship getRelationshipToTenant(String cloudOwner, String cloudRegionId, String tenantId) {
-        return buildRelationship(
-                AAIUriFactory.createResourceUri(AAIObjectType.TENANT, cloudOwner, cloudRegionId, tenantId));
+        return buildRelationship(AAIUriFactory.createResourceUri(
+                AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(cloudOwner, cloudRegionId).tenant(tenantId)));
     }
 
     public org.onap.aai.domain.yang.Subnet buildSubnet(Subnet subnet) {

@@ -22,14 +22,13 @@ package org.onap.so.client.orchestration;
 
 import java.util.Optional;
 import org.onap.aai.domain.yang.VpnBindings;
-import org.onap.so.bpmn.common.InjectionHelper;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding;
-import org.onap.aaiclient.client.aai.AAIObjectPlurals;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.so.bpmn.common.InjectionHelper;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -46,8 +45,8 @@ public class AAIVpnBindingResources {
      * @param customer
      */
     public boolean existsCustomer(Customer customer) {
-        AAIResourceUri uriCustomer =
-                AAIUriFactory.createResourceUri(AAIObjectType.CUSTOMER, customer.getGlobalCustomerId());
+        AAIResourceUri uriCustomer = AAIUriFactory
+                .createResourceUri(AAIFluentTypeBuilder.business().customer(customer.getGlobalCustomerId()));
         return injectionHelper.getAaiClient().exists(uriCustomer);
     }
 
@@ -56,8 +55,9 @@ public class AAIVpnBindingResources {
      * @return
      */
     public Optional<VpnBindings> getVpnBindingByCustomerVpnId(String customerVpnId) {
-        AAIPluralResourceUri aaiVpnBindingsResourceUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VPN_BINDING)
-                .queryParam("customer-vpn-id", customerVpnId);
+        AAIPluralResourceUri aaiVpnBindingsResourceUri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().vpnBindings())
+                        .queryParam("customer-vpn-id", customerVpnId);
         return injectionHelper.getAaiClient().get(VpnBindings.class, aaiVpnBindingsResourceUri);
 
     }
@@ -67,7 +67,7 @@ public class AAIVpnBindingResources {
      */
     public void createVpnBinding(VpnBinding vpnBinding) {
         AAIResourceUri aaiVpnBindingResourceUri =
-                AAIUriFactory.createResourceUri(AAIObjectType.VPN_BINDING, vpnBinding.getVpnId());
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().vpnBinding(vpnBinding.getVpnId()));
         injectionHelper.getAaiClient().create(aaiVpnBindingResourceUri, aaiObjectMapper.mapVpnBinding(vpnBinding));
     }
 
@@ -75,8 +75,8 @@ public class AAIVpnBindingResources {
      * @param customer
      */
     public void createCustomer(Customer customer) {
-        AAIResourceUri uriCustomer =
-                AAIUriFactory.createResourceUri(AAIObjectType.CUSTOMER, customer.getGlobalCustomerId());
+        AAIResourceUri uriCustomer = AAIUriFactory
+                .createResourceUri(AAIFluentTypeBuilder.business().customer(customer.getGlobalCustomerId()));
         injectionHelper.getAaiClient().create(uriCustomer, aaiObjectMapper.mapCustomer(customer));
     }
 
@@ -88,7 +88,7 @@ public class AAIVpnBindingResources {
      */
     public Optional<org.onap.aai.domain.yang.VpnBinding> getVpnBinding(String vpnId) {
         return injectionHelper.getAaiClient().get(org.onap.aai.domain.yang.VpnBinding.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.VPN_BINDING, vpnId));
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().vpnBinding(vpnId)));
     }
 
 
@@ -97,8 +97,10 @@ public class AAIVpnBindingResources {
      * @param vpnId
      */
     public void connectCustomerToVpnBinding(String globalSubscriberId, String vpnId) {
-        AAIResourceUri customerURI = AAIUriFactory.createResourceUri(AAIObjectType.CUSTOMER, globalSubscriberId);
-        AAIResourceUri vpnBindingURI = AAIUriFactory.createResourceUri(AAIObjectType.VPN_BINDING, vpnId);
+        AAIResourceUri customerURI =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId));
+        AAIResourceUri vpnBindingURI =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().vpnBinding(vpnId));
         injectionHelper.getAaiClient().connect(customerURI, vpnBindingURI);
     }
 }

@@ -32,6 +32,7 @@ import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
@@ -285,7 +286,7 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 			String serviceInstanceId = execution.getVariable('serviceInstanceId')
 
 			AAIResourcesClient resourceClient = new AAIResourcesClient()
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
 
 			if(resourceClient.exists(uri)){				
 				execution.setVariable("GENGS_FoundIndicator", true)
@@ -307,9 +308,9 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 
 				AAIResultWrapper wrapper = resourceClient.get(uri)
 				if(wrapper.getRelationships().isPresent()){
-					List<AAIResourceUri> uriList = wrapper.getRelationships().get().getRelatedAAIUris(AAIObjectType.ALLOTTED_RESOURCE)
-					uriList.addAll(wrapper.getRelationships().get().getRelatedAAIUris(AAIObjectType.GENERIC_VNF))
-					uriList.addAll(wrapper.getRelationships().get().getRelatedAAIUris(AAIObjectType.L3_NETWORK))
+					List<AAIResourceUri> uriList = wrapper.getRelationships().get().getRelatedUris(Types.ALLOTTED_RESOURCE)
+					uriList.addAll(wrapper.getRelationships().get().getRelatedUris(Types.GENERIC_VNF))
+					uriList.addAll(wrapper.getRelationships().get().getRelatedUris(Types.L3_NETWORK))
 
 					if(uriList.isEmpty()){
 						Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
@@ -372,7 +373,7 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 
 			AAIResourcesClient resourceClient = new AAIResourcesClient();
-			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalCustId, serviceType, serviceInstanceId)
+			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalCustId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId))
 			resourceClient.delete(serviceInstanceUri)
 
 			logger.trace("Exited deleteServiceInstance")

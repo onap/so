@@ -19,6 +19,9 @@
  */
 package org.onap.so.bpmn.infrastructure.scripts
 
+import static org.apache.commons.lang3.StringUtils.isBlank
+import javax.ws.rs.NotFoundException
+import javax.ws.rs.core.Response
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.AllottedResource
@@ -27,21 +30,20 @@ import org.onap.aai.domain.yang.Relationship
 import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.aai.domain.yang.ServiceProfile
 import org.onap.aai.domain.yang.ServiceProfiles
+import org.onap.aaiclient.client.aai.AAIObjectName
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
+import org.onap.logging.filter.base.ONAPComponents
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.OofUtils
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import javax.ws.rs.core.Response
-import javax.ws.rs.NotFoundException
-
-import static org.apache.commons.lang3.StringUtils.isBlank
 
 /**
  * This groovy class supports the <class>DoDeleteSliceService.bpmn</class> process.
@@ -104,7 +106,7 @@ class DoDeleteSliceService extends AbstractServiceTaskProcessor {
         try
         {
         String errorMsg = "query e2e slice service from aai failed"
-        AAIResultWrapper wrapper = queryAAI(execution, AAIObjectType.SERVICE_INSTANCE, serviceInstanceId, errorMsg)
+        AAIResultWrapper wrapper = queryAAI(execution, Types.SERVICE_INSTANCE, serviceInstanceId, errorMsg)
         Optional<ServiceInstance> si =wrapper.asBean(ServiceInstance.class)
         if(si.isPresent())
         {
@@ -121,7 +123,7 @@ class DoDeleteSliceService extends AbstractServiceTaskProcessor {
                 if (relatedTo.toLowerCase() == "service-instance") {
                     String relatioshipurl = relationship.getRelatedLink()
                     String instanceId = relatioshipurl.substring(relatioshipurl.lastIndexOf("/") + 1, relatioshipurl.length())
-                    AAIResultWrapper wrapper1 = queryAAI(execution, AAIObjectType.SERVICE_INSTANCE, instanceId, errorMsg)                           
+                    AAIResultWrapper wrapper1 = queryAAI(execution, Types.SERVICE_INSTANCE, instanceId, errorMsg)
                     Optional<ServiceInstance> serviceInstance = wrapper1.asBean(ServiceInstance.class)
                     if (serviceInstance.isPresent()) {
                         ServiceInstance instance = serviceInstance.get()
@@ -156,7 +158,7 @@ class DoDeleteSliceService extends AbstractServiceTaskProcessor {
         try
         {
             String errorMsg = "query allotted resource from aai failed."
-            AAIResultWrapper wrapper = queryAAI(execution, AAIObjectType.ALLOTTED_RESOURCE_ALL, serviceInstanceId, errorMsg)
+            AAIResultWrapper wrapper = queryAAI(execution, Types.ALLOTTED_RESOURCES, serviceInstanceId, errorMsg)
             Optional<AllottedResources> ars = wrapper?.asBean(AllottedResources.class)
             if(ars.isPresent() && ars.get().getAllottedResource())
             {
@@ -191,7 +193,7 @@ class DoDeleteSliceService extends AbstractServiceTaskProcessor {
         try
         {
             String errorMsg = "query nsi from aai failed."
-            AAIResultWrapper wrapper = queryAAI(execution, AAIObjectType.SERVICE_INSTANCE, nsiId, errorMsg)
+            AAIResultWrapper wrapper = queryAAI(execution, Types.SERVICE_INSTANCE, nsiId, errorMsg)
             Optional<ServiceInstance> si =wrapper.asBean(ServiceInstance.class)
             List<String> nssiIdList = []
             String msg = "nsiId:${nsiId},nssiIdList:"
@@ -205,7 +207,7 @@ class DoDeleteSliceService extends AbstractServiceTaskProcessor {
                     {
                         String relatedLink = relationship.getRelatedLink()?:""
                         String instanceId = relatedLink ? relatedLink.substring(relatedLink.lastIndexOf("/") + 1,relatedLink.length()) : ""
-                        AAIResultWrapper wrapper1 = queryAAI(execution, AAIObjectType.SERVICE_INSTANCE, instanceId, errorMsg)
+                        AAIResultWrapper wrapper1 = queryAAI(execution, Types.SERVICE_INSTANCE, instanceId, errorMsg)
                         Optional<ServiceInstance> serviceInstance = wrapper1.asBean(ServiceInstance.class)
                         if (serviceInstance.isPresent()) {
                             ServiceInstance instance = serviceInstance.get()
@@ -245,7 +247,7 @@ class DoDeleteSliceService extends AbstractServiceTaskProcessor {
         String errorMsg = "query nssi list from aai failed"
         for(String nssiId : nssiIdList)
         {
-            AAIResultWrapper wrapper = queryAAI(execution, AAIObjectType.SERVICE_INSTANCE, nssiId, errorMsg)
+            AAIResultWrapper wrapper = queryAAI(execution, Types.SERVICE_INSTANCE, nssiId, errorMsg)
             Optional<ServiceInstance> si =wrapper.asBean(ServiceInstance.class)
             if(si.isPresent())
             {
@@ -329,21 +331,30 @@ class DoDeleteSliceService extends AbstractServiceTaskProcessor {
     /**
      * query AAI
      * @param execution
-     * @param aaiObjectType
+     * @param aaiObjectName
      * @param instanceId
      * @return AAIResultWrapper
      */
-    private AAIResultWrapper queryAAI(DelegateExecution execution, AAIObjectType aaiObjectType, String instanceId, String errorMsg)
+    private AAIResultWrapper queryAAI(DelegateExecution execution, AAIObjectName aaiObjectName, String instanceId, String errorMsg)
     {
         LOGGER.trace(" *****${PREFIX} Start queryAAI *****")
         String globalSubscriberId = execution.getVariable("globalSubscriberId")
         String serviceType = execution.getVariable("serviceType")
 
-        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(aaiObjectType, globalSubscriberId, serviceType, instanceId)
-        if (!getAAIClient().exists(resourceUri)) {
+        org.onap.aaiclient.client.generated.fluentbuilders.ServiceInstance serviceInstanceType = AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(instanceId)
+        def type
+        if (aaiObjectName == Types.ALLOTTED_RESOURCES) {
+            type = serviceInstanceType.allottedResources()
+        } else if (aaiObjectName == Types.SLICE_PROFILES) {
+            type = serviceInstanceType.sliceProfiles()
+        } else {
+            type = serviceInstanceType
+        }
+        def uri = AAIUriFactory.createResourceUri(type)
+        if (!getAAIClient().exists(uri)) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 2500, errorMsg)
         }
-        AAIResultWrapper wrapper = getAAIClient().get(resourceUri, NotFoundException.class)
+        AAIResultWrapper wrapper = getAAIClient().get(uri, NotFoundException.class)
         LOGGER.trace(" *****${PREFIX} Exit queryAAI *****")
         return wrapper
     }
