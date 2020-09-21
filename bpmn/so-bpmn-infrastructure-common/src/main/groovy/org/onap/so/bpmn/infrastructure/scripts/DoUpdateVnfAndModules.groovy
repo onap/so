@@ -41,7 +41,9 @@ import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
 import org.onap.so.client.HttpClient
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -159,7 +161,7 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 			def vnfId = execution.getVariable('vnfId')
 
 			AaiUtil aaiUriUtil = new AaiUtil(this)
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId).depth(Depth.ONE)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId)).depth(Depth.ONE)
 			String endPoint = aaiUriUtil.createAaiUri(uri)
 			logger.debug("AAI endPoint: " + endPoint)
 

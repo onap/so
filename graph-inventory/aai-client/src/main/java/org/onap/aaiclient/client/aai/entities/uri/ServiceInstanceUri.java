@@ -25,22 +25,25 @@ import java.util.Optional;
 import javax.ws.rs.core.UriBuilder;
 import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 
 public class ServiceInstanceUri extends HttpLookupUri {
 
     private static final long serialVersionUID = 2248914170527514548L;
 
-    protected ServiceInstanceUri(Object... values) {
-        super(AAIObjectType.SERVICE_INSTANCE, values);
+    protected ServiceInstanceUri(AAIObjectType type, UriBuilder builder, Optional<String> cachedValue,
+            Object... values) {
+        super(type, builder, cachedValue, values);
     }
 
-    protected ServiceInstanceUri(UriBuilder builder, Optional<String> cachedValue, Object... values) {
-        super(AAIObjectType.SERVICE_INSTANCE, builder, cachedValue, values);
+    protected ServiceInstanceUri(AAISingleFragment fragment) {
+        super(AAIFluentTypeBuilder.business().customer("").serviceSubscription("").serviceInstance("").build(),
+                fragment.get().values());
     }
 
     @Override
     public ServiceInstanceUri clone() {
-        return new ServiceInstanceUri(this.internalURI.clone(), this.getCachedValue(), values);
+        return new ServiceInstanceUri(this.aaiType, this.internalURI.clone(), this.getCachedValue(), values);
     }
 
     public AAIResourcesClient getResourcesClient() {

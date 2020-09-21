@@ -45,6 +45,7 @@ import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.aai.entities.uri.ServiceInstanceUri;
 import org.onap.aaiclient.client.defaultproperties.DefaultAAIPropertiesImpl;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -70,7 +71,7 @@ public class AAIResourcesClientWithServiceInstanceUriTest {
         wireMockRule.stubFor(get(urlMatching("/aai/v[0-9]+/nodes.*")).willReturn(
                 aResponse().withStatus(404).withHeader("Content-Type", "application/json").withHeader("Mock", "true")));
 
-        uri = spy((ServiceInstanceUri) AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, "id"));
+        uri = spy((ServiceInstanceUri) AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment("id")));
         doReturn(aaiClient).when(uri).getResourcesClient();
     }
 

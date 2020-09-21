@@ -52,6 +52,8 @@ import org.w3c.dom.NodeList
 import org.xml.sax.InputSource
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 
@@ -453,7 +455,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 
 			AAIResourcesClient resourceClient = new AAIResourcesClient()
-			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalCustId, serviceType, serviceInstanceId)
+			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalCustId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId))
 			resourceClient.delete(serviceInstanceUri)
 
 			logger.trace("Exited deleteServiceInstance")

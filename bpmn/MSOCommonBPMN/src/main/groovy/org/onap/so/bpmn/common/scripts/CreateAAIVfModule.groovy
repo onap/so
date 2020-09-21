@@ -26,14 +26,13 @@ import org.apache.commons.lang.StringUtils
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.GenericVnf
 import org.onap.aai.domain.yang.GenericVnfs
-import org.onap.so.bpmn.core.RollbackData
-import org.onap.aaiclient.client.aai.AAIObjectPlurals
-import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
-import org.onap.so.db.catalog.beans.OrchestrationStatus
 import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.bpmn.core.RollbackData
+import org.onap.so.db.catalog.beans.OrchestrationStatus
 import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
@@ -154,9 +153,9 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 		def vnfName = execution.getVariable("CAAIVfMod_vnfName")
         Optional<GenericVnf> genericVnfOp
 		if (vnfId == null || vnfId.isEmpty()) {
-			genericVnfOp = getAAIClient().getFirst(GenericVnfs.class, GenericVnf.class, AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName).depth(Depth.ONE))
+			genericVnfOp = getAAIClient().getFirst(GenericVnfs.class, GenericVnf.class, AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnfs()).queryParam("vnf-name", vnfName).depth(Depth.ONE))
 		} else {
-			genericVnfOp = getAAIClient().get(GenericVnf.class,  AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId))
+			genericVnfOp = getAAIClient().get(GenericVnf.class,  AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId)))
 		}
 		try {
             if(genericVnfOp.isPresent()){
@@ -214,7 +213,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
         genericVnf.setModelVersionId(execution.getVariable("CAAIVfMod_vnfPersonaVer"))
 
 		try {
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, newVnfId)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(newVnfId))
             getAAIClient().create(uri,genericVnf)
 			execution.setVariable("CAAIVfMod_createGenericVnfResponseCode", 201)
 			execution.setVariable("CAAIVfMod_createGenericVnfResponse", "Vnf Created")
@@ -266,7 +265,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 
 		try {
 
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, newModuleId)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId).vfModule(newModuleId))
             getAAIClient().create(uri,vfModule)
             def statusCode = 201
 			execution.setVariable("CAAIVfMod_createVfModuleResponseCode", statusCode)

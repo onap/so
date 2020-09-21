@@ -23,6 +23,8 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 
+import static org.mockito.Mockito.*
+import javax.ws.rs.core.UriBuilder
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.junit.Assert
@@ -38,17 +40,15 @@ import org.mockito.junit.MockitoJUnitRunner
 import org.onap.aai.domain.yang.GenericVnf
 import org.onap.aai.domain.yang.VfModule
 import org.onap.aai.domain.yang.VolumeGroup
-import org.onap.so.bpmn.common.scripts.MsoGroovyTest
-import org.onap.so.bpmn.mock.FileUtil
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
+import org.onap.so.bpmn.common.scripts.MsoGroovyTest
+import org.onap.so.bpmn.mock.FileUtil
 import org.onap.so.constants.Defaults
-
-import javax.ws.rs.core.UriBuilder
-
-import static org.mockito.Mockito.*
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 class UpdateVfModuleVolumeInfraV1Test extends MsoGroovyTest{
@@ -79,7 +79,7 @@ class UpdateVfModuleVolumeInfraV1Test extends MsoGroovyTest{
 
         UpdateVfModuleVolumeInfraV1 obj = spy(UpdateVfModuleVolumeInfraV1.class)
         when(obj.getAAIClient()).thenReturn(client)
-        AAIResourceUri uri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.VF_MODULE, UriBuilder.fromPath("/aai/v8/network/generic-vnfs/generic-vnf/12345/vf-modules/vf-module/12345").build())
+        AAIResourceUri uri = AAIUriFactory.createResourceFromExistingURI(Types.VF_MODULE, UriBuilder.fromPath("/aai/v8/network/generic-vnfs/generic-vnf/12345/vf-modules/vf-module/12345").build())
         VfModule vfModule = new VfModule();
         vfModule.setVfModuleId("12345")
         vfModule.setModelInvariantId("ff5256d2-5a33-55df-13ab-12abad84e7ff")
@@ -98,7 +98,7 @@ class UpdateVfModuleVolumeInfraV1Test extends MsoGroovyTest{
 
         UpdateVfModuleVolumeInfraV1 obj = spy(UpdateVfModuleVolumeInfraV1.class)
         when(obj.getAAIClient()).thenReturn(client)
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), aicCloudRegion, volumeGroupId)
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(Defaults.CLOUD_OWNER.toString(), aicCloudRegion).volumeGroup(volumeGroupId))
         VolumeGroup volumeGroup = new VolumeGroup();
         volumeGroup.setVolumeGroupId(volumeGroupId)
 
@@ -116,7 +116,7 @@ class UpdateVfModuleVolumeInfraV1Test extends MsoGroovyTest{
         UpdateVfModuleVolumeInfraV1 obj = spy(UpdateVfModuleVolumeInfraV1.class)
         when(obj.getAAIClient()).thenReturn(client)
 
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId))
         GenericVnf genericVnf = new GenericVnf()
         genericVnf.setVnfId(vnfId)
         genericVnf.setVnfName("testvnfName")
@@ -133,7 +133,7 @@ class UpdateVfModuleVolumeInfraV1Test extends MsoGroovyTest{
         UpdateVfModuleVolumeInfraV1 obj = spy(UpdateVfModuleVolumeInfraV1.class)
         when(obj.getAAIClient()).thenReturn(client)
 
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId))
         when(client.get(GenericVnf.class,uri)).thenReturn(Optional.empty())
         thrown.expect(BpmnError.class)
         obj.queryAAIForGenericVnf(mockExecution, "true")

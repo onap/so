@@ -27,6 +27,8 @@ import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.core.json.JsonUtils
@@ -81,9 +83,7 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
         sliceProfile.setReliability(new Object())
         try {
             AAIResourcesClient client = getAAIClient()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SLICE_PROFILE, execution.getVariable
-                    ("globalSubscriberId"),
-                    execution.getVariable("subscriptionServiceType"), sliceserviceInstanceId, sliceProfileId)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(sliceserviceInstanceId).sliceProfile(sliceProfileId))
             client.create(uri, sliceProfile)
 
         } catch (BpmnError e) {
@@ -120,7 +120,7 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
             ss.setEnvironmentContext(snssai)
             ss.setServiceRole(serviceRole)
             AAIResourcesClient client = getAAIClient()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("subscriptionServiceType"), ssInstanceId)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(ssInstanceId))
             client.create(uri, ss)
         } catch (BpmnError e) {
             throw e
@@ -136,16 +136,14 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
         String serviceInstanceId = execution.getVariable('sliceServiceInstanceId')
 
         AAIResourcesClient resourceClient = getAAIClient()
-        AAIResourceUri ssServiceuri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
+        AAIResourceUri ssServiceuri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
 
         try {
             List<String> networkStrList = jsonUtil.StringArrayToList(execution.getVariable("transportSliceNetworks"))
 
             for (String networkStr : networkStrList) {
                 String allottedResourceId = UUID.randomUUID().toString()
-                AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.ALLOTTED_RESOURCE,
-                        execution.getVariable("globalSubscriberId"), execution.getVariable("subscriptionServiceType"),
-                        execution.getVariable("sliceserviceInstanceId"), allottedResourceId)
+                AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(execution.getVariable("sliceserviceInstanceId")).allottedResource(allottedResourceId))
                 execution.setVariable("allottedResourceUri", allottedResourceUri)
                 String modelInvariantId = execution.getVariable("modelInvariantUuid")
                 String modelVersionId = execution.getVariable("modelUuid")
@@ -157,7 +155,7 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
                 resource.setModelInvariantId(modelInvariantId)
                 resource.setModelVersionId(modelVersionId)
                 getAAIClient().create(allottedResourceUri, resource)
-                //AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.SERVICE_INSTANCE, UriBuilder.fromPath(ssServiceuri).build())
+                //AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceFromExistingURI(Types.SERVICE_INSTANCE, UriBuilder.fromPath(ssServiceuri).build())
                 //getAAIClient().connect(allottedResourceUri,ssServiceuri)
                 //execution.setVariable("aaiARPath", allottedResourceUri.build().toString());
 
@@ -191,7 +189,7 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
                 resource.setModelInvariantId(modelInvariantId)
                 resource.setModelVersionId(modelVersionId)
 
-                AAIResourceUri logicalLinkUri = AAIUriFactory.createResourceUri(AAIObjectType.LOGICAL_LINK, logicalLinkId)
+                AAIResourceUri logicalLinkUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().logicalLink(logicalLinkId))
                 getAAIClient().create(logicalLinkUri, resource)
             }
         } catch (Exception ex) {

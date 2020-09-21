@@ -20,15 +20,32 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import static org.apache.commons.lang3.StringUtils.isBlank
+import javax.ws.rs.NotFoundException
+import javax.ws.rs.core.Response
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.json.JSONObject
+import org.onap.aai.domain.yang.GenericVnf
+import org.onap.aai.domain.yang.RelatedToProperty
+import org.onap.aai.domain.yang.Relationship
+import org.onap.aai.domain.yang.RelationshipData
+import org.onap.aai.domain.yang.ServiceInstance
+import org.onap.aaiclient.client.aai.AAIObjectName
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.logging.filter.base.ONAPComponents
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.CatalogDbUtils
 import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.RequestDBUtil
+import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.client.HttpClient
+import org.onap.so.db.request.beans.ResourceOperationStatus
 import org.onap.so.serviceinstancebeans.CloudConfiguration
 import org.onap.so.serviceinstancebeans.LineOfBusiness
 import org.onap.so.serviceinstancebeans.ModelInfo
@@ -36,36 +53,14 @@ import org.onap.so.serviceinstancebeans.ModelType
 import org.onap.so.serviceinstancebeans.OwningEntity
 import org.onap.so.serviceinstancebeans.Platform
 import org.onap.so.serviceinstancebeans.Project
-import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.onap.so.rest.catalog.beans.Vnf
 import org.onap.so.serviceinstancebeans.RequestDetails
 import org.onap.so.serviceinstancebeans.RequestInfo
 import org.onap.so.serviceinstancebeans.RequestParameters
 import org.onap.so.serviceinstancebeans.SubscriberInfo
-import org.onap.aai.domain.yang.GenericVnf
-import org.onap.aai.domain.yang.RelatedToProperty
-import org.onap.aai.domain.yang.Relationship
-import org.onap.aai.domain.yang.RelationshipData
-import org.onap.aai.domain.yang.RelationshipList
-import org.onap.aai.domain.yang.ServiceInstance
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.onap.so.client.HttpClient
-import org.onap.so.client.HttpClientFactory
-import org.onap.so.db.request.beans.OperationStatus
-import org.onap.so.db.request.beans.ResourceOperationStatus
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.AAIResourcesClient
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import com.fasterxml.jackson.databind.ObjectMapper
 
-import static org.apache.commons.lang3.StringUtils.isBlank
-
-import javax.ws.rs.NotFoundException
-import javax.ws.rs.core.Response
 
 class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
 
@@ -123,7 +118,7 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
         String serviceInstanceId = execution.getVariable("serviceInstanceID")
 
         String errorMsg = "query Network Service Instance from AAI failed"
-        AAIResultWrapper wrapper = queryAAI(execution, AAIObjectType.SERVICE_INSTANCE, serviceInstanceId, errorMsg)
+        AAIResultWrapper wrapper = queryAAI(execution, Types.SERVICE_INSTANCE, serviceInstanceId, errorMsg)
         Optional<ServiceInstance> nsi = wrapper.asBean(ServiceInstance.class)
 
         String networkServiceInstanceName = ""
@@ -163,7 +158,7 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
                         String errorSliceProfileMsg = "Slice Profile Service Instance was not found in aai"
 
                         //Query Slice Profile Service Instance From AAI by sliceProfileServiceInstanceId
-                        AAIResultWrapper sliceProfileInstanceWrapper = queryAAI(execution, AAIObjectType.SERVICE_INSTANCE, sliceProfileServiceInstanceId, errorSliceProfileMsg)
+                        AAIResultWrapper sliceProfileInstanceWrapper = queryAAI(execution, Types.SERVICE_INSTANCE, sliceProfileServiceInstanceId, errorSliceProfileMsg)
                         Optional<ServiceInstance> sliceProfileServiceInstance = sliceProfileInstanceWrapper.asBean(ServiceInstance.class)
                         if (sliceProfileServiceInstance.isPresent()) {
                             String orchestrationStatus= sliceProfileServiceInstance.get().getOrchestrationStatus()
@@ -204,7 +199,7 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
         String serviceInstanceId = execution.getVariable("networkServiceInstanceId")
 
         String errorMsg = "query Network Service Instance from AAI failed"
-        AAIResultWrapper wrapper = queryAAI(execution, AAIObjectType.SERVICE_INSTANCE, serviceInstanceId, errorMsg)
+        AAIResultWrapper wrapper = queryAAI(execution, Types.SERVICE_INSTANCE, serviceInstanceId, errorMsg)
         Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
 
         String networkServiceModelInvariantUuid = si.get().getModelInvariantId()
@@ -256,7 +251,7 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
         logger.debug(Prefix+" **** Enter DoAllocateCoreSharedSlice ::: getVnfRelationships ****")
         String msg = "query Generic Vnf from AAI failed"
         try {
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, execution.getVariable('vnfId'))
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(execution.getVariable('vnfId')))
             if (!getAAIClient().exists(uri)) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
             }
@@ -313,15 +308,15 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
     /**
      * query AAI
      * @param execution
-     * @param aaiObjectType
+     * @param aaiObjectName
      * @param instanceId
      * @return AAIResultWrapper
      */
-    private AAIResultWrapper queryAAI(DelegateExecution execution, AAIObjectType aaiObjectType, String instanceId, String errorMsg) {
+    private AAIResultWrapper queryAAI(DelegateExecution execution, AAIObjectName aaiObjectName, String instanceId, String errorMsg) {
         logger.debug(Prefix+" **** Enter DoAllocateCoreSharedSlice ::: queryAAI ****")
         String globalSubscriberId = execution.getVariable("globalSubscriberId")
         String serviceType = execution.getVariable("serviceType")
-        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(aaiObjectType, globalSubscriberId, serviceType, instanceId)
+        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(instanceId))
         if (!getAAIClient().exists(resourceUri)) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 2500, errorMsg)
         }

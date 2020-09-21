@@ -34,11 +34,12 @@ import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
-import org.onap.aaiclient.client.aai.AAIObjectPlurals
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.logging.filter.base.ErrorCode
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
@@ -507,7 +508,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 
                     try {
                         // Query AAI for this network policy FQDN
-                        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+                        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkPolicies())
                         uri.queryParam("network-policy-fqdn", fqdn)
                         Optional<NetworkPolicies> networkPolicies = getAAIClient().get(NetworkPolicies.class, uri)
 
@@ -516,7 +517,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
                             NetworkPolicy networkPolicy = networkPolicies.get().getNetworkPolicy().get(0)
 
                             try{
-                                AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, networkPolicy.getNetworkPolicyId())
+                                AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkPolicy(networkPolicy.getNetworkPolicyId()))
                                 getAAIClient().delete(delUri)
                                 execution.setVariable(Prefix + "aaiDeleteNetworkPolicyReturnCode", 200)
                                 logger.debug("AAI delete network policy Response Code, NetworkPolicy #" + counting + " : " + 200)

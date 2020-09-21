@@ -20,19 +20,20 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import static org.mockito.Mockito.times
+import static org.mockito.Mockito.when
+import javax.ws.rs.core.UriBuilder
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.Spy
 import org.onap.aai.domain.yang.AllottedResource
-import org.onap.so.bpmn.common.scripts.MsoGroovyTest
-import org.onap.so.bpmn.mock.FileUtil
-import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-import javax.ws.rs.core.UriBuilder
-import static org.mockito.Mockito.times
-import static org.mockito.Mockito.when
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
+import org.onap.so.bpmn.common.scripts.MsoGroovyTest
+import org.onap.so.bpmn.mock.FileUtil
 
 class DoCustomDeleteE2EServiceInstanceV2Test extends MsoGroovyTest {
 
@@ -49,7 +50,7 @@ class DoCustomDeleteE2EServiceInstanceV2Test extends MsoGroovyTest {
     void testPrepareServiceDeleteResource(){
         when(mockExecution.getVariable("serviceInstance")).thenReturn(FileUtil.readResourceFile("__files/AAI/ServiceInstanceWithAR.json"))
         def relink = "/aai/v11/business/customers/customer/testCustIdInfra/service-subscriptions/service-subscription/HNPORTAL/service-instances/service-instance/testServiceInstanceIdPortalPri/allotted-resources/allotted-resource/testAllottedResourceIdPortalPri"
-        AAIResourceUri uri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.ALLOTTED_RESOURCE, UriBuilder.fromPath(relink).build())
+        AAIResourceUri uri = AAIUriFactory.createResourceFromExistingURI(Types.ALLOTTED_RESOURCE, UriBuilder.fromPath(relink).build())
         AllottedResource ar = new AllottedResource();
         ar.setId("ar1")
         ar.setType("ar")

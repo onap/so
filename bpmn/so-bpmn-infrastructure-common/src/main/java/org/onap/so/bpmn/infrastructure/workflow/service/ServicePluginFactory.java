@@ -54,19 +54,19 @@ import org.onap.aai.domain.yang.LogicalLinks;
 import org.onap.aai.domain.yang.PInterface;
 import org.onap.aai.domain.yang.Pnf;
 import org.onap.aai.domain.yang.Relationship;
-import org.onap.logging.filter.base.ErrorCode;
-import org.onap.so.bpmn.core.UrnPropertiesReader;
-import org.onap.so.bpmn.core.domain.Resource;
-import org.onap.so.bpmn.core.domain.ServiceDecomposition;
-import org.onap.so.bpmn.core.json.JsonUtils;
-import org.onap.aaiclient.client.aai.AAIObjectPlurals;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.Relationships;
 import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
+import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.bpmn.core.UrnPropertiesReader;
+import org.onap.so.bpmn.core.domain.Resource;
+import org.onap.so.bpmn.core.domain.ServiceDecomposition;
+import org.onap.so.bpmn.core.json.JsonUtils;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -448,7 +448,7 @@ public class ServicePluginFactory {
     public Map getTPsfromAAI(String serviceName) {
         Map<String, Object> tpInfo = new HashMap<>();
 
-        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.LOGICAL_LINK);
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().logicalLinks());
         AAIResourcesClient client = new AAIResourcesClient();
         Optional<LogicalLinks> result = client.get(LogicalLinks.class, uri);
 
@@ -464,10 +464,10 @@ public class ServicePluginFactory {
                 List<AAIResourceUri> pInterfaces = new ArrayList<>();
                 if (optRelationships.isPresent()) {
                     Relationships relationships = optRelationships.get();
-                    if (!relationships.getRelatedAAIUris(AAIObjectType.EXT_AAI_NETWORK).isEmpty()) {
+                    if (!relationships.getRelatedUris(Types.EXT_AAI_NETWORK).isEmpty()) {
                         isRemoteLink = true;
                     }
-                    pInterfaces.addAll(relationships.getRelatedAAIUris(AAIObjectType.P_INTERFACE));
+                    pInterfaces.addAll(relationships.getRelatedUris(Types.P_INTERFACE));
                     if (isRemoteLink) {
                         // find remote p interface
                         AAIResourceUri localTP = null;
@@ -502,8 +502,8 @@ public class ServicePluginFactory {
             tpInfo.put("local-access-node-id", localNodeId);
 
             logger.info("Get info for local TP :{}", localNodeId);
-            Optional<Pnf> optLocalPnf =
-                    client.get(Pnf.class, AAIUriFactory.createResourceUri(AAIObjectType.PNF, localNodeId));
+            Optional<Pnf> optLocalPnf = client.get(Pnf.class,
+                    AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(localNodeId)));
 
 
             getTpInfoFromLocalTp(tpInfo, optLocalPnf);
@@ -523,8 +523,8 @@ public class ServicePluginFactory {
             logger.info("Get info for remote TP:{}", remoteNodeId);
 
             String[] networkRefRemote = intfRemote.getNetworkRef().split("-");
-            Optional<Pnf> optRemotePnf =
-                    client.get(Pnf.class, AAIUriFactory.createResourceUri(AAIObjectType.PNF, remoteNodeId));
+            Optional<Pnf> optRemotePnf = client.get(Pnf.class,
+                    AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(remoteNodeId)));
 
             getTpInfoFromRemoteTp(tpInfo, networkRefRemote, optRemotePnf);
 
@@ -584,14 +584,14 @@ public class ServicePluginFactory {
         if (uriString != null) {
             // get the pnfname
             String[] token = uriString.split("/");
-            AAIResourceUri parent = AAIUriFactory.createResourceUri(AAIObjectType.PNF, token[4]);
+            AAIResourceUri parent = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(token[4]));
 
             AAIResultWrapper wrapper = client.get(parent);
             Optional<Relationships> optRelationships = wrapper.getRelationships();
             if (optRelationships.isPresent()) {
                 Relationships relationships = optRelationships.get();
 
-                return !relationships.getRelatedAAIUris(AAIObjectType.EXT_AAI_NETWORK).isEmpty();
+                return !relationships.getRelatedUris(Types.EXT_AAI_NETWORK).isEmpty();
             }
         }
 

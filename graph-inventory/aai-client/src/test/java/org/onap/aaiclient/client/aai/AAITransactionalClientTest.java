@@ -45,6 +45,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryPatchConverter;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -56,13 +57,13 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 public class AAITransactionalClientTest {
 
     private final static String AAI_JSON_FILE_LOCATION = "src/test/resources/__files/aai/bulkprocess/";
-    AAIResourceUri uriA = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test1");
-    AAIResourceUri uriB = AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, "test2");
-    AAIResourceUri uriC = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test3");
-    AAIResourceUri uriD = AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, "test4");
-    AAIResourceUri uriE = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test5");
-    AAIResourceUri uriF = AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, "test6");
-    AAIResourceUri uriG = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test7");
+    AAIResourceUri uriA = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"));
+    AAIResourceUri uriB = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().pserver("test2"));
+    AAIResourceUri uriC = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test3"));
+    AAIResourceUri uriD = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().pserver("test4"));
+    AAIResourceUri uriE = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test5"));
+    AAIResourceUri uriF = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().pserver("test6"));
+    AAIResourceUri uriG = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test7"));
 
     ObjectMapper mapper;
 

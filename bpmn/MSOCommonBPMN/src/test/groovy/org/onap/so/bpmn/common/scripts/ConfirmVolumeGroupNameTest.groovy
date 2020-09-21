@@ -22,6 +22,13 @@
 
 package org.onap.so.bpmn.common.scripts
 
+import static org.assertj.core.api.Assertions.catchThrowableOfType
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertFalse
+import static org.junit.Assert.assertTrue
+import static org.mockito.Mockito.spy
+import static org.mockito.Mockito.when
+import javax.ws.rs.core.UriBuilder
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake
@@ -31,29 +38,18 @@ import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import org.onap.aai.domain.yang.RelationshipList
 import org.onap.aai.domain.yang.VolumeGroup
-import org.onap.so.bpmn.common.scripts.ConfirmVolumeGroupName
-import org.onap.so.bpmn.common.scripts.ConfirmVolumeGroupNameFactory
-import org.onap.so.bpmn.common.scripts.ExceptionUtil
-import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.constants.Defaults
 import org.springframework.http.HttpStatus
-
-import javax.ws.rs.core.UriBuilder
-
-import static org.assertj.core.api.Assertions.catchThrowableOfType
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertFalse
-import static org.junit.Assert.assertTrue
-import static org.mockito.Mockito.spy
-import static org.mockito.Mockito.when
 
 class ConfirmVolumeGroupNameTest {
 
     private static final AAIResourceUri RESOURCE_URI = AAIUriFactory.createResourceFromExistingURI(
-            AAIObjectType.VOLUME_GROUP, UriBuilder.fromPath('/aai/test/volume-groups/volume-group/testVolumeGroup').build())
+            Types.VOLUME_GROUP, UriBuilder.fromPath('/aai/test/volume-groups/volume-group/testVolumeGroup').build())
 
     private ConfirmVolumeGroupName confirmVolumeGroupName
     @Mock
@@ -79,7 +75,7 @@ class ConfirmVolumeGroupNameTest {
         String volumeGroupId = "volume-group-id-1"
         String volumeGroupName = "volume-group-name-1"
         String aicCloudRegion = "aic-cloud-region-1"
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER, aicCloudRegion, volumeGroupId)
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(Defaults.CLOUD_OWNER.toString(), aicCloudRegion).volumeGroup(volumeGroupId))
 
         delegateExecution.setVariable("ConfirmVolumeGroupName_volumeGroupId", volumeGroupId)
         delegateExecution.setVariable("ConfirmVolumeGroupName_volumeGroupName", volumeGroupName)

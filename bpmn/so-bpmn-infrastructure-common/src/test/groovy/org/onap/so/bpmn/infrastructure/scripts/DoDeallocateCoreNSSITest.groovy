@@ -70,6 +70,8 @@ import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 
 import static org.mockito.ArgumentMatchers.anyDouble
@@ -182,8 +184,8 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
 
         when(mockExecution.getVariable("currentNSSI")).thenReturn(currentNSSI)
 
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, "5G-999")
-        AAIResourceUri networkServiceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, "NS-777")
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment("5G-999"))
+        AAIResourceUri networkServiceInstanceUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment("NS-777"))
 
         ServiceInstance nssi = new ServiceInstance()
         nssi.setServiceInstanceId("5G-999")
@@ -211,7 +213,7 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
         when(client.get(nssiUri)).thenReturn(wrapperMock)
         when(wrapperMock.getRelationships()).thenReturn(orsMock)
 
-        when(rsMock.getRelatedAAIUris(AAIObjectType.SERVICE_INSTANCE)).thenReturn(arus)
+        when(rsMock.getRelatedUris(Types.SERVICE_INSTANCE)).thenReturn(arus)
         when(client.get(ServiceInstance.class, aru)).thenReturn(networkServiceInstaneOpt)
 
         spy.getNetworkServiceInstance(mockExecution)
@@ -284,10 +286,10 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
         GenericVnf genericVNF = new GenericVnf()
         genericVNF.setVnfId("VNF-1")
 
-        AAIResourceUri networkServiceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, networkServiceInstance.getServiceInstanceId())
+        AAIResourceUri networkServiceInstanceUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(networkServiceInstance.getServiceInstanceId()))
 
         Optional<GenericVnf> genericVnfOpt = Optional.of(genericVNF)
-        AAIResourceUri genericVNFUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, genericVNF.getVnfId())
+        AAIResourceUri genericVNFUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(genericVNF.getVnfId()))
 
         currentNSSI.put("networkServiceInstanceUri", networkServiceInstanceUri)
         currentNSSI.put("networkServiceInstance", networkServiceInstance)
@@ -302,7 +304,7 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
         when(client.get(networkServiceInstanceUri)).thenReturn(wrapperMock)
         when(wrapperMock.getRelationships()).thenReturn(orsMock)
 
-        when(rsMock.getRelatedAAIUris(AAIObjectType.GENERIC_VNF)).thenReturn(arus)
+        when(rsMock.getRelatedUris(Types.GENERIC_VNF)).thenReturn(arus)
         when(client.get(GenericVnf.class, genericVNFUri)).thenReturn(genericVnfOpt)
 
         spy.getConstituteVNFFromNetworkServiceInst(mockExecution)
@@ -438,8 +440,8 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
         currentNSSI.put("nssiId", nssiId)
         currentNSSI.put("nsiId", nsiId)
 
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nssiId)
-        AAIResourceUri nsiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nsiId)
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+        AAIResourceUri nsiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nsiId))
 
         doNothing().when(client).disconnect(nssiUri, nsiUri)
 
@@ -462,7 +464,7 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
 
         currentNSSI.put("nssi", nssi)
 
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nssiId)
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
 
         DoDeallocateCoreNSSI spy = spy(DoDeallocateCoreNSSI.class)
 
@@ -516,7 +518,7 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
         sliceProfile.setSNssai(theSNSSAI)
         sliceProfile.setProfileId("prof-id")
 
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nssiId)
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
 
         currentNSSI.put("sliceProfileS-NSSAI", sliceProfile)
 
@@ -541,7 +543,7 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
 
         currentNSSI.put("nssiId", nssiId)
 
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nssiId)
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
 
         DoDeallocateCoreNSSI spy = spy(DoDeallocateCoreNSSI.class)
 
@@ -589,9 +591,9 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
         nssi.setServiceInstanceId("5G-999")
         nssi.setOrchestrationStatus("orchestration-status")
 
-        AAIResourceUri networkServiceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, "networkServiceInstance.getServiceInstanceId()")
+        AAIResourceUri networkServiceInstanceUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment("networkServiceInstance.getServiceInstanceId())")
 
-        AAIResourceUri cloudRegionAAIUri = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, "cloud-owner", "cloud-region-id")
+        AAIResourceUri cloudRegionAAIUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion("cloud-owner", "cloud-region-id"))
 
         currentNSSI.put("networkServiceInstanceUri", networkServiceInstanceUri)
 
@@ -647,7 +649,7 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
 
         currentNSSI.put("constituteVnf", genericVnf)
 
-        AAIResourceUri constituteVNFURI = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, genericVnf.getVnfId())
+        AAIResourceUri constituteVNFURI = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(genericVnf.getVnfId()))
 
         currentNSSI.put("constituteVnfUri", constituteVNFURI)
 
@@ -689,7 +691,7 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
         AAIResourceUri aru = new AAISimpleUri(cloudRegionAAIUri)
         arus.add(aru)
 
-        when(rsMock.getRelatedAAIUris(AAIObjectType.PROJECT)).thenReturn(arus)
+        when(rsMock.getRelatedUris(Types.PROJECT)).thenReturn(arus)
 
         Optional<Project> projectOpt = Optional.of(project)
 
@@ -715,7 +717,7 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
         AAIResourceUri aru = new AAISimpleUri(networkServiceInstanceUri)
         arus.add(aru)
 
-        when(rsMock.getRelatedAAIUris(AAIObjectType.OWNING_ENTITY)).thenReturn(arus)
+        when(rsMock.getRelatedUris(Types.OWNING_ENTITY)).thenReturn(arus)
 
         Optional<OwningEntity> owningEntityOpt = Optional.of(owningEntity)
 
@@ -737,7 +739,7 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
         AAIResourceUri aru = new AAISimpleUri(cloudRegionAAIUri)
         arus.add(aru)
 
-        when(rsMock.getRelatedAAIUris(AAIObjectType.CLOUD_REGION)).thenReturn(arus)
+        when(rsMock.getRelatedUris(Types.CLOUD_REGION)).thenReturn(arus)
 
         CloudRegion cloudRegion = new CloudRegion()
         cloudRegion.setCloudRegionId("cloud-region-id")
@@ -763,14 +765,14 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
         when(client.get(networkServiceInstanceUri)).thenReturn(wrapperMock)
         when(wrapperMock.getRelationships()).thenReturn(orsMock)
 
-        AAIResourceUri serviceSubscriptionUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_SUBSCRIPTION, "global-customer-id", "service-type")
+        AAIResourceUri serviceSubscriptionUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("global-customer-id").serviceSubscription("service-type"))
 
-        AAIResourceUri customerUri = AAIUriFactory.createResourceUri(AAIObjectType.CUSTOMER, "global-customer-id")
+        AAIResourceUri customerUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("global-customer-id"))
         List<AAIResourceUri> arus = new ArrayList<>()
 
         arus.add(serviceSubscriptionUri)
 
-        when(rsMock.getRelatedAAIUris(AAIObjectType.SERVICE_SUBSCRIPTION)).thenReturn(arus)
+        when(rsMock.getRelatedUris(Types.SERVICE_SUBSCRIPTION)).thenReturn(arus)
 
         ServiceSubscription serviceSubscription = new ServiceSubscription()
         serviceSubscription.setServiceType("service-type")
@@ -780,7 +782,7 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
 
         when(client.get(networkServiceInstanceUri)).thenReturn(wrapperMock)
 
-        when(rsMock.getRelatedAAIUris(AAIObjectType.CUSTOMER)).thenReturn(arus)
+        when(rsMock.getRelatedUris(Types.CUSTOMER)).thenReturn(arus)
 
         Customer customer = new Customer()
         customer.setSubscriberName("subscriber-name")
@@ -798,7 +800,7 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
 
         Optional<ModelVer> modelVerOpt = Optional.of(modelVer)
 
-        AAIResourceUri modelVerUrl = AAIUriFactory.createResourceUri(AAIObjectType.MODEL_VER, networkServiceInstance.getModelInvariantId(), networkServiceInstance.getModelVersionId())
+        AAIResourceUri modelVerUrl = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.serviceDesignAndCreation().model(networkServiceInstance.getModelInvariantId()).modelVer(networkServiceInstance.getModelVersionId()))
         when(client.get(ModelVer.class, modelVerUrl)).thenReturn(modelVerOpt)
     }
 
@@ -810,7 +812,7 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
 
         Optional<ModelVer> modelVerOpt = Optional.of(modelVer)
 
-        AAIResourceUri modelVerUrl = AAIUriFactory.createResourceUri(AAIObjectType.MODEL_VER, genericVnf.getModelInvariantId(), genericVnf.getModelVersionId())
+        AAIResourceUri modelVerUrl = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.serviceDesignAndCreation().model(genericVnf.getModelInvariantId()).modelVer(genericVnf.getModelVersionId()))
         when(client.get(ModelVer.class, modelVerUrl)).thenReturn(modelVerOpt)
     }
 
@@ -822,7 +824,7 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
 
         Optional<ModelVer> modelVerOpt = Optional.of(modelVer)
 
-        AAIResourceUri modelVerUrl = AAIUriFactory.createResourceUri(AAIObjectType.MODEL_VER, vfModule.getModelInvariantId(), vfModule.getModelVersionId())
+        AAIResourceUri modelVerUrl = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.serviceDesignAndCreation().model(vfModule.getModelInvariantId()).modelVer(vfModule.getModelVersionId()))
         when(client.get(ModelVer.class, modelVerUrl)).thenReturn(modelVerOpt)
     }
 

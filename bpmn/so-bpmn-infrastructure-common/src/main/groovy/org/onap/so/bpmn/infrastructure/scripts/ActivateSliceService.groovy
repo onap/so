@@ -20,11 +20,20 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import static org.apache.commons.lang3.StringUtils.isBlank
+import java.lang.reflect.Type
+import javax.ws.rs.NotFoundException
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.*
+import org.onap.aaiclient.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
+import org.onap.logging.filter.base.ErrorCode
 import org.onap.so.beans.nsmf.NSSI
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -32,22 +41,13 @@ import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.RequestDBUtil
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.AAIResourcesClient
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.db.request.beans.OperationStatus
-import org.onap.logging.filter.base.ErrorCode
 import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import javax.ws.rs.NotFoundException
-import java.lang.reflect.Type
-
-import static org.apache.commons.lang3.StringUtils.isBlank
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 /**
  * This groovy class supports the <class>ActivateSliceService.bpmn</class> process.
@@ -248,8 +248,7 @@ class ActivateSliceService extends AbstractServiceTaskProcessor {
         String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
 
         AAIResourcesClient client = new AAIResourcesClient()
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                globalSubscriberId, subscriptionServiceType, NSIServiceId)
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(NSIServiceId))
         if (!client.exists(uri)) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai")
         }
@@ -271,8 +270,7 @@ class ActivateSliceService extends AbstractServiceTaskProcessor {
                     }
                     for (String snssi : SNSSIList) {
                         AAIResourcesClient client01 = new AAIResourcesClient()
-                        AAIResourceUri uri01 = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                                globalSubscriberId, subscriptionServiceType, snssi)
+                        AAIResourceUri uri01 = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(snssi))
                         if (!client.exists(uri01)) {
                             exceptionUtil.buildAndThrowWorkflowException(execution, 2500,
                                     "Service Instance was not found in aai")
@@ -339,8 +337,7 @@ class ActivateSliceService extends AbstractServiceTaskProcessor {
 
         try {
             AAIResourcesClient client = new AAIResourcesClient()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                    globalCustId, serviceType, serviceId)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalCustId).serviceSubscription(serviceType).serviceInstance(serviceId))
             if (!client.exists(uri)) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai")
             }
@@ -392,8 +389,7 @@ class ActivateSliceService extends AbstractServiceTaskProcessor {
         try {
             //get the TN NSSI id by NSI id, active NSSI TN slicing
             AAIResourcesClient client = new AAIResourcesClient()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                    globalSubscriberId, subscriptionServiceType, NSIserviceInstanceId)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(NSIserviceInstanceId))
             if (!client.exists(uri)) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai")
             }
@@ -410,8 +406,7 @@ class ActivateSliceService extends AbstractServiceTaskProcessor {
                                 relatioshipurl.substring(relatioshipurl.lastIndexOf("/") + 1, relatioshipurl.length())
 
                         AAIResourcesClient client01 = new AAIResourcesClient()
-                        AAIResourceUri uri01 = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                                globalSubscriberId, subscriptionServiceType, nssiserviceid)
+                        AAIResourceUri uri01 = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(nssiserviceid))
                         if (!client.exists(uri01)) {
                             exceptionUtil.buildAndThrowWorkflowException(execution, 2500,
                                     "Service Instance was not found in aai")
@@ -477,8 +472,7 @@ class ActivateSliceService extends AbstractServiceTaskProcessor {
         try {
             try {
                 AAIResourcesClient client = new AAIResourcesClient()
-                AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                        globalSubscriberId, subscriptionServiceType, serviceInstanceId)
+                AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(serviceInstanceId))
                 if (!client.exists(uri)) {
                     exceptionUtil.buildAndThrowWorkflowException(execution, 2500,
                             "Service Instance was not found in aai")
@@ -516,8 +510,8 @@ class ActivateSliceService extends AbstractServiceTaskProcessor {
 
                 //get the allotted-resources by e2e slice id
                 AAIResourcesClient client_allotted = new AAIResourcesClient()
-                AAIResourceUri uri_allotted = AAIUriFactory.createResourceUri(AAIObjectType.ALLOTTED_RESOURCE_ALL,
-                        globalSubscriberId, subscriptionServiceType, serviceInstanceId)
+                AAIPluralResourceUri uri_allotted = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(serviceInstanceId).allottedResources()
+                        )
                 if (!client_allotted.exists(uri_allotted)) {
                     exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai")
                 }
@@ -536,8 +530,7 @@ class ActivateSliceService extends AbstractServiceTaskProcessor {
                     try {
                         //get the NSI id by e2e slice id
                         AAIResourcesClient client = new AAIResourcesClient()
-                        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                                globalSubscriberId, subscriptionServiceType, nsiserviceid)
+                        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(nsiserviceid))
                         if (!client.exists(uri)) {
                             exceptionUtil.buildAndThrowWorkflowException(execution, 2500,
                                     "Service Instance was not found in aai")

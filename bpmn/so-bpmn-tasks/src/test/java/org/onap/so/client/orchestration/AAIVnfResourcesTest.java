@@ -43,15 +43,6 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.so.bpmn.common.InjectionHelper;
-import org.onap.so.bpmn.common.data.TestDataSetup;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.LineOfBusiness;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Platform;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
-import org.onap.aaiclient.client.aai.AAIObjectPlurals;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.AAIRestClientImpl;
 import org.onap.aaiclient.client.aai.AAIValidatorImpl;
@@ -59,8 +50,16 @@ import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
-import org.onap.so.client.aai.mapper.AAIObjectMapper;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
+import org.onap.so.bpmn.common.InjectionHelper;
+import org.onap.so.bpmn.common.data.TestDataSetup;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.LineOfBusiness;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Platform;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
@@ -197,18 +196,19 @@ public class AAIVnfResourcesTest extends TestDataSetup {
     public void connectVnfToTenantTest() throws Exception {
         aaiVnfResources.connectVnfToTenant(genericVnf, cloudRegion);
         verify(MOCK_aaiResourcesClient, times(1)).connect(
-                eq(AAIUriFactory.createResourceUri(AAIObjectType.TENANT, cloudRegion.getCloudOwner(),
-                        cloudRegion.getLcpCloudRegionId(), cloudRegion.getTenantId())),
-                eq(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, genericVnf.getVnfId())));
+                eq(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                        .cloudRegion(cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId())
+                        .tenant(cloudRegion.getTenantId()))),
+                eq(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(genericVnf.getVnfId()))));
     }
 
     @Test
     public void connectVnfToCloudRegionTest() throws Exception {
         aaiVnfResources.connectVnfToCloudRegion(genericVnf, cloudRegion);
         verify(MOCK_aaiResourcesClient, times(1)).connect(
-                eq(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, genericVnf.getVnfId())),
-                eq(AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, cloudRegion.getCloudOwner(),
-                        cloudRegion.getLcpCloudRegionId())));
+                eq(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(genericVnf.getVnfId()))),
+                eq(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                        .cloudRegion(cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId()))));
     }
 
 
@@ -244,8 +244,8 @@ public class AAIVnfResourcesTest extends TestDataSetup {
 
     @Test
     public void checkNameInUseTrueTest() {
-        AAIPluralResourceUri vnfUri =
-                AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", "vnfName");
+        AAIPluralResourceUri vnfUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnfs())
+                .queryParam("vnf-name", "vnfName");
         doReturn(true).when(MOCK_aaiResourcesClient).exists(eq(vnfUri));
         boolean nameInUse = aaiVnfResources.checkNameInUse("vnfName");
         assertTrue(nameInUse);
@@ -253,8 +253,8 @@ public class AAIVnfResourcesTest extends TestDataSetup {
 
     @Test
     public void checkNameInUseFalseTest() {
-        AAIPluralResourceUri vnfUri =
-                AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", "vnfName");
+        AAIPluralResourceUri vnfUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnfs())
+                .queryParam("vnf-name", "vnfName");
         doReturn(false).when(MOCK_aaiResourcesClient).exists(eq(vnfUri));
         boolean nameInUse = aaiVnfResources.checkNameInUse("vnfName");
         assertFalse(nameInUse);
@@ -262,7 +262,8 @@ public class AAIVnfResourcesTest extends TestDataSetup {
 
     @Test
     public void queryVnfWrapperByIdTest() throws Exception {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "vnfId").depth(Depth.ALL);
+        AAIResourceUri uri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("vnfId")).depth(Depth.ALL);
         final String aaiResponse = new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "aaiGenericVnf.json")));
         GenericVnf genericVnf = new GenericVnf();
         genericVnf.setVnfId("vnfId");
@@ -279,8 +280,8 @@ public class AAIVnfResourcesTest extends TestDataSetup {
                 new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "aaiVserverQueryResponse.json")));
         AAIResultWrapper aaiResultWrapper = new AAIResultWrapper(content);
         Optional<org.onap.aai.domain.yang.Vserver> oVserver = Optional.empty();
-        AAIResourceUri vserverUri = AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, "ModelInvariantUUID",
-                "serviceModelVersionId", "abc", "abc");
+        AAIResourceUri vserverUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                .cloudRegion("ModelInvariantUUID", "serviceModelVersionId").tenant("abc").vserver("abc"));
 
         doReturn(aaiResultWrapper).when(MOCK_aaiResourcesClient).get(isA(AAIResourceUri.class));
         oVserver = aaiVnfResources.getVserver(vserverUri);

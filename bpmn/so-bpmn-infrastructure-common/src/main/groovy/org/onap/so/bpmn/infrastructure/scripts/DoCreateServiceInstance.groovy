@@ -44,6 +44,8 @@ import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -291,7 +293,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			String globalCustomerId = execution.getVariable("globalSubscriberId") //VID to AAI name map
 			logger.debug(" ***** getAAICustomerById ***** globalCustomerId:" + globalCustomerId)
 
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.CUSTOMER, globalCustomerId)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalCustomerId))
 			if(!getAAIClient().exists(uri)){
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "GlobalCustomerId:" + globalCustomerId + " not found (404) in AAI")
 			}
@@ -352,7 +354,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			si.setWorkloadContext(workloadContext)
 
 			AAIResourcesClient client = new AAIResourcesClient()
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("subscriptionServiceType"), serviceInstanceId)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(serviceInstanceId))
 			client.create(uri, si)
 
 		} catch (BpmnError e) {
