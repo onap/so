@@ -14,6 +14,13 @@ import org.onap.so.bpmn.common.scripts.NssmfAdapterUtils
 import org.onap.so.bpmn.core.domain.ModelInfo
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.aaiclient.client.aai.AAIObjectType
+import org.onap.aaiclient.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.entities.AAIEdgeLabel
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity

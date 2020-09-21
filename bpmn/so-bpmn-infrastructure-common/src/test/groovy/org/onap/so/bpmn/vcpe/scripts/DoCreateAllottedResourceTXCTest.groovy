@@ -22,28 +22,25 @@
 
 package org.onap.so.bpmn.vcpe.scripts
 
-import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
-import org.junit.*
-import org.mockito.MockitoAnnotations
-import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.bpmn.mock.FileUtil
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.AAIResourcesClient
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-
-import javax.ws.rs.core.UriBuilder
-
 import static org.junit.Assert.*
 import static org.mockito.Mockito.*
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetAllottedResource
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockPatchAllottedResource
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockPutAllottedResource
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockPutAllottedResource_500
-
+import javax.ws.rs.core.UriBuilder
+import org.camunda.bpm.engine.delegate.BpmnError
+import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
+import org.junit.*
+import org.mockito.MockitoAnnotations
+import org.onap.aaiclient.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.core.RollbackData
-
+import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.bpmn.mock.FileUtil
 import com.github.tomakehurst.wiremock.junit.WireMockRule
 
 class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
@@ -157,7 +154,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
     public void createAaiAR() {
         ExecutionEntity mex = setupMock()
         initCreateAaiAr(mex)
-        when(mex.getVariable("PSI_resourceLink")).thenReturn(AAIUriFactory.createResourceFromExistingURI(AAIObjectType.SERVICE_INSTANCE, UriBuilder.fromPath("/aai/v9/business/customers/customer/" + CUST + "/service-subscriptions/service-subscription/" + SVC + "/service-instances/service-instance/" + INST).build()))
+        when(mex.getVariable("PSI_resourceLink")).thenReturn(AAIUriFactory.createResourceFromExistingURI(Types.SERVICE_INSTANCE, UriBuilder.fromPath("/aai/v9/business/customers/customer/" + CUST + "/service-subscriptions/service-subscription/" + SVC + "/service-instances/service-instance/" + INST).build()))
         when(mex.getVariable("CSI_resourceLink")).thenReturn("/aai/v9/business/customers/customer/" + CUST + "/service-subscriptions/service-subscription/" + SVC + "/service-instances/service-instance/" + INST)
         when(mex.getVariable("allottedResourceModelInfo")).thenReturn("{\n" +
                 "  \"modelInvariantUuid\":\"modelInvariantUuid\",\n" +
@@ -788,7 +785,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
         when(mex.getVariable("allottedResourceId")).thenReturn(ARID)
         when(mex.getVariable("aai.endpoint")).thenReturn(aaiUriPfx)
         when(mex.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn(UrnPropertiesReader.getVariable("mso.workflow.global.default.aai.namespace"))
-        when(mex.getVariable("PSI_resourceLink")).thenReturn(AAIUriFactory.createResourceFromExistingURI(AAIObjectType.SERVICE_INSTANCE, UriBuilder.fromPath("/business/customers/customer/" + CUST + "/service-subscriptions/service-subscription/" + SVC + "/service-instances/service-instance/" + INST).build()))
+        when(mex.getVariable("PSI_resourceLink")).thenReturn(AAIUriFactory.createResourceFromExistingURI(Types.SERVICE_INSTANCE, UriBuilder.fromPath("/business/customers/customer/" + CUST + "/service-subscriptions/service-subscription/" + SVC + "/service-instances/service-instance/" + INST).build()))
         when(mex.getVariable("allottedResourceType")).thenReturn("TXCt")
         when(mex.getVariable("allottedResourceRole")).thenReturn("TXCr")
         when(mex.getVariable("CSI_resourceLink")).thenReturn(aaiUriPfx + "/aai/v9/mycsi")

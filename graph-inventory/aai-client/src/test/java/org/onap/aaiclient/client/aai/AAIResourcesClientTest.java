@@ -55,6 +55,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.defaultproperties.DefaultAAIPropertiesImpl;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.graphinventory.exceptions.GraphInventoryMultipleItemsException;
 import org.onap.so.client.RestClient;
 import com.github.tomakehurst.wiremock.admin.NotFoundException;
@@ -86,7 +87,7 @@ public class AAIResourcesClientTest {
 
     @Test
     public void verifyNotExists() {
-        AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test");
+        AAIResourceUri path = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test"));
         wireMockRule.stubFor(get(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
                 .willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("hello").withStatus(404)));
         AAIResourcesClient client = aaiClient;
@@ -96,7 +97,7 @@ public class AAIResourcesClientTest {
 
     @Test
     public void verifyDelete() {
-        AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test2");
+        AAIResourceUri path = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test2"));
         wireMockRule.stubFor(get(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withBodyFile("aai/resources/mockObject.json").withStatus(200)));
@@ -108,7 +109,7 @@ public class AAIResourcesClientTest {
 
     @Test
     public void verifyBasicAuth() {
-        AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test3");
+        AAIResourceUri path = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test3"));
         wireMockRule.stubFor(get(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build().toString()))
                 .withHeader("Authorization", equalTo("Basic dGVzdDp0ZXN0"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
@@ -119,8 +120,8 @@ public class AAIResourcesClientTest {
 
     @Test
     public void verifyConnect() {
-        AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test2");
-        AAIResourceUri path2 = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test3");
+        AAIResourceUri path = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test2"));
+        AAIResourceUri path2 = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test3"));
         wireMockRule.stubFor(
                 put(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build() + "/relationship-list/relationship"))
                         .willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(200)));
@@ -133,8 +134,8 @@ public class AAIResourcesClientTest {
 
     @Test
     public void verifyDisconnect() {
-        AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test2");
-        AAIResourceUri path2 = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test3");
+        AAIResourceUri path = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test2"));
+        AAIResourceUri path2 = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test3"));
 
         wireMockRule.stubFor(
                 delete(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build() + "/relationship-list/relationship"))
@@ -148,7 +149,7 @@ public class AAIResourcesClientTest {
 
     @Test
     public void verifyPatch() {
-        AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test2");
+        AAIResourceUri path = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test2"));
 
         wireMockRule.stubFor(post(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
                 .willReturn(aResponse().withStatus(200)));
@@ -160,7 +161,7 @@ public class AAIResourcesClientTest {
 
     @Test
     public void verifyNotExistsGet() {
-        AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test");
+        AAIResourceUri path = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test"));
         wireMockRule.stubFor(get(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
                 .willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("hello").withStatus(404)));
         AAIResourcesClient client = aaiClient;
@@ -170,7 +171,7 @@ public class AAIResourcesClientTest {
 
     @Test
     public void verifyNotExistsGetException() {
-        AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test");
+        AAIResourceUri path = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test"));
         wireMockRule.stubFor(get(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
                 .willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("hello").withStatus(404)));
         AAIResourcesClient client = aaiClient;
@@ -181,7 +182,7 @@ public class AAIResourcesClientTest {
 
     @Test
     public void verifyFailedCallException() {
-        AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test");
+        AAIResourceUri path = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test"));
         wireMockRule.stubFor(get(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build())).willReturn(aResponse()
                 .withHeader("Content-Type", "text/plain").withBodyFile("aai/error-message.json").withStatus(400)));
         AAIResourcesClient client = aaiClient;
@@ -195,7 +196,7 @@ public class AAIResourcesClientTest {
     @Test
     public void buildRelationshipTest() {
         AAIResourcesClient client = aaiClient;
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test");
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test"));
         Relationship relationship = new Relationship();
         relationship.setRelatedLink(uri.build().toString());
         Relationship actual = client.buildRelationship(uri);
@@ -213,7 +214,7 @@ public class AAIResourcesClientTest {
         vnf.setVnfId("my-vnf-id");
         GenericVnfs vnfs = new GenericVnfs();
         vnfs.getGenericVnf().add(vnf);
-        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF);
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnfs());
         RestClient restClientMock = mock(RestClient.class);
         doReturn(restClientMock).when(client).createClient(uri);
         when(restClientMock.get(GenericVnfs.class)).thenReturn(Optional.of(vnfs));
@@ -232,7 +233,7 @@ public class AAIResourcesClientTest {
         GenericVnfs vnfs = new GenericVnfs();
         vnfs.getGenericVnf().add(vnf);
         vnfs.getGenericVnf().add(vnf2);
-        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF);
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnfs());
         RestClient restClientMock = mock(RestClient.class);
         doReturn(restClientMock).when(client).createClient(uri);
         when(restClientMock.get(GenericVnfs.class)).thenReturn(Optional.of(vnfs));
@@ -250,7 +251,7 @@ public class AAIResourcesClientTest {
         GenericVnfs vnfs = new GenericVnfs();
         vnfs.getGenericVnf().add(vnf);
         vnfs.getGenericVnf().add(vnf2);
-        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF);
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnfs());
         RestClient restClientMock = mock(RestClient.class);
         doReturn(restClientMock).when(client).createClient(uri);
         when(restClientMock.get(GenericVnfs.class)).thenReturn(Optional.of(vnfs));
@@ -266,7 +267,7 @@ public class AAIResourcesClientTest {
         vnf.setVnfId("my-vnf-id");
         GenericVnfs vnfs = new GenericVnfs();
         vnfs.getGenericVnf().add(vnf);
-        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF);
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnfs());
         RestClient restClientMock = mock(RestClient.class);
         doReturn(restClientMock).when(client).createClient(uri);
         when(restClientMock.get(GenericVnfs.class)).thenReturn(Optional.empty());
@@ -282,7 +283,7 @@ public class AAIResourcesClientTest {
         vnf.setVnfId("my-vnf-id");
         GenericVnfs vnfs = new GenericVnfs();
         vnfs.getGenericVnf().add(vnf);
-        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF);
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnfs());
         RestClient restClientMock = mock(RestClient.class);
         doReturn(restClientMock).when(client).createClient(uri);
         when(restClientMock.get(GenericVnfs.class)).thenReturn(Optional.empty());
@@ -295,7 +296,7 @@ public class AAIResourcesClientTest {
     @Test
     public void testGetFirstWrongPluralClass() {
         GenericVnf vnf = new GenericVnf();
-        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF);
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnfs());
         RestClient restClientMock = mock(RestClient.class);
         doReturn(restClientMock).when(client).createClient(uri);
         when(restClientMock.get(GenericVnf.class)).thenReturn(Optional.of(vnf));

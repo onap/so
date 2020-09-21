@@ -26,10 +26,10 @@ import java.util.Optional;
 import java.util.UUID;
 import javax.ws.rs.NotFoundException;
 import org.onap.aai.domain.yang.GenericVnf;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.so.client.dmaap.DmaapConsumer;
 import org.onap.so.client.dmaap.DmaapPublisher;
 import org.onap.so.client.sdno.beans.Body;
@@ -48,7 +48,7 @@ public class SDNOValidatorImpl implements SDNOValidator {
     @Override
     public boolean healthDiagnostic(String vnfId, UUID uuid, String requestingUserId) throws IOException, Exception {
 
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId);
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId));
         AAIResourcesClient client = new AAIResourcesClient();
         GenericVnf vnf = client.get(GenericVnf.class, uri)
                 .orElseThrow(() -> new NotFoundException(vnfId + " not found in A&AI"));

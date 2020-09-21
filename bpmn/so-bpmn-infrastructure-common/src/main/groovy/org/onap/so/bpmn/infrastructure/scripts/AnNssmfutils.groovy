@@ -20,6 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+
 import com.google.gson.JsonArray
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
@@ -42,6 +43,8 @@ import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import javax.ws.rs.NotFoundException
 import org.onap.so.beans.nsmf.AllocateTnNssi
 import org.onap.so.beans.nsmf.DeAllocateNssi
@@ -52,6 +55,7 @@ import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.aai.domain.yang.SliceProfile
 import org.onap.aai.domain.yang.SliceProfiles
 import org.onap.aai.domain.yang.Relationship
+
 
 class AnNssmfUtils {
 
@@ -228,13 +232,13 @@ public void createSliceProfilesInAai(DelegateExecution execution) {
 	try {
 
 		AAIResourcesClient client = new AAIResourcesClient()
-		AAIResourceUri sliceProfileUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("subscriptionServiceType"), ANNF_sliceProfileInstanceId)
+		AAIResourceUri sliceProfileUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(ANNF_sliceProfileInstanceId))
 		client.create(sliceProfileUri, ANNF_sliceProfileInstance)
 
-		AAIResourceUri sliceProfileUri1 = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("subscriptionServiceType"), TNFH_sliceProfileInstanceId)
+		AAIResourceUri sliceProfileUri1 = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(TNFH_sliceProfileInstanceId))
 		client.create(sliceProfileUri1, TNFH_sliceProfileInstance)
 
-		AAIResourceUri sliceProfileUri2 = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("subscriptionServiceType"), TNMH_sliceProfileInstanceId)
+		AAIResourceUri sliceProfileUri2 = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(TNMH_sliceProfileInstanceId))
 		client.create(sliceProfileUri2, TNMH_sliceProfileInstance)
 
 	} catch (BpmnError e) {
@@ -303,10 +307,7 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
         String msg
 		AAIResourcesClient client = new AAIResourcesClient()
         try {
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                    execution.getVariable("globalSubscriberId"),
-                    execution.getVariable("subscriptionServiceType"),
-                    instanceId).relationshipAPI()
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(instanceId).relationshipAPI())
             client.create(uri, relationship)
 
         } catch (BpmnError e) {

@@ -30,6 +30,9 @@ import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.aai.domain.yang.LInterface;
 import org.onap.aai.domain.yang.Vserver;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
+import org.onap.aaiclient.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.logging.filter.base.ONAPComponentsList;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
@@ -38,9 +41,6 @@ import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
-import org.onap.aaiclient.client.aai.AAIObjectType;
-import org.onap.aaiclient.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
-import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.objects.audit.AAIObjectAudit;
@@ -280,20 +280,19 @@ public class ExceptionBuilder {
                         + auditList.getAuditType() + "d in AAI: ");
 
                 Stream<AAIObjectAudit> vServerLInterfaceAuditStream = auditList.getAuditList().stream()
-                        .filter(auditObject -> auditObject.getAaiObjectType().equals(AAIObjectType.VSERVER.typeName())
-                                || auditObject.getAaiObjectType().equals(AAIObjectType.L_INTERFACE.typeName()));
+                        .filter(auditObject -> auditObject.getAaiObjectType().equals(Types.VSERVER.typeName())
+                                || auditObject.getAaiObjectType().equals(Types.L_INTERFACE.typeName()));
                 List<AAIObjectAudit> filteredAuditStream =
                         vServerLInterfaceAuditStream.filter(a -> !a.isDoesObjectExist()).collect(Collectors.toList());
 
                 for (AAIObjectAudit object : filteredAuditStream) {
-                    if (object.getAaiObjectType().equals(AAIObjectType.L_INTERFACE.typeName())) {
+                    if (object.getAaiObjectType().equals(Types.L_INTERFACE.typeName())) {
                         LInterface li = objectMapper.getMapper().convertValue(object.getAaiObject(), LInterface.class);
-                        errorMessage = errorMessage
-                                .append(AAIObjectType.L_INTERFACE.typeName() + " " + li.getInterfaceId() + ", ");
+                        errorMessage =
+                                errorMessage.append(Types.L_INTERFACE.typeName() + " " + li.getInterfaceId() + ", ");
                     } else {
                         Vserver vs = objectMapper.getMapper().convertValue(object.getAaiObject(), Vserver.class);
-                        errorMessage =
-                                errorMessage.append(AAIObjectType.VSERVER.typeName() + " " + vs.getVserverId() + ", ");
+                        errorMessage = errorMessage.append(Types.VSERVER.typeName() + " " + vs.getVserverId() + ", ");
                     }
                 }
 

@@ -28,6 +28,12 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.GenericVnf
 import org.onap.aai.domain.yang.VolumeGroup
 import org.onap.aai.domain.yang.VolumeGroups
+import org.onap.aaiclient.client.aai.AAIObjectType
+import org.onap.aaiclient.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
@@ -36,11 +42,6 @@ import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.aaiclient.client.aai.AAIObjectPlurals
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.AAIResourcesClient
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.constants.Defaults
 import org.onap.so.db.catalog.beans.OrchestrationStatus
 import org.slf4j.Logger
@@ -148,7 +149,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
             String serviceInstanceId = execution.getVariable('serviceInstanceId')
 
             AAIResourcesClient resourceClient = new AAIResourcesClient()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
 
             if(!resourceClient.exists(uri)){
                 (new ExceptionUtil()).buildAndThrowWorkflowException(execution, 2500, "Service instance was not found in aai")
@@ -174,7 +175,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 
         AaiUtil aaiUtil = new AaiUtil(this)
 
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, Defaults.CLOUD_OWNER.toString(), cloudRegion)
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(Defaults.CLOUD_OWNER.toString(), cloudRegion))
         def queryCloudRegionRequest = aaiUtil.createAaiUri(uri)
 
         cloudRegion = aaiUtil.getAAICloudReqion(execution,  queryCloudRegionRequest, "PO", cloudRegion)
@@ -215,7 +216,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
         def cloudRegion = execution.getVariable('lcpCloudRegionId')
 
         try {
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion).queryParam("volume-group-name", volumeGroupName)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(Defaults.CLOUD_OWNER.toString(), cloudRegion).volumeGroups()).queryParam("volume-group-name", volumeGroupName)
             Optional<VolumeGroups> volumeGroups = getAAIClient().get(VolumeGroups.class,uri)
             if(volumeGroups.isPresent()){
                 VolumeGroup volumeGroup = volumeGroups.get().getVolumeGroup().get(0);
@@ -292,9 +293,9 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 
         logger.debug("volumeGroupId to be used: " + volumeGroupId)
 
-        AAIResourceUri volumeGroupUri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, cloudOwner, cloudRegion, volumeGroupId)
-        AAIResourceUri tenantUri = AAIUriFactory.createResourceUri(AAIObjectType.TENANT, cloudOwner, cloudRegion, tenantId)
-        AAIResourceUri vnfUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+        AAIResourceUri volumeGroupUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(cloudOwner, cloudRegion).volumeGroup(volumeGroupId))
+        AAIResourceUri tenantUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(cloudOwner, cloudRegion).tenant(tenantId))
+        AAIResourceUri vnfUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId))
         try {
             getAAIClient().create(volumeGroupUri, volumeGroup)
             getAAIClient().connect(volumeGroupUri, vnfUri)
@@ -504,7 +505,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
         String cloudOwner = execution.getVariable('cloudOwner')
         String createVnfAResponse = execution.getVariable(prefix+"createVnfAResponse")
         def heatStackID = utils.getNodeText(createVnfAResponse, "volumeGroupStackId")
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, cloudOwner, cloudRegion, volumeGroupId)
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(cloudOwner, cloudRegion).volumeGroup(volumeGroupId))
 
         execution.setVariable(prefix+"heatStackId", heatStackID)
 
@@ -534,7 +535,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
     public void callRESTQueryAAIGenericVnf(DelegateExecution execution, isDebugEnabled) {
 
         def vnfId = execution.getVariable('vnfId')
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId))
         try {
             Optional<GenericVnf> genericVnf = getAAIClient().get(GenericVnf.class, uri)
             if (genericVnf.isPresent()) {

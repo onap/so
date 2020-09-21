@@ -23,7 +23,6 @@ package org.onap.so.bpmn.servicedecomposition.tasks;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
 import java.io.File;
@@ -38,14 +37,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
+import org.onap.aaiclient.client.aai.entities.Relationships;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
-import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
-import org.onap.aaiclient.client.aai.AAIObjectType;
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
-import org.onap.aaiclient.client.aai.entities.Relationships;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -143,14 +142,14 @@ public class CloudInfoFromAAITest {
                 new AAIResultWrapper(new AAICommonObjectMapperProvider().getMapper().writeValueAsString(cloudRegion));
         cloudRegions.add(cloudRegionWrapper);
 
-        doReturn(cloudRegions).when(relationships).getByType(AAIObjectType.CLOUD_REGION);
+        doReturn(cloudRegions).when(relationships).getByType(Types.CLOUD_REGION);
         List<AAIResultWrapper> tenants = new ArrayList<>();
         org.onap.aai.domain.yang.Tenant tenant = new org.onap.aai.domain.yang.Tenant();
         tenant.setTenantId(tenantId);
         AAIResultWrapper tenantWrapper =
                 new AAIResultWrapper(new AAICommonObjectMapperProvider().getMapper().writeValueAsString(tenant));
         tenants.add(tenantWrapper);
-        doReturn(tenants).when(relationships).getByType(AAIObjectType.TENANT);
+        doReturn(tenants).when(relationships).getByType(Types.TENANT);
 
         Optional<CloudRegion> actual = SPY_CloudInfoFromAAI.getRelatedCloudRegionAndTenant(relationships);
 

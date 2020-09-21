@@ -23,23 +23,23 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 
+import javax.ws.rs.NotFoundException
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.VolumeGroups
+import org.onap.aaiclient.client.aai.AAIObjectType
+import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.VidUtils
 import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.aaiclient.client.aai.AAIObjectPlurals
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.constants.Defaults
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import javax.ws.rs.NotFoundException
 
 public class DoCreateVfModuleVolumeRollback extends AbstractServiceTaskProcessor {
     private static final Logger logger = LoggerFactory.getLogger( DoCreateVfModuleVolumeRollback.class);
@@ -133,7 +133,7 @@ public class DoCreateVfModuleVolumeRollback extends AbstractServiceTaskProcessor
 			volumeGroupName = testVolumeGroupName
 		}
 
-		AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion).queryParam("volume-group-name", volumeGroupName)
+		AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(Defaults.CLOUD_OWNER.toString(), cloudRegion).volumeGroups()).queryParam("volume-group-name", volumeGroupName)
 		try {
 			Optional<VolumeGroups> volumeGroups = getAAIClient().get(VolumeGroups.class, uri)
 			if (volumeGroups.isPresent()) {
@@ -154,7 +154,7 @@ public class DoCreateVfModuleVolumeRollback extends AbstractServiceTaskProcessor
 		String cloudRegion = execution.getVariable("DCVFMODVOLRBK_lcpCloudRegionId")
 		String volumeGroupId = callRESTQueryAAIVolGrpName(execution, cloudRegion)
 
-		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion, volumeGroupId)
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(Defaults.CLOUD_OWNER.toString(), cloudRegion).volumeGroup(volumeGroupId))
 		try {
 			getAAIClient().delete(uri)
 		}catch(NotFoundException ignored){

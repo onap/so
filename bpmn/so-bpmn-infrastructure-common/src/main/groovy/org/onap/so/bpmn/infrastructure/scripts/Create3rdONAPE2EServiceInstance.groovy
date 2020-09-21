@@ -22,42 +22,27 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import com.google.gson.JsonObject
+import static org.apache.commons.lang3.StringUtils.*
+import javax.ws.rs.core.Response
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONArray
 import org.json.JSONObject
-import org.json.XML
-import org.onap.so.bpmn.common.scripts.ExternalAPIUtilFactory
-
-import static org.apache.commons.lang3.StringUtils.*
-import groovy.xml.XmlUtil
-import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
-import org.onap.so.bpmn.common.scripts.ExceptionUtil
-import org.onap.so.bpmn.common.scripts.ExternalAPIUtil
-import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.aai.domain.yang.SpPartner
-import org.onap.so.bpmn.common.recipe.ResourceInput
-import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
-import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.builder.AbstractBuilder
-import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
-import org.onap.so.bpmn.infrastructure.workflow.service.ServicePluginFactory
-import java.util.Map
-import java.util.UUID
-import javax.ws.rs.core.Response
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
+import org.onap.so.bpmn.common.recipe.ResourceInput
+import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
+import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
+import org.onap.so.bpmn.common.scripts.ExceptionUtil
+import org.onap.so.bpmn.common.scripts.ExternalAPIUtil
+import org.onap.so.bpmn.common.scripts.ExternalAPIUtilFactory
+import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.bpmn.core.json.JsonUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import org.camunda.bpm.engine.runtime.Execution
-import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64
 
 
 /**
@@ -604,12 +589,12 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		partner.setModelCustomizationId(resourceModelCustomizationUuid)
 
 		AAIResourcesClient client = new AAIResourcesClient()
-		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SP_PARTNER, sppartnerId)
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().spPartner(sppartnerId))
 		logger.info("sending request to create sp-partner: " +  uri.toString())
 		logger.info("requestbody: " + partner)
 		client.create(uri, partner)
 
-		AAIResourceUri siUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId, serviceType, serviceInstanceId)
+		AAIResourceUri siUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId))
 		client.connect(uri, siUri)
         } catch (Exception ex) {
             String msg = "Exception in Create3rdONAPE2EServiceInstance.saveSPPartnerInAAI. " + ex.getMessage()

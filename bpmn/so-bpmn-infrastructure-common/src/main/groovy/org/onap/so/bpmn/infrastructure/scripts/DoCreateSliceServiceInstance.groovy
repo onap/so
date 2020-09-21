@@ -20,22 +20,22 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 
-import org.onap.aai.domain.yang.AllottedResource
-import org.onap.aai.domain.yang.ServiceInstance
-import org.onap.so.beans.nsmf.SliceTaskParamsAdapter
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.aai.domain.yang.ServiceProfile
+import org.onap.aai.domain.yang.AllottedResource
+import org.onap.aai.domain.yang.ServiceInstance
+import org.onap.aai.domain.yang.ServiceProfile;
+import org.onap.aaiclient.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.so.beans.nsmf.SliceTaskParamsAdapter
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.bpmn.core.domain.ModelInfo
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.aaiclient.client.aai.AAIResourcesClient
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -121,10 +121,7 @@ class DoCreateSliceServiceInstance extends AbstractServiceTaskProcessor{
             ss.setEnvironmentContext(snssai)
             ss.setServiceRole(serviceRole)
 
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                    execution.getVariable("globalSubscriberId"),
-                    execution.getVariable("subscriptionServiceType"),
-                    ssInstanceId)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(ssInstanceId))
             client.create(uri, ss)
         } catch (BpmnError e) {
             throw e
@@ -188,11 +185,11 @@ class DoCreateSliceServiceInstance extends AbstractServiceTaskProcessor{
         serviceProfile.setTrafficDensity(0)
         serviceProfile.setConnDensity(0)
         try {
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_PROFILE,
-                    execution.getVariable("globalSubscriberId"),
-                    execution.getVariable("subscriptionServiceType"),
-                    serviceProfileInstanceId,
-                    serviceProfileId)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(
+                AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId"))
+                .serviceSubscription(execution.getVariable("subscriptionServiceType"))
+                .serviceInstance(serviceProfileInstanceId)
+                .serviceProfile(serviceProfileId))
             client.create(uri, serviceProfile)
             execution.setVariable("sliceTaskParams", sliceParams)
 
@@ -221,11 +218,7 @@ class DoCreateSliceServiceInstance extends AbstractServiceTaskProcessor{
             for(org.onap.so.bpmn.core.domain.AllottedResource allottedResource : allottedResourceList) {
                 String allottedResourceId = UUID.randomUUID().toString()
 
-                AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.ALLOTTED_RESOURCE,
-                        execution.getVariable("globalSubscriberId"),
-                        execution.getVariable("subscriptionServiceType"),
-                        execution.getVariable("serviceInstanceId"),
-                        allottedResourceId)
+                AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(execution.getVariable("serviceInstanceId")).allottedResource(allottedResourceId))
 
                 execution.setVariable("allottedResourceUri", allottedResourceUri)
                 String arType = allottedResource.getAllottedResourceType()

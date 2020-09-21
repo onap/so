@@ -34,6 +34,8 @@ import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 
 import static org.mockito.Mockito.spy
 import static org.mockito.Mockito.times
@@ -81,7 +83,7 @@ class DoActivateCoreNSSITest extends MsoGroovyTest {
 
         DoActivateCoreNSSI obj = spy(DoActivateCoreNSSI.class)
         when(obj.getAAIClient()).thenReturn(client)
-        AAIResourceUri resourceUri1 = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, "5GCustomer", "5G", "NSSI-C-7Q4-HDBNJ-NSSMF-01-A-ZX")
+        AAIResourceUri resourceUri1 = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("5GCustomer").serviceSubscription("5G").serviceInstance("NSSI-C-7Q4-HDBNJ-NSSMF-01-A-ZX"))
         when(client.exists(resourceUri1)).thenReturn(true)
         AAIResultWrapper wrapper1 = new AAIResultWrapper(mockQuerySliceServiceReturn())
         when(client.get(resourceUri1, NotFoundException.class)).thenReturn(wrapper1)
@@ -89,14 +91,14 @@ class DoActivateCoreNSSITest extends MsoGroovyTest {
         //networkServiceInstanceId
         when(mockExecution.getVariable("networkServiceInstanceId")).thenReturn("206535e7-77c9-4036-9387-3f1cf57b4379")
 
-        AAIResourceUri resourceUri2 = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, "5GCustomer", "5G", "206535e7-77c9-4036-9387-3f1cf57b4379")
+        AAIResourceUri resourceUri2 = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("5GCustomer").serviceSubscription("5G").serviceInstance("206535e7-77c9-4036-9387-3f1cf57b4379"))
         when(client.exists(resourceUri2)).thenReturn(true)
         AAIResultWrapper wrapper2 = new AAIResultWrapper(mockQueryNS())
         when(client.get(resourceUri2, NotFoundException.class)).thenReturn(wrapper2)
 
         //Check Vnf
         when(mockExecution.getVariable("vnfId")).thenReturn("eeb66c6f-36bd-47ad-8294-48f46b1aa912")
-        AAIResourceUri resourceUri3 = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "eeb66c6f-36bd-47ad-8294-48f46b1aa912")
+        AAIResourceUri resourceUri3 = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("eeb66c6f-36bd-47ad-8294-48f46b1aa912"))
         when(client.exists(resourceUri3)).thenReturn(true)
         AAIResultWrapper wrapper3 = new AAIResultWrapper(mockQueryVnf())
         when(client.get(resourceUri3, NotFoundException.class)).thenReturn(wrapper3)
@@ -104,14 +106,14 @@ class DoActivateCoreNSSITest extends MsoGroovyTest {
 
         //Allotted Resources-1
         //when(mockExecution.getVariable("vnfId")).thenReturn("eeb66c6f-36bd-47ad-8294-48f46b1aa912")
-        AAIResourceUri resourceUri4 = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, "5GCustomer", "5G", "0d3d3cce-46a8-486d-816a-954e71697c4e")
+        AAIResourceUri resourceUri4 = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("5GCustomer").serviceSubscription("5G").serviceInstance("0d3d3cce-46a8-486d-816a-954e71697c4e"))
         when(client.exists(resourceUri4)).thenReturn(true)
         AAIResultWrapper wrapper4 = new AAIResultWrapper(mockServiceProfile1())
         when(client.get(resourceUri4, NotFoundException.class)).thenReturn(wrapper4)
 
         //Allotted Resources-2
         //when(mockExecution.getVariable("vnfId")).thenReturn("eeb66c6f-36bd-47ad-8294-48f46b1aa912")
-        AAIResourceUri resourceUri5 = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, "5GCustomer", "5G", "1c7046f2-a5a3-4d7f-9da8-388ee641a795")
+        AAIResourceUri resourceUri5 = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("5GCustomer").serviceSubscription("5G").serviceInstance("1c7046f2-a5a3-4d7f-9da8-388ee641a795"))
         when(client.exists(resourceUri5)).thenReturn(true)
         AAIResultWrapper wrapper5 = new AAIResultWrapper(mockServiceProfile2())
         when(client.get(resourceUri5, NotFoundException.class)).thenReturn(wrapper5)

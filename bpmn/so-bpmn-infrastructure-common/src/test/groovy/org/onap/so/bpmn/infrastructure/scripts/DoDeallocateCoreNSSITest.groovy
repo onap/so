@@ -29,6 +29,8 @@ import org.onap.aai.domain.yang.SliceProfiles
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 
 import static org.junit.Assert.assertNotNull
@@ -229,8 +231,8 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
         currentNSSI.put("nssiId", nssiId)
         currentNSSI.put("nsiId", nsiId)
 
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nssiId)
-        AAIResourceUri nsiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nsiId)
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+        AAIResourceUri nsiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nsiId))
 
         doNothing().when(client).disconnect(nssiUri, nsiUri)
 
@@ -249,7 +251,7 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
 
         currentNSSI.put("nssiId", nssiId)
 
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nssiId)
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
 
         DoDeallocateCoreNSSI spy = spy(DoDeallocateCoreNSSI.class)
 

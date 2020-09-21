@@ -1,6 +1,8 @@
 package org.onap.so.apihandlerinfra.infra.rest.validator;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +16,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.apihandlerinfra.Action;
 import org.onap.so.apihandlerinfra.infra.rest.AAIDataRetrieval;
 import org.onap.so.apihandlerinfra.infra.rest.validators.VolumeGroupDeleteValidator;
+import org.onap.so.serviceinstancebeans.CloudConfiguration;
+import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 
 
@@ -53,16 +57,24 @@ public class VolumeGroupDeleteValidatorTest {
     @Test
     public void validateSuccessTest() {
         instanceIdMap.put("volumeGroupInstanceId", "1");
-        when(aaiDataRetrieval.isVolumeGroupRelatedToVFModule("1")).thenReturn(false);
-        Optional<String> result = volumeGroupDeleteValidator.validate(instanceIdMap, null, null, null);
+        ServiceInstancesRequest request = new ServiceInstancesRequest();
+        RequestDetails details = new RequestDetails();
+        details.setCloudConfiguration(new CloudConfiguration());
+        request.setRequestDetails(details);
+        when(aaiDataRetrieval.isVolumeGroupRelatedToVFModule(any(CloudConfiguration.class), eq("1"))).thenReturn(false);
+        Optional<String> result = volumeGroupDeleteValidator.validate(instanceIdMap, request, null, null);
         assertEquals(false, result.isPresent());
     }
 
     @Test
     public void validateFailureVnfTest() {
         instanceIdMap.put("volumeGroupInstanceId", "1");
-        when(aaiDataRetrieval.isVolumeGroupRelatedToVFModule("1")).thenReturn(true);
-        Optional<String> result = volumeGroupDeleteValidator.validate(instanceIdMap, null, null, null);
+        ServiceInstancesRequest request = new ServiceInstancesRequest();
+        RequestDetails details = new RequestDetails();
+        details.setCloudConfiguration(new CloudConfiguration());
+        request.setRequestDetails(details);
+        when(aaiDataRetrieval.isVolumeGroupRelatedToVFModule(any(CloudConfiguration.class), eq("1"))).thenReturn(true);
+        Optional<String> result = volumeGroupDeleteValidator.validate(instanceIdMap, request, null, null);
         assertEquals(true, result.isPresent());
     }
 

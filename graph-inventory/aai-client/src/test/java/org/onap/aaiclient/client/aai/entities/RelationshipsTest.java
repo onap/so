@@ -30,9 +30,10 @@ import java.util.List;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 
 public class RelationshipsTest {
 
@@ -45,12 +46,16 @@ public class RelationshipsTest {
         AAIResultWrapper wrapper = new AAIResultWrapper(content);
         Relationships relationships = wrapper.getRelationships().get();
 
-        List<AAIResourceUri> test = relationships.getRelatedUris(AAIObjectType.VCE);
+        List<AAIResourceUri> test = relationships.getRelatedUris(Types.VCE);
         List<AAIResourceUri> uris = Arrays.asList(
-                AAIUriFactory.createResourceUri(AAIObjectType.VCE, "a9fec18e-1ea3-40e4-a6c0-a89b3de07053"),
-                AAIUriFactory.createResourceUri(AAIObjectType.VCE, "8ae1e5f8-61f1-4c71-913a-b40cc4593cb9"),
-                AAIUriFactory.createResourceUri(AAIObjectType.VCE, "a2935fa9-b743-49f4-9813-a127f13c4e93"),
-                AAIUriFactory.createResourceUri(AAIObjectType.VCE, "c7fe7698-8063-4e26-8bd3-ca3edde0b0d4"));
+                AAIUriFactory
+                        .createResourceUri(AAIFluentTypeBuilder.network().vce("a9fec18e-1ea3-40e4-a6c0-a89b3de07053")),
+                AAIUriFactory
+                        .createResourceUri(AAIFluentTypeBuilder.network().vce("8ae1e5f8-61f1-4c71-913a-b40cc4593cb9")),
+                AAIUriFactory
+                        .createResourceUri(AAIFluentTypeBuilder.network().vce("a2935fa9-b743-49f4-9813-a127f13c4e93")),
+                AAIUriFactory
+                        .createResourceUri(AAIFluentTypeBuilder.network().vce("c7fe7698-8063-4e26-8bd3-ca3edde0b0d4")));
 
         assertTrue(uris.containsAll(test) && test.containsAll(uris));
 
@@ -67,14 +72,14 @@ public class RelationshipsTest {
         ArgumentCaptor<AAIResourceUri> argument = ArgumentCaptor.forClass(AAIResourceUri.class);
         doReturn(new AAIResultWrapper("{}")).when(spy).get(argument.capture());
 
-        spy.getByType(AAIObjectType.VCE, uri -> uri.nodesOnly(true));
+        spy.getByType(Types.VCE, uri -> uri.nodesOnly(true));
 
         assertTrue(argument.getAllValues().stream().allMatch(item -> item.build().toString().contains("nodes-only")));
 
         argument = ArgumentCaptor.forClass(AAIResourceUri.class);
 
         doReturn(new AAIResultWrapper("{}")).when(spy).get(argument.capture());
-        spy.getByType(AAIObjectType.VCE);
+        spy.getByType(Types.VCE);
 
         assertTrue(argument.getAllValues().stream().allMatch(item -> !item.build().toString().contains("?")));
 

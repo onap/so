@@ -22,12 +22,13 @@ package org.onap.so.client.orchestration;
 
 import java.util.Optional;
 import javax.ws.rs.core.UriBuilder;
-import org.onap.so.bpmn.common.InjectionHelper;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.entities.AAIEdgeLabel;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
+import org.onap.so.bpmn.common.InjectionHelper;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +48,8 @@ public class AAIConfigurationResources {
      * @param configuration
      */
     public void createConfiguration(Configuration configuration) {
-        AAIResourceUri configurationURI =
-                AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configuration.getConfigurationId());
+        AAIResourceUri configurationURI = AAIUriFactory
+                .createResourceUri(AAIFluentTypeBuilder.network().configuration(configuration.getConfigurationId()));
         configuration.setOrchestrationStatus(OrchestrationStatus.INVENTORIED);
         org.onap.aai.domain.yang.Configuration aaiConfiguration = aaiObjectMapper.mapConfiguration(configuration);
         injectionHelper.getAaiClient().createIfNotExists(configurationURI, Optional.of(aaiConfiguration));
@@ -61,7 +62,8 @@ public class AAIConfigurationResources {
      * @return
      */
     public Optional<org.onap.aai.domain.yang.Configuration> getConfiguration(String configurationId) {
-        AAIResourceUri aaiResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId);
+        AAIResourceUri aaiResourceUri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().configuration(configurationId));
         return injectionHelper.getAaiClient().get(org.onap.aai.domain.yang.Configuration.class, aaiResourceUri);
     }
 
@@ -71,8 +73,8 @@ public class AAIConfigurationResources {
      * @param configuration
      */
     public void updateConfiguration(Configuration configuration) {
-        AAIResourceUri configurationURI =
-                AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configuration.getConfigurationId());
+        AAIResourceUri configurationURI = AAIUriFactory
+                .createResourceUri(AAIFluentTypeBuilder.network().configuration(configuration.getConfigurationId()));
         org.onap.aai.domain.yang.Configuration aaiConfiguration = aaiObjectMapper.mapConfiguration(configuration);
         injectionHelper.getAaiClient().update(configurationURI, aaiConfiguration);
     }
@@ -85,9 +87,10 @@ public class AAIConfigurationResources {
      */
 
     public void disconnectConfigurationToServiceInstance(String configurationId, String serviceInstanceId) {
-        AAIResourceUri configurationURI = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId);
+        AAIResourceUri configurationURI =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().configuration(configurationId));
         AAIResourceUri serviceInstanceURI =
-                AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId);
+                AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId));
         injectionHelper.getAaiClient().disconnect(configurationURI, serviceInstanceURI);
     }
 
@@ -99,9 +102,9 @@ public class AAIConfigurationResources {
      */
     public void connectVrfConfigurationToVnrConfiguration(String vrfConfigurationId, String vnrConfigurationId) {
         AAIResourceUri vnrConfigurationUri =
-                AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, vnrConfigurationId);
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().configuration(vnrConfigurationId));
         AAIResourceUri vrfConfigurationUri =
-                AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, vrfConfigurationId);
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().configuration(vrfConfigurationId));
         injectionHelper.getAaiClient().connect(vrfConfigurationUri, vnrConfigurationUri);
     }
 
@@ -112,8 +115,9 @@ public class AAIConfigurationResources {
      * @param configurationId
      */
     public void connectConfigurationToPnfObject(String pnfId, String configurationId) {
-        AAIResourceUri pnfUri = AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfId);
-        AAIResourceUri configurationUri = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId);
+        AAIResourceUri pnfUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(pnfId));
+        AAIResourceUri configurationUri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().configuration(configurationId));
         injectionHelper.getAaiClient().connect(configurationUri, pnfUri);
     }
 
@@ -124,9 +128,10 @@ public class AAIConfigurationResources {
      * @param serviceInstanceId
      */
     public void connectConfigurationToServiceInstance(String configurationId, String serviceInstanceId) {
-        AAIResourceUri configurationURI = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId);
+        AAIResourceUri configurationURI =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().configuration(configurationId));
         AAIResourceUri serviceInstanceURI =
-                AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId);
+                AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId));
         injectionHelper.getAaiClient().connect(configurationURI, serviceInstanceURI);
     }
 
@@ -139,9 +144,10 @@ public class AAIConfigurationResources {
      */
     public void connectConfigurationToServiceInstance(String configurationId, String serviceInstanceId,
             AAIEdgeLabel aaiLabel) {
-        AAIResourceUri configurationURI = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId);
+        AAIResourceUri configurationURI =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().configuration(configurationId));
         AAIResourceUri serviceInstanceURI =
-                AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId);
+                AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId));
         injectionHelper.getAaiClient().connect(configurationURI, serviceInstanceURI, aaiLabel);
     }
 
@@ -152,8 +158,10 @@ public class AAIConfigurationResources {
      * @param genericVnfId
      */
     public void connectConfigurationToGenericVnf(String configurationId, String genericVnfId) {
-        AAIResourceUri configurationURI = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId);
-        AAIResourceUri genericVnfURI = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, genericVnfId);
+        AAIResourceUri configurationURI =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().configuration(configurationId));
+        AAIResourceUri genericVnfURI =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(genericVnfId));
         injectionHelper.getAaiClient().connect(configurationURI, genericVnfURI);
     }
 
@@ -165,26 +173,33 @@ public class AAIConfigurationResources {
      *
      */
     public void connectConfigurationToVpnBinding(String configurationId, String vpnId) {
-        AAIResourceUri configurationURI = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId);
-        AAIResourceUri vpnBindingURI = AAIUriFactory.createResourceUri(AAIObjectType.VPN_BINDING, vpnId);
+        AAIResourceUri configurationURI =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().configuration(configurationId));
+        AAIResourceUri vpnBindingURI =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().vpnBinding(vpnId));
         injectionHelper.getAaiClient().connect(configurationURI, vpnBindingURI);
     }
 
     public void connectConfigurationToVfModule(String configurationId, String vnfId, String vfModuleId) {
-        AAIResourceUri configurationURI = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId);
-        AAIResourceUri vfModuleURI = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId);
+        AAIResourceUri configurationURI =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().configuration(configurationId));
+        AAIResourceUri vfModuleURI =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId).vfModule(vfModuleId));
         injectionHelper.getAaiClient().connect(configurationURI, vfModuleURI);
     }
 
     public void connectConfigurationToVnfc(String configurationId, String vnfcName) {
-        AAIResourceUri configurationURI = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId);
-        AAIResourceUri vnfcURI = AAIUriFactory.createResourceUri(AAIObjectType.VNFC, vnfcName);
+        AAIResourceUri configurationURI =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().configuration(configurationId));
+        AAIResourceUri vnfcURI = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().vnfc(vnfcName));
         injectionHelper.getAaiClient().connect(configurationURI, vnfcURI);
     }
 
     public void connectConfigurationToL3Network(String configurationId, String networkId) {
-        AAIResourceUri configurationURI = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId);
-        AAIResourceUri networkURI = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId);
+        AAIResourceUri configurationURI =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().configuration(configurationId));
+        AAIResourceUri networkURI =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Network(networkId));
         injectionHelper.getAaiClient().connect(configurationURI, networkURI);
     }
 
@@ -194,7 +209,8 @@ public class AAIConfigurationResources {
      * @param configurationId
      */
     public void deleteConfiguration(String configurationId) {
-        AAIResourceUri aaiResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId);
+        AAIResourceUri aaiResourceUri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().configuration(configurationId));
         injectionHelper.getAaiClient().delete(aaiResourceUri);
     }
 
@@ -204,8 +220,8 @@ public class AAIConfigurationResources {
      * @param configuration
      */
     public void deleteConfiguration(Configuration configuration) {
-        AAIResourceUri aaiResourceUri =
-                AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configuration.getConfigurationId());
+        AAIResourceUri aaiResourceUri = AAIUriFactory
+                .createResourceUri(AAIFluentTypeBuilder.network().configuration(configuration.getConfigurationId()));
         injectionHelper.getAaiClient().delete(aaiResourceUri);
     }
 
@@ -217,13 +233,13 @@ public class AAIConfigurationResources {
      */
     public Optional<org.onap.aai.domain.yang.Configuration> getConfigurationFromRelatedLink(String relatedLink) {
         return injectionHelper.getAaiClient().get(org.onap.aai.domain.yang.Configuration.class, AAIUriFactory
-                .createResourceFromExistingURI(AAIObjectType.CONFIGURATION, UriBuilder.fromPath(relatedLink).build()));
+                .createResourceFromExistingURI(Types.CONFIGURATION, UriBuilder.fromPath(relatedLink).build()));
     }
 
     public void updateOrchestrationStatusConfiguration(Configuration configuration,
             OrchestrationStatus orchestrationStatus) {
-        AAIResourceUri aaiResourceUri =
-                AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configuration.getConfigurationId());
+        AAIResourceUri aaiResourceUri = AAIUriFactory
+                .createResourceUri(AAIFluentTypeBuilder.network().configuration(configuration.getConfigurationId()));
         configuration.setOrchestrationStatus(orchestrationStatus);
         org.onap.aai.domain.yang.Configuration aaiConfiguration = aaiObjectMapper.mapConfiguration(configuration);
         injectionHelper.getAaiClient().update(aaiResourceUri, aaiConfiguration);
@@ -231,8 +247,8 @@ public class AAIConfigurationResources {
 
     public void updateConfigurationOrchestrationStatus(Configuration configuration,
             OrchestrationStatus orchestrationStatus) {
-        AAIResourceUri aaiResourceUri =
-                AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configuration.getConfigurationId());
+        AAIResourceUri aaiResourceUri = AAIUriFactory
+                .createResourceUri(AAIFluentTypeBuilder.network().configuration(configuration.getConfigurationId()));
         org.onap.aai.domain.yang.Configuration aaiConfiguration = new org.onap.aai.domain.yang.Configuration();
         aaiConfiguration.setOrchestrationStatus(orchestrationStatus.name());
         injectionHelper.getAaiClient().update(aaiResourceUri, aaiConfiguration);

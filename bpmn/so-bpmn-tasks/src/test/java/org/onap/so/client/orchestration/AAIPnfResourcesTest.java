@@ -32,25 +32,25 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import joptsimple.internal.Strings;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.aaiclient.client.aai.AAIObjectType;
+import org.onap.aaiclient.client.aai.AAIResourcesClient;
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
-import org.onap.aaiclient.client.aai.AAIResourcesClient;
-import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoPnf;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import joptsimple.internal.Strings;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class AAIPnfResourcesTest extends TestDataSetup {
@@ -118,7 +118,8 @@ public class AAIPnfResourcesTest extends TestDataSetup {
         Pnf pnfTest = createPnfWithDefaultName();
         org.onap.aai.domain.yang.Pnf pnfFromAai = createPnf(OrchestrationStatus.INVENTORIED.toString());
         when(injectionHelperMock.getAaiClient().get(org.onap.aai.domain.yang.Pnf.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.PNF, PNF_NAME))).thenReturn(Optional.of(pnfFromAai));
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(PNF_NAME))))
+                        .thenReturn(Optional.of(pnfFromAai));
         // when
         testedObject.checkIfPnfExistsInAaiAndCanBeUsed(pnfTest);
         verify(aaiResourcesClientMock, times(1)).update(any(), any());
@@ -131,7 +132,8 @@ public class AAIPnfResourcesTest extends TestDataSetup {
         org.onap.aai.domain.yang.Pnf pnfFromAai = createPnf(null);
         pnfTest.setRole("test");
         when(injectionHelperMock.getAaiClient().get(org.onap.aai.domain.yang.Pnf.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.PNF, PNF_NAME))).thenReturn(Optional.of(pnfFromAai));
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(PNF_NAME))))
+                        .thenReturn(Optional.of(pnfFromAai));
         // when
         testedObject.checkIfPnfExistsInAaiAndCanBeUsed(pnfTest);
         verify(aaiResourcesClientMock, times(1)).update(any(), eq(pnfFromAai));
@@ -143,7 +145,8 @@ public class AAIPnfResourcesTest extends TestDataSetup {
         org.onap.aai.domain.yang.Pnf pnfFromAai = createPnf(null);
         Pnf pnfTest = getPnfWithTestValues();
         when(injectionHelperMock.getAaiClient().get(org.onap.aai.domain.yang.Pnf.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.PNF, PNF_NAME))).thenReturn(Optional.of(pnfFromAai));
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(PNF_NAME))))
+                        .thenReturn(Optional.of(pnfFromAai));
         // when
         testedObject.checkIfPnfExistsInAaiAndCanBeUsed(pnfTest);
         verify(aaiResourcesClientMock, times(1)).update(any(), eq(pnfFromAai));
@@ -181,7 +184,8 @@ public class AAIPnfResourcesTest extends TestDataSetup {
         Pnf pnfTest = createPnfWithDefaultName();
         org.onap.aai.domain.yang.Pnf pnfFromAai = createPnf(Strings.EMPTY);
         when(injectionHelperMock.getAaiClient().get(org.onap.aai.domain.yang.Pnf.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.PNF, PNF_NAME))).thenReturn(Optional.of(pnfFromAai));
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(PNF_NAME))))
+                        .thenReturn(Optional.of(pnfFromAai));
         // when
         testedObject.checkIfPnfExistsInAaiAndCanBeUsed(pnfTest);
     }
@@ -192,7 +196,8 @@ public class AAIPnfResourcesTest extends TestDataSetup {
         Pnf pnfTest = createPnfWithDefaultName();
         org.onap.aai.domain.yang.Pnf pnfFromAai = createPnf(OrchestrationStatus.ACTIVE.toString());
         when(injectionHelperMock.getAaiClient().get(org.onap.aai.domain.yang.Pnf.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.PNF, PNF_NAME))).thenReturn(Optional.of(pnfFromAai));
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(PNF_NAME))))
+                        .thenReturn(Optional.of(pnfFromAai));
         // when
         try {
             testedObject.checkIfPnfExistsInAaiAndCanBeUsed(pnfTest);
@@ -216,7 +221,8 @@ public class AAIPnfResourcesTest extends TestDataSetup {
         org.onap.aai.domain.yang.Pnf pnfFromAai =
                 new ObjectMapper().readValue(new File(path), org.onap.aai.domain.yang.Pnf.class);
         when(injectionHelperMock.getAaiClient().get(org.onap.aai.domain.yang.Pnf.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.PNF, PNF_NAME))).thenReturn(Optional.of(pnfFromAai));
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(PNF_NAME))))
+                        .thenReturn(Optional.of(pnfFromAai));
         // when
         try {
             testedObject.checkIfPnfExistsInAaiAndCanBeUsed(pnfTest);
