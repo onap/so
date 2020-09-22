@@ -118,7 +118,7 @@ def mcnssi= new ModifyCoreNSSI()
       <bpmn:outgoing>Flow_1wtv1zj</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def mcnssi= new ModifyCoreNSSI()
-        mcnssi.removeNSSIToSliceInstanceAssociation(execution)</bpmn:script>
+        mcnssi.removeSPAssociationWithNSSI(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_15fi92t" sourceRef="Activity_0c4wmiz" targetRef="Activity_1iegufd" />
     <bpmn:scriptTask id="Activity_010nkjp" name="Delete the slice profile instance" scriptFormat="groovy">
@@ -143,6 +143,14 @@ def mcnssi= new ModifyCoreNSSI()
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1nmtzzp">
+      <bpmndi:BPMNEdge id="Flow_06j2avj_di" bpmnElement="Flow_06j2avj">
+        <di:waypoint x="380" y="150" />
+        <di:waypoint x="440" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0e007rx_di" bpmnElement="Flow_0e007rx">
+        <di:waypoint x="218" y="150" />
+        <di:waypoint x="280" y="150" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0lrenyo_di" bpmnElement="Flow_0lrenyo">
         <di:waypoint x="890" y="600" />
         <di:waypoint x="930" y="600" />
@@ -217,18 +225,37 @@ def mcnssi= new ModifyCoreNSSI()
         <di:waypoint x="540" y="150" />
         <di:waypoint x="620" y="150" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0e007rx_di" bpmnElement="Flow_0e007rx">
-        <di:waypoint x="218" y="150" />
-        <di:waypoint x="280" y="150" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_06j2avj_di" bpmnElement="Flow_06j2avj">
-        <di:waypoint x="380" y="150" />
-        <di:waypoint x="440" y="150" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_0fbqt56_di" bpmnElement="Event_0fbqt56">
         <dc:Bounds x="182" y="132" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="158" y="175" width="89" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0tf735w_di" bpmnElement="Activity_0tf735w">
+        <dc:Bounds x="440" y="110" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ce41n6_di" bpmnElement="Activity_1ce41n6">
+        <dc:Bounds x="620" y="110" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_02skgkj_di" bpmnElement="Activity_02skgkj">
+        <dc:Bounds x="810" y="110" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1hadnun_di" bpmnElement="Gateway_1hadnun" isMarkerVisible="true">
+        <dc:Bounds x="985" y="125" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="974" y="86" width="75" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1243wg1_di" bpmnElement="Event_1243wg1">
+        <dc:Bounds x="1132" y="132" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1113" y="173" width="90" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1gjhrcq_di" bpmnElement="Event_1gjhrcq">
+        <dc:Bounds x="992" y="252" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="973" y="293" width="90" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0oph5am_di" bpmnElement="Activity_0oph5am">
@@ -275,33 +302,6 @@ def mcnssi= new ModifyCoreNSSI()
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_010nkjp_di" bpmnElement="Activity_010nkjp">
         <dc:Bounds x="790" y="560" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1243wg1_di" bpmnElement="Event_1243wg1">
-        <dc:Bounds x="1132" y="132" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1113" y="173" width="90" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1hadnun_di" bpmnElement="Gateway_1hadnun" isMarkerVisible="true">
-        <dc:Bounds x="985" y="125" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="974" y="86" width="75" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1gjhrcq_di" bpmnElement="Event_1gjhrcq">
-        <dc:Bounds x="992" y="252" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="973" y="293" width="90" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_02skgkj_di" bpmnElement="Activity_02skgkj">
-        <dc:Bounds x="810" y="110" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1ce41n6_di" bpmnElement="Activity_1ce41n6">
-        <dc:Bounds x="620" y="110" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0tf735w_di" bpmnElement="Activity_0tf735w">
-        <dc:Bounds x="440" y="110" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0klj7y1_di" bpmnElement="Activity_0klj7y1">
         <dc:Bounds x="280" y="110" width="100" height="80" />
