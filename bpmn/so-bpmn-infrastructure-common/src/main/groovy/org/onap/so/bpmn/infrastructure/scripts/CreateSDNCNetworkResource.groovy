@@ -265,6 +265,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                 String uResourceInput = jsonUtil.addJsonValue(resourceInput, "requestInputs.service-name", inputParameters.get("name"))
                 resourceInputObj.setResourceParameters(uResourceInput)
                 execution.setVariable(Prefix + "resourceInput", resourceInputObj.toString())
+                execution.setVariable("isAsyncRequired", "Yes")
                 break
 
             case ~/[\w\s\W]*sdwanvpnattachment[\w\s\W]*/ :
