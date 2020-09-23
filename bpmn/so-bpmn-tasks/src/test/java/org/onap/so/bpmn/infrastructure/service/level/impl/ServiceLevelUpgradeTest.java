@@ -50,7 +50,8 @@ public class ServiceLevelUpgradeTest {
         // when
         testedObject.execute(execution);
         // then
-        assertThat(execution.getVariable(ServiceLevelConstants.SOFTWARE_WORKFLOW_TO_INVOKE));
+        assertThat(execution.getVariable(ServiceLevelConstants.SOFTWARE_WORKFLOW_TO_INVOKE))
+                .isEqualTo("GenericVnfSoftwareUpgrade");
         assertThat(execution.getVariable(ServiceLevelConstants.CONTROLLER_STATUS)).isEqualTo("");
     }
 
