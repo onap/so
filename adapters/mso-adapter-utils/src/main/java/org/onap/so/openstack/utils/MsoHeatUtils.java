@@ -24,6 +24,7 @@
 package org.onap.so.openstack.utils;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -124,10 +125,8 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
 
     // Properties names and variables (with default values)
     protected String createPollIntervalProp = "org.onap.so.adapters.po.pollInterval";
-    private String pollingMultiplierProp = "org.onap.so.adapters.po.pollMultiplier";
 
     protected static final String CREATE_POLL_INTERVAL_DEFAULT = "15";
-    private static final String POLLING_MULTIPLIER_DEFAULT = "60";
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
@@ -348,9 +347,12 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
             String tenantId, boolean notFoundIsSuccess) throws MsoException {
         int pollingFrequency =
                 Integer.parseInt(this.environment.getProperty(createPollIntervalProp, CREATE_POLL_INTERVAL_DEFAULT));
-        int pollingMultiplier =
-                Integer.parseInt(this.environment.getProperty(pollingMultiplierProp, POLLING_MULTIPLIER_DEFAULT));
-        int numberOfPollingAttempts = Math.floorDiv((timeoutMinutes * pollingMultiplier), pollingFrequency);
+        LocalDateTime stopPolling = LocalDateTime.now().plusMinutes(timeoutMinutes);
+        if (pollingFrequency > timeoutMinutes * 60) {
+            logger.debug("Will not poll. Poll interval {} sec is greater then timeout {} sec", pollingFrequency,
+                    timeoutMinutes * 60);
+            stopPolling = LocalDateTime.now().minusMinutes(1);
+        }
         Heat heatClient = getHeatClient(cloudSiteId, tenantId);
         while (true) {
             String stackName = stack.getStackName() + "/" + stack.getId();
@@ -363,12 +365,12 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
             } else if (latestStack != null) {
                 statusHandler.updateStackStatus(latestStack);
                 if (stackStatus.equals(latestStack.getStackStatus())) {
-                    if (numberOfPollingAttempts <= 0) {
+                    if (LocalDateTime.now().isAfter(stopPolling)) {
                         logger.error("Polling of stack timed out with Status: {}", latestStack.getStackStatus());
                         return latestStack;
                     }
+                    logger.debug("Will poll again until {}", stopPolling);
                     sleep(pollingFrequency * 1000L);
-                    numberOfPollingAttempts -= 1;
                 } else {
                     return latestStack;
                 }
