@@ -58,7 +58,8 @@
       "vnfResourceCustomizationUUID": "a80f05b8-d651-44af-b999-8ed78fb4582f",
       "cvnfcCustomizationUUID": "69cce457-9ffd-4359-962b-0596a1e83ad1",
       "vnfcName": "zauk51bmcmr01mcm001"
-    }
+    },
+    "resume": null
   },
   {
     "buildingBlock": {
