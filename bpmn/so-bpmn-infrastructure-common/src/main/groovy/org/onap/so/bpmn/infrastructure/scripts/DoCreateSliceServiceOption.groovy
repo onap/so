@@ -42,7 +42,15 @@ import org.onap.so.bpmn.core.domain.AllottedResource
 import org.onap.so.bpmn.core.domain.ModelInfo
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.json.JsonUtils
-
+import org.onap.so.client.HttpClient
+import org.onap.so.client.HttpClientFactory
+import org.onap.aaiclient.client.aai.AAIObjectType
+import org.onap.aaiclient.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
@@ -173,7 +181,6 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
      * @param execution
      */
     public void handleNsstByType(DelegateExecution execution) {
-        //todo: set to sliceTaskParams by type
 
         SliceTaskParamsAdapter sliceParams =
                 execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
@@ -186,7 +193,7 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
 
 
         for (ServiceDecomposition serviceDecomposition : nsstServiceDecompositions) {
-            //todo:
+
             SubnetCapability subnetCapability = new SubnetCapability()
 
             handleByType(execution, serviceDecomposition, sliceParams, subnetCapability)
@@ -503,6 +510,73 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
                 execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
 
         //todo
+        boolean needCnNssiSelection = execution.getVariable("NEED_CN_NSSI_SELECTION") as Boolean
+        boolean needAnNssiSelection = execution.getVariable("NEED_AN_NSSI_SELECTION") as Boolean
+        boolean needTnNssiSelection = execution.getVariable("NEED_TN_NSSI_SELECTION") as Boolean
+
+        /**
+         * [
+         * ​	{
+         * ​		"subType":  subtype,
+         * ​		"nsstInfo": object,
+         * ​		"sliceProfile": object
+         * ​	},
+         *      {
+         *          "subType":  subtype,
+         *          "nsstInfo": object,
+         *          "sliceProfile": object
+         *      }
+         * ]
+         */
+        List<Map> nssiNeedHandlerInfos = new ArrayList<>()
+        Map<String, Object> nssiNeedHandlerMap = new HashMap()
+
+        //List<TemplateInfo> nssiNeedHandlers = new ArrayList<>()
+        //List<Object> nssiProfileNeedHandlers = new ArrayList<>()
+        if (needCnNssiSelection) {
+            nssiNeedHandlerMap.put("subnetType", sliceTaskParams.cnSliceTaskInfo.subnetType)
+            nssiNeedHandlerMap.put("nsstInfo", sliceTaskParams.cnSliceTaskInfo.NSSTInfo)
+            nssiNeedHandlerMap.put("sliceProfile", sliceTaskParams.cnSliceTaskInfo.sliceProfile)
+            nssiNeedHandlerInfos.add(nssiNeedHandlerMap)
+        }
+        if (needAnNssiSelection) {
+            nssiNeedHandlerMap.clear()
+            nssiNeedHandlerMap.put("subnetType", sliceTaskParams.anSliceTaskInfo.subnetType)
+            nssiNeedHandlerMap.put("nsstInfo", sliceTaskParams.anSliceTaskInfo.NSSTInfo)
+            nssiNeedHandlerMap.put("sliceProfile", sliceTaskParams.anSliceTaskInfo.sliceProfile)
+            nssiNeedHandlerInfos.add(nssiNeedHandlerMap)
+        }
+        if (needTnNssiSelection) {
+            nssiNeedHandlerMap.clear()
+            nssiNeedHandlerMap.put("subnetType", sliceTaskParams.tnBHSliceTaskInfo.subnetType)
+            nssiNeedHandlerMap.put("nsstInfo", sliceTaskParams.tnBHSliceTaskInfo.NSSTInfo)
+            nssiNeedHandlerMap.put("sliceProfile", sliceTaskParams.tnBHSliceTaskInfo.sliceProfile)
+            nssiNeedHandlerInfos.add(nssiNeedHandlerMap)
+
+            nssiNeedHandlerMap.clear()
+            nssiNeedHandlerMap.put("subnetType", sliceTaskParams.tnMHSliceTaskInfo.subnetType)
+            nssiNeedHandlerMap.put("nsstInfo", sliceTaskParams.tnMHSliceTaskInfo.NSSTInfo)
+            nssiNeedHandlerMap.put("sliceProfile", sliceTaskParams.tnMHSliceTaskInfo.sliceProfile)
+            nssiNeedHandlerInfos.add(nssiNeedHandlerMap)
+
+            nssiNeedHandlerMap.clear()
+            nssiNeedHandlerMap.put("subnetType", sliceTaskParams.tnFHSliceTaskInfo.subnetType)
+            nssiNeedHandlerMap.put("nsstInfo", sliceTaskParams.tnFHSliceTaskInfo.NSSTInfo)
+            nssiNeedHandlerMap.put("sliceProfile", sliceTaskParams.tnFHSliceTaskInfo.sliceProfile)
+            nssiNeedHandlerInfos.add(nssiNeedHandlerMap)
+
+        }
+
+        if (nssiNeedHandlerInfos.size() > 0) {
+            execution.setVariable("needSelectNssi", true)
+            execution.setVariable("currNssiIndex", 0)
+            execution.setVariable("nssiNeedHandlerInfos", nssiNeedHandlerInfos)
+        } else {
+            execution.setVariable("needSelectNssi", false)
+        }
+
+        execution.setVariable("sliceTaskParams", sliceTaskParams)
+
     }
 
     /**
@@ -512,33 +586,34 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
      */
     public void preNSSIRequest(DelegateExecution execution) {
 
+        List<Map> nssiNeedHandlerInfos =
+                execution.getVariable("nssiNeedHandlerInfos") as List<Map>
+
+        int currNssiIndex = execution.getVariable("currNssiIndex") as Integer
+        Map nssiNeedHandlerInfo = nssiNeedHandlerInfos.get(currNssiIndex) as Map
+
+        TemplateInfo nsstInfo = nssiNeedHandlerInfo.get("nsstInfo") as TemplateInfo
+        Object profileInfo = nssiNeedHandlerInfo.get("sliceProfile")
+
         String urlString = UrnPropertiesReader.getVariable("mso.oof.endpoint", execution)
         logger.debug( "get NSI option OOF Url: " + urlString)
 
-        boolean isNSISuggested = true
-        execution.setVariable("isNSISuggested", isNSISuggested)
         String requestId = execution.getVariable("msoRequestId")
-        String messageType = "NSISelectionResponse"
+        String messageType = "NSSISelectionResponse"
 
-        Map<String, Object> profileInfo = execution.getVariable("serviceProfile") as Map
-        Map<String, Object> nstSolution = execution.getVariable("nstSolution") as Map
-        logger.debug("Get NST selection from OOF: " + nstSolution.toString())
-        String nstInfo = """{
-            "modelInvariantId":"${nstSolution.invariantUUID}",
-            "modelVersionId":"${nstSolution.UUID}",
-            "modelName":"${nstSolution.NSTName}"
-         }"""
-
-        execution.setVariable("nsiSelectionUrl", "/api/oof/selection/nsi/v1")
-        execution.setVariable("nsiSelection_messageType", messageType)
-        execution.setVariable("nsiSelection_correlator", requestId)
+        execution.setVariable("nssiSelectionUrl", "/api/oof/selection/nssi/v1")
+        execution.setVariable("nssiSelection_messageType", messageType)
+        execution.setVariable("nssiSelection_correlator", requestId)
         String timeout = UrnPropertiesReader.getVariable("mso.adapters.oof.timeout", execution)
-        execution.setVariable("nsiSelection_timeout", timeout)
+        execution.setVariable("nssiSelection_timeout", timeout)
 
-        //todo
-        String oofRequest = oofUtils.buildSelectNSIRequest(requestId, nstInfo, messageType, profileInfo)
+//        SliceTaskParamsAdapter sliceParams =
+//                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
 
-        execution.setVariable("nsiSelection_oofRequest", oofRequest)
+        String oofRequest = oofUtils.buildSelectNSSIRequest(requestId, nsstInfo, messageType,
+                profileInfo, timeout as Integer)
+
+        execution.setVariable("nssiSelection_oofRequest", oofRequest)
         logger.debug("Sending request to OOF: " + oofRequest)
     }
 
@@ -549,36 +624,74 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
      */
     public void processNSSIResp(DelegateExecution execution) {
 
-        SliceTaskParams sliceTaskParams = execution.getVariable("sliceTaskParams") as SliceTaskParams
-        String OOFResponse = execution.getVariable("nsiSelection_oofResponse")
+        List<Map> nssiNeedHandlerInfos =
+                execution.getVariable("nssiNeedHandlerInfos") as List<Map>
+
+        int currNssiIndex = execution.getVariable("currNssiIndex") as Integer
+        Map nssiNeedHandlerInfo = nssiNeedHandlerInfos.get(currNssiIndex) as Map
+        SubnetType subnetType = nssiNeedHandlerInfo.get("subnetType") as SubnetType
+
+        SliceTaskParamsAdapter sliceTaskParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
+
+        String OOFResponse = execution.getVariable("nssiSelection_oofResponse")
         logger.debug("NSI OOFResponse is: " + OOFResponse)
         execution.setVariable("OOFResponse", OOFResponse)
         //This needs to be changed to derive a value when we add policy to decide the solution options.
 
         Map<String, Object> resMap = objectMapper.readValue(OOFResponse, Map.class)
         List<Map<String, Object>> nsiSolutions = (List<Map<String, Object>>) resMap.get("solutions")
-        Map<String, Object> solutions = nsiSolutions.get(0)
+        Map<String, Object> solution = nsiSolutions.get(0)
 
         String resourceSharingLevel = execution.getVariable("resourceSharingLevel")
-        Boolean isSharable = resourceSharingLevel == "shared"
+        Boolean isSharable = resourceSharingLevel == "shared"   //todo
 
-        if (solutions != null) {
-            if (isSharable && solutions.get("existingNSI")) {
-                //sharedNSISolution
-                //processSharedNSISolutions(solutions, execution)
-            }
-            else if(solutions.containsKey("newNSISolution")) {
-                //processNewNSISolutions(solutions, execution)
-            }
+        if (isSharable && solution != null) {
+            processNssiResult(sliceTaskParams, subnetType, solution)
         }
+
         execution.setVariable("sliceTaskParams", sliceTaskParams)
-        logger.debug("sliceTaskParams: "+sliceTaskParams.convertToJson())
+        //logger.debug("sliceTaskParams: "+ sliceTaskParams.convertToJson())
         logger.debug("*** Completed options Call to OOF ***")
 
         logger.debug("start parseServiceProfile")
         //parseServiceProfile(execution)
         logger.debug("end parseServiceProfile")
+
+        if (currNssiIndex >= nssiNeedHandlerInfos.size() - 1) {
+            execution.setVariable("needSelectNssi", false)
+        } else {
+            execution.setVariable("currNssiIndex", currNssiIndex + 1)
+            execution.setVariable("needSelectNssi", true)
+        }
+
     }
 
+    private void processNssiResult(SliceTaskParamsAdapter sliceTaskParams, SubnetType subnetType,
+                                   Map<String, Object> solution) {
+        switch (subnetType) {
+            case SubnetType.CN:
+                sliceTaskParams.cnSliceTaskInfo.suggestNssiId = solution.get("NSSIId")
+                sliceTaskParams.cnSliceTaskInfo.suggestNssiName = solution.get("NSSIName")
+                break
+            case SubnetType.AN_NF:
+                sliceTaskParams.anSliceTaskInfo.suggestNssiId = solution.get("NSSIId")
+                sliceTaskParams.anSliceTaskInfo.suggestNssiName = solution.get("NSSIName")
+                break
+            case SubnetType.TN_BH:
+                sliceTaskParams.tnBHSliceTaskInfo.suggestNssiId = solution.get("NSSIId")
+                sliceTaskParams.tnBHSliceTaskInfo.suggestNssiName = solution.get("NSSIName")
+                break
+            case SubnetType.TN_FH:
+                sliceTaskParams.tnFHSliceTaskInfo.suggestNssiId = solution.get("NSSIId")
+                sliceTaskParams.tnFHSliceTaskInfo.suggestNssiName = solution.get("NSSIName")
+                break
+            case SubnetType.TN_MH:
+                sliceTaskParams.tnMHSliceTaskInfo.suggestNssiId = solution.get("NSSIId")
+                sliceTaskParams.tnMHSliceTaskInfo.suggestNssiName = solution.get("NSSIName")
+                break
+        }
+    }
 
 }
