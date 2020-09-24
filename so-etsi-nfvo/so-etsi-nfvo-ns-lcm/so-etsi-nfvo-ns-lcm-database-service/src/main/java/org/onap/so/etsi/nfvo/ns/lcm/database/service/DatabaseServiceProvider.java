@@ -33,6 +33,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Waqas Ikram (waqas.ikram@est.tech)
@@ -69,6 +72,16 @@ public class DatabaseServiceProvider {
     public Optional<NfvoJob> getJob(final String jobId) {
         logger.info("Querying database for NfvoJob using jobId: {}", jobId);
         return nfvoJobRepository.findById(jobId);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.REPEATABLE_READ, readOnly = true)
+    public Optional<NfvoJob> getRefreshedJob(final String jobId) {
+        logger.info("Querying database for NfvoJob using jobId: {}", jobId);
+        final Optional<NfvoJob> optional = getJob(jobId);
+        if (optional.isPresent()) {
+            nfvoJobRepository.refreshEntity(optional.get());
+        }
+        return optional;
     }
 
     public Optional<NfvoJob> getJobByResourceId(final String resourceId) {

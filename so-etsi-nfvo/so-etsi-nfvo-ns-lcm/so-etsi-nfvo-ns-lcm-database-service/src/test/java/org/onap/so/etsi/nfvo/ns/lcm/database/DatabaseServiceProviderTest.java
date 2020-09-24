@@ -65,8 +65,12 @@ public class DatabaseServiceProviderTest {
                 .resourceName(DUMMY_NAME).startTime(CURRENT_DATE_TIME).status(JobStatusEnum.STARTED);
         databaseServiceProvider.addJob(expected);
 
-        final Optional<NfvoJob> actual = databaseServiceProvider.getJob(expected.getJobId());
+        Optional<NfvoJob> actual = databaseServiceProvider.getJob(expected.getJobId());
         assertEquals(expected, actual.get());
+
+        actual = databaseServiceProvider.getRefreshedJob(expected.getJobId());
+        assertEquals(expected, actual.get());
+
     }
 
     @Test
