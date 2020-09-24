@@ -22,6 +22,7 @@ package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.extclients.aai;
 import java.util.Optional;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.ServiceInstance;
+import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
@@ -88,7 +89,8 @@ public class AaiServiceProviderImpl implements AaiServiceProvider {
     @Override
     public void deleteGenericVnf(final String vnfId) {
         logger.info("Deleting GenericVnf with id: {} from AAI.", vnfId);
-        final AAIResourceUri aaiResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId);
+        final AAIResourceUri aaiResourceUri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId));
         aaiClientProvider.getAaiClient().delete(aaiResourceUri);
     }
 }
