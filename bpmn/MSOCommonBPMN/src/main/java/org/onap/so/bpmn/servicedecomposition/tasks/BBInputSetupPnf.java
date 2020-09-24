@@ -34,6 +34,8 @@ final class BBInputSetupPnf {
     }
 
     static void populatePnfToServiceInstance(Pnfs pnfs, String pnfId, ServiceInstance serviceInstance) {
+        removePnfFromServiceIfExists(serviceInstance, pnfId);
+
         Pnf pnf = new Pnf();
         pnf.setPnfId(pnfId);
         pnf.setPnfName(pnfs.getInstanceName());
@@ -44,5 +46,10 @@ final class BBInputSetupPnf {
         pnf.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
 
         serviceInstance.getPnfs().add(pnf);
+    }
+
+    private static void removePnfFromServiceIfExists(ServiceInstance serviceInstance, String pnfId) {
+        serviceInstance.getPnfs().stream().filter(pnf -> pnf.getPnfId().equals(pnfId)).findFirst()
+                .ifPresent(serviceInstance.getPnfs()::remove);
     }
 }
