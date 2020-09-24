@@ -24,18 +24,22 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
-import org.onap.aai.domain.yang.*
-import org.onap.aaiclient.client.aai.AAIObjectType
+import org.onap.aai.domain.yang.v19.*
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.Relationships
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAISimpleUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.aai.entities.uri.ServiceInstanceUri
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
-import org.onap.aaiclient.client.aai.entities.uri.ServiceInstanceUri
+import org.onap.so.bpmn.common.scripts.ExternalAPIUtil
+import org.onap.so.bpmn.common.scripts.ExternalAPIUtilFactory
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 import org.onap.so.serviceinstancebeans.RequestDetails
+
+import javax.ws.rs.core.Response
+import java.time.Instant
 
 import static org.junit.Assert.assertNotNull
 import static org.junit.Assert.assertTrue
@@ -50,13 +54,32 @@ class DoCommonCoreNSSITest extends MsoGroovyTest {
 
     @Test
     void testPreProcessRequest() {
-        def currentNSSI = [:]
-        currentNSSI.put("nssiId","5G-999")
-        when(mockExecution.getVariable("currentNSSI")).thenReturn(currentNSSI)
+
+        String nssiId = "5G-999"
+        when(mockExecution.getVariable("serviceInstanceID")).thenReturn(nssiId)
+
+        String nsiId = "5G-777"
+        when(mockExecution.getVariable("nsiId")).thenReturn(nsiId)
+
+        String snssai = "S-NSSAI"
+        String snssaiList = "[ \"${snssai}\" ]"
+        String sliceProfileId = "slice-profile-id"
+        String sliceParams =  "{\n" +
+                "\"sliceProfile\":{\"sliceProfileId\":\"${sliceProfileId}\",\"snssaiList\":${snssaiList}}\n" +
+                "}"
+        when(mockExecution.getVariable("sliceParams")).thenReturn(sliceParams)
 
         DoCommonCoreNSSI dcnssi = new DoCommonCoreNSSI()
         dcnssi.preProcessRequest(mockExecution)
-        Mockito.verify(mockExecution,times(1)).getVariable("currentNSSI")
+
+        def currentNSSI = [:]
+        currentNSSI.put("nssiId", nssiId)
+        currentNSSI.put("nsiId", nsiId)
+        currentNSSI.put("sliceProfile", "{\"sliceProfileId\":\"slice-profile-id\",\"snssaiList\":[\"S-NSSAI\"]}")
+        currentNSSI.put("S-NSSAI", snssai)
+        currentNSSI.put("sliceProfileId", sliceProfileId)
+        Mockito.verify(mockExecution,times(1)).setVariable("currentNSSI", currentNSSI)
+
     }
 
 
@@ -90,13 +113,13 @@ class DoCommonCoreNSSITest extends MsoGroovyTest {
         Relationships rsMock = mock(Relationships.class)
         Optional<Relationships> orsMock = Optional.of(rsMock)
         List<AAIResourceUri> arus = new ArrayList<>()
-        AAIResourceUri aru = new ServiceInstanceUri(networkServiceInstanceUri)
+        AAIResourceUri aru = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(networkServiceInstance.getServiceInstanceId()))
         arus.add(aru)
 
         when(client.get(nssiUri)).thenReturn(wrapperMock)
         when(wrapperMock.getRelationships()).thenReturn(orsMock)
 
-        when(rsMockgetRelatedUris(Types.SERVICE_INSTANCE)).thenReturn(arus)
+        when(rsMock.getRelatedUris(Types.SERVICE_INSTANCE)).thenReturn(arus)
         when(client.get(ServiceInstance.class, aru)).thenReturn(networkServiceInstaneOpt)
 
         spy.getNetworkServiceInstance(mockExecution)
@@ -145,7 +168,7 @@ class DoCommonCoreNSSITest extends MsoGroovyTest {
         when(client.get(networkServiceInstanceUri)).thenReturn(wrapperMock)
         when(wrapperMock.getRelationships()).thenReturn(orsMock)
 
-        when(rsMockgetRelatedUris(Types.GENERIC_VNF)).thenReturn(arus)
+        when(rsMock.getRelatedUris(Types.GENERIC_VNF)).thenReturn(arus)
         when(client.get(GenericVnf.class, genericVNFUri)).thenReturn(genericVnfOpt)
 
         spy.getConstituteVNFFromNetworkServiceInst(mockExecution)
@@ -190,13 +213,9 @@ class DoCommonCoreNSSITest extends MsoGroovyTest {
         networkServiceInstance.setServiceInstanceId("NS-777")
         networkServiceInstance.setServiceRole("Network Service")
 
-        GenericVnf constituteVnf = new GenericVnf()
-        constituteVnf.setVnfId("VNF-1")
-
         when(mockExecution.getVariable("currentNSSI")).thenReturn(currentNSSI)
 
         currentNSSI.put("networkServiceInstance", networkServiceInstance)
-        currentNSSI.put("constituteVnf", constituteVnf)
 
         when(mockExecution.getVariable("mso.infra.endpoint.url")).thenReturn("http://mso.onap:8088")
         when(mockExecution.getVariable("mso.msoKey")).thenReturn("mso.msoKey")
@@ -211,7 +230,7 @@ class DoCommonCoreNSSITest extends MsoGroovyTest {
 
         when(spy.getAuthHeader(mockExecution, "auth-value", "mso.msoKey")).thenReturn(authHeaderResponse)
 
-        String urlString = String.format("http://mso.onap:8088/serviceInstantiation/v7/serviceInstances/%s/vnfs/%s", networkServiceInstance.getServiceInstanceId(), constituteVnf.getVnfId())
+        String urlString = String.format("http://mso.onap:8088/serviceInstantiation/v7/serviceInstances/%s", networkServiceInstance.getServiceInstanceId())
 
         String callPUTServiceInstanceResponse = "put"
 
@@ -282,11 +301,12 @@ class DoCommonCoreNSSITest extends MsoGroovyTest {
         when(mockExecution.getVariable("currentNSSI")).thenReturn(currentNSSI)
 
         String globalSubscriberId = "global-id"
-        String serviceType = "service"
+        String subscriptionServiceType = "subscription-service-type"
         String nssiId = "5G-999"
 
-        currentNSSI.put("globalSubscriberId", globalSubscriberId)
-        currentNSSI.put("serviceType", serviceType)
+        when(mockExecution.getVariable("globalSubscriberId")).thenReturn(globalSubscriberId)
+        when(mockExecution.getVariable("subscriptionServiceType")).thenReturn(subscriptionServiceType)
+
         currentNSSI.put("nssiId", nssiId)
 
         String theSNSSAI = "theS-NSSAI"
@@ -306,26 +326,6 @@ class DoCommonCoreNSSITest extends MsoGroovyTest {
         doNothing().when(client).delete(nssiUri)
 
         spy.deleteSliceProfileInstance(mockExecution)
-
-    }
-
-
-    @Test
-    void testUpdateServiceOperationStatus() {
-        def currentNSSI = [:]
-
-        when(mockExecution.getVariable("currentNSSI")).thenReturn(currentNSSI)
-
-        String nssiId = "5G-999"
-
-        currentNSSI.put("nssiId", nssiId)
-        currentNSSI.put("e2eServiceInstanceId", "e2eServiceInstanceId")
-        currentNSSI.put("operationId", "operationId")
-        currentNSSI.put("operationType", "operationType")
-
-        DoCommonCoreNSSI spy = spy(DoCommonCoreNSSI.class)
-
-        spy.updateServiceOperationStatus(mockExecution)
 
     }
 
@@ -431,6 +431,124 @@ class DoCommonCoreNSSITest extends MsoGroovyTest {
     }
 
 
+    @Test
+    void testPrepareFailedOperationStatusUpdate() {
+        def currentNSSI = [:]
+
+        when(mockExecution.getVariable("currentNSSI")).thenReturn(currentNSSI)
+        when(mockExecution.getVariable("jobId")).thenReturn("job-id")
+        when(mockExecution.getVariable("operationType")).thenReturn("operation-type")
+
+        String nssiId = "5G-999"
+        String nsiId = "5G-777"
+
+        currentNSSI.put("nssiId", nssiId)
+        currentNSSI.put("nsiId", nsiId)
+        currentNSSI.put("e2eServiceInstanceId", "e2eServiceInstanceId")
+        currentNSSI.put("operationId", "operationId")
+        currentNSSI.put("operationType", "operationType")
+
+        DoCommonCoreNSSI spy = spy(DoCommonCoreNSSI.class)
+
+        spy.prepareFailedOperationStatusUpdate(mockExecution)
+    }
+
+
+    @Test
+    void testPrepareUpdateResourceOperationStatus() {
+        def currentNSSI = [:]
+
+        when(mockExecution.getVariable("currentNSSI")).thenReturn(currentNSSI)
+        when(mockExecution.getVariable("jobId")).thenReturn("job-id")
+        when(mockExecution.getVariable("operationType")).thenReturn("operation-type")
+
+        String nssiId = "5G-999"
+        String nsiId = "5G-777"
+
+        currentNSSI.put("nssiId", nssiId)
+        currentNSSI.put("nsiId", nsiId)
+        currentNSSI.put("e2eServiceInstanceId", "e2eServiceInstanceId")
+        currentNSSI.put("operationId", "operationId")
+        currentNSSI.put("operationType", "operationType")
+
+        DoCommonCoreNSSI spy = spy(DoCommonCoreNSSI.class)
+
+        spy.prepareUpdateResourceOperationStatus(mockExecution)
+
+    }
+
+
+    @Test
+    void testGetPUTServiceInstanceProgressAcknowledged() {
+
+        executePUTServiceInstanceProgress("ACKNOWLEDGED")
+        Mockito.verify(mockExecution,times(1)).setVariable("putStatus", "processing")
+    }
+
+
+    @Test
+    void testGetPUTServiceInstanceProgressInProgress() {
+
+        executePUTServiceInstanceProgress("INPROGRESS")
+        Mockito.verify(mockExecution,times(1)).setVariable("putStatus", "processing")
+    }
+
+
+    @Test
+    void testGetPUTServiceInstanceProgressCompleted() {
+
+        executePUTServiceInstanceProgress("COMPLETED")
+        Mockito.verify(mockExecution,times(1)).setVariable("putStatus", "completed")
+    }
+
+
+    @Test
+    void testTimeDelay() {
+        DoCommonCoreNSSI obj = spy(DoCommonCoreNSSI.class)
+
+        long before = Instant.now().toEpochMilli()
+        obj.timeDelay(mockExecution)
+
+        long after = Instant.now().toEpochMilli()
+
+        long delay = 5L
+
+        assertTrue(String.format("Didn't wait %d sec", delay), ((after - before) >= delay))
+    }
+
+
+    void executePUTServiceInstanceProgress(String state) {
+
+        def currentNSSI = [:]
+
+        when(mockExecution.getVariable("currentNSSI")).thenReturn(currentNSSI)
+
+        String url = "http://mso.onap:8088/serviceInstantiation/v7/serviceInstances/5G-777"
+
+        currentNSSI.put("putServiceInstanceURL", url)
+
+        DoCommonCoreNSSI spy = spy(DoCommonCoreNSSI.class)
+
+        ExternalAPIUtilFactory externalAPIUtilFactoryMock = mock(ExternalAPIUtilFactory.class)
+        when(spy.getExternalAPIUtilFactory()).thenReturn(externalAPIUtilFactoryMock)
+
+        ExternalAPIUtil externalAPIUtilMock = mock(ExternalAPIUtil.class)
+
+        when(externalAPIUtilFactoryMock.create()).thenReturn(externalAPIUtilMock)
+
+        Response responseMock = mock(Response.class)
+        when(externalAPIUtilMock.executeExternalAPIGetCall(mockExecution, url)).thenReturn(responseMock)
+
+        when(responseMock.getStatus()).thenReturn(200)
+
+        String entity = "{\"state\":\"ACCEPTED\",\"orderItem\":[{\"service\":{\"id\":\"5G-999\"},\"state\":\"${state}\"}]}"
+        when(responseMock.readEntity(String.class)).thenReturn(entity)
+
+        spy.getPUTServiceInstanceProgress(mockExecution)
+
+    }
+
+
     void prepareProject(AAIResourceUri cloudRegionAAIUri) {
         Project project = new Project()
         project.setProjectName("project-name")
@@ -446,7 +564,7 @@ class DoCommonCoreNSSITest extends MsoGroovyTest {
         AAIResourceUri aru = new AAISimpleUri(cloudRegionAAIUri)
         arus.add(aru)
 
-        when(rsMockgetRelatedUris(Types.PROJECT)).thenReturn(arus)
+        when(rsMock.getRelatedUris(Types.PROJECT)).thenReturn(arus)
 
         Optional<Project> projectOpt = Optional.of(project)
 
@@ -472,7 +590,7 @@ class DoCommonCoreNSSITest extends MsoGroovyTest {
         AAIResourceUri aru = new AAISimpleUri(networkServiceInstanceUri)
         arus.add(aru)
 
-        when(rsMockgetRelatedUris(Types.OWNING_ENTITY)).thenReturn(arus)
+        when(rsMock.getRelatedUris(Types.OWNING_ENTITY)).thenReturn(arus)
 
         Optional<OwningEntity> owningEntityOpt = Optional.of(owningEntity)
 
@@ -494,7 +612,7 @@ class DoCommonCoreNSSITest extends MsoGroovyTest {
         AAIResourceUri aru = new AAISimpleUri(cloudRegionAAIUri)
         arus.add(aru)
 
-        when(rsMockgetRelatedUris(Types.CLOUD_REGION)).thenReturn(arus)
+        when(rsMock.getRelatedUris(Types.CLOUD_REGION)).thenReturn(arus)
 
         CloudRegion cloudRegion = new CloudRegion()
         cloudRegion.setCloudRegionId("cloud-region-id")
@@ -527,7 +645,7 @@ class DoCommonCoreNSSITest extends MsoGroovyTest {
 
         arus.add(serviceSubscriptionUri)
 
-        when(rsMockgetRelatedUris(Types.SERVICE_SUBSCRIPTION)).thenReturn(arus)
+        when(rsMock.getRelatedUris(Types.SERVICE_SUBSCRIPTION)).thenReturn(arus)
 
         ServiceSubscription serviceSubscription = new ServiceSubscription()
         serviceSubscription.setServiceType("service-type")
@@ -537,7 +655,7 @@ class DoCommonCoreNSSITest extends MsoGroovyTest {
 
         when(client.get(networkServiceInstanceUri)).thenReturn(wrapperMock)
 
-        when(rsMockgetRelatedUris(Types.CUSTOMER)).thenReturn(arus)
+        when(rsMock.getRelatedUris(Types.CUSTOMER)).thenReturn(arus)
 
         Customer customer = new Customer()
         customer.setSubscriberName("subscriber-name")
