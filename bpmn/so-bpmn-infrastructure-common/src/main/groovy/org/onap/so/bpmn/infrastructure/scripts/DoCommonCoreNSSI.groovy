@@ -22,22 +22,13 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.aai.domain.yang.CloudRegion
-import org.onap.aai.domain.yang.GenericVnf
-import org.onap.aai.domain.yang.ModelVer
-import org.onap.aai.domain.yang.ServiceInstance
-import org.onap.aai.domain.yang.ServiceSubscription
-import org.onap.aai.domain.yang.SliceProfile
-import org.onap.aai.domain.yang.Tenant
-import org.onap.aai.domain.yang.VfModule
+import org.onap.aai.domain.yang.*
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.Relationships
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
-import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.logging.filter.base.ONAPComponents
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -45,29 +36,17 @@ import org.onap.so.bpmn.common.scripts.RequestDBUtil
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
-import org.onap.so.db.request.beans.OperationStatus
-import org.onap.so.requestsdb.RequestsDbConstant
-import org.onap.so.serviceinstancebeans.CloudConfiguration
-import org.onap.so.serviceinstancebeans.LineOfBusiness
-import org.onap.so.serviceinstancebeans.ModelInfo
-import org.onap.so.serviceinstancebeans.ModelType
-import org.onap.so.serviceinstancebeans.OwningEntity
-import org.onap.so.serviceinstancebeans.Project
-import org.onap.so.serviceinstancebeans.RequestDetails
-import org.onap.so.serviceinstancebeans.RequestInfo
-import org.onap.so.serviceinstancebeans.RequestParameters
-import org.onap.so.serviceinstancebeans.Resources
-import org.onap.so.serviceinstancebeans.Service
-import org.onap.so.serviceinstancebeans.SubscriberInfo
-import org.onap.so.serviceinstancebeans.VfModules
-import org.onap.so.serviceinstancebeans.Vnfs
+import org.onap.so.db.request.beans.ResourceOperationStatus
+import org.onap.so.serviceinstancebeans.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 import javax.ws.rs.core.Response
 
+import static org.apache.commons.lang3.StringUtils.isBlank
 
- class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
+
+class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
     private final String PREFIX ="DoCommonCoreNSSI"
 
@@ -83,10 +62,54 @@ import javax.ws.rs.core.Response
 
         def currentNSSI = execution.getVariable("currentNSSI")
         if (!currentNSSI) {
-            String msg = "currentNSSI is null"
+            currentNSSI = [:]
+        }
+
+        // NSSI ID
+        String nssiId = execution.getVariable("serviceInstanceID")
+        if (isBlank(nssiId)) {
+            String msg = "NSSI service instance id is null"
             LOGGER.error(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
         }
+        else {
+            currentNSSI['nssiId'] = nssiId
+        }
+
+        // NSI ID
+        String nsiId = execution.getVariable("nsiId")
+        if (isBlank(nsiId)) {
+            String msg = "nsiId is null"
+            LOGGER.error(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+        }
+        else {
+            currentNSSI['nsiId'] = nsiId
+        }
+
+
+        // SLice Profile
+        String sliceProfile = jsonUtil.getJsonValue(execution.getVariable("sliceParams"), "sliceProfile")
+        if (isBlank(sliceProfile)) {
+            String msg = "Slice Profile is null"
+            exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+        } else {
+            currentNSSI['sliceProfile'] = sliceProfile
+        }
+
+        // S-NSSAI
+        def snssaiList = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(sliceProfile, "snssaiList"))
+
+        String sNssai = snssaiList.get(0)
+        currentNSSI['S-NSSAI'] = sNssai
+
+
+        // Slice Profile id
+        String sliceProfileId = jsonUtil.getJsonValue(sliceProfile, "sliceProfileId")
+        currentNSSI['sliceProfileId'] = sliceProfileId
+
+        execution.setVariable("currentNSSI", currentNSSI)
+
 
         LOGGER.trace("***** ${getPrefix()} Exit preProcessRequest")
     }
@@ -105,7 +128,7 @@ import javax.ws.rs.core.Response
 
         String nssiId = currentNSSI['nssiId']
 
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nssiId)
         Optional<ServiceInstance> nssiOpt = client.get(ServiceInstance.class, nssiUri)
 
         if (nssiOpt.isPresent()) {
@@ -141,7 +164,7 @@ import javax.ws.rs.core.Response
         Optional<Relationships> relationships = wrapper.getRelationships()
 
         if (relationships.isPresent()) {
-            for (AAIResourceUri networkServiceInstanceUri : relationships.get().getRelatedUris(Types.SERVICE_INSTANCE)) {
+            for (AAIResourceUri networkServiceInstanceUri : relationships.get().getRelatedAAIUris(AAIObjectType.SERVICE_INSTANCE)) {
                 Optional<ServiceInstance> networkServiceInstanceOpt = client.get(ServiceInstance.class, networkServiceInstanceUri)
                 if (networkServiceInstanceOpt.isPresent()) {
                     networkServiceInstance = networkServiceInstanceOpt.get()
@@ -189,7 +212,7 @@ import javax.ws.rs.core.Response
         AAIResultWrapper wrapper = client.get(networkServiceInstanceUri);
         Optional<Relationships> relationships = wrapper.getRelationships()
         if (relationships.isPresent()) {
-            for (AAIResourceUri constituteVnfUri : relationships.get().getRelatedUris(Types.GENERIC_VNF)) {
+            for (AAIResourceUri constituteVnfUri : relationships.get().getRelatedAAIUris(AAIObjectType.GENERIC_VNF)) {
                 currentNSSI['constituteVnfUri'] = constituteVnfUri
                 Optional<GenericVnf> constituteVnfOpt = client.get(GenericVnf.class, constituteVnfUri)
                 if(constituteVnfOpt.isPresent()) {
@@ -409,7 +432,7 @@ import javax.ws.rs.core.Response
 
         AAIResourcesClient client = getAAIClient()
 
-        AAIResourceUri modelVerUrl = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.serviceDesignAndCreation().model(networkServiceInstance.getModelInvariantId()).modelVer(networkServiceInstance.getModelVersionId()))
+        AAIResourceUri modelVerUrl = AAIUriFactory.createResourceUri(AAIObjectType.MODEL_VER, networkServiceInstance.getModelInvariantId(), networkServiceInstance.getModelVersionId())
         Optional<ModelVer> modelVerOpt = client.get(ModelVer.class, modelVerUrl)
 
         if (modelVerOpt.isPresent()) {
@@ -430,9 +453,9 @@ import javax.ws.rs.core.Response
     SubscriberInfo prepareSubscriberInfo(DelegateExecution execution) {
         def currentNSSI = execution.getVariable("currentNSSI")
 
-        String globalSubscriberId = currentNSSI['globalSubscriberId']
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
 
-        String subscriberName = currentNSSI['subscriberName']
+        String subscriberName = execution.getVariable("subscriberName")
 
         SubscriberInfo subscriberInfo = new SubscriberInfo()
         subscriberInfo.setGlobalSubscriberId(globalSubscriberId)
@@ -447,7 +470,7 @@ import javax.ws.rs.core.Response
         AAIResultWrapper wrapper = client.get(networkServiceInstanceUri)
         Optional<Relationships> serviceSubscriptionRelationshipsOps = wrapper.getRelationships()
         if(serviceSubscriptionRelationshipsOps.isPresent()) {
-            List<AAIResourceUri> serviceSubscriptionRelatedAAIUris = serviceSubscriptionRelationshipsOps.get().getRelatedUris(Types.SERVICE_SUBSCRIPTION)
+            List<AAIResourceUri> serviceSubscriptionRelatedAAIUris = serviceSubscriptionRelationshipsOps.get().getRelatedAAIUris(AAIObjectType.SERVICE_SUBSCRIPTION)
             if(!(serviceSubscriptionRelatedAAIUris == null || serviceSubscriptionRelatedAAIUris.isEmpty())) {
                 AAIResourceUri serviceSubscriptionUri = serviceSubscriptionRelatedAAIUris.get(0) // Many-To-One relation
                 Optional<ServiceSubscription> serviceSubscriptionOpt = client.get(ServiceSubscription.class, serviceSubscriptionUri)
@@ -459,7 +482,7 @@ import javax.ws.rs.core.Response
                 wrapper = client.get(serviceSubscriptionUri)
                 Optional<Relationships> customerRelationshipsOps = wrapper.getRelationships()
                 if(customerRelationshipsOps.isPresent()) {
-                    List<AAIResourceUri> customerRelatedAAIUris = customerRelationshipsOps.get().getRelatedUris(Types.CUSTOMER)
+                    List<AAIResourceUri> customerRelatedAAIUris = customerRelationshipsOps.get().getRelatedAAIUris(AAIObjectType.CUSTOMER)
                     if(!(customerRelatedAAIUris == null || customerRelatedAAIUris.isEmpty())) {
                         Optional<Customer> customerOpt = client.get(Customer.class, customerRelatedAAIUris.get(0)) // Many-To-One relation
                         if(customerOpt.isPresent()) {
@@ -484,13 +507,13 @@ import javax.ws.rs.core.Response
     RequestInfo prepareRequestInfo(DelegateExecution execution, ServiceInstance networkServiceInstance) {
         def currentNSSI = execution.getVariable("currentNSSI")
 
-        String serviceId = currentNSSI['serviceId']
+        String productFamilyId = execution.getVariable("productFamilyId")
 
         RequestInfo requestInfo = new RequestInfo()
 
         requestInfo.setInstanceName(networkServiceInstance.getServiceInstanceName())
         requestInfo.setSource("VID")
-        requestInfo.setProductFamilyId(serviceId)
+        requestInfo.setProductFamilyId(productFamilyId)
         requestInfo.setRequestorId("NBI")
 
         return requestInfo
@@ -534,7 +557,7 @@ import javax.ws.rs.core.Response
         Optional<Relationships> cloudRegionRelationshipsOps = wrapper.getRelationships()
 
         if(cloudRegionRelationshipsOps.isPresent()) {
-            List<AAIResourceUri> cloudRegionRelatedAAIUris = cloudRegionRelationshipsOps.get().getRelatedUris(Types.CLOUD_REGION)
+            List<AAIResourceUri> cloudRegionRelatedAAIUris = cloudRegionRelationshipsOps.get().getRelatedAAIUris(AAIObjectType.CLOUD_REGION)
             if (!(cloudRegionRelatedAAIUris == null || cloudRegionRelatedAAIUris.isEmpty())) {
                 AAIResourceUri cloudRegionRelatedAAIUri = cloudRegionRelatedAAIUris.get(0)
                 currentNSSI['cloudRegionRelatedAAIUri'] = cloudRegionRelatedAAIUri
@@ -576,7 +599,7 @@ import javax.ws.rs.core.Response
             vfModuleModelInfo.setModelInvariantUuid(vfModule.getModelInvariantId())
             vfModuleModelInfo.setModelCustomizationId(vfModule.getModelCustomizationId())
 
-            AAIResourceUri vfModuleUrl = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.serviceDesignAndCreation().model(vfModule.getModelInvariantId()).modelVer(vfModule.getModelVersionId()))
+            AAIResourceUri vfModuleUrl = AAIUriFactory.createResourceUri(AAIObjectType.MODEL_VER, vfModule.getModelInvariantId(), vfModule.getModelVersionId())
 
             Optional<ModelVer> vfModuleModelVerOpt = client.get(ModelVer.class, vfModuleUrl)
 
@@ -611,7 +634,7 @@ import javax.ws.rs.core.Response
         vnfModelInfo.setModelCustomizationId(constituteVnf.getModelCustomizationId())
         vnfModelInfo.setModelInstanceName(constituteVnf.getVnfName())
 
-        AAIResourceUri vnfModelUrl = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.serviceDesignAndCreation().model(constituteVnf.getModelInvariantId()).modelVer(constituteVnf.getModelVersionId()))
+        AAIResourceUri vnfModelUrl = AAIUriFactory.createResourceUri(AAIObjectType.MODEL_VER, constituteVnf.getModelInvariantId(), constituteVnf.getModelVersionId())
 
         Optional<ModelVer> vnfModelVerOpt = client.get(ModelVer.class, vnfModelUrl)
 
@@ -781,7 +804,7 @@ import javax.ws.rs.core.Response
         AAIResultWrapper wrapper = client.get(networkServiceInstanceUri)
         Optional<Relationships> owningEntityRelationshipsOps = wrapper.getRelationships()
         if (owningEntityRelationshipsOps.isPresent()) {
-            List<AAIResourceUri> owningEntityRelatedAAIUris = owningEntityRelationshipsOps.get().getRelatedUris(Types.OWNING_ENTITY)
+            List<AAIResourceUri> owningEntityRelatedAAIUris = owningEntityRelationshipsOps.get().getRelatedAAIUris(AAIObjectType.OWNING_ENTITY)
 
             if (!(owningEntityRelatedAAIUris == null || owningEntityRelatedAAIUris.isEmpty())) {
                 Optional<org.onap.aai.domain.yang.OwningEntity> owningEntityOpt = client.get(org.onap.aai.domain.yang.OwningEntity.class, owningEntityRelatedAAIUris.get(0)) // Many-To-One relation
@@ -815,7 +838,7 @@ import javax.ws.rs.core.Response
             AAIResultWrapper wrapper = client.get(cloudRegionRelatedAAIUri)
             Optional<Relationships> cloudRegionOps = wrapper.getRelationships()
             if (cloudRegionOps.isPresent()) {
-                List<AAIResourceUri> projectAAIUris = cloudRegionOps.get().getRelatedUris(Types.PROJECT)
+                List<AAIResourceUri> projectAAIUris = cloudRegionOps.get().getRelatedAAIUris(AAIObjectType.PROJECT)
                 if (!(projectAAIUris == null || projectAAIUris.isEmpty())) {
                     Optional<org.onap.aai.domain.yang.Project> projectOpt = client.get(org.onap.aai.domain.yang.Project.class, projectAAIUris.get(0))
                     if (projectOpt.isPresent()) {
@@ -930,7 +953,7 @@ import javax.ws.rs.core.Response
         ServiceInstance nssi = (ServiceInstance)currentNSSI['nssi']
 
         String nssiId = currentNSSI['nssiId']
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nssiId)
 
         List<SliceProfile> associatedProfiles = nssi.getSliceProfiles().getSliceProfile()
 
@@ -966,10 +989,10 @@ import javax.ws.rs.core.Response
         String nssiId = currentNSSI['nssiId']
 
         // global-customer-id, service-type, service-instance-id, profile-id
-        AAIResourceUri sliceProfileUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(nssiId).sliceProfile(sliceProfileContainsSNSSAI.getProfileId()))
+        AAIResourceUri sliceProfileUri = AAIUriFactory.createResourceUri(AAIObjectType.SLICE_PROFILE, globalSubscriberId, serviceType, nssiId, sliceProfileContainsSNSSAI.getProfileId())
 
         try {
-            getAAIClient().delete(sliceProfileUri)
+            client.delete(sliceProfileUri)
         }catch(Exception e){
             exceptionUtil.buildAndThrowWorkflowException(execution, 25000, "Exception occured while Slice Profile Instance delete call: " + e.getMessage())
         }
@@ -987,13 +1010,19 @@ import javax.ws.rs.core.Response
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
-        OperationStatus operationStatus = new OperationStatus()
-        operationStatus.setServiceId(currentNSSI['e2eServiceInstanceId'] as String)
-        operationStatus.setOperationId(currentNSSI['operationId'] as String)
-        operationStatus.setOperation(currentNSSI['operationType'] as String)
-        operationStatus.setResult(RequestsDbConstant.Status.FINISHED)
-
-        requestDBUtil.prepareUpdateOperationStatus(execution, operationStatus)
+        String serviceId = currentNSSI['nssiId']
+        String jobId = execution.getVariable("jobId")
+        String nsiId = currentNSSI['nsiId']
+        String operationType = execution.getVariable("operationType")
+        ResourceOperationStatus resourceOperationStatus = new ResourceOperationStatus()
+        resourceOperationStatus.setServiceId(serviceId)
+        resourceOperationStatus.setOperationId(jobId)
+        resourceOperationStatus.setResourceTemplateUUID(nsiId)
+        resourceOperationStatus.setOperType(operationType)
+        resourceOperationStatus.setStatus("finished")
+        resourceOperationStatus.setProgress("100")
+        resourceOperationStatus.setStatusDescription("Core Deallocate successful")
+        requestDBUtil.prepareUpdateResourceOperationStatus(execution, resourceOperationStatus)
 
         LOGGER.trace("${getPrefix()} Exit updateServiceOperationStatus")
     }

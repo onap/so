@@ -50,7 +50,7 @@ def mcnssi= new DoModifyCoreNSSI()
       <bpmn:incoming>Flow_0lrenyo</bpmn:incoming>
       <bpmn:outgoing>Flow_0yq24um</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
-def mcnssi= new DoDeallocateCoreNSSI()
+def mcnssi= new DoModifyCoreNSSI()
         mcnssi.updateServiceOperationStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:endEvent id="Event_1p0mogo" name="End">
@@ -77,7 +77,7 @@ def mcnssi= new DoModifyCoreNSSI()
       <bpmn:incoming>Flow_1nxaeez</bpmn:incoming>
       <bpmn:outgoing>Flow_0ccqmju</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
-def mcnssi= new ModifyCoreNSSI()
+def mcnssi= new DoModifyCoreNSSI()
         mcnssi.invokePUTServiceInstance(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1nxaeez" sourceRef="Activity_0ouov98" targetRef="Activity_00t4mmi" />
@@ -85,7 +85,7 @@ def mcnssi= new ModifyCoreNSSI()
       <bpmn:incoming>Flow_0ccqmju</bpmn:incoming>
       <bpmn:outgoing>Flow_1fdpbsx</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
-def mcnssi= new ModifyCoreNSSI()
+def mcnssi= new DoModifyCoreNSSI()
         mcnssi.createSliceProfileInstance(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_0ccqmju" sourceRef="Activity_00t4mmi" targetRef="Activity_1q02wiz" />
@@ -93,7 +93,7 @@ def mcnssi= new ModifyCoreNSSI()
       <bpmn:incoming>Flow_1fdpbsx</bpmn:incoming>
       <bpmn:outgoing>Flow_0l7hcnf</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
-def mcnssi= new ModifyCoreNSSI()
+def mcnssi= new DoModifyCoreNSSI()
         mcnssi.associateSliceProfileInstanceWithNSSI(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1fdpbsx" sourceRef="Activity_1q02wiz" targetRef="Activity_1josmor" />
@@ -109,7 +109,7 @@ def mcnssi= new DoModifyCoreNSSI()
       <bpmn:incoming>Flow_1oeokwy</bpmn:incoming>
       <bpmn:outgoing>Flow_15fi92t</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
-def mcnssi= new ModifyCoreNSSI()
+def mcnssi= new DoModifyCoreNSSI()
         mcnssi.invokePUTServiceInstance(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1oeokwy" sourceRef="Activity_0j4c22q" targetRef="Activity_0c4wmiz" />
@@ -117,7 +117,7 @@ def mcnssi= new ModifyCoreNSSI()
       <bpmn:incoming>Flow_15fi92t</bpmn:incoming>
       <bpmn:outgoing>Flow_1wtv1zj</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
-def mcnssi= new ModifyCoreNSSI()
+def mcnssi= new DoModifyCoreNSSI()
         mcnssi.removeSPAssociationWithNSSI(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_15fi92t" sourceRef="Activity_0c4wmiz" targetRef="Activity_1iegufd" />
@@ -125,7 +125,7 @@ def mcnssi= new ModifyCoreNSSI()
       <bpmn:incoming>Flow_1wtv1zj</bpmn:incoming>
       <bpmn:outgoing>Flow_0lrenyo</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
-def mcnssi= new ModifyCoreNSSI()
+def mcnssi= new DoModifyCoreNSSI()
         mcnssi.deleteSliceProfileInstance(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1wtv1zj" sourceRef="Activity_1iegufd" targetRef="Activity_010nkjp" />

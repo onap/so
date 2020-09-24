@@ -30,8 +30,6 @@ import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.AAIEdgeLabel
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
-import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 
 import static org.junit.Assert.assertNotNull
@@ -153,22 +151,7 @@ class DoModifyCoreNSSITest extends MsoGroovyTest  {
 
         when(mockExecution.getVariable("currentNSSI")).thenReturn(currentNSSI)
 
-        String sliceProfileId = "sliceProfileId"
-
-        when(mockExecution.getVariable("sliceProfileID")).thenReturn(sliceProfileId)
-
-        Map<String, Object> sliceProfileMap = new HashMap<>()
-        sliceProfileMap.put("expDataRateUL", "12")
-        sliceProfileMap.put("expDataRateDL", 5)
-        sliceProfileMap.put("activityFactor", 2)
-        sliceProfileMap.put("latency", 10)
-
-        when(mockExecution.getVariable("sliceProfileCn")).thenReturn(sliceProfileMap)
-
-
-        Map<String, Object> serviceProfileMap = new HashMap<>()
-        when(mockExecution.getVariable("serviceProfile")).thenReturn(serviceProfileMap)
-
+        String sliceProfileId = "slice-profile-id"
 
         DoModifyCoreNSSI spy = spy(DoModifyCoreNSSI.class)
         when(spy.getAAIClient()).thenReturn(client)
@@ -182,7 +165,13 @@ class DoModifyCoreNSSITest extends MsoGroovyTest  {
         currentNSSI.put("nssiId", nssiId)
         currentNSSI.put("sliceProfileId", sliceProfileId)
 
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(nssiId).sliceProfile(sliceProfileId))
+        currentNSSI.put("S-NSSAI", "S-NSSAI")
+
+        String sliceProfileJSON =  "{\"expDataRateUL\":\"12\",\"expDataRateDL\":\"5\",\"activityFactor\":\"2\",\"latency\":\"10\"}"
+
+        currentNSSI.put("sliceProfile", sliceProfileJSON)
+
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SLICE_PROFILE, globalSubscriberId, serviceType, nssiId, sliceProfileId)
 
         SliceProfile sliceProfile = new SliceProfile()
         sliceProfile.setProfileId(sliceProfileId)
@@ -215,8 +204,8 @@ class DoModifyCoreNSSITest extends MsoGroovyTest  {
         String globalSubscriberId = "globalSubscriberId"
         String serviceType = "serviceType"
 
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
-        AAIResourceUri sliceProfileUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(nssiId).sliceProfile(sliceProfileId))
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nssiId)
+        AAIResourceUri sliceProfileUri = AAIUriFactory.createResourceUri(AAIObjectType.SLICE_PROFILE, globalSubscriberId, serviceType, nssiId, sliceProfileId)
 
         currentNSSI.put("globalSubscriberId", globalSubscriberId)
         currentNSSI.put("serviceType", serviceType)

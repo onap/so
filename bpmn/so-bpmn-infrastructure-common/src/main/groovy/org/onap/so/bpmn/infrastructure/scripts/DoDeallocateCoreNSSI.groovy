@@ -20,28 +20,14 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import com.fasterxml.jackson.databind.ObjectMapper
+
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.aai.domain.yang.CloudRegion
-import org.onap.aai.domain.yang.Customer
-import org.onap.aai.domain.yang.ModelVer
-import org.onap.aai.domain.yang.OwningEntities
-import org.onap.aai.domain.yang.ServiceSubscription
-import org.onap.aai.domain.yang.SliceProfile
-import org.onap.aai.domain.yang.GenericVnf
 import org.onap.aai.domain.yang.ServiceInstance
-import org.onap.aai.domain.yang.Tenant
-import org.onap.aai.domain.yang.VfModule
-import org.onap.aaiclient.client.aai.AAIClient
+import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
-import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
-import org.onap.aaiclient.client.aai.entities.Relationships
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
-import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.logging.filter.base.ONAPComponents
-import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.RequestDBUtil
@@ -49,22 +35,6 @@ import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
-import org.onap.so.db.request.beans.OperationStatus
-import org.onap.so.requestsdb.RequestsDbConstant
-import org.onap.so.serviceinstancebeans.CloudConfiguration
-import org.onap.so.serviceinstancebeans.LineOfBusiness
-import org.onap.so.serviceinstancebeans.ModelInfo
-import org.onap.so.serviceinstancebeans.ModelType
-import org.onap.so.serviceinstancebeans.OwningEntity
-import org.onap.so.serviceinstancebeans.Project
-import org.onap.so.serviceinstancebeans.RequestDetails
-import org.onap.so.serviceinstancebeans.RequestInfo
-import org.onap.so.serviceinstancebeans.RequestParameters
-import org.onap.so.serviceinstancebeans.Resources
-import org.onap.so.serviceinstancebeans.Service
-import org.onap.so.serviceinstancebeans.SubscriberInfo
-import org.onap.so.serviceinstancebeans.VfModules
-import org.onap.so.serviceinstancebeans.Vnfs
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -80,7 +50,8 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
 
     private static final Logger LOGGER = LoggerFactory.getLogger( DoDeallocateCoreNSSI.class)
 
-/**
+
+    /**
      * Queries OOF for NSSI termination
      * @param execution
      */
@@ -189,36 +160,6 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
 
         return response
     }
-
-
-    String encryptBasicAuth(String basicAuth, String msoKey) {
-        return utils.encrypt(basicAuth, msoKey)
-    }
-
-
-    String getAuthHeader(DelegateExecution execution, String basicAuthValue, String msokey) {
-        String response = ""
-        String errorCode = ""
-        String errorMessage = ""
-
-        LOGGER.debug("Obtained BasicAuth username and password for OOF: " + basicAuthValue)
-        try {
-            response = utils.getBasicAuth(basicAuthValue, msokey)
-        } catch (Exception ex) {
-            LOGGER.error("Unable to encode username and password string: ", ex)
-
-            errorCode = "401"
-            errorMessage = "Internal Error - Unable to encode username and password string"
-
-            response =  "{\n" +
-                    " \"errorCode\": \"${errorCode}\",\n" +
-                    " \"errorMessage\": \"${errorMessage}\"\n" +
-                    "}"
-        }
-
-        return response
-    }
-
 
 
     /**
@@ -357,8 +298,8 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
         String nssiId = currentNSSI['nssiId']
         String nsiId = currentNSSI['nsiId']
 
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
-        AAIResourceUri nsiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nsiId))
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nssiId)
+        AAIResourceUri nsiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nsiId)
 
         try {
             client.disconnect(nssiUri, nsiUri)
@@ -382,12 +323,12 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
         def currentNSSI = execution.getVariable("currentNSSI")
 
         String nssiId = currentNSSI['nssiId']
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, nssiId)
 
         try {
             getAAIClient().delete(nssiUri)
         }catch(Exception e){
-            exceptionUtil.buildAndThrowWorkflowException(execution, 25000, "Exception occured while NSSI Service Instance delete call: " + e.getMessage())
+            exceptionUtil.buildAndThrowWorkflowException(execution, 25000, "Exception occurred while NSSI Service Instance delete call: " + e.getMessage())
         }
 
         LOGGER.trace("${PREFIX} Exit deleteNSSIServiceInstance")
