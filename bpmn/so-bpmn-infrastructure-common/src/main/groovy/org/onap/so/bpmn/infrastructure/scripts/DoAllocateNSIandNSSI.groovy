@@ -43,6 +43,7 @@ import org.onap.so.beans.nsmf.ServiceInfo
 import org.onap.so.beans.nsmf.SliceTaskInfo
 import org.onap.so.beans.nsmf.SliceTaskParamsAdapter
 import org.onap.so.beans.nsmf.TnSliceProfile
+import org.onap.so.beans.nsmf.oof.SubnetType
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.core.json.JsonUtils
@@ -69,7 +70,6 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
      * generate the nsOperationKey
      * generate the nsParameters
      */
-
     void preProcessRequest (DelegateExecution execution) {
         String msg = ""
         logger.trace("Enter preProcessRequest()")
@@ -333,7 +333,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         AllocateAnNssi allocateAnNssi = new AllocateAnNssi()
         allocateAnNssi.nsstId = sliceTaskInfo.NSSTInfo.UUID
-        allocateAnNssi.nssiId = sliceTaskInfo.NSSTInfo.UUID
+        allocateAnNssi.nssiId = sliceTaskInfo.suggestNssiId
         allocateAnNssi.nssiName = sliceTaskInfo.NSSTInfo.name
         allocateAnNssi.sliceProfile = sliceTaskInfo.sliceProfile
         allocateAnNssi.nsiInfo.nsiId = sliceParams.suggestNsiId
@@ -353,6 +353,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         serviceInfo.nsiId = sliceParams.suggestNsiId
         serviceInfo.serviceInvariantUuid = sliceTaskInfo.NSSTInfo.invariantUUID
         serviceInfo.serviceUuid = sliceTaskInfo.NSSTInfo.UUID
+        serviceInfo.nssiId = sliceTaskInfo.suggestNssiId
 
         nbiRequest.setServiceInfo(serviceInfo)
         nbiRequest.setEsrInfo(esrInfo)
@@ -360,6 +361,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         execution.setVariable("AnAllocateNssiNbiRequest", nbiRequest)
         execution.setVariable("anBHSliceTaskInfo", sliceTaskInfo)
+        execution.setVariable("anSubnetType", SubnetType.AN_NF)
     }
 
 
@@ -456,7 +458,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         AllocateCnNssi allocateCnNssi = new AllocateCnNssi()
         allocateCnNssi.nsstId = sliceTaskInfo.NSSTInfo.UUID
-        allocateCnNssi.nssiId = sliceTaskInfo.NSSTInfo.UUID
+        allocateCnNssi.nssiId = sliceTaskInfo.suggestNssiId
         allocateCnNssi.nssiName = sliceTaskInfo.NSSTInfo.name
         allocateCnNssi.sliceProfile = sliceTaskInfo.sliceProfile
         allocateCnNssi.nsiInfo.nsiId = sliceParams.suggestNsiId
@@ -476,6 +478,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         serviceInfo.nsiId = sliceParams.suggestNsiId
         serviceInfo.serviceInvariantUuid = sliceTaskInfo.NSSTInfo.invariantUUID
         serviceInfo.serviceUuid = sliceTaskInfo.NSSTInfo.UUID
+        serviceInfo.nssiId = sliceTaskInfo.suggestNssiId //if shared
 
         nbiRequest.setServiceInfo(serviceInfo)
         nbiRequest.setEsrInfo(esrInfo)
@@ -483,6 +486,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         execution.setVariable("CnAllocateNssiNbiRequest", nbiRequest)
         execution.setVariable("cnSliceTaskInfo", sliceTaskInfo)
+        execution.setVariable("cnSubnetType", SubnetType.CN)
     }
 
 
@@ -534,7 +538,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
     }
 
     /**
-     * create An Slice Profile
+     * create TN Slice Profile
      * @param execution
      */
     void createTnBHSliceProfile(DelegateExecution execution) {
@@ -566,7 +570,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
     }
 
     /**
-     * prepare AllocateCnNssi
+     * prepare AllocateTNNssi
      * @param execution
      */
     void prepareAllocateTnBHNssi(DelegateExecution execution) {
@@ -580,6 +584,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         AllocateTnNssi allocateTnNssi = new AllocateTnNssi()
         //todo: AllocateTnNssi
+        //todo: endpointId -> set into tn
         allocateTnNssi.setTransportSliceNetworks()
         allocateTnNssi.setNetworkSliceInfos()
 
@@ -599,6 +604,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         serviceInfo.nsiId = sliceParams.suggestNsiId
         serviceInfo.serviceInvariantUuid = sliceTaskInfo.NSSTInfo.invariantUUID
         serviceInfo.serviceUuid = sliceTaskInfo.NSSTInfo.UUID
+        serviceInfo.nssiId = sliceTaskInfo.suggestNssiId
 
         nbiRequest.setServiceInfo(serviceInfo)
         nbiRequest.setEsrInfo(esrInfo)
@@ -606,6 +612,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         execution.setVariable("TnBHAllocateNssiNbiRequest", nbiRequest)
         execution.setVariable("tnBHSliceTaskInfo", sliceTaskInfo)
+        execution.setVariable("tnBHSubnetType", SubnetType.TN_BH)
     }
 
     /**
@@ -624,11 +631,13 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         ResponseDescriptor result = execution.getVariable("anNssiAllocateResult") as ResponseDescriptor
         String nssiId = result.getNssiId()
-        String endPointId = result.getEndPointId()
         String nsiId = sliceParams.getSuggestNsiId()
         String sliceProfileInstanceId = sliceParams.anSliceTaskInfo.sliceInstanceId
         String serviceProfileInstanceId = sliceParams.serviceId
         //nsi id
+        //todo: aai -> nssi -> relationship -> endpointId -> set into tn
+        String endPointId = getEndpointIdFromAAI(execution, nssiId)
+        execution.setVariable("endPointIdAn", endPointId)
 
         updateRelationship(execution, nsiId, nssiId)
 
@@ -636,8 +645,8 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         updateRelationship(execution, sliceProfileInstanceId, nssiId)
 
-        updateRelationship(execution, sliceProfileInstanceId, endPointId)
-
+        sliceParams.anSliceTaskInfo.suggestNssiId = nssiId
+        execution.setVariable("sliceTaskParams", sliceParams)
     }
 
 
@@ -660,6 +669,9 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         String sliceProfileInstanceId = sliceParams.cnSliceTaskInfo.sliceInstanceId
         String serviceProfileInstanceId = sliceParams.serviceId
         //nsi id
+        //todo: aai -> nssi -> relationship -> endpointId -> set into tn
+        String endPointId = getEndpointIdFromAAI(execution, nssiId)
+        execution.setVariable("endPointIdCn", endPointId)
 
         updateRelationship(execution, nsiId, nssiId)
 
@@ -667,7 +679,62 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         updateRelationship(execution,sliceProfileInstanceId, nssiId)
 
+        sliceParams.cnSliceTaskInfo.suggestNssiId = nssiId
+        execution.setVariable("sliceTaskParams", sliceParams)
 
+    }
+
+    /**
+     * get endpoint Id from AAI by nssi id
+     * @param execution
+     * @param nssiId
+     * @return
+     */
+    private String getEndpointIdFromAAI(DelegateExecution execution, String nssiId) {
+        logger.debug("Enter update relationship in DoAllocateNSIandNSSI()")
+        //todo: allottedResourceId
+
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
+        //sliceParams.setServiceId(nsiServiceInstanceID)
+
+        AAIResourceUri nsiServiceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
+                execution.getVariable("globalSubscriberId"),
+                execution.getVariable("subscriptionServiceType"),
+                nssiId)
+        String endpointId = null
+
+        try {
+            AAIResultWrapper wrapper = client.get(nsiServiceUri, NotFoundException.class)
+            Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
+            //todo: if exists
+            if (!si.ifPresent()) {
+                String msg = "NSSI in the option doesn't exist. " + nssiId
+                logger.debug(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+            }
+
+            if (si.ifPresent()) {
+                ServiceInstance nssiInstance = si.get()
+                //todo: handle relationship and return endpointId
+                for (Relationship relationship : nssiInstance.relationshipList.getRelationship()) {
+                    if (relationship.relationshipLabel){
+                        endpointId = relationship //todo
+                    }
+                }
+
+                return endpointId
+            }
+
+        }catch(BpmnError e) {
+            throw e
+        }catch (Exception ex){
+            String msg = "NSSI suggested in the option doesn't exist. " + nssiId
+            logger.debug(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+        logger.debug("Exit update relationship in DoAllocateNSIandNSSI()")
     }
 
     /**
@@ -694,6 +761,9 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         updateRelationship(execution, serviceProfileInstanceId, sliceProfileInstanceId)
 
         updateRelationship(execution,sliceProfileInstanceId, nssiId)
+
+        sliceParams.tnBHSliceTaskInfo.suggestNssiId = nssiId
+        execution.setVariable("sliceTaskParams", sliceParams)
     }
 
     /**

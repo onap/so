@@ -53,4 +53,11 @@ public class SliceTaskParamsAdapter {
     private SliceTaskInfo<CnSliceProfile> cnSliceTaskInfo;
 
     private SliceTaskInfo<AnSliceProfile> anSliceTaskInfo;
+
+    public String convertToJson() {
+        SliceTaskParams sliceTaskParams = new SliceTaskParams();
+        sliceTaskParams.setServiceId(serviceId);
+        //todo: adapter SliceTaskParamsAdapter to SliceTaskParams
+        return sliceTaskParams.convertToJson();
+    }
 }

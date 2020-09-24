@@ -8,6 +8,8 @@ import org.onap.so.beans.nsmf.NssmfAdapterNBIRequest
 import org.onap.so.beans.nsmf.ResponseDescriptor
 import org.onap.so.beans.nsmf.ServiceInfo
 import org.onap.so.beans.nsmf.SliceTaskInfo
+import org.onap.so.beans.nsmf.SliceTaskParamsAdapter
+import org.onap.so.beans.nsmf.oof.SubnetType
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.NssmfAdapterUtils
@@ -17,6 +19,7 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
+import org.springframework.util.StringUtils
 
 import static org.apache.commons.lang3.StringUtils.isBlank
 
@@ -43,12 +46,15 @@ class DoAllocateNSSI extends AbstractServiceTaskProcessor {
         NssmfAdapterNBIRequest nbiRequest = execution.getVariable("nbiRequest") as NssmfAdapterNBIRequest
 
         //SliceTaskInfo sliceTaskInfo = execution.getVariable("sliceTaskInfo") as SliceTaskInfo
+        execution.setVariable("currentCycle", 0)
         boolean isNSIOptionAvailable = execution.getVariable("isNSIOptionAvailable") as Boolean
 
-        if (isNSIOptionAvailable) {
-            nbiRequest.serviceInfo.setActionType("modify")
-        } else {
+        if (!isNSIOptionAvailable) {
             nbiRequest.serviceInfo.setActionType("allocate")
+        } else if (StringUtils.isEmpty(nbiRequest.serviceInfo.nssiId)){
+            nbiRequest.serviceInfo.setActionType("allocate")
+        } else {
+            nbiRequest.serviceInfo.setActionType("modify")
         }
         execution.setVariable("nbiRequest", nbiRequest)
         logger.trace("Exit preProcessRequest")
@@ -101,14 +107,73 @@ class DoAllocateNSSI extends AbstractServiceTaskProcessor {
 
         //todo: handle status
         execution.setVariable("nssiAllocateResult", responseDescriptor)
+
     }
 
     void prepareUpdateOrchestrationTask(DelegateExecution execution) {
-        //todo；update orchestration task
+        logger.debug("Start prepareUpdateOrchestrationTask progress")
+        String requestMethod = "PUT"
+
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+        ResponseDescriptor response = execution.getVariable("nssiAllocateResult") as ResponseDescriptor
+        SubnetType subnetType = execution.getVariable("subnetType") as SubnetType
+
+
+        SliceTaskInfo sliceTaskInfo = execution.getVariable("sliceTaskInfo") as SliceTaskInfo
+        sliceTaskInfo.progress = response.getProgress()
+        sliceTaskInfo.status = response.getStatus()
+        sliceTaskInfo.statusDescription = response.getStatusDescription()
+        updateNssiResult(sliceParams, subnetType, sliceTaskInfo)
+
+        String paramJson = sliceParams.convertToJson()
+        execution.setVariable("CSSOT_paramJson", paramJson)
+        execution.setVariable("CSSOT_requestMethod", requestMethod)
+
+        execution.setVariable("sliceTaskParams", sliceParams)
+        execution.setVariable("sliceTaskInfo", sliceTaskInfo)
+        logger.debug("Finish prepareUpdateOrchestrationTask progress")
+
     }
 
+    private void updateNssiResult(SliceTaskParamsAdapter sliceTaskParams, SubnetType subnetType,
+                                   SliceTaskInfo sliceTaskInfo) {
+        switch (subnetType) {
+            case SubnetType.CN:
+                sliceTaskParams.cnSliceTaskInfo = sliceTaskInfo
+                break
+            case SubnetType.AN_NF:
+                sliceTaskParams.anSliceTaskInfo = sliceTaskInfo
+                break
+            case SubnetType.TN_BH:
+                sliceTaskParams.tnBHSliceTaskInfo = sliceTaskInfo
+                break
+            case SubnetType.TN_FH:
+                sliceTaskParams.tnFHSliceTaskInfo = sliceTaskInfo
+                break
+            case SubnetType.TN_MH:
+                sliceTaskParams.tnMHSliceTaskInfo = sliceTaskInfo
+                break
+        }
+    }
+
+
     void timeDelay(DelegateExecution execution) {
-        //todo: time delay
+        logger.trace("Enter timeDelay in DoAllocateNSSI()")
+        try {
+            Thread.sleep(60000)
+            int currentCycle = execution.getVariable("currentCycle") as Integer
+            currentCycle = currentCycle + 1
+            if(currentCycle >  60)
+            {
+                logger.trace("Completed all the retry times... but still nssmf havent completed the creation process...")
+                exceptionUtil.buildAndThrowWorkflowException(execution, 500, "NSSMF creation didnt complete by time...")
+            }
+            execution.setVariable("currentCycle", currentCycle)
+        } catch(InterruptedException e) {
+            logger.info("Time Delay exception" + e)
+        }
+        logger.trace("Exit timeDelay in DoAllocateNSSI()")
     }
 
 }
