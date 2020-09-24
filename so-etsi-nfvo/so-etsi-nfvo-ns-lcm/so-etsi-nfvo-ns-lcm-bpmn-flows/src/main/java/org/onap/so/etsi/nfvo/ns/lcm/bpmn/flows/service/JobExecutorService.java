@@ -200,7 +200,7 @@ public class JobExecutorService {
             JobStatusEnum currentJobStatus = null;
             while (timeOutTime > System.currentTimeMillis()) {
 
-                final Optional<NfvoJob> optional = databaseServiceProvider.getJob(jobId);
+                final Optional<NfvoJob> optional = databaseServiceProvider.getRefreshedJob(jobId);
 
                 if (optional.isEmpty()) {
                     logger.error("Unable to find Job using jobId: {}", jobId);
@@ -210,7 +210,7 @@ public class JobExecutorService {
                 final NfvoJob nfvoJob = optional.get();
                 currentJobStatus = nfvoJob.getStatus();
                 logger.info("Received job status response: \n ", nfvoJob);
-                if (jobFinishedStates.contains(nfvoJob.getStatus())) {
+                if (jobFinishedStates.contains(currentJobStatus)) {
                     logger.info("Job finished \n {}", currentJobStatus);
                     return ImmutablePair.of(nfvoJob.getProcessInstanceId(), currentJobStatus);
                 }
