@@ -42,6 +42,8 @@ css.processUserOptions(execution)</bpmn:script>
         <camunda:out source="rolledBack" target="rolledBack" />
         <camunda:out source="serviceInstanceData" target="serviceInstanceData" />
         <camunda:in source="sliceTaskParams" target="sliceTaskParams" />
+        <camunda:in source="sliceTaskParams" target="sliceTaskParams" />
+        <camunda:out source="sliceTaskParams" target="sliceTaskParams" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1dfon41</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0jhqtls</bpmn:outgoing>
@@ -278,6 +280,7 @@ css.prepareUpdateOrchestrationTask(execution)</bpmn:script>
         <camunda:out source="rollbackData" target="rollbackData" />
         <camunda:out source="rolledBack" target="rolledBack" />
         <camunda:in source="allottedResourceId" target="allottedResourceId" />
+        <camunda:out source="sliceTaskParams" target="sliceTaskParams" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1bevt3a</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0mlrlbv</bpmn:outgoing>
