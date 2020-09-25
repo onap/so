@@ -21,6 +21,8 @@ package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.tasks;
 
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.CREATE_NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.JOB_ID_PARAM_NAME;
+import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.NS_INSTANCE_ID_PARAM_NAME;
+import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.OCC_ID_PARAM_NAME;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import org.camunda.bpm.engine.delegate.BpmnError;
@@ -28,6 +30,9 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobStatusEnum;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoJob;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoJobStatus;
+import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoNsInst;
+import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NsLcmOpOcc;
+import org.onap.so.etsi.nfvo.ns.lcm.database.beans.OperationStateEnum;
 import org.onap.so.etsi.nfvo.ns.lcm.database.service.DatabaseServiceProvider;
 import org.onap.so.etsi.nfvo.ns.lcm.model.InlineResponse400;
 import org.slf4j.Logger;
@@ -35,6 +40,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Waqas Ikram (waqas.ikram@est.tech)
+ * @author Andrew Lamb (andrew.a.lamb@est.tech)
  *
  */
 public abstract class AbstractNetworkServiceTask {
@@ -90,6 +96,49 @@ public abstract class AbstractNetworkServiceTask {
 
     }
 
+    public void updateNsLcmOpOccStatusToCompleted(final DelegateExecution execution) {
+        logger.info("Executing updateNsLcmOpOccStatusToCompleted ...");
+        final String occId = (String) execution.getVariable(OCC_ID_PARAM_NAME);
+
+        final Optional<NsLcmOpOcc> optional = databaseServiceProvider.getNsLcmOpOcc(occId);
+
+        if (optional.isEmpty()) {
+            final String message = "Unable to find record for NSLcmOpOcc in database using id: " + occId;
+            logger.error(message);
+            abortOperation(execution, message);
+        }
+
+        final NsLcmOpOcc nsLcmOpOcc = optional.get();
+        final OperationStateEnum operationStateCompleted = OperationStateEnum.COMPLETED;
+        logger.info("Setting operation state to {} for id: {}", operationStateCompleted, occId);
+        nsLcmOpOcc.setOperationState(operationStateCompleted);
+        databaseServiceProvider.addNSLcmOpOcc(nsLcmOpOcc);
+
+        logger.info("Finished executing updateNsLcmOpOccStatusToCompleted ...");
+
+    }
+
+    public void updateNsLcmOpOccStatusToFailed(final DelegateExecution execution) {
+        logger.info("Executing updateNsLcmOpOccStatusToFailed ...");
+        final String occId = (String) execution.getVariable(OCC_ID_PARAM_NAME);
+
+        final Optional<NsLcmOpOcc> optional = databaseServiceProvider.getNsLcmOpOcc(occId);
+
+        if (optional.isPresent()) {
+            final NsLcmOpOcc nsLcmOpOcc = optional.get();
+            final OperationStateEnum operationStateFailed = OperationStateEnum.FAILED;
+            logger.info("Setting operation state to {} for id: {}", operationStateFailed, occId);
+            nsLcmOpOcc.setOperationState(operationStateFailed);
+
+            databaseServiceProvider.addNSLcmOpOcc(nsLcmOpOcc);
+        } else {
+            logger.error("Unable to find record for NSLcmOpOcc in database using id: {}", occId);
+        }
+
+        logger.info("Finished executing updateNsLcmOpOccStatusToFailed ...");
+
+    }
+
     protected void abortOperation(final DelegateExecution execution, final String message) {
         abortOperation(execution, message, new InlineResponse400().detail(message));
     }
@@ -104,7 +153,7 @@ public abstract class AbstractNetworkServiceTask {
     private NfvoJob getNfvoJob(final DelegateExecution execution) {
         final String jobId = (String) execution.getVariable(JOB_ID_PARAM_NAME);
         final Optional<NfvoJob> optional = databaseServiceProvider.getJob(jobId);
-        if (!optional.isPresent()) {
+        if (optional.isEmpty()) {
             final String message = "Unable to find job using job id: " + jobId;
             logger.error(message);
             execution.setVariable(CREATE_NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME,
@@ -114,4 +163,22 @@ public abstract class AbstractNetworkServiceTask {
         }
         return optional.get();
     }
+
+    protected NfvoNsInst getNfvoNsInst(final DelegateExecution execution) {
+        final String nsInstId = (String) execution.getVariable(NS_INSTANCE_ID_PARAM_NAME);
+        return getNfvoNsInst(execution, nsInstId);
+    }
+
+    protected NfvoNsInst getNfvoNsInst(final DelegateExecution execution, final String nsInstId) {
+        logger.info("Getting NfvoNsInst to update with nsInstId: {}", nsInstId);
+        final Optional<NfvoNsInst> optionalNfvoNsInst = databaseServiceProvider.getNfvoNsInst(nsInstId);
+
+        if (optionalNfvoNsInst.isEmpty()) {
+            final String message = "Unable to find NS Instance in database using id: " + nsInstId;
+            abortOperation(execution, message);
+        }
+
+        return optionalNfvoNsInst.get();
+    }
+
 }

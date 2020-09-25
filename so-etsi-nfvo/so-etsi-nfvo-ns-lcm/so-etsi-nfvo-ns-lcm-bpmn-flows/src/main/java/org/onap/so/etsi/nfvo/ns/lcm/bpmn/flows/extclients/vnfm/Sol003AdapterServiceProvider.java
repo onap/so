@@ -23,6 +23,7 @@ package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.extclients.vnfm;
 import java.util.Optional;
 import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.CreateVnfRequest;
 import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.CreateVnfResponse;
+import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.DeleteVnfResponse;
 import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.QueryJobResponse;
 
 public interface Sol003AdapterServiceProvider {
@@ -30,5 +31,7 @@ public interface Sol003AdapterServiceProvider {
     Optional<CreateVnfResponse> invokeCreateInstantiationRequest(final String vnfId, final CreateVnfRequest request);
 
     Optional<QueryJobResponse> getInstantiateOperationJobStatus(final String jobId);
+
+    Optional<DeleteVnfResponse> invokeTerminationRequest(final String vnfId);
 
 }

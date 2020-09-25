@@ -61,4 +61,14 @@ public class Sol003AdapterUrlProvider {
         return UriComponentsBuilder.fromUri(baseUri).pathSegment("jobs").pathSegment(jobId).build().toString();
     }
 
+    /**
+     * Get VNFM terminate vnf URL
+     *
+     * @param vnfId
+     * @return
+     */
+    public String getTerminateVnfUrl(final String vnfId) {
+        return UriComponentsBuilder.fromUri(baseUri).pathSegment("vnfs").pathSegment(vnfId).build().toString();
+    }
+
 }

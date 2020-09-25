@@ -72,8 +72,9 @@ public class NsLifecycleManagementController {
      * @param globalCustomerId The global customer ID
      * @param serviceType The service type
      * @param createNsRequest create network service request (see clause 6.5.2.9)
-     * @return "201 Created" response containing a representation of the NS instance resource {@link NsInstance} just
-     *         created by the NFVO, and provides the URI of the newly-created resource in the "Location:" HTTP header
+     * @return "201 Created" response containing a representation of the NS instance resource
+     *         {@link NsInstancesNsInstance} just created by the NFVO, and provides the URI of the newly-created
+     *         resource in the "Location:" HTTP header
      */
     @PostMapping(value = "/ns_instances", produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML},
             consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
@@ -145,7 +146,10 @@ public class NsLifecycleManagementController {
     public ResponseEntity<?> terminateNs(@PathVariable("nsInstanceId") final String nsInstanceId,
             @RequestBody final TerminateNsRequest terminateNsRequest) {
         logger.debug("Received terminate NS request: {}\n with nsInstanceId: {}", terminateNsRequest, nsInstanceId);
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("Operation is not supported yet");
+        final URI resourceUri = nsLifeCycleManager.terminateNs(nsInstanceId, terminateNsRequest);
+        logger.info("{} Ns Terminate started successfully. Resource Operation Occurrence uri: {}", nsInstanceId,
+                resourceUri);
+        return ResponseEntity.accepted().location(resourceUri).build();
     }
 
 }

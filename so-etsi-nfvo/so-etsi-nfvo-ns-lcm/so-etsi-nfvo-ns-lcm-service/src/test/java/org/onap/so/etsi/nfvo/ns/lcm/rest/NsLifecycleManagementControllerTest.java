@@ -77,7 +77,7 @@ public class NsLifecycleManagementControllerTest {
     private static final String GLOBAL_CUSTOMER_ID = UUID.randomUUID().toString();
     private static final String EXPECTED_CREATE_REQ_LOCATION_URL =
             EXPECTED_BASE_URL + "/ns_instances/" + RANDOM_NS_INST_ID;
-    private static final String EXPECTED_INSTANTIATE_REQ_LOCATION_URL =
+    private static final String EXPECTED_NS_LCM_OP_OCC_REQ_LOCATION_URL =
             EXPECTED_BASE_URL + "/ns_lcm_op_occs/" + RANDOM_NS_LCM_OP_OCC_ID;
 
     @LocalServerPort
@@ -197,7 +197,7 @@ public class NsLifecycleManagementControllerTest {
         assertTrue(httpHeaders.containsKey(HttpHeaders.LOCATION));
         final List<String> actual = httpHeaders.get(HttpHeaders.LOCATION);
         assertEquals(1, actual.size());
-        assertEquals(EXPECTED_INSTANTIATE_REQ_LOCATION_URL, actual.get(0));
+        assertEquals(EXPECTED_NS_LCM_OP_OCC_REQ_LOCATION_URL, actual.get(0));
     }
 
     @Test
@@ -218,17 +218,43 @@ public class NsLifecycleManagementControllerTest {
     }
 
     @Test
-    public void testTerminateNs_ValidInstantiateNsRequest() {
-        final String baseUrl = getNsLcmBaseUrl() + "/ns_instances/" + UUID.randomUUID().toString() + "/terminate";
-        final HttpEntity<?> request = new HttpEntity<>(getTerminateNsRequest());
+    public void testTerminateNs_ValidTerminateNsRequest_Success() {
+        final TerminateNsRequest terminateNsRequest = getTerminateNsRequest();
+        when(mockedJobExecutorService.runTerminateNsJob(eq(RANDOM_NS_INST_ID), eq(terminateNsRequest)))
+                .thenReturn(RANDOM_NS_LCM_OP_OCC_ID);
+
+        final String baseUrl = getNsLcmBaseUrl() + "/ns_instances/" + RANDOM_NS_INST_ID + "/terminate";
+        final HttpEntity<?> request = new HttpEntity<>(terminateNsRequest);
         final ResponseEntity<Void> responseEntity =
                 testRestTemplate.exchange(baseUrl, HttpMethod.POST, request, Void.class);
-        assertEquals(HttpStatus.NOT_IMPLEMENTED, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
+
+        final HttpHeaders httpHeaders = responseEntity.getHeaders();
+        assertTrue(httpHeaders.containsKey(HttpHeaders.LOCATION));
+        final List<String> actual = httpHeaders.get(HttpHeaders.LOCATION);
+        assertEquals(1, actual.size());
+        assertEquals(EXPECTED_NS_LCM_OP_OCC_REQ_LOCATION_URL, actual.get(0));
     }
 
+    @Test
+    public void testTerminateNs_ValidTerminateNsRequest_nsRequestProcessingExceptionThrown_returnInlineResponse400() {
+        final String errorMessage = "ERROR MESSAGE";
+        final TerminateNsRequest terminateNsRequest = getTerminateNsRequest();
+        when(mockedJobExecutorService.runTerminateNsJob(eq(RANDOM_NS_INST_ID), eq(terminateNsRequest)))
+                .thenThrow(new NsRequestProcessingException(errorMessage));
+
+        final String baseUrl = getNsLcmBaseUrl() + "/ns_instances/" + RANDOM_NS_INST_ID + "/terminate";
+        final HttpEntity<?> request = new HttpEntity<>(terminateNsRequest);
+        final ResponseEntity<InlineResponse400> responseEntity =
+                testRestTemplate.exchange(baseUrl, HttpMethod.POST, request, InlineResponse400.class);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+        assertTrue(responseEntity.hasBody());
+        assertNotNull(responseEntity.getBody());
+    }
 
     private TerminateNsRequest getTerminateNsRequest() {
-        return new TerminateNsRequest().terminationTime(LocalDateTime.now());
+        // Only support for the immediate Terminate request; i.e., terminateTime field is empty (not set)
+        return new TerminateNsRequest();
     }
 
     private InstantiateNsRequest getInstantiateNsRequest() {

@@ -41,4 +41,6 @@ public interface AaiServiceProvider {
 
     Optional<GenericVnf> getGenericVnf(final String vnfId);
 
+    void deleteGenericVnf(final String vnfId);
+
 }

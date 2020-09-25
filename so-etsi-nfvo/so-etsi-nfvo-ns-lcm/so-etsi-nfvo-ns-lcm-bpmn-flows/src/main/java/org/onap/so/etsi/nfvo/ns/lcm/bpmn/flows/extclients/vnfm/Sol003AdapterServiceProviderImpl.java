@@ -24,6 +24,7 @@ import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.extclients.vnfm.Sol003Adap
 import java.util.Optional;
 import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.CreateVnfRequest;
 import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.CreateVnfResponse;
+import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.DeleteVnfResponse;
 import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.QueryJobResponse;
 import org.onap.so.rest.exceptions.HttpResouceNotFoundException;
 import org.onap.so.rest.exceptions.InvalidRestRequestException;
@@ -112,6 +113,37 @@ public class Sol003AdapterServiceProviderImpl implements Sol003AdapterServicePro
         } catch (final RestProcessingException | InvalidRestRequestException | HttpResouceNotFoundException exception) {
             LOGGER.error("Unexpected error while processing job request", exception);
             throw exception;
+        }
+    }
+
+    @Override
+    public Optional<DeleteVnfResponse> invokeTerminationRequest(final String vnfId) {
+        try {
+            final String url = urlProvider.getTerminateVnfUrl(vnfId);
+
+            final ResponseEntity<DeleteVnfResponse> response =
+                    httpServiceProvider.deleteHttpRequest(url, DeleteVnfResponse.class);
+            final HttpStatus httpStatus = response.getStatusCode();
+            if (!(httpStatus.equals(HttpStatus.ACCEPTED)) && !(httpStatus.equals(HttpStatus.OK))) {
+                LOGGER.error("Unable to invoke HTTP DELETE using URL: {}, Response Code: {}", url, httpStatus.value());
+                return Optional.empty();
+            }
+            if (!response.hasBody()) {
+                LOGGER.error(RECEIVED_RESPONSE_WITHOUT_BODY, response);
+                return Optional.empty();
+            }
+
+            final DeleteVnfResponse deleteVnfResponse = response.getBody();
+            if (deleteVnfResponse.getJobId() == null || deleteVnfResponse.getJobId().isEmpty()) {
+                LOGGER.error("Received invalid terminate response: {}", response);
+                return Optional.empty();
+            }
+
+            return Optional.of(deleteVnfResponse);
+        } catch (final RestProcessingException | InvalidRestRequestException
+                | HttpResouceNotFoundException httpInvocationException) {
+            LOGGER.error("Unexpected error while processing terminate request", httpInvocationException);
+            return Optional.empty();
         }
     }
 }

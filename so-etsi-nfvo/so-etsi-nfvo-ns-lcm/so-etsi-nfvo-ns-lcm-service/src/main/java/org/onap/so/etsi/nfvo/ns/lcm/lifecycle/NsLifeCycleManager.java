@@ -27,6 +27,7 @@ import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.service.JobExecutorService;
 import org.onap.so.etsi.nfvo.ns.lcm.model.CreateNsRequest;
 import org.onap.so.etsi.nfvo.ns.lcm.model.InstantiateNsRequest;
 import org.onap.so.etsi.nfvo.ns.lcm.model.NsInstancesNsInstance;
+import org.onap.so.etsi.nfvo.ns.lcm.model.TerminateNsRequest;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -70,8 +71,15 @@ public class NsLifeCycleManager {
                 instantiateNsRequest, nsInstanceId);
         final String nsLcmOpOccId = jobExecutorService.runInstantiateNsJob(nsInstanceId, instantiateNsRequest);
 
-        return etsiSoNsLcmManagerUrlProvider.getInstantiatedOccUri(nsLcmOpOccId);
+        return etsiSoNsLcmManagerUrlProvider.getNsLcmOpOccUri(nsLcmOpOccId);
 
     }
 
+    public URI terminateNs(final String nsInstanceId, final TerminateNsRequest terminateNsRequest) {
+        logger.info("Will execute Terminate Ns for TerminateNsRequest: {} and nsInstanceId: {}", terminateNsRequest,
+                nsInstanceId);
+        final String nsLcmOpOccId = jobExecutorService.runTerminateNsJob(nsInstanceId, terminateNsRequest);
+
+        return etsiSoNsLcmManagerUrlProvider.getNsLcmOpOccUri(nsLcmOpOccId);
+    }
 }

@@ -216,7 +216,7 @@ public class NsLcmOpOcc {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append("class NfvoNsInst {\n");
+        sb.append("class NsLcmOpOcc {\n");
         sb.append("    id: ").append(toIndentedString(id)).append("\n");
         sb.append("    operationState: ").append(toIndentedString(operationState)).append("\n");
         sb.append("    stateEnteredTime: ").append(toIndentedString(stateEnteredTime)).append("\n");

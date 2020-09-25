@@ -26,9 +26,12 @@ import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstan
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.NS_INSTANCE_ID_PARAM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.OCC_ID_PARAM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.SERVICE_TYPE_PARAM_NAME;
+import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.TERMINATE_NS_REQUEST_PARAM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.Constants.CREATE_NS_WORKFLOW_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.Constants.INSTANTIATE_NS_WORKFLOW_NAME;
+import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.Constants.TERMINATE_NS_WORKFLOW_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobAction.INSTANTIATE;
+import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobAction.TERMINATE;
 import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobStatusEnum.ERROR;
 import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobStatusEnum.FINISHED;
 import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobStatusEnum.FINISHED_WITH_ERROR;
@@ -47,14 +50,17 @@ import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.exceptions.NsRequestProcessingExc
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobAction;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobStatusEnum;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoJob;
+import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoNsInst;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NsLcmOpOcc;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NsLcmOpType;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.OperationStateEnum;
+import org.onap.so.etsi.nfvo.ns.lcm.database.beans.State;
 import org.onap.so.etsi.nfvo.ns.lcm.database.service.DatabaseServiceProvider;
 import org.onap.so.etsi.nfvo.ns.lcm.model.CreateNsRequest;
 import org.onap.so.etsi.nfvo.ns.lcm.model.InlineResponse400;
 import org.onap.so.etsi.nfvo.ns.lcm.model.InstantiateNsRequest;
 import org.onap.so.etsi.nfvo.ns.lcm.model.NsInstancesNsInstance;
+import org.onap.so.etsi.nfvo.ns.lcm.model.TerminateNsRequest;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -156,8 +162,8 @@ public class JobExecutorService {
         final LocalDateTime currentDateTime = LocalDateTime.now();
         final NsLcmOpOcc newNsLcmOpOcc = new NsLcmOpOcc().id(nsInstanceId).operation(NsLcmOpType.INSTANTIATE)
                 .operationState(OperationStateEnum.PROCESSING).stateEnteredTime(currentDateTime)
-                .startTime(currentDateTime).isAutoInnovation(false).isCancelPending(false)
-                .operationParams(gson.toJson(instantiateNsRequest));
+                .startTime(currentDateTime).nfvoNsInst(getNfvoNsInst(nsInstanceId)).isAutoInnovation(false)
+                .isCancelPending(false).operationParams(gson.toJson(instantiateNsRequest));
         databaseServiceProvider.addNSLcmOpOcc(newNsLcmOpOcc);
         logger.info("New NSLcmOpOcc created in database :\n{}", newNsLcmOpOcc);
 
@@ -190,6 +196,89 @@ public class JobExecutorService {
         throw new NsRequestProcessingException(message);
     }
 
+    public String runTerminateNsJob(final String nsInstanceId, final TerminateNsRequest terminateNsRequest) {
+        doInitialTerminateChecks(nsInstanceId, terminateNsRequest);
+
+        final NfvoJob nfvoJob = new NfvoJob().startTime(LocalDateTime.now()).jobType("NS").jobAction(TERMINATE)
+                .resourceId(nsInstanceId).status(STARTING).progress(0);
+        databaseServiceProvider.addJob(nfvoJob);
+        logger.info("New job created in database :\n{}", nfvoJob);
+
+        final LocalDateTime currentDateTime = LocalDateTime.now();
+        final NsLcmOpOcc nsLcmOpOcc = new NsLcmOpOcc().id(nsInstanceId).operation(NsLcmOpType.TERMINATE)
+                .operationState(OperationStateEnum.PROCESSING).stateEnteredTime(currentDateTime)
+                .startTime(currentDateTime).nfvoNsInst(getNfvoNsInst(nsInstanceId)).isAutoInnovation(false)
+                .isCancelPending(false).operationParams(gson.toJson(terminateNsRequest));
+        databaseServiceProvider.addNSLcmOpOcc(nsLcmOpOcc);
+        logger.info("New NSLcmOpOcc created in database :\n{}", nsLcmOpOcc);
+
+        workflowExecutorService.executeWorkflow(nfvoJob.getJobId(), TERMINATE_NS_WORKFLOW_NAME,
+                getVariables(nsInstanceId, nfvoJob.getJobId(), nsLcmOpOcc.getId(), terminateNsRequest));
+
+        final ImmutableSet<JobStatusEnum> jobFinishedStates =
+                ImmutableSet.of(FINISHED, ERROR, FINISHED_WITH_ERROR, IN_PROGRESS);
+        final ImmutablePair<String, JobStatusEnum> immutablePair =
+                waitForJobToFinish(nfvoJob.getJobId(), jobFinishedStates);
+
+        if (immutablePair.getRight() == null) {
+            final String message =
+                    "Failed to Terminate NS with id: " + nsInstanceId + " for request: \n" + terminateNsRequest;
+            logger.error(message);
+            throw new NsRequestProcessingException(message);
+        }
+
+        final JobStatusEnum finalJobStatus = immutablePair.getRight();
+
+        if (IN_PROGRESS.equals(finalJobStatus) || FINISHED.equals(finalJobStatus)) {
+            logger.info("Termination Job status: {}", finalJobStatus);
+            return nsLcmOpOcc.getId();
+        }
+
+        final String message = "Received unexpected Job Status: " + finalJobStatus + " Failed to Terminate NS with id: "
+                + nsInstanceId + " for request: \n" + terminateNsRequest;
+        logger.error(message);
+        throw new NsRequestProcessingException(message);
+    }
+
+    private void doInitialTerminateChecks(final String nsInstanceId, final TerminateNsRequest terminateNsRequest) {
+        if (isNotImmediateTerminateRequest(terminateNsRequest)) {
+            final String message = "TerminateNsRequest received with terminateTime: "
+                    + terminateNsRequest.getTerminationTime()
+                    + "\nOnly immediate Terminate requests are currently supported \n(i.e., terminateTime field must not be set).";
+            logger.error(message);
+            throw new NsRequestProcessingException(message);
+        }
+
+        final NfvoNsInst nfvoNsInst = getNfvoNsInst(nsInstanceId);
+        if (isNotInstantiated(nfvoNsInst)) {
+            final String message = "TerminateNsRequest received: " + terminateNsRequest + " for nsInstanceId: "
+                    + nsInstanceId + "\nUnable to terminate.  NS Instance is already in NOT_INSTANTIATED state."
+                    + "\nThis method can only be used with an NS instance in the INSTANTIATED state.";
+            logger.error(message);
+            throw new NsRequestProcessingException(message);
+        }
+    }
+
+    private boolean isNotImmediateTerminateRequest(final TerminateNsRequest terminateNsRequest) {
+        return terminateNsRequest.getTerminationTime() != null;
+    }
+
+    private boolean isNotInstantiated(final NfvoNsInst nfvoNsInst) {
+        return State.NOT_INSTANTIATED.equals(nfvoNsInst.getStatus());
+    }
+
+    private NfvoNsInst getNfvoNsInst(final String nsInstId) {
+        logger.info("Getting NfvoNsInst with nsInstId: {}", nsInstId);
+        final Optional<NfvoNsInst> optionalNfvoNsInst = databaseServiceProvider.getNfvoNsInst(nsInstId);
+
+        if (optionalNfvoNsInst.isEmpty()) {
+            final String message = "No matching NS Instance for id: " + nsInstId + " found in database.";
+            throw new NsRequestProcessingException(message);
+        }
+
+        return optionalNfvoNsInst.get();
+    }
+
     private ImmutablePair<String, JobStatusEnum> waitForJobToFinish(final String jobId,
             final ImmutableSet<JobStatusEnum> jobFinishedStates) {
         try {
@@ -209,7 +298,7 @@ public class JobExecutorService {
 
                 final NfvoJob nfvoJob = optional.get();
                 currentJobStatus = nfvoJob.getStatus();
-                logger.info("Received job status response: \n ", nfvoJob);
+                logger.debug("Received job status response: \n {}", nfvoJob);
                 if (jobFinishedStates.contains(nfvoJob.getStatus())) {
                     logger.info("Job finished \n {}", currentJobStatus);
                     return ImmutablePair.of(nfvoJob.getProcessInstanceId(), currentJobStatus);
@@ -249,4 +338,13 @@ public class JobExecutorService {
         return variables;
     }
 
+    private Map<String, Object> getVariables(final String nsInstanceId, final String jobId, final String occId,
+            final TerminateNsRequest terminateNsRequest) {
+        final Map<String, Object> variables = new HashMap<>();
+        variables.put(NS_INSTANCE_ID_PARAM_NAME, nsInstanceId);
+        variables.put(JOB_ID_PARAM_NAME, jobId);
+        variables.put(OCC_ID_PARAM_NAME, occId);
+        variables.put(TERMINATE_NS_REQUEST_PARAM_NAME, terminateNsRequest);
+        return variables;
+    }
 }

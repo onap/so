@@ -24,6 +24,6 @@ package org.onap.so.etsi.nfvo.ns.lcm.database.beans;
  *
  */
 public enum State {
-    NOT_INSTANTIATED, INSTANTIATING, INSTANTIATED, FAILED;
+    NOT_INSTANTIATED, INSTANTIATING, INSTANTIATED, FAILED, TERMINATING;
 
 }
