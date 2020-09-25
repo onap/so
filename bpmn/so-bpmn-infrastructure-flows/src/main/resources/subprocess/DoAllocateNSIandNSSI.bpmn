@@ -58,19 +58,11 @@ dcnsio.createNSIinAAI(execution)</bpmn:script>
     <bpmn:callActivity id="CallActivity_1yh9tiq" name="Call DoAllocateNSSI(RAN)" calledElement="DoAllocateNSSI">
       <bpmn:extensionElements>
         <camunda:in source="msoRequestId" target="msoRequestId" />
-        <camunda:out source="serviceDecomposition" target="serviceDecomposition" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:in source="nsstInput" target="nsstInput" />
-        <camunda:in source="serviceProfile" target="serviceProfile" />
-        <camunda:in source="sliceProfileTn" target="sliceProfileTn" />
-        <camunda:in source="sliceProfileCn" target="sliceProfileCn" />
-        <camunda:in source="sliceProfileAn" target="sliceProfileAn" />
         <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
         <camunda:in source="subscriptionServiceType" target="subscriptionServiceType" />
         <camunda:in source="uuiRequest" target="uuiRequest" />
-        <camunda:in source="nsiServiceInstanceId" target="nsiServiceInstanceId" />
-        <camunda:in source="nsiServiceInstanceName" target="nsiServiceInstanceName" />
-        <camunda:in source="nssiserviceModelInfo" target="nssiserviceModelInfo" />
         <camunda:in source="sliceTaskParams" target="sliceTaskParams" />
         <camunda:in source="taskId" target="CSSOT_taskId" />
         <camunda:in source="taskName" target="CSSOT_name" />
@@ -80,6 +72,8 @@ dcnsio.createNSIinAAI(execution)</bpmn:script>
         <camunda:in source="anSliceTaskInfo" target="sliceTaskInfo" />
         <camunda:out source="nssiAllocateResult" target="anNssiAllocateResult" />
         <camunda:in source="AnAllocateNssiNbiRequest" target="nbiRequest" />
+        <camunda:out source="sliceTaskParams" target="sliceTaskParams" />
+        <camunda:in source="anSubnetType" target="subnetType" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0npsyye</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1xb5nx1</bpmn:outgoing>
@@ -88,19 +82,11 @@ dcnsio.createNSIinAAI(execution)</bpmn:script>
     <bpmn:callActivity id="CallActivity_1ixah3o" name="Call DoAllocateNSSI(Core)" calledElement="DoAllocateNSSI">
       <bpmn:extensionElements>
         <camunda:in source="msoRequestId" target="msoRequestId" />
-        <camunda:out source="serviceDecomposition" target="serviceDecomposition" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:in source="nsstInput" target="nsstInput" />
-        <camunda:in source="serviceProfile" target="serviceProfile" />
-        <camunda:in source="sliceProfileTn" target="sliceProfileTn" />
-        <camunda:in source="sliceProfileCn" target="sliceProfileCn" />
-        <camunda:in source="sliceProfileAn" target="sliceProfileAn" />
         <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
         <camunda:in source="subscriptionServiceType" target="subscriptionServiceType" />
         <camunda:in source="uuiRequest" target="uuiRequest" />
-        <camunda:in source="nsiServiceInstanceId" target="nsiServiceInstanceId" />
-        <camunda:in source="nsiServiceInstanceName" target="nsiServiceInstanceName" />
-        <camunda:in source="nssiserviceModelInfo" target="nssiserviceModelInfo" />
         <camunda:in source="sliceTaskParams" target="sliceTaskParams" />
         <camunda:in source="taskId" target="CSSOT_taskId" />
         <camunda:in source="taskName" target="CSSOT_name" />
@@ -111,6 +97,8 @@ dcnsio.createNSIinAAI(execution)</bpmn:script>
         <camunda:in source="domainType" target="domainType" />
         <camunda:out source="nssiAllocateResult" target="cnNssiAllocateResult" />
         <camunda:in source="CnAllocateNssiNbiRequest" target="nbiRequest" />
+        <camunda:out source="sliceTaskParams" target="sliceTaskParams" />
+        <camunda:in source="cnSubnetType" target="subnetType" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0cwbtmr</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1l74seh</bpmn:outgoing>
@@ -185,19 +173,11 @@ dcnsio.createTnBHSliceProfile(execution)</bpmn:script>
     <bpmn:callActivity id="CallActivity_0b28wlb" name="Call DoAllocateNSSI(TN)" calledElement="DoAllocateNSSI">
       <bpmn:extensionElements>
         <camunda:in source="msoRequestId" target="msoRequestId" />
-        <camunda:out source="serviceDecomposition" target="serviceDecomposition" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:in source="nsstInput" target="nsstInput" />
-        <camunda:in source="serviceProfile" target="serviceProfile" />
-        <camunda:in source="sliceProfileTn" target="sliceProfileTn" />
-        <camunda:in source="sliceProfileCn" target="sliceProfileCn" />
-        <camunda:in source="sliceProfileAn" target="sliceProfileAn" />
         <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
         <camunda:in source="subscriptionServiceType" target="subscriptionServiceType" />
         <camunda:in source="uuiRequest" target="uuiRequest" />
-        <camunda:in source="nsiServiceInstanceId" target="nsiServiceInstanceId" />
-        <camunda:in source="nsiServiceInstanceName" target="nsiServiceInstanceName" />
-        <camunda:in source="nssiserviceModelInfo" target="nssiserviceModelInfo" />
         <camunda:in source="sliceTaskParams" target="sliceTaskParams" />
         <camunda:in source="taskId" target="CSSOT_taskId" />
         <camunda:in source="taskName" target="CSSOT_name" />
@@ -207,6 +187,8 @@ dcnsio.createTnBHSliceProfile(execution)</bpmn:script>
         <camunda:in source="tnBHSliceTaskInfo" target="sliceTaskInfo" />
         <camunda:out source="nssiAllocateResult" target="tnBHNssiAllocateResult" />
         <camunda:in source="TnBHAllocateNssiNbiRequest" target="nbiRequest" />
+        <camunda:out source="sliceTaskParams" target="sliceTaskParams" />
+        <camunda:in source="tnBHSubnetType" target="subnetType" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_01isn2q</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1omynpt</bpmn:outgoing>
@@ -279,7 +261,7 @@ dcnsio.prepareAllocateTnBHNssi(execution)</bpmn:script>
   </bpmn:process>
   <bpmn:message id="Message_1i10pf1" name="Message_2mc69tg" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoAllocateNSIandNSSIV2">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoAllocateNSIandNSSI">
       <bpmndi:BPMNShape id="StartEvent_1ym3sha_di" bpmnElement="StartEvent_1ym3sha">
         <dc:Bounds x="138" y="122" width="36" height="36" />
         <bpmndi:BPMNLabel>

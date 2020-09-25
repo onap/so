@@ -23,6 +23,7 @@
 package org.onap.so.bpmn.common.scripts
 
 import org.onap.so.beans.nsmf.oof.NsiReqBody
+import org.onap.so.beans.nsmf.oof.NssiReqBody
 import org.onap.so.beans.nsmf.oof.RequestInfo
 import org.onap.so.beans.nsmf.oof.SubnetCapability
 import org.onap.so.beans.nsmf.oof.TemplateInfo
@@ -661,6 +662,7 @@ return json.toString()
                                         List<SubnetCapability> subnetCapabilities, Integer timeOut){
 
         def transactionId = requestId
+        String correlator = requestId
         logger.debug( "transactionId is: " + transactionId)
 
         String callbackUrl = UrnPropertiesReader.getVariable("mso.adapters.oof.callback.endpoint") + "/" + messageType + "/" + correlator
@@ -685,5 +687,34 @@ return json.toString()
         ObjectMapper objectMapper = new ObjectMapper()
 
         return objectMapper.writeValueAsString(nsiReqBody)
+    }
+
+    public <T> String buildSelectNSSIRequest(String requestId, TemplateInfo nsstInfo, String messageType,
+                                             T sliceProfile, Integer timeOut){
+
+        def transactionId = requestId
+        String correlator = requestId
+        logger.debug( "transactionId is: " + transactionId)
+
+        String callbackUrl = UrnPropertiesReader.getVariable("mso.adapters.oof.callback.endpoint") + "/" + messageType + "/" + correlator
+
+        NssiReqBody nssiReqBody = new NssiReqBody()
+
+        RequestInfo requestInfo = new RequestInfo()
+        requestInfo.setRequestId(requestId)
+        requestInfo.setTransactionId(transactionId)
+        requestInfo.setCallbackUrl(callbackUrl)
+        requestInfo.setSourceId("so")
+        requestInfo.setTimeout(timeOut)
+        //requestInfo.setNumSolutions()
+
+        nssiReqBody.setRequestInfo(requestInfo)
+        nssiReqBody.setSliceProfile(sliceProfile)
+        nssiReqBody.setNSSTInfo(nsstInfo)
+
+
+        ObjectMapper objectMapper = new ObjectMapper()
+
+        return objectMapper.writeValueAsString(nssiReqBody)
     }
 }

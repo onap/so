@@ -19,12 +19,16 @@
  */
 package org.onap.so.beans.nsmf;
 
-import lombok.Data;
+import lombok.*;
 import org.onap.so.beans.nsmf.oof.TemplateInfo;
 import java.util.Map;
 
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@Builder
 public class SliceTaskParamsAdapter {
     private static final long serialVersionUID = -7785578865170503301L;
 
@@ -53,4 +57,10 @@ public class SliceTaskParamsAdapter {
     private SliceTaskInfo<CnSliceProfile> cnSliceTaskInfo;
 
     private SliceTaskInfo<AnSliceProfile> anSliceTaskInfo;
+
+    public String convertToJson() {
+        SliceTaskParams sliceTaskParams = new SliceTaskParams();
+        sliceTaskParams.setServiceId(serviceId);
+        return sliceTaskParams.convertToJson();
+    }
 }
