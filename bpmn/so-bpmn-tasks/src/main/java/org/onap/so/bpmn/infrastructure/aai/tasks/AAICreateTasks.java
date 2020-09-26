@@ -85,6 +85,11 @@ public class AAICreateTasks {
     private static String CONTRAIL_NETWORK_POLICY_FQDN_LIST = "contrailNetworkPolicyFqdnList";
     private static String HEAT_STACK_ID = "heatStackId";
     private static String NETWORK_POLICY_FQDN_PARAM = "network-policy-fqdn";
+    protected static final String EXCEPTION_NAME_EXISTS_WITH_DIFFERENT_ID =
+            "Exception in AAICreateOwningEntity. Can't create OwningEntity as name already exists in AAI associated with a different owning-entity-id (name must be unique)";
+    protected static final String EXCEPTION_NAME_AND_ID_ARE_NULL =
+            "Exception in AAICreateOwningEntity. OwningEntityId and Name are null.";
+
     @Autowired
     private AAIServiceInstanceResources aaiSIResources;
     @Autowired
@@ -192,9 +197,8 @@ public class AAICreateTasks {
             OwningEntity owningEntity = serviceInstance.getOwningEntity();
             if (Strings.isNullOrEmpty(owningEntity.getOwningEntityId())
                     && Strings.isNullOrEmpty(owningEntity.getOwningEntityName())) {
-                String msg = "Exception in AAICreateOwningEntity. OwningEntityId and Name are null.";
-                execution.setVariable("ErrorCreateOEAAI", msg);
-                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
+                execution.setVariable("ErrorCreateOEAAI", EXCEPTION_NAME_AND_ID_ARE_NULL);
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "EXCEPTION_NAME_AND_ID_ARE_NULL");
             } else if (Strings.isNullOrEmpty(owningEntity.getOwningEntityId())
                     && !Strings.isNullOrEmpty(owningEntity.getOwningEntityName())) {
                 if (aaiSIResources.existsOwningEntityName(owningEntity.getOwningEntityName())) {
@@ -219,11 +223,11 @@ public class AAICreateTasks {
                         exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
                     } else {
                         if (aaiSIResources.existsOwningEntityName(owningEntity.getOwningEntityName())) {
-                            String msg =
-                                    "Exception in AAICreateOwningEntity. Can't create OwningEntity as name already exists in AAI associated with a different owning-entity-id (name must be unique)";
-                            logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg,
-                                    "BPMN", ErrorCode.UnknownError.getValue(), msg);
-                            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
+                            logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                                    EXCEPTION_NAME_EXISTS_WITH_DIFFERENT_ID, "BPMN", ErrorCode.UnknownError.getValue(),
+                                    EXCEPTION_NAME_EXISTS_WITH_DIFFERENT_ID);
+                            exceptionUtil.buildAndThrowWorkflowException(execution, 7000,
+                                    EXCEPTION_NAME_EXISTS_WITH_DIFFERENT_ID);
                         } else {
                             aaiSIResources.createOwningEntityandConnectServiceInstance(owningEntity, serviceInstance);
                         }
