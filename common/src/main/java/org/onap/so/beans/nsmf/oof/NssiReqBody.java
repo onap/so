@@ -19,17 +19,19 @@
  */
 package org.onap.so.beans.nsmf.oof;
 
-import lombok.Data;
-import org.onap.so.beans.nsmf.ServiceProfile;
+import lombok.*;
 import java.io.Serializable;
-import java.util.Map;
 
 @Data
-public class NssiReqBody implements Serializable {
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@Builder
+public class NssiReqBody<T> implements Serializable {
 
     private static final long serialVersionUID = -76327522074333341L;
 
-    private Map<String, Object> serviceProfile;
+    private T sliceProfile;
 
     private RequestInfo requestInfo;
 

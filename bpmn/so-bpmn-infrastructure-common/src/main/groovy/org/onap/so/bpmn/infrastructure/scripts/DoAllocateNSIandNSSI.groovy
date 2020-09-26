@@ -20,7 +20,8 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import static org.apache.commons.lang3.StringUtils.isBlank
+import org.onap.so.beans.nsmf.oof.SubnetType
+import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import javax.ws.rs.NotFoundException
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
@@ -49,8 +50,9 @@ import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import static org.apache.commons.lang3.StringUtils.isBlank
 
-class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor{
+class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
     private static final Logger logger = LoggerFactory.getLogger(DoAllocateNSIandNSSI.class);
 
@@ -338,6 +340,7 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
 
         execution.setVariable("AnAllocateNssiNbiRequest", nbiRequest)
         execution.setVariable("anBHSliceTaskInfo", sliceTaskInfo)
+        execution.setVariable("anSubnetType", SubnetType.AN_NF)
     }
 
 
@@ -384,7 +387,7 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
     }
 
     /**
-     * create An Slice Profile
+     * create Cn Slice Profile
      * @param execution
      */
     void createCnSliceProfile(DelegateExecution execution) {
@@ -426,7 +429,7 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
 
         AllocateCnNssi allocateCnNssi = new AllocateCnNssi()
         allocateCnNssi.nsstId = sliceTaskInfo.NSSTInfo.UUID
-        allocateCnNssi.nssiId = sliceTaskInfo.NSSTInfo.UUID
+        allocateCnNssi.nssiId = sliceTaskInfo.suggestNssiId
         allocateCnNssi.nssiName = sliceTaskInfo.NSSTInfo.name
         allocateCnNssi.sliceProfile = sliceTaskInfo.sliceProfile
         allocateCnNssi.nsiInfo.nsiId = sliceParams.suggestNsiId
@@ -446,6 +449,7 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
         serviceInfo.nsiId = sliceParams.suggestNsiId
         serviceInfo.serviceInvariantUuid = sliceTaskInfo.NSSTInfo.invariantUUID
         serviceInfo.serviceUuid = sliceTaskInfo.NSSTInfo.UUID
+        serviceInfo.nssiId = sliceTaskInfo.suggestNssiId //if shared
 
         nbiRequest.setServiceInfo(serviceInfo)
         nbiRequest.setEsrInfo(esrInfo)
@@ -453,6 +457,7 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
 
         execution.setVariable("CnAllocateNssiNbiRequest", nbiRequest)
         execution.setVariable("cnSliceTaskInfo", sliceTaskInfo)
+        execution.setVariable("cnSubnetType", SubnetType.CN)
     }
 
 
@@ -501,7 +506,7 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
     }
 
     /**
-     * create An Slice Profile
+     * create Tn Slice Profile
      * @param execution
      */
     void createTnBHSliceProfile(DelegateExecution execution) {
@@ -542,6 +547,7 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
 
         AllocateTnNssi allocateTnNssi = new AllocateTnNssi()
         //todo: AllocateTnNssi
+        //todo: endpointId -> set into tn
         allocateTnNssi.setTransportSliceNetworks()
         allocateTnNssi.setNetworkSliceInfos()
 
@@ -561,6 +567,7 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
         serviceInfo.nsiId = sliceParams.suggestNsiId
         serviceInfo.serviceInvariantUuid = sliceTaskInfo.NSSTInfo.invariantUUID
         serviceInfo.serviceUuid = sliceTaskInfo.NSSTInfo.UUID
+        serviceInfo.nssiId = sliceTaskInfo.suggestNssiId
 
         nbiRequest.setServiceInfo(serviceInfo)
         nbiRequest.setEsrInfo(esrInfo)
@@ -568,6 +575,7 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
 
         execution.setVariable("TnBHAllocateNssiNbiRequest", nbiRequest)
         execution.setVariable("tnBHSliceTaskInfo", sliceTaskInfo)
+        execution.setVariable("tnBHSubnetType", SubnetType.TN_BH)
     }
 
     /**
@@ -586,11 +594,13 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
 
         ResponseDescriptor result = execution.getVariable("anNssiAllocateResult") as ResponseDescriptor
         String nssiId = result.getNssiId()
-        String endPointId = result.getEndPointId()
         String nsiId = sliceParams.getSuggestNsiId()
         String sliceProfileInstanceId = sliceParams.anSliceTaskInfo.sliceInstanceId
         String serviceProfileInstanceId = sliceParams.serviceId
         //nsi id
+        //todo: aai -> nssi -> relationship -> endpointId -> set into tn
+        String endPointId = getEndpointIdFromAAI(execution, nssiId)
+        execution.setVariable("endPointIdAn", endPointId)
 
         updateRelationship(execution, nsiId, nssiId)
 
@@ -598,8 +608,8 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
 
         updateRelationship(execution, sliceProfileInstanceId, nssiId)
 
-        updateRelationship(execution, sliceProfileInstanceId, endPointId)
-
+        sliceParams.anSliceTaskInfo.suggestNssiId = nssiId
+        execution.setVariable("sliceTaskParams", sliceParams)
     }
 
 
@@ -622,6 +632,9 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
         String sliceProfileInstanceId = sliceParams.cnSliceTaskInfo.sliceInstanceId
         String serviceProfileInstanceId = sliceParams.serviceId
         //nsi id
+        //todo: aai -> nssi -> relationship -> endpointId -> set into tn
+        String endPointId = getEndpointIdFromAAI(execution, nssiId)
+        execution.setVariable("endPointIdCn", endPointId)
 
         updateRelationship(execution, nsiId, nssiId)
 
@@ -629,7 +642,58 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
 
         updateRelationship(execution,sliceProfileInstanceId, nssiId)
 
+        sliceParams.cnSliceTaskInfo.suggestNssiId = nssiId
+        execution.setVariable("sliceTaskParams", sliceParams)
+    }
 
+    /**
+     * get endpoint Id from AAI by nssi id
+     * @param execution
+     * @param nssiId
+     * @return
+     */
+    private String getEndpointIdFromAAI(DelegateExecution execution, String nssiId) {
+        logger.debug("Enter update relationship in DoAllocateNSIandNSSI()")
+        //todo: allottedResourceId
+
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
+        //sliceParams.setServiceId(nsiServiceInstanceID)
+        AAIResourceUri nsiServiceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(nssiId))
+
+        String endpointId = null
+
+        try {
+            AAIResultWrapper wrapper = client.get(nsiServiceUri, NotFoundException.class)
+            Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
+            //todo: if exists
+            if (!si.ifPresent()) {
+                String msg = "NSSI in the option doesn't exist. " + nssiId
+                logger.debug(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+            }
+
+            if (si.ifPresent()) {
+                ServiceInstance nssiInstance = si.get()
+                //todo: handle relationship and return endpointId
+                for (Relationship relationship : nssiInstance.relationshipList.getRelationship()) {
+                    if (relationship.relationshipLabel){
+                        endpointId = relationship //todo
+                    }
+                }
+
+                return endpointId
+            }
+
+        }catch(BpmnError e) {
+            throw e
+        }catch (Exception ex){
+            String msg = "NSSI suggested in the option doesn't exist. " + nssiId
+            logger.debug(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+        logger.debug("Exit update relationship in DoAllocateNSIandNSSI()")
     }
 
     /**
@@ -656,6 +720,9 @@ class DoAllocateNSIandNSSI extends org.onap.so.bpmn.common.scripts.AbstractServi
         updateRelationship(execution, serviceProfileInstanceId, sliceProfileInstanceId)
 
         updateRelationship(execution,sliceProfileInstanceId, nssiId)
+
+        sliceParams.tnBHSliceTaskInfo.suggestNssiId = nssiId
+        execution.setVariable("sliceTaskParams", sliceParams)
     }
 
     /**
