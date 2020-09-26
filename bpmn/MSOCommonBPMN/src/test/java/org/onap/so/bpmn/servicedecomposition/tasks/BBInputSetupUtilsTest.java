@@ -42,6 +42,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -115,6 +116,7 @@ public class BBInputSetupUtilsTest {
 
     @Before
     public void setup() {
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
     }
 
