@@ -20,7 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import static org.apache.commons.lang3.StringUtils.isBlank
+import groovy.json.JsonSlurper
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONObject
@@ -44,7 +44,8 @@ import org.onap.so.db.request.beans.OperationStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.util.UriUtils
-import groovy.json.JsonSlurper
+
+import static org.apache.commons.lang3.StringUtils.isBlank
 
 /**
  * This groovy class supports the <class>DoCreateCommunicationService.bpmn</class> process.
@@ -349,7 +350,7 @@ class CreateCommunicationService extends AbstractServiceTaskProcessor {
     /**
      * get E2EST id through CST id and change communication profile to E2E service profile
      * 1. get E2EST id from cst
-     * 1.1 查source service id
+     * 1.1 source service id
      * 1.2 source service
      * 1.3 source service input, init e2e profile
      */
@@ -383,9 +384,29 @@ class CreateCommunicationService extends AbstractServiceTaskProcessor {
                 }
             }
 
-            //TODO
+            //TODO temp solution
             e2eInputMap.put("sNSSAI", execution.getVariable("sNSSAI_id"))
 	        e2eInputMap.put("sST", execution.getVariable("csServiceType"))
+
+            Integer activityFactor = 60
+            Integer random = new Random().nextInt(5) + 2
+            Integer dLThptPerUE = Integer.parseInt(csInputMap.get("expDataRateDL").toString())
+            Integer uLThptPerUE = Integer.parseInt(csInputMap.get("expDataRateUL").toString())
+            Integer maxNumberofUEs = Integer.parseInt(csInputMap.get("maxNumberofUEs").toString())
+            Integer dLThptPerSlice = dLThptPerUE * maxNumberofUEs * activityFactor * random
+            Integer uLThptPerSlice = uLThptPerUE * maxNumberofUEs * activityFactor * random
+            Integer maxNumberofConns = maxNumberofUEs * activityFactor * 3
+
+            e2eInputMap.put("jitter", 10)
+            e2eInputMap.put("activityFactor", activityFactor)
+            e2eInputMap.put("maxNumberofUEs", maxNumberofUEs)
+            e2eInputMap.put("dLThptPerUE", dLThptPerUE)
+            e2eInputMap.put("uLThptPerUE", uLThptPerUE)
+            e2eInputMap.put("dLThptPerSlice", dLThptPerSlice)
+            e2eInputMap.put("uLThptPerSlice", uLThptPerSlice)
+            e2eInputMap.put("maxNumberofConns", maxNumberofConns)
+            e2eInputMap.put("coverageAreaTAList", csInputMap.get("coverageAreaList"))
+
             execution.setVariable("e2eInputMap", e2eInputMap)
             execution.setVariable("e2eServiceType", e2eServiceDecomposition.getServiceType())
             execution.setVariable("e2eModelInvariantUuid", e2eServiceDecomposition.getModelInfo().getModelInvariantUuid())

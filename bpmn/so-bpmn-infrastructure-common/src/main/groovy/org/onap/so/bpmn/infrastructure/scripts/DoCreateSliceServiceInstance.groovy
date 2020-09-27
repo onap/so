@@ -132,7 +132,7 @@ class DoCreateSliceServiceInstance extends AbstractServiceTaskProcessor{
         }
 
 
-        def rollbackData = execution.getVariable("RollbackData")
+        RollbackData rollbackData = execution.getVariable("RollbackData")
         if (rollbackData == null) {
             rollbackData = new RollbackData()
         }
@@ -171,19 +171,15 @@ class DoCreateSliceServiceInstance extends AbstractServiceTaskProcessor{
         serviceProfile.setCoverageAreaTAList(serviceProfileMap.get("coverageAreaTAList").toString())
         serviceProfile.setUeMobilityLevel(serviceProfileMap.get("uEMobilityLevel").toString())
         serviceProfile.setResourceSharingLevel(serviceProfileMap.get("resourceSharingLevel").toString())
-        serviceProfile.setExpDataRateUL(Integer.parseInt(serviceProfileMap.get("expDataRateUL").toString()))
-        serviceProfile.setExpDataRateDL(Integer.parseInt(serviceProfileMap.get("expDataRateDL").toString()))
-        serviceProfile.setAreaTrafficCapUL(Integer.parseInt(serviceProfileMap.get("areaTrafficCapUL").toString()))
-        serviceProfile.setAreaTrafficCapDL(Integer.parseInt(serviceProfileMap.get("areaTrafficCapDL").toString()))
+        serviceProfile.setDlThptPerSlice(Integer.parseInt(serviceProfileMap.get("dLThptPerSlice").toString()))
+        serviceProfile.setDlThptPerUE(Integer.parseInt(serviceProfileMap.get("dLThptPerUE").toString()))
+        serviceProfile.setUlThptPerSlice(Integer.parseInt(serviceProfileMap.get("uLThptPerSlice").toString()))
+        serviceProfile.setUlThptPerUE(Integer.parseInt(serviceProfileMap.get("uLThptPerUE").toString()))
         serviceProfile.setActivityFactor(Integer.parseInt(serviceProfileMap.get("activityFactor").toString()))
 
-        serviceProfile.setJitter(0)
+        serviceProfile.setJitter(Integer.parseInt(serviceProfileMap.get("jitter").toString()))
         serviceProfile.setSurvivalTime("0")
-        serviceProfile.setCsAvailability(new Object())
         serviceProfile.setReliability("")
-        serviceProfile.setExpDataRate(0)
-        serviceProfile.setTrafficDensity(0)
-        serviceProfile.setConnDensity(0)
         try {
             AAIResourceUri uri = AAIUriFactory.createResourceUri(
                 AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId"))

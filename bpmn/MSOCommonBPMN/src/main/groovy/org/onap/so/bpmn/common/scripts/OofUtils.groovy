@@ -659,7 +659,7 @@ return json.toString()
 
     public String buildSelectNSIRequest(String requestId, TemplateInfo nstInfo, List<TemplateInfo> nsstInfo,
                                         String messageType, Map<String, Object> serviceProfile,
-                                        List<SubnetCapability> subnetCapabilities, Integer timeOut){
+                                        List<SubnetCapability> subnetCapabilities, Integer timeOut, boolean preferReuse){
 
         def transactionId = requestId
         String correlator = requestId
@@ -682,7 +682,7 @@ return json.toString()
         nsiReqBody.setServiceProfile(serviceProfile)
         nsiReqBody.setSubnetCapabilities(subnetCapabilities)
         nsiReqBody.setNSSTInfo(nsstInfo)
-
+        nsiReqBody.setPreferReuse(preferReuse)
 
         ObjectMapper objectMapper = new ObjectMapper()
 

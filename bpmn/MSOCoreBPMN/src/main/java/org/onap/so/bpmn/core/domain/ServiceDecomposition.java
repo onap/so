@@ -55,6 +55,8 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
     private String serviceType;
     @JsonProperty("serviceRole")
     private String serviceRole;
+    @JsonProperty("serviceCategory")
+    private String serviceCategory;
     private ServiceInstance serviceInstance;
     private Request request;
     private String callbackURN;
@@ -259,7 +261,12 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
         this.serviceProxy = serviceProxy;
     }
 
+
     // *****
+
+    public String getServiceCategory() { return serviceCategory; }
+
+    public void setServiceCategory(String serviceCategory) { this.serviceCategory = serviceCategory; }
 
     // *****
     // Access methods

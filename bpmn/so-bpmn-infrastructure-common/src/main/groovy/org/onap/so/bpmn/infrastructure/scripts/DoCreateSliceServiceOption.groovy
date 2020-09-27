@@ -194,15 +194,12 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
 
     private void handleByType(DelegateExecution execution, ServiceDecomposition serviceDecomposition,
                               SliceTaskParamsAdapter sliceParams, SubnetCapability subnetCapability) {
-        //todo:
-        String domainType = ""
         ModelInfo modelInfo = serviceDecomposition.getModelInfo()
         String vendor = serviceDecomposition.getServiceRole()
-        SubnetType subnetType
+        SubnetType subnetType = convertServiceCategory(serviceDecomposition.getServiceCategory())
 
-        switch (domainType) {
-            case "tn_bh":
-                subnetType = SubnetType.TN_BH
+        switch (subnetType) {
+            case SubnetType.TN_BH:
                 sliceParams.tnBHSliceTaskInfo.vendor = vendor
                 sliceParams.tnBHSliceTaskInfo.subnetType = subnetType
                 sliceParams.tnBHSliceTaskInfo.networkType = subnetType.networkType
@@ -211,8 +208,7 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
                 sliceParams.tnBHSliceTaskInfo.NSSTInfo.name = modelInfo.getModelName()
 
                 break
-            case "tn_mh":
-                subnetType = SubnetType.TN_MH
+            case SubnetType.TN_MH:
                 sliceParams.tnMHSliceTaskInfo.vendor = vendor
                 sliceParams.tnMHSliceTaskInfo.subnetType = subnetType
                 sliceParams.tnMHSliceTaskInfo.networkType = subnetType.networkType
@@ -221,8 +217,7 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
                 sliceParams.tnMHSliceTaskInfo.NSSTInfo.name = modelInfo.getModelName()
 
                 break
-            case "an_nf":
-                subnetType = SubnetType.AN_NF
+            case SubnetType.AN_NF:
                 sliceParams.anSliceTaskInfo.vendor = vendor
                 sliceParams.anSliceTaskInfo.subnetType = subnetType
                 sliceParams.anSliceTaskInfo.networkType = subnetType.networkType
@@ -230,8 +225,7 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
                 sliceParams.anSliceTaskInfo.NSSTInfo.invariantUUID = modelInfo.getModelInvariantUuid()
                 sliceParams.anSliceTaskInfo.NSSTInfo.name = modelInfo.getModelName()
                 break
-            case "cn":
-                subnetType = SubnetType.CN
+            case SubnetType.CN:
                 sliceParams.cnSliceTaskInfo.vendor = vendor
                 sliceParams.cnSliceTaskInfo.subnetType = subnetType
                 sliceParams.cnSliceTaskInfo.networkType = subnetType.networkType
@@ -246,9 +240,10 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
         //todo
 
         }
-        if (subnetType == null) {
-            //todo: throw error
-            return
+        if (null == subnetType) {
+            def msg = "Get subnetType failed, modelUUId=" + modelInfo.getModelUuid()
+            logger.error(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
         }
         String response = querySubnetCapability(execution, vendor, subnetType)
         ResponseEntity responseEntity = objectMapper.readValue(response, ResponseEntity.class)
@@ -258,6 +253,26 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
             subnetCapability.setDomainType(entry.getKey())
             subnetCapability.setCapabilityDetails(entry.getValue())
         }
+    }
+
+    /**
+     * get subnetType from serviceCategory
+     * @return
+     */
+    private SubnetType convertServiceCategory(String serviceCategory){
+        if(serviceCategory ==~ /CN.*/){
+            return SubnetType.CN
+        }
+        if (serviceCategory ==~ /AN.*NF.*/){
+            return SubnetType.AN_NF
+        }
+        if (serviceCategory ==~ /TN.*BH.*/){
+            return SubnetType.TN_BH
+        }
+        if(serviceCategory ==~ /TN.*MH.*/){
+            return SubnetType.TN_MH
+        }
+        return null
     }
 
     /**
@@ -305,11 +320,10 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
      * prepare select nsi request
      * @param execution
      */
-    public void preNSIRequest(DelegateExecution execution) {
+    public void preNSIRequest(DelegateExecution execution, boolean preferReuse) {
 
         String urlString = UrnPropertiesReader.getVariable("mso.oof.endpoint", execution)
         logger.debug( "get NSI option OOF Url: " + urlString)
-
 
         String requestId = execution.getVariable("msoRequestId")
         String messageType = "NSISelectionResponse"
@@ -332,7 +346,7 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
                 execution.getVariable("subnetCapabilities") as List<SubnetCapability>
 
         String oofRequest = oofUtils.buildSelectNSIRequest(requestId, nstInfo, nsstInfos,
-                messageType, profileInfo, subnetCapabilities, timeout as Integer)
+                messageType, profileInfo, subnetCapabilities, timeout as Integer, preferReuse)
 
         execution.setVariable("nsiSelection_oofRequest", oofRequest)
         logger.debug("Sending request to OOF: " + oofRequest)
@@ -348,12 +362,12 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
         SliceTaskParamsAdapter sliceTaskParams =
                 execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
 
-        String OOFResponse = execution.getVariable("nsiSelection_oofResponse")
-        logger.debug("NSI OOFResponse is: " + OOFResponse)
-        execution.setVariable("OOFResponse", OOFResponse)
+        String oofResponse = execution.getVariable("nsiSelection_oofResponse")
+        logger.debug("NSI oofResponse is: " + oofResponse)
+        execution.setVariable("oofResponse", oofResponse)
         //This needs to be changed to derive a value when we add policy to decide the solution options.
 
-        Map<String, Object> resMap = objectMapper.readValue(OOFResponse, Map.class)
+        Map<String, Object> resMap = objectMapper.readValue(oofResponse, Map.class)
         List<Map<String, Object>> nsiSolutions = (List<Map<String, Object>>) resMap.get("solutions")
         Map<String, Object> solution = nsiSolutions.get(0)
 
