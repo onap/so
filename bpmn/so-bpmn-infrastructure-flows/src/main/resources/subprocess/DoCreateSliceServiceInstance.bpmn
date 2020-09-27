@@ -25,7 +25,7 @@ dcsi.preProcessRequest(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_0g5bwvl</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcsi = new DoCreateSliceServiceInstance()
-dcsi.instantiateSliceService(execution)</bpmn:script>
+dcsi.createServiceProfileInstance(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:endEvent id="EndEvent_1x6k78c">
       <bpmn:incoming>SequenceFlow_1uiz85h</bpmn:incoming>

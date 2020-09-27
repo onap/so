@@ -163,7 +163,7 @@ dcso.processNSIResp(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_14o0fxe</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcso = new DoCreateSliceServiceOption()
-dcso.preNSIRequest(execution)</bpmn:script>
+dcso.preNSIRequest(execution,true)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:intermediateCatchEvent id="IntermediateCatchEvent_00uke3g" name=" Select NSSI ">
       <bpmn:outgoing>SequenceFlow_1iawj3m</bpmn:outgoing>

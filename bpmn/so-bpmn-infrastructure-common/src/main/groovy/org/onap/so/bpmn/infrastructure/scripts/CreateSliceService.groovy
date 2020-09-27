@@ -161,8 +161,7 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
 
             execution.setVariable("serviceInputParams", inputMap)
             execution.setVariable("uuiRequest", uuiRequest)
-            execution.setVariable("se" +
-                    "rviceProfile", serviceProfile)
+            execution.setVariable("serviceProfile", serviceProfile)
 
             //TODO
             //execution.setVariable("serviceInputParams", jsonUtil.getJsonValue(siRequest, "requestDetails.requestParameters.userParams"))
