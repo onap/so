@@ -20,6 +20,8 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+
 import static org.apache.commons.lang3.StringUtils.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
@@ -52,11 +54,15 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
     String Prefix = "CRESS_"
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
+
     JsonUtils jsonUtil = new JsonUtils()
+
     JsonSlurper jsonSlurper = new JsonSlurper()
+
     ObjectMapper objectMapper = new ObjectMapper()
+
     OofUtils oofUtils = new OofUtils()
-    NssmfAdapterUtils nssmfAdapterUtils = new NssmfAdapterUtils(httpClientFactory, jsonUtil)
+
     AAIResourcesClient client = getAAIClient()
 
     private static final Logger logger = LoggerFactory.getLogger(CreateSliceService.class)
@@ -161,8 +167,7 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
 
             execution.setVariable("serviceInputParams", inputMap)
             execution.setVariable("uuiRequest", uuiRequest)
-            execution.setVariable("se" +
-                    "rviceProfile", serviceProfile)
+            execution.setVariable("serviceProfile", serviceProfile)
 
             //TODO
             //execution.setVariable("serviceInputParams", jsonUtil.getJsonValue(siRequest, "requestDetails.requestParameters.userParams"))
@@ -267,10 +272,8 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
 
         execution.setVariable("sliceTaskParams", sliceTaskParams)
 
-        //todo:----------------------------------------
-//        String paramJson = sliceTaskParams.convertToJson()
-//        execution.setVariable("CSSOT_paramJson", paramJson)
-        /*-------------------------------------------*/
+        String paramJson = sliceTaskParams.convertToJson()
+        execution.setVariable("CSSOT_paramJson", paramJson)
 
         logger.debug("Finish createOrchestrationTask")
     }
@@ -360,7 +363,8 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
         logger.debug("Start prepareUpdateOrchestrationTask")
         String requestMethod = "PUT"
         String taskStatus = execution.getVariable("taskStatus")
-        SliceTaskParams sliceTaskParams = execution.getVariable("sliceTaskParams")
+        SliceTaskParamsAdapter sliceTaskParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
         String paramJson = sliceTaskParams.convertToJson()
         execution.setVariable("CSSOT_status", taskStatus)
         execution.setVariable("CSSOT_paramJson", paramJson)
@@ -390,7 +394,7 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
         OrchestrationTask orchestrationTask = objectMapper.readValue(response, OrchestrationTask.class)
         String paramJson = orchestrationTask.getParams()
         logger.debug("paramJson: " + paramJson)
-        SliceTaskParams sliceTaskParams = new SliceTaskParams()
+        SliceTaskParamsAdapter sliceTaskParams = new SliceTaskParamsAdapter()
         sliceTaskParams.convertFromJson(paramJson)
         execution.setVariable("sliceTaskParams", sliceTaskParams)
         logger.debug("Finish processUserOptions")
@@ -404,7 +408,7 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
         try {
             ServiceInstance si = new ServiceInstance()
             si.setOrchestrationStatus(orchStatus)
-            AAIResourcesClient client = new AAIResourcesClient()
+
             AAIResourceUri uri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
             client.update(uri, si)
         } catch (BpmnError e) {
