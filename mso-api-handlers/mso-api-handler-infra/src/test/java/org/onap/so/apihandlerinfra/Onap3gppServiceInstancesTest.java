@@ -55,7 +55,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class Onap3gppServiceInstancesTest extends BaseTest {
 
-    private String onap3gppServicesUri = "/onap/so/infra/onap3gppServiceInstances/";
+    private String onap3gppServicesUri = "/onap/so/infra/3gppservices/";
 
     private final ObjectMapper mapper = new ObjectMapper();
 

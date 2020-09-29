@@ -88,9 +88,9 @@ import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 
 @Component
-@Path("/onap/so/infra/onap3gppServiceInstances")
-@OpenAPIDefinition(info = @Info(title = "/onap/so/infra/onap3gppServiceInstances",
-        description = "API Requests for 3GPP Service Instances"))
+@Path("/onap/so/infra/3gppservices")
+@OpenAPIDefinition(
+        info = @Info(title = "/onap/so/infra/3gppservices", description = "API Requests for 3GPP Service Instances"))
 public class Onap3gppServiceInstances {
 
     private static final Logger logger = LoggerFactory.getLogger(Onap3gppServiceInstances.class);
@@ -101,7 +101,7 @@ public class Onap3gppServiceInstances {
 
     private static final String SAVE_TO_DB = "save instance to db";
 
-    private static String uriPrefix = "/onap3gppServiceInstances/";
+    private static String uriPrefix = "/3gppservices/";
 
     @Autowired
     private MsoRequest msoRequest;
