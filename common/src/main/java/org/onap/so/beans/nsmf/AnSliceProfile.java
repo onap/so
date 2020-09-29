@@ -23,10 +23,12 @@ package org.onap.so.beans.nsmf;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.ToString;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
+@ToString
 public class AnSliceProfile {
 
     @JsonProperty(value = "sliceProfileId", required = true)

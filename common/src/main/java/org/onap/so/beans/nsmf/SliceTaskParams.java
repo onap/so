@@ -22,11 +22,19 @@ package org.onap.so.beans.nsmf;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 public class SliceTaskParams implements Serializable {
 
     private static final long serialVersionUID = -4389946152970978423L;
@@ -45,17 +53,17 @@ public class SliceTaskParams implements Serializable {
 
     private String cnScriptName;
 
-    private Map<String, Object> serviceProfile;
+    private Map<String, Object> serviceProfile = new HashMap<>();
 
     private String suggestNsiId;
 
     private String suggestNsiName;
 
-    private Map<String, Object> sliceProfileTn;
+    private Map<String, Object> sliceProfileTn = new HashMap<>();
 
-    private Map<String, Object> sliceProfileCn;
+    private Map<String, Object> sliceProfileCn = new HashMap<>();
 
-    private Map<String, Object> sliceProfileAn;
+    private Map<String, Object> sliceProfileAn = new HashMap<>();
 
     private String tnSuggestNssiId;
 
@@ -86,237 +94,6 @@ public class SliceTaskParams implements Serializable {
     private String anStatus;
 
     private String anStatusDescription;
-
-    public SliceTaskParams() {
-        this.serviceProfile = new HashMap<>();
-        this.sliceProfileAn = new HashMap<>();
-        this.sliceProfileCn = new HashMap<>();
-        this.sliceProfileTn = new HashMap<>();
-    }
-
-    public String getNstId() {
-        return nstId;
-    }
-
-    public void setNstId(String nstId) {
-        this.nstId = nstId;
-    }
-
-    public String getNstName() {
-        return nstName;
-    }
-
-    public void setNstName(String nstName) {
-        this.nstName = nstName;
-    }
-
-    public String getTnScriptName() {
-        return tnScriptName;
-    }
-
-    public void setTnScriptName(String tnScriptName) {
-        this.tnScriptName = tnScriptName;
-    }
-
-    public String getAnScriptName() {
-        return anScriptName;
-    }
-
-    public void setAnScriptName(String anScriptName) {
-        this.anScriptName = anScriptName;
-    }
-
-    public String getCnScriptName() {
-        return cnScriptName;
-    }
-
-    public void setCnScriptName(String cnScriptName) {
-        this.cnScriptName = cnScriptName;
-    }
-
-    public String getServiceId() {
-        return serviceId;
-    }
-
-    public void setServiceId(String serviceId) {
-        this.serviceId = serviceId;
-    }
-
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
-    }
-
-    public Map<String, Object> getServiceProfile() {
-        return serviceProfile;
-    }
-
-    public void setServiceProfile(Map<String, Object> serviceProfile) {
-        this.serviceProfile = serviceProfile;
-    }
-
-    public String getSuggestNsiId() {
-        return suggestNsiId;
-    }
-
-    public void setSuggestNsiId(String suggestNsiId) {
-        this.suggestNsiId = suggestNsiId;
-    }
-
-    public String getSuggestNsiName() {
-        return suggestNsiName;
-    }
-
-    public void setSuggestNsiName(String suggestNsiName) {
-        this.suggestNsiName = suggestNsiName;
-    }
-
-    public Map<String, Object> getSliceProfileTn() {
-        return sliceProfileTn;
-    }
-
-    public void setSliceProfileTn(Map<String, Object> sliceProfileTn) {
-        this.sliceProfileTn = sliceProfileTn;
-    }
-
-    public Map<String, Object> getSliceProfileCn() {
-        return sliceProfileCn;
-    }
-
-    public void setSliceProfileCn(Map<String, Object> sliceProfileCn) {
-        this.sliceProfileCn = sliceProfileCn;
-    }
-
-    public Map<String, Object> getSliceProfileAn() {
-        return sliceProfileAn;
-    }
-
-    public void setSliceProfileAn(Map<String, Object> sliceProfileAn) {
-        this.sliceProfileAn = sliceProfileAn;
-    }
-
-    public String getTnSuggestNssiId() {
-        return tnSuggestNssiId;
-    }
-
-    public void setTnSuggestNssiId(String tnSuggestNssiId) {
-        this.tnSuggestNssiId = tnSuggestNssiId;
-    }
-
-    public String getTnSuggestNssiName() {
-        return tnSuggestNssiName;
-    }
-
-    public void setTnSuggestNssiName(String tnSuggestNssiName) {
-        this.tnSuggestNssiName = tnSuggestNssiName;
-    }
-
-    public String getTnProgress() {
-        return tnProgress;
-    }
-
-    public void setTnProgress(String tnProgress) {
-        this.tnProgress = tnProgress;
-    }
-
-    public String getTnStatus() {
-        return tnStatus;
-    }
-
-    public void setTnStatus(String tnStatus) {
-        this.tnStatus = tnStatus;
-    }
-
-    public String getTnStatusDescription() {
-        return tnStatusDescription;
-    }
-
-    public void setTnStatusDescription(String tnStatusDescription) {
-        this.tnStatusDescription = tnStatusDescription;
-    }
-
-    public String getCnSuggestNssiId() {
-        return cnSuggestNssiId;
-    }
-
-    public void setCnSuggestNssiId(String cnSuggestNssiId) {
-        this.cnSuggestNssiId = cnSuggestNssiId;
-    }
-
-    public String getCnSuggestNssiName() {
-        return cnSuggestNssiName;
-    }
-
-    public void setCnSuggestNssiName(String cnSuggestNssiName) {
-        this.cnSuggestNssiName = cnSuggestNssiName;
-    }
-
-    public String getCnProgress() {
-        return cnProgress;
-    }
-
-    public void setCnProgress(String cnProgress) {
-        this.cnProgress = cnProgress;
-    }
-
-    public String getCnStatus() {
-        return cnStatus;
-    }
-
-    public void setCnStatus(String cnStatus) {
-        this.cnStatus = cnStatus;
-    }
-
-    public String getCnStatusDescription() {
-        return cnStatusDescription;
-    }
-
-    public void setCnStatusDescription(String cnStatusDescription) {
-        this.cnStatusDescription = cnStatusDescription;
-    }
-
-    public String getAnSuggestNssiId() {
-        return anSuggestNssiId;
-    }
-
-    public void setAnSuggestNssiId(String anSuggestNssiId) {
-        this.anSuggestNssiId = anSuggestNssiId;
-    }
-
-    public String getAnSuggestNssiName() {
-        return anSuggestNssiName;
-    }
-
-    public void setAnSuggestNssiName(String anSuggestNssiName) {
-        this.anSuggestNssiName = anSuggestNssiName;
-    }
-
-    public String getAnProgress() {
-        return anProgress;
-    }
-
-    public void setAnProgress(String anProgress) {
-        this.anProgress = anProgress;
-    }
-
-    public String getAnStatus() {
-        return anStatus;
-    }
-
-    public void setAnStatus(String anStatus) {
-        this.anStatus = anStatus;
-    }
-
-    public String getAnStatusDescription() {
-        return anStatusDescription;
-    }
-
-    public void setAnStatusDescription(String anStatusDescription) {
-        this.anStatusDescription = anStatusDescription;
-    }
 
     public String convertToJson() {
         JsonObject jsonObject = new JsonObject();
