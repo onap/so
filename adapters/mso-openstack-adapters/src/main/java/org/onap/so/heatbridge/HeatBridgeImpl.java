@@ -597,33 +597,29 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                 lIf.setInterfaceDescription(
                         "Attached to SR-IOV port: " + pserverHostName + "::" + matchingPifName.get());
                 try {
-                    Optional<PInterface> matchingPIf = resourcesClient.get(PInterface.class,
+                    AAIResourceUri pInterfaceUri =
                             AAIUriFactory
                                     .createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
                                             .pserver(pserverHostName).pInterface(matchingPifName.get()))
-                                    .depth(Depth.ONE));
-                    if (matchingPIf.isPresent()) {
-                        SriovPfs pIfSriovPfs = matchingPIf.get().getSriovPfs();
-                        if (pIfSriovPfs == null) {
-                            pIfSriovPfs = new SriovPfs();
-                        }
-                        // Extract PCI-ID from OS port object
+                                    .depth(Depth.ONE);
+                    if (resourcesClient.exists(pInterfaceUri)) {
+                        PInterface matchingPIf = resourcesClient.get(PInterface.class, pInterfaceUri).get();
+
                         String pfPciId = port.getProfile().get(HeatBridgeConstants.OS_PCI_SLOT_KEY).toString();
 
-                        List<SriovPf> existingSriovPfs = pIfSriovPfs.getSriovPf();
-                        if (CollectionUtils.isEmpty(existingSriovPfs) || existingSriovPfs.stream()
-                                .noneMatch(existingSriovPf -> existingSriovPf.getPfPciId().equals(pfPciId))) {
-                            // Add sriov-pf object with PCI-ID to AAI
+                        if (matchingPIf.getSriovPfs() == null
+                                || CollectionUtils.isEmpty(matchingPIf.getSriovPfs().getSriovPf())
+                                || matchingPIf.getSriovPfs().getSriovPf().stream()
+                                        .noneMatch(existingSriovPf -> existingSriovPf.getPfPciId().equals(pfPciId))) {
+
                             SriovPf sriovPf = new SriovPf();
                             sriovPf.setPfPciId(pfPciId);
-                            logger.debug("Queuing AAI command to update sriov-pf object to pserver: " + pserverHostName
-                                    + "/" + matchingPifName.get());
 
                             AAIResourceUri sriovPfUri = AAIUriFactory.createResourceUri(
                                     AAIFluentTypeBuilder.cloudInfrastructure().pserver(pserverHostName)
                                             .pInterface(matchingPifName.get()).sriovPf(sriovPf.getPfPciId()));
 
-
+                            // TODO if it does exist, should check if relationship is there, if not then create?
                             if (!resourcesClient.exists(sriovPfUri)) {
                                 transaction.create(sriovPfUri, sriovPf);
 
@@ -634,6 +630,10 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                                 transaction.connect(sriovPfUri, sriovVfUri);
                             }
                         }
+                    } else {
+                        logger.warn(
+                                "PInterface {} does not exist in AAI. Unable to build sriov-vf to sriov-pf relationship.",
+                                matchingPifName.get());
                     }
                 } catch (WebApplicationException e) {
                     // Silently log that we failed to update the Pserver p-interface with PCI-ID

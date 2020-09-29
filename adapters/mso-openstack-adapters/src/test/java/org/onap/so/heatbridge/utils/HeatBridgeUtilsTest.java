@@ -26,6 +26,6 @@ public class HeatBridgeUtilsTest {
     @Test
     public void matchServerName_unknown() {
         Optional<String> serverName = HeatBridgeUtils.getMatchingPserverPifName("differentServerName");
-        assertThat(serverName).isEmpty();
+        assertThat(serverName).isNotEmpty().hasValue("differentServerName");
     }
 }
