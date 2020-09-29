@@ -22,15 +22,9 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.aai.domain.yang.CloudRegion
-import org.onap.aai.domain.yang.GenericVnf
-import org.onap.aai.domain.yang.ModelVer
-import org.onap.aai.domain.yang.ServiceInstance
-import org.onap.aai.domain.yang.ServiceSubscription
-import org.onap.aai.domain.yang.SliceProfile
-import org.onap.aai.domain.yang.Tenant
-import org.onap.aai.domain.yang.VfModule
-import org.onap.aaiclient.client.aai.AAIObjectType
+import org.json.JSONArray
+import org.json.JSONObject
+import org.onap.aai.domain.yang.v19.*
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.Relationships
@@ -39,35 +33,20 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.logging.filter.base.ONAPComponents
-import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
-import org.onap.so.bpmn.common.scripts.ExceptionUtil
-import org.onap.so.bpmn.common.scripts.RequestDBUtil
+import org.onap.so.bpmn.common.scripts.*
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
-import org.onap.so.db.request.beans.OperationStatus
-import org.onap.so.requestsdb.RequestsDbConstant
-import org.onap.so.serviceinstancebeans.CloudConfiguration
-import org.onap.so.serviceinstancebeans.LineOfBusiness
-import org.onap.so.serviceinstancebeans.ModelInfo
-import org.onap.so.serviceinstancebeans.ModelType
-import org.onap.so.serviceinstancebeans.OwningEntity
-import org.onap.so.serviceinstancebeans.Project
-import org.onap.so.serviceinstancebeans.RequestDetails
-import org.onap.so.serviceinstancebeans.RequestInfo
-import org.onap.so.serviceinstancebeans.RequestParameters
-import org.onap.so.serviceinstancebeans.Resources
-import org.onap.so.serviceinstancebeans.Service
-import org.onap.so.serviceinstancebeans.SubscriberInfo
-import org.onap.so.serviceinstancebeans.VfModules
-import org.onap.so.serviceinstancebeans.Vnfs
+import org.onap.so.db.request.beans.ResourceOperationStatus
+import org.onap.so.serviceinstancebeans.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 import javax.ws.rs.core.Response
 
+import static org.apache.commons.lang3.StringUtils.isBlank
 
- class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
+class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
     private final String PREFIX ="DoCommonCoreNSSI"
 
@@ -83,10 +62,54 @@ import javax.ws.rs.core.Response
 
         def currentNSSI = execution.getVariable("currentNSSI")
         if (!currentNSSI) {
-            String msg = "currentNSSI is null"
+            currentNSSI = [:]
+        }
+
+        // NSSI ID
+        String nssiId = execution.getVariable("serviceInstanceID")
+        if (isBlank(nssiId)) {
+            String msg = "NSSI service instance id is null"
             LOGGER.error(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
         }
+        else {
+            currentNSSI['nssiId'] = nssiId
+        }
+
+        // NSI ID
+        String nsiId = execution.getVariable("nsiId")
+        if (isBlank(nsiId)) {
+            String msg = "nsiId is null"
+            LOGGER.error(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+        }
+        else {
+            currentNSSI['nsiId'] = nsiId
+        }
+
+
+        // Slice Profile
+        String sliceProfile = jsonUtil.getJsonValue(execution.getVariable("sliceParams"), "sliceProfile")
+        if (isBlank(sliceProfile)) {
+            String msg = "Slice Profile is null"
+            exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+        } else {
+            currentNSSI['sliceProfile'] = sliceProfile
+        }
+
+        // S-NSSAI
+        def snssaiList = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(sliceProfile, "snssaiList"))
+
+        String sNssai = snssaiList.get(0)
+        currentNSSI['S-NSSAI'] = sNssai
+
+
+        // Slice Profile id
+        String sliceProfileId = jsonUtil.getJsonValue(sliceProfile, "sliceProfileId")
+        currentNSSI['sliceProfileId'] = sliceProfileId
+
+        execution.setVariable("currentNSSI", currentNSSI)
+
 
         LOGGER.trace("***** ${getPrefix()} Exit preProcessRequest")
     }
@@ -257,7 +280,7 @@ import javax.ws.rs.core.Response
 
         List<String> snssais = new ArrayList<>()
 
-        String isCreateSliceProfileInstanceVar = execution.getVariable("isCreateSliceProfileInstance" )
+        String isCreateSliceProfileInstanceVar = execution.getVariable("isCreateSliceProfileInstance" ) // Not exist in case of Deallocate
 
         boolean isCreateSliceProfileInstance = Boolean.parseBoolean(isCreateSliceProfileInstanceVar)
 
@@ -294,14 +317,14 @@ import javax.ws.rs.core.Response
         def currentNSSI = execution.getVariable("currentNSSI")
 
         try {
-            //url:/onap/so/infra/serviceInstantiation/v7/serviceInstances/{serviceInstanceId}/vnfs/{vnfId}"
-            def nsmfЕndpoint = UrnPropertiesReader.getVariable("mso.infra.endpoint.url", execution) // ???
+            //url:/onap/so/infra/serviceInstantiation/v7/serviceInstances/{serviceInstanceId}"
+            def nsmfЕndPoint = UrnPropertiesReader.getVariable("mso.infra.endpoint.url", execution) // ???
 
             ServiceInstance networkServiceInstance = (ServiceInstance)currentNSSI['networkServiceInstance']
 
-            GenericVnf constituteVnf = (GenericVnf)currentNSSI['constituteVnf']
+            String url = String.format("${nsmfЕndPoint}/serviceInstantiation/v7/serviceInstances/%s", networkServiceInstance.getServiceInstanceId())
 
-            String url = String.format("${nsmfЕndpoint}/serviceInstantiation/v7/serviceInstances/%s/vnfs/%s", networkServiceInstance.getServiceInstanceId(), constituteVnf.getVnfId())
+            currentNSSI['putServiceInstanceURL'] = url
 
             String msoKey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
             String basicAuth =  UrnPropertiesReader.getVariable("mso.infra.endpoint.auth", execution)
@@ -332,7 +355,7 @@ import javax.ws.rs.core.Response
             String putServiceInstanceResponse = ""
 
             if(errorCode == null || errorCode.isEmpty()) { // No error
-                putServiceInstanceResponse = callPUTServiceInstanceResponse // check the response ???
+                putServiceInstanceResponse = callPUTServiceInstanceResponse
             }
             else {
                 LOGGER.error(jsonUtil.getJsonValue(callPUTServiceInstanceResponse, "errorMessage"))
@@ -430,9 +453,9 @@ import javax.ws.rs.core.Response
     SubscriberInfo prepareSubscriberInfo(DelegateExecution execution) {
         def currentNSSI = execution.getVariable("currentNSSI")
 
-        String globalSubscriberId = currentNSSI['globalSubscriberId']
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
 
-        String subscriberName = currentNSSI['subscriberName']
+        String subscriberName = execution.getVariable("subscriberName")
 
         SubscriberInfo subscriberInfo = new SubscriberInfo()
         subscriberInfo.setGlobalSubscriberId(globalSubscriberId)
@@ -484,13 +507,13 @@ import javax.ws.rs.core.Response
     RequestInfo prepareRequestInfo(DelegateExecution execution, ServiceInstance networkServiceInstance) {
         def currentNSSI = execution.getVariable("currentNSSI")
 
-        String serviceId = currentNSSI['serviceId']
+        String productFamilyId = execution.getVariable("productFamilyId")
 
         RequestInfo requestInfo = new RequestInfo()
 
         requestInfo.setInstanceName(networkServiceInstance.getServiceInstanceName())
         requestInfo.setSource("VID")
-        requestInfo.setProductFamilyId(serviceId)
+        requestInfo.setProductFamilyId(productFamilyId)
         requestInfo.setRequestorId("NBI")
 
         return requestInfo
@@ -961,15 +984,15 @@ import javax.ws.rs.core.Response
 
         SliceProfile sliceProfileContainsSNSSAI = (SliceProfile)currentNSSI['sliceProfileS-NSSAI']
 
-        String globalSubscriberId = currentNSSI['globalSubscriberId']
-        String serviceType = currentNSSI['serviceType']
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
+        String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
         String nssiId = currentNSSI['nssiId']
 
         // global-customer-id, service-type, service-instance-id, profile-id
-        AAIResourceUri sliceProfileUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(nssiId).sliceProfile(sliceProfileContainsSNSSAI.getProfileId()))
+        AAIResourceUri sliceProfileUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(nssiId).sliceProfile(sliceProfileContainsSNSSAI.getProfileId()))
 
         try {
-            getAAIClient().delete(sliceProfileUri)
+            client.delete(sliceProfileUri)
         }catch(Exception e){
             exceptionUtil.buildAndThrowWorkflowException(execution, 25000, "Exception occured while Slice Profile Instance delete call: " + e.getMessage())
         }
@@ -979,23 +1002,176 @@ import javax.ws.rs.core.Response
 
 
     /**
-     * Updates operation status
+     * Prepares update resource operation status
      * @param execution
      */
-    void updateServiceOperationStatus(DelegateExecution execution) {
+    void prepareUpdateResourceOperationStatus(DelegateExecution execution) {
         LOGGER.trace("${getPrefix()} Start updateServiceOperationStatus")
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
-        OperationStatus operationStatus = new OperationStatus()
-        operationStatus.setServiceId(currentNSSI['e2eServiceInstanceId'] as String)
-        operationStatus.setOperationId(currentNSSI['operationId'] as String)
-        operationStatus.setOperation(currentNSSI['operationType'] as String)
-        operationStatus.setResult(RequestsDbConstant.Status.FINISHED)
+        //Prepare Update Status for PUT failure and success
+        String isTimeOutVar = execution.getVariable("isTimeOut")
+        if(!isBlank(isTimeOutVar) && isTimeOutVar.equals("YES")) {
+            LOGGER.error("TIMEOUT - SO PUT Failure")
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "SO PUT Failure")
+        } else {
+            execution.setVariable("progress", "100")
+            execution.setVariable("status", "finished")
+            execution.setVariable("operationContent", "${getAction()} Core NSSI successful.")
+        }
 
-        requestDBUtil.prepareUpdateOperationStatus(execution, operationStatus)
+        setResourceOperationStatus(execution, "finished", "100", "Core NSSI ${getAction()} successful")
 
         LOGGER.trace("${getPrefix()} Exit updateServiceOperationStatus")
+    }
+
+
+    /**
+     * Prepares ResourceOperation status
+     * @param execution
+     * @param operationType
+     */
+    void setResourceOperationStatus(DelegateExecution execution, String status, String progress, String statusDesc) {
+        LOGGER.trace("${getPrefix()} Start setResourceOperationStatus")
+
+        def currentNSSI = execution.getVariable("currentNSSI")
+
+        String serviceId = currentNSSI['nssiId']
+        String jobId = execution.getVariable("jobId")
+        String nsiId = currentNSSI['nsiId']
+        String operationType = execution.getVariable("operationType")
+
+        ResourceOperationStatus resourceOperationStatus = new ResourceOperationStatus()
+        resourceOperationStatus.setServiceId(serviceId)
+        resourceOperationStatus.setOperationId(jobId)
+        resourceOperationStatus.setResourceTemplateUUID(nsiId)
+        resourceOperationStatus.setOperType(operationType)
+        resourceOperationStatus.setStatus(status)
+        resourceOperationStatus.setProgress(progress)
+        resourceOperationStatus.setStatusDescription(statusDesc)
+        requestDBUtil.prepareUpdateResourceOperationStatus(execution, resourceOperationStatus)
+
+        LOGGER.trace("${getPrefix()} Exit setResourceOperationStatus")
+    }
+
+
+    /**
+     * Prepares failed operation status update
+     * @param execution
+     */
+    void prepareFailedOperationStatusUpdate(DelegateExecution execution) {
+        LOGGER.trace("${getPrefix()} Start prepareFailedOperationStatusUpdate")
+
+        setResourceOperationStatus(execution, "failed", "0", "Core NSSI ${getAction()} Failed")
+
+        LOGGER.trace("${getPrefix()} Exit prepareFailedOperationStatusUpdate")
+    }
+
+
+    /**
+     * Gets progress status of ServiceInstance PUT operation
+     * @param execution
+     */
+    public void getPUTServiceInstanceProgress(DelegateExecution execution) {
+        LOGGER.trace("${getPrefix()} Start getPUTServiceInstanceProgress")
+
+        def currentNSSI = execution.getVariable("currentNSSI")
+
+        String url = currentNSSI['putServiceInstanceURL']
+
+        getProgress(execution, url, "putStatus")
+
+        LOGGER.trace("${getPrefix()} Exit getPUTServiceInstanceProgress")
+    }
+
+
+    void getProgress(DelegateExecution execution, String url, String statusVariableName) {
+        String msg=""
+        try {
+
+            ExternalAPIUtil externalAPIUtil = getExternalAPIUtilFactory().create()
+            Response response = externalAPIUtil.executeExternalAPIGetCall(execution, url)
+            int responseCode = response.getStatus()
+            execution.setVariable("GetServiceOrderResponseCode", responseCode)
+            LOGGER.debug("Get ServiceOrder response code is: " + responseCode)
+
+            String extApiResponse = response.readEntity(String.class)
+            JSONObject responseObj = new JSONObject(extApiResponse)
+            execution.setVariable("GetServiceOrderResponse", extApiResponse)
+            LOGGER.debug("Create response body is: " + extApiResponse)
+            //Process Response //200 OK 201 CREATED 202 ACCEPTED
+            if(responseCode == 200 || responseCode == 201 || responseCode == 202 )
+            {
+                LOGGER.debug("Get Create ServiceOrder Received a Good Response")
+                String orderState = responseObj.get("state")
+                if("REJECTED".equalsIgnoreCase(orderState)) {
+                    prepareFailedOperationStatusUpdate(execution)
+                    return
+                }
+
+                JSONArray items = responseObj.getJSONArray("orderItem")
+                JSONObject item = items.get(0)
+                JSONObject service = item.get("service")
+                String networkServiceId = service.get("id")
+                if (networkServiceId == null || networkServiceId.equals("null")) {
+                    prepareFailedOperationStatusUpdate(execution)
+                    return
+                }
+
+                execution.setVariable("networkServiceId", networkServiceId)
+                String serviceOrderState = item.get("state")
+                execution.setVariable("ServiceOrderState", serviceOrderState)
+                // Get serviceOrder State and process progress
+                if("ACKNOWLEDGED".equalsIgnoreCase(serviceOrderState)) {
+                    execution.setVariable(statusVariableName, "processing")
+                }
+                else if("INPROGRESS".equalsIgnoreCase(serviceOrderState)) {
+                    execution.setVariable(statusVariableName, "processing")
+                }
+                else if("COMPLETED".equalsIgnoreCase(serviceOrderState)) {
+                    execution.setVariable(statusVariableName, "completed")
+                }
+                else if("FAILED".equalsIgnoreCase(serviceOrderState)) {
+                    msg = "ServiceOrder failed"
+                    exceptionUtil.buildAndThrowWorkflowException(execution, 7000,  msg)
+                }
+                else {
+                    msg = "ServiceOrder failed"
+                    exceptionUtil.buildAndThrowWorkflowException(execution, 7000,  msg)
+                }
+            }
+            else{
+                msg = "Get ServiceOrder Received a Bad Response Code. Response Code is: " + responseCode
+                prepareFailedOperationStatusUpdate(execution)
+            }
+
+        }catch(Exception e){
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000,  e.getMessage())
+        }
+
+    }
+
+
+
+    /**
+     * Delays 5 sec
+     * @param execution
+     */
+    void timeDelay(DelegateExecution execution) {
+        LOGGER.trace("${getPrefix()} Start timeDelay")
+
+        try {
+            LOGGER.debug("${getPrefix()} timeDelay going to sleep for 5 sec")
+
+            Thread.sleep(5000)
+
+            LOGGER.debug("${getPrefix()} ::: timeDelay wakeup after 5 sec")
+        } catch(InterruptedException e) {
+            LOGGER.error("${getPrefix()} ::: timeDelay exception" + e)
+        }
+
+        LOGGER.trace("${getPrefix()} Exit timeDelay")
     }
 
 
@@ -1008,7 +1184,16 @@ import javax.ws.rs.core.Response
     }
 
 
+    ExternalAPIUtilFactory getExternalAPIUtilFactory() {
+        return new ExternalAPIUtilFactory()
+    }
+
+
     String getPrefix() {
         return PREFIX
+    }
+
+    String getAction() {
+        return ""
     }
 }

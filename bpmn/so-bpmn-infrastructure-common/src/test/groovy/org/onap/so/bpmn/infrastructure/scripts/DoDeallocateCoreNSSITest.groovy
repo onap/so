@@ -20,18 +20,18 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-
 import org.junit.Before
 import org.junit.Test
-import org.onap.aai.domain.yang.ServiceInstance
-import org.onap.aai.domain.yang.SliceProfile
-import org.onap.aai.domain.yang.SliceProfiles
-import org.onap.aaiclient.client.aai.AAIObjectType
+import org.mockito.Mockito
+import org.onap.aai.domain.yang.v19.*
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
+import org.onap.so.bpmn.common.scripts.ExternalAPIUtil
+import org.onap.so.bpmn.common.scripts.ExternalAPIUtilFactory
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
+
+import javax.ws.rs.core.Response
 
 import static org.junit.Assert.assertNotNull
 import static org.junit.Assert.assertTrue
@@ -262,5 +262,57 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
         spy.deleteNSSIServiceInstance(mockExecution)
     }
 
+
+    @Test
+    void testDeleteServiceOrderProgressAcknowledged() {
+
+        executeDeleteServiceOrderProgress("ACKNOWLEDGED")
+        Mockito.verify(mockExecution,times(1)).setVariable("deleteStatus", "processing")
+    }
+
+    @Test
+    void testDeleteServiceOrderProgressInProgress() {
+
+        executeDeleteServiceOrderProgress("INPROGRESS")
+        Mockito.verify(mockExecution,times(1)).setVariable("deleteStatus", "processing")
+    }
+
+
+    @Test
+    void testDeleteServiceOrderProgressCompleted() {
+
+        executeDeleteServiceOrderProgress("COMPLETED")
+        Mockito.verify(mockExecution,times(1)).setVariable("deleteStatus", "completed")
+    }
+
+
+    void executeDeleteServiceOrderProgress(String state) {
+        def currentNSSI = [:]
+
+        when(mockExecution.getVariable("currentNSSI")).thenReturn(currentNSSI)
+
+        String url = "http://nbi.onap:8088/api/v4/serviceOrder/NS-777"
+
+        currentNSSI.put("deleteServiceOrderURL", url)
+
+        DoDeallocateCoreNSSI spy = spy(DoDeallocateCoreNSSI.class)
+
+        ExternalAPIUtilFactory externalAPIUtilFactoryMock = mock(ExternalAPIUtilFactory.class)
+        when(spy.getExternalAPIUtilFactory()).thenReturn(externalAPIUtilFactoryMock)
+
+        ExternalAPIUtil externalAPIUtilMock = mock(ExternalAPIUtil.class)
+
+        when(externalAPIUtilFactoryMock.create()).thenReturn(externalAPIUtilMock)
+
+        Response responseMock = mock(Response.class)
+        when(externalAPIUtilMock.executeExternalAPIGetCall(mockExecution, url)).thenReturn(responseMock)
+
+        when(responseMock.getStatus()).thenReturn(200)
+
+        String entity = "{\"state\":\"ACCEPTED\",\"orderItem\":[{\"service\":{\"id\":\"5G-999\"},\"state\":\"${state}\"}]}"
+        when(responseMock.readEntity(String.class)).thenReturn(entity)
+
+        spy.getDeleteServiceOrderProgress(mockExecution)
+    }
 
 }
