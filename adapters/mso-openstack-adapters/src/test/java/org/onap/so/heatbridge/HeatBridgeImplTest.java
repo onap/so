@@ -41,6 +41,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -65,6 +66,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.L3InterfaceIpv6AddressList;
 import org.onap.aai.domain.yang.LInterface;
@@ -131,6 +133,7 @@ public class HeatBridgeImplTest {
     @Mock
     private Server server;
 
+    @Spy
     @InjectMocks
     private HeatBridgeImpl heatbridge = new HeatBridgeImpl(resourcesClient, cloudIdentity, CLOUD_OWNER, REGION_ID,
             REGION_ID, TENANT_ID, NodeType.GREENFIELD);
@@ -460,6 +463,63 @@ public class HeatBridgeImplTest {
         // Assert #2
         verify(transaction, times(4)).createIfNotExists(any(AAIResourceUri.class), any(Optional.class));
 
+    }
+
+    @Test
+    public void testUpdateLInterfaceVlan() throws HeatBridgeException {
+        // Arrange
+        List<Resource> stackResources = (List<Resource>) extractTestStackResources();
+        Port port = mock(Port.class);
+        when(port.getId()).thenReturn("test-port-id");
+        when(port.getName()).thenReturn("test-port-name");
+        when(port.getvNicType()).thenReturn(HeatBridgeConstants.OS_SRIOV_PORT_TYPE);
+        when(port.getMacAddress()).thenReturn("78:4f:43:68:e2:78");
+        when(port.getNetworkId()).thenReturn("890a203a-23gg-56jh-df67-731656a8f13a");
+        when(port.getDeviceId()).thenReturn("test-device-id");
+
+        LInterface lIf = new LInterface();
+        lIf.setInterfaceId("test-port-id");
+        lIf.setInterfaceType("SRIOV");
+        lIf.setInterfaceName("name");
+
+        String pfPciId = "0000:08:00.0";
+        when(port.getProfile()).thenReturn(ImmutableMap.of(HeatBridgeConstants.OS_PCI_SLOT_KEY, pfPciId,
+                HeatBridgeConstants.OS_PHYSICAL_NETWORK_KEY, "physical_network_id"));
+
+        IP ip = mock(IP.class);
+
+        Set<IP> ipSet = new HashSet<>();
+        ipSet.add(ip);
+        when(ip.getIpAddress()).thenReturn("2606:ae00:2e60:100::226");
+        when(ip.getSubnetId()).thenReturn("testSubnetId");
+        when(port.getFixedIps()).thenAnswer(x -> ipSet);
+
+        Subnet subnet = mock(Subnet.class);
+        when(subnet.getCidr()).thenReturn("169.254.100.0/24");
+        when(osClient.getSubnetById("testSubnetId")).thenReturn(subnet);
+
+        Network network = mock(Network.class);
+        when(network.getId()).thenReturn("test-network-id");
+        when(network.getNetworkType()).thenReturn(NetworkType.VLAN);
+        when(network.getProviderSegID()).thenReturn("2345");
+        when(network.getProviderPhyNet()).thenReturn("ovsnet");
+        doNothing().when(heatbridge).processOVS(any(), any(), any());
+
+        when(osClient.getNetworkById(anyString())).thenReturn(network);
+
+        SriovPf sriovPf = new SriovPf();
+        sriovPf.setPfPciId(pfPciId);
+        PInterface pIf = mock(PInterface.class);
+        when(pIf.getInterfaceName()).thenReturn("test-port-id");
+        when(resourcesClient.get(eq(PInterface.class), any(AAIResourceUri.class))).thenReturn(Optional.of(pIf));
+
+        // Act
+        heatbridge.updateLInterfaceVlan(port, lIf, "hostname");
+
+        // Assert
+        verify(transaction, times(2)).createIfNotExists(any(AAIResourceUri.class), any(Optional.class));
+        verify(osClient, times(1)).getNetworkById(anyString());
+        verify(heatbridge, times(0)).processOVS(any(), any(), any());
     }
 
     @Test

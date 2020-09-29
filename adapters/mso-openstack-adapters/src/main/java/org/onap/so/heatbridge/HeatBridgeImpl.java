@@ -466,7 +466,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
         resourcesClient.createIfNotExists(uri, Optional.of(pInterface));
     }
 
-    private void updateLInterfaceVlan(final Port port, final LInterface lIf, final String hostName)
+    protected void updateLInterfaceVlan(final Port port, final LInterface lIf, final String hostName)
             throws HeatBridgeException {
         // add back all vlan logic
         Vlan vlan = new Vlan();
@@ -486,11 +486,13 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                             Optional.of(vlan));
         }
 
-        if (nodeType == NodeType.GREENFIELD) {
-            validatePhysicalNetwork(port, network);
-            processOVS(lIf, hostName, NodeType.GREENFIELD.getInterfaceName());
-        } else {
-            processOVS(lIf, hostName, NodeType.BROWNFIELD.getInterfaceName());
+        if (!lIf.getInterfaceType().equals(SRIOV)) {
+            if (nodeType == NodeType.GREENFIELD) {
+                validatePhysicalNetwork(port, network);
+                processOVS(lIf, hostName, NodeType.GREENFIELD.getInterfaceName());
+            } else {
+                processOVS(lIf, hostName, NodeType.BROWNFIELD.getInterfaceName());
+            }
         }
 
         List<String> privateVlans = (ArrayList<String>) port.getProfile().get(PRIVATE_VLANS);
