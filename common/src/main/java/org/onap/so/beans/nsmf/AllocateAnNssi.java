@@ -22,14 +22,16 @@ package org.onap.so.beans.nsmf;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
+import java.io.Serializable;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
-public class AllocateAnNssi {
+public class AllocateAnNssi implements Serializable {
 
     @Deprecated
     public final static String URL = "/api/rest/provMns/v1/an/NSS" + "/SliceProfiles";
+    private static final long serialVersionUID = 4925129853421138442L;
 
     private String nsstId;
 

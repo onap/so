@@ -21,9 +21,12 @@
 package org.onap.so.beans.nsmf;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.io.Serializable;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class NsiInfo {
+public class NsiInfo implements Serializable {
+
+    private static final long serialVersionUID = -8432406430744875618L;
 
     private String nsiName;
 

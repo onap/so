@@ -59,8 +59,8 @@ public class AaiServiceProviderImpl implements AaiServiceProvider {
     public EsrSystemInfoList invokeGetThirdPartySdncEsrSystemInfo(String sdncId) {
         return aaiClientProvider.getAaiClient()
                 .get(EsrSystemInfoList.class,
-                        AAIUriFactory
-                                .createResourceUri(AAIFluentTypeBuilder.externalSystem().esrThirdpartySdnc((sdncId))))
+                        AAIUriFactory.createResourceUri(
+                                AAIFluentTypeBuilder.externalSystem().esrThirdpartySdnc((sdncId)).esrSystemInfoList()))
                 .orElseGet(() -> {
                     logger.debug("VNFM not found in AAI");
                     return null;

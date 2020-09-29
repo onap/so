@@ -21,9 +21,12 @@
 package org.onap.so.beans.nsmf;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.io.Serializable;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class JobStatusResponse {
+public class JobStatusResponse implements Serializable {
+
+    private static final long serialVersionUID = -2039407266985403172L;
 
     private ResponseDescriptor responseDescriptor;
 
