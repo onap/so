@@ -21,9 +21,12 @@
 package org.onap.so.beans.nsmf;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.io.Serializable;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PerfReqEmbb {
+public class PerfReqEmbb implements Serializable {
+
+    private static final long serialVersionUID = 8886635511695277599L;
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private int expDataRateDL;

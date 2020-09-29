@@ -21,9 +21,12 @@
 package org.onap.so.beans.nsmf;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.io.Serializable;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PerfReqUrllc {
+public class PerfReqUrllc implements Serializable {
+
+    private static final long serialVersionUID = 3133479142915485943L;
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private int e2eLatency;

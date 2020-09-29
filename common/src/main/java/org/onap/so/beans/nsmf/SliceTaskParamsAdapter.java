@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.io.Serializable;
 import java.util.Map;
 
 
@@ -35,7 +36,8 @@ import java.util.Map;
 @AllArgsConstructor
 @ToString
 @Builder
-public class SliceTaskParamsAdapter {
+public class SliceTaskParamsAdapter implements Serializable {
+
     private static final long serialVersionUID = -7785578865170503301L;
 
     private String serviceId;
