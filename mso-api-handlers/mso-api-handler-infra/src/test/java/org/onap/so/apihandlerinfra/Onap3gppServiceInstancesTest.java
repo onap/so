@@ -55,9 +55,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class Onap3gppServiceInstancesTest extends BaseTest {
 
-    private String onap3gppServicesUri = "/onap/so/infra/onap3gppServiceInstances/";
+    private static final String ONAP3GPPSERVICES_URI = "/onap/so/infra/3gppservices/";
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Autowired
     private Onap3gppServiceInstances objUnderTest;
@@ -74,11 +74,11 @@ public class Onap3gppServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlPathEqualTo("/service/search/findFirstByModelNameOrderByModelVersionDesc"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(MAPPER.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlPathEqualTo("/serviceRecipe/search/findFirstByServiceModelUUIDAndAction"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(serviceRecipe)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(MAPPER.writeValueAsString(serviceRecipe)).withStatus(HttpStatus.SC_OK)));
         wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests/")).willReturn(aResponse()
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_OK)));
         Mockito.doReturn(null).when(requestsDbClient).getInfraActiveRequestbyRequestId(Mockito.any());
@@ -107,7 +107,7 @@ public class Onap3gppServiceInstancesTest extends BaseTest {
 
     @Test
     public void createServiceInstanceTest() throws IOException {
-        String uri = onap3gppServicesUri + "v1/allocate";
+        String uri = ONAP3GPPSERVICES_URI + "v1/allocate";
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/commonNssmfTest")).willReturn(
                 aResponse().withHeader("Content-Type", "application/json").withBodyFile("Camunda/BPMN_response.json")
                         .withStatus(org.apache.http.HttpStatus.SC_ACCEPTED)));
@@ -123,7 +123,7 @@ public class Onap3gppServiceInstancesTest extends BaseTest {
 
     @Test
     public void updateServiceInstanceTest() throws IOException {
-        String uri = onap3gppServicesUri + "v1/modify";
+        String uri = ONAP3GPPSERVICES_URI + "v1/modify";
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/commonNssmfTest")).willReturn(
                 aResponse().withHeader("Content-Type", "application/json").withBodyFile("Camunda/BPMN_response.json")
                         .withStatus(org.apache.http.HttpStatus.SC_ACCEPTED)));
@@ -139,7 +139,7 @@ public class Onap3gppServiceInstancesTest extends BaseTest {
 
     @Test
     public void deleteServiceInstanceTest() throws IOException {
-        String uri = onap3gppServicesUri + "v1/deAllocate";
+        String uri = ONAP3GPPSERVICES_URI + "v1/deAllocate";
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/commonNssmfTest")).willReturn(
                 aResponse().withHeader("Content-Type", "application/json").withBodyFile("Camunda/BPMN_response.json")
                         .withStatus(org.apache.http.HttpStatus.SC_ACCEPTED)));
@@ -154,7 +154,7 @@ public class Onap3gppServiceInstancesTest extends BaseTest {
 
     @Test
     public void activateServiceInstanceTest() throws IOException {
-        String uri = onap3gppServicesUri + "v1/activate";
+        String uri = ONAP3GPPSERVICES_URI + "v1/activate";
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/commonNssmfTest")).willReturn(
                 aResponse().withHeader("Content-Type", "application/json").withBodyFile("Camunda/BPMN_response.json")
                         .withStatus(org.apache.http.HttpStatus.SC_ACCEPTED)));
@@ -169,7 +169,7 @@ public class Onap3gppServiceInstancesTest extends BaseTest {
 
     @Test
     public void deActivateServiceInstance() throws IOException {
-        String uri = onap3gppServicesUri + "v1/deActivate";
+        String uri = ONAP3GPPSERVICES_URI + "v1/deActivate";
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/commonNssmfTest")).willReturn(
                 aResponse().withHeader("Content-Type", "application/json").withBodyFile("Camunda/BPMN_response.json")
                         .withStatus(org.apache.http.HttpStatus.SC_ACCEPTED)));
@@ -185,7 +185,7 @@ public class Onap3gppServiceInstancesTest extends BaseTest {
     @Test
     public void getSliceSubnetCapabilitiesTest() throws IOException, ApiException {
         String request = "{\"subnetTypes\":[\"AN\"]}";
-        QuerySubnetCapability subnetCapabilityRequest = mapper.readValue(request, QuerySubnetCapability.class);
+        QuerySubnetCapability subnetCapabilityRequest = MAPPER.readValue(request, QuerySubnetCapability.class);
         String expectedResponse =
                 "{\"AN\":{\"latency\":\"5\",\"maxNumberofUEs\":\"100\",\"maxThroughput\":\"150\",\"terminalDensity\":\"50\"}}";
         Response response = objUnderTest.getSliceSubnetCapabilities(subnetCapabilityRequest, "v1");
