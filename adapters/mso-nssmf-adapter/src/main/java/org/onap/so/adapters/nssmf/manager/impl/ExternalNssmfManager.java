@@ -127,8 +127,8 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
         return restUtil.send(nssmfUrl, this.httpMethod, content, header);
     }
 
-    private void updateRequestDbJobStatus(ResponseDescriptor rspDesc, ResourceOperationStatus status, RestResponse rsp)
-            throws ApplicationException {
+    protected void updateRequestDbJobStatus(ResponseDescriptor rspDesc, ResourceOperationStatus status,
+            RestResponse rsp) throws ApplicationException {
 
         switch (fromString(rspDesc.getStatus())) {
             case STARTED:
