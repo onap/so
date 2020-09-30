@@ -26,6 +26,7 @@ import org.mockito.Mockito
 import org.onap.aai.domain.yang.v19.*
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.common.scripts.ExternalAPIUtil
 import org.onap.so.bpmn.common.scripts.ExternalAPIUtilFactory
@@ -153,31 +154,6 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
 
 
     @Test
-    void testGetNSSIAssociatedProfiles() {
-        def currentNSSI = [:]
-        when(mockExecution.getVariable("currentNSSI")).thenReturn(currentNSSI)
-
-        ServiceInstance nssi = new ServiceInstance()
-        nssi.setServiceInstanceId("5G-999")
-
-        SliceProfiles sliceProfiles = new SliceProfiles()
-
-        List<SliceProfile> slProfiles = sliceProfiles.getSliceProfile()
-        slProfiles.add(new SliceProfile())
-        slProfiles.add(new SliceProfile())
-
-        nssi.setSliceProfiles(sliceProfiles)
-        currentNSSI.put("nssi", nssi)
-
-        DoDeallocateCoreNSSI obj = new DoDeallocateCoreNSSI()
-        obj.getNSSIAssociatedProfiles(mockExecution)
-
-        List<SliceProfile> associatedProfiles = (List<SliceProfile>)currentNSSI.get("associatedProfiles")
-        assertTrue("Either associatedProfiles doesn't exist or size is incorrect", (associatedProfiles != null && associatedProfiles.size() == 2))
-    }
-
-
-    @Test
     void testCalculateSNSSAI() {
         def currentNSSI = [:]
         when(mockExecution.getVariable("currentNSSI")).thenReturn(currentNSSI)
@@ -232,9 +208,30 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
         currentNSSI.put("nsiId", nsiId)
 
         AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+
+        ServiceInstance nssi = new ServiceInstance()
+        nssi.setServiceInstanceId(nssiId)
+
+        AllottedResources allottedResources = new AllottedResources()
+        AllottedResource allottedResource = new AllottedResource()
+        allottedResource.setId(UUID.randomUUID().toString())
+        allottedResources.getAllottedResource().add(allottedResource)
+        nssi.setAllottedResources(allottedResources)
+
+        currentNSSI.put("nssi", nssi)
+
         AAIResourceUri nsiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nsiId))
 
-        doNothing().when(client).disconnect(nssiUri, nsiUri)
+        doNothing().when(client).update(nssiUri, nssi)
+
+        String globalSubscriberId = "globalSubscriberId"
+        String subscriptionServiceType = "subscription-service-type"
+        when(mockExecution.getVariable("globalSubscriberId")).thenReturn(globalSubscriberId)
+        when(mockExecution.getVariable("subscriptionServiceType")).thenReturn(subscriptionServiceType)
+
+        AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(nssiId).allottedResource(allottedResource.getId()))
+
+        doNothing().when(client).disconnect(nsiUri, allottedResourceUri)
 
         spy.removeNSSIAssociationWithNSI(mockExecution)
 
