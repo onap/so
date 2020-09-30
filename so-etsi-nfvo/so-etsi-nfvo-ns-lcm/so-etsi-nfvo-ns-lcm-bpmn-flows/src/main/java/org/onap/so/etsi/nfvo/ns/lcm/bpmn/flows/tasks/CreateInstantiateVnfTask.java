@@ -146,11 +146,9 @@ public class CreateInstantiateVnfTask extends AbstractNetworkServiceTask {
             setJobStatus(execution, IN_PROGRESS,
                     "Invoking SOL003 adapter for creating and instantiating VNF: " + request.getVnfName());
 
-            final String nsInstId = (String) execution.getVariable(NS_INSTANCE_ID_PARAM_NAME);
-            final NfvoNsInst nfvoNsInst = getNfvoNsInst(execution, nsInstId);
             final CreateVnfRequest vnfRequest = new CreateVnfRequest();
             vnfRequest.setTenant(request.getTenant());
-            vnfRequest.setName(nfvoNsInst.getName() + "." + request.getVnfName());
+            vnfRequest.setName(request.getVnfName());
             vnfRequest.setPkgId(request.getVnfPkgId());
             vnfRequest.setAdditionalParams(request.getAdditionalParams());
             final String vnfId = (String) execution.getVariable(NF_INST_ID_PARAM_NAME);

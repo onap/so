@@ -271,7 +271,7 @@ public class InstantiateNsTaskTest extends BaseTest {
         for (final Entry<String, String> entry : VNFD_ID_TO_VNFPKG_ID_MAPPING.entrySet()) {
             instantiateNsRequest
                     .addAdditionalParamsForVnfItem(new NsInstancesnsInstanceIdinstantiateAdditionalParamsForVnf()
-                            .vnfProfileId(entry.getValue()).additionalParams(additionalParams));
+                            .vnfProfileId(entry.getKey()).additionalParams(additionalParams));
         }
 
         return instantiateNsRequest;

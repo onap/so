@@ -22,17 +22,16 @@ package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.tasks;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.INSTANTIATE_NS_REQUEST_PARAM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.NETWORK_SERVICE_DESCRIPTOR_PARAM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.NS_INSTANCE_ID_PARAM_NAME;
-import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.OCC_ID_PARAM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.VNF_CREATE_INSTANTIATE_REQUESTS;
 import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobStatusEnum.FINISHED;
 import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobStatusEnum.IN_PROGRESS;
 import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobStatusEnum.STARTED;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.apache.commons.lang.StringUtils;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.Tenant;
 import org.onap.so.adapters.etsisol003adapter.pkgm.extclients.etsicatalog.model.NsdInfo;
@@ -43,8 +42,6 @@ import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.nsd.NetworkServiceDescriptor;
 import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.nsd.VirtualNetworkFunction;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoNfInst;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoNsInst;
-import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NsLcmOpOcc;
-import org.onap.so.etsi.nfvo.ns.lcm.database.beans.OperationStateEnum;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.State;
 import org.onap.so.etsi.nfvo.ns.lcm.database.service.DatabaseServiceProvider;
 import org.onap.so.etsi.nfvo.ns.lcm.model.InstantiateNsRequest;
@@ -144,7 +141,7 @@ public class InstantiateNsTask extends AbstractNetworkServiceTask {
             final Optional<NetworkServiceDescriptor> optional =
                     etsiCatalogPackageManagementServiceProvider.getNetworkServiceDescriptor(nsPackageId);
 
-            if (!optional.isPresent()) {
+            if (optional.isEmpty()) {
                 final String message = "Unable to parse NSD " + nsPackageId;
                 logger.error(message);
                 abortOperation(execution, message);
@@ -172,6 +169,7 @@ public class InstantiateNsTask extends AbstractNetworkServiceTask {
         final NetworkServiceDescriptor networkServiceDescriptor =
                 (NetworkServiceDescriptor) execution.getVariable(NETWORK_SERVICE_DESCRIPTOR_PARAM_NAME);
         final String nsInstId = (String) execution.getVariable(NS_INSTANCE_ID_PARAM_NAME);
+        final NfvoNsInst nfvoNsInst = getNfvoNsInst(execution, nsInstId);
 
         final InstantiateNsRequest instantiateNsRequest =
                 (InstantiateNsRequest) execution.getVariable(INSTANTIATE_NS_REQUEST_PARAM_NAME);
@@ -195,17 +193,36 @@ public class InstantiateNsTask extends AbstractNetworkServiceTask {
                 abortOperation(execution, message);
             }
 
-            final Optional<Tenant> optional = getTenant(vnfPkgId, additionalParamsForVnfList);
-            if (!optional.isPresent()) {
+            final Optional<NsInstancesnsInstanceIdinstantiateAdditionalParamsForVnf> additionalParamsForVnfOptional =
+                    getAdditionalParamsForVnf(vnfdId, additionalParamsForVnfList);
+
+            if (additionalParamsForVnfOptional.isEmpty()) {
+                final String message = "Unable to find AdditionalParamsForVnf for " + vnfdId
+                        + " in instantiateNsRequest : " + instantiateNsRequest;
+                abortOperation(execution, message);
+            }
+
+            final NsInstancesnsInstanceIdinstantiateAdditionalParamsForVnf additionalParamsForVnf =
+                    additionalParamsForVnfOptional.get();
+
+            @SuppressWarnings("unchecked")
+            final Map<String, String> additionalParams =
+                    (Map<String, String>) additionalParamsForVnf.getAdditionalParams();
+
+            final Optional<Tenant> optional = getTenant(additionalParams);
+            if (optional.isEmpty()) {
                 final String message = "Unable to find Tenant information for " + vnfdId + " in instantiateNsRequest : "
                         + instantiateNsRequest;
                 abortOperation(execution, message);
             }
 
-            final Tenant tenant = optional.get();
-            final CreateInstantiateRequest createInstantiateRequest = new CreateInstantiateRequest().nsInstId(nsInstId)
-                    .vnfdId(vnfdId).vnfName(vnf.getVnfName()).vnfPkgId(vnfPkgId).nfType(vnfmInfoList.get(0))
-                    .tenant(tenant).additionalParams(getAdditionalParams(vnfPkgId, additionalParamsForVnfList));
+            final String vnfInstanceName = additionalParamsForVnf.getVnfInstanceName();
+            final String vnfName = StringUtils.isNotBlank(vnfInstanceName) ? vnfInstanceName
+                    : nfvoNsInst.getName() + "." + vnf.getVnfName();
+
+            final CreateInstantiateRequest createInstantiateRequest =
+                    new CreateInstantiateRequest().nsInstId(nsInstId).vnfdId(vnfdId).vnfName(vnfName).vnfPkgId(vnfPkgId)
+                            .nfType(vnfmInfoList.get(0)).tenant(optional.get()).additionalParams(additionalParams);
 
             logger.info("Adding request to list: {}", createInstantiateRequest);
             requests.add(createInstantiateRequest);
@@ -233,7 +250,7 @@ public class InstantiateNsTask extends AbstractNetworkServiceTask {
                 final Optional<VnfPkgInfo> optional =
                         etsiCatalogPackageManagementServiceProvider.getVnfPkgInfo(vnfPkgId);
 
-                if (!optional.isPresent()) {
+                if (optional.isEmpty()) {
                     final String message = "Unable to find VNF package using NS vnfPkgId: " + vnfPkgId;
                     logger.error(message);
                     abortOperation(execution, message);
@@ -306,50 +323,31 @@ public class InstantiateNsTask extends AbstractNetworkServiceTask {
         databaseServiceProvider.saveNfvoNsInst(nfvoNsInst);
     }
 
-    private Optional<Tenant> getTenant(final String vnfPkgId,
-            final List<NsInstancesnsInstanceIdinstantiateAdditionalParamsForVnf> additionalParamsForVnfList) {
-
-        final Optional<NsInstancesnsInstanceIdinstantiateAdditionalParamsForVnf> optional = additionalParamsForVnfList
-                .stream().filter(entry -> vnfPkgId.equals(entry.getVnfProfileId())).findFirst();
-
-        if (optional.isPresent()) {
-            final NsInstancesnsInstanceIdinstantiateAdditionalParamsForVnf additionalParamsForVnf = optional.get();
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> additionalParams =
-                    (Map<String, Object>) additionalParamsForVnf.getAdditionalParams();
-            final String vimId = (String) additionalParams.get("vim_id");
-            if (vimId != null) {
-                final String[] splitString = vimId.split("_");
-                if (splitString.length == 3) {
-                    logger.info("Found Tenant in instantiateNsRequest using vnfPkgId: {}", vnfPkgId);
-                    return Optional.of(new Tenant().cloudOwner(splitString[0]).regionName(splitString[1])
-                            .tenantId(splitString[2]));
-                }
-
+    private Optional<Tenant> getTenant(final Map<String, String> additionalParams) {
+        final String vimId = (String) additionalParams.get("vim_id");
+        if (vimId != null) {
+            final String[] splitString = vimId.split("_");
+            if (splitString.length == 3) {
+                logger.info("Found Tenant in additionalParams: {}", additionalParams);
+                return Optional.of(
+                        new Tenant().cloudOwner(splitString[0]).regionName(splitString[1]).tenantId(splitString[2]));
             }
-        }
 
-        logger.error("Unable to find Tenant in instantiateNsRequest using vnfPkgId: {}", vnfPkgId);
+        }
+        logger.error("Unable to find Tenant in additionalParams: {}", additionalParams);
         return Optional.empty();
     }
 
-    @SuppressWarnings("unchecked")
-    private Map<String, String> getAdditionalParams(final String vnfPkgId,
+    private Optional<NsInstancesnsInstanceIdinstantiateAdditionalParamsForVnf> getAdditionalParamsForVnf(
+            final String vnfdId,
             final List<NsInstancesnsInstanceIdinstantiateAdditionalParamsForVnf> additionalParamsForVnfList) {
-
-        final Optional<NsInstancesnsInstanceIdinstantiateAdditionalParamsForVnf> optional = additionalParamsForVnfList
-                .stream().filter(entry -> vnfPkgId.equals(entry.getVnfProfileId())).findFirst();
-
+        final Optional<NsInstancesnsInstanceIdinstantiateAdditionalParamsForVnf> optional =
+                additionalParamsForVnfList.stream().filter(entry -> vnfdId.equals(entry.getVnfProfileId())).findFirst();
         if (optional.isPresent()) {
-            final NsInstancesnsInstanceIdinstantiateAdditionalParamsForVnf additionalParamsForVnf = optional.get();
-            if (additionalParamsForVnf instanceof Map) {
-                logger.info("Found AdditionalParams in instantiateNsRequest using vnfPkgId: {}", vnfPkgId);
-                return (Map<String, String>) additionalParamsForVnf.getAdditionalParams();
-            }
+            logger.info("Found AdditionalParamsForVnf in instantiateNsRequest using vnfdId: {}", vnfdId);
+
         }
-
-        return Collections.emptyMap();
-
+        return optional;
     }
 
 }
