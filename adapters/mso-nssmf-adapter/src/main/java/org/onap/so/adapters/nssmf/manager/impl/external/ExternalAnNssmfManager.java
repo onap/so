@@ -30,6 +30,8 @@ import org.onap.so.adapters.nssmf.util.NssmfAdapterUtil;
 import org.onap.so.beans.nsmf.DeAllocateNssi;
 import org.onap.so.beans.nsmf.NssiResponse;
 import org.onap.so.beans.nsmf.NssmfAdapterNBIRequest;
+import org.onap.so.beans.nsmf.ResponseDescriptor;
+import org.onap.so.beans.nsmf.JobStatusResponse;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
 import java.util.HashMap;
 import java.util.Map;
@@ -72,7 +74,7 @@ public class ExternalAnNssmfManager extends ExternalNssmfManager {
             restResponse = returnRsp;
 
             ResourceOperationStatus status =
-                    new ResourceOperationStatus(serviceInfo.getNsiId(), nssiId, serviceInfo.getServiceUuid());
+                    new ResourceOperationStatus(serviceInfo.getNsiId(), resp.getJobId(), serviceInfo.getServiceUuid());
             status.setResourceInstanceID(nssiId);
 
             updateDbStatus(status, restResponse.getStatus(), JobStatus.FINISHED,
@@ -108,6 +110,24 @@ public class ExternalAnNssmfManager extends ExternalNssmfManager {
     public RestResponse activateNssi(NssmfAdapterNBIRequest nbiRequest, String snssai) throws ApplicationException {
         // TODO
         return null;
+    }
+
+    @Override
+    protected RestResponse doQueryJobStatus(ResourceOperationStatus status) throws ApplicationException {
+        ResponseDescriptor responseDescriptor = new ResponseDescriptor();
+        responseDescriptor.setStatus(JobStatus.FINISHED.toString());
+        responseDescriptor.setProgress(100);
+
+        JobStatusResponse jobStatusResponse = new JobStatusResponse();
+        jobStatusResponse.setResponseDescriptor(responseDescriptor);
+
+        RestResponse restResponse = new RestResponse();
+        restResponse.setStatus(200);
+        restResponse.setResponseContent(marshal(jobStatusResponse));
+
+        updateRequestDbJobStatus(responseDescriptor, status, restResponse);
+
+        return restResponse;
     }
 
     @Override

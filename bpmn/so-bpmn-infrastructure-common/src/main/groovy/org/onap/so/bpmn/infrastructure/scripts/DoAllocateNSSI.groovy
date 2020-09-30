@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.commons.lang3.StringUtils
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.beans.nsmf.EsrInfo
+import org.onap.so.beans.nsmf.JobStatusResponse
 import org.onap.so.beans.nsmf.NssiResponse
 import org.onap.so.beans.nsmf.NssmfAdapterNBIRequest
 import org.onap.so.beans.nsmf.ResponseDescriptor
@@ -17,7 +18,6 @@ import org.onap.so.bpmn.common.scripts.NssmfAdapterUtils
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.http.ResponseEntity
 
 
 class DoAllocateNSSI extends AbstractServiceTaskProcessor {
@@ -34,7 +34,7 @@ class DoAllocateNSSI extends AbstractServiceTaskProcessor {
 
     private static final NSSMF_ALLOCATE_URL = "/api/rest/provMns/v1/NSS/SliceProfiles"
 
-    private static final NSSMF_QUERY_JOB_STATUS_URL = "/NSS/jobs/%s"
+    private static final NSSMF_QUERY_JOB_STATUS_URL = "/api/rest/provMns/v1/NSS/jobs/%s"
 
     @Override
     void preProcessRequest(DelegateExecution execution) {
@@ -64,11 +64,12 @@ class DoAllocateNSSI extends AbstractServiceTaskProcessor {
         NssmfAdapterNBIRequest nbiRequest = execution.getVariable("nbiRequest") as NssmfAdapterNBIRequest
         String response = nssmfAdapterUtils.sendPostRequestNSSMF(execution, NSSMF_ALLOCATE_URL,
                 objectMapper.writeValueAsString(nbiRequest))
-        ResponseEntity responseEntity = objectMapper.readValue(response, ResponseEntity.class)
-        String respBody = responseEntity.getBody()
-        NssiResponse result = objectMapper.readValue(respBody, NssiResponse.class)
-        //todo: if success
-        //todo:
+
+        if (response != null) {
+            NssiResponse nssiResponse = objectMapper.readValue(response, NssiResponse.class)
+            execution.setVariable("nssiAllocateResult", nssiResponse)
+        }
+
         execution.setVariable("serviceInfo", nbiRequest.getServiceInfo())
         execution.setVariable("esrInfo", nbiRequest.getEsrInfo())
     }
@@ -96,13 +97,14 @@ class DoAllocateNSSI extends AbstractServiceTaskProcessor {
         String response =
                 nssmfAdapterUtils.sendPostRequestNSSMF(execution, endpoint, objectMapper.writeValueAsString(nbiRequest))
 
-        ResponseEntity responseEntity = objectMapper.readValue(response, ResponseEntity.class)
-        String result = responseEntity.getBody()
-        //todo；if success
-        ResponseDescriptor responseDescriptor = objectMapper.readValue(result, ResponseDescriptor.class)
+        if (response != null) {
+            JobStatusResponse jobStatusResponse = objectMapper.readValue(response, JobStatusResponse.class)
+            execution.setVariable("nssiAllocateStatus", jobStatusResponse)
 
-        //todo: handle status
-        execution.setVariable("nssiAllocateResult", responseDescriptor)
+            if (jobStatusResponse.getResponseDescriptor().getProgress() == 100) {
+                execution.setVariable("jobFinished", true)
+            }
+        }
     }
 
     void prepareUpdateOrchestrationTask(DelegateExecution execution) {
@@ -111,9 +113,9 @@ class DoAllocateNSSI extends AbstractServiceTaskProcessor {
 
         SliceTaskParamsAdapter sliceParams =
                 execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
-        ResponseDescriptor response = execution.getVariable("nssiAllocateResult") as ResponseDescriptor
+        JobStatusResponse jobStatusResponse = execution.getVariable("nssiAllocateStatus") as JobStatusResponse
+        ResponseDescriptor response = jobStatusResponse.getResponseDescriptor()
         SubnetType subnetType = execution.getVariable("subnetType") as SubnetType
-
 
         SliceTaskInfo sliceTaskInfo = execution.getVariable("sliceTaskInfo") as SliceTaskInfo
         sliceTaskInfo.progress = response.getProgress()
@@ -127,6 +129,7 @@ class DoAllocateNSSI extends AbstractServiceTaskProcessor {
 
         execution.setVariable("sliceTaskParams", sliceParams)
         execution.setVariable("sliceTaskInfo", sliceTaskInfo)
+
         logger.debug("Finish prepareUpdateOrchestrationTask progress")
     }
 

@@ -141,7 +141,9 @@ public abstract class BaseNssmfManager implements NssmfManager {
     public RestResponse queryJobStatus(NssmfAdapterNBIRequest jobReq, String jobId) throws ApplicationException {
         this.params.clear();
         this.params.put("jobId", jobId);
-        this.params.put("responseId", jobReq.getResponseId());
+        if (jobReq.getResponseId() != null) {
+            this.params.put("responseId", jobReq.getResponseId());
+        }
         this.urlHandler();
 
         /**
