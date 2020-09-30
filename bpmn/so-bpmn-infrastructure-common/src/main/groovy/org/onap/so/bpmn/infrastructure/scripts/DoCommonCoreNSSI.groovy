@@ -246,11 +246,61 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
     void getNSSIAssociatedProfiles(DelegateExecution execution) {
         LOGGER.trace("${getPrefix()} Start getNSSIAssociatedProfiles")
 
+        List<SliceProfile> associatedProfiles = new ArrayList<>()
+
+        AAIResourcesClient client = getAAIClient()
+
         def currentNSSI = execution.getVariable("currentNSSI")
 
         ServiceInstance nssi = (ServiceInstance)currentNSSI['nssi']
 
-        List<SliceProfile> associatedProfiles = nssi.getSliceProfiles().getSliceProfile()
+        String nssiId = currentNSSI['nssiId']
+
+        // NSSI
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+        AAIResultWrapper nssiWrapper = client.get(nssiUri)
+        Optional<Relationships> nssiRelationships = nssiWrapper.getRelationships()
+
+        if (nssiRelationships.isPresent()) {
+            // Allotted Resource
+            for (AAIResourceUri allottedResourceUri : nssiRelationships.get().getRelatedUris(Types.ALLOTTED_RESOURCE)) {
+                AAIResultWrapper arWrapper = client.get(allottedResourceUri)
+                Optional<Relationships> arRelationships = arWrapper.getRelationships()
+
+                boolean isFound = false
+                if(arRelationships.isPresent()) {
+                    // Slice Profile Instance
+                    for (AAIResourceUri sliceProfileInstanceUri : arRelationships.get().getRelatedUris(Types.SERVICE_INSTANCE)) {
+                        Optional<ServiceInstance> sliceProfileInstanceOpt = client.get(ServiceInstance.class, sliceProfileInstanceUri)
+
+                        if (sliceProfileInstanceOpt.isPresent()) {
+                            ServiceInstance sliceProfileInstance = sliceProfileInstanceOpt.get()
+                            if(sliceProfileInstance.getServiceRole().equals("slice-profile-instance")) { // Service instance as a Slice Profile Instance
+                                associatedProfiles = sliceProfileInstance.getSliceProfiles()?.getSliceProfile()
+
+                                currentNSSI['sliceProfileInstanceUri'] = sliceProfileInstanceUri
+
+                                isFound = true
+                                break // Should be only one
+                            }
+                        }
+                        else {
+                            exceptionUtil.buildAndThrowWorkflowException(execution, 500, "No Slice Profile Instance found")
+                        }
+                    }
+                }
+                else {
+                    exceptionUtil.buildAndThrowWorkflowException(execution, 500, "No relationships found for Allotted Resource")
+                }
+
+                if(isFound) {
+                    break
+                }
+            }
+        }
+        else {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 500, "No relationships  found for nssi id = " + nssiId)
+        }
 
         if(associatedProfiles.isEmpty()) {
             String msg = String.format("No associated profiles found for NSSI %s in AAI", nssi.getServiceInstanceId())
@@ -587,13 +637,13 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @param constituteVnf
      * @return List<VfModules>
      */
-    List<VfModules> prepareVfModules(DelegateExecution execution, GenericVnf constituteVnf) {
+    List<org.onap.so.serviceinstancebeans.VfModules> prepareVfModules(DelegateExecution execution, GenericVnf constituteVnf) {
 
         AAIResourcesClient client = getAAIClient()
 
-        List<VfModules> vfModuless = new ArrayList<>()
+        List<org.onap.so.serviceinstancebeans.VfModules> vfModuless = new ArrayList<>()
         for (VfModule vfModule : constituteVnf.getVfModules().getVfModule()) {
-            VfModules vfmodules = new VfModules()
+            org.onap.so.serviceinstancebeans.VfModules vfmodules = new org.onap.so.serviceinstancebeans.VfModules()
 
             ModelInfo vfModuleModelInfo = new ModelInfo()
             vfModuleModelInfo.setModelInvariantUuid(vfModule.getModelInvariantId())
@@ -703,7 +753,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
         Vnfs vnf = new Vnfs()
 
         // Line of Business
-        LineOfBusiness lob = new LineOfBusiness()
+        org.onap.so.serviceinstancebeans.LineOfBusiness lob = new org.onap.so.serviceinstancebeans.LineOfBusiness()
         lob.setLineOfBusinessName("VNF")
         vnf.setLineOfBusiness(lob)
 
@@ -739,8 +789,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * Prepare Service
      * @return Service
      */
-    Service prepareService(DelegateExecution execution, ServiceInstance networkServiceInstance, ModelInfo modelInfo) {
-        Service service = new Service()
+    org.onap.so.serviceinstancebeans.Service prepareService(DelegateExecution execution, ServiceInstance networkServiceInstance, ModelInfo modelInfo) {
+        org.onap.so.serviceinstancebeans.Service service = new org.onap.so.serviceinstancebeans.Service()
 
         // Model Info
         service.setModelInfo(prepareServiceModelInfo(networkServiceInstance, modelInfo))
@@ -793,21 +843,21 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @param execution
      * @return OwningEntity
      */
-    OwningEntity prepareOwningEntity(DelegateExecution execution) {
+    org.onap.so.serviceinstancebeans.OwningEntity prepareOwningEntity(DelegateExecution execution) {
         def currentNSSI = execution.getVariable("currentNSSI")
 
         AAIResourcesClient client = getAAIClient()
 
         AAIResourceUri networkServiceInstanceUri = (AAIResourceUri)currentNSSI['networkServiceInstanceUri']
 
-        OwningEntity owningEntity = new OwningEntity()
+        org.onap.so.serviceinstancebeans.OwningEntity owningEntity = new org.onap.so.serviceinstancebeans.OwningEntity()
         AAIResultWrapper wrapper = client.get(networkServiceInstanceUri)
         Optional<Relationships> owningEntityRelationshipsOps = wrapper.getRelationships()
         if (owningEntityRelationshipsOps.isPresent()) {
             List<AAIResourceUri> owningEntityRelatedAAIUris = owningEntityRelationshipsOps.get().getRelatedUris(Types.OWNING_ENTITY)
 
             if (!(owningEntityRelatedAAIUris == null || owningEntityRelatedAAIUris.isEmpty())) {
-                Optional<org.onap.aai.domain.yang.OwningEntity> owningEntityOpt = client.get(org.onap.aai.domain.yang.OwningEntity.class, owningEntityRelatedAAIUris.get(0)) // Many-To-One relation
+                Optional<org.onap.aai.domain.yang.OwningEntity> owningEntityOpt = client.get(org.onap.aai.domain.yang.v19.OwningEntity.class, owningEntityRelatedAAIUris.get(0)) // Many-To-One relation
                 if (owningEntityOpt.isPresent()) {
                     owningEntity.setOwningEntityId(owningEntityOpt.get().getOwningEntityId())
                     owningEntity.setOwningEntityName(owningEntityOpt.get().getOwningEntityName())
@@ -825,12 +875,12 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @param execution
      * @return Project
      */
-    Project prepareProject(DelegateExecution execution) {
+    org.onap.so.serviceinstancebeans.Project prepareProject(DelegateExecution execution) {
         def currentNSSI = execution.getVariable("currentNSSI")
 
         AAIResourcesClient client = getAAIClient()
 
-        Project project = new Project()
+        org.onap.so.serviceinstancebeans.Project project = new org.onap.so.serviceinstancebeans.Project()
 
         AAIResourceUri cloudRegionRelatedAAIUri = (AAIResourceUri)currentNSSI['cloudRegionRelatedAAIUri']
 
@@ -840,7 +890,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
             if (cloudRegionOps.isPresent()) {
                 List<AAIResourceUri> projectAAIUris = cloudRegionOps.get().getRelatedUris(Types.PROJECT)
                 if (!(projectAAIUris == null || projectAAIUris.isEmpty())) {
-                    Optional<org.onap.aai.domain.yang.Project> projectOpt = client.get(org.onap.aai.domain.yang.Project.class, projectAAIUris.get(0))
+                    Optional<org.onap.aai.domain.yang.Project> projectOpt = client.get(org.onap.aai.domain.yang.v19.Project.class, projectAAIUris.get(0))
                     if (projectOpt.isPresent()) {
                         project.setProjectName(projectOpt.get().getProjectName())
                     }
@@ -950,22 +1000,48 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
-        ServiceInstance nssi = (ServiceInstance)currentNSSI['nssi']
-
         String nssiId = currentNSSI['nssiId']
         AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
 
-        List<SliceProfile> associatedProfiles = nssi.getSliceProfiles().getSliceProfile()
+        AAIResourceUri sliceProfileInstanceUri = (AAIResourceUri)currentNSSI['sliceProfileInstanceUri']
 
-        String currentSNSSAI = currentNSSI['S-NSSAI']
+        Optional<ServiceInstance> sliceProfileInstanceOpt = client.get(ServiceInstance.class, sliceProfileInstanceUri)
+        if (sliceProfileInstanceOpt.isPresent()) {
+            ServiceInstance sliceProfileInstance = sliceProfileInstanceOpt.get()
 
-        associatedProfiles.removeIf({ associatedProfile -> (associatedProfile.getSNssai().equals(currentSNSSAI)) })
+            List<SliceProfile> associatedProfiles = sliceProfileInstance.getSliceProfiles()?.getSliceProfile()
 
-        try {
-            getAAIClient().update(nssiUri, nssi)
-        }catch(Exception e){
-            exceptionUtil.buildAndThrowWorkflowException(execution, 25000, "Exception occured while Slice Profile association with NSSI update call: " + e.getMessage())
+            String currentSNSSAI = currentNSSI['S-NSSAI']
+
+            if(!(associatedProfiles == null || associatedProfiles.isEmpty())) {
+                // Removes slice profile which contains given S-NSSAI and  updates Slice Profile Instance
+                associatedProfiles.removeIf({ associatedProfile -> (associatedProfile.getSNssai().equals(currentSNSSAI)) })
+
+                try {
+                    client.update(sliceProfileInstanceUri, sliceProfileInstance)
+
+                    currentNSSI['sliceProfileInstance'] = sliceProfileInstance
+                } catch (Exception e) {
+                    exceptionUtil.buildAndThrowWorkflowException(execution, 25000, "Exception occured while Slice Profile association with NSSI update call: " + e.getMessage())
+                }
+            }
+            else {
+                exceptionUtil.buildAndThrowWorkflowException(execution, 500, "No slice profiles found")
+            }
+
         }
+        else {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 500, "No slice profile instance found")
+        }
+
+        // Removes SLice Profile Instance association with NSSI
+        try {
+            client.disconnect(nssiUri, sliceProfileInstanceUri)
+        }
+        catch (Exception e) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 25000, "Exception occured while Slice Profile Instance association with NSSI dosconnect call: " + e.getMessage())
+        }
+
 
         LOGGER.trace("${getPrefix()} Exit removeSPAssociationWithNSSI")
     }
@@ -982,17 +1058,10 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
-        SliceProfile sliceProfileContainsSNSSAI = (SliceProfile)currentNSSI['sliceProfileS-NSSAI']
-
-        String globalSubscriberId = execution.getVariable("globalSubscriberId")
-        String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
-        String nssiId = currentNSSI['nssiId']
-
-        // global-customer-id, service-type, service-instance-id, profile-id
-        AAIResourceUri sliceProfileUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(nssiId).sliceProfile(sliceProfileContainsSNSSAI.getProfileId()))
+        AAIResourceUri sliceProfileInstanceURI = (AAIResourceUri)currentNSSI['sliceProfileInstanceUri']
 
         try {
-            client.delete(sliceProfileUri)
+            client.delete(sliceProfileInstanceURI)
         }catch(Exception e){
             exceptionUtil.buildAndThrowWorkflowException(execution, 25000, "Exception occured while Slice Profile Instance delete call: " + e.getMessage())
         }

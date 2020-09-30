@@ -23,6 +23,8 @@ package org.onap.so.bpmn.infrastructure.scripts
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.Before
 import org.junit.Test
+import org.mockito.Mockito
+import org.onap.aai.domain.yang.v19.AllottedResource
 import org.onap.aai.domain.yang.v19.ServiceInstance
 import org.onap.aai.domain.yang.v19.SliceProfile
 import org.onap.aai.domain.yang.v19.SliceProfiles
@@ -42,31 +44,6 @@ class DoModifyCoreNSSITest extends MsoGroovyTest  {
     @Before
     void init() throws IOException {
         super.init("DoModifyCoreNSSITest")
-    }
-
-
-    @Test
-    void testGetNSSIAssociatedProfiles() {
-        def currentNSSI = [:]
-        when(mockExecution.getVariable("currentNSSI")).thenReturn(currentNSSI)
-
-        ServiceInstance nssi = new ServiceInstance()
-        nssi.setServiceInstanceId("5G-999")
-
-        SliceProfiles sliceProfiles = new SliceProfiles()
-
-        List<SliceProfile> slProfiles = sliceProfiles.getSliceProfile()
-        slProfiles.add(new SliceProfile())
-        slProfiles.add(new SliceProfile())
-
-        nssi.setSliceProfiles(sliceProfiles)
-        currentNSSI.put("nssi", nssi)
-
-        DoModifyCoreNSSI obj = new DoModifyCoreNSSI()
-        obj.getNSSIAssociatedProfiles(mockExecution)
-
-        List<SliceProfile> associatedProfiles = (List<SliceProfile>)currentNSSI.get("associatedProfiles")
-        assertTrue("Either associatedProfiles doesn't exist or size is incorrect", (associatedProfiles != null && associatedProfiles.size() == 2))
     }
 
 
@@ -154,8 +131,14 @@ class DoModifyCoreNSSITest extends MsoGroovyTest  {
 
         String sliceProfileId = "sliceProfileId"
 
-        currentNSSI.put("sliceProfile", "{\"sliceProfileId\":\"slice-profile-id\",\"snssaiList\":[\"S-NSSAI\"],\"expDataRateUL\":\"12\"}")
+        currentNSSI.put("sliceProfile", "{\"sliceProfileId\":\"slice-profile-id\",\"snssaiList\":[\"S-NSSAI\"],\"expDataRateUL\":\"12\",\"expDataRateDL\":\"5\"," +
+                        "\"activityFactor\":\"2\",\"resourceSharingLevel\":\"resource-sharing-level\",\"uEMobilityLevel\":\"ue-mobility-level\",\"coverageAreaTAList\":\"coverage-area-ta-list\"," +
+                        "\"maxNumberofUEs\":\"10000\",\"latency\":\"7\"}")
         currentNSSI.put("sliceProfileId", sliceProfileId)
+
+        List<String> snssais = new ArrayList<>()
+        snssais.add("s-nssai")
+        currentNSSI.put("S-NSSAIs", snssais)
 
         DoModifyCoreNSSI spy = spy(DoModifyCoreNSSI.class)
         when(spy.getAAIClient()).thenReturn(client)
@@ -169,17 +152,21 @@ class DoModifyCoreNSSITest extends MsoGroovyTest  {
 
         currentNSSI.put("nssiId", nssiId)
 
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(nssiId).sliceProfile(sliceProfileId))
+        ServiceInstance sliceProfileInstance = new ServiceInstance()
+        sliceProfileInstance.setServiceInstanceId(UUID.randomUUID().toString())
+
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).
+                                                            serviceInstance(sliceProfileInstance.getServiceInstanceId()))
 
         SliceProfile sliceProfile = new SliceProfile()
         sliceProfile.setProfileId(sliceProfileId)
 
-        doNothing().when(client).create(uri, sliceProfile)
+        doNothing().when(client).create(uri, sliceProfileInstance)
 
         spy.createSliceProfileInstance(mockExecution)
 
-        assertNotNull("Slice Profile doesn't exist", currentNSSI.get("createdSliceProfile"))
-        assertTrue("Unexpected Slice Profile Id", ((SliceProfile)currentNSSI.get("createdSliceProfile")).getProfileId().equals(sliceProfile.getProfileId()))
+        assertTrue("Slice Profile Instance Id doesn't exist", (currentNSSI.get("createdSliceProfileInstanceId")) != null)
+
     }
 
 
@@ -202,8 +189,19 @@ class DoModifyCoreNSSITest extends MsoGroovyTest  {
         String globalSubscriberId = "globalSubscriberId"
         String subscriptionServiceType = "subscriptionServiceType"
 
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
-        AAIResourceUri sliceProfileUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(nssiId).sliceProfile(sliceProfileId))
+        String sliceProfileInstanceId = "slice-rpofile-instance-id"
+        currentNSSI.put("createdSliceProfileInstanceId", sliceProfileInstanceId)
+
+        AllottedResource allottedResource = new AllottedResource()
+
+        String allottedResourceId = UUID.randomUUID().toString()
+
+        allottedResource.setId(allottedResourceId)
+
+        AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(sliceProfileInstanceId).allottedResource(allottedResourceId))
+        doNothing().when(client).create(allottedResourceUri, allottedResource)
+
+        currentNSSI.put("allottedResourceUri", allottedResourceUri)
 
         when(mockExecution.getVariable("globalSubscriberId")).thenReturn(globalSubscriberId)
         when(mockExecution.getVariable("subscriptionServiceType")).thenReturn(subscriptionServiceType)
@@ -213,19 +211,26 @@ class DoModifyCoreNSSITest extends MsoGroovyTest  {
         SliceProfile sliceProfile = new SliceProfile()
         currentNSSI.put("createdSliceProfile", sliceProfile)
 
+        AAIResourceUri sliceProfileInstanceUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(sliceProfileInstanceId))
+
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+
+        ServiceInstance sliceProfileInstance = new ServiceInstance()
+        sliceProfileInstance.setServiceInstanceId(sliceProfileInstanceId)
+        Optional<ServiceInstance> sliceProfileInstanceOpt = Optional.of(sliceProfileInstance)
+
+        when(client.get(ServiceInstance.class, sliceProfileInstanceUri)).thenReturn(sliceProfileInstanceOpt)
+        doNothing().when(client).update(sliceProfileInstanceUri, sliceProfileInstance)
+
         ServiceInstance nssi = new ServiceInstance()
         nssi.setServiceInstanceId(nssiId)
         nssi.setSliceProfiles(new SliceProfiles())
         currentNSSI.put("nssi", nssi)
 
-        int sizeBelore = nssi.getSliceProfiles().getSliceProfile().size()
-
-        doNothing().when(client).update(nssiUri, nssi)
-        doNothing().when(client).connect(sliceProfileUri, nssiUri, AAIEdgeLabel.BELONGS_TO)
+        doNothing().when(client).connect(nssiUri, sliceProfileInstanceUri, AAIEdgeLabel.USES)
 
         spy.associateSliceProfileInstanceWithNSSI(mockExecution)
 
-        assertTrue("Wrong number of associated slice profiles", ((ServiceInstance)currentNSSI.get("nssi")).getSliceProfiles().getSliceProfile().size() == (sizeBelore + 1))
     }
 
 }
