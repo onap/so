@@ -185,8 +185,10 @@ class DoCommonCoreNSSITest extends MsoGroovyTest {
         def currentNSSI = [:]
         when(mockExecution.getVariable("currentNSSI")).thenReturn(currentNSSI)
 
+        String nssiId = "5G-999"
         ServiceInstance nssi = new ServiceInstance()
-        nssi.setServiceInstanceId("5G-999")
+        nssi.setServiceInstanceId(nssiId)
+        currentNSSI.put("nssiId", nssiId)
 
         SliceProfiles sliceProfiles = new SliceProfiles()
 
@@ -194,13 +196,49 @@ class DoCommonCoreNSSITest extends MsoGroovyTest {
         slProfiles.add(new SliceProfile())
         slProfiles.add(new SliceProfile())
 
-        nssi.setSliceProfiles(sliceProfiles)
+        //nssi.setSliceProfiles(sliceProfiles)
         currentNSSI.put("nssi", nssi)
 
-        DoCommonCoreNSSI obj = new DoCommonCoreNSSI()
-        obj.getNSSIAssociatedProfiles(mockExecution)
+        DoCommonCoreNSSI spy = spy(DoCommonCoreNSSI.class)
+        when(spy.getAAIClient()).thenReturn(client)
+
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+
+        AAIResultWrapper wrapperMock = mock(AAIResultWrapper.class) //new AAIResultWrapper(json)
+        Relationships rsMock = mock(Relationships.class)
+        Optional<Relationships> orsMock = Optional.of(rsMock)
+        List<AAIResourceUri> allottedUris = new ArrayList<>()
+        AAIResourceUri allottedUri = AAIUriFactory.createResourceUri(Types.ALLOTTED_RESOURCE.getFragment("allotted-id"))
+        allottedUris.add(allottedUri)
+
+        when(client.get(nssiUri)).thenReturn(wrapperMock)
+        when(wrapperMock.getRelationships()).thenReturn(orsMock)
+        when(rsMock.getRelatedUris(Types.ALLOTTED_RESOURCE)).thenReturn(allottedUris)
+
+        String sliceProfileInstanceId = "slice-profile-instance-id"
+        ServiceInstance sliceProfileInstance = new ServiceInstance()
+        sliceProfileInstance.setServiceInstanceId(sliceProfileInstanceId)
+        sliceProfileInstance.setServiceRole("slice-profile-instance")
+
+        List<AAIResourceUri> sliceProfileInstanceUris = new ArrayList<>()
+        AAIResourceUri sliceProfileInstanceUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(sliceProfileInstance.getServiceInstanceId()))
+        sliceProfileInstanceUris.add(sliceProfileInstanceUri)
+
+        Optional<ServiceInstance> sliceProfileInstanceOpt = Optional.of(sliceProfileInstance)
+
+        when(client.get(allottedUri)).thenReturn(wrapperMock)
+        when(rsMock.getRelatedUris(Types.SERVICE_INSTANCE)).thenReturn(sliceProfileInstanceUris)
+        when(client.get(ServiceInstance.class, sliceProfileInstanceUri)).thenReturn(sliceProfileInstanceOpt)
+
+
+        SliceProfiles sps = new SliceProfiles()
+        sps.getSliceProfile().addAll(slProfiles)
+        sliceProfileInstance.setSliceProfiles(sps)
+
+        spy.getNSSIAssociatedProfiles(mockExecution)
 
         List<SliceProfile> associatedProfiles = (List<SliceProfile>)currentNSSI.get("associatedProfiles")
+        assertTrue("sliceProfileInstanceUri not found in contect Map", currentNSSI.get("sliceProfileInstanceUri") != null)
         assertTrue("Either associatedProfiles doesn't exist or size is incorrect", (associatedProfiles != null && associatedProfiles.size() == 2))
     }
 
@@ -262,6 +300,20 @@ class DoCommonCoreNSSITest extends MsoGroovyTest {
 
         AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
 
+        AAIResourceUri sliceProfileInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("global-subscriber-id").serviceSubscription("subscription-service-type").
+                serviceInstance("slice-profile-instance-id"))
+
+        String sliceProfileInstanceId = "slice-profile-instance-id"
+        ServiceInstance sliceProfileInstance = new ServiceInstance()
+        sliceProfileInstance.setServiceInstanceId(sliceProfileInstanceId)
+        sliceProfileInstance.setServiceRole("slice-profile-instance")
+
+        Optional<ServiceInstance> sliceProfileInstanceOpt = Optional.of(sliceProfileInstance)
+
+        when(client.get(ServiceInstance.class, sliceProfileInstanceUri)).thenReturn(sliceProfileInstanceOpt)
+
+        currentNSSI.put("sliceProfileInstanceUri", sliceProfileInstanceUri)
+
         DoCommonCoreNSSI spy = spy(DoCommonCoreNSSI.class)
 
         when(spy.getAAIClient()).thenReturn(client)
@@ -284,13 +336,19 @@ class DoCommonCoreNSSITest extends MsoGroovyTest {
         associatedProfiles.add(sliceProfile2)
         associatedProfiles.add(sliceProfile3)
 
+        SliceProfiles sps = new SliceProfiles()
+        sps.getSliceProfile().addAll(associatedProfiles)
+        sliceProfileInstance.setSliceProfiles(sps)
+
         int sizeBefore = associatedProfiles.size()
 
-        doNothing().when(client).update(nssiUri, nssi)
+        doNothing().when(client).update(sliceProfileInstanceUri, sliceProfileInstance)
+
+        doNothing().when(client). disconnect(nssiUri, sliceProfileInstanceUri)
 
         spy.removeSPAssociationWithNSSI(mockExecution)
 
-        assertTrue("Association between slice profile and NSSI wasn't removed", ((ServiceInstance)currentNSSI.get("nssi")).getSliceProfiles().getSliceProfile().size() == (sizeBefore - 1))
+        assertTrue("Association between slice profile and NSSI wasn't removed", ((ServiceInstance)currentNSSI.get("sliceProfileInstance")).getSliceProfiles().getSliceProfile().size() == (sizeBefore - 1))
     }
 
 
@@ -300,30 +358,16 @@ class DoCommonCoreNSSITest extends MsoGroovyTest {
 
         when(mockExecution.getVariable("currentNSSI")).thenReturn(currentNSSI)
 
-        String globalSubscriberId = "global-id"
-        String subscriptionServiceType = "subscription-service-type"
-        String nssiId = "5G-999"
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("global-subscriber-id").serviceSubscription("subscription-service-type").
+                serviceInstance("slice-profile-instance-id"))
 
-        when(mockExecution.getVariable("globalSubscriberId")).thenReturn(globalSubscriberId)
-        when(mockExecution.getVariable("subscriptionServiceType")).thenReturn(subscriptionServiceType)
-
-        currentNSSI.put("nssiId", nssiId)
-
-        String theSNSSAI = "theS-NSSAI"
-
-        SliceProfile sliceProfile = new SliceProfile()
-        sliceProfile.setSNssai(theSNSSAI)
-        sliceProfile.setProfileId("prof-id")
-
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
-
-        currentNSSI.put("sliceProfileS-NSSAI", sliceProfile)
+        currentNSSI.put("sliceProfileInstanceUri", uri)
 
         DoCommonCoreNSSI spy = spy(DoCommonCoreNSSI.class)
 
         when(spy.getAAIClient()).thenReturn(client)
 
-        doNothing().when(client).delete(nssiUri)
+        doNothing().when(client).delete(uri)
 
         spy.deleteSliceProfileInstance(mockExecution)
 
