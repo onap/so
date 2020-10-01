@@ -56,349 +56,359 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
     private static final Logger logger = LoggerFactory.getLogger( SDNCAdapterRestV1.class)
 
 
-	ExceptionUtil exceptionUtil = new ExceptionUtil()
-	JsonUtils jsonUtil = new JsonUtils()
+    ExceptionUtil exceptionUtil = new ExceptionUtil()
+    JsonUtils jsonUtil = new JsonUtils()
 
-	/**
-	 * Processes the incoming request.
-	 */
-	public void preProcessRequest (DelegateExecution execution) {
-		def method = getClass().getSimpleName() + '.preProcessRequest(' +
-			'execution=' + execution.getId() +
-			')'
-		logger.trace('Entered ' + method)
+    /**
+     * Processes the incoming request.
+     */
+    public void preProcessRequest (DelegateExecution execution) {
+        def method = getClass().getSimpleName() + '.preProcessRequest(' +
+                'execution=' + execution.getId() +
+                ')'
+        logger.trace('Entered ' + method)
 
-		def prefix="SDNCREST_"
-		execution.setVariable("prefix", prefix)
-		setSuccessIndicator(execution, false)
+        def prefix="SDNCREST_"
+        execution.setVariable("prefix", prefix)
+        setSuccessIndicator(execution, false)
 
-		try {
-			// Determine the request type and log the request
+        try {
+            // Determine the request type and log the request
 
-			String request = validateRequest(execution, "mso-request-id")
-			String requestType = jsonUtil.getJsonRootProperty(request)
-			execution.setVariable(prefix + 'requestType', requestType)
-			logger.debug(getProcessKey(execution) + ': ' + prefix + 'requestType = ' + requestType)
+            String request = validateRequest(execution, "mso-request-id")
+            String requestType = jsonUtil.getJsonRootProperty(request)
+            execution.setVariable(prefix + 'requestType', requestType)
+            logger.debug(getProcessKey(execution) + ': ' + prefix + 'requestType = ' + requestType)
 
-			// Determine the SDNCAdapter endpoint
+            // Determine the SDNCAdapter endpoint
 
-			String sdncAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.sdnc.rest.endpoint", execution)
+            String sdncAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.sdnc.rest.endpoint", execution)
 
-			if (sdncAdapterEndpoint == null || sdncAdapterEndpoint.isEmpty()) {
-				String msg = getProcessKey(execution) + ': mso:adapters:sdnc:rest:endpoint URN mapping is not defined'
-				logger.debug(msg)
-				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-						ErrorCode.UnknownError.getValue())
-				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
-			}
+            if (sdncAdapterEndpoint == null || sdncAdapterEndpoint.isEmpty()) {
+                String msg = getProcessKey(execution) + ': mso:adapters:sdnc:rest:endpoint URN mapping is not defined'
+                logger.debug(msg)
+                logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+                        ErrorCode.UnknownError.getValue())
+                exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+            }
 
-			while (sdncAdapterEndpoint.endsWith('/')) {
-				sdncAdapterEndpoint = sdncAdapterEndpoint.substring(0, sdncAdapterEndpoint.length()-1)
-			}
+            while (sdncAdapterEndpoint.endsWith('/')) {
+                sdncAdapterEndpoint = sdncAdapterEndpoint.substring(0, sdncAdapterEndpoint.length()-1)
+            }
 
-			String sdncAdapterMethod = null
-			String sdncAdapterUrl = null
-			String sdncAdapterRequest = request
+            String sdncAdapterMethod = null
+            String sdncAdapterUrl = null
+            String sdncAdapterRequest = request
 
-			if ('SDNCServiceRequest'.equals(requestType)) {
-				// Get the sdncRequestId from the request
+            if ('SDNCServiceRequest'.equals(requestType)) {
+                // Get the sdncRequestId from the request
 
-				String sdncRequestId = jsonUtil.getJsonValue(request, requestType + ".sdncRequestId")
+                String sdncRequestId = jsonUtil.getJsonValue(request, requestType + ".sdncRequestId")
 
-				if (sdncRequestId == null || sdncRequestId.isEmpty()) {
-					String msg = getProcessKey(execution) + ': no sdncRequestId in ' + requestType
-					logger.debug(msg)
-					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-							ErrorCode.UnknownError.getValue())
-					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
-				}
+                if (sdncRequestId == null || sdncRequestId.isEmpty()) {
+                    String msg = getProcessKey(execution) + ': no sdncRequestId in ' + requestType
+                    logger.debug(msg)
+                    logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+                            ErrorCode.UnknownError.getValue())
+                    exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+                }
 
-				execution.setVariable('SDNCAResponse_CORRELATOR', sdncRequestId)
-				logger.debug(getProcessKey(execution) + ': SDNCAResponse_CORRELATOR = ' + sdncRequestId)
+                execution.setVariable('SDNCAResponse_CORRELATOR', sdncRequestId)
+                logger.debug(getProcessKey(execution) + ': SDNCAResponse_CORRELATOR = ' + sdncRequestId)
 
-				// Get the bpNotificationUrl from the request (just to make sure it's there)
+                // Get the bpNotificationUrl from the request (just to make sure it's there)
 
-				String bpNotificationUrl = jsonUtil.getJsonValue(request, requestType + ".bpNotificationUrl")
+                String bpNotificationUrl = jsonUtil.getJsonValue(request, requestType + ".bpNotificationUrl")
 
-				if (bpNotificationUrl == null || bpNotificationUrl.isEmpty()) {
-					String msg = getProcessKey(execution) + ': no bpNotificationUrl in ' + requestType
-					logger.debug(msg)
-					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-							ErrorCode.UnknownError.getValue())
-					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
-				}
+                if (bpNotificationUrl == null || bpNotificationUrl.isEmpty()) {
+                    String msg = getProcessKey(execution) + ': no bpNotificationUrl in ' + requestType
+                    logger.debug(msg)
+                    logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+                            ErrorCode.UnknownError.getValue())
+                    exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+                }
 
-				sdncAdapterMethod = 'POST'
-				sdncAdapterUrl = sdncAdapterEndpoint
+                sdncAdapterMethod = 'POST'
+                sdncAdapterUrl = sdncAdapterEndpoint
 
-				RollbackData rollbackData = new RollbackData()
-				rollbackData.setRequestId(sdncRequestId)
-				rollbackData.getAdditionalData().put("service", jsonUtil.getJsonValue(request, requestType + ".sdncService"))
-				rollbackData.getAdditionalData().put("operation", jsonUtil.getJsonValue(request, requestType + ".sdncOperation"))
-				execution.setVariable("RollbackData", rollbackData)
+                RollbackData rollbackData = new RollbackData()
+                rollbackData.setRequestId(sdncRequestId)
+                rollbackData.getAdditionalData().put("service", jsonUtil.getJsonValue(request, requestType + ".sdncService"))
+                rollbackData.getAdditionalData().put("operation", jsonUtil.getJsonValue(request, requestType + ".sdncOperation"))
+                execution.setVariable("RollbackData", rollbackData)
 
-			} else {
-				String msg = getProcessKey(execution) + ': Unsupported request type: ' + requestType
-				logger.debug(msg)
-				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-						ErrorCode.UnknownError.getValue())
-				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
-			}
+            } else {
+                String msg = getProcessKey(execution) + ': Unsupported request type: ' + requestType
+                logger.debug(msg)
+                logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+                        ErrorCode.UnknownError.getValue())
+                exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+            }
 
-			execution.setVariable(prefix + 'sdncAdapterMethod', sdncAdapterMethod)
-			execution.setVariable(prefix + 'sdncAdapterUrl', sdncAdapterUrl)
-			execution.setVariable(prefix + 'sdncAdapterRequest', sdncAdapterRequest)
+            execution.setVariable(prefix + 'sdncAdapterMethod', sdncAdapterMethod)
+            execution.setVariable(prefix + 'sdncAdapterUrl', sdncAdapterUrl)
+            execution.setVariable(prefix + 'sdncAdapterRequest', sdncAdapterRequest)
 
-			// Get the Basic Auth credentials for the SDNCAdapter (yes... we ARE using the PO adapters credentials)
+            // Get the Basic Auth credentials for the SDNCAdapter (yes... we ARE using the PO adapters credentials)
 
-			String basicAuthValue = UrnPropertiesReader.getVariable("mso.adapters.po.auth", execution)
+            String basicAuthValue = UrnPropertiesReader.getVariable("mso.adapters.po.auth", execution)
 
-			if (basicAuthValue == null || basicAuthValue.isEmpty()) {
-				logger.debug(getProcessKey(execution) + ": mso:adapters:po:auth URN mapping is not defined")
-				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-						getProcessKey(execution) + ": mso:adapters:po:auth URN mapping is not defined", "BPMN",
-						ErrorCode.UnknownError.getValue())
-			} else {
-				try {
-					def encodedString = utils.getBasicAuth(basicAuthValue, UrnPropertiesReader.getVariable("mso.msoKey", execution))
-					execution.setVariable(prefix + 'basicAuthHeaderValue', encodedString)
-				} catch (IOException ex) {
-					logger.debug(getProcessKey(execution) + ": Unable to encode BasicAuth credentials for SDNCAdapter")
-					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-							getProcessKey(execution) + ": Unable to encode BasicAuth credentials for SDNCAdapter",
-							"BPMN", ErrorCode.UnknownError.getValue(), ex)
-				}
-			}
+            if (basicAuthValue == null || basicAuthValue.isEmpty()) {
+                logger.debug(getProcessKey(execution) + ": mso:adapters:po:auth URN mapping is not defined")
+                logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                        getProcessKey(execution) + ": mso:adapters:po:auth URN mapping is not defined", "BPMN",
+                        ErrorCode.UnknownError.getValue())
+            } else {
+                try {
+                    def encodedString = utils.getBasicAuth(basicAuthValue, UrnPropertiesReader.getVariable("mso.msoKey", execution))
+                    execution.setVariable(prefix + 'basicAuthHeaderValue', encodedString)
+                } catch (IOException ex) {
+                    logger.debug(getProcessKey(execution) + ": Unable to encode BasicAuth credentials for SDNCAdapter")
+                    logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                            getProcessKey(execution) + ": Unable to encode BasicAuth credentials for SDNCAdapter",
+                            "BPMN", ErrorCode.UnknownError.getValue(), ex)
+                }
+            }
 
-			// Set the timeout value, e.g. PT5M. It may be specified in the request as the
-			// bpTimeout value.  If it's not in the request, use the URN mapping value.
+            // Set the timeout value, e.g. PT5M. It may be specified in the request as the
+            // bpTimeout value.  If it's not in the request, use the URN mapping value.
 
-			String timeout = jsonUtil.getJsonValue(request, requestType + ".bpTimeout")
+            String timeout = jsonUtil.getJsonValue(request, requestType + ".bpTimeout")
 
-			// in addition to null/empty, also need to verify that the timer value is a valid duration "P[n]T[n]H|M|S"
-			String timerRegex = "PT[0-9]+[HMS]"
-			if (timeout == null || timeout.isEmpty() || !timeout.matches(timerRegex)) {
-				logger.debug(getProcessKey(execution) + ': preProcessRequest(): null/empty/invalid bpTimeout value. Using "mso.adapters.sdnc.timeout"')
-				timeout = UrnPropertiesReader.getVariable("mso.adapters.sdnc.timeout", execution)
-			}
+            // in addition to null/empty, also need to verify that the timer value is a valid duration "P[n]T[n]H|M|S"
+            String timerRegex = "PT[0-9]+[HMS]"
+            if (timeout == null || timeout.isEmpty() || !timeout.matches(timerRegex)) {
+                logger.debug(getProcessKey(execution) + ': preProcessRequest(): null/empty/invalid bpTimeout value. Using "mso.adapters.sdnc.timeout"')
+                timeout = UrnPropertiesReader.getVariable("mso.adapters.sdnc.timeout", execution)
+            }
 
-			// the timeout could still be null at this point if the config parm is missing/undefined
-			// forced to log (so OPs can fix the config) and temporarily use a hard coded value of 10 seconds
-			if (timeout == null) {
-				msoLogger.warnSimple('preProcessRequest()', 'property "mso.adapters.sdnc.timeout" is missing/undefined. Using "PT10S"')
-				timeout = "PT10S"
-			}
+            // the timeout could still be null at this point if the config parm is missing/undefined
+            // forced to log (so OPs can fix the config) and temporarily use a hard coded value of 10 seconds
+            if (timeout == null) {
+                msoLogger.warnSimple('preProcessRequest()', 'property "mso.adapters.sdnc.timeout" is missing/undefined. Using "PT10S"')
+                timeout = "PT10S"
+            }
 
-			execution.setVariable(prefix + 'timeout', timeout)
-			logger.debug(getProcessKey(execution) + ': ' + prefix + 'timeout = ' + timeout)
-		} catch (BpmnError e) {
-			throw e
-		} catch (Exception e) {
-			String msg = 'Caught exception in ' + method + ": " + e
-			logger.debug(msg)
-			logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-					ErrorCode.UnknownError.getValue())
-			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
-		}
-	}
+            execution.setVariable(prefix + 'timeout', timeout)
 
-	/**
-	 * Sends the request to the SDNC adapter.
-	 */
-	public void sendRequestToSDNCAdapter(DelegateExecution execution) {
-		def method = getClass().getSimpleName() + '.sendRequestToSDNCAdapter(' +
-			'execution=' + execution.getId() +
-			')'
-		logger.trace('Entered ' + method)
+            Boolean failOnCallbackError = execution.getVariable("failOnCallbackError")
+            if(failOnCallbackError == null) {
+                execution.setVariable("failOnCallbackError", true)
+            }
 
-		String prefix = execution.getVariable('prefix')
+            logger.debug(getProcessKey(execution) + ': ' + prefix + 'timeout = ' + timeout)
+        } catch (BpmnError e) {
+            throw e
+        } catch (Exception e) {
+            String msg = 'Caught exception in ' + method + ": " + e
+            logger.debug(msg)
+            logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+                    ErrorCode.UnknownError.getValue())
+            exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+        }
+    }
 
-		try {
-			String sdncAdapterMethod = execution.getVariable(prefix + 'sdncAdapterMethod')
-			logger.debug("SDNC Method is: " + sdncAdapterMethod)
-			String sdncAdapterUrl = execution.getVariable(prefix + 'sdncAdapterUrl')
-			logger.debug("SDNC Url is: " + sdncAdapterUrl)
-			String sdncAdapterRequest = execution.getVariable(prefix + 'sdncAdapterRequest')
-			logger.debug("SDNC Rest Request is: " + sdncAdapterRequest)
+    /**
+     * Sends the request to the SDNC adapter.
+     */
+    public void sendRequestToSDNCAdapter(DelegateExecution execution) {
+        def method = getClass().getSimpleName() + '.sendRequestToSDNCAdapter(' +
+                'execution=' + execution.getId() +
+                ')'
+        logger.trace('Entered ' + method)
 
-			URL url = new URL(sdncAdapterUrl)
+        String prefix = execution.getVariable('prefix')
 
-			HttpClient httpClient = new HttpClientFactory().newJsonClient(url, ONAPComponents.SDNC_ADAPTER)
-			httpClient.addAdditionalHeader("mso-request-id", execution.getVariable("mso-request-id"))
-			httpClient.addAdditionalHeader("mso-service-instance-id", execution.getVariable("mso-service-instance-id"))
-			httpClient.addAdditionalHeader("Authorization", execution.getVariable(prefix + "basicAuthHeaderValue"))
+        try {
+            String sdncAdapterMethod = execution.getVariable(prefix + 'sdncAdapterMethod')
+            logger.debug("SDNC Method is: " + sdncAdapterMethod)
+            String sdncAdapterUrl = execution.getVariable(prefix + 'sdncAdapterUrl')
+            logger.debug("SDNC Url is: " + sdncAdapterUrl)
+            String sdncAdapterRequest = execution.getVariable(prefix + 'sdncAdapterRequest')
+            logger.debug("SDNC Rest Request is: " + sdncAdapterRequest)
 
-			Response response
+            URL url = new URL(sdncAdapterUrl)
 
-			if ("GET".equals(sdncAdapterMethod)) {
-				response = httpClient.get()
-			} else if ("PUT".equals(sdncAdapterMethod)) {
-				response = httpClient.put(sdncAdapterRequest)
-			} else if ("POST".equals(sdncAdapterMethod)) {
-				response = httpClient.post(sdncAdapterRequest)
-			} else if ("DELETE".equals(sdncAdapterMethod)) {
-				response = httpClient.delete(sdncAdapterRequest)
-			} else {
-				String msg = 'Unsupported HTTP method "' + sdncAdapterMethod + '" in ' + method + ": " + e
-				logger.debug(msg)
-				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-						ErrorCode.UnknownError.getValue())
-				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
-			}
+            HttpClient httpClient = new HttpClientFactory().newJsonClient(url, ONAPComponents.SDNC_ADAPTER)
+            httpClient.addAdditionalHeader("mso-request-id", execution.getVariable("mso-request-id"))
+            httpClient.addAdditionalHeader("mso-service-instance-id", execution.getVariable("mso-service-instance-id"))
+            httpClient.addAdditionalHeader("Authorization", execution.getVariable(prefix + "basicAuthHeaderValue"))
 
-			execution.setVariable(prefix + "sdncAdapterStatusCode", response.getStatus())
-			if(response.hasEntity()){
-				execution.setVariable(prefix + "sdncAdapterResponse", response.readEntity(String.class))
-			}
-		} catch (BpmnError e) {
-			throw e
-		} catch (Exception e) {
-			String msg = 'Caught exception in ' + method + ": " + e
-			logger.debug(msg, e)
-			logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-					ErrorCode.UnknownError.getValue())
-			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
-		}
-	}
+            Response response
 
-	/**
-	 * Processes a callback.
-	 */
-	public void processCallback(DelegateExecution execution){
-		def method = getClass().getSimpleName() + '.processCallback(' +
-			'execution=' + execution.getId() +
-			')'
-		logger.trace('Entered ' + method)
+            if ("GET".equals(sdncAdapterMethod)) {
+                response = httpClient.get()
+            } else if ("PUT".equals(sdncAdapterMethod)) {
+                response = httpClient.put(sdncAdapterRequest)
+            } else if ("POST".equals(sdncAdapterMethod)) {
+                response = httpClient.post(sdncAdapterRequest)
+            } else if ("DELETE".equals(sdncAdapterMethod)) {
+                response = httpClient.delete(sdncAdapterRequest)
+            } else {
+                String msg = 'Unsupported HTTP method "' + sdncAdapterMethod + '" in ' + method + ": " + e
+                logger.debug(msg)
+                logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+                        ErrorCode.UnknownError.getValue())
+                exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+            }
 
-		String prefix = execution.getVariable('prefix')
-		String callback = execution.getVariable('SDNCAResponse_MESSAGE')
-		logger.debug("Incoming SDNC Rest Callback is: " + callback)
+            execution.setVariable(prefix + "sdncAdapterStatusCode", response.getStatus())
+            if(response.hasEntity()){
+                execution.setVariable(prefix + "sdncAdapterResponse", response.readEntity(String.class))
+            }
+        } catch (BpmnError e) {
+            throw e
+        } catch (Exception e) {
+            String msg = 'Caught exception in ' + method + ": " + e
+            logger.debug(msg, e)
+            logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+                    ErrorCode.UnknownError.getValue())
+            exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+        }
+    }
 
-		try {
-			int callbackNumber = 1
-			while (execution.getVariable(prefix + 'callback' + callbackNumber) != null) {
-				++callbackNumber
-			}
+    /**
+     * Processes a callback.
+     */
+    public void processCallback(DelegateExecution execution){
+        def method = getClass().getSimpleName() + '.processCallback(' +
+                'execution=' + execution.getId() +
+                ')'
+        logger.trace('Entered ' + method)
 
-			execution.setVariable(prefix + 'callback' + callbackNumber, callback)
-			execution.removeVariable('SDNCAResponse_MESSAGE')
+        String prefix = execution.getVariable('prefix')
+        String callback = execution.getVariable('SDNCAResponse_MESSAGE')
+        logger.debug("Incoming SDNC Rest Callback is: " + callback)
 
-			String responseType = jsonUtil.getJsonRootProperty(callback)
+        try {
+            int callbackNumber = 1
+            while (execution.getVariable(prefix + 'callback' + callbackNumber) != null) {
+                ++callbackNumber
+            }
 
-			// Get the ackFinalIndicator and make sure it's either Y or N.  Default to Y.
-			String ackFinalIndicator = jsonUtil.getJsonValue(callback, responseType + ".ackFinalIndicator")
+            execution.setVariable(prefix + 'callback' + callbackNumber, callback)
+            execution.removeVariable('SDNCAResponse_MESSAGE')
 
-			if (!'N'.equals(ackFinalIndicator)) {
-				ackFinalIndicator = 'Y'
-			}
+            String responseType = jsonUtil.getJsonRootProperty(callback)
 
-			execution.setVariable(prefix + "ackFinalIndicator", ackFinalIndicator)
+            // Get the ackFinalIndicator and make sure it's either Y or N.  Default to Y.
+            String ackFinalIndicator = jsonUtil.getJsonValue(callback, responseType + ".ackFinalIndicator")
 
-			if (responseType.endsWith('Error')) {
-				sdncAdapterBuildWorkflowException(execution, callback)
-			}
-		} catch (Exception e) {
-			callback = callback == null || String.valueOf(callback).isEmpty() ? "NONE" : callback
-			String msg = "Received error from SDNCAdapter: " + callback
-			logger.debug(getProcessKey(execution) + ': ' + msg)
-			exceptionUtil.buildWorkflowException(execution, 5300, msg)
-		}
-	}
+            if (!'N'.equals(ackFinalIndicator)) {
+                ackFinalIndicator = 'Y'
+            }
 
-	/**
-	 * Tries to parse the response as XML to extract the information to create
-	 * a WorkflowException.  If the response cannot be parsed, a more generic
-	 * WorkflowException is created.
-	 */
-	public void sdncAdapterBuildWorkflowException(DelegateExecution execution, String response) {
-		try {
-			String responseType = jsonUtil.getJsonRootProperty(response)
-			String responseCode = jsonUtil.getJsonValue(response, responseType + ".responseCode")
-			String responseMessage = jsonUtil.getJsonValue(response, responseType + ".responseMessage")
+            execution.setVariable(prefix + "ackFinalIndicator", ackFinalIndicator)
 
-			String info = ""
+            if (responseType.endsWith('Error')) {
+                Boolean failOnCallbackError = execution.getVariable("failOnCallbackError")
+                if(failOnCallbackError) {
+                    sdncAdapterBuildWorkflowException(execution, callback)
+                }
+            }
 
-			if (responseCode != null && !responseCode.isEmpty()) {
-				 info += " responseCode='" + responseCode + "'"
-			}
+        } catch (Exception e) {
+            callback = callback == null || String.valueOf(callback).isEmpty() ? "NONE" : callback
+            String msg = "Received error from SDNCAdapter: " + callback
+            logger.debug(getProcessKey(execution) + ': ' + msg)
+            exceptionUtil.buildWorkflowException(execution, 5300, msg)
+        }
+    }
 
-			if (responseMessage != null && !responseMessage.isEmpty()) {
-				 info += " responseMessage='" + responseMessage + "'"
-			}
+    /**
+     * Tries to parse the response as XML to extract the information to create
+     * a WorkflowException.  If the response cannot be parsed, a more generic
+     * WorkflowException is created.
+     */
+    public void sdncAdapterBuildWorkflowException(DelegateExecution execution, String response) {
+        try {
+            String responseType = jsonUtil.getJsonRootProperty(response)
+            String responseCode = jsonUtil.getJsonValue(response, responseType + ".responseCode")
+            String responseMessage = jsonUtil.getJsonValue(response, responseType + ".responseMessage")
 
-			// Note: the mapping function handles a null or empty responseCode
-			int mappedResponseCode = Integer.parseInt(exceptionUtil.MapSDNCResponseCodeToErrorCode(responseCode))
-			exceptionUtil.buildWorkflowException(execution, mappedResponseCode, "Received " + responseType +
-				" from SDNCAdapter:" + info)
-		} catch (Exception e) {
-			response = response == null || String.valueOf(response).isEmpty() ? "NONE" : response
-			exceptionUtil.buildWorkflowException(execution, 5300, "Received error from SDNCAdapter: " + response)
-		}
-	}
+            String info = ""
 
-	/**
-	 * Gets the last callback request from the execution, or null if there was no callback.
-	 */
-	public String getLastCallback(DelegateExecution execution) {
-		def method = getClass().getSimpleName() + '.getLastCallback(' +
-			'execution=' + execution.getId() +
-			')'
-		logger.trace('Entered ' + method)
+            if (responseCode != null && !responseCode.isEmpty()) {
+                info += " responseCode='" + responseCode + "'"
+            }
 
-		String prefix = execution.getVariable('prefix')
+            if (responseMessage != null && !responseMessage.isEmpty()) {
+                info += " responseMessage='" + responseMessage + "'"
+            }
 
-		try {
-			int callbackNumber = 1
-			String callback = null
+            // Note: the mapping function handles a null or empty responseCode
+            int mappedResponseCode = Integer.parseInt(exceptionUtil.MapSDNCResponseCodeToErrorCode(responseCode))
+            exceptionUtil.buildWorkflowException(execution, mappedResponseCode, "Received " + responseType +
+                    " from SDNCAdapter:" + info)
+        } catch (Exception e) {
+            response = response == null || String.valueOf(response).isEmpty() ? "NONE" : response
+            exceptionUtil.buildWorkflowException(execution, 5300, "Received error from SDNCAdapter: " + response)
+        }
+    }
 
-			while (true) {
-				String thisCallback = (String) execution.getVariable(prefix + 'callback' + callbackNumber)
+    /**
+     * Gets the last callback request from the execution, or null if there was no callback.
+     */
+    public String getLastCallback(DelegateExecution execution) {
+        def method = getClass().getSimpleName() + '.getLastCallback(' +
+                'execution=' + execution.getId() +
+                ')'
+        logger.trace('Entered ' + method)
 
-				if (thisCallback == null) {
-					break
-				}
+        String prefix = execution.getVariable('prefix')
 
-				callback = thisCallback
-				++callbackNumber
-			}
+        try {
+            int callbackNumber = 1
+            String callback = null
 
-			return callback
-		} catch (Exception e) {
-			String msg = 'Caught exception in ' + method + ": " + e
-			logger.debug(msg)
-			logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-					ErrorCode.UnknownError.getValue())
-			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
-		}
-	}
+            while (true) {
+                String thisCallback = (String) execution.getVariable(prefix + 'callback' + callbackNumber)
 
-	/**
-	 * Sets the timeout value to wait for the next notification.
-	 */
-	public void setTimeoutValue(DelegateExecution execution) {
-		def method = getClass().getSimpleName() + '.setTimeoutValue(' +
-			'execution=' + execution.getId() +
-			')'
-		logger.trace('Entered ' + method)
+                if (thisCallback == null) {
+                    break
+                }
 
-		String prefix = execution.getVariable('prefix')
+                callback = thisCallback
+                ++callbackNumber
+            }
 
-		try {
-			def timeoutValue = UrnPropertiesReader.getVariable("mso.adapters.sdnc.timeout", execution)
+            return callback
+        } catch (Exception e) {
+            String msg = 'Caught exception in ' + method + ": " + e
+            logger.debug(msg)
+            logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+                    ErrorCode.UnknownError.getValue())
+            exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+        }
+    }
 
-			if (execution.getVariable(prefix + 'callback1') != null) {
-				// Waiting for subsequent notifications
-			}
-		} catch (Exception e) {
-			String msg = 'Caught exception in ' + method + ": " + e
-			logger.debug(msg)
-			logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-					ErrorCode.UnknownError.getValue())
-			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
-		}
-	}
-	
-	public Logger getLogger() {
-		return logger
-	}
+    /**
+     * Sets the timeout value to wait for the next notification.
+     */
+    public void setTimeoutValue(DelegateExecution execution) {
+        def method = getClass().getSimpleName() + '.setTimeoutValue(' +
+                'execution=' + execution.getId() +
+                ')'
+        logger.trace('Entered ' + method)
+
+        String prefix = execution.getVariable('prefix')
+
+        try {
+            def timeoutValue = UrnPropertiesReader.getVariable("mso.adapters.sdnc.timeout", execution)
+
+            if (execution.getVariable(prefix + 'callback1') != null) {
+                // Waiting for subsequent notifications
+            }
+        } catch (Exception e) {
+            String msg = 'Caught exception in ' + method + ": " + e
+            logger.debug(msg)
+            logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+                    ErrorCode.UnknownError.getValue())
+            exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+        }
+    }
+
+    public Logger getLogger() {
+        return logger
+    }
 }
