@@ -46,6 +46,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.validator.routines.InetAddressValidator;
 import org.onap.aai.domain.yang.Flavor;
@@ -59,7 +60,6 @@ import org.onap.aai.domain.yang.Pserver;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.aai.domain.yang.RelationshipList;
 import org.onap.aai.domain.yang.SriovPf;
-import org.onap.aai.domain.yang.SriovPfs;
 import org.onap.aai.domain.yang.Subnets;
 import org.onap.aai.domain.yang.SriovVf;
 import org.onap.aai.domain.yang.VfModule;
@@ -80,12 +80,12 @@ import org.onap.aaiclient.client.graphinventory.entities.DSLQuery;
 import org.onap.aaiclient.client.graphinventory.entities.DSLQueryBuilder;
 import org.onap.aaiclient.client.graphinventory.entities.DSLStartNode;
 import org.onap.aaiclient.client.graphinventory.entities.Node;
+import org.onap.aaiclient.client.graphinventory.entities.Pathed;
 import org.onap.aaiclient.client.graphinventory.entities.Start;
 import org.onap.aaiclient.client.graphinventory.entities.TraversalBuilder;
 import org.onap.aaiclient.client.graphinventory.entities.__;
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
 import org.onap.aaiclient.client.graphinventory.exceptions.BulkProcessFailed;
-import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.cloud.resource.beans.NodeType;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.ServerType;
@@ -95,8 +95,6 @@ import org.onap.so.heatbridge.helpers.AaiHelper;
 import org.onap.so.heatbridge.openstack.api.OpenstackClient;
 import org.onap.so.heatbridge.openstack.factory.OpenstackClientFactoryImpl;
 import org.onap.so.heatbridge.utils.HeatBridgeUtils;
-import org.onap.so.logger.LoggingAnchor;
-import org.onap.so.logger.MessageEnum;
 import org.onap.so.spring.SpringContextHelper;
 import org.openstack4j.model.compute.Server;
 import org.openstack4j.model.heat.Resource;
@@ -582,69 +580,67 @@ public class HeatBridgeImpl implements HeatBridgeApi {
      *
      * @param port Openstack port object
      * @param lIf AAI l-interface object
+     * @throws HeatBridgeException
      */
-    private void updateSriovPfToPserver(final Port port, final LInterface lIf) {
+    protected void updateSriovPfToPserver(final Port port, final LInterface lIf) throws HeatBridgeException {
         if (port.getvNicType().equalsIgnoreCase(HeatBridgeConstants.OS_SRIOV_PORT_TYPE)) {
-            if (port.getProfile() == null || Strings
-                    .isNullOrEmpty(port.getProfile().get(HeatBridgeConstants.OS_PHYSICAL_NETWORK_KEY).toString())) {
-                logger.debug("The SRIOV port:" + port.getName() + " is missing physical-network-id, cannot update "
-                        + "sriov-pf object for host pserver: " + port.getHostId());
-                return;
-            }
-            Optional<String> matchingPifName = HeatBridgeUtils.getMatchingPserverPifName(
-                    port.getProfile().get(HeatBridgeConstants.OS_PHYSICAL_NETWORK_KEY).toString());
-            if (matchingPifName.isPresent()) {
-                // Update l-interface description
-                String pserverHostName = port.getHostId();
-                lIf.setInterfaceDescription(
-                        "Attached to SR-IOV port: " + pserverHostName + "::" + matchingPifName.get());
-                try {
-                    AAIResourceUri pInterfaceUri =
-                            AAIUriFactory
-                                    .createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
-                                            .pserver(pserverHostName).pInterface(matchingPifName.get()))
-                                    .depth(Depth.ONE);
-                    if (resourcesClient.exists(pInterfaceUri)) {
-                        PInterface matchingPIf = resourcesClient.get(PInterface.class, pInterfaceUri).get();
 
-                        String pfPciId = port.getProfile().get(HeatBridgeConstants.OS_PCI_SLOT_KEY).toString();
+            AAIResourceUri sriovVfUri = AAIUriFactory
+                    .createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(cloudOwner, cloudRegionId)
+                            .tenant(tenantId).vserver(port.getDeviceId()).lInterface(lIf.getInterfaceName())
+                            .sriovVf(port.getProfile().get(HeatBridgeConstants.OS_PCI_SLOT_KEY).toString()));
 
-                        if (matchingPIf.getSriovPfs() == null
-                                || CollectionUtils.isEmpty(matchingPIf.getSriovPfs().getSriovPf())
-                                || matchingPIf.getSriovPfs().getSriovPf().stream()
-                                        .noneMatch(existingSriovPf -> existingSriovPf.getPfPciId().equals(pfPciId))) {
+            boolean relationshipExist = sriovVfHasSriovPfRelationship(sriovVfUri);
 
-                            SriovPf sriovPf = new SriovPf();
-                            sriovPf.setPfPciId(pfPciId);
+            String pserverHostName = port.getHostId();
+            lIf.setInterfaceDescription("Attached to SR-IOV port: " + pserverHostName);
 
-                            AAIResourceUri sriovPfUri = AAIUriFactory.createResourceUri(
-                                    AAIFluentTypeBuilder.cloudInfrastructure().pserver(pserverHostName)
-                                            .pInterface(matchingPifName.get()).sriovPf(sriovPf.getPfPciId()));
+            if (!relationshipExist) {
+                AAIResourceUri pserverUri = AAIUriFactory
+                        .createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().pserver(pserverHostName));
+                if (resourcesClient.exists(pserverUri)) {
+                    String pfPciId = port.getProfile().get(HeatBridgeConstants.OS_PF_PCI_SLOT_KEY).toString();
 
-                            // TODO if it does exist, should check if relationship is there, if not then create?
-                            if (!resourcesClient.exists(sriovPfUri)) {
-                                transaction.create(sriovPfUri, sriovPf);
+                    DSLQueryBuilder<Start, Node> builder = TraversalBuilder
+                            .fragment(new DSLStartNode(Types.PSERVER, __.key("hostname", pserverHostName)))
+                            .to(__.node(Types.P_INTERFACE)
+                                    .to(__.node(Types.SRIOV_PF, __.key("pf-pci-id", pfPciId)).output()));
 
-                                AAIResourceUri sriovVfUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder
-                                        .cloudInfrastructure().cloudRegion(cloudOwner, cloudRegionId).tenant(tenantId)
-                                        .vserver(port.getDeviceId()).lInterface(lIf.getInterfaceName()).sriovVf(
-                                                port.getProfile().get(HeatBridgeConstants.OS_PCI_SLOT_KEY).toString()));
-                                transaction.connect(sriovPfUri, sriovVfUri);
-                            }
-                        }
+                    List<Pathed> results = getAAIDSLClient().queryPathed(new DSLQuery(builder.build()));
+
+                    if (results.size() == 1) {
+
+                        AAIResourceUri sriovPfUri = AAIUriFactory.createResourceFromExistingURI(Types.SRIOV_PF,
+                                UriBuilder.fromUri(results.get(0).getResourceLink()).build());
+
+                        transaction.connect(sriovPfUri, sriovVfUri);
+
                     } else {
-                        logger.warn(
-                                "PInterface {} does not exist in AAI. Unable to build sriov-vf to sriov-pf relationship.",
-                                matchingPifName.get());
+                        throw new HeatBridgeException("Unable to find sriov-pf related link " + pfPciId
+                                + ". Unexpected results size" + results.size());
                     }
-                } catch (WebApplicationException e) {
-                    // Silently log that we failed to update the Pserver p-interface with PCI-ID
-                    logger.error(LoggingAnchor.NINE, MessageEnum.GENERAL_EXCEPTION, pserverHostName,
-                            matchingPifName.get(), cloudOwner, tenantId, "OpenStack", "Heatbridge",
-                            ErrorCode.DataError.getValue(), "Exception - Failed to add sriov-pf object to pserver", e);
+                } else {
+                    logger.error("Pserver {} does not exist in AAI. Unable to build sriov-vf to sriov-pf relationship.",
+                            pserverHostName);
+                    throw new HeatBridgeException("Pserver " + pserverHostName + " does not exist in AAI");
                 }
             }
         }
+    }
+
+    protected boolean sriovVfHasSriovPfRelationship(AAIResourceUri sriovVfUri) {
+        boolean pfRelationshipsExist = false;
+        if (resourcesClient.exists(sriovVfUri)) {
+            Optional<Relationships> sriovVfRelationships = resourcesClient.get(sriovVfUri).getRelationships();
+
+            if (sriovVfRelationships.isPresent()) {
+                List<AAIResourceUri> sriovPfUris = sriovVfRelationships.get().getRelatedUris(Types.SRIOV_PF);
+                if (sriovPfUris.size() != 0) {
+                    pfRelationshipsExist = true;
+                }
+            }
+        }
+        return pfRelationshipsExist;
     }
 
     protected void updateLInterfaceIps(final Port port, final LInterface lIf) {
