@@ -59,7 +59,7 @@ public final class HeatBridgeUtils {
 
     public static Optional<String> getMatchingPserverPifName(@Nonnull final String physicalNetworkName) {
         Preconditions.checkState(!Strings.isNullOrEmpty(physicalNetworkName),
-                "Physical network name is null or " + "empty!");
+                "Physical network name is null or empty!");
         if (physicalNetworkName.contains(OS_SIDE_DEDICATED_SRIOV_PREFIX)) {
             return Optional.of(
                     physicalNetworkName.replace(OS_SIDE_DEDICATED_SRIOV_PREFIX, COMPUTE_SIDE_DEDICATED_SRIOV_PREFIX));
@@ -67,7 +67,7 @@ public final class HeatBridgeUtils {
             return Optional
                     .of(physicalNetworkName.replace(OS_SIDE_SHARED_SRIOV_PREFIX, COMPUTE_SIDE_SHARED_SRIOV_PREFIX));
         }
-        return Optional.empty();
+        return Optional.of(physicalNetworkName);
     }
 
     public static List<String> extractPciIdsFromVServer(Vserver vserver) {
