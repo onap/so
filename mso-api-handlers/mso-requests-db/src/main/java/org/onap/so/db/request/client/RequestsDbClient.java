@@ -29,6 +29,7 @@ import javax.annotation.PostConstruct;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.http.HttpStatus;
+import org.onap.logging.filter.spring.SpringClientPayloadFilter;
 import org.onap.so.db.request.beans.ArchivedInfraRequests;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.beans.OperationStatus;
@@ -42,6 +43,7 @@ import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
 import org.onap.so.db.request.beans.WatchdogDistributionStatus;
 import org.onap.so.db.request.beans.WatchdogServiceModVerIdLookup;
 import org.onap.so.db.request.data.controller.InstanceNameDuplicateCheckRequest;
+import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
@@ -297,17 +299,55 @@ public class RequestsDbClient {
         restTemplate.exchange(uri, HttpMethod.PATCH, entity, String.class);
     }
 
+    /**
+     * Required for groovy usage. Cannot use Spring Autowired variables
+     *
+     * @param requestId
+     * @param basicAuth
+     * @param host
+     * @return
+     */
     public InfraActiveRequests getInfraActiveRequests(String requestId, String basicAuth, String host) {
+        RestTemplate template = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.AUTHORIZATION, basicAuth);
+        headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+        headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
 
         URI uri = getUri(host + "/infraActiveRequests/" + requestId);
-
-        return getSingleResponse(uri, InfraActiveRequests.class);
+        try {
+            InfraActiveRequests infraActiveRequests = template
+                    .exchange(uri, HttpMethod.GET, new HttpEntity<>(headers), InfraActiveRequests.class).getBody();
+            if (infraActiveRequests != null) {
+                infraActiveRequests.setRequestId(requestId);
+            }
+            return infraActiveRequests;
+        } catch (HttpClientErrorException e) {
+            if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
+                return null;
+            }
+            throw e;
+        }
     }
 
+    /**
+     * Required for groovy usage. Cannot use Spring Autowired variables
+     *
+     * @param request
+     * @param basicAuth
+     * @param host
+     */
     public void updateInfraActiveRequests(InfraActiveRequests request, String basicAuth, String host) {
+        RestTemplate template = new RestTemplate();
+        template.getInterceptors().add(new SOSpringClientFilter());
+        template.getInterceptors().add(new SpringClientPayloadFilter());
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.AUTHORIZATION, basicAuth);
+        headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+        headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         URI uri = getUri(host + "/infraActiveRequests/" + request.getRequestId());
-        HttpEntity<InfraActiveRequests> entity = new HttpEntity<>(request, getHttpHeaders());
-        restTemplate.put(uri, entity);
+        HttpEntity<InfraActiveRequests> entity = new HttpEntity<>(request, headers);
+        template.put(uri, entity);
     }
 
     protected URI getUri(String uri) {
