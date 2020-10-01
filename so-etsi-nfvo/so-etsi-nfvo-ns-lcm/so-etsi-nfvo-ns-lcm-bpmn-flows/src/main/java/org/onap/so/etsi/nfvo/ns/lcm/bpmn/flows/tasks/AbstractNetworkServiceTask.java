@@ -19,7 +19,7 @@
  */
 package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.tasks;
 
-import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.CREATE_NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME;
+import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.JOB_ID_PARAM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.NS_INSTANCE_ID_PARAM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.OCC_ID_PARAM_NAME;
@@ -33,6 +33,7 @@ import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoJobStatus;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoNsInst;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NsLcmOpOcc;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.OperationStateEnum;
+import org.onap.so.etsi.nfvo.ns.lcm.database.beans.State;
 import org.onap.so.etsi.nfvo.ns.lcm.database.service.DatabaseServiceProvider;
 import org.onap.so.etsi.nfvo.ns.lcm.model.InlineResponse400;
 import org.slf4j.Logger;
@@ -77,7 +78,7 @@ public abstract class AbstractNetworkServiceTask {
         final Optional<NfvoJob> optional = databaseServiceProvider.getJob(jobId);
         if (optional.isPresent()) {
             final InlineResponse400 problemDetails =
-                    (InlineResponse400) execution.getVariable(CREATE_NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME);
+                    (InlineResponse400) execution.getVariable(NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME);
 
             final NfvoJob nfvoJob = optional.get();
             nfvoJob.status(JobStatusEnum.ERROR).endTime(LocalDateTime.now());
@@ -146,7 +147,7 @@ public abstract class AbstractNetworkServiceTask {
     protected void abortOperation(final DelegateExecution execution, final String message,
             final InlineResponse400 problemDetails) {
         logger.error(message);
-        execution.setVariable(CREATE_NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME, problemDetails);
+        execution.setVariable(NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME, problemDetails);
         throw new BpmnError("WORKFLOW_FAILED");
     }
 
@@ -156,12 +157,18 @@ public abstract class AbstractNetworkServiceTask {
         if (optional.isEmpty()) {
             final String message = "Unable to find job using job id: " + jobId;
             logger.error(message);
-            execution.setVariable(CREATE_NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME,
-                    new InlineResponse400().detail(message));
+            execution.setVariable(NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME, new InlineResponse400().detail(message));
             throw new BpmnError("WORKFLOW_FAILED");
 
         }
         return optional.get();
+    }
+
+    protected void updateNsInstanceStatus(final DelegateExecution execution, final State nsStatus) {
+        final NfvoNsInst nfvoNsInst = getNfvoNsInst(execution);
+        logger.info("Updating NfvoNsInst Status to {} and saving to DB", nsStatus);
+        nfvoNsInst.setStatus(nsStatus);
+        databaseServiceProvider.saveNfvoNsInst(nfvoNsInst);
     }
 
     protected NfvoNsInst getNfvoNsInst(final DelegateExecution execution) {

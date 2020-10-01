@@ -28,8 +28,10 @@ import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstan
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.SERVICE_TYPE_PARAM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.TERMINATE_NS_REQUEST_PARAM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.Constants.CREATE_NS_WORKFLOW_NAME;
+import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.Constants.DELETE_NS_WORKFLOW_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.Constants.INSTANTIATE_NS_WORKFLOW_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.Constants.TERMINATE_NS_WORKFLOW_NAME;
+import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobAction.DELETE;
 import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobAction.INSTANTIATE;
 import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobAction.TERMINATE;
 import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobStatusEnum.ERROR;
@@ -240,6 +242,46 @@ public class JobExecutorService {
         throw new NsRequestProcessingException(message);
     }
 
+    public void runDeleteNsJob(final String nsInstanceId) {
+        final NfvoJob nfvoJob = new NfvoJob().startTime(LocalDateTime.now()).jobType("NS").jobAction(DELETE)
+                .resourceId(nsInstanceId).status(STARTING).progress(0);
+        databaseServiceProvider.addJob(nfvoJob);
+        logger.info("New job created in database :\n{}", nfvoJob);
+
+        workflowExecutorService.executeWorkflow(nfvoJob.getJobId(), DELETE_NS_WORKFLOW_NAME,
+                getVariables(nsInstanceId, nfvoJob.getJobId()));
+
+        final ImmutablePair<String, JobStatusEnum> immutablePair =
+                waitForJobToFinish(nfvoJob.getJobId(), JOB_FINISHED_STATES);
+
+        if (immutablePair.getRight() == null) {
+            final String message = "Failed to Delete NS with id: " + nsInstanceId;
+            logger.error(message);
+            throw new NsRequestProcessingException(message);
+        }
+
+        final JobStatusEnum finalJobStatus = immutablePair.getRight();
+        final String processInstanceId = immutablePair.getLeft();
+
+        if (FINISHED.equals(finalJobStatus)) {
+            logger.info("Delete Job status: {}", finalJobStatus);
+            return;
+        }
+
+        final Optional<InlineResponse400> optional = workflowQueryService.getProblemDetails(processInstanceId);
+        if (optional.isPresent()) {
+            final InlineResponse400 problemDetails = optional.get();
+            final String message = "Failed to Delete NS with id: " + nsInstanceId + " due to:\n" + problemDetails;
+            logger.error(message);
+            throw new NsRequestProcessingException(message, problemDetails);
+        }
+
+        final String message =
+                "Received unexpected Job Status: " + finalJobStatus + " Failed to Delete NS with id: " + nsInstanceId;
+        logger.error(message);
+        throw new NsRequestProcessingException(message);
+    }
+
     private void doInitialTerminateChecks(final String nsInstanceId, final TerminateNsRequest terminateNsRequest) {
         if (isNotImmediateTerminateRequest(terminateNsRequest)) {
             final String message = "TerminateNsRequest received with terminateTime: "
@@ -345,6 +387,13 @@ public class JobExecutorService {
         variables.put(JOB_ID_PARAM_NAME, jobId);
         variables.put(OCC_ID_PARAM_NAME, occId);
         variables.put(TERMINATE_NS_REQUEST_PARAM_NAME, terminateNsRequest);
+        return variables;
+    }
+
+    private Map<String, Object> getVariables(final String nsInstanceId, final String jobId) {
+        final Map<String, Object> variables = new HashMap<>();
+        variables.put(NS_INSTANCE_ID_PARAM_NAME, nsInstanceId);
+        variables.put(JOB_ID_PARAM_NAME, jobId);
         return variables;
     }
 }

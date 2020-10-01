@@ -22,7 +22,6 @@ package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.extclients.aai;
 import java.util.Optional;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.ServiceInstance;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
@@ -92,5 +91,16 @@ public class AaiServiceProviderImpl implements AaiServiceProvider {
         final AAIResourceUri aaiResourceUri =
                 AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId));
         aaiClientProvider.getAaiClient().delete(aaiResourceUri);
+    }
+
+    @Override
+    public void deleteServiceInstance(final String globalCustomerId, final String serviceType,
+            final String serviceInstanceId) {
+        logger.info(
+                "Deleting Service Instance with \nGlobal Customer Id: {}, \nService Type: {}, and \nService Instance Id: {} \nfrom AAI.",
+                globalCustomerId, serviceType, serviceInstanceId);
+        final AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                .customer(globalCustomerId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId));
+        aaiClientProvider.getAaiClient().delete(serviceInstanceUri);
     }
 }

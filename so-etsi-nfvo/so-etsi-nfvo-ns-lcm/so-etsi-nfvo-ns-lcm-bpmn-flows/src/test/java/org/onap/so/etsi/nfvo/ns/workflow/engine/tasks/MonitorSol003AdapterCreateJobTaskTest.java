@@ -132,7 +132,7 @@ public class MonitorSol003AdapterCreateJobTaskTest extends BaseTest {
         assertNull(nsResponseVariable);
 
         final HistoricVariableInstance workflowExceptionVariable = getVariable(processInstance.getProcessInstanceId(),
-                CamundaVariableNameConstants.CREATE_NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME);
+                CamundaVariableNameConstants.NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME);
 
         final InlineResponse400 problemDetails = (InlineResponse400) workflowExceptionVariable.getValue();
         assertNotNull(problemDetails);

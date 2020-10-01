@@ -147,4 +147,9 @@ public abstract class BaseTest {
         return runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult() == null;
     }
 
+    protected String getAaiServiceInstanceEndPoint() {
+        return "/aai/v[0-9]+/business/customers/customer/" + GLOBAL_CUSTOMER_ID
+                + "/service-subscriptions/service-subscription/" + SERVICE_TYPE
+                + "/service-instances/service-instance/.*";
+    }
 }

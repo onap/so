@@ -82,4 +82,9 @@ public class NsLifeCycleManager {
 
         return etsiSoNsLcmManagerUrlProvider.getNsLcmOpOccUri(nsLcmOpOccId);
     }
+
+    public void deleteNs(final String nsInstanceId) {
+        logger.info("Will execute Delete Ns for nsInstanceId: {}", nsInstanceId);
+        jobExecutorService.runDeleteNsJob(nsInstanceId);
+    }
 }

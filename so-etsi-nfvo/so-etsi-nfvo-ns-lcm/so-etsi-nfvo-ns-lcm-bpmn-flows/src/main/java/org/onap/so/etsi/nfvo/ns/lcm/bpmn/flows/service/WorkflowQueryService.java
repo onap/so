@@ -20,7 +20,7 @@
 package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.service;
 
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.CREATE_NS_RESPONSE_PARAM_NAME;
-import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.CREATE_NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME;
+import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.Constants.TENANT_ID;
 import static org.slf4j.LoggerFactory.getLogger;
 import java.util.Optional;
@@ -83,7 +83,7 @@ public class WorkflowQueryService {
     public Optional<InlineResponse400> getProblemDetails(final String processInstanceId) {
         try {
             final HistoricVariableInstance historicVariableInstance =
-                    getVariable(processInstanceId, CREATE_NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME);
+                    getVariable(processInstanceId, NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME);
 
             logger.info("Found HistoricVariableInstance : {}", historicVariableInstance);
             final Object variableValue = historicVariableInstance.getValue();
@@ -94,7 +94,7 @@ public class WorkflowQueryService {
                     historicVariableInstance.getValue() != null ? variableValue.getClass() : null, variableValue);
         } catch (final ProcessEngineException processEngineException) {
             logger.error("Unable to find {} variable using processInstanceId: {}",
-                    CREATE_NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME, processInstanceId, processEngineException);
+                    NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME, processInstanceId, processEngineException);
         }
         return Optional.empty();
     }

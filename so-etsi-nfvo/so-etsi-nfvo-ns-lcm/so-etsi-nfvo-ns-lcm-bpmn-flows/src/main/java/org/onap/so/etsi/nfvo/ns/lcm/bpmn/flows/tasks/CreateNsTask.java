@@ -21,7 +21,7 @@ package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.tasks;
 
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.CREATE_NS_REQUEST_PARAM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.CREATE_NS_RESPONSE_PARAM_NAME;
-import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.CREATE_NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME;
+import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.GLOBAL_CUSTOMER_ID_PARAM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.NS_INSTANCE_ID_PARAM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.NS_PACKAGE_MODEL_PARAM_NAME;
@@ -102,7 +102,7 @@ public class CreateNsTask extends AbstractNetworkServiceTask {
                 final String message = "Unable to find NS package using NsdId: " + createNsRequest.getNsdId();
                 logger.error(message);
                 execution.setVariable(DOES_NS_PACKAGE_EXISTS_PARAM_NAME, false);
-                execution.setVariable(CREATE_NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME,
+                execution.setVariable(NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME,
                         new InlineResponse400().detail(message));
             }
 
@@ -113,7 +113,7 @@ public class CreateNsTask extends AbstractNetworkServiceTask {
 
             execution.setVariable(DOES_NS_PACKAGE_EXISTS_PARAM_NAME, false);
 
-            execution.setVariable(CREATE_NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME,
+            execution.setVariable(NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME,
                     new InlineResponse400().title(message).detail(message));
         }
 
@@ -135,7 +135,7 @@ public class CreateNsTask extends AbstractNetworkServiceTask {
             final Optional<NfvoNsInst> optional =
                     databaseServiceProvider.getNfvoNsInstByName(createNsRequest.getNsName());
             final NfvoNsInst nfvoNsInst = optional.get();
-            execution.setVariable(CREATE_NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME, new InlineResponse400()
+            execution.setVariable(NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME, new InlineResponse400()
                     .detail("Ns Instance already exists in database : " + nfvoNsInst.toString()));
         }
 

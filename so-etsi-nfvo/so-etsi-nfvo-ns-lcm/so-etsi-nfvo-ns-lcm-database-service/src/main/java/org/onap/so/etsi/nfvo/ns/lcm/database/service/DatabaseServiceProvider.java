@@ -160,5 +160,8 @@ public class DatabaseServiceProvider {
         return nsLcmOpOccRepository.findById(id);
     }
 
-
+    public void deleteNfvoNsInst(final String nsInstId) {
+        logger.info("Deleting NfvoNsInst with nsInstId: {}", nsInstId);
+        nfvoNsInstRepository.deleteById(nsInstId);
+    }
 }

@@ -19,17 +19,14 @@
  */
 package org.onap.so.etsi.nfvo.ns.lcm.rest;
 
-/**
- * @author Waqas Ikram (waqas.ikram@est.tech)
- *
- */
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import java.net.URISyntaxException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import org.junit.Before;
@@ -173,11 +170,30 @@ public class NsLifecycleManagementControllerTest {
     }
 
     @Test
-    public void testCreateNs_ValidDeleteNsRequest() {
-        final String baseUrl = getNsLcmBaseUrl() + "/ns_instances/" + UUID.randomUUID().toString();
+    public void testDeleteNs_SuccessfulCase() {
+        final String nsInstId = UUID.randomUUID().toString();
+        doNothing().when(mockedJobExecutorService).runDeleteNsJob(eq(nsInstId));
+
+        final String baseUrl = getNsLcmBaseUrl() + "/ns_instances/" + nsInstId;
         final ResponseEntity<Void> responseEntity =
                 testRestTemplate.exchange(baseUrl, HttpMethod.DELETE, null, Void.class);
-        assertEquals(HttpStatus.NOT_IMPLEMENTED, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void testDeleteNs_nsRequestProcessingExceptionThrown_returnInlineResponse400() {
+        final String nsInstId = UUID.randomUUID().toString();
+        final String message = "Unable to process request";
+        doThrow(new NsRequestProcessingException(message, new InlineResponse400().detail(message)))
+                .when(mockedJobExecutorService).runDeleteNsJob(eq(nsInstId));
+
+        final String baseUrl = getNsLcmBaseUrl() + "/ns_instances/" + nsInstId;
+        final ResponseEntity<InlineResponse400> responseEntity =
+                testRestTemplate.exchange(baseUrl, HttpMethod.DELETE, null, InlineResponse400.class);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+        assertTrue(responseEntity.hasBody());
+        assertNotNull(responseEntity.getBody());
     }
 
     @Test

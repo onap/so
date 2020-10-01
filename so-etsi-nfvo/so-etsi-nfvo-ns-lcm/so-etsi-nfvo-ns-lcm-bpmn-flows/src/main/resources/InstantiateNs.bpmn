@@ -133,7 +133,7 @@
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_1i36dw4" sourceRef="Activity_0gkpdft" targetRef="Activity_1w09i1k" />
   </bpmn:process>
-  <bpmn:error id="Error_0jsct8p" name="InstantiateNsProcessingException" errorCode="INSTANTIATE_NS_PROCESSING_EXCEPTION" />
+  <bpmn:error id="Error_0jsct8p" name="NsWorkflowProcessingException" errorCode="INSTANTIATE_NS_WORKFLOW_PROCESSING_EXCEPTION" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="InstantiateNs">
       <bpmndi:BPMNEdge id="Flow_1p21p1m_di" bpmnElement="Flow_1p21p1m">

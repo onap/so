@@ -234,7 +234,7 @@ public class CreateNsTaskTest extends BaseTest {
         assertNull(nsResponseVariable);
 
         final HistoricVariableInstance workflowExceptionVariable = getVariable(processInstance.getProcessInstanceId(),
-                CamundaVariableNameConstants.CREATE_NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME);
+                CamundaVariableNameConstants.NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME);
 
         final InlineResponse400 problemDetails = (InlineResponse400) workflowExceptionVariable.getValue();
         assertNotNull(problemDetails);
@@ -306,7 +306,7 @@ public class CreateNsTaskTest extends BaseTest {
 
         mockEtsiCatalogEndpoints(nsdId);
 
-        final String modelEndpoint = getAiaServiceInstancelEndPoint(createNsRequest);
+        final String modelEndpoint = getAaiServiceInstanceEndPoint();
         wireMockServer.stubFor(put(urlMatching(modelEndpoint)).willReturn(WireMock.serverError()));
         wireMockServer.stubFor(get(urlMatching(modelEndpoint)).willReturn(WireMock.serverError()));
 
@@ -339,16 +339,10 @@ public class CreateNsTaskTest extends BaseTest {
     }
 
     private void mockAAIEndpoints(final CreateNsRequest createNsRequest) {
-        final String modelEndpoint = getAiaServiceInstancelEndPoint(createNsRequest);
+        final String modelEndpoint = getAaiServiceInstanceEndPoint();
 
         wireMockServer.stubFor(put(urlMatching(modelEndpoint)).willReturn(ok()));
         wireMockServer.stubFor(get(urlMatching(modelEndpoint)).willReturn(notFound()));
-    }
-
-    private String getAiaServiceInstancelEndPoint(final CreateNsRequest createNsRequest) {
-        return "/aai/v[0-9]+/business/customers/customer/" + GLOBAL_CUSTOMER_ID
-                + "/service-subscriptions/service-subscription/" + SERVICE_TYPE
-                + "/service-instances/service-instance/.*";
     }
 
     private void mockEtsiCatalogEndpoints(final String nsdId) {
