@@ -23,3 +23,5 @@ packages/root-pack-extras/config-resources/mariadb/db-sql-scripts/main-schemas/M
 **/bin/
 /tattletale/
 /.metadata/
+**/.sts4-cache
+**/.java-version
