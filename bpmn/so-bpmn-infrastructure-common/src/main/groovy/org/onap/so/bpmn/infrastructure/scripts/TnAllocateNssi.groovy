@@ -27,11 +27,9 @@ import groovy.json.JsonSlurper
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.ServiceInstance
-import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -155,7 +153,7 @@ class TnAllocateNssi extends AbstractServiceTaskProcessor {
             "modelUuid":"${modelUuid}",
             "modelVersion":""
              }"""
-        execution.setVariable("ssServiceModelInfo", serviceModelInfo)
+        execution.setVariable("serviceModelInfo", serviceModelInfo)
 
         logger.debug("Finish prepareDecomposeService")
     }
@@ -186,13 +184,14 @@ class TnAllocateNssi extends AbstractServiceTaskProcessor {
         if (maxIndex < 1) {
             String msg = "Exception in TN NSST processDecomposition. There is no NSST associated with TN NSST "
             logger.info(msg)
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+            //exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        } else {
+            execution.setVariable("tnNsstInfoList", nsstInfoList)
+            execution.setVariable("tnModelVersion", tnModelVersion)
+            execution.setVariable("tnModelName", tnModelName)
+            execution.setVariable("currentIndex", currentIndex)
+            execution.setVariable("maxIndex", maxIndex)
         }
-        execution.setVariable("tnNsstInfoList", nsstInfoList)
-        execution.setVariable("tnModelVersion", tnModelVersion)
-        execution.setVariable("tnModelName", tnModelName)
-        execution.setVariable("currentIndex", currentIndex)
-        execution.setVariable("maxIndex", maxIndex)
 
         logger.debug("End processDecomposition")
     }
@@ -334,7 +333,7 @@ class TnAllocateNssi extends AbstractServiceTaskProcessor {
         roStatus.setProgress(progress)
         roStatus.setStatus(status)
         roStatus.setStatusDescription(statusDescription)
-        requestDBUtil.prepareUpdateResourceOperationStatus(execution, status)
+        requestDBUtil.prepareUpdateResourceOperationStatus(execution, roStatus)
     }
 
 }

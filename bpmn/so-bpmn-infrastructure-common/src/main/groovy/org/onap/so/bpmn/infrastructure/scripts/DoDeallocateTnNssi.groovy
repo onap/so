@@ -162,7 +162,7 @@ class DoDeallocateTnNssi extends AbstractServiceTaskProcessor {
         roStatus.setProgress(progress)
         roStatus.setStatus(status)
         roStatus.setStatusDescription(statusDescription)
-        requestDBUtil.prepareUpdateResourceOperationStatus(execution, status)
+        requestDBUtil.prepareUpdateResourceOperationStatus(execution, roStatus)
     }
 }
 
