@@ -316,13 +316,6 @@ public class InstantiateNsTask extends AbstractNetworkServiceTask {
 
     }
 
-    private void updateNsInstanceStatus(final DelegateExecution execution, final State nsStatus) {
-        final NfvoNsInst nfvoNsInst = getNfvoNsInst(execution);
-        logger.info("Updating NfvoNsInst Status to {} and saving to DB", nsStatus);
-        nfvoNsInst.setStatus(nsStatus);
-        databaseServiceProvider.saveNfvoNsInst(nfvoNsInst);
-    }
-
     private Optional<Tenant> getTenant(final Map<String, String> additionalParams) {
         final String vimId = (String) additionalParams.get("vim_id");
         if (vimId != null) {

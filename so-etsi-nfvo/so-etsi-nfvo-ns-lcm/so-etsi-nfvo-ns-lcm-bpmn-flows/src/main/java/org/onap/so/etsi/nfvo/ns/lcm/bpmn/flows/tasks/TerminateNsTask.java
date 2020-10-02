@@ -22,7 +22,6 @@ package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.tasks;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoNfInst;
-import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoNsInst;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.State;
 import org.onap.so.etsi.nfvo.ns.lcm.database.service.DatabaseServiceProvider;
 import org.slf4j.Logger;
@@ -114,13 +113,6 @@ public class TerminateNsTask extends AbstractNetworkServiceTask {
                 logger.info("Current status {} of vnf: {}", instance.getStatus(), instance.getName());
             });
         }
-    }
-
-    private void updateNsInstanceStatus(final DelegateExecution execution, final State nsStatus) {
-        final NfvoNsInst nfvoNsInst = getNfvoNsInst(execution);
-        logger.info("Updating NfvoNsInst Status to {} and saving to DB", nsStatus);
-        nfvoNsInst.setStatus(nsStatus);
-        databaseServiceProvider.saveNfvoNsInst(nfvoNsInst);
     }
 
     private List<String> getNfvoNfInstIds(final DelegateExecution execution) {

@@ -43,4 +43,5 @@ public interface AaiServiceProvider {
 
     void deleteGenericVnf(final String vnfId);
 
+    void deleteServiceInstance(final String globalCustomerId, final String serviceType, final String serviceInstanceId);
 }

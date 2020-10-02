@@ -35,7 +35,6 @@ import org.onap.so.etsi.nfvo.ns.lcm.model.NsInstancesNsInstance;
 import org.onap.so.etsi.nfvo.ns.lcm.model.TerminateNsRequest;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -109,7 +108,9 @@ public class NsLifecycleManagementController {
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public ResponseEntity<?> deleteNs(@PathVariable("nsInstanceId") final String nsInstanceId) {
         logger.debug("Received delete NS request for nsInstanceId: {}", nsInstanceId);
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("Operation is not supported yet");
+        nsLifeCycleManager.deleteNs(nsInstanceId);
+        logger.info("Successfully deleted NS for nsInstanceId: {}", nsInstanceId);
+        return ResponseEntity.noContent().build();
     }
 
     /**

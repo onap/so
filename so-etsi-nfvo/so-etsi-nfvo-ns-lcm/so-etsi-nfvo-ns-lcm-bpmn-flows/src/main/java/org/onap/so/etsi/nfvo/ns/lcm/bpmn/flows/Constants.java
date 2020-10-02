@@ -30,6 +30,7 @@ public class Constants {
     public static final String CREATE_NS_WORKFLOW_NAME = "CreateNs";
     public static final String INSTANTIATE_NS_WORKFLOW_NAME = "InstantiateNs";
     public static final String TERMINATE_NS_WORKFLOW_NAME = "TerminateNs";
+    public static final String DELETE_NS_WORKFLOW_NAME = "DeleteNs";
     public static final String GET_NS_OCCURRENCE_OPERATION_STATUS_NAME = "GetNsOccurrenceOperationStatus";
 
 

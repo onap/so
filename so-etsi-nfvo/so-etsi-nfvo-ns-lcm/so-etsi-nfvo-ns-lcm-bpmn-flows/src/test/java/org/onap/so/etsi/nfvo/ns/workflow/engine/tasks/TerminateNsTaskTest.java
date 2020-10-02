@@ -75,14 +75,8 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 public class TerminateNsTaskTest extends BaseTest {
 
     @Autowired
-    @Qualifier(ETSI_CATALOG_REST_TEMPLATE_BEAN)
-    private RestTemplate etsiCatalogRestTemplate;
-
-    @Autowired
     @Qualifier(SOL003_ADAPTER_REST_TEMPLATE_BEAN)
     private RestTemplate sol003AdapterRestTemplate;
-
-    private MockRestServiceServer mockEtsiCatalogRestServiceServer;
 
     private MockRestServiceServer mockSol003AdapterRestServiceServer;
 
@@ -101,21 +95,14 @@ public class TerminateNsTaskTest extends BaseTest {
     public void before() {
         wireMockServer.resetAll();
         gson = gsonProvider.getGson();
-
-        mockEtsiCatalogRestServiceServer =
-                MockRestServiceServer.bindTo(etsiCatalogRestTemplate).ignoreExpectOrder(true).build();
         mockSol003AdapterRestServiceServer =
                 MockRestServiceServer.bindTo(sol003AdapterRestTemplate).ignoreExpectOrder(true).build();
-
-        etsiCatalogRestTemplate.getMessageConverters().add(new GsonHttpMessageConverter(gson));
         sol003AdapterRestTemplate.getMessageConverters().add(new GsonHttpMessageConverter(gson));
-
     }
 
     @After
     public void after() {
         wireMockServer.resetAll();
-        mockEtsiCatalogRestServiceServer.reset();
     }
 
     @Test

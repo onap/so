@@ -32,8 +32,7 @@ public class CamundaVariableNameConstants {
     public static final String SERVICE_TYPE_PARAM_NAME = "serviceType";
 
     public static final String NS_PACKAGE_MODEL_PARAM_NAME = "NSPackageModel";
-    public static final String CREATE_NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME =
-            "CreateNsWorkflowProcessingException";
+    public static final String NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME = "NsWorkflowProcessingException";
     public static final String CREATE_NS_RESPONSE_PARAM_NAME = "createNsResponse";
 
     public static final String INSTANTIATE_NS_REQUEST_PARAM_NAME = "instantiateNsRequest";
