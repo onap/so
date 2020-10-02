@@ -20,8 +20,11 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-
+import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.Relationship
+import org.onap.aaiclient.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
@@ -240,5 +243,41 @@ class TnNssmfUtils {
         String res = jsonUtil.StringArrayToList(plmnListStr).get(0)
 
         return res
+    }
+
+    void createRelationShipInAAI(DelegateExecution execution, AAIResourceUri uri, Relationship relationship) {
+        logger.debug("createRelationShipInAAI Start")
+        String msg
+        AAIResourcesClient client = new AAIResourcesClient()
+        try {
+            if (!client.exists(uri)) {
+                logger.info("ERROR: createRelationShipInAAI: not exist: uri={}", uri)
+                return
+            }
+            AAIResourceUri from = ((AAIResourceUri) (uri.clone())).relationshipAPI()
+            client.create(from, relationship)
+
+        } catch (BpmnError e) {
+            throw e
+        } catch (Exception ex) {
+            msg = "Exception in createRelationShipInAAI. " + ex.getMessage()
+            logger.info(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+        logger.debug("createRelationShipInAAI Exit")
+    }
+
+    void attachLogicalLinkToAllottedResource(DelegateExecution execution, String aaiVersion, AAIResourceUri arUri,
+                                             String logicalLinkId) {
+
+
+        String toLink = "aai/${aaiVersion}/network/logical-links/logical-link/${logicalLinkId}"
+
+        Relationship relationship = new Relationship()
+        relationship.setRelatedLink(toLink)
+        relationship.setRelatedTo("logical-link")
+        relationship.setRelationshipLabel("org.onap.relationships.inventory.ComposedOf")
+
+        createRelationShipInAAI(execution, arUri, relationship)
     }
 }

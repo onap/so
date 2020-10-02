@@ -23,12 +23,10 @@ package org.onap.so.bpmn.infrastructure.scripts
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.SliceProfile
-import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
-import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.core.json.JsonUtils
@@ -38,6 +36,7 @@ import org.slf4j.LoggerFactory
 class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(DoCreateTnNssiInstance.class);
+    final String AAI_VERSION = "v21"
     JsonUtils jsonUtil = new JsonUtils()
     TnNssmfUtils tnNssmfUtils = new TnNssmfUtils()
     ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -67,23 +66,26 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
 
     void createSliceProfile(DelegateExecution execution) {
 
-        String sliceserviceInstanceId = execution.getVariable("sliceServiceInstanceId")
+        String ssInstanceId = execution.getVariable("sliceServiceInstanceId")
         String sliceProfileStr = execution.getVariable("sliceProfile")
         String sliceProfileId = UUID.randomUUID().toString()
         SliceProfile sliceProfile = new SliceProfile();
         sliceProfile.setProfileId(sliceProfileId)
         sliceProfile.setLatency(Integer.parseInt(jsonUtil.getJsonValue(sliceProfileStr, "latency")))
         sliceProfile.setResourceSharingLevel(jsonUtil.getJsonValue(sliceProfileStr, "resourceSharingLevel"))
-        sliceProfile.setSNssai(tnNssmfUtils.getFirstSnssaiFromSliceProfile(sliceProfileStr))    //TODO: should be list
+        //sliceProfile.setSNssai(tnNssmfUtils.getFirstSnssaiFromSliceProfile(sliceProfileStr))
 
-        sliceProfile.setE2ELatency(Integer.parseInt(jsonUtil.getJsonValue(sliceProfileStr, "latency")))
         sliceProfile.setMaxBandwidth(Integer.parseInt(jsonUtil.getJsonValue(sliceProfileStr, "maxBandwidth")))
 
-        //TODO: new API
-        sliceProfile.setReliability(new Object())
+        //sliceProfile.setReliability(new Object())
         try {
             AAIResourcesClient client = getAAIClient()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(sliceserviceInstanceId).sliceProfile(sliceProfileId))
+            AAIResourceUri uri =
+                    AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                            .customer(execution.getVariable("globalSubscriberId"))
+                            .serviceSubscription(execution.getVariable("subscriptionServiceType"))
+                            .serviceInstance(ssInstanceId)
+                            .sliceProfile(sliceProfileId))
             client.create(uri, sliceProfile)
 
         } catch (BpmnError e) {
@@ -112,20 +114,25 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
             ss.setOrchestrationStatus(serviceStatus)
             String modelInvariantUuid = execution.getVariable("modelInvariantUuid")
             String modelUuid = execution.getVariable("modelUuid")
-            ss.setModelInvariantId(modelInvariantUuid)
-            ss.setModelVersionId(modelUuid)
+            //TODO: need valid model ID from the caller, as AAI does not accept invalid IDs
+            //ss.setModelInvariantId(modelInvariantUuid)
+            //ss.setModelVersionId(modelUuid)
             String serviceInstanceLocationid = tnNssmfUtils.getFirstPlmnIdFromSliceProfile(sliceProfileStr)
             ss.setServiceInstanceLocationId(serviceInstanceLocationid)
             String snssai = tnNssmfUtils.getFirstSnssaiFromSliceProfile(sliceProfileStr)
             ss.setEnvironmentContext(snssai)
             ss.setServiceRole(serviceRole)
             AAIResourcesClient client = getAAIClient()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(ssInstanceId))
+            AAIResourceUri uri =
+                    AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                            .customer(execution.getVariable("globalSubscriberId"))
+                            .serviceSubscription(execution.getVariable("subscriptionServiceType"))
+                            .serviceInstance(ssInstanceId))
             client.create(uri, ss)
         } catch (BpmnError e) {
             throw e
         } catch (Exception ex) {
-            String msg = "Exception in DoCreateTnNssiInstance.createServiceInstance. " + ex.getMessage()
+            String msg = "Exception in DoCreateTnNssiInstance.createServiceInstance: " + ex.getMessage()
             logger.info(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
@@ -133,17 +140,19 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
 
 
     void createAllottedResource(DelegateExecution execution) {
-        String serviceInstanceId = execution.getVariable('sliceServiceInstanceId')
-
-        AAIResourcesClient resourceClient = getAAIClient()
-        AAIResourceUri ssServiceuri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
+        String ssInstanceId = execution.getVariable('sliceServiceInstanceId')
 
         try {
             List<String> networkStrList = jsonUtil.StringArrayToList(execution.getVariable("transportSliceNetworks"))
 
             for (String networkStr : networkStrList) {
                 String allottedResourceId = UUID.randomUUID().toString()
-                AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(execution.getVariable("sliceserviceInstanceId")).allottedResource(allottedResourceId))
+                AAIResourceUri allottedResourceUri =
+                        AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                                .customer(execution.getVariable("globalSubscriberId"))
+                                .serviceSubscription(execution.getVariable("subscriptionServiceType"))
+                                .serviceInstance(execution.getVariable("sliceServiceInstanceId"))
+                                .allottedResource(allottedResourceId))
                 execution.setVariable("allottedResourceUri", allottedResourceUri)
                 String modelInvariantId = execution.getVariable("modelInvariantUuid")
                 String modelVersionId = execution.getVariable("modelUuid")
@@ -152,27 +161,37 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
                 resource.setId(allottedResourceId)
                 resource.setType("TsciNetwork")
                 resource.setAllottedResourceName("network_" + execution.getVariable("sliceServiceInstanceName"))
-                resource.setModelInvariantId(modelInvariantId)
-                resource.setModelVersionId(modelVersionId)
                 getAAIClient().create(allottedResourceUri, resource)
-                //AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceFromExistingURI(Types.SERVICE_INSTANCE, UriBuilder.fromPath(ssServiceuri).build())
-                //getAAIClient().connect(allottedResourceUri,ssServiceuri)
-                //execution.setVariable("aaiARPath", allottedResourceUri.build().toString());
 
                 String linkArrayStr = jsonUtil.getJsonValue(networkStr, "connectionLinks")
-                createLogicalLinksForAllocatedResource(execution, linkArrayStr, serviceInstanceId, allottedResourceId)
+                createLogicalLinksForAllocatedResource(execution, linkArrayStr, ssInstanceId, allottedResourceId)
             }
-
+        } catch (BpmnError e) {
+            throw e
         } catch (Exception ex) {
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Exception in createAaiAR " + ex.getMessage())
+            String msg = "Exception in DoCreateTnNssiInstance.createAllottedResource: " + ex.getMessage()
+            logger.info(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
     }
 
     void createLogicalLinksForAllocatedResource(DelegateExecution execution,
-                                                String linkArrayStr, String serviceInstanceId,
+                                                String linkArrayStr, String ssInstanceId,
                                                 String allottedResourceId) {
-
         try {
+            AAIResourceUri allottedResourceUri =
+                    AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                            .customer(execution.getVariable("globalSubscriberId"))
+                            .serviceSubscription(execution.getVariable("subscriptionServiceType"))
+                            .serviceInstance(ssInstanceId)
+                            .allottedResource(allottedResourceId))
+
+            if (!getAAIClient().exists(allottedResourceUri)) {
+                logger.info("ERROR: createLogicalLinksForAllocatedResource: allottedResource not exist: uri={}",
+                        allottedResourceUri)
+                return
+            }
+
             List<String> linkStrList = jsonUtil.StringArrayToList(linkArrayStr)
 
             for (String linkStr : linkStrList) {
@@ -186,15 +205,22 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
                 resource.setLinkId(logicalLinkId)
                 resource.setLinkName(epA)
                 resource.setLinkName2(epB)
-                resource.setModelInvariantId(modelInvariantId)
-                resource.setModelVersionId(modelVersionId)
+                resource.setLinkType("TsciConnectionLink")
+                resource.setInMaint(false)
 
-                AAIResourceUri logicalLinkUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().logicalLink(logicalLinkId))
+                //epA is link-name
+                AAIResourceUri logicalLinkUri =
+                        AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().logicalLink(epA))
                 getAAIClient().create(logicalLinkUri, resource)
+
+                tnNssmfUtils.attachLogicalLinkToAllottedResource(execution, AAI_VERSION, allottedResourceUri, epA);
             }
+        } catch (BpmnError e) {
+            throw e
         } catch (Exception ex) {
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000,
-                    "Exception in createLogicalLinksForAllocatedResource" + ex.getMessage())
+            String msg = "Exception in DoCreateTnNssiInstance.createLogicalLinksForAllocatedResource: " + ex.getMessage()
+            logger.info(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
     }
 

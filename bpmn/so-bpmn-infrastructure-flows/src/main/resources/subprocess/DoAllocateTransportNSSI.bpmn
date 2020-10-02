@@ -68,12 +68,12 @@ ex.processJavaException(execution)</bpmn:script>
       <bpmn:incoming>SequenceFlow_07e12rt</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0t094g7</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
-def rupScript = new TnAllocateNssi()
+def runScript = new TnAllocateNssi()
 runScript.prepareUpdateJobStatus(execution,"progress","10","Allocate TN NSSI started")</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_1ex8ke9" name="Goto OOF TN NSSI Selection">
       <bpmn:incoming>SequenceFlow_0jrclmc</bpmn:incoming>
-      <bpmn:linkEventDefinition id="LinkEventDefinition_0de65en" name="OofTnNssiSelect" />
+      <bpmn:linkEventDefinition id="LinkEventDefinition_0de65en" name="TnAllocateNssi" />
     </bpmn:intermediateThrowEvent>
     <bpmn:scriptTask id="ScriptTask_1ssh2l9" name="Prepare Update Resource Oper Status((finish)" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_0kixzdj</bpmn:incoming>
