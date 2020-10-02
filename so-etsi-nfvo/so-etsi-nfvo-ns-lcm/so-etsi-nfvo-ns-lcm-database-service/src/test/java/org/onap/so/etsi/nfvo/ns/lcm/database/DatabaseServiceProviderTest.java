@@ -133,7 +133,7 @@ public class DatabaseServiceProviderTest {
                 .status(State.NOT_INSTANTIATED).createTime(CURRENT_DATE_TIME).lastUpdateTime(CURRENT_DATE_TIME);
         databaseServiceProvider.saveNfvoNfInst(nfInst);
 
-        final Optional<NfvoNfInst> actual = databaseServiceProvider.getNfvoNfInstByNfInstId(nfInst.getNfInstId());
+        final Optional<NfvoNfInst> actual = databaseServiceProvider.getNfvoNfInst(nfInst.getNfInstId());
         final NfvoNfInst actualNfvoNfInst = actual.get();
         assertEquals(nsInst.getNsInstId(), actualNfvoNfInst.getNsInst().getNsInstId());
         assertEquals(nfInst.getNfInstId(), actualNfvoNfInst.getNfInstId());

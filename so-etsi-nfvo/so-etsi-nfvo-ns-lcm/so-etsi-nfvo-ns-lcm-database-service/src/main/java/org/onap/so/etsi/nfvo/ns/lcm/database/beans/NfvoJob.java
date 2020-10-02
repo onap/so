@@ -238,14 +238,17 @@ public class NfvoJob {
 
     @Override
     public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
         if (obj instanceof NfvoJob) {
             final NfvoJob other = (NfvoJob) obj;
             return Objects.equals(jobId, other.jobId) && Objects.equals(processInstanceId, other.processInstanceId)
                     && Objects.equals(jobType, other.jobType) && Objects.equals(jobAction, other.jobAction)
                     && Objects.equals(progress, other.progress) && Objects.equals(status, other.status)
                     && Objects.equals(startTime, other.startTime) && Objects.equals(endTime, other.endTime)
-                    && Objects.equals(status, other.status) && Objects.equals(resourceId, other.resourceId)
-                    && Objects.equals(resourceName, other.resourceName)
+                    && Objects.equals(resourceId, other.resourceId) && Objects.equals(resourceName, other.resourceName)
                     && Utils.isEquals(nfvoJobStatuses, other.nfvoJobStatuses);
         }
         return false;
