@@ -22,7 +22,6 @@ package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.extclients.aai;
 import java.util.Optional;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.ServiceInstance;
-import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;

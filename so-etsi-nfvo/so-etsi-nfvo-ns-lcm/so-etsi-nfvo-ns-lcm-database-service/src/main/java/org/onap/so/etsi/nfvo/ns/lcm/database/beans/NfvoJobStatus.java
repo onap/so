@@ -116,17 +116,21 @@ public class NfvoJobStatus {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, status, updatedTime, description, nfvoJob.getJobId());
+        return Objects.hash(id, status, updatedTime, description, nfvoJob != null ? nfvoJob.getJobId() : 0);
     }
 
     @Override
     public boolean equals(final Object obj) {
-
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
         if (obj instanceof NfvoJobStatus) {
             final NfvoJobStatus other = (NfvoJobStatus) obj;
             return Objects.equals(id, other.id) && Objects.equals(status, other.status)
                     && Objects.equals(updatedTime, other.updatedTime) && Objects.equals(description, other.description)
-                    && Objects.equals(nfvoJob.getJobId(), other.nfvoJob.getJobId());
+                    && (nfvoJob == null ? other.nfvoJob == null
+                            : other.nfvoJob != null && Objects.equals(nfvoJob.getJobId(), other.nfvoJob.getJobId()));
         }
         return false;
     }

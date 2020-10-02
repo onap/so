@@ -39,10 +39,11 @@ public class Utils {
         if (first == null) {
             return second == null;
         }
+
         if (first.isEmpty()) {
             return second.isEmpty();
         }
-        if (first.size() == second.size()) {
+        if ((first != null && second != null) && (first.size() == second.size())) {
             for (int index = 0; index < first.size(); index++) {
                 if (!Objects.equals(first.get(index), second.get(index))) {
                     return false;

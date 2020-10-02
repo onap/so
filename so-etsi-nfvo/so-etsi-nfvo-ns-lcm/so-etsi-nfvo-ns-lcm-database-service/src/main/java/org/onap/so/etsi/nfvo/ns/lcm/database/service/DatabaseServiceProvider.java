@@ -120,11 +120,6 @@ public class DatabaseServiceProvider {
         return nfvoNfInstRepository.save(nfvoNfInst) != null;
     }
 
-    public Optional<NfvoNfInst> getNfvoNfInstByNfInstId(final String nfInstId) {
-        logger.info("Querying database for NfvoNfInst using nfInstId: {}", nfInstId);
-        return nfvoNfInstRepository.findByNfInstId(nfInstId);
-    }
-
     public List<NfvoNfInst> getNfvoNfInstByNsInstId(final String nsInstId) {
         logger.info("Querying database for NfvoNfInst using nsInstId: {}", nsInstId);
         return nfvoNfInstRepository.findByNsInstNsInstId(nsInstId);

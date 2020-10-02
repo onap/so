@@ -184,13 +184,15 @@ public class NfvoNfInst {
         final NfvoNfInst that = (NfvoNfInst) object;
         return Objects.equals(nfInstId, that.nfInstId) && Objects.equals(name, that.name)
                 && Objects.equals(vnfdId, that.vnfdId) && Objects.equals(packageId, that.packageId)
-                && Objects.equals(nsInst, that.nsInst) && Objects.equals(status, that.status)
-                && Objects.equals(createTime, that.createTime) && Objects.equals(lastUpdateTime, that.lastUpdateTime);
+                && (nsInst == null ? that.nsInst == null : that.nsInst != null && Objects.equals(nsInst, that.nsInst))
+                && Objects.equals(status, that.status) && Objects.equals(createTime, that.createTime)
+                && Objects.equals(lastUpdateTime, that.lastUpdateTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(nfInstId, name, vnfdId, packageId, nsInst, status, createTime, lastUpdateTime);
+        return Objects.hash(nfInstId, name, vnfdId, packageId, nsInst != null ? nsInst.getNsInstId() : 0, status,
+                createTime, lastUpdateTime);
     }
 
     @Override

@@ -193,24 +193,26 @@ public class NsLcmOpOcc {
     }
 
     @Override
-    public boolean equals(final Object object) {
-        if (this == object)
+    public boolean equals(final Object obj) {
+        if (this == obj)
             return true;
-        if (object == null || getClass() != object.getClass())
+        if (obj == null || getClass() != obj.getClass())
             return false;
-        final NsLcmOpOcc that = (NsLcmOpOcc) object;
+        final NsLcmOpOcc that = (NsLcmOpOcc) obj;
         return Objects.equals(id, that.id) && Objects.equals(operationState, that.operationState)
                 && Objects.equals(stateEnteredTime, that.stateEnteredTime) && Objects.equals(startTime, that.startTime)
-                && Objects.equals(nfvoNsInst, that.nfvoNsInst) && Objects.equals(operation, that.operation)
-                && Objects.equals(isAutoInnovation, that.isAutoInnovation)
+                && (nfvoNsInst == null ? that.nfvoNsInst == null
+                        : that.nfvoNsInst != null && Objects.equals(nfvoNsInst, that.nfvoNsInst))
+                && Objects.equals(operation, that.operation) && Objects.equals(isAutoInnovation, that.isAutoInnovation)
                 && Objects.equals(operationParams, that.operationParams)
                 && Objects.equals(isCancelPending, that.isCancelPending);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, operationState, stateEnteredTime, startTime, nfvoNsInst, operation, isAutoInnovation,
-                operationParams, isCancelPending);
+        return Objects.hash(id, operationState, stateEnteredTime, startTime,
+                nfvoNsInst != null ? nfvoNsInst.getNsInstId() : 0, operation, isAutoInnovation, operationParams,
+                isCancelPending);
     }
 
     @Override

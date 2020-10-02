@@ -251,6 +251,10 @@ public class NfvoNsInst {
 
     @Override
     public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
         if (obj instanceof NfvoNsInst) {
             final NfvoNsInst other = (NfvoNsInst) obj;
             return Objects.equals(nsInstId, other.nsInstId) && Objects.equals(name, other.name)

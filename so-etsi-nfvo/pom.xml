@@ -28,6 +28,7 @@
     <jaxb-api>2.3.0</jaxb-api>
     <snakeyaml-version>0.11</snakeyaml-version>
     <hamcrest-version>2.2</hamcrest-version>
+    <equalsverifier-version>3.4.1</equalsverifier-version>
   </properties>
 
   <build>
