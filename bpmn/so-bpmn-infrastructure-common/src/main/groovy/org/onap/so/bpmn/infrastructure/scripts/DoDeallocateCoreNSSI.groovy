@@ -22,10 +22,14 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.v19.AllottedResource
 import org.onap.aai.domain.yang.v19.ServiceInstance
 import org.onap.aaiclient.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.Relationships
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.logging.filter.base.ONAPComponents
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -299,12 +303,38 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
 
         String nssiId = currentNSSI['nssiId']
         String nsiId = currentNSSI['nsiId']
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
+        String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
 
+        // NSSI
         AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
-        AAIResourceUri nsiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nsiId))
+        ServiceInstance nssi = currentNSSI['nssi']
+
+        String allottedResourceId = null
+
+        // Removes Allotted resource
+        List<AllottedResource> allottedResources = nssi.getAllottedResources()?.getAllottedResource()
+        if(allottedResources != null && allottedResources.size() == 1) { // Shouldn contain one allotted resource
+            allottedResourceId = allottedResources.get(0).getId()
+            allottedResources.remove(0)
+        }
+        else {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 500, "No allotted resource found for NSSI id = " + nssiId)
+        }
 
         try {
-            client.disconnect(nssiUri, nsiUri)
+            client.update(nssiUri, nssi)
+        }catch(Exception e){
+            exceptionUtil.buildAndThrowWorkflowException(execution, 25000, "Exception occured while NSSI association with NSI disconnect call: " + e.getMessage())
+        }
+
+
+        // Remove association between NSI and Allotted Resource
+        AAIResourceUri nsiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nsiId))
+        AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(nssiId).allottedResource(allottedResourceId))
+
+        try {
+            client.disconnect(nsiUri, allottedResourceUri)
         }catch(Exception e){
             exceptionUtil.buildAndThrowWorkflowException(execution, 25000, "Exception occured while NSSI association with NSI disconnect call: " + e.getMessage())
         }
