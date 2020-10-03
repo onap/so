@@ -326,7 +326,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
             String requestScope = requestScopeFromUri(requestUri);
 
             msoRequest.createErrorRequestRecord(Status.FAILED, requestId, validateException.getMessage(), action,
-                    requestScope, requestJSON, null);
+                    requestScope, requestJSON, null, null);
 
             throw validateException;
         }
