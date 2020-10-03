@@ -304,6 +304,10 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
                 Boolean failOnCallbackError = execution.getVariable("failOnCallbackError")
                 if(failOnCallbackError) {
                     sdncAdapterBuildWorkflowException(execution, callback)
+                }else {
+                    if(ackFinalIndicator.equals('Y')) {
+                        sdncAdapterBuildWorkflowException(execution, callback)
+                    }
                 }
             }
 
