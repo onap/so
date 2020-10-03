@@ -22,6 +22,7 @@
 
 package org.onap.so.client.exception;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
@@ -39,6 +40,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.logging.filter.base.ONAPComponents;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -94,5 +96,18 @@ public class ExceptionBuilderUnitTest {
 
         thrown.expect(BpmnError.class);
         exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e.getMessage(), ONAPComponents.SDNC);
+    }
+
+    @Test
+    public void buildAndThrowWorkflowExceptionWithWorkStepTest() {
+        doReturn("Process key").when(exceptionBuilder).getProcessKey(execution);
+
+        try {
+            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e.getMessage(), ONAPComponents.SDNC,
+                    "WORKSTEP");
+        } catch (BpmnError e) {
+        }
+        WorkflowException workflowException = (WorkflowException) execution.getVariable("WorkflowException");
+        assertEquals("WORKSTEP", workflowException.getWorkStep());
     }
 }
