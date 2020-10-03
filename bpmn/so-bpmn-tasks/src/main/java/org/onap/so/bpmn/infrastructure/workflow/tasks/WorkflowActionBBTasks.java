@@ -75,6 +75,7 @@ public class WorkflowActionBBTasks {
     private static final String COMPLETED = "completed";
     private static final String HANDLINGCODE = "handlingCode";
     private static final String ROLLBACKTOCREATED = "RollbackToCreated";
+    private static final String ROLLBACKTOCREATEDNOCONFIGURATION = "RollbackToCreatedNoConfiguration";
     private static final String REPLACEINSTANCE = "replaceInstance";
     private static final String VFMODULE = "VfModule";
     protected String maxRetries = "mso.rainyDay.maxRetries";
@@ -334,14 +335,19 @@ public class WorkflowActionBBTasks {
 
             String handlingCode = (String) execution.getVariable(HANDLINGCODE);
             List<ExecuteBuildingBlock> rollbackFlowsFiltered = new ArrayList<>(rollbackFlows);
-            if ("RollbackToAssigned".equals(handlingCode) || ROLLBACKTOCREATED.equals(handlingCode)) {
+            if ("RollbackToAssigned".equals(handlingCode) || ROLLBACKTOCREATED.equals(handlingCode)
+                    || ROLLBACKTOCREATEDNOCONFIGURATION.equals(handlingCode)) {
                 for (ExecuteBuildingBlock rollbackFlow : rollbackFlows) {
-                    if (rollbackFlow.getBuildingBlock().getBpmnFlowName().contains("Unassign")
+                    if (rollbackFlows.getBuildingBlock().getBpmnFlowName().contains("Unassign")
                             && !rollbackFlow.getBuildingBlock().getBpmnFlowName().contains("FabricConfiguration")) {
                         rollbackFlowsFiltered.remove(rollbackFlow);
                     } else if (rollbackFlow.getBuildingBlock().getBpmnFlowName().contains("Delete")
-                            && !rollbackFlow.getBuildingBlock().getBpmnFlowName().contains("FabricConfiguration")
-                            && ROLLBACKTOCREATED.equals(handlingCode)) {
+                            && ((!rollbackFlow.getBuildingBlock().getBpmnFlowName().contains("FabricConfiguration")
+                                    && (ROLLBACKTOCREATED.equals(handlingCode)
+                                            || ROLLBACKTOCREATEDNOCONFIGURATION.equals(handlingCode)))
+                                    || (rollbackFlow.getBuildingBlock().getBpmnFlowName()
+                                            .contains("FabricConfiguration")
+                                            && ROLLBACKTOCREATEDNOCONFIGURATION.equals(handlingCode)))) {
                         rollbackFlowsFiltered.remove(rollbackFlow);
                     }
                 }

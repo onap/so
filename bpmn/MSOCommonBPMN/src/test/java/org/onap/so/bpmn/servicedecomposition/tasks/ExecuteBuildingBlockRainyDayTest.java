@@ -259,6 +259,35 @@ public class ExecuteBuildingBlockRainyDayTest extends BaseTest {
         assertEquals(Status.ROLLED_BACK_TO_CREATED.toString(), delegateExecution.getVariable("rollbackTargetState"));
     }
 
+    @Test
+    public void queryRainyDayTableRollbackToCreatedNoConfiguration() throws Exception {
+        customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
+        serviceInstance.getModelInfoServiceInstance().setServiceType("st1");
+        vnf.setVnfType("vnft1");
+        BuildingBlock buildingBlock = new BuildingBlock().setBpmnFlowName("AddFabricConfigurationBB");
+        ExecuteBuildingBlock executeBuildingBlock = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock);
+        delegateExecution.setVariable("buildingBlock", executeBuildingBlock);
+        delegateExecution.setVariable("aLaCarte", true);
+        delegateExecution.setVariable("suppressRollback", false);
+        delegateExecution.setVariable("WorkflowExceptionCode", "7000");
+        RainyDayHandlerStatus rainyDayHandlerStatus = new RainyDayHandlerStatus();
+        rainyDayHandlerStatus.setErrorCode("7000");
+        rainyDayHandlerStatus.setFlowName("AddFabricConfigurationBB");
+        rainyDayHandlerStatus.setServiceType("st1");
+        rainyDayHandlerStatus.setVnfType("vnft1");
+        rainyDayHandlerStatus.setPolicy("RollbackToCreatedNoConfiguration");
+        rainyDayHandlerStatus.setWorkStep(ASTERISK);
+        rainyDayHandlerStatus.setSecondaryPolicy("Abort");
+
+        doReturn(rainyDayHandlerStatus).when(MOCK_catalogDbClient).getRainyDayHandlerStatus("AddFabricConfigurationBB",
+                "st1", "vnft1", "7000", "*", "errorMessage", "*");
+
+        executeBuildingBlockRainyDay.queryRainyDayTable(delegateExecution, true);
+
+        assertEquals("RollbackToCreatedNoConfiguration", delegateExecution.getVariable("handlingCode"));
+        assertEquals(Status.ROLLED_BACK_TO_CREATED.toString(), delegateExecution.getVariable("rollbackTargetState"));
+    }
+
 
     @Test
     public void suppressRollbackTest() throws Exception {
