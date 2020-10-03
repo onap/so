@@ -403,7 +403,7 @@ public class E2EServiceInstances {
 
             msoRequest.createErrorRequestRecord(Status.FAILED, requestId,
                     "Exception while communciate with " + "Catalog DB", action, ModelType.service.name(), requestJSON,
-                    null);
+                    null, null);
             logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
             return response;
         }
@@ -415,7 +415,7 @@ public class E2EServiceInstances {
                     ErrorNumbers.SVC_GENERAL_SERVICE_ERROR, null, version);
 
             msoRequest.createErrorRequestRecord(Status.FAILED, requestId, "Recipe does not exist in catalog DB", action,
-                    ModelType.service.name(), requestJSON, null);
+                    ModelType.service.name(), requestJSON, null, null);
             logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
             return response;
         }
@@ -493,7 +493,7 @@ public class E2EServiceInstances {
 
             msoRequest.createErrorRequestRecord(Status.FAILED, requestId,
                     "Exception while communciate with " + "Catalog DB", action, ModelType.service.name(), requestJSON,
-                    null);
+                    null, null);
             logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
             return response;
         }
@@ -505,7 +505,7 @@ public class E2EServiceInstances {
                     ErrorNumbers.SVC_GENERAL_SERVICE_ERROR, null, version);
 
             msoRequest.createErrorRequestRecord(Status.FAILED, requestId, "Recipe does not exist in catalog DB", action,
-                    ModelType.service.name(), requestJSON, null);
+                    ModelType.service.name(), requestJSON, null, null);
             logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
             return response;
         }
@@ -725,7 +725,7 @@ public class E2EServiceInstances {
 
             msoRequest.createErrorRequestRecord(Status.FAILED, requestId,
                     "No communication to catalog DB " + e.getMessage(), action, ModelType.service.name(), requestJSON,
-                    null);
+                    null, null);
             logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
             return response;
         }
@@ -737,7 +737,7 @@ public class E2EServiceInstances {
                     MsoException.ServiceException, "Recipe does not exist in catalog DB",
                     ErrorNumbers.SVC_GENERAL_SERVICE_ERROR, null, version);
             msoRequest.createErrorRequestRecord(Status.FAILED, requestId, "No recipe found in DB", action,
-                    ModelType.service.name(), requestJSON, null);
+                    ModelType.service.name(), requestJSON, null, null);
             logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
             return response;
         }
@@ -958,7 +958,7 @@ public class E2EServiceInstances {
                             ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
 
             msoRequest.createErrorRequestRecord(Status.FAILED, requestId, validateException.getMessage(), action,
-                    ModelType.service.name(), requestJSON, null);
+                    ModelType.service.name(), requestJSON, null, null);
 
             throw validateException;
         }
