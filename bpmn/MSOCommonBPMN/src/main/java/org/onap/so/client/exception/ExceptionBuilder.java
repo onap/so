@@ -232,6 +232,20 @@ public class ExceptionBuilder {
         throw new BpmnError("MSOWorkflowException");
     }
 
+    public void buildAndThrowWorkflowException(DelegateExecution execution, int errorCode, String errorMessage,
+            ONAPComponentsList extSystemErrorSource, String workStep) {
+        String processKey = getProcessKey(execution);
+        logger.info("Building a WorkflowException for Subflow");
+
+        WorkflowException exception =
+                new WorkflowException(processKey, errorCode, errorMessage, workStep, extSystemErrorSource);
+        execution.setVariable("WorkflowException", exception);
+        execution.setVariable("WorkflowExceptionErrorMessage", errorMessage);
+        logger.info("Outgoing WorkflowException is {}", exception);
+        logger.info("Throwing MSOWorkflowException");
+        throw new BpmnError("MSOWorkflowException");
+    }
+
     public WorkflowException buildWorkflowException(DelegateExecution execution, int errorCode, String errorMessage,
             ONAPComponentsList extSystemErrorSource) {
         String processKey = getProcessKey(execution);

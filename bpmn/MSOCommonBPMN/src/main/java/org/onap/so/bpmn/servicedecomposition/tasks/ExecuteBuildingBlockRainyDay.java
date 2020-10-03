@@ -213,7 +213,8 @@ public class ExecuteBuildingBlockRainyDay {
                     String targetState = "";
                     if ("RollbackToAssigned".equalsIgnoreCase(handlingCode)) {
                         targetState = Status.ROLLED_BACK_TO_ASSIGNED.toString();
-                    } else if ("RollbackToCreated".equalsIgnoreCase(handlingCode)) {
+                    } else if ("RollbackToCreated".equalsIgnoreCase(handlingCode)
+                            || "RollbackToCreatedNoConfiguration".equalsIgnoreCase(handlingCode)) {
                         targetState = Status.ROLLED_BACK_TO_CREATED.toString();
                     } else {
                         targetState = Status.ROLLED_BACK.toString();
