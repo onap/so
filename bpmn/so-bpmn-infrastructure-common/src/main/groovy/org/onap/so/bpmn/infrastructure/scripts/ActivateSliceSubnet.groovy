@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory
 import static org.apache.commons.lang3.StringUtils.isBlank
 
 class ActivateSliceSubnet extends AbstractServiceTaskProcessor {
-	String Prefix="ActSS"
+	String Prefix="ActivateSliceSubnet_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 	RequestDBUtil requestDBUtil = new RequestDBUtil()

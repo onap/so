@@ -33,7 +33,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank
 
 class AllocateSliceSubnet extends AbstractServiceTaskProcessor {
 
-	String Prefix="ASS_"
+	String Prefix="AllocateSliceSubnet_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	RequestDBUtil requestDBUtil = new RequestDBUtil()
 	JsonUtils jsonUtil = new JsonUtils()

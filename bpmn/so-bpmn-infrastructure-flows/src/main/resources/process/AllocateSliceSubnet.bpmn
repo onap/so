@@ -91,13 +91,6 @@ nss.prepareInitOperationStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_0ou7wr9" sourceRef="Activity_1hyt0pb" targetRef="Activity_1ydx2rx" />
     <bpmn:sequenceFlow id="Flow_18cgkru" sourceRef="Activity_1ydx2rx" targetRef="Activity_0qlstj2" />
-    <bpmn:callActivity id="CallDoAllocateTransportNSSI" name="Call TNAllocateNSSI" calledElement="DoAllocateTransportNSSI">
-      <bpmn:extensionElements>
-        <camunda:in source="servicename" target="servicename" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0g7721r</bpmn:incoming>
-      <bpmn:outgoing>Flow_189zwjw</bpmn:outgoing>
-    </bpmn:callActivity>
     <bpmn:sequenceFlow id="Flow_189zwjw" sourceRef="CallDoAllocateTransportNSSI" targetRef="Event_18u424w" />
     <bpmn:callActivity id="CallDoAllocateCoreNSSI" name="Call CNAllocateNSSI" calledElement="DoAllocateCoreNSSI">
       <bpmn:extensionElements>
@@ -118,6 +111,24 @@ nss.prepareInitOperationStatus(execution)</bpmn:script>
       <bpmn:outgoing>Flow_1coedjo</bpmn:outgoing>
     </bpmn:callActivity>
     <bpmn:sequenceFlow id="Flow_1coedjo" sourceRef="CallDoAllocateCoreNSSI" targetRef="Event_18u424w" />
+    <bpmn:callActivity id="CallDoAllocateTransportNSSI" name="Call TNAllocateNSSI" calledElement="DoAllocateTransportNSSI">
+      <bpmn:extensionElements>
+        <camunda:in source="msoRequestId" target="msoRequestId" />
+        <camunda:in source="modelInvariantUuid" target="modelInvariantUuid" />
+        <camunda:in source="modelUuid" target="modelUuid" />
+        <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
+        <camunda:in source="dummyServiceId" target="dummyServiceId" />
+        <camunda:in source="nsiId" target="nsiId" />
+        <camunda:in source="networkType" target="networkType" />
+        <camunda:in source="subscriptionServiceType" target="subscriptionServiceType" />
+        <camunda:in source="jobId" target="jobId" />
+        <camunda:in source="sliceParams" target="sliceParams" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="servicename" target="servicename" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0g7721r</bpmn:incoming>
+      <bpmn:outgoing>Flow_189zwjw</bpmn:outgoing>
+    </bpmn:callActivity>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="AllocateSliceSubnet">
@@ -126,8 +137,8 @@ nss.prepareInitOperationStatus(execution)</bpmn:script>
         <di:waypoint x="1152" y="190" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_189zwjw_di" bpmnElement="Flow_189zwjw">
-        <di:waypoint x="1080" y="300" />
-        <di:waypoint x="1170" y="300" />
+        <di:waypoint x="1080" y="290" />
+        <di:waypoint x="1170" y="290" />
         <di:waypoint x="1170" y="208" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_18cgkru_di" bpmnElement="Flow_18cgkru">
@@ -153,10 +164,10 @@ nss.prepareInitOperationStatus(execution)</bpmn:script>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0g7721r_di" bpmnElement="Flow_0g7721r">
         <di:waypoint x="890" y="215" />
-        <di:waypoint x="890" y="300" />
-        <di:waypoint x="980" y="300" />
+        <di:waypoint x="890" y="290" />
+        <di:waypoint x="980" y="290" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="912" y="273" width="36" height="14" />
+          <dc:Bounds x="912" y="263" width="36" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1fij4ds_di" bpmnElement="Flow_1fij4ds">
@@ -208,12 +219,13 @@ nss.prepareInitOperationStatus(execution)</bpmn:script>
       <bpmndi:BPMNShape id="Activity_1ydx2rx_di" bpmnElement="Activity_1ydx2rx">
         <dc:Bounds x="380" y="150" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_008nbm9_di" bpmnElement="CallDoAllocateTransportNSSI">
-        <dc:Bounds x="980" y="260" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_01669p4_di" bpmnElement="CallDoAllocateCoreNSSI">
         <dc:Bounds x="980" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_00awuik_di" bpmnElement="CallDoAllocateTransportNSSI">
+        <dc:Bounds x="980" y="250" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
+
