@@ -22,6 +22,30 @@
       "revId": "3fb730c527fb4f24e8b63aac7845e02ceb6c3ceb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fcaf4c26_7d1e92d7",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/ActivateSliceSubnet.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 6209
+      },
+      "writtenOn": "2020-10-05T13:25:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "80be06b0_c3d36482",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 25
+      },
+      "revId": "3fb730c527fb4f24e8b63aac7845e02ceb6c3ceb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
