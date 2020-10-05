@@ -32,14 +32,13 @@ import org.slf4j.LoggerFactory
 import static org.apache.commons.lang3.StringUtils.isBlank
 
 class DeAllocateSliceSubnet extends AbstractServiceTaskProcessor {
-	String Prefix="DeASS_"
-	ExceptionUtil exceptionUtil = new ExceptionUtil()
-	JsonUtils jsonUtil = new JsonUtils()
-	RequestDBUtil requestDBUtil = new RequestDBUtil()
-	
-	private static final Logger logger = LoggerFactory.getLogger(DeAllocateSliceSubnet.class)
-	
-	 @Override
+    String Prefix="DeAllocateSliceSubnet_"
+    ExceptionUtil exceptionUtil = new ExceptionUtil()
+    JsonUtils jsonUtil = new JsonUtils()
+    RequestDBUtil requestDBUtil = new RequestDBUtil()
+    private static final Logger logger = LoggerFactory.getLogger(DeAllocateSliceSubnet.class)
+
+     @Override
     void preProcessRequest(DelegateExecution execution) {
         logger.debug(Prefix + "preProcessRequest Start")
         execution.setVariable("prefix", Prefix)
@@ -62,8 +61,8 @@ class DeAllocateSliceSubnet extends AbstractServiceTaskProcessor {
             } else {
                 execution.setVariable("globalSubscriberId", globalSubscriberId)
             }
-			
-			//NSSI ID
+
+            //NSSI ID
             String serviceInstanceID = jsonUtil.getJsonValue(subnetInstanceReq, "serviceInstanceID")
             if (isBlank(serviceInstanceID)) {
                 msg = "Input serviceInstanceID is null"
@@ -73,27 +72,27 @@ class DeAllocateSliceSubnet extends AbstractServiceTaskProcessor {
             {
                 execution.setVariable("serviceInstanceID", serviceInstanceID)
             }
-			
-			String nsiId = jsonUtil.getJsonValue(subnetInstanceReq, "additionalProperties.nsiId")
-			if (isBlank(nsiId)) {
-				msg = "Input nsiId is null"
-				logger.debug(msg)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			} else
-			{
-				execution.setVariable("nsiId", nsiId)
-			}
 
-			String networkType = jsonUtil.getJsonValue(subnetInstanceReq, "networkType")
-			if (isBlank(networkType)) {
-				msg = "Input networkType is null"
-				logger.debug(msg)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			} else
-			{
-				execution.setVariable("networkType", networkType.toUpperCase())
-			}
-			
+            String nsiId = jsonUtil.getJsonValue(subnetInstanceReq, "additionalProperties.nsiId")
+            if (isBlank(nsiId)) {
+                msg = "Input nsiId is null"
+                logger.debug(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+            } else
+            {
+                execution.setVariable("nsiId", nsiId)
+            }
+
+            String networkType = jsonUtil.getJsonValue(subnetInstanceReq, "networkType")
+            if (isBlank(networkType)) {
+                msg = "Input networkType is null"
+                logger.debug(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+            } else
+            {
+                execution.setVariable("networkType", networkType.toUpperCase())
+            }
+
             //requestParameters, subscriptionServiceType is 5G
             String subscriptionServiceType = jsonUtil.getJsonValue(subnetInstanceReq, "subscriptionServiceType")
             if (isBlank(subscriptionServiceType)) {
@@ -106,9 +105,9 @@ class DeAllocateSliceSubnet extends AbstractServiceTaskProcessor {
             
             String jobId = UUID.randomUUID().toString()
             execution.setVariable("jobId", jobId)
-			
-			String sliceParams = jsonUtil.getJsonValue(subnetInstanceReq, "additionalProperties")
-			execution.setVariable("sliceParams", sliceParams)
+
+            String sliceParams = jsonUtil.getJsonValue(subnetInstanceReq, "additionalProperties")
+            execution.setVariable("sliceParams", sliceParams)
 
         } catch(BpmnError e) {
             throw e
@@ -131,13 +130,13 @@ class DeAllocateSliceSubnet extends AbstractServiceTaskProcessor {
 
         String serviceId = execution.getVariable("serviceInstanceID")
         String jobId = execution.getVariable("jobId")
-		String nsiId = execution.getVariable("nsiId")
+        String nsiId = execution.getVariable("nsiId")
         logger.debug("Generated new job for Service Instance serviceId:" + serviceId + " jobId:" + jobId)
 
         ResourceOperationStatus initStatus = new ResourceOperationStatus()
         initStatus.setServiceId(serviceId)
         initStatus.setOperationId(jobId)
-		initStatus.setResourceTemplateUUID(nsiId)
+        initStatus.setResourceTemplateUUID(nsiId)
         initStatus.setOperType("Deallocate")
         requestDBUtil.prepareInitResourceOperationStatus(execution, initStatus)
 
@@ -145,26 +144,26 @@ class DeAllocateSliceSubnet extends AbstractServiceTaskProcessor {
     }
 
 
-	
-	/**
-	 * return sync response
-	 */
-	def sendSyncResponse = { DelegateExecution execution ->
-		logger.debug(Prefix + "sendSyncResponse Start")
-		try {
-			String jobId = execution.getVariable("jobId")
-			String deAllocateSyncResponse = """{"jobId": "${jobId}","status": "processing"}""".trim().replaceAll(" ", "")
 
-			logger.debug("sendSyncResponse to APIH:" + "\n" + deAllocateSyncResponse)
-			sendWorkflowResponse(execution, 202, deAllocateSyncResponse)
+    /**
+     * return sync response
+     */
+    def sendSyncResponse = { DelegateExecution execution ->
+        logger.debug(Prefix + "sendSyncResponse Start")
+        try {
+            String jobId = execution.getVariable("jobId")
+            String deAllocateSyncResponse = """{"jobId": "${jobId}","status": "processing"}""".trim().replaceAll(" ", "")
 
-			execution.setVariable("sentSyncResponse", true)
-		} catch (Exception ex) {
-			String msg = "Exception in sendSyncResponse:" + ex.getMessage()
-			logger.debug(msg)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-		}
-		logger.debug(Prefix + "sendSyncResponse Exit")
-	}
+            logger.debug("sendSyncResponse to APIH:" + "\n" + deAllocateSyncResponse)
+            sendWorkflowResponse(execution, 202, deAllocateSyncResponse)
+
+            execution.setVariable("sentSyncResponse", true)
+        } catch (Exception ex) {
+            String msg = "Exception in sendSyncResponse:" + ex.getMessage()
+            logger.debug(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+        logger.debug(Prefix + "sendSyncResponse Exit")
+    }
 
 }

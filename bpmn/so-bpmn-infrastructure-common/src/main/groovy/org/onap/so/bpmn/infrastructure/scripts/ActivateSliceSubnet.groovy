@@ -32,150 +32,148 @@ import org.slf4j.LoggerFactory
 import static org.apache.commons.lang3.StringUtils.isBlank
 
 class ActivateSliceSubnet extends AbstractServiceTaskProcessor {
-	String Prefix="ActSS"
-	ExceptionUtil exceptionUtil = new ExceptionUtil()
-	JsonUtils jsonUtil = new JsonUtils()
-	RequestDBUtil requestDBUtil = new RequestDBUtil()
-	
-	private static final Logger logger = LoggerFactory.getLogger(ActivateSliceSubnet.class)
-	
-	 @Override
-	void preProcessRequest(DelegateExecution execution) {
-		logger.debug(Prefix + "preProcessRequest Start")
-		execution.setVariable("prefix", Prefix)
-		execution.setVariable("startTime", System.currentTimeMillis())
-		def msg
-		try {
-			// get request input
-			String subnetInstanceReq = execution.getVariable("bpmnRequest")
-			logger.debug(subnetInstanceReq)
+    String Prefix="ActivateSliceSubnet_"
+    ExceptionUtil exceptionUtil = new ExceptionUtil()
+    JsonUtils jsonUtil = new JsonUtils()
+    RequestDBUtil requestDBUtil = new RequestDBUtil()
 
-			String requestId = execution.getVariable("mso-request-id")
-			execution.setVariable("msoRequestId", requestId)
-			logger.debug("Input Request:" + subnetInstanceReq + " reqId:" + requestId)
+    private static final Logger logger = LoggerFactory.getLogger(ActivateSliceSubnet.class)
 
-			//subscriberInfo
-			String globalSubscriberId = jsonUtil.getJsonValue(subnetInstanceReq, "globalSubscriberId")
-			if (isBlank(globalSubscriberId)) {
-				msg = "Input globalSubscriberId' is null"
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			} else {
-				execution.setVariable("globalSubscriberId", globalSubscriberId)
-			}
-			
-			//NSSI ID
-			String serviceInstanceID = jsonUtil.getJsonValue(subnetInstanceReq, "serviceInstanceID")
-			if (isBlank(serviceInstanceID)) {
-				msg = "Input serviceInstanceID is null"
-				logger.debug(msg)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			} else
-			{
-				execution.setVariable("serviceInstanceID", serviceInstanceID)
-			}
-			
-			String nsiId = jsonUtil.getJsonValue(subnetInstanceReq, "additionalProperties.nsiId")
-			if (isBlank(nsiId)) {
-				msg = "Input nsiId is null"
-				logger.debug(msg)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			} else
-			{
-				execution.setVariable("nsiId", nsiId)
-			}
-			String networkType = jsonUtil.getJsonValue(subnetInstanceReq, "networkType")
-			if (isBlank(networkType)) {
-				msg = "Input networkType is null"
-				logger.debug(msg)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			} else
-			{
-				execution.setVariable("networkType", networkType.toUpperCase())
-			}
-			
-			//requestParameters, subscriptionServiceType is 5G
-			String subscriptionServiceType = jsonUtil.getJsonValue(subnetInstanceReq, "subscriptionServiceType")
-			if (isBlank(subscriptionServiceType)) {
-				msg = "Input subscriptionServiceType is null"
-				logger.debug(msg)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			} else {
-				execution.setVariable("subscriptionServiceType", subscriptionServiceType)
-			}
-			
-			//operationType = deactivateInstance/activateInstance
-			String operationType = execution.getVariable("requestAction")
-			if (isBlank(operationType)) {
-				msg = "Input operationType is null"
-				logger.debug(msg)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			} else {
-				execution.setVariable("operationType", operationType)
-			}
-			
-			String jobId = UUID.randomUUID().toString()
-			execution.setVariable("jobId", jobId)
-			
-			String sliceParams = jsonUtil.getJsonValue(subnetInstanceReq, "additionalProperties")
-			execution.setVariable("sliceParams", sliceParams)
+     @Override
+    void preProcessRequest(DelegateExecution execution) {
+        logger.debug(Prefix + "preProcessRequest Start")
+        execution.setVariable("prefix", Prefix)
+        execution.setVariable("startTime", System.currentTimeMillis())
+        def msg
+        try {
+            // get request input
+            String subnetInstanceReq = execution.getVariable("bpmnRequest")
+            logger.debug(subnetInstanceReq)
 
-		} catch(BpmnError e) {
-			throw e
-		} catch(Exception ex) {
-			msg = "Exception in ActivateSliceSubnet.preProcessRequest " + ex.getMessage()
-			logger.debug(msg)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-		}
-		logger.debug(Prefix + "preProcessRequest Exit")
-	}
+            String requestId = execution.getVariable("mso-request-id")
+            execution.setVariable("msoRequestId", requestId)
+            logger.debug("Input Request:" + subnetInstanceReq + " reqId:" + requestId)
+
+            //subscriberInfo
+            String globalSubscriberId = jsonUtil.getJsonValue(subnetInstanceReq, "globalSubscriberId")
+            if (isBlank(globalSubscriberId)) {
+                msg = "Input globalSubscriberId' is null"
+                exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+            } else {
+                execution.setVariable("globalSubscriberId", globalSubscriberId)
+            }
+
+            //NSSI ID
+            String serviceInstanceID = jsonUtil.getJsonValue(subnetInstanceReq, "serviceInstanceID")
+            if (isBlank(serviceInstanceID)) {
+                msg = "Input serviceInstanceID is null"
+                logger.debug(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+            } else
+            {
+                execution.setVariable("serviceInstanceID", serviceInstanceID)
+            }
+            String nsiId = jsonUtil.getJsonValue(subnetInstanceReq, "additionalProperties.nsiId")
+            if (isBlank(nsiId)) {
+                msg = "Input nsiId is null"
+                logger.debug(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+            } else
+            {
+                execution.setVariable("nsiId", nsiId)
+            }
+            String networkType = jsonUtil.getJsonValue(subnetInstanceReq, "networkType")
+            if (isBlank(networkType)) {
+                msg = "Input networkType is null"
+                logger.debug(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+            } else
+            {
+                execution.setVariable("networkType", networkType.toUpperCase())
+            }
+            //requestParameters, subscriptionServiceType is 5G
+            String subscriptionServiceType = jsonUtil.getJsonValue(subnetInstanceReq, "subscriptionServiceType")
+            if (isBlank(subscriptionServiceType)) {
+                msg = "Input subscriptionServiceType is null"
+                logger.debug(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+            } else {
+                execution.setVariable("subscriptionServiceType", subscriptionServiceType)
+            }
+
+            //operationType = deactivateInstance/activateInstance
+            String operationType = execution.getVariable("requestAction")
+            if (isBlank(operationType)) {
+                msg = "Input operationType is null"
+                logger.debug(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+            } else {
+                execution.setVariable("operationType", operationType)
+            }
+
+            String jobId = UUID.randomUUID().toString()
+            execution.setVariable("jobId", jobId)
+
+            String sliceParams = jsonUtil.getJsonValue(subnetInstanceReq, "additionalProperties")
+            execution.setVariable("sliceParams", sliceParams)
+
+        } catch(BpmnError e) {
+            throw e
+        } catch(Exception ex) {
+            msg = "Exception in ActivateSliceSubnet.preProcessRequest " + ex.getMessage()
+            logger.debug(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+        logger.debug(Prefix + "preProcessRequest Exit")
+    }
 
 
-	/**
-	 * create operation status in request db
-	 *
-	 * Init the Operation Status
-	 */
-	def prepareInitOperationStatus = { DelegateExecution execution ->
-		logger.debug(Prefix + "prepareInitOperationStatus Start")
+    /**
+     * create operation status in request db
+     *
+     * Init the Operation Status
+     */
+    def prepareInitOperationStatus = { DelegateExecution execution ->
+        logger.debug(Prefix + "prepareInitOperationStatus Start")
 
-		String serviceId = execution.getVariable("serviceInstanceID")
-		String jobId = execution.getVariable("jobId")
-		String nsiId = execution.getVariable("nsiId")
-		String operationType = execution.getVariable("operationType")
-		logger.debug("Generated new job for Service Instance serviceId:" + serviceId + " jobId:" + jobId)
+        String serviceId = execution.getVariable("serviceInstanceID")
+        String jobId = execution.getVariable("jobId")
+        String nsiId = execution.getVariable("nsiId")
+        String operationType = execution.getVariable("operationType")
+        logger.debug("Generated new job for Service Instance serviceId:" + serviceId + " jobId:" + jobId)
 
-		ResourceOperationStatus initStatus = new ResourceOperationStatus()
-		initStatus.setServiceId(serviceId)
-		initStatus.setOperationId(jobId)
-		initStatus.setResourceTemplateUUID(nsiId)
-		initStatus.setOperType(operationType)
-		requestDBUtil.prepareInitResourceOperationStatus(execution, initStatus)
+        ResourceOperationStatus initStatus = new ResourceOperationStatus()
+        initStatus.setServiceId(serviceId)
+        initStatus.setOperationId(jobId)
+        initStatus.setResourceTemplateUUID(nsiId)
+        initStatus.setOperType(operationType)
+        requestDBUtil.prepareInitResourceOperationStatus(execution, initStatus)
 
-		logger.debug(Prefix + "prepareInitOperationStatus Exit")
-	}
+        logger.debug(Prefix + "prepareInitOperationStatus Exit")
+    }
 
 
-	
-	/**
-	 * return sync response
-	 */
-	def sendSyncResponse = { DelegateExecution execution ->
-		logger.debug(Prefix + "sendSyncResponse Start")
-		try {
-			String jobId = execution.getVariable("jobId")
-			String activateSyncResponse = """{"jobId": "${jobId}","status": "processing"}"""
-												.trim().replaceAll(" ", "")
 
-			logger.debug("sendSyncResponse to APIH:" + "\n" + activateSyncResponse)
-			sendWorkflowResponse(execution, 202, activateSyncResponse)
+    /**
+     * return sync response
+     */
+    def sendSyncResponse = { DelegateExecution execution ->
+        logger.debug(Prefix + "sendSyncResponse Start")
+        try {
+            String jobId = execution.getVariable("jobId")
+            String activateSyncResponse = """{"jobId": "${jobId}","status": "processing"}"""
+                                                .trim().replaceAll(" ", "")
 
-			execution.setVariable("sentSyncResponse", true)
-		} catch (Exception ex) {
-			String msg = "Exception in sendSyncResponse:" + ex.getMessage()
-			logger.debug(msg)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-		}
-		logger.debug(Prefix + "sendSyncResponse Exit")
-	}
-	
+            logger.debug("sendSyncResponse to APIH:" + "\n" + activateSyncResponse)
+            sendWorkflowResponse(execution, 202, activateSyncResponse)
+
+            execution.setVariable("sentSyncResponse", true)
+        } catch (Exception ex) {
+            String msg = "Exception in sendSyncResponse:" + ex.getMessage()
+            logger.debug(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+        logger.debug(Prefix + "sendSyncResponse Exit")
+    }
+
 }
