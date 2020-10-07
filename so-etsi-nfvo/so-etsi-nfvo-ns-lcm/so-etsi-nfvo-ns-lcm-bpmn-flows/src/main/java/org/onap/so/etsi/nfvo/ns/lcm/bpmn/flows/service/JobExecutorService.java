@@ -164,7 +164,7 @@ public class JobExecutorService {
         final LocalDateTime currentDateTime = LocalDateTime.now();
         final NsLcmOpOcc newNsLcmOpOcc = new NsLcmOpOcc().id(nsInstanceId).operation(NsLcmOpType.INSTANTIATE)
                 .operationState(OperationStateEnum.PROCESSING).stateEnteredTime(currentDateTime)
-                .startTime(currentDateTime).nfvoNsInst(getNfvoNsInst(nsInstanceId)).isAutoInnovation(false)
+                .startTime(currentDateTime).nfvoNsInst(getNfvoNsInst(nsInstanceId)).isAutoInvocation(false)
                 .isCancelPending(false).operationParams(gson.toJson(instantiateNsRequest));
         databaseServiceProvider.addNSLcmOpOcc(newNsLcmOpOcc);
         logger.info("New NSLcmOpOcc created in database :\n{}", newNsLcmOpOcc);
@@ -209,7 +209,7 @@ public class JobExecutorService {
         final LocalDateTime currentDateTime = LocalDateTime.now();
         final NsLcmOpOcc nsLcmOpOcc = new NsLcmOpOcc().id(nsInstanceId).operation(NsLcmOpType.TERMINATE)
                 .operationState(OperationStateEnum.PROCESSING).stateEnteredTime(currentDateTime)
-                .startTime(currentDateTime).nfvoNsInst(getNfvoNsInst(nsInstanceId)).isAutoInnovation(false)
+                .startTime(currentDateTime).nfvoNsInst(getNfvoNsInst(nsInstanceId)).isAutoInvocation(false)
                 .isCancelPending(false).operationParams(gson.toJson(terminateNsRequest));
         databaseServiceProvider.addNSLcmOpOcc(nsLcmOpOcc);
         logger.info("New NSLcmOpOcc created in database :\n{}", nsLcmOpOcc);

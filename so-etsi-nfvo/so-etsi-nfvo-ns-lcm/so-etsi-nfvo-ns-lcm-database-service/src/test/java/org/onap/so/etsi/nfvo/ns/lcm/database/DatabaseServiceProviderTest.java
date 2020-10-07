@@ -164,7 +164,7 @@ public class DatabaseServiceProviderTest {
         databaseServiceProvider.saveNfvoNsInst(nsInst);
 
         final NsLcmOpOcc nsLcmOpOcc = new NsLcmOpOcc().nfvoNsInst(nsInst).operationState(OperationStateEnum.PROCESSING)
-                .isCancelPending(false).isAutoInnovation(false).operation(NsLcmOpType.INSTANTIATE)
+                .isCancelPending(false).isAutoInvocation(false).operation(NsLcmOpType.INSTANTIATE)
                 .startTime(CURRENT_DATE_TIME).stateEnteredTime(CURRENT_DATE_TIME).operationParams("");
 
 
