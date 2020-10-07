@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "15bb9942_c6026aa3",
+        "filename": "so-etsi-nfvo/so-etsi-nfvo-ns-lcm/so-etsi-nfvo-ns-lcm-service/src/main/java/org/onap/so/etsi/nfvo/ns/lcm/rest/NsLifecycleManagementController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 5656
+      },
+      "writtenOn": "2020-10-07T15:22:24Z",
+      "side": 1,
+      "message": "Hi Waqas, \nI thought we needed the \u003c?\u003e wildcard because these methods may return more than one data type -  either the expected DataType, \nor ProblemDetails.\nIs that not the case?\n(Same comment for other method responses below)",
+      "range": {
+        "startLine": 80,
+        "startChar": 26,
+        "endLine": 80,
+        "endChar": 47
+      },
+      "revId": "80085205609fce24a44fe034fecf59beab83515a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
