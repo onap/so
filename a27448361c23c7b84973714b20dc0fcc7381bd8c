@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7762ecc6_5acdb6d4",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/Onap3gppServiceInstances.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2020-10-07T13:14:36Z",
+      "side": 1,
+      "message": "This should be static final and declared in CAPS",
+      "revId": "a27448361c23c7b84973714b20dc0fcc7381bd8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4edce081_c6518f79",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/Onap3gppServiceInstancesTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2020-10-07T13:14:36Z",
+      "side": 1,
+      "message": "Its usual norm to have constants as static final and declared in CAPS",
+      "range": {
+        "startLine": 58,
+        "startChar": 19,
+        "endLine": 58,
+        "endChar": 39
+      },
+      "revId": "a27448361c23c7b84973714b20dc0fcc7381bd8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
