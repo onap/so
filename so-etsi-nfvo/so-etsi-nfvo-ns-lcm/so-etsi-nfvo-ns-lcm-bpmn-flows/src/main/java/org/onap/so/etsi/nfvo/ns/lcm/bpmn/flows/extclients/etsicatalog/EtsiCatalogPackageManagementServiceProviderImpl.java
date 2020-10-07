@@ -25,7 +25,7 @@ import org.onap.so.adapters.etsisol003adapter.pkgm.extclients.etsicatalog.model.
 import org.onap.so.adapters.etsisol003adapter.pkgm.extclients.etsicatalog.model.VnfPkgInfo;
 import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.exceptions.EtsiCatalogManagerRequestFailureException;
 import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.nsd.NetworkServiceDescriptor;
-import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.nsd.NetworkServiceDescriptorParser;
+import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.nsd.parser.NetworkServiceDescriptorParser;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
