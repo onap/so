@@ -240,12 +240,20 @@ public class InstantiateNsTask extends AbstractNetworkServiceTask {
 
         final String nsInstId = (String) execution.getVariable(NS_INSTANCE_ID_PARAM_NAME);
         final NfvoNsInst nfvoNsInst = getNfvoNsInst(execution, nsInstId);
-
         final String nsPackageId = nfvoNsInst.getNsPackageId();
-        final NsdInfo nsdInfo = getNsdInfo(execution, nsPackageId);
 
         final Map<String, String> vnfdIdToVnfPkgIdMapping = new HashMap<>();
         try {
+            final Optional<NsdInfo> nsdInfoOptional =
+                    etsiCatalogPackageManagementServiceProvider.getNSPackageModel(nsPackageId);
+
+            if (nsdInfoOptional.isEmpty()) {
+                final String message = "Unable to find NS package using NS package id: " + nsPackageId;
+                logger.error(message);
+                abortOperation(execution, message);
+            }
+
+            final NsdInfo nsdInfo = nsdInfoOptional.get();
             for (final String vnfPkgId : nsdInfo.getVnfPkgIds()) {
                 final Optional<VnfPkgInfo> optional =
                         etsiCatalogPackageManagementServiceProvider.getVnfPkgInfo(vnfPkgId);
@@ -288,32 +296,6 @@ public class InstantiateNsTask extends AbstractNetworkServiceTask {
     public void setJobStatusToError(final DelegateExecution execution) {
         updateNsInstanceStatus(execution, State.FAILED);
         setJobStatusToError(execution, "Instantiate NS workflow process failed");
-    }
-
-    private NsdInfo getNsdInfo(final DelegateExecution execution, final String nsPackageId) {
-        try {
-            final Optional<NsdInfo> optional =
-                    etsiCatalogPackageManagementServiceProvider.getNSPackageModel(nsPackageId);
-
-            if (optional.isPresent()) {
-                final NsdInfo packageModel = optional.get();
-                logger.info("NS Package exists {}", packageModel);
-                return packageModel;
-            }
-
-        } catch (final EtsiCatalogManagerRequestFailureException failureException) {
-            final String message =
-                    "Unexpected exception occured while getting ns package using nsPackageId: " + nsPackageId;
-            logger.error(message, failureException);
-
-            abortOperation(execution, message);
-        }
-
-        final String message = "Unable to find NS package using NS package id: " + nsPackageId;
-        logger.error(message);
-        abortOperation(execution, message);
-        return null;
-
     }
 
     private Optional<Tenant> getTenant(final Map<String, String> additionalParams) {

@@ -31,10 +31,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class NsRequestProcessingException extends RuntimeException {
 
     private static final long serialVersionUID = 66862444537194516L;
-    private InlineResponse400 problemDetails;
+    private final InlineResponse400 problemDetails;
 
     public NsRequestProcessingException(final String message) {
         super(message);
+        problemDetails = null;
     }
 
     public NsRequestProcessingException(final String message, final InlineResponse400 problemDetails) {

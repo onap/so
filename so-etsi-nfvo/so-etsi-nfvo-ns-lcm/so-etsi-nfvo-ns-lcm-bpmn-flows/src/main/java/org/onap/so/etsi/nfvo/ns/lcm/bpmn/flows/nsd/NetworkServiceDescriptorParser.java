@@ -79,7 +79,7 @@ public class NetworkServiceDescriptorParser {
                         final Map<String, Object> nodeTemplates = getNodeTemplates(topologyTemplates);
 
                         final Optional<NetworkServiceDescriptor> nsdOptional =
-                                getNetworkServiceDescriptor(topologyTemplates);;
+                                getNetworkServiceDescriptor(topologyTemplates);
                         if (nsdOptional.isPresent()) {
                             final NetworkServiceDescriptor networkServiceDescriptor = nsdOptional.get();
                             networkServiceDescriptor.setVnfs(getVirtualNetworkFunctions(nodeTemplates));
@@ -91,10 +91,10 @@ public class NetworkServiceDescriptorParser {
 
             }
 
+            logger.error("Unable to find {} file in {}", TOSCA_META_PATH_FILE_NAME, files);
         } catch (final Exception exception) {
-            logger.error("Unable to parser nsd zip content", exception);
+            logger.error("Unable to parse nsd zip content", exception);
         }
-        logger.error("Unable to parser nsd zip content");
         return Optional.empty();
     }
 
@@ -191,7 +191,7 @@ public class NetworkServiceDescriptorParser {
             }
             return files;
         } catch (final Exception exception) {
-            logger.error("Unable to parser nsd zip content", exception);
+            logger.error("Unable to parse nsd zip content", exception);
             return Collections.emptyMap();
         }
     }

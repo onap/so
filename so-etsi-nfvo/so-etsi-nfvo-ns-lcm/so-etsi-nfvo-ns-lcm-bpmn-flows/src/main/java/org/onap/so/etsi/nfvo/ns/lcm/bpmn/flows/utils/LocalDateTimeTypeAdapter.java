@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 /**
@@ -45,14 +46,14 @@ public class LocalDateTimeTypeAdapter extends TypeAdapter<LocalDateTime> {
 
     @Override
     public LocalDateTime read(final JsonReader in) throws IOException {
-        switch (in.peek()) {
-            case NULL:
-                in.nextNull();
-                return null;
-            default:
-                final String dateTime = in.nextString();
-                return LocalDateTime.parse(dateTime, FORMATTER);
+        if (JsonToken.NULL == in.peek()) {
+            in.nextNull();
+            return null;
+
         }
+        final String dateTime = in.nextString();
+        return LocalDateTime.parse(dateTime, FORMATTER);
+
     }
 
 }

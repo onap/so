@@ -19,6 +19,7 @@
  */
 package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.nsd;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +40,7 @@ public class ToscaMetadataParser {
     public Optional<ToscaMetadata> parse(final FileEntry toscaMetaFile) {
         try {
             final ToscaMetadata toscaMetadata = new ToscaMetadata();
-            final List<String> lines = IOUtils.readLines(toscaMetaFile.getFileContentAsStream(), "utf-8");
+            final List<String> lines = IOUtils.readLines(toscaMetaFile.getFileContentAsStream(), UTF_8);
             for (final String line : lines) {
                 final String trimmedLine = line.trim();
                 if (!trimmedLine.isEmpty() && trimmedLine.contains(ATTRIBUTE_VALUE_SEPARATOR)) {
