@@ -22,20 +22,25 @@ package org.onap.so.etsi.nfvo.ns.lcm.rest;
 import static org.onap.so.etsi.nfvo.ns.lcm.Constants.NS_LIFE_CYCLE_MANAGEMENT_BASE_URL;
 import static org.slf4j.LoggerFactory.getLogger;
 import javax.ws.rs.core.MediaType;
+import org.onap.so.etsi.nfvo.ns.lcm.lifecycle.NsLcmOperationOccurrenceManager;
+import org.onap.so.etsi.nfvo.ns.lcm.model.InlineResponse400;
 import org.onap.so.etsi.nfvo.ns.lcm.model.NsLcmOpOccsNsLcmOpOcc;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import java.util.Optional;
 
 /**
  * Controller for handling NS lifecycle management operation occurrence requests see clause 6.4.9 and 6.4.10 in
  * https://www.etsi.org/deliver/etsi_gs/NFV-SOL/001_099/005/02.07.01_60/gs_NFV-SOL005v020701p.pdf
  * 
  * @author Waqas Ikram (waqas.ikram@est.tech)
+ * @author Andrew Lamb (andrew.a.lamb@est.tech)
  *
  */
 @Controller
@@ -43,6 +48,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class NsLcmOperationOccurrencesController {
     private static final Logger logger = getLogger(NsLcmOperationOccurrencesController.class);
 
+    private final NsLcmOperationOccurrenceManager nsLcmOperationOccurrenceManager;
+
+    @Autowired
+    public NsLcmOperationOccurrencesController(final NsLcmOperationOccurrenceManager nsLcmOperationOccurrenceManager) {
+        this.nsLcmOperationOccurrenceManager = nsLcmOperationOccurrenceManager;
+    }
 
     /**
      * The GET method to retrieve status information about a NS lifecycle management operation occurrence by reading an
@@ -57,7 +68,18 @@ public class NsLcmOperationOccurrencesController {
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public ResponseEntity<?> getOperationStatus(@PathVariable("nsLcmOpOccId") final String nsLcmOpOccId) {
         logger.info("Received request to retrieve operation status for nsLcmOpOccId: {}", nsLcmOpOccId);
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("Operation is not supported yet");
+        final Optional<NsLcmOpOccsNsLcmOpOcc> optionalNsLcmOpOccs =
+                nsLcmOperationOccurrenceManager.getNsLcmOperationOccurrence(nsLcmOpOccId);
+
+        if (optionalNsLcmOpOccs.isPresent()) {
+            final NsLcmOpOccsNsLcmOpOcc nsLcmOpOcc = optionalNsLcmOpOccs.get();
+            logger.info("Sending back NsLcmOpOcc: {}", nsLcmOpOcc);
+            return ResponseEntity.ok().body(nsLcmOpOcc);
+        }
+
+        final String errorMessage = "Unable to retrieve operation occurrence status for nsLcmOpOccId: " + nsLcmOpOccId;
+        logger.error(errorMessage);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new InlineResponse400().detail(errorMessage));
     }
 
 }

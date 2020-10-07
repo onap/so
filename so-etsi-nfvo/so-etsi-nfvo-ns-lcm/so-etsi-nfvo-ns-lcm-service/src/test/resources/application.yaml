@@ -29,8 +29,9 @@ spring:
             pool-name: ns-lcm-nfvo-pool
             registerMbeans: true
    jpa:
+      generate-ddl: true
       hibernate:
-         ddl-auto: none
+         ddl-auto: create
 logging:
    level:
       org.reflections.Reflections: ERROR

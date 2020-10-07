@@ -62,14 +62,18 @@ public class NsLcmOpOcc {
     @Column(name = "OPERATION")
     private NsLcmOpType operation;
 
-    @Column(name = "IS_AUTO_INNOVATION")
-    private boolean isAutoInnovation;
+    @Column(name = "IS_AUTO_INVOCATION")
+    private boolean isAutoInvocation;
 
     @Column(name = "OPERATION_PARAMS", columnDefinition = "LONGTEXT")
     private String operationParams;
 
     @Column(name = "IS_CANCEL_PENDING")
     private boolean isCancelPending;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "CANCEL_MODE")
+    private CancelModeType cancelMode;
 
     public NsLcmOpOcc() {
         this.id = UUID.randomUUID().toString();
@@ -153,16 +157,29 @@ public class NsLcmOpOcc {
         return this;
     }
 
-    public boolean getIsAutoInnovation() {
-        return isAutoInnovation;
+    public boolean getIsAutoInvocation() {
+        return isAutoInvocation;
     }
 
-    public void setIsAutoInnovation(final boolean isAutoInnovation) {
-        this.isAutoInnovation = isAutoInnovation;
+    public void setIsAutoInvocation(final boolean isAutoInvocation) {
+        this.isAutoInvocation = isAutoInvocation;
     }
 
-    public NsLcmOpOcc isAutoInnovation(final boolean isAutoInnovation) {
-        this.isAutoInnovation = isAutoInnovation;
+    public NsLcmOpOcc isAutoInvocation(final boolean isAutoInvocation) {
+        this.isAutoInvocation = isAutoInvocation;
+        return this;
+    }
+
+    public CancelModeType getCancelMode() {
+        return cancelMode;
+    }
+
+    public void setCancelMode(final CancelModeType cancelMode) {
+        this.cancelMode = cancelMode;
+    }
+
+    public NsLcmOpOcc cancelMode(final CancelModeType cancelMode) {
+        this.cancelMode = cancelMode;
         return this;
     }
 
@@ -203,16 +220,16 @@ public class NsLcmOpOcc {
                 && Objects.equals(stateEnteredTime, that.stateEnteredTime) && Objects.equals(startTime, that.startTime)
                 && (nfvoNsInst == null ? that.nfvoNsInst == null
                         : that.nfvoNsInst != null && Objects.equals(nfvoNsInst, that.nfvoNsInst))
-                && Objects.equals(operation, that.operation) && Objects.equals(isAutoInnovation, that.isAutoInnovation)
+                && Objects.equals(operation, that.operation) && Objects.equals(isAutoInvocation, that.isAutoInvocation)
                 && Objects.equals(operationParams, that.operationParams)
-                && Objects.equals(isCancelPending, that.isCancelPending);
+                && Objects.equals(isCancelPending, that.isCancelPending) && Objects.equals(cancelMode, that.cancelMode);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, operationState, stateEnteredTime, startTime,
-                nfvoNsInst != null ? nfvoNsInst.getNsInstId() : 0, operation, isAutoInnovation, operationParams,
-                isCancelPending);
+                nfvoNsInst != null ? nfvoNsInst.getNsInstId() : 0, operation, isAutoInvocation, operationParams,
+                isCancelPending, cancelMode);
     }
 
     @Override
@@ -226,9 +243,10 @@ public class NsLcmOpOcc {
         sb.append("    nfvoNsInst: ").append(nfvoNsInst != null ? toIndentedString(nfvoNsInst.getNsInstId()) : null)
                 .append("\n");
         sb.append("    operation: ").append(toIndentedString(operation)).append("\n");
-        sb.append("    isAutoInnovation: ").append(toIndentedString(isAutoInnovation)).append("\n");
+        sb.append("    isAutoInvocation: ").append(toIndentedString(isAutoInvocation)).append("\n");
         sb.append("    operationParams: ").append(toIndentedString(operationParams)).append("\n");
         sb.append("    isCancelPending: ").append(toIndentedString(isCancelPending)).append("\n");
+        sb.append("    cancelMode: ").append(toIndentedString(cancelMode)).append("\n");
         sb.append("}");
         return sb.toString();
     }
