@@ -1,0 +1,8 @@
+{
+	"results" : [
+		{
+			"resource-type" : "sriov-pf",
+			"resource-link" : "/cloud-infrastructure/pservers/pserver/id1/p-interfaces/p-interface/id2/sriov-pfs/sriov-pf/id3"
+		}
+	]
+}

@@ -42,6 +42,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -49,9 +50,10 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -60,7 +62,6 @@ import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -75,9 +76,12 @@ import org.onap.aai.domain.yang.SriovPf;
 import org.onap.aaiclient.client.aai.AAIDSLQueryClient;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.AAISingleTransactionClient;
+import org.onap.aaiclient.client.aai.entities.Results;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.graphinventory.entities.DSLQuery;
+import org.onap.aaiclient.client.graphinventory.entities.Pathed;
 import org.onap.aaiclient.client.graphinventory.exceptions.BulkProcessFailed;
 import org.onap.so.cloud.resource.beans.NodeType;
 import org.onap.so.db.catalog.beans.CloudIdentity;
@@ -100,6 +104,7 @@ import org.openstack4j.openstack.heat.domain.HeatResource;
 import org.openstack4j.openstack.heat.domain.HeatResource.Resources;
 import org.springframework.core.env.Environment;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
@@ -132,6 +137,9 @@ public class HeatBridgeImplTest {
 
     @Mock
     private Server server;
+
+    @Mock
+    private AAIDSLQueryClient dSLQueryClient;
 
     @Spy
     @InjectMocks
@@ -342,11 +350,13 @@ public class HeatBridgeImplTest {
     }
 
     @Test
-    public void testUpdateVserverLInterfacesToAai() throws HeatBridgeException {
+    public void testUpdateVserverLInterfacesToAai()
+            throws HeatBridgeException, JsonParseException, JsonMappingException, IOException {
         // Arrange
         List<Resource> stackResources = (List<Resource>) extractTestStackResources();
         Port port = mock(Port.class);
         when(port.getId()).thenReturn("test-port-id");
+        when(port.getHostId()).thenReturn("pserverId");
         when(port.getName()).thenReturn("test-port-name");
         when(port.getvNicType()).thenReturn(HeatBridgeConstants.OS_SRIOV_PORT_TYPE);
         when(port.getMacAddress()).thenReturn("78:4f:43:68:e2:78");
@@ -357,7 +367,7 @@ public class HeatBridgeImplTest {
         when(server.getHypervisorHostname()).thenReturn("test.server.name");
         String pfPciId = "0000:08:00.0";
         when(port.getProfile()).thenReturn(ImmutableMap.of(HeatBridgeConstants.OS_PCI_SLOT_KEY, pfPciId,
-                HeatBridgeConstants.OS_PHYSICAL_NETWORK_KEY, "physical_network_id"));
+                HeatBridgeConstants.OS_PF_PCI_SLOT_KEY, "testPfPciId"));
 
         IP ip = mock(IP.class);
 
@@ -386,10 +396,14 @@ public class HeatBridgeImplTest {
 
         SriovPf sriovPf = new SriovPf();
         sriovPf.setPfPciId(pfPciId);
-        PInterface pIf = mock(PInterface.class);
-        when(pIf.getInterfaceName()).thenReturn("test-port-id");
-        when(resourcesClient.get(eq(PInterface.class), any(AAIResourceUri.class))).thenReturn(Optional.of(pIf));
+
+        when(resourcesClient.exists(any(AAIResourceUri.class))).thenReturn(true);
         when(env.getProperty("mso.cloudOwner.included", "")).thenReturn("CloudOwner");
+        doReturn(dSLQueryClient).when(heatbridge).getAAIDSLClient();
+        List<Pathed> pathed = ((Results<Pathed>) MAPPER.readValue(getJson("pathed-sriov-pf.json"),
+                new TypeReference<Results<Pathed>>() {})).getResult();
+        when(dSLQueryClient.queryPathed(any(DSLQuery.class))).thenReturn(pathed);
+        doReturn(false).when(heatbridge).sriovVfHasSriovPfRelationship(any());
 
         // Act
         heatbridge.buildAddVserverLInterfacesToAaiAction(stackResources, Arrays.asList("1", "2"), "CloudOwner");
@@ -399,6 +413,7 @@ public class HeatBridgeImplTest {
         verify(osClient, times(5)).getPortById(anyString());
         verify(osClient, times(5)).getSubnetById("testSubnetId");
         verify(osClient, times(10)).getNetworkById(anyString());
+        verify(transaction, times(5)).connect(any(AAIResourceUri.class), any(AAIResourceUri.class));
     }
 
     @Test
@@ -571,7 +586,8 @@ public class HeatBridgeImplTest {
     }
 
     @Test
-    public void testUpdateVserverLInterfacesToAai_skipVlans() throws HeatBridgeException {
+    public void testUpdateVserverLInterfacesToAai_skipVlans()
+            throws HeatBridgeException, JsonParseException, JsonMappingException, IOException {
         // Arrange
         List<Resource> stackResources = (List<Resource>) extractTestStackResources();
         Port port = mock(Port.class);
@@ -597,11 +613,9 @@ public class HeatBridgeImplTest {
         when(osClient.getPortById("c54b9f45-b413-4937-bbe4-3c8a5689cfc9")).thenReturn(port);
         when(osClient.getNetworkById(anyString())).thenReturn(network);
 
-        SriovPf sriovPf = new SriovPf();
-        sriovPf.setPfPciId(pfPciId);
         PInterface pIf = mock(PInterface.class);
         when(pIf.getInterfaceName()).thenReturn("test-port-id");
-        when(resourcesClient.get(eq(PInterface.class), any(AAIResourceUri.class))).thenReturn(Optional.of(pIf));
+        doNothing().when(heatbridge).updateSriovPfToPserver(any(), any());
 
         // Act
         heatbridge.buildAddVserverLInterfacesToAaiAction(stackResources, Arrays.asList("1", "2"), "CloudOwner");
@@ -634,6 +648,10 @@ public class HeatBridgeImplTest {
             Assert.fail(String.format("Failed to read test resource file (%s)", filePath));
         }
         return content;
+    }
+
+    private String getJson(String filename) throws IOException {
+        return new String(Files.readAllBytes(Paths.get("src/test/resources/__files/" + filename)));
     }
 
 
