@@ -17,7 +17,7 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.nsd;
+package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.nsd.parser;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -31,6 +31,10 @@ import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.apache.commons.io.IOUtils;
+import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.nsd.FileEntry;
+import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.nsd.NetworkServiceDescriptor;
+import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.nsd.ToscaMetadata;
+import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.nsd.VirtualNetworkFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +83,7 @@ public class NetworkServiceDescriptorParser {
                         final Map<String, Object> nodeTemplates = getNodeTemplates(topologyTemplates);
 
                         final Optional<NetworkServiceDescriptor> nsdOptional =
-                                getNetworkServiceDescriptor(topologyTemplates);;
+                                getNetworkServiceDescriptor(topologyTemplates);
                         if (nsdOptional.isPresent()) {
                             final NetworkServiceDescriptor networkServiceDescriptor = nsdOptional.get();
                             networkServiceDescriptor.setVnfs(getVirtualNetworkFunctions(nodeTemplates));
@@ -91,10 +95,10 @@ public class NetworkServiceDescriptorParser {
 
             }
 
+            logger.error("Unable to find {} file in {}", TOSCA_META_PATH_FILE_NAME, files);
         } catch (final Exception exception) {
-            logger.error("Unable to parser nsd zip content", exception);
+            logger.error("Unable to parse nsd zip content", exception);
         }
-        logger.error("Unable to parser nsd zip content");
         return Optional.empty();
     }
 
@@ -191,7 +195,7 @@ public class NetworkServiceDescriptorParser {
             }
             return files;
         } catch (final Exception exception) {
-            logger.error("Unable to parser nsd zip content", exception);
+            logger.error("Unable to parse nsd zip content", exception);
             return Collections.emptyMap();
         }
     }

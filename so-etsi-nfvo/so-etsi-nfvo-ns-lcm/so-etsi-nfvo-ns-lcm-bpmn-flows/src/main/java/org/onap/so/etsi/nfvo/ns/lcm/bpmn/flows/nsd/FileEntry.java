@@ -22,6 +22,7 @@ package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.nsd;
 import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.utils.Utils.toIndentedString;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -82,7 +83,7 @@ public class FileEntry {
 
     @Override
     public int hashCode() {
-        return Objects.hash(isDirectory, filePath, fileContent);
+        return Objects.hash(isDirectory, filePath) + Arrays.hashCode(fileContent);
     }
 
     @Override
@@ -90,7 +91,7 @@ public class FileEntry {
         if (obj instanceof FileEntry) {
             final FileEntry other = (FileEntry) obj;
             return Objects.equals(isDirectory, other.isDirectory) && Objects.equals(filePath, other.filePath)
-                    && Objects.equals(fileContent, other.fileContent);
+                    && Arrays.equals(fileContent, other.fileContent);
         }
         return false;
     }

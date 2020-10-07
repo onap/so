@@ -77,7 +77,7 @@ public class NsLifecycleManagementController {
      */
     @PostMapping(value = "/ns_instances", produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML},
             consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public ResponseEntity<?> createNs(
+    public ResponseEntity<NsInstancesNsInstance> createNs(
             @RequestHeader(value = HTTP_GLOBAL_CUSTOMER_ID_HTTP_HEADER_PARM_NAME,
                     required = true) final String globalCustomerId,
             @RequestHeader(value = HTTP_SERVICETYPE_HEADER_PARM_NAME, required = false,
@@ -106,7 +106,7 @@ public class NsLifecycleManagementController {
      */
     @DeleteMapping(value = "/ns_instances/{nsInstanceId}",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public ResponseEntity<?> deleteNs(@PathVariable("nsInstanceId") final String nsInstanceId) {
+    public ResponseEntity<Void> deleteNs(@PathVariable("nsInstanceId") final String nsInstanceId) {
         logger.debug("Received delete NS request for nsInstanceId: {}", nsInstanceId);
         nsLifeCycleManager.deleteNs(nsInstanceId);
         logger.info("Successfully deleted NS for nsInstanceId: {}", nsInstanceId);
@@ -124,7 +124,7 @@ public class NsLifecycleManagementController {
     @PostMapping(value = "/ns_instances/{nsInstanceId}/instantiate",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML},
             consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public ResponseEntity<?> instantiateNs(@PathVariable("nsInstanceId") final String nsInstanceId,
+    public ResponseEntity<Void> instantiateNs(@PathVariable("nsInstanceId") final String nsInstanceId,
             @RequestBody final InstantiateNsRequest instantiateNsRequest) {
         logger.debug("Received instantiate NS request: {}\n with nsInstanceId: {}", instantiateNsRequest, nsInstanceId);
         final URI resourceUri = nsLifeCycleManager.instantiateNs(nsInstanceId, instantiateNsRequest);
@@ -144,7 +144,7 @@ public class NsLifecycleManagementController {
     @PostMapping(value = "/ns_instances/{nsInstanceId}/terminate",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML},
             consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public ResponseEntity<?> terminateNs(@PathVariable("nsInstanceId") final String nsInstanceId,
+    public ResponseEntity<Void> terminateNs(@PathVariable("nsInstanceId") final String nsInstanceId,
             @RequestBody final TerminateNsRequest terminateNsRequest) {
         logger.debug("Received terminate NS request: {}\n with nsInstanceId: {}", terminateNsRequest, nsInstanceId);
         final URI resourceUri = nsLifeCycleManager.terminateNs(nsInstanceId, terminateNsRequest);

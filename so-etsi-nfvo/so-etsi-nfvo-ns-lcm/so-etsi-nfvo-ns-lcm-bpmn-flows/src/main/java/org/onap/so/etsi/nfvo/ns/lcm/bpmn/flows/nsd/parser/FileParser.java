@@ -17,9 +17,10 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.nsd;
+package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.nsd.parser;
 
 import java.util.Map;
+import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.nsd.FileEntry;
 
 /**
  * @author Waqas Ikram (waqas.ikram@est.tech)

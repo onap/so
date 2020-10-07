@@ -109,9 +109,8 @@ public class TerminateNsTask extends AbstractNetworkServiceTask {
         final String nsInstId = (String) execution.getVariable(NS_INSTANCE_ID_PARAM_NAME);
         final List<NfvoNfInst> nfInstances = databaseServiceProvider.getNfvoNfInstByNsInstId(nsInstId);
         if (nfInstances != null) {
-            nfInstances.stream().forEach(instance -> {
-                logger.info("Current status {} of vnf: {}", instance.getStatus(), instance.getName());
-            });
+            nfInstances.stream().forEach(
+                    instance -> logger.info("Current status {} of vnf: {}", instance.getStatus(), instance.getName()));
         }
     }
 
@@ -120,16 +119,14 @@ public class TerminateNsTask extends AbstractNetworkServiceTask {
         logger.info("Getting NfvoNfInstList using nsInstId: {}", nsInstId);
         final List<NfvoNfInst> nfvoNfInstList = databaseServiceProvider.getNfvoNfInstByNsInstId(nsInstId);
 
-        if (nfvoNfInstList.size() == 0) {
+        if (nfvoNfInstList == null || nfvoNfInstList.size() == 0) {
             final String message = "Unable to find NF Instances in database using id: " + nsInstId;
             abortOperation(execution, message);
         }
 
         final List<String> vnfIdsList = new ArrayList<>();
 
-        nfvoNfInstList.stream().forEach(nfvoNfInst -> {
-            vnfIdsList.add(nfvoNfInst.getNfInstId());
-        });
+        nfvoNfInstList.stream().forEach(nfvoNfInst -> vnfIdsList.add(nfvoNfInst.getNfInstId()));
 
         return vnfIdsList;
     }

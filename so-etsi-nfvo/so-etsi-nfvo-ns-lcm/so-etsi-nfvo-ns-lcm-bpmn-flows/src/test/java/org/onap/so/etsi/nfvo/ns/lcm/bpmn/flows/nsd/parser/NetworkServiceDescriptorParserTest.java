@@ -17,7 +17,7 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.nsd;
+package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.nsd.parser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -31,6 +31,8 @@ import java.util.Optional;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.TestApplication;
+import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.nsd.NetworkServiceDescriptor;
+import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.nsd.parser.NetworkServiceDescriptorParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
