@@ -451,7 +451,7 @@ public class MsoRequest {
     }
 
     public void createErrorRequestRecord(Status status, String requestId, String errorMessage, Actions action,
-            String requestScope, String requestJSON, String serviceInstanceId) {
+            String requestScope, String requestJSON, String serviceInstanceId, ServiceInstancesRequest sir) {
         try {
             InfraActiveRequests request = new InfraActiveRequests(requestId);
             Timestamp startTimeStamp = new Timestamp(System.currentTimeMillis());
@@ -469,13 +469,23 @@ public class MsoRequest {
             Timestamp endTimeStamp = new Timestamp(System.currentTimeMillis());
             request.setEndTime(endTimeStamp);
             request.setRequestUrl(MDC.get(LogConstants.HTTP_URL));
+            if (sir != null) {
+                if (sir.getRequestDetails() != null && sir.getRequestDetails().getRequestInfo() != null) {
+                    request.setRequestorId(sir.getRequestDetails().getRequestInfo().getRequestorId());
+                    request.setSource(sir.getRequestDetails().getRequestInfo().getSource());
+                    if (ModelType.service.name().equalsIgnoreCase(requestScope)) {
+                        if (sir.getRequestDetails().getRequestInfo().getInstanceName() != null) {
+                            request.setServiceInstanceName(sir.getRequestDetails().getRequestInfo().getInstanceName());
+                        }
+                    }
+                }
+            }
             requestsDbClient.save(request);
         } catch (Exception e) {
             logger.error("Exception when updating record in DB", e);
             logger.debug("Exception: ", e);
         }
     }
-
 
     public Response buildResponse(int httpResponseCode, String errorCode, InfraActiveRequests inProgress) {
         return buildResponseWithError(httpResponseCode, errorCode, inProgress, null);

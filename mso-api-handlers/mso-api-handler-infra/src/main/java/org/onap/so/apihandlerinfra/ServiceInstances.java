@@ -830,7 +830,8 @@ public class ServiceInstances extends AbstractRestHandler {
         } catch (ApiException e) {
             msoRequest.createErrorRequestRecord(Status.FAILED, requestId, e.getMessage(), action, requestScope,
                     requestJSON, requestHandlerUtils
-                            .getServiceInstanceIdForValidationError(sir, instanceIdMap, requestScope).orElse(null));
+                            .getServiceInstanceIdForValidationError(sir, instanceIdMap, requestScope).orElse(null),
+                    sir);
             throw e;
         }
 
