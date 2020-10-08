@@ -108,7 +108,7 @@ public class NetworkServiceDescriptorParser {
         final Map<String, Object> substitutionMappings =
                 (Map<String, Object>) topologyTemplates.get(SUBSTITUTION_MAPPINGS);
         final Object nodeType = substitutionMappings.get(NODE_TYPE);
-        if (substitutionMappings != null && nodeType != null && NS_NODE_TYPE.equals(nodeType)) {
+        if (substitutionMappings != null && NS_NODE_TYPE.equals(nodeType)) {
             final NetworkServiceDescriptor networkServiceDescriptor = new NetworkServiceDescriptor();
             networkServiceDescriptor.setType(nodeType.toString());
             networkServiceDescriptor.setProperties((Map<String, Object>) substitutionMappings.get(PROPERTIES));

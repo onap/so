@@ -66,9 +66,8 @@ public class EtsiCatalogPackageManagementServiceProviderImpl implements EtsiCata
             }
             return Optional.empty();
         } catch (final Exception restProcessingException) {
-            logger.error("Caught exception while getting NS package model for: {}", nsdId, restProcessingException);
-            throw new EtsiCatalogManagerRequestFailureException("Internal Server Error Occurred.",
-                    restProcessingException);
+            final String message = "Caught exception while getting NS package model for: " + nsdId;
+            throw new EtsiCatalogManagerRequestFailureException(message, restProcessingException);
         }
     }
 
@@ -82,9 +81,8 @@ public class EtsiCatalogPackageManagementServiceProviderImpl implements EtsiCata
             }
             return Optional.empty();
         } catch (final Exception restProcessingException) {
-            logger.error("Caught exception while getting VNF package model for: {}", vnfPkgId, restProcessingException);
-            throw new EtsiCatalogManagerRequestFailureException("Internal Server Error Occurred.",
-                    restProcessingException);
+            final String message = "Caught exception while getting VNF package model for: " + vnfPkgId;
+            throw new EtsiCatalogManagerRequestFailureException(message, restProcessingException);
         }
     }
 
@@ -101,9 +99,8 @@ public class EtsiCatalogPackageManagementServiceProviderImpl implements EtsiCata
             }
             return Optional.empty();
         } catch (final Exception restProcessingException) {
-            logger.error("Caught exception while getting NS package content for: {}", nsdId, restProcessingException);
-            throw new EtsiCatalogManagerRequestFailureException("Internal Server Error Occurred.",
-                    restProcessingException);
+            final String message = "Caught exception while getting NS package content for: " + nsdId;
+            throw new EtsiCatalogManagerRequestFailureException(message, restProcessingException);
         }
     }
 

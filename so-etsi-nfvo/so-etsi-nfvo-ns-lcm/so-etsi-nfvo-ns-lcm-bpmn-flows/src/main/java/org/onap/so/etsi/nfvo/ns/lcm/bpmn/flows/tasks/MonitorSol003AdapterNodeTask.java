@@ -37,7 +37,7 @@ public abstract class MonitorSol003AdapterNodeTask extends AbstractNetworkServic
     private static final Logger LOGGER = LoggerFactory.getLogger(MonitorSol003AdapterNodeTask.class);
     private final AaiServiceProvider aaiServiceProvider;
 
-    public MonitorSol003AdapterNodeTask(final DatabaseServiceProvider databaseServiceProvider,
+    protected MonitorSol003AdapterNodeTask(final DatabaseServiceProvider databaseServiceProvider,
             final AaiServiceProvider aaiServiceProvider) {
         super(databaseServiceProvider);
         this.aaiServiceProvider = aaiServiceProvider;
@@ -56,7 +56,7 @@ public abstract class MonitorSol003AdapterNodeTask extends AbstractNetworkServic
             LOGGER.debug("Query A&AI for generic VNF using vnfID: {}", vnfId);
             final Optional<GenericVnf> aaiGenericVnfOptional = aaiServiceProvider.getGenericVnf(vnfId);
 
-            if (!aaiGenericVnfOptional.isPresent()) {
+            if (aaiGenericVnfOptional.isEmpty()) {
                 abortOperation(execution, "Unable to find generic vnf in A&AI using vnfId" + vnfId);
             }
             final GenericVnf genericVnf = aaiGenericVnfOptional.get();

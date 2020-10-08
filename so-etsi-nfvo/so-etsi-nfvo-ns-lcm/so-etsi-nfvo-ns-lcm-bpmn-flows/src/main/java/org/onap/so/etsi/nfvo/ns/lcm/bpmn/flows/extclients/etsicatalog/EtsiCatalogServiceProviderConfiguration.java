@@ -69,11 +69,11 @@ import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class EtsiCatalogServiceProviderConfiguration {
-    public static final String ETSI_CATALOG_REST_TEMPLATE_BEAN = "etsiCatalogRestTemplate";
+    private static final Logger LOGGER = LoggerFactory.getLogger(EtsiCatalogServiceProviderConfiguration.class);
 
     public static final String ETSI_CATALOG_SERVICE_PROVIDER_BEAN = "etsiCatalogServiceProvider";
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(EtsiCatalogServiceProviderConfiguration.class);
+    public static final String ETSI_CATALOG_REST_TEMPLATE_BEAN = "etsiCatalogRestTemplate";
 
     private final HttpClientConnectionConfiguration clientConnectionConfiguration;
 

@@ -22,6 +22,7 @@ package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.extclients.vnfm;
 
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.extclients.vnfm.Sol003AdapterConfiguration.SOL003_ADAPTER_HTTP_REST_SERVICE_PROVIDER_BEAN;
 import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
 import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.CreateVnfRequest;
 import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.CreateVnfResponse;
 import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.DeleteVnfResponse;
@@ -76,7 +77,7 @@ public class Sol003AdapterServiceProviderImpl implements Sol003AdapterServicePro
 
             final CreateVnfResponse createVnfResponse = response.getBody();
 
-            if (createVnfResponse.getJobId() == null || createVnfResponse.getJobId().isEmpty()) {
+            if (StringUtils.isBlank(createVnfResponse.getJobId())) {
                 LOGGER.error("Received invalid instantiation response: {}", response);
                 return Optional.empty();
             }
@@ -134,7 +135,7 @@ public class Sol003AdapterServiceProviderImpl implements Sol003AdapterServicePro
             }
 
             final DeleteVnfResponse deleteVnfResponse = response.getBody();
-            if (deleteVnfResponse.getJobId() == null || deleteVnfResponse.getJobId().isEmpty()) {
+            if (StringUtils.isBlank(deleteVnfResponse.getJobId())) {
                 LOGGER.error("Received invalid terminate response: {}", response);
                 return Optional.empty();
             }

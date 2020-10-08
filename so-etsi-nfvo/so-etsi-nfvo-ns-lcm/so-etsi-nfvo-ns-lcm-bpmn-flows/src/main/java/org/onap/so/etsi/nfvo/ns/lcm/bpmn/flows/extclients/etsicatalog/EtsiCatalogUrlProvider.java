@@ -33,8 +33,6 @@ public class EtsiCatalogUrlProvider {
     @Value("${etsi-catalog-manager.base.endpoint}")
     private String etsiCatalogManagerEndpoint;
 
-    public EtsiCatalogUrlProvider() {}
-
     public String getNsPackageUrl(final String nsdId) {
         return etsiCatalogManagerEndpoint + "/nsd/v1/ns_descriptors/" + nsdId;
     }

@@ -48,7 +48,7 @@ public abstract class AbstractNetworkServiceTask {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     protected final DatabaseServiceProvider databaseServiceProvider;
 
-    public AbstractNetworkServiceTask(final DatabaseServiceProvider jobServiceProvider) {
+    protected AbstractNetworkServiceTask(final DatabaseServiceProvider jobServiceProvider) {
         this.databaseServiceProvider = jobServiceProvider;
     }
 

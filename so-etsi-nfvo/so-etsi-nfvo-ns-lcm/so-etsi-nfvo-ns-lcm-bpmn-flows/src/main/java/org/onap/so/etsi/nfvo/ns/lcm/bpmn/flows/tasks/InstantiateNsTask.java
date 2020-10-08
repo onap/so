@@ -299,7 +299,7 @@ public class InstantiateNsTask extends AbstractNetworkServiceTask {
     }
 
     private Optional<Tenant> getTenant(final Map<String, String> additionalParams) {
-        final String vimId = (String) additionalParams.get("vim_id");
+        final String vimId = additionalParams.get("vim_id");
         if (vimId != null) {
             final String[] splitString = vimId.split("_");
             if (splitString.length == 3) {

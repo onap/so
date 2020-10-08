@@ -119,7 +119,7 @@ public class TerminateNsTask extends AbstractNetworkServiceTask {
         logger.info("Getting NfvoNfInstList using nsInstId: {}", nsInstId);
         final List<NfvoNfInst> nfvoNfInstList = databaseServiceProvider.getNfvoNfInstByNsInstId(nsInstId);
 
-        if (nfvoNfInstList == null || nfvoNfInstList.size() == 0) {
+        if (nfvoNfInstList == null || nfvoNfInstList.isEmpty()) {
             final String message = "Unable to find NF Instances in database using id: " + nsInstId;
             abortOperation(execution, message);
         }

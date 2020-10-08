@@ -79,14 +79,14 @@ public class Sol003AdapterConfiguration {
     @Autowired
     private GsonProvider gsonProvider;
 
-    @Autowired
-    private HttpComponentsClientConfiguration httpComponentsClientConfiguration;
-
     @Bean
     @Qualifier(SOL003_ADAPTER_REST_TEMPLATE_BEAN)
-    public RestTemplate sol003AdapterRestTemplate() {
+    public RestTemplate sol003AdapterRestTemplate(
+            @Autowired final HttpComponentsClientConfiguration httpComponentsClientConfiguration) {
+
         final HttpComponentsClientHttpRequestFactory clientHttpRequestFactory =
                 httpComponentsClientConfiguration.httpComponentsClientHttpRequestFactory();
+
         final RestTemplate restTemplate =
                 new RestTemplate(new BufferingClientHttpRequestFactory(clientHttpRequestFactory));
         restTemplate.getInterceptors().add(new SOSpringClientFilter());
@@ -114,7 +114,7 @@ public class Sol003AdapterConfiguration {
             final HttpComponentsClientHttpRequestFactory factory =
                     new HttpComponentsClientHttpRequestFactory(httpClient);
             restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(factory));
-        } catch (Exception exception) {
+        } catch (final Exception exception) {
             logger.error("Error reading truststore, TLS connection to VNFM will fail.", exception);
         }
     }
