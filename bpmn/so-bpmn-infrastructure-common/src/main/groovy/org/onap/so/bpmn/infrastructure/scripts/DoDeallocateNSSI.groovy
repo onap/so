@@ -19,8 +19,8 @@
  */
 package org.onap.so.bpmn.infrastructure.scripts
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.json.JSONObject
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
@@ -47,6 +47,7 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
 
     private ExceptionUtil exceptionUtil = new ExceptionUtil()
     private JsonUtils jsonUtil = new JsonUtils()
+    ObjectMapper objectMapper = new ObjectMapper()
     private RequestDBUtil requestDBUtil = new RequestDBUtil()
     private NssmfAdapterUtils nssmfAdapterUtils = new NssmfAdapterUtils(httpClientFactory, jsonUtil)
 
@@ -133,10 +134,9 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
         String nssiId = currentNSSI['nssiServiceInstanceId']
         String nsiId = currentNSSI['nsiServiceInstanceId']
         String scriptName = execution.getVariable("scriptName")
-        boolean modifyAction = execution.getVariable("terminateNSI")
 
         String serviceInvariantUuid = currentNSSI['modelInvariantId']
-        String serviceUuid = currentNSSI['modelVersionId']
+        String serviceUuid = currentNSSI['modelId']
         String globalSubscriberId = currentNSSI['globalSubscriberId']
         String subscriptionServiceType = execution.getVariable("serviceType")
         
@@ -146,37 +146,37 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
         deAllocateNssi.setTerminateNssiOption(0)
         deAllocateNssi.setSnssaiList(Arrays.asList(snssai))
         deAllocateNssi.setScriptName(scriptName)
-        deAllocateNssi.setSliceProfileId(profileId)
-        deAllocateNssi.setModifyAction(modifyAction)
         
         ServiceInfo serviceInfo = new ServiceInfo()
         serviceInfo.setServiceInvariantUuid(serviceInvariantUuid)
         serviceInfo.setServiceUuid(serviceUuid)
+        serviceInfo.setNsiId(nsiId)
         serviceInfo.setGlobalSubscriberId(globalSubscriberId)
         serviceInfo.setSubscriptionServiceType(subscriptionServiceType)
+        String serviceInfoString = objectMapper.writeValueAsString(serviceInfo)
         
         EsrInfo esrInfo = getEsrInfo(currentNSSI)
+        String esrInfoString = objectMapper.writeValueAsString(esrInfo)
         
         execution.setVariable("deAllocateNssi",deAllocateNssi)
-        execution.setVariable("esrInfo",esrInfo)
-        execution.setVariable("serviceInfo",serviceInfo)
+        execution.setVariable("esrInfo", esrInfoString)
+        execution.setVariable("serviceInfo", serviceInfoString)
         String nssmfRequest = """
                 {
-                  "deAllocateNssi": "${execution.getVariable("deAllocateNssi") as JSONObject}",
-                  "esrInfo":  ${execution.getVariable("esrInfo") as JSONObject},
-                  "serviceInfo": ${execution.getVariable("serviceInfo") as JSONObject}
+                  "deAllocateNssi": ${objectMapper.writeValueAsString(deAllocateNssi)},
+                  "esrInfo":  ${esrInfoString},
+                  "serviceInfo": ${serviceInfoString}
                 }
               """
 
-        String urlStr = String.format("/api/rest/provMns/v1/NSS/nssi/%s",nssiId)
+        String urlStr = String.format("/api/rest/provMns/v1/NSS/SliceProfiles/%s", profileId)
 
         NssiResponse nssmfResponse = nssmfAdapterUtils.sendPostRequestNSSMF(execution, urlStr, nssmfRequest, NssiResponse.class)
         if (nssmfResponse != null) {
             currentNSSI['jobId']= nssmfResponse.getJobId() ?: "" 
             currentNSSI['jobProgress'] = 0            
             execution.setVariable("currentNSSI", currentNSSI)    
-            } 
-            else {
+        } else {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Received a Bad Response from NSSMF.")
         }
         LOGGER.debug("*****${PREFIX} Exit sendRequestToNSSMF *****")
@@ -190,32 +190,9 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
     {
         def currentNSSI = execution.getVariable("currentNSSI")
         String jobId = currentNSSI['jobId']
-        String nssiId = currentNSSI['nssiServiceInstanceId']
-        String nsiId = currentNSSI['nsiServiceInstanceId']
-        String serviceInvariantUuid = currentNSSI['modelInvariantId']
-        String serviceUuid = currentNSSI['modelVersionId']
-        String globalSubscriberId = currentNSSI['globalSubscriberId']
-        String subscriptionServiceType = execution.getVariable("serviceType")
-        String sST =  currentNSSI['sST']
-        String PLMNIdList = currentNSSI['PLMNIdList']
-        String nssiName = currentNSSI['nssiName']
-        
+
         execution.setVariable("responseId", "3")
-        execution.setVariable("esrInfo", getEsrInfo(currentNSSI))
         execution.setVariable("jobId", jobId)
-        
-        Map<String, ?> serviceInfoMap = new HashMap<>()
-        serviceInfoMap.put("nssiId", nssiId)
-        serviceInfoMap.put("nsiId", nsiId)
-        serviceInfoMap.put("nssiName", nssiName)
-        serviceInfoMap.put("sST", sST)
-        serviceInfoMap.put("PLMNIdList", PLMNIdList)
-        serviceInfoMap.put("globalSubscriberId", globalSubscriberId)
-        serviceInfoMap.put("subscriptionServiceType", subscriptionServiceType)
-        serviceInfoMap.put("serviceInvariantUuid", serviceInvariantUuid)
-        serviceInfoMap.put("serviceUuid", serviceUuid)
-    
-        execution.setVariable("serviceInfo", serviceInfoMap)
     }
 
     
@@ -238,8 +215,9 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
                 LOGGER.error("job progress is null or empty!")
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Received a Bad Job progress from NSSMF.")
             }
+            def currentNSSI = execution.getVariable("currentNSSI")
             int oldProgress = currentNSSI['jobProgress']
-            int currentProgress = progress
+            int currentProgress = Integer.parseInt(progress)
 
             execution.setVariable("isNSSIDeAllocated", (currentProgress == 100))
             execution.setVariable("isNeedUpdateDB", (oldProgress != currentProgress))
@@ -247,6 +225,8 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
             currentNSSI['status'] = status
             currentNSSI['statusDescription'] = statusDescription
 
+            String nssiId = currentNSSI['nssiServiceInstanceId']
+            String nsiId = currentNSSI['nsiServiceInstanceId']
             LOGGER.debug("job status result: nsiId = ${nsiId}, nssiId=${nssiId}, oldProgress=${oldProgress}, progress = ${currentProgress}" )
         }
           else {
@@ -256,7 +236,7 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
         }
         catch (any)
         {
-            String msg = "Received a Bad Response from NSSMF." cause-"+any.getCause()"
+            String msg = "Received a Bad Response from NSSMF. cause-"+any.getCause()
             LOGGER.error(any.printStackTrace())
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
@@ -309,7 +289,7 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
         String nssiServiceInstanceId = currentNSSI['nssiServiceInstanceId']
         String profileId = currentNSSI['profileId']
         String globalSubscriberId = currentNSSI["globalSubscriberId"]
-        String serviceType = currentNSSI["serviceType"]
+        String serviceType = execution.getVariable("serviceType")
 
         try
         {

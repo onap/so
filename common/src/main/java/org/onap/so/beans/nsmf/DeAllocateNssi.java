@@ -21,12 +21,14 @@
 package org.onap.so.beans.nsmf;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.io.Serializable;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DeAllocateNssi {
+public class DeAllocateNssi implements Serializable {
     @Deprecated
     public final static String URL = "/api/rest/provMns/v1/NSS" + "/SliceProfiles/%s";
+    private static final long serialVersionUID = 8198187346132154044L;
 
     private String nsiId;
 

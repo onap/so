@@ -99,10 +99,11 @@ dnssi.prepareUpdateOperationStatus(execution)</bpmn:script>
     <bpmn:callActivity id="Task_1x3et9h" name="Query Job Status" calledElement="QueryJobStatus">
       <bpmn:extensionElements>
         <camunda:in source="msoRequestId" target="msoRequestId" />
-        <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
-        <camunda:in source="serviceModelInfo" target="serviceModelInfo" />
-        <camunda:out source="serviceDecomposition" target="serviceDecomposition" />
-        <camunda:out source="serviceDecompositionString" target="serviceDecompositionString" />
+        <camunda:in source="esrInfo" target="esrInfo" />
+        <camunda:in source="serviceInfo" target="serviceInfo" />
+        <camunda:in source="jobId" target="jobId" />
+        <camunda:in source="responseId" target="responseId" />
+        <camunda:out source="responseDescriptor" target="responseDescriptor" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0w01l14</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_10nogqz</bpmn:outgoing>

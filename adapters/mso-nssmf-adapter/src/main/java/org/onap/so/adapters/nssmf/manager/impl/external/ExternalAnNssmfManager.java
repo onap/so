@@ -117,6 +117,7 @@ public class ExternalAnNssmfManager extends ExternalNssmfManager {
         ResponseDescriptor responseDescriptor = new ResponseDescriptor();
         responseDescriptor.setStatus(JobStatus.FINISHED.toString());
         responseDescriptor.setProgress(100);
+        responseDescriptor.setStatusDescription("Finished");
 
         JobStatusResponse jobStatusResponse = new JobStatusResponse();
         jobStatusResponse.setResponseDescriptor(responseDescriptor);
