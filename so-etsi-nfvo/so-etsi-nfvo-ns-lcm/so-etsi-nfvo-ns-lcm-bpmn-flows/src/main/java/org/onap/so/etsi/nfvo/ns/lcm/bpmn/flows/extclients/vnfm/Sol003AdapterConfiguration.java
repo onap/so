@@ -73,7 +73,7 @@ public class Sol003AdapterConfiguration {
     @Value("${rest.http.client.configuration.ssl.trustStorePassword:#{null}}")
     private String trustStorePassword;
 
-    @Value("so.adapters.sol003-adapter.auth:Basic dm5mbTpwYXNzd29yZDEk")
+    @Value("${so.adapters.sol003-adapter.auth:Basic dm5mbTpwYXNzd29yZDEk}")
     private String sol003AdapterBasicAuth;
 
     @Autowired
