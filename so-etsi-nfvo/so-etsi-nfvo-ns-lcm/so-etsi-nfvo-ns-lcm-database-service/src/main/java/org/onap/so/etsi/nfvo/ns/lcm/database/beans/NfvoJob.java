@@ -42,24 +42,24 @@ import org.onap.so.etsi.nfvo.ns.lcm.database.beans.utils.Utils;
 public class NfvoJob {
 
     @Id
-    @Column(name = "JOB_ID")
+    @Column(name = "JOB_ID", nullable = false)
     private String jobId;
 
-    @Column(name = "JOB_TYPE")
+    @Column(name = "JOB_TYPE", nullable = false)
     private String jobType;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "JOB_ACTION")
+    @Column(name = "JOB_ACTION", nullable = false)
     private JobAction jobAction;
 
-    @Column(name = "RESOURCE_ID")
+    @Column(name = "RESOURCE_ID", nullable = false)
     private String resourceId;
 
     @Column(name = "RESOURCE_NAME")
     private String resourceName;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "STATUS")
+    @Column(name = "STATUS", nullable = false)
     private JobStatusEnum status;
 
     @Column(name = "START_TIME")

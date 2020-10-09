@@ -41,7 +41,7 @@ import javax.persistence.Table;
 public class NfvoNfInst {
 
     @Id
-    @Column(name = "NF_INST_ID")
+    @Column(name = "NF_INST_ID", nullable = false)
     private String nfInstId;
 
     @Column(name = "NAME")
@@ -54,11 +54,11 @@ public class NfvoNfInst {
     private String packageId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "NS_INST_ID")
+    @JoinColumn(name = "NS_INST_ID", nullable = false)
     private NfvoNsInst nsInst;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "STATUS")
+    @Column(name = "STATUS", nullable = false)
     private State status;
 
     @Column(name = "CREATE_TIME")

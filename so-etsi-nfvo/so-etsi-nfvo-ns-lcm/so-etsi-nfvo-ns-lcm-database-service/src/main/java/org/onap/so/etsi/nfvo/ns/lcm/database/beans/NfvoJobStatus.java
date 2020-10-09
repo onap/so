@@ -44,17 +44,17 @@ public class NfvoJobStatus {
     private int id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "STATUS")
+    @Column(name = "STATUS", nullable = false)
     private JobStatusEnum status;
 
     @Column(name = "DESCRIPTION", columnDefinition = "LONGTEXT")
     private String description;
 
-    @Column(name = "UPDATED_TIME")
+    @Column(name = "UPDATED_TIME", nullable = false)
     private LocalDateTime updatedTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "JOB_ID")
+    @JoinColumn(name = "JOB_ID", nullable = false)
     private NfvoJob nfvoJob;
 
     public int getId() {

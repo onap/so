@@ -41,11 +41,11 @@ import javax.persistence.Table;
 public class NsLcmOpOcc {
 
     @Id
-    @Column(name = "ID")
+    @Column(name = "ID", nullable = false)
     private String id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "OPERATION_STATE")
+    @Column(name = "OPERATION_STATE", nullable = false)
     private OperationStateEnum operationState;
 
     @Column(name = "STATE_ENTERED_TIME")
@@ -55,20 +55,20 @@ public class NsLcmOpOcc {
     private LocalDateTime startTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "NS_INST_ID")
+    @JoinColumn(name = "NS_INST_ID", nullable = false)
     private NfvoNsInst nfvoNsInst;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "OPERATION")
+    @Column(name = "OPERATION", nullable = false)
     private NsLcmOpType operation;
 
-    @Column(name = "IS_AUTO_INNOVATION")
+    @Column(name = "IS_AUTO_INNOVATION", nullable = false)
     private boolean isAutoInnovation;
 
-    @Column(name = "OPERATION_PARAMS", columnDefinition = "LONGTEXT")
+    @Column(name = "OPERATION_PARAMS", columnDefinition = "LONGTEXT", nullable = false)
     private String operationParams;
 
-    @Column(name = "IS_CANCEL_PENDING")
+    @Column(name = "IS_CANCEL_PENDING", nullable = false)
     private boolean isCancelPending;
 
     public NsLcmOpOcc() {

@@ -44,29 +44,29 @@ import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.utils.Utils.toIndented
 public class NfvoNsInst {
 
     @Id
-    @Column(name = "NS_INST_ID")
+    @Column(name = "NS_INST_ID", nullable = false)
     private String nsInstId;
 
-    @Column(name = "NAME")
+    @Column(name = "NAME", nullable = false)
     private String name;
 
     @Column(name = "NS_PACKAGE_ID")
     private String nsPackageId;
 
-    @Column(name = "NSD_ID")
+    @Column(name = "NSD_ID", nullable = false)
     private String nsdId;
 
-    @Column(name = "NSD_INVARIANT_ID")
+    @Column(name = "NSD_INVARIANT_ID", nullable = false)
     private String nsdInvariantId;
 
     @Column(name = "DESCRIPTION", columnDefinition = "LONGTEXT")
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "STATUS")
+    @Column(name = "STATUS", nullable = false)
     private State status;
 
-    @Column(name = "STATUS_UPDATED_TIME")
+    @Column(name = "STATUS_UPDATED_TIME", nullable = false)
     private LocalDateTime statusUpdatedTime;
 
     @Column(name = "GLOBAL_CUSTOMER_ID")
