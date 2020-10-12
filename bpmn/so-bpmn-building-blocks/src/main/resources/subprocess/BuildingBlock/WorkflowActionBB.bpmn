@@ -95,7 +95,7 @@
       </bpmn:serviceTask>
     </bpmn:subProcess>
     <bpmn:sequenceFlow id="SequenceFlow_0v588sm" name="Rollback = true" sourceRef="ExclusiveGateway_Finished" targetRef="Task_RollbackExecutionPath">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${execution.getVariable("handlingCode")=="Rollback"||execution.getVariable("handlingCode")=="RollbackToAssigned"||execution.getVariable("handlingCode")=="RollbackToCreated"}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${execution.getVariable("handlingCode")=="Rollback"||execution.getVariable("handlingCode")=="RollbackToAssigned"||execution.getVariable("handlingCode")=="RollbackToCreated"||execution.getVariable("handlingCode")=="RollbackToCreatedNoConfiguration"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_1atzsgn" sourceRef="Task_RollbackExecutionPath" targetRef="Task_SelectBB">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${execution.getVariable("isRollbackNeeded")==true}</bpmn:conditionExpression>
