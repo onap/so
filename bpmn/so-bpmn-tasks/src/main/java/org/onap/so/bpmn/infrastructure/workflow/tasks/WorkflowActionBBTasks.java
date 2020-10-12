@@ -414,9 +414,12 @@ public class WorkflowActionBBTasks {
         String handlingCode = (String) execution.getVariable(HANDLINGCODE);
         final boolean aLaCarte = (boolean) execution.getVariable(G_ALACARTE);
         int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE);
+        String requestAction = (String) execution.getVariable(G_ACTION);
         ExecuteBuildingBlock ebb = flowsToExecute.get(currentSequence - 1);
         String bbFlowName = ebb.getBuildingBlock().getBpmnFlowName();
-        if ("ActivateVfModuleBB".equalsIgnoreCase(bbFlowName) && aLaCarte && "Success".equalsIgnoreCase(handlingCode)) {
+        if ("ActivateVfModuleBB".equalsIgnoreCase(bbFlowName) && aLaCarte && "Success".equalsIgnoreCase(handlingCode)
+                && !(requestAction.equalsIgnoreCase("replaceInstance")
+                        || requestAction.equalsIgnoreCase("replaceInstanceRetainAssignments"))) {
             postProcessingExecuteBBActivateVfModule(execution, ebb, flowsToExecute);
         }
     }

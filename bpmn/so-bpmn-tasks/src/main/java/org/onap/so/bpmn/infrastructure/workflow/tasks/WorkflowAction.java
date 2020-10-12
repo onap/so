@@ -88,6 +88,7 @@ import org.onap.so.serviceinstancebeans.ModelType;
 import org.onap.so.serviceinstancebeans.Networks;
 import org.onap.so.serviceinstancebeans.Pnfs;
 import org.onap.so.serviceinstancebeans.RelatedInstance;
+import org.onap.so.serviceinstancebeans.RelatedInstanceList;
 import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.onap.so.serviceinstancebeans.Service;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
@@ -566,6 +567,20 @@ public class WorkflowAction {
         } else {
             vfModuleCustomizationUUID = aaiVfModule.getModelCustomizationId();
         }
+        String replaceVfModuleCustomizationUUID = "";
+        String replaceVnfModuleCustomizationUUID = "";
+        boolean isReplace = false;
+        if (dataObj.getRequestAction().equalsIgnoreCase("replaceInstance")
+                || dataObj.getRequestAction().equalsIgnoreCase("replaceInstanceRetainAssignments")) {
+            for (RelatedInstanceList relatedInstList : dataObj.getRequestDetails().getRelatedInstanceList()) {
+                RelatedInstance relatedInstance = relatedInstList.getRelatedInstance();
+                if (relatedInstance.getModelInfo().getModelType().equals(ModelType.vnf)) {
+                    replaceVnfModuleCustomizationUUID = relatedInstance.getModelInfo().getModelCustomizationId();
+                }
+            }
+            replaceVfModuleCustomizationUUID = dataObj.getRequestDetails().getModelInfo().getModelCustomizationId();
+            isReplace = true;
+        }
 
         List<org.onap.aai.domain.yang.Vnfc> vnfcs =
                 getRelatedResourcesInVfModule(vnfId, vfModuleId, org.onap.aai.domain.yang.Vnfc.class, Types.VNFC);
@@ -579,9 +594,19 @@ public class WorkflowAction {
             }
             workflowIdsCopy.setConfigurationId(configuration.getConfigurationId());
             for (OrchestrationFlow orchFlow : result) {
-                dataObj.getResourceKey().setVfModuleCustomizationId(vfModuleCustomizationUUID);
+                if (!isReplace) {
+                    dataObj.getResourceKey().setVfModuleCustomizationId(vfModuleCustomizationUUID);
+                    dataObj.getResourceKey().setVnfCustomizationId(vnfCustomizationUUID);
+                } else {
+                    if (orchFlow.getFlowName().contains("Delete")) {
+                        dataObj.getResourceKey().setVfModuleCustomizationId(vfModuleCustomizationUUID);
+                        dataObj.getResourceKey().setVnfCustomizationId(vnfCustomizationUUID);
+                    } else {
+                        dataObj.getResourceKey().setVfModuleCustomizationId(replaceVfModuleCustomizationUUID);
+                        dataObj.getResourceKey().setVnfCustomizationId(replaceVnfModuleCustomizationUUID);
+                    }
+                }
                 dataObj.getResourceKey().setCvnfModuleCustomizationId(vnfc.getModelCustomizationId());
-                dataObj.getResourceKey().setVnfCustomizationId(vnfCustomizationUUID);
                 String vnfcName = vnfc.getVnfcName();
                 if (vnfcName == null || vnfcName.isEmpty()) {
                     buildAndThrowException(dataObj.getExecution(), "Exception in create execution list "
