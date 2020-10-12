@@ -95,7 +95,7 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
         List<TemplateInfo> nsstInfos = new ArrayList<>()
         ServiceDecomposition nstServiceDecomposition =
                 execution.getVariable("nstServiceDecomposition") as ServiceDecomposition
-        //todo:
+
         List<AllottedResource> allottedResources = nstServiceDecomposition.getAllottedResources()
         for (AllottedResource allottedResource : allottedResources) {
             TemplateInfo nsstInfo = new TemplateInfo()
@@ -150,9 +150,6 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
 
         execution.setVariable("nsstServiceDecompositions", nsstServiceDecompositions)
 
-
-
-
         int num = execution.getVariable("maxNsstIndex") as Integer
         int index = execution.getVariable("currentNsstIndex") as Integer
 
@@ -180,8 +177,6 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
 
         List<SubnetCapability> subnetCapabilities = new ArrayList<>()
 
-
-
         for (ServiceDecomposition serviceDecomposition : nsstServiceDecompositions) {
             SubnetCapability subnetCapability = new SubnetCapability()
             handleByType(execution, serviceDecomposition, sliceParams, subnetCapability)
@@ -206,7 +201,6 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
                 sliceParams.tnBHSliceTaskInfo.NSSTInfo.UUID = modelInfo.getModelUuid()
                 sliceParams.tnBHSliceTaskInfo.NSSTInfo.invariantUUID = modelInfo.getModelInvariantUuid()
                 sliceParams.tnBHSliceTaskInfo.NSSTInfo.name = modelInfo.getModelName()
-
                 break
             case SubnetType.TN_MH:
                 sliceParams.tnMHSliceTaskInfo.vendor = vendor
@@ -215,7 +209,6 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
                 sliceParams.tnMHSliceTaskInfo.NSSTInfo.UUID = modelInfo.getModelUuid()
                 sliceParams.tnMHSliceTaskInfo.NSSTInfo.invariantUUID = modelInfo.getModelInvariantUuid()
                 sliceParams.tnMHSliceTaskInfo.NSSTInfo.name = modelInfo.getModelName()
-
                 break
             case SubnetType.AN_NF:
                 sliceParams.anSliceTaskInfo.vendor = vendor
@@ -236,9 +229,6 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
             default:
                 subnetType = null
                 break
-
-        //todo
-
         }
         if (null == subnetType) {
             def msg = "Get subnetType failed, modelUUId=" + modelInfo.getModelUuid()
@@ -297,17 +287,16 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
     private static String buildQuerySubnetCapRequest(String vendor, SubnetType subnetType) {
         NssmfAdapterNBIRequest request = new NssmfAdapterNBIRequest()
 
-        List<String> subnetTypes =  new ArrayList<>()
-        subnetTypes.add(subnetType.subnetType)
+//        List<String> subnetTypes =  new ArrayList<>()
+//        subnetTypes.add(subnetType.subnetType)
         Map<String, Object> paramMap = new HashMap()
-        paramMap.put("subnetTypes", subnetTypes)
+        paramMap.put("subnetType", subnetType.subnetType)
 
         request.setSubnetCapabilityQuery(objectMapper.writeValueAsString(paramMap))
 
         EsrInfo esrInfo = new EsrInfo()
         esrInfo.setVendor(vendor)
         esrInfo.setNetworkType(subnetType.networkType)
-
         request.setEsrInfo(esrInfo)
 
         String strRequest = objectMapper.writeValueAsString(request)
@@ -320,7 +309,8 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
      * prepare select nsi request
      * @param execution
      */
-    public void preNSIRequest(DelegateExecution execution, boolean preferReuse) {
+    public void preNSIRequest(DelegateExecution execution) {
+        boolean preferReuse = execution.getVariable("needQuerySliceProfile") ? false : true
 
         String urlString = UrnPropertiesReader.getVariable("mso.oof.endpoint", execution)
         logger.debug( "get NSI option OOF Url: " + urlString)
@@ -378,8 +368,9 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
             if (isSharable && solution.get("existingNSI")) {
                 //sharedNSISolution
                 processSharedNSI(solution, sliceTaskParams)
+                execution.setVariable("needQuerySliceProfile", true)
             }
-            else if(solution.containsKey("newNSISolution")) {
+            else {
                 processNewNSI(solution, sliceTaskParams)
             }
         }
@@ -395,6 +386,7 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
         String nsiName = sharedNSISolution.get("NSIName")
         sliceParams.setSuggestNsiId(nsiId)
         sliceParams.setSuggestNsiName(nsiName)
+
     }
 
     private void processNewNSI(Map<String, Object> solution, SliceTaskParamsAdapter sliceParams) {
