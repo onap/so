@@ -32,13 +32,15 @@ public class AaiPropertiesImpl implements AAIProperties {
     private final String endpoint;
     private final String encryptedBasicAuth;
     private final String encrytptionKey;
+    private final String aaiVersion;
 
     public AaiPropertiesImpl() {
-
         final ApplicationContext context = SpringContextHelper.getAppContext();
         this.endpoint = context.getEnvironment().getProperty("aai.endpoint");
         this.encryptedBasicAuth = context.getEnvironment().getProperty("aai.auth");
         this.encrytptionKey = context.getEnvironment().getProperty("mso.key");
+        this.aaiVersion = context.getEnvironment().getProperty("aai.version");
+
     }
 
     @Override
@@ -53,6 +55,11 @@ public class AaiPropertiesImpl implements AAIProperties {
 
     @Override
     public AAIVersion getDefaultVersion() {
+        for (final AAIVersion version : AAIVersion.values()) {
+            if (version.toString().equalsIgnoreCase(this.aaiVersion)) {
+                return version;
+            }
+        }
         return AAIVersion.LATEST;
     }
 
