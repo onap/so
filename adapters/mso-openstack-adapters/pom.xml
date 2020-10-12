@@ -51,76 +51,6 @@
           </execution>
         </executions>
       </plugin>
-
-      <!--  run the following plugin only when there's a wsdl change and you need to recompile the java classes
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jaxws-maven-plugin</artifactId>
-				<version>2.4.1</version>
-				<executions>
-					<execution>
-						<id>generate-network-async-stubs</id>
-						<phase>process-classes</phase>
-						<goals>
-							<goal>wsimport</goal>
-						</goals>
-						<configuration>
-                            <vmArgs>
-                                <vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
-                            </vmArgs>
-							<wsdlDirectory>src/main/resources/wsdl</wsdlDirectory>
-							<wsdlFiles>
-								<wsdlFile>NetworkAdapterNotify.wsdl</wsdlFile>
-							</wsdlFiles>
-							<wsdlLocation>/NetworkAdapterNotify.wsdl</wsdlLocation>
-							<packageName>org.onap.so.adapters.network.async.client</packageName>
-							<xnocompile>false</xnocompile>
-							<keep>true</keep>
-						</configuration>
-					</execution>
-
-					<execution>
-						<id>generate-vnf-async-stubs</id>
-						<phase>process-classes</phase>
-						<goals>
-							<goal>wsimport</goal>
-						</goals>
-						<configuration>
-					        <vmArgs>
-					            <vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
-					        </vmArgs>
-							<wsdlDirectory>src/main/resources/wsdl</wsdlDirectory>
-							<wsdlFiles>
-								<wsdlFile>VnfAdapterNotify.wsdl</wsdlFile>
-							</wsdlFiles>
-							<wsdlLocation>/VnfAdapterNotify.wsdl</wsdlLocation>
-							<packageName>org.onap.so.adapters.vnf.async.client</packageName>
-							<xnocompile>false</xnocompile>
-							<keep>true</keep>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-			    <groupId>org.codehaus.mojo</groupId>
-			    <artifactId>build-helper-maven-plugin</artifactId>
-			    <version>3.0.0</version>
-			    <executions>
-			        <execution>
-			            <id>add-source</id>
-			            <phase>generate-sources</phase>
-			            <goals>
-			                <goal>add-source</goal>
-			            </goals>
-			            <configuration>
-			                <sources>
-			                    <source>${project.build.directory}/generated-sources/wsimport/</source>
-			                </sources>
-			            </configuration>
-			        </execution>
-			    </executions>
-			 </plugin>
- -->
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
@@ -228,17 +158,14 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-spring-boot-starter-jaxws</artifactId>
-      <version>${cxf.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-spring-boot-starter-jaxrs</artifactId>
-      <version>${cxf.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-service-description-swagger</artifactId>
-      <version>${cxf.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
