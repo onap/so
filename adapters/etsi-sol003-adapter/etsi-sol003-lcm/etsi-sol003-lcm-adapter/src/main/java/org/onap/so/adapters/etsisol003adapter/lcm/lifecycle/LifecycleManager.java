@@ -199,9 +199,9 @@ public class LifecycleManager {
     private String sendInstantiateRequestToVnfm(final EsrVnfm vnfm, final GenericVnf genericVnf,
             final CreateVnfRequest createVnfRequest) {
 
-        final InstantiateVnfRequest instantiateVnfRequest =
-                vnfmHelper.createInstantiateRequest(createVnfRequest.getTenant(), createVnfRequest,
-                        packageProvider.getFlavourId(genericVnf.getModelVersionId()));
+        final String pkgId = getPackageId(createVnfRequest, genericVnf);
+        final InstantiateVnfRequest instantiateVnfRequest = vnfmHelper.createInstantiateRequest(
+                createVnfRequest.getTenant(), createVnfRequest, packageProvider.getFlavourId(pkgId));
         final String jobId = vnfmServiceProvider.instantiateVnf(vnfm, genericVnf.getSelflink(), instantiateVnfRequest);
 
         logger.info("Instantiate VNF request successfully sent to " + genericVnf.getSelflink());
