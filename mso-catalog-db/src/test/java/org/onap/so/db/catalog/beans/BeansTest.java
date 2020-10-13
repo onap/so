@@ -67,10 +67,10 @@ public class BeansTest {
     }
 
     private void test(String pojoPackage) {
-        Validator validator = ValidatorBuilder.create().with(new GetterMustExistRule()).with(new NoPrimitivesRule())
-                .with(new NoNestedClassRule()).with(new NoStaticExceptFinalRule())
-                .with(new SerializableMustHaveSerialVersionUIDRule()).with(new HasToStringRule())
-                .with(new EqualsAndHashCodeTester()).with(new NoPublicFieldsExceptStaticFinalRule())
+        Validator validator = ValidatorBuilder.create().with(new GetterMustExistRule()).with(new NoNestedClassRule())
+                .with(new NoStaticExceptFinalRule()).with(new SerializableMustHaveSerialVersionUIDRule())
+                .with(new HasToStringRule()).with(new EqualsAndHashCodeTester())
+                .with(new NoPublicFieldsExceptStaticFinalRule())
                 .with(new CustomSetterMustExistRule()
                         .exclude(allOf(hasAnnotationPropertyWithValue(Column.class, "updatable", equalTo(false)),
                                 hasAnnotation(GeneratedValue.class)), hasAnnotation(Temporal.class)))

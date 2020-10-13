@@ -29,6 +29,7 @@ import org.onap.so.bpmn.common.BBConstants;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.listener.flowmanipulator.FlowManipulator;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
+import org.onap.so.db.catalog.beans.PnfResourceCustomization;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
@@ -47,6 +48,9 @@ public class SkipCDSBuildingBlockListener implements FlowManipulator {
 
     private Set<String> vFModuleAction =
             new HashSet<String>(Arrays.asList("VfModuleConfigAssign", "VfModuleConfigDeploy"));
+
+    private Set<String> pnfActions =
+            new HashSet<>(Arrays.asList("config-assign", "config-deploy", "PnfConfigAssign", "PnfConfigDeploy"));
 
     @Override
     public boolean shouldRunFor(String currentBBName, boolean isFirst, BuildingBlockExecution execution) {
@@ -95,9 +99,17 @@ public class SkipCDSBuildingBlockListener implements FlowManipulator {
                 boolean skipVfModule = vfc.isSkipPostInstConf();
                 currentSequenceSkipCheck(execution, skipVfModule);
             }
+
+        } else if (currentBB.getBuildingBlock().getBpmnScope().equalsIgnoreCase("PNF")
+                && containsIgnoreCaseAction(currentBB, pnfActions)) {
+            PnfResourceCustomization pnfResourceCustomization =
+                    catalogDbClient.getPnfResourceCustomizationByModelCustomizationUUID(customizationUUID);
+
+            if (null != pnfResourceCustomization) {
+                boolean skipConfigPNF = pnfResourceCustomization.isSkipPostInstConf();
+                currentSequenceSkipCheck(execution, skipConfigPNF);
+            }
         }
-
-
     }
 
     private boolean containsIgnoreCaseAction(ExecuteBuildingBlock currentBB, Set<String> actions) {

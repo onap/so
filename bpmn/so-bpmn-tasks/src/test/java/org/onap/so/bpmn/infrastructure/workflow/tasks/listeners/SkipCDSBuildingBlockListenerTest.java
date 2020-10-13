@@ -36,6 +36,7 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
+import org.onap.so.db.catalog.beans.PnfResourceCustomization;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
@@ -47,9 +48,11 @@ public class SkipCDSBuildingBlockListenerTest {
 
     private static final String VNF_SCOPE = "VNF";
     private static final String VF_SCOPE = "VFModule";
+    private static final String PNF_SCOPE = "pnf";
     private static final String TEST_MODELUUID = "123456789";
     private static final String VNF_TEST_ACTION = "VnfConfigAssign";
     private static final String VFModule_TEST_ACTION = "VfModuleConfigAssign";
+    private static final String PNFModule_TEST_ACTION = "config-assign";
     private static final String MODELCUSTOMIZATIONUUID = "123456789";
     private static final String BBNAME = "ControllerExecutionBB";
     private static final boolean ISFIRST = true;
@@ -63,6 +66,7 @@ public class SkipCDSBuildingBlockListenerTest {
     private BuildingBlockExecution buildingBlockExecution = new DelegateExecutionImpl(new DelegateExecutionFake());
     private VnfResourceCustomization vnfCust = new VnfResourceCustomization();
     private VfModuleCustomization vfCust = new VfModuleCustomization();
+    private PnfResourceCustomization pnfResourceCustomization = new PnfResourceCustomization();
     private BuildingBlock buildingBlock = new BuildingBlock();
 
     @InjectMocks
@@ -166,6 +170,44 @@ public class SkipCDSBuildingBlockListenerTest {
 
     }
 
+    @Test
+    public void testProcessForPNFToSkipCDSBB() {
+        // given
+        setBuildingBlockAndCurrentSequence(PNF_SCOPE, PNFModule_TEST_ACTION, 0);
+        pnfResourceCustomization = getPnfResourceCustomization(true);
+
+        when(catalogDbClient
+                .getPnfResourceCustomizationByModelCustomizationUUID(executeBuildingBlock.getBuildingBlock().getKey()))
+                        .thenReturn(pnfResourceCustomization);
+
+        // when
+        skipCDSBuildingBlockListener.run(flowsToExecute, executeBuildingBlock, buildingBlockExecution);
+
+        // then
+        actual = buildingBlockExecution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
+        assertEquals(1, actual);
+
+    }
+
+    @Test
+    public void testProcessForPNFNotToSkipCDSBB() {
+        // given
+        setBuildingBlockAndCurrentSequence(PNF_SCOPE, PNFModule_TEST_ACTION, 0);
+        pnfResourceCustomization = getPnfResourceCustomization(false);
+
+        when(catalogDbClient
+                .getPnfResourceCustomizationByModelCustomizationUUID(executeBuildingBlock.getBuildingBlock().getKey()))
+                        .thenReturn(pnfResourceCustomization);
+
+        // when
+        skipCDSBuildingBlockListener.run(flowsToExecute, executeBuildingBlock, buildingBlockExecution);
+
+        // then
+        actual = buildingBlockExecution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
+        assertEquals(0, actual);
+
+    }
+
     /**
      * setting scope action in buildingBlock and BB current sequence in BuildingBlockExecution
      *
@@ -197,6 +239,13 @@ public class SkipCDSBuildingBlockListenerTest {
         vfCust.setSkipPostInstConf(setSkippost);
         vfModuleCustomizations.add(vfCust);
         return vfModuleCustomizations;
+    }
+
+    private PnfResourceCustomization getPnfResourceCustomization(boolean setSkippost) {
+        PnfResourceCustomization pnfResourceCustomization = new PnfResourceCustomization();
+        pnfResourceCustomization.setModelCustomizationUUID(MODELCUSTOMIZATIONUUID);
+        pnfResourceCustomization.setSkipPostInstConf(setSkippost);
+        return pnfResourceCustomization;
     }
 
 }
