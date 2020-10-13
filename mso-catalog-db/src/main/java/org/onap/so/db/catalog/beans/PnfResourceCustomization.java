@@ -83,7 +83,7 @@ public class PnfResourceCustomization implements Serializable {
     private String blueprintVersion;
 
     @Column(name = "SKIP_POST_INSTANTIATION_CONFIGURATION")
-    private Boolean skipPostInstConf;
+    private boolean skipPostInstConf;
 
     @Column(name = "CONTROLLER_ACTOR")
     private String controllerActor;
@@ -219,11 +219,11 @@ public class PnfResourceCustomization implements Serializable {
         this.blueprintVersion = blueprintVersion;
     }
 
-    public Boolean isSkipPostInstConf() {
+    public boolean isSkipPostInstConf() {
         return skipPostInstConf;
     }
 
-    public void setSkipPostInstConf(Boolean skipPostInstConf) {
+    public void setSkipPostInstConf(boolean skipPostInstConf) {
         this.skipPostInstConf = skipPostInstConf;
     }
 
