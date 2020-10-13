@@ -69,7 +69,7 @@ public class CreateInstantiateVnfTask extends AbstractNetworkServiceTask {
                 (CreateInstantiateRequest) execution.getVariable(CREATE_INSTANTIATE_REQUEST_PARAM_NAME);
         logger.info("request: {}", request);
 
-        setJobStatus(execution, JobStatusEnum.IN_PROGRESS, "Checking if NF Instance record exists in database for "
+        addJobStatus(execution, JobStatusEnum.IN_PROGRESS, "Checking if NF Instance record exists in database for "
                 + request.getNsInstId() + " and " + request.getVnfName());
         if (!databaseServiceProvider.isNsInstExists(request.getNsInstId(), request.getVnfName())) {
             abortOperation(execution,
@@ -85,7 +85,7 @@ public class CreateInstantiateVnfTask extends AbstractNetworkServiceTask {
                 (CreateInstantiateRequest) execution.getVariable(CREATE_INSTANTIATE_REQUEST_PARAM_NAME);
         logger.info("request: {}", request);
 
-        setJobStatus(execution, IN_PROGRESS, "Creating NF Instance record in database for " + request.getVnfName());
+        addJobStatus(execution, IN_PROGRESS, "Creating NF Instance record in database for " + request.getVnfName());
 
         final Optional<NfvoNsInst> optional = databaseServiceProvider.getNfvoNsInst(request.getNsInstId());
 
@@ -110,7 +110,7 @@ public class CreateInstantiateVnfTask extends AbstractNetworkServiceTask {
             final CreateInstantiateRequest request =
                     (CreateInstantiateRequest) execution.getVariable(CREATE_INSTANTIATE_REQUEST_PARAM_NAME);
 
-            setJobStatus(execution, IN_PROGRESS, "Creating GenericVnf record in AAI for " + request.getVnfName());
+            addJobStatus(execution, IN_PROGRESS, "Creating GenericVnf record in AAI for " + request.getVnfName());
 
             final String nfInstId = (String) execution.getVariable(NF_INST_ID_PARAM_NAME);
             final String nsInstId = (String) execution.getVariable(NS_INSTANCE_ID_PARAM_NAME);
@@ -148,7 +148,7 @@ public class CreateInstantiateVnfTask extends AbstractNetworkServiceTask {
                     (CreateInstantiateRequest) execution.getVariable(CREATE_INSTANTIATE_REQUEST_PARAM_NAME);
             logger.info("request: {}", request);
 
-            setJobStatus(execution, IN_PROGRESS,
+            addJobStatus(execution, IN_PROGRESS,
                     "Invoking SOL003 adapter for creating and instantiating VNF: " + request.getVnfName());
 
             final CreateVnfRequest vnfRequest = new CreateVnfRequest();
@@ -170,7 +170,7 @@ public class CreateInstantiateVnfTask extends AbstractNetworkServiceTask {
 
             logger.info("Vnf instantiation response: {}", vnfResponse);
             execution.setVariable(CREATE_VNF_RESPONSE_PARAM_NAME, vnfResponse);
-            setJobStatus(execution, IN_PROGRESS, "Successfully invoked SOL003 adapater creating and instantiating VNF: "
+            addJobStatus(execution, IN_PROGRESS, "Successfully invoked SOL003 adapater creating and instantiating VNF: "
                     + request.getVnfName() + " CreaetVnfResponse Job Id: " + vnfResponse.getJobId());
             logger.debug("Finished executing invokeCreateInstantiationRequest ...");
         } catch (final Exception exception) {
@@ -187,7 +187,7 @@ public class CreateInstantiateVnfTask extends AbstractNetworkServiceTask {
         updateNfInstanceStatus(execution, State.INSTANTIATED);
         final CreateInstantiateRequest request =
                 (CreateInstantiateRequest) execution.getVariable(CREATE_INSTANTIATE_REQUEST_PARAM_NAME);
-        setJobStatus(execution, FINISHED, "Successfully created and Instantiated VNF: " + request.getVnfName()
+        addJobStatus(execution, FINISHED, "Successfully created and Instantiated VNF: " + request.getVnfName()
                 + " will set status to " + State.INSTANTIATED);
 
         logger.info("Finished executing updateNfInstanceStatusToInstantiated  ...");
@@ -200,7 +200,7 @@ public class CreateInstantiateVnfTask extends AbstractNetworkServiceTask {
         updateNfInstanceStatus(execution, State.FAILED);
         final CreateInstantiateRequest request =
                 (CreateInstantiateRequest) execution.getVariable(CREATE_INSTANTIATE_REQUEST_PARAM_NAME);
-        setJobStatus(execution, ERROR, "Failed to create and instantiate VNF: " + request.getVnfName()
+        addJobStatus(execution, ERROR, "Failed to create and instantiate VNF: " + request.getVnfName()
                 + " will set status to " + State.FAILED);
 
         logger.info("Finished executing updateNfInstanceStatusToInstantiated  ...");
@@ -209,14 +209,11 @@ public class CreateInstantiateVnfTask extends AbstractNetworkServiceTask {
 
     private void updateNfInstanceStatus(final DelegateExecution execution, final State vnfStatus) {
         final String nfInstId = (String) execution.getVariable(NF_INST_ID_PARAM_NAME);
-
         final Optional<NfvoNfInst> optional = databaseServiceProvider.getNfvoNfInst(nfInstId);
         if (optional.isEmpty()) {
             final String message = "Unable to find NfvoNfInst record in database using nfInstId: " + nfInstId;
             logger.error(message);
-
             abortOperation(execution, message);
-
         }
 
         final NfvoNfInst nfvoNfInst = optional.get();

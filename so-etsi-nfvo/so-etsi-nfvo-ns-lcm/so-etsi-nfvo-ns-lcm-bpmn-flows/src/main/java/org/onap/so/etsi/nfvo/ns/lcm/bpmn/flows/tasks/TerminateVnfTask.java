@@ -19,6 +19,13 @@
  */
 package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.tasks;
 
+import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.DELETE_VNF_RESPONSE_PARAM_NAME;
+import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.NF_INST_ID_PARAM_NAME;
+import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.TERMINATE_VNF_VNFID_PARAM_NAME;
+import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobStatusEnum.ERROR;
+import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobStatusEnum.FINISHED;
+import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobStatusEnum.IN_PROGRESS;
+import java.util.Optional;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.DeleteVnfResponse;
 import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.extclients.aai.AaiServiceProvider;
@@ -31,13 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import java.util.Optional;
-import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.NF_INST_ID_PARAM_NAME;
-import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.DELETE_VNF_RESPONSE_PARAM_NAME;
-import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.TERMINATE_VNF_VNFID_PARAM_NAME;
-import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobStatusEnum.ERROR;
-import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobStatusEnum.FINISHED;
-import static org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobStatusEnum.IN_PROGRESS;
 
 /**
  * @author Andrew Lamb (andrew.a.lamb@est.tech)
@@ -63,7 +63,7 @@ public class TerminateVnfTask extends AbstractNetworkServiceTask {
         logger.info("vnfId: {}", vnfId);
         execution.setVariable(NF_INST_ID_PARAM_NAME, vnfId);
 
-        setJobStatus(execution, JobStatusEnum.IN_PROGRESS,
+        addJobStatus(execution, JobStatusEnum.IN_PROGRESS,
                 "Checking if VNF Instance with id: " + vnfId + " exists in database.");
         if (!databaseServiceProvider.isNfInstExists(vnfId)) {
             abortOperation(execution,
@@ -78,7 +78,7 @@ public class TerminateVnfTask extends AbstractNetworkServiceTask {
         final String vnfId = (String) execution.getVariable(TERMINATE_VNF_VNFID_PARAM_NAME);
 
         try {
-            setJobStatus(execution, IN_PROGRESS, "Invoking SOL003 adapter for terminating VNF with vnfId: " + vnfId);
+            addJobStatus(execution, IN_PROGRESS, "Invoking SOL003 adapter for terminating VNF with vnfId: " + vnfId);
 
             final Optional<DeleteVnfResponse> optional = sol003AdapterServiceProvider.invokeTerminationRequest(vnfId);
 
@@ -92,7 +92,7 @@ public class TerminateVnfTask extends AbstractNetworkServiceTask {
 
             logger.info("Vnf delete response: {}", vnfResponse);
             execution.setVariable(DELETE_VNF_RESPONSE_PARAM_NAME, vnfResponse);
-            setJobStatus(execution, IN_PROGRESS, "Successfully invoked SOL003 adapter terminate VNF with vnfId: "
+            addJobStatus(execution, IN_PROGRESS, "Successfully invoked SOL003 adapter terminate VNF with vnfId: "
                     + vnfId + " DeleteVnfResponse Job Id: " + vnfResponse.getJobId());
             logger.debug("Finished executing invokeTerminateRequest ...");
         } catch (final Exception exception) {
@@ -108,7 +108,7 @@ public class TerminateVnfTask extends AbstractNetworkServiceTask {
         final String vnfId = (String) execution.getVariable(TERMINATE_VNF_VNFID_PARAM_NAME);
 
         try {
-            setJobStatus(execution, IN_PROGRESS, "Deleting GenericVnf record from AAI for vnfId: " + vnfId);
+            addJobStatus(execution, IN_PROGRESS, "Deleting GenericVnf record from AAI for vnfId: " + vnfId);
             aaiServiceProvider.deleteGenericVnf(vnfId);
 
         } catch (final Exception exception) {
@@ -124,10 +124,10 @@ public class TerminateVnfTask extends AbstractNetworkServiceTask {
         logger.info("Executing deleteNfInstanceFromDb");
         final String vnfId = (String) execution.getVariable(TERMINATE_VNF_VNFID_PARAM_NAME);
 
-        setJobStatus(execution, IN_PROGRESS, "Deleting NF Instance record from Database for vnfId: " + vnfId);
+        addJobStatus(execution, IN_PROGRESS, "Deleting NF Instance record from Database for vnfId: " + vnfId);
         databaseServiceProvider.deleteNfvoNfInst(vnfId);
 
-        setJobStatus(execution, FINISHED, "Successfully finished terminating VNF with vnfId: " + vnfId);
+        addJobStatus(execution, FINISHED, "Successfully finished terminating VNF with vnfId: " + vnfId);
         logger.info("Finished executing deleteNfInstanceFromDb ...");
     }
 
@@ -136,7 +136,7 @@ public class TerminateVnfTask extends AbstractNetworkServiceTask {
 
         updateNfInstanceStatus(execution, State.TERMINATING);
         final String vnfId = (String) execution.getVariable(TERMINATE_VNF_VNFID_PARAM_NAME);
-        setJobStatus(execution, IN_PROGRESS,
+        addJobStatus(execution, IN_PROGRESS,
                 "Terminating VNF with vnfId: " + vnfId + " will set status to " + State.TERMINATING);
 
         logger.info("Finished executing updateNfInstanceStatusToTerminating  ...");
@@ -148,7 +148,7 @@ public class TerminateVnfTask extends AbstractNetworkServiceTask {
 
         updateNfInstanceStatus(execution, State.NOT_INSTANTIATED);
         final String vnfId = (String) execution.getVariable(TERMINATE_VNF_VNFID_PARAM_NAME);
-        setJobStatus(execution, IN_PROGRESS,
+        addJobStatus(execution, IN_PROGRESS,
                 "Successfully terminated VNF with vnfId: " + vnfId + " will set status to " + State.NOT_INSTANTIATED);
 
         logger.info("Finished executing updateNfInstanceStatusToInstantiated  ...");
@@ -160,7 +160,7 @@ public class TerminateVnfTask extends AbstractNetworkServiceTask {
 
         updateNfInstanceStatus(execution, State.FAILED);
         final String vnfId = (String) execution.getVariable(TERMINATE_VNF_VNFID_PARAM_NAME);
-        setJobStatus(execution, ERROR,
+        addJobStatus(execution, ERROR,
                 "Failed to terminate VNF with vnfId: " + vnfId + " will set status to " + State.FAILED);
 
         logger.info("Finished executing updateNfInstanceStatusToFailed  ...");
@@ -174,9 +174,7 @@ public class TerminateVnfTask extends AbstractNetworkServiceTask {
         if (optional.isEmpty()) {
             final String message = "Unable to find NfvoNfInst record in database using vnfId: " + vnfId;
             logger.error(message);
-
             abortOperation(execution, message);
-
         }
 
         final NfvoNfInst nfvoNfInst = optional.get();

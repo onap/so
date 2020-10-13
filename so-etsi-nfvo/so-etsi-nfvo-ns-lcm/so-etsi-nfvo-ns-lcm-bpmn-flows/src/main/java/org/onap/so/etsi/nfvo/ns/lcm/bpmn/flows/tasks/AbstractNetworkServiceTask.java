@@ -52,6 +52,16 @@ public abstract class AbstractNetworkServiceTask {
         this.databaseServiceProvider = jobServiceProvider;
     }
 
+    public void addJobStatus(final DelegateExecution execution, final JobStatusEnum jobStatus,
+            final String description) {
+        final NfvoJobStatus nfvoJobStatus =
+                new NfvoJobStatus().status(jobStatus).description(description).updatedTime(LocalDateTime.now());
+        logger.info("Adding NfvoJobStatus {}", nfvoJobStatus);
+        final NfvoJob nfvoJob = getNfvoJob(execution);
+        nfvoJob.nfvoJobStatus(nfvoJobStatus);
+        databaseServiceProvider.addJob(nfvoJob);
+    }
+
     public void setJobStatus(final DelegateExecution execution, final JobStatusEnum jobStatus,
             final String description) {
         logger.info("Setting Job Status to {}", jobStatus);
