@@ -962,7 +962,7 @@
       <dependency>
         <groupId>org.onap.aai.schema-service</groupId>
         <artifactId>aai-schema</artifactId>
-        <version>1.7.10-SNAPSHOT</version>
+        <version>1.7.10</version>
       </dependency>
       <dependency>
       <groupId>org.apache.cxf</groupId>
