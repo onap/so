@@ -592,7 +592,9 @@ public class HeatBridgeImpl implements HeatBridgeApi {
 
             boolean relationshipExist = sriovVfHasSriovPfRelationship(sriovVfUri);
 
-            String pserverHostName = port.getHostId();
+
+            Server server = getOpenstackServerById(port.getDeviceId());
+            String pserverHostName = server.getHypervisorHostname();
             lIf.setInterfaceDescription("Attached to SR-IOV port: " + pserverHostName);
 
             if (!relationshipExist) {
