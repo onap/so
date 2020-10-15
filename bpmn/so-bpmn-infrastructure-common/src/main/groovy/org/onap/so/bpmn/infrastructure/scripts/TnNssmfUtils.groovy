@@ -66,7 +66,29 @@ class TnNssmfUtils {
         }
     }
 
-    String buildSDNCRequest(DelegateExecution execution, String svcInstId, String action) {
+    String buildSDNCRequest(DelegateExecution execution, String svcInstId, String svcAction) {
+        String reqAction
+        switch (svcAction) {
+            case "create":
+                reqAction = "AllocateTransportSliceInstance"
+                break
+            case "delete":
+                reqAction = "DeleteTransportSliceInstance"
+                break
+            case "activate":
+                reqAction = "ActivateTransportSliceInstance"
+                break
+            case "deactivate":
+                reqAction = "DeactivateTransportSliceInstance"
+                break
+            default:
+                reqAction = svcAction
+        }
+
+        buildSDNCRequest(execution, svcInstId, svcAction, reqAction)
+    }
+
+    String buildSDNCRequest(DelegateExecution execution, String svcInstId, String svcAction, String reqAction) {
 
         String uuid = execution.getVariable('testReqId') // for junits
         if (uuid == null) {
@@ -105,7 +127,7 @@ class TnNssmfUtils {
 	   <sdncadapter:RequestHeader>
 				<sdncadapter:RequestId>${MsoUtils.xmlEscape(uuid)}</sdncadapter:RequestId>
 				<sdncadapter:SvcInstanceId>${MsoUtils.xmlEscape(svcInstId)}</sdncadapter:SvcInstanceId>
-				<sdncadapter:SvcAction>${MsoUtils.xmlEscape(action)}</sdncadapter:SvcAction>
+				<sdncadapter:SvcAction>${MsoUtils.xmlEscape(svcAction)}</sdncadapter:SvcAction>
 				<sdncadapter:SvcOperation>vnf-topology-operation</sdncadapter:SvcOperation>
 				<sdncadapter:CallbackUrl>${MsoUtils.xmlEscape(callbackURL)}</sdncadapter:CallbackUrl>
 				<sdncadapter:MsoAction>generic-resource</sdncadapter:MsoAction>
@@ -113,7 +135,7 @@ class TnNssmfUtils {
 	<sdncadapterworkflow:SDNCRequestData>
 		<request-information>
 			<request-id>${MsoUtils.xmlEscape(requestId)}</request-id>
-			<request-action>AllocateTnNssi</request-action>
+			<request-action>${MsoUtils.xmlEscape(reqAction)}</request-action>
 			<source>${MsoUtils.xmlEscape(source)}</source>
 			<notification-url/>
 			<order-number/>
@@ -168,7 +190,7 @@ class TnNssmfUtils {
 
         String msg
 
-        String prefix = execution.setVariable("prefix")
+        String prefix = execution.getVariable("prefix")
         if (isBlank(prefix)) {
             if (exceptionOnErr) {
                 msg = "validateSDNCResponse: prefix is null"
@@ -181,7 +203,8 @@ class TnNssmfUtils {
         WorkflowException workflowException = execution.getVariable("WorkflowException")
         boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
 
-        logger.debug("workflowException: " + workflowException)
+        logger.debug("TnNssmfUtils.validateSDNCResponse: SDNCResponse: " + response)
+        logger.debug("TnNssmfUtils.validateSDNCResponse: workflowException: " + workflowException)
 
         sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 
@@ -189,6 +212,9 @@ class TnNssmfUtils {
         if (execution.getVariable(prefix + 'sdncResponseSuccess') == true) {
             logger.debug("Received a Good Response from SDNC Adapter for " + method + " SDNC Call.  Response is: \n" + sdncResponse)
             RollbackData rollbackData = execution.getVariable("rollbackData")
+            if (rollbackData == null) {
+                rollbackData = new RollbackData()
+            }
 
             if (method.equals("allocate")) {
                 rollbackData.put("VNFMODULE", "rollbackSDNCRequestAllocate", "true")
@@ -204,7 +230,7 @@ class TnNssmfUtils {
             execution.setVariable("rollbackData", rollbackData)
         } else {
             if (exceptionOnErr) {
-                msg = "validateSDNCResponse: bad Response from SDNC Adapter for " + method + " SDNC Call."
+                msg = "TnNssmfUtils.validateSDNCResponse: bad Response from SDNC Adapter for " + method + " SDNC Call."
                 logger.error(msg)
                 exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
             }

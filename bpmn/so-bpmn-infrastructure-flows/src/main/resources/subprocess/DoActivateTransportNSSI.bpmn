@@ -56,8 +56,8 @@ runScript.preprocessSdncActOrDeactTnNssiRequest(execution)</bpmn:script>
       <bpmn:extensionElements>
         <camunda:in source="TNNSSMF_SDNCRequest" target="sdncAdapterWorkflowRequest" />
         <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
-        <camunda:in source="mso-request-id" target="mso-request-id" />
-        <camunda:in source="mso-service-instance-id" target="mso-service-instance-id" />
+        <camunda:in source="msoRequestId" target="mso-request-id" />
+        <camunda:in source="sliceServiceInstanceId" target="mso-service-instance-id" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:out source="sdncAdapterResponse" target="TNNSSMF_SDNCAdapterResponse" />
         <camunda:out source="SDNCA_SuccessIndicator" target="SDNCA_SuccessIndicator" />

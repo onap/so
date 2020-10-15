@@ -93,7 +93,7 @@ class DoDeallocateTnNssi extends AbstractServiceTaskProcessor {
         try {
             String serviceInstanceId = execution.getVariable("serviceInstanceID")
 
-            String sdncRequest = tnNssmfUtils.buildSDNCRequest(execution, serviceInstanceId, "deallocate")
+            String sdncRequest = tnNssmfUtils.buildSDNCRequest(execution, serviceInstanceId, "delete")
 
             execution.setVariable("TNNSSMF_SDNCRequest", sdncRequest)
             logger.debug("Outgoing SDNCRequest is: \n" + sdncRequest)
