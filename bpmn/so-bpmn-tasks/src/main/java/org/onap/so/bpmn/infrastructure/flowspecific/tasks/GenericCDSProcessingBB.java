@@ -84,7 +84,7 @@ public class GenericCDSProcessingBB implements ControllerRunnable<BuildingBlockE
     @Override
     public void run(ControllerContext<BuildingBlockExecution> context) {
         BuildingBlockExecution obj = context.getExecution();
-        cdsDispather.constructExecutionServiceInputObject(obj);
-        cdsDispather.sendRequestToCDSClient(obj);
+        cdsDispather.constructExecutionServiceInputObjectBB(obj);
+        cdsDispather.sendRequestToCDSClientBB(obj);
     }
 }

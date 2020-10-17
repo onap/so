@@ -94,8 +94,8 @@ public class GenericPnfCDSControllerRunnableBB implements ControllerRunnable<Bui
     @Override
     public void run(ControllerContext<BuildingBlockExecution> controllerContext) {
         BuildingBlockExecution buildingBlockExecution = controllerContext.getExecution();
-        abstractCDSProcessingBBUtils.constructExecutionServiceInputObject(buildingBlockExecution);
-        abstractCDSProcessingBBUtils.sendRequestToCDSClient(buildingBlockExecution);
+        abstractCDSProcessingBBUtils.constructExecutionServiceInputObjectBB(buildingBlockExecution);
+        abstractCDSProcessingBBUtils.sendRequestToCDSClientBB(buildingBlockExecution);
     }
 
     private AbstractCDSPropertiesBean prepareAndSetCdsPropertyBean(BuildingBlockExecution buildingBlockExecution) {

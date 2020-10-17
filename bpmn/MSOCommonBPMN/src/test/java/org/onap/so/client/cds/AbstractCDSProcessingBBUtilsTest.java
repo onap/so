@@ -97,7 +97,7 @@ public class AbstractCDSProcessingBBUtilsTest {
         BuildingBlockExecution execution = mock(BuildingBlockExecution.class);
         when(execution.getVariable("executionObject")).thenReturn(abstractCDSPropertiesBean);
 
-        abstractCDSProcessingBBUtils.constructExecutionServiceInputObject(execution);
+        abstractCDSProcessingBBUtils.constructExecutionServiceInputObjectBB(execution);
         verify(exceptionUtil, times(0)).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), anyInt(),
                 any(Exception.class));
     }
@@ -107,7 +107,7 @@ public class AbstractCDSProcessingBBUtilsTest {
 
         BuildingBlockExecution execution = mock(BuildingBlockExecution.class);
         when(execution.getVariable("executionServiceInput")).thenReturn(abstractCDSPropertiesBean);
-        abstractCDSProcessingBBUtils.sendRequestToCDSClient(execution);
+        abstractCDSProcessingBBUtils.sendRequestToCDSClientBB(execution);
         verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), anyInt(),
                 any(Exception.class));
 

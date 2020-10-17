@@ -92,7 +92,7 @@ public class AbstractCDSProcessingBBUtils {
      *
      * @param execution BuildingBlockExecution object
      */
-    public void constructExecutionServiceInputObject(BuildingBlockExecution execution) {
+    public void constructExecutionServiceInputObjectBB(BuildingBlockExecution execution) {
         logger.trace("Start AbstractCDSProcessingBBUtils.preProcessRequest for BuildingBlockExecution object.");
 
         try {
@@ -136,7 +136,7 @@ public class AbstractCDSProcessingBBUtils {
      *
      * @param execution BuildingBlockExecution object
      */
-    public void sendRequestToCDSClient(BuildingBlockExecution execution) {
+    public void sendRequestToCDSClientBB(BuildingBlockExecution execution) {
 
         logger.trace("Start AbstractCDSProcessingBBUtils.sendRequestToCDSClient for BuildingBlockExecution object.");
         try {

@@ -102,8 +102,8 @@ public class GenericCDSProcessingBBTest extends BaseTaskTest {
         AbstractCDSPropertiesBean cdsBean = prepareCDSBean();
 
         doReturn(cdsBean).when(generatePayloadForCds).buildCdsPropertiesBean(buildingBlockExecution);
-        doNothing().when(cdsDispather).constructExecutionServiceInputObject(buildingBlockExecution);
-        doNothing().when(cdsDispather).sendRequestToCDSClient(buildingBlockExecution);
+        doNothing().when(cdsDispather).constructExecutionServiceInputObjectBB(buildingBlockExecution);
+        doNothing().when(cdsDispather).sendRequestToCDSClientBB(buildingBlockExecution);
 
         // when
         Boolean isUnderstandable = controllerRunnable.understand(controllerContext);
