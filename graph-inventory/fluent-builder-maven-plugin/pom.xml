@@ -9,7 +9,7 @@
   <artifactId>fluent-builder-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <build>
-  <pluginManagement>
+    <pluginManagement>
       <plugins>
         <plugin>
           <groupId>org.eclipse.m2e</groupId>
