@@ -102,6 +102,8 @@ import org.openstack4j.model.network.Port;
 import org.openstack4j.model.network.Subnet;
 import org.openstack4j.openstack.heat.domain.HeatResource;
 import org.openstack4j.openstack.heat.domain.HeatResource.Resources;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -117,6 +119,8 @@ public class HeatBridgeImplTest {
     private static final String REGION_ID = "RegionOne";
     private static final String TENANT_ID = "7320ec4a5b9d4589ba7c4412ccfd290f";
     private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    private static Logger logger = LoggerFactory.getLogger(HeatBridgeImplTest.class);
 
     @Mock
     private OpenstackClient osClient;
@@ -137,6 +141,12 @@ public class HeatBridgeImplTest {
 
     @Mock
     private Server server;
+
+    @Mock
+    private Server server2;
+
+    @Mock
+    private Image image;
 
     @Mock
     private AAIDSLQueryClient dSLQueryClient;
@@ -626,6 +636,25 @@ public class HeatBridgeImplTest {
         verify(osClient, times(5)).getNetworkById(anyString());
     }
 
+
+    @Test
+    public void testExtractOpenstackImagesFromServers() throws HeatBridgeException {
+        // Arrange
+        List<Server> serverList = new ArrayList<>();
+        serverList.add(server);
+        serverList.add(server2);
+        when(server.getImage()).thenReturn(null);
+        when(server.getImage()).thenReturn(image);
+        when(image.getId()).thenReturn("imageId");
+        // Act
+
+        List<Image> images = heatbridge.extractOpenstackImagesFromServers(serverList);
+
+
+        // Assert
+        assertEquals(1, images.size());
+    }
+
     private List<? extends Resource> extractTestStackResources() {
         List<HeatResource> stackResources = null;
         try {
@@ -637,6 +666,7 @@ public class HeatBridgeImplTest {
         }
         return stackResources;
     }
+
 
     private String readTestResourceFile(String filePath) {
         String content = null;

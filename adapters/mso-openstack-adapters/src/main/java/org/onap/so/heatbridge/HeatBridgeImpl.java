@@ -245,7 +245,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
     @Override
     public List<org.openstack4j.model.compute.Image> extractOpenstackImagesFromServers(final List<Server> servers) {
         Objects.requireNonNull(osClient, ERR_MSG_NULL_OS_CLIENT);
-        return servers.stream().map(Server::getImage)
+        return servers.stream().filter(s -> s.getImage() != null).map(Server::getImage)
                 .filter(distinctByProperty(org.openstack4j.model.compute.Image::getId)).collect(Collectors.toList());
     }
 
