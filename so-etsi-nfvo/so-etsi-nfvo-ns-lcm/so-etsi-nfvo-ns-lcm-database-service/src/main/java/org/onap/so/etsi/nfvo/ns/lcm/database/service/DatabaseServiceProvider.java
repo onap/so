@@ -25,6 +25,7 @@ import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoJob;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoNfInst;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoNsInst;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NsLcmOpOcc;
+import org.onap.so.etsi.nfvo.ns.lcm.database.beans.State;
 import org.onap.so.etsi.nfvo.ns.lcm.database.repository.NSLcmOpOccRepository;
 import org.onap.so.etsi.nfvo.ns.lcm.database.repository.NfvoJobRepository;
 import org.onap.so.etsi.nfvo.ns.lcm.database.repository.NfvoNfInstRepository;
@@ -118,6 +119,12 @@ public class DatabaseServiceProvider {
     public boolean saveNfvoNfInst(final NfvoNfInst nfvoNfInst) {
         logger.info("Saving NfvoNfInst: {} to database", nfvoNfInst);
         return nfvoNfInstRepository.save(nfvoNfInst) != null;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public boolean updateNfInstState(final String nfInstId, final State state) {
+        logger.info("Updating NfvoNfInst: {} State to {}", nfInstId, state);
+        return nfvoNfInstRepository.updateNfInstState(nfInstId, state) > 0;
     }
 
     public List<NfvoNfInst> getNfvoNfInstByNsInstId(final String nsInstId) {
