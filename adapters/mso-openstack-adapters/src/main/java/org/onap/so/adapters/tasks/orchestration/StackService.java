@@ -276,7 +276,7 @@ public class StackService extends ExternalTaskUtils {
         networkAdapterImpl.createNetwork(req.getCloudSiteId(), req.getTenantId(), req.getNetworkType(),
                 req.getModelCustomizationUuid(), req.getNetworkName(), physicalNetworkName, vlans, routeTargets, shared,
                 external, req.getFailIfExists(), false, req.getSubnets(), fqdns, routeTable, req.getMsoRequest(),
-                networkId, neutronNetworkId, networkFqdn, subnetIdMap, networkRollback, false);
+                networkId, neutronNetworkId, networkFqdn, subnetIdMap, networkRollback, true);
         success.setTrue();
         backout.setValue(req.getBackout());
         canonicalStackId.value = networkRollback.value.getNetworkStackId();
