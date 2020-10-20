@@ -44,7 +44,11 @@ public class CreateVFModule {
             CloudInformation cloudInformation = new CloudInformation();
             cloudInformation.setOwner(gBBInput.getCloudRegion().getCloudOwner());
             cloudInformation.setRegionId(gBBInput.getCloudRegion().getLcpCloudRegionId());
-            cloudInformation.setTenantId(gBBInput.getTenant().getTenantId());
+            String tenantId = gBBInput.getTenant().getTenantId();
+            if (tenantId == null) {
+                tenantId = gBBInput.getCloudRegion().getTenantId();
+            }
+            cloudInformation.setTenantId(tenantId);
             cloudInformation.setTenantName(gBBInput.getTenant().getTenantName());
             cloudInformation.setTenantContext(gBBInput.getTenant().getTenantContext());
             cloudInformation.setTemplateInstanceId(execution.getVariable("heatStackId"));

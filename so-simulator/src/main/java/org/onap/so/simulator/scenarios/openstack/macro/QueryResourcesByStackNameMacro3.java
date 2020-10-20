@@ -9,7 +9,7 @@ import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 
 @Scenario("Openstack-Query-Stack-Resources-Macro3")
-@RequestMapping(value = "/sim/v1/tenantOne/stacks/macro_module_3/resources", method = RequestMethod.GET)
+@RequestMapping(value = "/sim/v1/tenantOne/stacks/macro_module_3/stackId/resources", method = RequestMethod.GET)
 public class QueryResourcesByStackNameMacro3 extends AbstractSimulatorScenario {
 
 
@@ -17,8 +17,8 @@ public class QueryResourcesByStackNameMacro3 extends AbstractSimulatorScenario {
     public void run(ScenarioDesigner scenario) {
         scenario.http().receive().get();
 
-        scenario.http().send().response(HttpStatus.OK)
-                .payload(new ClassPathResource("openstack/gr_api/GetStackResourcesMacro.json"));
+        scenario.http().send().response(HttpStatus.OK).header("ContentType", "application/json")
+                .payload(new ClassPathResource("openstack/gr_api/zrdm52emccr01_base_resources.json"));
 
     }
 

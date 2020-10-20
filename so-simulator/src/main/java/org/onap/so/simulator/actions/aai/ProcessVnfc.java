@@ -29,8 +29,7 @@ public class ProcessVnfc extends AbstractTestAction {
             AAIResourcesClient aaiResourceClient = new AAIResourcesClient();
 
             if (context.getVariable("requestAction").equals("CreateVfModuleInstance")
-                    && context.getVariable("serviceAction").equals("assign")
-                    && context.getVariable("vfModuleName").equals("nc_dummy_id")) {
+                    && context.getVariable("serviceAction").equals("assign")) {
 
                 AAIResourceUri vnfcURI =
                         AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().vnfc("ssc_server_1"));
@@ -47,14 +46,14 @@ public class ProcessVnfc extends AbstractTestAction {
                 vnfc.setModelVersionId("9e314c37-2258-4572-a399-c0dd7d5f1aec");
                 vnfc.setModelCustomizationId("2bd95cd4-d7ff-4af0-985d-2adea0339921");
 
-                if (!aaiResourceClient.exists(vnfcURI)) {
-                    logger.debug("creating VNFC");
-                    aaiResourceClient.create(vnfcURI, vnfc);
-
-
-                } else {
-                    aaiResourceClient.get(vnfcURI);
+                if (aaiResourceClient.exists(vnfcURI)) {
+                    logger.debug("cleaning up VNFC");
+                    aaiResourceClient.delete(vnfcURI);
                 }
+
+                logger.debug("creating new VNFC");
+                aaiResourceClient.create(vnfcURI, vnfc);
+
                 AAIResourceUri vfModuleURI = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network()
                         .genericVnf(context.getVariable("vnfId")).vfModule(context.getVariable("vfModuleId")));
                 logger.debug("creating VNFC edge to vf module");
