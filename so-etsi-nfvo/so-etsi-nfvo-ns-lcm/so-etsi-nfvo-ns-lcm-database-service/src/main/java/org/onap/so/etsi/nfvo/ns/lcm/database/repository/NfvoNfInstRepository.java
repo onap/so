@@ -22,7 +22,11 @@ package org.onap.so.etsi.nfvo.ns.lcm.database.repository;
 import java.util.List;
 import java.util.Optional;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoNfInst;
+import org.onap.so.etsi.nfvo.ns.lcm.database.beans.State;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 /**
  * @author Waqas Ikram (waqas.ikram@est.tech)
@@ -35,4 +39,12 @@ public interface NfvoNfInstRepository extends CrudRepository<NfvoNfInst, String>
     List<NfvoNfInst> findByNsInstNsInstId(final String nsInstId);
 
     List<NfvoNfInst> findByNsInstNsInstIdAndName(final String nsInstId, final String name);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE NfvoNfInst SET status = (:state) WHERE nfInstId = (:nfInstId)")
+    int updateNfInstState(@Param("nfInstId") final String nfInstId, @Param("state") final State state);
+
+    @Modifying(clearAutomatically = true)
+    @Query("DELETE FROM NfvoNfInst WHERE nfInstId = (:nfInstId)")
+    void deleteNfvoNfInstUsingNfInstId(@Param("nfInstId") final String nfInstId);
 }

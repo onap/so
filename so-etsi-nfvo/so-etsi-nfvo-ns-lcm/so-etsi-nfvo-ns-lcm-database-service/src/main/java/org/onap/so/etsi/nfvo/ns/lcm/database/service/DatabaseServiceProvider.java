@@ -25,6 +25,8 @@ import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoJob;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoNfInst;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoNsInst;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NsLcmOpOcc;
+import org.onap.so.etsi.nfvo.ns.lcm.database.beans.OperationStateEnum;
+import org.onap.so.etsi.nfvo.ns.lcm.database.beans.State;
 import org.onap.so.etsi.nfvo.ns.lcm.database.repository.NSLcmOpOccRepository;
 import org.onap.so.etsi.nfvo.ns.lcm.database.repository.NfvoJobRepository;
 import org.onap.so.etsi.nfvo.ns.lcm.database.repository.NfvoNfInstRepository;
@@ -105,6 +107,12 @@ public class DatabaseServiceProvider {
         return nfvoNsInstRepository.save(nfvoNsInst) != null;
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public boolean updateNsInstState(final String nsInstId, final State state) {
+        logger.info("Updating NfvoNsInst: {} State to {}", nsInstId, state);
+        return nfvoNsInstRepository.updateNsInstState(nsInstId, state) > 0;
+    }
+
     public Optional<NfvoNsInst> getNfvoNsInst(final String nsInstId) {
         logger.info("Querying database for NfvoNsInst using nsInstId: {}", nsInstId);
         return nfvoNsInstRepository.findById(nsInstId);
@@ -118,6 +126,12 @@ public class DatabaseServiceProvider {
     public boolean saveNfvoNfInst(final NfvoNfInst nfvoNfInst) {
         logger.info("Saving NfvoNfInst: {} to database", nfvoNfInst);
         return nfvoNfInstRepository.save(nfvoNfInst) != null;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public boolean updateNfInstState(final String nfInstId, final State state) {
+        logger.info("Updating NfvoNfInst: {} State to {}", nfInstId, state);
+        return nfvoNfInstRepository.updateNfInstState(nfInstId, state) > 0;
     }
 
     public List<NfvoNfInst> getNfvoNfInstByNsInstId(final String nsInstId) {
@@ -140,14 +154,21 @@ public class DatabaseServiceProvider {
         return nfvoNfInstRepository.findByNfInstId(nfInstId).isPresent();
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void deleteNfvoNfInst(final String nfInstId) {
         logger.info("Deleting NfvoNfInst with nfInstId: {} from database", nfInstId);
-        nfvoNfInstRepository.deleteById(nfInstId);
+        nfvoNfInstRepository.deleteNfvoNfInstUsingNfInstId(nfInstId);
     }
 
     public boolean addNSLcmOpOcc(final NsLcmOpOcc nsLcmOpOcc) {
         logger.info("Adding NSLcmOpOcc: {} to database", nsLcmOpOcc);
         return nsLcmOpOccRepository.save(nsLcmOpOcc) != null;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public boolean updateNsLcmOpOccOperationState(final String id, final OperationStateEnum operationState) {
+        logger.info("Updating NsLcmOpOcc: {} operationState to {}", id, operationState);
+        return nsLcmOpOccRepository.updateNsLcmOpOccOperationState(id, operationState) > 0;
     }
 
     public Optional<NsLcmOpOcc> getNsLcmOpOcc(final String id) {

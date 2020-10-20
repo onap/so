@@ -19,9 +19,13 @@
  */
 package org.onap.so.etsi.nfvo.ns.lcm.database.repository;
 
-import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NsLcmOpOcc;
-import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
+import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NsLcmOpOcc;
+import org.onap.so.etsi.nfvo.ns.lcm.database.beans.OperationStateEnum;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 /**
  * @author Waqas Ikram (waqas.ikram@est.tech)
@@ -30,4 +34,9 @@ import java.util.Optional;
 public interface NSLcmOpOccRepository extends CrudRepository<NsLcmOpOcc, String> {
 
     Optional<NsLcmOpOcc> findById(final String id);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE NsLcmOpOcc SET operationState = (:operationState) WHERE id = (:id)")
+    int updateNsLcmOpOccOperationState(@Param("id") final String id,
+            @Param("operationState") final OperationStateEnum operationState);
 }

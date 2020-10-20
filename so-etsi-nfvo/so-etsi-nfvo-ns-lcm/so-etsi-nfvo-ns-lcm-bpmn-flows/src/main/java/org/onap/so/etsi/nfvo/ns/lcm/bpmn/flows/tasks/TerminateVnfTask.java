@@ -31,7 +31,6 @@ import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.DeleteVnfResponse;
 import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.extclients.aai.AaiServiceProvider;
 import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.extclients.vnfm.Sol003AdapterServiceProvider;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobStatusEnum;
-import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoNfInst;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.State;
 import org.onap.so.etsi.nfvo.ns.lcm.database.service.DatabaseServiceProvider;
 import org.slf4j.Logger;
@@ -170,16 +169,12 @@ public class TerminateVnfTask extends AbstractNetworkServiceTask {
     private void updateNfInstanceStatus(final DelegateExecution execution, final State vnfStatus) {
         final String vnfId = (String) execution.getVariable(TERMINATE_VNF_VNFID_PARAM_NAME);
 
-        final Optional<NfvoNfInst> optional = databaseServiceProvider.getNfvoNfInst(vnfId);
-        if (optional.isEmpty()) {
-            final String message = "Unable to find NfvoNfInst record in database using vnfId: " + vnfId;
+        final boolean isSuccessful = databaseServiceProvider.updateNfInstState(vnfId, vnfStatus);
+        if (!isSuccessful) {
+            final String message = "Unable to update NfvoNfInst " + vnfId + " status to" + vnfStatus + " in database";
             logger.error(message);
             abortOperation(execution, message);
         }
-
-        final NfvoNfInst nfvoNfInst = optional.get();
-        nfvoNfInst.setStatus(vnfStatus);
-        databaseServiceProvider.saveNfvoNfInst(nfvoNfInst);
     }
 
 }

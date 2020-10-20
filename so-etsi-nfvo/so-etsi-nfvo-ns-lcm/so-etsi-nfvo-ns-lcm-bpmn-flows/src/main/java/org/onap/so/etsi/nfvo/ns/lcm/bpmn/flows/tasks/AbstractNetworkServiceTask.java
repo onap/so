@@ -19,9 +19,9 @@
  */
 package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.tasks;
 
-import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.JOB_ID_PARAM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.NS_INSTANCE_ID_PARAM_NAME;
+import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.NS_WORKFLOW_PROCESSING_EXCEPTION_PARAM_NAME;
 import static org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.CamundaVariableNameConstants.OCC_ID_PARAM_NAME;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -31,7 +31,6 @@ import org.onap.so.etsi.nfvo.ns.lcm.database.beans.JobStatusEnum;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoJob;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoJobStatus;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoNsInst;
-import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NsLcmOpOcc;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.OperationStateEnum;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.State;
 import org.onap.so.etsi.nfvo.ns.lcm.database.service.DatabaseServiceProvider;
@@ -109,21 +108,8 @@ public abstract class AbstractNetworkServiceTask {
 
     public void updateNsLcmOpOccStatusToCompleted(final DelegateExecution execution) {
         logger.info("Executing updateNsLcmOpOccStatusToCompleted ...");
-        final String occId = (String) execution.getVariable(OCC_ID_PARAM_NAME);
 
-        final Optional<NsLcmOpOcc> optional = databaseServiceProvider.getNsLcmOpOcc(occId);
-
-        if (optional.isEmpty()) {
-            final String message = "Unable to find record for NSLcmOpOcc in database using id: " + occId;
-            logger.error(message);
-            abortOperation(execution, message);
-        }
-
-        final NsLcmOpOcc nsLcmOpOcc = optional.get();
-        final OperationStateEnum operationStateCompleted = OperationStateEnum.COMPLETED;
-        logger.info("Setting operation state to {} for id: {}", operationStateCompleted, occId);
-        nsLcmOpOcc.setOperationState(operationStateCompleted);
-        databaseServiceProvider.addNSLcmOpOcc(nsLcmOpOcc);
+        updateNsLcmOpOccOperationState(execution, OperationStateEnum.COMPLETED);
 
         logger.info("Finished executing updateNsLcmOpOccStatusToCompleted ...");
 
@@ -131,20 +117,8 @@ public abstract class AbstractNetworkServiceTask {
 
     public void updateNsLcmOpOccStatusToFailed(final DelegateExecution execution) {
         logger.info("Executing updateNsLcmOpOccStatusToFailed ...");
-        final String occId = (String) execution.getVariable(OCC_ID_PARAM_NAME);
 
-        final Optional<NsLcmOpOcc> optional = databaseServiceProvider.getNsLcmOpOcc(occId);
-
-        if (optional.isPresent()) {
-            final NsLcmOpOcc nsLcmOpOcc = optional.get();
-            final OperationStateEnum operationStateFailed = OperationStateEnum.FAILED;
-            logger.info("Setting operation state to {} for id: {}", operationStateFailed, occId);
-            nsLcmOpOcc.setOperationState(operationStateFailed);
-
-            databaseServiceProvider.addNSLcmOpOcc(nsLcmOpOcc);
-        } else {
-            logger.error("Unable to find record for NSLcmOpOcc in database using id: {}", occId);
-        }
+        updateNsLcmOpOccOperationState(execution, OperationStateEnum.FAILED);
 
         logger.info("Finished executing updateNsLcmOpOccStatusToFailed ...");
 
@@ -152,6 +126,19 @@ public abstract class AbstractNetworkServiceTask {
 
     protected void abortOperation(final DelegateExecution execution, final String message) {
         abortOperation(execution, message, new InlineResponse400().detail(message));
+    }
+
+    private void updateNsLcmOpOccOperationState(final DelegateExecution execution,
+            final OperationStateEnum operationState) {
+        final String occId = (String) execution.getVariable(OCC_ID_PARAM_NAME);
+
+        final boolean isSuccessful = databaseServiceProvider.updateNsLcmOpOccOperationState(occId, operationState);
+        if (!isSuccessful) {
+            final String message =
+                    "Unable to update NsLcmOpOcc " + occId + " operationState to" + operationState + " in database";
+            logger.error(message);
+            abortOperation(execution, message);
+        }
     }
 
     protected void abortOperation(final DelegateExecution execution, final String message,
@@ -175,10 +162,10 @@ public abstract class AbstractNetworkServiceTask {
     }
 
     protected void updateNsInstanceStatus(final DelegateExecution execution, final State nsStatus) {
-        final NfvoNsInst nfvoNsInst = getNfvoNsInst(execution);
+        final String nsInstId = (String) execution.getVariable(NS_INSTANCE_ID_PARAM_NAME);
+
         logger.info("Updating NfvoNsInst Status to {} and saving to DB", nsStatus);
-        nfvoNsInst.setStatus(nsStatus);
-        databaseServiceProvider.saveNfvoNsInst(nfvoNsInst);
+        databaseServiceProvider.updateNsInstState(nsInstId, nsStatus);
     }
 
     protected NfvoNsInst getNfvoNsInst(final DelegateExecution execution) {
