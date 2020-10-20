@@ -1,4 +1,4 @@
-package org.onap.so.simulator.scenarios.openstack.resources;
+package org.onap.so.simulator.scenarios.openstack;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
@@ -8,20 +8,19 @@ import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
 import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 
-@Scenario("Openstack-Query-Base-Stack-Resources")
-@RequestMapping(value = "/sim/v1/tenantOne/stacks/base_module_id/stackId/resources", method = RequestMethod.GET)
-public class QueryResourcesByBaseStackName extends AbstractSimulatorScenario {
-
+@Scenario("Query-Replace-Volume-ID-Name-Resources")
+@RequestMapping(value = "/sim/v1/tenantOne/stacks/replace_module_volume_id/stackId/resources",
+        method = RequestMethod.GET)
+public class QueryResourcesByStackNameModuleReplaceVolume extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioDesigner scenario) {
         scenario.http().receive().get();
 
-        scenario.variable("stackName", "dummy_id");
+        scenario.variable("stackName", "replace_module_volume_id");
 
         scenario.http().send().response(HttpStatus.OK).header("ContentType", "application/json")
                 .payload(new ClassPathResource("openstack/gr_api/zrdm52emccr01_base_resources.json"));
 
     }
-
 }

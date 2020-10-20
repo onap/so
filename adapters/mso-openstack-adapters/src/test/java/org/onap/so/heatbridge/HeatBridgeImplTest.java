@@ -215,7 +215,7 @@ public class HeatBridgeImplTest {
 
         // Assert
         ArgumentCaptor<AAIResourceUri> captor = ArgumentCaptor.forClass(AAIResourceUri.class);
-        verify(transaction, times(2)).createIfNotExists(captor.capture(), any(Optional.class));
+        verify(transaction, times(2)).create(captor.capture(), any());
 
         List<AAIResourceUri> uris = captor.getAllValues();
         assertEquals(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
@@ -259,7 +259,7 @@ public class HeatBridgeImplTest {
 
         // Assert
         ArgumentCaptor<AAIResourceUri> captor = ArgumentCaptor.forClass(AAIResourceUri.class);
-        verify(transaction, times(2)).createIfNotExists(captor.capture(), any(Optional.class));
+        verify(transaction, times(2)).create(captor.capture(), any());
 
         List<AAIResourceUri> uris = captor.getAllValues();
         assertEquals(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
@@ -539,7 +539,7 @@ public class HeatBridgeImplTest {
         when(resourcesClient.get(eq(PInterface.class), any(AAIResourceUri.class))).thenReturn(Optional.of(pIf));
 
         // Act
-        heatbridge.updateLInterfaceVlan(port, lIf, "hostname");
+        heatbridge.createVlanAndSriovVF(port, lIf, "hostname");
 
         // Assert
         verify(transaction, times(2)).createIfNotExists(any(AAIResourceUri.class), any(Optional.class));
@@ -625,7 +625,7 @@ public class HeatBridgeImplTest {
 
         PInterface pIf = mock(PInterface.class);
         when(pIf.getInterfaceName()).thenReturn("test-port-id");
-        doNothing().when(heatbridge).updateSriovPfToPserver(any(), any());
+        doNothing().when(heatbridge).updateSriovPfToSriovVF(any(), any());
 
         // Act
         heatbridge.buildAddVserverLInterfacesToAaiAction(stackResources, Arrays.asList("1", "2"), "CloudOwner");

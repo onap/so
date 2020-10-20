@@ -20,7 +20,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.inventory.delete;
+package org.onap.so.adapters.tasks.inventory;
 
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
@@ -32,7 +32,6 @@ import org.onap.so.utils.RetrySequenceLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 
@@ -49,16 +48,13 @@ public class DeleteInventoryTask extends ExternalTaskUtils {
     private DeleteAAIInventory deleteInventory;
 
     @Autowired
-    private Environment env;
-
-    @Autowired
     private AuditMDCSetup mdcSetup;
 
     public DeleteInventoryTask() {
         super(RetrySequenceLevel.SHORT);
     }
 
-    protected void executeExternalTask(ExternalTask externalTask, ExternalTaskService externalTaskService) {
+    public void executeExternalTask(ExternalTask externalTask, ExternalTaskService externalTaskService) {
         mdcSetup.setupMDC(externalTask);
         String externalTaskId = externalTask.getId();
         CloudInformation cloudInformation = externalTask.getVariable("cloudInformation");
