@@ -195,7 +195,7 @@ public class CreateInstantiateVnfTask extends AbstractNetworkServiceTask {
     }
 
     public void updateNfInstanceStatusToFailed(final DelegateExecution execution) {
-        logger.info("Executing updateNfInstanceStatusToActive");
+        logger.info("Executing updateNfInstanceStatusToFailed");
 
         updateNfInstanceStatus(execution, State.FAILED);
         final CreateInstantiateRequest request =
@@ -203,22 +203,19 @@ public class CreateInstantiateVnfTask extends AbstractNetworkServiceTask {
         addJobStatus(execution, ERROR, "Failed to create and instantiate VNF: " + request.getVnfName()
                 + " will set status to " + State.FAILED);
 
-        logger.info("Finished executing updateNfInstanceStatusToInstantiated  ...");
+        logger.info("Finished executing updateNfInstanceStatusToFailed  ...");
 
     }
 
     private void updateNfInstanceStatus(final DelegateExecution execution, final State vnfStatus) {
         final String nfInstId = (String) execution.getVariable(NF_INST_ID_PARAM_NAME);
-        final Optional<NfvoNfInst> optional = databaseServiceProvider.getNfvoNfInst(nfInstId);
-        if (optional.isEmpty()) {
-            final String message = "Unable to find NfvoNfInst record in database using nfInstId: " + nfInstId;
+        final boolean isSuccessful = databaseServiceProvider.updateNfInstState(nfInstId, vnfStatus);
+        if (!isSuccessful) {
+            final String message =
+                    "Unable to update NfvoNfInst " + nfInstId + " status to" + vnfStatus + " in database";
             logger.error(message);
             abortOperation(execution, message);
         }
-
-        final NfvoNfInst nfvoNfInst = optional.get();
-        nfvoNfInst.setStatus(vnfStatus);
-        databaseServiceProvider.saveNfvoNfInst(nfvoNfInst);
     }
 
 }
