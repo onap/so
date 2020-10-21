@@ -50,10 +50,6 @@ public class ResponseBuilder {
                         .header(CommonConstants.X_PATCH_VERSION, apiPatchVersion)
                         .header(CommonConstants.X_LATEST_VERSION, latestVersion);
 
-        if (StringUtils.isNotBlank(requestId)) {
-            builder.header(CommonConstants.X_TRANSACTION_ID, requestId);
-        }
-
         return builder.entity(jsonResponse).build();
     }
 

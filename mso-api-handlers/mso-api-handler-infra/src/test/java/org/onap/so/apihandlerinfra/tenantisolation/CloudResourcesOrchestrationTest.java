@@ -31,6 +31,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.apihandlerinfra.BaseTest;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.springframework.http.HttpEntity;
@@ -212,6 +213,7 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
                                 .withStatus(HttpStatus.SC_OK)));
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
+        headers.set(ONAPLogConstants.Headers.REQUEST_ID, "e0e0e749-c9e2-48c3-8c4c-d51bf65a86c9");
         HttpEntity<String> entity = new HttpEntity<>("", headers);
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path) + "/v1");
@@ -226,7 +228,7 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
         assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
         assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
         assertEquals("1.0.0", response.getHeaders().get("X-LatestVersion").get(0));
-        assertEquals("90c56827-1c78-4827-bc4d-6afcdb37a51f", response.getHeaders().get("X-TransactionID").get(0));
+        assertEquals("e0e0e749-c9e2-48c3-8c4c-d51bf65a86c9", response.getHeaders().get("X-TransactionID").get(0));
     }
 
     @Test
