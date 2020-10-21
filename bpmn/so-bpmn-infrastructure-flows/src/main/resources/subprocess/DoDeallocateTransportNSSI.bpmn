@@ -26,7 +26,7 @@ ex.processJavaException(execution)</bpmn:script>
       <bpmn:incoming>Flow_0ca4l8d</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:scriptTask id="ScriptTask_1ssh2l9" name="Prepare Update Resource Oper Status((finish)" scriptFormat="groovy">
-      <bpmn:incoming>SequenceFlow_0kixzdj</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1jygjln</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1qv8qw1</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def runScript = new TnAllocateNssi()
@@ -34,15 +34,6 @@ runScript.prepareUpdateJobStatus(execution,"finished","100","Deallocated TN NSSI
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_03s744c" sourceRef="StartEvent_1nbljfd" targetRef="ScriptTask_1tc44ge" />
     <bpmn:sequenceFlow id="SequenceFlow_1qv8qw1" sourceRef="ScriptTask_1ssh2l9" targetRef="Activity_0rgeefb" />
-    <bpmn:scriptTask id="ScriptTask_19uxoi8" name="Update AAI Status" scriptFormat="groovy">
-      <bpmn:incoming>SequenceFlow_1jygjln</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0kixzdj</bpmn:outgoing>
-      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
-execution.setVariable("orchestrationStatus", "deallocated")
-def runScript = new DoDeallocateTnNssi()
-runScript.updateAAIOrchStatus(execution)</bpmn:script>
-    </bpmn:scriptTask>
-    <bpmn:sequenceFlow id="SequenceFlow_0kixzdj" sourceRef="ScriptTask_19uxoi8" targetRef="ScriptTask_1ssh2l9" />
     <bpmn:scriptTask id="Activity_1tw8eyy" name="PreProcess SDNC Deallocate TN NSSI Request" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_07e12rt</bpmn:incoming>
       <bpmn:outgoing>Flow_0cpctye</bpmn:outgoing>
@@ -91,7 +82,7 @@ def runScript = new DoDeallocateTnNssi()
 runScript.preProcessRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_07e12rt" sourceRef="ScriptTask_1tc44ge" targetRef="Activity_1tw8eyy" />
-    <bpmn:sequenceFlow id="SequenceFlow_1jygjln" sourceRef="Activity_013rjwc" targetRef="ScriptTask_19uxoi8" />
+    <bpmn:sequenceFlow id="SequenceFlow_1jygjln" sourceRef="Activity_013rjwc" targetRef="ScriptTask_1ssh2l9" />
     <bpmn:serviceTask id="Activity_0rgeefb" name="Update Resource Operation Status">
       <bpmn:extensionElements>
         <camunda:connector>
@@ -121,6 +112,10 @@ runScript.preProcessRequest(execution)</bpmn:script>
   <bpmn:error id="Error_0p2naox" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoDeallocateTransportNSSI">
+      <bpmndi:BPMNEdge id="Flow_0ca4l8d_di" bpmnElement="Flow_0ca4l8d">
+        <di:waypoint x="840" y="350" />
+        <di:waypoint x="1022" y="350" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1jygjln_di" bpmnElement="SequenceFlow_1jygjln">
         <di:waypoint x="360" y="350" />
         <di:waypoint x="520" y="350" />
@@ -132,8 +127,8 @@ runScript.preProcessRequest(execution)</bpmn:script>
       <bpmndi:BPMNEdge id="Flow_1jdb2oq_di" bpmnElement="SequenceFlow_1jdb2oq">
         <di:waypoint x="1080" y="121" />
         <di:waypoint x="1220" y="121" />
-        <di:waypoint x="1220" y="210" />
-        <di:waypoint x="310" y="210" />
+        <di:waypoint x="1220" y="230" />
+        <di:waypoint x="310" y="230" />
         <di:waypoint x="310" y="310" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0fuabjs_di" bpmnElement="Flow_0fuabjs">
@@ -144,21 +139,13 @@ runScript.preProcessRequest(execution)</bpmn:script>
         <di:waypoint x="630" y="121" />
         <di:waypoint x="729" y="121" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0kixzdj_di" bpmnElement="SequenceFlow_0kixzdj">
+      <bpmndi:BPMNEdge id="SequenceFlow_1qv8qw1_di" bpmnElement="SequenceFlow_1qv8qw1">
         <di:waypoint x="620" y="350" />
         <di:waypoint x="740" y="350" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1qv8qw1_di" bpmnElement="SequenceFlow_1qv8qw1">
-        <di:waypoint x="840" y="350" />
-        <di:waypoint x="990" y="350" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_03s744c_di" bpmnElement="SequenceFlow_03s744c">
         <di:waypoint x="214" y="121" />
         <di:waypoint x="285" y="121" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0ca4l8d_di" bpmnElement="Flow_0ca4l8d">
-        <di:waypoint x="1090" y="350" />
-        <di:waypoint x="1202" y="350" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="StartEvent_1nbljfd_di" bpmnElement="StartEvent_1nbljfd">
         <dc:Bounds x="178" y="103" width="36" height="36" />
@@ -166,8 +153,17 @@ runScript.preProcessRequest(execution)</bpmn:script>
           <dc:Bounds x="166" y="146" width="70" height="53" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1ssh2l9_di" bpmnElement="ScriptTask_1ssh2l9">
+        <dc:Bounds x="520" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0rgeefb_di" bpmnElement="Activity_0rgeefb">
-        <dc:Bounds x="990" y="310" width="100" height="80" />
+        <dc:Bounds x="740" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_05h01gx_di" bpmnElement="EndEvent_05h01gx">
+        <dc:Bounds x="1022" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1030" y="375" width="20" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="SubProcess_1yv9i68_di" bpmnElement="SubProcess_1yv9i68" isExpanded="true">
         <dc:Bounds x="685" y="1080" width="781" height="196" />
@@ -188,18 +184,6 @@ runScript.preProcessRequest(execution)</bpmn:script>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_1swzdpw_di" bpmnElement="ScriptTask_1swzdpw">
         <dc:Bounds x="979" y="1144" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_05h01gx_di" bpmnElement="EndEvent_05h01gx">
-        <dc:Bounds x="1202" y="332" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1210" y="375" width="20" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ScriptTask_1ssh2l9_di" bpmnElement="ScriptTask_1ssh2l9">
-        <dc:Bounds x="740" y="310" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ScriptTask_19uxoi8_di" bpmnElement="ScriptTask_19uxoi8">
-        <dc:Bounds x="520" y="310" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1tw8eyy_di" bpmnElement="Activity_1tw8eyy">
         <dc:Bounds x="509" y="74" width="121" height="94" />
