@@ -22,8 +22,10 @@ package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.extclients.vnfm;
 
 import java.io.IOException;
 import java.security.KeyManagementException;
+import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.Iterator;
 import javax.net.ssl.SSLContext;
@@ -67,10 +69,16 @@ public class Sol003AdapterConfiguration {
     public static final String SOL003_ADAPTER_HTTP_REST_SERVICE_PROVIDER_BEAN =
             "Sol003AdapterHttpRestServiceProviderBean";
 
-    @Value("${rest.http.client.configuration.ssl.trustStore:#{null}}")
+    @Value("${rest.http.client.configuration.ssl.keyStore: classpath:org.onap.so.p12}")
+    private Resource keyStoreResource;
+
+    @Value("${rest.http.client.configuration.ssl.keyStorePassword: 'RLe5ExMWW;Kd6GTSt0WQz;.Y}'")
+    private String keyStorePassword;
+
+    @Value("${rest.http.client.configuration.ssl.trustStore: classpath:org.onap.so.trust.jks}")
     private Resource trustStore;
 
-    @Value("${rest.http.client.configuration.ssl.trustStorePassword:#{null}}")
+    @Value("${rest.http.client.configuration.ssl.trustStorePassword:'[)3KV.k*!IlkFhWEq0Nv2dDa'}")
     private String trustStorePassword;
 
     @Value("${so.adapters.sol003-adapter.auth:Basic dm5mbTpwYXNzd29yZDEk}")
@@ -107,28 +115,31 @@ public class Sol003AdapterConfiguration {
         return getHttpRestServiceProvider(restTemplate, new BasicHttpHeadersProvider(sol003AdapterBasicAuth));
     }
 
+
     private void setTrustStore(final RestTemplate restTemplate) {
+        SSLContext sslContext;
         try {
-            final SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(getSSLContext());
+            if (keyStoreResource != null) {
+                logger.info("Setting keyStore: {} and trustStore: {}", keyStoreResource.getURL(), trustStore.getURL());
+                final KeyStore keystore = KeyStore.getInstance("pkcs12");
+                keystore.load(keyStoreResource.getInputStream(), keyStorePassword.toCharArray());
+                sslContext =
+                        new SSLContextBuilder().loadTrustMaterial(trustStore.getURL(), trustStorePassword.toCharArray())
+                                .loadKeyMaterial(keystore, keyStorePassword.toCharArray()).build();
+            } else {
+                logger.info("Setting truststore: {}", trustStore.getURL());
+                sslContext = new SSLContextBuilder()
+                        .loadTrustMaterial(trustStore.getURL(), trustStorePassword.toCharArray()).build();
+            }
+            final SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(sslContext);
             final HttpClient httpClient = HttpClients.custom().setSSLSocketFactory(socketFactory).build();
             final HttpComponentsClientHttpRequestFactory factory =
                     new HttpComponentsClientHttpRequestFactory(httpClient);
             restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(factory));
-        } catch (final Exception exception) {
+        } catch (final KeyManagementException | NoSuchAlgorithmException | KeyStoreException | CertificateException
+                | IOException | UnrecoverableKeyException exception) {
             logger.error("Error reading truststore, TLS connection to VNFM will fail.", exception);
         }
-    }
-
-    private SSLContext getSSLContext() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException,
-            CertificateException, IOException {
-        if (trustStore != null) {
-            logger.info("Setting truststore: {}", trustStore.getURL());
-            return new SSLContextBuilder().loadTrustMaterial(trustStore.getURL(), trustStorePassword.toCharArray())
-                    .build();
-        }
-        logger.info("Setting Default SSL ...");
-        return SSLContext.getDefault();
-
     }
 
     private HttpRestServiceProvider getHttpRestServiceProvider(final RestTemplate restTemplate,

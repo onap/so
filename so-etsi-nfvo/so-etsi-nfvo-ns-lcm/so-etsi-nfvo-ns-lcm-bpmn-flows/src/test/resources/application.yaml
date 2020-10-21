@@ -47,3 +47,13 @@ so-etsi-ns-lcm-workflow-engine:
 logging:
    level:
       org.reflections.Reflections: ERROR
+
+rest:
+   http:
+      client:
+         configuration:
+            ssl:
+               keyStore: null
+               keyStorePassword: null
+               trustStore: null
+               trustStorePassword: null
