@@ -55,10 +55,10 @@ public class SkipCDSBuildingBlockListenerTest {
     private static final String PNFModule_TEST_ACTION = "config-assign";
     private static final String MODELCUSTOMIZATIONUUID = "123456789";
     private static final String BBNAME = "ControllerExecutionBB";
+    private static final String COMPLETED = "completed";
     private static final boolean ISFIRST = true;
 
     private int actual;
-    private List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
     private List<VnfResourceCustomization> vnfResourceCustomization;
     private List<VfModuleCustomization> vfModuleCustomization;
     private ExecuteBuildingBlock executeBuildingBlock = new ExecuteBuildingBlock();
@@ -91,6 +91,9 @@ public class SkipCDSBuildingBlockListenerTest {
 
     @Test
     public void testProcessForVNFToSkipCDSBB() {
+        List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
+        flowsToExecute.add(executeBuildingBlock);
+        flowsToExecute.add(new ExecuteBuildingBlock());
         // given
         setBuildingBlockAndCurrentSequence(VNF_SCOPE, VNF_TEST_ACTION, 0);
         vnfResourceCustomization = getVnfResourceCustomizationList(true);
@@ -112,6 +115,9 @@ public class SkipCDSBuildingBlockListenerTest {
 
     @Test
     public void testProcessForVNFNotToSkipCDSBB() {
+        List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
+        flowsToExecute.add(executeBuildingBlock);
+        flowsToExecute.add(new ExecuteBuildingBlock());
         // given
         setBuildingBlockAndCurrentSequence(VNF_SCOPE, VNF_TEST_ACTION, 0);
         vnfResourceCustomization = getVnfResourceCustomizationList(false);
@@ -134,6 +140,9 @@ public class SkipCDSBuildingBlockListenerTest {
 
     @Test
     public void testProcessForVFToSkipCDSBB() {
+        List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
+        flowsToExecute.add(executeBuildingBlock);
+        flowsToExecute.add(new ExecuteBuildingBlock());
         // given
         setBuildingBlockAndCurrentSequence(VF_SCOPE, VFModule_TEST_ACTION, 0);
         vfModuleCustomization = getVfModuleCustomizationList(true);
@@ -153,6 +162,9 @@ public class SkipCDSBuildingBlockListenerTest {
 
     @Test
     public void testProcessForVFNotToSkipCDSBB() {
+        List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
+        flowsToExecute.add(executeBuildingBlock);
+        flowsToExecute.add(new ExecuteBuildingBlock());
         // given
         setBuildingBlockAndCurrentSequence(VF_SCOPE, VFModule_TEST_ACTION, 0);
         vfModuleCustomization = getVfModuleCustomizationList(false);
@@ -172,6 +184,9 @@ public class SkipCDSBuildingBlockListenerTest {
 
     @Test
     public void testProcessForPNFToSkipCDSBB() {
+        List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
+        flowsToExecute.add(executeBuildingBlock);
+        flowsToExecute.add(new ExecuteBuildingBlock());
         // given
         setBuildingBlockAndCurrentSequence(PNF_SCOPE, PNFModule_TEST_ACTION, 0);
         pnfResourceCustomization = getPnfResourceCustomization(true);
@@ -190,7 +205,32 @@ public class SkipCDSBuildingBlockListenerTest {
     }
 
     @Test
+    public void testProcessForPNFToSkipCDSBBLastBBInList() {
+        List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
+        flowsToExecute.add(executeBuildingBlock);
+        // given
+        setBuildingBlockAndCurrentSequence(PNF_SCOPE, PNFModule_TEST_ACTION, 0);
+        pnfResourceCustomization = getPnfResourceCustomization(true);
+
+        when(catalogDbClient
+                .getPnfResourceCustomizationByModelCustomizationUUID(executeBuildingBlock.getBuildingBlock().getKey()))
+                        .thenReturn(pnfResourceCustomization);
+
+        // when
+        skipCDSBuildingBlockListener.run(flowsToExecute, executeBuildingBlock, buildingBlockExecution);
+
+        // then
+        actual = buildingBlockExecution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
+        boolean isCompleted = buildingBlockExecution.getVariable(COMPLETED);
+        assertEquals(true, isCompleted);
+        assertEquals(1, actual);
+    }
+
+    @Test
     public void testProcessForPNFNotToSkipCDSBB() {
+        List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
+        flowsToExecute.add(executeBuildingBlock);
+        flowsToExecute.add(new ExecuteBuildingBlock());
         // given
         setBuildingBlockAndCurrentSequence(PNF_SCOPE, PNFModule_TEST_ACTION, 0);
         pnfResourceCustomization = getPnfResourceCustomization(false);
