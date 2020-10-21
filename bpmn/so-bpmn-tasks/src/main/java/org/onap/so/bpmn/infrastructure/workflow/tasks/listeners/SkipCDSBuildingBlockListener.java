@@ -52,6 +52,8 @@ public class SkipCDSBuildingBlockListener implements FlowManipulator {
     private Set<String> pnfActions =
             new HashSet<>(Arrays.asList("config-assign", "config-deploy", "PnfConfigAssign", "PnfConfigDeploy"));
 
+    private static final String COMPLETED = "completed";
+
     @Override
     public boolean shouldRunFor(String currentBBName, boolean isFirst, BuildingBlockExecution execution) {
 
@@ -70,6 +72,7 @@ public class SkipCDSBuildingBlockListener implements FlowManipulator {
     public void run(List<ExecuteBuildingBlock> flowsToExecute, ExecuteBuildingBlock currentBB,
             BuildingBlockExecution execution) {
         String customizationUUID = currentBB.getBuildingBlock().getKey();
+        int flowsToExecuteSize = flowsToExecute.size();
 
         if (Strings.isEmpty(customizationUUID)) {
             return;
@@ -85,7 +88,7 @@ public class SkipCDSBuildingBlockListener implements FlowManipulator {
                         vnfResourceCustomizations);
                 if (null != vrc) {
                     boolean skipConfigVNF = vrc.isSkipPostInstConf();
-                    currentSequenceSkipCheck(execution, skipConfigVNF);
+                    currentSequenceSkipCheck(execution, skipConfigVNF, flowsToExecuteSize);
                 }
 
             }
@@ -97,7 +100,7 @@ public class SkipCDSBuildingBlockListener implements FlowManipulator {
 
             if (null != vfc) {
                 boolean skipVfModule = vfc.isSkipPostInstConf();
-                currentSequenceSkipCheck(execution, skipVfModule);
+                currentSequenceSkipCheck(execution, skipVfModule, flowsToExecuteSize);
             }
 
         } else if (currentBB.getBuildingBlock().getBpmnScope().equalsIgnoreCase("PNF")
@@ -107,7 +110,7 @@ public class SkipCDSBuildingBlockListener implements FlowManipulator {
 
             if (null != pnfResourceCustomization) {
                 boolean skipConfigPNF = pnfResourceCustomization.isSkipPostInstConf();
-                currentSequenceSkipCheck(execution, skipConfigPNF);
+                currentSequenceSkipCheck(execution, skipConfigPNF, flowsToExecuteSize);
             }
         }
     }
@@ -118,10 +121,16 @@ public class SkipCDSBuildingBlockListener implements FlowManipulator {
     }
 
 
-    private void currentSequenceSkipCheck(BuildingBlockExecution execution, boolean skipModule) {
+    private void currentSequenceSkipCheck(BuildingBlockExecution execution, boolean skipModule,
+            int flowsToExecuteSize) {
         if (skipModule) {
             int currentSequence = execution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
-            execution.setVariable(BBConstants.G_CURRENT_SEQUENCE, currentSequence + 1);
+            currentSequence++;
+            if (currentSequence >= flowsToExecuteSize) {
+                execution.setVariable(COMPLETED, true);
+            } else {
+                execution.setVariable(BBConstants.G_CURRENT_SEQUENCE, currentSequence);
+            }
         }
     }
 
