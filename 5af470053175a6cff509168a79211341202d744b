@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4abd2f3e_6081301c",
+        "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/WorkflowActionBB.bpmn",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2020-10-21T23:42:29Z",
+      "side": 1,
+      "message": "exporter version too old. Please use a newer version.",
+      "revId": "5af470053175a6cff509168a79211341202d744b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
