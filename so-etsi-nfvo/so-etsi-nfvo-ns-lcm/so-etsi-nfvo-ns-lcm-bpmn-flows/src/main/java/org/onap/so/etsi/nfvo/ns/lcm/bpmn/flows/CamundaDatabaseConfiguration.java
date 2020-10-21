@@ -22,13 +22,17 @@ package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows;
 
 import static org.slf4j.LoggerFactory.getLogger;
 import javax.sql.DataSource;
+import org.camunda.bpm.engine.spring.SpringProcessEngineConfiguration;
+import org.camunda.bpm.spring.boot.starter.util.SpringBootProcessEnginePlugin;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jmx.export.MBeanExporter;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -39,8 +43,9 @@ import com.zaxxer.hikari.HikariDataSource;
  */
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(entityManagerFactoryRef = "entityManagerFactory", transactionManagerRef = "transactionManager")
 public class CamundaDatabaseConfiguration {
+
+    private static final String CAMUNDA_TRANSACTION_MANAGER_BEAN_NAME = "camundaTransactionManager";
 
     private static final String CAMUNDA_DATA_SOURCE_BEAN_NAME = "camundaBpmDataSource";
 
@@ -66,4 +71,22 @@ public class CamundaDatabaseConfiguration {
         return new HikariDataSource(hikariConfig);
     }
 
+    @Bean(name = CAMUNDA_TRANSACTION_MANAGER_BEAN_NAME)
+    public PlatformTransactionManager camundaTransactionManager(
+            @Qualifier(CAMUNDA_DATA_SOURCE_BEAN_NAME) final DataSource dataSource) {
+        return new DataSourceTransactionManager(dataSource);
+    }
+
+    @Bean
+    public SpringBootProcessEnginePlugin transactionManagerProcessEnginePlugin(
+            @Qualifier(CAMUNDA_TRANSACTION_MANAGER_BEAN_NAME) final PlatformTransactionManager camundaTransactionManager) {
+        return new SpringBootProcessEnginePlugin() {
+            @Override
+            public void preInit(final SpringProcessEngineConfiguration processEngineConfiguration) {
+                logger.info("Setting Camunda TransactionManager ...");
+                processEngineConfiguration.setTransactionManager(camundaTransactionManager);
+
+            }
+        };
+    }
 }

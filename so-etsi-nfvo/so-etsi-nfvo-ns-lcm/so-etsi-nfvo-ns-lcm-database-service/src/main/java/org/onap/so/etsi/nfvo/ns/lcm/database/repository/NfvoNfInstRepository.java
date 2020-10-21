@@ -23,16 +23,16 @@ import java.util.List;
 import java.util.Optional;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoNfInst;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.State;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 /**
  * @author Waqas Ikram (waqas.ikram@est.tech)
  * @author mukeshsharma(mukeshsharma@est.tech)
  */
-public interface NfvoNfInstRepository extends CrudRepository<NfvoNfInst, String> {
+public interface NfvoNfInstRepository extends JpaRepository<NfvoNfInst, String> {
 
     Optional<NfvoNfInst> findByNfInstId(final String nfInstId);
 

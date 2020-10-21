@@ -302,7 +302,7 @@ public class JobExecutorService {
     }
 
     private boolean isNotImmediateTerminateRequest(final TerminateNsRequest terminateNsRequest) {
-        return terminateNsRequest.getTerminationTime() != null;
+        return terminateNsRequest != null && terminateNsRequest.getTerminationTime() != null;
     }
 
     private boolean isNotInstantiated(final NfvoNsInst nfvoNsInst) {

@@ -22,16 +22,16 @@ package org.onap.so.etsi.nfvo.ns.lcm.database.repository;
 import java.util.Optional;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NsLcmOpOcc;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.OperationStateEnum;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 /**
  * @author Waqas Ikram (waqas.ikram@est.tech)
  * @author mukeshsharma(mukeshsharma@est.tech)
  */
-public interface NSLcmOpOccRepository extends CrudRepository<NsLcmOpOcc, String> {
+public interface NSLcmOpOccRepository extends JpaRepository<NsLcmOpOcc, String> {
 
     Optional<NsLcmOpOcc> findById(final String id);
 

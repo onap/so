@@ -19,24 +19,6 @@
  */
 package org.onap.so.etsi.nfvo.ns.workflow.engine.tasks;
 
-import com.google.gson.Gson;
-import org.camunda.bpm.engine.history.HistoricProcessInstance;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.BaseTest;
-import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.GsonProvider;
-import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.exceptions.NsRequestProcessingException;
-import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.service.JobExecutorService;
-import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoJob;
-import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoNsInst;
-import org.onap.so.etsi.nfvo.ns.lcm.database.beans.State;
-import org.springframework.beans.factory.annotation.Autowired;
-import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.UUID;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
@@ -45,6 +27,22 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
+import org.camunda.bpm.engine.history.HistoricProcessInstance;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.BaseTest;
+import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.exceptions.NsRequestProcessingException;
+import org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.service.JobExecutorService;
+import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoJob;
+import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoNsInst;
+import org.onap.so.etsi.nfvo.ns.lcm.database.beans.State;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Andrew Lamb (andrew.a.lamb@est.tech)
@@ -55,18 +53,12 @@ public class DeleteNsTaskTest extends BaseTest {
     @Autowired
     private JobExecutorService objUnderTest;
 
-    @Autowired
-    private GsonProvider gsonProvider;
-
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
-
-    private Gson gson;
 
     @Before
     public void before() {
         wireMockServer.resetAll();
-        gson = gsonProvider.getGson();
     }
 
     @After

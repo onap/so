@@ -22,16 +22,16 @@ package org.onap.so.etsi.nfvo.ns.lcm.database.repository;
 import java.util.Optional;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoNsInst;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.State;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 /**
  * @author Waqas Ikram (waqas.ikram@est.tech)
  *
  */
-public interface NfvoNsInstRepository extends CrudRepository<NfvoNsInst, String> {
+public interface NfvoNsInstRepository extends JpaRepository<NfvoNsInst, String> {
 
     Optional<NfvoNsInst> findByName(final String name);
 
