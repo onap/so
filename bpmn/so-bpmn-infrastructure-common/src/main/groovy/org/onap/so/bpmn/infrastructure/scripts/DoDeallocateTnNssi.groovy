@@ -126,7 +126,7 @@ class DoDeallocateTnNssi extends AbstractServiceTaskProcessor {
 
     public void updateAAIOrchStatus(DelegateExecution execution) {
         logger.debug("Start updateAAIOrchStatus")
-        String tnNssiId = execution.getVariable("serviceInstanceID")
+        String tnNssiId = execution.getVariable("sliceServiceInstanceId")
         String orchStatus = execution.getVariable("orchestrationStatus")
 
         try {
@@ -150,7 +150,7 @@ class DoDeallocateTnNssi extends AbstractServiceTaskProcessor {
                                 String status,
                                 String progress,
                                 String statusDescription) {
-        String serviceId = execution.getVariable("serviceInstanceID")
+        String serviceId = execution.getVariable("sliceServiceInstanceId")
         String jobId = execution.getVariable("jobId")
         String nsiId = execution.getVariable("nsiId")
 

@@ -98,6 +98,7 @@ class TnNssmfUtils {
         def callbackURL = execution.getVariable("sdncCallbackUrl")
         def requestId = execution.getVariable("msoRequestId")
         def serviceId = execution.getVariable("sliceServiceInstanceId")
+        def subServiceType = execution.getVariable("subscriptionServiceType")
         def vnfType = execution.getVariable("serviceType")
         def vnfName = execution.getVariable("sliceServiceInstanceName")
         def tenantId = execution.getVariable("sliceServiceInstanceId")
@@ -143,7 +144,7 @@ class TnNssmfUtils {
 		</request-information>
 		<service-information>
 			<service-id>${MsoUtils.xmlEscape(serviceId)}</service-id>
-			<subscription-service-type>${MsoUtils.xmlEscape(serviceId)}</subscription-service-type>
+			<subscription-service-type>${MsoUtils.xmlEscape(subServiceType)}</subscription-service-type>
 			${serviceEcompModelInformation}
 			<service-instance-id>${MsoUtils.xmlEscape(svcInstId)}</service-instance-id>
 			<global-customer-id>${MsoUtils.xmlEscape(globalSubscriberId)}</global-customer-id>

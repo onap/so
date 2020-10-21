@@ -25,11 +25,9 @@ import groovy.json.JsonSlurper
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.ServiceInstance
-import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -38,7 +36,6 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.db.request.beans.ResourceOperationStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
 
 public class DoActivateTnNssi extends AbstractServiceTaskProcessor {
     String Prefix = "TNACT_"
@@ -114,13 +111,14 @@ public class DoActivateTnNssi extends AbstractServiceTaskProcessor {
 
 
     void validateSDNCResponse(DelegateExecution execution, String response) {
-        tnNssmfUtils.validateSDNCResponse(execution, response, method)
+        String actionType = execution.getVariable("actionType")
+        tnNssmfUtils.validateSDNCResponse(execution, response, actionType)
     }
 
 
     void updateAAIOrchStatus(DelegateExecution execution) {
         logger.debug("Start updateAAIOrchStatus")
-        String tnNssiId = execution.getVariable("tnNssiId")
+        String tnNssiId = execution.getVariable("sliceServiceInstanceId")
         String orchStatus = execution.getVariable("orchestrationStatus")
 
         try {
@@ -144,7 +142,7 @@ public class DoActivateTnNssi extends AbstractServiceTaskProcessor {
                                 String status,
                                 String progress,
                                 String statusDescription) {
-        String serviceId = execution.getVariable("serviceInstanceID")
+        String serviceId = execution.getVariable("sliceServiceInstanceId")
         String jobId = execution.getVariable("jobId")
         String nsiId = execution.getVariable("nsiId")
         String operType = execution.getVariable("actionType")
