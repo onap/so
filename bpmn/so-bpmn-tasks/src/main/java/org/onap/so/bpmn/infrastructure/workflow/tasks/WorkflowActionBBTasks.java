@@ -103,7 +103,6 @@ public class WorkflowActionBBTasks {
                 (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         execution.setVariable("MacroRollback", false);
 
-        flowManipulatorListenerRunner.modifyFlows(flowsToExecute, new DelegateExecutionImpl(execution));
         int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE);
 
         ExecuteBuildingBlock ebb = flowsToExecute.get(currentSequence);
