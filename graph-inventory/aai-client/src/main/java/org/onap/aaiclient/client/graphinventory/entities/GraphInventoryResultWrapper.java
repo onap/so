@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
+import org.onap.aaiclient.client.graphinventory.GraphInventoryObjectName;
 import org.onap.so.jsonpath.JsonPathUtil;
 import org.slf4j.Logger;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -60,6 +61,15 @@ public abstract class GraphInventoryResultWrapper<R extends GraphInventoryRelati
         } catch (JsonProcessingException e) {
             logger.warn("could not parse object into json - defaulting to empty object");
             return "{}";
+        }
+    }
+
+    public boolean hasRelationshipsTo(GraphInventoryObjectName name) {
+        Optional<R> rOpt = this.getRelationships();
+        if (rOpt.isPresent()) {
+            return rOpt.get().getRelatedLinks(name).size() > 0;
+        } else {
+            return false;
         }
     }
 
