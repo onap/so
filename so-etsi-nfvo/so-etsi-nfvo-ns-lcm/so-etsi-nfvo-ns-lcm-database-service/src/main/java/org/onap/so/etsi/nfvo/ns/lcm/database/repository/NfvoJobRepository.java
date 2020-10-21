@@ -21,13 +21,13 @@ package org.onap.so.etsi.nfvo.ns.lcm.database.repository;
 
 import java.util.Optional;
 import org.onap.so.etsi.nfvo.ns.lcm.database.beans.NfvoJob;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  * @author Waqas Ikram (waqas.ikram@est.tech)
  *
  */
-public interface NfvoJobRepository extends CrudRepository<NfvoJob, String>, RefreshableRepository<NfvoJob> {
+public interface NfvoJobRepository extends JpaRepository<NfvoJob, String>, RefreshableRepository<NfvoJob> {
 
     Optional<NfvoJob> findByResourceId(final String resourceId);
 
