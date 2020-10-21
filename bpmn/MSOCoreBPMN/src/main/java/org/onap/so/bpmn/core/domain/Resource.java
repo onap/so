@@ -30,6 +30,7 @@ public abstract class Resource extends JsonWrapper implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private String resourceId; // TODO name this field just id instead, should be the id of the object as it is in aai
+    private String originalResourceId;
     protected ResourceType resourceType; // Enum of vnf or network or allotted resource
     protected ModelInfo modelInfo;
     private long concurrencyCounter = 1L;
@@ -50,6 +51,14 @@ public abstract class Resource extends JsonWrapper implements Serializable {
 
     public void setResourceId(String resourceId) {
         this.resourceId = resourceId;
+    }
+
+    public String getOriginalResourceId() {
+        return originalResourceId;
+    }
+
+    public void setOriginalResourceId(String originalResourceId) {
+        this.originalResourceId = originalResourceId;
     }
 
     public ModelInfo getModelInfo() {
