@@ -52,7 +52,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AAIObjectMapper {
-    private static final ModelMapper modelMapper = new ModelMapper();
+    private final ModelMapper modelMapper = new ModelMapper();
 
     public org.onap.aai.domain.yang.ServiceInstance mapServiceInstance(ServiceInstance serviceInstance) {
         if (modelMapper.getTypeMap(ServiceInstance.class, org.onap.aai.domain.yang.ServiceInstance.class) == null) {
