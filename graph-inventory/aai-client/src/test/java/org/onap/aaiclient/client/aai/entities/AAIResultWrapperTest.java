@@ -21,8 +21,9 @@
 package org.onap.aaiclient.client.aai.entities;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import java.io.IOException;
-import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -36,6 +37,7 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.springframework.util.SerializationUtils;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -106,5 +108,12 @@ public class AAIResultWrapperTest {
     public void objectConstructor() {
         AAIResultWrapper wrapper = new AAIResultWrapper(new GenericVnf());
         assertEquals("{}", wrapper.getJson());
+    }
+
+    @Test
+    public void hasRelationshipToTest() {
+        assertTrue(aaiResultWrapper.hasRelationshipsTo(Types.VCE));
+        assertFalse(aaiResultWrapper.hasRelationshipsTo(Types.CLASS_OF_SERVICE));
+
     }
 }
