@@ -1498,6 +1498,8 @@ public class ServiceInstancesTest extends BaseTest {
                 sendRequest(inputStream("/VfModuleNoModelType.json"), uri, HttpMethod.POST, headers);
         // ActualRecord
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
+        assertEquals("32807a28-1a14-4b88-b7b3-2950918aa76d",
+                response.getHeaders().get(ONAPLogConstants.Headers.REQUEST_ID).get(0));
     }
 
     @Test

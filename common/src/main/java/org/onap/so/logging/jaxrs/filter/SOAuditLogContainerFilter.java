@@ -2,13 +2,16 @@ package org.onap.so.logging.jaxrs.filter;
 
 import javax.annotation.Priority;
 import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.PreMatching;
+import javax.ws.rs.core.MultivaluedMap;
+import org.onap.logging.filter.base.AuditLogContainerFilter;
+import org.onap.logging.filter.base.Constants;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.logger.HttpHeadersConstants;
 import org.onap.so.logger.LogConstants;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
-import org.onap.logging.filter.base.AuditLogContainerFilter;
 
 @Priority(1)
 @PreMatching
@@ -26,5 +29,18 @@ public class SOAuditLogContainerFilter extends AuditLogContainerFilter {
             MDC.put(HttpHeadersConstants.REQUESTOR_ID, requestorId);
         }
         MDC.put(LogConstants.URI_BASE, request.getUriInfo().getBaseUri().toString());
+    }
+
+    @Override
+    protected void additionalPostHandling(ContainerResponseContext response) {
+        MultivaluedMap<String, Object> responseHeaders = response.getHeaders();
+        String requestId = MDC.get(ONAPLogConstants.MDCs.REQUEST_ID);
+        responseHeaders.add(ONAPLogConstants.Headers.REQUEST_ID, requestId);
+        responseHeaders.add(Constants.HttpHeaders.HEADER_REQUEST_ID, requestId);
+        responseHeaders.add(Constants.HttpHeaders.TRANSACTION_ID, requestId);
+        responseHeaders.add(Constants.HttpHeaders.ECOMP_REQUEST_ID, requestId);
+        responseHeaders.add(ONAPLogConstants.Headers.PARTNER_NAME, getProperty(Constants.Property.PARTNER_NAME));
+        responseHeaders.add(ONAPLogConstants.Headers.INVOCATION_ID,
+                MDC.get(ONAPLogConstants.MDCs.SERVER_INVOCATION_ID));
     }
 }
