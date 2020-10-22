@@ -44,7 +44,7 @@ import com.google.common.collect.ImmutableSet;
 public class EtsiResourcePackageProcessor {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(EtsiResourcePackageProcessor.class);
-    private static final String ONBOARDED_PACKAGE_DIR_PATH = "Artifacts/Deployment/ONBOARDED_PACKAGE";
+    private static final String ONBOARDED_PACKAGE_DIR_PATH = "Artifacts/Deployment/ETSI_PACKAGE";
     private final SdcResourceProvider sdcResourceProvider;
     private final EtsiCatalogServiceProvider catalogServiceProvider;
     private static final int SLEEP_TIME_IN_SECONDS = 5;

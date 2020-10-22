@@ -345,7 +345,7 @@ public class SdcNotificationWithSol004PackageTest extends BaseTest {
      * Mock the AAI using wireshark.
      */
     private void initMockAaiServer(final String serviceUuid, final String serviceInvariantUuid) {
-        final String modelEndpoint = "/aai/v19/service-design-and-creation/models/model/" + serviceInvariantUuid
+        final String modelEndpoint = "/aai/v21/service-design-and-creation/models/model/" + serviceInvariantUuid
                 + "/model-vers/model-ver/" + serviceUuid + "?depth=0";
 
         wireMockServer.stubFor(post(urlEqualTo(modelEndpoint)).willReturn(ok()));

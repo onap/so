@@ -29,8 +29,8 @@
                 },
                 {
                     "artifactName": "vgw6.csar",
-                    "artifactType": "ONBOARDED_PACKAGE",
-                    "artifactURL": "/ONBOARDED_PACKAGE/vgw6.csar",
+                    "artifactType": "ETSI_PACKAGE",
+                    "artifactURL": "/ETSI_PACKAGE/vgw6.csar",
                     "artifactChecksum": "NjdmNGU3ZDlkODQ0YTUzMTU5NjZmOThiYjMxNTJiNGI\u003d",
                     "artifactDescription": "Artifact created from csar",
                     "artifactTimeout": 120,
