@@ -145,7 +145,7 @@ public class NsLifecycleManagementController {
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML},
             consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public ResponseEntity<Void> terminateNs(@PathVariable("nsInstanceId") final String nsInstanceId,
-            @RequestBody final TerminateNsRequest terminateNsRequest) {
+            @RequestBody(required = false) final TerminateNsRequest terminateNsRequest) {
         logger.debug("Received terminate NS request: {}\n with nsInstanceId: {}", terminateNsRequest, nsInstanceId);
         final URI resourceUri = nsLifeCycleManager.terminateNs(nsInstanceId, terminateNsRequest);
         logger.info("{} Ns Terminate started successfully. Resource Operation Occurrence uri: {}", nsInstanceId,

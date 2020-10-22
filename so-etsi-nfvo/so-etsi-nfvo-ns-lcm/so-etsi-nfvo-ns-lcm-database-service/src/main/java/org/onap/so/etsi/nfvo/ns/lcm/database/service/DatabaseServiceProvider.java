@@ -68,7 +68,7 @@ public class DatabaseServiceProvider {
 
     public boolean addJob(final NfvoJob job) {
         logger.info("Adding NfvoJob: {} to database", job);
-        return nfvoJobRepository.save(job) != null;
+        return nfvoJobRepository.saveAndFlush(job) != null;
     }
 
     public Optional<NfvoJob> getJob(final String jobId) {
@@ -104,7 +104,7 @@ public class DatabaseServiceProvider {
 
     public boolean saveNfvoNsInst(final NfvoNsInst nfvoNsInst) {
         logger.info("Saving NfvoNsInst: {} to database", nfvoNsInst);
-        return nfvoNsInstRepository.save(nfvoNsInst) != null;
+        return nfvoNsInstRepository.saveAndFlush(nfvoNsInst) != null;
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -125,7 +125,7 @@ public class DatabaseServiceProvider {
 
     public boolean saveNfvoNfInst(final NfvoNfInst nfvoNfInst) {
         logger.info("Saving NfvoNfInst: {} to database", nfvoNfInst);
-        return nfvoNfInstRepository.save(nfvoNfInst) != null;
+        return nfvoNfInstRepository.saveAndFlush(nfvoNfInst) != null;
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -162,7 +162,7 @@ public class DatabaseServiceProvider {
 
     public boolean addNSLcmOpOcc(final NsLcmOpOcc nsLcmOpOcc) {
         logger.info("Adding NSLcmOpOcc: {} to database", nsLcmOpOcc);
-        return nsLcmOpOccRepository.save(nsLcmOpOcc) != null;
+        return nsLcmOpOccRepository.saveAndFlush(nsLcmOpOcc) != null;
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)

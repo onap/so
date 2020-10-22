@@ -67,7 +67,7 @@ public abstract class BaseTest {
 
     protected static final Logger logger = getLogger(BaseTest.class);
 
-    private static final long TIME_OUT_IN_SECONDS = 60;
+    private static final long TIME_OUT_IN_SECONDS = 120;
     private static final int SLEEP_TIME_IN_SECONDS = 5;
 
     @Autowired
