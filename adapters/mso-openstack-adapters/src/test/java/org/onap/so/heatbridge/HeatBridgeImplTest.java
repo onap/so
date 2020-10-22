@@ -636,6 +636,46 @@ public class HeatBridgeImplTest {
         verify(osClient, times(5)).getNetworkById(anyString());
     }
 
+    @Test
+    public void testBuildAddVserverLInterfacesToAaiAction_PortProfileNull()
+            throws HeatBridgeException, JsonParseException, JsonMappingException, IOException {
+        // Arrange
+        List<Resource> stackResources = (List<Resource>) extractTestStackResources();
+        Port port = mock(Port.class);
+        when(port.getId()).thenReturn("test-port-id");
+        when(port.getName()).thenReturn("test-port-name");
+        when(port.getvNicType()).thenReturn(HeatBridgeConstants.OS_SRIOV_PORT_TYPE);
+        when(port.getMacAddress()).thenReturn("78:4f:43:68:e2:78");
+        when(port.getNetworkId()).thenReturn("890a203a-23gg-56jh-df67-731656a8f13a");
+        when(port.getDeviceId()).thenReturn("test-device-id");
+        String pfPciId = "0000:08:00.0";
+
+        Network network = mock(Network.class);
+        when(network.getId()).thenReturn("test-network-id");
+        when(network.getNetworkType()).thenReturn(NetworkType.VLAN);
+        when(network.getProviderSegID()).thenReturn("2345");
+
+        when(osClient.getPortById("212a203a-9764-4f42-84ea-731536a8f13a")).thenReturn(port);
+        when(osClient.getPortById("387e3904-8948-43d1-8635-b6c2042b54da")).thenReturn(port);
+        when(osClient.getPortById("70a09dfd-f1c5-4bc8-bd8f-dc539b8d662a")).thenReturn(port);
+        when(osClient.getPortById("12f88b4d-c8a4-4fbd-bcb4-7e36af02430b")).thenReturn(port);
+        when(osClient.getPortById("c54b9f45-b413-4937-bbe4-3c8a5689cfc9")).thenReturn(port);
+        when(osClient.getNetworkById(anyString())).thenReturn(network);
+
+        PInterface pIf = mock(PInterface.class);
+        when(pIf.getInterfaceName()).thenReturn("test-port-id");
+        doNothing().when(heatbridge).updateSriovPfToSriovVF(any(), any());
+
+        // Act
+        heatbridge.buildAddVserverLInterfacesToAaiAction(stackResources, Arrays.asList("1", "2"), "CloudOwner");
+
+        // Assert
+        ArgumentCaptor<Optional> argument = ArgumentCaptor.forClass(Optional.class);
+        verify(transaction, times(5)).createIfNotExists(any(AAIResourceUri.class), argument.capture());
+        assertEquals(false, ((LInterface) argument.getValue().get()).isL2Multicasting());
+        verify(osClient, times(5)).getPortById(anyString());
+        verify(osClient, times(5)).getNetworkById(anyString());
+    }
 
     @Test
     public void testExtractOpenstackImagesFromServers() throws HeatBridgeException {
