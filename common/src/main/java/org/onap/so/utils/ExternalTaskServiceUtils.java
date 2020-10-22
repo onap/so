@@ -64,16 +64,6 @@ public class ExternalTaskServiceUtils {
         return Integer.parseInt(env.getProperty("workflow.topics.maxClients", "10"));
     }
 
-    public Long getLockDuration() {
-        Long lockDuration = Long.parseLong(env.getProperty("mso.audit.lock-time", "60000"));
-        return lockDuration;
-    }
-
-    public Long getLongLockDuration() {
-        Long lockDuration = Long.parseLong(env.getProperty("mso.long.lock-time", "600000"));
-        return lockDuration;
-    }
-
     @ScheduledLogging
     @Scheduled(fixedDelay = 30000)
     public void checkAllClientsActive() {
