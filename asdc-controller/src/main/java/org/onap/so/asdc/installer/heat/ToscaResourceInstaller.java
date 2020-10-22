@@ -2913,15 +2913,19 @@ public class ToscaResourceInstaller {
     }
 
     private void createServiceArtifact(Service service, VfResourceStructure vfResourceStruct, String artifactContent) {
+        if (null == vfResourceStruct) {
+            return;
+        }
         List<ServiceArtifact> serviceArtifactList = new ArrayList<>();
         ServiceArtifact serviceArtifact;
         List<IArtifactInfo> artifactInfoList = vfResourceStruct.getNotification().getServiceArtifacts().stream()
-                .filter(artifact -> artifact.getArtifactType().equalsIgnoreCase("OTHER")).collect(Collectors.toList());
+                .filter(artifact -> artifact.getArtifactType().equalsIgnoreCase("WORKFLOW"))
+                .collect(Collectors.toList());
         for (IArtifactInfo artifactInfo : artifactInfoList) {
             serviceArtifact = new ServiceArtifact();
             serviceArtifact.setArtifactUUID(artifactInfo.getArtifactUUID());
             serviceArtifact.setName(artifactInfo.getArtifactName());
-            serviceArtifact.setType(artifactInfo.getArtifactType());
+            serviceArtifact.setType("OTHER");
             serviceArtifact.setVersion(artifactInfo.getArtifactVersion());
             serviceArtifact.setDescription(artifactInfo.getArtifactDescription());
             serviceArtifact.setChecksum(artifactInfo.getArtifactChecksum());

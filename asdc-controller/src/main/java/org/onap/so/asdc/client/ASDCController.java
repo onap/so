@@ -978,7 +978,7 @@ public class ASDCController {
                 String artifactContent = null;
                 List<IArtifactInfo> serviceArtifacts = iNotif.getServiceArtifacts();
                 Optional<IArtifactInfo> artifactOpt = serviceArtifacts.stream()
-                        .filter(e -> e.getArtifactType().equalsIgnoreCase("OTHER")).findFirst();
+                        .filter(e -> e.getArtifactType().equalsIgnoreCase("WORKFLOW")).findFirst();
                 if (artifactOpt.isPresent()) {
                     IArtifactInfo artifactInfo = artifactOpt.get();
                     logger.debug("Ready to parse this serviceArtifactUUID:  " + artifactInfo.getArtifactUUID());
