@@ -1,0 +1,122 @@
+{
+  "resources" : [ {
+    "resource_name" : "oam_security_group",
+    "links" : [ {
+      "href" : "https://test.onap.org/v1/c162d85d27d54186b699935fd535c57a/stacks/stack_name/cb5e288d-e21f-49ee-87d0-5a2bd6be446e/resources/oam_security_group",
+      "rel" : "self"
+    }, {
+      "href" : "https://test.onap.org/v1/c162d85d27d54186b699935fd535c57a/stacks/stack_name/cb5e288d-e21f-49ee-87d0-5a2bd6be446e",
+      "rel" : "stack"
+    } ],
+    "resource_status" : "CREATE_COMPLETE",
+    "physical_resource_id" : "f83b7f23-ce5e-41bf-8dbf-ae53e905db7c",
+    "logical_resource_id" : "oam_security_group",
+    "required_by" : [ "cpm_0_oam_protected1_port_0" ],
+    "updated_time" : "2019-05-28T15:19:10Z",
+    "creation_time" : "2019-05-28T15:19:10Z",
+    "resource_type" : "OS::Neutron::SecurityGroup",
+    "resource_status_reason" : "state changed"
+  }, {
+    "resource_name" : "cpm_0_sd_base2_port_0",
+    "links" : [ {
+      "href" : "https://test.onap.org/v1/c162d85d27d54186b699935fd535c57a/stacks/stack_name/cb5e288d-e21f-49ee-87d0-5a2bd6be446e/resources/cpm_0_sd_base2_port_0",
+      "rel" : "self"
+    }, {
+      "href" : "https://test.onap.org/v1/c162d85d27d54186b699935fd535c57a/stacks/stack_name/cb5e288d-e21f-49ee-87d0-5a2bd6be446e",
+      "rel" : "stack"
+    } ],
+    "resource_status" : "CREATE_COMPLETE",
+    "physical_resource_id" : "803b18b6-e9ba-4fe8-93eb-4a68832b2869",
+    "logical_resource_id" : "cpm_0_sd_base2_port_0",
+    "required_by" : [ "cpm_server_0" ],
+    "updated_time" : "2019-05-28T15:19:10Z",
+    "creation_time" : "2019-05-28T15:19:10Z",
+    "resource_type" : "OS::Neutron::Port",
+    "resource_status_reason" : "state changed"
+  }, {
+    "resource_name" : "cpm_0_sd_base1_port_0",
+    "links" : [ {
+      "href" : "https://test.onap.org/v1/c162d85d27d54186b699935fd535c57a/stacks/stack_name/cb5e288d-e21f-49ee-87d0-5a2bd6be446e/resources/cpm_0_sd_base1_port_0",
+      "rel" : "self"
+    }, {
+      "href" : "https://test.onap.org/v1/c162d85d27d54186b699935fd535c57a/stacks/stack_name/cb5e288d-e21f-49ee-87d0-5a2bd6be446e",
+      "rel" : "stack"
+    } ],
+    "resource_status" : "CREATE_COMPLETE",
+    "physical_resource_id" : "56610b2d-6e58-451b-9eb7-5f516f85a458",
+    "logical_resource_id" : "cpm_0_sd_base1_port_0",
+    "required_by" : [ "cpm_server_0" ],
+    "updated_time" : "2019-05-28T15:19:10Z",
+    "creation_time" : "2019-05-28T15:19:10Z",
+    "resource_type" : "OS::Neutron::Port",
+    "resource_status_reason" : "state changed"
+  }, {
+    "resource_name" : "cpm_0_sd_eastwest2_port_0",
+    "links" : [ {
+      "href" : "https://test.onap.org/v1/c162d85d27d54186b699935fd535c57a/stacks/stack_name/cb5e288d-e21f-49ee-87d0-5a2bd6be446e/resources/cpm_0_sd_eastwest2_port_0",
+      "rel" : "self"
+    }, {
+      "href" : "https://test.onap.org/v1/c162d85d27d54186b699935fd535c57a/stacks/stack_name/cb5e288d-e21f-49ee-87d0-5a2bd6be446e",
+      "rel" : "stack"
+    } ],
+    "resource_status" : "CREATE_COMPLETE",
+    "physical_resource_id" : "67aaf2a1-2ada-4322-8603-dceec9b456a6",
+    "logical_resource_id" : "cpm_0_sd_eastwest2_port_0",
+    "required_by" : [ "cpm_server_0" ],
+    "updated_time" : "2019-05-28T15:19:10Z",
+    "creation_time" : "2019-05-28T15:19:10Z",
+    "resource_type" : "OS::Neutron::Port",
+    "resource_status_reason" : "state changed"
+  }, {
+    "resource_name" : "cpm_0_sd_eastwest1_port_0",
+    "links" : [ {
+      "href" : "https://test.onap.org/v1/c162d85d27d54186b699935fd535c57a/stacks/stack_name/cb5e288d-e21f-49ee-87d0-5a2bd6be446e/resources/cpm_0_sd_eastwest1_port_0",
+      "rel" : "self"
+    }, {
+      "href" : "https://test.onap.org/v1/c162d85d27d54186b699935fd535c57a/stacks/stack_name/cb5e288d-e21f-49ee-87d0-5a2bd6be446e",
+      "rel" : "stack"
+    } ],
+    "resource_status" : "CREATE_COMPLETE",
+    "physical_resource_id" : "8b5392c9-d3aa-41f4-85ee-a3223182e455",
+    "logical_resource_id" : "cpm_0_sd_eastwest1_port_0",
+    "required_by" : [ "cpm_server_0" ],
+    "updated_time" : "2019-05-28T15:19:10Z",
+    "creation_time" : "2019-05-28T15:19:10Z",
+    "resource_type" : "OS::Neutron::Port",
+    "resource_status_reason" : "state changed"
+  }, {
+    "resource_name" : "cpm_0_oam_protected1_port_0",
+    "links" : [ {
+      "href" : "https://test.onap.org/v1/c162d85d27d54186b699935fd535c57a/stacks/stack_name/cb5e288d-e21f-49ee-87d0-5a2bd6be446e/resources/cpm_0_oam_protected1_port_0",
+      "rel" : "self"
+    }, {
+      "href" : "https://test.onap.org/v1/c162d85d27d54186b699935fd535c57a/stacks/stack_name/cb5e288d-e21f-49ee-87d0-5a2bd6be446e",
+      "rel" : "stack"
+    } ],
+    "resource_status" : "CREATE_COMPLETE",
+    "physical_resource_id" : "4eec349e-be73-41ae-9457-69d31f3a9305",
+    "logical_resource_id" : "cpm_0_oam_protected1_port_0",
+    "required_by" : [ "cpm_server_0" ],
+    "updated_time" : "2019-05-28T15:19:10Z",
+    "creation_time" : "2019-05-28T15:19:10Z",
+    "resource_type" : "OS::Neutron::Port",
+    "resource_status_reason" : "state changed"
+  }, {
+    "resource_name" : "cpm_server_0",
+    "links" : [ {
+      "href" : "https://test.onap.org/v1/c162d85d27d54186b699935fd535c57a/stacks/stack_name/cb5e288d-e21f-49ee-87d0-5a2bd6be446e/resources/cpm_server_0",
+      "rel" : "self"
+    }, {
+      "href" : "https://test.onap.org/v1/c162d85d27d54186b699935fd535c57a/stacks/stack_name/cb5e288d-e21f-49ee-87d0-5a2bd6be446e",
+      "rel" : "stack"
+    } ],
+    "resource_status" : "CREATE_COMPLETE",
+    "physical_resource_id" : "635a609d-bb2b-446c-b955-8fc5a4ba4b8d",
+    "logical_resource_id" : "cpm_server_0",
+    "required_by" : [ ],
+    "updated_time" : "2019-05-28T15:19:10Z",
+    "creation_time" : "2019-05-28T15:19:10Z",
+    "resource_type" : "OS::Nova::Server",
+    "resource_status_reason" : "state changed"
+  } ]
+}

@@ -22,10 +22,8 @@ package org.onap.so.adapters.tasks;
 
 import javax.annotation.PostConstruct;
 import org.camunda.bpm.client.ExternalTaskClient;
-import org.onap.so.adapters.tasks.audit.AuditCreateStackService;
-import org.onap.so.adapters.tasks.audit.AuditDeleteStackService;
-import org.onap.so.adapters.tasks.audit.AuditQueryStackService;
 import org.onap.so.adapters.tasks.inventory.CreateInventoryTask;
+import org.onap.so.adapters.tasks.inventory.DeleteInventoryTask;
 import org.onap.so.adapters.tasks.orchestration.PollService;
 import org.onap.so.adapters.tasks.orchestration.RollbackService;
 import org.onap.so.adapters.tasks.orchestration.StackService;
@@ -46,15 +44,6 @@ public class TaskServices {
     private ExternalTaskServiceUtils externalTaskServiceUtils;
 
     @Autowired
-    private AuditCreateStackService auditCreateStack;
-
-    @Autowired
-    private AuditDeleteStackService auditDeleteStack;
-
-    @Autowired
-    private AuditQueryStackService auditQueryStack;
-
-    @Autowired
     private CreateInventoryTask createInventory;
 
     @Autowired
@@ -66,32 +55,8 @@ public class TaskServices {
     @Autowired
     private RollbackService rollbackService;
 
-    @PostConstruct
-    public void auditAddAAIInventory() throws Exception {
-        for (int i = 0; i < externalTaskServiceUtils.getMaxClients(); i++) {
-            ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
-            client.subscribe("InventoryAddAudit").lockDuration(externalTaskServiceUtils.getLockDurationLong())
-                    .handler(auditCreateStack::executeExternalTask).open();
-        }
-    }
-
-    @PostConstruct
-    public void auditDeleteAAIInventory() throws Exception {
-        for (int i = 0; i < externalTaskServiceUtils.getMaxClients(); i++) {
-            ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
-            client.subscribe("InventoryDeleteAudit").lockDuration(externalTaskServiceUtils.getLockDurationLong())
-                    .handler(auditDeleteStack::executeExternalTask).open();
-        }
-    }
-
-    @PostConstruct
-    public void auditQueryInventory() throws Exception {
-        for (int i = 0; i < externalTaskServiceUtils.getMaxClients(); i++) {
-            ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
-            client.subscribe("InventoryQueryAudit").lockDuration(externalTaskServiceUtils.getLockDuration())
-                    .handler(auditQueryStack::executeExternalTask).open();
-        }
-    }
+    @Autowired
+    private DeleteInventoryTask deleteInventory;
 
     @PostConstruct
     public void createtAAIInventory() throws Exception {
@@ -99,6 +64,15 @@ public class TaskServices {
             ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
             client.subscribe("InventoryCreate").lockDuration(externalTaskServiceUtils.getLongLockDuration())
                     .handler(createInventory::executeExternalTask).open();
+        }
+    }
+
+    @PostConstruct
+    public void auditAAIInventory() throws Exception {
+        for (int i = 0; i < externalTaskServiceUtils.getMaxClients(); i++) {
+            externalTaskServiceUtils.createExternalTaskClient().subscribe("InventoryDelete")
+                    .lockDuration(externalTaskServiceUtils.getLockDurationMedium())
+                    .handler(deleteInventory::executeExternalTask).open();
         }
     }
 

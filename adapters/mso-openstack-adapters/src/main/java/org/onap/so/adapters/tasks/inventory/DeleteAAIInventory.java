@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.inventory.delete;
+package org.onap.so.adapters.tasks.inventory;
 
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.so.cloud.CloudConfig;
@@ -26,6 +26,7 @@ import org.onap.so.cloud.resource.beans.CloudInformation;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.heatbridge.HeatBridgeApi;
+import org.onap.so.heatbridge.HeatBridgeException;
 import org.onap.so.heatbridge.HeatBridgeImpl;
 import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
 import org.slf4j.Logger;
@@ -47,22 +48,16 @@ public class DeleteAAIInventory {
     @Autowired
     protected Environment env;
 
-    public void heatbridge(CloudInformation cloudInformation) {
-        try {
-            logger.debug("Heatbridge delete executing");
-
-            CloudSite cloudSite = cloudConfig.getCloudSite(cloudInformation.getRegionId())
-                    .orElseThrow(() -> new MsoCloudSiteNotFound(cloudInformation.getRegionId()));
-            CloudIdentity cloudIdentity = cloudSite.getIdentityService();
-            HeatBridgeApi heatBridgeClient = new HeatBridgeImpl(new AAIResourcesClient(), cloudIdentity,
-                    cloudInformation.getOwner(), cloudInformation.getRegionId(), cloudSite.getRegionId(),
-                    cloudInformation.getTenantId(), cloudInformation.getNodeType());
-            heatBridgeClient.authenticate();
-            heatBridgeClient.deleteVfModuleData(cloudInformation.getVnfId(), cloudInformation.getVfModuleId());
-
-        } catch (Exception ex) {
-            logger.debug("Heatbrige failed for stackId: " + cloudInformation.getTemplateInstanceId(), ex);
-        }
+    public void heatbridge(CloudInformation cloudInformation) throws MsoCloudSiteNotFound, HeatBridgeException {
+        logger.debug("Heatbridge delete executing");
+        CloudSite cloudSite = cloudConfig.getCloudSite(cloudInformation.getRegionId())
+                .orElseThrow(() -> new MsoCloudSiteNotFound(cloudInformation.getRegionId()));
+        CloudIdentity cloudIdentity = cloudSite.getIdentityService();
+        HeatBridgeApi heatBridgeClient = new HeatBridgeImpl(new AAIResourcesClient(), cloudIdentity,
+                cloudInformation.getOwner(), cloudInformation.getRegionId(), cloudSite.getRegionId(),
+                cloudInformation.getTenantId(), cloudInformation.getNodeType());
+        heatBridgeClient.authenticate();
+        heatBridgeClient.deleteVfModuleData(cloudInformation.getVnfId(), cloudInformation.getVfModuleId());
     }
 
     protected AAIResourcesClient getAaiClient() {

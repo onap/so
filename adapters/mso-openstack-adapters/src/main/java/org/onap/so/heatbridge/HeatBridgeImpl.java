@@ -324,10 +324,28 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             // Build vserver relationships to: image, flavor, pserver, vf-module
             vserver.setRelationshipList(
                     aaiHelper.getVserverRelationshipList(cloudOwner, cloudRegionId, genericVnfId, vfModuleId, server));
-            transaction.createIfNotExists(
-                    AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
-                            .cloudRegion(cloudOwner, cloudRegionId).tenant(tenantId).vserver(vserver.getVserverId())),
-                    Optional.of(vserver));
+            AAIResourceUri vserverUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                    .cloudRegion(cloudOwner, cloudRegionId).tenant(tenantId).vserver(vserver.getVserverId()));
+            if (resourcesClient.exists(vserverUri)) {
+                AAIResultWrapper existingVserver = resourcesClient.get(vserverUri);
+                if (!existingVserver.hasRelationshipsTo(Types.VNFC)) {
+                    AAIResourceUri vnfcUri =
+                            AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().vnfc(server.getName()));
+                    transaction.connect(vserverUri, vnfcUri);
+                }
+                if (!existingVserver.hasRelationshipsTo(Types.VF_MODULE)) {
+                    AAIResourceUri vfModuleUri = AAIUriFactory.createResourceUri(
+                            AAIFluentTypeBuilder.network().genericVnf(genericVnfId).vfModule(vfModuleId));
+                    transaction.connect(vserverUri, vfModuleUri);
+                }
+                if (!existingVserver.hasRelationshipsTo(Types.PSERVER)) {
+                    AAIResourceUri pServerUri = AAIUriFactory.createResourceUri(
+                            AAIFluentTypeBuilder.cloudInfrastructure().pserver(server.getHypervisorHostname()));
+                    transaction.connect(vserverUri, pServerUri);
+                }
+            } else {
+                transaction.create(vserverUri, vserver);
+            }
         });
     }
 
@@ -380,10 +398,9 @@ public class HeatBridgeImpl implements HeatBridgeApi {
 
             if (cloudOwner.equals(env.getProperty("mso.cloudOwner.included", ""))) {
                 Server server = getOpenstackServerById(port.getDeviceId());
-                updateLInterfaceVlan(port, lIf, server.getHypervisorHostname());
+                createVlanAndSriovVF(port, lIf, server.getHypervisorHostname());
+                updateSriovPfToSriovVF(port, lIf);
             }
-
-            updateSriovPfToPserver(port, lIf);
         }
     }
 
@@ -464,7 +481,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
         resourcesClient.createIfNotExists(uri, Optional.of(pInterface));
     }
 
-    protected void updateLInterfaceVlan(final Port port, final LInterface lIf, final String hostName)
+    protected void createVlanAndSriovVF(final Port port, final LInterface lIf, final String hostName)
             throws HeatBridgeException {
         // add back all vlan logic
         Vlan vlan = new Vlan();
@@ -582,7 +599,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
      * @param lIf AAI l-interface object
      * @throws HeatBridgeException
      */
-    protected void updateSriovPfToPserver(final Port port, final LInterface lIf) throws HeatBridgeException {
+    protected void updateSriovPfToSriovVF(final Port port, final LInterface lIf) throws HeatBridgeException {
         if (port.getvNicType().equalsIgnoreCase(HeatBridgeConstants.OS_SRIOV_PORT_TYPE)) {
 
             AAIResourceUri sriovVfUri = AAIUriFactory
@@ -606,7 +623,9 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                     DSLQueryBuilder<Start, Node> builder = TraversalBuilder
                             .fragment(new DSLStartNode(Types.PSERVER, __.key("hostname", pserverHostName)))
                             .to(__.node(Types.P_INTERFACE)
-                                    .to(__.node(Types.SRIOV_PF, __.key("pf-pci-id", pfPciId)).output()));
+                                    .to(__.node(Types.SRIOV_PF,
+                                            __.key(HeatBridgeConstants.OS_PF_PCI_SLOT_KEY.toString(), pfPciId))
+                                            .output()));
 
                     List<Pathed> results = getAAIDSLClient().queryPathed(new DSLQuery(builder.build()));
 

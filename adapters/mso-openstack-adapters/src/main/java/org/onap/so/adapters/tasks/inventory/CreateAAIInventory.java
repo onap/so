@@ -29,6 +29,7 @@ import org.onap.so.cloud.resource.beans.CloudInformation;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.heatbridge.HeatBridgeApi;
+import org.onap.so.heatbridge.HeatBridgeException;
 import org.onap.so.heatbridge.HeatBridgeImpl;
 import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
 import org.openstack4j.model.compute.Flavor;
@@ -55,75 +56,70 @@ public class CreateAAIInventory {
     @Autowired
     protected Environment env;
 
-    public void heatbridge(CloudInformation cloudInformation) {
-        try {
-            CloudSite cloudSite = cloudConfig.getCloudSite(cloudInformation.getRegionId())
-                    .orElseThrow(() -> new MsoCloudSiteNotFound(cloudInformation.getRegionId()));
-            CloudIdentity cloudIdentity = cloudSite.getIdentityService();
-            String heatStackId = cloudInformation.getTemplateInstanceId().split("/")[1];
+    public void heatbridge(CloudInformation cloudInformation) throws HeatBridgeException, MsoCloudSiteNotFound {
+        CloudSite cloudSite = cloudConfig.getCloudSite(cloudInformation.getRegionId())
+                .orElseThrow(() -> new MsoCloudSiteNotFound(cloudInformation.getRegionId()));
+        CloudIdentity cloudIdentity = cloudSite.getIdentityService();
+        String heatStackId = cloudInformation.getTemplateInstanceId().split("/")[1];
 
-            List<String> oobMgtNetNames = new ArrayList<>();
+        List<String> oobMgtNetNames = new ArrayList<>();
 
-            HeatBridgeApi heatBridgeClient = new HeatBridgeImpl(new AAIResourcesClient(), cloudIdentity,
-                    cloudInformation.getOwner(), cloudInformation.getRegionId(), cloudSite.getRegionId(),
-                    cloudInformation.getTenantId(), cloudInformation.getNodeType());
+        HeatBridgeApi heatBridgeClient = new HeatBridgeImpl(new AAIResourcesClient(), cloudIdentity,
+                cloudInformation.getOwner(), cloudInformation.getRegionId(), cloudSite.getRegionId(),
+                cloudInformation.getTenantId(), cloudInformation.getNodeType());
 
-            heatBridgeClient.authenticate();
+        heatBridgeClient.authenticate();
 
-            List<Resource> stackResources =
-                    heatBridgeClient.queryNestedHeatStackResources(cloudInformation.getTemplateInstanceId());
+        List<Resource> stackResources =
+                heatBridgeClient.queryNestedHeatStackResources(cloudInformation.getTemplateInstanceId());
 
-            List<Network> osNetworks = heatBridgeClient.getAllOpenstackProviderNetworks(stackResources);
-            heatBridgeClient.buildAddNetworksToAaiAction(cloudInformation.getVnfId(), cloudInformation.getVfModuleId(),
-                    osNetworks);
+        List<Network> osNetworks = heatBridgeClient.getAllOpenstackProviderNetworks(stackResources);
+        heatBridgeClient.buildAddNetworksToAaiAction(cloudInformation.getVnfId(), cloudInformation.getVfModuleId(),
+                osNetworks);
 
-            List<Server> osServers = heatBridgeClient.getAllOpenstackServers(stackResources);
+        List<Server> osServers = heatBridgeClient.getAllOpenstackServers(stackResources);
 
-            heatBridgeClient.createPserversAndPinterfacesIfNotPresentInAai(stackResources);
+        heatBridgeClient.createPserversAndPinterfacesIfNotPresentInAai(stackResources);
 
-            List<Image> osImages = heatBridgeClient.extractOpenstackImagesFromServers(osServers);
+        List<Image> osImages = heatBridgeClient.extractOpenstackImagesFromServers(osServers);
 
-            List<Flavor> osFlavors = heatBridgeClient.extractOpenstackFlavorsFromServers(osServers);
+        List<Flavor> osFlavors = heatBridgeClient.extractOpenstackFlavorsFromServers(osServers);
 
-            logger.debug("Successfully queried heat stack{} for resources.", heatStackId);
-            // os images
-            if (osImages != null && !osImages.isEmpty()) {
-                heatBridgeClient.buildAddImagesToAaiAction(osImages);
-                logger.debug("Successfully built AAI actions to add images.");
-            } else {
-                logger.debug("No images to update to AAI.");
-            }
-            // flavors
-            if (osFlavors != null && !osFlavors.isEmpty()) {
-                heatBridgeClient.buildAddFlavorsToAaiAction(osFlavors);
-                logger.debug("Successfully built AAI actions to add flavors.");
-            } else {
-                logger.debug("No flavors to update to AAI.");
-            }
-
-            // compute resources
-            heatBridgeClient.buildAddVserversToAaiAction(cloudInformation.getVnfId(), cloudInformation.getVfModuleId(),
-                    osServers);
-            logger.debug("Successfully queried compute resources and built AAI vserver actions.");
-
-            // neutron resources
-            List<String> oobMgtNetIds = new ArrayList<>();
-
-            // if no network-id list is provided, however network-name list is
-            if (!CollectionUtils.isEmpty(oobMgtNetNames)) {
-                oobMgtNetIds = heatBridgeClient.extractNetworkIds(oobMgtNetNames);
-            }
-            heatBridgeClient.buildAddVserverLInterfacesToAaiAction(stackResources, oobMgtNetIds,
-                    cloudInformation.getOwner());
-            logger.debug(
-                    "Successfully queried neutron resources and built AAI actions to add l-interfaces to vservers.");
-
-            // Update AAI
-            logger.debug("Current Dry Run Value: {}", env.getProperty("heatBridgeDryrun", Boolean.class, false));
-            heatBridgeClient.submitToAai(env.getProperty("heatBridgeDryrun", Boolean.class, false));
-        } catch (Exception ex) {
-            logger.debug("Heatbrige failed for stackId: " + cloudInformation.getTemplateInstanceId(), ex);
+        logger.debug("Successfully queried heat stack{} for resources.", heatStackId);
+        // os images
+        if (osImages != null && !osImages.isEmpty()) {
+            heatBridgeClient.buildAddImagesToAaiAction(osImages);
+            logger.debug("Successfully built AAI actions to add images.");
+        } else {
+            logger.debug("No images to update to AAI.");
         }
+        // flavors
+        if (osFlavors != null && !osFlavors.isEmpty()) {
+            heatBridgeClient.buildAddFlavorsToAaiAction(osFlavors);
+            logger.debug("Successfully built AAI actions to add flavors.");
+        } else {
+            logger.debug("No flavors to update to AAI.");
+        }
+
+        // compute resources
+        heatBridgeClient.buildAddVserversToAaiAction(cloudInformation.getVnfId(), cloudInformation.getVfModuleId(),
+                osServers);
+        logger.debug("Successfully queried compute resources and built AAI vserver actions.");
+
+        // neutron resources
+        List<String> oobMgtNetIds = new ArrayList<>();
+
+        // if no network-id list is provided, however network-name list is
+        if (!CollectionUtils.isEmpty(oobMgtNetNames)) {
+            oobMgtNetIds = heatBridgeClient.extractNetworkIds(oobMgtNetNames);
+        }
+        heatBridgeClient.buildAddVserverLInterfacesToAaiAction(stackResources, oobMgtNetIds,
+                cloudInformation.getOwner());
+        logger.debug("Successfully queried neutron resources and built AAI actions to add l-interfaces to vservers.");
+
+        // Update AAI
+        logger.debug("Current Dry Run Value: {}", env.getProperty("heatBridgeDryrun", Boolean.class, false));
+        heatBridgeClient.submitToAai(env.getProperty("heatBridgeDryrun", Boolean.class, false));
     }
 
     protected AAIResourcesClient getAaiClient() {

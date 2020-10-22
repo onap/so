@@ -22,12 +22,9 @@ package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
 
 import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import java.io.IOException;
-import java.util.List;
 import org.camunda.bpm.engine.delegate.BpmnError;
-import org.camunda.bpm.engine.externaltask.LockedExternalTask;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,20 +44,10 @@ public class ActivateVfModuleBBTest extends BaseBPMNTest {
     public void sunnyDay() throws InterruptedException, IOException {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("ActivateVfModuleBB", variables);
-        List<LockedExternalTask> tasks = externalTaskService.fetchAndLock(100, "externalWorkerId")
-                .topic("InventoryAddAudit", 60L * 1000L).execute();
-        while (!tasks.isEmpty()) {
-            for (LockedExternalTask task : tasks) {
-                externalTaskService.complete(task.getId(), "externalWorkerId");
-            }
-            tasks = externalTaskService.fetchAndLock(100, "externalWorkerId").topic("InventoryAddAudit", 60L * 1000L)
-                    .execute();
-        }
 
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("ActivateVfModuleBB_Start", "ExclusiveGateway_1v8bmbu",
-                "Setup_AAI_Inventory_Audit", "Audit_AAI_Inventory", "ActivateVfModule", "CallActivity_sdncHandler",
-                "UpdateVfModuleActiveStatus", "ActivateVfModuleBB_End");
+        assertThat(pi).isStarted().hasPassedInOrder("ActivateVfModuleBB_Start", "ActivateVfModule",
+                "CallActivity_sdncHandler", "UpdateVfModuleActiveStatus", "ActivateVfModuleBB_End");
         assertThat(pi).isEnded();
     }
 
@@ -70,19 +57,9 @@ public class ActivateVfModuleBBTest extends BaseBPMNTest {
         doThrow(BpmnError.class).when(aaiUpdateTasks)
                 .updateOrchestrationStatusActivateVfModule(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("ActivateVfModuleBB", variables);
-        List<LockedExternalTask> tasks = externalTaskService.fetchAndLock(100, "externalWorkerId")
-                .topic("InventoryAddAudit", 60L * 1000L).execute();
-        while (!tasks.isEmpty()) {
-            for (LockedExternalTask task : tasks) {
-                externalTaskService.complete(task.getId(), "externalWorkerId");
-            }
-            tasks = externalTaskService.fetchAndLock(100, "externalWorkerId").topic("InventoryAddAudit", 60L * 1000L)
-                    .execute();
-        }
 
         assertThat(pi).isNotNull().isStarted()
-                .hasPassedInOrder("ActivateVfModuleBB_Start", "ExclusiveGateway_1v8bmbu", "Setup_AAI_Inventory_Audit",
-                        "Audit_AAI_Inventory", "ActivateVfModule", "UpdateVfModuleActiveStatus")
+                .hasPassedInOrder("ActivateVfModuleBB_Start", "ActivateVfModule", "UpdateVfModuleActiveStatus")
                 .hasNotPassed("ActivateVfModuleBB_End");
     }
 }
