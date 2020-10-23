@@ -241,19 +241,19 @@ class TnNssmfUtils {
     }
 
     String getExecutionInputParams(DelegateExecution execution) {
-        String res = "msoRequestId=" + execution.getVariable("msoRequestId") +
-                ", modelInvariantUuid=" + execution.getVariable("modelInvariantUuid") +
-                ", modelUuid=" + execution.getVariable("modelUuid") +
-                ", serviceInstanceID=" + execution.getVariable("serviceInstanceID") +
-                ", operationType=" + execution.getVariable("operationType") +
-                ", globalSubscriberId=" + execution.getVariable("globalSubscriberId") +
-                ", dummyServiceId=" + execution.getVariable("dummyServiceId") +
-                ", nsiId=" + execution.getVariable("nsiId") +
-                ", networkType=" + execution.getVariable("networkType") +
-                ", subscriptionServiceType=" + execution.getVariable("subscriptionServiceType") +
-                ", jobId=" + execution.getVariable("jobId") +
-                ", sliceParams=" + execution.getVariable("sliceParams") +
-                ", servicename=" + execution.getVariable("servicename")
+        String res = "\n msoRequestId=" + execution.getVariable("msoRequestId") +
+                "\n modelInvariantUuid=" + execution.getVariable("modelInvariantUuid") +
+                "\n modelUuid=" + execution.getVariable("modelUuid") +
+                "\n serviceInstanceID=" + execution.getVariable("serviceInstanceID") +
+                "\n operationType=" + execution.getVariable("operationType") +
+                "\n globalSubscriberId=" + execution.getVariable("globalSubscriberId") +
+                "\n dummyServiceId=" + execution.getVariable("dummyServiceId") +
+                "\n nsiId=" + execution.getVariable("nsiId") +
+                "\n networkType=" + execution.getVariable("networkType") +
+                "\n subscriptionServiceType=" + execution.getVariable("subscriptionServiceType") +
+                "\n jobId=" + execution.getVariable("jobId") +
+                "\n sliceParams=" + execution.getVariable("sliceParams") +
+                "\n servicename=" + execution.getVariable("servicename")
 
         return res
     }
@@ -297,7 +297,6 @@ class TnNssmfUtils {
     void attachLogicalLinkToAllottedResource(DelegateExecution execution, String aaiVersion, AAIResourceUri arUri,
                                              String logicalLinkId) {
 
-
         String toLink = "aai/${aaiVersion}/network/logical-links/logical-link/${logicalLinkId}"
 
         Relationship relationship = new Relationship()
@@ -306,5 +305,19 @@ class TnNssmfUtils {
         relationship.setRelationshipLabel("org.onap.relationships.inventory.ComposedOf")
 
         createRelationShipInAAI(execution, arUri, relationship)
+    }
+
+    void attachNetworkPolicyToAllottedResource(DelegateExecution execution, String aaiVersion,
+                                               AAIResourceUri aaiResourceUri, String networkPolicyId) {
+
+        String toLink = "aai/${aaiVersion}/network/network-policies/network-policy/${networkPolicyId}"
+
+        Relationship relationship = new Relationship()
+        relationship.setRelatedLink(toLink)
+        relationship.setRelatedTo("network-policy")
+        relationship.setRelationshipLabel("org.onap.relationships.inventory.Uses")
+
+        createRelationShipInAAI(execution, aaiResourceUri, relationship)
+
     }
 }
