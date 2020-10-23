@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -1663,8 +1664,11 @@ public class WorkflowAction {
                 execution.setVariable(BBConstants.G_ISTOPLEVELFLOW, northBoundRequest.getIsToplevelflow());
             }
             List<OrchestrationFlow> flows = northBoundRequest.getOrchestrationFlowList();
-            if (flows == null)
+            if (flows == null) {
                 flows = new ArrayList<>();
+            } else {
+                flows.sort(Comparator.comparingInt(OrchestrationFlow::getSequenceNumber));
+            }
             for (OrchestrationFlow flow : flows) {
                 if (!flow.getFlowName().contains("BB") && !flow.getFlowName().contains("Activity")) {
                     List<OrchestrationFlow> macroQueryFlows =

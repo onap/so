@@ -3110,9 +3110,11 @@ public class WorkflowActionTest extends BaseTaskTest {
 
     private List<OrchestrationFlow> createFlowList(String... flowNames) {
         List<OrchestrationFlow> result = new ArrayList<>();
+        int sequenceNumber = 1;
         for (String flowName : flowNames) {
             OrchestrationFlow orchFlow = new OrchestrationFlow();
             orchFlow.setFlowName(flowName);
+            orchFlow.setSequenceNumber(sequenceNumber++);
             result.add(orchFlow);
         }
         return result;
