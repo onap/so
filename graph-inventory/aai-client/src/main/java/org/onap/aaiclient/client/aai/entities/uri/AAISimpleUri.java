@@ -32,7 +32,7 @@ public class AAISimpleUri extends
 
     private static final long serialVersionUID = -6397024057188453229L;
 
-    protected AAISimpleUri(AAIObjectType type, Object... values) {
+    public AAISimpleUri(AAIObjectType type, Object... values) {
         super(type, values);
 
     }

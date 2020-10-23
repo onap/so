@@ -96,7 +96,7 @@ public class AAIObjectType implements AAIObjectBase, AAIObjectName, GraphInvento
         this.name = null;
     }
 
-    protected AAIObjectType(String parentUri, String partialUri, String name) {
+    public AAIObjectType(String parentUri, String partialUri, String name) {
         this(parentUri, partialUri, name, true);
     }
 
