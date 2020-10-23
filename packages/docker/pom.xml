@@ -22,8 +22,8 @@
     <docker.skip.build>false</docker.skip.build>
     <docker.skip.push>false</docker.skip.push>
     <docker.pull.registry>nexus3.onap.org:10001</docker.pull.registry>
-    <docker.push.registry>nexus3.onap.org:10003</docker.push.registry>
-    <docker.image.prefix>onap/so</docker.image.prefix>
+    <docker.push.registry>192.168.198.4:10005</docker.push.registry>
+    <docker.image.prefix>${docker.push.registry}/onap/so</docker.image.prefix>
     <docker.push.phase>deploy</docker.push.phase>
   </properties>
 
@@ -72,7 +72,10 @@
           <pushRegistry>${docker.push.registry}</pushRegistry>
           <images>
             <image>
+                <!--
               <name>${docker.image.prefix}/base-image:1.0</name>
+              -->
+              <name>onap/so/base-image:1.0</name>
               <build>
                 <cleanup>try</cleanup>
                 <dockerFile>docker-files/Dockerfile.so-base-image</dockerFile>
