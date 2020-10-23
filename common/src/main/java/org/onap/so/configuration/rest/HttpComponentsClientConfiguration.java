@@ -38,6 +38,8 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 @Configuration
 public class HttpComponentsClientConfiguration {
 
+    private static final CustomDefaultHttpRequestRetryHandler RETRY_HANDLER =
+            new CustomDefaultHttpRequestRetryHandler(3, false);
     private final HttpClientConnectionConfiguration clientConnectionConfiguration;
 
     @Autowired
@@ -55,7 +57,7 @@ public class HttpComponentsClientConfiguration {
         return HttpClientBuilder.create().setConnectionManager(poolingHttpClientConnectionManager())
                 .setMaxConnPerRoute(clientConnectionConfiguration.getMaxConnectionsPerRoute())
                 .setMaxConnTotal(clientConnectionConfiguration.getMaxConnections())
-                .setDefaultRequestConfig(requestConfig()).build();
+                .setDefaultRequestConfig(requestConfig()).setRetryHandler(RETRY_HANDLER).build();
     }
 
     @Bean
@@ -69,4 +71,6 @@ public class HttpComponentsClientConfiguration {
         return RequestConfig.custom().setSocketTimeout(clientConnectionConfiguration.getSocketTimeOutInMiliSeconds())
                 .setConnectTimeout(clientConnectionConfiguration.getConnectionTimeOutInMilliSeconds()).build();
     }
+
+
 }
