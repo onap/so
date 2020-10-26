@@ -63,7 +63,11 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
     protected void afterQueryJobStatus(ResourceOperationStatus status) {
         if (Integer.parseInt(status.getProgress()) == 100) {
 
-            ServiceInstance nssiInstance = new ServiceInstance();
+            ServiceInstance nssiInstance = restUtil.getServiceInstance(serviceInfo);
+            if (nssiInstance == null) {
+                nssiInstance = new ServiceInstance();
+            }
+
             nssiInstance.setServiceInstanceId(serviceInfo.getNssiId());
             nssiInstance.setServiceInstanceName(serviceInfo.getNssiName());
             nssiInstance.setServiceType(serviceInfo.getSST());

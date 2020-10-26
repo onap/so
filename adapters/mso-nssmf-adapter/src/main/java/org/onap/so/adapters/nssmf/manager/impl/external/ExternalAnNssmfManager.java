@@ -128,6 +128,8 @@ public class ExternalAnNssmfManager extends ExternalNssmfManager {
 
         updateRequestDbJobStatus(responseDescriptor, status, restResponse);
 
+        status.setProgress(Integer.toString(responseDescriptor.getProgress()));
+
         return restResponse;
     }
 

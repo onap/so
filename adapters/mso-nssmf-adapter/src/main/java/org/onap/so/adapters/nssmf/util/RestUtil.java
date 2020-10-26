@@ -77,6 +77,11 @@ public class RestUtil {
                 serviceInfo.getSubscriptionServiceType(), serviceInfo.getNssiId());
     }
 
+    public ServiceInstance getServiceInstance(ServiceInfo serviceInfo) {
+        return aaiSvcProv.invokeGetServiceInstance(serviceInfo.getGlobalSubscriberId(),
+                serviceInfo.getSubscriptionServiceType(), serviceInfo.getNssiId());
+    }
+
     public NssmfInfo getNssmfHost(EsrInfo esrInfo) throws ApplicationException {
         EsrThirdpartySdncList sdncList = aaiSvcProv.invokeGetThirdPartySdncList();
         if (sdncList != null && sdncList.getEsrThirdpartySdnc() != null) {

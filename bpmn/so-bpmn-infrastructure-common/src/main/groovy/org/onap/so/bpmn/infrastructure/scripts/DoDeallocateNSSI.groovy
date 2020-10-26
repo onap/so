@@ -151,6 +151,7 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
         serviceInfo.setServiceInvariantUuid(serviceInvariantUuid)
         serviceInfo.setServiceUuid(serviceUuid)
         serviceInfo.setNsiId(nsiId)
+        serviceInfo.setNssiId(nssiId)
         serviceInfo.setGlobalSubscriberId(globalSubscriberId)
         serviceInfo.setSubscriptionServiceType(subscriptionServiceType)
         String serviceInfoString = objectMapper.writeValueAsString(serviceInfo)
