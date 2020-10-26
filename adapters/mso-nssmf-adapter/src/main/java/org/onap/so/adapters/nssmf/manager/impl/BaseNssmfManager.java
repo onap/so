@@ -193,7 +193,7 @@ public abstract class BaseNssmfManager implements NssmfManager {
         return doQuerySubnetCapability(nbiRequest.getSubnetCapabilityQuery());
     }
 
-    protected abstract RestResponse doQuerySubnetCapability(String req) throws ApplicationException;
+    protected abstract <T> RestResponse doQuerySubnetCapability(T req) throws ApplicationException;
 
     /**
      * send request to nssmf

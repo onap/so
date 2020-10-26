@@ -157,7 +157,7 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
     }
 
     @Override
-    protected RestResponse doQuerySubnetCapability(String req) throws ApplicationException {
+    protected <T> RestResponse doQuerySubnetCapability(T req) throws ApplicationException {
         RestResponse response = new RestResponse();
         response.setStatus(200);
         response.setResponseContent(null);
