@@ -38,14 +38,17 @@ public class HttpClientConnectionConfiguration {
     @Value(value = "${rest.http.client.configuration.socketTimeOutInSec:180}")
     private int socketTimeOutInSeconds;
 
-    @Value(value = "${rest.http.client.configuration.socketTimeOutInSec:600}")
+    @Value(value = "${rest.http.client.configuration.timeToLiveInSeconds:600}")
     private int timeToLiveInSeconds;
 
-    @Value(value = "${rest.http.client.configuration.maxConnections:10}")
+    @Value(value = "${rest.http.client.configuration.maxConnections:100}")
     private int maxConnections;
 
-    @Value(value = "${rest.http.client.configuration.maxConnectionsPerRoute:2}")
+    @Value(value = "${rest.http.client.configuration.maxConnectionsPerRoute:20}")
     private int maxConnectionsPerRoute;
+
+    @Value(value = "${rest.http.client.configuration.evictIdleConnectionsTimeInSec:5}")
+    private int evictIdleConnectionsTimeInSec;
 
     /**
      * @return the socket connection time out in milliseconds
@@ -80,6 +83,10 @@ public class HttpClientConnectionConfiguration {
      */
     public int getTimeToLiveInMins() {
         return (int) TimeUnit.SECONDS.toMinutes(timeToLiveInSeconds);
+    }
+
+    public long getEvictIdleConnectionsTimeInSec() {
+        return evictIdleConnectionsTimeInSec;
     }
 
 }

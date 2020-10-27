@@ -22,6 +22,7 @@ package org.onap.so.configuration.rest;
 
 import java.util.concurrent.TimeUnit;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.NoConnectionReuseStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -55,7 +56,10 @@ public class HttpComponentsClientConfiguration {
         return HttpClientBuilder.create().setConnectionManager(poolingHttpClientConnectionManager())
                 .setMaxConnPerRoute(clientConnectionConfiguration.getMaxConnectionsPerRoute())
                 .setMaxConnTotal(clientConnectionConfiguration.getMaxConnections())
-                .setDefaultRequestConfig(requestConfig()).build();
+                .setDefaultRequestConfig(requestConfig()).setConnectionReuseStrategy(NoConnectionReuseStrategy.INSTANCE)
+                .evictExpiredConnections().evictIdleConnections(
+                        clientConnectionConfiguration.getEvictIdleConnectionsTimeInSec(), TimeUnit.SECONDS)
+                .build();
     }
 
     @Bean
