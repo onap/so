@@ -22,6 +22,7 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.NetworkPolicy
 import org.onap.aai.domain.yang.SliceProfile
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
@@ -133,7 +134,7 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
             throw e
         } catch (Exception ex) {
             String msg = "Exception in DoCreateTnNssiInstance.createServiceInstance: " + ex.getMessage()
-            logger.info(msg)
+            logger.error(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
     }
@@ -163,6 +164,8 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
                 resource.setAllottedResourceName("network_" + execution.getVariable("sliceServiceInstanceName"))
                 getAAIClient().create(allottedResourceUri, resource)
 
+                createNetworkPolicyForAllocatedResource(execution, ssInstanceId, allottedResourceId)
+
                 String linkArrayStr = jsonUtil.getJsonValue(networkStr, "connectionLinks")
                 createLogicalLinksForAllocatedResource(execution, linkArrayStr, ssInstanceId, allottedResourceId)
             }
@@ -170,7 +173,81 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
             throw e
         } catch (Exception ex) {
             String msg = "Exception in DoCreateTnNssiInstance.createAllottedResource: " + ex.getMessage()
-            logger.info(msg)
+            logger.error(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+    }
+
+    void createNetworkPolicy(DelegateExecution execution, String ssInstanceId, String networkPolicyId) {
+        try {
+
+            String sliceProfileStr = execution.getVariable("sliceProfile")
+            if (sliceProfileStr == null || sliceProfileStr.isEmpty()) {
+                String msg = "ERROR: createNetworkPolicy: sliceProfile is null"
+                logger.error(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+            }
+
+            NetworkPolicy networkPolicy = new NetworkPolicy();
+            networkPolicy.setNetworkPolicyId(networkPolicyId)
+            networkPolicy.setName("TSCi policy")
+            networkPolicy.setType("SLA")
+            networkPolicy.setNetworkPolicyFqdn(ssInstanceId)
+
+            String latencyStr = jsonUtil.getJsonValue(sliceProfileStr, "latency")
+            if (latencyStr != null && !latencyStr.isEmpty()) {
+                networkPolicy.setLatency(Integer.parseInt(latencyStr))
+            }
+
+            String bwStr = jsonUtil.getJsonValue(sliceProfileStr, "maxBandwidth")
+            if (bwStr != null && !bwStr.isEmpty()) {
+                networkPolicy.setMaxBandwidth(Integer.parseInt(bwStr))
+            } else {
+                log.debug("ERROR: createNetworkPolicy: maxBandwidth is null")
+            }
+
+            //networkPolicy.setReliability(new Object())
+
+            AAIResourceUri networkPolicyUri =
+                    AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkPolicy(networkPolicyId))
+            getAAIClient().create(networkPolicyUri, networkPolicy)
+
+        } catch (BpmnError e) {
+            throw e
+        } catch (Exception ex) {
+            String msg = "Exception in DoCreateSliceServiceInstance.instantiateSliceService. " + ex.getMessage()
+            logger.error(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+    }
+
+    void createNetworkPolicyForAllocatedResource(DelegateExecution execution,
+                                                 String ssInstanceId,
+                                                 String allottedResourceId) {
+        try {
+            AAIResourceUri allottedResourceUri =
+                    AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                            .customer(execution.getVariable("globalSubscriberId"))
+                            .serviceSubscription(execution.getVariable("subscriptionServiceType"))
+                            .serviceInstance(ssInstanceId)
+                            .allottedResource(allottedResourceId))
+
+            if (!getAAIClient().exists(allottedResourceUri)) {
+                logger.info("ERROR: createLogicalLinksForAllocatedResource: allottedResource not exist: uri={}",
+                        allottedResourceUri)
+                return
+            }
+
+            String networkPolicyId = UUID.randomUUID().toString()
+            createNetworkPolicy(execution, ssInstanceId, networkPolicyId)
+
+            tnNssmfUtils.attachNetworkPolicyToAllottedResource(execution, AAI_VERSION, allottedResourceUri, networkPolicyId);
+
+        } catch (BpmnError e) {
+            throw e
+        } catch (Exception ex) {
+            String msg = "Exception in DoCreateSliceServiceInstance.instantiateSliceService. " + ex.getMessage()
+            logger.error(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
     }
@@ -219,7 +296,7 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
             throw e
         } catch (Exception ex) {
             String msg = "Exception in DoCreateTnNssiInstance.createLogicalLinksForAllocatedResource: " + ex.getMessage()
-            logger.info(msg)
+            logger.error(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
     }
