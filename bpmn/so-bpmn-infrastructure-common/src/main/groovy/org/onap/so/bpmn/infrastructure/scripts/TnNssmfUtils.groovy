@@ -118,53 +118,65 @@ class TnNssmfUtils {
         if (execution.getVariable("vnfParamsExistFlag") == true) {
             sdncVNFParamsXml = buildSDNCParamsXml(execution)
         } else {
-            sdncVNFParamsXml = ""
+            sdncVNFParamsXml = buildDefaultVnfInputParams(vnfId)
         }
 
         String sdncRequest =
-                """<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.onap/so/request/types/v1"
-													xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1"
-													xmlns:sdncadapter="http://org.onap/workflow/sdnc/adapter/schema/v1">
-	   <sdncadapter:RequestHeader>
-				<sdncadapter:RequestId>${MsoUtils.xmlEscape(uuid)}</sdncadapter:RequestId>
-				<sdncadapter:SvcInstanceId>${MsoUtils.xmlEscape(svcInstId)}</sdncadapter:SvcInstanceId>
-				<sdncadapter:SvcAction>${MsoUtils.xmlEscape(svcAction)}</sdncadapter:SvcAction>
-				<sdncadapter:SvcOperation>vnf-topology-operation</sdncadapter:SvcOperation>
-				<sdncadapter:CallbackUrl>${MsoUtils.xmlEscape(callbackURL)}</sdncadapter:CallbackUrl>
-				<sdncadapter:MsoAction>generic-resource</sdncadapter:MsoAction>
-		</sdncadapter:RequestHeader>
-	<sdncadapterworkflow:SDNCRequestData>
-		<request-information>
-			<request-id>${MsoUtils.xmlEscape(requestId)}</request-id>
-			<request-action>${MsoUtils.xmlEscape(reqAction)}</request-action>
-			<source>${MsoUtils.xmlEscape(source)}</source>
-			<notification-url/>
-			<order-number/>
-			<order-version/>
-		</request-information>
-		<service-information>
-			<service-id>${MsoUtils.xmlEscape(serviceId)}</service-id>
-			<subscription-service-type>${MsoUtils.xmlEscape(subServiceType)}</subscription-service-type>
-			${serviceEcompModelInformation}
-			<service-instance-id>${MsoUtils.xmlEscape(svcInstId)}</service-instance-id>
-			<global-customer-id>${MsoUtils.xmlEscape(globalSubscriberId)}</global-customer-id>
-		</service-information>
-		<vnf-information>
-			<vnf-id>${MsoUtils.xmlEscape(vnfId)}</vnf-id>
-			<vnf-type>${MsoUtils.xmlEscape(vnfType)}</vnf-type>
-			${vnfEcompModelInformation}
-		</vnf-information>
-		<vnf-request-input>
-			${vnfNameString}
-			<tenant>${MsoUtils.xmlEscape(tenantId)}</tenant>
-			<aic-cloud-region>${MsoUtils.xmlEscape(cloudSiteId)}</aic-cloud-region>
-			${sdncVNFParamsXml}
-		</vnf-request-input>
-	</sdncadapterworkflow:SDNCRequestData>
-	</sdncadapterworkflow:SDNCAdapterWorkflowRequest>"""
+        """<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.onap/so/request/types/v1"
+                                                    xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1"
+                                                    xmlns:sdncadapter="http://org.onap/workflow/sdnc/adapter/schema/v1">
+         <sdncadapter:RequestHeader>
+            <sdncadapter:RequestId>${MsoUtils.xmlEscape(uuid)}</sdncadapter:RequestId>
+            <sdncadapter:SvcInstanceId>${MsoUtils.xmlEscape(svcInstId)}</sdncadapter:SvcInstanceId>
+            <sdncadapter:SvcAction>${MsoUtils.xmlEscape(svcAction)}</sdncadapter:SvcAction>
+            <sdncadapter:SvcOperation>vnf-topology-operation</sdncadapter:SvcOperation>
+            <sdncadapter:CallbackUrl>${MsoUtils.xmlEscape(callbackURL)}</sdncadapter:CallbackUrl>
+            <sdncadapter:MsoAction>generic-resource</sdncadapter:MsoAction>
+         </sdncadapter:RequestHeader>
+    <sdncadapterworkflow:SDNCRequestData>
+        <request-information>
+            <request-id>${MsoUtils.xmlEscape(requestId)}</request-id>
+            <request-action>${MsoUtils.xmlEscape(reqAction)}</request-action>
+            <source>${MsoUtils.xmlEscape(source)}</source>
+            <notification-url/>
+            <order-number/>
+            <order-version/>
+        </request-information>
+        <service-information>
+            <service-id>${MsoUtils.xmlEscape(serviceId)}</service-id>
+            <subscription-service-type>${MsoUtils.xmlEscape(subServiceType)}</subscription-service-type>
+            ${serviceEcompModelInformation}
+            <service-instance-id>${MsoUtils.xmlEscape(svcInstId)}</service-instance-id>
+            <global-customer-id>${MsoUtils.xmlEscape(globalSubscriberId)}</global-customer-id>
+        </service-information>
+        <vnf-information>
+            <vnf-id>${MsoUtils.xmlEscape(vnfId)}</vnf-id>
+            <vnf-type>${MsoUtils.xmlEscape(vnfType)}</vnf-type>
+            ${vnfEcompModelInformation}
+        </vnf-information>
+        <vnf-request-input>
+            ${vnfNameString}
+            <tenant>${MsoUtils.xmlEscape(tenantId)}</tenant>
+            <aic-cloud-region>${MsoUtils.xmlEscape(cloudSiteId)}</aic-cloud-region>
+            ${sdncVNFParamsXml}
+        </vnf-request-input>
+    </sdncadapterworkflow:SDNCRequestData>
+    </sdncadapterworkflow:SDNCAdapterWorkflowRequest>"""
 
         logger.debug("sdncRequest:  " + sdncRequest)
         return sdncRequest
+    }
+
+
+    String buildDefaultVnfInputParams(String vnfName) {
+        String res =
+                """<vnf-input-parameters>
+                      <param>
+                          <name>${MsoUtils.xmlEscape(vnfName)}</name>
+                      </param>
+                   </vnf-input-parameters>"""
+
+        return res
     }
 
     String buildSDNCParamsXml(DelegateExecution execution) {
@@ -241,19 +253,19 @@ class TnNssmfUtils {
     }
 
     String getExecutionInputParams(DelegateExecution execution) {
-        String res = "msoRequestId=" + execution.getVariable("msoRequestId") +
-                ", modelInvariantUuid=" + execution.getVariable("modelInvariantUuid") +
-                ", modelUuid=" + execution.getVariable("modelUuid") +
-                ", serviceInstanceID=" + execution.getVariable("serviceInstanceID") +
-                ", operationType=" + execution.getVariable("operationType") +
-                ", globalSubscriberId=" + execution.getVariable("globalSubscriberId") +
-                ", dummyServiceId=" + execution.getVariable("dummyServiceId") +
-                ", nsiId=" + execution.getVariable("nsiId") +
-                ", networkType=" + execution.getVariable("networkType") +
-                ", subscriptionServiceType=" + execution.getVariable("subscriptionServiceType") +
-                ", jobId=" + execution.getVariable("jobId") +
-                ", sliceParams=" + execution.getVariable("sliceParams") +
-                ", servicename=" + execution.getVariable("servicename")
+        String res = "\n msoRequestId=" + execution.getVariable("msoRequestId") +
+                "\n modelInvariantUuid=" + execution.getVariable("modelInvariantUuid") +
+                "\n modelUuid=" + execution.getVariable("modelUuid") +
+                "\n serviceInstanceID=" + execution.getVariable("serviceInstanceID") +
+                "\n operationType=" + execution.getVariable("operationType") +
+                "\n globalSubscriberId=" + execution.getVariable("globalSubscriberId") +
+                "\n dummyServiceId=" + execution.getVariable("dummyServiceId") +
+                "\n nsiId=" + execution.getVariable("nsiId") +
+                "\n networkType=" + execution.getVariable("networkType") +
+                "\n subscriptionServiceType=" + execution.getVariable("subscriptionServiceType") +
+                "\n jobId=" + execution.getVariable("jobId") +
+                "\n sliceParams=" + execution.getVariable("sliceParams") +
+                "\n servicename=" + execution.getVariable("servicename")
 
         return res
     }
@@ -297,7 +309,6 @@ class TnNssmfUtils {
     void attachLogicalLinkToAllottedResource(DelegateExecution execution, String aaiVersion, AAIResourceUri arUri,
                                              String logicalLinkId) {
 
-
         String toLink = "aai/${aaiVersion}/network/logical-links/logical-link/${logicalLinkId}"
 
         Relationship relationship = new Relationship()
@@ -306,5 +317,19 @@ class TnNssmfUtils {
         relationship.setRelationshipLabel("org.onap.relationships.inventory.ComposedOf")
 
         createRelationShipInAAI(execution, arUri, relationship)
+    }
+
+    void attachNetworkPolicyToAllottedResource(DelegateExecution execution, String aaiVersion,
+                                               AAIResourceUri aaiResourceUri, String networkPolicyId) {
+
+        String toLink = "aai/${aaiVersion}/network/network-policies/network-policy/${networkPolicyId}"
+
+        Relationship relationship = new Relationship()
+        relationship.setRelatedLink(toLink)
+        relationship.setRelatedTo("network-policy")
+        relationship.setRelationshipLabel("org.onap.relationships.inventory.Uses")
+
+        createRelationShipInAAI(execution, aaiResourceUri, relationship)
+
     }
 }
