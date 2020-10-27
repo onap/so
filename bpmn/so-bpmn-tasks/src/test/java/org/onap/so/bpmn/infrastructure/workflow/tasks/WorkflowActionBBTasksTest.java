@@ -41,6 +41,7 @@ import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.VfModule;
 import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.common.listener.flowmanipulator.FlowManipulatorListenerRunner;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ConfigurationResourceKeys;
@@ -88,6 +89,9 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 
     @Mock
     protected Environment environment;
+
+    @Mock
+    private FlowManipulatorListenerRunner flowManipulatorListenerRunner;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
