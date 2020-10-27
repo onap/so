@@ -103,6 +103,7 @@ public class WorkflowActionBBTasks {
                 (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         execution.setVariable("MacroRollback", false);
 
+        flowManipulatorListenerRunner.modifyFlows(flowsToExecute, new DelegateExecutionImpl(execution));
         int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE);
 
         ExecuteBuildingBlock ebb = flowsToExecute.get(currentSequence);
@@ -111,12 +112,6 @@ public class WorkflowActionBBTasks {
         currentSequence++;
         execution.setVariable(COMPLETED, currentSequence >= flowsToExecute.size());
         execution.setVariable(G_CURRENT_SEQUENCE, currentSequence);
-    }
-
-    public void runFlowManipulator(DelegateExecution execution) {
-        List<ExecuteBuildingBlock> flowsToExecute =
-                (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
-        flowManipulatorListenerRunner.modifyFlows(flowsToExecute, new DelegateExecutionImpl(execution));
     }
 
     public void updateFlowStatistics(DelegateExecution execution) {
