@@ -75,4 +75,16 @@ public class AaiServiceProviderImpl implements AaiServiceProvider {
                 .customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId));
         aaiClientProvider.getAaiClient().create(uri, nssiInstance);
     }
+
+    @Override
+    public ServiceInstance invokeGetServiceInstance(String globalSubscriberId, String serviceType,
+            String serviceInstanceId) {
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                .customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId));
+
+        return aaiClientProvider.getAaiClient().get(ServiceInstance.class, uri).orElseGet(() -> {
+            logger.debug("ServiceInstance " + serviceInstanceId + " not found in AAI");
+            return null;
+        });
+    }
 }
