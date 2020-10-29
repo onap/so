@@ -159,7 +159,7 @@ public class NssmfAdapterConsts {
                 new NssmfUrlInfo(EXTERNAL_QUERY_JOB_STATUS, HttpMethod.GET));
 
         urlInfoMap.put(generateKey(ExecutorType.INTERNAL, null, ActionType.QUERY_SUB_NET_CAPABILITY),
-                new NssmfUrlInfo(INTERNAL_QUERY_SUB_NET_CAPABILITY, HttpMethod.POST));
+                new NssmfUrlInfo(INTERNAL_QUERY_SUB_NET_CAPABILITY, HttpMethod.GET));
     }
 
     /**

@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.so.serviceinstancebeans.Service
 
 import static org.apache.commons.lang3.StringUtils.*
 import org.camunda.bpm.engine.delegate.BpmnError
@@ -126,21 +127,22 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
 
             logger.debug("modelInfo: " + serviceModelInfo)
 
-            //requestParameters
-            String subscriptionServiceType = jsonUtil.getJsonValue(ssRequest, "requestDetails.requestParameters.subscriptionServiceType")
-            if (isBlank(subscriptionServiceType)) {
-                msg = "Input subscriptionServiceType is null"
-                logger.debug(msg)
-                exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-            } else {
-                execution.setVariable("subscriptionServiceType", subscriptionServiceType)
-            }
-            logger.debug("subscriptionServiceType: " + subscriptionServiceType)
+//            //requestParameters
+//            String subscriptionServiceType = jsonUtil.getJsonValue(ssRequest, "requestDetails.requestParameters.subscriptionServiceType")
+//            if (isBlank(subscriptionServiceType)) {
+//                msg = "Input subscriptionServiceType is null"
+//                logger.debug(msg)
+//                exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+//            } else {
+//                subscriptionServiceType = "5G"
+//                execution.setVariable("subscriptionServiceType", subscriptionServiceType)
+//            }
+//            logger.debug("subscriptionServiceType: " + subscriptionServiceType)
 
             /*
             * Extracting User Parameters from incoming Request and converting into a Map
             */
-            Map reqMap = jsonSlurper.parseText(ssRequest)
+            Map reqMap = jsonSlurper.parseText(ssRequest) as Map
 
             //InputParams
             def userParamsList = reqMap.requestDetails?.requestParameters?.userParams
@@ -168,6 +170,7 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
             execution.setVariable("serviceInputParams", inputMap)
             execution.setVariable("uuiRequest", uuiRequest)
             execution.setVariable("serviceProfile", serviceProfile)
+            execution.setVariable("subscriptionServiceType", serviceObject.get("serviceType"))
 
             //TODO
             //execution.setVariable("serviceInputParams", jsonUtil.getJsonValue(siRequest, "requestDetails.requestParameters.userParams"))
