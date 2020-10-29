@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "92a1979a_5b605ffe",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/TnNssmfUtils.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2020-10-29T14:37:01Z",
+      "side": 1,
+      "message": "could you please remove the tabs?",
+      "range": {
+        "startLine": 125,
+        "startChar": 6,
+        "endLine": 129,
+        "endChar": 13
+      },
+      "revId": "9ea2f1604523ff2532ae9592bbe8b92d1ed825a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
