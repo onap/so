@@ -101,6 +101,9 @@ class DoCreateSliceServiceInstance extends AbstractServiceTaskProcessor{
          */
         String serviceRole = "service-profile"
         String serviceType = execution.getVariable("serviceType")
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
+        String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+
         Map<String, Object> serviceProfile = sliceParams.getServiceProfile()
         String ssInstanceId = execution.getVariable("serviceInstanceId")
         try {
@@ -121,7 +124,10 @@ class DoCreateSliceServiceInstance extends AbstractServiceTaskProcessor{
             ss.setEnvironmentContext(snssai)
             ss.setServiceRole(serviceRole)
 
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(ssInstanceId))
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                    .customer(globalSubscriberId)
+                    .serviceSubscription(subscriptionServiceType)
+                    .serviceInstance(ssInstanceId))
             client.create(uri, ss)
         } catch (BpmnError e) {
             throw e
@@ -139,8 +145,8 @@ class DoCreateSliceServiceInstance extends AbstractServiceTaskProcessor{
         //rollbackData.put("SERVICEINSTANCE", "disableRollback", disableRollback.toString())
         rollbackData.put("SERVICEINSTANCE", "rollbackAAI", "true")
         rollbackData.put("SERVICEINSTANCE", "serviceInstanceId", ssInstanceId)
-        rollbackData.put("SERVICEINSTANCE", "subscriptionServiceType", execution.getVariable("subscriptionServiceType"))
-        rollbackData.put("SERVICEINSTANCE", "globalSubscriberId", execution.getVariable("globalSubscriberId"))
+        rollbackData.put("SERVICEINSTANCE", "subscriptionServiceType", subscriptionServiceType)
+        rollbackData.put("SERVICEINSTANCE", "globalSubscriberId", globalSubscriberId)
         execution.setVariable("rollbackData", rollbackData)
         execution.setVariable("RollbackData", rollbackData)
         logger.debug("RollbackData:" + rollbackData)
@@ -156,6 +162,8 @@ class DoCreateSliceServiceInstance extends AbstractServiceTaskProcessor{
         /**
          * todo: ServiceProfile params changed
          */
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
+        String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
         SliceTaskParamsAdapter sliceParams =
                 execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
         Map<String, Object> serviceProfileMap = sliceParams.getServiceProfile()
@@ -181,11 +189,11 @@ class DoCreateSliceServiceInstance extends AbstractServiceTaskProcessor{
         serviceProfile.setSurvivalTime("0")
         serviceProfile.setReliability("")
         try {
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(
-                AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId"))
-                .serviceSubscription(execution.getVariable("subscriptionServiceType"))
-                .serviceInstance(serviceProfileInstanceId)
-                .serviceProfile(serviceProfileId))
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                    .customer(globalSubscriberId)
+                    .serviceSubscription(subscriptionServiceType)
+                    .serviceInstance(serviceProfileInstanceId)
+                    .serviceProfile(serviceProfileId))
             client.create(uri, serviceProfile)
             execution.setVariable("sliceTaskParams", sliceParams)
 
@@ -206,15 +214,21 @@ class DoCreateSliceServiceInstance extends AbstractServiceTaskProcessor{
     public void createAllottedResource(DelegateExecution execution) {
 
         try {
-
+            String globalSubscriberId = execution.getVariable("globalSubscriberId")
+            String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
             ServiceDecomposition serviceDecomposition =
                     execution.getVariable("serviceProfileDecomposition") as ServiceDecomposition
+            String serviceInstanceId = execution.getVariable("serviceInstanceId")
 
             List<org.onap.so.bpmn.core.domain.AllottedResource> allottedResourceList = serviceDecomposition.getAllottedResources()
             for(org.onap.so.bpmn.core.domain.AllottedResource allottedResource : allottedResourceList) {
                 String allottedResourceId = UUID.randomUUID().toString()
 
-                AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(execution.getVariable("serviceInstanceId")).allottedResource(allottedResourceId))
+                AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                        .customer(globalSubscriberId)
+                        .serviceSubscription(subscriptionServiceType)
+                        .serviceInstance(serviceInstanceId)
+                        .allottedResource(allottedResourceId))
 
                 execution.setVariable("allottedResourceUri", allottedResourceUri)
                 String arType = allottedResource.getAllottedResourceType()

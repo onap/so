@@ -44,7 +44,7 @@ dcsi.createAllottedResource(execution)</bpmn:script>
       <bpmn:incoming>SequenceFlow_0khtova</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1wafqwa</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
-def dcsi= new CreateSliceService()
+def dcsi = new DoCreateSliceServiceInstance()
 dcsi.prepareDecomposeService(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:callActivity id="CallActivity_0svmkxh" name="Call Decompose Service" calledElement="DecomposeService">
