@@ -95,7 +95,7 @@ class DoHandleOofRequest extends AbstractServiceTaskProcessor {
 		Response httpResponse = httpClient.post(oofRequest)
 		int responseCode = httpResponse.getStatus()
 		logger.debug("OOF sync response code is: " + responseCode)
-		if(responseCode != 200){
+        if(responseCode < 200 || responseCode >= 300){
 			exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from OOF.")
 		}
 	}

@@ -214,7 +214,11 @@ public class RestUtil {
                 break;
 
             case GET:
-                base = new HttpGet(url);
+                HttpGetWithBody get = new HttpGetWithBody(url);
+                if (content != null) {
+                    get.setEntity(new StringEntity(content, APPLICATION_JSON));
+                }
+                base = get;
                 break;
 
             case PUT:
@@ -272,6 +276,29 @@ public class RestUtil {
 
         public HttpDeleteWithBody() {
             super();
+        }
+    }
+
+    class HttpGetWithBody extends HttpEntityEnclosingRequestBase {
+        public static final String METHOD_NAME = "GET";
+
+        public HttpGetWithBody() {
+            super();
+        }
+
+        public HttpGetWithBody(final String uri) {
+            super();
+            setURI(URI.create(uri));
+        }
+
+        public HttpGetWithBody(final URI uri) {
+            super();
+            setURI(uri);
+        }
+
+        @Override
+        public String getMethod() {
+            return METHOD_NAME;
         }
     }
 
