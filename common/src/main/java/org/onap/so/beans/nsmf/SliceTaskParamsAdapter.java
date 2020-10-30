@@ -48,23 +48,23 @@ public class SliceTaskParamsAdapter implements Serializable {
 
     private String nstName;
 
-    private Map<String, Object> serviceProfile;
+    private Map<String, Object> serviceProfile = new HashMap<>();
 
     private String suggestNsiId;
 
     private String suggestNsiName;
 
-    private TemplateInfo NSTInfo;
+    private TemplateInfo NSTInfo = new TemplateInfo();
 
-    private SliceTaskInfo<TnSliceProfile> tnBHSliceTaskInfo;
+    private SliceTaskInfo<TnSliceProfile> tnBHSliceTaskInfo = new SliceTaskInfo<>();
 
-    private SliceTaskInfo<TnSliceProfile> tnMHSliceTaskInfo;
+    private SliceTaskInfo<TnSliceProfile> tnMHSliceTaskInfo = new SliceTaskInfo<>();
 
-    private SliceTaskInfo<TnSliceProfile> tnFHSliceTaskInfo;
+    private SliceTaskInfo<TnSliceProfile> tnFHSliceTaskInfo = new SliceTaskInfo<>();
 
-    private SliceTaskInfo<CnSliceProfile> cnSliceTaskInfo;
+    private SliceTaskInfo<CnSliceProfile> cnSliceTaskInfo = new SliceTaskInfo<>();
 
-    private SliceTaskInfo<AnSliceProfile> anSliceTaskInfo;
+    private SliceTaskInfo<AnSliceProfile> anSliceTaskInfo = new SliceTaskInfo<>();
 
     @SuppressWarnings("unchecked")
     public void convertFromJson(String jsonString) throws IOException {
@@ -226,6 +226,10 @@ public class SliceTaskParamsAdapter implements Serializable {
      */
     private <T> Map<String, Object> bean2Map(T t) {
         Map<String, Object> resMap = new HashMap<>();
+        if (t == null) {
+            return resMap;
+        }
+
         try {
             Field[] fields = t.getClass().getDeclaredFields();
             for (Field field : fields) {
