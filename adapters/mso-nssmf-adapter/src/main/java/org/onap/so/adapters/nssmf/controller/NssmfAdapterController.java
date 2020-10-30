@@ -1,5 +1,6 @@
 package org.onap.so.adapters.nssmf.controller;
 
+import org.onap.so.adapters.nssmf.annotation.RequestLogger;
 import org.onap.so.adapters.nssmf.service.NssmfManagerService;
 import org.onap.so.beans.nsmf.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @RestController
 @RequestMapping(value = "/api/rest/provMns/v1", produces = {APPLICATION_JSON}, consumes = {APPLICATION_JSON})
+@RequestLogger
 public class NssmfAdapterController {
 
     @Autowired
