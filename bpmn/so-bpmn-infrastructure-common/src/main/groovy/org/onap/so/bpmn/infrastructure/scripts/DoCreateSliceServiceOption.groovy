@@ -371,6 +371,9 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
                 execution.setVariable("needQuerySliceProfile", true)
             }
             else {
+                if(execution.getVariable("needQuerySliceProfile")){
+                    execution.setVariable("needQuerySliceProfile", false)
+                }
                 processNewNSI(solution, sliceTaskParams)
             }
         }

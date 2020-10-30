@@ -83,7 +83,7 @@ class DoHandleOofRequest extends AbstractServiceTaskProcessor {
 		execution.setVariable("oofRequestPayload", requestJson)
 	}
 	
-	public void callOofAdapter(DelegateExecution execution) {
+	void callOofAdapter(DelegateExecution execution) {
 		logger.debug("Start callOofAdapter")
 		String requestId = execution.getVariable("msoRequestId")
 		String oofAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.oof.endpoint", execution)

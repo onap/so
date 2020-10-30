@@ -540,10 +540,8 @@ class OofUtils {
                         "    \"timeout\": 600,\n" +
                         "    \"callbackUrl\": \"${callbackUrl}\"\n" +
                         "    },\n")
-        response.append(" \"serviceProfile\": {\n" +
-                "   \"serviceProfileParameters\": ")
-        response.append(json);
-        response.append("\n }\n")
+        response.append(" \"serviceProfile\":")
+        response.append(json)
         response.append("\n}\n")
         return response.toString()
     }
