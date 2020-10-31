@@ -120,7 +120,9 @@ public class VfResourceStructure extends ResourceStructure {
             case ASDCConfiguration.OTHER:
             case ASDCConfiguration.CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT:
             case ASDCConfiguration.HELM:
-                artifactsMapByUUID.put(artifactInfo.getArtifactUUID(), vfModuleArtifact);
+                if (!artifactInfo.getArtifactName().contains("dummy")
+                        && !artifactInfo.getArtifactName().contains("ignore"))
+                    artifactsMapByUUID.put(artifactInfo.getArtifactUUID(), vfModuleArtifact);
                 break;
             case ASDCConfiguration.VF_MODULES_METADATA:
                 vfModulesMetadataList = this.decodeVfModuleArtifact(clientResult.getArtifactPayload());
@@ -143,7 +145,9 @@ public class VfResourceStructure extends ResourceStructure {
             return;
         }
         for (IVfModuleData vfModuleMeta : vfModulesMetadataList) {
-            vfModulesStructureList.add(new VfModuleStructure(this, vfModuleMeta));
+            if (!vfModuleMeta.getVfModuleModelName().contains("dummy")
+                    && !vfModuleMeta.getVfModuleModelName().contains("ignore"))
+                vfModulesStructureList.add(new VfModuleStructure(this, vfModuleMeta));
         }
         setNumberOfResources(vfModulesMetadataList.size());
     }
