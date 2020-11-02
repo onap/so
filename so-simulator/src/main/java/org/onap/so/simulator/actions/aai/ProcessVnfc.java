@@ -1,7 +1,11 @@
 package org.onap.so.simulator.actions.aai;
 
+import java.util.Optional;
 import org.onap.aai.domain.yang.Vnfc;
+import org.onap.aai.domain.yang.Vserver;
+import org.onap.aai.domain.yang.Vservers;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
+import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
@@ -58,6 +62,26 @@ public class ProcessVnfc extends AbstractTestAction {
                         .genericVnf(context.getVariable("vnfId")).vfModule(context.getVariable("vfModuleId")));
                 logger.debug("creating VNFC edge to vf module");
                 aaiResourceClient.connect(vfModuleURI, vnfcURI);
+            } else if (context.getVariable("requestAction").equals("CreateVfModuleInstance")
+                    && context.getVariable("serviceAction").equals("activate")) {
+                logger.debug("creating edge between vserver and vnfc");
+                AAIResourceUri vnfcURI =
+                        AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().vnfc("ssc_server_1"));
+                AAIPluralResourceUri vserverPlural =
+                        AAIUriFactory
+                                .createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                                        .cloudRegion(context.getVariable("cloudOwner"),
+                                                context.getVariable("cloudRegion"))
+                                        .tenant(context.getVariable("tenant")).vservers())
+                                .queryParam("vserver-name", "ssc_server_1");
+                Optional<Vserver> vserver = aaiResourceClient.getFirst(Vservers.class, Vserver.class, vserverPlural);
+                if (vserver.isPresent()) {
+                    AAIResourceUri vserverURI =
+                            AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                                    .cloudRegion(context.getVariable("cloudOwner"), context.getVariable("cloudRegion"))
+                                    .tenant(context.getVariable("tenant")).vserver(vserver.get().getVserverId()));
+                    aaiResourceClient.connect(vserverURI, vnfcURI);
+                }
             }
 
         } catch (Exception e) {

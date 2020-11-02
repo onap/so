@@ -328,11 +328,6 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                     .cloudRegion(cloudOwner, cloudRegionId).tenant(tenantId).vserver(vserver.getVserverId()));
             if (resourcesClient.exists(vserverUri)) {
                 AAIResultWrapper existingVserver = resourcesClient.get(vserverUri);
-                if (!existingVserver.hasRelationshipsTo(Types.VNFC)) {
-                    AAIResourceUri vnfcUri =
-                            AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().vnfc(server.getName()));
-                    transaction.connect(vserverUri, vnfcUri);
-                }
                 if (!existingVserver.hasRelationshipsTo(Types.VF_MODULE)) {
                     AAIResourceUri vfModuleUri = AAIUriFactory.createResourceUri(
                             AAIFluentTypeBuilder.network().genericVnf(genericVnfId).vfModule(vfModuleId));
