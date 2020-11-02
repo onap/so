@@ -68,7 +68,7 @@ public class PollService extends ExternalTaskUtils {
 
     public void executeExternalTask(ExternalTask externalTask, ExternalTaskService externalTaskService) {
         mdcSetup.setupMDC(externalTask);
-        logger.debug("Starting External Task Poll Service");
+        logger.trace("Executing External Task Poll Service");
         Map<String, Object> variables = new HashMap<>();
         MutableBoolean success = new MutableBoolean();
         String errorMessage = null;
@@ -103,11 +103,11 @@ public class PollService extends ExternalTaskUtils {
             }
         } catch (Exception e) {
             logger.error("Error during External Task Poll Service", e);
-            errorMessage = e.toString();
-            variables.put("openstackAdapterErrorMessage", errorMessage);
+            errorMessage = e.getMessage();
         }
 
         variables.put("OpenstackPollSuccess", success.booleanValue());
+        variables.put("openstackAdapterErrorMessage", errorMessage);
         if (success.isTrue()) {
             externalTaskService.complete(externalTask, variables);
             logger.debug("The External Task Id: {}  Successful", externalTask.getId());

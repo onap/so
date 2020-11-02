@@ -39,7 +39,7 @@ public class RollbackService extends ExternalTaskUtils {
 
     public void executeExternalTask(ExternalTask externalTask, ExternalTaskService externalTaskService) {
         mdcSetup.setupMDC(externalTask);
-        logger.debug("Starting External Task Rollback Service");
+        logger.trace("Executing External Task Rollback Service");
         Map<String, Object> variables = new HashMap<>();
         boolean success = false;
         boolean pollRollbackStatus = false;
