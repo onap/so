@@ -91,7 +91,7 @@ public class StackService extends ExternalTaskUtils {
         Map<String, Object> variables = new HashMap<>();
         mdcSetup.setupMDC(externalTask);
         String xmlRequest = externalTask.getVariable("openstackAdapterTaskRequest");
-        logger.debug("Starting External Task Stack Service. {}", xmlRequest);
+        logger.debug("Executing External Task Stack Service. {}", xmlRequest);
         MutableBoolean success = new MutableBoolean();
         MutableBoolean backout = new MutableBoolean();
         String response = "";

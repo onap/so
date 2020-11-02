@@ -62,13 +62,13 @@ public class TaskServices {
     public void createtAAIInventory() throws Exception {
         for (int i = 0; i < externalTaskServiceUtils.getMaxClients(); i++) {
             ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
-            client.subscribe("InventoryCreate").lockDuration(externalTaskServiceUtils.getLockDurationMedium())
+            client.subscribe("InventoryCreate").lockDuration(externalTaskServiceUtils.getLongLockDuration())
                     .handler(createInventory::executeExternalTask).open();
         }
     }
 
     @PostConstruct
-    public void deleteAAIInventory() throws Exception {
+    public void auditAAIInventory() throws Exception {
         for (int i = 0; i < externalTaskServiceUtils.getMaxClients(); i++) {
             externalTaskServiceUtils.createExternalTaskClient().subscribe("InventoryDelete")
                     .lockDuration(externalTaskServiceUtils.getLockDurationMedium())
@@ -80,7 +80,7 @@ public class TaskServices {
     public void openstackInvoker() throws Exception {
         for (int i = 0; i < externalTaskServiceUtils.getMaxClients(); i++) {
             ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
-            client.subscribe("OpenstackAdapterInvoke").lockDuration(externalTaskServiceUtils.getLockDurationShort())
+            client.subscribe("OpenstackAdapterInvoke").lockDuration(externalTaskServiceUtils.getLockDuration())
                     .handler(stackService::executeExternalTask).open();
         }
     }
@@ -89,7 +89,7 @@ public class TaskServices {
     public void openstackPoller() throws Exception {
         for (int i = 0; i < externalTaskServiceUtils.getMaxClients(); i++) {
             ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
-            client.subscribe("OpenstackAdapterPolling").lockDuration(externalTaskServiceUtils.getLockDurationMedium())
+            client.subscribe("OpenstackAdapterPolling").lockDuration(externalTaskServiceUtils.getLockDuration())
                     .handler(pollService::executeExternalTask).open();
         }
     }
@@ -98,7 +98,7 @@ public class TaskServices {
     public void openstackRollback() throws Exception {
         for (int i = 0; i < externalTaskServiceUtils.getMaxClients(); i++) {
             ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
-            client.subscribe("OpenstackAdapterRollback").lockDuration(externalTaskServiceUtils.getLockDurationShort())
+            client.subscribe("OpenstackAdapterRollback").lockDuration(externalTaskServiceUtils.getLockDuration())
                     .handler(rollbackService::executeExternalTask).open();
         }
     }
