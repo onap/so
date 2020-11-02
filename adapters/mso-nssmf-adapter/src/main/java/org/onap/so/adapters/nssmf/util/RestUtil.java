@@ -82,6 +82,11 @@ public class RestUtil {
                 serviceInfo.getSubscriptionServiceType(), serviceInfo.getNssiId());
     }
 
+    public void deleteServiceInstance(ServiceInfo serviceInfo) {
+        aaiSvcProv.invokeDeleteServiceInstance(serviceInfo.getGlobalSubscriberId(),
+                serviceInfo.getSubscriptionServiceType(), serviceInfo.getNssiId());
+    }
+
     public NssmfInfo getNssmfHost(EsrInfo esrInfo) throws ApplicationException {
         EsrThirdpartySdncList sdncList = aaiSvcProv.invokeGetThirdPartySdncList();
         if (sdncList != null && sdncList.getEsrThirdpartySdnc() != null) {

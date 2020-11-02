@@ -25,6 +25,7 @@ import org.apache.http.message.BasicHeader;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.so.adapters.nssmf.entity.NssmfInfo;
 import org.onap.so.adapters.nssmf.entity.RestResponse;
+import org.onap.so.adapters.nssmf.enums.ActionType;
 import org.onap.so.adapters.nssmf.enums.JobStatus;
 import org.onap.so.adapters.nssmf.exceptions.ApplicationException;
 import org.onap.so.adapters.nssmf.util.NssmfAdapterUtil;
@@ -63,27 +64,31 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
     protected void afterQueryJobStatus(ResourceOperationStatus status) {
         if (Integer.parseInt(status.getProgress()) == 100) {
 
-            ServiceInstance nssiInstance = restUtil.getServiceInstance(serviceInfo);
-            if (nssiInstance == null) {
-                nssiInstance = new ServiceInstance();
+            ActionType jobOperType = ActionType.valueOf(status.getOperType());
+
+            if (ActionType.ALLOCATE.equals(jobOperType)) {
+                ServiceInstance nssiInstance = restUtil.getServiceInstance(serviceInfo);
+                if (nssiInstance == null) {
+                    nssiInstance = new ServiceInstance();
+                }
+
+                nssiInstance.setServiceInstanceId(serviceInfo.getNssiId());
+                nssiInstance.setServiceInstanceName(serviceInfo.getNssiName());
+                nssiInstance.setServiceType(serviceInfo.getSST());
+
+                nssiInstance.setOrchestrationStatus(initStatus);
+                nssiInstance.setModelInvariantId(serviceInfo.getServiceInvariantUuid());
+                nssiInstance.setModelVersionId(serviceInfo.getServiceUuid());
+                nssiInstance.setServiceInstanceLocationId(serviceInfo.getPLMNIdList());
+                nssiInstance.setEnvironmentContext(esrInfo.getNetworkType().getNetworkType());
+                nssiInstance.setServiceRole("nssi");
+
+                restUtil.createServiceInstance(nssiInstance, serviceInfo);
+            } else if (ActionType.DEALLOCATE.equals(jobOperType)) {
+                restUtil.deleteServiceInstance(serviceInfo);
             }
-
-            nssiInstance.setServiceInstanceId(serviceInfo.getNssiId());
-            nssiInstance.setServiceInstanceName(serviceInfo.getNssiName());
-            nssiInstance.setServiceType(serviceInfo.getSST());
-
-            nssiInstance.setOrchestrationStatus(initStatus);
-            nssiInstance.setModelInvariantId(serviceInfo.getServiceInvariantUuid());
-            nssiInstance.setModelVersionId(serviceInfo.getServiceUuid());
-            nssiInstance.setServiceInstanceLocationId(serviceInfo.getPLMNIdList());
-            nssiInstance.setEnvironmentContext(esrInfo.getNetworkType().getNetworkType());
-            nssiInstance.setServiceRole("nssi");
-
-            restUtil.createServiceInstance(nssiInstance, serviceInfo);
         }
     }
-
-
 
     @Override
     protected String wrapActDeActReqBody(ActDeActNssi actDeActNssi) throws ApplicationException {

@@ -76,6 +76,7 @@ public class ExternalAnNssmfManager extends ExternalNssmfManager {
             ResourceOperationStatus status =
                     new ResourceOperationStatus(serviceInfo.getNsiId(), resp.getJobId(), serviceInfo.getServiceUuid());
             status.setResourceInstanceID(nssiId);
+            status.setOperType(actionType.toString());
 
             updateDbStatus(status, restResponse.getStatus(), JobStatus.FINISHED,
                     NssmfAdapterUtil.getStatusDesc(actionType));

@@ -87,4 +87,12 @@ public class AaiServiceProviderImpl implements AaiServiceProvider {
             return null;
         });
     }
+
+    @Override
+    public void invokeDeleteServiceInstance(String globalSubscriberId, String serviceType, String serviceInstanceId) {
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                .customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId));
+
+        aaiClientProvider.getAaiClient().delete(uri);
+    }
 }
