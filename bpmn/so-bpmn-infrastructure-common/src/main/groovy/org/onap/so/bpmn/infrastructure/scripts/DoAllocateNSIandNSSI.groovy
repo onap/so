@@ -41,7 +41,6 @@ import org.onap.so.beans.nsmf.CnSliceProfile
 import org.onap.so.beans.nsmf.EsrInfo
 import org.onap.so.beans.nsmf.NssiResponse
 import org.onap.so.beans.nsmf.NssmfAdapterNBIRequest
-import org.onap.so.beans.nsmf.ResponseDescriptor
 import org.onap.so.beans.nsmf.ServiceInfo
 import org.onap.so.beans.nsmf.SliceTaskInfo
 import org.onap.so.beans.nsmf.SliceTaskParamsAdapter
@@ -157,6 +156,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
             logger.info(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
+        execution.setVariable("sliceTaskParams", sliceParams)
 
         logger.debug("Exit CreateNSIinAAI in DoAllocateNSIandNSSI()")
     }
@@ -201,8 +201,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         try {
             AAIResultWrapper wrapper = client.get(nsiServiceUri, NotFoundException.class)
             Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
-            //todo: if exists
-            if (!si.ifPresent()) {
+            if (!si.isPresent()) {
                 String msg = "NSI suggested in the option doesn't exist. " + nsiServiceInstanceID
                 logger.debug(msg)
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
@@ -251,14 +250,12 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         rspi.setOrchestrationStatus(oStatus)
         rspi.setModelInvariantId(sliceTaskInfo.NSSTInfo.invariantUUID)
         rspi.setModelVersionId(sliceTaskInfo.NSSTInfo.UUID)
-        rspi.setInputParameters(uuiRequest)
-        rspi.setWorkloadContext(useInterval)
-        rspi.setEnvironmentContext(sNSSAI_id)
+        rspi.setInputParameters(execution.getVariable("uuiRequest"))
+        rspi.setWorkloadContext(execution.getVariable("useInterval"))
+        rspi.setEnvironmentContext(execution.getVariable("sNSSAI_id"))
 
         //timestamp format YYYY-MM-DD hh:mm:ss
         rspi.setCreatedAt(new Date(System.currentTimeMillis()).format("yyyy-MM-dd HH:mm:ss", TimeZone.getDefault()))
-
-        execution.setVariable("communicationServiceInstance", rspi)
 
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(serviceInstanceId))
         client.create(uri, rspi)
@@ -312,11 +309,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         NssmfAdapterNBIRequest nbiRequest = new NssmfAdapterNBIRequest()
 
         AllocateAnNssi allocateAnNssi = new AllocateAnNssi()
-        allocateAnNssi.nsstId = sliceTaskInfo.NSSTInfo.UUID
-        allocateAnNssi.nssiId = sliceTaskInfo.NSSTInfo.UUID
-        allocateAnNssi.nssiName = sliceTaskInfo.NSSTInfo.name
         allocateAnNssi.sliceProfile = sliceTaskInfo.sliceProfile
-        allocateAnNssi.nsiInfo.nsiId = sliceParams.suggestNsiId
 
         EsrInfo esrInfo = new EsrInfo()
         //todo: vendor and network
@@ -339,7 +332,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         nbiRequest.setAllocateAnNssi(allocateAnNssi)
 
         execution.setVariable("AnAllocateNssiNbiRequest", nbiRequest)
-        execution.setVariable("anBHSliceTaskInfo", sliceTaskInfo)
+        execution.setVariable("anSliceTaskInfo", sliceTaskInfo)
         execution.setVariable("anSubnetType", SubnetType.AN_NF)
     }
 
@@ -592,7 +585,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         SliceTaskParamsAdapter sliceParams =
                 execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
 
-        ResponseDescriptor result = execution.getVariable("anNssiAllocateResult") as ResponseDescriptor
+        NssiResponse result = execution.getVariable("anNssiAllocateResult") as NssiResponse
         String nssiId = result.getNssiId()
         String nsiId = sliceParams.getSuggestNsiId()
         String sliceProfileInstanceId = sliceParams.anSliceTaskInfo.sliceInstanceId
@@ -660,23 +653,25 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
                 execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
 
         //sliceParams.setServiceId(nsiServiceInstanceID)
-        AAIResourceUri nsiServiceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(nssiId))
+        AAIResourceUri nsiServiceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(nssiId))
 
         String endpointId = null
 
         try {
             AAIResultWrapper wrapper = client.get(nsiServiceUri, NotFoundException.class)
             Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
-            //todo: if exists
-            if (!si.ifPresent()) {
+            if (!si.isPresent()) {
                 String msg = "NSSI in the option doesn't exist. " + nssiId
                 logger.debug(msg)
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-            }
-
-            if (si.ifPresent()) {
+            } else {
                 ServiceInstance nssiInstance = si.get()
                 //todo: handle relationship and return endpointId
+                if (nssiInstance.relationshipList == null) {
+                    String msg = "relationshipList of " + nssiId + " is null"
+                    logger.debug(msg)
+                    return null
+                }
                 for (Relationship relationship : nssiInstance.relationshipList.getRelationship()) {
                     if (relationship.relationshipLabel){
                         endpointId = relationship //todo
@@ -689,7 +684,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         }catch(BpmnError e) {
             throw e
         }catch (Exception ex){
-            String msg = "NSSI suggested in the option doesn't exist. " + nssiId
+            String msg = "Exception: " + ex
             logger.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
@@ -735,14 +730,14 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         //relation ship
         Relationship relationship = new Relationship()
 
-        AAIResourceUri nsiServiceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(targetId))
+        AAIResourceUri targetInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(targetId))
 
-        logger.info("Creating Allotted resource relationship, nsiServiceUri: " + nsiServiceUri)
+        logger.info("Creating relationship, targetInstanceUri: " + targetInstanceUri)
 
-        relationship.setRelatedLink(nsiServiceUri.build().toString())
+        relationship.setRelatedLink(targetInstanceUri.build().toString())
 
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(sourceId).relationshipAPI())
-        client.create(uri, relationship)
+        AAIResourceUri sourceInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(sourceId)).relationshipAPI()
+        client.create(sourceInstanceUri, relationship)
     }
 
 }
