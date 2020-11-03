@@ -143,8 +143,10 @@ public interface HeatBridgeApi {
      * @param genericVnfId AAI generic-vnf-id
      * @param vfModuleId AAI vf-module-id
      * @param servers Openstack Server list
+     * @throws HeatBridgeException
      */
-    void buildAddVserversToAaiAction(String genericVnfId, String vfModuleId, List<Server> servers);
+    void buildAddVserversToAaiAction(String genericVnfId, String vfModuleId, List<Server> servers)
+            throws HeatBridgeException;
 
     /**
      * Query and build AAI actions for Openstack Neutron resources associated with a Compute resource to AAI's

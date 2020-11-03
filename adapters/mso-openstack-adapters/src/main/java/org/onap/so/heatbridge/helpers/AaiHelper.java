@@ -37,6 +37,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -50,14 +51,20 @@ import org.onap.aai.domain.yang.RelationshipData;
 import org.onap.aai.domain.yang.RelationshipList;
 import org.onap.aai.domain.yang.SriovVf;
 import org.onap.aai.domain.yang.Vserver;
+import org.onap.aaiclient.client.aai.AAIResourcesClient;
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
+import org.onap.so.heatbridge.HeatBridgeException;
 import org.onap.so.heatbridge.constants.HeatBridgeConstants;
 import org.openstack4j.model.compute.Server;
 import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.Port;
 import org.openstack4j.model.network.Subnet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 
 /**
@@ -65,6 +72,14 @@ import com.google.common.base.Preconditions;
  * transforming into required objects.
  */
 public class AaiHelper {
+
+    private static final Logger logger = LoggerFactory.getLogger(AaiHelper.class);
+
+    private AAIResourcesClient resourcesClient;
+
+    public AaiHelper() {
+        this.resourcesClient = new AAIResourcesClient();
+    }
 
     /**
      * Build vserver relationship object to entities: pserver, vf-module, image, flavor
@@ -74,9 +89,10 @@ public class AaiHelper {
      * @param genericVnfId AAI generic-vnf identifier
      * @param vfModuleId AAI vf-module identifier
      * @param server Openstack Server object
+     * @throws HeatBridgeException
      */
     public RelationshipList getVserverRelationshipList(final String cloudOwner, final String cloudRegionId,
-            final String genericVnfId, final String vfModuleId, final Server server) {
+            final String genericVnfId, final String vfModuleId, final Server server) throws HeatBridgeException {
         RelationshipList relationshipList = new RelationshipList();
         List<Relationship> relationships = relationshipList.getRelationship();
 
@@ -92,6 +108,10 @@ public class AaiHelper {
                 AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(genericVnfId)));
         relationships.add(genericVnfRelationship);
 
+        // vserver to vnfc relationship
+        if (!StringUtils.isEmpty(server.getName())) {
+            relationships.add(createVnfRelationshiptoVserver(server.getName(), genericVnfId, vfModuleId));
+        }
         // vserver to vf-module relationship
         Relationship vfModuleRelationship = buildRelationship(AAIUriFactory
                 .createResourceUri(AAIFluentTypeBuilder.network().genericVnf(genericVnfId).vfModule(vfModuleId)));
@@ -113,6 +133,27 @@ public class AaiHelper {
 
         return relationshipList;
     }
+
+    public Relationship createVnfRelationshiptoVserver(String vserverName, String genericVnfId, String vfModuleId)
+            throws HeatBridgeException {
+        AAIResourceUri vfModuleUri = AAIUriFactory
+                .createResourceUri(AAIFluentTypeBuilder.network().genericVnf(genericVnfId).vfModule(vfModuleId));
+        AAIResultWrapper vfModule = resourcesClient.get(vfModuleUri);
+        if (vfModule.hasRelationshipsTo(Types.VNFC)) {
+            List<AAIResourceUri> vnfcUris = vfModule.getRelationships().get().getRelatedUris(Types.VNFC);
+            Optional<AAIResourceUri> foundVnfcURI = vnfcUris.stream()
+                    .filter(resourceUri -> resourceUri.getURIKeys().get("vnfc-name").startsWith(vserverName))
+                    .findFirst();
+            if (!foundVnfcURI.isPresent()) {
+                throw new HeatBridgeException("Cannot Find VNFC to create edge to VServer");
+            } else {
+                return buildRelationship(foundVnfcURI.get());
+            }
+        } else {
+            throw new HeatBridgeException("VF Module contains no relationships to VNFCS, cannot build edge to VServer");
+        }
+    }
+
 
     public RelationshipList getLInterfaceRelationshipList(final String pserverName, final String pIfName,
             final String pfPciId) {
@@ -377,5 +418,9 @@ public class AaiHelper {
         Relationship relationship = new Relationship();
         relationship.setRelatedLink(relatedLink.build().toString());
         return relationship;
+    }
+
+    public void setAAIResourcesClient(AAIResourcesClient client) {
+        this.resourcesClient = client;
     }
 }
