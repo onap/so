@@ -22,6 +22,8 @@
 
 package org.onap.so.adapters.tasks.inventory;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
@@ -56,6 +58,7 @@ public class DeleteInventoryTask extends ExternalTaskUtils {
 
     public void executeExternalTask(ExternalTask externalTask, ExternalTaskService externalTaskService) {
         mdcSetup.setupMDC(externalTask);
+        Map<String, Object> variables = new HashMap<>();
         String externalTaskId = externalTask.getId();
         CloudInformation cloudInformation = externalTask.getVariable("cloudInformation");
         boolean success = true;
@@ -66,6 +69,7 @@ public class DeleteInventoryTask extends ExternalTaskUtils {
             } catch (Exception e) {
                 logger.error("Error during inventory of stack", e);
                 success = false;
+                variables.put("inventoryErrorMessage", e.getMessage());
             }
             mdcSetup.setElapsedTime();
             if (success) {
@@ -81,7 +85,8 @@ public class DeleteInventoryTask extends ExternalTaskUtils {
                     externalTaskService.handleFailure(externalTask, UNABLE_TO_WRITE_ALL_INVENTORY_TO_A_AI,
                             UNABLE_TO_WRITE_ALL_INVENTORY_TO_A_AI, getRetrySequence().length, 10000);
                 } else if (retryCount != null && retryCount - 1 == 0) {
-                    externalTaskService.handleBpmnError(externalTask, AAI_INVENTORY_FAILURE);
+                    externalTaskService.handleBpmnError(externalTask, AAI_INVENTORY_FAILURE, AAI_INVENTORY_FAILURE,
+                            variables);
                     mdcSetup.setResponseCode(ONAPLogConstants.ResponseStatus.ERROR.toString());
                     logger.error("The External Task Id: {}  Failed, All Retries Exhausted", externalTaskId);
                     logger.info(ONAPLogConstants.Markers.EXIT, "Exiting");
