@@ -317,8 +317,8 @@ public class HeatBridgeImpl implements HeatBridgeApi {
 
     @Override
     public void buildAddVserversToAaiAction(final String genericVnfId, final String vfModuleId,
-            final List<Server> servers) {
-        servers.forEach(server -> {
+            final List<Server> servers) throws HeatBridgeException {
+        for (Server server : servers) {
             Vserver vserver = aaiHelper.buildVserver(server.getId(), server);
 
             // Build vserver relationships to: image, flavor, pserver, vf-module
@@ -326,11 +326,28 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                     aaiHelper.getVserverRelationshipList(cloudOwner, cloudRegionId, genericVnfId, vfModuleId, server));
             AAIResourceUri vserverUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
                     .cloudRegion(cloudOwner, cloudRegionId).tenant(tenantId).vserver(vserver.getVserverId()));
+
             if (resourcesClient.exists(vserverUri)) {
                 AAIResultWrapper existingVserver = resourcesClient.get(vserverUri);
+                AAIResourceUri vfModuleUri = AAIUriFactory.createResourceUri(
+                        AAIFluentTypeBuilder.network().genericVnf(genericVnfId).vfModule(vfModuleId));
+                if (!existingVserver.hasRelationshipsTo(Types.VNFC)) {
+                    AAIResultWrapper vfModule = resourcesClient.get(vfModuleUri);
+                    if (vfModule.hasRelationshipsTo(Types.VNFC)) {
+                        List<AAIResourceUri> vnfcUris = vfModule.getRelationships().get().getRelatedUris(Types.VNFC);
+                        Optional<AAIResourceUri> foundVnfcURI = vnfcUris.stream().filter(resourceUri -> resourceUri
+                                .getURIKeys().get("vnfc-name").startsWith(vserver.getVserverName())).findFirst();
+                        if (foundVnfcURI.isEmpty()) {
+                            throw new HeatBridgeException("Cannot Find VNFC to create edge to VServer");
+                        }
+                        transaction.connect(vserverUri, foundVnfcURI.get());
+                    } else {
+                        throw new HeatBridgeException(
+                                "VF Module contains no relationships to VNFCS, cannot build edge to VServer");
+                    }
+                }
+
                 if (!existingVserver.hasRelationshipsTo(Types.VF_MODULE)) {
-                    AAIResourceUri vfModuleUri = AAIUriFactory.createResourceUri(
-                            AAIFluentTypeBuilder.network().genericVnf(genericVnfId).vfModule(vfModuleId));
                     transaction.connect(vserverUri, vfModuleUri);
                 }
                 if (!existingVserver.hasRelationshipsTo(Types.PSERVER)) {
@@ -341,7 +358,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             } else {
                 transaction.create(vserverUri, vserver);
             }
-        });
+        }
     }
 
     @Override
@@ -831,6 +848,10 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             logger.error("Error retrieving URI from Results JSON", e);
             return Optional.empty();
         }
+    }
+
+    protected void setAAIHelper(AaiHelper aaiHelper) {
+        this.aaiHelper = aaiHelper;
     }
 
     protected AAIDSLQueryClient getAAIDSLClient() {
