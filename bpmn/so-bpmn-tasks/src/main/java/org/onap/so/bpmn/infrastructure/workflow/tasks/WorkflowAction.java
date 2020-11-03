@@ -178,6 +178,7 @@ public class WorkflowAction {
 
     public void selectExecutionList(DelegateExecution execution) throws Exception {
         try {
+            fillExecutionDefault(execution);
             final String bpmnRequest = (String) execution.getVariable(BBConstants.G_BPMN_REQUEST);
             ServiceInstancesRequest sIRequest =
                     new ObjectMapper().readValue(bpmnRequest, ServiceInstancesRequest.class);
@@ -1871,12 +1872,15 @@ public class WorkflowAction {
         return generatedResourceId;
     }
 
-    private void fillExecution(DelegateExecution execution, boolean suppressRollback, String resourceId,
-            WorkflowType resourceType) {
+    private void fillExecutionDefault(DelegateExecution execution) {
         execution.setVariable("sentSyncResponse", false);
         execution.setVariable(HOMING, false);
         execution.setVariable("calledHoming", false);
         execution.setVariable(BBConstants.G_ISTOPLEVELFLOW, true);
+    }
+
+    private void fillExecution(DelegateExecution execution, boolean suppressRollback, String resourceId,
+            WorkflowType resourceType) {
         execution.setVariable("suppressRollback", suppressRollback);
         execution.setVariable("resourceId", resourceId);
         execution.setVariable("resourceType", resourceType);
