@@ -618,9 +618,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                     DSLQueryBuilder<Start, Node> builder = TraversalBuilder
                             .fragment(new DSLStartNode(Types.PSERVER, __.key("hostname", pserverHostName)))
                             .to(__.node(Types.P_INTERFACE)
-                                    .to(__.node(Types.SRIOV_PF,
-                                            __.key(HeatBridgeConstants.OS_PF_PCI_SLOT_KEY.toString(), pfPciId))
-                                            .output()));
+                                    .to(__.node(Types.SRIOV_PF, __.key("pf-pci-id", pfPciId)).output()));
 
                     List<Pathed> results = getAAIDSLClient().queryPathed(new DSLQuery(builder.build()));
 
