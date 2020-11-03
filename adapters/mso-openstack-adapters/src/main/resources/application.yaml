@@ -42,7 +42,6 @@ org:
         default_keystone_url_version: /v2.0
         default_keystone_reg_ex: "/[vV][0-9]"        
         po:
-          retryCodes: 504
           retryDelay: 5
           retryCount: 3
           pollTimeout: 7500
