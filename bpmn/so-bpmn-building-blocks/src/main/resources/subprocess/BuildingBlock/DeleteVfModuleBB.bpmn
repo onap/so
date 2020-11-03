@@ -31,17 +31,6 @@
       <bpmn:incoming>SequenceFlow_08tvhtf</bpmn:incoming>
       <bpmn:outgoing>Flow_0hlvlw2</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:subProcess id="SubProcess_11p7mrh" name="Error Handling&#10;&#10;" triggeredByEvent="true">
-      <bpmn:startEvent id="StartEvent_1xp6ewt">
-        <bpmn:outgoing>SequenceFlow_0h607z0</bpmn:outgoing>
-        <bpmn:errorEventDefinition />
-      </bpmn:startEvent>
-      <bpmn:endEvent id="EndEvent_0guhjau">
-        <bpmn:incoming>SequenceFlow_0h607z0</bpmn:incoming>
-        <bpmn:terminateEventDefinition />
-      </bpmn:endEvent>
-      <bpmn:sequenceFlow id="SequenceFlow_0h607z0" sourceRef="StartEvent_1xp6ewt" targetRef="EndEvent_0guhjau" />
-    </bpmn:subProcess>
     <bpmn:serviceTask id="UpdateVfModuleHeatStackId" name="&#10;AAI&#10;Update&#10; (vf module)&#10;" camunda:expression="${AAIUpdateTasks.updateHeatStackIdVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_0yuz21z</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_01vfwtp</bpmn:outgoing>
@@ -89,9 +78,25 @@
     <bpmn:sequenceFlow id="Flow_0plbl7p" sourceRef="ServiceTask_0itw3by" targetRef="aaiThrow" />
     <bpmn:sequenceFlow id="Flow_0hlvlw2" sourceRef="VnfAdapter" targetRef="ServiceTask_08ulmzc" />
     <bpmn:sequenceFlow id="Flow_02lmh6f" sourceRef="DeleteVfModuleBB_Start" targetRef="DeleteVfModuleVnfAdapter" />
+    <bpmn:subProcess id="Activity_1thbmzc" name="Inventory Error Handling" triggeredByEvent="true">
+      <bpmn:endEvent id="Event_00dlrto">
+        <bpmn:incoming>Flow_0yqo5xu</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:startEvent id="Event_0dfwcfl">
+        <bpmn:outgoing>Flow_0qyhv7c</bpmn:outgoing>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_1p6vsj6" errorRef="Error_1le3oui" />
+      </bpmn:startEvent>
+      <bpmn:serviceTask id="Activity_025387k" name="Process Error" camunda:expression="${ExceptionBuilder.processInventoryException(execution)}">
+        <bpmn:incoming>Flow_0qyhv7c</bpmn:incoming>
+        <bpmn:outgoing>Flow_0yqo5xu</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:sequenceFlow id="Flow_0qyhv7c" sourceRef="Event_0dfwcfl" targetRef="Activity_025387k" />
+      <bpmn:sequenceFlow id="Flow_0yqo5xu" sourceRef="Activity_025387k" targetRef="Event_00dlrto" />
+    </bpmn:subProcess>
   </bpmn:process>
   <bpmn:error id="Error_0jjnve8" name="Error_3k24na6" errorCode="AAIInventoryFailure" />
   <bpmn:escalation id="Escalation_130je8j" name="audit" escalationCode="audit1" />
+  <bpmn:error id="Error_1le3oui" name="AAIInventoryFailure" errorCode="AAIInventoryFailure" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DeleteVfModuleBB">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="DeleteVfModuleBB_Start">
@@ -122,28 +127,6 @@
       <bpmndi:BPMNShape id="CallActivity_0whogn3_di" bpmnElement="VnfAdapter">
         <dc:Bounds x="435" y="84" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="SubProcess_11p7mrh_di" bpmnElement="SubProcess_11p7mrh" isExpanded="true">
-        <dc:Bounds x="304" y="500" width="231" height="135" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="StartEvent_1xp6ewt_di" bpmnElement="StartEvent_1xp6ewt">
-        <dc:Bounds x="347" y="562" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="261" y="976" width="90" height="0" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_0guhjau_di" bpmnElement="EndEvent_0guhjau">
-        <dc:Bounds x="476" y="562" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="390" y="976" width="90" height="0" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0h607z0_di" bpmnElement="SequenceFlow_0h607z0">
-        <di:waypoint x="383" y="580" />
-        <di:waypoint x="476" y="580" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="371" y="937" width="90" height="0" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_0vlgqod_di" bpmnElement="UpdateVfModuleHeatStackId">
         <dc:Bounds x="800" y="308" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -238,6 +221,26 @@
       <bpmndi:BPMNEdge id="Flow_02lmh6f_di" bpmnElement="Flow_02lmh6f">
         <di:waypoint x="195" y="124" />
         <di:waypoint x="290" y="124" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_1thbmzc_di" bpmnElement="Activity_1thbmzc" isExpanded="true">
+        <dc:Bounds x="280" y="490" width="340" height="180" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_00dlrto_di" bpmnElement="Event_00dlrto">
+        <dc:Bounds x="552" y="562" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0dfwcfl_di" bpmnElement="Event_0dfwcfl">
+        <dc:Bounds x="320" y="562" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_025387k_di" bpmnElement="Activity_025387k">
+        <dc:Bounds x="400" y="540" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0qyhv7c_di" bpmnElement="Flow_0qyhv7c">
+        <di:waypoint x="356" y="580" />
+        <di:waypoint x="400" y="580" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0yqo5xu_di" bpmnElement="Flow_0yqo5xu">
+        <di:waypoint x="500" y="580" />
+        <di:waypoint x="552" y="580" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

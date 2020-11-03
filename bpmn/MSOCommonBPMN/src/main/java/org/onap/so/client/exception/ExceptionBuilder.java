@@ -376,4 +376,18 @@ public class ExceptionBuilder {
 
     }
 
+    public void processInventoryException(DelegateExecution execution) {
+        String errorMessage = "";
+        logger.debug("Processing Inventory Exception");
+        try {
+            errorMessage = (String) execution.getVariable("inventoryErrorMessage");
+        } catch (Exception e) {
+            logger.debug("Error while Processing Inventory Exception", e);
+        }
+        buildWorkflowException(execution, 500, errorMessage, Components.OPENSTACK);
+        throw new BpmnError("MSOWorkflowException");
+
+
+    }
+
 }
