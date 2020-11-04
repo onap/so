@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9cf8b4fc_a306ba3c",
+        "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/CreateVfModuleBB.bpmn",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 5597
+      },
+      "writtenOn": "2020-11-04T08:32:47Z",
+      "side": 1,
+      "message": "Why IPv4 address only?\nWhat is openstack reports IPv6 address?\nShouldn`t we support both types of addresses here?",
+      "range": {
+        "startLine": 53,
+        "startChar": 113,
+        "endLine": 53,
+        "endChar": 136
+      },
+      "revId": "9630dd840fac8977329d7ff2dacc96e6db31248d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
