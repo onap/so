@@ -210,10 +210,12 @@ public abstract class BaseNssmfManager implements NssmfManager {
     private void urlHandler() {
         NssmfUrlInfo nssmfUrlInfo =
                 NssmfAdapterConsts.getNssmfUrlInfo(this.executorType, this.esrInfo.getNetworkType(), actionType);
-        this.nssmfUrl = nssmfUrlInfo.getUrl();
-        this.httpMethod = nssmfUrlInfo.getHttpMethod();
-        this.nssmfUrl = nssmfUrl.replaceAll("\\{apiVersion}", getApiVersion());
-        this.params.forEach((k, v) -> this.nssmfUrl = this.nssmfUrl.replaceAll("\\{" + k + "}", v));
+        if (nssmfUrlInfo != null) {
+            this.nssmfUrl = nssmfUrlInfo.getUrl();
+            this.httpMethod = nssmfUrlInfo.getHttpMethod();
+            this.nssmfUrl = nssmfUrl.replaceAll("\\{apiVersion}", getApiVersion());
+            this.params.forEach((k, v) -> this.nssmfUrl = this.nssmfUrl.replaceAll("\\{" + k + "}", v));
+        }
     }
 
     /**

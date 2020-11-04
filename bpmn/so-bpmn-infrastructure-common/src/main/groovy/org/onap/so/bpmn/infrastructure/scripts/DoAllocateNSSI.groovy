@@ -139,7 +139,7 @@ class DoAllocateNSSI extends AbstractServiceTaskProcessor {
             case SubnetType.CN:
                 sliceTaskParams.cnSliceTaskInfo = sliceTaskInfo
                 break
-            case SubnetType.AN_NF:
+            case SubnetType.AN:
                 sliceTaskParams.anSliceTaskInfo = sliceTaskInfo
                 break
             case SubnetType.TN_BH:
