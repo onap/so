@@ -20,6 +20,7 @@
 
 /*
  * Copyright (C) 2018 Bell Canada. All rights reserved.
+ * Copyright (C) 2020 Nokia. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -171,6 +172,8 @@ public class HeatBridgeImplTest {
     public void setUp() throws HeatBridgeException, OpenstackClientException, BulkProcessFailed {
         when(resourcesClient.beginSingleTransaction()).thenReturn(transaction);
     }
+
+
 
     @Test
     public void testExtractStackResourceIdsByResourceType() throws HeatBridgeException {
@@ -369,15 +372,15 @@ public class HeatBridgeImplTest {
 
         org.onap.aai.domain.yang.RelationshipList relList = aaiHelper.getVserverRelationshipList(CLOUD_OWNER, REGION_ID,
                 "test-genericVnf-id", "test-vfModule-id", server1);
-        assertEquals(4, relList.getRelationship().size());
+        assertEquals(3, relList.getRelationship().size());
 
         org.onap.aai.domain.yang.RelationshipList relList2 = aaiHelper.getVserverRelationshipList(CLOUD_OWNER,
                 REGION_ID, "test-genericVnf-id", "test-vfModule-id", server2);
-        assertEquals(3, relList2.getRelationship().size());
+        assertEquals(2, relList2.getRelationship().size());
 
         org.onap.aai.domain.yang.RelationshipList relList3 = aaiHelper.getVserverRelationshipList(CLOUD_OWNER,
                 REGION_ID, "test-genericVnf-id", "test-vfModule-id", server3);
-        assertEquals(3, relList3.getRelationship().size());
+        assertEquals(2, relList3.getRelationship().size());
     }
 
 

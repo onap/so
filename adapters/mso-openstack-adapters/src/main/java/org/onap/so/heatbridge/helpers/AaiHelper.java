@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 - 2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2020 Nokia. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,11 +103,6 @@ public class AaiHelper {
                     AAIFluentTypeBuilder.cloudInfrastructure().pserver(server.getHypervisorHostname())));
             relationships.add(pserverRelationship);
         }
-
-        // vserver to generic-vnf relationship
-        Relationship genericVnfRelationship = buildRelationship(
-                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(genericVnfId)));
-        relationships.add(genericVnfRelationship);
 
         // vserver to vnfc relationship
         if (!StringUtils.isEmpty(server.getName())) {
