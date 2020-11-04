@@ -8,9 +8,9 @@ import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
 import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 
-@Scenario("Openstack-Query-Base-Stack-Resources")
-@RequestMapping(value = "/sim/v1/tenantOne/stacks/base_module_id/stackId/resources", method = RequestMethod.GET)
-public class QueryResourcesByBaseStackName extends AbstractSimulatorScenario {
+@Scenario("Openstack-Query-Stack-Resources-2")
+@RequestMapping(value = "/sim/v1/tenantOne/stacks/dummy_id/resources", method = RequestMethod.GET)
+public class QueryResourcesByStackName2 extends AbstractSimulatorScenario {
 
 
     @Override
@@ -19,8 +19,8 @@ public class QueryResourcesByBaseStackName extends AbstractSimulatorScenario {
 
         scenario.variable("stackName", "dummy_id");
 
-        scenario.http().send().response(HttpStatus.OK).header("ContentType", "application/json")
-                .payload(new ClassPathResource("openstack/gr_api/zrdm52emccr01_base_resources.json"));
+        scenario.http().send().response(HttpStatus.OK)
+                .payload(new ClassPathResource("openstack/gr_api/GetStackResources.json"));
 
     }
 
