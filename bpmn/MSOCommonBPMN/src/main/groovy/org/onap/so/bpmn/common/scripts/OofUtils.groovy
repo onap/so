@@ -22,6 +22,7 @@
 
 package org.onap.so.bpmn.common.scripts
 
+import com.google.gson.GsonBuilder
 import org.onap.so.beans.nsmf.oof.NsiReqBody
 import org.onap.so.beans.nsmf.oof.NssiReqBody
 import org.onap.so.beans.nsmf.oof.RequestInfo
@@ -682,9 +683,7 @@ return json.toString()
         nsiReqBody.setNSSTInfo(nsstInfo)
         nsiReqBody.setPreferReuse(preferReuse)
 
-        ObjectMapper objectMapper = new ObjectMapper()
-
-        return objectMapper.writeValueAsString(nsiReqBody)
+        return bean2JsonStr(nsiReqBody)
     }
 
     public <T> String buildSelectNSSIRequest(String requestId, TemplateInfo nsstInfo, String messageType,
@@ -710,9 +709,10 @@ return json.toString()
         nssiReqBody.setSliceProfile(sliceProfile)
         nssiReqBody.setNSSTInfo(nsstInfo)
 
+        return bean2JsonStr(nssiReqBody)
+    }
 
-        ObjectMapper objectMapper = new ObjectMapper()
-
-        return objectMapper.writeValueAsString(nssiReqBody)
+    private static <T> String bean2JsonStr(T t) {
+        return new GsonBuilder().setPrettyPrinting().create().toJson(t)
     }
 }

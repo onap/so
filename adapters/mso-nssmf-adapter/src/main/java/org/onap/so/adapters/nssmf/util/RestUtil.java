@@ -270,6 +270,7 @@ public class RestUtil {
     class HttpDeleteWithBody extends HttpEntityEnclosingRequestBase {
         public static final String METHOD_NAME = "DELETE";
 
+        @Override
         public String getMethod() {
             return METHOD_NAME;
         }
@@ -316,12 +317,15 @@ public class RestUtil {
     public HttpClient getHttpsClient() {
 
         TrustManager[] trustAllCerts = new TrustManager[] {new X509TrustManager() {
+            @Override
             public java.security.cert.X509Certificate[] getAcceptedIssuers() {
                 return null;
             }
 
+            @Override
             public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {}
 
+            @Override
             public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {}
         }};
 
@@ -329,10 +333,9 @@ public class RestUtil {
         try {
             SSLContext sc = SSLContext.getInstance("SSL");
             sc.init(null, trustAllCerts, new java.security.SecureRandom());
-            // HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
-            SSLConnectionSocketFactory sslsf =
-                    new SSLConnectionSocketFactory(sc, new String[] {"TLSv1"}, null, (s, sslSession) -> true);
+            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sc,
+                    new String[] {"TLSv1", "TLSv1.1", "TLSv1.2", "TLSv1.3"}, null, (s, sslSession) -> true);
             return HttpClients.custom().setSSLSocketFactory(sslsf).build();
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
