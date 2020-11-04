@@ -340,7 +340,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         execution.setVariable("AnAllocateNssiNbiRequest", nbiRequest)
         execution.setVariable("anBHSliceTaskInfo", sliceTaskInfo)
-        execution.setVariable("anSubnetType", SubnetType.AN_NF)
+        execution.setVariable("anSubnetType", SubnetType.AN)
     }
 
 

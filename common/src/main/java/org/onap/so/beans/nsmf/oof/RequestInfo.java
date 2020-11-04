@@ -40,7 +40,7 @@ public class RequestInfo implements Serializable {
 
     private Integer numSolutions;
 
-    private Integer timeout;
+    private Object timeout;
 
     private Map<?, ?> addtnlArgs;
 }

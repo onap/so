@@ -59,7 +59,7 @@ mso:
       endpoint: https://so-request-db-adapter.{{ include "common.namespace" . }}:8083
       auth: Basic YnBlbDpwYXNzd29yZDEk
   infra:
-    endpoint: https://so.{{ include "common.namespace" . }}:8080
+    endpoint: http://so.onap:8080
     auth: Basic SW5mcmFQb3J0YWxDbGllbnQ6cGFzc3dvcmQxJA==
 
 #Actuator
