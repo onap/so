@@ -90,6 +90,7 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
         return marshal(actDeActNssi);
     }
 
+    @Override
     protected RestResponse doQueryJobStatus(ResourceOperationStatus status) throws ApplicationException {
         return doResponseStatus(status);
     }
