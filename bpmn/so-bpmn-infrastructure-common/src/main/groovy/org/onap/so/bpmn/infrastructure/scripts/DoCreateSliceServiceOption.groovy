@@ -43,7 +43,6 @@ import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.http.ResponseEntity
 import org.springframework.util.StringUtils
 
 class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
@@ -331,6 +330,7 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
                 execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
 
         Map<String, Object> profileInfo = sliceParams.getServiceProfile()
+        profileInfo.remove("profileId")
         TemplateInfo nstInfo = sliceParams.getNSTInfo()
 
         List<TemplateInfo> nsstInfos = execution.getVariable("nsstInfos") as List<TemplateInfo>
@@ -596,7 +596,8 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
         Map nssiNeedHandlerInfo = nssiNeedHandlerInfos.get(currNssiIndex) as Map
 
         TemplateInfo nsstInfo = nssiNeedHandlerInfo.get("nsstInfo") as TemplateInfo
-        Object profileInfo = nssiNeedHandlerInfo.get("sliceProfile")
+        Map<String, Object> profileInfo = nssiNeedHandlerInfo.get("sliceProfile") as Map
+        profileInfo.remove("profileId")
 
         String urlString = UrnPropertiesReader.getVariable("mso.oof.endpoint", execution)
         logger.debug( "get NSI option OOF Url: " + urlString)

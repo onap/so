@@ -315,12 +315,14 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
         logger.debug("Start prepareSelectNSTRequest")
         String requestId = execution.getVariable("msoRequestId")
         String messageType = "NSTSelectionResponse"
-        Map<String, Object> serviceProfile = execution.getVariable("serviceProfile") as Map<String, Object>
         execution.setVariable("nstSelectionUrl", "/api/oof/v1/selection/nst")
         execution.setVariable("nstSelection_messageType", messageType)
         execution.setVariable("nstSelection_correlator", requestId)
         String timeout = UrnPropertiesReader.getVariable("mso.adapters.oof.timeout", execution);
         execution.setVariable("nstSelection_timeout", timeout)
+
+        Map<String, Object> serviceProfile = execution.getVariable("serviceProfile") as Map<String, Object>
+        serviceProfile.remove("profileId")
         String oofRequest = oofUtils.buildSelectNSTRequest(requestId, messageType, serviceProfile)
         execution.setVariable("nstSelection_oofRequest", oofRequest)
         logger.debug("Finish prepareSelectNSTRequest")
