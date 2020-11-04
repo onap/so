@@ -22,22 +22,15 @@ package org.onap.so.bpmn.common.scripts
 
 import org.apache.commons.lang3.StringUtils
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.json.JSONArray
-import org.json.JSONObject
-import org.onap.logging.filter.base.ErrorCode
 import org.onap.logging.filter.base.ONAPComponents
-import org.onap.logging.ref.slf4j.ONAPLogConstants
+import org.onap.so.beans.nsmf.NssmfAdapterNBIRequest
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
-import org.onap.so.logger.LoggingAnchor
-import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.web.util.UriUtils
 
-import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
 /***
@@ -94,56 +87,91 @@ class NssmfAdapterUtils {
 
     }
 
-	public String sendPostRequestNSSMF (DelegateExecution execution, String endPoint, String nssmfRequest) {
-		try {
+    public String sendPostRequestNSSMF (DelegateExecution execution, String endPoint, String nssmfRequest) {
+        try {
 
-			String nssmfEndpoint = UrnPropertiesReader.getVariable("mso.adapters.nssmf.endpoint",execution)
-			String queryEndpoint = nssmfEndpoint + endPoint
-			def responseData
-			HttpClient client = httpClientFactory.newJsonClient(new URL(queryEndpoint), ONAPComponents.EXTERNAL)
-			String basicAuthCred = execution.getVariable("BasicAuthHeaderValue")
-			client.addAdditionalHeader("Authorization", StringUtils.defaultIfEmpty(basicAuthCred, getBasicDBAuthHeader(execution)))
+            String nssmfEndpoint = UrnPropertiesReader.getVariable("mso.adapters.nssmf.endpoint",execution)
+            String queryEndpoint = nssmfEndpoint + endPoint
+            def responseData
+            HttpClient client = httpClientFactory.newJsonClient(new URL(queryEndpoint), ONAPComponents.EXTERNAL)
+            String basicAuthCred = execution.getVariable("BasicAuthHeaderValue")
+            client.addAdditionalHeader("Authorization", StringUtils.defaultIfEmpty(basicAuthCred, getBasicDBAuthHeader(execution)))
 
-			logger.debug('sending POST to NSSMF endpoint: ' + endPoint)
-			Response response = client.post(nssmfRequest)
+            logger.debug('sending POST to NSSMF endpoint: ' + endPoint)
+            Response response = client.post(nssmfRequest)
 
-			responseData = response.readEntity(String.class)
-			if (responseData != null) {
-				logger.debug("Received data from NSSMF: " + responseData)
-			}
+            responseData = response.readEntity(String.class)
+            if (responseData != null) {
+                logger.debug("Received data from NSSMF: " + responseData)
+            }
 
-			logger.debug('Response code:' + response.getStatus())
-			logger.debug('Response:' + System.lineSeparator() + responseData)
-			if (response.getStatus() >= 200 && response.getStatus() < 300) {
-				// parse response as needed
-				return responseData
-			}
-			else {
-				return null
-			}
-		}
-		catch (Exception e) {
-			logger.debug("ERROR WHILE QUERYING CATALOG DB: " + e.message)
-			throw e
-		}
+            logger.debug('Response code:' + response.getStatus())
+            logger.debug('Response:' + System.lineSeparator() + responseData)
+            if (response.getStatus() >= 200 && response.getStatus() < 300) {
+                // parse response as needed
+                return responseData
+            }
+            else {
+                return null
+            }
+        }
+        catch (Exception e) {
+            logger.debug("ERROR WHILE QUERYING CATALOG DB: " + e.message)
+            throw e
+        }
 
-	}
+    }
 
+    public String sendPostRequestNSSMF (DelegateExecution execution, String endPoint, NssmfAdapterNBIRequest nssmfRequest) {
+        try {
 
-	private String getBasicDBAuthHeader(DelegateExecution execution) {
+            String nssmfEndpoint = UrnPropertiesReader.getVariable("mso.adapters.nssmf.endpoint",execution)
+            String queryEndpoint = nssmfEndpoint + endPoint
+            def responseData
+            HttpClient client = httpClientFactory.newJsonClient(new URL(queryEndpoint), ONAPComponents.EXTERNAL)
+            String basicAuthCred = execution.getVariable("BasicAuthHeaderValue")
+            client.addAdditionalHeader("Authorization", StringUtils.defaultIfEmpty(basicAuthCred, getBasicDBAuthHeader(execution)))
 
-		String encodedString = null
-		try {
-			String basicAuthValueDB = UrnPropertiesReader.getVariable("mso.adapters.db.auth", execution)
-			logger.debug("DEBUG", " Obtained BasicAuth userid password for Catalog DB adapter: " + basicAuthValueDB)
+            logger.debug('sending POST to NSSMF endpoint: ' + endPoint)
+            Response response = client.post(nssmfRequest)
 
-			encodedString = utils.getBasicAuth(basicAuthValueDB, UrnPropertiesReader.getVariable("mso.msoKey", execution))
-			execution.setVariable("BasicAuthHeaderValue", encodedString)
-		} catch (IOException ex) {
-			String dataErrorMessage = " Unable to encode Catalog DB user/password string - " + ex.getMessage()
-			logger.error(dataErrorMessage)
-		}
-		return encodedString
-	}
+            responseData = response.readEntity(String.class)
+            if (responseData != null) {
+                logger.debug("Received data from NSSMF: " + responseData)
+            }
+
+            logger.debug('Response code:' + response.getStatus())
+            logger.debug('Response:' + System.lineSeparator() + responseData)
+            if (response.getStatus() >= 200 && response.getStatus() < 300) {
+                // parse response as needed
+                return responseData
+            }
+            else {
+                return null
+            }
+        }
+        catch (Exception e) {
+            logger.debug("ERROR WHILE QUERYING CATALOG DB: " + e.message)
+            throw e
+        }
+
+    }
+
+    private String getBasicDBAuthHeader(DelegateExecution execution) {
+
+        String encodedString = null
+        try {
+            String basicAuthValueDB = UrnPropertiesReader.getVariable("mso.adapters.db.auth", execution)
+            logger.debug("DEBUG", " Obtained BasicAuth userid password for Catalog DB adapter: " + basicAuthValueDB)
+
+            encodedString = utils.getBasicAuth(basicAuthValueDB, UrnPropertiesReader.getVariable("mso.msoKey", execution))
+            execution.setVariable("BasicAuthHeaderValue", encodedString)
+        } catch (IOException ex) {
+            String dataErrorMessage = " Unable to encode Catalog DB user/password string - " + ex.getMessage()
+            logger.error(dataErrorMessage)
+        }
+        return encodedString
+    }
+
 
 }
