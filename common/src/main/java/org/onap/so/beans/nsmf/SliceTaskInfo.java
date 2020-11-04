@@ -40,7 +40,7 @@ public class SliceTaskInfo<T> implements Serializable {
 
     private T sliceProfile;
 
-    private TemplateInfo NSSTInfo;
+    private TemplateInfo NSSTInfo = new TemplateInfo();
 
     private String sliceInstanceId;
 

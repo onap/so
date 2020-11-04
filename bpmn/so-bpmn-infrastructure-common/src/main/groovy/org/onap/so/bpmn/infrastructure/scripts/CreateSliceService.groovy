@@ -349,7 +349,7 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
             TemplateInfo nstInfo = new TemplateInfo()
             nstInfo.setUUID(nstSolution.get("UUID") as String)
             nstInfo.setInvariantUUID(nstSolution.get("invariantUUID") as String)
-            nstInfo.setName(nstSolution.get("name") as String)
+            nstInfo.setName(nstSolution.get("NSTName") as String)
 
             sliceTaskParams.setNSTInfo(nstInfo)
 
