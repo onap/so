@@ -596,7 +596,8 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
         Map nssiNeedHandlerInfo = nssiNeedHandlerInfos.get(currNssiIndex) as Map
 
         TemplateInfo nsstInfo = nssiNeedHandlerInfo.get("nsstInfo") as TemplateInfo
-        Object profileInfo = nssiNeedHandlerInfo.get("sliceProfile")
+        Map<String, Object> profileInfo = nssiNeedHandlerInfo.get("sliceProfile") as Map
+        profileInfo.remove("profileId")
 
         String urlString = UrnPropertiesReader.getVariable("mso.oof.endpoint", execution)
         logger.debug( "get NSI option OOF Url: " + urlString)
