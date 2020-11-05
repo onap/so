@@ -3121,6 +3121,7 @@ public class WorkflowActionTest extends BaseTaskTest {
     }
 
     private void assertEqualsBulkFlowName(List<ExecuteBuildingBlock> ebbs, String... flowNames) {
+
         for (int i = 0; i < ebbs.size(); i++) {
             assertEquals(ebbs.get(i).getBuildingBlock().getBpmnFlowName(), flowNames[i]);
         }
