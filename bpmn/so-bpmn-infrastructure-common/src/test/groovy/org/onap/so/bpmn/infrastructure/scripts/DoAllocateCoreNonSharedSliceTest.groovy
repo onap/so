@@ -46,7 +46,7 @@ class DoAllocateCoreNonSharedSliceTest extends MsoGroovyTest {
     @Captor
     static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
 
-    @Test
+     @Test
     public void testPreProcessRequest() {
 
         String networkServiceModelInfo=""" {
@@ -57,10 +57,16 @@ class DoAllocateCoreNonSharedSliceTest extends MsoGroovyTest {
                                 "modelCustomizationUuid" : "cbc12c2a-67e6-4336-9236-eaf51eacdc75",
                                 "modelInstanceName"      : "5gcembb_proxy 0"
         }"""
+		
+		
+		
+		String sliceParams= """{\r\n\t\"sliceProfile\": {\r\n\t\t\"snssaiList\": [\r\n\t\t\t\"001-100001\"\r\n\t\t],\r\n\t\t\"sliceProfileId\": \"ab9af40f13f721b5f13539d87484098\",\r\n\t\t\"plmnIdList\": [\r\n\t\t\t\"460-00\",\r\n\t\t\t\"460-01\"\r\n\t\t],\r\n\t\t\"perfReq\": {\r\n\t\t\t\"perfReqEmbbList \": [{\r\n\t\t\t\t\"activityFactor\": 50\r\n\t\t\t}]\r\n\t\t},\r\n\t\t\"maxNumberofUEs\": 200,\r\n\t\t\"coverageAreaTAList\": [\r\n\t\t\t\"1\",\r\n\t\t\t\"2\",\r\n\t\t\t\"3\",\r\n\t\t\t\"4\"\r\n\t\t],\r\n\t\t\"latency\": 2,\r\n\t\t\"resourceSharingLevel\": \"non-shared\"\r\n\t},\r\n\t\"endPoints\": [{\r\n\t\t\"IpAdress\": \"\",\r\n\t\t\"LogicalLinkId\": \"\",\r\n\t\t\"nextHopInfo\": \"\"\r\n\t}],\r\n\t\"nsiInfo\": {\r\n\t\t\"nsiId\": \"NSI-M-001-HDBNJ-NSMF-01-A-ZX\",\r\n\t\t\"nsiName\": \"eMBB-001\"\r\n\t},\r\n\t\"scriptName\": \"AN1\"\r\n}"""
 
         when(mockExecution.getVariable("serviceInstanceId")).thenReturn("123456")
         when(mockExecution.getVariable("networkServiceModelInfo")).thenReturn(networkServiceModelInfo)
 
+		when(mockExecution.getVariable("sliceParams")).thenReturn(sliceParams)
+		
         DoAllocateCoreNonSharedSlice allocateNssi = new DoAllocateCoreNonSharedSlice()
         allocateNssi.preProcessRequest(mockExecution)
 
@@ -73,7 +79,9 @@ class DoAllocateCoreNonSharedSliceTest extends MsoGroovyTest {
 
         Mockito.verify(mockExecution, times(1)).setVariable(eq("orchestrationStatus"), captor.capture())
         assertEquals("created", captor.getValue())
-        Mockito.verify(mockExecution, times(4)).setVariable(captor.capture() as String, captor.capture())
+		
+		
+        Mockito.verify(mockExecution, times(5)).setVariable(captor.capture() as String, captor.capture())
     }
 
     @Test
