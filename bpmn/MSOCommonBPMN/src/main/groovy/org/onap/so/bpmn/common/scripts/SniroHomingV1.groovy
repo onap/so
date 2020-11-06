@@ -204,6 +204,7 @@ class SniroHomingV1 extends AbstractServiceTaskProcessor{
                             if(inventoryType.equalsIgnoreCase("service")){
                                 VnfResource vnf = new VnfResource()
                                 vnf.setVnfHostname(assignmentMap.get("vnfHostName"))
+                                vnf.setResourceId(assignmentMap.get("vnfId"))
                                 resource.getHomingSolution().setVnf(vnf)
                                 resource.getHomingSolution().setServiceInstanceId(placement.getString("serviceInstanceId"))
                             }
