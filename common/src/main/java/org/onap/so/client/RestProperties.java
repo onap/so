@@ -40,4 +40,13 @@ public interface RestProperties {
     public default boolean mapNotFoundToEmpty() {
         return false;
     }
+
+    /**
+     * Time in milliseconds
+     * 
+     * @return
+     */
+    public default Long getReadTimeout() {
+        return Long.valueOf(60000);
+    }
 }

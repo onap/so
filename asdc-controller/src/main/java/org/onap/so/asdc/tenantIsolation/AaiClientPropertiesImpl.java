@@ -32,6 +32,7 @@ public class AaiClientPropertiesImpl implements AAIProperties {
     private String aaiEndpoint;
     private String auth;
     private String key;
+    private Long readTimeout;
     private static final String SYSTEM_NAME = "MSO";
 
     public AaiClientPropertiesImpl() {
@@ -39,6 +40,7 @@ public class AaiClientPropertiesImpl implements AAIProperties {
         aaiEndpoint = context.getEnvironment().getProperty("mso.aai.endpoint");
         this.auth = context.getEnvironment().getProperty("aai.auth");
         this.key = context.getEnvironment().getProperty("mso.msoKey");
+        this.readTimeout = context.getEnvironment().getProperty("aai.readTimeout", Long.class, new Long(60000));
     }
 
     @Override
@@ -66,5 +68,10 @@ public class AaiClientPropertiesImpl implements AAIProperties {
     @Override
     public String getKey() {
         return this.key;
+    }
+
+    @Override
+    public Long getReadTimeout() {
+        return this.readTimeout;
     }
 }
