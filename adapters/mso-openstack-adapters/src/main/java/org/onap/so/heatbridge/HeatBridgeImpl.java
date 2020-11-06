@@ -342,8 +342,8 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                         }
                         transaction.connect(vserverUri, foundVnfcURI.get());
                     } else {
-                        throw new HeatBridgeException(
-                                "VF Module contains no relationships to VNFCS, cannot build edge to VServer");
+                        /*throw new HeatBridgeException(
+                                "VF Module contains no relationships to VNFCS, cannot build edge to VServer");*/
                     }
                 }
 
