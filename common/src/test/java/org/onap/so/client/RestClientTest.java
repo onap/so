@@ -21,6 +21,8 @@
 package org.onap.so.client;
 
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
@@ -28,7 +30,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Map;
+import java.util.Optional;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
@@ -37,20 +45,23 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.logging.filter.base.ONAPComponentsList;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RestClientTest {
 
 
     private final HttpClientFactory httpClientFactory = new HttpClientFactory();
-    @Mock
-    private RestProperties props;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(WireMockConfiguration.options().dynamicPort());
 
     @Test
     public void retries() throws Exception {
@@ -77,6 +88,50 @@ public class RestClientTest {
             // we expect an exception, ignore it
         }
         verify(spy, times(1)).buildRequest(any(String.class), ArgumentMatchers.isNull());
+
+    }
+
+    @Test
+    public void timeoutTest() throws URISyntaxException {
+        wireMockRule.stubFor(get("/chunked/delayed")
+                .willReturn(aResponse().withStatus(200).withBody("Hello world!").withChunkedDribbleDelay(2, 300)));
+
+
+        RestProperties props = new RestProperties() {
+
+            @Override
+            public URL getEndpoint() throws MalformedURLException {
+                return new URL(String.format("http://localhost:%s", wireMockRule.port()));
+            }
+
+            @Override
+            public String getSystemName() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public Long getReadTimeout() {
+                return Long.valueOf(100);
+            }
+        };
+        RestClient client = new RestClient(props, Optional.of(new URI("/chunked/delayed"))) {
+
+            @Override
+            protected void initializeHeaderMap(Map<String, String> headerMap) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            protected ONAPComponentsList getTargetEntity() {
+                return ONAPComponents.EXTERNAL;
+            }
+
+        };
+
+        thrown.expect(ProcessingException.class);
+        client.get();
 
     }
 

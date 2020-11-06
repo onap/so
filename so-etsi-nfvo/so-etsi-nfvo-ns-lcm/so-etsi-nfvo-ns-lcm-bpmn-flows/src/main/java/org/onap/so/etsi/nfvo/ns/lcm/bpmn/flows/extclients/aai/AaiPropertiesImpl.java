@@ -33,14 +33,15 @@ public class AaiPropertiesImpl implements AAIProperties {
     private final String encryptedBasicAuth;
     private final String encryptionKey;
     private final String aaiVersion;
+    private final Long readTimeout;
 
     public AaiPropertiesImpl() {
-
         final ApplicationContext context = SpringContextHelper.getAppContext();
         this.endpoint = context.getEnvironment().getProperty("aai.endpoint");
         this.encryptedBasicAuth = context.getEnvironment().getProperty("aai.auth");
         this.encryptionKey = context.getEnvironment().getProperty("mso.key");
         this.aaiVersion = context.getEnvironment().getProperty("aai.version");
+        this.readTimeout = context.getEnvironment().getProperty("aai.readTimeout", Long.class, new Long(60000));
     }
 
     @Override
@@ -72,5 +73,10 @@ public class AaiPropertiesImpl implements AAIProperties {
     @Override
     public String getKey() {
         return encryptionKey;
+    }
+
+    @Override
+    public Long getReadTimeout() {
+        return this.readTimeout;
     }
 }
