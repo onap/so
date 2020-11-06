@@ -1251,9 +1251,12 @@ public class WorkflowAction {
                                             foundVfModuleOrVG = true;
                                         }
 
-                                        if (vfModuleCustomization.getVfModule() != null
-                                                && vfModuleCustomization.getVfModule().getModuleHeatTemplate() != null
-                                                && vfModuleCustomization.getHeatEnvironment() != null) {
+                                        if ((vfModuleCustomization.getVfModule() != null)
+                                                && ((vfModuleCustomization.getVfModule().getModuleHeatTemplate() != null
+                                                        && vfModuleCustomization.getHeatEnvironment() != null))
+                                                || (vfModuleCustomization.getVfModule().getModelName() != null
+                                                        && vfModuleCustomization.getVfModule().getModelName()
+                                                                .contains("helm"))) {
                                             foundVfModuleOrVG = true;
                                             Resource resource = new Resource(WorkflowType.VFMODULE,
                                                     vfModuleCustomization.getModelCustomizationUUID(), false);
