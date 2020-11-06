@@ -243,6 +243,10 @@ public class WorkflowActionTest extends BaseTaskTest {
         SPY_workflowAction.selectExecutionList(execution);
         assertEquals(execution.getVariable("WorkflowActionErrorMessage"),
                 "Exception while setting execution list. serviceInstance with name (instanceName) and different version id (3c40d244-808e-42ca-b09a-256d83d19d0a) already exists. The name must be unique.");
+
+        // verify default values are present in failure case
+        assertEquals(true, execution.getVariable("isTopLevelFlow"));
+        assertEquals(false, execution.getVariable("sentSyncResponse"));
     }
 
     /**
