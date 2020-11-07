@@ -49,7 +49,9 @@ import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
 import org.onap.logging.filter.base.ONAPComponents
 import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.aai.domain.yang.NetworkRoute
 import org.onap.aai.domain.yang.v19.ServiceInstance
+import org.onap.aai.domain.yang.v20.Relationship
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.AAIEdgeLabel
@@ -86,6 +88,15 @@ class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
         //networkServiceModelUuid
         String networkServiceModelUuid = jsonUtil.getJsonValue(execution.getVariable("networkServiceModelInfo"), "modelUuid") ?: ""
         execution.setVariable("networkServiceModelUuid", networkServiceModelUuid)
+		String sliceParams = execution.getVariable("sliceParams")
+		logger.debug("sliceParams "+sliceParams)
+		List<String> bhEndPoints = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(sliceParams, "endPoints"))
+		if(bhEndPoints.empty) {
+			logger.debug("End point info is empty")
+			exceptionUtil.buildAndThrowWorkflowException(execution, 500, "End point info is empty")
+		}else {
+			execution.setVariable("bh_endpoint", bhEndPoints.get(0))
+		}
         logger.debug(Prefix+ " **** Exit DoAllocateCoreNonSharedSlice:::  preProcessRequest ****")
     }
 
@@ -376,6 +387,8 @@ class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
             if(response.getStatus()!=200 || response.getStatus()!=201 || response.getStatus()!=202) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, response.getStatus(), "Set association of NSSI and Network service instance has failed in AAI")
             } else {
+				//end point update
+				createEndPointsInAai(execution)
                 execution.setVariable("progress", 100)
                 execution.setVariable("status", "finished")
                 execution.setVariable("statusDescription", "DoAllocateCoreNonSharedNSSI success")
@@ -388,6 +401,63 @@ class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
         }
         logger.debug(Prefix+ " **** Exit DoAllocateCoreNonSharedSlice ::: updateRelationship ****")
     }
+
+	private void createEndPointsInAai(DelegateExecution execution) {
+		String type = "endpoint"
+		String function = "core_EP"
+		int prefixLength = 24
+		String addressFamily = "ipv4"
+		//BH RAN end point update
+		String bh_endpoint = execution.getVariable("bhEndPoints")
+		String bh_routeId = UUID.randomUUID().toString()
+		execution.setVariable("coreEp_ID_bh", bh_routeId)
+		String role = "CN"
+		String cnIpAddress = jsonUtil.getJsonValue(bh_endpoint, "IpAddress")
+		String LogicalLinkId = jsonUtil.getJsonValue(bh_endpoint, "LogicalLinkId")
+		String nextHopInfo = jsonUtil.getJsonValue(bh_endpoint, "nextHopInfo")
+		NetworkRoute bh_ep = new NetworkRoute()
+		bh_ep.setRouteId(bh_routeId)
+		bh_ep.setFunction(function)
+		bh_ep.setRole(role)
+		bh_ep.setType(type)
+		bh_ep.setIpAddress(cnIpAddress)
+		bh_ep.setLogicalInterfaceId(LogicalLinkId)
+		bh_ep.setNextHop(nextHopInfo)
+		bh_ep.setPrefixLength(prefixLength)
+		bh_ep.setAddressFamily(addressFamily)
+		try {
+			AAIResourcesClient client = new AAIResourcesClient()
+			logger.debug("creating bh endpoint . ID : "+bh_routeId+" node details : "+bh_ep.toString())
+			AAIResourceUri networkRouteUri = AAIUriFactory.createResourceUri( new AAIObjectType(AAINamespaceConstants.NETWORK, NetworkRoute.class), bh_routeId)
+			client.create(networkRouteUri, bh_ep)
+			//relationship b/w bh_ep and Core NSSI
+			def coreNssi = execution.getVariable("NSSIserviceInstanceId")
+			Relationship relationship = new Relationship()
+			String relatedLink = "aai/v21/network/network-routes/network-route/${bh_routeId}"
+			relationship.setRelatedLink(relatedLink)
+			relationship.setRelatedTo("network-route")
+			relationship.setRelationshipLabel("org.onap.relationships.inventory.ComposedOf")
+			try {
+				AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
+						execution.getVariable("globalSubscriberId"),
+						execution.getVariable("subscriptionServiceType"),
+						coreNssi).relationshipAPI()
+				client.create(uri, relationship)
+			} catch (BpmnError e) {
+				throw e
+			} catch (Exception ex) {
+				String msg = "Exception in CreateCommunicationService.createRelationShipInAAI. " + ex.getMessage()
+				logger.info(msg)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+			}
+		} catch (BpmnError e) {
+			throw e
+		} catch (Exception ex) {
+			String msg = "Exception in createEndPointsInAai " + ex.getMessage()
+			logger.info(msg)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+		}
+	}
 
     /**
      * prepare ResourceOperation status
