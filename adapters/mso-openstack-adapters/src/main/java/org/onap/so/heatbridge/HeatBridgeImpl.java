@@ -48,6 +48,7 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.InetAddressValidator;
 import org.onap.aai.domain.yang.Flavor;
 import org.onap.aai.domain.yang.Image;
@@ -374,44 +375,47 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             boolean isL2Multicast = false;
             Port port = osClient.getPortById(portId);
             Network network = osClient.getNetworkById(port.getNetworkId());
-            LInterface lIf = new LInterface();
-            lIf.setInterfaceId(port.getId());
-            lIf.setInterfaceName(port.getName());
-            lIf.setMacaddr(port.getMacAddress());
-            lIf.setNetworkName(network.getName());
-            lIf.setIsPortMirrored(false);
-            lIf.setIsIpUnnumbered(false);
-            lIf.setInMaint(false);
+            if (!StringUtils.isEmpty(port.getDeviceId())) {
+                LInterface lIf = new LInterface();
+                lIf.setInterfaceId(port.getId());
+                lIf.setInterfaceName(port.getName());
+                lIf.setMacaddr(port.getMacAddress());
+                lIf.setNetworkName(network.getName());
+                lIf.setIsPortMirrored(false);
+                lIf.setIsIpUnnumbered(false);
+                lIf.setInMaint(false);
 
-            if (port.getProfile() != null && port.getProfile().get("trusted") != null) {
-                String trusted = port.getProfile().get("trusted").toString();
-                if (Boolean.parseBoolean(trusted)) {
-                    isL2Multicast = true;
+                if (port.getProfile() != null && port.getProfile().get("trusted") != null) {
+                    String trusted = port.getProfile().get("trusted").toString();
+                    if (Boolean.parseBoolean(trusted)) {
+                        isL2Multicast = true;
+                    }
                 }
-            }
-            lIf.setL2Multicasting(isL2Multicast);
-            lIf.setInterfaceType(getInterfaceType(nodeType, port.getvNicType()));
-            lIf.setRelationshipList(new RelationshipList());
+                lIf.setL2Multicasting(isL2Multicast);
+                lIf.setInterfaceType(getInterfaceType(nodeType, port.getvNicType()));
+                lIf.setRelationshipList(new RelationshipList());
 
-            if (oobMgtNetIds != null && oobMgtNetIds.contains(port.getNetworkId())) {
-                lIf.setInterfaceRole(OOB_MGT_NETWORK_IDENTIFIER);
-            } else {
-                lIf.setInterfaceRole(port.getvNicType());
-            }
+                if (oobMgtNetIds != null && oobMgtNetIds.contains(port.getNetworkId())) {
+                    lIf.setInterfaceRole(OOB_MGT_NETWORK_IDENTIFIER);
+                } else {
+                    lIf.setInterfaceRole(port.getvNicType());
+                }
 
-            // Update l-interface to the vserver
-            transaction.createIfNotExists(
-                    AAIUriFactory.createResourceUri(
-                            AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(cloudOwner, cloudRegionId)
-                                    .tenant(tenantId).vserver(port.getDeviceId()).lInterface(lIf.getInterfaceName())),
-                    Optional.of(lIf));
+                // Update l-interface to the vserver
+                transaction
+                        .createIfNotExists(
+                                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                                        .cloudRegion(cloudOwner, cloudRegionId).tenant(tenantId)
+                                        .vserver(port.getDeviceId()).lInterface(lIf.getInterfaceName())),
+                                Optional.of(lIf));
 
-            updateLInterfaceIps(port, lIf);
+                updateLInterfaceIps(port, lIf);
 
-            if (cloudOwner.equals(env.getProperty("mso.cloudOwner.included", ""))) {
-                Server server = getOpenstackServerById(port.getDeviceId());
-                createVlanAndSriovVF(port, lIf, server.getHypervisorHostname());
-                updateSriovPfToSriovVF(port, lIf);
+                if (cloudOwner.equals(env.getProperty("mso.cloudOwner.included", ""))) {
+                    Server server = getOpenstackServerById(port.getDeviceId());
+                    createVlanAndSriovVF(port, lIf, server.getHypervisorHostname());
+                    updateSriovPfToSriovVF(port, lIf);
+                }
             }
         }
     }
