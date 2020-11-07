@@ -53,12 +53,18 @@ public class CreateAAIInventory {
     @Autowired
     protected CloudConfig cloudConfig;
 
+    private static final String MULTICLOUD_MODE = "MULTICLOUD";
+
     @Autowired
     protected Environment env;
 
     public void heatbridge(CloudInformation cloudInformation) throws HeatBridgeException, MsoCloudSiteNotFound {
         CloudSite cloudSite = cloudConfig.getCloudSite(cloudInformation.getRegionId())
                 .orElseThrow(() -> new MsoCloudSiteNotFound(cloudInformation.getRegionId()));
+        if (cloudSite.getOrchestrator() != null && MULTICLOUD_MODE.equalsIgnoreCase(cloudSite.getOrchestrator())) {
+            logger.debug("Skipping Heatbridge as CloudSite orchestrator is: " + MULTICLOUD_MODE);
+            return;
+        }
         CloudIdentity cloudIdentity = cloudSite.getIdentityService();
         String heatStackId = cloudInformation.getTemplateInstanceId().split("/")[1];
 

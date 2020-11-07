@@ -14,6 +14,8 @@ import org.camunda.bpm.client.task.ExternalTaskService;
 import org.onap.so.adapters.network.MsoNetworkAdapterImpl;
 import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.adapters.vnf.MsoVnfAdapterImpl;
+import org.onap.so.adapters.vnf.MsoVnfPluginAdapterImpl;
+import org.onap.so.adapters.vnf.VnfAdapterUtils;
 import org.onap.so.adapters.vnfrest.CreateVfModuleRequest;
 import org.onap.so.adapters.vnfrest.CreateVolumeGroupRequest;
 import org.onap.so.logging.tasks.AuditMDCSetup;
@@ -35,6 +37,12 @@ public class RollbackService extends ExternalTaskUtils {
     private MsoNetworkAdapterImpl networkAdapterImpl;
 
     @Autowired
+    private VnfAdapterUtils vnfAdapterUtils;
+
+    @Autowired
+    private MsoVnfPluginAdapterImpl vnfPluginImpl;
+
+    @Autowired
     private AuditMDCSetup mdcSetup;
 
     public void executeExternalTask(ExternalTask externalTask, ExternalTaskService externalTaskService) {
@@ -51,19 +59,38 @@ public class RollbackService extends ExternalTaskUtils {
                     logger.debug("Executing External Task Rollback Service for Create Volume Group");
                     CreateVolumeGroupRequest req =
                             JAXB.unmarshal(new StringReader(xmlRequest), CreateVolumeGroupRequest.class);
-                    vnfAdapterImpl.deleteVnf(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
-                            req.getVolumeGroupName(), req.getMsoRequest(), false);
-                    pollRollbackStatus = true;
-                    success = true;
+                    boolean isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
+                    if (!isMulticloud) {
+                        vnfAdapterImpl.deleteVnf(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
+                                req.getVolumeGroupName(), req.getMsoRequest(), false);
+                        pollRollbackStatus = true;
+                        success = true;
+                    } else {
+                        vnfPluginImpl.deleteVnf(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
+                                req.getVolumeGroupName(), req.getMsoRequest());
+                        pollRollbackStatus = false;
+                        success = true;
+                    }
                 } else if ("createVfModuleRequest".equals(requestType.get())) {
                     logger.debug("Executing External Task Rollback Service for Create Vf Module");
                     CreateVfModuleRequest req =
                             JAXB.unmarshal(new StringReader(xmlRequest), CreateVfModuleRequest.class);
-                    vnfAdapterImpl.deleteVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
-                            req.getVfModuleName(), req.getVnfId(), req.getVfModuleId(), req.getModelCustomizationUuid(),
-                            req.getMsoRequest(), new Holder<>());
-                    pollRollbackStatus = true;
-                    success = true;
+                    boolean isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
+                    if (!isMulticloud) {
+                        vnfAdapterImpl.deleteVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
+                                req.getVfModuleName(), req.getVnfId(), req.getVfModuleId(),
+                                req.getModelCustomizationUuid(), req.getMsoRequest(), new Holder<>());
+                        pollRollbackStatus = true;
+                        success = true;
+                    } else {
+                        /*
+                         * vnfPluginImpl.deleteVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
+                         * req.getVfModuleName(),req.getMsoRequest(), new Holder<>()); TODO: Figure out how to properly
+                         * rollback
+                         */
+                        pollRollbackStatus = false;
+                        success = true;
+                    }
                 } else if ("createNetworkRequest".equals(requestType.get())) {
                     logger.debug("Executing External Task Rollback Service for Create Network");
                     Holder<Boolean> networkDeleted = new Holder<>();

@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.adapters.tasks.orchestration.PollService;
+import org.onap.so.adapters.vnf.VnfAdapterUtils;
 import org.onap.so.logging.tasks.AuditMDCSetup;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.utils.MsoHeatUtils;
@@ -34,6 +35,9 @@ public class PollServiceTest {
     private MsoHeatUtils msoHeatUtils;
 
     @Mock
+    private VnfAdapterUtils vnfAdapterUtils;
+
+    @Mock
     private AuditMDCSetup mdcSetup;
 
     @InjectMocks
@@ -44,6 +48,7 @@ public class PollServiceTest {
         String xmlString =
                 new String(Files.readAllBytes(Paths.get(RESOURCE_PATH + "/vnfAdapterTaskRequestCreate.xml")));
 
+        Mockito.when(vnfAdapterUtils.isMulticloudMode(Mockito.any(), Mockito.any())).thenReturn(false);
         Mockito.when(mockExternalTask.getVariable("openstackAdapterTaskRequest")).thenReturn(xmlString);
         Mockito.when(mockExternalTask.getVariable("PollRollbackStatus")).thenReturn(false);
         Mockito.when(mockExternalTask.getVariable("stackId")).thenReturn("stackId/stack123");
