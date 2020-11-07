@@ -7,7 +7,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import javax.xml.ws.Holder;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
 import org.junit.Test;
@@ -16,15 +15,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.so.adapters.tasks.orchestration.StackService;
 import org.onap.so.adapters.vnf.MsoVnfAdapterImpl;
-import org.onap.so.entity.MsoRequest;
+import org.onap.so.adapters.vnf.VnfAdapterUtils;
+import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.logging.tasks.AuditMDCSetup;
-import org.onap.so.openstack.beans.VnfRollback;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.utils.MsoHeatUtils;
 import com.woorea.openstack.heat.model.Stack;
-import org.onap.so.adapters.vnf.exceptions.VnfException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StackServiceTest {
@@ -39,6 +36,9 @@ public class StackServiceTest {
 
     @Mock
     private MsoVnfAdapterImpl vnfAdapterImpl;
+
+    @Mock
+    private VnfAdapterUtils vnfAdapterUtils;
 
     @Mock
     private MsoHeatUtils msoHeatUtils;
@@ -64,6 +64,7 @@ public class StackServiceTest {
 
         Stack stack = new Stack();
         stack.setId("heatId");
+        Mockito.when(vnfAdapterUtils.isMulticloudMode(Mockito.any(), Mockito.any())).thenReturn(false);
         Mockito.when(mockExternalTask.getVariable("openstackAdapterTaskRequest")).thenReturn(payload);
         Mockito.doNothing().when(vnfAdapterImpl).createVfModule(Mockito.any(), Mockito.any(), Mockito.any(),
                 Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
