@@ -427,6 +427,83 @@ public class ASDCRestInterfaceTest extends BaseTest {
         assertEquals("vCPEResCust 2019-10-01 _2364", service.get().getModelName());
     }
 
+    @Test
+    public void testServiceUbuntu16Test() throws Exception {
+        wireMockServer.stubFor(post(urlPathMatching("/aai/.*"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")));
+
+        wireMockServer.stubFor(post(urlPathMatching("/v1.0/activity-spec"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withStatus(org.springframework.http.HttpStatus.ACCEPTED.value())));
+
+        String resourceLocation = "src/test/resources/resource-examples/service-ubuntu16test/";
+        ObjectMapper mapper = new ObjectMapper();
+        NotificationDataImpl request = mapper.readValue(
+                new File(resourceLocation + "service-ubuntu16test-notification.json"), NotificationDataImpl.class);
+        headers.add("resource-location", resourceLocation);
+        HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("test/treatNotification/v1"),
+                HttpMethod.POST, entity, String.class);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+
+        Optional<Service> service = serviceRepo.findById("ed0391da-b963-4c45-bf3a-b49cc7a94fab");
+        assertTrue(service.isPresent());
+        assertEquals("ubuntu16test", service.get().getModelName());
+    }
+
+
+    @Test
+    public void testServiceBasicCnf() throws Exception {
+
+        wireMockServer.stubFor(post(urlPathMatching("/aai/.*"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")));
+
+        wireMockServer.stubFor(post(urlPathMatching("/v1.0/activity-spec"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withStatus(org.springframework.http.HttpStatus.ACCEPTED.value())));
+
+        String resourceLocation = "src/test/resources/resource-examples/service-BasicCnf/";
+        ObjectMapper mapper = new ObjectMapper();
+        NotificationDataImpl request = mapper.readValue(
+                new File(resourceLocation + "service-BasicCnf-notification.json"), NotificationDataImpl.class);
+        headers.add("resource-location", resourceLocation);
+        HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("test/treatNotification/v1"),
+                HttpMethod.POST, entity, String.class);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+
+        Optional<Service> service = serviceRepo.findById("31e0cd50-0a84-42b4-a7a8-dd5d82e6907d");
+        assertTrue(service.isPresent());
+        assertEquals("basic_cnf", service.get().getModelName());
+
+    }
+
+
+    @Test
+    public void testServiceBasicNetwork() throws Exception {
+        wireMockServer.stubFor(post(urlPathMatching("/aai/.*"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")));
+
+        wireMockServer.stubFor(post(urlPathMatching("/v1.0/activity-spec"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withStatus(org.springframework.http.HttpStatus.ACCEPTED.value())));
+
+        String resourceLocation = "src/test/resources/resource-examples/service-BasicNetwork/";
+        ObjectMapper mapper = new ObjectMapper();
+        NotificationDataImpl request = mapper.readValue(
+                new File(resourceLocation + "service-BasicNetwork-notification.json"), NotificationDataImpl.class);
+        headers.add("resource-location", resourceLocation);
+        HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("test/treatNotification/v1"),
+                HttpMethod.POST, entity, String.class);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+
+        Optional<Service> service = serviceRepo.findById("31e0cd50-0a84-42b4-a7a8-dd5d82e6907d");
+        assertTrue(service.isPresent());
+        assertEquals("basic_cnf", service.get().getModelName());
+
+    }
+
     protected String createURLWithPort(String uri) {
         return "http://localhost:" + port + uri;
     }
