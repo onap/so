@@ -1,0 +1,112 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+metadata:
+  invariantUUID: 26b9c145-524a-4e30-8864-ad1ff7342bf4
+  UUID: 9ff42123-ff24-41dc-9f41-a956c9328699
+  name: basic_network
+  description: service
+  type: Service
+  category: Network Service
+  serviceType: ''
+  serviceRole: ''
+  instantiationType: A-la-carte
+  serviceEcompNaming: 'true'
+  ecompGeneratedNaming: 'true'
+  namingPolicy: ''
+  environmentContext: General_Revenue-Bearing
+  serviceFunction: ''
+imports:
+- nodes:
+    file: nodes.yml
+- datatypes:
+    file: data.yml
+- capabilities:
+    file: capabilities.yml
+- relationships:
+    file: relationships.yml
+- groups:
+    file: groups.yml
+- policies:
+    file: policies.yml
+- annotations:
+    file: annotations.yml
+- service-basic_network-interface:
+    file: service-BasicNetwork-template-interface.yml
+- resource-Generic NeutronNet:
+    file: resource-GenericNeutronnet-template.yml
+- resource-ExtVL:
+    file: resource-Extvl-template.yml
+topology_template:
+  inputs:
+    skip_post_instantiation_configuration:
+      default: true
+      type: boolean
+      required: false
+    controller_actor:
+      default: SO-REF-DATA
+      type: string
+      required: false
+    cds_model_version:
+      type: string
+      required: false
+    cds_model_name:
+      type: string
+      required: false
+    default_software_version:
+      type: string
+      required: false
+  node_templates:
+    Generic NeutronNet 0:
+      type: org.openecomp.resource.vl.GenericNeutronNet
+      metadata:
+        invariantUUID: 7c0b578e-6594-4213-be8b-aa6c7ae50853
+        UUID: 73670f4b-f10b-4f37-9bf0-79600ec86730
+        customizationUUID: fc59df65-4914-4817-b525-5565b8e66ce0
+        version: '1.0'
+        name: Generic NeutronNet
+        description: Generic NeutronNet
+        type: VL
+        category: Generic
+        subcategory: Network Elements
+        resourceVendor: ONAP (Tosca)
+        resourceVendorRelease: 1.0.0.wd03
+        resourceVendorModelNumber: ''
+      properties:
+        network_assignments:
+          is_external_network: false
+          is_trunked: false
+          ipv4_subnet_default_assignment:
+            min_subnets_count: 1
+          ecomp_generated_network_assignment: false
+          ipv6_subnet_default_assignment:
+            min_subnets_count: 1
+        exVL_naming:
+          ecomp_generated_naming: true
+        network_flows:
+          is_network_policy: false
+          is_bound_to_vpn: false
+        network_ecomp_naming:
+          ecomp_generated_naming: true
+        network_type: NEUTRON
+        network_technology: NEUTRON
+        network_homing:
+          ecomp_selected_instance_node_target: false
+  substitution_mappings:
+    node_type: org.openecomp.service.BasicNetwork
+    capabilities:
+      genericneutronnet0.feature:
+      - Generic NeutronNet 0
+      - feature
+      genericneutronnet0.virtual_linkable:
+      - Generic NeutronNet 0
+      - virtual_linkable
+    properties:
+      skip_post_instantiation_configuration:
+      - skip_post_instantiation_configuration
+      controller_actor:
+      - controller_actor
+      cds_model_version:
+      - cds_model_version
+      cds_model_name:
+      - cds_model_name
+      default_software_version:
+      - default_software_version

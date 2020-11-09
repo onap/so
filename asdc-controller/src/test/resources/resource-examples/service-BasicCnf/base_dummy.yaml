@@ -1,0 +1,49 @@
+# #==================LICENSE_START==========================================
+# #
+# # Copyright (C) 2019 Intel Corporation
+# # SPDX-License-Identifier: Apache-2.0
+# #
+# #==================LICENSE_END============================================
+
+heat_template_version: 2016-10-14
+description: Heat template to deploy dummy VNF
+
+parameters:
+ dummy_name_0:
+   type: string
+   label: name of vm
+   description: Dummy name
+
+ vnf_id:
+   type: string
+   label: id of vnf
+   description: Provided by ONAP
+
+ vnf_name:
+   type: string
+   label: name of vnf
+   description: Provided by ONAP
+
+ vf_module_id:
+   type: string
+   label: vnf module id
+   description: Provided by ONAP
+
+ dummy_image_name:
+   type: string
+   label: Image name or ID
+   description: Dummy image name
+
+ dummy_flavor_name:
+   type: string
+   label: flavor
+   description: Dummy flavor
+
+resources:
+ dummy_0:
+   type: OS::Nova::Server
+   properties:
+     name: { get_param: dummy_name_0 }
+     image: { get_param: dummy_image_name }
+     flavor: { get_param: dummy_flavor_name }
+     metadata: { vnf_name: { get_param: vnf_name }, vnf_id: { get_param: vnf_id }, vf_module_id: { get_param: vf_module_id }}
