@@ -1,0 +1,352 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+metadata:
+  invariantUUID: 830857aa-604f-483b-a299-b63267698420
+  UUID: 31e0cd50-0a84-42b4-a7a8-dd5d82e6907d
+  name: basic_cnf
+  description: service
+  type: Service
+  category: Network Service
+  serviceType: ''
+  serviceRole: ''
+  instantiationType: A-la-carte
+  serviceEcompNaming: 'true'
+  ecompGeneratedNaming: 'true'
+  namingPolicy: ''
+  environmentContext: General_Revenue-Bearing
+  serviceFunction: ''
+imports:
+- nodes:
+    file: nodes.yml
+- datatypes:
+    file: data.yml
+- capabilities:
+    file: capabilities.yml
+- relationships:
+    file: relationships.yml
+- groups:
+    file: groups.yml
+- policies:
+    file: policies.yml
+- annotations:
+    file: annotations.yml
+- service-basic_cnf-interface:
+    file: service-BasicCnf-template-interface.yml
+- resource-basic_cnf:
+    file: resource-BasicCnf-template.yml
+- resource-basic_cnf-interface:
+    file: resource-BasicCnf-template-interface.yml
+topology_template:
+  inputs:
+    skip_post_instantiation_configuration:
+      default: true
+      type: boolean
+      required: false
+    controller_actor:
+      default: SO-REF-DATA
+      type: string
+      required: false
+    cds_model_version:
+      type: string
+      required: false
+    cds_model_name:
+      type: string
+      required: false
+    default_software_version:
+      type: string
+      required: false
+  node_templates:
+    basic_cnf 0:
+      type: org.openecomp.resource.vf.BasicCnf
+      metadata:
+        invariantUUID: 39ea5e7d-ce9c-4808-852c-7eee93016e4e
+        UUID: e41055ce-d879-44aa-b738-851be0dd9ca3
+        customizationUUID: bd0d1395-84c0-4bb3-956a-4b183f60754d
+        version: '1.0'
+        name: basic_cnf
+        description: VF
+        type: VF
+        category: Generic
+        subcategory: Abstract
+        resourceVendor: basicnf_vendor
+        resourceVendorRelease: '1.0'
+        resourceVendorModelNumber: ''
+      properties:
+        vf_module_id: PROVIDED_BY_ONAP
+        skip_post_instantiation_configuration: true
+        nf_naming:
+          ecomp_generated_naming: true
+        multi_stage_design: false
+        controller_actor: SO-REF-DATA
+        availability_zone_max_count: 1
+        vnf_id: PROVIDED_BY_ONAP
+        dummy_image_name: dummy
+        vnf_name: PROVIDED_BY_ONAP
+        dummy_name_0: dummy_1_0
+        dummy_flavor_name: dummy.default
+      capabilities:
+        abstract_dummy.cpu_dummy:
+          properties:
+            name: cpu
+        abstract_dummy.disk.device.read.requests.rate_dummy:
+          properties:
+            name: disk.device.read.requests.rate
+        abstract_dummy.disk.capacity_dummy:
+          properties:
+            name: disk.capacity
+        abstract_dummy.disk.write.bytes.rate_dummy:
+          properties:
+            name: disk.write.bytes.rate
+        abstract_dummy.disk.usage_dummy:
+          properties:
+            name: disk.usage
+        abstract_dummy.disk.latency_dummy:
+          properties:
+            name: disk.latency
+        abstract_dummy.endpoint_dummy:
+          properties:
+            secure: true
+        abstract_dummy.disk.allocation_dummy:
+          properties:
+            name: disk.allocation
+        abstract_dummy.memory.usage_dummy:
+          properties:
+            name: memory.usage
+        abstract_dummy.disk.device.iops_dummy:
+          properties:
+            name: disk.device.iops
+        abstract_dummy.disk.root.size_dummy:
+          properties:
+            name: disk.root.size
+        abstract_dummy.disk.read.bytes_dummy:
+          properties:
+            name: disk.read.bytes
+        abstract_dummy.disk.device.latency_dummy:
+          properties:
+            name: disk.device.latency
+        abstract_dummy.disk.iops_dummy:
+          properties:
+            name: disk.iops
+        abstract_dummy.vcpus_dummy:
+          properties:
+            name: vcpus
+        abstract_dummy.disk.device.allocation_dummy:
+          properties:
+            name: disk.device.allocation
+        abstract_dummy.disk.device.read.requests_dummy:
+          properties:
+            name: disk.device.read.requests
+        abstract_dummy.disk.device.read.bytes.rate_dummy:
+          properties:
+            name: disk.device.read.bytes.rate
+        abstract_dummy.instance_dummy:
+          properties:
+            name: instance
+        abstract_dummy.cpu_util_dummy:
+          properties:
+            name: cpu_util
+        abstract_dummy.memory_dummy:
+          properties:
+            name: memory
+        abstract_dummy.disk.device.write.bytes.rate_dummy:
+          properties:
+            name: disk.device.write.bytes.rate
+        abstract_dummy.disk.device.write.requests_dummy:
+          properties:
+            name: disk.device.write.requests
+        abstract_dummy.disk.write.requests_dummy:
+          properties:
+            name: disk.write.requests
+        abstract_dummy.disk.device.write.requests.rate_dummy:
+          properties:
+            name: disk.device.write.requests.rate
+        abstract_dummy.disk.device.usage_dummy:
+          properties:
+            name: disk.device.usage
+        abstract_dummy.disk.device.read.bytes_dummy:
+          properties:
+            name: disk.device.read.bytes
+        abstract_dummy.disk.device.capacity_dummy:
+          properties:
+            name: disk.device.capacity
+        abstract_dummy.disk.read.bytes.rate_dummy:
+          properties:
+            name: disk.read.bytes.rate
+        abstract_dummy.disk.device.write.bytes_dummy:
+          properties:
+            name: disk.device.write.bytes
+        abstract_dummy.disk.read.requests_dummy:
+          properties:
+            name: disk.read.requests
+        abstract_dummy.disk.write.requests.rate_dummy:
+          properties:
+            name: disk.write.requests.rate
+        abstract_dummy.memory.resident_dummy:
+          properties:
+            name: memory.resident
+        abstract_dummy.disk.write.bytes_dummy:
+          properties:
+            name: disk.write.bytes
+        abstract_dummy.disk.ephemeral.size_dummy:
+          properties:
+            name: disk.ephemeral.size
+        abstract_dummy.cpu.delta_dummy:
+          properties:
+            name: cpu.delta
+        abstract_dummy.scalable_dummy:
+          properties:
+            min_instances: 1
+            max_instances: 1
+  groups:
+    basic_cnf0..BasicCnf..base_dummy..module-0:
+      type: org.openecomp.groups.VfModule
+      metadata:
+        vfModuleModelName: BasicCnf..base_dummy..module-0
+        vfModuleModelInvariantUUID: f7ed621b-54c7-4edd-978d-765a63de766e
+        vfModuleModelUUID: 32f3dd22-6eee-466a-87a5-0a8b6476c671
+        vfModuleModelVersion: '1'
+        vfModuleModelCustomizationUUID: 164773f7-58a2-4e3b-b544-2348edbc7ddc
+      properties:
+        min_vf_module_instances: 1
+        vf_module_label: base_dummy
+        max_vf_module_instances: 1
+        vf_module_type: Base
+        isBase: true
+        initial_count: 1
+        volume_group: false
+  substitution_mappings:
+    node_type: org.openecomp.service.BasicCnf
+    capabilities:
+      basic_cnf0.abstract_dummy.disk.device.read.requests.rate_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.device.read.requests.rate_dummy
+      basic_cnf0.abstract_dummy.disk.latency_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.latency_dummy
+      basic_cnf0.abstract_dummy.disk.device.latency_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.device.latency_dummy
+      basic_cnf0.abstract_dummy.disk.write.requests.rate_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.write.requests.rate_dummy
+      basic_cnf0.abstract_dummy.disk.ephemeral.size_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.ephemeral.size_dummy
+      basic_cnf0.abstract_dummy.disk.device.write.requests.rate_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.device.write.requests.rate_dummy
+      basic_cnf0.abstract_dummy.disk.iops_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.iops_dummy
+      basic_cnf0.abstract_dummy.disk.read.requests_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.read.requests_dummy
+      basic_cnf0.abstract_dummy.memory_dummy:
+      - basic_cnf 0
+      - abstract_dummy.memory_dummy
+      basic_cnf0.abstract_dummy.disk.device.read.requests_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.device.read.requests_dummy
+      basic_cnf0.abstract_dummy.host_dummy:
+      - basic_cnf 0
+      - abstract_dummy.host_dummy
+      basic_cnf0.abstract_dummy.disk.read.bytes_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.read.bytes_dummy
+      basic_cnf0.abstract_dummy.cpu_util_dummy:
+      - basic_cnf 0
+      - abstract_dummy.cpu_util_dummy
+      basic_cnf0.abstract_dummy.disk.write.bytes.rate_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.write.bytes.rate_dummy
+      basic_cnf0.abstract_dummy.disk.allocation_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.allocation_dummy
+      basic_cnf0.abstract_dummy.instance_dummy:
+      - basic_cnf 0
+      - abstract_dummy.instance_dummy
+      basic_cnf0.abstract_dummy.binding_dummy:
+      - basic_cnf 0
+      - abstract_dummy.binding_dummy
+      basic_cnf0.abstract_dummy.disk.root.size_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.root.size_dummy
+      basic_cnf0.abstract_dummy.disk.write.requests_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.write.requests_dummy
+      basic_cnf0.abstract_dummy.vcpus_dummy:
+      - basic_cnf 0
+      - abstract_dummy.vcpus_dummy
+      basic_cnf0.abstract_dummy.disk.read.bytes.rate_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.read.bytes.rate_dummy
+      basic_cnf0.abstract_dummy.cpu_dummy:
+      - basic_cnf 0
+      - abstract_dummy.cpu_dummy
+      basic_cnf0.abstract_dummy.disk.device.allocation_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.device.allocation_dummy
+      basic_cnf0.abstract_dummy.disk.device.usage_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.device.usage_dummy
+      basic_cnf0.abstract_dummy.disk.device.read.bytes.rate_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.device.read.bytes.rate_dummy
+      basic_cnf0.abstract_dummy.cpu.delta_dummy:
+      - basic_cnf 0
+      - abstract_dummy.cpu.delta_dummy
+      basic_cnf0.abstract_dummy.disk.usage_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.usage_dummy
+      basic_cnf0.abstract_dummy.disk.capacity_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.capacity_dummy
+      basic_cnf0.abstract_dummy.memory.usage_dummy:
+      - basic_cnf 0
+      - abstract_dummy.memory.usage_dummy
+      basic_cnf0.abstract_dummy.endpoint_dummy:
+      - basic_cnf 0
+      - abstract_dummy.endpoint_dummy
+      basic_cnf0.abstract_dummy.disk.device.capacity_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.device.capacity_dummy
+      basic_cnf0.abstract_dummy.os_dummy:
+      - basic_cnf 0
+      - abstract_dummy.os_dummy
+      basic_cnf0.abstract_dummy.memory.resident_dummy:
+      - basic_cnf 0
+      - abstract_dummy.memory.resident_dummy
+      basic_cnf0.abstract_dummy.disk.write.bytes_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.write.bytes_dummy
+      basic_cnf0.abstract_dummy.scalable_dummy:
+      - basic_cnf 0
+      - abstract_dummy.scalable_dummy
+      basic_cnf0.abstract_dummy.disk.device.read.bytes_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.device.read.bytes_dummy
+      basic_cnf0.abstract_dummy.disk.device.write.requests_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.device.write.requests_dummy
+      basic_cnf0.abstract_dummy.disk.device.write.bytes_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.device.write.bytes_dummy
+      basic_cnf0.abstract_dummy.feature_dummy:
+      - basic_cnf 0
+      - abstract_dummy.feature_dummy
+      basic_cnf0.abstract_dummy.disk.device.iops_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.device.iops_dummy
+      basic_cnf0.abstract_dummy.disk.device.write.bytes.rate_dummy:
+      - basic_cnf 0
+      - abstract_dummy.disk.device.write.bytes.rate_dummy
+    properties:
+      skip_post_instantiation_configuration:
+      - skip_post_instantiation_configuration
+      controller_actor:
+      - controller_actor
+      cds_model_version:
+      - cds_model_version
+      cds_model_name:
+      - cds_model_name
+      default_software_version:
+      - default_software_version
