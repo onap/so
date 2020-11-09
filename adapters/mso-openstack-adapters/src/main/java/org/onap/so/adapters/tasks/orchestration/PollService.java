@@ -40,6 +40,7 @@ import org.onap.so.adapters.vnfrest.DeleteVfModuleRequest;
 import org.onap.so.adapters.vnfrest.DeleteVolumeGroupRequest;
 import org.onap.so.adapters.nwrest.DeleteNetworkRequest;
 import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
+import org.onap.so.adapters.vnf.VnfAdapterUtils;
 import org.onap.so.logging.tasks.AuditMDCSetup;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.utils.MsoHeatUtils;
@@ -58,6 +59,9 @@ public class PollService extends ExternalTaskUtils {
 
     @Autowired
     private MsoHeatUtils msoHeatUtils;
+
+    @Autowired
+    private VnfAdapterUtils vnfAdapterUtils;
 
     @Autowired
     private AuditMDCSetup mdcSetup;
@@ -84,12 +88,22 @@ public class PollService extends ExternalTaskUtils {
                     logger.debug("Executing External Task Poll Service for Delete Vf Module");
                     DeleteVfModuleRequest req =
                             JAXB.unmarshal(new StringReader(xmlRequest), DeleteVfModuleRequest.class);
-                    pollDeleteResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
+                    boolean isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
+                    if (!isMulticloud) {
+                        pollDeleteResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
+                    } else {
+                        success.setTrue();
+                    }
                 } else if ("deleteVolumeGroupRequest".equals(requestType.get())) {
                     logger.debug("Executing External Task Poll Service for Delete Volume Group");
                     DeleteVolumeGroupRequest req =
                             JAXB.unmarshal(new StringReader(xmlRequest), DeleteVolumeGroupRequest.class);
-                    pollDeleteResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
+                    boolean isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
+                    if (!isMulticloud) {
+                        pollDeleteResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
+                    } else {
+                        success.setTrue();
+                    }
                 } else if ("createNetworkRequest".equals(requestType.get())) {
                     determineCreateNetworkStatus(xmlRequest, externalTask, success);
                 } else if ("deleteNetworkRequest".equals(requestType.get())) {
@@ -133,25 +147,35 @@ public class PollService extends ExternalTaskUtils {
     private void determineCreateVolumeGroupStatus(String xmlRequest, ExternalTask externalTask, MutableBoolean success)
             throws MsoException {
         CreateVolumeGroupRequest req = JAXB.unmarshal(new StringReader(xmlRequest), CreateVolumeGroupRequest.class);
-        boolean pollRollbackStatus = externalTask.getVariable("PollRollbackStatus");
-        if (pollRollbackStatus) {
-            logger.debug("Executing External Task Poll Service for Rollback Create Volume Group");
-            pollDeleteResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
+        boolean isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
+        if (!isMulticloud) {
+            boolean pollRollbackStatus = externalTask.getVariable("PollRollbackStatus");
+            if (pollRollbackStatus) {
+                logger.debug("Executing External Task Poll Service for Rollback Create Volume Group");
+                pollDeleteResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
+            } else {
+                pollCreateResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
+            }
         } else {
-            pollCreateResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
+            success.setTrue();
         }
     }
 
     private void determineCreateVfModuleStatus(String xmlRequest, ExternalTask externalTask, MutableBoolean success)
             throws MsoException {
         CreateVfModuleRequest req = JAXB.unmarshal(new StringReader(xmlRequest), CreateVfModuleRequest.class);
-        boolean pollRollbackStatus = externalTask.getVariable("PollRollbackStatus");
-        if (pollRollbackStatus) {
-            logger.debug("Executing External Task Poll Service for Rollback Create Vf Module");
-            pollDeleteResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
+        boolean isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
+        if (!isMulticloud) {
+            boolean pollRollbackStatus = externalTask.getVariable("PollRollbackStatus");
+            if (pollRollbackStatus) {
+                logger.debug("Executing External Task Poll Service for Rollback Create Vf Module");
+                pollDeleteResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
+            } else {
+                logger.debug("Executing External Task Poll Service for Create Vf Module");
+                pollCreateResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
+            }
         } else {
-            logger.debug("Executing External Task Poll Service for Create Vf Module");
-            pollCreateResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
+            success.setTrue();
         }
     }
 

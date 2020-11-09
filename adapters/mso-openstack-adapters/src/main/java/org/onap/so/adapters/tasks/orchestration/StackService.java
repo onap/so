@@ -48,6 +48,8 @@ import org.onap.so.adapters.nwrest.RollbackNetworkResponse;
 import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
 import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
 import org.onap.so.adapters.vnf.MsoVnfAdapterImpl;
+import org.onap.so.adapters.vnf.MsoVnfPluginAdapterImpl;
+import org.onap.so.adapters.vnf.VnfAdapterUtils;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.adapters.vnfrest.CreateVfModuleRequest;
 import org.onap.so.adapters.vnfrest.CreateVfModuleResponse;
@@ -79,6 +81,12 @@ public class StackService extends ExternalTaskUtils {
 
     @Autowired
     private MsoNetworkAdapterImpl networkAdapterImpl;
+
+    @Autowired
+    private MsoVnfPluginAdapterImpl vnfPluginImpl;
+
+    @Autowired
+    private VnfAdapterUtils vnfAdapterUtils;
 
     @Autowired
     private AuditMDCSetup mdcSetup;
@@ -160,10 +168,18 @@ public class StackService extends ExternalTaskUtils {
         Holder<String> stackId = new Holder<>();
         CreateVolumeGroupRequest req = JAXB.unmarshal(new StringReader(xmlRequest), CreateVolumeGroupRequest.class);
         String completeVnfVfModuleType = req.getVnfType() + "::" + req.getVfModuleType();
-        vnfAdapterImpl.createVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
-                completeVnfVfModuleType, req.getVnfVersion(), "", req.getVolumeGroupName(), "", "VOLUME", null, null,
-                req.getModelCustomizationUuid(), req.getVolumeGroupParams(), false, true, req.getEnableBridge(),
-                req.getMsoRequest(), stackId, outputs, vnfRollback);
+        boolean isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
+        if (isMulticloud) {
+            vnfPluginImpl.createVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
+                    completeVnfVfModuleType, req.getVnfVersion(), "", req.getVolumeGroupName(), "", "VOLUME", null,
+                    null, req.getModelCustomizationUuid(), req.getVolumeGroupParams(), false, true,
+                    req.getEnableBridge(), req.getMsoRequest(), stackId, outputs, vnfRollback);
+        } else {
+            vnfAdapterImpl.createVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
+                    completeVnfVfModuleType, req.getVnfVersion(), "", req.getVolumeGroupName(), "", "VOLUME", null,
+                    null, req.getModelCustomizationUuid(), req.getVolumeGroupParams(), false, true,
+                    req.getEnableBridge(), req.getMsoRequest(), stackId, outputs, vnfRollback);
+        }
         success.setTrue();
         backout.setValue(!req.getSuppressBackout());
         VolumeGroupRollback rb = new VolumeGroupRollback(req.getVolumeGroupId(), stackId.value,
@@ -181,11 +197,20 @@ public class StackService extends ExternalTaskUtils {
         Holder<String> stackId = new Holder<>();
         CreateVfModuleRequest req = JAXB.unmarshal(new StringReader(xmlRequest), CreateVfModuleRequest.class);
         String completeVnfVfModuleType = req.getVnfType() + "::" + req.getVfModuleType();
-        vnfAdapterImpl.createVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
-                completeVnfVfModuleType, req.getVnfVersion(), req.getVnfId(), req.getVfModuleName(),
-                req.getVfModuleId(), req.getRequestType(), req.getVolumeGroupStackId(), req.getBaseVfModuleStackId(),
-                req.getModelCustomizationUuid(), req.getVfModuleParams(), false, false, req.getEnableBridge(),
-                req.getMsoRequest(), stackId, outputs, vnfRollback);
+        boolean isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
+        if (isMulticloud) {
+            vnfPluginImpl.createVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
+                    completeVnfVfModuleType, req.getVnfVersion(), req.getVnfId(), req.getVfModuleName(),
+                    req.getVfModuleId(), req.getRequestType(), req.getVolumeGroupStackId(),
+                    req.getBaseVfModuleStackId(), req.getModelCustomizationUuid(), req.getVfModuleParams(), false,
+                    false, req.getEnableBridge(), req.getMsoRequest(), stackId, outputs, vnfRollback);
+        } else {
+            vnfAdapterImpl.createVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
+                    completeVnfVfModuleType, req.getVnfVersion(), req.getVnfId(), req.getVfModuleName(),
+                    req.getVfModuleId(), req.getRequestType(), req.getVolumeGroupStackId(),
+                    req.getBaseVfModuleStackId(), req.getModelCustomizationUuid(), req.getVfModuleParams(), false,
+                    false, req.getEnableBridge(), req.getMsoRequest(), stackId, outputs, vnfRollback);
+        }
         success.setTrue();
         backout.setValue(req.getBackout());
         canonicalStackId.value = stackId.value;
@@ -201,9 +226,15 @@ public class StackService extends ExternalTaskUtils {
             MutableBoolean success) throws VnfException {
         backout.setFalse();
         DeleteVfModuleRequest req = JAXB.unmarshal(new StringReader(xmlRequest), DeleteVfModuleRequest.class);
-        vnfAdapterImpl.deleteVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
-                req.getVfModuleStackId(), req.getVnfId(), req.getVfModuleId(), req.getModelCustomizationUuid(),
-                req.getMsoRequest(), outputs);
+        boolean isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
+        if (isMulticloud) {
+            vnfPluginImpl.deleteVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
+                    req.getVfModuleStackId(), req.getMsoRequest(), outputs);
+        } else {
+            vnfAdapterImpl.deleteVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
+                    req.getVfModuleStackId(), req.getVnfId(), req.getVfModuleId(), req.getModelCustomizationUuid(),
+                    req.getMsoRequest(), outputs);
+        }
         success.setTrue();
         if (outputs != null && outputs.value != null) {
             canonicalStackId.value = outputs.value.get("canonicalStackId");
@@ -220,7 +251,6 @@ public class StackService extends ExternalTaskUtils {
             MutableBoolean success) throws VnfException {
         backout.setFalse();
         DeleteVolumeGroupRequest req = JAXB.unmarshal(new StringReader(xmlRequest), DeleteVolumeGroupRequest.class);
-
         vnfAdapterImpl.deleteVnf(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
                 req.getVolumeGroupStackId(), req.getMsoRequest(), false);
         success.setTrue();

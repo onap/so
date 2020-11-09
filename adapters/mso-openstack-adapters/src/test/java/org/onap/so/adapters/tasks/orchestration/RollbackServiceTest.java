@@ -18,6 +18,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.adapters.tasks.orchestration.RollbackService;
 import org.onap.so.adapters.vnf.MsoVnfAdapterImpl;
+import org.onap.so.adapters.vnf.VnfAdapterUtils;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.logging.tasks.AuditMDCSetup;
@@ -39,6 +40,9 @@ public class RollbackServiceTest {
 
     @Mock
     private MsoVnfAdapterImpl vnfAdapterImpl;
+
+    @Mock
+    private VnfAdapterUtils vnfAdapterUtils;
 
     @Mock
     private MsoHeatUtils msoHeatUtils;
@@ -65,6 +69,8 @@ public class RollbackServiceTest {
 
         Stack stack = new Stack();
         stack.setId("heatId");
+
+        Mockito.when(vnfAdapterUtils.isMulticloudMode(Mockito.any(), Mockito.any())).thenReturn(false);
         Mockito.when(mockExternalTask.getVariable("openstackAdapterTaskRequest")).thenReturn(payload);
         Mockito.doNothing().when(vnfAdapterImpl).deleteVfModule(Mockito.any(), Mockito.any(), Mockito.any(),
                 Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
