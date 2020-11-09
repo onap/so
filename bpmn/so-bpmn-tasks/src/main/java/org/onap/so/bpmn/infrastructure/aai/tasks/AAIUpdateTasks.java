@@ -615,6 +615,8 @@ public class AAIUpdateTasks {
 
     private void updateOrchestrationStatusForVnf(BuildingBlockExecution execution, OrchestrationStatus status) {
         try {
+
+            logger.debug("AAIUpdateTasks updateOrchestrationStatusForVnf entry");
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             aaiVnfResources.updateOrchestrationStatusVnf(vnf, status);
         } catch (Exception ex) {
@@ -641,12 +643,14 @@ public class AAIUpdateTasks {
 
     private void updateOrchestrationStatusForVfModule(BuildingBlockExecution execution, OrchestrationStatus status) {
         try {
+            logger.debug("updateOrchestrationStatusAssignedVnf entry");
             VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
             if (status.equals(OrchestrationStatus.ASSIGNED)) {
                 vfModule.setHeatStackId("");
             }
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf, status);
+            logger.debug("updateOrchestrationStatusAssignedVnf ended ");
         } catch (Exception ex) {
             logger.error(
                     "Exception occurred in AAIUpdateTasks during update orchestration status to {} for " + "vf module",

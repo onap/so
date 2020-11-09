@@ -178,6 +178,7 @@ public class WorkflowAction {
 
     public void selectExecutionList(DelegateExecution execution) throws Exception {
         try {
+            logger.debug(" WorkflowAction selectExecutionList entry");
             fillExecutionDefault(execution);
             final String bpmnRequest = (String) execution.getVariable(BBConstants.G_BPMN_REQUEST);
             ServiceInstancesRequest sIRequest =
@@ -438,6 +439,7 @@ public class WorkflowAction {
             List<OrchestrationFlow> orchFlows, String apiVersion, Resource resourceKey,
             ReplaceInstanceRelatedInformation replaceInfo) throws Exception {
 
+        logger.debug("createBuildingBlocksForOrchFlows entry orchFlows ::{}", orchFlows.size());
         for (OrchestrationFlow orchFlow : orchFlows) {
             if (orchFlow.getFlowName().contains(CONFIGURATION)) {
                 List<OrchestrationFlow> configOrchFlows = new ArrayList<>();
@@ -737,6 +739,7 @@ public class WorkflowAction {
 
     private void generateResourceIds(List<ExecuteBuildingBlock> flowsToExecute, List<Resource> resourceList,
             String serviceInstanceId) {
+        logger.debug("generateResourceIds entry");
         Arrays.stream(WorkflowType.values()).filter(type -> !type.equals(WorkflowType.SERVICE))
                 .forEach(type -> resourceList.stream().filter(resource -> type.equals(resource.getResourceType()))
                         .forEach(resource -> updateWorkflowResourceIds(flowsToExecute, type, resource.getResourceId(),
@@ -1525,6 +1528,7 @@ public class WorkflowAction {
             List<Resource> resourceList, String requestId, String apiVersion, String resourceId, String requestAction,
             String vnfType, WorkflowResourceIds workflowResourceIds, RequestDetails requestDetails,
             boolean replaceVnf) {
+        logger.debug("buildExecuteBuildingBlockList entry workflowResourceIds::{}", workflowResourceIds);
         List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
         for (OrchestrationFlow orchFlow : orchFlows) {
             if (orchFlow.getFlowName().contains(SERVICE)) {
@@ -1599,7 +1603,7 @@ public class WorkflowAction {
             String vnfType, WorkflowResourceIds workflowResourceIds, RequestDetails requestDetails,
             boolean isVirtualLink, String virtualLinkKey, String vnfcName, boolean isConfiguration,
             ReplaceInstanceRelatedInformation replaceInfo) {
-
+        logger.debug("buildExecuteBuildingBlock : entry ");
         BuildingBlock buildingBlock =
                 new BuildingBlock().setBpmnFlowName(orchFlow.getFlowName()).setMsoId(UUID.randomUUID().toString())
                         .setIsVirtualLink(isVirtualLink).setVirtualLinkKey(virtualLinkKey)

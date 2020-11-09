@@ -51,6 +51,8 @@ public class FlowManipulatorListenerRunner extends ListenerRunner {
     public void modifyFlows(List<ExecuteBuildingBlock> flowsToExecute, BuildingBlockExecution execution) {
 
         ExecuteBuildingBlock currentBB = flowsToExecute.get(execution.getCurrentSequence());
+        logger.debug(" modifyFlows entry currentBB ::{},flow to execute size ::{}", currentBB, flowsToExecute.size());
+
         List<FlowManipulator> filtered = filterListeners(flowManipulators,
                 (item -> item.shouldRunFor(currentBB.getBuildingBlock().getBpmnFlowName(),
                         execution.getCurrentSequence() == 0, execution)));
@@ -58,7 +60,7 @@ public class FlowManipulatorListenerRunner extends ListenerRunner {
         logger.info("Running flow manipulators:\n{}",
                 filtered.stream().map(item -> item.getClass().getName()).collect(Collectors.joining("\n")));
         filtered.forEach(item -> item.run(flowsToExecute, currentBB, execution));
-
+        logger.debug(" modifyFlows ended ");
     }
 
 

@@ -227,6 +227,8 @@ public class BBInputSetup implements JavaDelegate {
 
     protected GeneralBuildingBlock getGBB(ExecuteBuildingBlock executeBB, Map<ResourceKey, String> lookupKeyMap,
             String requestAction, boolean aLaCarte, String resourceId, String vnfType) throws Exception {
+        logger.debug("getGBB entry  lookupKeyMap::{} ,resourceId::{} ,requestAction::{}", lookupKeyMap, resourceId,
+                requestAction);
         String requestId = executeBB.getRequestId();
         this.populateLookupKeyMapWithIds(executeBB.getWorkflowResourceIds(), lookupKeyMap);
         RequestDetails requestDetails = executeBB.getRequestDetails();
@@ -384,6 +386,7 @@ public class BBInputSetup implements JavaDelegate {
     }
 
     protected void populateObjectsOnAssignAndCreateFlows(BBInputSetupParameter parameter) throws Exception {
+        logger.debug("populateObjectsOnAssignAndCreateFlows  entry ");
         parameter.setModelInfo(parameter.getRequestDetails().getModelInfo());
         parameter.setInstanceName(parameter.getRequestDetails().getRequestInfo().getInstanceName());
         parameter.setProductFamilyId(parameter.getRequestDetails().getRequestInfo().getProductFamilyId());
@@ -847,6 +850,7 @@ public class BBInputSetup implements JavaDelegate {
     }
 
     protected void populateGenericVnf(BBInputSetupParameter parameter) {
+        logger.debug("populateGenericVnf enrty ");
         GenericVnf vnf = null;
         ModelInfo instanceGroupModelInfo = null;
         String instanceGroupId = null;
@@ -940,6 +944,7 @@ public class BBInputSetup implements JavaDelegate {
             org.onap.so.serviceinstancebeans.Platform platform,
             org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusiness, String vnfId, String vnfType,
             List<Map<String, String>> instanceParams, String productFamilyId, String applicationId) {
+        logger.debug("createGenericVnf entry vnfId {}::", vnfId);
         lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, vnfId);
         GenericVnf genericVnf = new GenericVnf();
         genericVnf.setVnfId(vnfId);
@@ -1039,6 +1044,7 @@ public class BBInputSetup implements JavaDelegate {
 
     protected GeneralBuildingBlock getGBBALaCarteService(ExecuteBuildingBlock executeBB, RequestDetails requestDetails,
             Map<ResourceKey, String> lookupKeyMap, String requestAction, String resourceId) throws Exception {
+        logger.debug("getGBBALaCarteService entry");
         Customer customer = getCustomerAndServiceSubscription(requestDetails, resourceId);
         if (customer != null) {
             Project project = null;
@@ -1193,6 +1199,7 @@ public class BBInputSetup implements JavaDelegate {
     protected ServiceInstance getALaCarteServiceInstance(Service service, RequestDetails requestDetails,
             Customer customer, Project project, OwningEntity owningEntity, Map<ResourceKey, String> lookupKeyMap,
             String serviceInstanceId, boolean aLaCarte, String bbName) throws Exception {
+        logger.debug(" getALaCarteServiceInstance  entry");
         ServiceInstance serviceInstance = this.getServiceInstanceHelper(requestDetails, customer, project, owningEntity,
                 lookupKeyMap, serviceInstanceId, aLaCarte, service, bbName);
         org.onap.aai.domain.yang.ServiceInstance serviceInstanceAAI = null;
@@ -1217,6 +1224,8 @@ public class BBInputSetup implements JavaDelegate {
             }
         }
         serviceInstance.setModelInfoServiceInstance(mapperLayer.mapCatalogServiceIntoServiceInstance(service));
+        logger.debug(" getALaCarteServiceInstance  ended");
+
         return serviceInstance;
     }
 
@@ -1226,6 +1235,7 @@ public class BBInputSetup implements JavaDelegate {
         String bbName = executeBB.getBuildingBlock().getBpmnFlowName();
         String key = executeBB.getBuildingBlock().getKey();
 
+        logger.debug("getGBBMacro1 entry ::{},bbName:{} ,requestAction:{}", lookupKeyMap, bbName, requestAction);
         if (requestAction.equalsIgnoreCase("deleteInstance") || requestAction.equalsIgnoreCase("unassignInstance")
                 || requestAction.equalsIgnoreCase("activateInstance")
                 || requestAction.equalsIgnoreCase("activateFabricConfiguration")
@@ -1548,6 +1558,7 @@ public class BBInputSetup implements JavaDelegate {
         ServiceInstance serviceInstance = gBB.getServiceInstance();
         org.onap.so.serviceinstancebeans.Service serviceMacro =
                 mapper.readValue(input, org.onap.so.serviceinstancebeans.Service.class);
+        logger.debug("getGBBMacroUserParams  entry ");
 
         Resources resources = serviceMacro.getResources();
         Vnfs vnfs = null;
@@ -1732,6 +1743,8 @@ public class BBInputSetup implements JavaDelegate {
     protected ServiceInstance getServiceInstanceHelper(RequestDetails requestDetails, Customer customer,
             Project project, OwningEntity owningEntity, Map<ResourceKey, String> lookupKeyMap, String serviceInstanceId,
             boolean aLaCarte, Service service, String bbName) throws Exception {
+        logger.debug("getServiceInstanceHelper entry bbName::{}", bbName);
+
         if (requestDetails.getRequestInfo().getInstanceName() == null && aLaCarte
                 && bbName.equalsIgnoreCase(AssignFlows.SERVICE_INSTANCE.toString())) {
             throw new Exception("Request invalid missing: RequestInfo:InstanceName");
@@ -1749,6 +1762,7 @@ public class BBInputSetup implements JavaDelegate {
 
     private org.onap.aai.domain.yang.ServiceInstance getServiceInstanceAAI(RequestDetails requestDetails,
             Customer customer, String serviceInstanceId, boolean aLaCarte, String bbName) throws Exception {
+        logger.debug(" getServiceInstanceAAI  entry");
         org.onap.aai.domain.yang.ServiceInstance serviceInstanceAAI = null;
         if (aLaCarte && bbName.equalsIgnoreCase(AssignFlows.SERVICE_INSTANCE.toString())) {
             serviceInstanceAAI = bbInputSetupUtils
@@ -1763,6 +1777,8 @@ public class BBInputSetup implements JavaDelegate {
                 serviceInstanceAAI = bbInputSetupUtils.getAAIServiceInstanceById(serviceInstanceId);
             }
         }
+
+        logger.debug(" getServiceInstanceAAI  ended");
         return serviceInstanceAAI;
     }
 
@@ -1883,6 +1899,8 @@ public class BBInputSetup implements JavaDelegate {
     }
 
     private void mapRelationship(ServiceInstance serviceInstance, Relationships relationships) {
+
+        logger.debug("mapRelationship entry");
         this.mapProject(relationships.getByType(Types.PROJECT, uri -> uri.nodesOnly(true)), serviceInstance);
         this.mapOwningEntity(relationships.getByType(Types.OWNING_ENTITY, uri -> uri.nodesOnly(true)), serviceInstance);
         this.mapL3Networks(relationships.getRelatedUris(Types.L3_NETWORK), serviceInstance.getNetworks());
@@ -1890,6 +1908,8 @@ public class BBInputSetup implements JavaDelegate {
         this.mapPnfs(relationships.getRelatedUris(Types.PNF), serviceInstance.getPnfs());
         this.mapCollection(relationships.getByType(Types.COLLECTION), serviceInstance);
         this.mapConfigurations(relationships.getRelatedUris(Types.CONFIGURATION), serviceInstance.getConfigurations());
+        logger.debug("mapRelationship end");
+
     }
 
     protected void mapConfigurations(List<AAIResourceUri> relatedAAIUris, List<Configuration> configurations) {
@@ -1910,12 +1930,14 @@ public class BBInputSetup implements JavaDelegate {
     }
 
     protected void mapGenericVnfs(List<AAIResourceUri> list, List<GenericVnf> genericVnfs) {
+        logger.debug("mapGenericVnfs entry ::{}", list.size());
         for (AAIResourceUri aaiResourceUri : list) {
             genericVnfs.add(this.mapGenericVnf(aaiResourceUri));
         }
     }
 
     protected GenericVnf mapGenericVnf(AAIResourceUri aaiResourceUri) {
+        logger.debug("mapGenericVnf entry");
         AAIResultWrapper aaiGenericVnfWrapper = this.bbInputSetupUtils.getAAIResourceDepthOne(aaiResourceUri);
         Optional<org.onap.aai.domain.yang.GenericVnf> aaiGenericVnfOp =
                 aaiGenericVnfWrapper.asBean(org.onap.aai.domain.yang.GenericVnf.class);
@@ -1924,7 +1946,7 @@ public class BBInputSetup implements JavaDelegate {
         }
 
         GenericVnf genericVnf = this.mapperLayer.mapAAIGenericVnfIntoGenericVnf(aaiGenericVnfOp.get());
-
+        logger.debug("mapGenericVnf genericVnf id ::{}", genericVnf.getVnfId());
         Optional<Relationships> relationshipsOp = aaiGenericVnfWrapper.getRelationships();
         if (relationshipsOp.isPresent()) {
             Relationships relationships = relationshipsOp.get();

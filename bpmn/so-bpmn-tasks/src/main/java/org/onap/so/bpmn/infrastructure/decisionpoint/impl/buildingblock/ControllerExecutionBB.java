@@ -54,8 +54,10 @@ public class ControllerExecutionBB extends AbstractControllerExecution<BuildingB
     protected CatalogDbClient catalogDbClient;
 
     public void execute(final BuildingBlockExecution execution) {
+        logger.debug("ControllerExecutionBB execute entry");
         ControllerContext<BuildingBlockExecution> controllerContext = buildControllerContext(execution);
         controllerExecute(controllerContext);
+        logger.debug("ControllerExecutionBB execute end ");
     }
 
     @Override

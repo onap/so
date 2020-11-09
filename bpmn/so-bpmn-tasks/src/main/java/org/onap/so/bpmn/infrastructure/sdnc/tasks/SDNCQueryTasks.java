@@ -67,6 +67,8 @@ public class SDNCQueryTasks {
      * @throws Exception
      */
     public void queryVnf(BuildingBlockExecution execution) throws BBObjectNotFoundException {
+
+        logger.debug(" SDNCQueryTasks queryVnf entry");
         ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
         GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 
@@ -90,6 +92,8 @@ public class SDNCQueryTasks {
             logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, ONAPComponents.SO);
         }
+        logger.debug(" SDNCQueryTasks queryVnf end");
+
     }
 
 
@@ -102,6 +106,9 @@ public class SDNCQueryTasks {
      * @throws Exception
      */
     public void queryVfModule(BuildingBlockExecution execution) throws BBObjectNotFoundException {
+
+        logger.debug(" SDNCQueryTasks queryVfModule entry");
+
         ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
         GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
         VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
@@ -131,6 +138,8 @@ public class SDNCQueryTasks {
             logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug(" SDNCQueryTasks queryVfModule end");
+
     }
 
     /**

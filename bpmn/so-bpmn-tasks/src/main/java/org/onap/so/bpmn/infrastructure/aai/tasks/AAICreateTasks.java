@@ -125,6 +125,7 @@ public class AAICreateTasks {
      */
     public void createServiceInstance(BuildingBlockExecution execution) {
         try {
+            logger.debug("AAICreateTasks createServiceInstance entry");
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             Customer customer = execution.getGeneralBuildingBlock().getCustomer();
@@ -251,11 +252,14 @@ public class AAICreateTasks {
      */
     public void createVnf(BuildingBlockExecution execution) {
         try {
+            logger.debug("AAICreateTasks createVnf entry");
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             execution.setVariable("homing", Boolean.TRUE.equals(vnf.isCallHoming()));
             aaiVnfResources.createVnfandConnectServiceInstance(vnf, serviceInstance);
+            logger.debug("AAICreateTasks createVnf end");
+
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }

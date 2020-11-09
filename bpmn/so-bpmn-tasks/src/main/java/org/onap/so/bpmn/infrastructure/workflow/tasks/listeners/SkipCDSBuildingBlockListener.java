@@ -36,6 +36,8 @@ import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class SkipCDSBuildingBlockListener implements FlowManipulator {
@@ -58,6 +60,8 @@ public class SkipCDSBuildingBlockListener implements FlowManipulator {
         return "ControllerExecutionBB".equals(currentBBName);
     }
 
+    private static Logger logger = LoggerFactory.getLogger(SkipCDSBuildingBlockListener.class);
+
     /**
      * Skip the CDS Building block according to the Skip Flag.
      *
@@ -69,6 +73,7 @@ public class SkipCDSBuildingBlockListener implements FlowManipulator {
     @Override
     public void run(List<ExecuteBuildingBlock> flowsToExecute, ExecuteBuildingBlock currentBB,
             BuildingBlockExecution execution) {
+        logger.debug("SkipCDSBuildingBlockListener run entry");
         String customizationUUID = currentBB.getBuildingBlock().getKey();
 
         if (Strings.isEmpty(customizationUUID)) {
@@ -83,6 +88,9 @@ public class SkipCDSBuildingBlockListener implements FlowManipulator {
             if (!CollectionUtils.isEmpty(vnfResourceCustomizations)) {
                 VnfResourceCustomization vrc = catalogDbClient.findVnfResourceCustomizationInList(customizationUUID,
                         vnfResourceCustomizations);
+                // to check null pointer
+                logger.debug("vrc::{}", vrc.isSkipPostInstConf());
+
                 if (null != vrc) {
                     boolean skipConfigVNF = vrc.isSkipPostInstConf();
                     currentSequenceSkipCheck(execution, skipConfigVNF);
@@ -110,6 +118,7 @@ public class SkipCDSBuildingBlockListener implements FlowManipulator {
                 currentSequenceSkipCheck(execution, skipConfigPNF);
             }
         }
+        logger.debug("SkipCDSBuildingBlockListener run end");
     }
 
     private boolean containsIgnoreCaseAction(ExecuteBuildingBlock currentBB, Set<String> actions) {

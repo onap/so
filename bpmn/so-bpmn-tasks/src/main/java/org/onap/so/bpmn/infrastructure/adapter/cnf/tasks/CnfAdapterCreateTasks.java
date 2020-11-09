@@ -74,6 +74,8 @@ public class CnfAdapterCreateTasks {
      */
     public void createInstance(BuildingBlockExecution execution) {
         try {
+
+            logger.debug("CnfAdapterCreateTasks createInstance entry");
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
             ServiceInstance serviceInstance =
                     gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0);

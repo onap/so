@@ -315,6 +315,7 @@ public class BBInputSetupMapperLayer {
     }
 
     protected GenericVnf mapAAIGenericVnfIntoGenericVnf(org.onap.aai.domain.yang.GenericVnf aaiGenericVnf) {
+        logger.debug("mapAAIGenericVnfIntoGenericVnf entry ");
         GenericVnf genericVnf = modelMapper.map(aaiGenericVnf, GenericVnf.class);
         mapAllVfModulesIntoGenericVnf(aaiGenericVnf, genericVnf);
         mapAllLagInterfacesIntoGenericVnf(aaiGenericVnf, genericVnf);
@@ -359,6 +360,7 @@ public class BBInputSetupMapperLayer {
 
     protected void mapAllVfModulesIntoGenericVnf(org.onap.aai.domain.yang.GenericVnf aaiGenericVnf,
             GenericVnf genericVnf) {
+        logger.debug("mapAllVfModulesIntoGenericVnf entry");
         if (aaiGenericVnf.getVfModules() != null) {
             for (org.onap.aai.domain.yang.VfModule aaiVfModule : aaiGenericVnf.getVfModules().getVfModule()) {
                 VfModule vfModule = mapAAIVfModule(aaiVfModule);

@@ -66,6 +66,7 @@ public class ControllerExecution {
      */
     public void setControllerActorScopeAction(BuildingBlockExecution execution) {
 
+        logger.debug("ControllerExecution setControllerActorScopeAction entry");
         ExecuteBuildingBlock executeBuildingBlock = execution.getVariable(BUILDING_BLOCK);
         BuildingBlock buildingBlock = executeBuildingBlock.getBuildingBlock();
 
@@ -99,7 +100,8 @@ public class ControllerExecution {
             execution.setVariable(SCOPE, scope);
             execution.setVariable(ACTION, action);
             execution.setVariable(CONTROLLER_ACTOR, controllerActor);
-
+            logger.debug("Executing Controller Execution for ControllerActor: {}, Scope: {} , Action: {}",
+                    controllerActor, scope, action);
             logger.debug("Executing Controller Execution for ControllerActor: {}, Scope: {} , Action: {}",
                     controllerActor, scope, action);
         } catch (Exception ex) {
@@ -115,7 +117,7 @@ public class ControllerExecution {
      */
     public void selectBB(BuildingBlockExecution execution) {
         try {
-
+            logger.debug("ControllerExecution selectBB  entry");
             String controllerActor = execution.getVariable(CONTROLLER_ACTOR);
             String action = Optional.of((String) execution.getVariable(ACTION)).get();
             String scope = Optional.of((String) execution.getVariable(SCOPE)).get();
@@ -129,6 +131,7 @@ public class ControllerExecution {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 
         }
+        logger.debug("ControllerExecution selectBB  end");
 
     }
 

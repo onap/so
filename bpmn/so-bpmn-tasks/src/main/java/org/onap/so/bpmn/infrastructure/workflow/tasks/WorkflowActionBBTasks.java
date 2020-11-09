@@ -99,13 +99,15 @@ public class WorkflowActionBBTasks {
     private RequestsDbListenerRunner requestsDbListener;
 
     public void selectBB(DelegateExecution execution) {
+        logger.debug("WorkflowActionBBTasks selectBB entry ");
+
         List<ExecuteBuildingBlock> flowsToExecute =
                 (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         execution.setVariable("MacroRollback", false);
 
         flowManipulatorListenerRunner.modifyFlows(flowsToExecute, new DelegateExecutionImpl(execution));
         int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE);
-
+        logger.debug("WorkflowActionBBTasks selectBB flow modified ");
         ExecuteBuildingBlock ebb = flowsToExecute.get(currentSequence);
 
         execution.setVariable("buildingBlock", ebb);
@@ -246,6 +248,7 @@ public class WorkflowActionBBTasks {
     }
 
     public void checkRetryStatus(DelegateExecution execution) {
+        logger.debug(" checkRetryStatus  entry ");
         String handlingCode = (String) execution.getVariable(HANDLINGCODE);
         String requestId = (String) execution.getVariable(G_REQUEST_ID);
         String retryDuration = (String) execution.getVariable("RetryDuration");
@@ -279,6 +282,8 @@ public class WorkflowActionBBTasks {
         } else {
             execution.setVariable(RETRY_COUNT, 0);
         }
+        logger.debug(" checkRetryStatus  end ");
+
     }
 
     /**
@@ -409,6 +414,7 @@ public class WorkflowActionBBTasks {
     }
 
     public void postProcessingExecuteBB(DelegateExecution execution) {
+        logger.debug("postProcessingExecuteBB entry");
         List<ExecuteBuildingBlock> flowsToExecute =
                 (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         String handlingCode = (String) execution.getVariable(HANDLINGCODE);
@@ -422,6 +428,7 @@ public class WorkflowActionBBTasks {
                         || requestAction.equalsIgnoreCase("replaceInstanceRetainAssignments"))) {
             postProcessingExecuteBBActivateVfModule(execution, ebb, flowsToExecute);
         }
+        logger.debug("postProcessingExecuteBB ended for  ::{}", bbFlowName);
     }
 
     protected void postProcessingExecuteBBActivateVfModule(DelegateExecution execution, ExecuteBuildingBlock ebb,
