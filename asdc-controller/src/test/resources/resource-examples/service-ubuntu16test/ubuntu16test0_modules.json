@@ -1,0 +1,25 @@
+[
+  {
+    "vfModuleModelName": "Ubuntu16test..base_ubuntu16..module-0",
+    "vfModuleModelInvariantUUID": "28038eb1-cb06-45be-b7f4-dd6349f45a83",
+    "vfModuleModelVersion": "1",
+    "vfModuleModelUUID": "1c71e637-0a79-4316-86f0-c24921798bfa",
+    "vfModuleModelCustomizationUUID": "58832c82-4fd8-4248-9dbc-e006af9c1702",
+    "isBase": true,
+    "artifacts": [
+      "9a3c7717-09b6-4a96-8a39-66beb2bb2b36",
+      "fdb0d678-10f5-4ff0-a1b4-36bc01a012d7"
+    ],
+    "properties": {
+      "min_vf_module_instances": "1",
+      "vf_module_label": "base_ubuntu16",
+      "max_vf_module_instances": "1",
+      "vfc_list": "",
+      "vf_module_type": "Base",
+      "vf_module_description": "",
+      "initial_count": "1",
+      "volume_group": "false",
+      "availability_zone_count": ""
+    }
+  }
+]

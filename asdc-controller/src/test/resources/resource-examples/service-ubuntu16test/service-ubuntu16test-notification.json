@@ -1,0 +1,114 @@
+{
+  "distributionID": "2d6c5aa8-b644-4f30-a632-5577801ef954",
+  "serviceName": "ubuntu16test",
+  "serviceVersion": "1.0",
+  "serviceUUID": "ed0391da-b963-4c45-bf3a-b49cc7a94fab",
+  "serviceDescription": "service",
+  "serviceInvariantUUID": "941b713e-4ba0-47c9-bfaf-611168cbf7d1",
+  "resources": [
+    {
+      "resourceInstanceName": "ubuntu16test 0",
+      "resourceName": "Ubuntu16test",
+      "resourceVersion": "1.0",
+      "resoucreType": "VF",
+      "resourceUUID": "e6afd1be-ee4f-439d-bd79-d559c626fd27",
+      "resourceInvariantUUID": "72ce1922-0359-4079-a76e-f3f1b6cf8cc1",
+      "resourceCustomizationUUID": "1b2bf1c7-25a5-48df-bf30-7ae43508a5ea",
+      "category": "Generic",
+      "subcategory": "Abstract",
+      "artifacts": [
+{
+          "artifactName": "ubuntu16test0_modules.json",
+          "artifactType": "VF_MODULES_METADATA",
+          "artifactURL": "/ubuntu16test0_modules.json",
+          "artifactChecksum": "MDJkYjNmNjEzM2Y1ZDgzNzZiZWUxMjZkMzA3YzkwZDI\u003d",
+          "artifactDescription": "Auto-generated VF Modules information artifact",
+          "artifactTimeout": 120,
+          "artifactUUID": "28038eb1-cb06-45be-b7f4-dd6349f45a83",
+          "artifactVersion": "1"
+        }, 
+
+
+{
+          "artifactName": "base_ubuntu16.env",
+          "artifactType": "HEAT_ENV",
+          "artifactURL": "/base_ubuntu16.env",
+          "artifactChecksum": "YzI4MjlkODk4YzcyOTgzZTg2YjAyM2ZiNWU1N2FmMjI\u003d",
+          "artifactDescription": "Auto-generated HEAT Environment deployment artifact",
+          "artifactTimeout": 120,
+          "artifactUUID": "5821b043-ba50-49ef-b739-61b0896050f2",
+          "artifactVersion": "2",
+          "generatedFromUUID": "12dcc618-20f2-4f15-ab00-c549b96b3910"
+        },
+      
+ {
+          "artifactName": "vendor-license-model.xml",
+          "artifactType": "VF_LICENSE",
+          "artifactURL": "/vendor-license-model.xml",
+          "artifactChecksum": "YjYyYWNiMzUxM2YzMWYxYWVhN2Y5MTM3N2E5YzNhNmU\u003d",
+          "artifactDescription": "VF license file",
+          "artifactTimeout": 120,
+          "artifactUUID": "5c29e823-7114-4988-824f-f670ba9d7b21",
+          "artifactVersion": "1"
+        },
+        
+        {
+          "artifactName": "/base_ubuntu16.yaml",
+          "artifactType": "HEAT",
+          "artifactURL": "/base_ubuntu16.yaml",
+          "artifactChecksum": "NWU2NGUwNmNkMGEzYjAxMTAyODkzNTc5YzFmZDBmMzM\u003d",
+          "artifactDescription": "created from csar",
+          "artifactTimeout": 120,
+          "artifactUUID": "fdb0d678-10f5-4ff0-a1b4-36bc01a012d7",
+          "artifactVersion": "2"
+        },
+        {
+          "artifactName": "vendor-license-model.xml",
+          "artifactType": "VENDOR_LICENSE",
+          "artifactURL": "/vendor-license-model.xml",
+          "artifactChecksum": "OTRkOTY3YjdjM2ZlNDM3NjNlZjBjODU4YTJmNGZhNGE\u003d",
+          "artifactDescription": " Vendor license file",
+          "artifactTimeout": 120,
+          "artifactUUID": "74c4d1bd-1779-421f-8c9d-774ac4567031",
+          "artifactVersion": "1"
+        },
+ {
+          "artifactName": "base_ubuntu16.env",
+          "artifactType": "HEAT_ENV",
+          "artifactURL": "/base_ubuntu16.env",
+          "artifactChecksum": "OTRkOTY3YjdjM2ZlNDM3NjNlZjBjODU4YTJmNGZhNGE\u003d",
+          "artifactDescription": " Vendor license file",
+          "artifactTimeout": 120,
+          "artifactUUID": "9a3c7717-09b6-4a96-8a39-66beb2bb2b36",
+          "artifactVersion": "1"
+        }
+        
+      ]
+    }
+   
+   
+  ],
+  "serviceArtifacts": [
+    {
+      "artifactName": "service-Ubuntu16test-template.ym",
+      "artifactType": "TOSCA_TEMPLATE",
+      "artifactURL": "/service-Ubuntu16test-template.ym",
+      "artifactChecksum": "NTUzMDU5YzM3MTk4OGNiNjQ2OGRlMWY2YjU3MjE2YjM\u003d",
+      "artifactDescription": "TOSCA representation of the asset",
+      "artifactTimeout": 0,
+      "artifactUUID": "2617d0ca-54f0-4222-b659-c12e292d94dd",
+      "artifactVersion": "1"
+    },
+    {
+      "artifactName": "service-Ubuntu16test-csar.csar",
+      "artifactType": "TOSCA_CSAR",
+      "artifactURL": "/service-Ubuntu16test-csar.csar",
+      "artifactChecksum": "ZTRhOGI0M2UxN2ZhYjQ0ODI5ZDZhZTExZTFkMGU3N2Y\u003d",
+      "artifactDescription": "TOSCA definition package of the asset",
+      "artifactTimeout": 0,
+      "artifactUUID": "26a323ff-b97b-4b86-96b1-25a80c0876e5",
+      "artifactVersion": "1"
+    }
+  ],
+  "workloadContext": "Production"
+}
