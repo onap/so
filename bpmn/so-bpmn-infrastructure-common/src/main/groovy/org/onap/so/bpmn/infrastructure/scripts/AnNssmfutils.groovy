@@ -37,6 +37,7 @@ import java.sql.Timestamp
 import java.util.List
 import static org.apache.commons.lang3.StringUtils.isBlank
 import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
@@ -48,7 +49,6 @@ import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.T
 import javax.ws.rs.NotFoundException
 import org.onap.so.beans.nsmf.AllocateTnNssi
 import org.onap.so.beans.nsmf.DeAllocateNssi
-import org.onap.so.beans.nsmf.EsrInfo
 import org.onap.so.beans.nsmf.ServiceInfo
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.aai.domain.yang.ServiceInstance
@@ -65,12 +65,11 @@ class AnNssmfUtils {
 	JsonUtils jsonUtil = new JsonUtils()
 	public String buildSelectRANNSSIRequest(String requestId, String messageType, String UUID,String invariantUUID,
 		String name, Map<String, Object> profileInfo, List<String> nsstInfoList, JsonArray capabilitiesList, Boolean preferReuse){
-
+	JsonParser parser = new JsonParser()
 	def transactionId = requestId
 	logger.debug( "transactionId is: " + transactionId)
 	String correlator = requestId
 	String callbackUrl = UrnPropertiesReader.getVariable("mso.adapters.oof.callback.endpoint") + "/" + messageType + "/" + correlator
-	ObjectMapper objectMapper = new ObjectMapper();
 	String profileJson = objectMapper.writeValueAsString(profileInfo);
 	String nsstInfoListString = objectMapper.writeValueAsString(nsstInfoList);
 	//Prepare requestInfo object
@@ -91,8 +90,8 @@ class AnNssmfUtils {
 	JsonObject json = new JsonObject()
 	json.add("requestInfo", requestInfo)
 	json.add("NSTInfo", ranNsstInfo)
-	json.addProperty("serviceProfile", profileJson)
-	json.addProperty("NSSTInfo", nsstInfoListString)
+	json.add("serviceProfile", (JsonObject) parser.parse(profileJson))
+	//json.add("NSSTInfo", (JsonArray) parser.parse(nsstInfoListString))
 	json.add("subnetCapabilities", capabilitiesList)
 	json.addProperty("preferReuse", preferReuse)
 
@@ -100,29 +99,33 @@ class AnNssmfUtils {
 }
 
 public String buildCreateTNNSSMFSubnetCapabilityRequest() {
-	EsrInfo esrInfo = new EsrInfo()
-	esrInfo.setNetworkType("TN")
-	esrInfo.setVendor("ONAP")
+	JsonObject esrInfo = new JsonObject()
+	esrInfo.addProperty("networkType", "tn")
+	esrInfo.addProperty("vendor", "ONAP_internal")
 
 	JsonArray subnetTypes = new JsonArray()
 	subnetTypes.add("TN_FH")
 	subnetTypes.add("TN_MH")
 	JsonObject response = new JsonObject()
-	response.add("subnetCapabilityQuery", subnetTypes)
-	response.addProperty("esrInfo", objectMapper.writeValueAsString(esrInfo))
+	JsonObject subnetTypesObj = new JsonObject()
+	subnetTypesObj.add("subnetTypes", subnetTypes)
+	response.add("subnetCapabilityQuery", subnetTypesObj)
+	response.add("esrInfo", esrInfo)
 	return response.toString()
 }
 
 public String buildCreateANNFNSSMFSubnetCapabilityRequest() {
-	EsrInfo esrInfo = new EsrInfo()
-	esrInfo.setNetworkType("AN")
-	esrInfo.setVendor("ONAP")
+	JsonObject esrInfo = new JsonObject()
+	esrInfo.addProperty("networkType", "an")
+	esrInfo.addProperty("vendor", "ONAP_internal")
 
 	JsonArray subnetTypes = new JsonArray()
 	subnetTypes.add("AN_NF")
 	JsonObject response = new JsonObject()
-	response.add("subnetCapabilityQuery", subnetTypes)
-	response.addProperty("esrInfo", objectMapper.writeValueAsString(esrInfo))
+	JsonObject subnetTypesObj = new JsonObject()
+	subnetTypesObj.add("subnetTypes", subnetTypes)
+	response.add("subnetCapabilityQuery", subnetTypesObj)
+	response.add("esrInfo", esrInfo)
 	return response.toString()
 }
 public void createDomainWiseSliceProfiles(List<String> ranConstituentSliceProfiles, DelegateExecution execution) {
@@ -333,10 +336,9 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 	}
 	
 	public String buildCreateNSSMFRequest(DelegateExecution execution, String domainType, String action) {
-		EsrInfo esrInfo = new EsrInfo()
-		esrInfo.setNetworkType("TN")
-		esrInfo.setVendor("ONAP")
-		String esrInfoString = objectMapper.writeValueAsString(esrInfo)
+		JsonObject esrInfo = new JsonObject()
+	    esrInfo.addProperty("networkType", "tn")
+	    esrInfo.addProperty("vendor", "ONAP_internal")
 		JsonObject response = new JsonObject()
 		JsonObject allocateTnNssi = new JsonObject()
 		JsonObject serviceInfo = new JsonObject()
@@ -404,7 +406,7 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 		serviceInfo.addProperty("nsiId", execution.getVariable("nsiId"))
 		serviceInfo.addProperty("globalSubscriberId", execution.getVariable("globalSubscriberId"))
 		serviceInfo.addProperty("subscriptionServiceType", execution.getVariable("subscriptionServiceType"))
-		response.addProperty("esrInfo", esrInfoString)
+		response.add("esrInfo", esrInfo)
 		response.add("serviceInfo", serviceInfo)
 		response.add("allocateTnNssi", allocateTnNssi)
 		return response.toString()
@@ -429,9 +431,9 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 			deAllocateNssi.addProperty("sliceProfileId", execution.getVariable("TNMH_sliceProfileInstanceId"))
 		}
 		
-		EsrInfo esrInfo = new EsrInfo()
-		esrInfo.setVendor("ONAP")
-		esrInfo.setNetworkType("TN")
+		JsonObject esrInfo = new JsonObject()
+	    esrInfo.addProperty("networkType", "tn")
+	    esrInfo.addProperty("vendor", "ONAP_internal")
 	   
 		JsonObject serviceInfo = new JsonObject()
 		serviceInfo.addProperty("serviceInvariantUuid", null)
@@ -441,7 +443,7 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 	   
 		JsonObject json = new JsonObject()
 		json.add("deAllocateNssi", deAllocateNssi)
-		json.addProperty("esrInfo", objectMapper.writeValueAsString(esrInfo))
+		json.add("esrInfo", esrInfo)
 		json.add("serviceInfo", serviceInfo)
 		return json.toString()
 	   
