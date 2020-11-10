@@ -50,7 +50,7 @@ import org.onap.so.db.catalog.beans.HomingInstance
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import com.google.gson.JsonObject
-
+import com.google.gson.JsonParser
 import com.fasterxml.jackson.databind.ObjectMapper
 
 class OofUtils {
@@ -596,6 +596,7 @@ String correlator = requestId
 String callbackUrl = UrnPropertiesReader.getVariable("mso.adapters.oof.callback.endpoint") + "/" + messageType + "/" + correlator
 ObjectMapper objectMapper = new ObjectMapper();
 String profileJson = objectMapper.writeValueAsString(profileInfo);
+JsonParser parser = new JsonParser()
 
 //Prepare requestInfo object
 JsonObject requestInfo = new JsonObject()
@@ -615,9 +616,11 @@ nsstInfo.addProperty("name", name)
 JsonObject json = new JsonObject()
 json.add("requestInfo", requestInfo)
 json.add("NSSTInfo", nsstInfo)
-json.addProperty("sliceProfile", profileJson)
+json.add("sliceProfile", (JsonObject) parser.parse(profileJson))
+
 return json.toString()
 }
+
 /**
 * Method to create NSI/NSSI termination request
 * (OOF response will be synchronous in G-Release)
