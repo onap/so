@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c362cd3a_7b9927bf",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/R__MacroData.sql",
+        "patchSetId": 1
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 5597
+      },
+      "writtenOn": "2020-11-10T09:54:56Z",
+      "side": 1,
+      "message": "This is super-interesting in case of gating...\nDue to the reason, that resource models used in pnfRegistration do not really use CDS packages.\nskip_post_instantiation_configuration flag is set to its default value -- true.\n\nThis has been fixed for PNFs in this MR: https://gerrit.onap.org/r/c/so/+/113839\nIs there a chance, that this code has been overwritten by other commits merged recently?",
+      "range": {
+        "startLine": 231,
+        "startChar": 0,
+        "endLine": 233,
+        "endChar": 208
+      },
+      "revId": "ce4f7a8ad09088a51028d860d39ee52ca09bb853",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
