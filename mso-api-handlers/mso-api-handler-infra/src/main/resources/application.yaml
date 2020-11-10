@@ -83,3 +83,7 @@ org:
       adapters:
         network:
           encryptionKey: aa3871669d893c7fb8abbcda31b88b4f
+
+subnetCapability:
+  config:
+      file: /app/subnetCapability.json

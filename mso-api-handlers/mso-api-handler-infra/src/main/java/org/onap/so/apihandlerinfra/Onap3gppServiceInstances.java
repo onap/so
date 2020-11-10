@@ -20,6 +20,9 @@
 
 package org.onap.so.apihandlerinfra;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.UUID;
@@ -72,6 +75,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -123,6 +127,9 @@ public class Onap3gppServiceInstances {
 
     @Autowired
     private ResponseHandler responseHandler;
+
+    @Value("${subnetCapability.config.file}")
+    private String subnetCapabilityConfigFile;
 
     /**
      * POST Requests for 3GPP Service create Instance on a version provided
@@ -583,13 +590,23 @@ public class Onap3gppServiceInstances {
         }
     }
 
-    // To be implemented for fetching Subnet capabilities
     private Response getSubnetCapabilities(List<SubnetTypes> subnetTypes, String version) throws ApiException {
         ObjectMapper oMapper = new ObjectMapper();
-        InputStream inputStream = TypeReference.class.getResourceAsStream("/subnetCapability.json");
+        String inputFileString = "";
         Map<String, Object> subnetCapability = new HashMap<>();
+        BufferedReader br = null;
         try {
-            subnetCapability = oMapper.readValue(inputStream, Map.class);
+            logger.debug("Reading SubnetCapability file");
+            br = new BufferedReader(new FileReader(new File(subnetCapabilityConfigFile)));
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+            while (line != null) {
+                sb.append(line);
+                sb.append("\n");
+                line = br.readLine();
+            }
+            inputFileString = sb.toString();
+            subnetCapability = oMapper.readValue(inputFileString, Map.class);
         } catch (Exception e) {
             logger.debug("Exception while reading subnet capability value from json", e);
         }
