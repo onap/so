@@ -24,6 +24,7 @@ import java.net.URI;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLContext;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -56,7 +57,8 @@ public abstract class RestClientSSL extends RestClient {
                 }
             }
             // Use default SSL context
-            client = ClientBuilder.newBuilder().sslContext(SSLContext.getDefault()).build();
+            client = ClientBuilder.newBuilder().sslContext(SSLContext.getDefault())
+                    .readTimeout(props.getReadTimeout(), TimeUnit.MILLISECONDS).build();
             logger.info("RestClientSSL using default SSL context!");
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
