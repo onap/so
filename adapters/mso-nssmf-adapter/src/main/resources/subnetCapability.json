@@ -1,0 +1,19 @@
+{
+  "AN": {
+    "latency": "5",
+    "maxNumberofUEs": "100"
+  },
+  "CN": {
+    "latency": "10",
+    "maxNumberofConns": "100"
+  },
+  "TN_FH": {
+    "latency": "10"
+  },
+  "TN_MH": {
+    "latency": "5"
+  },
+  "TN_BH": {
+    "latency": "10"
+  }
+}

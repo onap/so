@@ -38,6 +38,7 @@ import org.onap.so.adapters.nssmf.entity.TokenResponse;
 import org.onap.so.adapters.nssmf.enums.HttpMethod;
 import org.onap.so.adapters.nssmf.util.RestUtil;
 import org.onap.so.beans.nsmf.*;
+import org.onap.so.beans.nsmf.oof.SubnetCapability;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
 import org.onap.so.db.request.data.repository.ResourceOperationStatusRepository;
 import org.springframework.http.ResponseEntity;
@@ -429,7 +430,9 @@ public class NssmfManagerServiceImplTest {
     public void querySubnetCapability() {
         NssmfAdapterNBIRequest nbiRequest = createNbiRequest();
 
-        String subnetCapabilityQuery = "\"subnetTypes\": [\"TN-FH\",\"TN-MH\",\"TN-BH\"]";
+        QuerySubnetCapability subnetCapabilityQuery = new QuerySubnetCapability();
+        List<String> subnetTypes = Arrays.asList("TN-FH", "TN-MH", "TN-BH");
+        subnetCapabilityQuery.setSubnetTypes(subnetTypes);
         nbiRequest.setSubnetCapabilityQuery(subnetCapabilityQuery);
         ResponseEntity res = nssiManagerService.queryNSSISelectionCapability(nbiRequest);
         assertNotNull(res);

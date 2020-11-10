@@ -20,7 +20,11 @@
 
 package org.onap.so.adapters.nssmf.manager.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.Header;
+import org.apache.http.HttpStatus;
 import org.apache.http.message.BasicHeader;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.so.adapters.nssmf.entity.NssmfInfo;
@@ -31,13 +35,22 @@ import org.onap.so.adapters.nssmf.exceptions.ApplicationException;
 import org.onap.so.adapters.nssmf.util.NssmfAdapterUtil;
 import org.onap.so.beans.nsmf.*;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import static java.lang.String.valueOf;
 import static org.onap.so.adapters.nssmf.enums.JobStatus.*;
-import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.StatusDesc.*;
+import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.StatusDesc.QUERY_JOB_STATUS_FAILED;
+import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.StatusDesc.QUERY_JOB_STATUS_SUCCESS;
 import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.marshal;
 import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.unMarshal;
 
 public abstract class ExternalNssmfManager extends BaseNssmfManager {
+
+    private static final Logger logger = LoggerFactory.getLogger(ExternalNssmfManager.class);
 
     @Override
     protected String wrapAllocateReqBody(NssmfAdapterNBIRequest nbiRequest) throws ApplicationException {
@@ -167,11 +180,34 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
     }
 
     @Override
-    protected <T> RestResponse doQuerySubnetCapability(T req) throws ApplicationException {
-        RestResponse response = new RestResponse();
-        response.setStatus(200);
-        response.setResponseContent(null);
-        return response;
+    protected <T> RestResponse doQuerySubnetCapability(QuerySubnetCapability req) throws ApplicationException {
+
+        ObjectMapper oMapper = new ObjectMapper();
+        InputStream inputStream = TypeReference.class.getResourceAsStream("/subnetCapability.json");
+        Map<String, Object> subnetCapability = new HashMap<>();
+        try {
+            subnetCapability = oMapper.readValue(inputStream, Map.class);
+        } catch (Exception e) {
+            logger.debug("Exception while reading subnet capability value from json", e);
+        }
+        Map<String, Object> responseMap = new HashMap<>();
+        List<String> subnetTypes = req.getSubnetTypes();
+        for (String value : subnetTypes) {
+            if (subnetCapability.containsKey(value)) {
+                responseMap.put(value, subnetCapability.get(value));
+            }
+        }
+        String response = null;
+        try {
+            response = oMapper.writeValueAsString(responseMap);
+        } catch (JsonProcessingException e) {
+            logger.debug("Exception while converting subnet capability object to String {}", e);
+        }
+
+        RestResponse rsp = new RestResponse();
+        rsp.setStatus(HttpStatus.SC_OK);
+        rsp.setResponseContent(response);
+        return rsp;
     }
 
     /**

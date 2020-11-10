@@ -122,7 +122,7 @@ public abstract class InternalNssmfManager extends BaseNssmfManager {
     protected abstract String doWrapModifyReqBody(NssmfAdapterNBIRequest nbiRequest) throws ApplicationException;
 
     @Override
-    protected <T> RestResponse doQuerySubnetCapability(T req) throws ApplicationException {
+    protected <T> RestResponse doQuerySubnetCapability(QuerySubnetCapability req) throws ApplicationException {
         // handler
         return sendRequest(marshal(req));
     }
