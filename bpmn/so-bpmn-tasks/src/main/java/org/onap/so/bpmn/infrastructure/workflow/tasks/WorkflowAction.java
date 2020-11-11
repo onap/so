@@ -369,8 +369,11 @@ public class WorkflowAction {
             logger.info("List of BuildingBlocks to execute:");
 
             flowsToExecute.forEach(ebb -> {
-                logger.info(ebb.getBuildingBlock().getBpmnFlowName());
-                flowNames.add(ebb.getBuildingBlock().getBpmnFlowName());
+                final BuildingBlock buildingBlock = ebb.getBuildingBlock();
+                final String bpmnFlowName = buildingBlock.getBpmnFlowName();
+                logger.info("BB Name {}, scope {}, action {}, key {}", bpmnFlowName, buildingBlock.getBpmnScope(),
+                        buildingBlock.getBpmnAction(), buildingBlock.getKey());
+                flowNames.add(bpmnFlowName);
             });
 
             if (!isResume) {

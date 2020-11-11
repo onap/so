@@ -81,6 +81,7 @@ import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -699,7 +700,6 @@ public class CatalogDbClient {
     }
 
 
-
     public NetworkRecipe getFirstNetworkRecipeByModelNameAndAction(String modelName, String action) {
         return this.getSingleResource(networkRecipeClient, UriBuilder.fromUri(findFirstByModelNameAndAction)
                 .queryParam(MODEL_NAME, modelName).queryParam(ACTION, action).build());
@@ -942,11 +942,16 @@ public class CatalogDbClient {
             throw new EntityNotFoundException(
                     "a NULL UUID was provided in query to search for VnfResourceCustomization");
         }
+        if (CollectionUtils.isEmpty(vnfResourceCusts)) {
+            throw new EntityNotFoundException(
+                    "a NULL or empty list was provided in query to search for VnfResourceCustomization");
+        }
         List<VnfResourceCustomization> filtered =
                 vnfResourceCusts.stream().filter(v -> v.getModelCustomizationUUID() != null)
                         .filter(vnfCustRes -> vnfCustomizationUUID.equals(vnfCustRes.getModelCustomizationUUID()))
                         .collect(Collectors.toList());
         if (filtered != null && !filtered.isEmpty() && filtered.size() == 1) {
+            logger.debug("Found VnfResourceCustomization: {}", filtered.get(0));
             return filtered.get(0);
         } else
             throw new EntityNotFoundException(
