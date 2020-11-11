@@ -952,3 +952,8 @@ VALUES
 ('VNFConfigModifyActivity','*','*','*','*','Manual','Abort','*', '*'),
 ('VNFUnsetInMaintFlagActivity','*','*','*','*','Manual','Abort','*', '*'),
 ('VNFUnsetClosedLoopDisabledActivity','*','*','*','*','Manual','Abort','*', '*');
+
+UPDATE orchestration_flow_reference set FLOW_NAME='ControllerExecutionBB', SCOPE='vnf', ACTION='config-assign' WHERE COMPOSITE_ACTION = 'Service-Macro-Create' and FLOW_NAME = 'ConfigAssignVnfBB';
+UPDATE orchestration_flow_reference set FLOW_NAME='ControllerExecutionBB', SCOPE='vnf', ACTION='config-deploy' WHERE COMPOSITE_ACTION = 'Service-Macro-Create' and FLOW_NAME = 'ConfigDeployVnfBB';
+UPDATE orchestration_flow_reference set FLOW_NAME='ControllerExecutionBB', SCOPE='vnf', ACTION='HealthCheck' WHERE COMPOSITE_ACTION = 'VFModule-ScaleOut' and FLOW_NAME = 'GenericVnfHealthCheckBB';
+UPDATE orchestration_flow_reference set FLOW_NAME='ControllerExecutionBB', SCOPE='vfmodule', ACTION='ScaleOutReconfiguration' WHERE COMPOSITE_ACTION = 'VFModule-ScaleOut' and FLOW_NAME = 'GenericVnfHealthCheckBB';
