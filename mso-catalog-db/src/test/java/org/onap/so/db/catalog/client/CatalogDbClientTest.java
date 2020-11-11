@@ -27,10 +27,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityNotFoundException;
 import javax.ws.rs.core.UriBuilder;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -92,6 +96,18 @@ public class CatalogDbClientTest {
         vrcs.add(vrc2);
         VnfResourceCustomization aVrc = catalogDbClient.findVnfResourceCustomizationInList(vnfCustomizationUUID, vrcs);
         assertTrue(aVrc.getModelCustomizationUUID().equals("a123"));
+    }
+
+
+    @Test
+    public final void testFindVnfResourceCustomizationInListFromFile() throws IOException {
+        String vnfCustomizationUUID = "97ea1f01-7961-40e1-990b-e1e354be911a";
+        ObjectMapper mapper = new ObjectMapper();
+        List<VnfResourceCustomization> vrcs =
+                mapper.readValue(new File("src/test/resources/VnfResourceCustomization.json"),
+                        new TypeReference<List<VnfResourceCustomization>>() {});
+        VnfResourceCustomization aVrc = catalogDbClient.findVnfResourceCustomizationInList(vnfCustomizationUUID, vrcs);
+        assertTrue(aVrc.getModelCustomizationUUID().equals(vnfCustomizationUUID));
     }
 
     @Test

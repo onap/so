@@ -1,0 +1,21 @@
+[ {
+  "id" : 17,
+  "modelCustomizationUUID" : "97ea1f01-7961-40e1-990b-e1e354be911a",
+  "modelInstanceName" : "VF_new_cba_vfw_k8s_demo 0",
+  "created" : "2020-10-27 14:15:31.000",
+  "minInstances" : null,
+  "maxInstances" : null,
+  "availabilityZoneMaxCount" : null,
+  "nfFunction" : null,
+  "nfType" : null,
+  "nfRole" : null,
+  "nfNamingCode" : null,
+  "multiStageDesign" : "false",
+  "resourceInput" : "{\\\"vf_module_id\\\":\\\"vFirewallCL\\\",\\\"skip_post_instantiation_configuration\\\":\\\"true\\\",\\\"nf_naming\\\":\\\"true\\\",\\\"vnf_software_version\\\":\\\"1.0.0\\\",\\\"multi_stage_design\\\":\\\"false\\\",\\\"controller_actor\\\":\\\"SO-REF-DATA\\\",\\\"availability_zone_max_count\\\":\\\"1\\\",\\\"vnf_id\\\":\\\"vSink_demo_app\\\",\\\"vnf_name\\\":\\\"vFW_CDS_CNF\\\"}",
+  "blueprintName" : null,
+  "blueprintVersion" : null,
+  "skipPostInstConf" : true,
+  "vnfcInstanceGroupOrder" : null,
+  "nfDataValid" : null,
+  "controllerActor" : "SO-REF-DATA"
+  } ]
