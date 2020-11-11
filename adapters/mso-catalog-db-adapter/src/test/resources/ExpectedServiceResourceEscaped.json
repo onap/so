@@ -1,0 +1,103 @@
+{ "serviceResources"    : {
+	"modelInfo"       : {
+		"modelName"          : "MSOTADevInfra_vSAMP10a_Service",
+		"modelUuid"          : "5df8b6de-2083-11e7-93ae-92361f002671",
+		"modelInvariantUuid" : "9647dfc4-2083-11e7-93ae-92361f002671",
+		"modelVersion"       : "1.0"
+	},
+	"serviceType"        : "NA",
+	"serviceRole"        : "NA",
+	"environmentContext" : "Luna",
+	"resourceOrder"      : null,
+	"workloadContext"    : "Oxygen",
+	"serviceVnfs": [
+	
+		{ "modelInfo"                    : {
+			"modelName"              : "vSAMP10a",
+			"modelUuid"              : "ff2ae348-214a-11e7-93ae-92361f002671",
+			"modelInvariantUuid"     : "2fff5b20-214b-11e7-93ae-92361f002671",
+			"modelVersion"           : "1.0",
+			"modelCustomizationUuid" : "68dc9a92-214c-11e7-93ae-92361f002671",
+			"modelInstanceName"      : "vSAMP10a 1"
+			},
+		"toscaNodeType"            : "VF",
+		"nfFunction"           	: "vSAMP",
+		"nfType"              		: "vSAMP",
+		"nfRole"              		: "vSAMP",
+		"nfNamingCode"         	: "vSAMP",
+		"multiStageDesign"         : null,
+		"vnfcInstGroupOrder"       : null,
+		"resourceInput"            : "{\"resource_input\":\"test\"}",
+			"vfModules": [
+				{
+					"modelInfo"               : { 
+						"modelName"              : "vSAMP10aDEV::base::module-0",
+						"modelUuid"              : "20c4431c-246d-11e7-93ae-92361f002671",
+						"modelInvariantUuid"     : "78ca26d0-246d-11e7-93ae-92361f002671",
+						"modelVersion"           : "2",
+						"modelCustomizationUuid" : "cb82ffd8-252a-11e7-93ae-92361f002671"
+					},		"isBase"                 : true,
+					"vfModuleLabel"          : "base",
+					"initialCount"           : 1,
+					"hasVolumeGroup"           : false
+				},
+				{
+					"modelInfo"               : { 
+						"modelName"              : "vSAMP10aDEV::PCM::module-1",
+						"modelUuid"              : "066de97e-253e-11e7-93ae-92361f002671",
+						"modelInvariantUuid"     : "64efd51a-2544-11e7-93ae-92361f002671",
+						"modelVersion"           : "2",
+						"modelCustomizationUuid" : "b4ea86b4-253f-11e7-93ae-92361f002671"
+					},		"isBase"                 : false,
+					"vfModuleLabel"          : "PCM",
+					"initialCount"           : 0,
+					"hasVolumeGroup"           : false
+				}
+			],
+			"groups": []
+		}
+	],
+	"serviceNetworks": [
+		{
+			"modelInfo"                : {
+				"modelName"              : "CONTRAIL30_GNDIRECT",
+				"modelUuid"              : "10b36f65-f4e6-4be6-ae49-9596dc1c47fc",
+				"modelInvariantUuid"     : "ce4ff476-9641-4e60-b4d5-b4abbec1271d",
+				"modelVersion"           : "1.0",
+				"modelCustomizationUuid" : "3bdbb104-476c-483e-9f8b-c095b3d308ac",
+				"modelInstanceName"      : "CONTRAIL30_GNDIRECT 9"
+		},
+			"toscaNodeType"            : "",
+			"networkType"              : "",
+			"networkTechnology"        : "",
+			"resourceInput"            : "TBD",
+			"networkRole"              : "",
+			"networkScope"             : ""
+		}
+	],
+	"serviceInfo": null,
+	"serviceProxy": [],
+	"serviceAllottedResources": [
+		{
+			"modelInfo"       : {
+				"modelName"              : "Tunnel_Xconn",
+				"modelUuid"              : "f6b7d4c6-e8a4-46e2-81bc-31cad5072842",
+				"modelInvariantUuid"     : "b7a1b78e-6b6b-4b36-9698-8c9530da14af",
+				"modelVersion"           : "1.0",
+				"modelCustomizationUuid" : "367a8ba9-057a-4506-b106-fbae818597c6",
+				"modelInstanceName"      : "Sec_Tunnel_Xconn 11"
+			},
+			"toscaNodeType"                      : "",
+			"allottedResourceType"               : "",
+			"allottedResourceRole"               : null,
+			"providingServiceModelName"          : null,
+			"providingServiceModelInvariantUuid" : null,
+			"providingServiceModelUuid"          : null,
+			"nfFunction"                         : null,
+			"nfType"                             : null,
+			"nfRole"                             : null,
+			"nfNamingCode"                       : null,
+			"resourceInput"                      : "TBD"
+		}
+	]
+	}}

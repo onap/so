@@ -23,10 +23,13 @@ package org.onap.so.adapters.catalogdb.catalogrest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.json.JSONException;
+import org.json.simple.parser.ParseException;
 import org.junit.Test;
 import org.onap.so.adapters.catalogdb.CatalogDbAdapterBaseTest;
 import org.onap.so.db.catalog.beans.ProcessingFlags;
@@ -66,12 +69,8 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
 
     HttpHeaders headers = new HttpHeaders();
 
-    private final String expectedServiceResourceResponse =
-            "{\r\n\"serviceResources\": {\r\n\"modelInfo\": {\r\n\"modelName\": \"MSOTADevInfra_vSAMP10a_Service\",\r\n\"modelUuid\": \"5df8b6de-2083-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"9647dfc4-2083-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"1.0\"\r\n},\r\n\"serviceType\": \"NA\",\r\n\"serviceRole\": \"NA\",\r\n\"environmentContext\": \"Luna\",\r\n\"workloadContext\": \"Oxygen\",\r\n\"serviceVnfs\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10a\",\r\n\"modelUuid\": \"ff2ae348-214a-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"2fff5b20-214b-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"68dc9a92-214c-11e7-93ae-92361f002671\",\r\n\"modelInstanceName\": \"vSAMP10a 1\"\r\n},\r\n\"toscaNodeType\": \"VF\",\r\n\"nfFunction\": \"vSAMP\",\r\n\"nfType\": \"vSAMP\",\r\n\"nfRole\": \"vSAMP\",\r\n\"nfNamingCode\": \"vSAMP\",\r\n\"multiStageDesign\": null,\r\n\"vfModules\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::base::module-0\",\r\n\"modelUuid\": \"20c4431c-246d-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"78ca26d0-246d-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"cb82ffd8-252a-11e7-93ae-92361f002671\"\r\n},\r\n\"isBase\": true,\r\n\"vfModuleLabel\": \"base\",\r\n\"initialCount\": 1,\r\n\"hasVolumeGroup\": false\r\n},\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::PCM::module-1\",\r\n\"modelUuid\": \"066de97e-253e-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"64efd51a-2544-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"b4ea86b4-253f-11e7-93ae-92361f002671\"\r\n},\r\n\"isBase\": false,\r\n\"vfModuleLabel\": \"PCM\",\r\n\"initialCount\": 0,\r\n\"hasVolumeGroup\": false\r\n}\r\n]\r\n}\r\n],\r\n\"serviceNetworks\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"CONTRAIL30_GNDIRECT\",\r\n\"modelUuid\": \"10b36f65-f4e6-4be6-ae49-9596dc1c47fc\",\r\n\"modelInvariantUuid\": \"ce4ff476-9641-4e60-b4d5-b4abbec1271d\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"3bdbb104-476c-483e-9f8b-c095b3d308ac\",\r\n\"modelInstanceName\": \"CONTRAIL30_GNDIRECT 9\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"networkType\": \"\",\r\n\"networkTechnology\": \"\",\r\n\"networkRole\": \"\",\r\n\"networkScope\": \"\"\r\n}\r\n],\r\n\"serviceAllottedResources\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"Tunnel_Xconn\",\r\n\"modelUuid\": \"f6b7d4c6-e8a4-46e2-81bc-31cad5072842\",\r\n\"modelInvariantUuid\": \"b7a1b78e-6b6b-4b36-9698-8c9530da14af\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"367a8ba9-057a-4506-b106-fbae818597c6\",\r\n\"modelInstanceName\": \"Sec_Tunnel_Xconn 11\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"allottedResourceType\": \"\",\r\n\"allottedResourceRole\": null,\r\n\"providingServiceModelName\": null,\r\n\"providingServiceModelInvariantUuid\": null,\r\n\"providingServiceModelUuid\": null,\r\n\"nfFunction\": null,\r\n\"nfType\": null,\r\n\"nfRole\": null,\r\n\"nfNamingCode\": null\r\n}\r\n]\r\n}\r\n}";
-
     private final String expectedServiceResourceResponsev2 =
             "{\r\n\"serviceResources\": {\r\n\"modelInfo\": {\r\n\"modelName\": \"MSOTADevInfra_vSAMP10a_Service\",\r\n\"modelUuid\": \"5df8b6de-2083-11e7-93ae-92361f002672\",\r\n\"modelInvariantUuid\": \"9647dfc4-2083-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2.0\"\r\n},\r\n\"serviceType\": \"NA\",\r\n\"serviceRole\": \"NA\",\r\n\"environmentContext\": \"Luna\",\r\n\"workloadContext\": \"Oxygen\",\r\n\"serviceVnfs\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10a\",\r\n\"modelUuid\": \"ff2ae348-214a-11e7-93ae-92361f002672\",\r\n\"modelInvariantUuid\": \"2fff5b20-214b-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2.0\",\r\n\"modelCustomizationUuid\": \"68dc9a92-214c-11e7-93ae-92361f002672\",\r\n\"modelInstanceName\": \"vSAMP10a 2\"\r\n},\r\n\"toscaNodeType\": \"VF\",\r\n\"nfFunction\": \"vSAMP\",\r\n\"nfType\": \"vSAMP\",\r\n\"nfRole\": \"vSAMP\",\r\n\"nfNamingCode\": \"vSAMP\",\r\n\"multiStageDesign\": null,\r\n\"vfModules\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::base::module-0\",\r\n\"modelUuid\": \"20c4431c-246d-11e7-93ae-92361f002672\",\r\n\"modelInvariantUuid\": \"78ca26d0-246d-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"cb82ffd8-252a-11e7-93ae-92361f002672\"\r\n},\r\n\"isBase\": true,\r\n\"vfModuleLabel\": \"base\",\r\n\"initialCount\": 1,\r\n\"hasVolumeGroup\": false\r\n},\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::PCM::module-1\",\r\n\"modelUuid\": \"066de97e-253e-11e7-93ae-92361f002672\",\r\n\"modelInvariantUuid\": \"64efd51a-2544-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"b4ea86b4-253f-11e7-93ae-92361f002672\"\r\n},\r\n\"isBase\": false,\r\n\"vfModuleLabel\": \"PCM\",\r\n\"initialCount\": 0,\r\n\"hasVolumeGroup\": false\r\n}\r\n]\r\n}\r\n],\r\n\"serviceNetworks\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"CONTRAIL30_GNDIRECT\",\r\n\"modelUuid\": \"10b36f65-f4e6-4be6-ae49-9596dc1c47fc\",\r\n\"modelInvariantUuid\": \"ce4ff476-9641-4e60-b4d5-b4abbec1271d\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"3bdbb104-476c-483e-9f8b-c095b3d308ac\",\r\n\"modelInstanceName\": \"CONTRAIL30_GNDIRECT 9\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"networkType\": \"\",\r\n\"networkTechnology\": \"\",\r\n\"networkRole\": \"\",\r\n\"networkScope\": \"\"\r\n}\r\n],\r\n\"serviceAllottedResources\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"Tunnel_Xconn\",\r\n\"modelUuid\": \"f6b7d4c6-e8a4-46e2-81bc-31cad5072842\",\r\n\"modelInvariantUuid\": \"b7a1b78e-6b6b-4b36-9698-8c9530da14af\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"367a8ba9-057a-4506-b106-fbae818597c6\",\r\n\"modelInstanceName\": \"Sec_Tunnel_Xconn 11\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"allottedResourceType\": \"\",\r\n\"allottedResourceRole\": null,\r\n\"providingServiceModelName\": null,\r\n\"providingServiceModelInvariantUuid\": null,\r\n\"providingServiceModelUuid\": null,\r\n\"nfFunction\": null,\r\n\"nfType\": null,\r\n\"nfRole\": null,\r\n\"nfNamingCode\": null\r\n}\r\n]\r\n}\r\n}";
-
 
     private final String expectedServiceVnfResponse =
             "{\r\n\"serviceVnfs\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10a\",\r\n\"modelUuid\": \"ff2ae348-214a-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"2fff5b20-214b-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"68dc9a92-214c-11e7-93ae-92361f002671\",\r\n\"modelInstanceName\": \"vSAMP10a 1\"\r\n},\r\n\"toscaNodeType\": \"VF\",\r\n\"nfFunction\": \"vSAMP\",\r\n\"nfType\": \"vSAMP\",\r\n\"nfRole\": \"vSAMP\",\r\n\"nfNamingCode\": \"vSAMP\",\r\n\"multiStageDesign\": null,\r\n\"vfModules\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::base::module-0\",\r\n\"modelUuid\": \"20c4431c-246d-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"78ca26d0-246d-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"cb82ffd8-252a-11e7-93ae-92361f002671\"\r\n},\r\n\"isBase\": true,\r\n\"vfModuleLabel\": \"base\",\r\n\"initialCount\": 1,\r\n\"hasVolumeGroup\": false\r\n},\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::PCM::module-1\",\r\n\"modelUuid\": \"066de97e-253e-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"64efd51a-2544-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"b4ea86b4-253f-11e7-93ae-92361f002671\"\r\n},\r\n\"isBase\": false,\r\n\"vfModuleLabel\": \"PCM\",\r\n\"initialCount\": 0,\r\n\"hasVolumeGroup\": false\r\n}\r\n]\r\n}\r\n]\r\n}";
@@ -87,6 +86,9 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
 
     private final String expectedAllottedResponse =
             "{\r\n\"serviceAllottedResources\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"Tunnel_Xconn\",\r\n\"modelUuid\": \"f6b7d4c6-e8a4-46e2-81bc-31cad5072842\",\r\n\"modelInvariantUuid\": \"b7a1b78e-6b6b-4b36-9698-8c9530da14af\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"367a8ba9-057a-4506-b106-fbae818597c6\",\r\n\"modelInstanceName\": \"Sec_Tunnel_Xconn 11\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"allottedResourceType\": \"\",\r\n\"allottedResourceRole\": null,\r\n\"providingServiceModelName\": null,\r\n\"providingServiceModelInvariantUuid\": null,\r\n\"providingServiceModelUuid\": null,\r\n\"nfFunction\": null,\r\n\"nfType\": null,\r\n\"nfRole\": null,\r\n\"nfNamingCode\": null\r\n}\r\n]\r\n}";
+
+    private final String expectedFilteredServiceResourceResponse =
+            "{\r\n\"serviceResources\": {\r\n\"modelInfo\": {\r\n\"modelName\": \"MSOTADevInfra_vSAMP10a_Service\",\r\n\"modelUuid\": \"5df8b6de-2083-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"9647dfc4-2083-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"1.0\"\r\n},\r\n\"serviceType\": \"NA\",\r\n\"serviceRole\": \"NA\",\r\n\"environmentContext\": \"Luna\",\r\n\"workloadContext\": \"Oxygen\",\r\n\"serviceVnfs\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10a\",\r\n\"modelUuid\": \"ff2ae348-214a-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"2fff5b20-214b-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"68dc9a92-214c-11e7-93ae-92361f002671\",\r\n\"modelInstanceName\": \"vSAMP10a 1\"\r\n},\r\n\"toscaNodeType\": \"VF\",\r\n\"nfFunction\": \"vSAMP\",\r\n\"nfType\": \"vSAMP\",\r\n\"nfRole\": \"vSAMP\",\r\n\"nfNamingCode\": \"vSAMP\",\r\n\"multiStageDesign\": null,\r\n\"vfModules\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::base::module-0\",\r\n\"modelUuid\": \"20c4431c-246d-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"78ca26d0-246d-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"cb82ffd8-252a-11e7-93ae-92361f002671\"\r\n},\r\n\"isBase\": true,\r\n\"vfModuleLabel\": \"base\",\r\n\"initialCount\": 1,\r\n\"hasVolumeGroup\": false\r\n},\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::PCM::module-1\",\r\n\"modelUuid\": \"066de97e-253e-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"64efd51a-2544-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"b4ea86b4-253f-11e7-93ae-92361f002671\"\r\n},\r\n\"isBase\": false,\r\n\"vfModuleLabel\": \"PCM\",\r\n\"initialCount\": 0,\r\n\"hasVolumeGroup\": false\r\n}\r\n]\r\n}\r\n],\r\n\"serviceNetworks\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"CONTRAIL30_GNDIRECT\",\r\n\"modelUuid\": \"10b36f65-f4e6-4be6-ae49-9596dc1c47fc\",\r\n\"modelInvariantUuid\": \"ce4ff476-9641-4e60-b4d5-b4abbec1271d\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"3bdbb104-476c-483e-9f8b-c095b3d308ac\",\r\n\"modelInstanceName\": \"CONTRAIL30_GNDIRECT 9\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"networkType\": \"\",\r\n\"networkTechnology\": \"\",\r\n\"networkRole\": \"\",\r\n\"networkScope\": \"\"\r\n}\r\n],\r\n\"serviceAllottedResources\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"Tunnel_Xconn\",\r\n\"modelUuid\": \"f6b7d4c6-e8a4-46e2-81bc-31cad5072842\",\r\n\"modelInvariantUuid\": \"b7a1b78e-6b6b-4b36-9698-8c9530da14af\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"367a8ba9-057a-4506-b106-fbae818597c6\",\r\n\"modelInstanceName\": \"Sec_Tunnel_Xconn 11\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"allottedResourceType\": \"\",\r\n\"allottedResourceRole\": null,\r\n\"providingServiceModelName\": null,\r\n\"providingServiceModelInvariantUuid\": null,\r\n\"providingServiceModelUuid\": null,\r\n\"nfFunction\": null,\r\n\"nfType\": null,\r\n\"nfRole\": null,\r\n\"nfNamingCode\": null\r\n}\r\n]\r\n}\r\n}";
 
     private final String serviceUUID = "5df8b6de-2083-11e7-93ae-92361f002671";
 
@@ -110,7 +112,7 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
     /* Service Resources Endpoint */
 
     @Test
-    public void testGetServiceModelUUID() throws JSONException {
+    public void testGetServiceModelUUID() throws JSONException, IOException, ParseException {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
@@ -122,24 +124,42 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-        JSONAssert.assertEquals(expectedServiceResourceResponse, response.getBody().toString(),
+        JSONAssert.assertEquals(getJson("ExpectedServiceResourceEscaped.json"), response.getBody().toString(),
                 JSONCompareMode.LENIENT);
     }
 
     @Test
-    public void testGetServiceInvariantUUIDAndVersion() throws JSONException {
+    public void testGetFilteredVnfResourceInputServiceModelUUID() throws JSONException {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
+
         UriComponentsBuilder builder =
                 UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_RESOURCES))
-                        .queryParam("serviceModelInvariantUuid", "9647dfc4-2083-11e7-93ae-92361f002671")
-                        .queryParam("serviceModelVersion", "1.0");
+                        .queryParam("serviceModelUuid", serviceUUID).queryParam("filter", "resourceInput");
 
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-        JSONAssert.assertEquals(expectedServiceResourceResponse, response.getBody().toString(), false);
+        JSONAssert.assertEquals(expectedFilteredServiceResourceResponse, response.getBody().toString(),
+                JSONCompareMode.LENIENT);
+    }
+
+    @Test
+    public void testGetServiceInvariantUUIDAndVersion() throws JSONException, IOException {
+        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+        headers.set("Accept", MediaType.APPLICATION_JSON);
+        UriComponentsBuilder builder =
+                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_RESOURCES))
+                        .queryParam("serviceModelInvariantUuid", "9647dfc4-2083-11e7-93ae-92361f002671")
+                        .queryParam("serviceModelVersion", "1.0").queryParam("filter", "resourceInput");
+
+        ResponseEntity<String> response =
+                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        JSONAssert.assertEquals(expectedFilteredServiceResourceResponse, response.getBody().toString(),
+                JSONCompareMode.LENIENT);
     }
 
     @Test
@@ -212,8 +232,10 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         headers.set("Accept", MediaType.APPLICATION_JSON);
         String expectedResponse =
                 "{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10a\",\r\n\"modelUuid\": \"ff2ae348-214a-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"2fff5b20-214b-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"68dc9a92-214c-11e7-93ae-92361f002671\",\r\n\"modelInstanceName\": \"vSAMP10a 1\"\r\n},\r\n\"toscaNodeType\": \"VF\",\r\n\"nfFunction\": \"vSAMP\",\r\n\"nfType\": \"vSAMP\",\r\n\"nfRole\": \"vSAMP\",\r\n\"nfNamingCode\": \"vSAMP\",\r\n\"multiStageDesign\": null,\r\n\"vfModules\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::base::module-0\",\r\n\"modelUuid\": \"20c4431c-246d-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"78ca26d0-246d-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"cb82ffd8-252a-11e7-93ae-92361f002671\"\r\n},\r\n\"isBase\": true,\r\n\"vfModuleLabel\": \"base\",\r\n\"initialCount\": 1,\r\n\"hasVolumeGroup\": false\r\n},\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::PCM::module-1\",\r\n\"modelUuid\": \"066de97e-253e-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"64efd51a-2544-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"b4ea86b4-253f-11e7-93ae-92361f002671\"\r\n},\r\n\"isBase\": false,\r\n\"vfModuleLabel\": \"PCM\",\r\n\"initialCount\": 0,\r\n\"hasVolumeGroup\": false\r\n}\r\n]\r\n}";
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
-                createURLWithPort("ecomp/mso/catalog/v2/vnfResources/68dc9a92-214c-11e7-93ae-92361f002671"));
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(
+                        createURLWithPort("ecomp/mso/catalog/v2/vnfResources/68dc9a92-214c-11e7-93ae-92361f002671"))
+                .queryParam("filter", "resourceInput");
 
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
@@ -246,7 +268,8 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
 
         UriComponentsBuilder builder =
                 UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
-                        .queryParam("vnfModelCustomizationUuid", "68dc9a92-214c-11e7-93ae-92361f002671");
+                        .queryParam("vnfModelCustomizationUuid", "68dc9a92-214c-11e7-93ae-92361f002671")
+                        .queryParam("filter", "resourceInput");
 
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
@@ -262,7 +285,7 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
 
         UriComponentsBuilder builder =
                 UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
-                        .queryParam("serviceModelUuid", serviceUUID);
+                        .queryParam("serviceModelUuid", serviceUUID).queryParam("filter", "resourceInput");
 
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
@@ -279,7 +302,7 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         UriComponentsBuilder builder =
                 UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
                         .queryParam("serviceModelInvariantUuid", "9647dfc4-2083-11e7-93ae-92361f002671")
-                        .queryParam("serviceModelVersion", "1.0");
+                        .queryParam("serviceModelVersion", "1.0").queryParam("filter", "resourceInput");
 
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
@@ -362,7 +385,7 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         UriComponentsBuilder builder =
                 UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
                         .queryParam("serviceModelName", "MSOTADevInfra_vSAMP10a_Service")
-                        .queryParam("serviceModelVersion", "1.0");
+                        .queryParam("serviceModelVersion", "1.0").queryParam("filter", "resourceInput");
 
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
@@ -880,5 +903,9 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
 
     private String createURLWithPort(String uri) {
         return "http://localhost:" + port + uri;
+    }
+
+    private String getJson(String filename) throws IOException {
+        return new String(Files.readAllBytes(Paths.get("src/test/resources/" + filename)));
     }
 }
