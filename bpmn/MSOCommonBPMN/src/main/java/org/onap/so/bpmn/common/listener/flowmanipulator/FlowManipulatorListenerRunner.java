@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Copyright (C) 2020 Nokia.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,6 +28,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
+import org.onap.so.bpmn.common.BBConstants;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.listener.ListenerRunner;
@@ -49,17 +52,21 @@ public class FlowManipulatorListenerRunner extends ListenerRunner {
     }
 
     public void modifyFlows(List<ExecuteBuildingBlock> flowsToExecute, BuildingBlockExecution execution) {
+        int sequenceBeforeFlowManipulator;
+        do {
+            sequenceBeforeFlowManipulator = execution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
+            ExecuteBuildingBlock currentBB = flowsToExecute.get(execution.getCurrentSequence());
+            List<FlowManipulator> filtered = filterListeners(flowManipulators,
+                    (item -> item.shouldRunFor(currentBB.getBuildingBlock().getBpmnFlowName(),
+                            execution.getCurrentSequence() == 0, execution)));
 
-        ExecuteBuildingBlock currentBB = flowsToExecute.get(execution.getCurrentSequence());
-        List<FlowManipulator> filtered = filterListeners(flowManipulators,
-                (item -> item.shouldRunFor(currentBB.getBuildingBlock().getBpmnFlowName(),
-                        execution.getCurrentSequence() == 0, execution)));
-
-        logger.info("Running flow manipulators:\n{}",
-                filtered.stream().map(item -> item.getClass().getName()).collect(Collectors.joining("\n")));
-        filtered.forEach(item -> item.run(flowsToExecute, currentBB, execution));
-
+            logger.info("Running flow manipulators:\n{}",
+                    filtered.stream().map(item -> item.getClass().getName()).collect(Collectors.joining("\n")));
+            filtered.forEach(item -> item.run(flowsToExecute, currentBB, execution));
+        } while (isBuildingBlockSkipped(sequenceBeforeFlowManipulator, execution));
     }
 
-
+    private boolean isBuildingBlockSkipped(int sequenceBeforeFlowManipulator, BuildingBlockExecution execution) {
+        return sequenceBeforeFlowManipulator != (int) execution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
+    }
 }
