@@ -1928,7 +1928,7 @@ public class BBInputSetup implements JavaDelegate {
         Optional<Relationships> relationshipsOp = aaiGenericVnfWrapper.getRelationships();
         if (relationshipsOp.isPresent()) {
             Relationships relationships = relationshipsOp.get();
-            this.mapPlatform(relationships.getByType(Types.PLATFORM), genericVnf);
+            this.mapPlatform(relationships.getByType(Types.PLATFORM, uri -> uri.nodesOnly(true)), genericVnf);
             this.mapLineOfBusiness(relationships.getByType(Types.LINE_OF_BUSINESS), genericVnf);
             genericVnf.getVolumeGroups().addAll(mapVolumeGroups(relationships.getByType(Types.VOLUME_GROUP)));
             genericVnf.getInstanceGroups().addAll(mapInstanceGroups(relationships.getByType(Types.INSTANCE_GROUP)));
