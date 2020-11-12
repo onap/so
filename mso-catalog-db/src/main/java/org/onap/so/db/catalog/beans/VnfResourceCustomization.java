@@ -118,7 +118,7 @@ public class VnfResourceCustomization implements Serializable {
     private String blueprintVersion;
 
     @Column(name = "SKIP_POST_INSTANTIATION_CONFIGURATION")
-    private Boolean skipPostInstConf;
+    private boolean skipPostInstConf;
 
     @Column(name = "VNFCINSTANCEGROUP_ORDER")
     private String vnfcInstanceGroupOrder;
@@ -327,11 +327,11 @@ public class VnfResourceCustomization implements Serializable {
         this.blueprintVersion = blueprintVersion;
     }
 
-    public Boolean isSkipPostInstConf() {
+    public boolean isSkipPostInstConf() {
         return skipPostInstConf;
     }
 
-    public void setSkipPostInstConf(Boolean skipPostInstConf) {
+    public void setSkipPostInstConf(boolean skipPostInstConf) {
         this.skipPostInstConf = skipPostInstConf;
     }
 
