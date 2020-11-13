@@ -21,12 +21,14 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.gson.Gson
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.beans.nsmf.AnSliceProfile
 import org.onap.so.beans.nsmf.CnSliceProfile
 import org.onap.so.beans.nsmf.EsrInfo
 import org.onap.so.beans.nsmf.NetworkType
 import org.onap.so.beans.nsmf.NssmfAdapterNBIRequest
+import org.onap.so.beans.nsmf.QuerySubnetCapability
 import org.onap.so.beans.nsmf.SliceTaskParamsAdapter
 import org.onap.so.beans.nsmf.TnSliceProfile
 import org.onap.so.beans.nsmf.oof.SubnetCapability
@@ -44,6 +46,7 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.util.StringUtils
+
 
 class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
 
@@ -290,13 +293,12 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
         NssmfAdapterNBIRequest request = new NssmfAdapterNBIRequest()
 
         List<String> subnetTypes =  new ArrayList<>()
-
         subnetTypes.add(subnetType.subnetType)
 
-        Map<String, Object> paramMap = new  HashMap<>()
-        paramMap.put("subnetTypes", subnetTypes)
+        QuerySubnetCapability req = new QuerySubnetCapability()
+        req.setSubnetTypes(subnetTypes)
 
-        request.setSubnetCapabilityQuery(paramMap)
+        request.setSubnetCapabilityQuery(req)
 
         EsrInfo esrInfo = new EsrInfo()
         esrInfo.setVendor(vendor)
@@ -405,16 +407,17 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
         List<Map> sliceProfiles = newNSISolution.get("sliceProfiles") as List<Map>
         for (Map sliceProfile : sliceProfiles) {
             String domainType = sliceProfile.get("domainType")
+            sliceProfile.remove("domainType")
             switch (domainType.toLowerCase()) {
                 case "tn-bh":
-                    sliceParams.tnBHSliceTaskInfo.sliceProfile = sliceProfile as TnSliceProfile
+                    sliceParams.tnBHSliceTaskInfo.sliceProfile = map2Bean(sliceProfile, TnSliceProfile.class)
                     break
                 case "an-nf":
                 case "an":
-                    sliceParams.anSliceTaskInfo.sliceProfile = sliceProfile as AnSliceProfile
+                    sliceParams.anSliceTaskInfo.sliceProfile = map2Bean(sliceProfile, AnSliceProfile.class)
                     break
                 case "cn":
-                    sliceParams.cnSliceTaskInfo.sliceProfile = sliceProfile as CnSliceProfile
+                    sliceParams.cnSliceTaskInfo.sliceProfile = map2Bean(sliceProfile, CnSliceProfile.class)
                     break
                 default:
                     break
@@ -423,6 +426,13 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
             //todo
 
         }
+    }
+
+    static  <T> T map2Bean(Map map, Class<T> cls) {
+        Gson gson = new Gson()
+        T res
+        res = gson.fromJson(gson.toJson(map), cls)
+        return res
     }
 
     /**

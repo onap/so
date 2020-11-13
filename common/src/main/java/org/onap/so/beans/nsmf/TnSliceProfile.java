@@ -23,10 +23,13 @@ package org.onap.so.beans.nsmf;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
-public class TnSliceProfile {
+public class TnSliceProfile implements Serializable {
 
+    private static final long serialVersionUID = 8951622875592961671L;
     private String sliceProfileId;
 
     private String bandwidth;
