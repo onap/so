@@ -225,12 +225,12 @@ values (901, 'VNF-Macro-Modify',1,'ControllerExecutionBB',1,500,'vnf','config-as
 insert into orchestration_flow_reference (id,COMPOSITE_ACTION,SEQ_NO,FLOW_NAME,FLOW_VERSION,NB_REQ_REF_LOOKUP_ID,SCOPE,ACTION)
 values (902, 'VNF-Macro-Modify',2,'ControllerExecutionBB',1,500,'vnf','config-deploy');
 
+-- ContollerExecutionBB to support config-assign and config-deploy for pnfRegistration flow
 
 INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID, SCOPE, ACTION) VALUES
 ('Service-Macro-Create', '10', 'ControllerExecutionBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT'), 'pnf', 'config-assign');
---  change to test the pnf regitsration works with the gating... 
---INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID, SCOPE, ACTION) VALUES
---('Service-Macro-Create', '11', 'ControllerExecutionBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = --'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT'), 'pnf', 'config-deploy');
+INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID, SCOPE, ACTION) VALUES
+('Service-Macro-Create', '11', 'ControllerExecutionBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = --'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT'), 'pnf', 'config-deploy');
 
 INSERT INTO rainy_day_handler_macro (FLOW_NAME, SERVICE_TYPE, VNF_TYPE, ERROR_CODE, WORK_STEP, POLICY)
 VALUES
