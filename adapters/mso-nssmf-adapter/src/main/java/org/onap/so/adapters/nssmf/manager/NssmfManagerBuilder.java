@@ -77,6 +77,12 @@ public class NssmfManagerBuilder {
             return;
         }
 
+        if (ExecutorType.EXTERNAL.equals(executorType) && NetworkType.TRANSPORT.equals(networkType)) {
+            this.nssmfManger = new ExternalAnNssmfManager().setEsrInfo(esrInfo).setExecutorType(executorType)
+                    .setInitStatus("activated");
+            return;
+        }
+
         if (ExecutorType.EXTERNAL.equals(executorType) && NetworkType.ACCESS.equals(networkType)) {
             this.nssmfManger = new ExternalAnNssmfManager().setEsrInfo(esrInfo).setExecutorType(executorType)
                     .setInitStatus("activated");
