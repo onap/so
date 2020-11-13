@@ -21,12 +21,14 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.gson.Gson
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.beans.nsmf.AnSliceProfile
 import org.onap.so.beans.nsmf.CnSliceProfile
 import org.onap.so.beans.nsmf.EsrInfo
 import org.onap.so.beans.nsmf.NetworkType
 import org.onap.so.beans.nsmf.NssmfAdapterNBIRequest
+import org.onap.so.beans.nsmf.QuerySubnetCapability
 import org.onap.so.beans.nsmf.SliceTaskParamsAdapter
 import org.onap.so.beans.nsmf.TnSliceProfile
 import org.onap.so.beans.nsmf.oof.SubnetCapability
@@ -44,6 +46,7 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.util.StringUtils
+
 
 class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
 
@@ -185,6 +188,7 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
 
         execution.setVariable("sliceTaskParams", sliceParams)
         execution.setVariable("subnetCapabilities", subnetCapabilities)
+        execution.setVariable("queryNsiFirst", true)
         logger.debug("sliceTaskParams= " + sliceParams.toString())
     }
 
@@ -290,13 +294,12 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
         NssmfAdapterNBIRequest request = new NssmfAdapterNBIRequest()
 
         List<String> subnetTypes =  new ArrayList<>()
-
         subnetTypes.add(subnetType.subnetType)
 
-        Map<String, Object> paramMap = new  HashMap<>()
-        paramMap.put("subnetTypes", subnetTypes)
+        QuerySubnetCapability req = new QuerySubnetCapability()
+        req.setSubnetTypes(subnetTypes)
 
-        request.setSubnetCapabilityQuery(paramMap)
+        request.setSubnetCapabilityQuery(req)
 
         EsrInfo esrInfo = new EsrInfo()
         esrInfo.setVendor(vendor)
@@ -362,67 +365,79 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
 
         Map<String, Object> resMap = objectMapper.readValue(oofResponse, Map.class)
         String requestStatus = resMap.get("requestStatus")
-        if (StringUtils.isEmpty(requestStatus)) {
+        if (!StringUtils.isEmpty(requestStatus) && requestStatus == "error") {
             exceptionUtil.buildWorkflowException(execution, 7000, "get nsi from oof error: " + oofResponse)
+            return
         }
 
         List<Map<String, Object>> nsiSolutions = (List<Map<String, Object>>) resMap.get("solutions")
 
         Map<String, Object> solution = nsiSolutions.get(0)
 
-        String resourceSharingLevel = execution.getVariable("resourceSharingLevel")
-        Boolean isSharable = resourceSharingLevel == "shared"
+        //String resourceSharingLevel = execution.getVariable("resourceSharingLevel")
+        //Boolean isSharable = resourceSharingLevel == "shared"
 
         if (solution != null) {
-            if (isSharable && solution.get("existingNSI")) {
-                //sharedNSISolution
-                processSharedNSI(solution, sliceTaskParams)
-                execution.setVariable("needQuerySliceProfile", true)
-            }
-            else {
-                if(execution.getVariable("needQuerySliceProfile")){
+            if (execution.getVariable("queryNsiFirst")) {
+                if (solution.get("existingNSI")) {
+                    execution.setVariable("needQuerySliceProfile", true)
+                } else {
+                    processNewNSI(solution, sliceTaskParams)
                     execution.setVariable("needQuerySliceProfile", false)
                 }
-                processNewNSI(solution, sliceTaskParams)
+                execution.setVariable("queryNsiFirst", false)
+            } else {
+                processSharedNSI(solution, sliceTaskParams)
+                execution.setVariable("needQuerySliceProfile", false)
             }
         }
         execution.setVariable("sliceTaskParams", sliceTaskParams)
         logger.debug("*** Completed options Call to OOF ***")
     }
 
-    private void processSharedNSI(Map<String, Object> solution, SliceTaskParamsAdapter sliceParams) {
+    private static void processSharedNSI(Map<String, Object> solution, SliceTaskParamsAdapter sliceParams) {
         Map<String, Object> sharedNSISolution = solution.get("sharedNSISolution") as Map
-
         String nsiId = sharedNSISolution.get("NSIId")
         String nsiName = sharedNSISolution.get("NSIName")
         sliceParams.setSuggestNsiId(nsiId)
         sliceParams.setSuggestNsiName(nsiName)
 
+        List<Map> sliceProfiles = sharedNSISolution.get("sliceProfiles") as List<Map>
+        handleSliceProfiles(sliceProfiles, sliceParams)
     }
 
-    private void processNewNSI(Map<String, Object> solution, SliceTaskParamsAdapter sliceParams) {
+    private static void processNewNSI(Map<String, Object> solution, SliceTaskParamsAdapter sliceParams) {
         Map<String, Object> newNSISolution = solution.get("newNSISolution") as Map
         List<Map> sliceProfiles = newNSISolution.get("sliceProfiles") as List<Map>
+        handleSliceProfiles(sliceProfiles, sliceParams)
+    }
+
+    static def handleSliceProfiles(List<Map> sliceProfiles, SliceTaskParamsAdapter sliceParams) {
         for (Map sliceProfile : sliceProfiles) {
             String domainType = sliceProfile.get("domainType")
+            sliceProfile.remove("domainType")
             switch (domainType.toLowerCase()) {
                 case "tn-bh":
-                    sliceParams.tnBHSliceTaskInfo.sliceProfile = sliceProfile as TnSliceProfile
+                    sliceParams.tnBHSliceTaskInfo.sliceProfile = map2Bean(sliceProfile, TnSliceProfile.class)
                     break
                 case "an-nf":
                 case "an":
-                    sliceParams.anSliceTaskInfo.sliceProfile = sliceProfile as AnSliceProfile
+                    sliceParams.anSliceTaskInfo.sliceProfile = map2Bean(sliceProfile, AnSliceProfile.class)
                     break
                 case "cn":
-                    sliceParams.cnSliceTaskInfo.sliceProfile = sliceProfile as CnSliceProfile
+                    sliceParams.cnSliceTaskInfo.sliceProfile = map2Bean(sliceProfile, CnSliceProfile.class)
                     break
                 default:
                     break
             }
-
-            //todo
-
         }
+    }
+
+    static  <T> T map2Bean(Map map, Class<T> cls) {
+        Gson gson = new Gson()
+        T res
+        res = gson.fromJson(gson.toJson(map), cls)
+        return res
     }
 
     /**
