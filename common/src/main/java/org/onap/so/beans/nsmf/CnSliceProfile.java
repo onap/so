@@ -21,11 +21,16 @@
 package org.onap.so.beans.nsmf;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Data;
+
+import java.io.Serializable;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CnSliceProfile {
+@Data
+public class CnSliceProfile implements Serializable {
 
+    private static final long serialVersionUID = -3695693380329368745L;
     private List<String> snssaiList;
 
     private String sliceProfileId;
@@ -45,76 +50,4 @@ public class CnSliceProfile {
     private UeMobilityLevel ueMobilityLevel;
 
     private ResourceSharingLevel resourceSharingLevel;
-
-    public String getSliceProfileId() {
-        return sliceProfileId;
-    }
-
-    public void setSliceProfileId(String sliceProfileId) {
-        this.sliceProfileId = sliceProfileId;
-    }
-
-    public List<String> getPlmnIdList() {
-        return plmnIdList;
-    }
-
-    public void setPlmnIdList(List<String> plmnIdList) {
-        this.plmnIdList = plmnIdList;
-    }
-
-    public PerfReq getPerfReq() {
-        return perfReq;
-    }
-
-    public void setPerfReq(PerfReq perfReq) {
-        this.perfReq = perfReq;
-    }
-
-    public int getMaxNumberofUEs() {
-        return maxNumberofUEs;
-    }
-
-    public void setMaxNumberofUEs(int maxNumberofUEs) {
-        this.maxNumberofUEs = maxNumberofUEs;
-    }
-
-    public List<String> getCoverageAreaTAList() {
-        return coverageAreaTAList;
-    }
-
-    public void setCoverageAreaTAList(List<String> coverageAreaTAList) {
-        this.coverageAreaTAList = coverageAreaTAList;
-    }
-
-    public int getLatency() {
-        return latency;
-    }
-
-    public void setLatency(int latency) {
-        this.latency = latency;
-    }
-
-    public UeMobilityLevel getUeMobilityLevel() {
-        return ueMobilityLevel;
-    }
-
-    public void setUeMobilityLevel(UeMobilityLevel ueMobilityLevel) {
-        this.ueMobilityLevel = ueMobilityLevel;
-    }
-
-    public ResourceSharingLevel getResourceSharingLevel() {
-        return resourceSharingLevel;
-    }
-
-    public void setResourceSharingLevel(ResourceSharingLevel resourceSharingLevel) {
-        this.resourceSharingLevel = resourceSharingLevel;
-    }
-
-    public List<String> getSnssaiList() {
-        return snssaiList;
-    }
-
-    public void setSnssaiList(List<String> snssaiList) {
-        this.snssaiList = snssaiList;
-    }
 }

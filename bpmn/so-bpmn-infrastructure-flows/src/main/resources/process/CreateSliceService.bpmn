@@ -5,7 +5,7 @@
       <bpmn:outgoing>SequenceFlow_03s744c</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:intermediateCatchEvent id="IntermediateCatchEvent_0vilb24" name="Waiting for confirmation">
-      <bpmn:outgoing>SequenceFlow_060j650</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0sub2c2</bpmn:outgoing>
       <bpmn:linkEventDefinition id="LinkEventDefinition_197u5pe" name="WaitingForConfirmation" />
     </bpmn:intermediateCatchEvent>
     <bpmn:scriptTask id="ScriptTask_1tc44ge" name="PreProcess Incoming Request" scriptFormat="groovy">
@@ -355,7 +355,6 @@ css.prepareCreateOrchestrationTask(execution)</bpmn:script>
     </bpmn:intermediateCatchEvent>
     <bpmn:sequenceFlow id="SequenceFlow_14c2tav" sourceRef="IntermediateCatchEvent_0gceuxu" targetRef="ScriptTask_1ayg9y8" />
     <bpmn:sequenceFlow id="SequenceFlow_00kcej9" sourceRef="CallActivity_0n47zoh" targetRef="IntermediateThrowEvent_1v96asi" />
-    <bpmn:sequenceFlow id="SequenceFlow_060j650" sourceRef="IntermediateCatchEvent_0vilb24" targetRef="ScriptTask_04qudo2" />
     <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_0lpvnze" name="Goto Create Slice Service">
       <bpmn:incoming>SequenceFlow_12wo878</bpmn:incoming>
       <bpmn:linkEventDefinition id="LinkEventDefinition_1oxsvp3" name="CreateSliceService" />
@@ -369,20 +368,12 @@ def css = new CreateSliceService()
 css.processNSTSolutions(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1f6dyxo" sourceRef="ScriptTask_13roglo" targetRef="CallActivity_0v4mw2x" />
-    <bpmn:receiveTask id="ReceiveTask_02qzb6i" name="Waiting for confirmation" />
     <bpmn:endEvent id="EndEvent_0bz8a65">
-      <bpmn:incoming>SequenceFlow_1vesvto</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1fk2cn3</bpmn:incoming>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_1hni1r1" errorRef="Error_0p2naox" />
     </bpmn:endEvent>
-    <bpmn:boundaryEvent id="BoundaryEvent_0p4swyp" attachedToRef="ReceiveTask_02qzb6i">
-      <bpmn:outgoing>SequenceFlow_1vesvto</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_112p48l">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT2H</bpmn:timeDuration>
-      </bpmn:timerEventDefinition>
-    </bpmn:boundaryEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_1vesvto" sourceRef="BoundaryEvent_0p4swyp" targetRef="EndEvent_0bz8a65" />
     <bpmn:scriptTask id="ScriptTask_04qudo2" name="Prepare Get User Options" scriptFormat="groovy">
-      <bpmn:incoming>SequenceFlow_060j650</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_031cwkd</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0ti386y</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def css = new CreateSliceService()
@@ -427,10 +418,36 @@ def css = new CreateSliceService()
 css.prepareSelectNSTRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_02sve8o" sourceRef="ScriptTask_1ayg9y8" targetRef="CallActivity_0xf2g6c" />
+    <bpmn:subProcess id="SubProcess_1sxkpqq" name="Wait for Confim Message">
+      <bpmn:incoming>SequenceFlow_0sub2c2</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_031cwkd</bpmn:outgoing>
+      <bpmn:startEvent id="StartEvent_1hd68zf">
+        <bpmn:outgoing>SequenceFlow_0recnor</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:endEvent id="EndEvent_05npq16">
+        <bpmn:incoming>SequenceFlow_1htsa6t</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:intermediateCatchEvent id="IntermediateCatchEvent_1iti8re" name="Catch Confim Message">
+        <bpmn:incoming>SequenceFlow_0recnor</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1htsa6t</bpmn:outgoing>
+        <bpmn:messageEventDefinition id="MessageEventDefinition_1rxlviw" messageRef="Message_0c4b2r5" />
+      </bpmn:intermediateCatchEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_1htsa6t" name="" sourceRef="IntermediateCatchEvent_1iti8re" targetRef="EndEvent_05npq16" />
+      <bpmn:sequenceFlow id="SequenceFlow_0recnor" name="" sourceRef="StartEvent_1hd68zf" targetRef="IntermediateCatchEvent_1iti8re" />
+    </bpmn:subProcess>
+    <bpmn:boundaryEvent id="BoundaryEvent_0xqq1ch" name="Timeout" attachedToRef="SubProcess_1sxkpqq">
+      <bpmn:outgoing>SequenceFlow_1fk2cn3</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0jxhpup">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT2H</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1fk2cn3" sourceRef="BoundaryEvent_0xqq1ch" targetRef="EndEvent_0bz8a65" />
+    <bpmn:sequenceFlow id="SequenceFlow_0sub2c2" sourceRef="IntermediateCatchEvent_0vilb24" targetRef="SubProcess_1sxkpqq" />
+    <bpmn:sequenceFlow id="SequenceFlow_031cwkd" sourceRef="SubProcess_1sxkpqq" targetRef="ScriptTask_04qudo2" />
   </bpmn:process>
-  <bpmn:message id="Message_0c4b2r5" name="SliceServiceTask" />
   <bpmn:error id="Error_03akl5v" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmn:error id="Error_0p2naox" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
+  <bpmn:message id="Message_0c4b2r5" name="SliceServiceTask" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CreateSliceService">
       <bpmndi:BPMNEdge id="SequenceFlow_0kixzdj_di" bpmnElement="SequenceFlow_0kixzdj">
@@ -446,20 +463,20 @@ css.prepareSelectNSTRequest(execution)</bpmn:script>
         <di:waypoint x="274" y="965" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_10ng1vx_di" bpmnElement="SequenceFlow_10ng1vx">
-        <di:waypoint x="1294" y="805" />
+        <di:waypoint x="1320" y="805" />
         <di:waypoint x="1396" y="805" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_19lsayh_di" bpmnElement="SequenceFlow_19lsayh">
-        <di:waypoint x="1124" y="805" />
-        <di:waypoint x="1194" y="805" />
+        <di:waypoint x="1174" y="805" />
+        <di:waypoint x="1220" y="805" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0477975_di" bpmnElement="SequenceFlow_0477975">
-        <di:waypoint x="1294" y="620" />
+        <di:waypoint x="1320" y="620" />
         <di:waypoint x="1396" y="620" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0thd6ny_di" bpmnElement="SequenceFlow_0thd6ny">
-        <di:waypoint x="1124" y="620" />
-        <di:waypoint x="1194" y="620" />
+        <di:waypoint x="1160" y="620" />
+        <di:waypoint x="1220" y="620" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1qv8qw1_di" bpmnElement="SequenceFlow_1qv8qw1">
         <di:waypoint x="1174" y="965" />
@@ -504,23 +521,23 @@ css.prepareSelectNSTRequest(execution)</bpmn:script>
         <di:waypoint x="1220" y="350" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_038lb9m_di" bpmnElement="SequenceFlow_038lb9m">
-        <di:waypoint x="884" y="645" />
-        <di:waypoint x="884" y="805" />
-        <di:waypoint x="1024" y="805" />
+        <di:waypoint x="984" y="645" />
+        <di:waypoint x="984" y="805" />
+        <di:waypoint x="1074" y="805" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="886" y="722" width="27" height="14" />
+          <dc:Bounds x="986" y="722" width="27" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_12t5exy_di" bpmnElement="SequenceFlow_12t5exy">
-        <di:waypoint x="909" y="620" />
-        <di:waypoint x="1024" y="620" />
+        <di:waypoint x="1009" y="620" />
+        <di:waypoint x="1060" y="620" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="911" y="602" width="42" height="14" />
+          <dc:Bounds x="998" y="602" width="42" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_197cm2e_di" bpmnElement="SequenceFlow_197cm2e">
-        <di:waypoint x="804" y="620" />
-        <di:waypoint x="859" y="620" />
+        <di:waypoint x="930" y="620" />
+        <di:waypoint x="959" y="620" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_07e12rt_di" bpmnElement="SequenceFlow_07e12rt">
         <di:waypoint x="350" y="122" />
@@ -543,12 +560,12 @@ css.prepareSelectNSTRequest(execution)</bpmn:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_1jgtb0y_di" bpmnElement="ScriptTask_1jgtb0y">
-        <dc:Bounds x="704" y="580" width="100" height="80" />
+        <dc:Bounds x="830" y="580" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_0elbczl_di" bpmnElement="ExclusiveGateway_0elbczl" isMarkerVisible="true">
-        <dc:Bounds x="859" y="595" width="50" height="50" />
+        <dc:Bounds x="959" y="595" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="846" y="577" width="78" height="14" />
+          <dc:Bounds x="946" y="577" width="78" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="CallActivity_139l55g_di" bpmnElement="CallActivity_139l55g">
@@ -620,16 +637,16 @@ css.prepareSelectNSTRequest(execution)</bpmn:script>
         <dc:Bounds x="1220" y="310" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_12h8542_di" bpmnElement="ScriptTask_12h8542">
-        <dc:Bounds x="1024" y="580" width="100" height="80" />
+        <dc:Bounds x="1060" y="580" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="CallActivity_0o89wmf_di" bpmnElement="CallActivity_0o89wmf">
-        <dc:Bounds x="1194" y="580" width="100" height="80" />
+        <dc:Bounds x="1220" y="580" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="CallActivity_0jdzpem_di" bpmnElement="CallActivity_0jdzpem">
-        <dc:Bounds x="1194" y="765" width="100" height="80" />
+        <dc:Bounds x="1220" y="765" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_1mscu5w_di" bpmnElement="ScriptTask_1mscu5w">
-        <dc:Bounds x="1024" y="765" width="100" height="80" />
+        <dc:Bounds x="1074" y="765" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="IntermediateCatchEvent_0pkvfun_di" bpmnElement="IntermediateCatchEvent_0pkvfun">
         <dc:Bounds x="177" y="947" width="36" height="36" />
@@ -700,10 +717,6 @@ css.prepareSelectNSTRequest(execution)</bpmn:script>
         <di:waypoint x="1320" y="350" />
         <di:waypoint x="1402" y="350" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_060j650_di" bpmnElement="SequenceFlow_060j650">
-        <di:waypoint x="213" y="620" />
-        <di:waypoint x="394" y="620" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="IntermediateThrowEvent_0lpvnze_di" bpmnElement="IntermediateThrowEvent_0lpvnze">
         <dc:Bounds x="1402" y="106" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -721,32 +734,22 @@ css.prepareSelectNSTRequest(execution)</bpmn:script>
         <di:waypoint x="810" y="350" />
         <di:waypoint x="880" y="350" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ReceiveTask_02qzb6i_di" bpmnElement="ReceiveTask_02qzb6i">
-        <dc:Bounds x="254" y="580" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_0bz8a65_di" bpmnElement="EndEvent_0bz8a65">
-        <dc:Bounds x="286" y="757" width="36" height="36" />
+        <dc:Bounds x="354" y="772" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BoundaryEvent_0p4swyp_di" bpmnElement="BoundaryEvent_0p4swyp">
-        <dc:Bounds x="286" y="642" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1vesvto_di" bpmnElement="SequenceFlow_1vesvto">
-        <di:waypoint x="304" y="678" />
-        <di:waypoint x="304" y="757" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_04qudo2_di" bpmnElement="ScriptTask_04qudo2">
-        <dc:Bounds x="394" y="580" width="100" height="80" />
+        <dc:Bounds x="550" y="580" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0ti386y_di" bpmnElement="SequenceFlow_0ti386y">
-        <di:waypoint x="494" y="620" />
-        <di:waypoint x="534" y="620" />
+        <di:waypoint x="650" y="620" />
+        <di:waypoint x="688" y="620" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="CallActivity_1vu3zcv_di" bpmnElement="CallActivity_1vu3zcv">
-        <dc:Bounds x="534" y="580" width="100" height="80" />
+        <dc:Bounds x="688" y="580" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1whq7vc_di" bpmnElement="SequenceFlow_1whq7vc">
-        <di:waypoint x="634" y="620" />
-        <di:waypoint x="704" y="620" />
+        <di:waypoint x="788" y="620" />
+        <di:waypoint x="830" y="620" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="CallActivity_0xf2g6c_di" bpmnElement="CallActivity_0xf2g6c">
         <dc:Bounds x="520" y="310" width="100" height="80" />
@@ -761,6 +764,47 @@ css.prepareSelectNSTRequest(execution)</bpmn:script>
       <bpmndi:BPMNEdge id="SequenceFlow_02sve8o_di" bpmnElement="SequenceFlow_02sve8o">
         <di:waypoint x="410" y="350" />
         <di:waypoint x="520" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SubProcess_1sxkpqq_di" bpmnElement="SubProcess_1sxkpqq" isExpanded="true">
+        <dc:Bounds x="240" y="540" width="280" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_0xqq1ch_di" bpmnElement="BoundaryEvent_0xqq1ch">
+        <dc:Bounds x="354" y="682" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="395" y="712" width="40" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_1hd68zf_di" bpmnElement="StartEvent_1hd68zf">
+        <dc:Bounds x="272" y="602" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_05npq16_di" bpmnElement="EndEvent_05npq16">
+        <dc:Bounds x="460" y="602" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_1iti8re_di" bpmnElement="IntermediateCatchEvent_1iti8re">
+        <dc:Bounds x="367" y="602" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="353" y="644" width="67" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1htsa6t_di" bpmnElement="SequenceFlow_1htsa6t">
+        <di:waypoint x="403" y="620" />
+        <di:waypoint x="460" y="620" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0recnor_di" bpmnElement="SequenceFlow_0recnor">
+        <di:waypoint x="308" y="620" />
+        <di:waypoint x="367" y="620" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1fk2cn3_di" bpmnElement="SequenceFlow_1fk2cn3">
+        <di:waypoint x="372" y="718" />
+        <di:waypoint x="372" y="772" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0sub2c2_di" bpmnElement="SequenceFlow_0sub2c2">
+        <di:waypoint x="213" y="620" />
+        <di:waypoint x="240" y="620" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_031cwkd_di" bpmnElement="SequenceFlow_031cwkd">
+        <di:waypoint x="520" y="620" />
+        <di:waypoint x="550" y="620" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
