@@ -180,11 +180,11 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
     }
 
     @Override
-    protected <T> RestResponse doQuerySubnetCapability(QuerySubnetCapability req) throws ApplicationException {
+    protected RestResponse doQuerySubnetCapability(QuerySubnetCapability req) throws ApplicationException {
 
         ObjectMapper oMapper = new ObjectMapper();
         InputStream inputStream = TypeReference.class.getResourceAsStream("/subnetCapability.json");
-        Map<String, Object> subnetCapability = new HashMap<>();
+        Map subnetCapability = new HashMap<>();
         try {
             subnetCapability = oMapper.readValue(inputStream, Map.class);
         } catch (Exception e) {
@@ -201,7 +201,7 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
         try {
             response = oMapper.writeValueAsString(responseMap);
         } catch (JsonProcessingException e) {
-            logger.debug("Exception while converting subnet capability object to String {}", e);
+            logger.debug("Exception while converting subnet capability object to String {}", e.getMessage());
         }
 
         RestResponse rsp = new RestResponse();
