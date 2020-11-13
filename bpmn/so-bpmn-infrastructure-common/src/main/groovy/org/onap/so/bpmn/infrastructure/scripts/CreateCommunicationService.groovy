@@ -43,6 +43,7 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.db.request.beans.OperationStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.util.StringUtils
 import org.springframework.web.util.UriUtils
 
 import static org.apache.commons.lang3.StringUtils.isBlank
@@ -296,7 +297,7 @@ class CreateCommunicationService extends AbstractServiceTaskProcessor {
             Integer expDataRateDL = jsonUtil.getJsonValue(uuiRequest, "service.parameters.requestInputs.expDataRateDL") as Integer
             Integer expDataRateUL = jsonUtil.getJsonValue(uuiRequest, "service.parameters.requestInputs.expDataRateUL") as Integer
             Integer latency = jsonUtil.getJsonValue(uuiRequest, "service.parameters.requestInputs.latency") as Integer
-            Integer maxNumberOfUEs = jsonUtil.getJsonValue(uuiRequest, "service.parameters.requestInputs.maxNumberofUEs") as Integer
+            Integer maxNumberOfUEs = jsonUtil.getJsonValue(uuiRequest, "service.parameters.requestInputs.maxNumberOfUEs") as Integer
             String uEMobilityLevel = jsonUtil.getJsonValue(uuiRequest, "service.parameters.requestInputs.uEMobilityLevel")
             String resourceSharingLevel = jsonUtil.getJsonValue(uuiRequest, "service.parameters.requestInputs.resourceSharingLevel")
             String coverageArea = jsonUtil.getJsonValue(uuiRequest, "service.parameters.requestInputs.coverageAreaList")
@@ -317,25 +318,21 @@ class CreateCommunicationService extends AbstractServiceTaskProcessor {
 
             Map<String, ?> csInputMap = new HashMap<>()
             for (String csInput : csInputs) {
-                def value
-                if (jsonUtil.getJsonValue(csInput, "type") == "integer") {
-                    value = jsonUtil.getJsonValue(csInput, "default")
-                    csInputMap.put(jsonUtil.getJsonValue(csInput, "name"), isBlank(value) ? 0 : (value as Integer))
-                } else if (jsonUtil.getJsonValue(csInput, "type") == "string") {
-                    csInputMap.put(jsonUtil.getJsonValue(csInput, "name"),
-                            jsonUtil.getJsonValue(csInput, "default"))
-                }
+                String key = jsonUtil.getJsonValue(csInput, "name")
+                def value = jsonUtil.getJsonValue(csInput, "default")
+                csInputMap.put(key, getDefaultPropertiesByType(value, key))
             }
             csInputMap.put("expDataRateDL", expDataRateDL)
             csInputMap.put("expDataRateUL", expDataRateUL)
             csInputMap.put("latency", latency)
-            csInputMap.put("maxNumberofUEs", maxNumberOfUEs)
+            csInputMap.put("maxNumberOfUEs", maxNumberOfUEs)
             csInputMap.put("uEMobilityLevel", uEMobilityLevel)
             csInputMap.put("resourceSharingLevel", resourceSharingLevel)
             csInputMap.put("coverageAreaTAList", coverageArea)
             csInputMap.put("useInterval", useInterval)
 
             execution.setVariable("csInputMap", csInputMap)
+            logger.debug(Prefix + "csInputMap is = " + csInputMap.toString())
         } catch (BpmnError e) {
             throw e
         } catch (Exception ex) {
@@ -365,53 +362,45 @@ class CreateCommunicationService extends AbstractServiceTaskProcessor {
 
             Map<String, ?> csInputMap = execution.getVariable("csInputMap") as Map
             Map<String, ?> e2eInputMap = new HashMap<>()
-            String key
-            def value
-
 
             for (String e2eInput in e2eInputs) {
-                key = jsonUtil.getJsonValue(e2eInput, "name")
+                String key = jsonUtil.getJsonValue(e2eInput, "name")
                 String type = jsonUtil.getJsonValue(e2eInput, "type")
-                if (type == "integer") {
-                    def temp
-                    value = csInputMap.containsKey(key) ? csInputMap.getOrDefault(key, 0) : (isBlank(temp = jsonUtil.getJsonValue(e2eInput, "default")) ? 0 : temp)
-
-                    e2eInputMap.put(key, value as Integer)
-                } else if(type == "string") {
-                    e2eInputMap.put(key, csInputMap.containsKey(key)
-                            ? csInputMap.getOrDefault(key, null) : (jsonUtil.getJsonValue(e2eInput, "default")))
+                def value
+                if (csInputMap.containsKey(key)) {
+                    value = csInputMap.get(key)
+                } else {
+                    value = jsonUtil.getJsonValue(e2eInput, "default")
 
                 }
+                e2eInputMap.put(key, getDefaultPropertiesByType(value, type))
             }
 
             //TODO temp solution
             e2eInputMap.put("sNSSAI", execution.getVariable("sNSSAI_id"))
 	        e2eInputMap.put("sST", execution.getVariable("csServiceType"))
 
-            Integer activityFactor = 60
+            Integer activityFactor = Integer.parseInt(e2eInputMap.get("activityFactor").toString())
             Integer random = new Random().nextInt(5) + 2
             Integer dLThptPerUE = Integer.parseInt(csInputMap.get("expDataRateDL").toString())
             Integer uLThptPerUE = Integer.parseInt(csInputMap.get("expDataRateUL").toString())
-            Integer maxNumberofUEs = Integer.parseInt(csInputMap.get("maxNumberofUEs").toString())
+            Integer maxNumberofUEs = Integer.parseInt(e2eInputMap.get("maxNumberOfUEs").toString())
             Integer dLThptPerSlice = dLThptPerUE * maxNumberofUEs * activityFactor * random
             Integer uLThptPerSlice = uLThptPerUE * maxNumberofUEs * activityFactor * random
             Integer maxNumberofConns = maxNumberofUEs * activityFactor * 3
 
             e2eInputMap.put("jitter", 10)
-            e2eInputMap.put("activityFactor", activityFactor)
-            e2eInputMap.put("maxNumberofUEs", maxNumberofUEs)
             e2eInputMap.put("dLThptPerUE", dLThptPerUE)
             e2eInputMap.put("uLThptPerUE", uLThptPerUE)
             e2eInputMap.put("dLThptPerSlice", dLThptPerSlice)
             e2eInputMap.put("uLThptPerSlice", uLThptPerSlice)
             e2eInputMap.put("maxNumberofConns", maxNumberofConns)
-            e2eInputMap.put("coverageAreaTAList", csInputMap.get("coverageAreaList"))
 
             execution.setVariable("e2eInputMap", e2eInputMap)
             execution.setVariable("e2eServiceType", e2eServiceDecomposition.getServiceType())
             execution.setVariable("e2eModelInvariantUuid", e2eServiceDecomposition.getModelInfo().getModelInvariantUuid())
             execution.setVariable("e2eModelUuid", e2eServiceDecomposition.getModelInfo().getModelUuid())
-
+            logger.debug(Prefix + "e2eInputMap is = " + e2eInputMap.toString())
         } catch (BpmnError e) {
             throw e
         } catch (Exception ex) {
@@ -423,6 +412,25 @@ class CreateCommunicationService extends AbstractServiceTaskProcessor {
         logger.debug(Prefix + "generateE2EServiceProfile Exit")
     }
 
+    static def getDefaultPropertiesByType(def value, String type) {
+
+        def defaultValue
+        switch (type) {
+            case "string":
+                defaultValue = ""
+                break
+            case "integer":
+                defaultValue = 0
+                break
+            case "float":
+                defaultValue = 0.0
+                break
+            default:
+                defaultValue = null
+                break
+        }
+        return StringUtils.isEmpty(value) ? defaultValue : value
+    }
 
     /**
      * call createE2EService get operation id,
@@ -453,7 +461,7 @@ class CreateCommunicationService extends AbstractServiceTaskProcessor {
                 }
             """
             execution.setVariable("CSMF_NSMFRequest", payload.replaceAll("\\s+", ""))
-
+            logger.debug(Prefix + "Sent to NSMF Request = " + payload)
         } catch (BpmnError e) {
             throw e
         } catch (Exception ex) {

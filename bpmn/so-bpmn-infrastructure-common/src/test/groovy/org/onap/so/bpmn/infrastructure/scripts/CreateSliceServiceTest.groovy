@@ -89,7 +89,7 @@ class CreateSliceServiceTest extends MsoGroovyTest {
                                         "sNSSAI": "1-10101",
                                         "uEMobilityLevel": "stationary",
                                         "areaTrafficCapDL": 123,
-                                        "maxNumberofUEs": 1000,
+                                        "maxNumberOfUEs": 1000,
                                         "expDataRateUL": 2000,
                                         "plmnIdList": "39-00|39-01",
                                         "areaTrafficCapUL": 456,
@@ -129,7 +129,7 @@ class CreateSliceServiceTest extends MsoGroovyTest {
                   "sNSSAI": "1-10101",
                   "uEMobilityLevel": "stationary",
                   "areaTrafficCapDL": 123,
-                  "maxNumberofUEs": 1000,
+                  "maxNumberOfUEs": 1000,
                   "expDataRateUL": 2000,
                   "plmnIdList": "39-00|39-01",
                   "areaTrafficCapUL": 456,
@@ -142,7 +142,7 @@ class CreateSliceServiceTest extends MsoGroovyTest {
         }""".replaceAll("\\s+", "")
 
     final def serviceProfile = ["sST": "embb", "sNSSAI": "1-10101", "uEMobilityLevel": "stationary", "areaTrafficCapDL": 123,
-                                "maxNumberofUEs": 1000, "expDataRateUL": 2000, "plmnIdList": "39-00|39-01", "areaTrafficCapUL": 456,
+                                "maxNumberOfUEs": 1000, "expDataRateUL": 2000, "plmnIdList": "39-00|39-01", "areaTrafficCapUL": 456,
                                 "latency": 300, "expDataRateDL": 400, "coverageAreaTAList": 101001, "activityFactor": 99,
                                 "resourceSharingLevel": "shared"]
 

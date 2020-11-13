@@ -133,7 +133,7 @@ class DoCreateCommunicationServiceTest extends MsoGroovyTest {
                         "expDataRateDL":10,
                         "expDataRateUL":30,
                         "latency":20,
-                        "maxNumberofUEs":300,
+                        "maxNumberOfUEs":300,
                         "uemobilityLevel":"stationary",
                         "resourceSharingLevel":"shared",
                         "coverageAreaList": "01001",
@@ -165,7 +165,7 @@ class DoCreateCommunicationServiceTest extends MsoGroovyTest {
                         "expDataRateDL":10,
                         "expDataRateUL":30,
                         "latency":20,
-                        "maxNumberofUEs":300,
+                        "maxNumberOfUEs":300,
                         "uemobilityLevel":"stationary",
                         "resourceSharingLevel":"shared",
                         "coverageAreaList": "01001",
@@ -180,7 +180,7 @@ class DoCreateCommunicationServiceTest extends MsoGroovyTest {
         csInputMap.put("expDataRateDL", 10)
         csInputMap.put("expDataRateUL", 30)
         csInputMap.put("latency", 20)
-        csInputMap.put("maxNumberofUEs", 300)
+        csInputMap.put("maxNumberOfUEs", 300)
         csInputMap.put("uEMobilityLevel", "stationary")
         csInputMap.put("resourceSharingLevel", "shared")
         csInputMap.put("coverageAreaTAList", "01001")

@@ -248,7 +248,7 @@ class DoDeallocateNSSITest extends MsoGroovyTest {
                                 "constrainstsl":"less_or_equal",
                                 "value":"300"
                             },
-                            "maxNumberofUEs":{
+                            "maxNumberOfUEs":{
                                 "type":"integer",
                                 "constrainstsl":"less_or_equal",
                                 "value":"300"
