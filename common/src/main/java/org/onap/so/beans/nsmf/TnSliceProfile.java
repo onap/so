@@ -23,10 +23,11 @@ package org.onap.so.beans.nsmf;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
+
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 public class TnSliceProfile {
-
     private String sliceProfileId;
 
     private String bandwidth;
