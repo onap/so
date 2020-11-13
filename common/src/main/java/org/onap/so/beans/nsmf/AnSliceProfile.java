@@ -25,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.ToString;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -62,5 +63,18 @@ public class AnSliceProfile implements Serializable {
 
     @JsonProperty(value = "resourceSharingLevel")
     private ResourceSharingLevel resourceSharingLevel;
+
+    public void setCoverageAreaTAList(String coverage) {
+        this.coverageAreaTAList = new ArrayList<>();
+        String[] split = coverage.split("\\|");
+        for (String s : split) {
+            this.coverageAreaTAList.add(area2Code(s));
+        }
+    }
+
+    private Integer area2Code(String str) {
+        //todo: change to code
+        return str.length();
+    }
 
 }
