@@ -56,15 +56,15 @@ public class SliceTaskParamsAdapter implements Serializable {
 
     private TemplateInfo NSTInfo = new TemplateInfo();
 
-    private SliceTaskInfo<TnSliceProfile> tnBHSliceTaskInfo = new SliceTaskInfo<>();
+    private SliceTaskInfo<SliceProfileAdapter> tnBHSliceTaskInfo = new SliceTaskInfo<>();
 
-    private SliceTaskInfo<TnSliceProfile> tnMHSliceTaskInfo = new SliceTaskInfo<>();
+    private SliceTaskInfo<SliceProfileAdapter> tnMHSliceTaskInfo = new SliceTaskInfo<>();
 
-    private SliceTaskInfo<TnSliceProfile> tnFHSliceTaskInfo = new SliceTaskInfo<>();
+    private SliceTaskInfo<SliceProfileAdapter> tnFHSliceTaskInfo = new SliceTaskInfo<>();
 
-    private SliceTaskInfo<CnSliceProfile> cnSliceTaskInfo = new SliceTaskInfo<>();
+    private SliceTaskInfo<SliceProfileAdapter> cnSliceTaskInfo = new SliceTaskInfo<>();
 
-    private SliceTaskInfo<AnSliceProfile> anSliceTaskInfo = new SliceTaskInfo<>();
+    private SliceTaskInfo<SliceProfileAdapter> anSliceTaskInfo = new SliceTaskInfo<>();
 
     @SuppressWarnings("unchecked")
     public void convertFromJson(String jsonString) throws IOException {
@@ -80,24 +80,24 @@ public class SliceTaskParamsAdapter implements Serializable {
 
         this.setServiceProfile(replaceHeader(paramMap, "ServiceProfile."));
 
-        TnSliceProfile tnBHSliceProfile = mapper.readValue(
-                mapper.writeValueAsString(replaceHeader(paramMap, "SliceProfile.TN.BH.")), TnSliceProfile.class);
+        SliceProfileAdapter tnBHSliceProfile = mapper.readValue(
+                mapper.writeValueAsString(replaceHeader(paramMap, "SliceProfile.TN.BH.")), SliceProfileAdapter.class);
         this.tnBHSliceTaskInfo.setSliceProfile(tnBHSliceProfile);
 
-        TnSliceProfile tnMHSliceProfile = mapper.readValue(
-                mapper.writeValueAsString(replaceHeader(paramMap, "SliceProfile.TN.MH.")), TnSliceProfile.class);
+        SliceProfileAdapter tnMHSliceProfile = mapper.readValue(
+                mapper.writeValueAsString(replaceHeader(paramMap, "SliceProfile.TN.MH.")), SliceProfileAdapter.class);
         this.tnMHSliceTaskInfo.setSliceProfile(tnMHSliceProfile);
 
-        TnSliceProfile tnFHSliceProfile = mapper.readValue(
-                mapper.writeValueAsString(replaceHeader(paramMap, "SliceProfile.TN.FH.")), TnSliceProfile.class);
+        SliceProfileAdapter tnFHSliceProfile = mapper.readValue(
+                mapper.writeValueAsString(replaceHeader(paramMap, "SliceProfile.TN.FH.")), SliceProfileAdapter.class);
         this.tnFHSliceTaskInfo.setSliceProfile(tnFHSliceProfile);
 
-        CnSliceProfile cnSliceProfile = mapper.readValue(
-                mapper.writeValueAsString(replaceHeader(paramMap, "SliceProfile.CN.")), CnSliceProfile.class);
+        SliceProfileAdapter cnSliceProfile = mapper.readValue(
+                mapper.writeValueAsString(replaceHeader(paramMap, "SliceProfile.CN.")), SliceProfileAdapter.class);
         this.cnSliceTaskInfo.setSliceProfile(cnSliceProfile);
 
-        AnSliceProfile anSliceProfile = mapper.readValue(
-                mapper.writeValueAsString(replaceHeader(paramMap, "SliceProfile.AN.")), AnSliceProfile.class);
+        SliceProfileAdapter anSliceProfile = mapper.readValue(
+                mapper.writeValueAsString(replaceHeader(paramMap, "SliceProfile.AN.")), SliceProfileAdapter.class);
         this.anSliceTaskInfo.setSliceProfile(anSliceProfile);
 
         this.tnBHSliceTaskInfo.setSuggestNssiId(paramMap.get("TN.BH.SuggestNSSIId"));
@@ -148,40 +148,37 @@ public class SliceTaskParamsAdapter implements Serializable {
         for (Map.Entry<String, Object> entry : serviceProfile.entrySet()) {
             jsonObject.addProperty("ServiceProfile." + entry.getKey(), entry.getValue().toString());
         }
-
         Map<String, Object> sliceProfileAn = bean2Map(anSliceTaskInfo.getSliceProfile());
-
         for (Map.Entry<String, Object> entry : sliceProfileAn.entrySet()) {
-            jsonObject.addProperty("SliceProfile.AN." + entry.getKey(), entry.getValue().toString());
+            String value = entry.getValue() == null ? "" : entry.getValue().toString();
+            jsonObject.addProperty("SliceProfile.AN." + entry.getKey(), value);
         }
-
         Map<String, Object> sliceProfileCn = bean2Map(cnSliceTaskInfo.getSliceProfile());
         for (Map.Entry<String, Object> entry : sliceProfileCn.entrySet()) {
-            jsonObject.addProperty("SliceProfile.CN." + entry.getKey(), entry.getValue().toString());
+            String value = entry.getValue() == null ? "" : entry.getValue().toString();
+            jsonObject.addProperty("SliceProfile.CN." + entry.getKey(), value);
         }
-
         Map<String, Object> sliceProfileTnBH = bean2Map(tnBHSliceTaskInfo.getSliceProfile());
         for (Map.Entry<String, Object> entry : sliceProfileTnBH.entrySet()) {
-            jsonObject.addProperty("SliceProfile.TN.BH." + entry.getKey(), entry.getValue().toString());
+            String value = entry.getValue() == null ? "" : entry.getValue().toString();
+            jsonObject.addProperty("SliceProfile.TN.BH." + entry.getKey(), value);
         }
-
         Map<String, Object> sliceProfileTnMH = bean2Map(tnMHSliceTaskInfo.getSliceProfile());
         for (Map.Entry<String, Object> entry : sliceProfileTnMH.entrySet()) {
-            jsonObject.addProperty("SliceProfile.TN.MH." + entry.getKey(), entry.getValue().toString());
+            String value = entry.getValue() == null ? "" : entry.getValue().toString();
+            jsonObject.addProperty("SliceProfile.TN.MH." + entry.getKey(), value);
         }
-
         Map<String, Object> sliceProfileTnFH = bean2Map(tnFHSliceTaskInfo.getSliceProfile());
         for (Map.Entry<String, Object> entry : sliceProfileTnFH.entrySet()) {
-            jsonObject.addProperty("SliceProfile.TN.FH." + entry.getKey(), entry.getValue().toString());
+            String value = entry.getValue() == null ? "" : entry.getValue().toString();
+            jsonObject.addProperty("SliceProfile.TN.FH." + entry.getKey(), value);
         }
-
         jsonObject.addProperty("TN.BH.SuggestNSSIId", tnBHSliceTaskInfo.getSuggestNssiId());
         jsonObject.addProperty("TN.BH.SuggestNSSIName", tnBHSliceTaskInfo.getSuggestNssiName());
         jsonObject.addProperty("TN.BH.progress", tnBHSliceTaskInfo.getProgress());
         jsonObject.addProperty("TN.BH.status", tnBHSliceTaskInfo.getStatus());
         jsonObject.addProperty("TN.BH.statusDescription", tnBHSliceTaskInfo.getStatusDescription());
         jsonObject.addProperty("TN.BH.ScriptName", tnBHSliceTaskInfo.getScriptName());
-
 
         jsonObject.addProperty("TN.MH.SuggestNSSIId", tnMHSliceTaskInfo.getSuggestNssiId());
         jsonObject.addProperty("TN.MH.SuggestNSSIName", tnMHSliceTaskInfo.getSuggestNssiName());
@@ -190,7 +187,6 @@ public class SliceTaskParamsAdapter implements Serializable {
         jsonObject.addProperty("TN.MH.statusDescription", tnMHSliceTaskInfo.getStatusDescription());
         jsonObject.addProperty("TN.MH.ScriptName", tnMHSliceTaskInfo.getScriptName());
 
-
         jsonObject.addProperty("TN.FH.SuggestNSSIId", tnFHSliceTaskInfo.getSuggestNssiId());
         jsonObject.addProperty("TN.FH.SuggestNSSIName", tnFHSliceTaskInfo.getSuggestNssiName());
         jsonObject.addProperty("TN.FH.progress", tnFHSliceTaskInfo.getProgress());
@@ -198,14 +194,12 @@ public class SliceTaskParamsAdapter implements Serializable {
         jsonObject.addProperty("TN.FH.statusDescription", tnFHSliceTaskInfo.getStatusDescription());
         jsonObject.addProperty("TN.FH.ScriptName", tnFHSliceTaskInfo.getScriptName());
 
-
         jsonObject.addProperty("CN.SuggestNSSIId", cnSliceTaskInfo.getSuggestNssiId());
         jsonObject.addProperty("CN.SuggestNSSIName", cnSliceTaskInfo.getSuggestNssiName());
         jsonObject.addProperty("CN.progress", cnSliceTaskInfo.getProgress());
         jsonObject.addProperty("CN.status", cnSliceTaskInfo.getStatus());
         jsonObject.addProperty("CN.statusDescription", cnSliceTaskInfo.getStatusDescription());
         jsonObject.addProperty("CN.ScriptName", cnSliceTaskInfo.getScriptName());
-
 
         jsonObject.addProperty("AN.SuggestNSSIId", anSliceTaskInfo.getSuggestNssiId());
         jsonObject.addProperty("AN.SuggestNSSIName", anSliceTaskInfo.getSuggestNssiName());
@@ -219,7 +213,7 @@ public class SliceTaskParamsAdapter implements Serializable {
 
     /**
      * change T t to {@link Map}
-     * 
+     *
      * @param t input
      * @param <T> Object
      * @return {@link Map}
@@ -234,7 +228,10 @@ public class SliceTaskParamsAdapter implements Serializable {
             Field[] fields = t.getClass().getDeclaredFields();
             for (Field field : fields) {
                 String name = field.getName();
-                Method method = t.getClass().getMethod("get" + name);
+                if (name == null || "".equals(name) || "serialVersionUID".equalsIgnoreCase(name)) {
+                    continue;
+                }
+                Method method = t.getClass().getMethod("get" + name.substring(0, 1).toUpperCase() + name.substring(1));
                 Object value = method.invoke(t);
                 resMap.put(name, value);
             }
@@ -247,7 +244,7 @@ public class SliceTaskParamsAdapter implements Serializable {
 
     /**
      * replace of slice profile
-     * 
+     *
      * @param paramMap params map
      * @param header starts of key
      * @return Map
