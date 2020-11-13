@@ -121,8 +121,7 @@ public class VnfAdapterCreateTasks {
             try {
                 volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
             } catch (BBObjectNotFoundException bbException) {
-                logger.error("Exception occurred if bb object not found in VnfAdapterCreateTasks createVfModule ",
-                        bbException);
+                logger.info("Volume Group not found in GBB. ");
             }
             CloudRegion cloudRegion = gBBInput.getCloudRegion();
             RequestContext requestContext = gBBInput.getRequestContext();
