@@ -187,7 +187,7 @@ public class Onap3gppServiceInstancesTest extends BaseTest {
         String request = "{\"subnetTypes\":[\"AN\"]}";
         QuerySubnetCapability subnetCapabilityRequest = MAPPER.readValue(request, QuerySubnetCapability.class);
         String expectedResponse =
-                "{\"AN\":{\"latency\":\"5\",\"maxNumberofUEs\":\"100\",\"maxThroughput\":\"150\",\"terminalDensity\":\"50\"}}";
+                "{\"AN\":{\"latency\":\"5\",\"maxNumberOfUEs\":\"100\",\"maxThroughput\":\"150\",\"terminalDensity\":\"50\"}}";
         Response response = objUnderTest.getSliceSubnetCapabilities(subnetCapabilityRequest, "v1");
         String actualResponse = (String) response.getEntity();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());

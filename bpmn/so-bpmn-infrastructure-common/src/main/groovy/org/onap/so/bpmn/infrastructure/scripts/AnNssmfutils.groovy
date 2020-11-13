@@ -263,7 +263,7 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 			result.setResourceSharingLevel(profile.get("resourceSharingLevel"))
 			result.setSNssai(profile.get("sNSSAI"))
 			result.setUeMobilityLevel(profile.get("uEMobilityLevel"))
-			result.setMaxNumberOfUEs(profile.get("maxNumberofUEs"))
+			result.setMaxNumberOfUEs(profile.get("maxNumberOfUEs"))
 			result.setActivityFactor(profile.get("activityFactor"))
 			result.setCoverageAreaTAList(profile.get("coverageAreaTAList"))
 			result.setCsAvailability(profile.get("cSAvailabilityTarget"))

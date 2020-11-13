@@ -21,7 +21,10 @@
 package org.onap.so.beans.nsmf;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+
+import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
@@ -29,8 +32,14 @@ public class TnSliceProfile {
 
     private String sliceProfileId;
 
+    @JsonProperty(value = "maxBandwidth")
     private String bandwidth;
 
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private int latency;
+
+    @JsonProperty(value = "sNSSAIList", required = true)
+    private List<String> sNSSAIList;
+
+    @JsonProperty(value = "pLMNIdList", required = true)
+    private List<String> pLMNIdList;
 }

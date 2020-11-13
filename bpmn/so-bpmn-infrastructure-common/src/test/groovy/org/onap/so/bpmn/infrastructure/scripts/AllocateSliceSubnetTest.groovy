@@ -71,7 +71,7 @@ class AllocateSliceSubnetTest extends MsoGroovyTest {
 						}
 					]
 					},
-				"maxNumberofUEs": 200,
+				"maxNumberOfUEs": 200,
 				"coverageAreaTAList": [
 						"1",
 						"2",

@@ -105,7 +105,7 @@ class DoCreateCommunicationService extends AbstractServiceTaskProcessor{
 
             def csInputMap = execution.getVariable("csInputMap") as Map<String, ?>
             Integer latency = csInputMap.get("latency") as Integer
-            Integer maxNumberOfUEs = csInputMap.get("maxNumberofUEs") as Integer
+            Integer maxNumberOfUEs = csInputMap.get("maxNumberOfUEs") as Integer
             Integer expDataRateDL = csInputMap.get("expDataRateDL") as Integer
             Integer expDataRateUL = csInputMap.get("expDataRateUL") as Integer
             String coverageArea = csInputMap.get("coverageAreaTAList")

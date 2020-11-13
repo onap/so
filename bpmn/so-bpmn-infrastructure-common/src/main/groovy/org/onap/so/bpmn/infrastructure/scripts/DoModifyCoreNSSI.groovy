@@ -101,8 +101,8 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
             sliceProfile.setCoverageAreaTAList(sliceProfileMap.get("coverageAreaTAList").toString())
         }
 
-        if(!isBlank(sliceProfileMap.get("maxNumberofUEs"))) {
-            sliceProfile.setMaxNumberOfUEs(Integer.parseInt(sliceProfileMap.get("maxNumberofUEs").toString()))
+        if(!isBlank(sliceProfileMap.get("maxNumberOfUEs"))) {
+            sliceProfile.setMaxNumberOfUEs(Integer.parseInt(sliceProfileMap.get("maxNumberOfUEs").toString()))
         }
 
         if(!isBlank(sliceProfileMap.get("latency"))) {

@@ -81,7 +81,7 @@ public class NssmfAdapterRestTest {
             + "      \"sliceProfileId\" : \"ab9af40f13f721b5f13539d87484098\",\n"
             + "      \"plmnIdList\" : [ \"460-00\", \"460-01\" ],\n" + "      \"perfReq\" : {\n"
             + "        \"perfReqEmbbList\" : [ {\n" + "          \"activityFactor\" : 50\n" + "        } ]\n"
-            + "      },\n" + "      \"maxNumberofUEs\" : 200,\n"
+            + "      },\n" + "      \"maxNumberOfUEs\" : 200,\n"
             + "      \"coverageAreaTAList\" : [ \"1\", \"2\", \"3\" ],\n" + "      \"latency\" : 6,\n"
             + "      \"resourceSharingLevel\" : \"non-shared\"\n" + "    },\n" + "    \"scriptName\" : \"CN1\",\n"
             + "    \"nsiInfo\" : {\n" + "      \"nsiName\" : \"eMBB-001\",\n"

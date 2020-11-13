@@ -20,6 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.so.beans.nsmf.SliceProfileAdapter
 import org.onap.so.beans.nsmf.oof.SubnetType
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import javax.ws.rs.NotFoundException
@@ -36,15 +37,12 @@ import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.so.beans.nsmf.AllocateAnNssi
 import org.onap.so.beans.nsmf.AllocateCnNssi
 import org.onap.so.beans.nsmf.AllocateTnNssi
-import org.onap.so.beans.nsmf.AnSliceProfile
-import org.onap.so.beans.nsmf.CnSliceProfile
 import org.onap.so.beans.nsmf.EsrInfo
 import org.onap.so.beans.nsmf.NssiResponse
 import org.onap.so.beans.nsmf.NssmfAdapterNBIRequest
 import org.onap.so.beans.nsmf.ServiceInfo
 import org.onap.so.beans.nsmf.SliceTaskInfo
 import org.onap.so.beans.nsmf.SliceTaskParamsAdapter
-import org.onap.so.beans.nsmf.TnSliceProfile
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.slf4j.Logger
@@ -239,7 +237,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         SliceTaskParamsAdapter sliceParams =
                 execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
-        SliceTaskInfo<AnSliceProfile> sliceTaskInfo = sliceParams.anSliceTaskInfo
+        SliceTaskInfo<SliceProfileAdapter> sliceTaskInfo = sliceParams.anSliceTaskInfo
         sliceTaskInfo.setSliceInstanceId(serviceInstanceId)
 
         // create slice profile
@@ -275,15 +273,15 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         SliceTaskParamsAdapter sliceParams =
                 execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
-        SliceTaskInfo<AnSliceProfile> sliceTaskInfo = sliceParams.anSliceTaskInfo
-        AnSliceProfile anSliceProfile = sliceTaskInfo.sliceProfile
+        SliceTaskInfo<SliceProfileAdapter> sliceTaskInfo = sliceParams.anSliceTaskInfo
+        SliceProfileAdapter anSliceProfile = sliceTaskInfo.sliceProfile
 
         String profileId = UUID.randomUUID().toString()
         anSliceProfile.setSliceProfileId(profileId)
 
         SliceProfile sliceProfile = new SliceProfile()
         sliceProfile.setProfileId(profileId)
-        sliceProfile.setCoverageAreaTAList(anSliceProfile.coverageAreaTAList as String)
+        sliceProfile.setCoverageAreaTAList(anSliceProfile.coverageAreaTAList)
         //todo:...
         AAIResourceUri uri = AAIUriFactory.createResourceUri(
             AAIFluentTypeBuilder.business().customer(globalSubscriberId)
@@ -304,12 +302,16 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         //todo:
         SliceTaskParamsAdapter sliceParams =
                 execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
-        SliceTaskInfo<AnSliceProfile> sliceTaskInfo = sliceParams.anSliceTaskInfo
+        SliceTaskInfo<SliceProfileAdapter> sliceTaskInfo = sliceParams.anSliceTaskInfo
 
         NssmfAdapterNBIRequest nbiRequest = new NssmfAdapterNBIRequest()
 
         AllocateAnNssi allocateAnNssi = new AllocateAnNssi()
-        allocateAnNssi.sliceProfile = sliceTaskInfo.sliceProfile
+        allocateAnNssi.sliceProfile = sliceTaskInfo.sliceProfile.trans2AnProfile()
+        allocateAnNssi.nsstId = sliceTaskInfo.NSSTInfo.UUID
+        allocateAnNssi.nssiId = sliceTaskInfo.suggestNssiId
+        allocateAnNssi.nssiName = sliceTaskInfo.NSSTInfo.name
+        allocateAnNssi.nsiInfo.nsiId = sliceParams.suggestNsiId
 
         EsrInfo esrInfo = new EsrInfo()
         //todo: vendor and network
@@ -354,7 +356,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         SliceTaskParamsAdapter sliceParams =
                 execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
-        SliceTaskInfo<CnSliceProfile> sliceTaskInfo = sliceParams.cnSliceTaskInfo
+        SliceTaskInfo<SliceProfileAdapter> sliceTaskInfo = sliceParams.cnSliceTaskInfo
         sliceTaskInfo.setSliceInstanceId(serviceInstanceId)
 
         // create slice profile
@@ -392,8 +394,8 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         SliceTaskParamsAdapter sliceParams =
                 execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
 
-        SliceTaskInfo<CnSliceProfile> sliceTaskInfo = sliceParams.cnSliceTaskInfo
-        CnSliceProfile cnSliceProfile = sliceTaskInfo.sliceProfile
+        SliceTaskInfo<SliceProfileAdapter> sliceTaskInfo = sliceParams.cnSliceTaskInfo
+        SliceProfileAdapter cnSliceProfile = sliceTaskInfo.sliceProfile
 
         String profileId = UUID.randomUUID().toString()
         cnSliceProfile.setSliceProfileId(profileId)
@@ -416,7 +418,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         //todo:
         SliceTaskParamsAdapter sliceParams =
                 execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
-        SliceTaskInfo<CnSliceProfile> sliceTaskInfo = sliceParams.cnSliceTaskInfo
+        SliceTaskInfo<SliceProfileAdapter> sliceTaskInfo = sliceParams.cnSliceTaskInfo
 
         NssmfAdapterNBIRequest nbiRequest = new NssmfAdapterNBIRequest()
 
@@ -424,7 +426,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         allocateCnNssi.nsstId = sliceTaskInfo.NSSTInfo.UUID
         allocateCnNssi.nssiId = sliceTaskInfo.suggestNssiId
         allocateCnNssi.nssiName = sliceTaskInfo.NSSTInfo.name
-        allocateCnNssi.sliceProfile = sliceTaskInfo.sliceProfile
+        allocateCnNssi.sliceProfile = sliceTaskInfo.sliceProfile.trans2CnProfile()
         allocateCnNssi.nsiInfo.nsiId = sliceParams.suggestNsiId
 
         EsrInfo esrInfo = new EsrInfo()
@@ -469,7 +471,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         SliceTaskParamsAdapter sliceParams =
                 execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
 
-        SliceTaskInfo<TnSliceProfile> sliceTaskInfo = sliceParams.tnBHSliceTaskInfo
+        SliceTaskInfo<SliceProfileAdapter> sliceTaskInfo = sliceParams.tnBHSliceTaskInfo
         String serviceInstanceId = UUID.randomUUID().toString()
 
         sliceTaskInfo.setSliceInstanceId(serviceInstanceId)
@@ -510,9 +512,9 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         SliceTaskParamsAdapter sliceParams =
                 execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
 
-        SliceTaskInfo<TnSliceProfile> sliceTaskInfo = sliceParams.tnBHSliceTaskInfo
+        SliceTaskInfo<SliceProfileAdapter> sliceTaskInfo = sliceParams.tnBHSliceTaskInfo
 
-        TnSliceProfile tnSliceProfile = sliceTaskInfo.sliceProfile
+        SliceProfileAdapter tnSliceProfile = sliceTaskInfo.sliceProfile
         String profileId = UUID.randomUUID().toString()
         tnSliceProfile.setSliceProfileId(profileId)
 
@@ -534,7 +536,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         //todo:
         SliceTaskParamsAdapter sliceParams =
                 execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
-        SliceTaskInfo<TnSliceProfile> sliceTaskInfo = sliceParams.tnBHSliceTaskInfo
+        SliceTaskInfo<SliceProfileAdapter> sliceTaskInfo = sliceParams.tnBHSliceTaskInfo
 
         NssmfAdapterNBIRequest nbiRequest = new NssmfAdapterNBIRequest()
 
@@ -543,6 +545,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         //todo: endpointId -> set into tn
         allocateTnNssi.setTransportSliceNetworks()
         allocateTnNssi.setNetworkSliceInfos()
+
 
 
         //allocateTnNssi.networkSliceInfos

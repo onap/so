@@ -89,7 +89,7 @@ class CreateCommunicationServiceTest extends MsoGroovyTest {
                                 \\"expDataRateDL\\":10,\\r\\n                
                                 \\"expDataRateUL\\":30,\\r\\n                
                                 \\"latency\\":20,\\r\\n                
-                                \\"maxNumberofUEs\\":300,\\r\\n                
+                                \\"maxNumberOfUEs\\":300,\\r\\n                
                                 \\"uemobilityLevel\\":\\"stationary\\",\\r\\n                
                                 \\"resourceSharingLevel\\":\\"shared\\",\\r\\n                
                                 \\"coverageAreaList\\": \\"01001\\",\\r\\n                
@@ -182,7 +182,7 @@ class CreateCommunicationServiceTest extends MsoGroovyTest {
         serviceInfo.setServiceProperties("""
             [{"name":"useInterval","type":"string","required":false},
             {"default":"39-00","name":"plmnIdList","type":"string","required":false},
-            {"name":"maxNumberofUEs","type":"integer","required":false},
+            {"name":"maxNumberOfUEs","type":"integer","required":false},
             {"name":"latency","type":"integer","required":false},
             {"name":"uEMobilityLevel","type":"string","required":false},
             {"name":"expDataRateUL","type":"integer","required":false},
@@ -209,7 +209,7 @@ class CreateCommunicationServiceTest extends MsoGroovyTest {
         csInputMap.put("expDataRateDL", 10)
         csInputMap.put("expDataRateUL", 30)
         csInputMap.put("latency", 20)
-        csInputMap.put("maxNumberofUEs", 300)
+        csInputMap.put("maxNumberOfUEs", 300)
         csInputMap.put("uEMobilityLevel", "stationary")
         csInputMap.put("resourceSharingLevel", "shared")
         csInputMap.put("coverageAreaTAList", "01001")
@@ -228,7 +228,7 @@ class CreateCommunicationServiceTest extends MsoGroovyTest {
        serviceInfo.setServiceProperties("""
             [{"name":"nstar0_allottedresource0_providing_service_uuid","type":"string","required":true},
             {"name":"areaTrafficCapDL","type":"integer","required":false},
-            {"name":"maxNumberofUEs","type":"integer","required":false},
+            {"name":"maxNumberOfUEs","type":"integer","required":false},
             {"name":"latency","type":"integer","required":false},
             {"name":"expDataRateUL","type":"integer","required":false},
             {"name":"sNSSAI","type":"string","required":false},
@@ -269,7 +269,7 @@ class CreateCommunicationServiceTest extends MsoGroovyTest {
         e2eInputMap.put("expDataRateDL", 10)
         e2eInputMap.put("expDataRateUL", 30)
         e2eInputMap.put("latency", 20)
-        e2eInputMap.put("maxNumberofUEs", 300)
+        e2eInputMap.put("maxNumberOfUEs", 300)
         e2eInputMap.put("uEMobilityLevel", "stationary")
         e2eInputMap.put("resourceSharingLevel", "shared")
         e2eInputMap.put("coverageAreaTAList", "01001")
@@ -443,7 +443,7 @@ class CreateCommunicationServiceTest extends MsoGroovyTest {
                         "expDataRateDL":10,
                         "expDataRateUL":30,
                         "latency":20,
-                        "maxNumberofUEs":300,
+                        "maxNumberOfUEs":300,
                         "uemobilityLevel":"stationary",
                         "resourceSharingLevel":"shared",
                         "coverageAreaList": "01001",

@@ -133,7 +133,7 @@ class DoModifyCoreNSSITest extends MsoGroovyTest  {
 
         currentNSSI.put("sliceProfile", "{\"sliceProfileId\":\"slice-profile-id\",\"snssaiList\":[\"S-NSSAI\"],\"expDataRateUL\":\"12\",\"expDataRateDL\":\"5\"," +
                         "\"activityFactor\":\"2\",\"resourceSharingLevel\":\"resource-sharing-level\",\"uEMobilityLevel\":\"ue-mobility-level\",\"coverageAreaTAList\":\"coverage-area-ta-list\"," +
-                        "\"maxNumberofUEs\":\"10000\",\"latency\":\"7\"}")
+                        "\"maxNumberOfUEs\":\"10000\",\"latency\":\"7\"}")
         currentNSSI.put("sliceProfileId", sliceProfileId)
 
         List<String> snssais = new ArrayList<>()

@@ -175,7 +175,7 @@ class DoCreateSliceServiceInstance extends AbstractServiceTaskProcessor{
         ServiceProfile serviceProfile = new ServiceProfile()
         serviceProfile.setProfileId(serviceProfileId)
         serviceProfile.setLatency(Integer.parseInt(serviceProfileMap.get("latency").toString()))
-        serviceProfile.setMaxNumberOfUEs(Integer.parseInt(serviceProfileMap.get("maxNumberofUEs").toString()))
+        serviceProfile.setMaxNumberOfUEs(Integer.parseInt(serviceProfileMap.get("maxNumberOfUEs").toString()))
         serviceProfile.setCoverageAreaTAList(serviceProfileMap.get("coverageAreaTAList").toString())
         serviceProfile.setUeMobilityLevel(serviceProfileMap.get("uEMobilityLevel").toString())
         serviceProfile.setResourceSharingLevel(serviceProfileMap.get("resourceSharingLevel").toString())

@@ -62,7 +62,7 @@ class DoAllocateCoreNSSITest extends MsoGroovyTest {
                 "activityFactor": 50
             }]
         },
-        "maxNumberofUEs": 200,
+        "maxNumberOfUEs": 200,
         "coverageAreaTAList": [
             "1",
             "2",
@@ -91,7 +91,7 @@ class DoAllocateCoreNSSITest extends MsoGroovyTest {
     },
     "scriptName": "AN1"
 }"""
-        String expected = """{"plmnIdList":["460-00","460-01"],"sliceProfileId":"ab9af40f13f721b5f13539d87484098","maxNumberofUEs":200,"latency":2,"snssaiList":["001-100001"],"perfReq":{"perfReqEmbbList ":[{"activityFactor":50}]},"coverageAreaTAList":["1","2","3","4"],"resourceSharingLevel":"non-shared"}"""
+        String expected = """{"plmnIdList":["460-00","460-01"],"sliceProfileId":"ab9af40f13f721b5f13539d87484098","maxNumberOfUEs":200,"latency":2,"snssaiList":["001-100001"],"perfReq":{"perfReqEmbbList ":[{"activityFactor":50}]},"coverageAreaTAList":["1","2","3","4"],"resourceSharingLevel":"non-shared"}"""
         when(mockExecution.getVariable("sliceParams")).thenReturn(sliceParams)
         DoAllocateCoreNSSI allocateNssi = new DoAllocateCoreNSSI()
         allocateNssi.preProcessRequest(mockExecution)
