@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.ToString;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -46,14 +47,12 @@ public class AnSliceProfile implements Serializable {
     @JsonProperty(value = "perfReq", required = true)
     private AnPerfReq perfReq;
 
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     @JsonProperty(value = "maxNumberofUEs")
     private long maxNumberofUEs;
 
     @JsonProperty(value = "coverageAreaTAList")
-    private List<Integer> coverageAreaTAList;
+    private List<String> coverageAreaTAList;
 
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     @JsonProperty(value = "latency")
     private int latency;
 
