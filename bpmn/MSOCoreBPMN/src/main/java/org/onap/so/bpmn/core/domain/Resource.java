@@ -81,6 +81,7 @@ public abstract class Resource extends JsonWrapper implements Serializable {
         return homingSolution;
     }
 
+    @Deprecated
     public void setHomingSolution(HomingSolution homingSolution) {
         this.homingSolution = homingSolution;
     }
