@@ -246,6 +246,7 @@ class DoCreateSliceServiceInstance extends AbstractServiceTaskProcessor{
 
                 client.create(allottedResourceUri, resource)
 
+                execution.setVariable("allottedResourceId", allottedResourceId)
             }
 
         }catch (Exception ex) {
