@@ -25,6 +25,9 @@ import java.io.Serializable;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PerfReqEmbb implements Serializable {
+    /*
+     * Reference 3GPP TS 28.541 V16.5.0, Section 6.4.1.
+     */
 
     private static final long serialVersionUID = 8886635511695277599L;
 

@@ -31,6 +31,9 @@ import java.util.List;
 @Data
 @ToString
 public class AnSliceProfile implements Serializable {
+    /*
+     * Reference 3GPP TS 28.541 V16.5.0, Section 6.3.4.
+     */
 
     private static final long serialVersionUID = -3057342171549542794L;
 
@@ -44,7 +47,7 @@ public class AnSliceProfile implements Serializable {
     private List<String> pLMNIdList;
 
     @JsonProperty(value = "perfReq", required = true)
-    private AnPerfReq perfReq;
+    private PerfReq perfReq;
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     @JsonProperty(value = "maxNumberofUEs")
