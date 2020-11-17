@@ -354,6 +354,8 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
             nstInfo.setName(nstSolution.get("NSTName") as String)
 
             sliceTaskParams.setNSTInfo(nstInfo)
+            sliceTaskParams.setNstId(nstSolution.get("UUID") as String)
+            sliceTaskParams.setNstName(nstSolution.get("NSTName") as String)
 
             execution.setVariable("sliceTaskParams", sliceTaskParams)
 
