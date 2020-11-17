@@ -44,7 +44,7 @@ public class AnSliceProfile implements Serializable {
     private List<String> pLMNIdList;
 
     @JsonProperty(value = "perfReq", required = true)
-    private AnPerfReq perfReq;
+    private PerfReq perfReq;
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     @JsonProperty(value = "maxNumberofUEs")
