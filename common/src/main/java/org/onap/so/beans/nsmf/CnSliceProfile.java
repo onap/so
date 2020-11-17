@@ -23,11 +23,15 @@ package org.onap.so.beans.nsmf;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+
+import java.io.Serializable;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
-public class CnSliceProfile {
+public class CnSliceProfile implements Serializable {
+
+    private static final long serialVersionUID = 6627071735572539536L;
 
     @JsonProperty(value = "sNSSAIList", required = true)
     private List<String> snssaiList;
