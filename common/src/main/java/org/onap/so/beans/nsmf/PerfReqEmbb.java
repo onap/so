@@ -23,6 +23,9 @@ package org.onap.so.beans.nsmf;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.io.Serializable;
 
+/*
+ * Reference 3GPP TS 28.541 V16.5.0, Section 6.4.1.
+ */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PerfReqEmbb implements Serializable {
 
