@@ -83,9 +83,9 @@ public class SliceProfileAdapter implements Serializable {
         anSliceProfile.setCoverageAreaTAList(Arrays.asList(areasRes));
         anSliceProfile.setUEMobilityLevel(UeMobilityLevel.fromString(this.uEMobilityLevel));
         anSliceProfile.setResourceSharingLevel(ResourceSharingLevel.fromString(this.resourceSharingLevel));
-        AnPerfReq anPerfReq = new AnPerfReq();
+        PerfReq perfReq = new PerfReq();
         // todo
-        anSliceProfile.setPerfReq(anPerfReq);
+        anSliceProfile.setPerfReq(perfReq);
         return anSliceProfile;
     }
 
