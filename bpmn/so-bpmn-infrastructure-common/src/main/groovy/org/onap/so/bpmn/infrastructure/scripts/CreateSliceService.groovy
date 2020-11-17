@@ -401,7 +401,10 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
         OrchestrationTask orchestrationTask = objectMapper.readValue(response, OrchestrationTask.class)
         String paramJson = orchestrationTask.getParams()
         logger.debug("paramJson: " + paramJson)
-        SliceTaskParamsAdapter sliceTaskParams = new SliceTaskParamsAdapter()
+
+        SliceTaskParamsAdapter sliceTaskParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
         sliceTaskParams.convertFromJson(paramJson)
         execution.setVariable("sliceTaskParams", sliceTaskParams)
         logger.debug("Finish processUserOptions")
