@@ -1622,6 +1622,7 @@ public class BBInputSetup implements JavaDelegate {
                 parameter.setInstanceName(vfModules.getInstanceName());
                 parameter.setInstanceParams(vfModules.getInstanceParams());
                 this.populateVfModule(parameter);
+                gBB.getRequestContext().setIsHelm(parameter.getIsHelm());
             }
         } else if (bbName.contains(NETWORK)) {
             networks = findNetworksByKey(key, resources);
