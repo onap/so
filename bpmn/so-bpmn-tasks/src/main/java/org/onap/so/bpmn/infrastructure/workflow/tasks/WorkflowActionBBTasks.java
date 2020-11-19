@@ -100,22 +100,26 @@ public class WorkflowActionBBTasks {
     private RequestsDbListenerRunner requestsDbListener;
 
     public void selectBB(DelegateExecution execution) {
-        List<ExecuteBuildingBlock> flowsToExecute =
-                (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
-        execution.setVariable("MacroRollback", false);
         try {
-            flowManipulatorListenerRunner.modifyFlows(flowsToExecute, new DelegateExecutionImpl(execution));
-        } catch (NullPointerException ex) {
-            workflowAction.buildAndThrowException(execution, "Error in FlowManipulator Modify Flows", ex);
+            List<ExecuteBuildingBlock> flowsToExecute =
+                    (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+            execution.setVariable("MacroRollback", false);
+            try {
+                flowManipulatorListenerRunner.modifyFlows(flowsToExecute, new DelegateExecutionImpl(execution));
+            } catch (NullPointerException ex) {
+                workflowAction.buildAndThrowException(execution, "Error in FlowManipulator Modify Flows", ex);
+            }
+            int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE);
+
+            ExecuteBuildingBlock ebb = flowsToExecute.get(currentSequence);
+
+            execution.setVariable("buildingBlock", ebb);
+            currentSequence++;
+            execution.setVariable(COMPLETED, currentSequence >= flowsToExecute.size());
+            execution.setVariable(G_CURRENT_SEQUENCE, currentSequence);
+        } catch (Exception e) {
+            workflowAction.buildAndThrowException(execution, "Internal Error occured during selectBB", e);
         }
-        int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE);
-
-        ExecuteBuildingBlock ebb = flowsToExecute.get(currentSequence);
-
-        execution.setVariable("buildingBlock", ebb);
-        currentSequence++;
-        execution.setVariable(COMPLETED, currentSequence >= flowsToExecute.size());
-        execution.setVariable(G_CURRENT_SEQUENCE, currentSequence);
     }
 
     public void updateFlowStatistics(DelegateExecution execution) {
