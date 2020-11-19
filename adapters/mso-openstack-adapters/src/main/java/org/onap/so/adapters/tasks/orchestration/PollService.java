@@ -90,7 +90,9 @@ public class PollService extends ExternalTaskUtils {
                             JAXB.unmarshal(new StringReader(xmlRequest), DeleteVfModuleRequest.class);
                     boolean isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
                     if (!isMulticloud) {
-                        pollDeleteResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
+                        int timeoutMinutes = msoHeatUtils.getVfHeatTimeoutValue(req.getModelCustomizationUuid(), false);
+                        pollDeleteResource(timeoutMinutes, req.getCloudSiteId(), req.getTenantId(), externalTask,
+                                success);
                     } else {
                         success.setTrue();
                     }
@@ -100,7 +102,7 @@ public class PollService extends ExternalTaskUtils {
                             JAXB.unmarshal(new StringReader(xmlRequest), DeleteVolumeGroupRequest.class);
                     boolean isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
                     if (!isMulticloud) {
-                        pollDeleteResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
+                        pollDeleteResource(118, req.getCloudSiteId(), req.getTenantId(), externalTask, success);
                     } else {
                         success.setTrue();
                     }
@@ -109,7 +111,7 @@ public class PollService extends ExternalTaskUtils {
                 } else if ("deleteNetworkRequest".equals(requestType.get())) {
                     logger.debug("Executing External Task Poll Service for Delete Network");
                     DeleteNetworkRequest req = JAXB.unmarshal(new StringReader(xmlRequest), DeleteNetworkRequest.class);
-                    pollDeleteResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
+                    pollDeleteResource(118, req.getCloudSiteId(), req.getTenantId(), externalTask, success);
                 } else if ("updateNetworkRequest".equals(requestType.get())) {
                     UpdateNetworkRequest req = JAXB.unmarshal(new StringReader(xmlRequest), UpdateNetworkRequest.class);
                     pollUpdateResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
@@ -152,9 +154,10 @@ public class PollService extends ExternalTaskUtils {
             boolean pollRollbackStatus = externalTask.getVariable("PollRollbackStatus");
             if (pollRollbackStatus) {
                 logger.debug("Executing External Task Poll Service for Rollback Create Volume Group");
-                pollDeleteResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
+                pollDeleteResource(118, req.getCloudSiteId(), req.getTenantId(), externalTask, success);
             } else {
-                pollCreateResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
+                int timeoutMinutes = msoHeatUtils.getVfHeatTimeoutValue(req.getModelCustomizationUuid(), true);
+                pollCreateResource(timeoutMinutes, req.getCloudSiteId(), req.getTenantId(), externalTask, success);
             }
         } else {
             success.setTrue();
@@ -167,12 +170,13 @@ public class PollService extends ExternalTaskUtils {
         boolean isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
         if (!isMulticloud) {
             boolean pollRollbackStatus = externalTask.getVariable("PollRollbackStatus");
+            int timeoutMinutes = msoHeatUtils.getVfHeatTimeoutValue(req.getModelCustomizationUuid(), false);
             if (pollRollbackStatus) {
                 logger.debug("Executing External Task Poll Service for Rollback Create Vf Module");
-                pollDeleteResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
+                pollDeleteResource(timeoutMinutes, req.getCloudSiteId(), req.getTenantId(), externalTask, success);
             } else {
                 logger.debug("Executing External Task Poll Service for Create Vf Module");
-                pollCreateResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
+                pollCreateResource(timeoutMinutes, req.getCloudSiteId(), req.getTenantId(), externalTask, success);
             }
         } else {
             success.setTrue();
@@ -183,29 +187,31 @@ public class PollService extends ExternalTaskUtils {
             throws MsoException {
         CreateNetworkRequest req = JAXB.unmarshal(new StringReader(xmlRequest), CreateNetworkRequest.class);
         boolean pollRollbackStatus = externalTask.getVariable("PollRollbackStatus");
+        int timeoutMinutes =
+                msoHeatUtils.getNetworkHeatTimeoutValue(req.getModelCustomizationUuid(), req.getNetworkType());
         if (pollRollbackStatus) {
             logger.debug("Executing External Task Poll Service for Rollback Create Network");
-            pollDeleteResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
+            pollDeleteResource(timeoutMinutes, req.getCloudSiteId(), req.getTenantId(), externalTask, success);
         } else {
             logger.debug("Executing External Task Poll Service for Create Network");
-            pollCreateResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
+            pollCreateResource(timeoutMinutes, req.getCloudSiteId(), req.getTenantId(), externalTask, success);
         }
     }
 
-    private void pollCreateResource(String cloudSiteId, String tenantId, ExternalTask externalTask,
+    private void pollCreateResource(int pollingTimeout, String cloudSiteId, String tenantId, ExternalTask externalTask,
             MutableBoolean success) throws MsoException {
         Stack currentStack = createCurrentStack(externalTask.getVariable("stackId"));
-        Stack stack =
-                msoHeatUtils.pollStackForStatus(1, currentStack, "CREATE_IN_PROGRESS", cloudSiteId, tenantId, false);
+        Stack stack = msoHeatUtils.pollStackForStatus(pollingTimeout, currentStack, "CREATE_IN_PROGRESS", cloudSiteId,
+                tenantId, false);
         msoHeatUtils.postProcessStackCreate(stack, false, 0, false, cloudSiteId, tenantId, null);
         success.setTrue();
     }
 
-    private void pollDeleteResource(String cloudSiteId, String tenantId, ExternalTask externalTask,
+    private void pollDeleteResource(int pollingTimeout, String cloudSiteId, String tenantId, ExternalTask externalTask,
             MutableBoolean success) throws MsoException {
         Stack currentStack = createCurrentStack(externalTask.getVariable("stackId"));
-        Stack stack =
-                msoHeatUtils.pollStackForStatus(1, currentStack, "DELETE_IN_PROGRESS", cloudSiteId, tenantId, true);
+        Stack stack = msoHeatUtils.pollStackForStatus(pollingTimeout, currentStack, "DELETE_IN_PROGRESS", cloudSiteId,
+                tenantId, true);
         if (stack != null) { // if stack is null it was not found and no need to do post process
             msoHeatUtils.postProcessStackDelete(stack);
         }
@@ -245,5 +251,4 @@ public class PollService extends ExternalTaskUtils {
         currentStack.setStackName(stackName);
         return currentStack;
     }
-
 }

@@ -158,6 +158,7 @@ public class MsoVnfAdapterImpl {
      * @param outputs Holder for Map of VNF outputs from heat (assigned IPs, etc)
      * @param rollback Holder for returning VnfRollback object
      */
+    @Deprecated
     public void createVnf(String cloudSiteId, String cloudOwner, String tenantId, String vnfType, String vnfVersion,
             String vnfName, String requestType, String volumeGroupHeatStackId, Map<String, Object> inputs,
             Boolean failIfExists, Boolean backout, Boolean enableBridge, MsoRequest msoRequest, Holder<String> vnfId,
@@ -212,6 +213,7 @@ public class MsoVnfAdapterImpl {
      * @param vnfName VNF Name or Openstack ID
      * @param msoRequest Request tracking information for logs
      */
+    @Deprecated
     public void deleteVnf(String cloudSiteId, String cloudOwner, String tenantId, String vnfName, MsoRequest msoRequest)
             throws VnfException {
 
@@ -251,6 +253,7 @@ public class MsoVnfAdapterImpl {
      * @param vnfName VNF Name or Openstack ID
      * @param msoRequest Request tracking information for logs
      */
+    @Deprecated
     public void deleteVnf(String cloudSiteId, String cloudOwner, String tenantId, String vnfName, MsoRequest msoRequest,
             boolean pollStackStatus) throws VnfException {
 
@@ -988,29 +991,7 @@ public class MsoVnfAdapterImpl {
         // call method which handles the conversion from Map<String,Object> to Map<String,String> for our expected
         // Object types
         outputs.value = this.convertMapStringObjectToStringString(stackOutputs);
-        int timeoutMinutes = 118;
-        VfModule vf = null;
-        VfModuleCustomization vfmc = null;
-        if (modelCustomizationUuid != null) {
-            vfmc = vfModuleCustomRepo.findFirstByModelCustomizationUUIDOrderByCreatedDesc(modelCustomizationUuid);
-            if (vfmc != null) {
-                vf = vfmc.getVfModule();
-            }
-            if (vf != null) {
-                logger.trace("Found vfModuleCust entry {}", vfmc.toString());
-                HeatTemplate heat = vf.getModuleHeatTemplate();
-                if (heat != null && heat.getTimeoutMinutes() != null) {
-                    if (heat.getTimeoutMinutes() < 118) {
-                        timeoutMinutes = heat.getTimeoutMinutes();
-                    }
-                }
-
-            } else {
-                logger.debug(
-                        "Unable to find vfModuleCust with modelCustomizationUuid={} . Using default timeout for polling",
-                        modelCustomizationUuid);
-            }
-        }
+        int timeoutMinutes = msoHeatUtils.getVfHeatTimeoutValue(modelCustomizationUuid, false);
 
         try {
             StackInfo currentStack =

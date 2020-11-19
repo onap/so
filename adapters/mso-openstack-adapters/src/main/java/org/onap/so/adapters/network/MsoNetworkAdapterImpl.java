@@ -962,31 +962,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             pollForCompletion = true;
         }
 
-        // Retrieve the Network Resource definition
-        NetworkResource networkResource = null;
-        if (commonUtils.isNullOrEmpty(modelCustomizationUuid)) {
-            if (!commonUtils.isNullOrEmpty(networkType)) {
-                networkResource = networkResourceRepo.findFirstByModelNameOrderByModelVersionDesc(networkType);
-            }
-        } else {
-            NetworkResourceCustomization nrc =
-                    networkCustomRepo.findOneByModelCustomizationUUID(modelCustomizationUuid);
-            if (nrc != null) {
-                networkResource = nrc.getNetworkResource();
-            }
-        }
-
-        int timeoutMinutes = 118;
-        if (networkResource != null) {
-            logger.debug(LOG_DEBUG_MSG, networkResource.toString());
-            networkResource.getHeatTemplate().getTimeoutMinutes();
-            HeatTemplate heat = networkResource.getHeatTemplate();
-            if (heat != null && heat.getTimeoutMinutes() != null) {
-                if (heat.getTimeoutMinutes() < 118) {
-                    timeoutMinutes = heat.getTimeoutMinutes();
-                }
-            }
-        }
+        int timeoutMinutes = heat.getNetworkHeatTimeoutValue(modelCustomizationUuid, networkType);
 
         try {
             StackInfo stack =

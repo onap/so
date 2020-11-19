@@ -52,15 +52,17 @@ public class PollServiceTest {
         Mockito.when(mockExternalTask.getVariable("openstackAdapterTaskRequest")).thenReturn(xmlString);
         Mockito.when(mockExternalTask.getVariable("PollRollbackStatus")).thenReturn(false);
         Mockito.when(mockExternalTask.getVariable("stackId")).thenReturn("stackId/stack123");
-        Mockito.when(msoHeatUtils.pollStackForStatus(eq(1), any(Stack.class), eq("CREATE_IN_PROGRESS"), eq("regionOne"),
-                eq("0422ffb57ba042c0800a29dc85ca70f8"), eq(false))).thenReturn(new Stack());
+        Mockito.when(msoHeatUtils.pollStackForStatus(eq(118), any(Stack.class), eq("CREATE_IN_PROGRESS"),
+                eq("regionOne"), eq("0422ffb57ba042c0800a29dc85ca70f8"), eq(false))).thenReturn(new Stack());
+        Mockito.when(msoHeatUtils.getVfHeatTimeoutValue(any(), eq(false))).thenReturn(118);
         // Mockito.doNothing().when(msoHeatUtils).postProcessStackCreate(Mockito.any(), Mockito.any(), Mockito.any(),
         // Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
 
         pollService.executeExternalTask(mockExternalTask, mockExternalTaskService);
 
-        Mockito.verify(msoHeatUtils).pollStackForStatus(eq(1), any(Stack.class), eq("CREATE_IN_PROGRESS"),
+        Mockito.verify(msoHeatUtils).pollStackForStatus(eq(118), any(Stack.class), eq("CREATE_IN_PROGRESS"),
                 eq("regionOne"), eq("0422ffb57ba042c0800a29dc85ca70f8"), eq(false));
+        Mockito.verify(msoHeatUtils).getVfHeatTimeoutValue(any(), eq(false));
 
     }
 
@@ -72,16 +74,16 @@ public class PollServiceTest {
         Mockito.when(mockExternalTask.getVariable("openstackAdapterTaskRequest")).thenReturn(xmlString);
         Mockito.when(mockExternalTask.getVariable("PollRollbackStatus")).thenReturn(true);
         Mockito.when(mockExternalTask.getVariable("stackId")).thenReturn("stackId/stack123");
-        Mockito.when(msoHeatUtils.pollStackForStatus(eq(1), any(), eq("DELETE_IN_PROGRESS"), eq("regionOne"),
+        Mockito.when(msoHeatUtils.pollStackForStatus(eq(118), any(), eq("DELETE_IN_PROGRESS"), eq("regionOne"),
                 eq("0422ffb57ba042c0800a29dc85ca70f8"), eq(true))).thenReturn(new Stack());
         Mockito.doNothing().when(msoHeatUtils).postProcessStackDelete(Mockito.any());
-
+        Mockito.when(msoHeatUtils.getVfHeatTimeoutValue(any(), eq(false))).thenReturn(118);
 
         pollService.executeExternalTask(mockExternalTask, mockExternalTaskService);
 
-        Mockito.verify(msoHeatUtils).pollStackForStatus(eq(1), any(), eq("DELETE_IN_PROGRESS"), eq("regionOne"),
+        Mockito.verify(msoHeatUtils).pollStackForStatus(eq(118), any(), eq("DELETE_IN_PROGRESS"), eq("regionOne"),
                 eq("0422ffb57ba042c0800a29dc85ca70f8"), eq(true));
-
+        Mockito.verify(msoHeatUtils).getVfHeatTimeoutValue(any(), eq(false));
     }
 
 }
