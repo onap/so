@@ -154,7 +154,7 @@ activator.processSdnrResponse(execution)</bpmn:script>
       <bpmn:outgoing>Flow_0rizzsm</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activator = new DoActivateAccessNSSI()
-activator..prepareUpdateJobStatus(execution,"processing","40","AN NF NSSI activation completed")</bpmn:script>
+activator.prepareUpdateJobStatus(execution,"processing","40","AN NF NSSI activation completed")</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:serviceTask id="Activity_08yj5gq" name="Update Resource Operation Status">
       <bpmn:extensionElements>
