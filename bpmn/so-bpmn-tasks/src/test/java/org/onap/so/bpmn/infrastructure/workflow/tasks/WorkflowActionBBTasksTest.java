@@ -29,6 +29,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -47,23 +48,30 @@ import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ConfigurationResourceKeys;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
+import org.onap.so.client.namingservice.NamingRequestObject;
+import org.onap.so.db.catalog.beans.ConfigurationResource;
+import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.springframework.core.env.Environment;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class WorkflowActionBBTasksTest extends BaseTaskTest {
@@ -95,6 +103,9 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+
+    @Mock
+    private DelegateExecution mockExecution;
 
     @Before
     public void before() throws Exception {
@@ -603,6 +614,87 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 
     @Test
     public void postProcessingExecuteBBActivateVfModuleTest() throws CloneNotSupportedException {
+
+        BuildingBlock bbAddFabric = new BuildingBlock().setBpmnFlowName("AddFabricConfigurationBB");
+        ExecuteBuildingBlock ebbAddFabric = new ExecuteBuildingBlock().setBuildingBlock(bbAddFabric);
+        WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
+        workflowResourceIds.setServiceInstanceId("1");
+        workflowResourceIds.setVnfId("1");
+        ebbAddFabric.setWorkflowResourceIds(workflowResourceIds);
+        ebbAddFabric.setResourceId("1");
+
+        BuildingBlock bbActivateVfModule = new BuildingBlock().setBpmnFlowName("ActivateVfModuleBB");
+        ExecuteBuildingBlock ebbActivateVfModule = new ExecuteBuildingBlock().setBuildingBlock(bbActivateVfModule);
+        ebbActivateVfModule.setWorkflowResourceIds(workflowResourceIds);
+        ebbActivateVfModule.setResourceId("1");
+        ConfigurationResourceKeys configurationResourceKeys = new ConfigurationResourceKeys();
+        ebbActivateVfModule.setConfigurationResourceKeys(configurationResourceKeys);
+
+        ServiceInstance service = new ServiceInstance();
+        service.setServiceInstanceName("name");
+        service.setModelVersionId("1");
+        doReturn(service).when(bbSetupUtils).getAAIServiceInstanceById("1");
+
+        GenericVnf vnf = new GenericVnf();
+        vnf.setVnfName("name");
+        vnf.setModelCustomizationId("1");
+        doReturn(vnf).when(bbSetupUtils).getAAIGenericVnf("1");
+
+        VfModule vfModule = new VfModule();
+        vfModule.setVfModuleName("name");
+        vfModule.setModelCustomizationId("1");
+        doReturn(vfModule).when(bbSetupUtils).getAAIVfModule("1", "1");
+
+        List<org.onap.aai.domain.yang.Vnfc> vnfcs = new ArrayList<org.onap.aai.domain.yang.Vnfc>();
+        org.onap.aai.domain.yang.Vnfc vnfc = new org.onap.aai.domain.yang.Vnfc();
+        vnfc.setModelInvariantId("1");
+        vnfc.setVnfcName("name");
+        vnfc.setModelCustomizationId("2");
+        vnfcs.add(vnfc);
+        doReturn(vnfcs).when(workflowAction).getRelatedResourcesInVfModule(any(), any(), any(), any());
+
+        CvnfcConfigurationCustomization vfModuleCustomization = new CvnfcConfigurationCustomization();
+        ConfigurationResource configuration = new ConfigurationResource();
+        configuration.setToscaNodeType("FabricConfiguration");
+        configuration.setModelUUID("1");
+        vfModuleCustomization.setConfigurationResource(configuration);
+
+        doReturn(vfModuleCustomization).when(catalogDbClient).getCvnfcCustomization("1", "1", "1", "2");
+
+        prepareDelegateExecution();
+        List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
+        flowsToExecute.add(ebbActivateVfModule);
+
+        ArgumentCaptor<DelegateExecution> executionCaptor = ArgumentCaptor.forClass(DelegateExecution.class);
+        ArgumentCaptor<ExecuteBuildingBlock> bbCaptor = ArgumentCaptor.forClass(ExecuteBuildingBlock.class);
+        ArgumentCaptor<List> listCaptor = ArgumentCaptor.forClass(List.class);
+        workflowActionBBTasks.postProcessingExecuteBBActivateVfModule(execution, ebbAddFabric, flowsToExecute);
+        verify(workflowActionBBTasks, times(1)).postProcessingExecuteBBActivateVfModule(executionCaptor.capture(),
+                bbCaptor.capture(), listCaptor.capture());
+        assertEquals(false, executionCaptor.getAllValues().get(0).getVariable("completed"));
+        assertEquals(2, ((ArrayList) executionCaptor.getAllValues().get(0).getVariable("flowsToExecute")).size());
+        assertEquals(null,
+                ((ExecuteBuildingBlock) ((ArrayList) executionCaptor.getAllValues().get(0)
+                        .getVariable("flowsToExecute")).get(0)).getConfigurationResourceKeys()
+                                .getCvnfcCustomizationUUID());
+
+
+        execution.setVariable("requestAction", "replaceInstance");
+        flowsToExecute = new ArrayList<>();
+        flowsToExecute.add(ebbActivateVfModule);
+        workflowActionBBTasks.postProcessingExecuteBBActivateVfModule(execution, ebbActivateVfModule, flowsToExecute);
+        verify(workflowActionBBTasks, times(2)).postProcessingExecuteBBActivateVfModule(executionCaptor.capture(),
+                bbCaptor.capture(), listCaptor.capture());
+        assertEquals(false, executionCaptor.getAllValues().get(0).getVariable("completed"));
+        assertEquals(1, ((ArrayList) executionCaptor.getAllValues().get(0).getVariable("flowsToExecute")).size());
+        assertEquals("2",
+                ((ExecuteBuildingBlock) ((ArrayList) executionCaptor.getAllValues().get(0)
+                        .getVariable("flowsToExecute")).get(0)).getConfigurationResourceKeys()
+                                .getCvnfcCustomizationUUID());
+    }
+
+    @Test
+    public void getExecuteBBForConfigTest() throws CloneNotSupportedException {
         BuildingBlock bbActivateVfModule = new BuildingBlock().setBpmnFlowName("ActivateVfModuleBB");
         ExecuteBuildingBlock ebbActivateVfModule = new ExecuteBuildingBlock().setBuildingBlock(bbActivateVfModule);
 
