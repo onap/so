@@ -49,6 +49,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.logging.filter.base.ONAPComponentsList;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -61,7 +62,8 @@ public class RestClientTest {
     public ExpectedException thrown = ExpectedException.none();
 
     @Rule
-    public WireMockRule wireMockRule = new WireMockRule(WireMockConfiguration.options().dynamicPort());
+    public WireMockRule wireMockRule = new WireMockRule(
+            WireMockConfiguration.options().dynamicPort().extensions(new ResponseTemplateTransformer(false)));
 
     @Test
     public void retries() throws Exception {

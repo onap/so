@@ -23,8 +23,13 @@ package org.onap.aaiclient.client.graphinventory;
 import java.net.URI;
 import java.util.Map;
 import java.util.Optional;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
+import org.onap.aaiclient.client.CacheControlFeature;
+import org.onap.aaiclient.client.FlushCache;
 import org.onap.logging.filter.base.ONAPComponentsList;
+import org.onap.so.client.AddCacheHeaders;
+import org.onap.so.client.CacheFactory;
 import org.onap.so.client.ResponseExceptionMapper;
 import org.onap.so.client.RestClientSSL;
 import org.onap.so.client.RestProperties;
@@ -39,6 +44,21 @@ public abstract class GraphInventoryRestClient extends RestClientSSL {
 
     protected GraphInventoryRestClient(RestProperties props, URI uri) {
         super(props, Optional.of(uri));
+    }
+
+
+    protected ClientBuilder enableCaching(ClientBuilder builder) {
+        builder.register(new AddCacheHeaders(props.getCacheProperties()));
+        builder.register(new FlushCache(props.getCacheProperties()));
+        CacheControlFeature cacheControlFeature = new CacheControlFeature();
+        cacheControlFeature.setCacheResponseInputStream(true);
+        cacheControlFeature.setExpiryPolicyFactory(new CacheFactory(props.getCacheProperties()));
+        builder.property("org.onap.aaiclient.client.CacheControlFeature.name",
+                props.getCacheProperties().getCacheName());
+
+        builder.register(cacheControlFeature);
+
+        return builder;
     }
 
     @Override

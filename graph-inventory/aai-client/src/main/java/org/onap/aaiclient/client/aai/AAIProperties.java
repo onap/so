@@ -20,6 +20,7 @@
 
 package org.onap.aaiclient.client.aai;
 
+import org.onap.so.client.CacheProperties;
 import org.onap.so.client.RestProperties;
 
 public interface AAIProperties extends RestProperties {
@@ -33,5 +34,16 @@ public interface AAIProperties extends RestProperties {
     @Override
     public default boolean mapNotFoundToEmpty() {
         return true;
+    }
+
+    default CacheProperties getCacheProperties() {
+        return new AAICacheProperties() {};
+    }
+
+    public interface AAICacheProperties extends CacheProperties {
+
+        default String getCacheName() {
+            return "aai-http-cache";
+        }
     }
 }

@@ -49,4 +49,12 @@ public interface RestProperties {
     public default Long getReadTimeout() {
         return Long.valueOf(60000);
     }
+
+    public default boolean isCachingEnabled() {
+        return false;
+    }
+
+    public default CacheProperties getCacheProperties() {
+        return new CacheProperties() {};
+    }
 }
