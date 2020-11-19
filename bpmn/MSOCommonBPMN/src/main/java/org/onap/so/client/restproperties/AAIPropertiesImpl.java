@@ -22,9 +22,9 @@ package org.onap.so.client.restproperties;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.aaiclient.client.aai.AAIProperties;
 import org.onap.aaiclient.client.aai.AAIVersion;
+import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -33,6 +33,8 @@ public class AAIPropertiesImpl implements AAIProperties {
     public static final String MSO_MSO_KEY = "mso.msoKey";
     public static final String AAI_AUTH = "aai.auth";
     public static final String AAI_ENDPOINT = "aai.endpoint";
+    public static final String AAI_READ_TIMEOUT = "aai.readTimeout";
+    private UrnPropertiesReader reader;
 
     @Override
     public URL getEndpoint() throws MalformedURLException {
@@ -58,4 +60,10 @@ public class AAIPropertiesImpl implements AAIProperties {
     public String getKey() {
         return UrnPropertiesReader.getVariable(MSO_MSO_KEY);
     }
+
+    @Override
+    public Long getReadTimeout() {
+        return Long.valueOf(reader.getVariable(AAI_READ_TIMEOUT, "60000"));
+    }
+
 }

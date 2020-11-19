@@ -34,10 +34,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation.Builder;
+import javax.ws.rs.client.ResponseProcessingException;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
@@ -187,7 +189,7 @@ public abstract class RestClient {
     }
 
     protected Client getClient() {
-        return ClientBuilder.newBuilder().build();
+        return ClientBuilder.newBuilder().readTimeout(props.getReadTimeout(), TimeUnit.MILLISECONDS).build();
     }
 
     protected abstract ONAPComponentsList getTargetEntity();
@@ -201,7 +203,6 @@ public abstract class RestClient {
         metricLogClientFilter = new SOMetricLogClientFilter();
         mdcSetup.setTargetEntity(getTargetEntity());
         client.register(metricLogClientFilter);
-
         if (!path.isPresent()) {
             webTarget = client.target(host.toString());
         } else {
@@ -224,6 +225,9 @@ public abstract class RestClient {
         });
         result.add(e -> {
             return e.getCause() instanceof ConnectException;
+        });
+        result.add(e -> {
+            return e.getCause() instanceof ResponseProcessingException;
         });
         return result;
     }
