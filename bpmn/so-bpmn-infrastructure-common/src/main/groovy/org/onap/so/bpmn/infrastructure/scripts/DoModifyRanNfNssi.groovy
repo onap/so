@@ -83,7 +83,7 @@ class DoModifyRanNfNssi extends AbstractServiceTaskProcessor {
 						exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Invalid modify Action : "+modifyAction)
 				}
 			}
-			List<String> snssaiList = objectMapper.readValue(execution.getVariable("snssaiList"), List.class)
+			List<String> snssaiList = execution.getVariable("snssaiList")
 			String sliceProfileId = execution.getVariable("sliceProfileId")
 			if (isBlank(sliceProfileId) || (snssaiList.empty)) {
 				msg = "Mandatory fields are empty"
@@ -123,6 +123,7 @@ class DoModifyRanNfNssi extends AbstractServiceTaskProcessor {
 		if(status.equalsIgnoreCase("success")) {
 			String nfIds = jsonUtil.getJsonValue(SDNRResponse, "nfIds")
 			execution.setVariable("ranNfIdsJson", nfIds)
+			execution.setVariable("ranNfStatus", status)
 		}else {
 			String reason = jsonUtil.getJsonValue(SDNRResponse, "reason")
 			logger.error("received failed status from SDNR "+ reason)
@@ -134,7 +135,7 @@ class DoModifyRanNfNssi extends AbstractServiceTaskProcessor {
 	private String buildSdnrAllocateRequest(DelegateExecution execution, String action, String rpcName, String callbackUrl) {
 		
 		String requestId = execution.getVariable("msoRequestId")
-		Date date = new Date().getTime()
+	        long date = new Date().getTime()
 		Timestamp time = new Timestamp(date)
 		String sliceProfileString
 		JsonObject response = new JsonObject()
