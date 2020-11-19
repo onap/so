@@ -29,7 +29,8 @@ import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.core.json.JsonUtils
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.JsonObject
-import java.sql.Timestamp
+import com.google.gson.JsonParser
+import java.time.Instant
 
 import static org.apache.commons.lang3.StringUtils.isBlank
 import org.onap.so.bpmn.core.UrnPropertiesReader
@@ -75,7 +76,7 @@ class DoModifyRanNfNssi extends AbstractServiceTaskProcessor {
 						execution.setVariable("sliceProfile", sliceProfile)
 						break
 					case "reconfigure":
-						String resourceConfig = execution.getVariable("additionalProperties")
+                                                String resourceConfig = execution.getVariable("additionalProperties")
 						execution.setVariable("resourceConfig", resourceConfig)
 						break
 					default:
@@ -83,7 +84,7 @@ class DoModifyRanNfNssi extends AbstractServiceTaskProcessor {
 						exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Invalid modify Action : "+modifyAction)
 				}
 			}
-			List<String> snssaiList = objectMapper.readValue(execution.getVariable("snssaiList"), List.class)
+			List<String> snssaiList = execution.getVariable("snssaiList")
 			String sliceProfileId = execution.getVariable("sliceProfileId")
 			if (isBlank(sliceProfileId) || (snssaiList.empty)) {
 				msg = "Mandatory fields are empty"
@@ -109,7 +110,7 @@ class DoModifyRanNfNssi extends AbstractServiceTaskProcessor {
 		logger.debug(Prefix+"createSdnrRequest method start")
 		String callbackUrl = UrnPropertiesReader.getVariable("mso.workflow.message.endpoint") + "/AsyncSdnrResponse/"+execution.getVariable("msoRequestId")
 		String modifyAction = execution.getVariable("modifyAction")
-		String sdnrRequest = buildSdnrAllocateRequest(execution, modifyAction, "InstantiateRANSlice", callbackUrl)
+		String sdnrRequest = buildSdnrAllocateRequest(execution, modifyAction, "instantiateRANSlice", callbackUrl)
 		execution.setVariable("createNSSI_sdnrRequest", sdnrRequest)
 		execution.setVariable("createNSSI_timeout", "PT10M")
 		execution.setVariable("createNSSI_correlator", execution.getVariable("msoRequestId"))
@@ -123,6 +124,7 @@ class DoModifyRanNfNssi extends AbstractServiceTaskProcessor {
 		if(status.equalsIgnoreCase("success")) {
 			String nfIds = jsonUtil.getJsonValue(SDNRResponse, "nfIds")
 			execution.setVariable("ranNfIdsJson", nfIds)
+			execution.setVariable("ranNfStatus", status)
 		}else {
 			String reason = jsonUtil.getJsonValue(SDNRResponse, "reason")
 			logger.error("received failed status from SDNR "+ reason)
@@ -134,53 +136,47 @@ class DoModifyRanNfNssi extends AbstractServiceTaskProcessor {
 	private String buildSdnrAllocateRequest(DelegateExecution execution, String action, String rpcName, String callbackUrl) {
 		
 		String requestId = execution.getVariable("msoRequestId")
-		Date date = new Date().getTime()
-		Timestamp time = new Timestamp(date)
-		String sliceProfileString
+                Instant time = Instant.now()
+                Map<String,Object> sliceProfile = new HashMap<>()
 		JsonObject response = new JsonObject()
 		JsonObject body = new JsonObject()
 		JsonObject input = new JsonObject()
 		JsonObject commonHeader = new JsonObject()
 		JsonObject payload = new JsonObject()
 		JsonObject payloadInput = new JsonObject()
+                JsonParser parser = new JsonParser()
 		if(action.equals("allocate")) {
-			Map<String,Object> sliceProfile = objectMapper.readValue(execution.getVariable("sliceProfile"), Map.class)
+			sliceProfile = objectMapper.readValue(execution.getVariable("sliceProfile"), Map.class)
 			sliceProfile.put("sliceProfileId", execution.getVariable("sliceProfileId"))
 			sliceProfile.put("maxNumberofConns", sliceProfile.get("maxNumberofPDUSessions"))
 			sliceProfile.put("uLThptPerSlice", sliceProfile.get("expDataRateUL"))
 			sliceProfile.put("dLThptPerSlice", sliceProfile.get("expDataRateDL"))
-			sliceProfileString = objectMapper.writeValueAsString(sliceProfile)
 			action = "modify-"+action
 			payloadInput.add("additionalproperties", new JsonObject())
 		}else if(action.equals("deallocate")) {
 			action = "modify-"+action
-			Map<String,Object> sliceProfile = new HashMap<>()
 			sliceProfile.put("sliceProfileId", execution.getVariable("sliceProfileId"))
 			sliceProfile.put("sNSSAI", execution.getVariable("snssai"))
-			sliceProfileString = objectMapper.writeValueAsString(sliceProfile)
 			payloadInput.add("additionalproperties", new JsonObject())
 		}else if(action.equals("reconfigure")) {
-			Map<String,Object> sliceProfile = new HashMap<>()
 			sliceProfile.put("sliceProfileId", execution.getVariable("sliceProfileId"))
 			sliceProfile.put("sNSSAI", execution.getVariable("snssai"))
-			sliceProfileString = objectMapper.writeValueAsString(sliceProfile)
 			JsonObject resourceconfig = new JsonObject()
-			resourceconfig.addProperty("resourceConfig", execution.getVariable("resourceConfig"))
+			resourceconfig.add("resourceConfig", (JsonObject) parser.parse(execution.getVariable("resourceConfig")))
 			payloadInput.add("additionalproperties", resourceconfig)
 		}
-		commonHeader.addProperty("TimeStamp", time.toString())
-		commonHeader.addProperty("APIver", "1.0")
-		commonHeader.addProperty("RequestID", requestId)
-		commonHeader.addProperty("SubRequestID", "1")
-		commonHeader.add("RequestTrack", new JsonObject())
-		commonHeader.add("Flags", new JsonObject())
-		payloadInput.addProperty("sliceProfile", sliceProfileString)
+		commonHeader.addProperty("timestamp", time.toString())
+		commonHeader.addProperty("api-ver", "1.0")
+		commonHeader.addProperty("request-id", requestId)
+		commonHeader.addProperty("sub-request-id", "1")
+		commonHeader.add("flags", new JsonObject())
+		payloadInput.addProperty("sliceProfile", sliceProfile.toString())
 		payloadInput.addProperty("RANNFNSSIId", execution.getVariable("serviceInstanceID"))
 		payloadInput.addProperty("callbackURL", callbackUrl)
 		payload.add("input", payloadInput)
-		input.add("CommonHeader", commonHeader)
-		input.addProperty("Action", action)
-		input.add("Payload", payload)
+		input.add("common-header", commonHeader)
+		input.addProperty("action", action)
+		input.addProperty("payload", payload.toString())
 		body.add("input", input)
 		response.add("body", body)
 		response.addProperty("version", "1.0")
