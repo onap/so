@@ -450,14 +450,18 @@ public class WorkflowActionBBTasks {
                 if (requestAction.equalsIgnoreCase("replaceInstance")
                         || requestAction.equalsIgnoreCase("replaceInstanceRetainAssignments")) {
                     List<ExecuteBuildingBlock> configBBs = flowsToExecute.stream()
-                            .filter(item -> !item.getBuildingBlock().getBpmnFlowName().matches(CONFIGURATION_PATTERN))
+                            .filter(item -> item.getBuildingBlock().getBpmnFlowName().matches(CONFIGURATION_PATTERN))
                             .collect(Collectors.toList());
-                    for (ExecuteBuildingBlock bb : configBBs) {
-                        bb.getConfigurationResourceKeys().setCvnfcCustomizationUUID(modelCustomizationId);
-                        bb.getConfigurationResourceKeys().setVnfcName(vnfc.getVnfcName());
+                    if (configBBs != null && configBBs.size() > 0) {
+                        for (ExecuteBuildingBlock bb : configBBs) {
+                            if (bb.getConfigurationResourceKeys() != null) {
+                                bb.getConfigurationResourceKeys().setCvnfcCustomizationUUID(modelCustomizationId);
+                                bb.getConfigurationResourceKeys().setVnfcName(vnfc.getVnfcName());
+                            }
+                        }
+                        execution.setVariable("flowsToExecute", flowsToExecute);
+                        execution.setVariable(COMPLETED, false);
                     }
-                    execution.setVariable("flowsToExecute", flowsToExecute);
-                    execution.setVariable(COMPLETED, false);
                 } else {
                     CvnfcConfigurationCustomization fabricConfig = catalogDbClient.getCvnfcCustomization(
                             serviceModelUUID, vnfCustomizationUUID, vfModuleCustomizationUUID, modelCustomizationId);
