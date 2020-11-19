@@ -31,9 +31,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import org.onap.logging.filter.base.ErrorCode;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.adapters.vdu.CloudInfo;
@@ -49,6 +50,11 @@ import org.onap.so.adapters.vdu.VduStatus;
 import org.onap.so.cloud.authentication.KeystoneAuthHolder;
 import org.onap.so.db.catalog.beans.HeatTemplate;
 import org.onap.so.db.catalog.beans.HeatTemplateParam;
+import org.onap.so.db.catalog.beans.NetworkResource;
+import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
+import org.onap.so.db.catalog.beans.VfModule;
+import org.onap.so.db.catalog.beans.VfModuleCustomization;
+import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.CloudApiRequests;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
@@ -108,6 +114,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
     public static final String EXCEPTION_ROLLING_BACK_STACK =
             "{} Create Stack: Nested exception rolling back stack: {} ";
     public static final String IN_PROGRESS = "in_progress";
+    private static final int DEFAULT_POLLING_TIMEOUT = 118;
 
     @Autowired
     private Environment environment;
@@ -120,6 +127,9 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
 
     @Autowired
     RequestsDbClient requestDBClient;
+
+    @Autowired
+    private CatalogDbClient catalogClient;
 
     private static final Logger logger = LoggerFactory.getLogger(MsoHeatUtils.class);
 
@@ -898,11 +908,6 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         if (inputs == null) {
             return new HashMap<>();
         }
-        try {
-            Set<HeatTemplateParam> paramSet = template.getParameters();
-        } catch (Exception e) {
-            logger.debug("Exception occurred in convertInputMap {} :", e.getMessage(), e);
-        }
 
         for (HeatTemplateParam htp : template.getParameters()) {
             params.put(htp.getParamName(), htp);
@@ -1230,6 +1235,74 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         } catch (HttpClientErrorException e) {
             logger.warn("Unable to update active request resource status");
         }
+    }
+
+    public int getVfHeatTimeoutValue(String modelCustomizationUuid, boolean isVolumeGroup) {
+        int timeoutMinutes = DEFAULT_POLLING_TIMEOUT;
+        try {
+            VfModuleCustomization vfmc = null;
+            if (modelCustomizationUuid != null) {
+                vfmc = catalogClient.getVfModuleCustomizationByModelCuztomizationUUID(modelCustomizationUuid);
+                if (vfmc != null) {
+                    VfModule vf = vfmc.getVfModule();
+                    if (vf != null) {
+                        HeatTemplate heat = vf.getModuleHeatTemplate();
+                        if (isVolumeGroup) {
+                            heat = vf.getVolumeHeatTemplate();
+                        }
+                        if (heat != null && heat.getTimeoutMinutes() != null) {
+                            if (heat.getTimeoutMinutes() < DEFAULT_POLLING_TIMEOUT) {
+                                timeoutMinutes = heat.getTimeoutMinutes();
+                            }
+                        }
+                    }
+                } else {
+                    logger.debug(
+                            "Unable to find Vf Module Customization with model customization uuid {}. Using default timeout {}",
+                            modelCustomizationUuid, timeoutMinutes);
+                }
+            }
+        } catch (Exception e) {
+            logger.warn("Exception occured while getting heat timeout value. Using default timeout {}", timeoutMinutes,
+                    e);
+        }
+        return timeoutMinutes;
+    }
+
+    public int getNetworkHeatTimeoutValue(String modelCustomizationUuid, String networkType) {
+        int timeoutMinutes = DEFAULT_POLLING_TIMEOUT;
+        try {
+            NetworkResource networkResource = null;
+            if (isBlank(modelCustomizationUuid)) {
+                if (isNotBlank(networkType)) {
+                    networkResource = catalogClient.getNetworkResourceByModelName(networkType);
+                }
+            } else {
+                NetworkResourceCustomization nrc =
+                        catalogClient.getNetworkResourceCustomizationByModelCustomizationUUID(modelCustomizationUuid);
+                if (nrc != null) {
+                    networkResource = nrc.getNetworkResource();
+                }
+            }
+
+            if (networkResource != null) {
+                networkResource.getHeatTemplate().getTimeoutMinutes();
+                HeatTemplate heat = networkResource.getHeatTemplate();
+                if (heat != null && heat.getTimeoutMinutes() != null) {
+                    if (heat.getTimeoutMinutes() < DEFAULT_POLLING_TIMEOUT) {
+                        timeoutMinutes = heat.getTimeoutMinutes();
+                    }
+                }
+            } else {
+                logger.debug(
+                        "Unable to find Network Resource with model customization uuid {} or network type {}. Using default timeout {}",
+                        modelCustomizationUuid, networkType, timeoutMinutes);
+            }
+        } catch (Exception e) {
+            logger.warn("Exception occured while getting heat timeout value. Using default timeout {}", timeoutMinutes,
+                    e);
+        }
+        return timeoutMinutes;
     }
 
 }

@@ -47,6 +47,7 @@ import org.onap.so.db.catalog.beans.HomingInstance;
 import org.onap.so.db.catalog.beans.InstanceGroup;
 import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.NetworkRecipe;
+import org.onap.so.db.catalog.beans.NetworkResource;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.OrchestrationAction;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
@@ -98,6 +99,7 @@ public class CatalogDbClient {
     private static final String RAINY_DAY_HANDLER_MACRO = "/rainy_day_handler_macro";
     private static final String NORTHBOUND_REQUEST_REF_LOOKUP = "/northbound_request_ref_lookup";
     private static final String NETWORK_RESOURCE_CUSTOMIZATION = "/networkResourceCustomization";
+    private static final String NETWORK_RESOURCE = "/networkResource";
     private static final String COLLECTION_RESOURCE_INSTANCE_GROUP_CUSTOMIZATION =
             "/collectionResourceInstanceGroupCustomization";
     private static final String VNFC_INSTANCE_GROUP_CUSTOMIZATION = "/vnfcInstanceGroupCustomization";
@@ -223,6 +225,7 @@ public class CatalogDbClient {
     private String vnfResourceURI;
     private String networkCollectionResourceCustomizationURI;
     private String networkResourceCustomizationURI;
+    private String networkResourceURI;
     private String collectionNetworkResourceCustomizationURI;
     private String instanceGroupURI;
     private String cloudifyManagerURI;
@@ -375,6 +378,7 @@ public class CatalogDbClient {
         networkCollectionResourceCustomizationURI =
                 endpoint + NETWORK_COLLECTION_RESOURCE_CUSTOMIZATION + URI_SEPARATOR;
         networkResourceCustomizationURI = endpoint + NETWORK_RESOURCE_CUSTOMIZATION + URI_SEPARATOR;
+        networkResourceURI = endpoint + NETWORK_RESOURCE + SEARCH;
         collectionNetworkResourceCustomizationURI =
                 endpoint + COLLECTION_NETWORK_RESOURCE_CUSTOMIZATION + URI_SEPARATOR;
         instanceGroupURI = endpoint + INSTANCE_GROUP + URI_SEPARATOR;
@@ -606,6 +610,25 @@ public class CatalogDbClient {
         }
         return networkResourceCustomization;
     }
+
+    public NetworkResource getNetworkResourceByModelName(String networkType) {
+        if (Strings.isNullOrEmpty(networkType)) {
+            throw new EntityNotFoundException("networkType passed as Null or Empty String");
+        }
+        try {
+            HttpEntity<?> entity = getHttpEntity();
+            return restTemplate.exchange(
+                    UriBuilder.fromUri(networkResourceURI + "/findFirstByModelNameOrderByModelVersionDesc")
+                            .queryParam("modelName", networkType).build(),
+                    HttpMethod.GET, entity, NetworkResource.class).getBody();
+        } catch (HttpClientErrorException e) {
+            if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
+                throw new EntityNotFoundException("Unable to find NetworkResource By networkType " + networkType);
+            }
+            throw e;
+        }
+    }
+
 
 
     public BuildingBlockDetail getBuildingBlockDetail(String buildingBlockName) {

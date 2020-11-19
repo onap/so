@@ -46,6 +46,12 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
+import org.onap.so.db.catalog.beans.HeatTemplate;
+import org.onap.so.db.catalog.beans.NetworkResource;
+import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
+import org.onap.so.db.catalog.beans.VfModule;
+import org.onap.so.db.catalog.beans.VfModuleCustomization;
+import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.CloudApiRequests;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
@@ -102,6 +108,9 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
 
     @Mock
     private CreateStack mockCreateStack;
+
+    @Mock
+    private CatalogDbClient catalogDbClient;
 
     private String cloudSiteId = "cloudSiteId";
     private String tenantId = "tenantId";
@@ -562,6 +571,40 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
         Mockito.verify(heatUtils, times(1)).pollStackForStatus(120, stack, "CREATE_IN_PROGRESS", cloudSiteId, tenantId,
                 false);
         Mockito.verify(heatUtils, times(0)).handleUnknownCreateStackFailure(stack, 120, cloudSiteId, tenantId);
+    }
+
+    @Test
+    public void testGetVfHeatTimeoutValue() {
+
+        VfModuleCustomization vfmc = new VfModuleCustomization();
+        VfModule vf = new VfModule();
+        HeatTemplate heat = new HeatTemplate();
+        heat.setTimeoutMinutes(110);
+        vf.setModuleHeatTemplate(heat);
+        vfmc.setVfModule(vf);
+
+        Mockito.when(catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID("uuid")).thenReturn(vfmc);
+
+        int timeout = heatUtils.getVfHeatTimeoutValue("uuid", false);
+        assertEquals(110, timeout);
+        Mockito.verify(catalogDbClient, times(1)).getVfModuleCustomizationByModelCuztomizationUUID("uuid");
+    }
+
+    @Test
+    public void testGetNetworkHeatTimeoutValue() {
+
+        NetworkResourceCustomization mc = new NetworkResourceCustomization();
+        NetworkResource nr = new NetworkResource();
+        HeatTemplate heat = new HeatTemplate();
+        heat.setTimeoutMinutes(110);
+        nr.setHeatTemplate(heat);
+        mc.setNetworkResource(nr);
+
+        Mockito.when(catalogDbClient.getNetworkResourceCustomizationByModelCustomizationUUID("uuid")).thenReturn(mc);
+
+        int timeout = heatUtils.getNetworkHeatTimeoutValue("uuid", "type");
+        assertEquals(110, timeout);
+        Mockito.verify(catalogDbClient, times(1)).getNetworkResourceCustomizationByModelCustomizationUUID("uuid");
     }
 
 }
