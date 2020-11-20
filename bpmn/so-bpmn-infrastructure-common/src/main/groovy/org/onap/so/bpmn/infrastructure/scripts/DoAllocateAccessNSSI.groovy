@@ -31,17 +31,16 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.db.request.beans.ResourceOperationStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.sql.Timestamp
 import java.util.List
 import static org.apache.commons.lang3.StringUtils.isBlank
 import com.google.gson.JsonObject
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.JsonArray
+import com.google.gson.JsonParser
 import org.onap.aai.domain.yang.Relationship
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.beans.nsmf.AllocateTnNssi
-import org.onap.so.beans.nsmf.EsrInfo
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.ServiceInstance
@@ -99,8 +98,8 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 				execution.setVariable("sliceProfile", sliceProfile)
 			}
 			String sliceProfileId = jsonUtil.getJsonValue(sliceProfile, "sliceProfileId")
-			def snssaiList = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(sliceProfile, "snssaiList"))
-			def plmnIdList = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(sliceProfile, "plmnIdList"))
+			def snssaiList = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(sliceProfile, "sNSSAI"))
+			def plmnIdList = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(sliceProfile, "pLMNIdList"))
 			def coverageAreaTAList = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(sliceProfile, "coverageAreaTAList"))
 
 			if (isBlank(sliceProfileId) || (snssaiList.empty) || (plmnIdList.empty)
@@ -185,7 +184,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		List<String> nsstInfoList = new ArrayList<>()
 		for(ServiceProxy serviceProxy : serviceProxyList)
 		{
-			String nsstModelUuid = serviceProxy.getModelInfo().getModelUuid()
+			String nsstModelUuid = serviceProxy.getSourceModelUuid()
 			String nsstModelInvariantUuid = serviceProxy.getModelInfo().getModelInvariantUuid()
 			String name = serviceProxy.getModelInfo().getModelName()
 			String nsstServiceModelInfo = """{
@@ -203,7 +202,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 			logger.info(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		execution.setVariable("ranNsstInfoList",nsstInfoList)
+		execution.setVariable("ranNsstInfoList", objectMapper.writeValueAsString(nsstInfoList))
 		execution.setVariable("ranModelVersion", ranModelVersion)
 		execution.setVariable("ranModelName", ranModelName)
 		execution.setVariable("currentIndex",currentIndex)
@@ -255,7 +254,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 
 		String urlString = UrnPropertiesReader.getVariable("mso.oof.endpoint", execution)
 		logger.debug( "get NSSI option OOF Url: " + urlString)
-
+		JsonParser parser = new JsonParser()
 		//build oof request body
 		boolean ranNssiPreferReuse = execution.getVariable("ranNssiPreferReuse");
 		String requestId = execution.getVariable("msoRequestId")
@@ -265,7 +264,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		String modelInvariantUuid = execution.getVariable("modelInvariantUuid")
 		String modelName = execution.getVariable("ranModelName")
 		String timeout = UrnPropertiesReader.getVariable("mso.adapters.oof.timeout", execution);
-		List<String> nsstInfoList =  objectMapper.readValue(execution.getVariable("nsstInfoList"), List.class)
+		List<String> nsstInfoList =  objectMapper.readValue(execution.getVariable("ranNsstInfoList"), List.class)
 		JsonArray capabilitiesList = new JsonArray()
 		String FHCapabilities = execution.getVariable("FHCapabilities")
 		String MHCapabilities = execution.getVariable("MHCapabilities")
@@ -274,11 +273,11 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		JsonObject MH = new JsonObject()
 		JsonObject ANNF = new JsonObject()
 		FH.addProperty("domainType", "TN_FH")
-		FH.addProperty("capabilityDetails", FHCapabilities)
+		FH.add("capabilityDetails", (JsonObject) parser.parse(FHCapabilities))
 		MH.addProperty("domainType", "TN_MH")
-		MH.addProperty("capabilityDetails", MHCapabilities)
+		MH.add("capabilityDetails", (JsonObject) parser.parse(MHCapabilities))
 		ANNF.addProperty("domainType", "AN_NF")
-		ANNF.addProperty("capabilityDetails", FHCapabilities)
+		ANNF.add("capabilityDetails", (JsonObject) parser.parse(ANNFCapabilities))
 		capabilitiesList.add(FH)
 		capabilitiesList.add(MH)
 		capabilitiesList.add(ANNF)
@@ -302,13 +301,18 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		String oofResponse = execution.getVariable("nssiSelection_asyncCallbackResponse")
 		String requestStatus = jsonUtil.getJsonValue(oofResponse, "requestStatus")
 		if(requestStatus.equals("completed")) {
-			List<String> solution = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(oofResponse, "solutions"))
-			boolean existingNSI = jsonUtil.getJsonValue(solution.get(0), "existingNSI")
+			String solutions = jsonUtil.getJsonValue(oofResponse, "solutions")
+			logger.debug("solutions value : "+solutions)
+			JsonParser parser = new JsonParser()
+			JsonArray solution = parser.parse(solutions)
+			JsonObject sol = solution.get(0)
+			boolean existingNSI = sol.get("existingNSI").getAsBoolean()
+			logger.debug("existingNSI value : "+existingNSI)
 			if(existingNSI) {
-				def sharedNSISolution = jsonUtil.getJsonValue(solution.get(0), "sharedNSISolution")
-				execution.setVariable("sharedRanNSSISolution", sharedNSISolution)
+				JsonObject sharedNSISolution = sol.get("sharedNSISolution").getAsJsonObject()
+				execution.setVariable("sharedRanNSSISolution", sharedNSISolution.toString())
 				logger.debug("sharedRanNSSISolution from OOF "+sharedNSISolution)
-				String RANServiceInstanceId = jsonUtil.getJsonValue(solution.get(0), "sharedNSISolution.NSIId")
+				String RANServiceInstanceId = sharedNSISolution.get("NSIId").getAsString()
 				execution.setVariable("RANServiceInstanceId", RANServiceInstanceId)
 				ServiceInstance serviceInstance = new ServiceInstance();
 				serviceInstance.setInstanceId(RANServiceInstanceId);
@@ -317,9 +321,10 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 				execution.setVariable("ranNsstServiceDecomposition", serviceDecomposition)
 				execution.setVariable("isRspRanNssi", true)
 			}else {
-				def sliceProfiles = jsonUtil.getJsonValue(solution.get(0), "newNSISolution.sliceProfiles")
-				execution.setVariable("RanConstituentSliceProfiles", sliceProfiles)
+				JsonObject newNSISolution = sol.get("newNSISolution").getAsJsonObject()
+				JsonArray sliceProfiles = newNSISolution.get("slice_profiles").getAsJsonArray()
 				logger.debug("RanConstituentSliceProfiles list from OOF "+sliceProfiles)
+				execution.setVariable("RanConstituentSliceProfiles", sliceProfiles.toString())
 			}
 		}else {
 			String statusMessage = jsonUtil.getJsonValue(oofResponse, "statusMessage")
@@ -362,11 +367,11 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 	
 	def createModifyNssiQueryJobStatus = { DelegateExecution execution ->
 		logger.debug(Prefix+"createModifyNssiQueryJobStatus method start")
-		EsrInfo esrInfo = new EsrInfo()
-		esrInfo.setNetworkType("AN")
-		esrInfo.setVendor("ONAP")
-		String esrInfoString = objectMapper.writeValueAsString(esrInfo)
-		execution.setVariable("esrInfo", esrInfoString)
+		JsonObject esrInfo = new JsonObject()
+	    esrInfo.addProperty("networkType", "tn")
+	    esrInfo.addProperty("vendor", "ONAP_internal")
+
+		execution.setVariable("esrInfo", esrInfo.toString())
 		JsonObject serviceInfo = new JsonObject()
 		serviceInfo.addProperty("nssiId", execution.getVariable("RANServiceInstanceId"))
 		serviceInfo.addProperty("nsiId", execution.getVariable("nsiId"))
@@ -491,12 +496,16 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		String oofResponse = execution.getVariable("nfNssiSelection_asyncCallbackResponse")
 		String requestStatus = jsonUtil.getJsonValue(oofResponse, "requestStatus")
 		if(requestStatus.equals("completed")) {
-			List<String> solution = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(oofResponse, "solutions"))		
+			String solutions = jsonUtil.getJsonValue(oofResponse, "solutions")
+			logger.debug("nssi solutions value : "+solutions)
+			JsonParser parser = new JsonParser()
+			JsonArray solution = parser.parse(solutions)		
 			if(solution.size()>=1) {
-				String ranNfNssiId = jsonUtil.getJsonValue(solution.get(0), "NSSIId")
-				String invariantUuid = jsonUtil.getJsonValue(solution.get(0), "invariantUUID")
-				String uuid = jsonUtil.getJsonValue(solution.get(0), "UUID")
-				String nssiName = jsonUtil.getJsonValue(solution.get(0), "NSSIName")
+				JsonObject sol = solution.get(0)
+				String ranNfNssiId = sol.get("NSSIId").getAsString()
+				String invariantUuid = sol.get("invariantUUID").getAsString()
+				String uuid = sol.get("UUID").getAsString()
+				String nssiName = sol.get("NSSIName").getAsString()
 				execution.setVariable("RANNFServiceInstanceId", ranNfNssiId)
 				execution.setVariable("RANNFInvariantUUID", invariantUuid)
 				execution.setVariable("RANNFUUID", uuid)
@@ -528,7 +537,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		logger.debug(Prefix+"processRanNfModifyRsp method start")
 		anNssmfUtils.processRanNfModifyRsp(execution)
 		//create RAN NSSI 
-		org.onap.aai.domain.yang.ServiceInstance ANServiceInstance = new ServiceInstance();
+		org.onap.aai.domain.yang.ServiceInstance ANServiceInstance = new org.onap.aai.domain.yang.ServiceInstance();
 		//AN instance creation
 		ANServiceInstance.setServiceInstanceId(execution.getVariable("RANServiceInstanceId"))
 		String sliceInstanceName = execution.getVariable("servicename")
@@ -593,8 +602,8 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 	def updateAaiWithRANInstances = { DelegateExecution execution ->
 		logger.debug(Prefix+"updateAaiWithRANInstances method start")
 		//create RAN NSSI 
-		org.onap.aai.domain.yang.ServiceInstance ANServiceInstance = new ServiceInstance();
-		org.onap.aai.domain.yang.ServiceInstance ANNFServiceInstance = new ServiceInstance();
+		org.onap.aai.domain.yang.ServiceInstance ANServiceInstance = new org.onap.aai.domain.yang.ServiceInstance();
+		org.onap.aai.domain.yang.ServiceInstance ANNFServiceInstance = new org.onap.aai.domain.yang.ServiceInstance();
 		//AN instance creation
 		ANServiceInstance.setServiceInstanceId(execution.getVariable("RANServiceInstanceId"))
 		String sliceInstanceName = execution.getVariable("servicename")
@@ -603,15 +612,16 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		ANServiceInstance.setServiceType(serviceType)
 		String serviceStatus = "deactivated"
 		ANServiceInstance.setOrchestrationStatus(serviceStatus)
-		String serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("sliceProfile"), "plmnIdList")
+		String serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("sliceProfile"), "pLMNIdList")
 		ANServiceInstance.setServiceInstanceLocationId(serviceInstanceLocationid)
 		String serviceRole = "nssi"
 		ANServiceInstance.setServiceRole(serviceRole)
-		List<String> snssaiList = objectMapper.readValue(execution.getVariable("snssaiList"), List.class)
+		List<String> snssaiList = execution.getVariable("snssaiList")
 		String snssai = snssaiList.get(0)
 		ANServiceInstance.setEnvironmentContext(snssai)
 		ANServiceInstance.setWorkloadContext("AN")
-		
+		String serviceFunctionAn = jsonUtil.getJsonValue(execution.getVariable("sliceProfile"), "resourceSharingLevel")
+		ANServiceInstance.setServiceFunction(serviceFunctionAn)
 		logger.debug("completed AN service instance build "+ ANServiceInstance.toString())
 		//create RAN NF NSSI
 		ANNFServiceInstance.setServiceInstanceId(execution.getVariable("RANNFServiceInstanceId"))
@@ -619,13 +629,15 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		ANNFServiceInstance.setServiceInstanceName(sliceInstanceName)
 		ANNFServiceInstance.setServiceType(serviceType)
 		ANNFServiceInstance.setOrchestrationStatus(serviceStatus)
-		serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("ranNfSliceProfile"), "plmnIdList")
+		serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("ranNfSliceProfile"), "pLMNIdList")
 		ANNFServiceInstance.setServiceInstanceLocationId(serviceInstanceLocationid)
 		ANNFServiceInstance.setServiceRole(serviceRole)
-		snssaiList = objectMapper.readValue(execution.getVariable("snssaiList"), List.class)
+		snssaiList = execution.getVariable("snssaiList")
 		snssai = snssaiList.get(0)
 		ANNFServiceInstance.setEnvironmentContext(snssai)
 		ANNFServiceInstance.setWorkloadContext("AN-NF")
+		String serviceFunctionAnnf = jsonUtil.getJsonValue(execution.getVariable("ranNfSliceProfile"), "resourceSharingLevel")
+		ANNFServiceInstance.setServiceFunction(serviceFunctionAnnf)
 		logger.debug("completed AN service instance build "+ ANNFServiceInstance.toString())
 		
 		String msg = ""
@@ -695,11 +707,10 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 	}
 	
 	private void createTnAllocateNssiJobQuery(DelegateExecution execution, String domainType) {
-		EsrInfo esrInfo = new EsrInfo()
-		esrInfo.setNetworkType("TN")
-		esrInfo.setVendor("ONAP")
-		String esrInfoString = objectMapper.writeValueAsString(esrInfo)
-		execution.setVariable("esrInfo", esrInfoString)
+		JsonObject esrInfo = new JsonObject()
+	    esrInfo.addProperty("networkType", "tn")
+	    esrInfo.addProperty("vendor", "ONAP_internal")
+		execution.setVariable("esrInfo", esrInfo.toString())
 		JsonObject serviceInfo = new JsonObject()
 		serviceInfo.addProperty("nssiId", null)
 		serviceInfo.addProperty("nsiId", execution.getVariable("nsiId"))
@@ -853,7 +864,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		updateStatus.setResourceTemplateUUID(nsiId)
 		updateStatus.setResourceInstanceID(nssiId)
 		updateStatus.setOperType("Allocate")
-		updateStatus.setProgress(100)
+		updateStatus.setProgress("100")
 		updateStatus.setStatus("finished")
 		requestDBUtil.prepareUpdateResourceOperationStatus(execution, updateStatus)
 
@@ -875,7 +886,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		updateStatus.setResourceTemplateUUID(nsiId)
 		updateStatus.setResourceInstanceID(nssiId)
 		updateStatus.setOperType("Allocate")
-		updateStatus.setProgress(0)
+		updateStatus.setProgress("0")
 		updateStatus.setStatus("failed")
 		requestDBUtil.prepareUpdateResourceOperationStatus(execution, updateStatus)
 	}
@@ -883,8 +894,6 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 	private String buildSdnrAllocateRequest(DelegateExecution execution, String action, String rpcName, String callbackUrl) {
 		
 		String requestId = execution.getVariable("msoRequestId")
-		Date date = new Date().getTime()
-		Timestamp time = new Timestamp(date)
 		Map<String,Object> sliceProfile = objectMapper.readValue(execution.getVariable("ranNfSliceProfile"), Map.class)
 		sliceProfile.put("sliceProfileId", execution.getVariable("ANNF_sliceProfileInstanceId"))
 		sliceProfile.put("maxNumberofConns", sliceProfile.get("maxNumberofPDUSessions"))
@@ -897,7 +906,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		JsonObject commonHeader = new JsonObject()
 		JsonObject payload = new JsonObject()
 		JsonObject payloadInput = new JsonObject()
-		commonHeader.addProperty("TimeStamp", time.toString())
+		commonHeader.addProperty("TimeStamp",new Date(System.currentTimeMillis()).format("yyyy-MM-dd'T'HH:mm:ss.sss", TimeZone.getDefault()))
 		commonHeader.addProperty("APIver", "1.0")
 		commonHeader.addProperty("RequestID", requestId)
 		commonHeader.addProperty("SubRequestID", "1")
@@ -912,12 +921,12 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		payload.add("input", payloadInput)
 		input.add("CommonHeader", commonHeader)
 		input.addProperty("Action", action)
-		input.add("Payload", payload)
+		input.addProperty("Payload", payload.toString())
 		body.add("input", input)
 		response.add("body", body)
 		response.addProperty("version", "1.0")
 		response.addProperty("rpc-name", rpcName)
-		response.addProperty("correlation-id", requestId+"-1")
+		response.addProperty("correlation-id", (requestId+"-1"))
 		response.addProperty("type", "request")
 		return response.toString()
 	}
@@ -979,8 +988,15 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		String DUEG_routeId = UUID.randomUUID().toString()
 		execution.setVariable("tranportEp_ID_DUEG", DUEG_routeId)
 		NetworkRoute DUEG_ep = new NetworkRoute()
-		DU_ep.setRouteId(DUEG_routeId)
-		DU_ep.setNextHop("Host3")
+                DUEG_ep.setRouteId(DUEG_routeId)
+                DUEG_ep.setFunction(function)
+                DUEG_ep.setRole(role)
+                DUEG_ep.setType(type)
+                DUEG_ep.setIpAddress("192.168.100.5")
+                DUEG_ep.setLogicalInterfaceId("1234")
+                DUEG_ep.setPrefixLength(prefixLength)
+                DUEG_ep.setAddressFamily(addressFamily)
+		DUEG_ep.setNextHop("Host3")
 		//CUIN
 		String CUIN_routeId = UUID.randomUUID().toString()
 		execution.setVariable("tranportEp_ID_CUIN", CUIN_routeId)
@@ -1005,9 +1021,9 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 			logger.debug("creating DUIN endpoint . ID : "+DUIN_routeId+" node details : "+DU_ep.toString())
 			networkRouteUri = AAIUriFactory.createResourceUri( new AAIObjectType(AAINamespaceConstants.NETWORK, NetworkRoute.class), DUIN_routeId)
 			client.create(networkRouteUri, DU_ep)
-			logger.debug("creating DUEG endpoint . ID : "+DUEG_routeId+" node details : "+DU_ep.toString())
+			logger.debug("creating DUEG endpoint . ID : "+DUEG_routeId+" node details : "+DUEG_ep.toString())
 			networkRouteUri = AAIUriFactory.createResourceUri( new AAIObjectType(AAINamespaceConstants.NETWORK, NetworkRoute.class), DUEG_routeId)
-			client.create(networkRouteUri, DU_ep)
+			client.create(networkRouteUri, DUEG_ep)
 			logger.debug("creating CUIN endpoint . ID : "+CUIN_routeId+" node details : "+CUIN_ep.toString())
 			networkRouteUri = AAIUriFactory.createResourceUri( new AAIObjectType(AAINamespaceConstants.NETWORK, NetworkRoute.class), CUIN_routeId)
 			client.create(networkRouteUri, CUIN_ep)
@@ -1041,3 +1057,4 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 	}
 	}
 }
+

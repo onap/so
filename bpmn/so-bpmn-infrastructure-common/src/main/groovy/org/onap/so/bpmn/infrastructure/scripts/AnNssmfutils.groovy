@@ -37,6 +37,7 @@ import java.sql.Timestamp
 import java.util.List
 import static org.apache.commons.lang3.StringUtils.isBlank
 import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
@@ -48,7 +49,6 @@ import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.T
 import javax.ws.rs.NotFoundException
 import org.onap.so.beans.nsmf.AllocateTnNssi
 import org.onap.so.beans.nsmf.DeAllocateNssi
-import org.onap.so.beans.nsmf.EsrInfo
 import org.onap.so.beans.nsmf.ServiceInfo
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.aai.domain.yang.ServiceInstance
@@ -65,12 +65,11 @@ class AnNssmfUtils {
 	JsonUtils jsonUtil = new JsonUtils()
 	public String buildSelectRANNSSIRequest(String requestId, String messageType, String UUID,String invariantUUID,
 		String name, Map<String, Object> profileInfo, List<String> nsstInfoList, JsonArray capabilitiesList, Boolean preferReuse){
-
+	JsonParser parser = new JsonParser()
 	def transactionId = requestId
 	logger.debug( "transactionId is: " + transactionId)
 	String correlator = requestId
 	String callbackUrl = UrnPropertiesReader.getVariable("mso.adapters.oof.callback.endpoint") + "/" + messageType + "/" + correlator
-	ObjectMapper objectMapper = new ObjectMapper();
 	String profileJson = objectMapper.writeValueAsString(profileInfo);
 	String nsstInfoListString = objectMapper.writeValueAsString(nsstInfoList);
 	//Prepare requestInfo object
@@ -91,8 +90,8 @@ class AnNssmfUtils {
 	JsonObject json = new JsonObject()
 	json.add("requestInfo", requestInfo)
 	json.add("NSTInfo", ranNsstInfo)
-	json.addProperty("serviceProfile", profileJson)
-	json.addProperty("NSSTInfo", nsstInfoListString)
+	json.add("serviceProfile", (JsonObject) parser.parse(profileJson))
+	//json.add("NSSTInfo", (JsonArray) parser.parse(nsstInfoListString))
 	json.add("subnetCapabilities", capabilitiesList)
 	json.addProperty("preferReuse", preferReuse)
 
@@ -100,29 +99,33 @@ class AnNssmfUtils {
 }
 
 public String buildCreateTNNSSMFSubnetCapabilityRequest() {
-	EsrInfo esrInfo = new EsrInfo()
-	esrInfo.setNetworkType("TN")
-	esrInfo.setVendor("ONAP")
+	JsonObject esrInfo = new JsonObject()
+	esrInfo.addProperty("networkType", "tn")
+	esrInfo.addProperty("vendor", "ONAP_internal")
 
 	JsonArray subnetTypes = new JsonArray()
 	subnetTypes.add("TN_FH")
 	subnetTypes.add("TN_MH")
 	JsonObject response = new JsonObject()
-	response.add("subnetCapabilityQuery", subnetTypes)
-	response.addProperty("esrInfo", objectMapper.writeValueAsString(esrInfo))
+	JsonObject subnetTypesObj = new JsonObject()
+	subnetTypesObj.add("subnetTypes", subnetTypes)
+	response.add("subnetCapabilityQuery", subnetTypesObj)
+	response.add("esrInfo", esrInfo)
 	return response.toString()
 }
 
 public String buildCreateANNFNSSMFSubnetCapabilityRequest() {
-	EsrInfo esrInfo = new EsrInfo()
-	esrInfo.setNetworkType("AN")
-	esrInfo.setVendor("ONAP")
+	JsonObject esrInfo = new JsonObject()
+	esrInfo.addProperty("networkType", "an")
+	esrInfo.addProperty("vendor", "ONAP_internal")
 
 	JsonArray subnetTypes = new JsonArray()
 	subnetTypes.add("AN_NF")
 	JsonObject response = new JsonObject()
-	response.add("subnetCapabilityQuery", subnetTypes)
-	response.addProperty("esrInfo", objectMapper.writeValueAsString(esrInfo))
+	JsonObject subnetTypesObj = new JsonObject()
+	subnetTypesObj.add("subnetTypes", subnetTypes)
+	response.add("subnetCapabilityQuery", subnetTypesObj)
+	response.add("esrInfo", esrInfo)
 	return response.toString()
 }
 public void createDomainWiseSliceProfiles(List<String> ranConstituentSliceProfiles, DelegateExecution execution) {
@@ -190,16 +193,19 @@ public void createSliceProfilesInAai(DelegateExecution execution) {
 	ANNF_sliceProfileInstance.setServiceType(serviceType)
 	String serviceStatus = "deactivated"
 	ANNF_sliceProfileInstance.setOrchestrationStatus(serviceStatus)
-	String serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("ranNfSliceProfile"), "plmnIdList")
+	String serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("ranNfSliceProfile"), "pLMNIdList")
 	ANNF_sliceProfileInstance.setServiceInstanceLocationId(serviceInstanceLocationid)
 	String serviceRole = "slice-profile-instance"
 	ANNF_sliceProfileInstance.setServiceRole(serviceRole)
-	List<String> snssaiList = objectMapper.readValue(execution.getVariable("snssaiList"), List.class)
+        ArrayList<String> snssaiList = execution.getVariable("snssaiList")
 	String snssai = snssaiList.get(0)
 	ANNF_sliceProfileInstance.setEnvironmentContext(snssai)
 	ANNF_sliceProfileInstance.setWorkloadContext("AN-NF")	 
 	ANNF_sliceProfileInstance.setSliceProfiles(ANNF_SliceProfiles)
-	logger.debug("completed ANNF sliceprofileinstance build "+ ANNF_sliceProfileInstance.toString())
+	String serviceFunctionAnnf = jsonUtil.getJsonValue(execution.getVariable("ranNfSliceProfile"), "resourceSharingLevel")
+	ANNF_sliceProfileInstance.setServiceFunction(serviceFunctionAnnf)
+	logger.debug("completed ANNF sliceprofileinstance build : "+ ANNF_sliceProfileInstance.toString())
+	
 	//TNFH slice profile instance creation
 	TNFH_sliceProfileInstance.setServiceInstanceId(TNFH_sliceProfileInstanceId)
 	sliceInstanceName = "sliceprofile_"+TNFH_sliceProfileId
@@ -207,13 +213,16 @@ public void createSliceProfilesInAai(DelegateExecution execution) {
 	serviceType = jsonUtil.getJsonValue(execution.getVariable("tnFhSliceProfile"), "sST")
 	TNFH_sliceProfileInstance.setServiceType(serviceType)
 	TNFH_sliceProfileInstance.setOrchestrationStatus(serviceStatus)
-	serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("tnFhSliceProfile"), "plmnIdList")
+	serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("tnFhSliceProfile"), "pLMNIdList")
 	TNFH_sliceProfileInstance.setServiceInstanceLocationId(serviceInstanceLocationid)
 	TNFH_sliceProfileInstance.setServiceRole(serviceRole)
 	TNFH_sliceProfileInstance.setEnvironmentContext(snssai)
 	TNFH_sliceProfileInstance.setWorkloadContext("TN-FH")
 	TNFH_sliceProfileInstance.setSliceProfiles(TNFH_SliceProfiles)
-	logger.debug("completed TNFH sliceprofileinstance build "+TNFH_sliceProfileInstance)
+	String serviceFunctionTnFH = jsonUtil.getJsonValue(execution.getVariable("tnFhSliceProfile"), "resourceSharingLevel")
+	TNFH_sliceProfileInstance.setServiceFunction(serviceFunctionTnFH)
+	logger.debug("completed TNFH sliceprofileinstance build : "+TNFH_sliceProfileInstance)
+	
 	//TNMH slice profile instance creation
 	TNMH_sliceProfileInstance.setServiceInstanceId(TNMH_sliceProfileInstanceId)
 	sliceInstanceName = "sliceprofile_"+TNMH_sliceProfileId
@@ -221,13 +230,16 @@ public void createSliceProfilesInAai(DelegateExecution execution) {
 	serviceType = jsonUtil.getJsonValue(execution.getVariable("tnMhSliceProfile"), "sST")
 	TNMH_sliceProfileInstance.setServiceType(serviceType)
 	TNMH_sliceProfileInstance.setOrchestrationStatus(serviceStatus)
-	serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("tnMhSliceProfile"), "plmnIdList")
+	serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("tnMhSliceProfile"), "pLMNIdList")
 	TNMH_sliceProfileInstance.setServiceInstanceLocationId(serviceInstanceLocationid)
 	TNMH_sliceProfileInstance.setServiceRole(serviceRole)
 	TNMH_sliceProfileInstance.setEnvironmentContext(snssai)
 	TNMH_sliceProfileInstance.setWorkloadContext("TN-MH")
 	TNMH_sliceProfileInstance.setSliceProfiles(TNMH_SliceProfiles)
-	logger.debug("completed TNMH sliceprofileinstance build "+TNMH_sliceProfileInstance)
+	String serviceFunctionTnMH = jsonUtil.getJsonValue(execution.getVariable("tnMhSliceProfile"), "resourceSharingLevel")
+	TNMH_sliceProfileInstance.setServiceFunction(serviceFunctionTnMH)
+	logger.debug("completed TNMH sliceprofileinstance build : "+TNMH_sliceProfileInstance)
+	
 	String msg = ""
 	try {
 
@@ -261,12 +273,10 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 			result.setJitter(profile.get("jitter"))
 			result.setLatency(profile.get("latency"))
 			result.setResourceSharingLevel(profile.get("resourceSharingLevel"))
-			result.setSNssai(profile.get("sNSSAI"))
 			result.setUeMobilityLevel(profile.get("uEMobilityLevel"))
 			result.setMaxNumberOfUEs(profile.get("maxNumberofUEs"))
 			result.setActivityFactor(profile.get("activityFactor"))
 			result.setCoverageAreaTAList(profile.get("coverageAreaTAList"))
-			result.setCsAvailability(profile.get("cSAvailabilityTarget"))
 			result.setExpDataRateDL(profile.get("expDataRateDL"))
 			result.setExpDataRateUL(profile.get("expDataRateUL"))
 			result.setSurvivalTime(profile.get("survivalTime"))
@@ -280,7 +290,6 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 			result.setJitter(profile.get("jitter"))
 			result.setLatency(profile.get("latency"))
 			result.setResourceSharingLevel(profile.get("resourceSharingLevel"))
-			result.setSNssai(profile.get("sNSSAI"))
 			result.setProfileId(execution.getVariable("TNFH_sliceProfileId"))
 			break
 		case "TN-MH":
@@ -288,7 +297,6 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 			result.setJitter(profile.get("jitter"))
 			result.setLatency(profile.get("latency"))
 			result.setResourceSharingLevel(profile.get("resourceSharingLevel"))
-			result.setSNssai(profile.get("sNSSAI"))
 			result.setProfileId(execution.getVariable("TNMH_sliceProfileId"))
 			break
 		default:
@@ -307,13 +315,13 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
         String msg
 		AAIResourcesClient client = new AAIResourcesClient()
         try {
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(instanceId).relationshipAPI())
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(instanceId)).relationshipAPI()
             client.create(uri, relationship)
 
         } catch (BpmnError e) {
             throw e
         } catch (Exception ex) {
-            msg = "Exception in CreateCommunicationService.createRelationShipInAAI. " + ex.getMessage()
+            msg = "Exception in AN NSSMF Utils : CreateRelationShipInAAI. " + ex.getMessage()
             logger.info(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
@@ -333,10 +341,9 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 	}
 	
 	public String buildCreateNSSMFRequest(DelegateExecution execution, String domainType, String action) {
-		EsrInfo esrInfo = new EsrInfo()
-		esrInfo.setNetworkType("TN")
-		esrInfo.setVendor("ONAP")
-		String esrInfoString = objectMapper.writeValueAsString(esrInfo)
+		JsonObject esrInfo = new JsonObject()
+	    esrInfo.addProperty("networkType", "tn")
+	    esrInfo.addProperty("vendor", "ONAP_internal")
 		JsonObject response = new JsonObject()
 		JsonObject allocateTnNssi = new JsonObject()
 		JsonObject serviceInfo = new JsonObject()
@@ -404,7 +411,7 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 		serviceInfo.addProperty("nsiId", execution.getVariable("nsiId"))
 		serviceInfo.addProperty("globalSubscriberId", execution.getVariable("globalSubscriberId"))
 		serviceInfo.addProperty("subscriptionServiceType", execution.getVariable("subscriptionServiceType"))
-		response.addProperty("esrInfo", esrInfoString)
+		response.add("esrInfo", esrInfo)
 		response.add("serviceInfo", serviceInfo)
 		response.add("allocateTnNssi", allocateTnNssi)
 		return response.toString()
@@ -429,9 +436,9 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 			deAllocateNssi.addProperty("sliceProfileId", execution.getVariable("TNMH_sliceProfileInstanceId"))
 		}
 		
-		EsrInfo esrInfo = new EsrInfo()
-		esrInfo.setVendor("ONAP")
-		esrInfo.setNetworkType("TN")
+		JsonObject esrInfo = new JsonObject()
+	    esrInfo.addProperty("networkType", "tn")
+	    esrInfo.addProperty("vendor", "ONAP_internal")
 	   
 		JsonObject serviceInfo = new JsonObject()
 		serviceInfo.addProperty("serviceInvariantUuid", null)
@@ -441,7 +448,7 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 	   
 		JsonObject json = new JsonObject()
 		json.add("deAllocateNssi", deAllocateNssi)
-		json.addProperty("esrInfo", objectMapper.writeValueAsString(esrInfo))
+		json.add("esrInfo", esrInfo)
 		json.add("serviceInfo", serviceInfo)
 		return json.toString()
 	   
