@@ -31,13 +31,18 @@ import org.onap.so.adapters.nssmf.util.RestUtil;
 import org.onap.so.beans.nsmf.*;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
 import org.onap.so.db.request.data.repository.ResourceOperationStatusRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.marshal;
 
 public abstract class BaseNssmfManager implements NssmfManager {
+
+    private static final Logger logger = LoggerFactory.getLogger(BaseNssmfManager.class);
 
     protected RestUtil restUtil;
 
@@ -152,6 +157,7 @@ public abstract class BaseNssmfManager implements NssmfManager {
         ResourceOperationStatus status =
                 getOperationStatus(serviceInfo.getNsiId(), jobId, serviceInfo.getServiceUuid());
 
+        logger.info("ResourceOperationStatus = {}", status);
         this.restResponse = doQueryJobStatus(status);
 
         afterQueryJobStatus(status);
@@ -165,11 +171,16 @@ public abstract class BaseNssmfManager implements NssmfManager {
 
     private ResourceOperationStatus getOperationStatus(String nsiId, String jobId, String serviceUuid) {
 
-        ResourceOperationStatus status = new ResourceOperationStatus(nsiId, jobId, serviceUuid);
+        logger.info("Query operations: nsiId = [{}], jobId = [{}], serviceUuid = [{}]", nsiId, jobId, serviceUuid);
 
-        Optional<ResourceOperationStatus> optional = repository.findOne(Example.of(status));
+        List<ResourceOperationStatus> resourceOperationStatuses
+                = repository.findByServiceIdAndOperationId(nsiId, jobId);
 
-        return optional.orElse(null);
+        logger.info("resourceOperationStatuses = {}", resourceOperationStatuses);
+        if (resourceOperationStatuses.size() == 0) {
+            return null;
+        }
+        return resourceOperationStatuses.get(0);
     }
 
     @Override

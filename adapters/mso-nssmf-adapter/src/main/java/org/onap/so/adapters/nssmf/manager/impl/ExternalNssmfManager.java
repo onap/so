@@ -75,8 +75,9 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
 
     @Override
     protected void afterQueryJobStatus(ResourceOperationStatus status) {
+        logger.info("afterQueryJobStatus = " + status);
         if (Integer.parseInt(status.getProgress()) == 100) {
-
+            logger.info("after query finished = " + status);
             ActionType jobOperType = ActionType.valueOf(status.getOperType());
 
             if (ActionType.ALLOCATE.equals(jobOperType)) {
@@ -118,6 +119,8 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
         JobStatusResponse jobStatusResponse = unMarshal(restResponse.getResponseContent(), JobStatusResponse.class);
 
         ResponseDescriptor rspDesc = jobStatusResponse.getResponseDescriptor();
+
+        logger.info("status = {}", status);
         rspDesc.setNssiId(status.getResourceInstanceID());
 
         jobStatusResponse.setResponseDescriptor(rspDesc);
@@ -152,7 +155,7 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
 
     protected void updateRequestDbJobStatus(ResponseDescriptor rspDesc, ResourceOperationStatus status,
             RestResponse rsp) throws ApplicationException {
-
+        status.setProgress(Integer.toString(rspDesc.getProgress()));
         switch (fromString(rspDesc.getStatus())) {
             case STARTED:
                 updateDbStatus(status, rsp.getStatus(), STARTED, QUERY_JOB_STATUS_SUCCESS);
@@ -167,6 +170,8 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
                 break;
             case ERROR:
                 updateDbStatus(status, rsp.getStatus(), ERROR, QUERY_JOB_STATUS_FAILED);
+                throw new ApplicationException(500, QUERY_JOB_STATUS_FAILED);
+            default:
                 throw new ApplicationException(500, QUERY_JOB_STATUS_FAILED);
         }
     }
@@ -227,6 +232,8 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
         ResourceOperationStatus status =
                 new ResourceOperationStatus(serviceInfo.getNsiId(), response.getJobId(), serviceInfo.getServiceUuid());
         status.setResourceInstanceID(response.getNssiId());
+        status.setOperType(actionType.toString());
+        status.setProgress("0");
 
         updateDbStatus(status, restResponse.getStatus(), STARTED, NssmfAdapterUtil.getStatusDesc(actionType));
     }

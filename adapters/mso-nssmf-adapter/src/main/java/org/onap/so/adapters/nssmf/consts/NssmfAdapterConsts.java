@@ -91,8 +91,7 @@ public class NssmfAdapterConsts {
     private final static String INTERNAL_MODIFY_URL = "/onap/so/infra/3gppservices/{apiVersion}/modify";
 
     //
-    private final static String EXTERNAL_QUERY_JOB_STATUS =
-            "/api/rest/provMns/{apiVersion}/NSS/jobs/{jobId}?responseId={responseId}";
+    private final static String EXTERNAL_QUERY_JOB_STATUS = "/api/rest/provMns/{apiVersion}/NSS/jobs/{jobId}";
 
     private final static String INTERNAL_QUERY_SUB_NET_CAPABILITY =
             "/onap/so/infra/3gppservices/{apiVersion}/subnetCapabilityQuery";
