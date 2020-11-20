@@ -92,7 +92,7 @@ public class NssmfAdapterConsts {
 
     //
     private final static String EXTERNAL_QUERY_JOB_STATUS =
-            "/api/rest/provMns/{apiVersion}/NSS/jobs/{jobId}?responseId={responseId}";
+            "/api/rest/provMns/{apiVersion}/NSS/jobs/{jobId}";
 
     private final static String INTERNAL_QUERY_SUB_NET_CAPABILITY =
             "/onap/so/infra/3gppservices/{apiVersion}/subnetCapabilityQuery";

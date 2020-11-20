@@ -90,7 +90,7 @@ public class SliceProfileAdapter implements Serializable {
     }
 
     private Integer str2Code(String area) {
-        return area.hashCode() >> 16;
+        return Math.abs(area.hashCode() >> 16);
     }
 
     public CnSliceProfile trans2CnProfile() {
@@ -100,6 +100,7 @@ public class SliceProfileAdapter implements Serializable {
         cnSliceProfile.setCoverageAreaTAList(Arrays.asList(this.coverageAreaTAList.split("\\|")));
         cnSliceProfile.setPlmnIdList(Arrays.asList(this.pLMNIdList.split("\\|")));
         cnSliceProfile.setResourceSharingLevel(ResourceSharingLevel.fromString(this.resourceSharingLevel));
+        cnSliceProfile.setUeMobilityLevel(UeMobilityLevel.fromString(this.uEMobilityLevel));
         PerfReq perfReq = new PerfReq();
         // todo
         cnSliceProfile.setPerfReq(perfReq);
