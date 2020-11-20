@@ -768,7 +768,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         ServiceInstance rspi = new ServiceInstance()
         rspi.setServiceInstanceName(sliceTaskInfo.NSSTInfo.name)
         rspi.setServiceType(sliceTaskInfo.sliceProfile.getSST())
-        rspi.setServiceRole("slice-profile-instance")
+        rspi.setServiceRole("slice-profile")
         rspi.setOrchestrationStatus(oStatus)
         rspi.setServiceInstanceLocationId(sliceTaskInfo.sliceProfile.getPLMNIdList())
         rspi.setModelInvariantId(sliceTaskInfo.NSSTInfo.invariantUUID)
