@@ -26,11 +26,12 @@ import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
+@Deprecated
 public class AdditionalProperties implements Serializable {
 
     private static final long serialVersionUID = -4020397418955518175L;
 
-    private SliceProfile sliceProfile;
+    private TnSliceProfile sliceProfile;
 
     private List<EndPoint> endPoints;
 
