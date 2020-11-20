@@ -75,11 +75,12 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
 
     @Override
     protected void afterQueryJobStatus(ResourceOperationStatus status) {
-        if (Integer.parseInt(status.getProgress()) == 100) {
+        logger.info("afterQueryJobStatus = " + status);
+        if (Integer.parseInt(status.getProgress()) == 100
+                || status.getStatus().equalsIgnoreCase(FINISHED.toString())) {
+            logger.info("after query finished = " + status);
 
-            ActionType jobOperType = ActionType.valueOf(status.getOperType());
-
-            if (ActionType.ALLOCATE.equals(jobOperType)) {
+            if (ActionType.ALLOCATE.getType().equalsIgnoreCase(serviceInfo.getActionType())) {
                 ServiceInstance nssiInstance = restUtil.getServiceInstance(serviceInfo);
                 if (nssiInstance == null) {
                     nssiInstance = new ServiceInstance();
@@ -97,7 +98,7 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
                 nssiInstance.setServiceRole("nssi");
 
                 restUtil.createServiceInstance(nssiInstance, serviceInfo);
-            } else if (ActionType.DEALLOCATE.equals(jobOperType)) {
+            } else if (ActionType.DEALLOCATE.getType().equalsIgnoreCase(serviceInfo.getActionType())) {
                 restUtil.deleteServiceInstance(serviceInfo);
             }
         }
@@ -152,7 +153,7 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
 
     protected void updateRequestDbJobStatus(ResponseDescriptor rspDesc, ResourceOperationStatus status,
             RestResponse rsp) throws ApplicationException {
-
+        status.setProgress(String.valueOf(rspDesc.getProgress()));
         switch (fromString(rspDesc.getStatus())) {
             case STARTED:
                 updateDbStatus(status, rsp.getStatus(), STARTED, QUERY_JOB_STATUS_SUCCESS);
@@ -167,6 +168,8 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
                 break;
             case ERROR:
                 updateDbStatus(status, rsp.getStatus(), ERROR, QUERY_JOB_STATUS_FAILED);
+                throw new ApplicationException(500, QUERY_JOB_STATUS_FAILED);
+            default:
                 throw new ApplicationException(500, QUERY_JOB_STATUS_FAILED);
         }
     }
