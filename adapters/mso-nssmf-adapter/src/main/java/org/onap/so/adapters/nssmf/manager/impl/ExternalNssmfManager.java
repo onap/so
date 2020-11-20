@@ -75,11 +75,12 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
 
     @Override
     protected void afterQueryJobStatus(ResourceOperationStatus status) {
-        if (Integer.parseInt(status.getProgress()) == 100) {
+        logger.info("afterQueryJobStatus = " + status);
+        if (Integer.parseInt(status.getProgress()) == 100
+                || status.getStatus().equalsIgnoreCase(FINISHED.toString())) {
+            logger.info("after query finished = " + status);
 
-            ActionType jobOperType = ActionType.valueOf(status.getOperType());
-
-            if (ActionType.ALLOCATE.equals(jobOperType)) {
+            if (ActionType.ALLOCATE.getType().equalsIgnoreCase(serviceInfo.getActionType())) {
                 ServiceInstance nssiInstance = restUtil.getServiceInstance(serviceInfo);
                 if (nssiInstance == null) {
                     nssiInstance = new ServiceInstance();
@@ -97,7 +98,7 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
                 nssiInstance.setServiceRole("nssi");
 
                 restUtil.createServiceInstance(nssiInstance, serviceInfo);
-            } else if (ActionType.DEALLOCATE.equals(jobOperType)) {
+            } else if (ActionType.DEALLOCATE.getType().equalsIgnoreCase(serviceInfo.getActionType())) {
                 restUtil.deleteServiceInstance(serviceInfo);
             }
         }

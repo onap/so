@@ -24,6 +24,9 @@ import lombok.Getter;
 
 @Getter
 public enum ActionType {
+    /**
+     * allocate
+     */
     ALLOCATE("allocate"),
 
     DEALLOCATE("deallocate"),
@@ -51,5 +54,14 @@ public enum ActionType {
 
     ActionType(String type) {
         this.type = type;
+    }
+
+    public static ActionType getActionType(String value) {
+        for (ActionType actionType : ActionType.values()) {
+            if (actionType.type.equalsIgnoreCase(value)) {
+                return actionType;
+            }
+        }
+        return null;
     }
 }
