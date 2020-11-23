@@ -30,7 +30,13 @@ public class AllocateTnNssi implements Serializable {
 
     private static final long serialVersionUID = -7069801712339914746L;
 
+    private TnSliceProfile sliceProfile;
+
     private List<NetworkSliceInfo> networkSliceInfos;
 
     private List<TransportSliceNetwork> transportSliceNetworks;
+
+    private NsiInfo nsiInfo;
+
+    private String scriptName;
 }

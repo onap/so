@@ -555,8 +555,11 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         //todo: endpointId -> set into tn
         allocateTnNssi.setTransportSliceNetworks()
         allocateTnNssi.setNetworkSliceInfos()
-
-
+        allocateTnNssi.setSliceProfile(sliceTaskInfo.sliceProfile.trans2TnProfile())
+        NsiInfo nsiInfo = new NsiInfo()
+        nsiInfo.setNsiId(sliceParams.suggestNsiId)
+        nsiInfo.setNsiName(sliceParams.suggestNsiName)
+        allocateTnNssi.setNsiInfo(nsiInfo)
 
         //allocateTnNssi.networkSliceInfos
 
@@ -768,7 +771,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         ServiceInstance rspi = new ServiceInstance()
         rspi.setServiceInstanceName(sliceTaskInfo.NSSTInfo.name)
         rspi.setServiceType(sliceTaskInfo.sliceProfile.getSST())
-        rspi.setServiceRole("slice-profile-instance")
+        rspi.setServiceRole("slice-profile")
         rspi.setOrchestrationStatus(oStatus)
         rspi.setServiceInstanceLocationId(sliceTaskInfo.sliceProfile.getPLMNIdList())
         rspi.setModelInvariantId(sliceTaskInfo.NSSTInfo.invariantUUID)

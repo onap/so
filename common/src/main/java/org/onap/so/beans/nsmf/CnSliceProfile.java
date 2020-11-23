@@ -32,12 +32,12 @@ public class CnSliceProfile implements Serializable {
 
     private static final long serialVersionUID = 6627071735572539536L;
 
-    @JsonProperty(value = "sNSSAIList", required = true)
+    @JsonProperty(value = "snssaiList", required = true)
     private List<String> snssaiList;
 
     private String sliceProfileId;
 
-    @JsonProperty(value = "pLMNIdList", required = true)
+    @JsonProperty(value = "plmnIdList", required = true)
     private List<String> plmnIdList;
 
     @JsonProperty(value = "perfReq", required = true)

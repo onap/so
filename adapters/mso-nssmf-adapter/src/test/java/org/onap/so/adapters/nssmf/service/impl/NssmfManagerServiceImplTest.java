@@ -361,9 +361,10 @@ public class NssmfManagerServiceImplTest {
 
         NssmfAdapterNBIRequest nbiRequest = createNbiRequest();
         nbiRequest.setResponseId("7512eb3feb5249eca5ddd742fedddd39");
-        Optional<ResourceOperationStatus> optional = Optional.of(operationStatus);
+        List<ResourceOperationStatus> optional = new ArrayList<>();
+        optional.add(operationStatus);
 
-        doAnswer(invocation -> optional).when(repository).findOne(any());
+        doAnswer(invocation -> optional).when(repository).findByServiceIdAndOperationId(any(), any());
 
         createCommonMock(200, nssmf);
 

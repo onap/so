@@ -21,9 +21,12 @@
 package org.onap.so.beans.nsmf;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.io.Serializable;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PnfErrorList {
+public class PnfErrorList implements Serializable {
+
+    private static final long serialVersionUID = 1506455363755909867L;
 
     private String pnfId;
 
