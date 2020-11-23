@@ -235,7 +235,10 @@ public class VnfAdapterVfModuleObjectMapper {
                         logger.error("No value tag found for attribute: {}", attributeName);
                         throw new MissingValueTagException("No value tag found for " + attributeName);
                     }
-                    directives.append(new AttributeNameValue(attributeName, attributeValue.toString()));
+                    String nameValue = new StringBuilder().append("{\"attribute_name\": \"").append(attributeName)
+                            .append("\", \"attribute_value\": \"").append(attributeValue.toString()).append("\"}")
+                            .toString();
+                    directives.append(nameValue);
                     if (i < (srcMap.size() - 1 + noOfDirectivesSize))
                         directives.append(", ");
                     i++;
