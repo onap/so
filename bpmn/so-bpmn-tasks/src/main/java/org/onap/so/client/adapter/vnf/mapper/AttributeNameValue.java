@@ -21,17 +21,15 @@
 package org.onap.so.client.adapter.vnf.mapper;
 
 import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class AttributeNameValue implements Serializable {
     private static final long serialVersionUID = -5215028275587848311L;
 
+    @JsonProperty("attribute_name")
     private String attributeName;
+    @JsonProperty("attribute_value")
     private transient Object attributeValue;
-
-    public AttributeNameValue(String attributeName, Object attributeValue) {
-        this.attributeName = attributeName;
-        this.attributeValue = attributeValue;
-    }
 
     public String getAttributeName() {
         return attributeName;
