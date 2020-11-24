@@ -22,6 +22,30 @@
       "revId": "6fd962d39df25b7f15cbeac7a5b644b1a2f3bd6f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9346f762_729fab9e",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2020-11-24T13:34:08Z",
+      "side": 1,
+      "message": "Maybe you want to remove this epic? Or, change the description.. By the way, Design ETSI SOL007... belong to a SDC Epic...",
+      "parentUuid": "aab7e922_153b6f0b",
+      "range": {
+        "startLine": 86,
+        "startChar": 30,
+        "endLine": 86,
+        "endChar": 84
+      },
+      "revId": "6fd962d39df25b7f15cbeac7a5b644b1a2f3bd6f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
