@@ -26,6 +26,7 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
+import java.util.Comparator;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ConfigurationResourceKeys;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
@@ -36,12 +37,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.ASSIGNINSTANCE;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.ACTIVATE_INSTANCE;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.ASSIGN_INSTANCE;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.CONFIGURATION;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.CONTROLLER;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.CREATE_INSTANCE;
@@ -94,15 +95,17 @@ public class ExecuteBuildingBlockBuilder {
                         true, false);
             } else if (orchFlow.getFlowName().contains(VFMODULE) || (orchFlow.getFlowName().contains(CONTROLLER)
                     && (VFMODULE).equalsIgnoreCase(orchFlow.getBpmnScope()))) {
-                List<Resource> vfModuleResourcesSorted;
-                if (requestAction.equals(CREATE_INSTANCE) || requestAction.equals(ASSIGNINSTANCE)
-                        || requestAction.equals("activateInstance")) {
-                    vfModuleResourcesSorted = sortVfModulesByBaseFirst(resourceList.stream()
-                            .filter(x -> WorkflowType.VFMODULE == x.getResourceType()).collect(Collectors.toList()));
+                Comparator<Resource> resourceComparator;
+                if (requestAction.equals(CREATE_INSTANCE) || requestAction.equals(ASSIGN_INSTANCE)
+                        || requestAction.equals(ACTIVATE_INSTANCE)) {
+                    resourceComparator = Resource.sortBaseFirst;
                 } else {
-                    vfModuleResourcesSorted = sortVfModulesByBaseLast(resourceList.stream()
-                            .filter(x -> WorkflowType.VFMODULE == x.getResourceType()).collect(Collectors.toList()));
+                    resourceComparator = Resource.sortBaseLast;
                 }
+                List<Resource> vfModuleResourcesSorted =
+                        resourceList.stream().filter(x -> WorkflowType.VFMODULE == x.getResourceType())
+                                .sorted(resourceComparator).collect(Collectors.toList());
+
                 for (Resource resource : vfModuleResourcesSorted) {
                     flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId, resource, apiVersion, resourceId,
                             requestAction, false, vnfType, workflowResourceIds, requestDetails, false, null, null,
@@ -167,30 +170,6 @@ public class ExecuteBuildingBlockBuilder {
             executeBuildingBlock.setConfigurationResourceKeys(configurationResourceKeys);
         }
         return executeBuildingBlock;
-    }
-
-    protected List<Resource> sortVfModulesByBaseFirst(List<Resource> vfModuleResources) {
-        int count = 0;
-        for (Resource resource : vfModuleResources) {
-            if (resource.isBaseVfModule()) {
-                Collections.swap(vfModuleResources, 0, count);
-                break;
-            }
-            count++;
-        }
-        return vfModuleResources;
-    }
-
-    protected List<Resource> sortVfModulesByBaseLast(List<Resource> vfModuleResources) {
-        int count = 0;
-        for (Resource resource : vfModuleResources) {
-            if (resource.isBaseVfModule()) {
-                Collections.swap(vfModuleResources, vfModuleResources.size() - 1, count);
-                break;
-            }
-            count++;
-        }
-        return vfModuleResources;
     }
 
     private void addBuildingBlockToExecuteBBList(List<ExecuteBuildingBlock> flowsToExecute, List<Resource> resourceList,

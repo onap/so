@@ -935,8 +935,7 @@ public class ServiceInstances extends AbstractRestHandler {
         }
 
         if (!requestScope.equalsIgnoreCase(ModelType.service.name()) && action != Action.recreateInstance
-                && !(requestScope.equalsIgnoreCase(ModelType.vnf.name())
-                        && (action == Action.replaceInstance || action == Action.replaceInstanceRetainAssignments))) {
+                && !requestScope.equalsIgnoreCase(ModelType.vnf.name())) {
             aLaCarte = true;
         } else if (aLaCarte == null) {
             aLaCarte = false;
