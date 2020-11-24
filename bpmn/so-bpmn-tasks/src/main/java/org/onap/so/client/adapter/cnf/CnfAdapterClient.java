@@ -61,7 +61,7 @@ public class CnfAdapterClient {
         try {
             // String uri = env.getRequiredProperty("mso.cnf.adapter.endpoint"); //TODO: This needs to be added as well
             // for configuration
-            String uri = "https://cnf-adapter:8090"; // TODO: What is the correct uri?
+            String uri = "http://cnf-adapter:8090"; // TODO: What is the correct uri?
             String endpoint = UriBuilder.fromUri(uri).path(INSTANCE_CREATE_PATH).build().toString();
             HttpEntity<?> entity = getHttpEntity(request);
             ResponseEntity<InstanceResponse> result =
@@ -81,7 +81,7 @@ public class CnfAdapterClient {
         try {
             // String uri = env.getRequiredProperty("mso.cnf.adapter.endpoint"); //TODO: This needs to be added as well
             // for configuration
-            String uri = "https://cnf-adapter:8090"; // TODO: What is the correct uri?
+            String uri = "http://cnf-adapter:8090"; // TODO: What is the correct uri?
             String endpoint = UriBuilder.fromUri(uri).path("/api/cnf-adapter/v1/healthcheck").build().toString();
             HttpEntity<?> entity = new HttpEntity<>(getHttpHeaders());
             ResponseEntity<InstanceResponse> result =
