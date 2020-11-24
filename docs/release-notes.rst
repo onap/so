@@ -10,6 +10,201 @@ Service Orchestrator Release Notes
 The SO provides the highest level of service orchestration in the ONAP architecture. 
 
 
+=============
+Release Notes
+=============
+
+Version: 1.7.10
+==============
+
+:Release Date: 2020-11-19
+
+SO Release Image Versions
+--------------------------
+ - so-bpmn-infra
+
+    :Version: 1.7.10
+
+ - so-catalog-db-adapter
+
+    :Version: 1.7.10
+
+ - so-monitoring
+
+    :Version: 1.7.10
+
+ - so/nssmf-adapter
+
+    :Version: 1.7.10
+
+ - so/openstack-adapter
+
+    :Version: 1.7.10
+
+ - so/request-db-adapter
+
+    :Version: 1.7.10
+
+ - so/sdc-controller
+
+    :Version: 1.7.10
+
+ - so/sdnc-adapter
+
+    :Version: 1.7.10
+
+ - so/vnfm-adapter
+
+    :Version: 1.7.10
+
+ - so/api-handler-infra
+
+    :Version: 1.7.10
+
+ - so/api-handler-infra
+
+    :Version: 1.7.10
+
+ - so/so-etsi-nfvo-ns-lcm
+
+    :Version: 1.7.7
+
+ - so/so-oof-adapter
+
+    :Version: 1.7.6
+
+ - so/cnf-adapter
+
+    :Version: 1.7.10
+
+Release Purpose
+----------------
+SO Guilin Release
+
+**Epics**
+
+*  `SO-3167 <https://jira.onap.org/browse/SO-3167>`_ - Design ETSI SOL007 compliant Network Service Descriptor packages
+*  `SO-3208 <https://jira.onap.org/browse/SO-3208>`_ - SOL003 Adapter maintenance Enhancements
+*  `SO-3036 <https://jira.onap.org/browse/SO-3036>`_ - SO impacts for E2E Network Slicing use case in Guilin
+*  `SO-2936 <https://jira.onap.org/browse/SO-2936>`_ - PNF PnP: SO macro flow - use existing PNF instance in a Service Instance
+*  `SO-2843 <https://jira.onap.org/browse/SO-2843>`_ - Support NS LCM and Workflows Management
+*  `SO-2842 <https://jira.onap.org/browse/SO-2842>`_ - Support for SOL005 NBI API Handler
+*  `SO-2841 <https://jira.onap.org/browse/SO-2841>`_ - Support SO NFVO Microservice Plugin Capabilities
+*  `SO-2840 <https://jira.onap.org/browse/SO-2840>`_ - Support for ETSI NFV NFVO  Orchestrator in ONAP SO (ONAP SO ETSI-Aligned Hierarchical Orchestration)
+*  `SO-2841 <https://jira.onap.org/browse/SO-2681>`_ - SO direct Catalog Management Support - Guilin
+*  `SO-2046 <https://jira.onap.org/browse/SO-2046>`_ - support Java 11 upgrade
+
+
+**Stories**
+
+The full list of implemented tasks is available on `JIRA GUILIN STORY <https://jira.onap.org/issues/?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20story%20AND%20fixVersion%20%3D%20%22Guilin%20Release%22>`_
+Listed below are key functional jira stories handled in the Guilin release:
+
+*  `SO-2950 <https://jira.onap.org/browse/SO-2950>`_ - Asynchronous service activation response handling support in MDONS
+*  `SO-3028 <https://jira.onap.org/browse/SO-3028>`_ - SO supports the OVP 2.0 test platform
+*  `SO-2930 <https://jira.onap.org/browse/SO-2930>`_ - Service level workflow execution API
+*  `SO-2929 <https://jira.onap.org/browse/SO-2929>`_ - Service level workflow retrieving API
+*  `SO-2928 <https://jira.onap.org/browse/SO-2928>`_ - Service model retrieving API
+*  `SO-2927 <https://jira.onap.org/browse/SO-2927>`_ - Generic service level upgrade workflow
+*  `SO-2926 <https://jira.onap.org/browse/SO-2926>`_ - New Service Level postCheck building block
+*  `SO-2925 <https://jira.onap.org/browse/SO-2925>`_ - New Service Level Upgrade building block
+*  `SO-2924 <https://jira.onap.org/browse/SO-2924>`_ - New Service Level Preparation building block
+*  `SO-2981 <https://jira.onap.org/browse/SO-2981>`_ - PNF Plug & Play in R7 - SO Building Block Work
+*  `SO-3026 <https://jira.onap.org/browse/SO-3026>`_ - Adapter for the SO to interact with the K8S plugin
+*  `SO-3025 <https://jira.onap.org/browse/SO-3025>`_ - SO should support CNFO
+*  `SO-3039 <https://jira.onap.org/browse/SO-3039>`_ - Containers must crash properly when a failure occurs
+*  `SO-3040 <https://jira.onap.org/browse/SO-3040>`_ - ONAP container repository (nexus) must not contain upstream docker images
+*  `SO-3029 <https://jira.onap.org/browse/SO-3029>`_ - SO support Multi Tenancy
+*  `SO-3077 <https://jira.onap.org/browse/SO-3077>`_ - ONAP shall use STDOUT for logs collection - REQ-374
+
+**Tasks**
+
+The full list of implemented tasks is available on `JIRA GUILIN TASKS <https://jira.onap.org/issues/?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20Task%20AND%20fixVersion%20%3D%20%22Guilin%20Release%22>`_
+Listed below are highest and high piority jira tasks handled in the Guilin release:
+
+*  `SO-3205 <https://jira.onap.org/browse/SO-3205>`_ - E2E Network Slicing: Improvements for NST/NSI Selection callback
+*  `SO-3120 <https://jira.onap.org/browse/SO-3120>`_ - Create swagger api for software upgrade in SO
+*  `SO-2915 <https://jira.onap.org/browse/SO-2915>`_ - Upgrade Vulnerable Direct Dependencies
+
+
+**Bug Fixes**
+
+The full list of fixed bugs is available on `JIRA GUILIN BUGS 
+<https://jira.onap.org/issues/?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20Bug%20AND%20fixVersion%20%3D%20%22Guilin%20Release%22>`_
+Listed below are highest and high piority jira tasks handled in the Guilin release:
+
+*  `SO-3375 <https://jira.onap.org/browse/SO-3375>`_ - FlowManipulatorListenerRunner does not invoke for controller execution config-deploy
+*  `SO-3369 <https://jira.onap.org/browse/SO-3369>`_ - Fix basic vm test case in onap
+*  `SO-3364 <https://jira.onap.org/browse/SO-3364>`_ - SO sends rest request to cds twice per one operation
+*  `SO-3360 <https://jira.onap.org/browse/SO-3360>`_ - SO-OpenStack-Adapter attempts to create wrong vserver-to-vnfc relation in AAI
+*  `SO-3357 <https://jira.onap.org/browse/SO-3357>`_ - ControllerExecutionBB is triggered, when running a`la carte DeleteVFModule
+*  `SO-3352 <https://jira.onap.org/browse/SO-3352>`_ - Exception in org.onap.so.bpmn.infrastructure.workflow.tasks.OrchestrationStatusValidator.validateOrchestrationStatus Orchestration Status Validation failed
+*  `SO-3351 <https://jira.onap.org/browse/SO-3351>`_ - Staging image is present in OOM master branch
+*  `SO-3346 <https://jira.onap.org/browse/SO-3346>`_ - vFW CNF AssignVfModuleBB has failed
+*  `SO-3342 <https://jira.onap.org/browse/SO-3342>`_ - VnfAdapter is configured by default to v1 version whereas v2 version is more complete
+*  `SO-3341 <https://jira.onap.org/browse/SO-3341>`_ - Exception of Writing NSSI to AAI for ExternalNssmfManager
+*  `SO-3339 <https://jira.onap.org/browse/SO-3339>`_ - Transport Slicing integration: network-policy is missing under allotted-resource
+*  `SO-3326 <https://jira.onap.org/browse/SO-3326>`_ - Transport Slicing integration: AAI Exception in DeAllocate TN NSSI WF
+*  `SO-3322 <https://jira.onap.org/browse/SO-3322>`_ - PNF service instantiation using building blocks fails during ActivateServiceInstanceBB building block execution
+*  `SO-3321 <https://jira.onap.org/browse/SO-3321>`_ - Transport Slicing integration: SO sets wrong subscription-service-type in SDNC payload
+*  `SO-3313 <https://jira.onap.org/browse/SO-3313>`_ - SO getting disto error while SDC distribution
+*  `SO-3310 <https://jira.onap.org/browse/SO-3310>`_ - Transport Slicing Integration: null pointer exception in saving SDNC rollback data
+*  `SO-3309 <https://jira.onap.org/browse/SO-3309>`_ - Transport Slicing integration: unable to get prefix environment variable from execution in TnNssmfUntils
+*  `SO-3308 <https://jira.onap.org/browse/SO-3308>`_ - Transport Slicing integration: MSOWorkflowException: mso-request-id not provided
+*  `SO-3304 <https://jira.onap.org/browse/SO-3304>`_ - Exception in org.onap.so.bpmn.infrastructure.aai.tasks.AAICreateTasks.createServiceInstance ModelMapper configuration errors
+*  `SO-3296 <https://jira.onap.org/browse/SO-3296>`_ - SO has python 2.7 pods
+*  `SO-3294 <https://jira.onap.org/browse/SO-3294>`_ - Parameters exception of Deallocating NSSI
+*  `SO-3293 <https://jira.onap.org/browse/SO-3293>`_ - Allocate TN NSSI fails to create relationship between allotted-resource and logical-links
+*  `SO-3290 <https://jira.onap.org/browse/SO-3290>`_ - SO-VNFM certificates expired
+*  `SO-3284 <https://jira.onap.org/browse/SO-3284>`_ - Exceptions in Allocate TN NSSI work flow
+*  `SO-3275 <https://jira.onap.org/browse/SO-3275>`_ - Fix 3gppservices URI path in API-Handler
+*  `SO-3274 <https://jira.onap.org/browse/SO-3274>`_ - Parameters exception of Allocating NSSI
+*  `SO-3271 <https://jira.onap.org/browse/SO-3271>`_ - SO/BB PNF - skip_post_instantiation_configuration is not processed properly.
+*  `SO-3270 <https://jira.onap.org/browse/SO-3270>`_ - BB workflow failing sporadically during post instantiation
+*  `SO-3266 <https://jira.onap.org/browse/SO-3266>`_ - BPMN config assign bb - NullPointerException in ControllerExecution
+*  `SO-3261 <https://jira.onap.org/browse/SO-3261>`_ - Encountering NullPointerException, WorkFlow failure after Java 11 upgrade Code refactorig on SO-bpmn-infra code base.
+*  `SO-3243 <https://jira.onap.org/browse/SO-3243>`_ - SO-bpmn-infra Container after Java 11 upgrade encountering SunCertPathBuilder Exception: unable to find valid certification path to requested target in CSIT
+*  `SO-3236 <https://jira.onap.org/browse/SO-3236>`_ - SO has java 8 pods
+*  `SO-3216 <https://jira.onap.org/browse/SO-3216>`_ - Integration E2E VNF test fails due to missing EdgeRule in AAI call
+*  `SO-3196 <https://jira.onap.org/browse/SO-3196>`_ - [SO] so-sdc-controller fails to connect to aai due to cert issue
+*  `SO-3193 <https://jira.onap.org/browse/SO-3193>`_ - Macro Workflow fails in AssignVnfBB in step HomingBB
+*  `SO-2941 <https://jira.onap.org/browse/SO-2941>`_ - Docker are not built anymore
+*  `SO-2939 <https://jira.onap.org/browse/SO-2939>`_ - Master branch uses SNAPSHOT version that are not available anymore
+*  `SO-2809 <https://jira.onap.org/browse/SO-2809>`_ - SO build is failing due to unable to download org.onap.appc.client:client-lib:jar:1.7.1-SNAPSHOT
+*  `SO-2797 <https://jira.onap.org/browse/SO-2797>`_ - BB workflow with post instantiation is not working
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+*Known Security Issues*
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1702>`__
+
+**Known Issues**
+
+	N/A
+
+**Upgrade Notes**
+
+	N/A
+
+**Deprecation Notes**
+
+	SO modules Ve-Vnfm-adapter and appc-orchestrator are deprectaed for the Guilin release.
+
+**Other**
+
+	N/A
+***************************************************************************************
+
 
 Version: 1.6.4
 -----------------------
