@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aab7e922_153b6f0b",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2020-11-24T12:31:36Z",
+      "side": 1,
+      "message": "SO-3167 is for Code Freeze",
+      "range": {
+        "startLine": 86,
+        "startChar": 30,
+        "endLine": 86,
+        "endChar": 84
+      },
+      "revId": "6fd962d39df25b7f15cbeac7a5b644b1a2f3bd6f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
