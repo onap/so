@@ -35,12 +35,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.ACTIVATE_INSTANCE;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.DEACTIVATE_INSTANCE;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.DELETE_INSTANCE;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.UNASSIGN_INSTANCE;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.WORKFLOW_ACTION_ERROR_MESSAGE;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.CREATE_INSTANCE;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.FABRIC_CONFIGURATION;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.NETWORKCOLLECTION;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.USER_PARAM_SERVICE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.ASSIGNINSTANCE;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.ASSIGN_INSTANCE;
 
 
 @Component
@@ -77,7 +81,7 @@ public class ServiceEBBLoader {
         boolean containsService = false;
         List<Resource> resourceList = new ArrayList<>();
         List<Map<String, Object>> userParams = sIRequest.getRequestDetails().getRequestParameters().getUserParams();
-        if (requestAction.equalsIgnoreCase(ASSIGNINSTANCE)) {
+        if (requestAction.equalsIgnoreCase(ASSIGN_INSTANCE)) {
             // SERVICE-MACRO-ASSIGN will always get user params with a
             // service.
 
@@ -108,16 +112,15 @@ public class ServiceEBBLoader {
             if (!foundRelated(resourceList)) {
                 traverseCatalogDbService(execution, sIRequest, resourceList, aaiResourceIds);
             }
-        } else if (("activateInstance".equalsIgnoreCase(requestAction)
-                || "unassignInstance".equalsIgnoreCase(requestAction)
-                || "deleteInstance".equalsIgnoreCase(requestAction)
+        } else if ((ACTIVATE_INSTANCE.equalsIgnoreCase(requestAction)
+                || UNASSIGN_INSTANCE.equalsIgnoreCase(requestAction) || DELETE_INSTANCE.equalsIgnoreCase(requestAction)
                 || requestAction.equalsIgnoreCase("activate" + FABRIC_CONFIGURATION))) {
             // SERVICE-MACRO-ACTIVATE, SERVICE-MACRO-UNASSIGN, and
             // SERVICE-MACRO-DELETE
             // Will never get user params with service, macro will have
             // to query the SI in AAI to find related instances.
             traverseAAIService(execution, resourceList, resourceId, aaiResourceIds);
-        } else if ("deactivateInstance".equalsIgnoreCase(requestAction)) {
+        } else if (DEACTIVATE_INSTANCE.equalsIgnoreCase(requestAction)) {
             resourceList.add(new Resource(WorkflowType.SERVICE, "", false));
         }
         return resourceList;

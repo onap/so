@@ -20,6 +20,8 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
+import java.util.Comparator;
+
 public class Resource {
 
     private String resourceId;
@@ -30,6 +32,9 @@ public class Resource {
     private String vnfCustomizationId;
     private String vfModuleCustomizationId;
     private String cvnfModuleCustomizationId;
+
+    public static final Comparator<Resource> sortBaseFirst = Comparator.comparingInt(x -> x.isBaseVfModule() ? 0 : 1);
+    public static final Comparator<Resource> sortBaseLast = Comparator.comparingInt(x -> x.isBaseVfModule() ? 1 : 0);
 
     public Resource(WorkflowType resourceType, String resourceId, boolean generated) {
         this.resourceId = resourceId;
