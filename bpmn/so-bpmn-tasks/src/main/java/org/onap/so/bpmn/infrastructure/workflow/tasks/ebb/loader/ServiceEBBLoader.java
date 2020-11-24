@@ -35,6 +35,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.ACTIVATE_INSTANCE;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.DEACTIVATE_INSTANCE;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.DELETE_INSTANCE;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.UNASSIGN_INSTANCE;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.WORKFLOW_ACTION_ERROR_MESSAGE;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.CREATE_INSTANCE;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.FABRIC_CONFIGURATION;
@@ -108,16 +112,15 @@ public class ServiceEBBLoader {
             if (!foundRelated(resourceList)) {
                 traverseCatalogDbService(execution, sIRequest, resourceList, aaiResourceIds);
             }
-        } else if (("activateInstance".equalsIgnoreCase(requestAction)
-                || "unassignInstance".equalsIgnoreCase(requestAction)
-                || "deleteInstance".equalsIgnoreCase(requestAction)
+        } else if ((ACTIVATE_INSTANCE.equalsIgnoreCase(requestAction)
+                || UNASSIGN_INSTANCE.equalsIgnoreCase(requestAction) || DELETE_INSTANCE.equalsIgnoreCase(requestAction)
                 || requestAction.equalsIgnoreCase("activate" + FABRIC_CONFIGURATION))) {
             // SERVICE-MACRO-ACTIVATE, SERVICE-MACRO-UNASSIGN, and
             // SERVICE-MACRO-DELETE
             // Will never get user params with service, macro will have
             // to query the SI in AAI to find related instances.
             traverseAAIService(execution, resourceList, resourceId, aaiResourceIds);
-        } else if ("deactivateInstance".equalsIgnoreCase(requestAction)) {
+        } else if (DEACTIVATE_INSTANCE.equalsIgnoreCase(requestAction)) {
             resourceList.add(new Resource(WorkflowType.SERVICE, "", false));
         }
         return resourceList;

@@ -32,16 +32,23 @@ public final class WorkflowActionConstants {
         throw new IllegalStateException("Utility class");
     }
 
-    public static final String USER_PARAM_SERVICE = "service";
-    public static final String CREATE_INSTANCE = "createInstance";
-    public static final String FABRIC_CONFIGURATION = "FabricConfiguration";
-    public static final String WORKFLOW_ACTION_ERROR_MESSAGE = "WorkflowActionErrorMessage";
-    static final String SERVICE = "Service";
-    static final String CONTROLLER = "Controller";
-    public static final String NETWORKCOLLECTION = "NetworkCollection";
-    static final String CONFIGURATION = "Configuration";
+    public static final String ACTIVATE_INSTANCE = "activateInstance";
     public static final String ASSIGNINSTANCE = "assignInstance";
-    static final String REPLACEINSTANCE = "replaceInstance";
-    static final String VOLUMEGROUP = "VolumeGroup";
-    static final String REPLACEINSTANCERETAINASSIGNMENTS = "replaceInstanceRetainAssignments";
+    public static final String CONFIGURATION = "Configuration";
+    public static final String CONTROLLER = "Controller";
+    public static final String CREATE_INSTANCE = "createInstance";
+    public static final String DEACTIVATE_INSTANCE = "deactivateInstance";
+    public static final String DELETE_INSTANCE = "deleteInstance";
+    public static final String FABRIC_CONFIGURATION = "FabricConfiguration";
+    public static final String NETWORKCOLLECTION = "NetworkCollection";
+    public static final String RECREATE_INSTANCE = "recreateInstance";
+    public static final String REPLACEINSTANCE = "replaceInstance";
+    public static final String REPLACEINSTANCERETAINASSIGNMENTS = "replaceInstanceRetainAssignments";
+    public static final String SERVICE = "Service";
+    public static final String UNASSIGN_INSTANCE = "unassignInstance";
+    public static final String UPDATE_INSTANCE = "updateInstance";
+    public static final String USER_PARAM_SERVICE = "service";
+    public static final String VOLUMEGROUP = "VolumeGroup";
+    public static final String WORKFLOW_ACTION_ERROR_MESSAGE = "WorkflowActionErrorMessage";
+
 }

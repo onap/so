@@ -29,10 +29,13 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.ASSIGNINSTANCE;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.CONTROLLER;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.CREATE_INSTANCE;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.DELETE_INSTANCE;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.FABRIC_CONFIGURATION;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.RECREATE_INSTANCE;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.REPLACEINSTANCE;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.REPLACEINSTANCERETAINASSIGNMENTS;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.SERVICE;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.UPDATE_INSTANCE;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.WORKFLOW_ACTION_ERROR_MESSAGE;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -279,14 +282,17 @@ public class WorkflowAction {
         List<Resource> resourceList = new ArrayList<>();
         List<Pair<WorkflowType, String>> aaiResourceIds = new ArrayList<>();
 
-        if (resourceType == WorkflowType.SERVICE) {
+        boolean isVNFCreateOrDelete = resourceType == WorkflowType.VNF
+                && (CREATE_INSTANCE.equalsIgnoreCase(requestAction) || DELETE_INSTANCE.equalsIgnoreCase(requestAction));
+
+        if (resourceType == WorkflowType.SERVICE || isVNFCreateOrDelete) {
             resourceList = serviceEBBLoader.getResourceListForService(sIRequest, requestAction, execution,
                     serviceInstanceId, resourceId, aaiResourceIds);
         } else if (resourceType == WorkflowType.VNF && (REPLACEINSTANCE.equalsIgnoreCase(requestAction)
-                || ("recreateInstance".equalsIgnoreCase(requestAction)))) {
+                || (RECREATE_INSTANCE.equalsIgnoreCase(requestAction)))) {
             vnfEBBLoader.traverseAAIVnf(execution, resourceList, workflowResourceIds.getServiceInstanceId(),
                     workflowResourceIds.getVnfId(), aaiResourceIds);
-        } else if (resourceType == WorkflowType.VNF && "updateInstance".equalsIgnoreCase(requestAction)) {
+        } else if (resourceType == WorkflowType.VNF && UPDATE_INSTANCE.equalsIgnoreCase(requestAction)) {
             vnfEBBLoader.customTraverseAAIVnf(execution, resourceList, workflowResourceIds.getServiceInstanceId(),
                     workflowResourceIds.getVnfId(), aaiResourceIds);
         } else {
