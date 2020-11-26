@@ -106,8 +106,8 @@ public class AAIRestClientImpl implements AAIRestClientI {
     }
 
     @Override
-    public Optional<ServiceInstance> getServiceInstanceById(String globalSubscriberId, String serviceType,
-            String serviceInstanceId) {
+    public Optional<ServiceInstance> getServiceInstanceById(String serviceInstanceId, String serviceType,
+            String globalSubscriberId) {
         Response response = new AAIResourcesClient().getFullResponse(
                 AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId)
                         .serviceSubscription(serviceType).serviceInstance(serviceInstanceId)));
@@ -115,7 +115,7 @@ public class AAIRestClientImpl implements AAIRestClientI {
     }
 
     @Override
-    public void updateServiceInstance(String globalSubscriberId, String serviceType, String serviceInstanceId,
+    public void updateServiceInstance(String serviceInstanceId, String serviceType, String globalSubscriberId,
             ServiceInstance serviceInstance) {
         try {
             new AAIResourcesClient().update(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
