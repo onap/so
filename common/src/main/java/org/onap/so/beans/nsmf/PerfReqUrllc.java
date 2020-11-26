@@ -21,118 +21,31 @@
 package org.onap.so.beans.nsmf;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Data;
 import java.io.Serializable;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Data
 public class PerfReqUrllc implements Serializable {
 
     private static final long serialVersionUID = 3133479142915485943L;
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-    private int e2eLatency;
-
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-    private int jitter;
-
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-    private int survivalTime;
-
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-    private float csAvailability;
-
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-    private float reliability;
+    private String survivalTime;
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private int expDataRate;
 
-    private String payloadSize;
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    private String transferIntervalTarget;
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-    private int trafficDensity;
+    private String msgSizeByte;
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-    private int connDensity;
+    private String csReliabilityMeanTime;
 
-    private String serviceAreaDimension;
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    private float csAvailabilityTarget;
 
-    public int getE2eLatency() {
-        return e2eLatency;
-    }
-
-    public void setE2eLatency(int e2eLatency) {
-        this.e2eLatency = e2eLatency;
-    }
-
-    public int getJitter() {
-        return jitter;
-    }
-
-    public void setJitter(int jitter) {
-        this.jitter = jitter;
-    }
-
-    public int getSurvivalTime() {
-        return survivalTime;
-    }
-
-    public void setSurvivalTime(int survivalTime) {
-        this.survivalTime = survivalTime;
-    }
-
-    public float getReliability() {
-        return reliability;
-    }
-
-    public void setReliability(float reliability) {
-        this.reliability = reliability;
-    }
-
-    public int getExpDataRate() {
-        return expDataRate;
-    }
-
-    public void setExpDataRate(int expDataRate) {
-        this.expDataRate = expDataRate;
-    }
-
-    public String getPayloadSize() {
-        return payloadSize;
-    }
-
-    public void setPayloadSize(String payloadSize) {
-        this.payloadSize = payloadSize;
-    }
-
-    public int getTrafficDensity() {
-        return trafficDensity;
-    }
-
-    public void setTrafficDensity(int trafficDensity) {
-        this.trafficDensity = trafficDensity;
-    }
-
-    public int getConnDensity() {
-        return connDensity;
-    }
-
-    public void setConnDensity(int connDensity) {
-        this.connDensity = connDensity;
-    }
-
-    public String getServiceAreaDimension() {
-        return serviceAreaDimension;
-    }
-
-    public void setServiceAreaDimension(String serviceAreaDimension) {
-        this.serviceAreaDimension = serviceAreaDimension;
-    }
-
-    public float getCsAvailability() {
-        return csAvailability;
-    }
-
-    public void setCsAvailability(float csAvailability) {
-        this.csAvailability = csAvailability;
-    }
 }
