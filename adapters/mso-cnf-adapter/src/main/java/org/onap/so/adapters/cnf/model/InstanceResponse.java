@@ -44,6 +44,10 @@ public class InstanceResponse extends Response {
         super(errorMsg);
     }
 
+    public InstanceResponse() {
+        super();
+    }
+
     @JsonProperty("id")
     public String getId() {
         return id;

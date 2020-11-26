@@ -28,6 +28,10 @@ public class Response {
         this.errorMsg = errorMsg;
     }
 
+    public Response() {
+
+    }
+
     public String getErrorMsg() {
         return errorMsg;
     }
