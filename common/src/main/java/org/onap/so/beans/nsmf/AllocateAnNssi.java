@@ -47,5 +47,5 @@ public class AllocateAnNssi implements Serializable {
 
     private NsiInfo nsiInfo;
 
-    private Map<String, Object> endPoint;
+    private EndPoint endPoint;
 }
