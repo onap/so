@@ -192,8 +192,9 @@ class RequestDBUtil {
                                 <ns:updateResourceOperationStatus xmlns:ns="http://org.onap.so/requestsdb">
                                     <serviceId>${MsoUtils.xmlEscape(serviceId)}</serviceId>
                                     <operationId>${MsoUtils.xmlEscape(operationId)}</operationId>
-									<resourceTemplateUUIDs>${MsoUtils.xmlEscape(resourceTemplateUUID)}</resourceTemplateUUIDs>
+									<resourceTemplateUUID>${MsoUtils.xmlEscape(resourceTemplateUUID)}</resourceTemplateUUID>
                                     <operationType>${MsoUtils.xmlEscape(operType)}</operationType>
+                                    <resourceInstanceID>${MsoUtils.xmlEscape(resourceInstanceID)}</resourceInstanceID>
                                     <jobId>${MsoUtils.xmlEscape(jobId)}</jobId>
                                     <status>${MsoUtils.xmlEscape(status)}</status>
                                     <progress>${MsoUtils.xmlEscape(progress)}</progress>
