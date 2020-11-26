@@ -52,4 +52,6 @@ public class SliceTaskInfo<T> implements Serializable {
 
     private SubnetType subnetType;
 
+    private String endPointId;
+
 }
