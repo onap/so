@@ -45,6 +45,6 @@ public interface AAIRestClientI {
     Optional<ServiceInstance> getServiceInstanceById(String serviceInstanceId, String serviceType,
             String globalSubscriberId);
 
-    void updateServiceInstance(String globalSubscriberId, String serviceType, String serviceInstanceId,
+    void updateServiceInstance(String serviceInstanceId, String serviceType, String globalSubscriberId,
             ServiceInstance serviceInstance);
 }
