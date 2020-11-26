@@ -66,19 +66,20 @@ public abstract class InternalNssmfManager extends BaseNssmfManager {
     }
 
     private RestResponse responseDBStatus(ResourceOperationStatus status) throws ApplicationException {
+        JobStatusResponse statusResponse = new JobStatusResponse();
         ResponseDescriptor descriptor = new ResponseDescriptor();
         if (status == null) {
             descriptor.setProgress(0);
             descriptor.setStatus(PROCESSING.name());
             descriptor.setStatusDescription("Initiating Nssi Instance");
-            return restUtil.createResponse(200, marshal(descriptor));
+        } else {
+            descriptor.setStatus(status.getStatus());
+            descriptor.setStatusDescription(status.getStatusDescription());
+            descriptor.setProgress(Integer.parseInt(status.getProgress()));
+            descriptor.setNssiId(status.getResourceInstanceID());
         }
-        descriptor.setStatus(status.getStatus());
-        descriptor.setStatusDescription(status.getStatusDescription());
-        descriptor.setProgress(Integer.parseInt(status.getProgress()));
-        descriptor.setNssiId(status.getResourceInstanceID());
-        // descriptor.setResponseId(status.getOperationId());
-        return restUtil.createResponse(200, marshal(descriptor));
+        statusResponse.setResponseDescriptor(descriptor);
+        return restUtil.createResponse(200, marshal(statusResponse));
     }
 
     @Override
