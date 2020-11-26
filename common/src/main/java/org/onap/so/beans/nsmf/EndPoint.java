@@ -20,17 +20,29 @@
 package org.onap.so.beans.nsmf;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
 import java.io.Serializable;
-import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class EndPoint implements Serializable {
 
     private static final long serialVersionUID = 2479795890807020491L;
 
-    private String nodeId;
+    @JsonProperty(value = "ipAddress")
+    private String ipAddress;
 
-    private Map<String, Object> additionalInfo;
+    @JsonProperty(value = "logicInterfaceId")
+    private String logicInterfaceId;
+
+    @JsonProperty(value = "nextHopInfo")
+    private String nextHopInfo;
 }
