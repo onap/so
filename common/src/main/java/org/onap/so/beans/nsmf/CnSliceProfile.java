@@ -37,14 +37,14 @@ public class CnSliceProfile implements Serializable {
 
     private String sliceProfileId;
 
-    @JsonProperty(value = "plmnIdList", required = true)
-    private List<String> plmnIdList;
+    @JsonProperty(value = "pLMNIdList", required = true)
+    private List<String> pLMNIdList;
 
     @JsonProperty(value = "perfReq", required = true)
     private PerfReq perfReq;
 
     @JsonProperty(value = "maxNumberofUEs")
-    private int maxNumberofUEs;
+    private int maxNumberOfUEs;
 
     @JsonProperty(value = "coverageAreaTAList")
     private List<String> coverageAreaTAList;
@@ -57,4 +57,43 @@ public class CnSliceProfile implements Serializable {
 
     @JsonProperty(value = "resourceSharingLevel")
     private ResourceSharingLevel resourceSharingLevel;
+
+    @JsonProperty(value = "activityFactor")
+    private int activityFactor;
+
+    @JsonProperty(value = "areaTrafficCapDL")
+    private int areaTrafficCapDL;
+
+    @JsonProperty(value = "areaTrafficCapUL")
+    private int areaTrafficCapUL;
+
+    @JsonProperty(value = "csAvailabilityTarget")
+    private float csAvailabilityTarget;
+
+    @JsonProperty(value = "cSReliabilityMeanTime")
+    private String csReliabilityMeanTime;
+
+    @JsonProperty(value = "expDataRate")
+    private int expDataRate;
+
+    @JsonProperty(value = "expDataRateDL")
+    private int expDataRateDL;
+
+    @JsonProperty(value = "expDataRateUL")
+    private int expDataRateUL;
+
+    @JsonProperty(value = "maxNumberofPDUSession")
+    private int maxNumberOfPDUSession;
+
+    @JsonProperty(value = "msgSizeByte")
+    private String msgSizeByte;
+
+    @JsonProperty(value = "overallUserDensity")
+    private int overallUserDensity;
+
+    @JsonProperty(value = "survivalTime")
+    private String survivalTime;
+
+    @JsonProperty(value = "transferIntervalTarget")
+    private String transferIntervalTarget;
 }

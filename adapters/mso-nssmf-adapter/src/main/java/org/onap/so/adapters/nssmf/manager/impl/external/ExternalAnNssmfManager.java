@@ -27,11 +27,7 @@ import org.onap.so.adapters.nssmf.enums.SelectionType;
 import org.onap.so.adapters.nssmf.exceptions.ApplicationException;
 import org.onap.so.adapters.nssmf.manager.impl.ExternalNssmfManager;
 import org.onap.so.adapters.nssmf.util.NssmfAdapterUtil;
-import org.onap.so.beans.nsmf.DeAllocateNssi;
-import org.onap.so.beans.nsmf.NssiResponse;
-import org.onap.so.beans.nsmf.NssmfAdapterNBIRequest;
-import org.onap.so.beans.nsmf.ResponseDescriptor;
-import org.onap.so.beans.nsmf.JobStatusResponse;
+import org.onap.so.beans.nsmf.*;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,11 +38,17 @@ import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.unMarshal;
 
 public class ExternalAnNssmfManager extends ExternalNssmfManager {
 
-    private Map<String, String> bodyParams = new HashMap<>(); // request body params
+    /**
+     * request body params
+     */
+    private Map<String, String> bodyParams = new HashMap<>();
 
     @Override
     protected String doWrapExtAllocateReqBody(NssmfAdapterNBIRequest nbiRequest) throws ApplicationException {
         Map<String, Object> request = new HashMap<>();
+        AnSliceProfile sliceProfile = nbiRequest.getAllocateAnNssi().getSliceProfile();
+        // in this version, the maxNumberOfPDUSession should not serialize, so set 0
+        sliceProfile.setMaxNumberOfPDUSession(0);
         request.put("attributeListIn", nbiRequest.getAllocateAnNssi().getSliceProfile());
         return marshal(request);
     }
