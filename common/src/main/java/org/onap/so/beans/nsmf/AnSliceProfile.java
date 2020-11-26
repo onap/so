@@ -20,6 +20,7 @@
 
 package org.onap.so.beans.nsmf;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -51,7 +52,7 @@ public class AnSliceProfile implements Serializable {
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     @JsonProperty(value = "maxNumberofUEs")
-    private long maxNumberofUEs;
+    private int maxNumberOfUEs;
 
     @JsonProperty(value = "coverageAreaTAList")
     private List<Integer> coverageAreaTAList;
@@ -61,9 +62,13 @@ public class AnSliceProfile implements Serializable {
     private int latency;
 
     @JsonProperty(value = "uEMobilityLevel")
-    private UeMobilityLevel uEMobilityLevel;
+    private UeMobilityLevel ueMobilityLevel;
 
     @JsonProperty(value = "resourceSharingLevel")
     private ResourceSharingLevel resourceSharingLevel;
+
+     @JsonProperty(value = "maxNumberofPDUSession")
+     @JsonIgnore
+     private int maxNumberOfPDUSession;
 
 }

@@ -31,7 +31,6 @@ public class ResponseDescriptor implements Serializable {
 
     private static final long serialVersionUID = 6330527958947215910L;
 
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private int progress;
 
     private String status;

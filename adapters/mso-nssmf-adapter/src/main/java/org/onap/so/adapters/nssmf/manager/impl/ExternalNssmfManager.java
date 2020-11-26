@@ -235,6 +235,8 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
         status.setOperType(actionType.toString());
         status.setProgress("0");
 
+        response.setStatus(STARTED.toString());
+        restResponse.setResponseContent(marshal(response));
         updateDbStatus(status, restResponse.getStatus(), STARTED, NssmfAdapterUtil.getStatusDesc(actionType));
     }
 }
