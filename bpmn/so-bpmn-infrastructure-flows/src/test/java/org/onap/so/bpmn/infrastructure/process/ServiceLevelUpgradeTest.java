@@ -205,7 +205,7 @@ public class ServiceLevelUpgradeTest extends BaseBPMNTest {
     private void mockAai() {
 
         final String sIUrl =
-                "/business/customers/customer/5df8b6de-2083-11e7-93ae-92361f002676/service-subscriptions/service-subscription/pNF/service-instances/service-instance/ETE_Customer_807c7a02-249c-4db8-9fa9-bee973fe08ce";
+                "/business/customers/customer/ETE_Customer_807c7a02-249c-4db8-9fa9-bee973fe08ce/service-subscriptions/service-subscription/pNF/service-instances/service-instance/5df8b6de-2083-11e7-93ae-92361f002676";
         final String aaiPnfDemoEntry = FileUtil.readResourceFile("response/PnfDemo_aai.json");
         final String aaiPnfDemo1Entry = FileUtil.readResourceFile("response/PnfDemo1_aai.json");
         final String aaiServiceInstanceEntry = FileUtil.readResourceFile("response/Service_instance_aai.json");
