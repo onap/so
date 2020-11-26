@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0474hns" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.0.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0474hns" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.4.0">
   <bpmn:process id="GenericPnfSWUPDownload" name="GenericPnfSWUPDownload" isExecutable="true">
     <bpmn:startEvent id="download_StartEvent" name="Start Flow">
       <bpmn:outgoing>SequenceFlow_1fdclh0</bpmn:outgoing>
@@ -131,6 +131,7 @@ pnfSwUpgrade.prepareCompletion(execution)</bpmn:script>
     <bpmn:callActivity id="CallActivity_0tq2dug" name="Complete Process" calledElement="CompleteMsoProcess">
       <bpmn:extensionElements>
         <camunda:in source="PnfSwUpgrade_CompleteMsoProcessRequest" target="CompleteMsoProcessRequest" />
+        <camunda:in source="requestId" target="CMSO_request_id" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_183s0wo</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0mjjdia</bpmn:outgoing>
