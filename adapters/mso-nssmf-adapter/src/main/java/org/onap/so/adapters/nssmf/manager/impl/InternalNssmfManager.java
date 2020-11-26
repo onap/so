@@ -77,8 +77,10 @@ public abstract class InternalNssmfManager extends BaseNssmfManager {
         descriptor.setStatusDescription(status.getStatusDescription());
         descriptor.setProgress(Integer.parseInt(status.getProgress()));
         descriptor.setNssiId(status.getResourceInstanceID());
-        // descriptor.setResponseId(status.getOperationId());
-        return restUtil.createResponse(200, marshal(descriptor));
+        JobStatusResponse statusResponse = new JobStatusResponse();
+        statusResponse.setResponseDescriptor(descriptor);
+
+        return restUtil.createResponse(200, marshal(statusResponse));
     }
 
     @Override
