@@ -25,7 +25,9 @@ import lombok.Data;
 import lombok.ToString;
 import org.springframework.beans.BeanUtils;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Data
 @ToString
@@ -43,7 +45,7 @@ public class SliceProfileAdapter implements Serializable {
     private String pLMNIdList = "";
 
     @JsonProperty(value = "maxNumberofUEs")
-    private long maxNumberofUEs;
+    private int maxNumberOfUEs;
 
     @JsonProperty(value = "coverageAreaTAList")
     private String coverageAreaTAList = "";
@@ -52,22 +54,67 @@ public class SliceProfileAdapter implements Serializable {
     private int latency;
 
     @JsonProperty(value = "uEMobilityLevel")
-    private String uEMobilityLevel;
+    private String ueMobilityLevel;
 
     @JsonProperty(value = "resourceSharingLevel")
     private String resourceSharingLevel;
 
     @JsonProperty(value = "maxBandwidth")
-    private String bandwidth;
+    private int maxBandwidth;
 
     @JsonProperty(value = "sST")
     private String sST;
 
     @JsonProperty(value = "activityFactor")
-    private String activityFactor;
+    private int activityFactor;
 
     @JsonProperty(value = "survivalTime")
     private String survivalTime;
+
+    @JsonProperty(value = "expDataRateUL")
+    private int expDataRateUL;
+
+    @JsonProperty(value = "expDataRateDL")
+    private int expDataRateDL;
+
+    @JsonProperty(value = "areaTrafficCapUL")
+    private int areaTrafficCapUL;
+
+    @JsonProperty(value = "areaTrafficCapDL")
+    private int areaTrafficCapDL;
+
+    @JsonProperty(value = "jitter")
+    private int jitter;
+
+    @JsonProperty(value = "csAvailabilityTarget")
+    private float csAvailabilityTarget;
+
+    @JsonProperty(value = "expDataRate")
+    private int expDataRate;
+
+    @JsonProperty(value = "maxNumberofPDUSession")
+    private int maxNumberOfPDUSession;
+
+    @JsonProperty(value = "overallUserDensity")
+    private int overallUserDensity;
+
+    @JsonProperty(value = "cSReliabilityMeanTime")
+    private String csReliabilityMeanTime;
+
+    @JsonProperty(value = "msgSizeByte")
+    private String msgSizeByte;
+
+    @JsonProperty(value = "transferIntervalTarget")
+    private String transferIntervalTarget;
+
+    @JsonProperty(value = "ipAddress")
+    private String ipAddress;
+
+    @JsonProperty(value = "logicInterfaceId")
+    private String logicInterfaceId;
+
+    @JsonProperty(value = "nextHopInfo")
+    private String nextHopInfo;
 
     public AnSliceProfile trans2AnProfile() {
         AnSliceProfile anSliceProfile = new AnSliceProfile();
@@ -81,16 +128,16 @@ public class SliceProfileAdapter implements Serializable {
             areasRes[i] = str2Code(areas[i]);
         }
         anSliceProfile.setCoverageAreaTAList(Arrays.asList(areasRes));
-        anSliceProfile.setUEMobilityLevel(UeMobilityLevel.fromString(this.uEMobilityLevel));
+
+        anSliceProfile.setUeMobilityLevel(UeMobilityLevel.fromString(this.ueMobilityLevel));
         anSliceProfile.setResourceSharingLevel(ResourceSharingLevel.fromString(this.resourceSharingLevel));
-        PerfReq perfReq = new PerfReq();
-        // todo
-        anSliceProfile.setPerfReq(perfReq);
+        anSliceProfile.setPerfReq(generatePerfReq());
+
         return anSliceProfile;
     }
 
     private Integer str2Code(String area) {
-        return Math.abs(area.hashCode() >> 16);
+        return area.hashCode() >> 16;
     }
 
     public CnSliceProfile trans2CnProfile() {
@@ -98,13 +145,29 @@ public class SliceProfileAdapter implements Serializable {
         BeanUtils.copyProperties(this, cnSliceProfile);
         cnSliceProfile.setSnssaiList(Arrays.asList(this.sNSSAIList.split("\\|")));
         cnSliceProfile.setCoverageAreaTAList(Arrays.asList(this.coverageAreaTAList.split("\\|")));
-        cnSliceProfile.setPlmnIdList(Arrays.asList(this.pLMNIdList.split("\\|")));
+        cnSliceProfile.setPLMNIdList(Arrays.asList(this.pLMNIdList.split("\\|")));
         cnSliceProfile.setResourceSharingLevel(ResourceSharingLevel.fromString(this.resourceSharingLevel));
-        cnSliceProfile.setUeMobilityLevel(UeMobilityLevel.fromString(this.uEMobilityLevel));
-        PerfReq perfReq = new PerfReq();
-        // todo
-        cnSliceProfile.setPerfReq(perfReq);
+
+        cnSliceProfile.setPerfReq(generatePerfReq());
         return cnSliceProfile;
+    }
+
+    private PerfReq generatePerfReq() {
+        PerfReq perfReq = new PerfReq();
+        if("embb".equalsIgnoreCase(sST)){
+            List<PerfReqEmbb> perfReqEmbbs = new ArrayList<>();
+            PerfReqEmbb perfReqEmbb = new PerfReqEmbb();
+            BeanUtils.copyProperties(this, perfReqEmbb);
+            perfReqEmbbs.add(perfReqEmbb);
+            perfReq.setPerfReqEmbbList(perfReqEmbbs);
+        } else if ("ullc".equalsIgnoreCase(sST)){
+            List<PerfReqUrllc> perfReqUrllcs = new ArrayList<>();
+            PerfReqUrllc perfReqUrllc = new PerfReqUrllc();
+            BeanUtils.copyProperties(this, perfReqUrllc);
+            perfReqUrllcs.add(perfReqUrllc);
+            perfReq.setPerfReqUrllcList(perfReqUrllcs);
+        }
+        return perfReq;
     }
 
     public TnSliceProfile trans2TnProfile() {

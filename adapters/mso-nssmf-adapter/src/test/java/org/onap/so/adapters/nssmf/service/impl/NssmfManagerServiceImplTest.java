@@ -204,9 +204,9 @@ public class NssmfManagerServiceImplTest {
         taList.add("3");
         sP.setSnssaiList(sns);
         sP.setSliceProfileId("ab9af40f13f721b5f13539d87484098");
-        sP.setPlmnIdList(plmn);
+        sP.setPLMNIdList(plmn);
         sP.setPerfReq(perfReq);
-        sP.setMaxNumberofUEs(200);
+        sP.setMaxNumberOfUEs(200);
         sP.setCoverageAreaTAList(taList);
         sP.setLatency(6);
         sP.setResourceSharingLevel(NON_SHARED);
