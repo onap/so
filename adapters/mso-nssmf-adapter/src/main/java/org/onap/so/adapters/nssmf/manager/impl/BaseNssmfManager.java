@@ -173,8 +173,6 @@ public abstract class BaseNssmfManager implements NssmfManager {
 
         logger.info("Query operations: nsiId = [{}], jobId = [{}], serviceUuid = [{}]", nsiId, jobId, serviceUuid);
 
-        ResourceOperationStatus status = new ResourceOperationStatus(nsiId, jobId, serviceUuid);
-
         List<ResourceOperationStatus> resourceOperationStatuses =
                 repository.findByServiceIdAndOperationId(nsiId, jobId);
 
