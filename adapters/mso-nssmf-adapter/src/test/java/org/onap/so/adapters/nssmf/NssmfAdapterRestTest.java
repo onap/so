@@ -78,6 +78,7 @@ public class NssmfAdapterRestTest {
             + "    \"networkType\" : \"cn\"\n" + "  },\n" + "  \"allocateCnNssi\" : {\n"
             + "    \"nssiId\" : \"NSST-C-001-HDBNJ-NSSMF-01-A-ZX\",\n" + "    \"nssiName\" : \"eMBB-001\",\n"
             + "    \"sliceProfile\" : {\n" + "      \"snssaiList\" : [ \"001-100001\" ],\n"
+            + "      \"maxNumberofPDUSession\" : 10,\n"
             + "      \"sliceProfileId\" : \"ab9af40f13f721b5f13539d87484098\",\n"
             + "      \"plmnIdList\" : [ \"460-00\", \"460-01\" ],\n" + "      \"perfReq\" : {\n"
             + "        \"perfReqEmbbList\" : [ {\n" + "          \"activityFactor\" : 50\n" + "        } ]\n"
@@ -315,12 +316,13 @@ public class NssmfAdapterRestTest {
         taList.add("3");
         sP.setSnssaiList(sns);
         sP.setSliceProfileId("ab9af40f13f721b5f13539d87484098");
-        sP.setPlmnIdList(plmn);
+        sP.setPLMNIdList(plmn);
         sP.setPerfReq(perfReq);
-        sP.setMaxNumberofUEs(200);
+        sP.setMaxNumberOfUEs(200);
         sP.setCoverageAreaTAList(taList);
         sP.setLatency(6);
         sP.setResourceSharingLevel(NON_SHARED);
+        sP.setMaxNumberOfPDUSession(10);
         NsiInfo nsiInfo = new NsiInfo();
         nsiInfo.setNsiId("NSI-M-001-HDBNJ-NSMF-01-A-ZX");
         nsiInfo.setNsiName("eMBB-001");
