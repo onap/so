@@ -119,8 +119,9 @@ class DoAllocateNSSI extends AbstractServiceTaskProcessor {
 
         SliceTaskInfo sliceTaskInfo = execution.getVariable("sliceTaskInfo") as SliceTaskInfo
         sliceTaskInfo.progress = response.getProgress()
-        sliceTaskInfo.status = response.getStatus()
+        sliceTaskInfo.status = response.getStatus().toLowerCase()
         sliceTaskInfo.statusDescription = response.getStatusDescription()
+        sliceTaskInfo.endPointId = response.getEndPointId()
         updateNssiResult(sliceParams, subnetType, sliceTaskInfo)
 
         String paramJson = sliceParams.convertToJson()
