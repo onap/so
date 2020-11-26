@@ -149,16 +149,17 @@ class AllocateSliceSubnet extends AbstractServiceTaskProcessor {
     def prepareInitOperationStatus = { DelegateExecution execution ->
         logger.debug(Prefix + "prepareInitOperationStatus Start")
 
-        String serviceId = execution.getVariable("dummyServiceId")
+        String modelUuid = execution.getVariable("modelUuid")
         String jobId = execution.getVariable("jobId")
         String nsiId = execution.getVariable("nsiId")
-        logger.debug("Generated new job for Service Instance serviceId:" + serviceId + " jobId:" + jobId)
+        logger.debug("Generated new job for Service Instance serviceId:" + modelUuid + " jobId:" + jobId)
 
         ResourceOperationStatus initStatus = new ResourceOperationStatus()
-        initStatus.setServiceId(serviceId)
-        initStatus.setOperationId(jobId)
-        initStatus.setResourceTemplateUUID(nsiId)
-        initStatus.setOperType("Allocate")
+        initStatus.setServiceId(nsiId)  // set nsiId to this field
+        initStatus.setOperationId(jobId)    // set jobId to this field
+        initStatus.setResourceTemplateUUID(modelUuid)   // set modelUuid to this field
+        initStatus.setOperType("ALLOCATE")
+        //initStatus.setResourceInstanceID() // set nssiId to this field
         requestDBUtil.prepareInitResourceOperationStatus(execution, initStatus)
 
         logger.debug(Prefix + "prepareInitOperationStatus Exit")
