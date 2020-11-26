@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2a0d3865_cb1f7ba7",
+        "filename": "adapters/mso-nssmf-adapter/src/main/java/org/onap/so/adapters/nssmf/manager/impl/external/ExternalAnNssmfManager.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 4801
+      },
+      "writtenOn": "2020-11-26T07:21:20Z",
+      "side": 1,
+      "message": "Currently, the External RAN NSSMF do not need this new parameter, my suggestion is to remove it in Guilin release.\nThe inheritence of management clase (NSSMF adapter) is not aligned with that of managed model (SliceProfile), i suggest we should re-factor the class definition next release.",
+      "range": {
+        "startLine": 49,
+        "startChar": 8,
+        "endLine": 51,
+        "endChar": 49
+      },
+      "revId": "6c7e96081717d5e6f232690d5ce9e78306dc7f07",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a772dc32_99ca8560",
+        "filename": "common/src/main/java/org/onap/so/beans/nsmf/AnSliceProfile.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 4801
+      },
+      "writtenOn": "2020-11-26T07:21:20Z",
+      "side": 1,
+      "message": "It is NOT aligned with the reference at the begining. I knew the SDO mentioned it in the service profile, but it is not stable in slice profile level. Most importantly, it is labled with \u0027Edtor\u0027s note\u0027 and \u0027FFS\u0027. My suggestion is to remove it in Guilin and discuss it after is is finalized in 3GPP.",
+      "range": {
+        "startLine": 70,
+        "startChar": 4,
+        "endLine": 72,
+        "endChar": 38
+      },
+      "revId": "6c7e96081717d5e6f232690d5ce9e78306dc7f07",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
