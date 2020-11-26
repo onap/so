@@ -321,17 +321,17 @@ class TnAllocateNssi extends AbstractServiceTaskProcessor {
                                 String status,
                                 String progress,
                                 String statusDescription) {
-        String serviceId = execution.getVariable("dummyServiceId")
+        String modelUuid = execution.getVariable("modelUuid")
         String ssInstanceId = execution.getVariable("sliceServiceInstanceId")
         String jobId = execution.getVariable("jobId")
         String nsiId = execution.getVariable("nsiId")
 
         ResourceOperationStatus roStatus = new ResourceOperationStatus()
-        roStatus.setServiceId(serviceId)
+        roStatus.setServiceId(nsiId)
         roStatus.setOperationId(jobId)
-        roStatus.setResourceTemplateUUID(nsiId)
+        roStatus.setResourceTemplateUUID(modelUuid)
         roStatus.setResourceInstanceID(ssInstanceId)
-        roStatus.setOperType("Allocate")
+        roStatus.setOperType("ALLOCATE")
         roStatus.setProgress(progress)
         roStatus.setStatus(status)
         roStatus.setStatusDescription(statusDescription)
