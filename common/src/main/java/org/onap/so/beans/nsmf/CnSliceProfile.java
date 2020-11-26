@@ -38,13 +38,13 @@ public class CnSliceProfile implements Serializable {
     private String sliceProfileId;
 
     @JsonProperty(value = "plmnIdList", required = true)
-    private List<String> plmnIdList;
+    private List<String> pLMNIdList;
 
     @JsonProperty(value = "perfReq", required = true)
     private PerfReq perfReq;
 
     @JsonProperty(value = "maxNumberofUEs")
-    private int maxNumberofUEs;
+    private int maxNumberOfUEs;
 
     @JsonProperty(value = "coverageAreaTAList")
     private List<String> coverageAreaTAList;
@@ -57,4 +57,8 @@ public class CnSliceProfile implements Serializable {
 
     @JsonProperty(value = "resourceSharingLevel")
     private ResourceSharingLevel resourceSharingLevel;
+
+    @JsonProperty(value = "maxNumberofPDUSession")
+    private int maxNumberOfPDUSession;
+
 }

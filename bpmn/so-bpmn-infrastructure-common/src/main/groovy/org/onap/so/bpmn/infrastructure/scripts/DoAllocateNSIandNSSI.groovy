@@ -20,8 +20,11 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.so.beans.nsmf.ConnectionLink
+import org.onap.so.beans.nsmf.EndPoint
 import org.onap.so.beans.nsmf.NsiInfo
 import org.onap.so.beans.nsmf.SliceProfileAdapter
+import org.onap.so.beans.nsmf.TransportSliceNetwork
 import org.onap.so.beans.nsmf.oof.SubnetType
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import javax.ws.rs.NotFoundException
@@ -328,6 +331,12 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         NsiInfo nsiInfo = new NsiInfo()
         nsiInfo.nsiId = sliceParams.suggestNsiId
         allocateAnNssi.nsiInfo = nsiInfo
+        //endPoint
+        EndPoint endPoint = new EndPoint()
+        endPoint.setIpAddress(sliceTaskInfo.sliceProfile.ipAddress)
+        endPoint.setLogicInterfaceId(sliceTaskInfo.sliceProfile.logicInterfaceId)
+        endPoint.setNextHopInfo(sliceTaskInfo.sliceProfile.nextHopInfo)
+        allocateAnNssi.setEndPoint(endPoint)
 
         EsrInfo esrInfo = new EsrInfo()
         //todo: vendor and network
@@ -442,6 +451,12 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         NsiInfo nsiInfo = new NsiInfo()
         nsiInfo.nsiId = sliceParams.suggestNsiId
         allocateCnNssi.nsiInfo = nsiInfo
+        // endPoint
+        EndPoint endPoint = new EndPoint()
+        endPoint.setIpAddress(sliceTaskInfo.sliceProfile.ipAddress)
+        endPoint.setLogicInterfaceId(sliceTaskInfo.sliceProfile.logicInterfaceId)
+        endPoint.setNextHopInfo(sliceTaskInfo.sliceProfile.nextHopInfo)
+        allocateCnNssi.setEndPoint(endPoint)
 
         EsrInfo esrInfo = new EsrInfo()
         //todo: vendor and network
@@ -552,8 +567,18 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         AllocateTnNssi allocateTnNssi = new AllocateTnNssi()
         //todo: AllocateTnNssi
-        //todo: endpointId -> set into tn
-        allocateTnNssi.setTransportSliceNetworks()
+        //todo: endPointId -> set into tn
+        List<TransportSliceNetwork> transportSliceNetworks = new ArrayList<>()
+        TransportSliceNetwork transportSliceNetwork = new TransportSliceNetwork()
+        List<ConnectionLink> connectionLinks = new ArrayList<>()
+        ConnectionLink connectionLink = new ConnectionLink()
+        connectionLink.setTransportEndpointA(sliceParams.anSliceTaskInfo.endPointId)
+        connectionLink.setTransportEndpointB(sliceParams.cnSliceTaskInfo.endPointId)
+        connectionLinks.add(connectionLink)
+        transportSliceNetwork.setConnectionLinks(connectionLinks)
+        transportSliceNetworks.add(transportSliceNetwork)
+        allocateTnNssi.setTransportSliceNetworks(transportSliceNetworks)
+
         allocateTnNssi.setNetworkSliceInfos()
         allocateTnNssi.setSliceProfile(sliceTaskInfo.sliceProfile.trans2TnProfile())
         NsiInfo nsiInfo = new NsiInfo()
@@ -607,7 +632,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         String sliceProfileInstanceId = sliceParams.anSliceTaskInfo.sliceInstanceId
         String serviceProfileInstanceId = sliceParams.serviceId
         //nsi id
-        //todo: aai -> nssi -> relationship -> endpointId -> set into tn
+        //todo: aai -> nssi -> relationship -> endPointId -> set into tn
         String endPointId = getEndpointIdFromAAI(execution, nssiId)
         execution.setVariable("endPointIdAn", endPointId)
 
@@ -641,7 +666,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         String sliceProfileInstanceId = sliceParams.cnSliceTaskInfo.sliceInstanceId
         String serviceProfileInstanceId = sliceParams.serviceId
         //nsi id
-        //todo: aai -> nssi -> relationship -> endpointId -> set into tn
+        //todo: aai -> nssi -> relationship -> endPointId -> set into tn
         String endPointId = getEndpointIdFromAAI(execution, nssiId)
         execution.setVariable("endPointIdCn", endPointId)
 
@@ -685,7 +710,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
             } else {
                 ServiceInstance nssiInstance = si.get()
-                //todo: handle relationship and return endpointId
+                //todo: handle relationship and return endPointId
                 if (nssiInstance.relationshipList == null) {
                     String msg = "relationshipList of " + nssiId + " is null"
                     logger.debug(msg)

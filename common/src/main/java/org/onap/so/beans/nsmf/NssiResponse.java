@@ -21,9 +21,11 @@
 package org.onap.so.beans.nsmf;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Data;
 import java.io.Serializable;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Data
 public class NssiResponse implements Serializable {
 
     private static final long serialVersionUID = 2723440188640857903L;
@@ -32,19 +34,5 @@ public class NssiResponse implements Serializable {
 
     private String jobId;
 
-    public String getNssiId() {
-        return nssiId;
-    }
-
-    public void setNssiId(String nssiId) {
-        this.nssiId = nssiId;
-    }
-
-    public String getJobId() {
-        return jobId;
-    }
-
-    public void setJobId(String jobId) {
-        this.jobId = jobId;
-    }
+    private String status;
 }
