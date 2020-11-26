@@ -35,14 +35,17 @@ public class TnSliceProfile implements Serializable {
     private String sliceProfileId;
 
     @JsonProperty(value = "maxBandwidth")
-    private String bandwidth;
+    private int maxBandwidth;
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private int latency;
 
-    @JsonProperty(value = "sNSSAIList", required = true)
+    @JsonProperty(value = "snssaiList", required = true)
     private List<String> sNSSAIList;
 
-    @JsonProperty(value = "pLMNIdList", required = true)
+    @JsonProperty(value = "plmnIdList", required = true)
     private List<String> pLMNIdList;
+
+    @JsonProperty(value = "jitter")
+    private int jitter;
 }
