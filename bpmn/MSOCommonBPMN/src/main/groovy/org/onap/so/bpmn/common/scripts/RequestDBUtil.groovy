@@ -144,7 +144,7 @@ class RequestDBUtil {
                                 <ns:initResourceOperationStatus xmlns:ns="http://org.onap.so/requestsdb">
                                     <serviceId>${MsoUtils.xmlEscape(serviceId)}</serviceId>
                                     <operationId>${MsoUtils.xmlEscape(operationId)}</operationId>
-                                    <operationType>${MsoUtils.xmlEscape(operType)}</operationType>
+                                    <operType>${MsoUtils.xmlEscape(operType)}</operType>
                                     <resourceTemplateUUIDs>${MsoUtils.xmlEscape(resourceTemplateUUID)}</resourceTemplateUUIDs>
                                 </ns:initResourceOperationStatus>
                             </soapenv:Body>
@@ -192,8 +192,9 @@ class RequestDBUtil {
                                 <ns:updateResourceOperationStatus xmlns:ns="http://org.onap.so/requestsdb">
                                     <serviceId>${MsoUtils.xmlEscape(serviceId)}</serviceId>
                                     <operationId>${MsoUtils.xmlEscape(operationId)}</operationId>
-									<resourceTemplateUUIDs>${MsoUtils.xmlEscape(resourceTemplateUUID)}</resourceTemplateUUIDs>
-                                    <operationType>${MsoUtils.xmlEscape(operType)}</operationType>
+									<resourceTemplateUUID>${MsoUtils.xmlEscape(resourceTemplateUUID)}</resourceTemplateUUID>
+                                    <operType>${MsoUtils.xmlEscape(operType)}</operType>
+                                    <resourceInstanceID>${MsoUtils.xmlEscape(resourceInstanceID)}</resourceInstanceID>
                                     <jobId>${MsoUtils.xmlEscape(jobId)}</jobId>
                                     <status>${MsoUtils.xmlEscape(status)}</status>
                                     <progress>${MsoUtils.xmlEscape(progress)}</progress>
