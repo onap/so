@@ -111,7 +111,7 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
             String sliceInstanceName = execution.getVariable("sliceServiceInstanceName")
             ss.setServiceInstanceName(sliceInstanceName)
             ss.setServiceType(serviceType)
-            String serviceStatus = "allocated"
+            String serviceStatus = "activated"
             ss.setOrchestrationStatus(serviceStatus)
             String modelInvariantUuid = execution.getVariable("modelInvariantUuid")
             String modelUuid = execution.getVariable("modelUuid")
@@ -121,7 +121,8 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
             String serviceInstanceLocationid = tnNssmfUtils.getFirstPlmnIdFromSliceProfile(sliceProfileStr)
             ss.setServiceInstanceLocationId(serviceInstanceLocationid)
             String snssai = tnNssmfUtils.getFirstSnssaiFromSliceProfile(sliceProfileStr)
-            ss.setEnvironmentContext(snssai)
+            //ss.setEnvironmentContext(snssai)
+            ss.setEnvironmentContext("tn")
             ss.setServiceRole(serviceRole)
             AAIResourcesClient client = getAAIClient()
             AAIResourceUri uri =
