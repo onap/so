@@ -16,6 +16,24 @@
       "revId": "44d6c42628116b50c12dc2a193f820aebdf8d400",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9d250a8e_3f17d72b",
+        "filename": "adapters/mso-nssmf-adapter/src/main/java/org/onap/so/adapters/nssmf/manager/impl/external/ExternalAnNssmfManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 5302
+      },
+      "writtenOn": "2020-11-30T11:13:36Z",
+      "side": 1,
+      "message": "Thank you for your comments. Using one by one assignment to avoid missing some properties when one of classes is changed, because it will fail in compilation phase.",
+      "parentUuid": "21136500_918e0c23",
+      "revId": "44d6c42628116b50c12dc2a193f820aebdf8d400",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
