@@ -2227,28 +2227,6 @@ public class ToscaResourceInstaller {
                 .setModelCustomizationUUID(fabricMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
         cvnfcConfigurationCustomization.setModelInstanceName(fabricEntity.getName());
 
-        List<IEntityDetails> policyList =
-                getEntityDetails(toscaResourceStruct, EntityQuery.newBuilder("org.openecomp.policies.External"),
-                        TopologyTemplateQuery.newBuilder(SdcTypes.VF), true);
-
-
-        if (policyList != null) {
-            for (IEntityDetails policyEntity : policyList) {
-
-                for (String policyCvfcTarget : policyEntity.getTargets()) {
-
-                    if (policyCvfcTarget.equalsIgnoreCase(vfModuleMemberName)) {
-
-                        String policyType = getLeafPropertyValue(policyEntity, "type");
-
-                        if (policyType != null && policyType.equalsIgnoreCase("Fabric Policy")) {
-                            cvnfcConfigurationCustomization.setPolicyName(getLeafPropertyValue(policyEntity, "name"));
-                        }
-                    }
-                }
-            }
-        }
-
         cvnfcConfigurationCustomization.setConfigurationFunction(getLeafPropertyValue(fabricEntity, "function"));
         cvnfcConfigurationCustomization.setConfigurationRole(getLeafPropertyValue(fabricEntity, "role"));
         cvnfcConfigurationCustomization.setConfigurationType(getLeafPropertyValue(fabricEntity, "type"));
