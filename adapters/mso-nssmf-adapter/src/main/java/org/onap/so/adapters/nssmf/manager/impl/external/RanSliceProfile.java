@@ -18,32 +18,33 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.beans.nsmf;
+package org.onap.so.adapters.nssmf.manager.impl.external;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import lombok.ToString;
 import java.io.Serializable;
 import java.util.List;
+import org.onap.so.beans.nsmf.PerfReq;
+import org.onap.so.beans.nsmf.UeMobilityLevel;
+import org.onap.so.beans.nsmf.ResourceSharingLevel;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
-@ToString
-public class AnSliceProfile implements Serializable {
+public class RanSliceProfile implements Serializable {
     /*
-     * Reference 3GPP TS 28.541 V16.5.0.
+     * Reference 3GPP TS 28.541 V16.5.0, Section 6.3.4.
      */
 
-    private static final long serialVersionUID = -3057342171549542794L;
+    private static final long serialVersionUID = 172447042469370448L;
 
     @JsonProperty(value = "sliceProfileId", required = true)
     private String sliceProfileId;
 
-    @JsonProperty(value = "snssaiList", required = true)
+    @JsonProperty(value = "sNSSAIList", required = true)
     private List<String> sNSSAIList;
 
-    @JsonProperty(value = "plmnIdList", required = true)
+    @JsonProperty(value = "pLMNIdList", required = true)
     private List<String> pLMNIdList;
 
     @JsonProperty(value = "perfReq", required = true)
@@ -51,7 +52,7 @@ public class AnSliceProfile implements Serializable {
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     @JsonProperty(value = "maxNumberofUEs")
-    private int maxNumberOfUEs;
+    private long maxNumberOfUEs;
 
     @JsonProperty(value = "coverageAreaTAList")
     private List<Integer> coverageAreaTAList;

@@ -27,6 +27,7 @@ import org.onap.so.adapters.nssmf.enums.SelectionType;
 import org.onap.so.adapters.nssmf.exceptions.ApplicationException;
 import org.onap.so.adapters.nssmf.manager.impl.ExternalNssmfManager;
 import org.onap.so.adapters.nssmf.util.NssmfAdapterUtil;
+import org.onap.so.beans.nsmf.AnSliceProfile;
 import org.onap.so.beans.nsmf.DeAllocateNssi;
 import org.onap.so.beans.nsmf.NssiResponse;
 import org.onap.so.beans.nsmf.NssmfAdapterNBIRequest;
@@ -47,7 +48,21 @@ public class ExternalAnNssmfManager extends ExternalNssmfManager {
     @Override
     protected String doWrapExtAllocateReqBody(NssmfAdapterNBIRequest nbiRequest) throws ApplicationException {
         Map<String, Object> request = new HashMap<>();
-        request.put("attributeListIn", nbiRequest.getAllocateAnNssi().getSliceProfile());
+
+        AnSliceProfile anSliceProfile = nbiRequest.getAllocateAnNssi().getSliceProfile();
+
+        RanSliceProfile ranSliceProfile = new RanSliceProfile();
+        ranSliceProfile.setSliceProfileId(anSliceProfile.getSliceProfileId());
+        ranSliceProfile.setSNSSAIList(anSliceProfile.getSNSSAIList());
+        ranSliceProfile.setPLMNIdList(anSliceProfile.getPLMNIdList());
+        ranSliceProfile.setPerfReq(anSliceProfile.getPerfReq());
+        ranSliceProfile.setMaxNumberOfUEs(anSliceProfile.getMaxNumberOfUEs());
+        ranSliceProfile.setCoverageAreaTAList(anSliceProfile.getCoverageAreaTAList());
+        ranSliceProfile.setLatency(anSliceProfile.getLatency());
+        ranSliceProfile.setUeMobilityLevel(anSliceProfile.getUeMobilityLevel());
+        ranSliceProfile.setResourceSharingLevel(anSliceProfile.getResourceSharingLevel());
+
+        request.put("attributeListIn", ranSliceProfile);
         return marshal(request);
     }
 
