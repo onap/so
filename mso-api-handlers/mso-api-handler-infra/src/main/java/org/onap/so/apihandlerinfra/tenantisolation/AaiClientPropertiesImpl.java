@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import org.onap.aaiclient.client.aai.AAIProperties;
 import org.onap.aaiclient.client.aai.AAIVersion;
+import org.onap.so.client.CacheProperties;
 import org.onap.so.spring.SpringContextHelper;
 import org.springframework.context.ApplicationContext;
 
@@ -33,6 +34,8 @@ public class AaiClientPropertiesImpl implements AAIProperties {
     private String auth;
     private String key;
     private Long readTimeout;
+    private boolean enableCaching;
+    private Long cacheMaxAge;
 
     public AaiClientPropertiesImpl() {
 
@@ -41,6 +44,8 @@ public class AaiClientPropertiesImpl implements AAIProperties {
         this.auth = context.getEnvironment().getProperty("aai.auth");
         this.key = context.getEnvironment().getProperty("mso.msoKey");
         this.readTimeout = context.getEnvironment().getProperty("aai.readTimeout", Long.class, new Long(60000));
+        this.enableCaching = context.getEnvironment().getProperty("aai.caching.enabled", Boolean.class, false);
+        this.cacheMaxAge = context.getEnvironment().getProperty("aai.caching.maxAge", Long.class, 60000L);
     }
 
     @Override
@@ -71,5 +76,20 @@ public class AaiClientPropertiesImpl implements AAIProperties {
     @Override
     public Long getReadTimeout() {
         return this.readTimeout;
+    }
+
+    @Override
+    public boolean isCachingEnabled() {
+        return this.enableCaching;
+    }
+
+    @Override
+    public CacheProperties getCacheProperties() {
+        return new AAICacheProperties() {
+            @Override
+            public Long getMaxAge() {
+                return cacheMaxAge;
+            }
+        };
     }
 }

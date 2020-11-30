@@ -188,8 +188,20 @@ public abstract class RestClient {
         return APPLICATION_MERGE_PATCH_JSON;
     }
 
+    protected ClientBuilder getClientBuilder() {
+        ClientBuilder builder = ClientBuilder.newBuilder();
+        if (props.isCachingEnabled()) {
+            enableCaching(builder);
+        }
+        return builder.readTimeout(props.getReadTimeout(), TimeUnit.MILLISECONDS);
+    }
+
+    protected ClientBuilder enableCaching(ClientBuilder builder) {
+        return builder;
+    }
+
     protected Client getClient() {
-        return ClientBuilder.newBuilder().readTimeout(props.getReadTimeout(), TimeUnit.MILLISECONDS).build();
+        return getClientBuilder().build();
     }
 
     protected abstract ONAPComponentsList getTargetEntity();

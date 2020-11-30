@@ -22,6 +22,7 @@ package org.onap.so.etsi.nfvo.ns.lcm.bpmn.flows.extclients.aai;
 
 import org.onap.aaiclient.client.aai.AAIProperties;
 import org.onap.aaiclient.client.aai.AAIVersion;
+import org.onap.so.client.CacheProperties;
 import org.onap.so.spring.SpringContextHelper;
 import org.springframework.context.ApplicationContext;
 import java.net.MalformedURLException;
@@ -34,6 +35,8 @@ public class AaiPropertiesImpl implements AAIProperties {
     private final String encryptionKey;
     private final String aaiVersion;
     private final Long readTimeout;
+    private final boolean enableCaching;
+    private final Long cacheMaxAge;
 
     public AaiPropertiesImpl() {
         final ApplicationContext context = SpringContextHelper.getAppContext();
@@ -42,6 +45,8 @@ public class AaiPropertiesImpl implements AAIProperties {
         this.encryptionKey = context.getEnvironment().getProperty("mso.key");
         this.aaiVersion = context.getEnvironment().getProperty("aai.version");
         this.readTimeout = context.getEnvironment().getProperty("aai.readTimeout", Long.class, new Long(60000));
+        this.enableCaching = context.getEnvironment().getProperty("aai.caching.enabled", Boolean.class, false);
+        this.cacheMaxAge = context.getEnvironment().getProperty("aai.caching.maxAge", Long.class, 60000L);
     }
 
     @Override
@@ -78,5 +83,20 @@ public class AaiPropertiesImpl implements AAIProperties {
     @Override
     public Long getReadTimeout() {
         return this.readTimeout;
+    }
+
+    @Override
+    public boolean isCachingEnabled() {
+        return this.enableCaching;
+    }
+
+    @Override
+    public CacheProperties getCacheProperties() {
+        return new AAICacheProperties() {
+            @Override
+            public Long getMaxAge() {
+                return cacheMaxAge;
+            }
+        };
     }
 }

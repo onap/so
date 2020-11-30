@@ -25,7 +25,11 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.matching;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,8 +39,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import javax.ws.rs.core.Response;
 import org.junit.Rule;
@@ -48,6 +54,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aaiclient.client.defaultproperties.DefaultAAIPropertiesImpl;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryPatchConverter;
 import org.onap.aaiclient.client.graphinventory.exceptions.GraphInventoryPatchDepthExceededException;
+import org.onap.so.client.RestClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.collect.ImmutableMap;
@@ -95,5 +102,114 @@ public class AAIRestClientTest {
         client.get();
         wireMockRule.verify(getRequestedFor(urlPathEqualTo("/test")).withHeader("X-FromAppId", equalTo("MSO"))
                 .withHeader("X-TransactionId", matching(".*")).withHeader("test", equalTo("value")));
+    }
+
+
+    @Test
+    public void cacheGetTest() throws URISyntaxException, InterruptedException {
+
+        wireMockRule.stubFor(get(urlPathMatching("/cached"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/plain").withBody("value")));
+
+        AAIProperties props = new AAIProperties() {
+
+            @Override
+            public URL getEndpoint() throws MalformedURLException {
+                return new URL(String.format("http://localhost:%s", wireMockRule.port()));
+            }
+
+            @Override
+            public String getSystemName() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public boolean isCachingEnabled() {
+                return true;
+            }
+
+            @Override
+            public AAIVersion getDefaultVersion() {
+                return AAIVersion.LATEST;
+            }
+
+            @Override
+            public String getAuth() {
+                return null;
+            }
+
+            @Override
+            public String getKey() {
+                return null;
+            }
+
+        };
+        RestClient client = new AAIRestClient(props, new URI("/cached"), new HashMap<String, String>());
+
+        Response response = client.get();
+
+        response.readEntity(String.class);
+        response = client.get();
+        response.readEntity(String.class);
+        verify(1, getRequestedFor(urlEqualTo("/cached")));
+
+    }
+
+    @Test
+    public void cachePutTest() throws URISyntaxException, InterruptedException {
+
+        wireMockRule.stubFor(put(urlPathMatching("/cached/1")).willReturn(aResponse().withStatus(200)));
+
+        wireMockRule.stubFor(get(urlPathMatching("/cached/1"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody("{}")));
+
+        AAIProperties props = new AAIProperties() {
+
+            @Override
+            public URL getEndpoint() throws MalformedURLException {
+                return new URL(String.format("http://localhost:%s", wireMockRule.port()));
+            }
+
+            @Override
+            public String getSystemName() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public boolean isCachingEnabled() {
+                return true;
+            }
+
+            @Override
+            public AAIVersion getDefaultVersion() {
+                return AAIVersion.LATEST;
+            }
+
+            @Override
+            public String getAuth() {
+                return null;
+            }
+
+            @Override
+            public String getKey() {
+                return null;
+            }
+
+        };
+
+        RestClient client = new AAIRestClient(props, new URI("/cached/1"), new HashMap<String, String>());
+
+
+        Response response = client.get();
+
+        response.readEntity(String.class);
+        client.put("wow");
+
+        client.get();
+        response.readEntity(String.class);
+        verify(2, getRequestedFor(urlEqualTo("/cached/1")));
+
     }
 }

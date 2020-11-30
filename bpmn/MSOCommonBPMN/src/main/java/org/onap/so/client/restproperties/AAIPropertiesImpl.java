@@ -25,6 +25,7 @@ import java.net.URL;
 import org.onap.aaiclient.client.aai.AAIProperties;
 import org.onap.aaiclient.client.aai.AAIVersion;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
+import org.onap.so.client.CacheProperties;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -34,6 +35,9 @@ public class AAIPropertiesImpl implements AAIProperties {
     public static final String AAI_AUTH = "aai.auth";
     public static final String AAI_ENDPOINT = "aai.endpoint";
     public static final String AAI_READ_TIMEOUT = "aai.readTimeout";
+    public static final String AAI_ENABLE_CACHING = "aai.caching.enable";
+    public static final String AAI_CACHE_MAX_AGE = "aai.caching.maxAge";
+
     private UrnPropertiesReader reader;
 
     @Override
@@ -64,6 +68,21 @@ public class AAIPropertiesImpl implements AAIProperties {
     @Override
     public Long getReadTimeout() {
         return Long.valueOf(reader.getVariable(AAI_READ_TIMEOUT, "60000"));
+    }
+
+    @Override
+    public boolean isCachingEnabled() {
+        return Boolean.parseBoolean(reader.getVariable(AAI_ENABLE_CACHING, "false"));
+    }
+
+    @Override
+    public CacheProperties getCacheProperties() {
+        return new AAICacheProperties() {
+            @Override
+            public Long getMaxAge() {
+                return Long.valueOf(reader.getVariable(AAI_CACHE_MAX_AGE, "60000"));
+            }
+        };
     }
 
 }
