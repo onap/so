@@ -36,6 +36,7 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.onap.so.adapters.catalogdb.catalogrest.CatalogQuery;
 import org.onap.so.adapters.catalogdb.catalogrest.CatalogQueryException;
@@ -89,6 +90,7 @@ public class CatalogDbAdapterRest {
     protected static Logger logger = LoggerFactory.getLogger(CatalogDbAdapterRest.class);
     private static final boolean IS_ARRAY = true;
     private static final String NETWORK_SERVICE = "network service";
+    private static final String RESOURCE_INPUT_FILTER = "resourceInput";
 
     @Autowired
     private VnfCustomizationRepository vnfCustomizationRepo;
@@ -144,8 +146,8 @@ public class CatalogDbAdapterRest {
     @Transactional(readOnly = true)
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response serviceVnfs(@PathParam("version") String version,
-            @PathParam("vnfModelCustomizationUuid") String vnfUuid) {
-        return serviceVnfsImpl(version, !IS_ARRAY, vnfUuid, null, null, null, null);
+            @PathParam("vnfModelCustomizationUuid") String vnfUuid, @QueryParam("filter") String filter) {
+        return serviceVnfsImpl(version, !IS_ARRAY, vnfUuid, null, null, null, null, filter);
     }
 
     @GET
@@ -155,12 +157,12 @@ public class CatalogDbAdapterRest {
     public Response serviceVnfs(@PathParam("version") String version,
             @QueryParam("vnfModelCustomizationUuid") String vnfUuid, @QueryParam("serviceModelUuid") String smUuid,
             @QueryParam("serviceModelInvariantUuid") String smiUuid, @QueryParam("serviceModelVersion") String smVer,
-            @QueryParam("serviceModelName") String smName) {
-        return serviceVnfsImpl(version, IS_ARRAY, vnfUuid, smUuid, smiUuid, smVer, smName);
+            @QueryParam("serviceModelName") String smName, @QueryParam("filter") String filter) {
+        return serviceVnfsImpl(version, IS_ARRAY, vnfUuid, smUuid, smiUuid, smVer, smName, filter);
     }
 
     public Response serviceVnfsImpl(String version, boolean isArray, String vnfUuid, String serviceModelUUID,
-            String smiUuid, String smVer, String smName) {
+            String smiUuid, String smVer, String smName, String filter) {
         QueryServiceVnfs qryResp = null;
         int respStatus = HttpStatus.SC_OK;
         List<VnfResourceCustomization> ret = new ArrayList<>();
@@ -188,9 +190,16 @@ public class CatalogDbAdapterRest {
                 respStatus = HttpStatus.SC_NOT_FOUND;
                 qryResp = new QueryServiceVnfs();
             } else if (service == null && !ret.isEmpty()) {
+                if (StringUtils.isNotEmpty(filter) && RESOURCE_INPUT_FILTER.equalsIgnoreCase(filter)) {
+                    ret.forEach(vnfCustomization -> vnfCustomization.setResourceInput(null));
+                }
                 qryResp = new QueryServiceVnfs(ret);
             } else if (service != null) {
-                qryResp = new QueryServiceVnfs(service.getVnfCustomizations());
+                ret = service.getVnfCustomizations();
+                if (StringUtils.isNotEmpty(filter) && RESOURCE_INPUT_FILTER.equalsIgnoreCase(filter)) {
+                    ret.forEach(vnfCustomization -> vnfCustomization.setResourceInput(null));
+                }
+                qryResp = new QueryServiceVnfs(ret);
             }
             logger.debug("serviceVnfs qryResp= {}", qryResp);
             return respond(version, respStatus, isArray, qryResp);
@@ -290,7 +299,7 @@ public class CatalogDbAdapterRest {
     public Response serviceResources(@PathParam("version") String version,
             @QueryParam("serviceModelUuid") String modelUUID,
             @QueryParam("serviceModelInvariantUuid") String modelInvariantUUID,
-            @QueryParam("serviceModelVersion") String modelVersion) {
+            @QueryParam("serviceModelVersion") String modelVersion, @QueryParam("filter") String filter) {
 
         QueryServiceMacroHolder qryResp;
         int respStatus = HttpStatus.SC_OK;
@@ -305,6 +314,10 @@ public class CatalogDbAdapterRest {
 
                 if (serv != null) {
                     ret.setNetworkResourceCustomizations(new ArrayList(serv.getNetworkCustomizations()));
+                    if (StringUtils.isNotEmpty(filter) && RESOURCE_INPUT_FILTER.equalsIgnoreCase(filter)) {
+                        serv.getVnfCustomizations()
+                                .forEach(vnfCustomization -> vnfCustomization.setResourceInput(null));
+                    }
                     ret.setVnfResourceCustomizations(new ArrayList(serv.getVnfCustomizations()));
                     ret.setAllottedResourceCustomizations(new ArrayList(serv.getAllottedCustomizations()));
                 }
