@@ -99,8 +99,12 @@ class DoAllocateNSSI extends AbstractServiceTaskProcessor {
 
         if (response != null) {
             JobStatusResponse jobStatusResponse = objectMapper.readValue(response, JobStatusResponse.class)
-            execution.setVariable("nssiAllocateStatus", jobStatusResponse)
+            if (StringUtils.isBlank(nssiId)) {
+                nssiAllocateResult.setNssiId(jobStatusResponse.getResponseDescriptor().getNssiId())
+                execution.setVariable("nssiAllocateResult", nssiAllocateResult)
+            }
 
+            execution.setVariable("nssiAllocateStatus", jobStatusResponse)
             if (jobStatusResponse.getResponseDescriptor().getProgress() == 100) {
                 execution.setVariable("jobFinished", true)
             }
