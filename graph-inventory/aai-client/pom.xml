@@ -93,7 +93,7 @@
               <destination>${project.build.directory}/generated-sources</destination>
               <destinationClasspath>org.onap.aaiclient.client.generated.fluentbuilders</destinationClasspath>
               <builderName>AAIFluentTypeBuilder</builderName>
-              <swaggerLocation>${project.build.directory}/swagger/onap/aai_swagger_yaml/aai_swagger_v19.yaml</swaggerLocation>
+              <swaggerLocation>${project.build.directory}/swagger/onap/aai_swagger_yaml/aai_swagger_LATEST.yaml</swaggerLocation>
               <singularBuilderClass>org.onap.aaiclient.client.aai.entities.uri.AAIFluentSingleType</singularBuilderClass>
               <pluralBuilderClass>org.onap.aaiclient.client.aai.entities.uri.AAIFluentPluralType</pluralBuilderClass>
               <topLevelBuilderClass>org.onap.aaiclient.client.aai.entities.uri.AAIFluentTopLevelType</topLevelBuilderClass>

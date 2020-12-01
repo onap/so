@@ -1,6 +1,10 @@
 package org.onap.graphinventory.generate;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -26,6 +30,9 @@ public class SwaggerConverter {
     }
 
     public Map<String, ObjectType> getDoc(String swaggerLocation) throws JsonProcessingException {
+
+
+        swaggerLocation = processLocation(swaggerLocation);
         Swagger swagger = new SwaggerParser().read(swaggerLocation);
 
         Map<String, Path> paths = swagger.getPaths().entrySet().stream()
@@ -167,5 +174,20 @@ public class SwaggerConverter {
         log.debug(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(output));
 
         return output;
+    }
+
+    private String processLocation(String swaggerLocation) {
+
+        java.nio.file.Path path = Paths.get(swaggerLocation);
+        try {
+            return Files.list(path.getParent())
+                    .filter(it -> it.getFileName().toString()
+                            .matches(path.getFileName().toString().replaceFirst("LATEST", "v\\\\\\d+")))
+                    .sorted(Comparator.reverseOrder()).map(it -> it.toString()).findFirst().orElseGet(null);
+        } catch (IOException e) {
+            log.error(e);
+        }
+
+        return null;
     }
 }
