@@ -269,10 +269,10 @@ public class BBInputSetupUtils {
             String cloudRegionId = cloudConfiguration.getLcpCloudRegionId();
             String cloudOwner = cloudConfiguration.getCloudOwner();
             if (cloudRegionId != null && cloudOwner != null && !cloudRegionId.isEmpty() && !cloudOwner.isEmpty()) {
-                return injectionHelper.getAaiClient()
-                        .get(CloudRegion.class, AAIUriFactory.createResourceUri(
+                return injectionHelper.getAaiClient().get(CloudRegion.class,
+                        AAIUriFactory.createResourceUri(
                                 AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(cloudOwner, cloudRegionId))
-                                .depth(Depth.TWO))
+                                .depth(Depth.ONE).nodesOnly(true))
                         .orElse(null);
 
             } else {

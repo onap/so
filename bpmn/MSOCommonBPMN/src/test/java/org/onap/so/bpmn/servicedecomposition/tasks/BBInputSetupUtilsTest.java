@@ -184,7 +184,7 @@ public class BBInputSetupUtilsTest {
                 AAIUriFactory
                         .createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
                                 .cloudRegion(cloudConfig.getCloudOwner(), cloudConfig.getLcpCloudRegionId()))
-                        .depth(Depth.TWO));
+                        .depth(Depth.ONE).nodesOnly(true));
 
         assertThat(bbInputSetupUtils.getCloudRegion(cloudConfig), sameBeanAs(expected.get()));
     }
