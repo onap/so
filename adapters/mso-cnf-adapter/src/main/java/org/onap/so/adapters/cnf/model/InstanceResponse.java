@@ -27,22 +27,24 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"id", "request", "namespace", "resources"})
+@JsonPropertyOrder({"id", "request", "namespace", "release-name", "resources"})
 @JsonIgnoreProperties(value = "true")
-public class InstanceResponse extends Response {
+public class InstanceResponse {
 
     @JsonProperty("id")
     private String id;
+
     @JsonProperty("request")
     private MulticloudInstanceRequest request;
+
     @JsonProperty("namespace")
     private String namespace;
-    @JsonProperty("resources")
-    private List<Resource> resources = null;
 
-    public InstanceResponse(String errorMsg) {
-        super(errorMsg);
-    }
+    @JsonProperty("release-name")
+    private String releaseName;
+
+    @JsonProperty("resources")
+    private List<Resource> resources;
 
     @JsonProperty("id")
     public String getId() {
@@ -82,6 +84,16 @@ public class InstanceResponse extends Response {
     @JsonProperty("resources")
     public void setResources(List<Resource> resources) {
         this.resources = resources;
+    }
+
+    @JsonProperty("release-name")
+    public String getReleaseName() {
+        return releaseName;
+    }
+
+    @JsonProperty("release-name")
+    public void setReleaseName(String releaseName) {
+        this.releaseName = releaseName;
     }
 
 }
