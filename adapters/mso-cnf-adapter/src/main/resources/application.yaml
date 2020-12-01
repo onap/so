@@ -54,8 +54,15 @@ server:
   #    auth: Basic YnBlbDpwYXNzd29yZDEk
 
 #Actuator
-#management:
-#  security:
- #   enabled: false
- #   basic:
-#      enabled: false
+management:
+  endpoints:
+    web:
+      base-path: /manage
+      exposure:
+        include: "*"
+  metrics:
+    se-global-registry: false
+    export:
+      prometheus:
+        enabled: true # Whether exporting of metrics to Prometheus is enabled.
+        step: 1m # Step size (i.e. reporting frequency) to use.

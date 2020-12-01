@@ -26,6 +26,7 @@ import java.util.List;
 import javax.persistence.EntityNotFoundException;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.http.HttpStatus;
+import org.apache.http.util.EntityUtils;
 import org.onap.so.adapters.cnf.model.BpmnInstanceRequest;
 import org.onap.so.adapters.cnf.model.InstanceMiniResponse;
 import org.onap.so.adapters.cnf.model.InstanceMiniResponseList;
@@ -84,7 +85,7 @@ public class CnfAdapterService {
         }
     }
 
-    public ResponseEntity<InstanceResponse> createInstance(BpmnInstanceRequest bpmnInstanceRequest)
+    public String createInstance(BpmnInstanceRequest bpmnInstanceRequest)
             throws JsonParseException, JsonMappingException, IOException {
         try {
             logger.info("CnfAdapterService createInstance called");
@@ -100,7 +101,7 @@ public class CnfAdapterService {
                 multicloudInstanceRequest.setVfModuleUuid(bpmnInstanceRequest.getVfModuleUUID());
             } else {
                 logger.error("k8sProfileName should not be null");
-                return instanceResponse;
+                // return instanceResponse;
             }
             // String uri = env.getRequiredProperty("multicloud.endpoint"); //TODO:
             // This needs to be added as well
@@ -109,7 +110,7 @@ public class CnfAdapterService {
             String endpoint = UriBuilder.fromUri(uri).path(INSTANCE_CREATE_PATH).build().toString();
             HttpEntity<?> entity = getHttpEntity(multicloudInstanceRequest);
             instanceResponse = restTemplate.exchange(endpoint, HttpMethod.POST, entity, InstanceResponse.class);
-            return instanceResponse;
+            return EntityUtils.toString((org.apache.http.HttpEntity) instanceResponse);
         } catch (HttpClientErrorException e) {
             logger.error("Error Calling Multicloud, e");
             if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
@@ -118,9 +119,7 @@ public class CnfAdapterService {
             throw e;
         } catch (HttpStatusCodeException e) {
             logger.error("Error in Multicloud, e");
-            String responseString = e.getResponseBodyAsString();
-            InstanceResponse result = new InstanceResponse(responseString.trim());
-            return ResponseEntity.status(e.getStatusCode()).body(result);
+            throw e;
         }
     }
 
@@ -148,8 +147,7 @@ public class CnfAdapterService {
             throw e;
         } catch (HttpStatusCodeException e) {
             logger.error("Error in Multicloud, e");
-            String responseString = e.getResponseBodyAsString();
-            InstanceResponse result = new InstanceResponse(responseString.trim());
+            InstanceResponse result = new InstanceResponse();
             return ResponseEntity.status(e.getStatusCode()).body(result);
         }
     }
