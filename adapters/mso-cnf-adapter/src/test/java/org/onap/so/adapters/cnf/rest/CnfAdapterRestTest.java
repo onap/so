@@ -86,7 +86,7 @@ public class CnfAdapterRestTest {
         bpmnInstanceRequest.setOverrideValues(overrideValues);
         bpmnInstanceRequest.setVfModuleUUID("20200824");
         List<Resource> resourceList = new ArrayList<Resource>();
-        InstanceResponse instanceResponse = new InstanceResponse(HttpStatus.CREATED.toString());
+        InstanceResponse instanceResponse = new InstanceResponse();
         instanceResponse.setId("123");
         instanceResponse.setNamespace("testNamespace");
         instanceResponse.setRequest(new MulticloudInstanceRequest());

@@ -119,7 +119,7 @@ public class CnfAdapterService {
         } catch (HttpStatusCodeException e) {
             logger.error("Error in Multicloud, e");
             String responseString = e.getResponseBodyAsString();
-            InstanceResponse result = new InstanceResponse(responseString.trim());
+            InstanceResponse result = new InstanceResponse();
             return ResponseEntity.status(e.getStatusCode()).body(result);
         }
     }
@@ -148,8 +148,7 @@ public class CnfAdapterService {
             throw e;
         } catch (HttpStatusCodeException e) {
             logger.error("Error in Multicloud, e");
-            String responseString = e.getResponseBodyAsString();
-            InstanceResponse result = new InstanceResponse(responseString.trim());
+            InstanceResponse result = new InstanceResponse();
             return ResponseEntity.status(e.getStatusCode()).body(result);
         }
     }
