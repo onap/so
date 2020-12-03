@@ -23,12 +23,12 @@ package org.onap.so.adapters.cnf.service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.persistence.EntityNotFoundException;
 import javax.ws.rs.core.UriBuilder;
+
 import org.apache.http.HttpStatus;
-import org.apache.http.util.EntityUtils;
 import org.onap.so.adapters.cnf.model.BpmnInstanceRequest;
-import org.onap.so.adapters.cnf.model.InstanceMiniResponse;
 import org.onap.so.adapters.cnf.model.InstanceMiniResponseList;
 import org.onap.so.adapters.cnf.model.InstanceResponse;
 import org.onap.so.adapters.cnf.model.InstanceStatusResponse;
@@ -45,6 +45,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -58,11 +59,9 @@ public class CnfAdapterService {
 
     public ResponseEntity<String> healthCheck() {
 
-        logger.info("CnfAdapterService createInstance called");
+        logger.info("CnfAdapterService healthCheck called");
         ResponseEntity<String> result = null;
         try {
-
-            logger.info("CnfAdapterService createInstance called");
 
             // String uri = env.getRequiredProperty("multicloud.endpoint"); //TODO:
             // This needs to be added as well
@@ -85,7 +84,7 @@ public class CnfAdapterService {
         }
     }
 
-    public String createInstance(BpmnInstanceRequest bpmnInstanceRequest)
+    public ResponseEntity<String> createInstance(BpmnInstanceRequest bpmnInstanceRequest)
             throws JsonParseException, JsonMappingException, IOException {
         try {
             logger.info("CnfAdapterService createInstance called");
@@ -110,7 +109,7 @@ public class CnfAdapterService {
             String endpoint = UriBuilder.fromUri(uri).path(INSTANCE_CREATE_PATH).build().toString();
             HttpEntity<?> entity = getHttpEntity(multicloudInstanceRequest);
             instanceResponse = restTemplate.exchange(endpoint, HttpMethod.POST, entity, String.class);
-            return instanceResponse.getBody();
+            return ResponseEntity.ok(instanceResponse.getBody());
         } catch (HttpClientErrorException e) {
             logger.error("Error Calling Multicloud, e");
             if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
@@ -126,7 +125,7 @@ public class CnfAdapterService {
     public ResponseEntity<InstanceResponse> getInstanceByInstanceId(String instanceId)
             throws JsonParseException, JsonMappingException, IOException {
 
-        logger.info("CnfAdapterService createInstance called");
+        logger.info("CnfAdapterService getInstanceByInstanceId called");
         ResponseEntity<InstanceResponse> instanceResponse = null;
         try {
 
@@ -155,7 +154,7 @@ public class CnfAdapterService {
     public ResponseEntity<InstanceStatusResponse> getInstanceStatusByInstanceId(String instanceId)
             throws JsonParseException, JsonMappingException, IOException {
 
-        logger.info("CnfAdapterService createInstance called");
+        logger.info("CnfAdapterService getInstanceStatusByInstanceId called");
         ResponseEntity<InstanceStatusResponse> instanceResponse = null;
         try {
 
@@ -187,7 +186,7 @@ public class CnfAdapterService {
     public ResponseEntity<InstanceMiniResponseList> getInstanceByRBNameOrRBVersionOrProfileName(String rbName,
             String rbVersion, String profileName) throws JsonParseException, JsonMappingException, IOException {
 
-        logger.info("CnfAdapterService createInstance called");
+        logger.info("CnfAdapterService getInstanceByRBNameOrRBVersionOrProfileName called");
         ResponseEntity<InstanceMiniResponseList> instanceMiniResponseList = null;
         try {
 
@@ -219,7 +218,7 @@ public class CnfAdapterService {
     public ResponseEntity<String> deleteInstanceByInstanceId(String instanceId)
             throws JsonParseException, JsonMappingException, IOException {
 
-        logger.info("CnfAdapterService createInstance called");
+        logger.info("CnfAdapterService deleteInstanceByInstanceId called");
         ResponseEntity<String> result = null;
         try {
 

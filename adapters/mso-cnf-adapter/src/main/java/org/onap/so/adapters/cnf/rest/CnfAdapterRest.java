@@ -87,7 +87,7 @@ public class CnfAdapterRest {
     @ResponseBody
     @RequestMapping(value = {"/api/cnf-adapter/v1/instance"}, method = RequestMethod.POST,
             produces = "application/json", consumes = "application/json")
-    public String createInstance(@RequestBody BpmnInstanceRequest bpmnInstanceRequest)
+    public ResponseEntity<String> createInstance(@RequestBody BpmnInstanceRequest bpmnInstanceRequest)
             throws JsonParseException, JsonMappingException, IOException {
 
         logger.info("createInstance called.");
