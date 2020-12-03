@@ -20,23 +20,24 @@
 
 package org.onap.so.bpmn.appc.payload;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Optional;
+import org.onap.so.bpmn.appc.payload.beans.ConfigurationParametersDistributeTraffic;
+import org.onap.so.bpmn.appc.payload.beans.ConfigurationParametersHealthCheck;
 import org.onap.so.bpmn.appc.payload.beans.ConfigurationParametersQuiesce;
 import org.onap.so.bpmn.appc.payload.beans.ConfigurationParametersResumeTraffic;
-import org.onap.so.bpmn.appc.payload.beans.ConfigurationParametersDistributeTraffic;
 import org.onap.so.bpmn.appc.payload.beans.ConfigurationParametersUpgrade;
+import org.onap.so.bpmn.appc.payload.beans.DistributeTrafficAction;
+import org.onap.so.bpmn.appc.payload.beans.DistributeTrafficCheckAction;
 import org.onap.so.bpmn.appc.payload.beans.HealthCheckAction;
 import org.onap.so.bpmn.appc.payload.beans.QuiesceTrafficAction;
 import org.onap.so.bpmn.appc.payload.beans.RequestParametersHealthCheck;
 import org.onap.so.bpmn.appc.payload.beans.ResumeTrafficAction;
-import org.onap.so.bpmn.appc.payload.beans.DistributeTrafficAction;
-import org.onap.so.bpmn.appc.payload.beans.DistributeTrafficCheckAction;
 import org.onap.so.bpmn.appc.payload.beans.SnapshotAction;
 import org.onap.so.bpmn.appc.payload.beans.StartStopAction;
 import org.onap.so.bpmn.appc.payload.beans.UpgradeAction;
 import org.onap.so.bpmn.core.json.JsonUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class PayloadClient {
 
@@ -122,6 +123,12 @@ public class PayloadClient {
         RequestParametersHealthCheck requestParams = new RequestParametersHealthCheck();
         requestParams.setHostIpAddress(vnfHostIpAddress);
         payloadResult.setRequestParameters(requestParams);
+
+        ConfigurationParametersHealthCheck configurationParametersHealthCheck =
+                new ConfigurationParametersHealthCheck();
+        configurationParametersHealthCheck.setVnfName(vnfName);
+        payloadResult.setConfigurationParameters(configurationParametersHealthCheck);
+
         return Optional.of((mapper.writeValueAsString(payloadResult)));
     }
 
