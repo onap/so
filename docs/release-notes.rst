@@ -188,8 +188,7 @@ Quick Links:
 - `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1702>`__
 
 **Known Issues**
-
-	N/A
+*  `SO-3403 <https://jira.onap.org/browse/SO-3403>`_ - The functionality of the SO cnf-adapter will be tested further and will be delivered by the Guilin Maintenance Release as a 1.7.11 patch.
 
 **Upgrade Notes**
 
