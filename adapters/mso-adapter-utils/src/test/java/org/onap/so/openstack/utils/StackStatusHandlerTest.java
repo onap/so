@@ -66,6 +66,21 @@ public class StackStatusHandlerTest {
     }
 
     @Test
+    public final void incompleteStackInput_Test() throws MsoException, IOException {
+        RequestProcessingData requestProcessingData = new RequestProcessingData();
+        requestProcessingData.setValue("testMe");
+
+        doReturn(requestProcessingData).when(requestDBClient)
+                .getRequestProcessingDataBySoRequestIdAndNameAndGrouping(null, "stackName", "id");
+        Stack latestStack = new Stack();
+        latestStack.setStackStatus("CREATE_COMPLETE");
+        latestStack.setStackStatusReason("Stack Finished");
+
+        statusHandler.updateStackStatus(latestStack);
+        Mockito.verify(requestDBClient, times(0)).updateRequestProcessingData(requestProcessingData);
+    }
+
+    @Test
     public final void record_Not_Exists_Test() throws MsoException, IOException {
         ArgumentCaptor<RequestProcessingData> requestCaptor = ArgumentCaptor.forClass(RequestProcessingData.class);
         doReturn(null).when(requestDBClient).getRequestProcessingDataBySoRequestIdAndNameAndGrouping(null, "stackName",

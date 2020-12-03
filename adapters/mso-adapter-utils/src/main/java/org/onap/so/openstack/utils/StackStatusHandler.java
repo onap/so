@@ -45,8 +45,13 @@ public class StackStatusHandler {
     @Async
     public void updateStackStatus(Stack stack) {
         try {
-            String requestId = MDC.get(ONAPLogConstants.MDCs.REQUEST_ID);
             String stackStatus = mapper.writeValueAsString(stack);
+            if ((stack.getStackName() == null) || (stack.getId() == null)) {
+                logger.warn("Input stack id or stack name is null.RequestDb not updated for stack status.{}",
+                        stackStatus);
+                return;
+            }
+            String requestId = MDC.get(ONAPLogConstants.MDCs.REQUEST_ID);
             RequestProcessingData requestProcessingData =
                     requestDBClient.getRequestProcessingDataBySoRequestIdAndNameAndGrouping(requestId,
                             stack.getStackName(), stack.getId());
