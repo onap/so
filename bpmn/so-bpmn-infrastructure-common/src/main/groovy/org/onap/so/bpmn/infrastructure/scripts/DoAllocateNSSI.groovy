@@ -97,6 +97,8 @@ class DoAllocateNSSI extends AbstractServiceTaskProcessor {
         String response =
                 nssmfAdapterUtils.sendPostRequestNSSMF(execution, endpoint, objectMapper.writeValueAsString(nbiRequest))
 
+        logger.debug("nssmf response nssiAllocateStatus:" + response)
+
         if (response != null) {
             JobStatusResponse jobStatusResponse = objectMapper.readValue(response, JobStatusResponse.class)
             if (StringUtils.isBlank(nssiId)) {
@@ -125,7 +127,6 @@ class DoAllocateNSSI extends AbstractServiceTaskProcessor {
         sliceTaskInfo.progress = response.getProgress()
         sliceTaskInfo.status = response.getStatus().toLowerCase()
         sliceTaskInfo.statusDescription = response.getStatusDescription()
-        sliceTaskInfo.endPointId = response.getEndPointId()
         updateNssiResult(sliceParams, subnetType, sliceTaskInfo)
 
         String paramJson = sliceParams.convertToJson()

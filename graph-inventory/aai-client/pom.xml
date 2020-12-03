@@ -65,7 +65,7 @@
                 <artifactItem>
                   <groupId>org.onap.aai.traversal</groupId>
                   <artifactId>aai-traversal</artifactId>
-                  <version>1.6.3</version>
+                  <version>1.7.2</version>
                   <outputDirectory>${project.build.directory}/antlr</outputDirectory>
                   <includes>**/*.g4</includes>
                 </artifactItem>
@@ -93,7 +93,7 @@
               <destination>${project.build.directory}/generated-sources</destination>
               <destinationClasspath>org.onap.aaiclient.client.generated.fluentbuilders</destinationClasspath>
               <builderName>AAIFluentTypeBuilder</builderName>
-              <swaggerLocation>${project.build.directory}/swagger/onap/aai_swagger_yaml/aai_swagger_v19.yaml</swaggerLocation>
+              <swaggerLocation>${project.build.directory}/swagger/onap/aai_swagger_yaml/aai_swagger_v21.yaml</swaggerLocation>
               <singularBuilderClass>org.onap.aaiclient.client.aai.entities.uri.AAIFluentSingleType</singularBuilderClass>
               <pluralBuilderClass>org.onap.aaiclient.client.aai.entities.uri.AAIFluentPluralType</pluralBuilderClass>
               <topLevelBuilderClass>org.onap.aaiclient.client.aai.entities.uri.AAIFluentTopLevelType</topLevelBuilderClass>

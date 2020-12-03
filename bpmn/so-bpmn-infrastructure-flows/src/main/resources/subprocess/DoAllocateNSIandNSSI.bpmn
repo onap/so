@@ -140,7 +140,7 @@ dcnsio.createAnSliceProfileInstance(execution)</bpmn:script>
 def dcnsio = new DoAllocateNSIandNSSI()
 dcnsio.createAnSliceProfile(execution)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:sequenceFlow id="SequenceFlow_0zbd2tq" sourceRef="ScriptTask_1r2li91" targetRef="ScriptTask_0s8vhha" />
+    <bpmn:sequenceFlow id="SequenceFlow_0zbd2tq" sourceRef="ScriptTask_1r2li91" targetRef="Task_0dkfe9n" />
     <bpmn:scriptTask id="Task_1en3luv" name="Create Core Slice Profile Instance" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_0k5iu2n</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0f36cu2</bpmn:outgoing>
@@ -234,7 +234,7 @@ dcnsio.updateCnRelationship(execution)</bpmn:script>
       <bpmn:linkEventDefinition name="CreateTnSliceProfile" />
     </bpmn:intermediateThrowEvent>
     <bpmn:scriptTask id="ScriptTask_0s8vhha" name="prepare Allocate An Nssi" scriptFormat="groovy">
-      <bpmn:incoming>SequenceFlow_0zbd2tq</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1rwy8q7</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0npsyye</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcnsio = new DoAllocateNSIandNSSI()
@@ -242,14 +242,14 @@ dcnsio.prepareAllocateAnNssi(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_0npsyye" sourceRef="ScriptTask_0s8vhha" targetRef="CallActivity_1yh9tiq" />
     <bpmn:scriptTask id="ScriptTask_0z0ec5b" name="prepare Allocate Cn Nssi" scriptFormat="groovy">
-      <bpmn:incoming>SequenceFlow_1wffel4</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_17r1oa0</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0cwbtmr</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcnsio = new DoAllocateNSIandNSSI()
 dcnsio.prepareAllocateCnNssi(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_0cwbtmr" sourceRef="ScriptTask_0z0ec5b" targetRef="CallActivity_1ixah3o" />
-    <bpmn:sequenceFlow id="SequenceFlow_1wffel4" sourceRef="Task_1g8n8iz" targetRef="ScriptTask_0z0ec5b" />
+    <bpmn:sequenceFlow id="SequenceFlow_1wffel4" sourceRef="Task_1g8n8iz" targetRef="Task_0fwhsq2" />
     <bpmn:scriptTask id="ScriptTask_0ci5g6y" name="prepare Allocate Tn-BH Nssi" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_00dexhy</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_01isn2q</bpmn:outgoing>
@@ -258,6 +258,22 @@ def dcnsio = new DoAllocateNSIandNSSI()
 dcnsio.prepareAllocateTnBHNssi(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_01isn2q" sourceRef="ScriptTask_0ci5g6y" targetRef="CallActivity_0b28wlb" />
+    <bpmn:sequenceFlow id="SequenceFlow_1rwy8q7" sourceRef="Task_0dkfe9n" targetRef="ScriptTask_0s8vhha" />
+    <bpmn:scriptTask id="Task_0dkfe9n" name="Create AN EP" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0zbd2tq</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1rwy8q7</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def dcnsio = new DoAllocateNSIandNSSI()
+dcnsio.createANEndpoint(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_17r1oa0" sourceRef="Task_0fwhsq2" targetRef="ScriptTask_0z0ec5b" />
+    <bpmn:scriptTask id="Task_0fwhsq2" name="Create CN EP" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1wffel4</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_17r1oa0</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def dcnsio = new DoAllocateNSIandNSSI()
+dcnsio.createCNEndpoint(execution)</bpmn:script>
+    </bpmn:scriptTask>
   </bpmn:process>
   <bpmn:message id="Message_1i10pf1" name="Message_2mc69tg" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -338,25 +354,25 @@ dcnsio.prepareAllocateTnBHNssi(execution)</bpmn:script>
         <di:waypoint x="310" y="630" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="CallActivity_1yh9tiq_di" bpmnElement="CallActivity_1yh9tiq">
-        <dc:Bounds x="930" y="400" width="100" height="80" />
+        <dc:Bounds x="1030" y="400" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1hfjn79_di" bpmnElement="SequenceFlow_1hfjn79">
         <di:waypoint x="410" y="440" />
-        <di:waypoint x="530" y="440" />
+        <di:waypoint x="480" y="440" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="CallActivity_1ixah3o_di" bpmnElement="CallActivity_1ixah3o">
-        <dc:Bounds x="930" y="590" width="100" height="80" />
+        <dc:Bounds x="1030" y="590" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0f36cu2_di" bpmnElement="SequenceFlow_0f36cu2">
         <di:waypoint x="410" y="630" />
-        <di:waypoint x="530" y="630" />
+        <di:waypoint x="480" y="630" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1xb5nx1_di" bpmnElement="SequenceFlow_1xb5nx1">
-        <di:waypoint x="1030" y="440" />
-        <di:waypoint x="1140" y="440" />
+        <di:waypoint x="1130" y="440" />
+        <di:waypoint x="1210" y="440" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ParallelGateway_15vgf7c_di" bpmnElement="ExclusiveGateway_19ru3hp">
-        <dc:Bounds x="1325" y="505" width="50" height="50" />
+        <dc:Bounds x="1405" y="505" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_07sgklo_di" bpmnElement="ScriptTask_07sgklo">
         <dc:Bounds x="930" y="220" width="100" height="80" />
@@ -377,21 +393,21 @@ dcnsio.prepareAllocateTnBHNssi(execution)</bpmn:script>
         <dc:Bounds x="310" y="400" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_1r2li91_di" bpmnElement="ScriptTask_1r2li91">
-        <dc:Bounds x="530" y="400" width="100" height="80" />
+        <dc:Bounds x="480" y="400" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0zbd2tq_di" bpmnElement="SequenceFlow_0zbd2tq">
-        <di:waypoint x="630" y="440" />
-        <di:waypoint x="730" y="440" />
+        <di:waypoint x="580" y="440" />
+        <di:waypoint x="650" y="440" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_01n5nmt_di" bpmnElement="Task_1en3luv">
         <dc:Bounds x="310" y="590" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_0juh1xy_di" bpmnElement="Task_1g8n8iz">
-        <dc:Bounds x="530" y="590" width="100" height="80" />
+        <dc:Bounds x="480" y="590" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0ax2c4p_di" bpmnElement="SequenceFlow_0ax2c4p">
-        <di:waypoint x="1375" y="530" />
-        <di:waypoint x="1412" y="530" />
+        <di:waypoint x="1455" y="530" />
+        <di:waypoint x="1512" y="530" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_0stnvp3_di" bpmnElement="ScriptTask_0stnvp3">
         <dc:Bounds x="310" y="840" width="100" height="80" />
@@ -428,24 +444,24 @@ dcnsio.prepareAllocateTnBHNssi(execution)</bpmn:script>
         <di:waypoint x="1412" y="880" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_0mls87v_di" bpmnElement="ScriptTask_0mls87v">
-        <dc:Bounds x="1140" y="400" width="100" height="80" />
+        <dc:Bounds x="1210" y="400" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0xx5bwa_di" bpmnElement="SequenceFlow_0xx5bwa">
-        <di:waypoint x="1240" y="440" />
-        <di:waypoint x="1350" y="440" />
-        <di:waypoint x="1350" y="505" />
+        <di:waypoint x="1310" y="440" />
+        <di:waypoint x="1430" y="440" />
+        <di:waypoint x="1430" y="505" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_0z9x5uh_di" bpmnElement="ScriptTask_0z9x5uh">
-        <dc:Bounds x="1140" y="590" width="100" height="80" />
+        <dc:Bounds x="1210" y="590" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1l74seh_di" bpmnElement="SequenceFlow_1l74seh">
-        <di:waypoint x="1030" y="630" />
-        <di:waypoint x="1140" y="630" />
+        <di:waypoint x="1130" y="630" />
+        <di:waypoint x="1210" y="630" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0jqxxjq_di" bpmnElement="SequenceFlow_0jqxxjq">
-        <di:waypoint x="1240" y="630" />
-        <di:waypoint x="1350" y="630" />
-        <di:waypoint x="1350" y="555" />
+        <di:waypoint x="1310" y="630" />
+        <di:waypoint x="1430" y="630" />
+        <di:waypoint x="1430" y="555" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1omynpt_di" bpmnElement="SequenceFlow_1omynpt">
         <di:waypoint x="1030" y="880" />
@@ -455,28 +471,28 @@ dcnsio.prepareAllocateTnBHNssi(execution)</bpmn:script>
         <dc:Bounds x="1412" y="862" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="IntermediateThrowEvent_0gz4vi6_di" bpmnElement="EndEvent_02c8wsp">
-        <dc:Bounds x="1412" y="512" width="36" height="36" />
+        <dc:Bounds x="1512" y="512" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1392" y="555" width="79" height="27" />
+          <dc:Bounds x="1492" y="555" width="79" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_0s8vhha_di" bpmnElement="ScriptTask_0s8vhha">
-        <dc:Bounds x="730" y="400" width="100" height="80" />
+        <dc:Bounds x="830" y="400" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0npsyye_di" bpmnElement="SequenceFlow_0npsyye">
-        <di:waypoint x="830" y="440" />
         <di:waypoint x="930" y="440" />
+        <di:waypoint x="1030" y="440" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_0z0ec5b_di" bpmnElement="ScriptTask_0z0ec5b">
-        <dc:Bounds x="730" y="590" width="100" height="80" />
+        <dc:Bounds x="830" y="590" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0cwbtmr_di" bpmnElement="SequenceFlow_0cwbtmr">
-        <di:waypoint x="830" y="630" />
         <di:waypoint x="930" y="630" />
+        <di:waypoint x="1030" y="630" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1wffel4_di" bpmnElement="SequenceFlow_1wffel4">
-        <di:waypoint x="630" y="630" />
-        <di:waypoint x="730" y="630" />
+        <di:waypoint x="580" y="630" />
+        <di:waypoint x="650" y="630" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_0ci5g6y_di" bpmnElement="ScriptTask_0ci5g6y">
         <dc:Bounds x="730" y="840" width="100" height="80" />
@@ -485,6 +501,20 @@ dcnsio.prepareAllocateTnBHNssi(execution)</bpmn:script>
         <di:waypoint x="830" y="880" />
         <di:waypoint x="930" y="880" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1rwy8q7_di" bpmnElement="SequenceFlow_1rwy8q7">
+        <di:waypoint x="750" y="440" />
+        <di:waypoint x="830" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0x8r537_di" bpmnElement="Task_0dkfe9n">
+        <dc:Bounds x="650" y="400" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_17r1oa0_di" bpmnElement="SequenceFlow_17r1oa0">
+        <di:waypoint x="750" y="630" />
+        <di:waypoint x="830" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0mlyx1u_di" bpmnElement="Task_0fwhsq2">
+        <dc:Bounds x="650" y="590" width="100" height="80" />
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

@@ -20,6 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.aai.domain.yang.NetworkRoute
 import org.onap.so.beans.nsmf.ConnectionLink
 import org.onap.so.beans.nsmf.EndPoint
 import org.onap.so.beans.nsmf.NsiInfo
@@ -310,6 +311,57 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         execution.setVariable("sliceTaskParams", sliceParams)
     }
 
+    void createANEndpoint(DelegateExecution execution){
+        logger.debug("Enter createANEndpoint in DoAllocateNSIandNSSI()")
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+        SliceTaskInfo<SliceProfileAdapter> sliceTaskInfo = sliceParams.anSliceTaskInfo
+
+        NetworkRoute route = new NetworkRoute()
+        String routeId = UUID.randomUUID().toString()
+        route.setRouteId(routeId)
+        route.setType("endpoint")
+        route.setRole("an")
+        route.setFunction("3gppTransportEP")
+        route.setIpAddress( sliceTaskInfo.sliceProfile.ipAddress)
+        route.setNextHop(sliceTaskInfo.sliceProfile.nextHopInfo)
+        route.setAddressFamily("ipv4")
+        route.setPrefixLength(24)
+        sliceTaskInfo.setEndPointId(routeId)
+
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkRoute(routeId))
+        client.create(uri, route)
+        execution.setVariable("sliceTaskParams", sliceParams)
+        logger.info("an endpointId:" + sliceParams.anSliceTaskInfo.endPointId)
+    }
+
+
+    void createCNEndpoint(DelegateExecution execution){
+        logger.debug("Enter createCNNetworkRoute in DoAllocateNSIandNSSI()")
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+        SliceTaskInfo<SliceProfileAdapter> sliceTaskInfo = sliceParams.cnSliceTaskInfo
+
+        NetworkRoute route = new NetworkRoute()
+        String routeId = UUID.randomUUID().toString()
+        route.setRouteId(routeId)
+        route.setType("endpoint")
+        route.setRole("cn")
+        route.setFunction("3gppTransportEP")
+        route.setIpAddress( sliceTaskInfo.sliceProfile.ipAddress)
+        route.setNextHop(sliceTaskInfo.sliceProfile.nextHopInfo)
+        route.setAddressFamily("ipv4")
+        route.setPrefixLength(24)
+
+        sliceTaskInfo.setEndPointId(routeId)
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkRoute(routeId))
+        client.create(uri, route)
+
+        execution.setVariable("cnEndpointId", routeId)
+        execution.setVariable("sliceTaskParams", sliceParams)
+        logger.info("cn endpointId:" + sliceParams.cnSliceTaskInfo.endPointId)
+    }
+
     /**
      * prepare AllocateAnNssi
      * @param execution
@@ -330,6 +382,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         allocateAnNssi.nssiName = sliceTaskInfo.NSSTInfo.name
         NsiInfo nsiInfo = new NsiInfo()
         nsiInfo.nsiId = sliceParams.suggestNsiId
+        nsiInfo.nsiName = sliceParams.suggestNsiName
         allocateAnNssi.nsiInfo = nsiInfo
         //endPoint
         EndPoint endPoint = new EndPoint()
@@ -450,6 +503,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         allocateCnNssi.sliceProfile = sliceTaskInfo.sliceProfile.trans2CnProfile()
         NsiInfo nsiInfo = new NsiInfo()
         nsiInfo.nsiId = sliceParams.suggestNsiId
+        nsiInfo.nsiName = sliceParams.suggestNsiName
         allocateCnNssi.nsiInfo = nsiInfo
         // endPoint
         EndPoint endPoint = new EndPoint()
@@ -631,16 +685,20 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         String nsiId = sliceParams.getSuggestNsiId()
         String sliceProfileInstanceId = sliceParams.anSliceTaskInfo.sliceInstanceId
         String serviceProfileInstanceId = sliceParams.serviceId
+        String epId = sliceParams.anSliceTaskInfo.endPointId
         //nsi id
         //todo: aai -> nssi -> relationship -> endPointId -> set into tn
-        String endPointId = getEndpointIdFromAAI(execution, nssiId)
-        execution.setVariable("endPointIdAn", endPointId)
-
+        //String endPointId = getEndpointIdFromAAI(execution, nssiId)
+        //execution.setVariable("endPointIdAn", endPointId)
         updateRelationship(execution, nsiId, nssiId)
 
         updateRelationship(execution, serviceProfileInstanceId, sliceProfileInstanceId)
 
         updateRelationship(execution, sliceProfileInstanceId, nssiId)
+
+        updateEPRelationship(execution, nssiId, epId)
+
+        updateEPRelationship(execution, sliceProfileInstanceId, epId)
 
         sliceParams.anSliceTaskInfo.suggestNssiId = nssiId
         execution.setVariable("sliceTaskParams", sliceParams)
@@ -665,16 +723,21 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         String nsiId = sliceParams.getSuggestNsiId()
         String sliceProfileInstanceId = sliceParams.cnSliceTaskInfo.sliceInstanceId
         String serviceProfileInstanceId = sliceParams.serviceId
+        String epId = sliceParams.cnSliceTaskInfo.endPointId
         //nsi id
         //todo: aai -> nssi -> relationship -> endPointId -> set into tn
-        String endPointId = getEndpointIdFromAAI(execution, nssiId)
-        execution.setVariable("endPointIdCn", endPointId)
+//        String endPointId = getEndpointIdFromAAI(execution, nssiId)
+//        execution.setVariable("endPointIdCn", endPointId)
 
         updateRelationship(execution, nsiId, nssiId)
 
         updateRelationship(execution, serviceProfileInstanceId, sliceProfileInstanceId)
 
-        updateRelationship(execution,sliceProfileInstanceId, nssiId)
+        updateRelationship(execution, sliceProfileInstanceId, nssiId)
+
+        updateEPRelationship(execution, nssiId, epId)
+
+        updateEPRelationship(execution, sliceProfileInstanceId, epId)
 
         sliceParams.cnSliceTaskInfo.suggestNssiId = nssiId
         execution.setVariable("sliceTaskParams", sliceParams)
@@ -779,9 +842,33 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
                 .serviceSubscription(execution.getVariable("subscriptionServiceType"))
                 .serviceInstance(targetId))
 
-        logger.info("Creating relationship, targetInstanceUri: " + targetInstanceUri)
+        logger.debug("Creating relationship, targetInstanceUri: " + targetInstanceUri)
 
         relationship.setRelatedLink(targetInstanceUri.build().toString())
+
+        AAIResourceUri sourceInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                .customer(execution.getVariable("globalSubscriberId"))
+                .serviceSubscription(execution.getVariable("subscriptionServiceType"))
+                .serviceInstance(sourceId))
+                .relationshipAPI()
+        client.create(sourceInstanceUri, relationship)
+    }
+
+    /**
+     * update endpoint relationship
+     * @param execution
+     * @param sourceId
+     * @param targetId
+     */
+    void updateEPRelationship(DelegateExecution execution, String sourceId, String endpointId) {
+        //relation ship
+        Relationship relationship = new Relationship()
+
+        AAIResourceUri endpointUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkRoute(endpointId))
+
+        logger.debug("Creating relationship, endpoint Uri: " + endpointUri + ",endpointId: " + endpointId)
+
+        relationship.setRelatedLink(endpointUri.build().toString())
 
         AAIResourceUri sourceInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
                 .customer(execution.getVariable("globalSubscriberId"))

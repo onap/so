@@ -49,5 +49,4 @@ public class ResponseDescriptor implements Serializable {
 
     private String nssiId;
 
-    private String endPointId;
 }
