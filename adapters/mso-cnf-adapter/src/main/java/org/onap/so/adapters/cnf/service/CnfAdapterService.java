@@ -29,9 +29,6 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.apache.http.HttpStatus;
 import org.onap.so.adapters.cnf.model.BpmnInstanceRequest;
-import org.onap.so.adapters.cnf.model.InstanceMiniResponseList;
-import org.onap.so.adapters.cnf.model.InstanceResponse;
-import org.onap.so.adapters.cnf.model.InstanceStatusResponse;
 import org.onap.so.adapters.cnf.model.MulticloudInstanceRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +54,7 @@ public class CnfAdapterService {
     private static final String INSTANCE_CREATE_PATH = "/v1/instance";
     private static final String HEALTH_CHECK = "/v1/healthcheck";
 
-    public ResponseEntity<String> healthCheck() {
+    public String healthCheck() {
 
         logger.info("CnfAdapterService healthCheck called");
         ResponseEntity<String> result = null;
@@ -70,7 +67,7 @@ public class CnfAdapterService {
             String endpoint = UriBuilder.fromUri(uri).path(HEALTH_CHECK).build().toString();
             HttpEntity<?> requestEntity = new HttpEntity<>(getHttpHeaders());
             result = restTemplate.exchange(endpoint, HttpMethod.GET, requestEntity, String.class);
-            return result;
+            return result.getBody();
         } catch (HttpClientErrorException e) {
             logger.error("Error Calling Multicloud, e");
             if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
@@ -79,12 +76,11 @@ public class CnfAdapterService {
             throw e;
         } catch (HttpStatusCodeException e) {
             logger.error("Error in Multicloud, e");
-            String responseString = e.getResponseBodyAsString();
-            return ResponseEntity.status(e.getStatusCode()).body(responseString);
+            throw e;
         }
     }
 
-    public ResponseEntity<String> createInstance(BpmnInstanceRequest bpmnInstanceRequest)
+    public String createInstance(BpmnInstanceRequest bpmnInstanceRequest)
             throws JsonParseException, JsonMappingException, IOException {
         try {
             logger.info("CnfAdapterService createInstance called");
@@ -109,7 +105,7 @@ public class CnfAdapterService {
             String endpoint = UriBuilder.fromUri(uri).path(INSTANCE_CREATE_PATH).build().toString();
             HttpEntity<?> entity = getHttpEntity(multicloudInstanceRequest);
             instanceResponse = restTemplate.exchange(endpoint, HttpMethod.POST, entity, String.class);
-            return ResponseEntity.ok(instanceResponse.getBody());
+            return instanceResponse.getBody();
         } catch (HttpClientErrorException e) {
             logger.error("Error Calling Multicloud, e");
             if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
@@ -122,11 +118,11 @@ public class CnfAdapterService {
         }
     }
 
-    public ResponseEntity<InstanceResponse> getInstanceByInstanceId(String instanceId)
+    public String getInstanceByInstanceId(String instanceId)
             throws JsonParseException, JsonMappingException, IOException {
 
         logger.info("CnfAdapterService getInstanceByInstanceId called");
-        ResponseEntity<InstanceResponse> instanceResponse = null;
+        ResponseEntity<String> instanceResponse = null;
         try {
 
             // String uri = env.getRequiredProperty("multicloud.endpoint"); //TODO:
@@ -136,8 +132,8 @@ public class CnfAdapterService {
             String path = "/v1/instance/" + instanceId;
             String endpoint = UriBuilder.fromUri(uri).path(path).build().toString();
             HttpEntity<?> requestEntity = new HttpEntity<>(getHttpHeaders());
-            instanceResponse = restTemplate.exchange(endpoint, HttpMethod.GET, requestEntity, InstanceResponse.class);
-            return instanceResponse;
+            instanceResponse = restTemplate.exchange(endpoint, HttpMethod.GET, requestEntity, String.class);
+            return instanceResponse.getBody();
         } catch (HttpClientErrorException e) {
             logger.error("Error Calling Multicloud, e");
             if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
@@ -146,16 +142,15 @@ public class CnfAdapterService {
             throw e;
         } catch (HttpStatusCodeException e) {
             logger.error("Error in Multicloud, e");
-            InstanceResponse result = new InstanceResponse();
-            return ResponseEntity.status(e.getStatusCode()).body(result);
+            throw e;
         }
     }
 
-    public ResponseEntity<InstanceStatusResponse> getInstanceStatusByInstanceId(String instanceId)
+    public String getInstanceStatusByInstanceId(String instanceId)
             throws JsonParseException, JsonMappingException, IOException {
 
         logger.info("CnfAdapterService getInstanceStatusByInstanceId called");
-        ResponseEntity<InstanceStatusResponse> instanceResponse = null;
+        ResponseEntity<String> instanceResponse = null;
         try {
 
             // String uri = env.getRequiredProperty("multicloud.endpoint"); //TODO:
@@ -166,8 +161,8 @@ public class CnfAdapterService {
             String endpoint = UriBuilder.fromUri(uri).path(path).build().toString();
             HttpEntity<?> requestEntity = new HttpEntity<>(getHttpHeaders());
             instanceResponse =
-                    restTemplate.exchange(endpoint, HttpMethod.GET, requestEntity, InstanceStatusResponse.class);
-            return instanceResponse;
+                    restTemplate.exchange(endpoint, HttpMethod.GET, requestEntity, String.class);
+            return instanceResponse.getBody();
         } catch (HttpClientErrorException e) {
             logger.error("Error Calling Multicloud, e");
             if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
@@ -176,18 +171,16 @@ public class CnfAdapterService {
             throw e;
         } catch (HttpStatusCodeException e) {
             logger.error("Error in Multicloud, e");
-            String responseString = e.getResponseBodyAsString();
-            InstanceStatusResponse result = new InstanceStatusResponse(responseString.trim());
-            return ResponseEntity.status(e.getStatusCode()).body(result);
+            throw e;
         }
 
     }
 
-    public ResponseEntity<InstanceMiniResponseList> getInstanceByRBNameOrRBVersionOrProfileName(String rbName,
+    public String getInstanceByRBNameOrRBVersionOrProfileName(String rbName,
             String rbVersion, String profileName) throws JsonParseException, JsonMappingException, IOException {
 
         logger.info("CnfAdapterService getInstanceByRBNameOrRBVersionOrProfileName called");
-        ResponseEntity<InstanceMiniResponseList> instanceMiniResponseList = null;
+        ResponseEntity<String> instanceMiniResponseList = null;
         try {
 
             // String uri = env.getRequiredProperty("multicloud.endpoint"); //TODO:
@@ -199,8 +192,8 @@ public class CnfAdapterService {
             String endPoint = uri + path;
             HttpEntity<?> requestEntity = new HttpEntity<>(getHttpHeaders());
             instanceMiniResponseList =
-                    restTemplate.exchange(endPoint, HttpMethod.GET, requestEntity, InstanceMiniResponseList.class);
-            return instanceMiniResponseList;
+                    restTemplate.exchange(endPoint, HttpMethod.GET, requestEntity, String.class);
+            return instanceMiniResponseList.getBody();
         } catch (HttpClientErrorException e) {
             logger.error("Error Calling Multicloud, e");
             if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
@@ -209,13 +202,11 @@ public class CnfAdapterService {
             throw e;
         } catch (HttpStatusCodeException e) {
             logger.error("Error in Multicloud, e");
-            String responseString = e.getResponseBodyAsString();
-            InstanceMiniResponseList result = new InstanceMiniResponseList(responseString.trim());
-            return ResponseEntity.status(e.getStatusCode()).body(result);
+            throw e;
         }
     }
 
-    public ResponseEntity<String> deleteInstanceByInstanceId(String instanceId)
+    public String deleteInstanceByInstanceId(String instanceId)
             throws JsonParseException, JsonMappingException, IOException {
 
         logger.info("CnfAdapterService deleteInstanceByInstanceId called");
@@ -230,7 +221,7 @@ public class CnfAdapterService {
             String endpoint = UriBuilder.fromUri(uri).path(path).build().toString();
             HttpEntity<?> requestEntity = new HttpEntity<>(getHttpHeaders());
             result = restTemplate.exchange(endpoint, HttpMethod.DELETE, requestEntity, String.class);
-            return result;
+            return result.getBody();
         } catch (HttpClientErrorException e) {
             logger.error("Error Calling Multicloud, e");
             if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
@@ -239,8 +230,7 @@ public class CnfAdapterService {
             throw e;
         } catch (HttpStatusCodeException e) {
             logger.error("Error in Multicloud, e");
-            String responseString = e.getResponseBodyAsString();
-            return ResponseEntity.status(e.getStatusCode()).body(responseString);
+            throw e;
         }
     }
 
