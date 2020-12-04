@@ -41,9 +41,6 @@ import org.onap.so.adapters.cnf.model.ConfigTemplateEntity;
 import org.onap.so.adapters.cnf.model.ConfigurationEntity;
 import org.onap.so.adapters.cnf.model.ConfigurationRollbackEntity;
 import org.onap.so.adapters.cnf.model.ConnectivityInfo;
-import org.onap.so.adapters.cnf.model.InstanceMiniResponseList;
-import org.onap.so.adapters.cnf.model.InstanceResponse;
-import org.onap.so.adapters.cnf.model.InstanceStatusResponse;
 import org.onap.so.adapters.cnf.model.ProfileEntity;
 import org.onap.so.adapters.cnf.model.ResourceBundleEntity;
 import org.onap.so.adapters.cnf.model.Tag;
@@ -51,7 +48,6 @@ import org.onap.so.adapters.cnf.service.CnfAdapterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -77,7 +73,7 @@ public class CnfAdapterRest {
     @ResponseBody
     @RequestMapping(value = {"/api/cnf-adapter/v1/healthcheck"}, method = RequestMethod.GET,
             produces = "application/json")
-    public ResponseEntity<String> healthCheck() throws Exception {
+    public String healthCheck() throws Exception {
 
         logger.info("healthCheck called.");
         return cnfAdapterService.healthCheck();
@@ -87,7 +83,7 @@ public class CnfAdapterRest {
     @ResponseBody
     @RequestMapping(value = {"/api/cnf-adapter/v1/instance"}, method = RequestMethod.POST,
             produces = "application/json", consumes = "application/json")
-    public ResponseEntity<String> createInstance(@RequestBody BpmnInstanceRequest bpmnInstanceRequest)
+    public String createInstance(@RequestBody BpmnInstanceRequest bpmnInstanceRequest)
             throws JsonParseException, JsonMappingException, IOException {
 
         logger.info("createInstance called.");
@@ -97,7 +93,7 @@ public class CnfAdapterRest {
     @ResponseBody
     @RequestMapping(value = {"/api/cnf-adapter/v1/instance/{instID}"}, method = RequestMethod.GET,
             produces = "application/json")
-    public ResponseEntity<InstanceResponse> getInstanceByInstanceId(@PathVariable("instID") String instanceId)
+    public String getInstanceByInstanceId(@PathVariable("instID") String instanceId)
             throws JsonParseException, JsonMappingException, IOException {
 
         logger.info("getInstanceByInstanceId called.");
@@ -109,8 +105,8 @@ public class CnfAdapterRest {
     @ResponseBody
     @RequestMapping(value = {"/api/cnf-adapter/v1/instance/{instID}/status"}, method = RequestMethod.GET,
             produces = "application/json")
-    public ResponseEntity<InstanceStatusResponse> getInstanceStatusByInstanceId(
-            @PathVariable("instID") String instanceId) throws JsonParseException, JsonMappingException, IOException {
+    public String getInstanceStatusByInstanceId(@PathVariable("instID") String instanceId)
+            throws JsonParseException, JsonMappingException, IOException {
 
         logger.info("getInstanceStatusByInstanceId called.");
 
@@ -119,7 +115,7 @@ public class CnfAdapterRest {
     }
 
     @RequestMapping(value = {"/api/cnf-adapter/v1/instance"}, method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<InstanceMiniResponseList> getInstanceByRBNameOrRBVersionOrProfileName(
+    public String getInstanceByRBNameOrRBVersionOrProfileName(
             @RequestParam(value = "rb-name", required = false) String rbName,
             @RequestParam(value = "rb-version", required = false) String rbVersion,
             @RequestParam(value = "profile-name", required = false) String profileName)
@@ -133,7 +129,7 @@ public class CnfAdapterRest {
     @ResponseBody
     @RequestMapping(value = {"/api/cnf-adapter/v1/instance/{instID}"}, method = RequestMethod.DELETE,
             produces = "application/json")
-    public ResponseEntity<String> deleteInstanceByInstanceId(@PathVariable("instID") String instanceID)
+    public String deleteInstanceByInstanceId(@PathVariable("instID") String instanceID)
             throws JsonParseException, JsonMappingException, IOException {
 
         logger.info("deleteInstanceByInstanceId called.");
