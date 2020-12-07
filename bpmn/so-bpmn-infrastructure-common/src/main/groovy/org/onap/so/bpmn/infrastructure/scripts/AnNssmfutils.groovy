@@ -55,7 +55,7 @@ import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.aai.domain.yang.SliceProfile
 import org.onap.aai.domain.yang.SliceProfiles
 import org.onap.aai.domain.yang.Relationship
-
+import com.google.gson.Gson
 
 class AnNssmfUtils {
 
@@ -193,7 +193,7 @@ public void createSliceProfilesInAai(DelegateExecution execution) {
 	ANNF_sliceProfileInstance.setServiceType(serviceType)
 	String serviceStatus = "deactivated"
 	ANNF_sliceProfileInstance.setOrchestrationStatus(serviceStatus)
-	String serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("ranNfSliceProfile"), "pLMNIdList")
+	String serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("ranNfSliceProfile"), "plmnIdList")
 	ANNF_sliceProfileInstance.setServiceInstanceLocationId(serviceInstanceLocationid)
 	String serviceRole = "slice-profile-instance"
 	ANNF_sliceProfileInstance.setServiceRole(serviceRole)
@@ -213,7 +213,7 @@ public void createSliceProfilesInAai(DelegateExecution execution) {
 	serviceType = jsonUtil.getJsonValue(execution.getVariable("tnFhSliceProfile"), "sST")
 	TNFH_sliceProfileInstance.setServiceType(serviceType)
 	TNFH_sliceProfileInstance.setOrchestrationStatus(serviceStatus)
-	serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("tnFhSliceProfile"), "pLMNIdList")
+	serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("tnFhSliceProfile"), "plmnIdList")
 	TNFH_sliceProfileInstance.setServiceInstanceLocationId(serviceInstanceLocationid)
 	TNFH_sliceProfileInstance.setServiceRole(serviceRole)
 	TNFH_sliceProfileInstance.setEnvironmentContext(snssai)
@@ -230,7 +230,7 @@ public void createSliceProfilesInAai(DelegateExecution execution) {
 	serviceType = jsonUtil.getJsonValue(execution.getVariable("tnMhSliceProfile"), "sST")
 	TNMH_sliceProfileInstance.setServiceType(serviceType)
 	TNMH_sliceProfileInstance.setOrchestrationStatus(serviceStatus)
-	serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("tnMhSliceProfile"), "pLMNIdList")
+	serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("tnMhSliceProfile"), "plmnIdList")
 	TNMH_sliceProfileInstance.setServiceInstanceLocationId(serviceInstanceLocationid)
 	TNMH_sliceProfileInstance.setServiceRole(serviceRole)
 	TNMH_sliceProfileInstance.setEnvironmentContext(snssai)
@@ -268,7 +268,7 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 	Map<String,Object> profile
 	switch(domainType) {
 		case "AN-NF":
-			profile = objectMapper.readValue(execution.getVariable("ranNfSliceProfile"), Map.class)//pending fields - maxBandwidth, sST, pLMNIdList, cSReliabilityMeanTime, 
+			profile = objectMapper.readValue(execution.getVariable("ranNfSliceProfile"), Map.class)//pending fields - maxBandwidth, sST, plmnIdList, cSReliabilityMeanTime, 
 																									//msgSizeByte, maxNumberofPDUSessions,overallUserDensity,transferIntervalTarget
 			result.setJitter(profile.get("jitter"))
 			result.setLatency(profile.get("latency"))
@@ -286,14 +286,14 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 			result.setProfileId(execution.getVariable("ANNF_sliceProfileId"))
 			break
 		case "TN-FH":
-			profile = objectMapper.readValue(execution.getVariable("tnFhSliceProfile"), Map.class) //pending fields - maxBandwidth, sST, pLMNIdList
+			profile = objectMapper.readValue(execution.getVariable("tnFhSliceProfile"), Map.class) //pending fields - maxBandwidth, sST, plmnIdList
 			result.setJitter(profile.get("jitter"))
 			result.setLatency(profile.get("latency"))
 			result.setResourceSharingLevel(profile.get("resourceSharingLevel"))
 			result.setProfileId(execution.getVariable("TNFH_sliceProfileId"))
 			break
 		case "TN-MH":
-			profile = objectMapper.readValue(execution.getVariable("tnMhSliceProfile"), Map.class)//pending fields - maxBandwidth, sST, pLMNIdList
+			profile = objectMapper.readValue(execution.getVariable("tnMhSliceProfile"), Map.class)//pending fields - maxBandwidth, sST, plmnIdList
 			result.setJitter(profile.get("jitter"))
 			result.setLatency(profile.get("latency"))
 			result.setResourceSharingLevel(profile.get("resourceSharingLevel"))
@@ -342,16 +342,17 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 	
 	public String buildCreateNSSMFRequest(DelegateExecution execution, String domainType, String action) {
 		JsonObject esrInfo = new JsonObject()
-	    esrInfo.addProperty("networkType", "tn")
-	    esrInfo.addProperty("vendor", "ONAP_internal")
+	        esrInfo.addProperty("networkType", "tn")
+	        esrInfo.addProperty("vendor", "ONAP_internal")
 		JsonObject response = new JsonObject()
 		JsonObject allocateTnNssi = new JsonObject()
 		JsonObject serviceInfo = new JsonObject()
 		JsonArray transportSliceNetworksList  = new JsonArray()
 		JsonArray connectionLinksList = new JsonArray()
 		JsonObject connectionLinks = new JsonObject()
+		Gson jsonConverter = new Gson()
 		if(action.equals("allocate")){
-			Map<String, String> endpoints
+			JsonObject endpoints = new JsonObject()
 			if(domainType.equals("TN_FH")) {
 				serviceInfo.addProperty("serviceInvariantUuid", execution.getVariable("TNFH_modelInvariantUuid"))
 				serviceInfo.addProperty("serviceUuid", execution.getVariable("TNFH_modelUuid"))
@@ -359,12 +360,10 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 				allocateTnNssi.addProperty("nssiName", execution.getVariable("TNFH_modelName"))
 				Map<String,Object> sliceProfile = objectMapper.readValue(execution.getVariable("tnFhSliceProfile"), Map.class)
 				sliceProfile.put("sliceProfileId", execution.getVariable("TNFH_sliceProfileInstanceId"))
-				String sliceProfileString = objectMapper.writeValueAsString(sliceProfile)
-				allocateTnNssi.addProperty("sliceProfile", sliceProfileString)
-				endpoints.put("transportEndpointA", execution.getVariable("tranportEp_ID_RU"))
-				endpoints.put("transportEndpointB", execution.getVariable("tranportEp_ID_DUIN"))
-				String endpointsString = objectMapper.writeValueAsString(endpoints)
-				connectionLinksList.add(endpointsString)
+				allocateTnNssi.add("sliceProfile", jsonConverter.toJsonTree(sliceProfile))
+				endpoints.addProperty("transportEndpointA", execution.getVariable("tranportEp_ID_RU"))
+				endpoints.addProperty("transportEndpointB", execution.getVariable("tranportEp_ID_DUIN"))
+				connectionLinksList.add(endpoints)
 			}else if(domainType.equals("TN_MH")) {
 				serviceInfo.addProperty("serviceInvariantUuid", execution.getVariable("TNMH_modelInvariantUuid"))
 				serviceInfo.addProperty("serviceUuid", execution.getVariable("TNMH_modelUuid"))
@@ -372,41 +371,32 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 				allocateTnNssi.addProperty("nssiName", execution.getVariable("TNMH_modelName"))
 				Map<String,Object> sliceProfile = objectMapper.readValue(execution.getVariable("tnMhSliceProfile"), Map.class)
 				sliceProfile.put("sliceProfileId", execution.getVariable("TNMH_sliceProfileInstanceId"))
-				String sliceProfileString = objectMapper.writeValueAsString(sliceProfile)
-				allocateTnNssi.addProperty("sliceProfile", sliceProfileString)
-				endpoints.put("transportEndpointA", execution.getVariable("tranportEp_ID_DUEG"))
-				endpoints.put("transportEndpointB", execution.getVariable("tranportEp_ID_CUIN"))
-				String endpointsString = objectMapper.writeValueAsString(endpoints)
-				connectionLinksList.add(endpointsString)
+				allocateTnNssi.add("sliceProfile", jsonConverter.toJsonTree(sliceProfile))
+                                endpoints.addProperty("transportEndpointA", execution.getVariable("tranportEp_ID_DUEG"))
+				endpoints.addProperty("transportEndpointB", execution.getVariable("tranportEp_ID_CUIN"))
+				connectionLinksList.add(endpoints)
 			}
 			
 			//Connection links
 			connectionLinks.add("connectionLinks", connectionLinksList)
 			transportSliceNetworksList.add(connectionLinks)
 			allocateTnNssi.add("transportSliceNetworks", transportSliceNetworksList)
-			allocateTnNssi.addProperty("nssiId", null)
-			serviceInfo.addProperty("nssiId", null)
 		}else if(action.equals("modify-allocate")) {
 			if(domainType.equals("TN_FH")) {
-				serviceInfo.addProperty("serviceInvariantUuid", null)
-				serviceInfo.addProperty("serviceUuid", null)
-				allocateTnNssi.addProperty("nsstId", null)
 				allocateTnNssi.addProperty("nssiName", execution.getVariable("TNFH_nssiName"))
 				allocateTnNssi.addProperty("sliceProfileId", execution.getVariable("TNFH_sliceProfileInstanceId"))
 				allocateTnNssi.addProperty("nssiId", execution.getVariable("TNFH_NSSI"))
 				serviceInfo.addProperty("nssiId", execution.getVariable("TNFH_NSSI"))
 			}else if(domainType.equals("TN_MH")) {
-				serviceInfo.addProperty("serviceInvariantUuid", null)
-				serviceInfo.addProperty("serviceUuid", null)
-				allocateTnNssi.addProperty("nsstId", null)
 				allocateTnNssi.addProperty("nssiName", execution.getVariable("TNMH_nssiName"))
 				allocateTnNssi.addProperty("sliceProfileId", execution.getVariable("TNMH_sliceProfileInstanceId"))
 				allocateTnNssi.addProperty("nssiId", execution.getVariable("TNMH_NSSI"))
 				serviceInfo.addProperty("nssiId", execution.getVariable("TNMH_NSSI"))
 			}
 		}
+		JsonParser parser = new JsonParser()
 		String nsiInfo = jsonUtil.getJsonValue(execution.getVariable("sliceParams"), "nsiInfo")
-		allocateTnNssi.addProperty("nsiInfo", nsiInfo)
+		allocateTnNssi.add("nsiInfo",(JsonObject) parser.parse(nsiInfo))
 		allocateTnNssi.addProperty("scriptName", "TN1")
 		serviceInfo.addProperty("nsiId", execution.getVariable("nsiId"))
 		serviceInfo.addProperty("globalSubscriberId", execution.getVariable("globalSubscriberId"))

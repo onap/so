@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory
 import java.util.List
 import static org.apache.commons.lang3.StringUtils.isBlank
 import com.google.gson.JsonObject
+import com.google.gson.Gson
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.JsonArray
 import com.google.gson.JsonParser
@@ -98,8 +99,8 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 				execution.setVariable("sliceProfile", sliceProfile)
 			}
 			String sliceProfileId = jsonUtil.getJsonValue(sliceProfile, "sliceProfileId")
-			def snssaiList = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(sliceProfile, "sNSSAI"))
-			def plmnIdList = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(sliceProfile, "pLMNIdList"))
+			def snssaiList = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(sliceProfile, "snssaiList"))
+			def plmnIdList = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(sliceProfile, "plmnIdList"))
 			def coverageAreaTAList = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(sliceProfile, "coverageAreaTAList"))
 
 			if (isBlank(sliceProfileId) || (snssaiList.empty) || (plmnIdList.empty)
@@ -577,7 +578,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 	def createSdnrRequest = { DelegateExecution execution ->
 		logger.debug(Prefix+"createSdnrRequest method start")
 		String callbackUrl = UrnPropertiesReader.getVariable("mso.workflow.message.endpoint") + "/AsyncSdnrResponse/"+execution.getVariable("msoRequestId")
-		String sdnrRequest = buildSdnrAllocateRequest(execution, "allocate", "InstantiateRANSlice", callbackUrl)
+		String sdnrRequest = buildSdnrAllocateRequest(execution, "allocate", "instantiateRANSlice", callbackUrl)
 		execution.setVariable("createNSSI_sdnrRequest", sdnrRequest)
 		execution.setVariable("createNSSI_timeout", "PT10M")
 		execution.setVariable("createNSSI_correlator", execution.getVariable("msoRequestId"))
@@ -697,12 +698,12 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 	}
 	
 	def createFhAllocateNssiJobQuery = { DelegateExecution execution ->
-		logger.debug(Prefix+"createModifyNssiQueryJobStatus method start")
+		logger.debug(Prefix+"createFhAllocateNssiJobQuery method start")
 		createTnAllocateNssiJobQuery(execution, "TN_FH")		
 	}
 	
 	def createMhAllocateNssiJobQuery = { DelegateExecution execution ->
-		logger.debug(Prefix+"createModifyNssiQueryJobStatus method start")
+		logger.debug(Prefix+"createMhAllocateNssiJobQuery method start")
 		createTnAllocateNssiJobQuery(execution, "TN_MH")
 	}
 	
@@ -712,9 +713,9 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 	    esrInfo.addProperty("vendor", "ONAP_internal")
 		execution.setVariable("esrInfo", esrInfo.toString())
 		JsonObject serviceInfo = new JsonObject()
-		serviceInfo.addProperty("nssiId", null)
 		serviceInfo.addProperty("nsiId", execution.getVariable("nsiId"))
 		String sST = jsonUtil.getJsonValue(execution.getVariable("sliceProfile"), "sST")
+logger.debug("sst value : ${sST}")
 		serviceInfo.addProperty("sST", sST)
 		serviceInfo.addProperty("PLMNIdList", objectMapper.writeValueAsString(execution.getVariable("plmnIdList")))
 		serviceInfo.addProperty("globalSubscriberId", execution.getVariable("globalSubscriberId"))
@@ -736,14 +737,14 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		logger.debug(Prefix+"processJobStatusRsp method start")
 		String jobResponse = execution.getVariable("TNFH_jobResponse")
 		logger.debug("Job status response "+jobResponse)
-		String status = jsonUtil.getJsonValue(jobResponse, "responseDescriptor.status")
-		String nssi = jsonUtil.getJsonValue(jobResponse, "responseDescriptor.nssi")
+		String status = jsonUtil.getJsonValue(jobResponse, "status")
+		String nssi = jsonUtil.getJsonValue(jobResponse, "nssiId")
 		if(status.equalsIgnoreCase("finished")) {
 			execution.setVariable("TNFH_NSSI", nssi)
 			logger.debug("Job successfully completed ... proceeding with flow for nssi : "+nssi)
 		}
 		else {
-			String statusDescription = jsonUtil.getJsonValue(jobResponse, "responseDescriptor.statusDescription")
+			String statusDescription = jsonUtil.getJsonValue(jobResponse, "statusDescription")
 			logger.error("received failed status from job status query for nssi : "+nssi+" with status description : "+ statusDescription)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000,"received failed status from job status query for nssi : "+nssi+" with status description : "+ statusDescription)
 		}
@@ -753,14 +754,14 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		logger.debug(Prefix+"processJobStatusRsp method start")
 		String jobResponse = execution.getVariable("TNMH_jobResponse")
 		logger.debug("Job status response "+jobResponse)
-		String status = jsonUtil.getJsonValue(jobResponse, "responseDescriptor.status")
-		String nssi = jsonUtil.getJsonValue(jobResponse, "responseDescriptor.nssi")
+		String status = jsonUtil.getJsonValue(jobResponse, "status")
+		String nssi = jsonUtil.getJsonValue(jobResponse, "nssiId")
 		if(status.equalsIgnoreCase("finished")) {
 			execution.setVariable("TNMH_NSSI", nssi)
 			logger.debug("Job successfully completed ... proceeding with flow for nssi : "+nssi)
 		}
 		else {
-			String statusDescription = jsonUtil.getJsonValue(jobResponse, "responseDescriptor.statusDescription")
+			String statusDescription = jsonUtil.getJsonValue(jobResponse, "statusDescription")
 			logger.error("received failed status from job status query for nssi : "+nssi+" with status description : "+ statusDescription)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000,"received failed status from job status query for nssi : "+nssi+" with status description : "+ statusDescription)
 		}
@@ -770,13 +771,13 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		logger.debug(Prefix+"processJobStatusRsp method start")
 		String jobResponse = execution.getVariable("jobResponse")
 		logger.debug("Job status response "+jobResponse)
-		String status = jsonUtil.getJsonValue(jobResponse, "responseDescriptor.status")
-		String nssi = jsonUtil.getJsonValue(jobResponse, "responseDescriptor.nssi")
+		String status = jsonUtil.getJsonValue(jobResponse, "status")
+		String nssi = jsonUtil.getJsonValue(jobResponse, "nssiId")
 		if(status.equalsIgnoreCase("finished")) {
 			logger.debug("Job successfully completed ... proceeding with flow for nssi : "+nssi)
 		}
 		else {
-			String statusDescription = jsonUtil.getJsonValue(jobResponse, "responseDescriptor.statusDescription")
+			String statusDescription = jsonUtil.getJsonValue(jobResponse, "statusDescription")
 			logger.error("received failed status from job status query for nssi : "+nssi+" with status description : "+ statusDescription)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000,"received failed status from job status query for nssi : "+nssi+" with status description : "+ statusDescription)
 		}
@@ -899,29 +900,30 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		sliceProfile.put("maxNumberofConns", sliceProfile.get("maxNumberofPDUSessions"))
 		sliceProfile.put("uLThptPerSlice", sliceProfile.get("expDataRateUL"))
 		sliceProfile.put("dLThptPerSlice", sliceProfile.get("expDataRateDL"))
-		String sliceProfileString = objectMapper.writeValueAsString(sliceProfile)
+
 		JsonObject response = new JsonObject()
 		JsonObject body = new JsonObject()
 		JsonObject input = new JsonObject()
 		JsonObject commonHeader = new JsonObject()
 		JsonObject payload = new JsonObject()
 		JsonObject payloadInput = new JsonObject()
-		commonHeader.addProperty("TimeStamp",new Date(System.currentTimeMillis()).format("yyyy-MM-dd'T'HH:mm:ss.sss", TimeZone.getDefault()))
-		commonHeader.addProperty("APIver", "1.0")
-		commonHeader.addProperty("RequestID", requestId)
-		commonHeader.addProperty("SubRequestID", "1")
-		commonHeader.add("RequestTrack", new JsonObject())
-		commonHeader.add("Flags", new JsonObject())
-		payloadInput.addProperty("sliceProfile", sliceProfileString)
+		commonHeader.addProperty("TimeStamp",new Date(System.currentTimeMillis()).format("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", TimeZone.getDefault()))
+		commonHeader.addProperty("api-ver", "1.0")
+		commonHeader.addProperty("request-id", requestId)
+		commonHeader.addProperty("sub-request-id", "1")
+		commonHeader.add("request-track", new JsonObject())
+		commonHeader.add("flags", new JsonObject())
+	        Gson jsonConverter = new Gson() 
+         	payloadInput.add("sliceProfile", jsonConverter.toJsonTree(sliceProfile))
 		payloadInput.addProperty("RANNSSIId", execution.getVariable("RANServiceInstanceId"))
 		payloadInput.addProperty("NSIID", execution.getVariable("nsiId"))
 		payloadInput.addProperty("RANNFNSSIId", execution.getVariable("RANNFServiceInstanceId"))
 		payloadInput.addProperty("callbackURL", callbackUrl)
 		payloadInput.add("additionalproperties", new JsonObject())
 		payload.add("input", payloadInput)
-		input.add("CommonHeader", commonHeader)
-		input.addProperty("Action", action)
-		input.addProperty("Payload", payload.toString())
+		input.add("common-header", commonHeader)
+		input.addProperty("action", action)
+		input.addProperty("payload", payload.toString())
 		body.add("input", input)
 		response.add("body", body)
 		response.addProperty("version", "1.0")
