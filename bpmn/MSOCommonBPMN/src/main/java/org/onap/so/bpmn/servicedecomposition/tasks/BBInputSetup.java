@@ -1478,6 +1478,11 @@ public class BBInputSetup implements JavaDelegate {
                                 lookupKeyMap.put(ResourceKey.VOLUME_GROUP_ID, volumeGroupIdOp.get());
                             }
                         }
+                        if (vfModule.getModelInfoVfModule() != null
+                                && vfModule.getModelInfoVfModule().getModelName() != null
+                                && vfModule.getModelInfoVfModule().getModelName().contains("helm")) {
+                            gBB.getRequestContext().setIsHelm(parameter.getIsHelm());
+                        }
                         break;
                     }
                 }
