@@ -60,6 +60,11 @@ committers:
       company: 'Nokia'
       id: 'lukaszM'
       timezone: 'Europe/Warsaw'
+    - name: 'Ramesh Parthasarathy'
+      email: 'ramesh.parthasarathy@att.com'
+      company: 'ATT'
+      id: 'parthasram'
+      timezone: 'PST'
 tsc:
     approval: 'https://lists.onap.org/pipermail/onap-tsc'
     changes:
@@ -96,3 +101,6 @@ tsc:
           name: 'Marcus Williams'
           name: 'Sanchita Pathak'
           name: 'Subhash Kumar Singh'
+        - type: 'addition'
+          name: 'Ramesh Parthasarathy'
+          link: 'https://wiki.onap.org/display/Meetings/TSC+2020-12-03'
