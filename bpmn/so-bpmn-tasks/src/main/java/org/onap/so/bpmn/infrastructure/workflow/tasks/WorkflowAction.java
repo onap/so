@@ -26,18 +26,8 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.SerializationUtils;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.javatuples.Pair;
@@ -76,8 +66,6 @@ import org.onap.so.client.orchestration.AAIEntityNotFoundException;
 import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
-import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
-import org.onap.so.db.catalog.beans.CvnfcCustomization;
 import org.onap.so.db.catalog.beans.InstanceGroup;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
@@ -86,28 +74,36 @@ import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.ModelType;
-import org.onap.so.serviceinstancebeans.Networks;
-import org.onap.so.serviceinstancebeans.Pnfs;
 import org.onap.so.serviceinstancebeans.RelatedInstance;
 import org.onap.so.serviceinstancebeans.RelatedInstanceList;
 import org.onap.so.serviceinstancebeans.RequestDetails;
-import org.onap.so.serviceinstancebeans.Service;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
-import org.onap.so.serviceinstancebeans.VfModules;
-import org.onap.so.serviceinstancebeans.Vnfs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionCommon.CREATE_INSTANCE;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionCommon.FABRIC_CONFIGURATION;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionCommon.USER_PARAM_SERVICE;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionCommon.WORKFLOW_ACTION_ERROR_MESSAGE;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionCommon.getListOfUserParams;
 
 @Component
 public class WorkflowAction {
 
-    private static final String WORKFLOW_ACTION_ERROR_MESSAGE = "WorkflowActionErrorMessage";
     private static final String SERVICE_INSTANCES = "serviceInstances";
     private static final String SERVICE_INSTANCE = "serviceInstance";
     private static final String VF_MODULES = "vfModules";
@@ -123,14 +119,11 @@ public class WorkflowAction {
     private static final String NETWORKCOLLECTION = "NetworkCollection";
     private static final String CONFIGURATION = "Configuration";
     private static final String ASSIGNINSTANCE = "assignInstance";
-    private static final String CREATEINSTANCE = "createInstance";
     private static final String REPLACEINSTANCE = "replaceInstance";
     private static final String REPLACEINSTANCERETAINASSIGNMENTS = "replaceInstanceRetainAssignments";
-    private static final String USERPARAMSERVICE = "service";
     private static final String SUPPORTEDTYPES =
             "vnfs|vfModules|networks|networkCollections|volumeGroups|serviceInstances|instanceGroups";
     private static final String HOMINGSOLUTION = "Homing_Solution";
-    private static final String FABRIC_CONFIGURATION = "FabricConfiguration";
     private static final String SERVICE_TYPE_TRANSPORT = "TRANSPORT";
     private static final String SERVICE_TYPE_BONDING = "BONDING";
     private static final String CLOUD_OWNER = "DEFAULT";
@@ -238,7 +231,7 @@ public class WorkflowAction {
                                 requestDetails, requestAction, resourceId, flowsToExecute, vnfType, orchFlows,
                                 apiVersion, resourceKey, replaceInfo);
                     } else {
-                        if (isConfiguration(orchFlows) && !requestAction.equalsIgnoreCase(CREATEINSTANCE)) {
+                        if (isConfiguration(orchFlows) && !requestAction.equalsIgnoreCase(CREATE_INSTANCE)) {
                             addConfigBuildingBlocksToFlowsToExecuteList(execution, sIRequest, requestId,
                                     workflowResourceIds, requestDetails, requestAction, resourceId, flowsToExecute,
                                     vnfType, apiVersion, resourceKey, replaceInfo, orchFlows);
@@ -255,36 +248,41 @@ public class WorkflowAction {
                         }
                     }
                 } else {
-                    boolean foundRelated = false;
                     boolean containsService = false;
                     List<Resource> resourceList = new ArrayList<>();
                     List<Pair<WorkflowType, String>> aaiResourceIds = new ArrayList<>();
+                    UserParamsServiceTraversal userParamsServiceTraversal =
+                            new UserParamsServiceTraversal(catalogDbClient, exceptionBuilder);
                     if (resourceType == WorkflowType.SERVICE && requestAction.equalsIgnoreCase(ASSIGNINSTANCE)) {
                         // SERVICE-MACRO-ASSIGN will always get user params with a
                         // service.
-                        if (sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
+
+                        if (getListOfUserParams(sIRequest) != null) {
                             containsService = isContainsService(sIRequest);
                             if (containsService) {
-                                traverseUserParamsService(execution, resourceList, sIRequest, requestAction);
+                                resourceList = userParamsServiceTraversal.getResourceListFromUserParams(execution,
+                                        getListOfUserParams(sIRequest), serviceInstanceId, requestAction);
                             }
                         } else {
                             buildAndThrowException(execution,
                                     "Service-Macro-Assign request details must contain user params with a service");
                         }
-                    } else if (resourceType == WorkflowType.SERVICE && requestAction.equalsIgnoreCase(CREATEINSTANCE)) {
+                    } else if (resourceType == WorkflowType.SERVICE
+                            && requestAction.equalsIgnoreCase(CREATE_INSTANCE)) {
                         // SERVICE-MACRO-CREATE will get user params with a service,
                         // a service with a network, a service with a
-                        // networkcollection, OR an empty service.
+                        // network collection, OR an empty service.
                         // If user params is just a service or null and macro
                         // queries the SI and finds a VNF, macro fails.
 
-                        if (sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
+                        if (getListOfUserParams(sIRequest) != null) {
                             containsService = isContainsService(sIRequest);
                         }
                         if (containsService) {
-                            foundRelated = traverseUserParamsService(execution, resourceList, sIRequest, requestAction);
+                            resourceList = userParamsServiceTraversal.getResourceListFromUserParams(execution,
+                                    getListOfUserParams(sIRequest), serviceInstanceId, requestAction);
                         }
-                        if (!foundRelated) {
+                        if (!foundRelated(resourceList)) {
                             traverseCatalogDbService(execution, sIRequest, resourceList, aaiResourceIds);
                         }
                     } else if (resourceType == WorkflowType.SERVICE
@@ -333,15 +331,15 @@ public class WorkflowAction {
                         logger.info("Sorting for Vlan Tagging");
                         flowsToExecute = sortExecutionPathByObjectForVlanTagging(flowsToExecute, requestAction);
                     }
-                    // By default, enable homing at VNF level for CREATEINSTANCE and ASSIGNINSTANCE
+                    // By default, enable homing at VNF level for CREATE_INSTANCE and ASSIGNINSTANCE
                     if (resourceType == WorkflowType.SERVICE
-                            && (requestAction.equals(CREATEINSTANCE) || requestAction.equals(ASSIGNINSTANCE))
+                            && (requestAction.equals(CREATE_INSTANCE) || requestAction.equals(ASSIGNINSTANCE))
                             && resourceList.stream().anyMatch(x -> WorkflowType.VNF.equals(x.getResourceType()))) {
                         execution.setVariable(HOMING, true);
                         execution.setVariable("calledHoming", false);
                     }
                     if (resourceType == WorkflowType.SERVICE && (requestAction.equalsIgnoreCase(ASSIGNINSTANCE)
-                            || requestAction.equalsIgnoreCase(CREATEINSTANCE))) {
+                            || requestAction.equalsIgnoreCase(CREATE_INSTANCE))) {
                         generateResourceIds(flowsToExecute, resourceList, serviceInstanceId);
                     } else {
                         updateResourceIdsFromAAITraversal(flowsToExecute, resourceList, aaiResourceIds,
@@ -401,13 +399,11 @@ public class WorkflowAction {
     private boolean isContainsService(ServiceInstancesRequest sIRequest) {
         boolean containsService;
         List<Map<String, Object>> userParams = getListOfUserParams(sIRequest);
-        containsService = userParams.stream().anyMatch(param -> param.containsKey(USERPARAMSERVICE));
+        containsService = userParams.stream().anyMatch(param -> param.containsKey(USER_PARAM_SERVICE));
         return containsService;
     }
 
-    private List<Map<String, Object>> getListOfUserParams(ServiceInstancesRequest sIRequest) {
-        return sIRequest.getRequestDetails().getRequestParameters().getUserParams();
-    }
+
 
     private List<ExecuteBuildingBlock> loadExecuteBuildingBlocks(DelegateExecution execution, String requestId,
             String errorMessage) {
@@ -623,6 +619,18 @@ public class WorkflowAction {
             }
         }
         return flowsToExecuteConfigs;
+    }
+
+    protected void buildAndThrowException(DelegateExecution execution, String msg) {
+        logger.error(msg);
+        execution.setVariable(WORKFLOW_ACTION_ERROR_MESSAGE, msg);
+        exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, msg);
+    }
+
+    protected void buildAndThrowException(DelegateExecution execution, String msg, Exception ex) {
+        logger.error(msg, ex);
+        execution.setVariable(WORKFLOW_ACTION_ERROR_MESSAGE, msg + ex.getMessage());
+        exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, msg + ex.getMessage());
     }
 
     protected List<OrchestrationFlow> getVfModuleReplaceBuildingBlocks(ConfigBuildingBlocksDataObject dataObj)
@@ -1214,150 +1222,6 @@ public class WorkflowAction {
         }
     }
 
-    protected boolean traverseUserParamsService(DelegateExecution execution, List<Resource> resourceList,
-            ServiceInstancesRequest sIRequest, String requestAction) throws IOException {
-        boolean foundRelated = false;
-        boolean foundVfModuleOrVG = false;
-        String vnfCustomizationUUID = "";
-        String vfModuleCustomizationUUID = "";
-        if (sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
-            List<Map<String, Object>> userParams = getListOfUserParams(sIRequest);
-            for (Map<String, Object> params : userParams) {
-                if (params.containsKey(USERPARAMSERVICE)) {
-                    ObjectMapper obj = new ObjectMapper();
-                    String input = obj.writeValueAsString(params.get(USERPARAMSERVICE));
-                    Service validate = obj.readValue(input, Service.class);
-                    resourceList.add(
-                            new Resource(WorkflowType.SERVICE, validate.getModelInfo().getModelVersionId(), false));
-                    if (validate.getResources().getVnfs() != null) {
-                        for (Vnfs vnf : validate.getResources().getVnfs()) {
-                            resourceList.add(new Resource(WorkflowType.VNF,
-                                    vnf.getModelInfo().getModelCustomizationId(), false));
-                            foundRelated = true;
-                            if (vnf.getModelInfo() != null && vnf.getModelInfo().getModelCustomizationUuid() != null) {
-                                vnfCustomizationUUID = vnf.getModelInfo().getModelCustomizationUuid();
-                            }
-                            if (vnf.getVfModules() != null) {
-                                for (VfModules vfModule : vnf.getVfModules()) {
-                                    VfModuleCustomization vfModuleCustomization =
-                                            catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID(
-                                                    vfModule.getModelInfo().getModelCustomizationUuid());
-                                    if (vfModuleCustomization != null) {
-
-                                        if (vfModuleCustomization.getVfModule() != null
-                                                && vfModuleCustomization.getVfModule().getVolumeHeatTemplate() != null
-                                                && vfModuleCustomization.getVolumeHeatEnv() != null) {
-                                            resourceList.add(new Resource(WorkflowType.VOLUMEGROUP,
-                                                    vfModuleCustomization.getModelCustomizationUUID(), false));
-                                            foundVfModuleOrVG = true;
-                                        }
-
-                                        if ((vfModuleCustomization.getVfModule() != null)
-                                                && ((vfModuleCustomization.getVfModule().getModuleHeatTemplate() != null
-                                                        && vfModuleCustomization.getHeatEnvironment() != null))
-                                                || (vfModuleCustomization.getVfModule().getModelName() != null
-                                                        && vfModuleCustomization.getVfModule().getModelName()
-                                                                .contains("helm"))) {
-                                            foundVfModuleOrVG = true;
-                                            Resource resource = new Resource(WorkflowType.VFMODULE,
-                                                    vfModuleCustomization.getModelCustomizationUUID(), false);
-                                            resource.setBaseVfModule(
-                                                    vfModuleCustomization.getVfModule().getIsBase() != null
-                                                            && vfModuleCustomization.getVfModule().getIsBase());
-                                            resourceList.add(resource);
-                                            if (vfModule.getModelInfo() != null
-                                                    && vfModule.getModelInfo().getModelCustomizationUuid() != null) {
-                                                vfModuleCustomizationUUID =
-                                                        vfModule.getModelInfo().getModelCustomizationUuid();
-                                            }
-                                            if (!vnfCustomizationUUID.isEmpty()
-                                                    && !vfModuleCustomizationUUID.isEmpty()) {
-                                                List<CvnfcConfigurationCustomization> configs =
-                                                        traverseCatalogDbForConfiguration(
-                                                                validate.getModelInfo().getModelVersionId(),
-                                                                vnfCustomizationUUID, vfModuleCustomizationUUID);
-                                                for (CvnfcConfigurationCustomization config : configs) {
-                                                    Resource configResource = new Resource(WorkflowType.CONFIGURATION,
-                                                            config.getConfigurationResource().getModelUUID(), false);
-                                                    resource.setVnfCustomizationId(
-                                                            vnf.getModelInfo().getModelCustomizationId());
-                                                    resource.setVfModuleCustomizationId(
-                                                            vfModule.getModelInfo().getModelCustomizationId());
-                                                    resourceList.add(configResource);
-                                                }
-                                            }
-                                        }
-                                        if (!foundVfModuleOrVG) {
-                                            buildAndThrowException(execution,
-                                                    "Could not determine if vfModule was a vfModule or volume group. Heat template and Heat env are null");
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if (validate.getResources().getPnfs() != null) {
-                        for (Pnfs pnf : validate.getResources().getPnfs()) {
-                            resourceList.add(new Resource(WorkflowType.PNF,
-                                    pnf.getModelInfo().getModelCustomizationId(), false));
-                            foundRelated = true;
-                        }
-                    }
-                    if (validate.getResources().getNetworks() != null) {
-                        for (Networks network : validate.getResources().getNetworks()) {
-                            resourceList.add(new Resource(WorkflowType.NETWORK,
-                                    network.getModelInfo().getModelCustomizationId(), false));
-                            foundRelated = true;
-                        }
-                        if (requestAction.equals(CREATEINSTANCE)) {
-                            String networkColCustId = queryCatalogDBforNetworkCollection(execution, sIRequest);
-                            if (networkColCustId != null) {
-                                resourceList.add(new Resource(WorkflowType.NETWORKCOLLECTION, networkColCustId, false));
-                                foundRelated = true;
-                            }
-                        }
-                    }
-                    break;
-                }
-            }
-        }
-        return foundRelated;
-    }
-
-    protected List<CvnfcConfigurationCustomization> traverseCatalogDbForConfiguration(String serviceModelUUID,
-            String vnfCustomizationUUID, String vfModuleCustomizationUUID) {
-        List<CvnfcConfigurationCustomization> configurations = new ArrayList<>();
-        try {
-            List<CvnfcCustomization> cvnfcCustomizations = catalogDbClient.getCvnfcCustomization(serviceModelUUID,
-                    vnfCustomizationUUID, vfModuleCustomizationUUID);
-            for (CvnfcCustomization cvnfc : cvnfcCustomizations) {
-                for (CvnfcConfigurationCustomization customization : cvnfc.getCvnfcConfigurationCustomization()) {
-                    if (customization.getConfigurationResource().getToscaNodeType().contains(FABRIC_CONFIGURATION)) {
-                        configurations.add(customization);
-                    }
-                }
-            }
-            logger.debug("found {} fabric configuration(s)", configurations.size());
-            return configurations;
-        } catch (Exception ex) {
-            logger.error("Error in finding configurations", ex);
-            return configurations;
-        }
-    }
-
-    protected String queryCatalogDBforNetworkCollection(DelegateExecution execution,
-            ServiceInstancesRequest sIRequest) {
-        org.onap.so.db.catalog.beans.Service service =
-                catalogDbClient.getServiceByID(sIRequest.getRequestDetails().getModelInfo().getModelVersionId());
-        if (service != null) {
-            CollectionResourceCustomization networkCollection = this.findCatalogNetworkCollection(execution, service);
-            if (networkCollection != null) {
-                return networkCollection.getModelCustomizationUUID();
-            }
-        }
-        return null;
-    }
-
     protected WorkflowResourceIds populateResourceIdsFromApiHandler(DelegateExecution execution) {
         return WorkflowResourceIdsUtils.getWorkflowResourceIdsFromExecution(execution);
     }
@@ -1442,7 +1306,7 @@ public class WorkflowAction {
     protected List<ExecuteBuildingBlock> sortExecutionPathByObjectForVlanTagging(List<ExecuteBuildingBlock> orchFlows,
             String requestAction) {
         List<ExecuteBuildingBlock> sortedOrchFlows = new ArrayList<>();
-        if (requestAction.equals(CREATEINSTANCE)) {
+        if (requestAction.equals(CREATE_INSTANCE)) {
             for (ExecuteBuildingBlock ebb : orchFlows) {
                 if (ebb.getBuildingBlock().getBpmnFlowName().equals("AssignNetworkBB")) {
                     String key = ebb.getBuildingBlock().getKey();
@@ -1555,7 +1419,7 @@ public class WorkflowAction {
             } else if (orchFlow.getFlowName().contains(VFMODULE) || (orchFlow.getFlowName().contains(CONTROLLER)
                     && (VFMODULE).equalsIgnoreCase(orchFlow.getBpmnScope()))) {
                 List<Resource> vfModuleResourcesSorted;
-                if (requestAction.equals(CREATEINSTANCE) || requestAction.equals(ASSIGNINSTANCE)
+                if (requestAction.equals(CREATE_INSTANCE) || requestAction.equals(ASSIGNINSTANCE)
                         || requestAction.equals("activateInstance")) {
                     vfModuleResourcesSorted = sortVfModulesByBaseFirst(resourceList.stream()
                             .filter(x -> WorkflowType.VFMODULE == x.getResourceType()).collect(Collectors.toList()));
@@ -1686,18 +1550,6 @@ public class WorkflowAction {
         return listToExecute;
     }
 
-    protected void buildAndThrowException(DelegateExecution execution, String msg, Exception ex) {
-        logger.error(msg, ex);
-        execution.setVariable(WORKFLOW_ACTION_ERROR_MESSAGE, msg + ex.getMessage());
-        exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, msg + ex.getMessage());
-    }
-
-    protected void buildAndThrowException(DelegateExecution execution, String msg) {
-        logger.error(msg);
-        execution.setVariable(WORKFLOW_ACTION_ERROR_MESSAGE, msg);
-        exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, msg);
-    }
-
     public void handleRuntimeException(DelegateExecution execution) {
         StringBuilder wfeExpMsg = new StringBuilder("Runtime error ");
         String runtimeErrorMessage;
@@ -1724,7 +1576,7 @@ public class WorkflowAction {
     protected boolean isRequestMacroServiceResume(boolean aLaCarte, WorkflowType resourceType, String requestAction,
             String serviceInstanceId) {
         return (!aLaCarte && resourceType == WorkflowType.SERVICE
-                && (requestAction.equalsIgnoreCase(ASSIGNINSTANCE) || requestAction.equalsIgnoreCase(CREATEINSTANCE))
+                && (requestAction.equalsIgnoreCase(ASSIGNINSTANCE) || requestAction.equalsIgnoreCase(CREATE_INSTANCE))
                 && (serviceInstanceId != null && serviceInstanceId.trim().length() > 1)
                 && (bbInputSetupUtils.getAAIServiceInstanceById(serviceInstanceId) != null));
     }
@@ -1875,6 +1727,17 @@ public class WorkflowAction {
         return generatedResourceId;
     }
 
+    protected Boolean foundRelated(List<Resource> resourceList) {
+        return (containsWorkflowType(resourceList, WorkflowType.VNF)
+                || containsWorkflowType(resourceList, WorkflowType.PNF)
+                || containsWorkflowType(resourceList, WorkflowType.NETWORK)
+                || containsWorkflowType(resourceList, WorkflowType.NETWORKCOLLECTION));
+    }
+
+    protected Boolean containsWorkflowType(List<Resource> resourceList, WorkflowType workflowType) {
+        return resourceList.stream().anyMatch(resource -> resource.getResourceType().equals(workflowType));
+    }
+
     private void fillExecutionDefault(DelegateExecution execution) {
         execution.setVariable("sentSyncResponse", false);
         execution.setVariable(HOMING, false);
@@ -1918,5 +1781,4 @@ public class WorkflowAction {
         }
         return serviceInstanceId;
     }
-
 }
