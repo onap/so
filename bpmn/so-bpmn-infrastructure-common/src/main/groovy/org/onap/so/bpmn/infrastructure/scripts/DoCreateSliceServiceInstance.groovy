@@ -100,7 +100,6 @@ class DoCreateSliceServiceInstance extends AbstractServiceTaskProcessor{
          * todo: role
          */
         String serviceRole = "service-profile"
-        String serviceType = execution.getVariable("serviceType")
         String globalSubscriberId = execution.getVariable("globalSubscriberId")
         String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
 
@@ -111,7 +110,7 @@ class DoCreateSliceServiceInstance extends AbstractServiceTaskProcessor{
             ss.setServiceInstanceId(ssInstanceId)
             String sliceInstanceName = execution.getVariable("serviceInstanceName")
             ss.setServiceInstanceName(sliceInstanceName)
-            ss.setServiceType(serviceType)
+            ss.setServiceType(serviceProfile.get("sST"))
             String serviceStatus = "deactivated"
             ss.setOrchestrationStatus(serviceStatus)
             String modelInvariantUuid = modelInfo.getModelInvariantUuid()

@@ -62,8 +62,10 @@ class DoAllocateNSSI extends AbstractServiceTaskProcessor {
      */
     void sendCreateRequestNSSMF(DelegateExecution execution) {
         NssmfAdapterNBIRequest nbiRequest = execution.getVariable("nbiRequest") as NssmfAdapterNBIRequest
-        String response = nssmfAdapterUtils.sendPostRequestNSSMF(execution, NSSMF_ALLOCATE_URL,
-                objectMapper.writeValueAsString(nbiRequest))
+        String nssmfRequest = objectMapper.writeValueAsString(nbiRequest)
+        logger.debug("sendCreateRequestNSSMF: " + nssmfRequest)
+
+        String response = nssmfAdapterUtils.sendPostRequestNSSMF(execution, NSSMF_ALLOCATE_URL, nssmfRequest)
 
         if (response != null) {
             NssiResponse nssiResponse = objectMapper.readValue(response, NssiResponse.class)

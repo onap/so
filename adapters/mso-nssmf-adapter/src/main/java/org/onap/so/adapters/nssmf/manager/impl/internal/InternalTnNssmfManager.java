@@ -37,6 +37,6 @@ public class InternalTnNssmfManager extends InternalNssmfManager {
     @Override
     protected String doWrapModifyReqBody(NssmfAdapterNBIRequest nbiRequest) throws ApplicationException {
         // TODO
-        return null;
+        return doWrapAllocateReqBody(nbiRequest);
     }
 }

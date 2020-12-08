@@ -101,7 +101,7 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
 
     void createServiceInstance(DelegateExecution execution) {
 
-        String serviceRole = "TN"
+        String serviceRole = "nssi"
         String serviceType = execution.getVariable("subscriptionServiceType")
         String ssInstanceId = execution.getVariable("sliceServiceInstanceId")
         String sliceProfileStr = execution.getVariable("sliceProfile")
