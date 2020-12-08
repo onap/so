@@ -3100,6 +3100,32 @@ public class WorkflowActionTest extends BaseTaskTest {
         }
     }
 
+    @Test
+    public void foundRelatedTest() {
+        List<Resource> resourceList = new ArrayList<>();
+        resourceList.add(new Resource(WorkflowType.PNF, "model customization id", false));
+        resourceList.add(new Resource(WorkflowType.VNF, "model customization id", false));
+        resourceList.add(new Resource(WorkflowType.NETWORK, "model customization id", false));
+        resourceList.add(new Resource(WorkflowType.NETWORKCOLLECTION, "model customization id", false));
+
+        assertEquals(workflowAction.foundRelated(resourceList), true);
+    }
+
+    @Test
+    public void containsWorkflowTypeTest() {
+        List<Resource> resourceList = new ArrayList<>();
+        resourceList.add(new Resource(WorkflowType.PNF, "model customization id", false));
+        resourceList.add(new Resource(WorkflowType.VNF, "model customization id", false));
+        resourceList.add(new Resource(WorkflowType.NETWORK, "model customization id", false));
+        resourceList.add(new Resource(WorkflowType.NETWORKCOLLECTION, "model customization id", false));
+
+        assertEquals(workflowAction.containsWorkflowType(resourceList, WorkflowType.PNF), true);
+        assertEquals(workflowAction.containsWorkflowType(resourceList, WorkflowType.VNF), true);
+        assertEquals(workflowAction.containsWorkflowType(resourceList, WorkflowType.NETWORK), true);
+        assertEquals(workflowAction.containsWorkflowType(resourceList, WorkflowType.NETWORKCOLLECTION), true);
+        assertEquals(workflowAction.containsWorkflowType(resourceList, WorkflowType.CONFIGURATION), false);
+    }
+
     private List<Pair<WorkflowType, String>> getExpectedResourceIds() {
         List<Pair<WorkflowType, String>> resourceIds = new ArrayList<>();
         resourceIds.add(new Pair<WorkflowType, String>(WorkflowType.VNF, "testVnfId1"));
