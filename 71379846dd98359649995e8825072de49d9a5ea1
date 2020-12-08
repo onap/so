@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "08e6fa3a_fa68952a",
+        "filename": "INFO.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 481
+      },
+      "writtenOn": "2020-12-08T18:16:40Z",
+      "side": 1,
+      "message": "This is not supported anymore since we have 1 INFO per repo. \nPlease only have \"so\" here.",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 18
+      },
+      "revId": "71379846dd98359649995e8825072de49d9a5ea1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f465e7d4_0d3d50f0",
+        "filename": "INFO.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 481
+      },
+      "writtenOn": "2020-12-08T18:16:40Z",
+      "side": 1,
+      "message": "Can\u0027t have several name tags in one block.. linting will mark it as an error. \n\nPlease have 1 block per user",
+      "range": {
+        "startLine": 99,
+        "startChar": 1,
+        "endLine": 103,
+        "endChar": 37
+      },
+      "revId": "71379846dd98359649995e8825072de49d9a5ea1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
