@@ -127,6 +127,10 @@ public class WorkflowActionTest extends BaseTaskTest {
 
     @Mock
     protected Environment environment;
+
+    @Mock
+    protected UserParamsServiceTraversal userParamsServiceTraversal;
+
     @InjectMocks
     protected WorkflowAction workflowAction;
     private DelegateExecution execution;
@@ -304,6 +308,8 @@ public class WorkflowActionTest extends BaseTaskTest {
     public void selectExecutionListServiceMacroAssignNoCloudTest() throws Exception {
         String gAction = "assignInstance";
         String resource = "Service";
+        List<Resource> resources = prepareListWithResources();
+        List<Map<String, Object>> userParams = new ArrayList<>();
         String bpmnRequest = readBpmnRequestFromFile(MACRO_ASSIGN_NO_CLOUD_JSON);
         initExecution(gAction, bpmnRequest, false);
         execution.setVariable("requestUri", "v6/serviceInstances/123");
@@ -333,6 +339,9 @@ public class WorkflowActionTest extends BaseTaskTest {
 
         VfModuleCustomization vfModuleCustomization3 = vfModuleCustomization2;
         vfModuleCustomization3.setModelCustomizationUUID("72d9d1cd-f46d-447a-abdb-451d6fb05fa8");
+
+        when(userParamsServiceTraversal.getResourceListFromUserParams(execution, userParams, "adfadf",
+                "3c40d244-808e-42ca-b09a-256d83d19d0a")).thenReturn(resources);
 
         when(environment.getProperty("org.onap.so.cloud-owner")).thenReturn("att-aic");
         when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
@@ -615,13 +624,14 @@ public class WorkflowActionTest extends BaseTaskTest {
         when(catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID("da4d4327-fb7d-4311-ac7a-be7ba60cf969"))
                 .thenReturn(vfModuleCustomization3);
         when(catalogDbClient.getServiceByID("3c40d244-808e-42ca-b09a-256d83d19d0a")).thenReturn(service);
-        workflowAction.selectExecutionList(execution);
+
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         assertEqualsBulkFlowName(ebbs, "AssignServiceInstanceBB", "AssignVnfBB", "AssignVolumeGroupBB",
                 "AssignVfModuleBB", "AssignVfModuleBB", "AssignVfModuleBB", "CreateVolumeGroupBB",
                 "ActivateVolumeGroupBB", "CreateVfModuleBB", "CreateVfModuleBB", "CreateVfModuleBB",
                 "ActivateVfModuleBB", "ActivateVfModuleBB", "ActivateVfModuleBB", "ActivateVnfBB",
                 "ActivateServiceInstanceBB");
+
         assertEquals(3, ebbs.get(0).getWorkflowResourceIds().getServiceInstanceId().length());
         int randomUUIDLength = UUID.randomUUID().toString().length();
         assertEquals(randomUUIDLength, ebbs.get(1).getWorkflowResourceIds().getVnfId().length());
@@ -3100,6 +3110,32 @@ public class WorkflowActionTest extends BaseTaskTest {
         }
     }
 
+    @Test
+    public void foundRelatedTest() {
+        List<Resource> resourceList = new ArrayList<>();
+        resourceList.add(new Resource(WorkflowType.PNF, "model customization id", false));
+        resourceList.add(new Resource(WorkflowType.VNF, "model customization id", false));
+        resourceList.add(new Resource(WorkflowType.NETWORK, "model customization id", false));
+        resourceList.add(new Resource(WorkflowType.NETWORKCOLLECTION, "model customization id", false));
+
+        assertEquals(workflowAction.foundRelated(resourceList), true);
+    }
+
+    @Test
+    public void containsWorkflowTypeTest() {
+        List<Resource> resourceList = new ArrayList<>();
+        resourceList.add(new Resource(WorkflowType.PNF, "resource id", false));
+        resourceList.add(new Resource(WorkflowType.VNF, "model customization id", false));
+        resourceList.add(new Resource(WorkflowType.NETWORK, "model customization id", false));
+        resourceList.add(new Resource(WorkflowType.NETWORKCOLLECTION, "model customization id", false));
+
+        assertEquals(workflowAction.containsWorkflowType(resourceList, WorkflowType.PNF), true);
+        assertEquals(workflowAction.containsWorkflowType(resourceList, WorkflowType.VNF), true);
+        assertEquals(workflowAction.containsWorkflowType(resourceList, WorkflowType.NETWORK), true);
+        assertEquals(workflowAction.containsWorkflowType(resourceList, WorkflowType.NETWORKCOLLECTION), true);
+        assertEquals(workflowAction.containsWorkflowType(resourceList, WorkflowType.CONFIGURATION), false);
+    }
+
     private List<Pair<WorkflowType, String>> getExpectedResourceIds() {
         List<Pair<WorkflowType, String>> resourceIds = new ArrayList<>();
         resourceIds.add(new Pair<WorkflowType, String>(WorkflowType.VNF, "testVnfId1"));
@@ -3140,5 +3176,16 @@ public class WorkflowActionTest extends BaseTaskTest {
 
     private String readBpmnRequestFromFile(String fileName) throws IOException {
         return new String(Files.readAllBytes(Paths.get("src/test/resources/__files/" + fileName)));
+    }
+
+    private List<Resource> prepareListWithResources() {
+        List<Resource> resourceList = new ArrayList<>();
+        resourceList.add(new Resource(WorkflowType.SERVICE, "3c40d244-808e-42ca-b09a-256d83d19d0a", false));
+        resourceList.add(new Resource(WorkflowType.VNF, "ab153b6e-c364-44c0-bef6-1f2982117f04", false));
+        resourceList.add(new Resource(WorkflowType.VOLUMEGROUP, "a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f", false));
+        resourceList.add(new Resource(WorkflowType.VFMODULE, "72d9d1cd-f46d-447a-abdb-451d6fb05fa8", false));
+        resourceList.add(new Resource(WorkflowType.VFMODULE, "3c40d244-808e-42ca-b09a-256d83d19d0a", false));
+        resourceList.add(new Resource(WorkflowType.VFMODULE, "72d9d1cd-f46d-447a-abdb-451d6fb05fa8", false));
+        return resourceList;
     }
 }
