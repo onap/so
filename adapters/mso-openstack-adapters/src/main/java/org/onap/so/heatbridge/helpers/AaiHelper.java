@@ -108,6 +108,13 @@ public class AaiHelper {
          * if (!StringUtils.isEmpty(server.getName())) {
          * relationships.add(createVnfRelationshiptoVserver(server.getName(), genericVnfId, vfModuleId)); }
          */
+
+        // vserver to generic-vnf relationship
+        Relationship genericVnfRelationship = buildRelationship(
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(genericVnfId)));
+        relationships.add(genericVnfRelationship);
+
+
         // vserver to vf-module relationship
         Relationship vfModuleRelationship = buildRelationship(AAIUriFactory
                 .createResourceUri(AAIFluentTypeBuilder.network().genericVnf(genericVnfId).vfModule(vfModuleId)));
