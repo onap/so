@@ -145,7 +145,7 @@ csi.createCSAndSSRelationship(execution)</bpmn:script>
         <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
         <camunda:in source="csInputMap" target="csInputMap" />
         <camunda:in source="serviceInstanceName" target="serviceInstanceName" />
-        <camunda:in source="serviceType" target="serviceType" />
+        <camunda:in source="csServiceType" target="csServiceType" />
         <camunda:in source="uuiRequest" target="uuiRequest" />
         <camunda:in source="modelInvariantUuid" target="modelInvariantUuid" />
         <camunda:in source="modelUuid" target="modelUuid" />

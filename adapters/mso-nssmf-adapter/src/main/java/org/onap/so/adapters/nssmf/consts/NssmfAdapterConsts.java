@@ -122,7 +122,7 @@ public class NssmfAdapterConsts {
         urlInfoMap.put(generateKey(ExecutorType.EXTERNAL, NetworkType.CORE, ActionType.ACTIVATE),
                 new NssmfUrlInfo(EXTERNAL_CN_ACTIVATE_URL, HttpMethod.PUT));
         urlInfoMap.put(generateKey(ExecutorType.INTERNAL, null, ActionType.ACTIVATE),
-                new NssmfUrlInfo(INTERNAL_ACTIVATE_URL, HttpMethod.PUT));
+                new NssmfUrlInfo(INTERNAL_ACTIVATE_URL, HttpMethod.POST));
 
         urlInfoMap.put(generateKey(ExecutorType.EXTERNAL, NetworkType.ACCESS, ActionType.DEACTIVATE),
                 new NssmfUrlInfo(EXTERNAL_AN_DEACTIVATE_URL, HttpMethod.PUT));

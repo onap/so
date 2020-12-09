@@ -34,7 +34,6 @@ css.processUserOptions(execution)</bpmn:script>
         <camunda:in source="serviceInstanceName" target="serviceInstanceName" />
         <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
         <camunda:in source="subscriptionServiceType" target="subscriptionServiceType" />
-        <camunda:in source="serviceType" target="serviceType" />
         <camunda:in source="uuiRequest" target="uuiRequest" />
         <camunda:in source="operationId" target="operationId" />
         <camunda:out source="WorkflowException" target="WorkflowException" />

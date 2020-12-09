@@ -126,7 +126,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
 
         String sliceInstanceName = "nsi_"+execution.getVariable("sliceServiceInstanceName")
-        String serviceType = execution.getVariable("serviceType")
+        String serviceType = sliceParams.serviceProfile.get("sST")
         String serviceStatus = "deactivated"
         String modelInvariantUuid = sliceParams.getNSTInfo().invariantUUID
         String modelUuid = sliceParams.getNSTInfo().UUID
@@ -379,7 +379,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         allocateAnNssi.sliceProfile = sliceTaskInfo.sliceProfile.trans2AnProfile()
         allocateAnNssi.nsstId = sliceTaskInfo.NSSTInfo.UUID
         allocateAnNssi.nssiId = sliceTaskInfo.suggestNssiId
-        allocateAnNssi.nssiName = sliceTaskInfo.NSSTInfo.name
+        allocateAnNssi.nssiName = "nssi_An" + execution.getVariable("sliceServiceInstanceName")
         NsiInfo nsiInfo = new NsiInfo()
         nsiInfo.nsiId = sliceParams.suggestNsiId
         nsiInfo.nsiName = sliceParams.suggestNsiName
@@ -406,6 +406,8 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         serviceInfo.nsiId = sliceParams.suggestNsiId
         serviceInfo.serviceInvariantUuid = sliceTaskInfo.NSSTInfo.invariantUUID
         serviceInfo.serviceUuid = sliceTaskInfo.NSSTInfo.UUID
+        serviceInfo.sST = sliceTaskInfo.sliceProfile.sST ?: sliceParams.serviceProfile.get("sST")
+        serviceInfo.nssiName = allocateAnNssi.nssiName
 
         nbiRequest.setServiceInfo(serviceInfo)
         nbiRequest.setEsrInfo(esrInfo)
@@ -499,7 +501,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         AllocateCnNssi allocateCnNssi = new AllocateCnNssi()
         allocateCnNssi.nsstId = sliceTaskInfo.NSSTInfo.UUID
         allocateCnNssi.nssiId = sliceTaskInfo.suggestNssiId
-        allocateCnNssi.nssiName = sliceTaskInfo.NSSTInfo.name
+        allocateCnNssi.nssiName = "nssi_Cn" + execution.getVariable("sliceServiceInstanceName")
         allocateCnNssi.sliceProfile = sliceTaskInfo.sliceProfile.trans2CnProfile()
         NsiInfo nsiInfo = new NsiInfo()
         nsiInfo.nsiId = sliceParams.suggestNsiId
@@ -528,6 +530,8 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         serviceInfo.serviceInvariantUuid = sliceTaskInfo.NSSTInfo.invariantUUID
         serviceInfo.serviceUuid = sliceTaskInfo.NSSTInfo.UUID
         serviceInfo.nssiId = sliceTaskInfo.suggestNssiId //if shared
+        serviceInfo.sST = sliceTaskInfo.sliceProfile.sST ?: sliceParams.serviceProfile.get("sST")
+        serviceInfo.nssiName = allocateCnNssi.nssiName
 
         nbiRequest.setServiceInfo(serviceInfo)
         nbiRequest.setEsrInfo(esrInfo)
@@ -656,6 +660,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         serviceInfo.serviceInvariantUuid = sliceTaskInfo.NSSTInfo.invariantUUID
         serviceInfo.serviceUuid = sliceTaskInfo.NSSTInfo.UUID
         serviceInfo.nssiId = sliceTaskInfo.suggestNssiId
+        serviceInfo.sST = sliceTaskInfo.sliceProfile.sST ?: sliceParams.serviceProfile.get("sST")
 
         nbiRequest.setServiceInfo(serviceInfo)
         nbiRequest.setEsrInfo(esrInfo)

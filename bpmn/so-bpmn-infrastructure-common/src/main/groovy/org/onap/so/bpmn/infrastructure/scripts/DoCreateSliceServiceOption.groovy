@@ -416,10 +416,10 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
             sliceProfile.remove("domainType")
             SliceProfileAdapter adapter = objectMapper.readValue(objectMapper.writeValueAsString(sliceProfile), SliceProfileAdapter.class)
             switch (domainType.toLowerCase()) {
-                case "tn-bh":
+                case "tn_bh":
                     sliceParams.tnBHSliceTaskInfo.sliceProfile = adapter
                     break
-                case "an-nf":
+                case "an_nf":
                 case "an":
                     sliceParams.anSliceTaskInfo.sliceProfile = adapter
                     break
