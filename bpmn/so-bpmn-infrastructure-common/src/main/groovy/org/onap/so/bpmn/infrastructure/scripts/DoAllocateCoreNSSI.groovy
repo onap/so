@@ -79,8 +79,8 @@ class DoAllocateCoreNSSI extends AbstractServiceTaskProcessor {
             String json = catalogDbUtils.getServiceResourcesByServiceModelInvariantUuidString(execution, nsstModelInvariantUuid)
             logger.debug("***** JSON Response is: "+json)
             String nsstName = jsonUtil.getJsonValue(json, "serviceResources.modelInfo.modelName") ?: ""
-            String networkServiceModelInfo = jsonUtil.getJsonValue(json, "serviceResources.serviceProxy.modelInfo") ?: ""
-
+            List serviceProxyList = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(json, "serviceResources.serviceProxy"))
+            String networkServiceModelInfo = serviceProxyList.get(0)
             execution.setVariable("networkServiceModelInfo", networkServiceModelInfo)
             logger.debug("***** nsstName is: "+ nsstName)
             execution.setVariable("nsstName",nsstName)
@@ -93,6 +93,11 @@ class DoAllocateCoreNSSI extends AbstractServiceTaskProcessor {
         }
         logger.debug(Prefix+" **** Exit DoAllocateCoreNSSI ::: getNSSTName ****")
     }
+
+    /**
+     * Prepares OOF request payload
+     * @param execution
+     */
     void prepareOOFRequest(DelegateExecution execution){
         logger.debug(Prefix+" **** Enter DoAllocateCoreNSSI ::: prepareOOFRequest ****")
         //API Path
@@ -105,8 +110,6 @@ class DoAllocateCoreNSSI extends AbstractServiceTaskProcessor {
         //Setting messageType for all Core slice as cn
         String messageType = "cn"
         execution.setVariable("NSSI_messageType", messageType)
-        //Is there any specific timeout we have to set or else we don't need to send
-        //if blank will be set default value in DoHandleOofRequest
         String timeout = "PT30M"
         execution.setVariable("NSSI_timeout", timeout)
         Map<String, Object> profileInfo = mapper.readValue(execution.getVariable("sliceProfile"), Map.class)
@@ -119,6 +122,10 @@ class DoAllocateCoreNSSI extends AbstractServiceTaskProcessor {
         logger.debug(Prefix+" **** Exit DoAllocateCoreNSSI ::: prepareOOFRequest ****")
     }
 
+    /**
+     * processes OOF Async Response
+     * @param execution
+     */
     void processOOFAsyncResponse(DelegateExecution execution) {
         logger.debug(Prefix+ " **** Enter DoAllocateCoreNSSI ::: processOOFAsyncResponse ****")
         String OOFResponse = execution.getVariable("NSSI_asyncCallbackResponse")
@@ -128,6 +135,10 @@ class DoAllocateCoreNSSI extends AbstractServiceTaskProcessor {
         String solutions =""
         if(requestStatus.equals("completed")) {
             solutions = jsonUtil.getJsonValue(OOFResponse, "solutions")
+            List solutionsList = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(OOFResponse, "solutions"))
+            if(solutionsList!=null && !solutionsList.isEmpty() ) {
+                solutions = solutionsList.get(0)
+            }
         } else {
             String statusMessage = jsonUtil.getJsonValue(OOFResponse, "statusMessage")
             logger.error("received failed status from oof "+ statusMessage)
@@ -137,18 +148,31 @@ class DoAllocateCoreNSSI extends AbstractServiceTaskProcessor {
         logger.debug(Prefix+" **** Exit DoAllocateCoreNSSI ::: processOOFAsyncResponse ****")
     }
 
+    /**
+     * Prepares Failed OperationStatusUpdate for DB
+     * @param execution
+     */
     void prepareFailedOperationStatusUpdate(DelegateExecution execution){
         logger.debug(Prefix + " **** Enter DoAllocateCoreNSSI ::: prepareFailedOperationStatusUpdate ****")
-        String serviceId = execution.getVariable("nssiId")
+        String serviceId = execution.getVariable("nsiId")
+        logger.debug("serviceId: "+serviceId)
         String jobId = execution.getVariable("jobId")
+        logger.debug("jobId: "+jobId)
         String nsiId = execution.getVariable("nsiId")
-        String operationType = execution.getVariable("operationType")
+        logger.debug("nsiId: "+nsiId)
+        String nssiId = execution.getVariable("nssiId")
+        String operationType = "ALLOCATE"
+        logger.debug("operationType: "+operationType)
+        //modelUuid
+        String modelUuid= execution.getVariable("modelUuid")
         ResourceOperationStatus resourceOperationStatus = new ResourceOperationStatus()
         resourceOperationStatus.setServiceId(serviceId)
+        resourceOperationStatus.setJobId(jobId)
         resourceOperationStatus.setOperationId(jobId)
-        resourceOperationStatus.setResourceTemplateUUID(nsiId)
+        resourceOperationStatus.setResourceTemplateUUID(modelUuid)
+        resourceOperationStatus.setResourceInstanceID(nssiId)
         resourceOperationStatus.setOperType(operationType)
-        resourceOperationStatus.setProgress(0)
+        resourceOperationStatus.setProgress("0")
         resourceOperationStatus.setStatus("failed")
         resourceOperationStatus.setStatusDescription("Core NSSI Allocate Failed")
         requestDBUtil.prepareUpdateResourceOperationStatus(execution, resourceOperationStatus)
