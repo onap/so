@@ -300,7 +300,24 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         SliceProfile sliceProfile = new SliceProfile()
         sliceProfile.setProfileId(profileId)
         sliceProfile.setCoverageAreaTAList(anSliceProfile.coverageAreaTAList)
-        //todo:...
+        sliceProfile.setMaxNumberOfUEs(anSliceProfile.maxNumberOfUEs)
+        sliceProfile.setLatency(anSliceProfile.latency)
+        sliceProfile.setMaxNumberOfPDUSession(anSliceProfile.maxNumberOfPDUSession)
+        sliceProfile.setExpDataRateDL(anSliceProfile.expDataRateDL)
+        sliceProfile.setExpDataRateUL(anSliceProfile.expDataRateUL)
+        sliceProfile.setAreaTrafficCapDL(anSliceProfile.areaTrafficCapDL)
+        sliceProfile.setAreaTrafficCapUL(anSliceProfile.areaTrafficCapUL)
+        sliceProfile.setOverallUserDensity(anSliceProfile.overallUserDensity)
+        sliceProfile.setActivityFactor(anSliceProfile.activityFactor)
+        sliceProfile.setUeMobilityLevel(anSliceProfile.ueMobilityLevel)
+        sliceProfile.setResourceSharingLevel(anSliceProfile.resourceSharingLevel)
+        sliceProfile.setCsAvailabilityTarget(anSliceProfile.csAvailabilityTarget)
+        sliceProfile.setCsReliabilityMeanTime(anSliceProfile.csReliabilityMeanTime)
+        sliceProfile.setExpDataRate(anSliceProfile.expDataRate)
+        sliceProfile.setMsgSizeByte(anSliceProfile.msgSizeByte)
+        sliceProfile.setTransferIntervalTarget(anSliceProfile.transferIntervalTarget)
+        sliceProfile.setSurvivalTime(anSliceProfile.survivalTime)
+
         AAIResourceUri uri = AAIUriFactory.createResourceUri(
             AAIFluentTypeBuilder.business().customer(globalSubscriberId)
             .serviceSubscription(subscriptionServiceType)
@@ -379,7 +396,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         allocateAnNssi.sliceProfile = sliceTaskInfo.sliceProfile.trans2AnProfile()
         allocateAnNssi.nsstId = sliceTaskInfo.NSSTInfo.UUID
         allocateAnNssi.nssiId = sliceTaskInfo.suggestNssiId
-        allocateAnNssi.nssiName = "nssi_An" + execution.getVariable("sliceServiceInstanceName")
+        allocateAnNssi.nssiName = "nssi_an" + execution.getVariable("sliceServiceInstanceName")
         NsiInfo nsiInfo = new NsiInfo()
         nsiInfo.nsiId = sliceParams.suggestNsiId
         nsiInfo.nsiName = sliceParams.suggestNsiName
@@ -475,7 +492,24 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         SliceProfile sliceProfile = new SliceProfile()
         sliceProfile.setProfileId(profileId)
         sliceProfile.setCoverageAreaTAList(cnSliceProfile.coverageAreaTAList as String)
-        //todo:...
+        sliceProfile.setMaxNumberOfUEs(cnSliceProfile.maxNumberOfUEs)
+        sliceProfile.setLatency(cnSliceProfile.latency)
+        sliceProfile.setMaxNumberOfPDUSession(cnSliceProfile.maxNumberOfPDUSession)
+        sliceProfile.setExpDataRateDL(cnSliceProfile.expDataRateDL)
+        sliceProfile.setExpDataRateUL(cnSliceProfile.expDataRateUL)
+        sliceProfile.setAreaTrafficCapDL(cnSliceProfile.areaTrafficCapDL)
+        sliceProfile.setAreaTrafficCapUL(cnSliceProfile.areaTrafficCapUL)
+        sliceProfile.setOverallUserDensity(cnSliceProfile.overallUserDensity)
+        sliceProfile.setActivityFactor(cnSliceProfile.activityFactor)
+        sliceProfile.setUeMobilityLevel(cnSliceProfile.ueMobilityLevel)
+        sliceProfile.setResourceSharingLevel(cnSliceProfile.resourceSharingLevel)
+        sliceProfile.setCsAvailabilityTarget(cnSliceProfile.csAvailabilityTarget)
+        sliceProfile.setCsReliabilityMeanTime(cnSliceProfile.csReliabilityMeanTime)
+        sliceProfile.setExpDataRate(cnSliceProfile.expDataRate)
+        sliceProfile.setMsgSizeByte(cnSliceProfile.msgSizeByte)
+        sliceProfile.setTransferIntervalTarget(cnSliceProfile.transferIntervalTarget)
+        sliceProfile.setSurvivalTime(cnSliceProfile.survivalTime)
+
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
                 .customer(globalSubscriberId)
                 .serviceSubscription(subscriptionServiceType)
@@ -501,7 +535,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         AllocateCnNssi allocateCnNssi = new AllocateCnNssi()
         allocateCnNssi.nsstId = sliceTaskInfo.NSSTInfo.UUID
         allocateCnNssi.nssiId = sliceTaskInfo.suggestNssiId
-        allocateCnNssi.nssiName = "nssi_Cn" + execution.getVariable("sliceServiceInstanceName")
+        allocateCnNssi.nssiName = "nssi_cn" + execution.getVariable("sliceServiceInstanceName")
         allocateCnNssi.sliceProfile = sliceTaskInfo.sliceProfile.trans2CnProfile()
         NsiInfo nsiInfo = new NsiInfo()
         nsiInfo.nsiId = sliceParams.suggestNsiId
@@ -599,7 +633,10 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         SliceProfile sliceProfile = new SliceProfile()
         sliceProfile.setProfileId(profileId)
-        //todo:...
+        sliceProfile.setLatency(tnSliceProfile.latency)
+        sliceProfile.setMaxBandwidth(tnSliceProfile.maxBandwidth)
+        sliceProfile.setJitter(tnSliceProfile.jitter)
+
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
                 .customer(globalSubscriberId)
                 .serviceSubscription(subscriptionServiceType)
