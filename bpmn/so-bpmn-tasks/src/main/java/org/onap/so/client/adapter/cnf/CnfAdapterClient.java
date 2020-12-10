@@ -76,6 +76,25 @@ public class CnfAdapterClient {
         }
     }
 
+
+    @Retryable(value = {HttpServerErrorException.class}, maxAttempts = 3, backoff = @Backoff(delay = 3000))
+    public void deleteVfModule(String heatStackId) throws CnfAdapterClientException {
+        try {
+            // String uri = env.getRequiredProperty("mso.cnf.adapter.endpoint"); //TODO: This needs to be added as well
+            // for configuration
+            String uri = "http://so-cnf-adapter:8090";
+            String endpoint = UriBuilder.fromUri(uri).path(INSTANCE_CREATE_PATH + "/" + heatStackId).build().toString();
+            HttpEntity<?> entity = new HttpEntity<>(getHttpHeaders());
+            restTemplate.exchange(endpoint, HttpMethod.DELETE, entity, String.class);
+        } catch (HttpClientErrorException e) {
+            logger.error("Error Calling CNF Adapter, e");
+            if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
+                throw new EntityNotFoundException(e.getResponseBodyAsString());
+            }
+            throw e;
+        }
+    }
+
     @Retryable(value = {HttpServerErrorException.class}, maxAttempts = 3, backoff = @Backoff(delay = 3000))
     public InstanceResponse healthcheck() throws CnfAdapterClientException {
         try {
