@@ -190,7 +190,8 @@ Quick Links:
 
 **Known Issues**
 *  `SO-3403 <https://jira.onap.org/browse/SO-3403>`_ - The functionality of the SO cnf-adapter will be tested further and will be delivered by the Guilin Maintenance Release as a 1.7.11 patch.
-*   `SO-3237 <https://jira.onap.org/browse/SO-SO-3237>`_ - Exposed HTTP port. 
+*  `SO-3237 <https://jira.onap.org/browse/SO-SO-3237>`_ - Exposed HTTP port. 
+*  `SO-3414 <https://jira.onap.org/browse/SO-SO-3414>`_ - Search Query does not contain get model data for vFW closed loop. 
 
 
 **Upgrade Notes**
