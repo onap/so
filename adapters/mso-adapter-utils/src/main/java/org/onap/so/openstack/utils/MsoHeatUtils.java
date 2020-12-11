@@ -363,7 +363,8 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
             if (latestStack == null && notFoundIsSuccess) {
                 return null;
             } else if (latestStack != null) {
-                statusHandler.updateStackStatus(latestStack);
+                String requestId = MDC.get(ONAPLogConstants.MDCs.REQUEST_ID);
+                statusHandler.updateStackStatus(latestStack, requestId);
                 if (stackStatus.equals(latestStack.getStackStatus())) {
                     if (LocalDateTime.now().isAfter(stopPolling)) {
                         logger.error("Polling of stack timed out with Status: {}", latestStack.getStackStatus());

@@ -43,9 +43,8 @@ public class StackStatusHandler {
     private RequestsDbClient requestDBClient;
 
     @Async
-    public void updateStackStatus(Stack stack) {
+    public void updateStackStatus(Stack stack, String requestId) {
         try {
-            String requestId = MDC.get(ONAPLogConstants.MDCs.REQUEST_ID);
             String stackStatus = mapper.writeValueAsString(stack);
             RequestProcessingData requestProcessingData =
                     requestDBClient.getRequestProcessingDataBySoRequestIdAndNameAndGrouping(requestId,
