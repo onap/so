@@ -36,7 +36,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -46,6 +45,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.db.request.beans.CloudApiRequests;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
@@ -53,6 +53,7 @@ import org.onap.so.openstack.beans.CreateStackRequest;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoOpenstackException;
 import org.onap.so.openstack.exceptions.MsoStackAlreadyExists;
+import org.slf4j.MDC;
 import org.springframework.core.env.Environment;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.woorea.openstack.base.client.OpenStackResponseException;
@@ -63,6 +64,7 @@ import com.woorea.openstack.heat.StackResource.DeleteStack;
 import com.woorea.openstack.heat.model.CreateStackParam;
 import com.woorea.openstack.heat.model.Resources;
 import com.woorea.openstack.heat.model.Stack;
+import java.util.UUID;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MsoHeatUtilsTest extends MsoHeatUtils {
@@ -104,9 +106,15 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
     private String cloudSiteId = "cloudSiteId";
     private String tenantId = "tenantId";
 
+    private String getRequestId() {
+        return MDC.get(ONAPLogConstants.MDCs.REQUEST_ID);
+    }
+
     @Before
     public void setup() {
         doReturn("15").when(env).getProperty("org.onap.so.adapters.po.pollInterval", "15");
+        String requestId = UUID.randomUUID().toString();
+        MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, requestId);
     }
 
     @Test
@@ -117,6 +125,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
         stack.setStackStatus("CREATE_IN_PROGRESS");
         stack.setStackStatusReason("Stack Finished");
 
+        String requestId = getRequestId();
         Stack latestStack = new Stack();
         latestStack.setId("id");
         latestStack.setStackName("stackName");
@@ -125,7 +134,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
         doReturn(latestStack).when(heatUtils).queryHeatStack(isA(Heat.class), eq("stackName/id"));
         doReturn(heatClient).when(heatUtils).getHeatClient(cloudSiteId, tenantId);
         Stack actual = heatUtils.pollStackForStatus(1, stack, "CREATE_IN_PROGRESS", cloudSiteId, tenantId, false);
-        Mockito.verify(stackStatusHandler, times(1)).updateStackStatus(latestStack);
+        Mockito.verify(stackStatusHandler, times(1)).updateStackStatus(latestStack, requestId);
         Mockito.verify(heatUtils, times(1)).queryHeatStack(isA(Heat.class), eq("stackName/id"));
         assertEquals(true, actual != null);
     }
@@ -137,12 +146,13 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
         stack.setStackName("stackName");
         stack.setStackStatus("CREATE_IN_PROGRESS");
         stack.setStackStatusReason("Stack Finished");
-        doNothing().when(stackStatusHandler).updateStackStatus(stack);
+        String requestId = getRequestId();
+        doNothing().when(stackStatusHandler).updateStackStatus(stack, requestId);
         doReturn(stack).when(heatUtils).queryHeatStack(isA(Heat.class), eq("stackName/id"));
         doReturn(heatClient).when(heatUtils).getHeatClient(cloudSiteId, tenantId);
         doReturn("61").when(env).getProperty("org.onap.so.adapters.po.pollInterval", "15");
         Stack actual = heatUtils.pollStackForStatus(1, stack, "CREATE_IN_PROGRESS", cloudSiteId, tenantId, false);
-        Mockito.verify(stackStatusHandler, times(1)).updateStackStatus(stack);
+        Mockito.verify(stackStatusHandler, times(1)).updateStackStatus(stack, requestId);
         Mockito.verify(heatUtils, times(1)).queryHeatStack(isA(Heat.class), eq("stackName/id"));
         assertEquals(true, actual != null);
     }
@@ -154,11 +164,12 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
         stack.setStackName("stackName");
         stack.setStackStatus("CREATE_IN_PROGRESS");
         stack.setStackStatusReason("Stack Finished");
-        doNothing().when(stackStatusHandler).updateStackStatus(stack);
+        String requestId = getRequestId();
+        doNothing().when(stackStatusHandler).updateStackStatus(stack, requestId);
         doReturn(stack).when(heatUtils).queryHeatStack(isA(Heat.class), eq("stackName/id"));
         doReturn(heatClient).when(heatUtils).getHeatClient(cloudSiteId, tenantId);
         Stack actual = heatUtils.pollStackForStatus(1, stack, "CREATE_IN_PROGRESS", cloudSiteId, tenantId, false);
-        Mockito.verify(stackStatusHandler, times(5)).updateStackStatus(stack);
+        Mockito.verify(stackStatusHandler, times(5)).updateStackStatus(stack, requestId);
         Mockito.verify(heatUtils, times(5)).queryHeatStack(isA(Heat.class), eq("stackName/id"));
         assertEquals(true, actual != null);
     }
@@ -417,6 +428,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
         CreateStackParam createStackParam = new CreateStackParam();
         createStackParam.setStackName("stackName");
 
+        String requestId = getRequestId();
         doReturn(heatClient).when(heatUtils).getHeatClient(cloudSiteId, tenantId);
         doReturn(stackResource).when(heatClient).getStacks();
         doReturn(mockCreateStack).when(stackResource).create(createStackParam);
@@ -425,7 +437,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
 
         heatUtils.createStack(createStackParam, cloudSiteId, tenantId);
         Mockito.verify(stackResource, times(1)).create(createStackParam);
-        Mockito.verify(heatUtils, times(1)).saveStackRequest(eq(createStackParam), isNull(), eq("stackName"));
+        Mockito.verify(heatUtils, times(1)).saveStackRequest(eq(createStackParam), eq(requestId), eq("stackName"));
         Mockito.verify(heatClient, times(1)).getStacks();
         Mockito.verify(stackResource, times(1)).create(createStackParam);
     }
