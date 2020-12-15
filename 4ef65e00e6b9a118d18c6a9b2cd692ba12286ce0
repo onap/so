@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3f884775_fd2bc804",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-12-15T11:28:03Z",
+      "side": 1,
+      "message": "I think it is better idea to inject this as dependency, instead of creating new object inside the method.",
+      "range": {
+        "startLine": 255,
+        "startChar": 28,
+        "endLine": 255,
+        "endChar": 58
+      },
+      "revId": "4ef65e00e6b9a118d18c6a9b2cd692ba12286ce0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d78f55e6_47c52c0d",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-12-15T11:28:03Z",
+      "side": 1,
+      "message": "I am not sure if it is worth to create a separate class with static method only to get the value from siRequest param. I would just get userParams object, and then use this reference later in the code.\n\nList\u003cMap\u003cString, Object\u003e\u003e userParams \u003d sIRequest.getRequestDetails().getRequestParameters().getUserParams();",
+      "range": {
+        "startLine": 260,
+        "startChar": 28,
+        "endLine": 260,
+        "endChar": 58
+      },
+      "revId": "4ef65e00e6b9a118d18c6a9b2cd692ba12286ce0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e0c34725_c91a1072",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 1730,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-12-15T11:28:03Z",
+      "side": 1,
+      "message": "Why Boolean instead of primitive boolean?",
+      "range": {
+        "startLine": 1730,
+        "startChar": 14,
+        "endLine": 1730,
+        "endChar": 21
+      },
+      "revId": "4ef65e00e6b9a118d18c6a9b2cd692ba12286ce0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
