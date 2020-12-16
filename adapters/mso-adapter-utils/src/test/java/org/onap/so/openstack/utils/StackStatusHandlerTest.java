@@ -26,6 +26,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import java.io.IOException;
+import java.util.UUID;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -47,35 +48,41 @@ public class StackStatusHandlerTest {
     @Mock
     RequestsDbClient requestDBClient;
 
+    private String getRequestId() {
+        return UUID.randomUUID().toString();
+    }
+
     @Test
     public final void recordExists_Test() throws MsoException, IOException {
         RequestProcessingData requestProcessingData = new RequestProcessingData();
         requestProcessingData.setValue("testMe");
 
+        String requestId = getRequestId();
         doReturn(requestProcessingData).when(requestDBClient)
-                .getRequestProcessingDataBySoRequestIdAndNameAndGrouping(null, "stackName", "id");
+                .getRequestProcessingDataBySoRequestIdAndNameAndGrouping(requestId, "stackName", "id");
         Stack latestStack = new Stack();
         latestStack.setId("id");
         latestStack.setStackName("stackName");
         latestStack.setStackStatus("CREATE_COMPLETE");
         latestStack.setStackStatusReason("Stack Finished");
 
-        statusHandler.updateStackStatus(latestStack);
+        statusHandler.updateStackStatus(latestStack, requestId);
         Mockito.verify(requestDBClient, times(1)).updateRequestProcessingData(requestProcessingData);
         assertNotEquals("testMe", requestProcessingData.getValue());
     }
 
     @Test
     public final void record_Not_Exists_Test() throws MsoException, IOException {
+        String requestId = getRequestId();
         ArgumentCaptor<RequestProcessingData> requestCaptor = ArgumentCaptor.forClass(RequestProcessingData.class);
-        doReturn(null).when(requestDBClient).getRequestProcessingDataBySoRequestIdAndNameAndGrouping(null, "stackName",
-                "id");
+        doReturn(null).when(requestDBClient).getRequestProcessingDataBySoRequestIdAndNameAndGrouping(requestId,
+                "stackName", "id");
         Stack latestStack = new Stack();
         latestStack.setId("id");
         latestStack.setStackName("stackName");
         latestStack.setStackStatus("CREATE_COMPLETE");
         latestStack.setStackStatusReason("Stack Finished");
-        statusHandler.updateStackStatus(latestStack);
+        statusHandler.updateStackStatus(latestStack, requestId);
         Mockito.verify(requestDBClient, times(1)).saveRequestProcessingData(requestCaptor.capture());
         RequestProcessingData actualRequest = requestCaptor.getValue();
         assertEquals("id", actualRequest.getGroupingId());
