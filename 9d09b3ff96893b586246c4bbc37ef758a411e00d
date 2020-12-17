@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "b971c14d_ba7cc13c",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowActionConstants.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 2807
+      },
+      "writtenOn": "2020-12-17T06:05:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dc2971c7_ac231d5b",
+      "revId": "9d09b3ff96893b586246c4bbc37ef758a411e00d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "72bba132_babb66fa",
         "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/BaseTaskTest.java",
         "patchSetId": 11
@@ -42,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "fbcce003_53886165",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/BaseTaskTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 2807
+      },
+      "writtenOn": "2020-12-17T06:05:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "72bba132_babb66fa",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 81
+      },
+      "revId": "9d09b3ff96893b586246c4bbc37ef758a411e00d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "541b2fb6_ef69f095",
         "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowActionTest.java",
         "patchSetId": 11
@@ -62,6 +104,30 @@
       "revId": "9d09b3ff96893b586246c4bbc37ef758a411e00d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c9f16a1c_a353e21a",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowActionTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 2807
+      },
+      "writtenOn": "2020-12-17T06:05:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "541b2fb6_ef69f095",
+      "range": {
+        "startLine": 306,
+        "startChar": 86,
+        "endLine": 306,
+        "endChar": 93
+      },
+      "revId": "9d09b3ff96893b586246c4bbc37ef758a411e00d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
