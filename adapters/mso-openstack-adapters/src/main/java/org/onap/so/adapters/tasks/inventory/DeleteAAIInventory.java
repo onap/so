@@ -48,10 +48,16 @@ public class DeleteAAIInventory {
     @Autowired
     protected Environment env;
 
+    private static final String MULTICLOUD_MODE = "MULTICLOUD";
+
     public void heatbridge(CloudInformation cloudInformation) throws MsoCloudSiteNotFound, HeatBridgeException {
         logger.debug("Heatbridge delete executing");
         CloudSite cloudSite = cloudConfig.getCloudSite(cloudInformation.getRegionId())
                 .orElseThrow(() -> new MsoCloudSiteNotFound(cloudInformation.getRegionId()));
+        if (cloudSite.getOrchestrator() != null && MULTICLOUD_MODE.equalsIgnoreCase(cloudSite.getOrchestrator())) {
+            logger.debug("Skipping Heatbridge as CloudSite orchestrator is: " + MULTICLOUD_MODE);
+            return;
+        }
         CloudIdentity cloudIdentity = cloudSite.getIdentityService();
         HeatBridgeApi heatBridgeClient = new HeatBridgeImpl(new AAIResourcesClient(), cloudIdentity,
                 cloudInformation.getOwner(), cloudInformation.getRegionId(), cloudSite.getRegionId(),
