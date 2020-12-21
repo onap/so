@@ -1120,7 +1120,9 @@ public class MsoVnfPluginAdapterImpl {
         long subStartTime = System.currentTimeMillis();
         try {
             // TODO: Get an appropriate timeout value - require access to the model
-            vduPlugin.deleteVdu(cloudInfo, vfModuleId, 5);
+            if (!vduInstance.getStatus().getState().equals(VduStateType.NOTFOUND)) {
+                vduPlugin.deleteVdu(cloudInfo, vfModuleId, 5);
+            }
         } catch (VduException me) {
             me.addContext("DeleteVfModule");
             // Convert to a generic VnfException
