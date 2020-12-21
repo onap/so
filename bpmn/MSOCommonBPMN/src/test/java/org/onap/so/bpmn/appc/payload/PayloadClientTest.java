@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2018 AT&T Intellectual Property. All rights reserved. 
+ * Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,7 +66,8 @@ public class PayloadClientTest {
 
     @Test
     public void healthCheckFormatTest() throws Exception {
-        String payloadResult = "{\"request-parameters\":{\"host-ip-address\":\"hostIpAddress1\"}}";
+        String payloadResult =
+                "{\"request-parameters\":{\"host-ip-address\":\"hostIpAddress1\"},\"configuration-parameters\":{\"vnf_name\":\"vnfName1\"}}";
         Optional<String> payloadClient = PayloadClient.healthCheckFormat("vnfName1", "hostIpAddress1");
         assertEquals(payloadResult, payloadClient.get());
     }
