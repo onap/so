@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6d4ada69_46076acf",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoActivateAccessNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2020-12-21T10:56:06Z",
+      "side": 1,
+      "message": "Not a recommendde way of using Hashma, why cant use a enum instead... ?\nI understand the intension, but it rather kills the concept behind the collections.. Just a query",
+      "revId": "b8057099c4eb64dfde9d5573e92e79fa0ca15fd4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
