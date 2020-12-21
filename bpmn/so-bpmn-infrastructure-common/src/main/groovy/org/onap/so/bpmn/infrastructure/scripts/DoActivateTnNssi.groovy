@@ -142,20 +142,15 @@ public class DoActivateTnNssi extends AbstractServiceTaskProcessor {
                                 String status,
                                 String progress,
                                 String statusDescription) {
-        String serviceId = execution.getVariable("sliceServiceInstanceId")
+        String ssInstanceId = execution.getVariable("sliceServiceInstanceId")
+        String modelUuid = execution.getVariable("modelUuid")
         String jobId = execution.getVariable("jobId")
         String nsiId = execution.getVariable("nsiId")
         String operType = execution.getVariable("actionType")
 
+        ResourceOperationStatus roStatus = tnNssmfUtils.buildRoStatus(modelUuid, ssInstanceId,
+                jobId, nsiId, operType, status, progress, statusDescription)
 
-        ResourceOperationStatus roStatus = new ResourceOperationStatus()
-        roStatus.setServiceId(serviceId)
-        roStatus.setOperationId(jobId)
-        roStatus.setResourceTemplateUUID(nsiId)
-        roStatus.setOperType(operType)
-        roStatus.setProgress(progress)
-        roStatus.setStatus(status)
-        roStatus.setStatusDescription(statusDescription)
         requestDBUtil.prepareUpdateResourceOperationStatus(execution, roStatus)
     }
 

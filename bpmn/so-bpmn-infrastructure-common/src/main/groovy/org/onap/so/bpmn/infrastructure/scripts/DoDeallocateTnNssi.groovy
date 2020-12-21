@@ -25,7 +25,6 @@ import groovy.json.JsonSlurper
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.ServiceInstance
-import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
@@ -150,18 +149,14 @@ class DoDeallocateTnNssi extends AbstractServiceTaskProcessor {
                                 String status,
                                 String progress,
                                 String statusDescription) {
-        String serviceId = execution.getVariable("sliceServiceInstanceId")
+        String ssInstanceId = execution.getVariable("sliceServiceInstanceId")
+        String modelUuid = execution.getVariable("modelUuid")
         String jobId = execution.getVariable("jobId")
         String nsiId = execution.getVariable("nsiId")
 
-        ResourceOperationStatus roStatus = new ResourceOperationStatus()
-        roStatus.setServiceId(serviceId)
-        roStatus.setOperationId(jobId)
-        roStatus.setResourceTemplateUUID(nsiId)
-        roStatus.setOperType("Deallocate")
-        roStatus.setProgress(progress)
-        roStatus.setStatus(status)
-        roStatus.setStatusDescription(statusDescription)
+        ResourceOperationStatus roStatus = tnNssmfUtils.buildRoStatus(modelUuid, ssInstanceId,
+                jobId, nsiId, "deallocate", status, progress, statusDescription)
+
         requestDBUtil.prepareUpdateResourceOperationStatus(execution, roStatus)
     }
 }

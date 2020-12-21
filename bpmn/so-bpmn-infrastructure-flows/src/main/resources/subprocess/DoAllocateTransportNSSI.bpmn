@@ -164,7 +164,7 @@ css.prepareOofSelection(execution)</bpmn:script>
       <bpmn:incoming>SequenceFlow_0n4xku8</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0kixzdj</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
-execution.setVariable("orchestrationStatus", "activated")
+execution.setVariable("orchestrationStatus", "deactivated")
 def runScript = new TnAllocateNssi()
 runScript.updateAAIOrchStatus(execution)</bpmn:script>
     </bpmn:scriptTask>

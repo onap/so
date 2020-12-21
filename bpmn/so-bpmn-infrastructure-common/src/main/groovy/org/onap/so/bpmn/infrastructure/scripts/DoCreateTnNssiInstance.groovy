@@ -34,6 +34,8 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import static org.apache.commons.lang3.StringUtils.isBlank
+
 class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(DoCreateTnNssiInstance.class);
@@ -109,9 +111,13 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
             org.onap.aai.domain.yang.ServiceInstance ss = new org.onap.aai.domain.yang.ServiceInstance()
             ss.setServiceInstanceId(ssInstanceId)
             String sliceInstanceName = execution.getVariable("sliceServiceInstanceName")
+            if (isBlank(sliceInstanceName)) {
+                logger.error("ERROR: createServiceInstance: sliceInstanceName is null")
+                sliceInstanceName = ssInstanceId
+            }
             ss.setServiceInstanceName(sliceInstanceName)
             ss.setServiceType(serviceType)
-            String serviceStatus = "activated"
+            String serviceStatus = "deactivated"
             ss.setOrchestrationStatus(serviceStatus)
             String modelInvariantUuid = execution.getVariable("modelInvariantUuid")
             String modelUuid = execution.getVariable("modelUuid")
