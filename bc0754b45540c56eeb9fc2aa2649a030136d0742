@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "620b0e0c_bbcf9bfc",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/resources/application-test.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2020-12-21T10:49:19Z",
+      "side": 1,
+      "message": "Its better to keep the deploymnet of test and src same.. since its no more read from resources for the src , cant we read the same file for the testing too ?\n\nIs it required to change any value while testing it?",
+      "revId": "bc0754b45540c56eeb9fc2aa2649a030136d0742",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
