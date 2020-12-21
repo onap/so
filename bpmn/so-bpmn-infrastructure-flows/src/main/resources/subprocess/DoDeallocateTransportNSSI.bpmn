@@ -29,7 +29,7 @@ ex.processJavaException(execution)</bpmn:script>
       <bpmn:incoming>SequenceFlow_1jygjln</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1qv8qw1</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
-def runScript = new TnAllocateNssi()
+def runScript = new DoDeallocateTnNssi()
 runScript.prepareUpdateJobStatus(execution,"finished","100","Deallocated TN NSSI successfully")</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_03s744c" sourceRef="StartEvent_1nbljfd" targetRef="ScriptTask_1tc44ge" />

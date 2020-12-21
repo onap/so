@@ -32,6 +32,7 @@ import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.db.request.beans.ResourceOperationStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -122,7 +123,7 @@ class TnNssmfUtils {
         }
 
         String sdncRequest =
-        """<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.onap/so/request/types/v1"
+                """<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.onap/so/request/types/v1"
                                                     xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1"
                                                     xmlns:sdncadapter="http://org.onap/workflow/sdnc/adapter/schema/v1">
          <sdncadapter:RequestHeader>
@@ -331,5 +332,26 @@ class TnNssmfUtils {
 
         createRelationShipInAAI(execution, aaiResourceUri, relationship)
 
+    }
+
+    ResourceOperationStatus buildRoStatus(String nsstId,
+                                          String nssiId,
+                                          String jobId,
+                                          String nsiId,
+                                          String action,
+                                          String status,
+                                          String progress,
+                                          String statusDescription) {
+        ResourceOperationStatus roStatus = new ResourceOperationStatus()
+        roStatus.setResourceTemplateUUID(nsstId)
+        roStatus.setResourceInstanceID(nssiId)
+        roStatus.setServiceId(nsiId)
+        roStatus.setOperationId(jobId)
+        roStatus.setOperType(action)
+        roStatus.setProgress(progress)
+        roStatus.setStatus(status)
+        roStatus.setStatusDescription(statusDescription)
+
+        return roStatus
     }
 }

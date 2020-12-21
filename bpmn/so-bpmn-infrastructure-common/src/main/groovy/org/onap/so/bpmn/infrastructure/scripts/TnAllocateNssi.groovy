@@ -72,7 +72,7 @@ class TnAllocateNssi extends AbstractServiceTaskProcessor {
 
             String additionalPropJsonStr = execution.getVariable("sliceParams")
 
-            String tnNssiId = execution.getVariable("serviceInstanceID")
+            String tnNssiId = jsonUtil.getJsonValue(additionalPropJsonStr, "serviceInstanceID") //for debug
             if (isBlank(tnNssiId)) {
                 tnNssiId = UUID.randomUUID().toString()
             }
