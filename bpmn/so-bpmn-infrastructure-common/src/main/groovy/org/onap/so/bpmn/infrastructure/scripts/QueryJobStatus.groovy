@@ -20,9 +20,11 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import groovy.json.JsonSlurper
 import org.json.JSONObject
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.so.beans.nsmf.JobStatusRequest
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.core.json.JsonUtils
@@ -43,16 +45,15 @@ public class QueryJobStatus extends AbstractServiceTaskProcessor{
         try{
             String requestId = execution.getVariable("msoRequestId")
             logger.debug("RequestId :" + requestId)
-            String responseId = execution.getVariable("responseId")
-            String jobId = execution.getVariable("jobId")   
+            String jobId = execution.getVariable("jobId")
             def jsonSlurper = new JsonSlurper()
             
-            HashMap<String,?> esrInfo=jsonSlurper.parseText(execution.getVariable("esrInfo"))
+            HashMap<String,?> esrInfo = jsonSlurper.parseText(execution.getVariable("esrInfo"))
             logger.debug("esrInfo" + esrInfo.toString())
             
-            HashMap<String,?> serviceInfo=jsonSlurper.parseText(execution.getVariable("serviceInfo"))
+            HashMap<String,?> serviceInfo = jsonSlurper.parseText(execution.getVariable("serviceInfo"))
             logger.debug("serviceInfo" + serviceInfo.toString())
-            
+
             execution.setVariable("esrInfo", esrInfo)
             execution.setVariable("serviceInfo", serviceInfo)
             
@@ -60,10 +61,9 @@ public class QueryJobStatus extends AbstractServiceTaskProcessor{
             String endPoint = String.format("/api/rest/provMns/v1/NSS/jobs/%s", jobId)          
             String url = nssmfEndpoint + endPoint 
             execution.setVariable("NSSMF_AdapterEndpoint", url)
-            
+
             String payload = """
                 {
-                  "responseId": "${responseId}",
                   "esrInfo":  ${execution.getVariable("esrInfo") as JSONObject},
                   "serviceInfo": ${execution.getVariable("serviceInfo") as JSONObject}
                 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1p1suc9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.7.2">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1p1suc9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.4.1">
   <bpmn:process id="DoDeleteSliceServiceV1" name="DoDeleteSliceServiceV1" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1" name="start">
       <bpmn:outgoing>SequenceFlow_0ep5het</bpmn:outgoing>
@@ -68,14 +68,14 @@ ddss.parseNextNSSI(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_15z9iio" sourceRef="ScriptTask_159855t" targetRef="ExclusiveGateway_1ogbunu" />
     <bpmn:sequenceFlow id="SequenceFlow_029u1wr" sourceRef="Task_13k9usx" targetRef="Task_1ujnqtj" />
-    <bpmn:scriptTask id="Task_13k9usx" name="Query E2ESlice Serive From AAI" scriptFormat="groovy">
+    <bpmn:scriptTask id="Task_13k9usx" name="Query ServiceProfile From AAI" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_0npmman</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_029u1wr</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def ddss= new DoDeleteSliceService()
-ddss.queryE2ESliceSeriveFromAAI(execution)</bpmn:script>
+ddss.queryServiceProfileFromAAI(execution)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:callActivity id="Task_1rc7mcw" name="Do Deallocate NSSI " calledElement="DoDeallocateNSSIV1">
+    <bpmn:callActivity id="Task_1rc7mcw" name="Do Deallocate NSSI" calledElement="DoDeallocateNSSIV1">
       <bpmn:extensionElements>
         <camunda:in source="currentNSSI" target="currentNSSI" />
         <camunda:in source="msoRequestId" target="msoRequestId" />
@@ -90,7 +90,7 @@ ddss.queryE2ESliceSeriveFromAAI(execution)</bpmn:script>
       <bpmn:incoming>SequenceFlow_1aa2ek0</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1252rbf</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
-def dss= new DeleteSliceService()
+def dss= new DoDeleteSliceService()
 dss.terminateNSIQuery(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_17tvomo" sourceRef="Task_1iomfas" targetRef="Task_1rc7mcw" />
