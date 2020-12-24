@@ -93,7 +93,7 @@ public class ExternalAnNssmfManager extends ExternalNssmfManager {
             status.setResourceInstanceID(nssiId);
             status.setOperType(actionType.toString());
 
-            updateDbStatus(status, restResponse.getStatus(), JobStatus.FINISHED,
+            updateDbStatus(status, restResponse.getStatus(), JobStatus.STARTED,
                     NssmfAdapterUtil.getStatusDesc(actionType));
         }
         // todo

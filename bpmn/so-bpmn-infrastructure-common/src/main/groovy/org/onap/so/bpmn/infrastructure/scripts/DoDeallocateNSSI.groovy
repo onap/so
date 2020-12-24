@@ -21,25 +21,26 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.SliceProfiles
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAISimpleUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
-import org.onap.so.beans.nsmf.DeAllocateNssi
-import org.onap.so.beans.nsmf.EsrInfo
-import org.onap.so.beans.nsmf.NetworkType
-import org.onap.so.beans.nsmf.NssiResponse
-import org.onap.so.beans.nsmf.ServiceInfo
+import org.onap.so.beans.nsmf.*
+import org.onap.so.beans.nsmf.oof.SubnetType
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.NssmfAdapterUtils
 import org.onap.so.bpmn.common.scripts.RequestDBUtil
-import org.onap.so.bpmn.core.domain.ServiceArtifact
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.db.request.beans.OperationStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import javax.ws.rs.NotFoundException
 
 class DoDeallocateNSSI extends AbstractServiceTaskProcessor
 {
@@ -103,15 +104,13 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
 
         try {
             ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition") as ServiceDecomposition
-            ServiceArtifact serviceArtifact = serviceDecomposition ?.getServiceInfo()?.getServiceArtifact()?.get(0)
-            String content = serviceArtifact.getContent()
-            String vendor = jsonUtil.getJsonValue(content, "metadata.vendor")
-            String domainType  = jsonUtil.getJsonValue(content, "metadata.domainType")
+            String vendor = serviceDecomposition ?.getServiceRole()
+            NetworkType domainType = convertServiceCategory(serviceDecomposition.getServiceCategory())
 
             def currentNSSI = execution.getVariable("currentNSSI")
             currentNSSI['vendor'] = vendor
             currentNSSI['domainType'] = domainType
-            LOGGER.info("processDecomposition, current vendor-domainType:" +String.join("-", vendor, domainType))
+            LOGGER.info("processDecomposition, current vendor-domainType:" +String.join("-", vendor, domainType.toString()))
 
         } catch (any) {
             String exceptionMessage = "Bpmn error encountered in deallocate nssi. processDecomposition() - " + any.getMessage()
@@ -119,6 +118,27 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
         }
         LOGGER.debug("*****${PREFIX} Exit processDecomposition *****")
+    }
+
+
+    /**
+     * get subnetType from serviceCategory
+     * @return
+     */
+    private NetworkType convertServiceCategory(String serviceCategory){
+        if(serviceCategory ==~ /CN.*/){
+            return SubnetType.CN.getNetworkType()
+        }
+        if (serviceCategory ==~ /AN.*NF.*/){
+            return SubnetType.AN.getNetworkType()
+        }
+        if (serviceCategory ==~ /TN.*BH.*/){
+            return SubnetType.TN_BH.getNetworkType()
+        }
+        if(serviceCategory ==~ /TN.*MH.*/){
+            return SubnetType.TN_MH.getNetworkType()
+        }
+        return null
     }
     
     /**
@@ -136,9 +156,9 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
         String scriptName = execution.getVariable("scriptName")
 
         String serviceInvariantUuid = currentNSSI['modelInvariantId']
-        String serviceUuid = currentNSSI['modelId']
+        String serviceUuid = currentNSSI['modelVersionId']
         String globalSubscriberId = currentNSSI['globalSubscriberId']
-        String subscriptionServiceType = execution.getVariable("serviceType")
+        String subscriptionServiceType = currentNSSI['serviceType']
         
         DeAllocateNssi deAllocateNssi = new DeAllocateNssi()
         deAllocateNssi.setNsiId(nsiId)
@@ -191,8 +211,6 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
     {
         def currentNSSI = execution.getVariable("currentNSSI")
         String jobId = currentNSSI['jobId']
-
-        execution.setVariable("responseId", "3")
         execution.setVariable("jobId", jobId)
     }
 
@@ -245,11 +263,11 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
 
     private EsrInfo getEsrInfo(def currentNSSI)
     {
-        String domaintype = currentNSSI['domainType']
+        NetworkType domainType = currentNSSI['domainType']
         String vendor = currentNSSI['vendor']
         
         EsrInfo info = new EsrInfo()
-        info.setNetworkType(NetworkType.fromString(domaintype))
+        info.setNetworkType(domainType)
         info.setVendor(vendor)
         return info
     }
@@ -264,17 +282,17 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
         def currentNSSI = execution.getVariable("currentNSSI")
         int currentProgress = currentNSSI["jobProgress"]
         def proportion = currentNSSI['proportion']
-        def statusDes = currentNSSI["statusDescription"]
         int progress = (currentProgress as int) == 0 ? 0 : (currentProgress as int) / 100 * (proportion as int)
         def status = currentNSSI['status']
-        
+
+
         OperationStatus operationStatus = new OperationStatus()
         operationStatus.setServiceId(currentNSSI['e2eServiceInstanceId'] as String)
         operationStatus.setOperationId(currentNSSI['operationId'] as String)
         operationStatus.setOperation("DELETE")
-        operationStatus.setResult(status as String)
+        operationStatus.setResult("processing")
         operationStatus.setProgress(progress as String)
-        operationStatus.setOperationContent(statusDes as String)
+        operationStatus.setOperationContent(currentNSSI['domainType'].toString() + " " + status.toString())
         requestDBUtil.prepareUpdateOperationStatus(execution, operationStatus)
         LOGGER.debug("update operation, currentProgress=${currentProgress}, proportion=${proportion}, progress = ${progress}" )
     }
@@ -283,20 +301,20 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
      * delete slice profile from aai
      * @param execution
      */
-    void delSliceProfileFromAAI(DelegateExecution execution)
+    void delSliceProfileServiceFromAAI(DelegateExecution execution)
     {
         LOGGER.debug("*****${PREFIX} start delSliceProfileFromAAI *****")
         def currentNSSI = execution.getVariable("currentNSSI")
         String nssiServiceInstanceId = currentNSSI['nssiServiceInstanceId']
         String profileId = currentNSSI['profileId']
         String globalSubscriberId = currentNSSI["globalSubscriberId"]
-        String serviceType = execution.getVariable("serviceType")
+        String serviceType = currentNSSI['serviceType']
 
         try
         {
             LOGGER.debug("delete nssiServiceInstanceId:${nssiServiceInstanceId}, profileId:${profileId}")
             AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(
-                AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(nssiServiceInstanceId).sliceProfile(profileId))
+                AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(profileId))
             if (!getAAIClient().exists(resourceUri)) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai")
             }
@@ -309,5 +327,42 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
         LOGGER.debug("*****${PREFIX} Exist delSliceProfileFromAAI *****")
+    }
+
+    void delSliceProfileFromAAI(DelegateExecution execution){
+
+        LOGGER.debug("*****${PREFIX} start delSliceProfileFromAAI *****")
+        def currentNSSI = execution.getVariable("currentNSSI")
+        String globalSubscriberId = currentNSSI["globalSubscriberId"]
+        String serviceType = currentNSSI['serviceType']
+        String sliceProfileInstId = currentNSSI['profileId']
+
+        try
+        {
+            AAIPluralResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(sliceProfileInstId).sliceProfiles())
+            AAIResultWrapper wrapper = getAAIClient().get(resourceUri, NotFoundException.class)
+            Optional<SliceProfiles> sliceProfilesOpt =wrapper.asBean(SliceProfiles.class)
+            SliceProfiles sliceProfiles
+            String profileId
+            if(sliceProfilesOpt.isPresent()){
+                sliceProfiles = sliceProfilesOpt.get()
+                org.onap.aai.domain.yang.SliceProfile sliceProfile = sliceProfiles.getSliceProfile().get(0)
+                profileId = sliceProfile ? sliceProfile.getProfileId() : ""
+            }
+            if (profileId){
+                AAISimpleUri profileUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(sliceProfileInstId).sliceProfile(profileId))
+                if (!getAAIClient().exists(profileUri)) {
+                    exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai")
+                }
+                getAAIClient().delete(profileUri)
+            }
+
+        }
+        catch (any)
+        {
+            String msg = "delete service profile from aai failed! cause-"+any.getCause()
+            LOGGER.error(any.printStackTrace())
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
+        }
     }
 }
