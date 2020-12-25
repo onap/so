@@ -20,6 +20,8 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.aaiclient.client.aai.entities.uri.AAISimpleUri
+
 import static org.apache.commons.lang3.StringUtils.isBlank
 import javax.ws.rs.NotFoundException
 import org.camunda.bpm.engine.delegate.BpmnError
@@ -176,11 +178,11 @@ class DeleteSliceService extends AbstractServiceTaskProcessor {
                 ServiceProfile serviceProfile = serviceProfiles.getServiceProfile().get(0)
                 profileId = serviceProfile ? serviceProfile.getProfileId() : ""
             }
-            resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId).serviceProfile(profileId))
-            if (!getAAIClient().exists(resourceUri)) {
+            AAISimpleUri profileUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId).serviceProfile(profileId))
+            if (!getAAIClient().exists(profileUri)) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai")
             }
-            getAAIClient().delete(resourceUri)
+            getAAIClient().delete(profileUri)
         }
         catch (any)
         {

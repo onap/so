@@ -394,6 +394,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         AllocateAnNssi allocateAnNssi = new AllocateAnNssi()
         allocateAnNssi.sliceProfile = sliceTaskInfo.sliceProfile.trans2AnProfile()
+        allocateAnNssi.sliceProfile.sliceProfileId = sliceTaskInfo.sliceInstanceId
         allocateAnNssi.nsstId = sliceTaskInfo.NSSTInfo.UUID
         allocateAnNssi.nssiId = sliceTaskInfo.suggestNssiId
         allocateAnNssi.nssiName = "nssi_an" + execution.getVariable("sliceServiceInstanceName")
@@ -537,6 +538,8 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         allocateCnNssi.nssiId = sliceTaskInfo.suggestNssiId
         allocateCnNssi.nssiName = "nssi_cn" + execution.getVariable("sliceServiceInstanceName")
         allocateCnNssi.sliceProfile = sliceTaskInfo.sliceProfile.trans2CnProfile()
+        allocateCnNssi.sliceProfile.sliceProfileId = sliceTaskInfo.sliceInstanceId
+
         NsiInfo nsiInfo = new NsiInfo()
         nsiInfo.nsiId = sliceParams.suggestNsiId
         nsiInfo.nsiName = sliceParams.suggestNsiName

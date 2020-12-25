@@ -99,7 +99,8 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
 
                 restUtil.createServiceInstance(nssiInstance, serviceInfo);
             } else if (ActionType.DEALLOCATE.equals(jobOperType)) {
-                restUtil.deleteServiceInstance(serviceInfo);
+                // TODO
+                // restUtil.deleteServiceInstance(serviceInfo);
             }
         }
     }
