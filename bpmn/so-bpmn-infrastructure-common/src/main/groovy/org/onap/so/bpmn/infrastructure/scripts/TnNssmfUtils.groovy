@@ -354,4 +354,18 @@ class TnNssmfUtils {
 
         return roStatus
     }
+
+
+    void setEnableSdncConfig(DelegateExecution execution) {
+        String enableSdnc = UrnPropertiesReader.getVariable(
+                "mso.workflow.TnNssmf.enableSDNCNetworkConfig")
+        if (isBlank(enableSdnc)) {
+            logger.debug("mso.workflow.TnNssmf.enableSDNCNetworkConfig is undefined, so use default value (true)")
+            enableSdnc = "true"
+        }
+
+        logger.debug("setEnableSdncConfig: enableSdnc=" + enableSdnc)
+
+        execution.setVariable("enableSdnc", enableSdnc)
+    }
 }

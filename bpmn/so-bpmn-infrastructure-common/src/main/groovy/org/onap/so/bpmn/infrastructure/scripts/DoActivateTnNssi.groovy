@@ -83,6 +83,7 @@ public class DoActivateTnNssi extends AbstractServiceTaskProcessor {
         String actionType = operationType.equals("activateInstance") ? "activate" : "deactivate"
         execution.setVariable("actionType", actionType)
 
+        tnNssmfUtils.setEnableSdncConfig(execution)
 
         logger.debug("Finish preProcessRequest")
     }
@@ -147,6 +148,8 @@ public class DoActivateTnNssi extends AbstractServiceTaskProcessor {
         String jobId = execution.getVariable("jobId")
         String nsiId = execution.getVariable("nsiId")
         String operType = execution.getVariable("actionType")
+        operType = operType.toUpperCase()
+
 
         ResourceOperationStatus roStatus = tnNssmfUtils.buildRoStatus(modelUuid, ssInstanceId,
                 jobId, nsiId, operType, status, progress, statusDescription)
