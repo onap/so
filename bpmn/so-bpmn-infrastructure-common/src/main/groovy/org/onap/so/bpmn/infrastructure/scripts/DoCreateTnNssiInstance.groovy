@@ -63,6 +63,8 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
              }"""
         execution.setVariable("serviceModelInfo", serviceModelInfo)
 
+        tnNssmfUtils.setEnableSdncConfig(execution)
+
         logger.trace("Exit preProcessRequest")
     }
 
