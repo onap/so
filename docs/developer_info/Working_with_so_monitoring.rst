@@ -39,20 +39,22 @@ This setup is overridden by the override.yaml file which is stored in the OOM pr
 Override.yaml file can be edited directly in case of local ONAP setup. This file is loaded into
 container through configmap.
 
-**Note** : If you want to change config stored in override.yaml on working deployment, you have to edit k8s
-configmap. Due to insufficient permissions it is not possible directly in the container. After that pod have 
-to be restarted.
+.. note::
+ If you want to change config stored in override.yaml on working deployment, you have to edit k8s
+ configmap. Due to insufficient permissions it is not possible directly in the container. After that pod have 
+ to be restarted.
 
-**kubectl -n onap edit configmap dev-so-monitoring-app-configmap**
+.. code-block:: bash
+ kubectl -n onap edit configmap dev-so-monitoring-app-configmap
 
 .. image:: ../images/configmap.png
 
 Special care needs to be given to the indentation. Spring needs to be inline with the mso already present and others
 added accordingly.
 
-**Attention! The default setup of the OOM makes SO Monitoring password is being automatically generated during ONAP
-deployment and injected through k8s secret**
-
+.. warning::
+Attention! The default setup of the OOM makes SO Monitoring password is being automatically generated during ONAP
+deployment and injected through k8s secret
 
 2. Setup, retrieve and edit default SO Monitoring password
 ----------------------------------------------------------
@@ -89,19 +91,25 @@ Alternative way (**not recommended**) is to add password entry in the **oom/kube
 
 To retrieve actual password for SO Monitoring on existing ONAP install, run the following command:
 
-**kubectl get secret -n onap dev-so-monitoring-app-user-creds -o json | jq -r .data.password | base64 --decode**
+.. code-block:: bash
+
+ kubectl get secret -n onap dev-so-monitoring-app-user-creds -o json | jq -r .data.password | base64 --decode
 
 .. image:: ../images/so-monitoring-password.png
 
 To change actual password on existing ONAP install, **dev-so-monitoring-app-user-creds** secret has to be modified.
 
-**kubectl edit secret -n onap dev-so-monitoring-app-user-creds**
+.. code-block:: bash
+
+ kubectl edit secret -n onap dev-so-monitoring-app-user-creds
 
 .. image:: ../images/so-monitoring-secret.png
 
 Edit password entry, which has to be given in base64 form. Base64 form of password can be obtained by running:
 
-**echo 'YOUR_PASSWORD' | base64**
+.. code-block:: bash
+ 
+ echo 'YOUR_PASSWORD' | base64
 
 .. image:: ../images/so-monitorring-base64-password.png
 
@@ -113,11 +121,13 @@ Once, password was edited, pod has to be restarted.
 
 Identify the external port which is mapped to SO Monitoring using the following command. The default port is 30224 :
 
-**sudo kubectl -n onap get svc | grep so-monitoring**
+.. code-block:: bash
+
+ sudo kubectl -n onap get svc | grep so-monitoring
 
 .. image:: ../images/nodemap.png
 
-Then access the UI of SO Monitoring, for example by  https://<IP>:30224/ 
+Then access the UI of SO Monitoring, by default https://<k8s-worker-ip>:30224/
 
 .. image:: ../images/ui.png
 
@@ -131,6 +141,8 @@ In order to make the service only reachable from within the cluster, ClusterIP s
 
 Command used to edit the service configuration of SO Monitoring is:
 
-**sudo kubectl edit svc so-monitoring -n onap**
+.. code-block:: bash
+
+ sudo kubectl edit svc so-monitoring -n onap
 
 .. image:: ../images/nodeport.png
