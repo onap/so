@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "32cbfd6e_ab68fc2b",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateCoreSharedSlice.groovy",
+        "patchSetId": 3
+      },
+      "lineNbr": 569,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-12-28T14:17:11Z",
+      "side": 1,
+      "message": "waiting for this correction",
+      "range": {
+        "startLine": 569,
+        "startChar": 2,
+        "endLine": 569,
+        "endChar": 53
+      },
+      "revId": "36cdaeb207619022fdb6098370a06f904d57b9a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
