@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4bd960d4_a796c91b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ResourceIdValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-12-30T16:47:06Z",
+      "side": 1,
+      "message": "Now I\u0027m thinking it might be better to call it AaiResourceIdValidator (or AAIResourceIdValidator)",
+      "revId": "84b52cf1f6f7d6d0b9a263e346842e8da39c5024",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
