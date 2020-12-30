@@ -20,13 +20,7 @@
 
 package org.onap.so.db.catalog.beans;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.openpojo.business.annotation.BusinessKey;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.Date;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -36,6 +30,12 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.openpojo.business.annotation.BusinessKey;
 import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 /**
@@ -73,6 +73,11 @@ public class CloudIdentity {
     @BusinessKey
     @Column(name = "PROJECT_DOMAIN_NAME")
     private String projectDomainName;
+
+    @JsonProperty("admin_project_domain_name ")
+    @BusinessKey
+    @Column(name = "ADMIN_PROJECT_DOMAIN_NAME")
+    private String adminProjectDomainName;
 
     @JsonProperty("user_domain_name")
     @BusinessKey
@@ -245,6 +250,14 @@ public class CloudIdentity {
         this.projectDomainName = projectDomainName;
     }
 
+    public String getAdminProjectDomainName() {
+        return adminProjectDomainName;
+    }
+
+    public void setAdminProjectDomainName(String adminProjectDomainName) {
+        this.adminProjectDomainName = adminProjectDomainName;
+    }
+
     public String getUserDomainName() {
         return userDomainName;
     }
@@ -267,6 +280,7 @@ public class CloudIdentity {
         cloudIdentityCopy.identityServerType = this.identityServerType;
         cloudIdentityCopy.identityAuthenticationType = this.identityAuthenticationType;
         cloudIdentityCopy.projectDomainName = this.projectDomainName;
+        cloudIdentityCopy.adminProjectDomainName = this.adminProjectDomainName;
         cloudIdentityCopy.userDomainName = this.userDomainName;
 
         return cloudIdentityCopy;
@@ -279,7 +293,8 @@ public class CloudIdentity {
                 .append("projectDomain", getProjectDomainName()).append("userDomain", getUserDomainName())
                 .append("adminTenant", getAdminTenant()).append("memberRole", getMemberRole())
                 .append("tenantMetadata", getTenantMetadata()).append("identityServerType", getIdentityServerType())
-                .append("identityAuthenticationType", getIdentityAuthenticationType()).toString();
+                .append("identityAuthenticationType", getIdentityAuthenticationType())
+                .append("adminProjectDomainName", getAdminProjectDomainName()).toString();
     }
 
     @Override
@@ -299,7 +314,8 @@ public class CloudIdentity {
                 .append(getMemberRole(), castOther.getMemberRole())
                 .append(getTenantMetadata(), castOther.getTenantMetadata())
                 .append(getIdentityServerType(), castOther.getIdentityServerType())
-                .append(getIdentityAuthenticationType(), castOther.getIdentityAuthenticationType()).isEquals();
+                .append(getIdentityAuthenticationType(), castOther.getIdentityAuthenticationType())
+                .append(getAdminProjectDomainName(), castOther.getAdminProjectDomainName()).isEquals();
     }
 
     @Override
@@ -307,6 +323,7 @@ public class CloudIdentity {
         return new HashCodeBuilder(1, 31).append(getId()).append(getIdentityUrl()).append(getMsoId())
                 .append(getMsoPass()).append(getProjectDomainName()).append(getUserDomainName())
                 .append(getAdminTenant()).append(getMemberRole()).append(getTenantMetadata())
-                .append(getIdentityServerType()).append(getIdentityAuthenticationType()).toHashCode();
+                .append(getIdentityServerType()).append(getIdentityAuthenticationType())
+                .append(getAdminProjectDomainName()).toHashCode();
     }
 }
