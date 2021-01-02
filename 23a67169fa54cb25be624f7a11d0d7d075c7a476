@@ -22,6 +22,30 @@
       "revId": "23a67169fa54cb25be624f7a11d0d7d075c7a476",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c5d61974_ca40fdb9",
+        "filename": "packages/docker/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 3755
+      },
+      "writtenOn": "2021-01-02T20:21:18Z",
+      "side": 1,
+      "message": "Thanks for catching this. My mistake. pom.xml is a local change that should not be submitted.",
+      "parentUuid": "f3e4a4a7_640048a5",
+      "range": {
+        "startLine": 25,
+        "startChar": 26,
+        "endLine": 25,
+        "endChar": 45
+      },
+      "revId": "23a67169fa54cb25be624f7a11d0d7d075c7a476",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
