@@ -80,6 +80,9 @@ class DoDeallocateTnNssi extends AbstractServiceTaskProcessor {
             "modelVersion":""
              }"""
         execution.setVariable("serviceModelInfo", serviceModelInfo)
+
+        tnNssmfUtils.setEnableSdncConfig(execution)
+
         logger.debug("Finish preProcessRequest")
     }
 
@@ -155,7 +158,7 @@ class DoDeallocateTnNssi extends AbstractServiceTaskProcessor {
         String nsiId = execution.getVariable("nsiId")
 
         ResourceOperationStatus roStatus = tnNssmfUtils.buildRoStatus(modelUuid, ssInstanceId,
-                jobId, nsiId, "deallocate", status, progress, statusDescription)
+                jobId, nsiId, "DEALLOCATE", status, progress, statusDescription)
 
         logger.debug("DoDeallocateTnNssi: roStatus={}", roStatus)
         requestDBUtil.prepareUpdateResourceOperationStatus(execution, roStatus)
