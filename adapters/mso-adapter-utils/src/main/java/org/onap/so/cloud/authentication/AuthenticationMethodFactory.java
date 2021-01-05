@@ -100,7 +100,7 @@ public final class AuthenticationMethodFactory {
         Project project = new Project();
         Project.Domain projectDomain = new Project.Domain();
         userDomain.setName(cloudIdentity.getUserDomainName());
-        projectDomain.setName(cloudIdentity.getProjectDomainName());
+        projectDomain.setName(cloudIdentity.getAdminProjectDomainName());
         user.setName(cloudIdentity.getMsoId());
         user.setPassword(CryptoUtils.decryptCloudConfigPassword(cloudIdentity.getMsoPass()));
         user.setDomain(userDomain);
