@@ -108,6 +108,27 @@ public class AAIResourcesClientTest {
     }
 
     @Test
+    public void verifyDeleteIfExists() {
+        AAIResourceUri path = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test2"));
+        wireMockRule.stubFor(get(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(404)));
+        AAIResourcesClient client = aaiClient;
+        client.deleteIfExists(path);
+    }
+
+    @Test
+    public void verifyDeleteIfExists_exists() {
+        AAIResourceUri path = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test2"));
+        wireMockRule.stubFor(get(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBodyFile("aai/resources/mockObject.json").withStatus(200)));
+        wireMockRule.stubFor(delete(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
+                .withQueryParam("resource-version", equalTo("1234")).willReturn(aResponse().withStatus(204)));
+        AAIResourcesClient client = aaiClient;
+        client.deleteIfExists(path);
+    }
+
+    @Test
     public void verifyBasicAuth() {
         AAIResourceUri path = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test3"));
         wireMockRule.stubFor(get(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build().toString()))

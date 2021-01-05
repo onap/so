@@ -42,8 +42,12 @@ import org.onap.aaiclient.client.graphinventory.entities.uri.HttpAwareUri;
 import org.onap.aaiclient.client.graphinventory.exceptions.GraphInventoryMultipleItemsException;
 import org.onap.so.client.RestClient;
 import org.onap.so.client.RestProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInventoryResourceUri<?, ?>, SingleUri extends GraphInventorySingleResourceUri<?, ?, ?, ?, ?, ?>, PluralUri extends GraphInventoryPluralResourceUri<?, ?>, EdgeLabel extends GraphInventoryEdgeLabel, Wrapper extends GraphInventoryResultWrapper, TransactionalClient, SingleTransactionClient> {
+
+    private static final Logger logger = LoggerFactory.getLogger(GraphInventoryResourcesClient.class);
 
     protected GraphInventoryClient client;
 
@@ -147,6 +151,27 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
         String resourceVersion = (String) result.get("resource-version");
         giRC = client.createClient(clone.resourceVersion(resourceVersion));
         giRC.delete();
+
+    }
+
+    /**
+     * Deletes object from GraphInventory only if exists. Automatically handles resource-version.
+     * 
+     * @param uri
+     * @return
+     */
+    public void deleteIfExists(SingleUri uri) {
+        GraphInventorySingleResourceUri<?, ?, ?, ?, ?, ?> clone = (SingleUri) uri.clone();
+        RestClient giRC = client.createClient(clone);
+        Optional<Map<String, Object>> result = giRC.get(new GenericType<Map<String, Object>>() {});
+        if (result.isPresent()) {
+            String resourceVersion = (String) result.get().get("resource-version");
+            giRC = client.createClient(clone.resourceVersion(resourceVersion));
+            giRC.delete();
+        } else {
+            logger.warn(clone.build() + " already does not exist in " + client.getGraphDBName()
+                    + " therefore delete call not executed");
+        }
     }
 
     /**
