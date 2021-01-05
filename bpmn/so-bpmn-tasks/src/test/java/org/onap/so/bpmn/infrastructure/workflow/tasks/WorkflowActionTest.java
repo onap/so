@@ -1258,8 +1258,8 @@ public class WorkflowActionTest extends BaseTaskTest {
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
 
         assertEqualsBulkFlowName(ebbs, "DeleteFabricConfigurationBB", "DeactivateVfModuleBB", "DeleteVfModuleATTBB",
-                "UnassignVFModuleBB", "AssignVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB",
-                "AddFabricConfigurationBB", "ChangeModelVnfBB", "ChangeModelServiceInstanceBB");
+                "UnassignVFModuleBB", "AssignVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB", "ChangeModelVnfBB",
+                "ChangeModelServiceInstanceBB");
     }
 
     @Test
