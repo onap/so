@@ -31,6 +31,8 @@ import java.util.Map;
 import java.util.Optional;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
+import org.apache.commons.lang3.mutable.MutableBoolean;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.adapters.network.beans.ContrailPolicyRef;
 import org.onap.so.adapters.network.beans.ContrailPolicyRefSeq;
 import org.onap.so.adapters.network.beans.ContrailSubnet;
@@ -47,7 +49,6 @@ import org.onap.so.db.catalog.data.repository.NetworkResourceCustomizationReposi
 import org.onap.so.db.catalog.data.repository.NetworkResourceRepository;
 import org.onap.so.db.catalog.utils.MavenLikeVersioning;
 import org.onap.so.entity.MsoRequest;
-import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.HeatStatus;
@@ -150,7 +151,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         Holder<String> networkFqdn = new Holder<>();
         createNetwork(cloudSiteId, tenantId, networkType, modelCustomizationUuid, networkName, physicalNetworkName,
                 vlans, null, shared, external, failIfExists, backout, subnets, null, null, msoRequest, networkId,
-                neutronNetworkId, networkFqdn, subnetIdMap, rollback, true);
+                neutronNetworkId, networkFqdn, subnetIdMap, rollback, true, new MutableBoolean());
     }
 
     @Deprecated
@@ -164,7 +165,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             throws NetworkException {
         createNetwork(cloudSiteId, tenantId, networkType, modelCustomizationUuid, networkName, null, null, routeTargets,
                 shared, external, failIfExists, backout, subnets, policyFqdns, routeTableFqdns, msoRequest, networkId,
-                neutronNetworkId, networkFqdn, subnetIdMap, rollback, true);
+                neutronNetworkId, networkFqdn, subnetIdMap, rollback, true, new MutableBoolean());
     }
 
     /**
@@ -195,13 +196,14 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             String shared, String external, Boolean failIfExists, Boolean backout, List<Subnet> subnets,
             List<String> policyFqdns, List<String> routeTableFqdns, MsoRequest msoRequest, Holder<String> networkId,
             Holder<String> neutronNetworkId, Holder<String> networkFqdn, Holder<Map<String, String>> subnetIdMap,
-            Holder<NetworkRollback> rollback, Boolean pollForCompletion) throws NetworkException {
+            Holder<NetworkRollback> rollback, Boolean pollForCompletion, MutableBoolean isOs3Nw)
+            throws NetworkException {
         logger.debug("*** CREATE Network: {} of type {} in {}/{}", networkName, networkType, cloudSiteId, tenantId);
 
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis();
 
-        // Build a default rollback object (no actions performed)
+        // Build a default rollback object (no actions performed) //TODO remove
         NetworkRollback networkRollback = new NetworkRollback();
         networkRollback.setCloudId(cloudSiteId);
         networkRollback.setTenantId(tenantId);
@@ -241,13 +243,13 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         template = template.replaceAll("\r\n", "\n");
 
         boolean os3template = false;
-        String os3nw = OS3_NW;
 
-        os3nw = environment.getProperty(OS3_NW_PROPERTY, OS3_NW);
+        String os3nw = environment.getProperty(OS3_NW_PROPERTY, OS3_NW);
 
         if (template.contains(os3nw))
             os3template = true;
 
+        isOs3Nw.setValue(os3template);
         // First, look up to see if the Network already exists (by name).
         // For HEAT orchestration of networks, the stack name will always match the network name
         StackInfo heatStack = null;
@@ -280,20 +282,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                     }
                     Map<String, Object> outputs = heatStack.getOutputs();
 
-                    for (Map.Entry<String, Object> entry : outputs.entrySet()) {
-                        String key = entry.getKey();
-                        if (key != null && key.startsWith("subnet")) {
-                            if (os3template) // one subnet_id output
-                            {
-                                Map<String, String> map = getSubnetUUId(key, outputs, subnets);
-                                sMap.putAll(map);
-                            } else // multiples subnet_%aaid% outputs
-                            {
-                                String subnetUUId = (String) outputs.get(key);
-                                sMap.put(key.substring("subnet_id_".length()), subnetUUId);
-                            }
-                        }
-                    }
+                    sMap = buildSubnetMap(outputs, subnets, os3template);
                 }
                 subnetIdMap.value = sMap;
                 logger.warn("{} {} Found Existing network stack, status={} networkName={} for {}/{}",
@@ -390,20 +379,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         Map<String, Object> outputs = heatStack.getOutputs();
         Map<String, String> sMap = new HashMap<>();
         if (outputs != null) {
-            for (Map.Entry<String, Object> entry : outputs.entrySet()) {
-                String key = entry.getKey();
-                if (key != null && key.startsWith("subnet")) {
-                    if (os3template) // one subnet output expected
-                    {
-                        Map<String, String> map = getSubnetUUId(key, outputs, subnets);
-                        sMap.putAll(map);
-                    } else // multiples subnet_%aaid% outputs allowed
-                    {
-                        String subnetUUId = (String) outputs.get(key);
-                        sMap.put(key.substring("subnet_id_".length()), subnetUUId);
-                    }
-                }
-            }
+            sMap = buildSubnetMap(outputs, subnets, os3template);
             networkRollback.setNeutronNetworkId((String) outputs.get(NETWORK_ID));
         }
         subnetIdMap.value = sMap;
@@ -686,20 +662,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             Map<String, Object> outputs = heatStack.getOutputs();
             Map<String, String> sMap = new HashMap<>();
             if (outputs != null) {
-                for (Map.Entry<String, Object> entry : outputs.entrySet()) {
-                    String key = entry.getKey();
-                    if (key != null && key.startsWith("subnet")) {
-                        if (os3template) // one subnet output expected
-                        {
-                            Map<String, String> map = getSubnetUUId(key, outputs, subnets);
-                            sMap.putAll(map);
-                        } else // multiples subnet_%aaid% outputs allowed
-                        {
-                            String subnetUUId = (String) outputs.get(key);
-                            sMap.put(key.substring("subnet_id_".length()), subnetUUId);
-                        }
-                    }
-                }
+                sMap = buildSubnetMap(outputs, subnets, os3template);
             }
             subnetIdMap.value = sMap;
 
@@ -1361,7 +1324,8 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         return heatTemplate;
     }
 
-    private Map<String, String> getSubnetUUId(String key, Map<String, Object> outputs, List<Subnet> subnets) {
+    // TODO remove
+    public Map<String, String> getSubnetUUId(String key, Map<String, Object> outputs, List<Subnet> subnets) {
 
         Map<String, String> sMap = new HashMap<>();
 
@@ -1416,6 +1380,26 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
         logger.debug("Template updated with a subnet:{}", updatedTemplate);
         return updatedTemplate;
+    }
+
+    public Map<String, String> buildSubnetMap(Map<String, Object> outputs, List<Subnet> subnets, boolean os3template) {
+
+        Map<String, String> sMap = new HashMap<>();
+        for (Map.Entry<String, Object> entry : outputs.entrySet()) {
+            String key = entry.getKey();
+            if (key != null && key.startsWith("subnet")) {
+                if (os3template) // one subnet_id output
+                {
+                    Map<String, String> map = getSubnetUUId(key, outputs, subnets);
+                    sMap.putAll(map);
+                } else // multiples subnet_%aaid% outputs
+                {
+                    String subnetUUId = (String) outputs.get(key);
+                    sMap.put(key.substring("subnet_id_".length()), subnetUUId);
+                }
+            }
+        }
+        return sMap;
     }
 
 }
