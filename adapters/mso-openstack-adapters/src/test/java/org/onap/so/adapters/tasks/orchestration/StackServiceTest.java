@@ -89,14 +89,15 @@ public class StackServiceTest {
 
         Map<String, Object> variables = new HashMap<>();
         variables.put("backout", true);
-        variables.put("WorkflowResponse", "");
         variables.put("OpenstackInvokeSuccess", true);
         variables.put("stackId", null);
-        variables.put("openstackAdapterErrorMessage", null);
+        variables.put("openstackAdapterErrorMessage", "");
         variables.put("PollRollbackStatus", false);
         variables.put("rollbackPerformed", false);
         variables.put("OpenstackRollbackSuccess", false);
         variables.put("OpenstackPollSuccess", false);
+        variables.put("os3Nw", false);
+
 
         Mockito.verify(vnfAdapterImpl, Mockito.times(1)).createVfModule(Mockito.eq("regionOne"),
                 Mockito.eq("CloudOwner"), Mockito.eq("0422ffb57ba042c0800a29dc85ca70f8"),

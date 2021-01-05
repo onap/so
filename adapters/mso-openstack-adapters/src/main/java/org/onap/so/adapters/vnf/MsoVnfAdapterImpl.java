@@ -315,7 +315,7 @@ public class MsoVnfAdapterImpl {
         return;
     }
 
-    private Map<String, String> copyStringOutputs(Map<String, Object> stackOutputs) {
+    public Map<String, String> copyStringOutputs(Map<String, Object> stackOutputs) {
         Map<String, String> stringOutputs = new HashMap<>();
         for (Map.Entry<String, Object> entry : stackOutputs.entrySet()) {
             String key = entry.getKey();
@@ -405,6 +405,7 @@ public class MsoVnfAdapterImpl {
         return stringMap;
     }
 
+    // TODO remove rollback and outputs and polling
     public void createVfModule(String cloudSiteId, String cloudOwner, String tenantId, String vnfType,
             String vnfVersion, String genericVnfName, String vnfName, String vfModuleId, String requestType,
             String volumeGroupHeatStackId, String baseVfHeatStackId, String modelCustomizationUuid,
@@ -461,6 +462,7 @@ public class MsoVnfAdapterImpl {
         logger.debug("requestTypeString = " + requestTypeString + ", nestedStackId = " + nestedStackId
                 + ", nestedBaseStackId = " + nestedBaseStackId);
 
+        // TODO remove
         // Build a default rollback object (no actions performed)
         VnfRollback vfRollback = new VnfRollback();
         vfRollback.setCloudSiteId(cloudSiteId);
@@ -960,7 +962,7 @@ public class MsoVnfAdapterImpl {
 
             vnfId.value = heatStack.getCanonicalName();
             outputs.value = copyStringOutputs(heatStack.getOutputs());
-            rollback.value = vfRollback;
+            rollback.value = vfRollback; // TODO remove
             logger.debug("VF Module {} successfully created", vfModuleName);
         } catch (Exception e) {
             logger.debug("unhandled exception in create VF", e);
