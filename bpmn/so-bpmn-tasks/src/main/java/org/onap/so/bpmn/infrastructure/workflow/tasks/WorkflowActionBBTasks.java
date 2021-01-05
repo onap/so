@@ -52,6 +52,9 @@ import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
+import org.onap.so.serviceinstancebeans.ModelType;
+import org.onap.so.serviceinstancebeans.RelatedInstance;
+import org.onap.so.serviceinstancebeans.RelatedInstanceList;
 import org.onap.so.serviceinstancebeans.RequestReferences;
 import org.onap.so.serviceinstancebeans.ServiceInstancesResponse;
 import org.slf4j.Logger;
@@ -437,54 +440,53 @@ public class WorkflowActionBBTasks {
             String vnfId = ebb.getWorkflowResourceIds().getVnfId();
             String vfModuleId = ebb.getResourceId();
             ebb.getWorkflowResourceIds().setVfModuleId(vfModuleId);
-            String serviceModelUUID =
-                    bbInputSetupUtils.getAAIServiceInstanceById(serviceInstanceId).getModelVersionId();
-            String vnfCustomizationUUID = bbInputSetupUtils.getAAIGenericVnf(vnfId).getModelCustomizationId();
-            String vfModuleCustomizationUUID =
-                    bbInputSetupUtils.getAAIVfModule(vnfId, vfModuleId).getModelCustomizationId();
+            String serviceModelUUID = "";
+            String vnfCustomizationUUID = "";
+            String vfModuleCustomizationUUID = "";
+            if (requestAction.equalsIgnoreCase("replaceInstance")
+                    || requestAction.equalsIgnoreCase("replaceInstanceRetainAssignments")) {
+                for (RelatedInstanceList relatedInstList : ebb.getRequestDetails().getRelatedInstanceList()) {
+                    RelatedInstance relatedInstance = relatedInstList.getRelatedInstance();
+                    if (relatedInstance.getModelInfo().getModelType().equals(ModelType.vnf)) {
+                        vnfCustomizationUUID = relatedInstance.getModelInfo().getModelCustomizationId();
+                    }
+                    if (relatedInstance.getModelInfo().getModelType().equals(ModelType.service)) {
+                        serviceModelUUID = relatedInstance.getModelInfo().getModelVersionId();
+                    }
+                }
+                vfModuleCustomizationUUID = ebb.getRequestDetails().getModelInfo().getModelCustomizationId();
+            } else {
+                serviceModelUUID = bbInputSetupUtils.getAAIServiceInstanceById(serviceInstanceId).getModelVersionId();
+                vnfCustomizationUUID = bbInputSetupUtils.getAAIGenericVnf(vnfId).getModelCustomizationId();
+                vfModuleCustomizationUUID =
+                        bbInputSetupUtils.getAAIVfModule(vnfId, vfModuleId).getModelCustomizationId();
+            }
             List<Vnfc> vnfcs = workflowAction.getRelatedResourcesInVfModule(vnfId, vfModuleId, Vnfc.class, Types.VNFC);
             logger.debug("Vnfc Size: {}", vnfcs.size());
             for (Vnfc vnfc : vnfcs) {
                 String modelCustomizationId = vnfc.getModelCustomizationId();
                 logger.debug("Processing Vnfc: {}", modelCustomizationId);
-                if (requestAction.equalsIgnoreCase("replaceInstance")
-                        || requestAction.equalsIgnoreCase("replaceInstanceRetainAssignments")) {
-                    List<ExecuteBuildingBlock> configBBs = flowsToExecute.stream()
-                            .filter(item -> item.getBuildingBlock().getBpmnFlowName().matches(CONFIGURATION_PATTERN))
-                            .collect(Collectors.toList());
-                    if (configBBs != null && configBBs.size() > 0) {
-                        for (ExecuteBuildingBlock bb : configBBs) {
-                            if (bb.getConfigurationResourceKeys() != null) {
-                                bb.getConfigurationResourceKeys().setCvnfcCustomizationUUID(modelCustomizationId);
-                                bb.getConfigurationResourceKeys().setVnfcName(vnfc.getVnfcName());
-                            }
-                        }
-                        execution.setVariable("flowsToExecute", flowsToExecute);
-                        execution.setVariable(COMPLETED, false);
-                    }
+                CvnfcConfigurationCustomization fabricConfig = catalogDbClient.getCvnfcCustomization(serviceModelUUID,
+                        vnfCustomizationUUID, vfModuleCustomizationUUID, modelCustomizationId);
+                if (fabricConfig != null && fabricConfig.getConfigurationResource() != null
+                        && fabricConfig.getConfigurationResource().getToscaNodeType() != null
+                        && fabricConfig.getConfigurationResource().getToscaNodeType().contains(FABRIC_CONFIGURATION)) {
+                    String configurationId = getConfigurationId(vnfc);
+                    ConfigurationResourceKeys configurationResourceKeys = new ConfigurationResourceKeys();
+                    configurationResourceKeys.setCvnfcCustomizationUUID(modelCustomizationId);
+                    configurationResourceKeys.setVfModuleCustomizationUUID(vfModuleCustomizationUUID);
+                    configurationResourceKeys.setVnfResourceCustomizationUUID(vnfCustomizationUUID);
+                    configurationResourceKeys.setVnfcName(vnfc.getVnfcName());
+                    ExecuteBuildingBlock addConfigBB = getExecuteBBForConfig(ADD_FABRIC_CONFIGURATION_BB, ebb,
+                            configurationId, configurationResourceKeys);
+                    flowsToExecute.add(addConfigBB);
+                    flowsToExecute.stream()
+                            .forEach(executeBB -> logger.info("Flows to Execute After Post Processing: {}",
+                                    executeBB.getBuildingBlock().getBpmnFlowName()));
+                    execution.setVariable("flowsToExecute", flowsToExecute);
+                    execution.setVariable(COMPLETED, false);
                 } else {
-                    CvnfcConfigurationCustomization fabricConfig = catalogDbClient.getCvnfcCustomization(
-                            serviceModelUUID, vnfCustomizationUUID, vfModuleCustomizationUUID, modelCustomizationId);
-                    if (fabricConfig != null && fabricConfig.getConfigurationResource() != null
-                            && fabricConfig.getConfigurationResource().getToscaNodeType() != null && fabricConfig
-                                    .getConfigurationResource().getToscaNodeType().contains(FABRIC_CONFIGURATION)) {
-                        String configurationId = getConfigurationId(vnfc);
-                        ConfigurationResourceKeys configurationResourceKeys = new ConfigurationResourceKeys();
-                        configurationResourceKeys.setCvnfcCustomizationUUID(modelCustomizationId);
-                        configurationResourceKeys.setVfModuleCustomizationUUID(vfModuleCustomizationUUID);
-                        configurationResourceKeys.setVnfResourceCustomizationUUID(vnfCustomizationUUID);
-                        configurationResourceKeys.setVnfcName(vnfc.getVnfcName());
-                        ExecuteBuildingBlock addConfigBB = getExecuteBBForConfig(ADD_FABRIC_CONFIGURATION_BB, ebb,
-                                configurationId, configurationResourceKeys);
-                        flowsToExecute.add(addConfigBB);
-                        flowsToExecute.stream()
-                                .forEach(executeBB -> logger.info("Flows to Execute After Post Processing: {}",
-                                        executeBB.getBuildingBlock().getBpmnFlowName()));
-                        execution.setVariable("flowsToExecute", flowsToExecute);
-                        execution.setVariable(COMPLETED, false);
-                    } else {
-                        logger.debug("No cvnfcCustomization found for customizationId: {}", modelCustomizationId);
-                    }
+                    logger.debug("No cvnfcCustomization found for customizationId: {}", modelCustomizationId);
                 }
             }
         } catch (EntityNotFoundException e) {

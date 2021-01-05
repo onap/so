@@ -22,6 +22,22 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
@@ -48,31 +64,16 @@ import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ConfigurationResourceKeys;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
-import org.onap.so.client.namingservice.NamingRequestObject;
 import org.onap.so.db.catalog.beans.ConfigurationResource;
 import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.serviceinstancebeans.ModelInfo;
+import org.onap.so.serviceinstancebeans.ModelType;
+import org.onap.so.serviceinstancebeans.RelatedInstance;
+import org.onap.so.serviceinstancebeans.RelatedInstanceList;
 import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.springframework.core.env.Environment;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyObject;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class WorkflowActionBBTasksTest extends BaseTaskTest {
 
@@ -680,7 +681,28 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
     @Test
     public void postProcessingExecuteBBActivateVfModuleReplaceInstanceHasConfigurationTest()
             throws CloneNotSupportedException {
-
+        RequestDetails reqDetails = new RequestDetails();
+        RelatedInstanceList[] list = new RelatedInstanceList[2];
+        RelatedInstanceList vnfList = new RelatedInstanceList();
+        RelatedInstanceList serviceList = new RelatedInstanceList();
+        list[0] = vnfList;
+        list[1] = serviceList;
+        RelatedInstance vnfInstance = new RelatedInstance();
+        RelatedInstance serviceInstance = new RelatedInstance();
+        ModelInfo vnfModelInfo = new ModelInfo();
+        vnfModelInfo.setModelType(ModelType.vnf);
+        vnfModelInfo.setModelCustomizationId("1");
+        ModelInfo serviceModelInfo = new ModelInfo();
+        serviceModelInfo.setModelType(ModelType.service);
+        serviceModelInfo.setModelVersionId("1");
+        vnfInstance.setModelInfo(vnfModelInfo);
+        serviceInstance.setModelInfo(serviceModelInfo);
+        reqDetails.setRelatedInstanceList(list);
+        vnfList.setRelatedInstance(vnfInstance);
+        serviceList.setRelatedInstance(serviceInstance);
+        ModelInfo vfModuleInfo = new ModelInfo();
+        vfModuleInfo.setModelCustomizationId("1");
+        reqDetails.setModelInfo(vfModuleInfo);
         BuildingBlock bbAddFabric = new BuildingBlock().setBpmnFlowName("AddFabricConfigurationBB");
         ExecuteBuildingBlock ebbAddFabric = new ExecuteBuildingBlock().setBuildingBlock(bbAddFabric);
         WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
@@ -695,6 +717,7 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         ebbActivateVfModule.setResourceId("1");
         ConfigurationResourceKeys configurationResourceKeys = new ConfigurationResourceKeys();
         ebbAddFabric.setConfigurationResourceKeys(configurationResourceKeys);
+        ebbActivateVfModule.setRequestDetails(reqDetails);
 
         ServiceInstance service = new ServiceInstance();
         service.setServiceInstanceName("name");
@@ -730,7 +753,6 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         prepareDelegateExecution();
         List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
         flowsToExecute.add(ebbActivateVfModule);
-        flowsToExecute.add(ebbAddFabric);
 
         ArgumentCaptor<DelegateExecution> executionCaptor = ArgumentCaptor.forClass(DelegateExecution.class);
         ArgumentCaptor<ExecuteBuildingBlock> bbCaptor = ArgumentCaptor.forClass(ExecuteBuildingBlock.class);

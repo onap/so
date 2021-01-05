@@ -577,30 +577,32 @@ public class WorkflowAction {
             }
             workflowIdsCopy.setConfigurationId(configuration.getConfigurationId());
             for (OrchestrationFlow orchFlow : result) {
-                if (!isReplace) {
-                    dataObj.getResourceKey().setVfModuleCustomizationId(vfModuleCustomizationUUID);
-                    dataObj.getResourceKey().setVnfCustomizationId(vnfCustomizationUUID);
-                } else {
-                    if (orchFlow.getFlowName().contains("Delete")) {
+                if (!isReplace || (isReplace && (orchFlow.getFlowName().contains("Delete")))) {
+                    if (!isReplace) {
                         dataObj.getResourceKey().setVfModuleCustomizationId(vfModuleCustomizationUUID);
                         dataObj.getResourceKey().setVnfCustomizationId(vnfCustomizationUUID);
                     } else {
-                        dataObj.getResourceKey().setVfModuleCustomizationId(replaceVfModuleCustomizationUUID);
-                        dataObj.getResourceKey().setVnfCustomizationId(replaceVnfModuleCustomizationUUID);
+                        if (orchFlow.getFlowName().contains("Delete")) {
+                            dataObj.getResourceKey().setVfModuleCustomizationId(vfModuleCustomizationUUID);
+                            dataObj.getResourceKey().setVnfCustomizationId(vnfCustomizationUUID);
+                        } else {
+                            dataObj.getResourceKey().setVfModuleCustomizationId(replaceVfModuleCustomizationUUID);
+                            dataObj.getResourceKey().setVnfCustomizationId(replaceVnfModuleCustomizationUUID);
+                        }
                     }
+                    dataObj.getResourceKey().setCvnfModuleCustomizationId(vnfc.getModelCustomizationId());
+                    String vnfcName = vnfc.getVnfcName();
+                    if (vnfcName == null || vnfcName.isEmpty()) {
+                        buildAndThrowException(dataObj.getExecution(), "Exception in create execution list "
+                                + ": VnfcName does not exist or is null while there is a configuration for the vfModule",
+                                new Exception("Vnfc and Configuration do not match"));
+                    }
+                    ExecuteBuildingBlock ebb = buildExecuteBuildingBlock(orchFlow, dataObj.getRequestId(),
+                            dataObj.getResourceKey(), dataObj.getApiVersion(), dataObj.getResourceId(),
+                            dataObj.getRequestAction(), dataObj.isaLaCarte(), dataObj.getVnfType(), workflowIdsCopy,
+                            dataObj.getRequestDetails(), false, null, vnfcName, true, null);
+                    flowsToExecuteConfigs.add(ebb);
                 }
-                dataObj.getResourceKey().setCvnfModuleCustomizationId(vnfc.getModelCustomizationId());
-                String vnfcName = vnfc.getVnfcName();
-                if (vnfcName == null || vnfcName.isEmpty()) {
-                    buildAndThrowException(dataObj.getExecution(), "Exception in create execution list "
-                            + ": VnfcName does not exist or is null while there is a configuration for the vfModule",
-                            new Exception("Vnfc and Configuration do not match"));
-                }
-                ExecuteBuildingBlock ebb = buildExecuteBuildingBlock(orchFlow, dataObj.getRequestId(),
-                        dataObj.getResourceKey(), dataObj.getApiVersion(), dataObj.getResourceId(),
-                        dataObj.getRequestAction(), dataObj.isaLaCarte(), dataObj.getVnfType(), workflowIdsCopy,
-                        dataObj.getRequestDetails(), false, null, vnfcName, true, null);
-                flowsToExecuteConfigs.add(ebb);
             }
         }
         return flowsToExecuteConfigs;
