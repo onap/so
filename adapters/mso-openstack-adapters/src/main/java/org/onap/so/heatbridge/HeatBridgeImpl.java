@@ -765,7 +765,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                         if (env.getProperty("heatBridgeDryrun", Boolean.class, false)) {
                             logger.debug("Would delete Vserver: {}", vserverUri.build().toString());
                         } else {
-                            resourcesClient.delete(vserverUri);
+                            resourcesClient.deleteIfExists(vserverUri);
                         }
                     }
                 }
