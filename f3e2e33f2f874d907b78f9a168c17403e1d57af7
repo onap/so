@@ -22,6 +22,30 @@
       "revId": "f3e2e33f2f874d907b78f9a168c17403e1d57af7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7aac8371_a259ab1b",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/ServiceLevelUpgrade.groovy",
+        "patchSetId": 6
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2021-01-06T11:01:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1c918265_5f3c3183",
+      "range": {
+        "startLine": 99,
+        "startChar": 12,
+        "endLine": 99,
+        "endChar": 92
+      },
+      "revId": "f3e2e33f2f874d907b78f9a168c17403e1d57af7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
