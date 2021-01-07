@@ -37,7 +37,7 @@ public class NssmfRequest implements Serializable {
 
     private String globalSubscriberId;
 
-    private String serviceInstanceId;
+    private String serviceInstanceID;
 
     private String subscriptionServiceType;
 
@@ -54,7 +54,7 @@ public class NssmfRequest implements Serializable {
         this.subscriptionServiceType = serviceInfo.getSubscriptionServiceType();
         this.networkType = networkType;
         this.additionalProperties = additionalProperties;
-        this.serviceInstanceId = serviceInfo.getNssiId();
+        this.serviceInstanceID = serviceInfo.getNssiId();
         this.name = serviceInfo.getNssiName();
     }
 

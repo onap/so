@@ -19,6 +19,7 @@
  */
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.aaiclient.client.aai.entities.uri.AAISimpleUri
 
 import static org.apache.commons.lang3.StringUtils.isBlank
 import javax.ws.rs.NotFoundException
@@ -319,12 +320,12 @@ class DeleteCommunicationService extends AbstractServiceTaskProcessor {
                 CommunicationServiceProfile csProfile = csProfiles.getCommunicationServiceProfile().get(0)
                 profileId = csProfile ? csProfile.getProfileId() : ""
             }
-            resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId).communicationServiceProfile(profileId))
-            if (!getAAIClient().exists(resourceUri)) {
+            AAISimpleUri profileUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId).communicationServiceProfile(profileId))
+            if (!getAAIClient().exists(profileUri)) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "communication service profile was not found in aai")
             }
 
-            getAAIClient().delete(resourceUri)
+            getAAIClient().delete(profileUri)
             LOGGER.debug("end delete communication service profile from AAI")
         }
         catch (any)

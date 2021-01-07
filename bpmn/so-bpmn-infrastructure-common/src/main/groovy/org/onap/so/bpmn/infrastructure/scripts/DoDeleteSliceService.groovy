@@ -19,22 +19,15 @@
  */
 package org.onap.so.bpmn.infrastructure.scripts
 
-import org.onap.aai.domain.yang.SliceProfiles
-import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
-
-import static org.apache.commons.lang3.StringUtils.isBlank
-import javax.ws.rs.NotFoundException
-import javax.ws.rs.core.Response
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.AllottedResource
 import org.onap.aai.domain.yang.AllottedResources
 import org.onap.aai.domain.yang.Relationship
 import org.onap.aai.domain.yang.ServiceInstance
-import org.onap.aai.domain.yang.ServiceProfile
-import org.onap.aai.domain.yang.ServiceProfiles
 import org.onap.aaiclient.client.aai.AAIObjectName
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
@@ -47,6 +40,11 @@ import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+
+import javax.ws.rs.NotFoundException
+import javax.ws.rs.core.Response
+
+import static org.apache.commons.lang3.StringUtils.isBlank
 
 /**
  * This groovy class supports the <class>DoDeleteSliceService.bpmn</class> process.
@@ -193,13 +191,27 @@ class DoDeleteSliceService extends AbstractServiceTaskProcessor {
     {
         LOGGER.trace(" *****${PREFIX} Start getNSIFromAAI *****")
         String nsiId = execution.getVariable("nsiId")
+        List<String> nssiIdList = getNSSIIdList(execution, nsiId)
+        String msg = "nsiId: ${nsiId}, nssiIdList:"
+        msg+= nssiIdList.join(",")
+        LOGGER.info(msg)
+        execution.setVariable("nssiIdList", nssiIdList)
+        LOGGER.trace(" *****${PREFIX} Exit getNSIFromAAI *****")
+    }
+    /**
+     * Get NSSI Id from AAI
+     * @param execution
+     * @param nsiId
+     * @return
+     */
+    private List<String> getNSSIIdList(DelegateExecution execution, String nsiId){
+        List<String> nssiIdList = []
+
         try
         {
-            String errorMsg = "query nsi from aai failed."
+            String errorMsg = "query nssi from aai failed."
             AAIResultWrapper wrapper = queryAAI(execution, Types.SERVICE_INSTANCE, nsiId, errorMsg)
-            Optional<ServiceInstance> si =wrapper.asBean(ServiceInstance.class)
-            List<String> nssiIdList = []
-            String msg = "nsiId:${nsiId},nssiIdList:"
+            Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
             if(si.isPresent())
             {
                 List<Relationship> relationshipList = si.get().getRelationshipList()?.getRelationship()
@@ -217,15 +229,12 @@ class DoDeleteSliceService extends AbstractServiceTaskProcessor {
                             ServiceInstance instance = serviceInstance.get()
                             if ("nssi".equalsIgnoreCase(instance.getServiceRole())) {
                                 nssiId = instance.getServiceInstanceId()
+                                nssiIdList.add(nssiId)
                             }
                         }
-                        nssiIdList.add(nssiId)
-                        msg+="${nssiId}, "
                     }
                 }
             }
-            LOGGER.info(msg)
-            execution.setVariable("nssiIdList", nssiIdList)
         }
         catch(BpmnError e){
             throw e
@@ -235,7 +244,7 @@ class DoDeleteSliceService extends AbstractServiceTaskProcessor {
             LOGGER.error(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
-        LOGGER.trace(" *****${PREFIX} Exit getNSIFromAAI *****")
+        return nssiIdList
     }
 
     /**
@@ -396,6 +405,7 @@ class DoDeleteSliceService extends AbstractServiceTaskProcessor {
         LOGGER.debug("Start terminateNSIQuery")
 
         return
+
         //To test
         String requestId = execution.getVariable("msoRequestId")
         String nxlId = currentNSSI['nsiServiceInstanceId']
@@ -445,5 +455,27 @@ class DoDeleteSliceService extends AbstractServiceTaskProcessor {
             exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Failed to get terminate Response suggested by OOF.")
         }
         LOGGER.debug("Finish terminateNSIQuery")
+    }
+
+
+    /**
+     * If no nssi,delete NSI from AAI
+     * @param execution
+     */
+    void deleteNSIInstance(DelegateExecution execution){
+        def currentNSSI = execution.getVariable("currentNSSI")
+        def nsiId = currentNSSI['nsiServiceInstanceId']
+        List<String> nssiIdList = getNSSIIdList(execution, nsiId)
+        try
+        {
+            if(0 == nssiIdList.size()){
+                AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("serviceType")).serviceInstance(nsiId))
+                getAAIClient().delete(serviceInstanceUri)
+            }
+        } catch (Exception ex) {
+            LOGGER.debug( "Failed to delete NSI instance.")
+            exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Failed to delete NSI instance.")
+        }
+
     }
 }
