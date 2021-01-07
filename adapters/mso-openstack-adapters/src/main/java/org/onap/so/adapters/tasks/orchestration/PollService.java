@@ -97,21 +97,28 @@ public class PollService extends ExternalTaskUtils {
         Map<String, Object> variables = new HashMap<>();
         MutableBoolean success = new MutableBoolean();
         String errorMessage = null;
-        String response = "";
+        Optional<String> response = Optional.empty();
+        boolean isMulticloud = false;
         try {
             String xmlRequest = externalTask.getVariable("openstackAdapterTaskRequest");
             if (xmlRequest != null) {
                 Optional<String> requestType = findRequestType(xmlRequest);
                 if ("createVolumeGroupRequest".equals(requestType.get())) {
-                    response = determineCreateVolumeGroupStatus(xmlRequest, externalTask, success);
+                    CreateVolumeGroupRequest req =
+                            JAXB.unmarshal(new StringReader(xmlRequest), CreateVolumeGroupRequest.class);
+                    isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
+                    response = determineCreateVolumeGroupStatus(req, externalTask, success, isMulticloud);
                 } else if ("createVfModuleRequest".equals(requestType.get())) {
-                    response = determineCreateVfModuleStatus(xmlRequest, externalTask, success);
+                    CreateVfModuleRequest req =
+                            JAXB.unmarshal(new StringReader(xmlRequest), CreateVfModuleRequest.class);
+                    isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
+                    response = determineCreateVfModuleStatus(req, externalTask, success, isMulticloud);
                 } else if ("deleteVfModuleRequest".equals(requestType.get())) {
                     logger.debug("Executing External Task Poll Service for Delete Vf Module");
                     String stackId = externalTask.getVariable("stackId");
                     DeleteVfModuleRequest req =
                             JAXB.unmarshal(new StringReader(xmlRequest), DeleteVfModuleRequest.class);
-                    boolean isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
+                    isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
                     if (!isMulticloud) {
                         int timeoutMinutes = msoHeatUtils.getVfHeatTimeoutValue(req.getModelCustomizationUuid(), false);
                         StackInfo stack = pollDeleteResource(timeoutMinutes, req.getCloudSiteId(), req.getTenantId(),
@@ -119,24 +126,23 @@ public class PollService extends ExternalTaskUtils {
                         DeleteVfModuleResponse deleteResponse =
                                 new DeleteVfModuleResponse(req.getVnfId(), req.getVfModuleId(), Boolean.TRUE,
                                         req.getMessageId(), vnfAdapterImpl.copyStringOutputs(stack.getOutputs()));
-                        response = deleteResponse.toXmlString();
+                        response = Optional.of(deleteResponse.toXmlString());
                     }
                 } else if ("deleteVolumeGroupRequest".equals(requestType.get())) {
                     logger.debug("Executing External Task Poll Service for Delete Volume Group");
                     String stackId = externalTask.getVariable("stackId");
                     DeleteVolumeGroupRequest req =
                             JAXB.unmarshal(new StringReader(xmlRequest), DeleteVolumeGroupRequest.class);
-                    boolean isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
+                    isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
                     if (!isMulticloud) {
                         pollDeleteResource(118, req.getCloudSiteId(), req.getTenantId(), stackId, success);
                         DeleteVolumeGroupResponse deleteResponse =
                                 new DeleteVolumeGroupResponse(true, req.getMessageId());
-                        response = deleteResponse.toXmlString();
-                    } else {
-                        success.setTrue();
+                        response = Optional.of(deleteResponse.toXmlString());
                     }
                 } else if ("createNetworkRequest".equals(requestType.get())) {
-                    response = determineCreateNetworkStatus(xmlRequest, externalTask, success);
+                    CreateNetworkRequest req = JAXB.unmarshal(new StringReader(xmlRequest), CreateNetworkRequest.class);
+                    response = determineCreateNetworkStatus(req, externalTask, success);
                 } else if ("deleteNetworkRequest".equals(requestType.get())) {
                     logger.debug("Executing External Task Poll Service for Delete Network");
                     String stackId = externalTask.getVariable("stackId");
@@ -144,13 +150,13 @@ public class PollService extends ExternalTaskUtils {
                     pollDeleteResource(118, req.getCloudSiteId(), req.getTenantId(), stackId, success);
                     DeleteNetworkResponse deleteResponse =
                             new DeleteNetworkResponse(req.getNetworkId(), true, req.getMessageId());
-                    response = deleteResponse.toXmlString();
+                    response = Optional.of(deleteResponse.toXmlString());
                 } else if ("updateNetworkRequest".equals(requestType.get())) {
                     UpdateNetworkRequest req = JAXB.unmarshal(new StringReader(xmlRequest), UpdateNetworkRequest.class);
                     pollUpdateResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
                     UpdateNetworkResponse updateResponse =
                             new UpdateNetworkResponse(req.getNetworkId(), null, null, req.getMessageId());
-                    response = updateResponse.toXmlString();
+                    response = Optional.of(updateResponse.toXmlString());
                 }
             }
         } catch (Exception e) {
@@ -159,7 +165,12 @@ public class PollService extends ExternalTaskUtils {
             variables.put("openstackAdapterErrorMessage", errorMessage);
         }
 
-        variables.put("WorkflowResponse", response);
+        if (isMulticloud) {
+            success.setTrue();
+        }
+        if (response.isPresent()) {
+            variables.put("WorkflowResponse", response.get());
+        }
         variables.put("OpenstackPollSuccess", success.booleanValue());
         if (success.isTrue()) {
             externalTaskService.complete(externalTask, variables);
@@ -183,79 +194,70 @@ public class PollService extends ExternalTaskUtils {
         }
     }
 
-    private String determineCreateVolumeGroupStatus(String xmlRequest, ExternalTask externalTask,
-            MutableBoolean success) throws MsoException {
-        CreateVolumeGroupRequest req = JAXB.unmarshal(new StringReader(xmlRequest), CreateVolumeGroupRequest.class);
-        boolean isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
-        if (!isMulticloud) {
-            boolean pollRollbackStatus = externalTask.getVariable("PollRollbackStatus");
-            String stackId = externalTask.getVariable("stackId");
-            if (pollRollbackStatus) {
-                logger.debug("Executing External Task Poll Service for Rollback Create Volume Group");
+    private Optional<String> determineCreateVolumeGroupStatus(CreateVolumeGroupRequest req, ExternalTask externalTask,
+            MutableBoolean success, boolean isMulticloud) throws MsoException {
+        boolean pollRollbackStatus = externalTask.getVariable("PollRollbackStatus");
+        String stackId = externalTask.getVariable("stackId");
+        if (pollRollbackStatus) {
+            logger.debug("Executing External Task Poll Service for Rollback Volume Group");
+            if (!isMulticloud) {
                 pollDeleteResource(118, req.getCloudSiteId(), req.getTenantId(), stackId, success);
-                DeleteVolumeGroupResponse deleteResponse = new DeleteVolumeGroupResponse(true, req.getMessageId());
-                return deleteResponse.toXmlString();
-            } else {
+            }
+            return Optional.empty();
+        } else {
+            logger.debug("Executing External Task Poll Service for Create Volume Group");
+            Map<String, String> outputs = new HashMap<String, String>();
+            if (!isMulticloud) {
                 int timeoutMinutes = msoHeatUtils.getVfHeatTimeoutValue(req.getModelCustomizationUuid(), true);
                 StackInfo stack =
                         pollCreateResource(timeoutMinutes, req.getCloudSiteId(), req.getTenantId(), stackId, success);
-                VolumeGroupRollback rb =
-                        new VolumeGroupRollback(req.getVolumeGroupId(), stackId, true, req.getTenantId(),
-                                req.getCloudOwner(), req.getCloudSiteId(), req.getMsoRequest(), req.getMessageId());
-                CreateVolumeGroupResponse createResponse = new CreateVolumeGroupResponse(req.getVolumeGroupId(),
-                        stackId, true, vnfAdapterImpl.copyStringOutputs(stack.getOutputs()), rb, req.getMessageId());
-                return createResponse.toXmlString();
+                outputs = vnfAdapterImpl.copyStringOutputs(stack.getOutputs());
             }
-        } else {
-            success.setTrue();
-            return null;
+            VolumeGroupRollback rb = new VolumeGroupRollback(req.getVolumeGroupId(), stackId, true, req.getTenantId(),
+                    req.getCloudOwner(), req.getCloudSiteId(), req.getMsoRequest(), req.getMessageId());
+            CreateVolumeGroupResponse createResponse = new CreateVolumeGroupResponse(req.getVolumeGroupId(), stackId,
+                    true, outputs, rb, req.getMessageId());
+            return Optional.of(createResponse.toXmlString());
         }
     }
 
-    private String determineCreateVfModuleStatus(String xmlRequest, ExternalTask externalTask, MutableBoolean success)
-            throws MsoException {
-        CreateVfModuleRequest req = JAXB.unmarshal(new StringReader(xmlRequest), CreateVfModuleRequest.class);
-        boolean isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
+    private Optional<String> determineCreateVfModuleStatus(CreateVfModuleRequest req, ExternalTask externalTask,
+            MutableBoolean success, boolean isMulticloud) throws MsoException {
         String stackId = externalTask.getVariable("stackId");
-        if (!isMulticloud) {
-            boolean pollRollbackStatus = externalTask.getVariable("PollRollbackStatus");
-            int timeoutMinutes = msoHeatUtils.getVfHeatTimeoutValue(req.getModelCustomizationUuid(), false);
-            if (pollRollbackStatus) {
-                logger.debug("Executing External Task Poll Service for Rollback Create Vf Module");
-                StackInfo stack =
-                        pollDeleteResource(timeoutMinutes, req.getCloudSiteId(), req.getTenantId(), stackId, success);
-                DeleteVfModuleResponse deleteResponse = new DeleteVfModuleResponse(req.getVnfId(), req.getVfModuleId(),
-                        Boolean.TRUE, req.getMessageId(), vnfAdapterImpl.copyStringOutputs(stack.getOutputs()));
-                return deleteResponse.toXmlString();
-            } else {
-                logger.debug("Executing External Task Poll Service for Create Vf Module");
+        boolean pollRollbackStatus = externalTask.getVariable("PollRollbackStatus");
+        int timeoutMinutes = msoHeatUtils.getVfHeatTimeoutValue(req.getModelCustomizationUuid(), false);
+        if (pollRollbackStatus) {
+            logger.debug("Executing External Task Poll Service for Rollback Vf Module");
+            if (!isMulticloud) {
+                pollDeleteResource(timeoutMinutes, req.getCloudSiteId(), req.getTenantId(), stackId, success);
+            }
+            return Optional.empty();
+        } else {
+            logger.debug("Executing External Task Poll Service for Create Vf Module");
+            Map<String, String> outputs = new HashMap<String, String>();
+            if (!isMulticloud) {
                 StackInfo stack =
                         pollCreateResource(timeoutMinutes, req.getCloudSiteId(), req.getTenantId(), stackId, success);
-                VfModuleRollback modRollback = new VfModuleRollback(buildVnfRollback(req, stackId, isMulticloud),
-                        req.getVfModuleId(), stackId, req.getMessageId());
-                CreateVfModuleResponse createResponse =
-                        new CreateVfModuleResponse(req.getVnfId(), req.getVfModuleId(), stackId, Boolean.TRUE,
-                                vnfAdapterImpl.copyStringOutputs(stack.getOutputs()), modRollback, req.getMessageId());
-                return createResponse.toXmlString();
+                outputs = vnfAdapterImpl.copyStringOutputs(stack.getOutputs());
             }
-        } else {
-            success.setTrue();
-            return null;
+            VfModuleRollback modRollback = new VfModuleRollback(buildVnfRollback(req, stackId, isMulticloud),
+                    req.getVfModuleId(), stackId, req.getMessageId());
+            CreateVfModuleResponse createResponse = new CreateVfModuleResponse(req.getVnfId(), req.getVfModuleId(),
+                    stackId, Boolean.TRUE, outputs, modRollback, req.getMessageId());
+            return Optional.of(createResponse.toXmlString());
         }
     }
 
-    private String determineCreateNetworkStatus(String xmlRequest, ExternalTask externalTask, MutableBoolean success)
-            throws MsoException {
-        CreateNetworkRequest req = JAXB.unmarshal(new StringReader(xmlRequest), CreateNetworkRequest.class);
+    private Optional<String> determineCreateNetworkStatus(CreateNetworkRequest req, ExternalTask externalTask,
+            MutableBoolean success) throws MsoException {
         String stackId = externalTask.getVariable("stackId");
         boolean pollRollbackStatus = externalTask.getVariable("PollRollbackStatus");
         int timeoutMinutes =
                 msoHeatUtils.getNetworkHeatTimeoutValue(req.getModelCustomizationUuid(), req.getNetworkType());
         if (pollRollbackStatus) {
-            logger.debug("Executing External Task Poll Service for Rollback Create Network");
+            logger.debug("Executing External Task Poll Service for Rollback Network");
             pollDeleteResource(timeoutMinutes, req.getCloudSiteId(), req.getTenantId(), stackId, success);
-            DeleteNetworkResponse response = new DeleteNetworkResponse(req.getNetworkId(), true, req.getMessageId());
-            return response.toXmlString();
+            return Optional.empty();
         } else {
             logger.debug("Executing External Task Poll Service for Create Network");
             boolean os3Nw = externalTask.getVariable("os3Nw");
@@ -271,7 +273,7 @@ public class PollService extends ExternalTaskUtils {
             }
             CreateNetworkResponse response = new CreateNetworkResponse(req.getNetworkId(), neutronNetworkId, stackId,
                     networkFqdn, true, subnetMap, buildNetworkRollback(req, stackId), req.getMessageId());
-            return response.toXmlString();
+            return Optional.of(response.toXmlString());
 
         }
     }
@@ -348,6 +350,7 @@ public class PollService extends ExternalTaskUtils {
         if (isMulticloud) {
             vfRollback.setMode("CFY");
         }
+
         return vfRollback;
     }
 
