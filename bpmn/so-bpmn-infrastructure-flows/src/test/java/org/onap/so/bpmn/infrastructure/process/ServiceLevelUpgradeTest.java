@@ -145,7 +145,7 @@ public class ServiceLevelUpgradeTest extends BaseBPMNTest {
         assertThat(pi).isEnded().hasPassedInOrder("Event_02mc8tr", "Activity_18vue7u", "Activity_09bqns0",
                 "Activity_02vp5np", "Activity_0n17xou", "Gateway_1nr51kr", "Activity_0snmatn", "Activity_0e6w886",
                 "Activity_1q4o9fx", "Gateway_02fectw", "Activity_1hp67qz", "Gateway_18ch73t", "Activity_0ft7fa2",
-                "Gateway_1vq11i7", "Activity_1n4rk7m", "Activity_1lz38px", "Event_12983th");
+                "Gateway_1vq11i7", "Activity_0o2rrag", "Activity_1n4rk7m", "Activity_1lz38px", "Event_12983th");
 
         List<ExecutionServiceInput> detailedMessages = grpcNettyServer.getDetailedMessages();
         assertThat(detailedMessages.size() == 5);
@@ -205,7 +205,7 @@ public class ServiceLevelUpgradeTest extends BaseBPMNTest {
     private void mockAai() {
 
         final String sIUrl =
-                "/business/customers/customer/5df8b6de-2083-11e7-93ae-92361f002676/service-subscriptions/service-subscription/pNF/service-instances/service-instance/ETE_Customer_807c7a02-249c-4db8-9fa9-bee973fe08ce";
+                "/business/customers/customer/ETE_Customer_807c7a02-249c-4db8-9fa9-bee973fe08ce/service-subscriptions/service-subscription/pNF/service-instances/service-instance/5df8b6de-2083-11e7-93ae-92361f002676";
         final String aaiPnfDemoEntry = FileUtil.readResourceFile("response/PnfDemo_aai.json");
         final String aaiPnfDemo1Entry = FileUtil.readResourceFile("response/PnfDemo1_aai.json");
         final String aaiServiceInstanceEntry = FileUtil.readResourceFile("response/Service_instance_aai.json");
