@@ -78,6 +78,7 @@ allocateNssi.prepareOOFRequest(execution)</bpmn:script>
         <camunda:in source="servicename" target="servicename" />
         <camunda:in source="msoRequestId" target="msoRequestId" />
         <camunda:in source="sliceProfile" target="sliceProfile" />
+        <camunda:in source="jobId" target="jobId" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1ygklb8</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0tytimn</bpmn:outgoing>

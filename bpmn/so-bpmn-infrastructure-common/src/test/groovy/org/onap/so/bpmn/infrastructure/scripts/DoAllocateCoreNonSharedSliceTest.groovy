@@ -20,7 +20,8 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import static org.junit.Assert.*
+import static org.junit.Assert.assertNotNull
+import static org.junit.Assert.assertEquals
 
 import org.junit.Before
 import org.junit.Test
@@ -49,14 +50,19 @@ class DoAllocateCoreNonSharedSliceTest extends MsoGroovyTest {
     @Test
     public void testPreProcessRequest() {
 
-        String networkServiceModelInfo=""" {
-                                "modelName"              : "5GC-eMBB Service Proxy",
-                                "modelUuid"              : "b666119e-4400-47c6-a0c1-bbe050a33b47",
-                                "modelInvariantUuid"     : "a26327e1-4a9b-4883-b7a5-5f37dcb7405a",
+        String networkServiceModelInfo="""{
+                        "modelInfo"                : {
+                                "modelName"              : "vfw_cnf_service_2310 Service Proxy",
+                                "modelUuid"              : "35386eb0-b673-48c5-9757-45ecfc506bf8",
+                                "modelInvariantUuid"     : "b048d7bc-8bfd-4950-aea5-22b1aaf5d76b",
                                 "modelVersion"           : "1.0",
-                                "modelCustomizationUuid" : "cbc12c2a-67e6-4336-9236-eaf51eacdc75",
-                                "modelInstanceName"      : "5gcembb_proxy 0"
-        }"""
+                                "modelCustomizationUuid" : "82f4db76-e7ad-47eb-b5e3-661683f14de6",
+                                "modelInstanceName"      : "vfw_cnf_service_2310_proxy 0"
+                },
+                        "toscaNodeType"            : "org.openecomp.nodes.vfw_cnf_service_2310_proxy",
+                        "description"            : "A Proxy for Service vfw_cnf_service_2310",
+                        "sourceModelUuid"            : "f3666c56-744e-4055-9f4a-0726460898e0"
+                }"""
 
 		String sliceParams= """{\r\n\t\"sliceProfile\": {\r\n\t\t\"snssaiList\": [\r\n\t\t\t\"001-100001\"\r\n\t\t],\r\n\t\t\"sliceProfileId\": \"ab9af40f13f721b5f13539d87484098\",\r\n\t\t\"plmnIdList\": [\r\n\t\t\t\"460-00\",\r\n\t\t\t\"460-01\"\r\n\t\t],\r\n\t\t\"perfReq\": {\r\n\t\t\t\"perfReqEmbbList \": [{\r\n\t\t\t\t\"activityFactor\": 50\r\n\t\t\t}]\r\n\t\t},\r\n\t\t\"maxNumberofUEs\": 200,\r\n\t\t\"coverageAreaTAList\": [\r\n\t\t\t\"1\",\r\n\t\t\t\"2\",\r\n\t\t\t\"3\",\r\n\t\t\t\"4\"\r\n\t\t],\r\n\t\t\"latency\": 2,\r\n\t\t\"resourceSharingLevel\": \"non-shared\"\r\n\t},\r\n\t\"endPoints\": [{\r\n\t\t\"IpAdress\": \"\",\r\n\t\t\"LogicalLinkId\": \"\",\r\n\t\t\"nextHopInfo\": \"\"\r\n\t}],\r\n\t\"nsiInfo\": {\r\n\t\t\"nsiId\": \"NSI-M-001-HDBNJ-NSMF-01-A-ZX\",\r\n\t\t\"nsiName\": \"eMBB-001\"\r\n\t},\r\n\t\"scriptName\": \"AN1\"\r\n}"""
 
@@ -70,10 +76,10 @@ class DoAllocateCoreNonSharedSliceTest extends MsoGroovyTest {
 
         Mockito.verify(mockExecution, times(1)).setVariable(eq("networkServiceModelUuid"), captor.capture())
         captor.getValue()
-        assertEquals("b666119e-4400-47c6-a0c1-bbe050a33b47", captor.getValue())
+        assertEquals("f3666c56-744e-4055-9f4a-0726460898e0", captor.getValue())
 
         Mockito.verify(mockExecution, times(1)).setVariable(eq("networkServiceName"), captor.capture())
-        assertEquals("5GC-eMBB", captor.getValue())
+        assertEquals("vfw_cnf_service_2310", captor.getValue())
 
         Mockito.verify(mockExecution, times(1)).setVariable(eq("orchestrationStatus"), captor.capture())
         assertEquals("created", captor.getValue())
@@ -90,6 +96,7 @@ class DoAllocateCoreNonSharedSliceTest extends MsoGroovyTest {
         when(mockExecution.getVariable("networkServiceName")).thenReturn("5g_embb")
         when(mockExecution.getVariable("globalSubscriberId")).thenReturn("5GCustomer")
         when(mockExecution.getVariable("networkServiceModelUuid")).thenReturn("12345")
+        when(mockExecution.getVariable("vnfInstanceName")).thenReturn("vf00")
 
         DoAllocateCoreNonSharedSlice allocateNssi = new DoAllocateCoreNonSharedSlice()
         allocateNssi.prepareServiceOrderRequest(mockExecution)
@@ -106,7 +113,7 @@ class DoAllocateCoreNonSharedSliceTest extends MsoGroovyTest {
         Map<String, Object> ServiceCharacteristicValue = new LinkedHashMap<>()
         Map<String, Object> ServiceCharacteristicValueObject = new LinkedHashMap<>()
         ServiceCharacteristicValueObject.put("serviceCharacteristicValue","001-100001")
-        ServiceCharacteristicValue.put("name", "snssai")
+        ServiceCharacteristicValue.put("name", "vf00_snssai")
         ServiceCharacteristicValue.put("value", ServiceCharacteristicValueObject)
 
         List expectedList= new ArrayList()
@@ -116,8 +123,7 @@ class DoAllocateCoreNonSharedSliceTest extends MsoGroovyTest {
         Map<String, Object> serviceCharacteristic = objectMapper.readValue(sliceProfile, Map.class);
 
         DoAllocateCoreNonSharedSlice allocateNssi = new DoAllocateCoreNonSharedSlice()
-        List characteristicList=allocateNssi.retrieveServiceCharacteristicsAsKeyValue(serviceCharacteristic)
-
+        List characteristicList=allocateNssi.retrieveServiceCharacteristicsAsKeyValue(mockExecution, serviceCharacteristic)
         assertEquals(expectedList, characteristicList)
     }
 }

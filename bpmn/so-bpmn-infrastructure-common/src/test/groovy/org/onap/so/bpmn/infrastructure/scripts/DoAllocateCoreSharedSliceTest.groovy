@@ -20,6 +20,9 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import static org.junit.Assert.assertNotNull
+import static org.junit.Assert.assertEquals
+
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.junit.Before
 import org.junit.Test
@@ -32,7 +35,6 @@ import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
-import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 
 import static org.mockito.Mockito.spy
 import static org.mockito.Mockito.times
@@ -91,7 +93,7 @@ class DoAllocateCoreSharedSliceTest extends MsoGroovyTest {
     }
 
     @Test
-    public void tesPrepareSOMacroRequestPayload() {
+    public void testPrepareSOMacroRequestPayload() {
 
         String json ="{ \"serviceResources\"    : {\r\n\t\"modelInfo\"       : {\r\n\t\t\"modelName\"          : \"MSOTADevInfra_vSAMP10a_Service\",\r\n\t\t\"modelUuid\"          : \"5df8b6de-2083-11e7-93ae-92361f002671\",\r\n\t\t\"modelInvariantUuid\" : \"9647dfc4-2083-11e7-93ae-92361f002671\",\r\n\t\t\"modelVersion\"       : \"1.0\"\r\n\t},\r\n\t\"serviceType\"        : \"PortMirroring\",\r\n\t\"serviceRole\"        : \"InfraRole\",\r\n\t\"environmentContext\" : \"Luna\",\r\n\t\"workloadContext\"    : \"Oxygen\",\r\n\t\"serviceVnfs\": [\r\n\t\r\n\t\t{ \"modelInfo\"                    : {\r\n\t\t\t\"modelName\"              : \"vSAMP10a\",\r\n\t\t\t\"modelUuid\"              : \"ff2ae348-214a-11e7-93ae-92361f002671\",\r\n\t\t\t\"modelInvariantUuid\"     : \"2fff5b20-214b-11e7-93ae-92361f002671\",\r\n\t\t\t\"modelVersion\"           : \"1.0\",\r\n\t\t\t\"modelCustomizationUuid\" : \"68dc9a92-214c-11e7-93ae-92361f002671\",\r\n\t\t\t\"modelInstanceName\"      : \"vSAMP10a 1\"\r\n\t\t\t},\r\n\t\t\"toscaNodeType\"            : \"VF\",\r\n\t\t\"nfFunction\"           \t: null,\r\n\t\t\"nfType\"              \t\t: null,\r\n\t\t\"nfRole\"              \t\t: null,\r\n\t\t\"nfNamingCode\"         \t: null,\r\n\t\t\"multiStageDesign\"\t\t: null,\r\n\t\t\t\"vfModules\": [\r\n\t\t\t\t{\r\n\t\t\t\t\t\"modelInfo\"               : { \r\n\t\t\t\t\t\t\"modelName\"              : \"NetworkFqdnTest4\",\r\n\t\t\t\t\t\t\"modelUuid\"              : \"025606c1-4223-11e7-9252-005056850d2e\",\r\n\t\t\t\t\t\t\"modelInvariantUuid\"     : \"06bd0a18-65c0-4418-83c7-5b0d13cba01a\",\r\n\t\t\t\t\t\t\"modelVersion\"           : \"2.0\",\r\n\t\t\t\t\t\t\"modelCustomizationUuid\" : \"06bd0a18-65c0-4418-83c7-5b0d13cba01a\"\r\n\t\t\t\t\t},\t\t\"isBase\"                 : true,\r\n\t\t\t\t\t\"vfModuleLabel\"          : \"label\",\r\n\t\t\t\t\t\"initialCount\"           : 0,\r\n\t\t\t\t\t\"hasVolumeGroup\"           : true\r\n\t\t\t\t},\r\n\t\t\t\t{\r\n\t\t\t\t\t\"modelInfo\"               : { \r\n\t\t\t\t\t\t\"modelName\"              : \"NetworkFqdnTest3\",\r\n\t\t\t\t\t\t\"modelUuid\"              : \"02560575-4223-11e7-9252-005056850d2e\",\r\n\t\t\t\t\t\t\"modelInvariantUuid\"     : \"06bd0a18-65c0-4418-83c7-5b0d13cba0bb\",\r\n\t\t\t\t\t\t\"modelVersion\"           : \"1.0\",\r\n\t\t\t\t\t\t\"modelCustomizationUuid\" : \"06bd0a18-65c0-4418-83c7-5b0d13cba0bb\"\r\n\t\t\t\t\t},\t\t\"isBase\"                 : true,\r\n\t\t\t\t\t\"vfModuleLabel\"          : \"label\",\r\n\t\t\t\t\t\"initialCount\"           : 0,\r\n\t\t\t\t\t\"hasVolumeGroup\"           : false\r\n\t\t\t\t},\r\n\t\t\t\t{\r\n\t\t\t\t\t\"modelInfo\"               : { \r\n\t\t\t\t\t\t\"modelName\"              : \"NetworkFqdnTest5\",\r\n\t\t\t\t\t\t\"modelUuid\"              : \"025607e4-4223-11e7-9252-005056850d2e\",\r\n\t\t\t\t\t\t\"modelInvariantUuid\"     : \"06bd0a18-65c0-4418-83c7-5b0d14cba01a\",\r\n\t\t\t\t\t\t\"modelVersion\"           : \"1.0\",\r\n\t\t\t\t\t\t\"modelCustomizationUuid\" : \"06bd0a18-65c0-4418-83c7-5b0d14cba01a\"\r\n\t\t\t\t\t},\t\t\"isBase\"                 : false,\r\n\t\t\t\t\t\"vfModuleLabel\"          : \"label\",\r\n\t\t\t\t\t\"initialCount\"           : 0,\r\n\t\t\t\t\t\"hasVolumeGroup\"           : false\r\n\t\t\t\t},\r\n\t\t\t\t{\r\n\t\t\t\t\t\"modelInfo\"               : { \r\n\t\t\t\t\t\t\"modelName\"              : \"vSAMP10aDEV::PCM::module-2\",\r\n\t\t\t\t\t\t\"modelUuid\"              : \"7774b4e4-7d37-11e7-bb31-be2e44b06b34\",\r\n\t\t\t\t\t\t\"modelInvariantUuid\"     : \"93e9c1d2-7d37-11e7-bb31-be2e44b06b34\",\r\n\t\t\t\t\t\t\"modelVersion\"           : \"2\",\r\n\t\t\t\t\t\t\"modelCustomizationUuid\" : \"6728bee8-7d3a-11e7-bb31-be2e44b06b34\"\r\n\t\t\t\t\t},\t\t\"isBase\"                 : false,\r\n\t\t\t\t\t\"vfModuleLabel\"          : \"PCM\",\r\n\t\t\t\t\t\"initialCount\"           : 0,\r\n\t\t\t\t\t\"hasVolumeGroup\"           : true\r\n\t\t\t\t},\r\n\t\t\t\t{\r\n\t\t\t\t\t\"modelInfo\"               : { \r\n\t\t\t\t\t\t\"modelName\"              : \"vSAMP10aDEV::PCM::module-1\",\r\n\t\t\t\t\t\t\"modelUuid\"              : \"066de97e-253e-11e7-93ae-92361f002671\",\r\n\t\t\t\t\t\t\"modelInvariantUuid\"     : \"64efd51a-2544-11e7-93ae-92361f002671\",\r\n\t\t\t\t\t\t\"modelVersion\"           : \"2\",\r\n\t\t\t\t\t\t\"modelCustomizationUuid\" : \"b4ea86b4-253f-11e7-93ae-92361f002671\"\r\n\t\t\t\t\t},\t\t\"isBase\"                 : false,\r\n\t\t\t\t\t\"vfModuleLabel\"          : \"PCM\",\r\n\t\t\t\t\t\"initialCount\"           : 0,\r\n\t\t\t\t\t\"hasVolumeGroup\"           : true\r\n\t\t\t\t},\r\n\t\t\t\t{\r\n\t\t\t\t\t\"modelInfo\"               : { \r\n\t\t\t\t\t\t\"modelName\"              : \"vSAMP10aDEV::base::module-0\",\r\n\t\t\t\t\t\t\"modelUuid\"              : \"20c4431c-246d-11e7-93ae-92361f002671\",\r\n\t\t\t\t\t\t\"modelInvariantUuid\"     : \"78ca26d0-246d-11e7-93ae-92361f002671\",\r\n\t\t\t\t\t\t\"modelVersion\"           : \"2\",\r\n\t\t\t\t\t\t\"modelCustomizationUuid\" : \"cb82ffd8-252a-11e7-93ae-92361f002671\"\r\n\t\t\t\t\t},\t\t\"isBase\"                 : true,\r\n\t\t\t\t\t\"vfModuleLabel\"          : \"base\",\r\n\t\t\t\t\t\"initialCount\"           : 1,\r\n\t\t\t\t\t\"hasVolumeGroup\"           : true\r\n\t\t\t\t},\r\n\t\t\t\t{\r\n\t\t\t\t\t\"modelInfo\"               : { \r\n\t\t\t\t\t\t\"modelName\"              : \"vSAMP10a::base::module-0\",\r\n\t\t\t\t\t\t\"modelUuid\"              : \"02560de2-4223-11e7-9252-005056850d2e\",\r\n\t\t\t\t\t\t\"modelInvariantUuid\"     : null,\r\n\t\t\t\t\t\t\"modelVersion\"           : \"2\",\r\n\t\t\t\t\t\t\"modelCustomizationUuid\" : \"MIGRATED_36e76920-ef30-4793-9979-cbd7d4b2bfc4\"\r\n\t\t\t\t\t},\t\t\"isBase\"                 : true,\r\n\t\t\t\t\t\"vfModuleLabel\"          : \"base\",\r\n\t\t\t\t\t\"initialCount\"           : 1,\r\n\t\t\t\t\t\"hasVolumeGroup\"           : true\r\n\t\t\t\t},\r\n\t\t\t\t{\r\n\t\t\t\t\t\"modelInfo\"               : { \r\n\t\t\t\t\t\t\"modelName\"              : \"base::module-0\",\r\n\t\t\t\t\t\t\"modelUuid\"              : \"02561381-4223-11e7-9252-005056850d2e\",\r\n\t\t\t\t\t\t\"modelInvariantUuid\"     : null,\r\n\t\t\t\t\t\t\"modelVersion\"           : \"1\",\r\n\t\t\t\t\t\t\"modelCustomizationUuid\" : \"MIGRATED_51baae4c-b7c7-4f57-b77e-6e01acca89e5\"\r\n\t\t\t\t\t},\t\t\"isBase\"                 : true,\r\n\t\t\t\t\t\"vfModuleLabel\"          : \"module-0\",\r\n\t\t\t\t\t\"initialCount\"           : 1,\r\n\t\t\t\t\t\"hasVolumeGroup\"           : false\r\n\t\t\t\t},\r\n\t\t\t\t{\r\n\t\t\t\t\t\"modelInfo\"               : { \r\n\t\t\t\t\t\t\"modelName\"              : \"vSAMP10a::PCM::module-1\",\r\n\t\t\t\t\t\t\"modelUuid\"              : \"02560f1b-4223-11e7-9252-005056850d2e\",\r\n\t\t\t\t\t\t\"modelInvariantUuid\"     : null,\r\n\t\t\t\t\t\t\"modelVersion\"           : \"1\",\r\n\t\t\t\t\t\t\"modelCustomizationUuid\" : \"MIGRATED_e9be2ed7-45b6-479c-b06e-9093899f8ce8\"\r\n\t\t\t\t\t},\t\t\"isBase\"                 : true,\r\n\t\t\t\t\t\"vfModuleLabel\"          : \"PCM\",\r\n\t\t\t\t\t\"initialCount\"           : 1,\r\n\t\t\t\t\t\"hasVolumeGroup\"           : true\r\n\t\t\t\t}\r\n\t\t\t]\r\n\t\t}\r\n\t],\r\n\t\"serviceNetworks\": [],\r\n\t\"serviceAllottedResources\": [\r\n\t\t{\r\n\t\t\t\"modelInfo\"       : {\r\n\t\t\t\t\"modelName\"              : \"Tunnel_Xconn\",\r\n\t\t\t\t\"modelUuid\"              : \"f6b7d4c6-e8a4-46e2-81bc-31cad5072842\",\r\n\t\t\t\t\"modelInvariantUuid\"     : \"b7a1b78e-6b6b-4b36-9698-8c9530da14af\",\r\n\t\t\t\t\"modelVersion\"           : \"1.0\",\r\n\t\t\t\t\"modelCustomizationUuid\" : \"5b9bee43-f537-4fb3-9e8b-4de9f714d28a\",\r\n\t\t\t\t\"modelInstanceName\"      : \"Pri_Tunnel_Xconn 9\"\r\n\t\t\t},\r\n\t\t\t\"toscaNodeType\"              : null,\r\n\t\t\t\"allottedResourceType\"              : null,\r\n\t\t\t\"allottedResourceRole\"              : null,\r\n\t\t\t\"providingServiceModelInvariantUuid\"              : null,\r\n\t\t\t\"nfFunction\"              : null,\r\n\t\t\t\"nfType\"              : null,\r\n\t\t\t\"nfRole\"              : null,\r\n\t\t\t\"nfNamingCode\"              : null\r\n\t\t}\r\n\t],\r\n\t\"serviceConfigs\": [\r\n\t\t{\r\n\t\t\t\"modelInfo\"       : {\r\n\t\t\t\t\"modelName\"              : \"Mulder\",\r\n\t\t\t\t\"modelUuid\"              : \"025606c1-4fff-11e7-9252-005056850d2e\",\r\n\t\t\t\t\"modelInvariantUuid\"     : \"025606c1-4eee-11e7-9252-005056850d2e\",\r\n\t\t\t\t\"modelVersion\"           : \"1.0\",\r\n\t\t\t\t\"modelCustomizationUuid\" : \"025606c1-4ddd-11e7-9252-005056850d2e\",\r\n\t\t\t\t\"modelInstanceName\"      : \"X_FILES_001\"\r\n\t\t\t},\r\n\t\t\t\"toscaNodeType\"   : \"Scully\"\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"modelInfo\"       : {\r\n\t\t\t\t\"modelName\"              : \"Krychuk\",\r\n\t\t\t\t\"modelUuid\"              : \"025606c1-5fff-11e7-9252-005056850d2e\",\r\n\t\t\t\t\"modelInvariantUuid\"     : \"025606c1-5eee-11e7-9252-005056850d2e\",\r\n\t\t\t\t\"modelVersion\"           : \"1.0\",\r\n\t\t\t\t\"modelCustomizationUuid\" : \"025606c1-5ddd-11e7-9252-005056850d2e\",\r\n\t\t\t\t\"modelInstanceName\"      : \"X_FILES_002\"\r\n\t\t\t},\r\n\t\t\t\"toscaNodeType\"   : \"Skinner\"\r\n\t\t}\r\n\t]\r\n\t}}\r\n\r\n"
         String sliceProfile = "{\r\n      \"snssaiList\": [ \r\n        \"001-100001\"\r\n      ],\r\n      \"sliceProfileId\": \"ab9af40f13f721b5f13539d87484098\",\r\n      \"plmnIdList\": [\r\n        \"460-00\",\r\n        \"460-01\"\r\n      ],\r\n      \"perfReq\": {\r\n        \"perfReqEmbbList \": [\r\n          {\r\n            \"activityFactor\": 50\r\n          }\r\n        ]\r\n      },\r\n      \"maxNumberofUEs\": 200, \r\n      \"coverageAreaTAList\": [ \r\n        \"1\",\r\n        \"2\",\r\n        \"3\",\r\n        \"4\"\r\n      ],\r\n      \"latency\": 2,\r\n      \"resourceSharingLevel\": \"non-shared\" \r\n    }"
@@ -125,7 +127,7 @@ class DoAllocateCoreSharedSliceTest extends MsoGroovyTest {
         when(mockExecution.getVariable("snssaiAndOrchStatusList")).thenReturn(snssaiList)
 
         String returnedJsonAsString= allocate.prepareVnfInstanceParamsJson(mockExecution)
-        String expectedJsonAsString = """{supportedNssai={"sNssai":[{"snssai":"01-5C83F071","status":"activated"},{"snssai":"01-5B179BD4","status":"activated"}]}}"""
+        String expectedJsonAsString = """{"sNssai":[{"snssai":"01-5C83F071","status":"activated"},{"snssai":"01-5B179BD4","status":"activated"}]}"""
         assertEquals(expectedJsonAsString, returnedJsonAsString)
     }
 
@@ -137,6 +139,7 @@ class DoAllocateCoreSharedSliceTest extends MsoGroovyTest {
 
         DoAllocateCoreSharedSlice obj = spy(DoAllocateCoreSharedSlice.class)
         when(obj.getAAIClient()).thenReturn(client)
+
         AAIResourceUri resourceUri1 = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("5GCustomer").serviceSubscription("5G").serviceInstance("NSSI-C-7Q4-HDBNJ-NSSMF-01-A-ZX"))
         when(client.exists(resourceUri1)).thenReturn(true)
         AAIResultWrapper wrapper1 = new AAIResultWrapper(mockQuerySliceServiceReturn())
@@ -149,14 +152,13 @@ class DoAllocateCoreSharedSliceTest extends MsoGroovyTest {
         when(client.exists(resourceUri2)).thenReturn(true)
         AAIResultWrapper wrapper2 = new AAIResultWrapper(mockQueryNS())
         when(client.get(resourceUri2, NotFoundException.class)).thenReturn(wrapper2)
-
         //Check Vnf
         when(mockExecution.getVariable("vnfId")).thenReturn("eeb66c6f-36bd-47ad-8294-48f46b1aa912")
-        AAIResourceUri resourceUri3 = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("eeb66c6f-36bd-47ad-8294-48f46b1aa912"))
+
+        AAIResourceUri resourceUri3 = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(mockExecution.getVariable("vnfId")))
         when(client.exists(resourceUri3)).thenReturn(true)
         AAIResultWrapper wrapper3 = new AAIResultWrapper(mockQueryVnf())
         when(client.get(resourceUri3, NotFoundException.class)).thenReturn(wrapper3)
-
 
         //Allotted Resources-1
         AAIResourceUri resourceUri4 = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("5GCustomer").serviceSubscription("5G").serviceInstance("0d3d3cce-46a8-486d-816a-954e71697c4e"))
@@ -185,22 +187,19 @@ class DoAllocateCoreSharedSliceTest extends MsoGroovyTest {
         Mockito.verify(mockExecution, times(1)).setVariable(eq("owningEntityId"), captor.capture())
         assertEquals("OE-generic", captor.getValue())
 
-        //assertEquals("206535e7-77c9-4036-9387-3f1cf57b4379", captor.getValue())
-
         //VnfId
         Mockito.verify(mockExecution, times(1)).setVariable(eq("vnfId"), captor.capture())
         assertEquals("eeb66c6f-36bd-47ad-8294-48f46b1aa912", captor.getValue())
 
-        //
         Mockito.verify(mockExecution, times(1)).setVariable(eq("snssaiAndOrchStatusList"), captor.capture())
         List<Map<String, Object>> snssaiList = new ArrayList<>()
         Map<String, Object> snssaiMap = new LinkedHashMap<>()
         snssaiMap.put("snssai", "01-5C83F071")
-        snssaiMap.put("orchestrationStatus", "activated")
+        snssaiMap.put("status", "activated")
         snssaiList.add(snssaiMap)
         Map<String, Object> snssaiMap1 = new LinkedHashMap<>()
         snssaiMap1.put("snssai", "01-5B179BD4")
-        snssaiMap1.put("orchestrationStatus", "activated")
+        snssaiMap1.put("status", "activated")
         snssaiList.add(snssaiMap1)
         assertEquals(snssaiList, captor.getValue())
 
@@ -237,6 +236,7 @@ class DoAllocateCoreSharedSliceTest extends MsoGroovyTest {
 
         when(mockExecution.getVariable("msoRequestId")).thenReturn("5ad89cf9-0569-4a93-4509-d8324321e2be")
         when(mockExecution.getVariable("serviceInstanceID")).thenReturn("NSSI-C-7Q4-HDBNJ-NSSMF-01-A-ZX")
+        when(mockExecution.getVariable("nssiId")).thenReturn("NSSI-C-7Q4-HDBNJ-NSSMF-01-A-ZX")
         when(mockExecution.getVariable("nsiId")).thenReturn("NSI-M-001-HDBNJ-NSMF-01-A-ZX")
         when(mockExecution.getVariable("globalSubscriberId")).thenReturn("5GCustomer")
         when(mockExecution.getVariable("subscriptionServiceType")).thenReturn("5G")

@@ -39,37 +39,15 @@ allocateNssi.prepareSOMacroRequestPayload(execution)</bpmn:script>
 def allocateNssi = new DoAllocateCoreSharedSlice()
 allocateNssi.sendPutRequestToSOMacro(execution)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:scriptTask id="Activity_0ge2y0l" name="Prepare Call CheckServiceProcessStatus" scriptFormat="groovy">
+    <bpmn:scriptTask id="Activity_0ge2y0l" name="Call Get SO PUT progress" scriptFormat="groovy">
       <bpmn:incoming>Flow_0x7shtq</bpmn:incoming>
+      <bpmn:incoming>Flow_163kxug</bpmn:incoming>
       <bpmn:outgoing>Flow_1c9nkx4</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def allocateNssi = new DoAllocateCoreSharedSlice()
-allocateNssi.prepareCallCheckProcessStatus(execution)</bpmn:script>
+allocateNssi.getSOPUTProgress(execution)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:callActivity id="Activity_19xwwnc" name="CallCheckServiceProcessStatus" calledElement="CheckServiceProcessStatus">
-      <bpmn:extensionElements>
-        <camunda:in source="networkServiceInstanceId" target="serviceInstanceId" />
-        <camunda:in source="macroOperationId" target="operationId" />
-        <camunda:in source="successConditions" target="successConditions" />
-        <camunda:in source="errorConditions" target="errorConditions" />
-        <camunda:in source="processServiceType" target="processServiceType" />
-        <camunda:in source="timeOut" target="timeOut" />
-        <camunda:out source="operationStatus" target="result" />
-        <camunda:out source="operationContent" target="reason" />
-        <camunda:out source="WorkflowException" target="WorkflowException" />
-        <camunda:out source="isTimeOut" target="isTimeOut" />
-        <camunda:in source="subOperationType" target="operationType" />
-        <camunda:in source="initProgress" target="initProgress" />
-        <camunda:in source="endProgress" target="endProgress" />
-        <camunda:in source="serviceInstanceID" target="parentServiceInstanceId" />
-        <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
-        <camunda:in source="operationId" target="parentOperationId" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1c9nkx4</bpmn:incoming>
-      <bpmn:outgoing>Flow_0c94gye</bpmn:outgoing>
-    </bpmn:callActivity>
-    <bpmn:sequenceFlow id="Flow_1c9nkx4" sourceRef="Activity_0ge2y0l" targetRef="Activity_19xwwnc" />
-    <bpmn:sequenceFlow id="Flow_0c94gye" sourceRef="Activity_19xwwnc" targetRef="Activity_1t49t6c" />
+    <bpmn:sequenceFlow id="Flow_1c9nkx4" sourceRef="Activity_0ge2y0l" targetRef="Gateway_1boyqt9" />
     <bpmn:scriptTask id="Activity_0no0sxa" name="Get VNF/VFs modelInfo from CatalogDB" scriptFormat="groovy">
       <bpmn:incoming>Flow_1973d9m</bpmn:incoming>
       <bpmn:outgoing>Flow_0da7dao</bpmn:outgoing>
@@ -78,13 +56,13 @@ def allocateNssi = new DoAllocateCoreSharedSlice()
 allocateNssi.getServiceVNFAndVFsFromCatalogDB(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_1t49t6c" name="Prepare Update Operation Status" scriptFormat="groovy">
-      <bpmn:incoming>Flow_0c94gye</bpmn:incoming>
+      <bpmn:incoming>Flow_15lksyg</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1re5jor</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def allocateNssi = new DoAllocateCoreSharedSlice()
 allocateNssi.prepareUpdateResourceOperationStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:serviceTask id="Activity_0t6viuq" name="Update Service Operation Status">
+    <bpmn:serviceTask id="Activity_0t6viuq" name="Update Resource Operation Status">
       <bpmn:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
@@ -95,7 +73,7 @@ allocateNssi.prepareUpdateResourceOperationStatus(execution)</bpmn:script>
                 <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
               </camunda:map>
             </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${updateOperationStatus}</camunda:inputParameter>
+            <camunda:inputParameter name="payload">${updateResourceOperationStatus}</camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
             <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
             <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
@@ -111,11 +89,11 @@ allocateNssi.prepareUpdateResourceOperationStatus(execution)</bpmn:script>
     <bpmn:sequenceFlow id="SequenceFlow_08q2fd9" sourceRef="Activity_12jcmzc" targetRef="Gateway_0sfmiku" />
     <bpmn:sequenceFlow id="SequenceFlow_1re5jor" sourceRef="Activity_1t49t6c" targetRef="Activity_0t6viuq" />
     <bpmn:sequenceFlow id="SequenceFlow_1j1qqcs" sourceRef="Task_16983t3" targetRef="IntermediateThrowEvent_09rhn4h" />
-    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_09rhn4h" name="Call SO macro api">
+    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_09rhn4h" name="CallSO">
       <bpmn:incoming>SequenceFlow_1j1qqcs</bpmn:incoming>
       <bpmn:linkEventDefinition name="CallSO" />
     </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateCatchEvent id="IntermediateThrowEvent_0qh9wy2" name="Call SO macro api">
+    <bpmn:intermediateCatchEvent id="IntermediateThrowEvent_0qh9wy2" name="CallSO">
       <bpmn:outgoing>SequenceFlow_013bc74</bpmn:outgoing>
       <bpmn:linkEventDefinition name="CallSO" />
     </bpmn:intermediateCatchEvent>
@@ -178,16 +156,33 @@ allocateNssi.prepareFailedOperationStatusUpdate(execution)</bpmn:script>
       <bpmn:sequenceFlow id="Flow_0kadgoq" sourceRef="Activity_0sqggtb" targetRef="Activity_1btidug" />
       <bpmn:sequenceFlow id="Flow_128o22z" sourceRef="Activity_1btidug" targetRef="Activity_1150yu6" />
     </bpmn:subProcess>
+    <bpmn:exclusiveGateway id="Gateway_1boyqt9" default="Flow_15lksyg">
+      <bpmn:incoming>Flow_1c9nkx4</bpmn:incoming>
+      <bpmn:outgoing>Flow_15lksyg</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1lzv4jo</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_15lksyg" sourceRef="Gateway_1boyqt9" targetRef="Activity_1t49t6c" />
+    <bpmn:sequenceFlow id="Flow_1lzv4jo" name="requestState=IN_PROGRESS" sourceRef="Gateway_1boyqt9" targetRef="Activity_1qm4des">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{(execution.getVariable("requestState" ) == "IN_PROGRESS")}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:scriptTask id="Activity_1qm4des" name="Time Delay 5s" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1lzv4jo</bpmn:incoming>
+      <bpmn:outgoing>Flow_163kxug</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def allocateNssi = new DoAllocateCoreSharedSlice()
+allocateNssi.timeDelay(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_163kxug" sourceRef="Activity_1qm4des" targetRef="Activity_0ge2y0l" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoAllocateCoreSharedSlice">
       <bpmndi:BPMNEdge id="Flow_1nn15tq_di" bpmnElement="Flow_1nn15tq">
-        <di:waypoint x="420" y="306" />
-        <di:waypoint x="420" y="360" />
-        <di:waypoint x="967" y="360" />
-        <di:waypoint x="967" y="321" />
+        <di:waypoint x="420" y="256" />
+        <di:waypoint x="420" y="200" />
+        <di:waypoint x="967" y="200" />
+        <di:waypoint x="967" y="241" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="687" y="342" width="14" height="12" />
+          <dc:Bounds x="687" y="182" width="15" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0x7shtq_di" bpmnElement="Flow_0x7shtq">
@@ -232,16 +227,9 @@ allocateNssi.prepareFailedOperationStatusUpdate(execution)</bpmn:script>
           <dc:Bounds x="931.5" y="336" width="90" height="20" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0c94gye_di" bpmnElement="Flow_0c94gye">
-        <di:waypoint x="736" y="281" />
-        <di:waypoint x="778" y="281" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="652" y="336" width="90" height="20" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1c9nkx4_di" bpmnElement="Flow_1c9nkx4">
         <di:waypoint x="584" y="281" />
-        <di:waypoint x="636" y="281" />
+        <di:waypoint x="655" y="281" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="505" y="336" width="90" height="20" />
         </bpmndi:BPMNLabel>
@@ -271,6 +259,22 @@ allocateNssi.prepareFailedOperationStatusUpdate(execution)</bpmn:script>
           <dc:Bounds x="207" y="179" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15lksyg_di" bpmnElement="Flow_15lksyg">
+        <di:waypoint x="705" y="281" />
+        <di:waypoint x="778" y="281" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lzv4jo_di" bpmnElement="Flow_1lzv4jo">
+        <di:waypoint x="680" y="306" />
+        <di:waypoint x="680" y="340" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="603" y="315" width="78" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_163kxug_di" bpmnElement="Flow_163kxug">
+        <di:waypoint x="630" y="380" />
+        <di:waypoint x="534" y="380" />
+        <di:waypoint x="534" y="321" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="248" y="102" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -298,9 +302,6 @@ allocateNssi.prepareFailedOperationStatusUpdate(execution)</bpmn:script>
       <bpmndi:BPMNShape id="Activity_0ge2y0l_di" bpmnElement="Activity_0ge2y0l">
         <dc:Bounds x="484" y="241" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_19xwwnc_di" bpmnElement="Activity_19xwwnc">
-        <dc:Bounds x="636" y="241" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0k70k5i_di" bpmnElement="Activity_0no0sxa">
         <dc:Bounds x="654" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -313,20 +314,26 @@ allocateNssi.prepareFailedOperationStatusUpdate(execution)</bpmn:script>
       <bpmndi:BPMNShape id="IntermediateThrowEvent_06785ru_di" bpmnElement="IntermediateThrowEvent_09rhn4h">
         <dc:Bounds x="949" y="102" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="923" y="142" width="90" height="14" />
+          <dc:Bounds x="950" y="142" width="36" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="IntermediateCatchEvent_09u3rdp_di" bpmnElement="IntermediateThrowEvent_0qh9wy2">
         <dc:Bounds x="182" y="263" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="156" y="303" width="90" height="14" />
+          <dc:Bounds x="183" y="303" width="36" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0sfmiku_di" bpmnElement="Gateway_0sfmiku" isMarkerVisible="true">
         <dc:Bounds x="395" y="256" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="380" y="226" width="80" height="27" />
+          <dc:Bounds x="380" y="315.5" width="80" height="27" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1boyqt9_di" bpmnElement="Gateway_1boyqt9" isMarkerVisible="true">
+        <dc:Bounds x="655" y="256" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1iksno7_di" bpmnElement="Activity_1qm4des">
+        <dc:Bounds x="630" y="340" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_08h38js_di" bpmnElement="Activity_08h38js" isExpanded="true">
         <dc:Bounds x="250" y="440" width="781" height="196" />
