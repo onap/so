@@ -63,13 +63,13 @@ public class EtsiPackageProvider {
     }
 
     private String getVnfNodeProperty(final String csarId, final String propertyName) {
-        logger.debug("Getting " + propertyName + " from " + csarId);
+        logger.debug("Getting {} from {}", propertyName, csarId);
         final byte[] onapPackage = getPackage(csarId);
 
         try {
             final String vnfdLocation = getVnfdLocation(new ByteArrayInputStream(onapPackage));
             final String onapVnfdContent = getFileInZip(new ByteArrayInputStream(onapPackage), vnfdLocation).toString();
-            logger.debug("VNFD CONTENTS: " + onapVnfdContent);
+            logger.debug("VNFD CONTENTS: {}", onapVnfdContent);
             final JsonObject root = new Gson().toJsonTree(new Yaml().load(onapVnfdContent)).getAsJsonObject();
 
             final JsonObject topologyTemplates = child(root, "topology_template");
@@ -79,14 +79,14 @@ public class EtsiPackageProvider {
                 String propertyValue = null;
                 if ("tosca.nodes.nfv.VNF".equals(type)) {
                     final JsonObject properties = child(child, "properties");
-                    logger.debug("properties: " + properties.toString());
-
+                    logger.debug("properties: {}", properties);
                     propertyValue = properties.get(propertyName).getAsJsonPrimitive().getAsString();
+                    if (propertyValue == null) {
+                        propertyValue = getValueFromNodeTypeDefinition(root, type, propertyName);
+                    }
+                    return propertyValue;
                 }
-                if (propertyValue == null) {
-                    propertyValue = getValueFromNodeTypeDefinition(root, type, propertyName);
-                }
-                return propertyValue;
+
             }
 
         } catch (final Exception e) {
@@ -102,10 +102,10 @@ public class EtsiPackageProvider {
 
         if ("tosca.nodes.nfv.VNF".equals(childElement(nodeType, "derived_from").getAsString())) {
             final JsonObject properties = child(nodeType, "properties");
-            logger.debug("properties: " + properties.toString());
+            logger.debug("properties: {}", properties);
             final JsonObject property = child(properties, propertyName);
-            logger.debug("property: " + property.toString());
-            logger.debug("property default: " + childElement(property, "default").toString());
+            logger.debug("property: {}", property);
+            logger.debug("property default: {}", childElement(property, "default"));
             return childElement(property, "default").getAsJsonPrimitive().getAsString();
         }
         return null;

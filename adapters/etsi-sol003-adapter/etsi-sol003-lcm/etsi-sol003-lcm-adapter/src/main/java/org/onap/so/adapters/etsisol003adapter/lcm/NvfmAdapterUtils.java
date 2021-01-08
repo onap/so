@@ -27,8 +27,12 @@ import org.slf4j.Logger;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-public class NvfmAdapterUtils {
+public final class NvfmAdapterUtils {
     private static Logger logger = getLogger(NvfmAdapterUtils.class);
+
+    private NvfmAdapterUtils() {
+        throw new IllegalStateException("Utility class");
+    }
 
     public static JsonObject child(final JsonObject parent, final String name) {
         return childElement(parent, name).getAsJsonObject();
