@@ -22,6 +22,7 @@
  */
 package org.onap.so.security;
 
+import javax.annotation.Priority;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import org.onap.aaf.cadi.config.Config;
@@ -34,6 +35,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Profile("!test & aaf")
+@Priority(0)
 public class SoCadiFilter extends CadiFilter {
 
     protected final Logger logger = LoggerFactory.getLogger(SoCadiFilter.class);
