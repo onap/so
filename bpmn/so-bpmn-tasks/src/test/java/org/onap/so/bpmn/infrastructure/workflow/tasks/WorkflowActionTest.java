@@ -120,6 +120,7 @@ public class WorkflowActionTest extends BaseTaskTest {
     protected Environment environment;
     @Mock
     protected UserParamsServiceTraversal userParamsServiceTraversal;
+
     @Mock
     private AaiResourceIdValidator aaiResourceIdValidator;
     @InjectMocks
@@ -130,6 +131,9 @@ public class WorkflowActionTest extends BaseTaskTest {
     @InjectMocks
     @Spy
     protected WorkflowAction SPY_workflowAction;
+
+    @Spy
+    protected ExecuteBuildingBlockBuilder executeBuildingBlockBuilder;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -159,6 +163,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         when(bbSetupUtils.getAAIServiceInstanceByName(anyString(), anyObject())).thenReturn(servInstance);
         workflowAction.setBbInputSetupUtils(bbSetupUtils);
         workflowAction.setBbInputSetup(bbInputSetup);
+
     }
 
     /**
@@ -179,6 +184,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 
         when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
                 true, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
+
         workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         assertEqualsBulkFlowName(ebbs, "AssignNetwork1802BB", "CreateNetworkBB", "ActivateNetworkBB");
@@ -199,6 +205,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 
         when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
                 true, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
+
         workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         assertEqualsBulkFlowName(ebbs, "DeactivateNetworkBB", "DeleteNetworkBB", "UnassignNetwork1802BB");
@@ -219,6 +226,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 
         when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
                 true, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
+
         workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         assertEqualsBulkFlowName(ebbs, "AssignServiceInstanceBB", "ActivateServiceInstanceBB");
@@ -292,6 +300,7 @@ public class WorkflowActionTest extends BaseTaskTest {
                 .thenReturn(vfModuleCustomization2);
         when(catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID("da4d4327-fb7d-4311-ac7a-be7ba60cf969"))
                 .thenReturn(vfModuleCustomization3);
+
         workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         assertEqualsBulkFlowName(ebbs, "AssignServiceInstanceBB", "AssignVnfBB", "AssignVolumeGroupBB",
@@ -471,6 +480,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         doReturn(service).when(catalogDbClient).getServiceByID("3c40d244-808e-42ca-b09a-256d83d19d0a");
         when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
                 false, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
+
         workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         assertEqualsBulkFlowName(ebbs, "AssignServiceInstanceBB", "AssignNetworkBB", "CreateNetworkBB",
@@ -2063,41 +2073,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         workflowAction.traverseCatalogDbService(execution, sIRequest, resourceCounter, aaiResourceIds);
     }
 
-    @Test
-    public void sortVfModulesByBaseFirstTest() {
-        List<Resource> resources = new ArrayList<>();
-        Resource resource1 = new Resource(WorkflowType.VFMODULE, "111", false);
-        resource1.setBaseVfModule(false);
-        resources.add(resource1);
-        Resource resource2 = new Resource(WorkflowType.VFMODULE, "222", false);
-        resource2.setBaseVfModule(false);
-        resources.add(resource2);
-        Resource resource3 = new Resource(WorkflowType.VFMODULE, "333", false);
-        resource3.setBaseVfModule(true);
-        resources.add(resource3);
-        List<Resource> result = workflowAction.sortVfModulesByBaseFirst(resources);
-        assertEquals("333", result.get(0).getResourceId());
-        assertEquals("222", result.get(1).getResourceId());
-        assertEquals("111", result.get(2).getResourceId());
-    }
 
-    @Test
-    public void sortVfModulesByBaseLastTest() {
-        List<Resource> resources = new ArrayList<>();
-        Resource resource1 = new Resource(WorkflowType.VFMODULE, "111", false);
-        resource1.setBaseVfModule(true);
-        resources.add(resource1);
-        Resource resource2 = new Resource(WorkflowType.VFMODULE, "222", false);
-        resource2.setBaseVfModule(false);
-        resources.add(resource2);
-        Resource resource3 = new Resource(WorkflowType.VFMODULE, "333", false);
-        resource3.setBaseVfModule(false);
-        resources.add(resource3);
-        List<Resource> result = workflowAction.sortVfModulesByBaseLast(resources);
-        assertEquals("333", result.get(0).getResourceId());
-        assertEquals("222", result.get(1).getResourceId());
-        assertEquals("111", result.get(2).getResourceId());
-    }
 
     @Test
     public void findCatalogNetworkCollectionTest() {
@@ -2136,17 +2112,6 @@ public class WorkflowActionTest extends BaseTaskTest {
                 execution.getVariable("WorkflowActionErrorMessage"));
     }
 
-    @Test
-    public void verifyLackOfNullPointerExceptionForNullResource() {
-        ExecuteBuildingBlock result = null;
-        try {
-            result = workflowAction.buildExecuteBuildingBlock(new OrchestrationFlow(), null, null, null, null, null,
-                    false, null, null, null, false, null, null, true, null);
-        } catch (NullPointerException e) {
-            fail("NullPointerException should not be thrown when 'resource' is null");
-        }
-        assertNotNull(result);
-    }
 
     @Test
     public void traverseAAIServiceTest() {
