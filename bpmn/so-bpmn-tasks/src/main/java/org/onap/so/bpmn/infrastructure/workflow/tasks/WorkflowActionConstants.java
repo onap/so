@@ -32,4 +32,12 @@ public final class WorkflowActionConstants {
     static final String CREATE_INSTANCE = "createInstance";
     static final String FABRIC_CONFIGURATION = "FabricConfiguration";
     static final String WORKFLOW_ACTION_ERROR_MESSAGE = "WorkflowActionErrorMessage";
+    static final String SERVICE = "Service";
+    static final String CONTROLLER = "Controller";
+    static final String NETWORKCOLLECTION = "NetworkCollection";
+    static final String CONFIGURATION = "Configuration";
+    static final String ASSIGNINSTANCE = "assignInstance";
+    static final String REPLACEINSTANCE = "replaceInstance";
+    static final String VOLUMEGROUP = "VolumeGroup";
+    static final String REPLACEINSTANCERETAINASSIGNMENTS = "replaceInstanceRetainAssignments";
 }
