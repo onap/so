@@ -4,5 +4,9 @@
 	"nf-role":"gNB",
 	"orchestration-status":"INVENTORIED",
 	"cloud-region":null,
-	"model-info-pnf":null
+	"model-info-pnf": {
+		"model-customization-uuid": "model-customization-uuid",
+		"model-invariant-uuid": "model-invariant-uuid",
+		"model-uuid": "model-uuid"
+	}
 }

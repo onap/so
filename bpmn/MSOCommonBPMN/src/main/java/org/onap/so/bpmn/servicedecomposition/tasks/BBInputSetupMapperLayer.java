@@ -96,12 +96,27 @@ import java.util.Optional;
 
 @Component("BBInputSetupMapperLayer")
 public class BBInputSetupMapperLayer {
+
     private static final String USER_PARAM_NAME_KEY = "name";
     private static final String USER_PARAM_VALUE_KEY = "value";
 
     private static final Logger logger = LoggerFactory.getLogger(BBInputSetupMapperLayer.class);
 
     private ModelMapper modelMapper = new ModelMapper();
+
+    public BBInputSetupMapperLayer() {
+        initPnfTypeMaps();
+    }
+
+    private void initPnfTypeMaps() {
+        modelMapper.typeMap(org.onap.aai.domain.yang.Pnf.class, Pnf.class)
+                .addMappings(mapper -> mapper.<String>map(src -> src.getModelCustomizationId(),
+                        (dest, v) -> dest.getModelInfoPnf().setModelCustomizationUuid(v)))
+                .addMappings(mapper -> mapper.<String>map(src -> src.getModelInvariantId(),
+                        (dest, v) -> dest.getModelInfoPnf().setModelInvariantUuid(v)))
+                .addMappings(mapper -> mapper.<String>map(src -> src.getModelVersionId(),
+                        (dest, v) -> dest.getModelInfoPnf().setModelUuid(v)));
+    }
 
     public Customer mapAAICustomer(org.onap.aai.domain.yang.Customer customerAAI) {
         return modelMapper.map(customerAAI, Customer.class);
@@ -215,10 +230,11 @@ public class BBInputSetupMapperLayer {
     protected ModelInfoInstanceGroup mapCatalogInstanceGroupToInstanceGroup(
             CollectionResourceCustomization collectionCust, InstanceGroup instanceGroup) {
         ModelInfoInstanceGroup modelInfoInstanceGroup = modelMapper.map(instanceGroup, ModelInfoInstanceGroup.class);
-        if (instanceGroup.getType() != null && instanceGroup.getType().equals(InstanceGroupType.L3_NETWORK))
+        if (instanceGroup.getType() != null && instanceGroup.getType().equals(InstanceGroupType.L3_NETWORK)) {
             modelInfoInstanceGroup.setType(ModelInfoInstanceGroup.TYPE_L3_NETWORK);
-        else
+        } else {
             modelInfoInstanceGroup.setType(ModelInfoInstanceGroup.TYPE_VNFC);
+        }
         if (collectionCust != null) {
             List<CollectionResourceInstanceGroupCustomization> instanceGroupCustList =
                     instanceGroup.getCollectionInstanceGroupCustomizations();
@@ -434,10 +450,12 @@ public class BBInputSetupMapperLayer {
     protected CloudRegion mapCloudRegion(CloudConfiguration cloudConfiguration,
             org.onap.aai.domain.yang.CloudRegion aaiCloudRegion) {
         CloudRegion cloudRegion = new CloudRegion();
-        if (cloudConfiguration != null)
+        if (cloudConfiguration != null) {
             cloudRegion = modelMapper.map(cloudConfiguration, CloudRegion.class);
-        if (aaiCloudRegion != null)
+        }
+        if (aaiCloudRegion != null) {
             modelMapper.map(aaiCloudRegion, cloudRegion);
+        }
         return cloudRegion;
     }
 
