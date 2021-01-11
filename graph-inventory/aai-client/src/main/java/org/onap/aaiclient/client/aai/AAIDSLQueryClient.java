@@ -25,6 +25,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIFluentTypeReverseLookup;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryQueryClient;
 import org.onap.aaiclient.client.graphinventory.entities.DSLQuery;
+import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
 import org.onap.aaiclient.client.graphinventory.entities.uri.GraphInventoryUri;
 import com.google.common.collect.ImmutableMap;
 
@@ -41,7 +42,7 @@ public class AAIDSLQueryClient
 
     @Override
     protected GraphInventoryUri getQueryUri() {
-        return AAIUriFactory.createResourceUri(AAIObjectType.DSL);
+        return AAIUriFactory.createResourceUri(AAIObjectType.DSL).depth(Depth.ZERO);
     }
 
 

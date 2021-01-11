@@ -32,6 +32,7 @@ import org.onap.aaiclient.client.aai.entities.Results;
 import org.onap.aaiclient.client.graphinventory.entities.GraphInventoryResultWrapper;
 import org.onap.aaiclient.client.graphinventory.entities.Pathed;
 import org.onap.aaiclient.client.graphinventory.entities.ResourceAndUrl;
+import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
 import org.onap.aaiclient.client.graphinventory.entities.uri.GraphInventoryUri;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -39,7 +40,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public abstract class GraphInventoryQueryClient<S, I, Wrapper extends GraphInventoryResultWrapper<?>, Type extends GraphInventoryObjectType> {
 
-    private Optional<String> depth = Optional.empty();
+    private Optional<Depth> depth = Optional.empty();
     private boolean nodesOnly = false;
     private Optional<GraphInventorySubgraphType> subgraph = Optional.empty();
     private GraphInventoryClient client;
@@ -108,7 +109,7 @@ public abstract class GraphInventoryQueryClient<S, I, Wrapper extends GraphInven
 
     public abstract Type createType(String name, String uri);
 
-    public S depth(String depth) {
+    public S depth(Depth depth) {
         this.depth = Optional.of(depth);
         return (S) this;
     }
@@ -128,7 +129,7 @@ public abstract class GraphInventoryQueryClient<S, I, Wrapper extends GraphInven
     protected GraphInventoryUri setupQueryParams(GraphInventoryUri uri) {
         GraphInventoryUri clone = uri.clone();
         if (this.depth.isPresent()) {
-            clone.queryParam("depth", depth.get());
+            clone.queryParam("depth", depth.get().toString());
         }
         if (this.nodesOnly) {
             clone.queryParam("nodesOnly", "");
