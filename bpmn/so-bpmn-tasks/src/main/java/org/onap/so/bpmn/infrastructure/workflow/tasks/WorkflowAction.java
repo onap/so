@@ -328,6 +328,7 @@ public class WorkflowAction {
         } else {
             updateResourceIdsFromAAITraversal(flowsToExecute, resourceList, aaiResourceIds, serviceInstanceId);
         }
+        execution.setVariable("resources", resourceList);
         return flowsToExecute;
     }
 
