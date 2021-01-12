@@ -1235,7 +1235,8 @@ public class BBInputSetup implements JavaDelegate {
                 || requestAction.equalsIgnoreCase("activateInstance")
                 || requestAction.equalsIgnoreCase("activateFabricConfiguration")
                 || requestAction.equalsIgnoreCase("recreateInstance")
-                || requestAction.equalsIgnoreCase("replaceInstance")) {
+                || requestAction.equalsIgnoreCase("replaceInstance")
+                || requestAction.equalsIgnoreCase("upgradeInstance")) {
             return getGBBMacroExistingService(executeBB, lookupKeyMap, bbName, requestAction,
                     requestDetails.getCloudConfiguration());
         }
@@ -1415,7 +1416,13 @@ public class BBInputSetup implements JavaDelegate {
         if (serviceInstanceId != null) {
             aaiServiceInstance = bbInputSetupUtils.getAAIServiceInstanceById(serviceInstanceId);
             if (aaiServiceInstance != null) {
-                service = bbInputSetupUtils.getCatalogServiceByModelUUID(aaiServiceInstance.getModelVersionId());
+                String modelVersionId = aaiServiceInstance.getModelVersionId();
+                if ("upgradeInstance".equalsIgnoreCase(requestAction)) {
+                    modelVersionId = requestDetails.getModelInfo().getModelVersionId();
+                }
+
+                service = bbInputSetupUtils.getCatalogServiceByModelUUID(modelVersionId);
+
                 if (service == null) {
                     String message = String.format(
                             "Related service instance model not found in MSO CatalogDB: model-version-id=%s",

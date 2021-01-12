@@ -22,6 +22,7 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
 public class Resource {
 
+    private static final long serialVersionUID = 4259534487473481127L;
     private String resourceId;
     private WorkflowType resourceType;
     private boolean generated;
@@ -30,6 +31,7 @@ public class Resource {
     private String vnfCustomizationId;
     private String vfModuleCustomizationId;
     private String cvnfModuleCustomizationId;
+    private String modelInvariantId;
 
     public Resource(WorkflowType resourceType, String resourceId, boolean generated) {
         this.resourceId = resourceId;
@@ -100,4 +102,13 @@ public class Resource {
     public void setCvnfModuleCustomizationId(String cvnfModuleCustomizationId) {
         this.cvnfModuleCustomizationId = cvnfModuleCustomizationId;
     }
+
+    public String getModelInvariantId() {
+        return modelInvariantId;
+    }
+
+    public void setModelInvariantId(String modelInvariantId) {
+        this.modelInvariantId = modelInvariantId;
+    }
+
 }

@@ -46,6 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -2935,6 +2936,50 @@ public class BBInputSetupTest {
         // then
         verify(SPY_bbInputSetup, times(1)).mapCatalogConfiguration(any(Configuration.class), any(ModelInfo.class),
                 any(Service.class), isA(ConfigurationResourceKeys.class));
+    }
+
+    @Test
+    public void testGetGBBMacroExistingServiceUpgrade() throws Exception {
+        String requestAction = "upgradeInstance";
+        GeneralBuildingBlock gBB = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
+                GeneralBuildingBlock.class);
+        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
+                ExecuteBuildingBlock.class);
+        RequestDetails requestDetails = mapper
+                .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_serviceUpgrade.json"), RequestDetails.class);
+        Map<ResourceKey, String> lookupKeyMap = prepareLookupKeyMap();
+        executeBB.setRequestDetails(requestDetails);
+
+        Service service = new Service();
+        VnfResourceCustomization vrc = new VnfResourceCustomization();
+        String vnfModelCustomizationId = UUID.randomUUID().toString();
+        vrc.setModelCustomizationUUID(vnfModelCustomizationId);
+        service.getVnfCustomizations().add(vrc);
+
+        org.onap.aai.domain.yang.ServiceInstance aaiServiceInstance = new org.onap.aai.domain.yang.ServiceInstance();
+        aaiServiceInstance.setModelInvariantId(requestDetails.getModelInfo().getModelInvariantId());
+
+        ServiceInstance serviceInstance = gBB.getServiceInstance();
+        GenericVnf vnf = new GenericVnf();
+        String vnfId = UUID.randomUUID().toString();
+        vnf.setVnfId(vnfId);
+        serviceInstance.getVnfs().add(vnf);
+
+        org.onap.aai.domain.yang.GenericVnf aaiVnf = new org.onap.aai.domain.yang.GenericVnf();
+        aaiVnf.setModelCustomizationId(vnfModelCustomizationId);
+
+        doReturn(service).when(SPY_bbInputSetupUtils)
+                .getCatalogServiceByModelUUID(requestDetails.getModelInfo().getModelVersionId());
+        doReturn(aaiServiceInstance).when(SPY_bbInputSetupUtils)
+                .getAAIServiceInstanceById(lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
+        doReturn(serviceInstance).when(SPY_bbInputSetup).getExistingServiceInstance(aaiServiceInstance);
+        doReturn(gBB).when(SPY_bbInputSetup).populateGBBWithSIAndAdditionalInfo(any(BBInputSetupParameter.class));
+
+        SPY_bbInputSetup.getGBBMacroExistingService(executeBB, lookupKeyMap,
+                executeBB.getBuildingBlock().getBpmnFlowName(), requestAction, null);
+
+        verify(SPY_bbInputSetupUtils, times(1))
+                .getCatalogServiceByModelUUID(requestDetails.getModelInfo().getModelVersionId());
     }
 
     @Test

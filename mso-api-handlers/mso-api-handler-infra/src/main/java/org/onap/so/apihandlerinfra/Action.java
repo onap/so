@@ -26,6 +26,7 @@ public enum Action implements Actions {
     updateInstance,
     deleteInstance,
     configureInstance,
+    upgradeInstance,
     replaceInstance,
     replaceInstanceRetainAssignments,
     activateInstance,
