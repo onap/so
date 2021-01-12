@@ -486,8 +486,8 @@ public class OrchestrationRequestsTest extends BaseTest {
                         .withBody(new String(Files.readAllBytes(
                                 Paths.get("src/test/resources/OrchestrationRequest/getOrchestrationRequest.json"))))
                         .withStatus(HttpStatus.SC_OK)));
-        wireMockServer
-                .stubFor(get(urlPathEqualTo("/requestProcessingData/search/findBySoRequestIdOrderByGroupingIdDesc/"))
+        wireMockServer.stubFor(get(urlPathEqualTo(
+                "/requestProcessingData/search/findBySoRequestIdAndIsDataInternalOrderByGroupingIdDesc/"))
                         .withQueryParam("SO_REQUEST_ID", equalTo("00032ab7-1a18-42e5-965d-8ea592502018"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(new String(Files.readAllBytes(Paths
@@ -502,9 +502,10 @@ public class OrchestrationRequestsTest extends BaseTest {
                         .withBody(new String(Files.readAllBytes(Paths.get(
                                 "src/test/resources/OrchestrationRequest/getOrchestrationRequestInstanceGroup.json"))))
                         .withStatus(HttpStatus.SC_OK)));
-        wireMockServer
-                .stubFor(get(urlPathEqualTo("/requestProcessingData/search/findBySoRequestIdOrderByGroupingIdDesc/"))
+        wireMockServer.stubFor(get(urlPathEqualTo(
+                "/requestProcessingData/search/findBySoRequestIdAndIsDataInternalOrderByGroupingIdDesc/"))
                         .withQueryParam("SO_REQUEST_ID", equalTo("00032ab7-1a18-42e5-965d-8ea592502018"))
+                        .withQueryParam("IS_INTERNAL_DATA", equalTo("false"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(new String(Files.readAllBytes(Paths
                                         .get("src/test/resources/OrchestrationRequest/getRequestProcessingData.json"))))

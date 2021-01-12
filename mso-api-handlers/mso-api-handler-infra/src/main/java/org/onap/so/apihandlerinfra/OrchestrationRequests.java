@@ -46,6 +46,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.http.HttpStatus;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandler.common.ResponseBuilder;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
@@ -57,7 +58,6 @@ import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.beans.RequestProcessingData;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.exceptions.ValidationException;
-import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.serviceinstancebeans.CloudRequestData;
 import org.onap.so.serviceinstancebeans.GetOrchestrationListResponse;
@@ -213,7 +213,7 @@ public class OrchestrationRequests {
 
             if (isRequestProcessingDataRequired(format)) {
                 List<RequestProcessingData> requestProcessingData =
-                        requestsDbClient.getRequestProcessingDataBySoRequestId(infraActive.getRequestId());
+                        requestsDbClient.getExternalRequestProcessingDataBySoRequestId(infraActive.getRequestId());
                 if (null != requestProcessingData && !requestProcessingData.isEmpty()) {
                     request.setRequestProcessingData(mapRequestProcessingData(requestProcessingData));
                 }
