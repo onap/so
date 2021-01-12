@@ -39,6 +39,7 @@ import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConst
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.DEACTIVATE_INSTANCE;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.DELETE_INSTANCE;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.UNASSIGN_INSTANCE;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.UPGRADE_INSTANCE;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.WORKFLOW_ACTION_ERROR_MESSAGE;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.CREATE_INSTANCE;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.FABRIC_CONFIGURATION;
@@ -114,6 +115,7 @@ public class ServiceEBBLoader {
             }
         } else if ((ACTIVATE_INSTANCE.equalsIgnoreCase(requestAction)
                 || UNASSIGN_INSTANCE.equalsIgnoreCase(requestAction) || DELETE_INSTANCE.equalsIgnoreCase(requestAction)
+                || UPGRADE_INSTANCE.equalsIgnoreCase(requestAction)
                 || requestAction.equalsIgnoreCase("activate" + FABRIC_CONFIGURATION))) {
             // SERVICE-MACRO-ACTIVATE, SERVICE-MACRO-UNASSIGN, and
             // SERVICE-MACRO-DELETE
@@ -169,7 +171,10 @@ public class ServiceEBBLoader {
             ServiceInstance serviceInstanceAAI = bbInputSetupUtils.getAAIServiceInstanceById(resourceId);
             org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO =
                     bbInputSetup.getExistingServiceInstance(serviceInstanceAAI);
-            resourceList.add(new Resource(WorkflowType.SERVICE, serviceInstanceMSO.getServiceInstanceId(), false));
+            Resource serviceInstanceResource =
+                    new Resource(WorkflowType.SERVICE, serviceInstanceMSO.getServiceInstanceId(), false);
+            serviceInstanceResource.setModelInvariantId(serviceInstanceAAI.getModelInvariantId());
+            resourceList.add(serviceInstanceResource);
             traverseServiceInstanceMSOVnfs(resourceList, aaiResourceIds, serviceInstanceMSO);
             traverseServiceInstanceMSOPnfs(resourceList, aaiResourceIds, serviceInstanceMSO);
             if (serviceInstanceMSO.getNetworks() != null) {

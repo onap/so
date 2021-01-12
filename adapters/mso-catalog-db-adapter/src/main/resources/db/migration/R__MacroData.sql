@@ -15,6 +15,7 @@ INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, I
 ('Service-Macro-Unassign', 'unassignInstance', 'Service', false,true, '7','7', 'DEFAULT', '*'),
 ('Service-Macro-Create', 'createInstance', 'Service', false,true, '7','7', 'DEFAULT', '*'),
 ('Service-Macro-Delete', 'deleteInstance', 'Service', false,true, '7','7', 'DEFAULT', '*'),
+('Service-Macro-Upgrade', 'upgradeInstance', 'Service', false,true, '7','7', 'DEFAULT', '*'),
 ('Network-Create', 'createInstance', 'Network', true,true, '7','7', 'DEFAULT', '*'),
 ('Network-Delete', 'deleteInstance', 'Network', true,true, '7','7', 'DEFAULT', '*'),
 ('VNF-Macro-Create', 'createInstance', 'Vnf', false,true, '7','7', 'DEFAULT', '*'),
@@ -103,6 +104,7 @@ INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FL
 ('Service-Macro-Delete', '14', 'UnassignVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'DEFAULT')),
 ('Service-Macro-Delete', '15', 'UnassignNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'DEFAULT')),
 ('Service-Macro-Delete', '16', 'UnassignServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'DEFAULT')),
+('Service-Macro-Upgrade', '1', 'ChangeModelServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
 ('Network-Create', '1', 'AssignNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Network-Create' and CLOUD_OWNER = 'DEFAULT')),
 ('Network-Create', '2', 'CreateNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Network-Create' and CLOUD_OWNER = 'DEFAULT')),
 ('Network-Create', '3', 'ActivateNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Network-Create' and CLOUD_OWNER = 'DEFAULT')),
@@ -961,6 +963,12 @@ WHERE NF_ROLE = 'GR-API-DEFAULT' AND ACTION = 'inPlaceSoftwareUpdate';
 UPDATE vnf_recipe
 SET ORCHESTRATION_URI = '/mso/async/services/WorkflowActionBB'
 WHERE NF_ROLE = 'GR-API-DEFAULT' AND ACTION = 'applyUpdatedConfig';
+
+DELETE FROM service_recipe where ACTION = 'upgradeInstance';
+INSERT INTO service_recipe (ACTION, VERSION_STR, DESCRIPTION, ORCHESTRATION_URI, RECIPE_TIMEOUT, SERVICE_MODEL_UUID)
+VALUES
+('upgradeInstance', '1.0', 'Gr api recipe to upgrade service-instance', '/mso/async/services/WorkflowActionBB', 180, 'd88da85c-d9e8-4f73-b837-3a72a431622b');
+
 
 INSERT INTO rainy_day_handler_macro (FLOW_NAME, SERVICE_TYPE, VNF_TYPE, ERROR_CODE, WORK_STEP, POLICY, SECONDARY_POLICY, REG_EX_ERROR_MESSAGE, SERVICE_ROLE)
 VALUES 
