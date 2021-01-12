@@ -34,6 +34,7 @@ public final class WorkflowActionConstants {
 
     public static final String USER_PARAM_SERVICE = "service";
     public static final String CREATE_INSTANCE = "createInstance";
+    public static final String UPGRADE_INSTANCE = "upgradeInstance";
     public static final String FABRIC_CONFIGURATION = "FabricConfiguration";
     public static final String WORKFLOW_ACTION_ERROR_MESSAGE = "WorkflowActionErrorMessage";
     static final String SERVICE = "Service";

@@ -379,6 +379,28 @@ public class ServiceInstances extends AbstractRestHandler {
     }
 
     @POST
+    @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/upgrade")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Upgrade a Service Instance to newer model", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Transactional
+    public Response upgradeServiceInstance(String request, @PathParam("version") String version,
+            @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
+            throws ApiException {
+        String requestId = requestHandlerUtils.getRequestId(requestContext);
+        HashMap<String, String> instanceIdMap = new HashMap<>();
+        instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+        try {
+            return serviceInstances(request, Action.upgradeInstance, instanceIdMap, version, requestId,
+                    requestHandlerUtils.getRequestUri(requestContext, uriPrefix));
+        } catch (Exception e) {
+            logger.error("Error in vnf", e);
+            throw e;
+        }
+    }
+
+    @POST
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/replace")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
