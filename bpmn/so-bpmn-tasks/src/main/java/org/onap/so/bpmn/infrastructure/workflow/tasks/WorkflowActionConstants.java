@@ -39,6 +39,7 @@ public final class WorkflowActionConstants {
     public static final String CREATE_INSTANCE = "createInstance";
     public static final String DEACTIVATE_INSTANCE = "deactivateInstance";
     public static final String DELETE_INSTANCE = "deleteInstance";
+    public static final String UPGRADE_INSTANCE = "upgradeInstance";
     public static final String FABRIC_CONFIGURATION = "FabricConfiguration";
     public static final String NETWORKCOLLECTION = "NetworkCollection";
     public static final String RECREATE_INSTANCE = "recreateInstance";

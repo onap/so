@@ -181,7 +181,25 @@ public class AAIServiceInstanceResources {
                 .createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstance.getServiceInstanceId()));
         org.onap.aai.domain.yang.ServiceInstance aaiServiceInstance =
                 aaiObjectMapper.mapServiceInstance(serviceInstance);
+        mapEmptyStringsToNull(aaiServiceInstance);
         injectionHelper.getAaiClient().update(serviceInstanceURI, aaiServiceInstance);
+    }
+
+    /*
+     * Per serialization configurations in GraphInventoryCommonObjectMapperPatchProvider, empty strings are mapped to
+     * null and included in the payload. Null values are on the other hand excluded. Passing null values in a PATCH
+     * request to AAI will fail. We need to map empty strings to null before serialization in order to exclude these
+     * values from the payload.
+     */
+    private void mapEmptyStringsToNull(org.onap.aai.domain.yang.ServiceInstance serviceInstance) {
+        if (serviceInstance != null) {
+            if ("".equals(serviceInstance.getServiceType()))
+                serviceInstance.setServiceType(null);
+            if ("".equals(serviceInstance.getServiceRole()))
+                serviceInstance.setServiceRole(null);
+            if ("".equals(serviceInstance.getServiceFunction()))
+                serviceInstance.setServiceFunction(null);
+        }
     }
 
     public boolean checkInstanceServiceNameInUse(ServiceInstance serviceInstance) {
