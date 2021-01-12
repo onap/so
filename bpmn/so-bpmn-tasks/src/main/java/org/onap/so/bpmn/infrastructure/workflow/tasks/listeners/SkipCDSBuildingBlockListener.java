@@ -84,7 +84,7 @@ public class SkipCDSBuildingBlockListener implements FlowManipulator {
                 VnfResourceCustomization vrc = catalogDbClient.findVnfResourceCustomizationInList(customizationUUID,
                         vnfResourceCustomizations);
                 if (null != vrc) {
-                    boolean skipConfigVNF = vrc.isSkipPostInstConf();
+                    boolean skipConfigVNF = vrc.isSkipPostInstConf().booleanValue();
                     currentSequenceSkipCheck(execution, skipConfigVNF);
                 }
 
