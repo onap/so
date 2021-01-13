@@ -39,10 +39,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
-import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
-import org.onap.sdc.toscaparser.api.elements.Metadata;
-import org.onap.so.asdc.util.ZipParser;
-import org.onap.so.logger.LoggingAnchor;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.sdc.api.IDistributionClient;
 import org.onap.sdc.api.consumer.IDistributionStatusMessage;
@@ -53,6 +50,8 @@ import org.onap.sdc.api.notification.IResourceInstance;
 import org.onap.sdc.api.results.IDistributionClientDownloadResult;
 import org.onap.sdc.api.results.IDistributionClientResult;
 import org.onap.sdc.impl.DistributionClientFactory;
+import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
+import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.sdc.utils.DistributionActionResultEnum;
 import org.onap.sdc.utils.DistributionStatusEnum;
 import org.onap.so.asdc.activity.DeployActivitySpecs;
@@ -70,11 +69,12 @@ import org.onap.so.asdc.installer.heat.ToscaResourceInstaller;
 import org.onap.so.asdc.tenantIsolation.DistributionStatus;
 import org.onap.so.asdc.tenantIsolation.WatchdogDistribution;
 import org.onap.so.asdc.util.ASDCNotificationLogging;
+import org.onap.so.asdc.util.ZipParser;
 import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
 import org.onap.so.db.request.beans.WatchdogDistributionStatus;
 import org.onap.so.db.request.data.repository.WatchdogComponentDistributionStatusRepository;
 import org.onap.so.db.request.data.repository.WatchdogDistributionStatusRepository;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,6 +145,10 @@ public class ASDCController {
     public ASDCController(String controllerConfigName, IDistributionClient asdcClient) {
         distributionClient = asdcClient;
         this.controllerName = controllerConfigName;
+    }
+
+    public ASDCConfiguration getASDCConfiguration() {
+        return asdcConfig;
     }
 
     public int getNbOfNotificationsOngoing() {
