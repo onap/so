@@ -135,8 +135,11 @@
     </dependency>
     <dependency>
       <groupId>org.onap.aaf.authz</groupId>
+      <artifactId>aaf-cadi-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.aaf.authz</groupId>
       <artifactId>aaf-cadi-aaf</artifactId>
-      <version>${aaf.cadi.version}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.servlet</groupId>
@@ -147,6 +150,21 @@
           <artifactId>log4j</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.aaf.authz</groupId>
+      <artifactId>aaf-auth-client</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.aaf.authz</groupId>
+      <artifactId>aaf-misc-env</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.aaf.authz</groupId>
+      <artifactId>aaf-misc-rosetta</artifactId>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.reflections</groupId>
