@@ -54,6 +54,7 @@ import org.onap.aaiclient.client.graphinventory.GraphInventoryClient;
 import org.onap.aaiclient.client.graphinventory.GraphInventorySubgraphType;
 import org.onap.aaiclient.client.graphinventory.entities.Pathed;
 import org.onap.aaiclient.client.graphinventory.entities.ResourceAndUrl;
+import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
 import org.onap.so.client.RestClient;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -92,7 +93,7 @@ public class AAIQueryClientTest {
 
     @Test
     public void testCreateClient() {
-        String depth = "testDepth";
+        Depth depth = Depth.ZERO;
         GraphInventorySubgraphType subgraph = GraphInventorySubgraphType.STAR;
 
         aaiQueryClient.depth(depth);
@@ -103,7 +104,7 @@ public class AAIQueryClientTest {
         doReturn(aaiUri).when(aaiUri).clone();
         aaiQueryClient.setupQueryParams(aaiUri);
 
-        verify(aaiUri, times(1)).queryParam("depth", depth);
+        verify(aaiUri, times(1)).queryParam("depth", "0");
         verify(aaiUri, times(1)).queryParam("nodesOnly", "");
         verify(aaiUri, times(1)).queryParam("subgraph", subgraph.toString());
     }
