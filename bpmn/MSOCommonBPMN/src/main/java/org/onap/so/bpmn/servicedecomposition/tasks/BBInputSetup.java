@@ -640,7 +640,8 @@ public class BBInputSetup implements JavaDelegate {
                             parameter.getServiceModel().getCurrentService(), vnfModelCustomizationUUID);
                 }
             }
-            if (vfModule.getModelInfoVfModule() != null && vfModule.getModelInfoVfModule().getModelName() != null
+            if (vfModule != null && vfModule.getModelInfoVfModule() != null
+                    && vfModule.getModelInfoVfModule().getModelName() != null
                     && vfModule.getModelInfoVfModule().getModelName().contains("helm")) {
                 parameter.setIsHelm(true);
             }
