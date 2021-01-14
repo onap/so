@@ -70,9 +70,7 @@ public class CreateAAIInventory {
 
         List<String> oobMgtNetNames = new ArrayList<>();
 
-        HeatBridgeApi heatBridgeClient = new HeatBridgeImpl(new AAIResourcesClient(), cloudIdentity,
-                cloudInformation.getOwner(), cloudInformation.getRegionId(), cloudSite.getRegionId(),
-                cloudInformation.getTenantId(), cloudInformation.getNodeType());
+        HeatBridgeApi heatBridgeClient = createClient(getAaiClient(), cloudSite, cloudIdentity, cloudInformation);
 
         heatBridgeClient.authenticate();
 
@@ -126,6 +124,12 @@ public class CreateAAIInventory {
         // Update AAI
         logger.debug("Current Dry Run Value: {}", env.getProperty("heatBridgeDryrun", Boolean.class, false));
         heatBridgeClient.submitToAai(env.getProperty("heatBridgeDryrun", Boolean.class, false));
+    }
+
+    public HeatBridgeApi createClient(AAIResourcesClient client, CloudSite cloudSite, CloudIdentity cloudIdentity,
+            CloudInformation cloudInformation) {
+        return new HeatBridgeImpl(client, cloudIdentity, cloudInformation.getOwner(), cloudInformation.getRegionId(),
+                cloudSite.getRegionId(), cloudInformation.getTenantId(), cloudInformation.getNodeType());
     }
 
     protected AAIResourcesClient getAaiClient() {

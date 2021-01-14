@@ -61,9 +61,8 @@ import org.onap.aai.domain.yang.Pserver;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.aai.domain.yang.RelationshipList;
 import org.onap.aai.domain.yang.SriovPf;
-import org.onap.aai.domain.yang.Subnets;
 import org.onap.aai.domain.yang.SriovVf;
-import org.onap.aai.domain.yang.VfModule;
+import org.onap.aai.domain.yang.Subnets;
 import org.onap.aai.domain.yang.Vlan;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.aaiclient.client.aai.AAIDSLQueryClient;
@@ -734,27 +733,15 @@ public class HeatBridgeImpl implements HeatBridgeApi {
         Objects.requireNonNull(vnfId, "Null vnf-id!");
         Objects.requireNonNull(vfModuleId, "Null vf-module-id!");
         try {
-            Optional<VfModule> vfModule = resourcesClient.get(AAIUriFactory
+            AAIResultWrapper vfModule = resourcesClient.get(AAIUriFactory
                     .createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId).vfModule(vfModuleId))
-                    .depth(Depth.ONE), NotFoundException.class).asBean(VfModule.class);
+                    .depth(Depth.ONE), NotFoundException.class);
 
-            AAIResultWrapper resultWrapper = new AAIResultWrapper(vfModule.get());
-            Optional<Relationships> relationships = resultWrapper.getRelationships();
+            Optional<Relationships> relationships = vfModule.getRelationships();
             logger.debug("VfModule contains relationships in AAI: {}", relationships.isPresent());
             if (relationships.isPresent()) {
 
-                List<AAIResourceUri> l3NetworkUris = relationships.get().getRelatedUris(Types.L3_NETWORK);
-                logger.debug("L3Network contains {} relationships in AAI", l3NetworkUris.size());
-
-                if (!l3NetworkUris.isEmpty()) {
-                    for (AAIResourceUri l3NetworkUri : l3NetworkUris) {
-                        if (env.getProperty("heatBridgeDryrun", Boolean.class, true)) {
-                            logger.debug("Would delete L3Network: {}", l3NetworkUri.build().toString());
-                        } else {
-                            resourcesClient.delete(l3NetworkUri);
-                        }
-                    }
-                }
+                deleteL3Networks(relationships.get());
 
                 List<AAIResourceUri> vserverUris = relationships.get().getRelatedUris(Types.VSERVER);
                 logger.debug("VServer contains {} relationships in AAI", vserverUris.size());
@@ -779,6 +766,21 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             String msg = "Failed to commit delete heatbridge data transaction";
             logger.debug(msg + " with error: " + e);
             throw new HeatBridgeException(msg, e);
+        }
+    }
+
+    protected void deleteL3Networks(Relationships relationships) {
+        List<AAIResourceUri> l3NetworkUris = relationships.getRelatedUris(Types.L3_NETWORK);
+        logger.debug("L3Network contains {} relationships in AAI", l3NetworkUris.size());
+
+        if (!l3NetworkUris.isEmpty()) {
+            for (AAIResourceUri l3NetworkUri : l3NetworkUris) {
+                if (env.getProperty("heatBridgeDryrun", Boolean.class, true)) {
+                    logger.debug("Would delete L3Network: {}", l3NetworkUri.build().toString());
+                } else {
+                    resourcesClient.delete(l3NetworkUri);
+                }
+            }
         }
     }
 

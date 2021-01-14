@@ -59,11 +59,15 @@ public class DeleteAAIInventory {
             return;
         }
         CloudIdentity cloudIdentity = cloudSite.getIdentityService();
-        HeatBridgeApi heatBridgeClient = new HeatBridgeImpl(new AAIResourcesClient(), cloudIdentity,
-                cloudInformation.getOwner(), cloudInformation.getRegionId(), cloudSite.getRegionId(),
-                cloudInformation.getTenantId(), cloudInformation.getNodeType());
+        HeatBridgeApi heatBridgeClient = createClient(getAaiClient(), cloudSite, cloudIdentity, cloudInformation);
         heatBridgeClient.authenticate();
         heatBridgeClient.deleteVfModuleData(cloudInformation.getVnfId(), cloudInformation.getVfModuleId());
+    }
+
+    public HeatBridgeApi createClient(AAIResourcesClient client, CloudSite cloudSite, CloudIdentity cloudIdentity,
+            CloudInformation cloudInformation) {
+        return new HeatBridgeImpl(client, cloudIdentity, cloudInformation.getOwner(), cloudInformation.getRegionId(),
+                cloudSite.getRegionId(), cloudInformation.getTenantId(), cloudInformation.getNodeType());
     }
 
     protected AAIResourcesClient getAaiClient() {
