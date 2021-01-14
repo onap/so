@@ -2940,6 +2940,62 @@
           }
         }
       }
+    },
+    "/onap/so/infra/instanceManagement/{version}/serviceInstances/{serviceInstanceId}/pnfs/${pnfName}/workflows/${workflow_UUID}": {
+      "post": {
+        "tags": [
+          "onapsoinfrainstanceManagement"
+        ],
+        "summary": "Executing download/activate custom workflow",
+        "description": "",
+        "operationId": "executePNFCustomWorkflow",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/PNFCustomWorkflowExecution"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "pattern": "[vV][1]"
+          },
+          {
+            "name": "serviceInstanceId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "pnfName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "workflow_UUID",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "successful operation"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -3160,6 +3216,105 @@
     },
     "ServiceLevelWorkflowExecution": {
       "description": "This describes the request body of service level custom workflow execution",
+      "type": "object",
+      "properties": {
+        "requestInfo": {
+          "description": "Request object contains source information",
+          "type": "object",
+          "properties": {
+            "source": {
+              "description": "Name of the sender",
+              "type": "string"
+            },
+            "suppressRollback": {
+              "description": "Enable/disable rollback suppression",
+              "type": "boolean"
+            },
+            "requestorId": {
+              "description": "Id of the sender",
+              "type": "string"
+            }
+          }
+        },
+        "modelInfo": {
+          "description": "Parameters related to the service model",
+          "type": "object",
+          "properties": {
+            "modelType": {
+              "description": "Type of the model to be executed",
+              "type": "string"
+            },
+            "modelInvariantUuid": {
+              "description": "Model invariant id corresponding to the service",
+              "type": "string"
+            },
+            "modelUuid": {
+              "description": "Model uuid corresponding to the service",
+              "type": "string"
+            },
+            "modelVersionId": {
+              "description": "Model version of the service instance",
+              "type": "string"
+            },
+            "modelName": {
+              "description": "Name of the service",
+              "type": "string"
+            },
+            "modelVersion": {
+              "description": "Version of the service instance",
+              "type": "string"
+            }
+          }
+        },
+        "requestParameters": {
+          "description": "User parameter object",
+          "type": "object",
+          "properties": {
+            "subscriptionServiceType": {
+              "description": "Type of service subscription",
+              "type": "string"
+            }
+          }
+        },
+        "subscriberInfo": {
+          "description": "Subscriber id information",
+          "type": "object",
+          "properties": {
+            "globalSubscriberId": {
+              "description": "Id of the subscriber sending the request",
+              "type": "string"
+            }
+          }
+        },
+        "project": {
+          "description": "Information about the target project name",
+          "type": "object",
+          "properties": {
+            "projectName":{
+              "description": "Name of the target project",
+              "type": "string"
+            }
+          }
+        },
+        "owningEntity": {
+          "description": "Object describes the entity details",
+          "type": "object",
+          "properties": {
+            "owningEntityId": {
+              "description": "Id of the owning Entity",
+              "type": "string"
+            },
+            "owningEntityName": {
+              "description": "Name of the owning Entity",
+              "type": "string"
+            }
+          }
+        }
+
+      }
+    },
+    "PNFCustomWorkflowExecution": {
+      "description": "This describes the request body of PNF custom workflow execution",
       "type": "object",
       "properties": {
         "requestInfo": {
