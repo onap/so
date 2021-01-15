@@ -56,7 +56,8 @@ public class WorkflowActionExtractResourcesAAITest {
     public void extractRelationshipsConfigurationSuccess() {
         // given
         Relationships relationships = mock(Relationships.class);
-        when(relationships.getByType(Types.CONFIGURATION)).thenReturn(getConfigurationList());
+        when(relationships.getByType(Types.CONFIGURATION))
+                .thenReturn(getConfigurationList("{\"configuration-id\" : \"" + CONFIGURATION_ID + "\"}"));
         // when
         Optional<Configuration> resultOpt = testedObject.extractRelationshipsConfiguration(relationships);
         // then
@@ -65,7 +66,18 @@ public class WorkflowActionExtractResourcesAAITest {
     }
 
     @Test
-    public void extractRelationshipsConfiguration_notFound() {
+    public void extractRelationshipsConfiguration_noConfigurationFoundInList() {
+        // given
+        Relationships relationships = mock(Relationships.class);
+        when(relationships.getByType(Types.CONFIGURATION)).thenReturn(getConfigurationList("noJson"));
+        // when
+        Optional<Configuration> resultOpt = testedObject.extractRelationshipsConfiguration(relationships);
+        // then
+        assertThat(resultOpt).isEmpty();
+    }
+
+    @Test
+    public void extractRelationshipsConfiguration_notFound_listEmpty() {
         // given
         Relationships relationships = mock(Relationships.class);
         when(relationships.getByType(Types.CONFIGURATION)).thenReturn(Collections.emptyList());
@@ -92,10 +104,71 @@ public class WorkflowActionExtractResourcesAAITest {
         assertThat(resultOpt.get().getVpnId()).isEqualTo(VPN_ID);
     }
 
-    private List<AAIResultWrapper> getConfigurationList() {
+    @Test
+    public void extractRelationshipsVpnBinding_noVpnBindingFoundInList() {
+        // given
+        Relationships relationships = mock(Relationships.class);
+        AAIResourceUri aaiResourceUri = mock(AAISimpleUri.class);
+        List<AAIResourceUri> aaiResourceUriList = new ArrayList<>();
+        aaiResourceUriList.add(aaiResourceUri);
+        when(relationships.getRelatedUris(Types.VPN_BINDING)).thenReturn(aaiResourceUriList);
+        AAIResultWrapper aaiResultWrapper = new AAIResultWrapper("noJson");
+        when(bbInputSetupUtils.getAAIResourceDepthOne(aaiResourceUri)).thenReturn(aaiResultWrapper);
+        // when
+        Optional<VpnBinding> resultOpt = testedObject.extractRelationshipsVpnBinding(relationships);
+        // then
+        assertThat(resultOpt).isEmpty();
+    }
+
+    @Test
+    public void extractRelationshipsVpnBinding_notFound_listEmpty() {
+        // given
+        Relationships relationships = mock(Relationships.class);
+        when(relationships.getRelatedUris(Types.VPN_BINDING)).thenReturn(Collections.emptyList());
+        // when
+        Optional<VpnBinding> resultOpt = testedObject.extractRelationshipsVpnBinding(relationships);
+        // then
+        assertThat(resultOpt).isEmpty();
+    }
+
+    @Test
+    public void extractRelationshipsVnfcSuccess() {
+        // given
+        Relationships relationships = mock(Relationships.class);
+        when(relationships.getByType(Types.VNFC)).thenReturn(
+                getConfigurationList("{\"relationship-list\": {\"relationship\": [{\"related-to\": \"tenant\"}]}}"));
+        // when
+        Optional<Relationships> resultOpt = testedObject.extractRelationshipsVnfc(relationships);
+        // then
+        assertThat(resultOpt).isNotEmpty();
+        assertThat(resultOpt.get().getJson()).isEqualTo("{\"relationship\":[{\"related-to\":\"tenant\"}]}");
+    }
+
+    @Test
+    public void extractRelationshipsVnfc_noRelationFoundList() {
+        // given
+        Relationships relationships = mock(Relationships.class);
+        when(relationships.getByType(Types.VNFC)).thenReturn(getConfigurationList("{\"jsonWithNoRelation\": {}}"));
+        // when
+        Optional<Relationships> resultOpt = testedObject.extractRelationshipsVnfc(relationships);
+        // then
+        assertThat(resultOpt).isEmpty();
+    }
+
+    @Test
+    public void extractRelationshipsVnfc_notFound_listEmpty() {
+        // given
+        Relationships relationships = mock(Relationships.class);
+        when(relationships.getByType(Types.VNFC)).thenReturn(Collections.emptyList());
+        // when
+        Optional<Relationships> resultOpt = testedObject.extractRelationshipsVnfc(relationships);
+        // then
+        assertThat(resultOpt).isEmpty();
+    }
+
+    private List<AAIResultWrapper> getConfigurationList(String json) {
         List<AAIResultWrapper> configurations = new ArrayList<>();
-        AAIResultWrapper aaiResultWrapper =
-                new AAIResultWrapper("{\"configuration-id\" : \"" + CONFIGURATION_ID + "\"}");
+        AAIResultWrapper aaiResultWrapper = new AAIResultWrapper(json);
         configurations.add(aaiResultWrapper);
         return configurations;
     }
