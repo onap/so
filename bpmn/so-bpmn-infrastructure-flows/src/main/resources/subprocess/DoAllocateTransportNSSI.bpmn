@@ -69,7 +69,7 @@ ex.processJavaException(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_0t094g7</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def runScript = new TnAllocateNssi()
-runScript.prepareUpdateJobStatus(execution,"progress","10","Allocate TN NSSI started")</bpmn:script>
+runScript.prepareUpdateJobStatus(execution,"INPROGRESS","10","Allocate TN NSSI started")</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_1ex8ke9" name="Goto OOF TN NSSI Selection">
       <bpmn:incoming>SequenceFlow_0jrclmc</bpmn:incoming>
@@ -80,7 +80,7 @@ runScript.prepareUpdateJobStatus(execution,"progress","10","Allocate TN NSSI sta
       <bpmn:outgoing>SequenceFlow_1qv8qw1</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def runScript = new TnAllocateNssi()
-runScript.prepareUpdateJobStatus(execution,"finished","100","Allocated TN NSSI successfully")</bpmn:script>
+runScript.prepareUpdateJobStatus(execution,"FINISHED","100","Allocated TN NSSI successfully")</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:callActivity id="CallActivity_1bnkmaz" name="Call Decompose Service" calledElement="DecomposeService">
       <bpmn:extensionElements>
@@ -174,7 +174,7 @@ runScript.updateAAIOrchStatus(execution)</bpmn:script>
       <bpmn:outgoing>Flow_1853sgs</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def runScript = new TnAllocateNssi()
-runScript.prepareUpdateJobStatus(execution,"finished","100","Allocated TN NSSI successfully")</bpmn:script>
+runScript.prepareUpdateJobStatus(execution,"FINISHED","100","Allocated TN NSSI successfully")</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1853sgs" sourceRef="Activity_1mh10j4" targetRef="Activity_124z7q2" />
     <bpmn:callActivity id="Activity_187hs2t" name="Handle TN NSSI Selection OOF request" calledElement="DoHandleOofRequest">

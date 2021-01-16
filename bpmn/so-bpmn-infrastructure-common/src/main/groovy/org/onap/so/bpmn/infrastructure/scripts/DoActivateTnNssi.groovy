@@ -117,6 +117,19 @@ public class DoActivateTnNssi extends AbstractServiceTaskProcessor {
     }
 
 
+    String getOrchStatusBasedOnActionType(String actionType) {
+        String res = "unknown"
+        if (actionType.equals("activate")) {
+            res = "activated"
+        } else if (actionType.equals("deactivate")) {
+            res = "deactivated"
+        } else {
+            logger.error("ERROR: getOrchStatusBasedOnActionType bad actionType= \n" + actionType)
+        }
+
+        return res
+    }
+
     void updateAAIOrchStatus(DelegateExecution execution) {
         logger.debug("Start updateAAIOrchStatus")
         String tnNssiId = execution.getVariable("sliceServiceInstanceId")
