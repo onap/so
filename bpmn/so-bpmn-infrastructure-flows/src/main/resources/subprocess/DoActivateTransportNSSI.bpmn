@@ -30,7 +30,7 @@ ex.processJavaException(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_1qv8qw1</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def runScript = new DoActivateTnNssi()
-runScript.prepareUpdateJobStatus(execution,"finished","100","Activate or Deactivate successfully")</bpmn:script>
+runScript.prepareUpdateJobStatus(execution,"FINISHED","100","Activate or Deactivate successfully")</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_03s744c" sourceRef="StartEvent_1nbljfd" targetRef="ScriptTask_1tc44ge" />
     <bpmn:sequenceFlow id="SequenceFlow_1qv8qw1" sourceRef="ScriptTask_1ssh2l9" targetRef="Activity_0nhxd67" />
