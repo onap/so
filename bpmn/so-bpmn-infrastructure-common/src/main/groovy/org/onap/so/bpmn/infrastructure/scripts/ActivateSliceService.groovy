@@ -20,9 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import static org.apache.commons.lang3.StringUtils.isBlank
-import java.lang.reflect.Type
-import javax.ws.rs.NotFoundException
+
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.*
@@ -32,9 +30,12 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
-import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.logging.filter.base.ErrorCode
-import org.onap.so.beans.nsmf.NSSI
+import org.onap.so.beans.nsmf.CustomerInfo
+import org.onap.so.beans.nsmf.NetworkType
+import org.onap.so.beans.nsmf.NssInstance
+import org.onap.so.beans.nsmf.OperationType
+import org.onap.so.beans.nsmf.OrchestrationStatusEnum
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
@@ -46,8 +47,11 @@ import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+
+import javax.ws.rs.NotFoundException
+import java.util.function.Consumer
+
+import static org.apache.commons.lang3.StringUtils.isBlank
 
 /**
  * This groovy class supports the <class>ActivateSliceService.bpmn</class> process.
@@ -66,6 +70,8 @@ class ActivateSliceService extends AbstractServiceTaskProcessor {
 
     RequestDBUtil requestDBUtil = new RequestDBUtil()
 
+    AAIResourcesClient client = getAAIClient()
+
     private static final Logger logger = LoggerFactory.getLogger(ActivateSliceService.class)
 
     void preProcessRequest(DelegateExecution execution) {
@@ -75,7 +81,7 @@ class ActivateSliceService extends AbstractServiceTaskProcessor {
 
         try {
             // check for incoming json message/input
-            String siRequest = execution.getVariable("bpmnRequest")
+            String siRequest = Objects.requireNonNull(execution.getVariable("bpmnRequest"))
             logger.debug(siRequest)
 
             String requestId = execution.getVariable("mso-request-id")
@@ -109,13 +115,20 @@ class ActivateSliceService extends AbstractServiceTaskProcessor {
             } else {
                 execution.setVariable("subscriptionServiceType", subscriptionServiceType)
             }
-            String operationId = jsonUtil.getJsonValue(siRequest, "operationId")
+            String operationId = Objects.requireNonNull(jsonUtil.getJsonValue(siRequest, "operationId"))
             execution.setVariable("operationId", operationId)
 
-            String operationType = execution.getVariable("operationType")
-            execution.setVariable("operationType", operationType.toUpperCase())
-
+            String operationType = Objects.requireNonNull(execution.getVariable("operationType"))
             logger.info("operationType is " + execution.getVariable("operationType") )
+
+            CustomerInfo customerInfo = CustomerInfo.builder().operationId(operationId)
+                    .operationType(Objects.requireNonNull(OperationType.getOperationType(operationType)))
+                    .globalSubscriberId(globalSubscriberId).serviceInstanceId(serviceInstanceId)
+                    .subscriptionServiceType(subscriptionServiceType)
+                    .build()
+
+            execution.setVariable("customerInfo", customerInfo)
+
         } catch (BpmnError e) {
             throw e
         } catch (Exception ex) {
@@ -126,14 +139,58 @@ class ActivateSliceService extends AbstractServiceTaskProcessor {
         logger.debug(Prefix + "preProcessRequest Exit")
     }
 
+    /**
+     * Init the service Operation Status
+     */
+    def prepareInitServiceOperationStatus = { DelegateExecution execution ->
+        logger.debug(Prefix + "prepareActivateServiceOperationStatus Start")
+        try {
+            CustomerInfo customerInfo = execution.getVariable("customerInfo") as CustomerInfo
+            String serviceId = customerInfo.getServiceInstanceId()
+            String operationId = customerInfo.getOperationId()
+            String operationType = customerInfo.getOperationType().getType()
+            String userId = customerInfo.getGlobalSubscriberId()
+            String result = "processing"
+            String progress = "0"
+            String reason = ""
+            String operationContent = "Prepare service activation"
+
+            execution.setVariable("e2eserviceInstanceId", serviceId)
+            //execution.setVariable("operationType", operationType)
+
+            OperationStatus initStatus = new OperationStatus()
+            initStatus.setServiceId(serviceId)
+            initStatus.setOperationId(operationId)
+            initStatus.setOperation(operationType)
+            initStatus.setUserId(userId)
+            initStatus.setResult(result)
+            initStatus.setProgress(progress)
+            initStatus.setReason(reason)
+            initStatus.setOperationContent(operationContent)
+
+            requestDBUtil.prepareUpdateOperationStatus(execution, initStatus)
+
+        } catch (Exception e) {
+            logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    "Exception Occured Processing prepareInitServiceOperationStatus.", "BPMN",
+                    ErrorCode.UnknownError.getValue(), "Exception is:\n" + e)
+            execution.setVariable("CVFMI_ErrorResponse",
+                    "Error Occurred during prepareInitServiceOperationStatus Method:\n" + e.getMessage())
+        }
+        logger.debug(Prefix + "prepareInitServiceOperationStatus Exit")
+    }
+
 
     def sendSyncResponse = { DelegateExecution execution ->
         logger.debug(Prefix + "sendSyncResponse Start")
         try {
-            String operationId = execution.getVariable("operationId")
+            CustomerInfo customerInfo = execution.getVariable("customerInfo") as CustomerInfo
+            String operationId = customerInfo.getOperationId()
+
             // RESTResponse for API Handler (APIH) Reply Task
             String Activate5GsliceServiceRestRequest = """{"operationId":"${operationId}"}""".trim()
             logger.debug(" sendSyncResponse to APIH:" + "\n" + Activate5GsliceServiceRestRequest)
+
             sendWorkflowResponse(execution, 202, Activate5GsliceServiceRestRequest)
             execution.setVariable("sentSyncResponse", true)
         } catch (Exception ex) {
@@ -171,18 +228,276 @@ class ActivateSliceService extends AbstractServiceTaskProcessor {
         logger.debug(Prefix + "sendSyncError Exit")
     }
 
+    def checkAAIOrchStatusOfE2ESlice = { DelegateExecution execution ->
+        logger.debug(Prefix + "CheckAAIOrchStatus Start")
+        execution.setVariable("isContinue", "false")
+        CustomerInfo customerInfo = execution.getVariable("customerInfo") as CustomerInfo
+        String msg
+        String serviceInstanceId = customerInfo.serviceInstanceId
+        String globalSubscriberId = customerInfo.globalSubscriberId
+        String subscriptionServiceType = customerInfo.subscriptionServiceType
+
+        logger.debug("serviceInstanceId: " + serviceInstanceId)
+
+        //check the e2e slice status
+        try {
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                    .customer(globalSubscriberId)
+                    .serviceSubscription(subscriptionServiceType)
+                    .serviceInstance(serviceInstanceId))
+
+            AAIResultWrapper wrapper = client.get(uri, NotFoundException.class)
+            Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
+            ServiceInstance serviceInstance = si.orElseThrow()
+
+            boolean isContinue = handleOperation(customerInfo, serviceInstance)
+            execution.setVariable("isContinue", isContinue)
+            customerInfo.setSnssai(serviceInstance.getEnvironmentContext())
+
+            execution.setVariable("customerInfo", customerInfo)
+            execution.setVariable("ssInstance", serviceInstance)
+            execution.setVariable("ssiUri", uri)
+        } catch (BpmnError e) {
+            throw e
+        } catch (Exception ex) {
+            execution.setVariable("isContinue", "false")
+            msg = "Exception in org.onap.so.bpmn.common.scripts.CompleteMsoProcess.CheckAAIOrchStatus, " +
+                    "Requested e2eservice does not exist: " + ex.getMessage()
+            logger.info(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+
+        logger.debug(Prefix + "CheckAAIOrchStatus Exit")
+    }
+
+    static boolean handleOperation(CustomerInfo customerInfo, ServiceInstance serviceInstance) {
+        OperationType operationType = customerInfo.operationType
+        OrchestrationStatusEnum status = OrchestrationStatusEnum.getStatus(Objects.requireNonNull(
+                serviceInstance.getOrchestrationStatus()))
+
+        return ((OrchestrationStatusEnum.ACTIVATED == status && OperationType.DEACTIVATE == operationType)
+            || (OrchestrationStatusEnum.DEACTIVATED == status && OperationType.ACTIVATE == operationType))
+    }
+
+    void checkAAIOrchStatusOfAllocates(DelegateExecution execution) {
+        logger.debug(Prefix + "CheckAAIOrchStatus Start")
+        CustomerInfo customerInfo = execution.getVariable("customerInfo") as CustomerInfo
+        String msg
+        String serviceInstanceId = customerInfo.serviceInstanceId
+        String globalSubscriberId = customerInfo.globalSubscriberId
+        String subscriptionServiceType = customerInfo.subscriptionServiceType
+
+        logger.debug("serviceInstanceId: " + serviceInstanceId)
+
+        //check the NSI is exist or the status of NSI is active or de-active
+        try {
+
+            //get the allotted-resources by e2e slice id
+            AAIPluralResourceUri uriAllotted = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                    .customer(globalSubscriberId)
+                    .serviceSubscription(subscriptionServiceType)
+                    .serviceInstance(serviceInstanceId)
+                    .allottedResources()
+            )
+
+            AAIResultWrapper wrapperAllotted = client.get(uriAllotted, NotFoundException.class)
+            Optional<AllottedResources> allAllotted = wrapperAllotted.asBean(AllottedResources.class)
+
+            AllottedResources allottedResources = allAllotted.get()
+            List<AllottedResource> AllottedResourceList = allottedResources.getAllottedResource()
+            if (AllottedResourceList.isEmpty()) {
+                execution.setVariable("isContinue", "false")
+                exceptionUtil.buildAndThrowWorkflowException(execution, 2500,
+                        "allottedResources in aai is empty")
+            }
+            AllottedResource ar = AllottedResourceList.first()
+            String relatedLink = ar.getRelationshipList().getRelationship().first().getRelatedLink()
+            String nsiServiceId = relatedLink.substring(relatedLink.lastIndexOf("/") + 1, relatedLink.length())
+            customerInfo.setNsiId(nsiServiceId)
+            execution.setVariable("customerInfo", customerInfo)
+            logger.info("the NSI ID is:" + nsiServiceId)
+        } catch (BpmnError e) {
+            throw e
+        } catch (Exception ex) {
+            logger.info("NSI Service doesnt exist")
+            execution.setVariable("isContinue", "false")
+            msg = "Exception in org.onap.so.bpmn.common.scripts.CompleteMsoProcess.CheckAAIOrchStatus " + ex.getMessage()
+            logger.info(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+        logger.debug(Prefix + "CheckAAIOrchStatus Exit")
+    }
+
+    void checkAAIOrchStatusOfNSI(DelegateExecution execution) {
+
+        logger.debug(Prefix + "CheckAAIOrchStatus Start")
+        CustomerInfo customerInfo = execution.getVariable("customerInfo") as CustomerInfo
+        String msg = ""
+        String globalSubscriberId = customerInfo.globalSubscriberId
+        String subscriptionServiceType = customerInfo.subscriptionServiceType
+        String nsiServiceId = customerInfo.getNsiId()
+
+        logger.debug("network slice instance id: " + nsiServiceId)
+
+        //check the NSI is exist or the status of NSI is active or de-active
+        try {
+            //Query nsi by nsi id
+
+            //get the NSI id by e2e slice id
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                    .customer(globalSubscriberId)
+                    .serviceSubscription(subscriptionServiceType)
+                    .serviceInstance(nsiServiceId))
+
+            AAIResultWrapper wrapper = client.get(uri, NotFoundException.class)
+            Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
+
+            ServiceInstance nsInstance = si.get()
+            if (!"nsi".equalsIgnoreCase(nsInstance.getServiceRole().toLowerCase())) {
+                logger.info("the service id" + nsInstance.getServiceInstanceId() + "is " +
+                        nsInstance.getServiceRole())
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+            }
+            execution.setVariable("nsInstance", nsInstance)
+            execution.setVariable("nsiUri", uri)
+            boolean isContinue = handleOperation(customerInfo, nsInstance)
+            execution.setVariable("isContinue", isContinue)
+
+        } catch (BpmnError e) {
+            throw e
+        } catch (Exception ex) {
+            logger.info("NSI Service doesnt exist")
+            execution.setVariable("isActivate", "false")
+            execution.setVariable("isContinue", "false")
+            msg = "Exception in org.onap.so.bpmn.common.scripts.CompleteMsoProcess.CheckAAIOrchStatus " + ex.getMessage()
+            logger.info(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+        logger.debug(Prefix + "CheckAAIOrchStatus Exit")
+    }
+
+    void prepareActivation(DelegateExecution execution) {
+        logger.debug(Prefix + "prepareActivation Start")
+
+        CustomerInfo customerInfo = execution.getVariable("customerInfo") as CustomerInfo
+        String globalSubscriberId = customerInfo.globalSubscriberId
+        String subscriptionServiceType = customerInfo.subscriptionServiceType
+
+        logger.debug(" ***** prepare active NSI/AN/CN/TN slice ***** ")
+
+        Queue<NssInstance> nssInstances = new LinkedList<>()
+        ServiceInstance nsInstance =
+                execution.getVariable("nsInstance") as ServiceInstance
+        try {
+            //get the TN NSSI id by NSI id, active NSSI TN slicing
+            List<Relationship> relatedList = nsInstance.getRelationshipList().getRelationship()
+            for (Relationship relationship : relatedList) {
+                String relatedTo = relationship.getRelatedTo()
+                if (!"service-instance".equalsIgnoreCase(relatedTo)) {
+                    continue
+                }
+                String relatioshipurl = relationship.getRelatedLink()
+                String nssiserviceid = relatioshipurl.substring(relatioshipurl.lastIndexOf("/") + 1,
+                        relatioshipurl.length())
+
+                AAIResourceUri nsiUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                        .customer(globalSubscriberId)
+                        .serviceSubscription(subscriptionServiceType)
+                        .serviceInstance(nssiserviceid))
+                if (!client.exists(nsiUri)) {
+                    exceptionUtil.buildAndThrowWorkflowException(execution, 2500,
+                            "Service Instance was not found in aai")
+                }
+                AAIResultWrapper wrapper01 = client.get(nsiUri, NotFoundException.class)
+                Optional<ServiceInstance> nssiSi = wrapper01.asBean(ServiceInstance.class)
+                nssiSi.ifPresent(new Consumer<ServiceInstance>() {
+                    @Override
+                    void accept(ServiceInstance instance) {
+                        String env = Objects.requireNonNull(instance.getEnvironmentContext())
+                        NssInstance nssi = NssInstance.builder().nssiId(instance.getServiceInstanceId())
+                                .modelInvariantId(instance.getModelInvariantId())
+                                .modelVersionId(instance.getModelVersionId())
+                                .networkType(NetworkType.fromString(env))
+                                .operationType(customerInfo.operationType)
+                                .snssai(customerInfo.snssai)
+                                .serviceType(instance.getServiceType())
+                                .build()
+                        nssInstances.offer(nssi)
+                    }
+                })
+            }
+            execution.setVariable("nssInstances", nssInstances)
+            execution.setVariable("nssInstanceInfos", nssInstances)
+        } catch (Exception e) {
+            String msg = "Requested service does not exist:" + e.getMessage()
+            logger.info("Service doesnt exist")
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+
+        logger.debug(Prefix + "prepareActivation Exit")
+    }
+
+    void isOperationFinished(DelegateExecution execution) {
+        Queue<NssInstance> nssInstances = execution.getVariable("nssInstances") as Queue<NssInstance>
+        if (nssInstances.isEmpty()) {
+            execution.setVariable("isOperationFinished", "true")
+        }
+    }
+
+    def updateStatusSNSSAIandNSIandNSSI = { DelegateExecution execution ->
+        logger.debug(Prefix + "updateStatusSNSSAIandNSIandNSSI Start")
+        logger.debug(" ***** update SNSSAI NSI NSSI slicing ***** ")
+        ServiceInstance ssInstance = execution.getVariable("ssInstance") as ServiceInstance
+        AAIResourceUri ssUri = execution.getVariable("ssiUri") as AAIResourceUri
+
+        CustomerInfo customerInfo = execution.getVariable("customerInfo") as CustomerInfo
+        OperationType operationType = customerInfo.operationType
+
+        updateStratus(execution, ssInstance, operationType, ssUri)
+        //update the nsi
+        ServiceInstance nsInstance = execution.getVariable("nsInstance") as ServiceInstance
+        AAIResourceUri nsiUri = execution.getVariable("nsiUri") as AAIResourceUri
+
+        updateStratus(execution, nsInstance, operationType, nsiUri)
+
+
+        logger.debug(Prefix + "updateStatusSNSSAIandNSIandNSSI Exit")
+    }
+
+    void updateStratus(DelegateExecution execution, ServiceInstance serviceInstance,
+                       OperationType operationType, AAIResourceUri uri) {
+
+        logger.debug(Prefix + "updateStratus Start")
+
+        try {
+            serviceInstance.setOrchestrationStatus()
+            if (OperationType.ACTIVATE == operationType) {
+                serviceInstance.setOrchestrationStatus(OrchestrationStatusEnum.ACTIVATED.getValue())
+            } else {
+                serviceInstance.setOrchestrationStatus(OrchestrationStatusEnum.DEACTIVATED.getValue())
+            }
+            client.update(uri, serviceInstance)
+        } catch (Exception e) {
+            logger.info("Service is already in active state")
+            String msg = "Service is already in active state, " + e.getMessage()
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+
+        logger.debug(Prefix + "updateStratus Exit")
+    }
 
     def prepareCompletionRequest = { DelegateExecution execution ->
         logger.debug(Prefix + "prepareCompletionRequest Start")
-        String serviceId = execution.getVariable("serviceInstanceId")
-        String operationId = execution.getVariable("operationId")
-        String userId = execution.getVariable("globalSubscriberId")
-        //String result = execution.getVariable("result")
+        CustomerInfo customerInfo = execution.getVariable("customerInfo") as CustomerInfo
+        String serviceId = customerInfo.getServiceInstanceId()
+        String operationId = customerInfo.getOperationId()
+        String userId = customerInfo.getGlobalSubscriberId()
+
         String result = "finished"
         String progress = "100"
         String reason = ""
-        String operationContent = execution.getVariable("operationContent")
-        String operationType = execution.getVariable("operationType")
+        String operationContent = "action finished success"
+        String operationType = customerInfo.operationType.getType()
 
         OperationStatus initStatus = new OperationStatus()
         initStatus.setServiceId(serviceId)
@@ -198,383 +513,4 @@ class ActivateSliceService extends AbstractServiceTaskProcessor {
 
         logger.debug(Prefix + "prepareCompletionRequest Exit")
     }
-
-
-    /**
-     * Init the service Operation Status
-     */
-    def prepareInitServiceOperationStatus = { DelegateExecution execution ->
-        logger.debug(Prefix + "prepareActivateServiceOperationStatus Start")
-        try {
-            String serviceId = execution.getVariable("serviceInstanceId")
-            String operationId = execution.getVariable("operationId")
-            String operationType = execution.getVariable("operationType")
-            String userId = execution.getVariable("globalSubscriberId")
-            String result = "processing"
-            String progress = "0"
-            String reason = ""
-            String operationContent = "Prepare service activation"
-
-            execution.setVariable("e2eserviceInstanceId", serviceId)
-            execution.setVariable("operationType", operationType)
-
-            OperationStatus initStatus = new OperationStatus()
-            initStatus.setServiceId(serviceId)
-            initStatus.setOperationId(operationId)
-            initStatus.setOperation(operationType)
-            initStatus.setUserId(userId)
-            initStatus.setResult(result)
-            initStatus.setProgress(progress)
-            initStatus.setReason(reason)
-            initStatus.setOperationContent(operationContent)
-
-            requestDBUtil.prepareUpdateOperationStatus(execution, initStatus)
-
-        } catch (Exception e) {
-            logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    "Exception Occured Processing prepareInitServiceOperationStatus.", "BPMN",
-                    ErrorCode.UnknownError.getValue(), "Exception is:\n" + e)
-            execution.setVariable("CVFMI_ErrorResponse",
-                    "Error Occurred during prepareInitServiceOperationStatus Method:\n" + e.getMessage())
-        }
-        logger.debug(Prefix + "prepareInitServiceOperationStatus Exit")
-    }
-
-
-    private getSNSSIStatusByNsi = { DelegateExecution execution, String NSIServiceId ->
-
-        logger.debug(Prefix + "getSNSSIStatusByNsi Start")
-        String globalSubscriberId = execution.getVariable("globalSubscriberId")
-        String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
-
-        AAIResourcesClient client = new AAIResourcesClient()
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(NSIServiceId))
-        if (!client.exists(uri)) {
-            exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai")
-        }
-        AAIResultWrapper wrapper = client.get(uri, NotFoundException.class)
-        Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
-        if (si.isPresent()) {
-
-            List<Relationship> relatedList = si.get().getRelationshipList().getRelationship()
-            for (Relationship relationship : relatedList) {
-                String relatedTo = relationship.getRelatedTo()
-                if (relatedTo.toLowerCase() == "allotted-resource") {
-                    //get snssi from allotted resource in list by nsi
-                    List<String> SNSSIList = new ArrayList<>()
-                    List<RelationshipData> relationshipDataList = relationship.getRelationshipData()
-                    for (RelationshipData relationshipData : relationshipDataList) {
-                        if (relationshipData.getRelationshipKey() == "service-instance.service-instance-id") {
-                            SNSSIList.add(relationshipData.getRelationshipValue())
-                        }
-                    }
-                    for (String snssi : SNSSIList) {
-                        AAIResourcesClient client01 = new AAIResourcesClient()
-                        AAIResourceUri uri01 = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(snssi))
-                        if (!client.exists(uri01)) {
-                            exceptionUtil.buildAndThrowWorkflowException(execution, 2500,
-                                    "Service Instance was not found in aai")
-                        }
-                        AAIResultWrapper wrapper01 = client01.get(uri01, NotFoundException.class)
-                        Optional<ServiceInstance> nssiSi = wrapper01.asBean(ServiceInstance.class)
-                        if (nssiSi.isPresent()) {
-                            return nssiSi.get().getOrchestrationStatus() == "deactivated"
-                        }
-                    }
-
-                }
-            }
-
-        }
-        logger.debug(Prefix + "getSNSSIStatusByNsi Exit")
-    }
-
-
-    def updateStatusSNSSAIandNSIandNSSI = { DelegateExecution execution ->
-        logger.debug(Prefix + "updateStatusSNSSAIandNSIandNSSI Start")
-        logger.debug(" ***** update SNSSAI NSI NSSI slicing ***** ")
-        String e2eserviceInstanceId = execution.getVariable("e2eserviceInstanceId")
-        String NSIserviceInstanceId = execution.getVariable("NSIserviceid")
-
-        String globalCustId = execution.getVariable("globalSubscriberId")
-        String serviceType = execution.getVariable("serviceType")
-        String operationType = execution.getVariable("operationType")
-
-        String nssiMap = execution.getVariable("nssiMap")
-        Type type = new TypeToken<HashMap<String, NSSI>>() {}.getType()
-        Map<String, NSSI> activateNssiMap = new Gson().fromJson(nssiMap, type)
-        //update tn/cn/an nssi
-        for (Map.Entry<String, NSSI> entry : activateNssiMap.entrySet()) {
-            NSSI nssi = entry.getValue()
-            String nssiid = nssi.getNssiId()
-            updateStratus(execution, globalCustId, serviceType, nssiid, operationType)
-        }
-        if (operationType.equalsIgnoreCase("activation")) {
-            //update the s-nssai
-            updateStratus(execution, globalCustId, serviceType, e2eserviceInstanceId, operationType)
-            //update the nsi
-            updateStratus(execution, globalCustId, serviceType, NSIserviceInstanceId, operationType)
-        } else {
-            //update the s-nssai
-            updateStratus(execution, globalCustId, serviceType, e2eserviceInstanceId, operationType)
-            boolean flag = getSNSSIStatusByNsi(execution, NSIserviceInstanceId)
-            if (flag) {
-                //update the nsi
-                updateStratus(execution, globalCustId, serviceType, NSIserviceInstanceId, operationType)
-            } else {
-                logger.error("Service's status update failed")
-                String msg = "Service's status update failed"
-                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-            }
-        }
-        logger.debug(Prefix + "updateStatusSNSSAIandNSIandNSSI Exit")
-    }
-
-
-    def updateStratus = { DelegateExecution execution, String globalCustId,
-                          String serviceType, String serviceId, String operationType ->
-        logger.debug(Prefix + "updateStratus Start")
-
-        try {
-            AAIResourcesClient client = new AAIResourcesClient()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalCustId).serviceSubscription(serviceType).serviceInstance(serviceId))
-            if (!client.exists(uri)) {
-                exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai")
-            }
-            AAIResultWrapper wrapper = client.get(uri, NotFoundException.class)
-            Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
-
-            if (si.isPresent()) {
-                if (operationType.equalsIgnoreCase("activation")) {
-                    if (si.get().getOrchestrationStatus() == "deactivated") {
-                        si.get().setOrchestrationStatus("activated")
-                        client.update(uri, si.get())
-                    }
-                } else {
-                    if (si.get().getOrchestrationStatus() == "activated") {
-                        si.get().setOrchestrationStatus("deactivated")
-                        client.update(uri, si.get())
-                    }
-                }
-
-            }
-        } catch (Exception e) {
-            logger.info("Service is already in active state")
-            String msg = "Service is already in active state, " + e.getMessage()
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-        }
-
-        logger.debug(Prefix + "updateStratus Exit")
-    }
-
-
-    def prepareActivation = { DelegateExecution execution ->
-        logger.debug(Prefix + "prepareActivation Start")
-
-        logger.debug(" ***** prepare active NSI/AN/CN/TN slice ***** ")
-        String NSIserviceInstanceId = execution.getVariable("NSIserviceid")
-
-        String globalSubscriberId = execution.getVariable("globalSubscriberId")
-        String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
-
-        Map<String, NSSI> nssiMap = new HashMap<>()
-
-        List<String> activationSequence = new ArrayList<>(Arrays.asList("an", "tn", "cn"))
-
-        def activationCount = activationSequence.size()
-
-        execution.setVariable("activationIndex", "0")
-
-        execution.setVariable("activationCount", activationCount)
-        try {
-            //get the TN NSSI id by NSI id, active NSSI TN slicing
-            AAIResourcesClient client = new AAIResourcesClient()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(NSIserviceInstanceId))
-            if (!client.exists(uri)) {
-                exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai")
-            }
-            AAIResultWrapper wrapper = client.get(uri, NotFoundException.class)
-            Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
-            if (si.isPresent()) {
-
-                List<Relationship> relatedList = si.get().getRelationshipList().getRelationship()
-                for (Relationship relationship : relatedList) {
-                    String relatedTo = relationship.getRelatedTo()
-                    if (relatedTo.toLowerCase() == "service-instance") {
-                        String relatioshipurl = relationship.getRelatedLink()
-                        String nssiserviceid =
-                                relatioshipurl.substring(relatioshipurl.lastIndexOf("/") + 1, relatioshipurl.length())
-
-                        AAIResourcesClient client01 = new AAIResourcesClient()
-                        AAIResourceUri uri01 = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(nssiserviceid))
-                        if (!client.exists(uri01)) {
-                            exceptionUtil.buildAndThrowWorkflowException(execution, 2500,
-                                    "Service Instance was not found in aai")
-                        }
-                        AAIResultWrapper wrapper01 = client01.get(uri01, NotFoundException.class)
-                        Optional<ServiceInstance> nssiSi = wrapper01.asBean(ServiceInstance.class)
-                        if (nssiSi.isPresent()) {
-                            if (nssiSi.get().getEnvironmentContext().toLowerCase().contains("an")
-                                    || nssiSi.get().getEnvironmentContext().toLowerCase().contains("cn")
-                                    || nssiSi.get().getEnvironmentContext().toLowerCase().contains("tn")) {
-                                nssiMap.put(nssiSi.get().getEnvironmentContext(),
-                                        new NSSI(nssiSi.get().getServiceInstanceId(),
-                                                nssiSi.get().getModelInvariantId(), nssiSi.get().getModelVersionId()))
-                            }
-                        }
-                    }
-                }
-
-
-            }
-        } catch (Exception e) {
-            String msg = "Requested service does not exist:" + e.getMessage()
-            logger.info("Service doesnt exist")
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-        }
-
-        if (nssiMap.size() > 0) {
-            execution.setVariable("isNSSIActivate", "true")
-            String nssiMap01 = mapToJsonStr(nssiMap)
-            execution.setVariable("nssiMap", nssiMap01)
-            execution.setVariable("operation_type", "activate")
-            execution.setVariable("activationCount", nssiMap.size())
-            logger.info("the nssiMap01 is :" + nssiMap01)
-        } else {
-            execution.setVariable("isNSSIActivate", "false")
-        }
-
-        logger.debug(Prefix + "prepareActivation Exit")
-    }
-
-
-    private mapToJsonStr = { HashMap<String, NSSI> stringNSSIHashMap ->
-        HashMap<String, NSSI> map = new HashMap<String, NSSI>()
-        for (Map.Entry<String, NSSI> child : stringNSSIHashMap.entrySet()) {
-            map.put(child.getKey(), child.getValue())
-        }
-        return new Gson().toJson(map)
-    }
-
-
-    def checkAAIOrchStatusofslice = { DelegateExecution execution ->
-        logger.debug(Prefix + "CheckAAIOrchStatus Start")
-
-        String msg = ""
-        String serviceInstanceId = execution.getVariable("serviceInstanceId")
-        String globalSubscriberId = execution.getVariable("globalSubscriberId")
-        String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
-        String operationType = execution.getVariable("operationType")
-
-        logger.debug("serviceInstanceId: " + serviceInstanceId)
-
-        //check the e2e slice status
-        try {
-            try {
-                AAIResourcesClient client = new AAIResourcesClient()
-                AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(serviceInstanceId))
-                if (!client.exists(uri)) {
-                    exceptionUtil.buildAndThrowWorkflowException(execution, 2500,
-                            "Service Instance was not found in aai")
-                }
-                AAIResultWrapper wrapper = client.get(uri, NotFoundException.class)
-                Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
-                if (si.isPresent()) {
-                    if (si.get().getOrchestrationStatus().toLowerCase() == "activated" &&
-                            operationType.equalsIgnoreCase("deactivation")) {
-                        logger.info("Service is in active state")
-                        execution.setVariable("e2eservicestatus", "activated")
-                        execution.setVariable("isContinue", "true")
-                        String snssai = si.get().getEnvironmentContext()
-                        execution.setVariable("snssai", snssai)
-                    } else if (si.get().getOrchestrationStatus().toLowerCase() == "deactivated" &&
-                            operationType.equalsIgnoreCase("activation")) {
-                        logger.info("Service is  in de-activated state")
-                        execution.setVariable("e2eservicestatus", "deactivated")
-                        execution.setVariable("isContinue", "true")
-                        String snssai = si.get().getEnvironmentContext()
-                        execution.setVariable("snssai", snssai)
-                    } else {
-                        execution.setVariable("isContinue", "false")
-                    }
-                }
-            } catch (Exception e) {
-                msg = "Requested e2eservice does not exist"
-                logger.info("e2eservice doesnt exist")
-                execution.setVariable("isContinue", "false")
-                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-            }
-
-            //check the NSI is exist or the status of NSI is active or de-active
-            try {
-
-                //get the allotted-resources by e2e slice id
-                AAIResourcesClient client_allotted = new AAIResourcesClient()
-                AAIPluralResourceUri uri_allotted = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(serviceInstanceId).allottedResources()
-                        )
-                if (!client_allotted.exists(uri_allotted)) {
-                    exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai")
-                }
-                AAIResultWrapper wrapper_allotted = client_allotted.get(uri_allotted, NotFoundException.class)
-                Optional<AllottedResources> all_allotted = wrapper_allotted.asBean(AllottedResources.class)
-
-                if (all_allotted.isPresent() && all_allotted.get().getAllottedResource()) {
-                    List<AllottedResource> AllottedResourceList = all_allotted.get().getAllottedResource()
-                    AllottedResource ar = AllottedResourceList.first()
-                    String relatedLink = ar.getRelationshipList().getRelationship().first().getRelatedLink()
-                    String nsiserviceid = relatedLink.substring(relatedLink.lastIndexOf("/") + 1, relatedLink.length())
-                    execution.setVariable("NSIserviceid", nsiserviceid)
-                    logger.info("the NSI ID is:" + nsiserviceid)
-
-                    //Query nsi by nsi id
-                    try {
-                        //get the NSI id by e2e slice id
-                        AAIResourcesClient client = new AAIResourcesClient()
-                        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(nsiserviceid))
-                        if (!client.exists(uri)) {
-                            exceptionUtil.buildAndThrowWorkflowException(execution, 2500,
-                                    "Service Instance was not found in aai")
-                        }
-                        AAIResultWrapper wrapper = client.get(uri, NotFoundException.class)
-                        Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
-
-                        if (si.isPresent()) {
-                            if (si.get().getServiceRole().toLowerCase() == "nsi") {
-                                if (si.get().getOrchestrationStatus() == "activated") {
-                                    logger.info("NSI services is  in activated state")
-                                    execution.setVariable("NSIservicestatus", "activated")
-                                } else {
-                                    logger.info("NSI services is  in deactivated state")
-                                    execution.setVariable("NSIservicestatus", "deactivated")
-                                }
-                            } else {
-                                logger.info("the service id" + si.get().getServiceInstanceId() + "is " +
-                                        si.get().getServiceRole())
-                                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-                            }
-                        }
-                    } catch (Exception e) {
-                        msg = "Requested NSI service does not exist:" + e.getMessage()
-                        logger.info("NSI service doesnt exist")
-                        execution.setVariable("isContinue", "false")
-                        exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-                    }
-                }
-            } catch (Exception e) {
-                msg = "Requested service does not exist: " + e.getMessage()
-                logger.info("NSI Service doesnt exist")
-                execution.setVariable("isActivate", "false")
-                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-            }
-        } catch (BpmnError e) {
-            throw e
-        } catch (Exception ex) {
-            msg = "Exception in org.onap.so.bpmn.common.scripts.CompleteMsoProcess.CheckAAIOrchStatus " + ex.getMessage()
-            logger.info(msg)
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-        }
-
-        logger.debug(Prefix + "CheckAAIOrchStatus Exit")
-    }
-
 }

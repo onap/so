@@ -35,6 +35,7 @@ import org.mockito.stubbing.Answer;
 import org.onap.so.adapters.nssmf.consts.NssmfAdapterConsts;
 import org.onap.so.adapters.nssmf.entity.NssmfInfo;
 import org.onap.so.adapters.nssmf.entity.TokenResponse;
+import org.onap.so.adapters.nssmf.enums.ActionType;
 import org.onap.so.adapters.nssmf.enums.HttpMethod;
 import org.onap.so.adapters.nssmf.util.RestUtil;
 import org.onap.so.beans.nsmf.*;
@@ -358,6 +359,7 @@ public class NssmfManagerServiceImplTest {
         operationStatus.setOperationId("4b45d919816ccaa2b762df5120f72067");
         operationStatus.setResourceTemplateUUID("8ee5926d-720b-4bb2-86f9-d20e921c143b");
         operationStatus.setServiceId("NSI-M-001-HDBNJ-NSMF-01-A-ZX");
+        operationStatus.setOperType(ActionType.ALLOCATE.toString());
 
         NssmfAdapterNBIRequest nbiRequest = createNbiRequest();
         nbiRequest.setResponseId("7512eb3feb5249eca5ddd742fedddd39");
@@ -375,8 +377,6 @@ public class NssmfManagerServiceImplTest {
         assertEquals(allRes.getResponseDescriptor().getProgress(), 20);
         assertEquals(allRes.getResponseDescriptor().getStatus(), "processing");
         assertEquals(allRes.getResponseDescriptor().getResponseId(), "7512eb3feb5249eca5ddd742fedddd39");
-
-        System.out.println(res);
 
     }
 
