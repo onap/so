@@ -39,7 +39,7 @@ class ActivateSliceServiceTest extends MsoGroovyTest {
         when(mockExecution.getVariable("operationType")).thenReturn("activation")
 
 
-        ActivateSliceService service = new ActivateSliceService()
+        ActivateSliceServiceV3 service = new ActivateSliceServiceV3()
         service.preProcessRequest(mockExecution)
         Mockito.verify(mockExecution, times(7)).setVariable(captor.capture(), captor.capture())
     }
@@ -52,7 +52,7 @@ class ActivateSliceServiceTest extends MsoGroovyTest {
 
         when(mockExecution.getVariable("globalSubscriberId")).thenReturn("11111")
 
-        ActivateSliceService service = new ActivateSliceService()
+        ActivateSliceServiceV3 service = new ActivateSliceServiceV3()
 
         service.prepareInitServiceOperationStatus(mockExecution)
         Mockito.verify(mockExecution, times(1)).setVariable(eq("updateOperationStatus"), captor.capture())
@@ -64,7 +64,7 @@ class ActivateSliceServiceTest extends MsoGroovyTest {
     void testSendSyncResponse() {
         when(mockExecution.getVariable("operationId")).thenReturn("123456")
         when(mockExecution.getVariable("serviceInstanceId")).thenReturn("12345")
-        ActivateSliceService service = new ActivateSliceService()
+        ActivateSliceServiceV3 service = new ActivateSliceServiceV3()
         service.sendSyncResponse(mockExecution)
         Mockito.verify(mockExecution, times(1)).setVariable(eq("sentSyncResponse"), captor.capture())
         def updateVolumeGroupRequest = captor.getValue()
@@ -104,7 +104,7 @@ class ActivateSliceServiceTest extends MsoGroovyTest {
         when(mockExecution.getVariable("globalSubscriberId")).thenReturn("11111")
         when(mockExecution.getVariable("operationStatus"))
                 .thenReturn("deactivated")
-        ActivateSliceService service = new ActivateSliceService()
+        ActivateSliceServiceV3 service = new ActivateSliceServiceV3()
 
         service.prepareCompletionRequest(mockExecution)
         Mockito.verify(mockExecution, times(1)).setVariable(eq("updateOperationStatus"), captor.capture())

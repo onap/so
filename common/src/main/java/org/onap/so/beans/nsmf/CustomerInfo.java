@@ -19,42 +19,28 @@
  */
 package org.onap.so.beans.nsmf;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class ServiceInfo implements Serializable {
-
-    private static final long serialVersionUID = 7895110339097615695L;
-
-    private String serviceInvariantUuid;
-
-    private String serviceUuid;
+public class CustomerInfo implements Serializable {
+    private static final long serialVersionUID = -8749985097619384358L;
 
     private String globalSubscriberId;
 
+    private String serviceInstanceId;
+
     private String subscriptionServiceType;
 
-    private String serviceType;
+    private String operationId;
+
+    private OperationType operationType;
 
     private String nsiId;
 
-    private String nssiId;
+    private String snssai;
 
-    private String sST;
-
-    private String nssiName;
-
-    private String pLMNIdList;
-
-    private String actionType;
 }

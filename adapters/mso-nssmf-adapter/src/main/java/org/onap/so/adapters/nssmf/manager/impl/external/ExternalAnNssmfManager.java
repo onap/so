@@ -43,7 +43,10 @@ import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.unMarshal;
 
 public class ExternalAnNssmfManager extends ExternalNssmfManager {
 
-    private Map<String, String> bodyParams = new HashMap<>(); // request body params
+    /**
+     * request body params
+     */
+    private Map<String, String> bodyParams = new HashMap<>();
 
     @Override
     protected String doWrapExtAllocateReqBody(NssmfAdapterNBIRequest nbiRequest) throws ApplicationException {
@@ -125,7 +128,23 @@ public class ExternalAnNssmfManager extends ExternalNssmfManager {
     @Override
     public RestResponse activateNssi(NssmfAdapterNBIRequest nbiRequest, String snssai) throws ApplicationException {
         // TODO
-        return null;
+        NssiResponse resp = new NssiResponse();
+        String nssiId = nbiRequest.getActDeActNssi().getNssiId();
+        resp.setJobId(UUID.randomUUID().toString());
+        resp.setNssiId(nssiId);
+
+        RestResponse returnRsp = new RestResponse();
+
+        returnRsp.setStatus(202);
+        returnRsp.setResponseContent(marshal(resp));
+
+        ResourceOperationStatus status =
+                new ResourceOperationStatus(serviceInfo.getNsiId(), resp.getJobId(), serviceInfo.getServiceUuid());
+        status.setResourceInstanceID(nssiId);
+        status.setOperType(actionType.toString());
+
+        updateDbStatus(status, returnRsp.getStatus(), JobStatus.FINISHED, NssmfAdapterUtil.getStatusDesc(actionType));
+        return returnRsp;
     }
 
     @Override
