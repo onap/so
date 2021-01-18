@@ -33,6 +33,9 @@ public interface AaiServiceProvider {
     void invokeCreateServiceInstance(ServiceInstance nssiInstance, String globalSubscriberId, String serviceType,
             String serviceInstanceId);
 
+    void invokeUpdateServiceInstance(ServiceInstance nssiInstance, String globalSubscriberId, String serviceType,
+                                     String serviceInstanceId);
+
     ServiceInstance invokeGetServiceInstance(String globalSubscriberId, String serviceType, String serviceInstanceId);
 
     void invokeDeleteServiceInstance(String globalSubscriberId, String serviceType, String serviceInstanceId);

@@ -77,6 +77,11 @@ public class RestUtil {
                 serviceInfo.getSubscriptionServiceType(), serviceInfo.getNssiId());
     }
 
+    public void updateServiceInstance(ServiceInstance serviceInstance, ServiceInfo serviceInfo) {
+        aaiSvcProv.invokeUpdateServiceInstance(serviceInstance, serviceInfo.getGlobalSubscriberId(),
+                serviceInfo.getSubscriptionServiceType(), serviceInfo.getNssiId());
+    }
+
     public ServiceInstance getServiceInstance(ServiceInfo serviceInfo) {
         return aaiSvcProv.invokeGetServiceInstance(serviceInfo.getGlobalSubscriberId(),
                 serviceInfo.getSubscriptionServiceType(), serviceInfo.getNssiId());
