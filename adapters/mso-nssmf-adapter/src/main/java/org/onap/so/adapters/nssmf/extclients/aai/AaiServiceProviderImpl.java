@@ -77,6 +77,14 @@ public class AaiServiceProviderImpl implements AaiServiceProvider {
     }
 
     @Override
+    public void invokeUpdateServiceInstance(ServiceInstance nssiInstance, String globalSubscriberId, String serviceType,
+            String serviceInstanceId) {
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                .customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId));
+        aaiClientProvider.getAaiClient().update(uri, nssiInstance);
+    }
+
+    @Override
     public ServiceInstance invokeGetServiceInstance(String globalSubscriberId, String serviceType,
             String serviceInstanceId) {
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()

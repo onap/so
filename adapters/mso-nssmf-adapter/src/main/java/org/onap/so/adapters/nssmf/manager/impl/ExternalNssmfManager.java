@@ -101,6 +101,8 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
             } else if (ActionType.DEALLOCATE.equals(jobOperType)) {
                 // TODO
                 restUtil.deleteServiceInstance(serviceInfo);
+            } else {
+                throw new UnsupportedOperationException("unsupported Operation " + jobOperType);
             }
         }
     }
