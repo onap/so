@@ -20,7 +20,15 @@
 
 package org.onap.so.beans.nsmf;
 
-public class NSSI {
+import lombok.Builder;
+import lombok.Data;
+import java.io.Serializable;
+
+@Data
+@Builder
+public class NssInstance implements Serializable {
+
+    private static final long serialVersionUID = -153484249182203537L;
 
     private String nssiId;
 
@@ -28,33 +36,11 @@ public class NSSI {
 
     private String modelVersionId;
 
-    public NSSI(String nssiId, String modelInvariantId, String modelVersionId) {
-        this.nssiId = nssiId;
-        this.modelInvariantId = modelInvariantId;
-        this.modelVersionId = modelVersionId;
-    }
+    private NetworkType networkType;
 
-    public String getNssiId() {
-        return nssiId;
-    }
+    private OperationType operationType;
 
-    public void setNssiId(String nssiId) {
-        this.nssiId = nssiId;
-    }
+    private String snssai;
 
-    public String getModelInvariantId() {
-        return modelInvariantId;
-    }
-
-    public void setModelInvariantId(String modelInvariantId) {
-        this.modelInvariantId = modelInvariantId;
-    }
-
-    public String getModelVersionId() {
-        return modelVersionId;
-    }
-
-    public void setModelVersionId(String modelVersionId) {
-        this.modelVersionId = modelVersionId;
-    }
+    private String serviceType;
 }
