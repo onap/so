@@ -17,43 +17,43 @@
  # limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.so.beans.nsmf;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import java.io.Serializable;
+import lombok.Getter;
+import lombok.ToString;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class ServiceInfo implements Serializable {
+@Getter
+@ToString
+public enum OperationType {
+    /**
+     * allocate
+     */
+    ALLOCATE("allocate"),
 
-    private static final long serialVersionUID = 7895110339097615695L;
+    DEALLOCATE("deallocate"),
 
-    private String serviceInvariantUuid;
+    CREATE("create"),
 
-    private String serviceUuid;
+    TERMINATE("terminate"),
 
-    private String globalSubscriberId;
+    ACTIVATE("activation"),
 
-    private String subscriptionServiceType;
+    DEACTIVATE("deactivation");
 
-    private String serviceType;
+    private String type;
 
-    private String nsiId;
 
-    private String nssiId;
+    OperationType(String type) {
+        this.type = type;
+    }
 
-    private String sST;
-
-    private String nssiName;
-
-    private String pLMNIdList;
-
-    private String actionType;
+    public static OperationType getOperationType(String value) {
+        for (OperationType operationType : OperationType.values()) {
+            if (operationType.type.equalsIgnoreCase(value)) {
+                return operationType;
+            }
+        }
+        return null;
+    }
 }
