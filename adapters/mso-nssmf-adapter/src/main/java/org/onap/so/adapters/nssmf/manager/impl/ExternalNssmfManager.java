@@ -101,6 +101,16 @@ public abstract class ExternalNssmfManager extends BaseNssmfManager {
             } else if (ActionType.DEALLOCATE.equals(jobOperType)) {
                 // TODO
                 restUtil.deleteServiceInstance(serviceInfo);
+            } else if (ActionType.ACTIVATE.equals(jobOperType)) {
+                ServiceInstance nssiInstance = restUtil.getServiceInstance(serviceInfo);
+                nssiInstance.setOrchestrationStatus("deactivated");
+                restUtil.updateServiceInstance(nssiInstance, serviceInfo);
+            } else if (ActionType.DEACTIVATE.equals(jobOperType)) {
+                ServiceInstance nssiInstance = restUtil.getServiceInstance(serviceInfo);
+                nssiInstance.setOrchestrationStatus("activated");
+                restUtil.updateServiceInstance(nssiInstance, serviceInfo);
+            } else {
+                throw new UnsupportedOperationException("unsupported Operation " + jobOperType);
             }
         }
     }
