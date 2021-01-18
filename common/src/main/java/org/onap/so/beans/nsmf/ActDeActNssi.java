@@ -20,15 +20,18 @@
 
 package org.onap.so.beans.nsmf;
 
+import java.io.Serializable;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ActDeActNssi {
+public class ActDeActNssi implements Serializable {
 
     public final static String ACT_URL = "/api/rest/provMns/v1/NSS/%s" + "/activation";
 
     public final static String DE_ACT_URL = "/api/rest/provMns/v1/NSS/%s" + "/deactivation";
+
+    private static final long serialVersionUID = 7597630091910711349L;
 
     private String nsiId;
 

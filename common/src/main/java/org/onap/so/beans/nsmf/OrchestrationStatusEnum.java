@@ -19,42 +19,37 @@
  */
 package org.onap.so.beans.nsmf;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 
-import java.io.Serializable;
+@Getter
+@ToString
+public enum OrchestrationStatusEnum {
+    /**
+     * activated
+     */
+    ACTIVATED("activated"),
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class ServiceInfo implements Serializable {
+    /**
+     * deactivated
+     */
+    DEACTIVATED("deactivated"),
 
-    private static final long serialVersionUID = 7895110339097615695L;
+    ;
 
-    private String serviceInvariantUuid;
+    private String value;
 
-    private String serviceUuid;
 
-    private String globalSubscriberId;
+    OrchestrationStatusEnum(String value) {
+        this.value = value;
+    }
 
-    private String subscriptionServiceType;
-
-    private String serviceType;
-
-    private String nsiId;
-
-    private String nssiId;
-
-    private String sST;
-
-    private String nssiName;
-
-    private String pLMNIdList;
-
-    private String actionType;
+    public static OrchestrationStatusEnum getStatus(String value) {
+        for (OrchestrationStatusEnum orchestrationStatus : OrchestrationStatusEnum.values()) {
+            if (orchestrationStatus.value.equalsIgnoreCase(value)) {
+                return orchestrationStatus;
+            }
+        }
+        return null;
+    }
 }
