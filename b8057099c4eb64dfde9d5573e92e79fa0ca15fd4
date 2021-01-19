@@ -16,6 +16,24 @@
       "revId": "b8057099c4eb64dfde9d5573e92e79fa0ca15fd4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d8a53059_913ab717",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoActivateAccessNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 6209
+      },
+      "writtenOn": "2021-01-19T03:20:23Z",
+      "side": 1,
+      "message": "Sure, this comment will be addressed by Deepika in the next commit.\nCan you please merge this.",
+      "parentUuid": "6d4ada69_46076acf",
+      "revId": "b8057099c4eb64dfde9d5573e92e79fa0ca15fd4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
