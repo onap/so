@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5346b10f_48c8999b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowActionConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-01-19T09:10:40Z",
+      "side": 1,
+      "message": "sonar: make a private constructor:\n\n   private WorkflowActionConstants() {\nthrow new IllegalStateException(\"Utility class\");    }",
+      "range": {
+        "startLine": 29,
+        "startChar": 19,
+        "endLine": 29,
+        "endChar": 42
+      },
+      "revId": "769889497ee8b84b386f10633df16795f9a41db7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d06da4fb_c8794b53",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowActionTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2274,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-01-19T09:10:40Z",
+      "side": 1,
+      "message": "not used, remove",
+      "range": {
+        "startLine": 2250,
+        "startChar": 3,
+        "endLine": 2274,
+        "endChar": 5
+      },
+      "revId": "769889497ee8b84b386f10633df16795f9a41db7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
