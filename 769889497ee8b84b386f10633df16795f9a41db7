@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "2eebb5b0_fd2f603a",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowActionConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 2807
+      },
+      "writtenOn": "2021-01-19T10:02:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5346b10f_48c8999b",
+      "range": {
+        "startLine": 29,
+        "startChar": 19,
+        "endLine": 29,
+        "endChar": 42
+      },
+      "revId": "769889497ee8b84b386f10633df16795f9a41db7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d06da4fb_c8794b53",
         "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowActionTest.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "769889497ee8b84b386f10633df16795f9a41db7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e0d8571a_ff351b90",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowActionTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2274,
+      "author": {
+        "id": 2807
+      },
+      "writtenOn": "2021-01-19T10:02:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d06da4fb_c8794b53",
+      "range": {
+        "startLine": 2250,
+        "startChar": 3,
+        "endLine": 2274,
+        "endChar": 5
+      },
+      "revId": "769889497ee8b84b386f10633df16795f9a41db7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
