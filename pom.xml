@@ -51,7 +51,6 @@
     <sonar.jacoco.reportMissing.force.zero>true</sonar.jacoco.reportMissing.force.zero>
     <sonar.projectVersion>${project.version}</sonar.projectVersion>
     <sonar.cpd.exclusions>**/*</sonar.cpd.exclusions>
-    <jacoco.version>0.8.5</jacoco.version>
     <org.apache.maven.user-settings />
     <openstack.version>1.7.1</openstack.version>
     <maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>
@@ -342,7 +341,6 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>${jacoco.version}</version>
         <executions>
           <execution>
             <id>prepare-agent</id>
