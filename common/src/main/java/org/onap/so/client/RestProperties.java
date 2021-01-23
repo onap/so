@@ -50,6 +50,15 @@ public interface RestProperties {
         return Long.valueOf(60000);
     }
 
+    /**
+     * Time in milliseconds
+     * 
+     * @return
+     */
+    public default Long getConnectionTimeout() {
+        return Long.valueOf(60000);
+    }
+
     public default boolean isCachingEnabled() {
         return false;
     }
