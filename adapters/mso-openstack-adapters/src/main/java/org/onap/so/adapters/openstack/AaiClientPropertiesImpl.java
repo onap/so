@@ -34,6 +34,7 @@ public class AaiClientPropertiesImpl implements AAIProperties {
     private String auth;
     private String key;
     private Long readTimeout;
+    private Long connectionTimeout;
     private boolean enableCaching;
     private Long cacheMaxAge;
     private static final String SYSTEM_NAME = "MSO";
@@ -43,7 +44,8 @@ public class AaiClientPropertiesImpl implements AAIProperties {
         aaiEndpoint = context.getEnvironment().getProperty("aai.endpoint");
         this.auth = context.getEnvironment().getProperty("aai.auth");
         this.key = context.getEnvironment().getProperty("mso.msoKey");
-        this.readTimeout = context.getEnvironment().getProperty("aai.readTimeout", Long.class, new Long(60000));
+        this.readTimeout = context.getEnvironment().getProperty("aai.readTimeout", Long.class, 60000L);
+        this.connectionTimeout = context.getEnvironment().getProperty("aai.connectionTimeout", Long.class, 60000L);
         this.enableCaching = context.getEnvironment().getProperty("aai.caching.enabled", Boolean.class, false);
         this.cacheMaxAge = context.getEnvironment().getProperty("aai.caching.maxAge", Long.class, 60000L);
     }
@@ -76,6 +78,11 @@ public class AaiClientPropertiesImpl implements AAIProperties {
     @Override
     public Long getReadTimeout() {
         return this.readTimeout;
+    }
+
+    @Override
+    public Long getConnectionTimeout() {
+        return this.connectionTimeout;
     }
 
     @Override

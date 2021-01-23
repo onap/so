@@ -35,6 +35,7 @@ public class AaiPropertiesImpl implements AAIProperties {
     private final String encryptionKey;
     private final String aaiVersion;
     private final Long readTimeout;
+    private final Long connectionTimeout;
     private final boolean enableCaching;
     private final Long cacheMaxAge;
 
@@ -44,7 +45,8 @@ public class AaiPropertiesImpl implements AAIProperties {
         this.encryptedBasicAuth = context.getEnvironment().getProperty("aai.auth");
         this.encryptionKey = context.getEnvironment().getProperty("mso.key");
         this.aaiVersion = context.getEnvironment().getProperty("aai.version");
-        this.readTimeout = context.getEnvironment().getProperty("aai.readTimeout", Long.class, new Long(60000));
+        this.readTimeout = context.getEnvironment().getProperty("aai.readTimeout", Long.class, 60000L));
+        this.connectionTimeout = context.getEnvironment().getProperty("aai.connectionTimeout", Long.class, 60000L);
         this.enableCaching = context.getEnvironment().getProperty("aai.caching.enabled", Boolean.class, false);
         this.cacheMaxAge = context.getEnvironment().getProperty("aai.caching.maxAge", Long.class, 60000L);
     }
@@ -83,6 +85,11 @@ public class AaiPropertiesImpl implements AAIProperties {
     @Override
     public Long getReadTimeout() {
         return this.readTimeout;
+    }
+
+    @Override
+    public Long getConnectionTimeout() {
+        return this.connectionTimeout;
     }
 
     @Override

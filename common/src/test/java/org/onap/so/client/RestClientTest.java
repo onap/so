@@ -101,6 +101,12 @@ public class RestClientTest {
 
         RestProperties props = new RestProperties() {
 
+
+            @Override
+            public Integer getRetries() {
+                return Integer.valueOf(0);
+            }
+
             @Override
             public URL getEndpoint() throws MalformedURLException {
                 return new URL(String.format("http://localhost:%s", wireMockRule.port()));
