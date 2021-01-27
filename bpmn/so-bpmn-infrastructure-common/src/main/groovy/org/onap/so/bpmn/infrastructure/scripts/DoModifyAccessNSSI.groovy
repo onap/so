@@ -549,7 +549,7 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 		updateStatus.setResourceTemplateUUID(nsiId)
 		updateStatus.setResourceInstanceID(nssiId)
 		updateStatus.setOperType("Modify")
-		updateStatus.setProgress(100)
+		updateStatus.setProgress("100")
 		updateStatus.setStatus("finished")
 		requestDBUtil.prepareUpdateResourceOperationStatus(execution, updateStatus)
 
@@ -571,7 +571,7 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 		updateStatus.setResourceTemplateUUID(nsiId)
 		updateStatus.setResourceInstanceID(nssiId)
 		updateStatus.setOperType("Modify")
-		updateStatus.setProgress(0)
+		updateStatus.setProgress("0")
 		updateStatus.setStatus("failed")
 		requestDBUtil.prepareUpdateResourceOperationStatus(execution, updateStatus)
 	}
