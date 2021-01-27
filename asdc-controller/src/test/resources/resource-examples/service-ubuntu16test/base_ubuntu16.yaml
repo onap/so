@@ -1,0 +1,106 @@
+heat_template_version: 2013-05-23
+
+description: Heat template to deploy a ubuntu16 VM
+
+parameters:
+  # Metadata required by ONAP
+  vnf_name:
+    type: string
+    label: VM name
+    description: The VM name
+  vnf_id:
+    type: string
+    label: VNF ID
+    description: The VNF ID is provided by ONAP
+  vf_module_id:
+    type: string
+    label: VF module ID
+    description: The VF Module ID is provided by ONAP
+
+# Server parameters, naming required by ONAP
+  ubuntu16_image_name:
+    type: string
+    label: Image name or ID
+    description: Image to be used for compute instance
+  ubuntu16_flavor_name:
+    type: string
+    label: Flavor
+    description: Type of instance (flavor) to be used
+  ubuntu16_key_name:
+    type: string
+    label: openSSH Key name
+    description: openSSH key name
+  ubuntu16_pub_key:
+    type: string
+    label: Public key
+    description: Public key to be installed on the compute instance
+  ubuntu16_name_0:
+    type: string
+    label: VM name
+    description: The VM name
+
+# Network parameters, naming required by ONAP
+  admin_plane_net_name:
+    type: string
+    label: management network
+    description: The external management network
+
+resources:
+  random-str:
+    type: OS::Heat::RandomString
+    properties:
+      length: 4
+
+  ubuntu16_instantiated_key_name:
+    type: OS::Nova::KeyPair
+    properties:
+      name:
+        str_replace:
+          template: base_rand
+          params:
+            base: { get_param: ubuntu16_key_name }
+            rand: { get_resource: random-str }
+      public_key: { get_param: ubuntu16_pub_key }
+      save_private_key: false
+
+  ubuntu16_admin_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: security group
+      name:  ubuntu16_admin_security_group
+      rules: [
+        {remote_ip_prefix: 0.0.0.0/0, protocol: tcp, port_range_min: 22, port_range_max: 22},
+        {remote_ip_prefix: 0.0.0.0/0, protocol: icmp}]
+
+  ubuntu16_0_admin_plane_port_0:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: base_rand
+          params:
+            base: ubuntu16_0_admin_plane_port
+            rand: { get_resource: random-str }
+      network: { get_param: admin_plane_net_name }
+      security_groups: [{ get_resource: ubuntu16_admin_security_group }]
+
+  ubuntu16_VM_settings:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      config: |
+            #!/bin/bash
+            sudo apt-get update
+
+  ubuntu16_server_0:
+    type: OS::Nova::Server
+    properties:
+      image: { get_param: ubuntu16_image_name }
+      flavor: { get_param: ubuntu16_flavor_name }
+      name: { get_param: ubuntu16_name_0 }
+      metadata: {vnf_id: { get_param: vnf_id }, vf_module_id: { get_param: vf_module_id }, vnf_name: { get_param: vnf_name }}
+      key_name: { get_resource: ubuntu16_instantiated_key_name }
+      networks:
+        - port: { get_resource: ubuntu16_0_admin_plane_port_0 }
+      user_data_format: RAW
+      user_data:
+        get_resource: ubuntu16_VM_settings

@@ -1,0 +1,47 @@
+{
+  "distributionID": "2d6c5aa8-b644-4f30-a632-5577801ef957",
+  "serviceName": "basic_network",
+  "serviceVersion": "1.0",
+  "serviceUUID": "9ff42123-ff24-41dc-9f41-a956c9328699",
+  "serviceDescription": "service",
+  "serviceInvariantUUID": "26b9c145-524a-4e30-8864-ad1ff7342bf4",
+  "resources": [
+    {
+      "resourceInstanceName": "GenericNeutronNet 0",
+      "resourceName": "GenericNeutronNet",
+      "resourceVersion": "1.0",
+      "resoucreType": "VL",
+      "resourceUUID": "73670f4b-f10b-4f37-9bf0-79600ec86730",
+      "resourceInvariantUUID": "7c0b578e-6594-4213-be8b-aa6c7ae50853",
+      "resourceCustomizationUUID": "fc59df65-4914-4817-b525-5565b8e66ce0",
+      "category": "Generic",
+      "subcategory": "Network Elements",
+      "artifacts": [ ]
+    }
+   
+   
+  ],
+  "serviceArtifacts": [
+    {
+      "artifactName": "service-BasicNetwork-template.yml",
+      "artifactType": "TOSCA_TEMPLATE",
+      "artifactURL": "/service-BasicNetwork-template.yml",
+      "artifactChecksum": "NTUzMDU5YzM3MTk4OGNiNjQ2OGRlMWY2YjU3MjE2YjM\u003d",
+      "artifactDescription": "TOSCA representation of the asset",
+      "artifactTimeout": 0,
+      "artifactUUID": "9ff42123-ff24-41dc-9f41-a956c9328699",
+      "artifactVersion": "1"
+    },
+    {
+      "artifactName": "service-BasicNetwork-csar.csar",
+      "artifactType": "TOSCA_CSAR",
+      "artifactURL": "/service-BasicNetwork-csar.csar",
+      "artifactChecksum": "ZTRhOGI0M2UxN2ZhYjQ0ODI5ZDZhZTExZTFkMGU3N2Y\u003d",
+      "artifactDescription": "TOSCA definition package of the asset",
+      "artifactTimeout": 0,
+      "artifactUUID": "9ff42123-ff24-41dc-9f41-a956c9328699",
+      "artifactVersion": "1"
+    }
+  ],
+  "workloadContext": "Production"
+}

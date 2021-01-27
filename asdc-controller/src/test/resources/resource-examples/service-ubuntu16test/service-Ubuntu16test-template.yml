@@ -1,0 +1,429 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+metadata:
+  invariantUUID: 941b713e-4ba0-47c9-bfaf-611168cbf7d1
+  UUID: ed0391da-b963-4c45-bf3a-b49cc7a94fab
+  name: ubuntu16test
+  description: service
+  type: Service
+  category: Network Service
+  serviceType: ''
+  serviceRole: ''
+  instantiationType: A-la-carte
+  serviceEcompNaming: 'true'
+  ecompGeneratedNaming: 'true'
+  namingPolicy: ''
+  environmentContext: General_Revenue-Bearing
+  serviceFunction: ''
+imports:
+- nodes:
+    file: nodes.yml
+- datatypes:
+    file: data.yml
+- capabilities:
+    file: capabilities.yml
+- relationships:
+    file: relationships.yml
+- groups:
+    file: groups.yml
+- policies:
+    file: policies.yml
+- annotations:
+    file: annotations.yml
+- service-ubuntu16test-interface:
+    file: service-Ubuntu16test-template-interface.yml
+- resource-ubuntu16test:
+    file: resource-Ubuntu16test-template.yml
+- resource-ubuntu16test-interface:
+    file: resource-Ubuntu16test-template-interface.yml
+- resource-SecurityRules:
+    file: resource-Securityrules-template.yml
+topology_template:
+  inputs:
+    skip_post_instantiation_configuration:
+      default: true
+      type: boolean
+      required: false
+    controller_actor:
+      default: SO-REF-DATA
+      type: string
+      required: false
+    cds_model_version:
+      type: string
+      required: false
+    cds_model_name:
+      type: string
+      required: false
+    default_software_version:
+      type: string
+      required: false
+  node_templates:
+    ubuntu16test 0:
+      type: org.openecomp.resource.vf.Ubuntu16test
+      metadata:
+        invariantUUID: 72ce1922-0359-4079-a76e-f3f1b6cf8cc1
+        UUID: e6afd1be-ee4f-439d-bd79-d559c626fd27
+        customizationUUID: 1b2bf1c7-25a5-48df-bf30-7ae43508a5ea
+        version: '1.0'
+        name: ubuntu16test
+        description: VF
+        type: VF
+        category: Generic
+        subcategory: Abstract
+        resourceVendor: basicvm_vendor
+        resourceVendorRelease: '1.0'
+        resourceVendorModelNumber: ''
+      properties:
+        vf_module_id: Ubuntu16-VF-module
+        skip_post_instantiation_configuration: true
+        nf_naming:
+          ecomp_generated_naming: true
+        ubuntu16_flavor_name: onap.small
+        multi_stage_design: false
+        controller_actor: SO-REF-DATA
+        availability_zone_max_count: 1
+        vnf_name: Ubuntu16-VNF-name
+        ubuntu16_name_0: ubuntu16
+        ubuntu16_pub_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDY15cdBmIs2XOpe4EiFCsaY6bmUmK/GysMoLl4UG51JCfJwvwoWCoA+6mDIbymZxhxq9IGxilp/yTA6WQ9s/5pBag1cUMJmFuda9PjOkXl04jgqh5tR6I+GZ97AvCg93KAECis5ubSqw1xOCj4utfEUtPoF1OuzqM/lE5mY4N6VKXn+fT7pCD6cifBEs6JHhVNvs5OLLp/tO8Pa3kKYQOdyS0xc3rh+t2lrzvKUSWGZbX+dLiFiEpjsUL3tDqzkEMNUn4pdv69OJuzWHCxRWPfdrY9Wg0j3mJesP29EBht+w+EC9/kBKq+1VKdmsXUXAcjEvjovVL8l1BrX3BY0R8D imported-openssh-key
+        vnf_id: Ubuntu16-VNF
+        ubuntu16_image_name: ubuntu-16.04-daily
+        admin_plane_net_name: admin
+        ubuntu16_key_name: cleouverte
+      capabilities:
+        abstract_ubuntu16.cpu_util_ubuntu16:
+          properties:
+            name: cpu_util
+        abstract_ubuntu16.disk.device.read.bytes.rate_ubuntu16:
+          properties:
+            name: disk.device.read.bytes.rate
+        abstract_ubuntu16.endpoint_ubuntu16:
+          properties:
+            secure: true
+        abstract_ubuntu16.disk.ephemeral.size_ubuntu16:
+          properties:
+            name: disk.ephemeral.size
+        abstract_ubuntu16.network.incoming.packets_ubuntu16_ubuntu16_admin_plane_port_0:
+          properties:
+            name: network.incoming.packets
+        abstract_ubuntu16.disk.write.bytes_ubuntu16:
+          properties:
+            name: disk.write.bytes
+        abstract_ubuntu16.cpu.delta_ubuntu16:
+          properties:
+            name: cpu.delta
+        abstract_ubuntu16.network.incoming.bytes_ubuntu16_ubuntu16_admin_plane_port_0:
+          properties:
+            name: network.incoming.bytes
+        abstract_ubuntu16.network.outpoing.packets_ubuntu16_ubuntu16_admin_plane_port_0:
+          properties:
+            name: network.outpoing.packets
+        abstract_ubuntu16.disk.write.requests.rate_ubuntu16:
+          properties:
+            name: disk.write.requests.rate
+        abstract_ubuntu16.memory_ubuntu16:
+          properties:
+            name: memory
+        abstract_ubuntu16.network.incoming.bytes.rate_ubuntu16_ubuntu16_admin_plane_port_0:
+          properties:
+            name: network.incoming.bytes.rate
+        abstract_ubuntu16.disk.root.size_ubuntu16:
+          properties:
+            name: disk.root.size
+        abstract_ubuntu16.network.incoming.packets.rate_ubuntu16_ubuntu16_admin_plane_port_0:
+          properties:
+            name: network.incoming.packets.rate
+        abstract_ubuntu16.disk.device.usage_ubuntu16:
+          properties:
+            name: disk.device.usage
+        abstract_ubuntu16.disk.write.requests_ubuntu16:
+          properties:
+            name: disk.write.requests
+        abstract_ubuntu16.disk.device.read.bytes_ubuntu16:
+          properties:
+            name: disk.device.read.bytes
+        abstract_ubuntu16.vcpus_ubuntu16:
+          properties:
+            name: vcpus
+        abstract_ubuntu16.port_mirroring_ubuntu16_ubuntu16_admin_plane_port_0:
+          properties:
+            connection_point:
+              network_role:
+                get_input: port_ubuntu16_admin_plane_port_0_network_role
+              nfc_naming_code: ubuntu16
+        abstract_ubuntu16.disk.read.bytes_ubuntu16:
+          properties:
+            name: disk.read.bytes
+        abstract_ubuntu16.disk.latency_ubuntu16:
+          properties:
+            name: disk.latency
+        abstract_ubuntu16.disk.device.read.requests.rate_ubuntu16:
+          properties:
+            name: disk.device.read.requests.rate
+        abstract_ubuntu16.scalable_ubuntu16:
+          properties:
+            min_instances: 1
+            max_instances: 1
+        abstract_ubuntu16.disk.device.write.requests.rate_ubuntu16:
+          properties:
+            name: disk.device.write.requests.rate
+        abstract_ubuntu16.disk.device.allocation_ubuntu16:
+          properties:
+            name: disk.device.allocation
+        abstract_ubuntu16.disk.device.write.bytes_ubuntu16:
+          properties:
+            name: disk.device.write.bytes
+        abstract_ubuntu16.disk.device.capacity_ubuntu16:
+          properties:
+            name: disk.device.capacity
+        abstract_ubuntu16.network.outgoing.bytes_ubuntu16_ubuntu16_admin_plane_port_0:
+          properties:
+            name: network.outgoing.bytes
+        abstract_ubuntu16.disk.device.latency_ubuntu16:
+          properties:
+            name: disk.device.latency
+        abstract_ubuntu16.disk.write.bytes.rate_ubuntu16:
+          properties:
+            name: disk.write.bytes.rate
+        abstract_ubuntu16.instance_ubuntu16:
+          properties:
+            name: instance
+        abstract_ubuntu16.disk.iops_ubuntu16:
+          properties:
+            name: disk.iops
+        abstract_ubuntu16.disk.capacity_ubuntu16:
+          properties:
+            name: disk.capacity
+        abstract_ubuntu16.memory.resident_ubuntu16:
+          properties:
+            name: memory.resident
+        abstract_ubuntu16.disk.allocation_ubuntu16:
+          properties:
+            name: disk.allocation
+        abstract_ubuntu16.network.outgoing.bytes.rate_ubuntu16_ubuntu16_admin_plane_port_0:
+          properties:
+            name: network.outgoing.bytes.rate
+        abstract_ubuntu16.disk.read.requests_ubuntu16:
+          properties:
+            name: disk.read.requests
+        abstract_ubuntu16.cpu_ubuntu16:
+          properties:
+            name: cpu
+        abstract_ubuntu16.disk.device.iops_ubuntu16:
+          properties:
+            name: disk.device.iops
+        abstract_ubuntu16.disk.device.read.requests_ubuntu16:
+          properties:
+            name: disk.device.read.requests
+        abstract_ubuntu16.memory.usage_ubuntu16:
+          properties:
+            name: memory.usage
+        abstract_ubuntu16.disk.usage_ubuntu16:
+          properties:
+            name: disk.usage
+        abstract_ubuntu16.disk.device.write.bytes.rate_ubuntu16:
+          properties:
+            name: disk.device.write.bytes.rate
+        abstract_ubuntu16.disk.read.bytes.rate_ubuntu16:
+          properties:
+            name: disk.read.bytes.rate
+        abstract_ubuntu16.network.outgoing.packets.rate_ubuntu16_ubuntu16_admin_plane_port_0:
+          properties:
+            name: network.outgoing.packets.rate
+        abstract_ubuntu16.disk.device.write.requests_ubuntu16:
+          properties:
+            name: disk.device.write.requests
+  groups:
+    ubuntu16test0..Ubuntu16test..base_ubuntu16..module-0:
+      type: org.openecomp.groups.VfModule
+      metadata:
+        vfModuleModelName: Ubuntu16test..base_ubuntu16..module-0
+        vfModuleModelInvariantUUID: 28038eb1-cb06-45be-b7f4-dd6349f45a83
+        vfModuleModelUUID: 1c71e637-0a79-4316-86f0-c24921798bfa
+        vfModuleModelVersion: '1'
+        vfModuleModelCustomizationUUID: 58832c82-4fd8-4248-9dbc-e006af9c1702
+      properties:
+        min_vf_module_instances: 1
+        vf_module_label: base_ubuntu16
+        max_vf_module_instances: 1
+        vf_module_type: Base
+        isBase: true
+        initial_count: 1
+        volume_group: false
+  substitution_mappings:
+    node_type: org.openecomp.service.Ubuntu16test
+    capabilities:
+      ubuntu16test0.abstract_ubuntu16.network.incoming.bytes_ubuntu16_ubuntu16_admin_plane_port_0:
+      - ubuntu16test 0
+      - abstract_ubuntu16.network.incoming.bytes_ubuntu16_ubuntu16_admin_plane_port_0
+      ubuntu16test0.abstract_ubuntu16.scalable_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.scalable_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.disk.device.write.bytes_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.device.write.bytes_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.vcpus_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.vcpus_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.feature_ubuntu16_ubuntu16_admin_plane_port_0:
+      - ubuntu16test 0
+      - abstract_ubuntu16.feature_ubuntu16_ubuntu16_admin_plane_port_0
+      ubuntu16test0.abstract_ubuntu16.disk.device.write.requests.rate_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.device.write.requests.rate_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.disk.read.bytes.rate_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.read.bytes.rate_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.network.incoming.packets_ubuntu16_ubuntu16_admin_plane_port_0:
+      - ubuntu16test 0
+      - abstract_ubuntu16.network.incoming.packets_ubuntu16_ubuntu16_admin_plane_port_0
+      ubuntu16test0.abstract_ubuntu16.instance_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.instance_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.disk.allocation_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.allocation_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.binding_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.binding_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.cpu_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.cpu_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.feature_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.feature_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.memory_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.memory_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.disk.device.read.bytes_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.device.read.bytes_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.disk.device.write.requests_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.device.write.requests_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.disk.device.latency_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.device.latency_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.endpoint_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.endpoint_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.disk.device.read.bytes.rate_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.device.read.bytes.rate_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.network.incoming.packets.rate_ubuntu16_ubuntu16_admin_plane_port_0:
+      - ubuntu16test 0
+      - abstract_ubuntu16.network.incoming.packets.rate_ubuntu16_ubuntu16_admin_plane_port_0
+      ubuntu16test0.abstract_ubuntu16.disk.write.requests_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.write.requests_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.disk.root.size_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.root.size_ubuntu16
+      ubuntu16test0.ubuntu16_admin_security_group.feature:
+      - ubuntu16test 0
+      - ubuntu16_admin_security_group.feature
+      ubuntu16test0.abstract_ubuntu16.disk.device.usage_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.device.usage_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.disk.latency_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.latency_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.cpu_util_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.cpu_util_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.disk.read.bytes_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.read.bytes_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.disk.write.requests.rate_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.write.requests.rate_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.memory.usage_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.memory.usage_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.host_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.host_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.disk.ephemeral.size_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.ephemeral.size_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.memory.resident_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.memory.resident_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.disk.device.read.requests_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.device.read.requests_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.disk.device.allocation_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.device.allocation_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.disk.read.requests_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.read.requests_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.network.outgoing.bytes_ubuntu16_ubuntu16_admin_plane_port_0:
+      - ubuntu16test 0
+      - abstract_ubuntu16.network.outgoing.bytes_ubuntu16_ubuntu16_admin_plane_port_0
+      ubuntu16test0.abstract_ubuntu16.disk.device.iops_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.device.iops_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.cpu.delta_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.cpu.delta_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.forwarder_ubuntu16_ubuntu16_admin_plane_port_0:
+      - ubuntu16test 0
+      - abstract_ubuntu16.forwarder_ubuntu16_ubuntu16_admin_plane_port_0
+      ubuntu16test0.abstract_ubuntu16.network.incoming.bytes.rate_ubuntu16_ubuntu16_admin_plane_port_0:
+      - ubuntu16test 0
+      - abstract_ubuntu16.network.incoming.bytes.rate_ubuntu16_ubuntu16_admin_plane_port_0
+      ubuntu16test0.abstract_ubuntu16.binding_ubuntu16_ubuntu16_admin_plane_port_0:
+      - ubuntu16test 0
+      - abstract_ubuntu16.binding_ubuntu16_ubuntu16_admin_plane_port_0
+      ubuntu16test0.abstract_ubuntu16.attachment_ubuntu16_ubuntu16_admin_plane_port_0:
+      - ubuntu16test 0
+      - abstract_ubuntu16.attachment_ubuntu16_ubuntu16_admin_plane_port_0
+      ubuntu16test0.abstract_ubuntu16.disk.capacity_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.capacity_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.network.outpoing.packets_ubuntu16_ubuntu16_admin_plane_port_0:
+      - ubuntu16test 0
+      - abstract_ubuntu16.network.outpoing.packets_ubuntu16_ubuntu16_admin_plane_port_0
+      ubuntu16test0.abstract_ubuntu16.disk.usage_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.usage_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.port_mirroring_ubuntu16_ubuntu16_admin_plane_port_0:
+      - ubuntu16test 0
+      - abstract_ubuntu16.port_mirroring_ubuntu16_ubuntu16_admin_plane_port_0
+      ubuntu16test0.abstract_ubuntu16.os_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.os_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.network.outgoing.packets.rate_ubuntu16_ubuntu16_admin_plane_port_0:
+      - ubuntu16test 0
+      - abstract_ubuntu16.network.outgoing.packets.rate_ubuntu16_ubuntu16_admin_plane_port_0
+      ubuntu16test0.abstract_ubuntu16.disk.write.bytes_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.write.bytes_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.disk.device.write.bytes.rate_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.device.write.bytes.rate_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.disk.write.bytes.rate_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.write.bytes.rate_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.network.outgoing.bytes.rate_ubuntu16_ubuntu16_admin_plane_port_0:
+      - ubuntu16test 0
+      - abstract_ubuntu16.network.outgoing.bytes.rate_ubuntu16_ubuntu16_admin_plane_port_0
+      ubuntu16test0.abstract_ubuntu16.disk.device.read.requests.rate_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.device.read.requests.rate_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.disk.iops_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.iops_ubuntu16
+      ubuntu16test0.abstract_ubuntu16.disk.device.capacity_ubuntu16:
+      - ubuntu16test 0
+      - abstract_ubuntu16.disk.device.capacity_ubuntu16
+    properties:
+      skip_post_instantiation_configuration:
+      - skip_post_instantiation_configuration
+      controller_actor:
+      - controller_actor
+      cds_model_version:
+      - cds_model_version
+      cds_model_name:
+      - cds_model_name
+      default_software_version:
+      - default_software_version
