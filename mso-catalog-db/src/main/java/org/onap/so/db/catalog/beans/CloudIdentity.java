@@ -76,8 +76,8 @@ public class CloudIdentity {
 
     @JsonProperty("admin_project_domain_name ")
     @BusinessKey
-    @Column(name = "ADMIN_PROJECT_DOMAIN_NAME")
-    private String adminProjectDomainName;
+    @Column(name = "ADMIN_PROJECT_DOMAIN_NAME", nullable = false)
+    private String adminProjectDomainName = "Default";
 
     @JsonProperty("user_domain_name")
     @BusinessKey

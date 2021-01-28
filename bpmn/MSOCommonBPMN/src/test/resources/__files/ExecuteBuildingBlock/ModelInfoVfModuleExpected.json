@@ -10,5 +10,5 @@
     "max-instances": 3,
     "availability-zone-count": 5,
     "label": "label",
-    "initial-count": null
+    "initial-count": 0
 }

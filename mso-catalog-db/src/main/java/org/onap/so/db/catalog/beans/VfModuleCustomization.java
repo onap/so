@@ -64,14 +64,14 @@ public class VfModuleCustomization implements Serializable {
     @Column(name = "LABEL")
     private String label;
 
-    @Column(name = "MIN_INSTANCES")
-    private Integer minInstances;
+    @Column(name = "MIN_INSTANCES", nullable = false)
+    private Integer minInstances = 0;
 
     @Column(name = "MAX_INSTANCES")
     private Integer maxInstances;
 
-    @Column(name = "INITIAL_COUNT")
-    private Integer initialCount;
+    @Column(name = "INITIAL_COUNT", nullable = false)
+    private Integer initialCount = 0;
 
     @Column(name = "AVAILABILITY_ZONE_COUNT")
     private Integer availabilityZoneCount;
@@ -100,8 +100,8 @@ public class VfModuleCustomization implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "vfModuleCustomization")
     private List<CvnfcCustomization> cvnfcCustomization;
 
-    @Column(name = "SKIP_POST_INSTANTIATION_CONFIGURATION")
-    private Boolean skipPostInstConf;
+    @Column(name = "SKIP_POST_INSTANTIATION_CONFIGURATION", nullable = false)
+    private Boolean skipPostInstConf = true;
 
     @Override
     public boolean equals(final Object other) {

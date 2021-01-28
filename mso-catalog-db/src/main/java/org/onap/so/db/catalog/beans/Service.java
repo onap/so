@@ -159,8 +159,8 @@ public class Service implements Serializable {
     @Column(name = "CDS_BLUEPRINT_VERSION")
     private String blueprintVersion;
 
-    @Column(name = "SKIP_POST_INSTANTIATION_CONFIGURATION")
-    private Boolean skipPostInstConf;
+    @Column(name = "SKIP_POST_INSTANTIATION_CONFIGURATION", nullable = false)
+    private Boolean skipPostInstConf = true;
 
     @Column(name = "CONTROLLER_ACTOR")
     private String controllerActor;

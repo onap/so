@@ -55,8 +55,8 @@ public class NetworkResource implements Serializable {
     @Column(name = "MODEL_UUID")
     private String modelUUID;
 
-    @Column(name = "ORCHESTRATION_MODE")
-    private String orchestrationMode = null;
+    @Column(name = "ORCHESTRATION_MODE", nullable = false)
+    private String orchestrationMode = "HEAT";
 
     @Column(name = "DESCRIPTION")
     private String description = null;

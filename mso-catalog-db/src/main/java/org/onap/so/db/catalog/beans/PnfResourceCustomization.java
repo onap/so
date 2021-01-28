@@ -82,8 +82,8 @@ public class PnfResourceCustomization implements Serializable {
     @Column(name = "CDS_BLUEPRINT_VERSION")
     private String blueprintVersion;
 
-    @Column(name = "SKIP_POST_INSTANTIATION_CONFIGURATION")
-    private boolean skipPostInstConf;
+    @Column(name = "SKIP_POST_INSTANTIATION_CONFIGURATION", nullable = false)
+    private boolean skipPostInstConf = true;
 
     @Column(name = "CONTROLLER_ACTOR")
     private String controllerActor;

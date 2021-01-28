@@ -117,14 +117,14 @@ public class VnfResourceCustomization implements Serializable {
     @Column(name = "CDS_BLUEPRINT_VERSION")
     private String blueprintVersion;
 
-    @Column(name = "SKIP_POST_INSTANTIATION_CONFIGURATION")
+    @Column(name = "SKIP_POST_INSTANTIATION_CONFIGURATION", nullable = false)
     private Boolean skipPostInstConf = true;
 
     @Column(name = "VNFCINSTANCEGROUP_ORDER")
     private String vnfcInstanceGroupOrder;
 
-    @Column(name = "NF_DATA_VALID")
-    private Boolean nfDataValid;
+    @Column(name = "NF_DATA_VALID", nullable = false)
+    private Boolean nfDataValid = false;
 
     @Column(name = "CONTROLLER_ACTOR")
     private String controllerActor;

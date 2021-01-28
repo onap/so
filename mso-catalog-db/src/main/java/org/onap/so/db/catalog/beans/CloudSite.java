@@ -127,7 +127,7 @@ public class CloudSite {
 
     @JsonProperty("support_fabric")
     @BusinessKey
-    @Column(name = "SUPPORT_FABRIC")
+    @Column(name = "SUPPORT_FABRIC", nullable = false)
     private Boolean supportFabric = true;
 
     @Transient

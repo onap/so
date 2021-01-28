@@ -65,8 +65,8 @@ public class Workflow implements Serializable {
     @Column(name = "TIMEOUT_MINUTES")
     private Integer timeoutMinutes;
 
-    @Column(name = "ARTIFACT_CHECKSUM")
-    private String artifactChecksum;
+    @Column(name = "ARTIFACT_CHECKSUM", nullable = false)
+    private String artifactChecksum = "RECORD";
 
     @Column(name = "CREATION_TIMESTAMP", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
