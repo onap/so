@@ -35,7 +35,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Profile("!test & aaf")
-@Priority(0)
+// Run right before default priority of 0 to block requests
+@Priority(-1)
 public class SoCadiFilter extends CadiFilter {
 
     protected final Logger logger = LoggerFactory.getLogger(SoCadiFilter.class);
