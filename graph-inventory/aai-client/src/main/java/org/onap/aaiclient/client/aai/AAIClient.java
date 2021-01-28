@@ -21,10 +21,11 @@
 package org.onap.aaiclient.client.aai;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
+import org.javatuples.Pair;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryClient;
 import org.onap.aaiclient.client.graphinventory.exceptions.GraphInventoryUriComputationException;
 import org.onap.so.client.RestClient;
@@ -38,19 +39,19 @@ public class AAIClient extends GraphInventoryClient {
     protected AAIVersion version;
 
     protected AAIClient() {
-        super(AAIProperties.class, new HashMap<String, String>());
+        super(AAIProperties.class, new MultivaluedHashMap<>());
     }
 
     protected AAIClient(AAIVersion version) {
-        super(AAIProperties.class, new HashMap<String, String>());
+        super(AAIProperties.class, new MultivaluedHashMap<>());
         this.version = version;
     }
 
-    protected AAIClient(Map<String, String> additionalHeaders) {
+    protected AAIClient(MultivaluedMap<String, Pair<String, String>> additionalHeaders) {
         super(AAIProperties.class, additionalHeaders);
     }
 
-    protected AAIClient(AAIVersion version, Map<String, String> additionalHeaders) {
+    protected AAIClient(AAIVersion version, MultivaluedMap<String, Pair<String, String>> additionalHeaders) {
         super(AAIProperties.class, additionalHeaders);
         this.version = version;
     }

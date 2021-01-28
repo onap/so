@@ -21,32 +21,33 @@
 package org.onap.so.client.adapter.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
-import java.util.HashMap;
-import java.util.Map;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 import org.apache.commons.codec.binary.Base64;
+import org.javatuples.Pair;
 import org.junit.Before;
 import org.junit.Test;
+import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.so.client.policy.JettisonStyleMapperProvider;
 import org.onap.so.utils.CryptoUtils;
-import org.onap.logging.filter.base.ONAPComponents;
 
 public class AdapterRestClientTest {
 
     private static final String CRYPTO_KEY = "546573746F736973546573746F736973";
     private static final String INVALID_CRYPTO_KEY = "1234";
 
-    private Map<String, String> headerMap;
+    private MultivaluedMap<String, Pair<String, String>> headerMap;
     private AdapterRestProperties adapterRestPropertiesMock;
 
     @Before
     public void setup() {
-        headerMap = new HashMap<>();
+        headerMap = new MultivaluedHashMap<>();
+
         adapterRestPropertiesMock = mock(AdapterRestProperties.class);
     }
 
@@ -60,7 +61,8 @@ public class AdapterRestClientTest {
         // when
         testedObject.initializeHeaderMap(headerMap);
         // then
-        assertThat(headerMap).containsOnly(entry("Authorization", getExpectedEncodedString(encyptedMessage)));
+        assertThat(headerMap.get("ALL"))
+                .containsOnly(Pair.with("Authorization", getExpectedEncodedString(encyptedMessage)));
     }
 
     @Test
@@ -70,7 +72,7 @@ public class AdapterRestClientTest {
         // when
         testedObject.initializeHeaderMap(headerMap);
         // then
-        assertThat(headerMap).containsOnly(entry("Authorization", null));
+        assertThat(headerMap.get("ALL")).containsOnly(Pair.with("Authorization", null));
     }
 
     @Test
@@ -84,7 +86,7 @@ public class AdapterRestClientTest {
         // when
         testedObject.initializeHeaderMap(headerMap);
         // then
-        assertThat(headerMap).containsOnly(entry("Authorization", null));
+        assertThat(headerMap.get("ALL")).containsOnly(Pair.with("Authorization", null));
     }
 
     @Test

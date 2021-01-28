@@ -1044,40 +1044,40 @@
         <groupId>org.onap.aaf.authz</groupId>
         <artifactId>aaf-cadi-client</artifactId>
         <version>${aaf.version}</version>
-	    </dependency>
-	    <dependency>
-	      <groupId>org.onap.aaf.authz</groupId>
-	      <artifactId>aaf-cadi-aaf</artifactId>
-	      <version>${aaf.version}</version>
-	      <exclusions>
-	        <exclusion>
-	          <groupId>javax.servlet</groupId>
-	          <artifactId>servlet-api</artifactId>
-	        </exclusion>
-	        <exclusion>
-	          <groupId>log4j</groupId>
-	          <artifactId>log4j</artifactId>
-	        </exclusion>
-	      </exclusions>
-	    </dependency>
-	    <dependency>
-	        <groupId>org.onap.aaf.authz</groupId>
-	        <artifactId>aaf-auth-client</artifactId>
-	        <version>${aaf.version}</version>
-	        <scope>runtime</scope>
-	    </dependency>
-	    <dependency>
-	        <groupId>org.onap.aaf.authz</groupId>
-	        <artifactId>aaf-misc-env</artifactId>
-	        <version>${aaf.version}</version>
-	        <scope>runtime</scope>
-	    </dependency>
-	    <dependency>
-	        <groupId>org.onap.aaf.authz</groupId>
-	        <artifactId>aaf-misc-rosetta</artifactId>
-	        <version>${aaf.version}</version>
-	        <scope>runtime</scope>
-	    </dependency>
+      </dependency>
+      <dependency>
+        <groupId>org.onap.aaf.authz</groupId>
+        <artifactId>aaf-cadi-aaf</artifactId>
+        <version>${aaf.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.onap.aaf.authz</groupId>
+        <artifactId>aaf-auth-client</artifactId>
+        <version>${aaf.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onap.aaf.authz</groupId>
+        <artifactId>aaf-misc-env</artifactId>
+        <version>${aaf.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onap.aaf.authz</groupId>
+        <artifactId>aaf-misc-rosetta</artifactId>
+        <version>${aaf.version}</version>
+        <scope>runtime</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <profiles>
