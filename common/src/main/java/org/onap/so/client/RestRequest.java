@@ -49,23 +49,23 @@ public class RestRequest implements CheckedSupplier<Response> {
     public Response get() throws Exception {
         final Response response;
         if ("GET".equals(method)) {
-            response = this.client.getBuilder().accept(this.client.getAccept()).get();
+            response = this.client.getBuilder(method).accept(this.client.getAccept()).get();
         } else if ("POST".equals(method)) {
-            response = this.client.getBuilder().accept(this.client.getAccept())
+            response = this.client.getBuilder(method).accept(this.client.getAccept())
                     .post(Entity.entity(entity, this.client.getContentType()));
         } else if ("PATCH".equals(method)) {
-            response = this.client.getBuilder().header("X-HTTP-Method-Override", "PATCH")
+            response = this.client.getBuilder(method).header("X-HTTP-Method-Override", "PATCH")
                     .accept(this.client.getAccept()).post(Entity.entity(entity, this.client.getMergeContentType()));
         } else if ("DELETE".equals(method)) {
             if (entity == null) {
-                response = this.client.getBuilder().accept(this.client.getAccept()).delete();
+                response = this.client.getBuilder(method).accept(this.client.getAccept()).delete();
 
             } else {
-                response = this.client.getBuilder().accept(this.client.getAccept())
+                response = this.client.getBuilder(method).accept(this.client.getAccept())
                         .build(HttpMethod.DELETE, Entity.entity(entity, this.client.getContentType())).invoke();
             }
         } else if ("PUT".equals(method)) {
-            response = this.client.getBuilder().accept(this.client.getAccept())
+            response = this.client.getBuilder(method).accept(this.client.getAccept())
                     .put(Entity.entity(entity, this.client.getContentType()));
         } else {
             response = Response.serverError().entity(method + " not valid").build();

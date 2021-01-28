@@ -33,13 +33,14 @@ import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Map;
 import java.util.Optional;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
+import org.javatuples.Pair;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -120,7 +121,7 @@ public class RestClientTest {
         RestClient client = new RestClient(props, Optional.of(new URI("/chunked/delayed"))) {
 
             @Override
-            protected void initializeHeaderMap(Map<String, String> headerMap) {
+            protected void initializeHeaderMap(MultivaluedMap<String, Pair<String, String>> headerMap) {
                 // TODO Auto-generated method stub
 
             }

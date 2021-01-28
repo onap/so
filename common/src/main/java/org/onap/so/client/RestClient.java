@@ -29,10 +29,7 @@ import java.security.GeneralSecurityException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
@@ -43,9 +40,12 @@ import javax.ws.rs.client.ResponseProcessingException;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
+import org.javatuples.Pair;
 import org.onap.logging.filter.base.MDCSetup;
 import org.onap.logging.filter.base.ONAPComponentsList;
 import org.onap.logging.filter.base.PayloadLoggingClientFilter;
@@ -67,7 +67,7 @@ public abstract class RestClient {
     private static final int MAX_PAYLOAD_SIZE = 1024 * 1024;
     private WebTarget webTarget;
 
-    protected final Map<String, String> headerMap;
+    protected final MultivaluedMap<String, Pair<String, String>> headerMap;
     protected final Logger logger = LoggerFactory.getLogger(RestClient.class);
     protected URL host;
     protected Optional<URI> path;
@@ -80,7 +80,7 @@ public abstract class RestClient {
 
     protected RestClient(RestProperties props, Optional<URI> path) {
 
-        headerMap = new HashMap<>();
+        headerMap = new MultivaluedHashMap<>();
         try {
             host = props.getEndpoint();
         } catch (MalformedURLException e) {
@@ -99,7 +99,7 @@ public abstract class RestClient {
     }
 
     protected RestClient(URL host, String contentType) {
-        headerMap = new HashMap<>();
+        headerMap = new MultivaluedHashMap<>();
         this.path = Optional.empty();
         this.host = host;
         this.contentType = contentType;
@@ -107,7 +107,7 @@ public abstract class RestClient {
     }
 
     protected RestClient(URL host, String acceptType, String contentType) {
-        headerMap = new HashMap<>();
+        headerMap = new MultivaluedHashMap<>();
         this.path = Optional.empty();
         this.host = host;
         this.accept = acceptType;
@@ -133,15 +133,23 @@ public abstract class RestClient {
         return MAX_PAYLOAD_SIZE;
     }
 
-    protected Builder getBuilder() {
+    protected Builder getBuilder(String method) {
 
         if (webTarget == null) {
             initializeClient(getClient());
         }
         Builder builder = webTarget.request();
         initializeHeaderMap(headerMap);
-        for (Entry<String, String> entry : headerMap.entrySet()) {
-            builder.header(entry.getKey(), entry.getValue());
+        if (headerMap.containsKey("ALL")) {
+            for (Pair<String, String> pair : headerMap.get("ALL")) {
+                builder.header(pair.getValue0(), pair.getValue1());
+            }
+        }
+
+        if (headerMap.containsKey(method)) {
+            for (Pair<String, String> pair : headerMap.get(method)) {
+                builder.header(pair.getValue0(), pair.getValue1());
+            }
         }
         return builder;
     }
@@ -150,7 +158,7 @@ public abstract class RestClient {
         return this.webTarget;
     }
 
-    protected abstract void initializeHeaderMap(Map<String, String> headerMap);
+    protected abstract void initializeHeaderMap(MultivaluedMap<String, Pair<String, String>> headerMap);
 
     protected Optional<ResponseExceptionMapper> addResponseExceptionMapper() {
         return Optional.of(new ResponseExceptionMapperImpl());
@@ -170,7 +178,7 @@ public abstract class RestClient {
         try {
             byte[] decryptedAuth = CryptoUtils.decrypt(auth, key).getBytes();
             String authHeaderValue = "Basic " + Base64.getEncoder().encodeToString(decryptedAuth);
-            headerMap.put("Authorization", authHeaderValue);
+            headerMap.add("ALL", Pair.with("Authorization", authHeaderValue));
         } catch (GeneralSecurityException e) {
             logger.error(e.getMessage(), e);
         }

@@ -24,8 +24,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
+import org.javatuples.Pair;
 import org.junit.Test;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.slf4j.MDC;
@@ -48,11 +49,12 @@ public class DMaaPRestClientTest {
             throw new RuntimeException(e);
         }
         DMaaPRestClient client = new DMaaPRestClient(url, contentType, auth, key);
-        Map<String, String> map = new HashMap<>();
+        MultivaluedMap<String, Pair<String, String>> map = new MultivaluedHashMap<>();
         client.initializeHeaderMap(map);
-        map.put(ONAPLogConstants.MDCs.REQUEST_ID, "1234");
+        map.add("ALL", Pair.with(ONAPLogConstants.MDCs.REQUEST_ID, "1234"));
         assertNotNull(map);
-        assertEquals("Found expected RequesttId", "1234", map.get(ONAPLogConstants.MDCs.REQUEST_ID));
+        assertEquals("Found expected RequestId", true,
+                map.get("ALL").contains(Pair.with(ONAPLogConstants.MDCs.REQUEST_ID, "1234")));
 
     }
 
@@ -67,11 +69,12 @@ public class DMaaPRestClientTest {
         }
         MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, "1234");
         DMaaPRestClient client = new DMaaPRestClient(url, contentType, auth, key);
-        Map<String, String> map = new HashMap<>();
+        MultivaluedMap<String, Pair<String, String>> map = new MultivaluedHashMap<>();
         client.initializeHeaderMap(map);
 
         assertNotNull(map);
-        assertEquals("Found expected RequestId", "1234", map.get(ONAPLogConstants.Headers.INVOCATION_ID));
+        assertEquals("Found expected RequestId", true,
+                map.get("ALL").contains(Pair.with(ONAPLogConstants.Headers.INVOCATION_ID, "1234")));
 
     }
 
@@ -87,11 +90,12 @@ public class DMaaPRestClientTest {
 
         MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, null);
         DMaaPRestClient client = new DMaaPRestClient(url, contentType, auth, key);
-        Map<String, String> map = new HashMap<>();
+        MultivaluedMap<String, Pair<String, String>> map = new MultivaluedHashMap<>();
         client.initializeHeaderMap(map);
 
         assertNotNull(map);
-        assertEquals("header not found as expected", null, map.get(ONAPLogConstants.Headers.INVOCATION_ID));
+        assertEquals("header not found as expected", false,
+                map.get("ALL").contains(Pair.with(ONAPLogConstants.Headers.INVOCATION_ID, "1234")));
 
     }
 }

@@ -21,10 +21,11 @@
 package org.onap.aaiclient.client.graphinventory;
 
 import java.net.URI;
-import java.util.Map;
 import java.util.Optional;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import org.javatuples.Pair;
 import org.onap.aaiclient.client.CacheControlFeature;
 import org.onap.aaiclient.client.FlushCache;
 import org.onap.logging.filter.base.ONAPComponentsList;
@@ -65,7 +66,7 @@ public abstract class GraphInventoryRestClient extends RestClientSSL {
     public abstract ONAPComponentsList getTargetEntity();
 
     @Override
-    protected abstract void initializeHeaderMap(Map<String, String> headerMap);
+    protected abstract void initializeHeaderMap(MultivaluedMap<String, Pair<String, String>> headerMap);
 
     @Override
     protected abstract Optional<ResponseExceptionMapper> addResponseExceptionMapper();

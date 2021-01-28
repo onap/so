@@ -43,8 +43,9 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashMap;
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
+import org.javatuples.Pair;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -75,7 +76,7 @@ public class AAIRestClientTest {
 
     @Test
     public void failPatchOnComplexObject() throws URISyntaxException {
-        AAIRestClient client = new AAIRestClient(props, new URI(""), new HashMap<String, String>());
+        AAIRestClient client = new AAIRestClient(props, new URI(""), new MultivaluedHashMap<>());
         this.thrown.expect(GraphInventoryPatchDepthExceededException.class);
         this.thrown.expectMessage(containsString("Object exceeds allowed depth for update action"));
         client.patch(
@@ -84,7 +85,7 @@ public class AAIRestClientTest {
 
     @Test
     public void verifyPatchValidation() throws URISyntaxException {
-        AAIRestClient client = new AAIRestClient(props, new URI(""), new HashMap<String, String>());
+        AAIRestClient client = new AAIRestClient(props, new URI(""), new MultivaluedHashMap<>());
         AAIRestClient spy = spy(client);
         GraphInventoryPatchConverter patchValidatorMock = mock(GraphInventoryPatchConverter.class);
         doReturn(patchValidatorMock).when(spy).getPatchConverter();
@@ -97,11 +98,13 @@ public class AAIRestClientTest {
     @Test
     public void verifyAdditionalHeadersTest() throws URISyntaxException {
         AAIRestClient client = new AAIRestClient(new DefaultAAIPropertiesImpl(wireMockRule.port()), new URI("/test"),
-                ImmutableMap.of("test", "value"));
+                new MultivaluedHashMap<String, Pair<String, String>>(
+                        ImmutableMap.of("ALL", Pair.with("test", "value"), "GET", Pair.with("get test", "value"))));
         wireMockRule.stubFor(get(urlPathEqualTo("/test")).willReturn(aResponse().withStatus(200)));
         client.get();
         wireMockRule.verify(getRequestedFor(urlPathEqualTo("/test")).withHeader("X-FromAppId", equalTo("MSO"))
-                .withHeader("X-TransactionId", matching(".*")).withHeader("test", equalTo("value")));
+                .withHeader("X-TransactionId", matching(".*")).withHeader("test", equalTo("value"))
+                .withHeader("get test", equalTo("value")));
     }
 
 
@@ -145,7 +148,7 @@ public class AAIRestClientTest {
             }
 
         };
-        RestClient client = new AAIRestClient(props, new URI("/cached"), new HashMap<String, String>());
+        RestClient client = new AAIRestClient(props, new URI("/cached"), new MultivaluedHashMap<>());
 
         Response response = client.get();
 
@@ -199,7 +202,7 @@ public class AAIRestClientTest {
 
         };
 
-        RestClient client = new AAIRestClient(props, new URI("/cached/1"), new HashMap<String, String>());
+        RestClient client = new AAIRestClient(props, new URI("/cached/1"), new MultivaluedHashMap<>());
 
 
         Response response = client.get();
