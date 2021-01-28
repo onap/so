@@ -20,10 +20,11 @@
 
 package org.onap.so.client;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.net.URL;
-import java.util.Map;
 import java.util.Optional;
-import static org.apache.commons.lang3.StringUtils.*;
+import javax.ws.rs.core.MultivaluedMap;
+import org.javatuples.Pair;
 import org.onap.logging.filter.base.ONAPComponentsList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +50,7 @@ public class HttpClient extends RestClient {
     }
 
     @Override
-    protected void initializeHeaderMap(Map<String, String> headerMap) {}
+    protected void initializeHeaderMap(MultivaluedMap<String, Pair<String, String>> headerMap) {}
 
     @Override
     protected Optional<ResponseExceptionMapper> addResponseExceptionMapper() {
@@ -79,7 +80,7 @@ public class HttpClient extends RestClient {
     public void addAdditionalHeader(String name, String value) {
         try {
             if (isNotBlank(name) && isNotBlank(value)) {
-                headerMap.put(name, value);
+                headerMap.add("ALL", Pair.with(name, value));
             } else {
                 log.warn("Not adding " + name + " to headers.");
             }

@@ -1,7 +1,8 @@
 package org.onap.aaiclient.client.aai;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import java.net.URISyntaxException;
+import org.javatuples.Pair;
 import org.junit.Test;
 
 public class AAIDSLQueryClientTest {
@@ -12,6 +13,6 @@ public class AAIDSLQueryClientTest {
     public void verifyHeadersTest() throws URISyntaxException {
 
         AAIDSLQueryClient client = new AAIDSLQueryClient();
-        assertEquals("V2", client.getClient().getAdditionalHeaders().get("X-DslApiVersion"));
+        assertTrue(client.getClient().getAdditionalHeaders().get("ALL").contains(Pair.with("X-DslApiVersion", "V2")));
     }
 }

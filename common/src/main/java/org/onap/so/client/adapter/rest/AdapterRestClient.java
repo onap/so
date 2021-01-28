@@ -22,14 +22,15 @@ package org.onap.so.client.adapter.rest;
 
 import java.net.URI;
 import java.security.GeneralSecurityException;
-import java.util.Map;
 import java.util.Optional;
+import javax.ws.rs.core.MultivaluedMap;
 import org.apache.commons.codec.binary.Base64;
+import org.javatuples.Pair;
+import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.so.client.RestClient;
 import org.onap.so.client.policy.CommonObjectMapperProvider;
 import org.onap.so.client.policy.JettisonStyleMapperProvider;
 import org.onap.so.utils.CryptoUtils;
-import org.onap.logging.filter.base.ONAPComponents;
 
 public class AdapterRestClient extends RestClient {
 
@@ -51,9 +52,9 @@ public class AdapterRestClient extends RestClient {
     }
 
     @Override
-    protected void initializeHeaderMap(Map<String, String> headerMap) {
-        headerMap.put("Authorization",
-                this.getBasicAuth(adapterRestProperties.getAuth(), adapterRestProperties.getKey()));
+    protected void initializeHeaderMap(MultivaluedMap<String, Pair<String, String>> headerMap) {
+        headerMap.add("ALL", Pair.with("Authorization",
+                this.getBasicAuth(adapterRestProperties.getAuth(), adapterRestProperties.getKey())));
     }
 
     @Override

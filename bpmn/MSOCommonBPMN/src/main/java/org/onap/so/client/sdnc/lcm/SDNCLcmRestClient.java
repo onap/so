@@ -21,10 +21,11 @@
 package org.onap.so.client.sdnc.lcm;
 
 import java.net.URI;
-import java.util.Map;
 import java.util.Optional;
-import org.onap.so.client.RestClient;
+import javax.ws.rs.core.MultivaluedMap;
+import org.javatuples.Pair;
 import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.client.RestClient;
 import org.onap.so.client.sdnc.lcm.beans.LcmInput;
 import org.onap.so.client.sdnc.lcm.beans.LcmOutput;
 import org.onap.so.client.sdnc.lcm.beans.LcmRestRequest;
@@ -44,8 +45,8 @@ public class SDNCLcmRestClient extends RestClient {
     }
 
     @Override
-    protected void initializeHeaderMap(Map<String, String> headerMap) {
-        headerMap.put("Authorization", sdncLcmProperties.getBasicAuth());
+    protected void initializeHeaderMap(MultivaluedMap<String, Pair<String, String>> headerMap) {
+        headerMap.add("ALL", Pair.with("Authorization", sdncLcmProperties.getBasicAuth()));
     }
 
     @Override

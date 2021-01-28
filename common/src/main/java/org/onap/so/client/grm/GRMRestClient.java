@@ -22,10 +22,11 @@ package org.onap.so.client.grm;
 
 
 import java.net.URI;
-import java.util.Map;
 import java.util.Optional;
-import org.onap.so.client.RestClient;
+import javax.ws.rs.core.MultivaluedMap;
+import org.javatuples.Pair;
 import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.client.RestClient;
 
 public class GRMRestClient extends RestClient {
 
@@ -42,7 +43,7 @@ public class GRMRestClient extends RestClient {
     }
 
     @Override
-    protected void initializeHeaderMap(Map<String, String> headerMap) {
+    protected void initializeHeaderMap(MultivaluedMap<String, Pair<String, String>> headerMap) {
         String auth = properties.getAuth();
         String key = properties.getKey();
 

@@ -21,12 +21,13 @@
 package org.onap.so.client.policy;
 
 
-import java.util.Map;
 import java.util.Optional;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
+import org.javatuples.Pair;
+import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.so.client.RestClient;
 import org.onap.so.client.policy.entities.PolicyServiceType;
-import org.onap.logging.filter.base.ONAPComponents;
 
 public class PolicyRestClient extends RestClient {
 
@@ -43,10 +44,10 @@ public class PolicyRestClient extends RestClient {
     }
 
     @Override
-    protected void initializeHeaderMap(Map<String, String> headerMap) {
-        headerMap.put("ClientAuth", properties.getClientAuth());
-        headerMap.put("Authorization", properties.getAuth());
-        headerMap.put("Environment", properties.getEnvironment());
+    protected void initializeHeaderMap(MultivaluedMap<String, Pair<String, String>> headerMap) {
+        headerMap.add("ALL", Pair.with("ClientAuth", properties.getClientAuth()));
+        headerMap.add("ALL", Pair.with("Authorization", properties.getAuth()));
+        headerMap.add("ALL", Pair.with("Environment", properties.getEnvironment()));
     }
 
 }

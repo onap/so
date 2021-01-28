@@ -62,9 +62,9 @@ public class RestPropertiesLoader {
             if (clazz.isAssignableFrom(item.getClass())) {
                 try {
                     if (forceNewInstance) {
-                        result = (T) item.getClass().newInstance();
+                        return (T) item.getClass().newInstance();
                     } else {
-                        result = (T) item;
+                        return (T) item;
                     }
                 } catch (InstantiationException | IllegalAccessException e) {
                     /*
