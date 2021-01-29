@@ -28,6 +28,7 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import org.apache.commons.lang3.SerializationUtils;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.javatuples.Pair;
@@ -175,8 +176,7 @@ public class WorkflowAction {
             String serviceInstanceId = getServiceInstanceId(execution, resourceId, resourceType);
 
             fillExecution(execution, requestDetails.getRequestInfo().getSuppressRollback(), resourceId, resourceType);
-            List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
-
+            List<ExecuteBuildingBlock> flowsToExecute;
             if (isRequestMacroServiceResume(isALaCarte, resourceType, requestAction, serviceInstanceId)) {
                 String errorMessage = "Could not resume Macro flow. Error loading execution path.";
                 flowsToExecute = loadExecuteBuildingBlocks(execution, requestId, errorMessage);
@@ -193,141 +193,13 @@ public class WorkflowAction {
                 final String serviceType =
                         Optional.ofNullable((String) execution.getVariable(BBConstants.G_SERVICE_TYPE)).orElse("");
                 if (isALaCarte) {
-                    if (orchFlows == null || orchFlows.isEmpty()) {
-                        orchFlows = queryNorthBoundRequestCatalogDb(execution, requestAction, resourceType, true,
-                                cloudOwner, serviceType);
-                    }
-                    Resource resourceKey = getResourceKey(sIRequest, resourceType);
-
-                    ReplaceInstanceRelatedInformation replaceInfo = new ReplaceInstanceRelatedInformation();
-                    if ((requestAction.equalsIgnoreCase(REPLACEINSTANCE)
-                            || requestAction.equalsIgnoreCase(REPLACEINSTANCERETAINASSIGNMENTS))
-                            && resourceType.equals(WorkflowType.VFMODULE)) {
-                        logger.debug("Build a BB list for replacing BB modules");
-                        ConfigBuildingBlocksDataObject cbbdo = createConfigBuildingBlocksDataObject(execution,
-                                sIRequest, requestId, workflowResourceIds, requestDetails, requestAction, resourceId,
-                                vnfType, orchFlows, apiVersion, resourceKey, replaceInfo);
-                        orchFlows = getVfModuleReplaceBuildingBlocks(cbbdo);
-
-                        createBuildingBlocksForOrchFlows(execution, sIRequest, requestId, workflowResourceIds,
-                                requestDetails, requestAction, resourceId, flowsToExecute, vnfType, orchFlows,
-                                apiVersion, resourceKey, replaceInfo);
-                    } else {
-                        if (isConfiguration(orchFlows) && !requestAction.equalsIgnoreCase(CREATE_INSTANCE)) {
-                            addConfigBuildingBlocksToFlowsToExecuteList(execution, sIRequest, requestId,
-                                    workflowResourceIds, requestDetails, requestAction, resourceId, flowsToExecute,
-                                    vnfType, apiVersion, resourceKey, replaceInfo, orchFlows);
-                        }
-                        orchFlows =
-                                orchFlows.stream().filter(item -> !item.getFlowName().contains(FABRIC_CONFIGURATION))
-                                        .collect(Collectors.toList());
-
-                        for (OrchestrationFlow orchFlow : orchFlows) {
-                            ExecuteBuildingBlock ebb = executeBuildingBlockBuilder.buildExecuteBuildingBlock(orchFlow,
-                                    requestId, resourceKey, apiVersion, resourceId, requestAction, true, vnfType,
-                                    workflowResourceIds, requestDetails, false, null, null, false, replaceInfo);
-                            flowsToExecute.add(ebb);
-                        }
-                    }
+                    flowsToExecute = loadExecuteBuildingBlocksForAlaCarte(orchFlows, execution, requestAction,
+                            resourceType, cloudOwner, serviceType, sIRequest, requestId, workflowResourceIds,
+                            requestDetails, resourceId, vnfType, apiVersion);
                 } else {
-                    boolean containsService = false;
-                    List<Resource> resourceList = new ArrayList<>();
-                    List<Pair<WorkflowType, String>> aaiResourceIds = new ArrayList<>();
-                    List<Map<String, Object>> userParams =
-                            sIRequest.getRequestDetails().getRequestParameters().getUserParams();
-                    if (resourceType == WorkflowType.SERVICE && requestAction.equalsIgnoreCase(ASSIGNINSTANCE)) {
-                        // SERVICE-MACRO-ASSIGN will always get user params with a
-                        // service.
-
-                        if (userParams != null) {
-                            containsService = isContainsService(sIRequest);
-                            if (containsService) {
-                                resourceList = userParamsServiceTraversal.getResourceListFromUserParams(execution,
-                                        userParams, serviceInstanceId, requestAction);
-                            }
-                        } else {
-                            buildAndThrowException(execution,
-                                    "Service-Macro-Assign request details must contain user params with a service");
-                        }
-                    } else if (resourceType == WorkflowType.SERVICE
-                            && requestAction.equalsIgnoreCase(CREATE_INSTANCE)) {
-                        // SERVICE-MACRO-CREATE will get user params with a service,
-                        // a service with a network, a service with a
-                        // network collection, OR an empty service.
-                        // If user params is just a service or null and macro
-                        // queries the SI and finds a VNF, macro fails.
-
-                        if (userParams != null) {
-                            containsService = isContainsService(sIRequest);
-                        }
-                        if (containsService) {
-                            resourceList = userParamsServiceTraversal.getResourceListFromUserParams(execution,
-                                    userParams, serviceInstanceId, requestAction);
-                        }
-                        if (!foundRelated(resourceList)) {
-                            traverseCatalogDbService(execution, sIRequest, resourceList, aaiResourceIds);
-                        }
-                    } else if (resourceType == WorkflowType.SERVICE
-                            && ("activateInstance".equalsIgnoreCase(requestAction)
-                                    || "unassignInstance".equalsIgnoreCase(requestAction)
-                                    || "deleteInstance".equalsIgnoreCase(requestAction)
-                                    || requestAction.equalsIgnoreCase("activate" + FABRIC_CONFIGURATION))) {
-                        // SERVICE-MACRO-ACTIVATE, SERVICE-MACRO-UNASSIGN, and
-                        // SERVICE-MACRO-DELETE
-                        // Will never get user params with service, macro will have
-                        // to query the SI in AAI to find related instances.
-                        traverseAAIService(execution, resourceList, resourceId, aaiResourceIds);
-                    } else if (resourceType == WorkflowType.SERVICE
-                            && "deactivateInstance".equalsIgnoreCase(requestAction)) {
-                        resourceList.add(new Resource(WorkflowType.SERVICE, "", false));
-                    } else if (resourceType == WorkflowType.VNF && (REPLACEINSTANCE.equalsIgnoreCase(requestAction)
-                            || ("recreateInstance".equalsIgnoreCase(requestAction)))) {
-                        traverseAAIVnf(execution, resourceList, workflowResourceIds.getServiceInstanceId(),
-                                workflowResourceIds.getVnfId(), aaiResourceIds);
-                    } else if (resourceType == WorkflowType.VNF && "updateInstance".equalsIgnoreCase(requestAction)) {
-                        customTraverseAAIVnf(execution, resourceList, workflowResourceIds.getServiceInstanceId(),
-                                workflowResourceIds.getVnfId(), aaiResourceIds);
-                    } else {
-                        buildAndThrowException(execution, "Current Macro Request is not supported");
-                    }
-                    StringBuilder foundObjects = new StringBuilder();
-                    for (WorkflowType type : WorkflowType.values()) {
-                        foundObjects.append(type).append(" - ").append(
-                                (int) resourceList.stream().filter(x -> type.equals(x.getResourceType())).count())
-                                .append("    ");
-                    }
-                    logger.info("Found {}", foundObjects);
-
-                    if (orchFlows == null || orchFlows.isEmpty()) {
-                        orchFlows = queryNorthBoundRequestCatalogDb(execution, requestAction, resourceType, isALaCarte,
-                                cloudOwner, serviceType);
-                    }
-                    boolean vnfReplace = false;
-                    if (resourceType.equals(WorkflowType.VNF) && (REPLACEINSTANCE.equalsIgnoreCase(requestAction)
-                            || REPLACEINSTANCERETAINASSIGNMENTS.equalsIgnoreCase(requestAction))) {
-                        vnfReplace = true;
-                    }
-                    flowsToExecute = executeBuildingBlockBuilder.buildExecuteBuildingBlockList(orchFlows, resourceList,
-                            requestId, apiVersion, resourceId, requestAction, vnfType, workflowResourceIds,
-                            requestDetails, vnfReplace);
-                    if (isNetworkCollectionInTheResourceList(resourceList)) {
-                        logger.info("Sorting for Vlan Tagging");
-                        flowsToExecute = sortExecutionPathByObjectForVlanTagging(flowsToExecute, requestAction);
-                    }
-                    // By default, enable homing at VNF level for CREATE_INSTANCE and ASSIGNINSTANCE
-                    if (resourceType == WorkflowType.SERVICE
-                            && (requestAction.equals(CREATE_INSTANCE) || requestAction.equals(ASSIGNINSTANCE))
-                            && resourceList.stream().anyMatch(x -> WorkflowType.VNF.equals(x.getResourceType()))) {
-                        execution.setVariable(HOMING, true);
-                        execution.setVariable("calledHoming", false);
-                    }
-                    if (resourceType == WorkflowType.SERVICE && (requestAction.equalsIgnoreCase(ASSIGNINSTANCE)
-                            || requestAction.equalsIgnoreCase(CREATE_INSTANCE))) {
-                        generateResourceIds(flowsToExecute, resourceList, serviceInstanceId);
-                    } else {
-                        updateResourceIdsFromAAITraversal(flowsToExecute, resourceList, aaiResourceIds,
-                                serviceInstanceId);
-                    }
+                    flowsToExecute = loadExecuteBuildingBlocksForMacro(sIRequest, resourceType, requestAction,
+                            execution, serviceInstanceId, resourceId, workflowResourceIds, orchFlows, cloudOwner,
+                            serviceType, requestId, apiVersion, vnfType, requestDetails);
                 }
             }
             // If the user set "Homing_Solution" to "none", disable homing, else if "Homing_Solution" is specified,
@@ -366,6 +238,151 @@ public class WorkflowAction {
                 throw ex;
             }
         }
+    }
+
+    private List<ExecuteBuildingBlock> loadExecuteBuildingBlocksForAlaCarte(List<OrchestrationFlow> orchFlows,
+            DelegateExecution execution, String requestAction, WorkflowType resourceType, String cloudOwner,
+            String serviceType, ServiceInstancesRequest sIRequest, String requestId,
+            WorkflowResourceIds workflowResourceIds, RequestDetails requestDetails, String resourceId, String vnfType,
+            String apiVersion) throws Exception {
+        List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
+        if (orchFlows == null || orchFlows.isEmpty()) {
+            orchFlows = queryNorthBoundRequestCatalogDb(execution, requestAction, resourceType, true, cloudOwner,
+                    serviceType);
+        }
+        Resource resourceKey = getResourceKey(sIRequest, resourceType);
+
+        ReplaceInstanceRelatedInformation replaceInfo = new ReplaceInstanceRelatedInformation();
+        if ((requestAction.equalsIgnoreCase(REPLACEINSTANCE)
+                || requestAction.equalsIgnoreCase(REPLACEINSTANCERETAINASSIGNMENTS))
+                && resourceType.equals(WorkflowType.VFMODULE)) {
+            logger.debug("Build a BB list for replacing BB modules");
+            ConfigBuildingBlocksDataObject cbbdo = createConfigBuildingBlocksDataObject(execution, sIRequest, requestId,
+                    workflowResourceIds, requestDetails, requestAction, resourceId, vnfType, orchFlows, apiVersion,
+                    resourceKey, replaceInfo);
+            orchFlows = getVfModuleReplaceBuildingBlocks(cbbdo);
+
+            createBuildingBlocksForOrchFlows(execution, sIRequest, requestId, workflowResourceIds, requestDetails,
+                    requestAction, resourceId, flowsToExecute, vnfType, orchFlows, apiVersion, resourceKey,
+                    replaceInfo);
+        } else {
+            if (isConfiguration(orchFlows) && !requestAction.equalsIgnoreCase(CREATE_INSTANCE)) {
+                addConfigBuildingBlocksToFlowsToExecuteList(execution, sIRequest, requestId, workflowResourceIds,
+                        requestDetails, requestAction, resourceId, flowsToExecute, vnfType, apiVersion, resourceKey,
+                        replaceInfo, orchFlows);
+            }
+            orchFlows = orchFlows.stream().filter(item -> !item.getFlowName().contains(FABRIC_CONFIGURATION))
+                    .collect(Collectors.toList());
+
+            for (OrchestrationFlow orchFlow : orchFlows) {
+                ExecuteBuildingBlock ebb = executeBuildingBlockBuilder.buildExecuteBuildingBlock(orchFlow, requestId,
+                        resourceKey, apiVersion, resourceId, requestAction, true, vnfType, workflowResourceIds,
+                        requestDetails, false, null, null, false, replaceInfo);
+                flowsToExecute.add(ebb);
+            }
+        }
+        return flowsToExecute;
+    }
+
+    private List<ExecuteBuildingBlock> loadExecuteBuildingBlocksForMacro(ServiceInstancesRequest sIRequest,
+            WorkflowType resourceType, String requestAction, DelegateExecution execution, String serviceInstanceId,
+            String resourceId, WorkflowResourceIds workflowResourceIds, List<OrchestrationFlow> orchFlows,
+            String cloudOwner, String serviceType, String requestId, String apiVersion, String vnfType,
+            RequestDetails requestDetails) throws IOException, VrfBondingServiceException {
+        List<ExecuteBuildingBlock> flowsToExecute;
+        boolean containsService = false;
+        List<Resource> resourceList = new ArrayList<>();
+        List<Pair<WorkflowType, String>> aaiResourceIds = new ArrayList<>();
+        List<Map<String, Object>> userParams = sIRequest.getRequestDetails().getRequestParameters().getUserParams();
+        if (resourceType == WorkflowType.SERVICE && requestAction.equalsIgnoreCase(ASSIGNINSTANCE)) {
+            // SERVICE-MACRO-ASSIGN will always get user params with a
+            // service.
+
+            if (userParams != null) {
+                containsService = isContainsService(sIRequest);
+                if (containsService) {
+                    resourceList = userParamsServiceTraversal.getResourceListFromUserParams(execution, userParams,
+                            serviceInstanceId, requestAction);
+                }
+            } else {
+                buildAndThrowException(execution,
+                        "Service-Macro-Assign request details must contain user params with a service");
+            }
+        } else if (resourceType == WorkflowType.SERVICE && requestAction.equalsIgnoreCase(CREATE_INSTANCE)) {
+            // SERVICE-MACRO-CREATE will get user params with a service,
+            // a service with a network, a service with a
+            // network collection, OR an empty service.
+            // If user params is just a service or null and macro
+            // queries the SI and finds a VNF, macro fails.
+
+            if (userParams != null) {
+                containsService = isContainsService(sIRequest);
+            }
+            if (containsService) {
+                resourceList = userParamsServiceTraversal.getResourceListFromUserParams(execution, userParams,
+                        serviceInstanceId, requestAction);
+            }
+            if (!foundRelated(resourceList)) {
+                traverseCatalogDbService(execution, sIRequest, resourceList, aaiResourceIds);
+            }
+        } else if (resourceType == WorkflowType.SERVICE && ("activateInstance".equalsIgnoreCase(requestAction)
+                || "unassignInstance".equalsIgnoreCase(requestAction)
+                || "deleteInstance".equalsIgnoreCase(requestAction)
+                || requestAction.equalsIgnoreCase("activate" + FABRIC_CONFIGURATION))) {
+            // SERVICE-MACRO-ACTIVATE, SERVICE-MACRO-UNASSIGN, and
+            // SERVICE-MACRO-DELETE
+            // Will never get user params with service, macro will have
+            // to query the SI in AAI to find related instances.
+            traverseAAIService(execution, resourceList, resourceId, aaiResourceIds);
+        } else if (resourceType == WorkflowType.SERVICE && "deactivateInstance".equalsIgnoreCase(requestAction)) {
+            resourceList.add(new Resource(WorkflowType.SERVICE, "", false));
+        } else if (resourceType == WorkflowType.VNF && (REPLACEINSTANCE.equalsIgnoreCase(requestAction)
+                || ("recreateInstance".equalsIgnoreCase(requestAction)))) {
+            traverseAAIVnf(execution, resourceList, workflowResourceIds.getServiceInstanceId(),
+                    workflowResourceIds.getVnfId(), aaiResourceIds);
+        } else if (resourceType == WorkflowType.VNF && "updateInstance".equalsIgnoreCase(requestAction)) {
+            customTraverseAAIVnf(execution, resourceList, workflowResourceIds.getServiceInstanceId(),
+                    workflowResourceIds.getVnfId(), aaiResourceIds);
+        } else {
+            buildAndThrowException(execution, "Current Macro Request is not supported");
+        }
+        StringBuilder foundObjects = new StringBuilder();
+        for (WorkflowType type : WorkflowType.values()) {
+            foundObjects.append(type).append(" - ")
+                    .append((int) resourceList.stream().filter(x -> type.equals(x.getResourceType())).count())
+                    .append("    ");
+        }
+        logger.info("Found {}", foundObjects);
+
+        if (orchFlows == null || orchFlows.isEmpty()) {
+            orchFlows = queryNorthBoundRequestCatalogDb(execution, requestAction, resourceType, false, cloudOwner,
+                    serviceType);
+        }
+        boolean vnfReplace = false;
+        if (resourceType.equals(WorkflowType.VNF) && (REPLACEINSTANCE.equalsIgnoreCase(requestAction)
+                || REPLACEINSTANCERETAINASSIGNMENTS.equalsIgnoreCase(requestAction))) {
+            vnfReplace = true;
+        }
+        flowsToExecute = executeBuildingBlockBuilder.buildExecuteBuildingBlockList(orchFlows, resourceList, requestId,
+                apiVersion, resourceId, requestAction, vnfType, workflowResourceIds, requestDetails, vnfReplace);
+        if (isNetworkCollectionInTheResourceList(resourceList)) {
+            logger.info("Sorting for Vlan Tagging");
+            flowsToExecute = sortExecutionPathByObjectForVlanTagging(flowsToExecute, requestAction);
+        }
+        // By default, enable homing at VNF level for CREATE_INSTANCE and ASSIGNINSTANCE
+        if (resourceType == WorkflowType.SERVICE
+                && (requestAction.equals(CREATE_INSTANCE) || requestAction.equals(ASSIGNINSTANCE))
+                && resourceList.stream().anyMatch(x -> WorkflowType.VNF.equals(x.getResourceType()))) {
+            execution.setVariable(HOMING, true);
+            execution.setVariable("calledHoming", false);
+        }
+        if (resourceType == WorkflowType.SERVICE && (requestAction.equalsIgnoreCase(ASSIGNINSTANCE)
+                || requestAction.equalsIgnoreCase(CREATE_INSTANCE))) {
+            generateResourceIds(flowsToExecute, resourceList, serviceInstanceId);
+        } else {
+            updateResourceIdsFromAAITraversal(flowsToExecute, resourceList, aaiResourceIds, serviceInstanceId);
+        }
+        return flowsToExecute;
     }
 
     private void setExecutionVariables(DelegateExecution execution, List<ExecuteBuildingBlock> flowsToExecute,
