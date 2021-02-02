@@ -120,6 +120,11 @@ public class DoModifyTnNssi extends AbstractServiceTaskProcessor {
             } else {
                 execution.setVariable("nsiInfo", nsiInfo)
             }
+
+            if (isBlank(tnNssmfUtils.setExecVarFromJsonIfExists(execution, additionalPropJsonStr,
+                    "enableSdnc", "enableSdnc"))) {
+                tnNssmfUtils.setEnableSdncConfig(execution)
+            }
         } catch (BpmnError e) {
             throw e
         } catch (Exception ex) {

@@ -116,10 +116,10 @@ class TnAllocateNssi extends AbstractServiceTaskProcessor {
                 execution.setVariable("nsiInfo", nsiInfoStr)
             }
 
-            //nsiId is passed in from caller bpmn
-            //String nsiIdStr = jsonUtil.getJsonValue(nsiInfo, "nsiId")
-            //execution.setVariable("nsiId", nsiIdStr)
-
+            if (isBlank(tnNssmfUtils.setExecVarFromJsonIfExists(execution, additionalPropJsonStr,
+                    "enableSdnc", "enableSdnc"))) {
+                tnNssmfUtils.setEnableSdncConfig(execution)
+            }
         } catch (BpmnError e) {
             throw e
         } catch (Exception ex) {

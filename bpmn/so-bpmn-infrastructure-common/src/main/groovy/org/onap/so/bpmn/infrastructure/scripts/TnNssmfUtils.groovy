@@ -23,8 +23,11 @@ package org.onap.so.bpmn.infrastructure.scripts
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.Relationship
+import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
@@ -367,5 +370,63 @@ class TnNssmfUtils {
         logger.debug("setEnableSdncConfig: enableSdnc=" + enableSdnc)
 
         execution.setVariable("enableSdnc", enableSdnc)
+    }
+
+    String setExecVarFromJsonIfExists(DelegateExecution execution,
+                                      String jsonStr, String jsonKey, String varName) {
+        return setExecVarFromJsonStr(execution, jsonStr, jsonKey, varName, false)
+    }
+
+    String setExecVarFromJsonStr(DelegateExecution execution,
+                                 String jsonStr, String jsonKey, String varName,
+                                 boolean exceptionOnErr) {
+        String msg = ""
+        String valueStr = jsonUtil.getJsonValue(jsonStr, jsonKey)
+        if (isBlank(valueStr)) {
+            if (exceptionOnErr) {
+                msg = "cannot find " + jsonKey + " in " + jsonStr
+                logger.debug(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+            }
+        } else {
+            execution.setVariable(varName, valueStr)
+        }
+
+        return valueStr
+    }
+
+    ServiceInstance getServiceInstanceFromAai(String serviceInstanceId) {
+        if (isBlank(serviceInstanceId)) {
+            logger.error("ERROR: getServiceInstanceFromAai: serviceInstanceId is blank")
+            return null
+        }
+
+        ServiceInstance nssi = null
+        AAIResourcesClient client = new AAIResourcesClient()
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.Types.SERVICE_INSTANCE
+                .getFragment(serviceInstanceId))
+        Optional<ServiceInstance> nssiOpt = client.get(ServiceInstance.class, uri)
+
+        if (nssiOpt.isPresent()) {
+            nssi = nssiOpt.get()
+            return nssi
+        } else {
+            String msg = String.format("ERROR: getServiceInstanceFromAai: NSSI %s not found in AAI", serviceInstanceId)
+            logger.error(msg)
+        }
+
+        return nssi;
+    }
+
+    String getModelUuidFromServiceInstance(String serviceInstanceId) {
+        ServiceInstance si = getServiceInstanceFromAai(serviceInstanceId)
+        if (si == null) {
+            String msg = String.format("ERROR: getModelUuidFromServiceInstance: getServiceInstanceFromAai() failed. " +
+                    "serviceInstanceId=%s", serviceInstanceId)
+            logger.error(msg)
+            return null
+        }
+
+        return si.modelVersionId()
     }
 }

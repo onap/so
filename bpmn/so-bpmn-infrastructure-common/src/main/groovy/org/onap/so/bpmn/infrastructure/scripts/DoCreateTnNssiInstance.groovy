@@ -35,6 +35,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 import static org.apache.commons.lang3.StringUtils.isBlank
+import static org.apache.commons.lang3.StringUtils.isNotBlank
 
 class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
 
@@ -63,7 +64,9 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
              }"""
         execution.setVariable("serviceModelInfo", serviceModelInfo)
 
-        tnNssmfUtils.setEnableSdncConfig(execution)
+        if (isBlank(execution.getVariable("enableSdnc"))) {
+            tnNssmfUtils.setEnableSdncConfig(execution)
+        }
 
         logger.trace("Exit preProcessRequest")
     }
@@ -110,6 +113,12 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
         String ssInstanceId = execution.getVariable("sliceServiceInstanceId")
         String sliceProfileStr = execution.getVariable("sliceProfile")
         try {
+            if (sliceProfileStr == null || sliceProfileStr.isEmpty()) {
+                String msg = "ERROR: createServiceInstance: sliceProfile is null"
+                logger.error(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+            }
+
             org.onap.aai.domain.yang.ServiceInstance ss = new org.onap.aai.domain.yang.ServiceInstance()
             ss.setServiceInstanceId(ssInstanceId)
             String sliceInstanceName = execution.getVariable("sliceServiceInstanceName")
@@ -125,12 +134,18 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
             String modelUuid = execution.getVariable("modelUuid")
             ss.setModelInvariantId(modelInvariantUuid)
             ss.setModelVersionId(modelUuid)
-            String serviceInstanceLocationid = tnNssmfUtils.getFirstPlmnIdFromSliceProfile(sliceProfileStr)
-            ss.setServiceInstanceLocationId(serviceInstanceLocationid)
+            String serviceInstanceLocationId = tnNssmfUtils.getFirstPlmnIdFromSliceProfile(sliceProfileStr)
+            ss.setServiceInstanceLocationId(serviceInstanceLocationId)
             String snssai = tnNssmfUtils.getFirstSnssaiFromSliceProfile(sliceProfileStr)
             //ss.setEnvironmentContext(snssai)
             ss.setEnvironmentContext("tn")
             ss.setServiceRole(serviceRole)
+
+            String domainTypeStr = jsonUtil.getJsonValue(sliceProfileStr, "domainType")
+            if (isNotBlank(domainTypeStr)) {
+                ss.setWorkloadContext(domainTypeStr)
+            }
+
             AAIResourcesClient client = getAAIClient()
             AAIResourceUri uri =
                     AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
@@ -280,25 +295,30 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
             List<String> linkStrList = jsonUtil.StringArrayToList(linkArrayStr)
 
             for (String linkStr : linkStrList) {
-                String logicalLinkId = UUID.randomUUID().toString()
+                String linkName = jsonUtil.getJsonValue(linkStr, "name")
+                if (isBlank(linkName)) {
+                    linkName = "tn-nssmf-" + UUID.randomUUID().toString()
+                }
+                logger.debug("createLogicalLinksForAllocatedResource: linkName=" + linkName)
+
                 String epA = jsonUtil.getJsonValue(linkStr, "transportEndpointA")
                 String epB = jsonUtil.getJsonValue(linkStr, "transportEndpointB")
                 String modelInvariantId = execution.getVariable("modelInvariantUuid")
                 String modelVersionId = execution.getVariable("modelUuid")
 
                 org.onap.aai.domain.yang.LogicalLink resource = new org.onap.aai.domain.yang.LogicalLink()
-                resource.setLinkId(logicalLinkId)
-                resource.setLinkName(epA)
+                resource.setLinkName(linkName)
+                resource.setLinkId(epA)
                 resource.setLinkName2(epB)
                 resource.setLinkType("TsciConnectionLink")
                 resource.setInMaint(false)
 
                 //epA is link-name
                 AAIResourceUri logicalLinkUri =
-                        AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().logicalLink(epA))
+                        AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().logicalLink(linkName))
                 getAAIClient().create(logicalLinkUri, resource)
 
-                tnNssmfUtils.attachLogicalLinkToAllottedResource(execution, AAI_VERSION, allottedResourceUri, epA);
+                tnNssmfUtils.attachLogicalLinkToAllottedResource(execution, AAI_VERSION, allottedResourceUri, linkName);
             }
         } catch (BpmnError e) {
             throw e

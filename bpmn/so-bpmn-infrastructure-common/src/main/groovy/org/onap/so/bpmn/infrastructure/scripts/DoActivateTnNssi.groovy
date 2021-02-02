@@ -37,6 +37,9 @@ import org.onap.so.db.request.beans.ResourceOperationStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import static org.apache.commons.lang3.StringUtils.isBlank
+import static org.apache.commons.lang3.StringUtils.isEmpty
+
 public class DoActivateTnNssi extends AbstractServiceTaskProcessor {
     String Prefix = "TNACT_"
 
@@ -63,7 +66,9 @@ public class DoActivateTnNssi extends AbstractServiceTaskProcessor {
 
         String modelInvariantUuid = execution.getVariable("modelInvariantUuid")
         String modelUuid = execution.getVariable("modelUuid")
-        //here modelVersion is not set, we use modelUuid to decompose the service.
+        if (isEmpty(modelUuid)) {
+            modelUuid = tnNssmfUtils.getModelUuidFromServiceInstance(execution.getVariable("serviceInstanceID"))
+        }
         def isDebugLogEnabled = true
         execution.setVariable("isDebugLogEnabled", isDebugLogEnabled)
         String serviceModelInfo = """{
@@ -83,7 +88,13 @@ public class DoActivateTnNssi extends AbstractServiceTaskProcessor {
         String actionType = operationType.equals("activateInstance") ? "activate" : "deactivate"
         execution.setVariable("actionType", actionType)
 
-        tnNssmfUtils.setEnableSdncConfig(execution)
+        String additionalPropJsonStr = execution.getVariable("sliceParams")
+        if (isBlank(additionalPropJsonStr) ||
+                isBlank(tnNssmfUtils.setExecVarFromJsonIfExists(execution,
+                        additionalPropJsonStr,
+                        "enableSdnc", "enableSdnc"))) {
+            tnNssmfUtils.setEnableSdncConfig(execution)
+        }
 
         logger.debug("Finish preProcessRequest")
     }
