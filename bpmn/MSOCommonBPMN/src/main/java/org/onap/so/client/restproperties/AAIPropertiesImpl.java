@@ -39,8 +39,6 @@ public class AAIPropertiesImpl implements AAIProperties {
     public static final String AAI_ENABLE_CACHING = "aai.caching.enable";
     public static final String AAI_CACHE_MAX_AGE = "aai.caching.maxAge";
 
-    private UrnPropertiesReader reader;
-
     @Override
     public URL getEndpoint() throws MalformedURLException {
         return new URL(UrnPropertiesReader.getVariable(AAI_ENDPOINT));
@@ -68,7 +66,12 @@ public class AAIPropertiesImpl implements AAIProperties {
 
     @Override
     public Long getReadTimeout() {
-        return Long.valueOf(reader.getVariable(AAI_READ_TIMEOUT, "60000"));
+        return Long.valueOf(UrnPropertiesReader.getVariable(AAI_READ_TIMEOUT, "60000"));
+    }
+
+    @Override
+    public Long getConnectionTimeout() {
+        return Long.valueOf(UrnPropertiesReader.getVariable(AAI_CONNECTION_TIMEOUT, "60000"));
     }
 
     @Override
@@ -78,7 +81,7 @@ public class AAIPropertiesImpl implements AAIProperties {
 
     @Override
     public boolean isCachingEnabled() {
-        return Boolean.parseBoolean(reader.getVariable(AAI_ENABLE_CACHING, "false"));
+        return Boolean.parseBoolean(UrnPropertiesReader.getVariable(AAI_ENABLE_CACHING, "false"));
     }
 
     @Override
@@ -86,7 +89,7 @@ public class AAIPropertiesImpl implements AAIProperties {
         return new AAICacheProperties() {
             @Override
             public Long getMaxAge() {
-                return Long.valueOf(reader.getVariable(AAI_CACHE_MAX_AGE, "60000"));
+                return Long.valueOf(UrnPropertiesReader.getVariable(AAI_CACHE_MAX_AGE, "60000"));
             }
         };
     }
