@@ -21,8 +21,9 @@
 package org.onap.aaiclient.client.aai;
 
 import java.net.URI;
-import java.util.Map;
 import java.util.Optional;
+import javax.ws.rs.core.MultivaluedMap;
+import org.javatuples.Pair;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryPatchConverter;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryRestClient;
 import org.onap.logging.filter.base.ONAPComponents;
@@ -31,9 +32,10 @@ import org.onap.so.client.ResponseExceptionMapper;
 public class AAIRestClient extends GraphInventoryRestClient {
 
     private final AAIProperties aaiProperties;
-    private final Map<String, String> additionalHeaders;
+    private final MultivaluedMap<String, Pair<String, String>> additionalHeaders;
 
-    protected AAIRestClient(AAIProperties props, URI uri, Map<String, String> additionalHeaders) {
+    protected AAIRestClient(AAIProperties props, URI uri,
+            MultivaluedMap<String, Pair<String, String>> additionalHeaders) {
         super(props, uri);
         this.aaiProperties = props;
         this.additionalHeaders = additionalHeaders;
@@ -45,15 +47,23 @@ public class AAIRestClient extends GraphInventoryRestClient {
     }
 
     @Override
-    protected void initializeHeaderMap(Map<String, String> headerMap) {
-        headerMap.put("X-FromAppId", aaiProperties.getSystemName());
-        headerMap.put("X-TransactionId", requestId);
-        headerMap.putAll(additionalHeaders);
+    protected void initializeHeaderMap(MultivaluedMap<String, Pair<String, String>> headerMap) {
+        headerMap.add("ALL", Pair.with("X-FromAppId", aaiProperties.getSystemName()));
+        headerMap.add("ALL", Pair.with("X-TransactionId", requestId));
+        additionalHeaders.forEach((k, v) -> {
+            headerMap.addAll(k, v);
+        });
         String auth = aaiProperties.getAuth();
         String key = aaiProperties.getKey();
 
         if (auth != null && !auth.isEmpty() && key != null && !key.isEmpty()) {
             addBasicAuthHeader(auth, key);
+        }
+
+        if (!aaiProperties.additionalHeaders().isEmpty()) {
+            aaiProperties.additionalHeaders().forEach((k, v) -> {
+                headerMap.addAll(k, v);
+            });
         }
     }
 

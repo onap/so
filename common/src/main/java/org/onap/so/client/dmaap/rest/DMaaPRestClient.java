@@ -21,8 +21,10 @@
 package org.onap.so.client.dmaap.rest;
 
 import java.net.URL;
-import java.util.Map;
 import java.util.UUID;
+import javax.ws.rs.core.MultivaluedMap;
+import org.javatuples.Pair;
+import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.client.RestClient;
 import org.onap.logging.filter.base.ONAPComponents;
@@ -46,14 +48,15 @@ public class DMaaPRestClient extends RestClient {
     }
 
     @Override
-    protected void initializeHeaderMap(Map<String, String> headerMap) {
+    protected void initializeHeaderMap(MultivaluedMap<String, Pair<String, String>> headerMap) {
         if (auth != null && !auth.isEmpty() && key != null && !key.isEmpty()) {
             addBasicAuthHeader(auth, key);
         }
         String onapRequestId = UUID.randomUUID().toString();
-        headerMap.put(ONAPLogConstants.Headers.REQUEST_ID, onapRequestId);
+        headerMap.add("ALL", Pair.with(ONAPLogConstants.Headers.REQUEST_ID, onapRequestId));
         if (MDC.get(ONAPLogConstants.MDCs.REQUEST_ID) != null) {
-            headerMap.put(ONAPLogConstants.Headers.INVOCATION_ID, MDC.get(ONAPLogConstants.MDCs.REQUEST_ID));
+            headerMap.add("ALL",
+                    Pair.with(ONAPLogConstants.Headers.INVOCATION_ID, MDC.get(ONAPLogConstants.MDCs.REQUEST_ID)));
         }
     }
 }

@@ -23,21 +23,22 @@
 package org.onap.so.client.policy;
 
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.assertj.core.api.Assertions.assertThat;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
+import org.javatuples.Pair;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -56,10 +57,10 @@ import org.onap.so.client.policy.entities.PolicyConfig;
 import org.onap.so.client.policy.entities.PolicyDecision;
 import org.onap.so.client.policy.entities.PolicyDecisionRequest;
 import org.onap.so.client.policy.entities.PolicyServiceType;
+import org.onap.so.client.policy.entities.Workstep;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.onap.so.client.policy.entities.Workstep;
 
 public class PolicyClientImplTest {
 
@@ -79,11 +80,13 @@ public class PolicyClientImplTest {
     @Test
     public void successReadProperties() {
         PolicyRestClient client = new PolicyRestClient(new PolicyRestPropertiesImpl(), PolicyServiceType.GET_DECISION);
-        Map<String, String> map = new HashMap<>();
+        MultivaluedMap<String, Pair<String, String>> map = new MultivaluedHashMap<>();
         client.initializeHeaderMap(map);
-        assertEquals("Found expected Client Auth", "Basic bTAzNzQzOnBvbGljeVIwY2sk", map.get("ClientAuth"));
-        assertEquals("Found expected Authorization", "Basic dGVzdHBkcDphbHBoYTEyMw==", map.get("Authorization"));
-        assertEquals("Found expected Environment", "TEST", map.get("Environment"));
+        assertTrue("Found expected Client Auth",
+                map.get("ALL").contains(Pair.with("ClientAuth", "Basic bTAzNzQzOnBvbGljeVIwY2sk")));
+        assertTrue("Found expected Authorization",
+                map.get("ALL").contains(Pair.with("Authorization", "Basic dGVzdHBkcDphbHBoYTEyMw==")));
+        assertTrue("Found expected Environment", map.get("ALL").contains(Pair.with("Environment", "TEST")));
     }
 
     @Test
