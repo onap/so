@@ -368,4 +368,27 @@ class TnNssmfUtils {
 
         execution.setVariable("enableSdnc", enableSdnc)
     }
+
+    String setExecVarFromJsonIfExists(DelegateExecution execution,
+                                      String jsonStr, String jsonKey, String varName) {
+        return setExecVarFromJsonStr(execution, jsonStr, jsonKey, varName, false)
+    }
+
+    String setExecVarFromJsonStr(DelegateExecution execution,
+                                 String jsonStr, String jsonKey, String varName,
+                                 boolean exceptionOnErr) {
+        String msg = ""
+        String valueStr = jsonUtil.getJsonValue(jsonStr, jsonKey)
+        if (isBlank(valueStr)) {
+            if (exceptionOnErr) {
+                msg = "cannot find " + jsonKey + " in " + jsonStr
+                logger.debug(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+            }
+        } else {
+            execution.setVariable(varName, valueStr)
+        }
+
+        return valueStr
+    }
 }

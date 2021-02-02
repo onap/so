@@ -131,6 +131,7 @@ css.prepareOofSelection(execution)</bpmn:script>
         <camunda:in source="operationId" target="operationId" />
         <camunda:in source="sliceProfile" target="sliceProfile" />
         <camunda:in source="transportSliceNetworks" target="transportSliceNetworks" />
+        <camunda:in source="enableSdnc" target="enableSdnc" />
         <camunda:in source="nsiInfo" target="nsiInfo" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:out source="rollbackData" target="rollbackData" />

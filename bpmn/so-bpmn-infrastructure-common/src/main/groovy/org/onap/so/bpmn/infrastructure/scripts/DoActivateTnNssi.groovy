@@ -37,6 +37,8 @@ import org.onap.so.db.request.beans.ResourceOperationStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import static org.apache.commons.lang3.StringUtils.isBlank
+
 public class DoActivateTnNssi extends AbstractServiceTaskProcessor {
     String Prefix = "TNACT_"
 
@@ -83,7 +85,13 @@ public class DoActivateTnNssi extends AbstractServiceTaskProcessor {
         String actionType = operationType.equals("activateInstance") ? "activate" : "deactivate"
         execution.setVariable("actionType", actionType)
 
-        tnNssmfUtils.setEnableSdncConfig(execution)
+        String additionalPropJsonStr = execution.getVariable("sliceParams")
+        if (isBlank(additionalPropJsonStr) ||
+                isBlank(tnNssmfUtils.setExecVarFromJsonIfExists(execution,
+                        additionalPropJsonStr,
+                        "enableSdnc", "enableSdnc"))) {
+            tnNssmfUtils.setEnableSdncConfig(execution)
+        }
 
         logger.debug("Finish preProcessRequest")
     }
