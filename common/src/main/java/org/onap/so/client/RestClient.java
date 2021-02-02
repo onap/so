@@ -193,7 +193,8 @@ public abstract class RestClient {
         if (props.isCachingEnabled()) {
             enableCaching(builder);
         }
-        return builder.readTimeout(props.getReadTimeout(), TimeUnit.MILLISECONDS);
+        return builder.connectTimeout(props.getConnectionTimeout(), TimeUnit.MILLISECONDS)
+                .readTimeout(props.getReadTimeout(), TimeUnit.MILLISECONDS);
     }
 
     protected ClientBuilder enableCaching(ClientBuilder builder) {

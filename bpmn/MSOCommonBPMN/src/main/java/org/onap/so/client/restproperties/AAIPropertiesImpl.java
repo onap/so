@@ -35,6 +35,7 @@ public class AAIPropertiesImpl implements AAIProperties {
     public static final String AAI_AUTH = "aai.auth";
     public static final String AAI_ENDPOINT = "aai.endpoint";
     public static final String AAI_READ_TIMEOUT = "aai.readTimeout";
+    public static final String AAI_CONNECTION_TIMEOUT = "aai.connectionTimeout";
     public static final String AAI_ENABLE_CACHING = "aai.caching.enable";
     public static final String AAI_CACHE_MAX_AGE = "aai.caching.maxAge";
 
@@ -68,6 +69,11 @@ public class AAIPropertiesImpl implements AAIProperties {
     @Override
     public Long getReadTimeout() {
         return Long.valueOf(reader.getVariable(AAI_READ_TIMEOUT, "60000"));
+    }
+
+    @Override
+    public Long getConnectionTimeout() {
+        return Long.valueOf(reader.getVariable(AAI_CONNECTION_TIMEOUT, "60000"));
     }
 
     @Override
