@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "58d76e4e_d9b03a3e",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateCoreNonSharedSlice.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 443,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-02-04T16:50:27Z",
+      "side": 1,
+      "message": "Cast it to String if you want to use it as String.",
+      "range": {
+        "startLine": 443,
+        "startChar": 12,
+        "endLine": 443,
+        "endChar": 73
+      },
+      "revId": "06d8ff7803fc9abf1a466d4bf47ba192c9974164",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f919b959_e3aa1b3b",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateCoreNonSharedSlice.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 451,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-02-04T16:50:27Z",
+      "side": 1,
+      "message": "cast to String",
+      "range": {
+        "startLine": 451,
+        "startChar": 110,
+        "endLine": 451,
+        "endChar": 153
+      },
+      "revId": "06d8ff7803fc9abf1a466d4bf47ba192c9974164",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "de4eae6c_43c00478",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateCoreNonSharedSlice.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 451,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-02-04T16:50:27Z",
+      "side": 1,
+      "message": "cast to String",
+      "range": {
+        "startLine": 451,
+        "startChar": 175,
+        "endLine": 451,
+        "endChar": 223
+      },
+      "revId": "06d8ff7803fc9abf1a466d4bf47ba192c9974164",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5830a678_578a85a0",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateCoreNonSharedSlice.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 495,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-02-04T16:50:27Z",
+      "side": 1,
+      "message": "not used",
+      "range": {
+        "startLine": 495,
+        "startChar": 7,
+        "endLine": 495,
+        "endChar": 70
+      },
+      "revId": "06d8ff7803fc9abf1a466d4bf47ba192c9974164",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
