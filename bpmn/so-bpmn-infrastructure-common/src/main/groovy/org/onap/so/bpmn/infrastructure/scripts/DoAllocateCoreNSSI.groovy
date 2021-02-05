@@ -123,7 +123,6 @@ class DoAllocateCoreNSSI extends AbstractServiceTaskProcessor {
         execution.setVariable("OOFResponse", OOFResponse)
         String solutions =""
         if(requestStatus.equals("completed")) {
-            solutions = jsonUtil.getJsonValue(OOFResponse, "solutions")
             List solutionsList = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(OOFResponse, "solutions"))
             if(solutionsList!=null && !solutionsList.isEmpty() ) {
                 solutions = solutionsList.get(0)

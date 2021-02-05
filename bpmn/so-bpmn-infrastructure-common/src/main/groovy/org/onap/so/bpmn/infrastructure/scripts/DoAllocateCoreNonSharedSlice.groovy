@@ -440,7 +440,9 @@ class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
             AAIResourceUri networkRouteUri = AAIUriFactory.createResourceUri( new AAIObjectType(AAINamespaceConstants.NETWORK, NetworkRoute.class), bh_routeId)
             client.create(networkRouteUri, bh_ep)
             //relationship b/w bh_ep and Core NSSI
-            def coreNssi = execution.getVariable("nssiServiceInstanceId")
+            String coreNssi = execution.getVariable("nssiServiceInstanceId")
+            String globalSubscriberId = execution.getVariable("globalSubscriberId")
+            String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
             Relationship relationship = new Relationship()
             String relatedLink = "aai/v21/network/network-routes/network-route/${bh_routeId}"
             relationship.setRelatedLink(relatedLink)
@@ -448,10 +450,7 @@ class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
             relationship.setRelationshipLabel("org.onap.relationships.inventory.ComposedOf")
             logger.debug("networkRouteUri: "+networkRouteUri+"relationship: "+relationship)
             try {
-                AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                        execution.getVariable("globalSubscriberId"),
-                        execution.getVariable("subscriptionServiceType"),
-                        coreNssi).relationshipAPI()
+                AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(coreNssi)).relationshipAPI()
                 logger.debug("uri: "+uri)
                 client.create(uri, relationship)
             } catch (BpmnError e) {
@@ -475,6 +474,7 @@ class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
         String serviceId = execution.getVariable("nsiId")
         String jobId = execution.getVariable("jobId")
         String nsiId = execution.getVariable("nsiId")
+        String nssiId = execution.getVariable("nssiServiceInstanceId")
         String operationType = "ALLOCATE"
         ResourceOperationStatus resourceOperationStatus = new ResourceOperationStatus()
         resourceOperationStatus.setServiceId(serviceId)
@@ -494,15 +494,17 @@ class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
         String serviceId = execution.getVariable("nsiId")
         String jobId = execution.getVariable("jobId")
         String nsiId = execution.getVariable("nsiId")
-        String nssiId = execution.getVariable("nssiId")
+        String nssiId = execution.getVariable("nssiServiceInstanceId")
         String operationType = "ALLOCATE"
         //modelUuid
         String modelUuid= execution.getVariable("modelUuid")
-        logger.debug("serviceId: "+serviceId +"  "+ "jobId: "+jobId   +"  "+  "nsiId: "+nsiId +"   "+  "operationType: "+operationType)
+        logger.debug("serviceId: "+serviceId +"  "+ "jobId: "+jobId   +"  "+  "nsiId: "+nsiId +"   "+  "nssiId: "+nssiId +"   "+  "operationType: "+operationType)
         ResourceOperationStatus resourceOperationStatus = new ResourceOperationStatus()
         resourceOperationStatus.setServiceId(serviceId)
         resourceOperationStatus.setJobId(jobId)
         resourceOperationStatus.setOperationId(jobId)
+        resourceOperationStatus.setResourceTemplateUUID(nsiId)
+        resourceOperationStatus.setResourceInstanceID(nssiId)
         resourceOperationStatus.setResourceTemplateUUID(modelUuid)
         resourceOperationStatus.setOperType(operationType)
         resourceOperationStatus.setProgress("0")
