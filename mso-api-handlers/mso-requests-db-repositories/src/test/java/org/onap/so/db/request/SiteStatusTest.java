@@ -60,7 +60,7 @@ public class SiteStatusTest {
     @Test
     public void sortByCreated() {
 
-        final PageRequest page1 = new PageRequest(0, 20, Direction.DESC, "created");
+        final PageRequest page1 = PageRequest.of(0, 20, Direction.DESC, "created");
 
         SiteStatus example = new SiteStatus();
         example.setStatus(true);

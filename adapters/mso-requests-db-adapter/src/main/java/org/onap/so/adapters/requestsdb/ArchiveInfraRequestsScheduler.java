@@ -78,7 +78,9 @@ public class ArchiveInfraRequestsScheduler {
                 + "-" + calendar.get(Calendar.YEAR));
 
         List<InfraActiveRequests> requestsByEndTime = new ArrayList<>();
-        PageRequest pageRequest = new PageRequest(0, 100);
+
+        PageRequest pageRequest = PageRequest.of(0, 100); // Could use sorting here
+
         do {
             requestsByEndTime = infraActiveRepo.findByEndTimeLessThan(archivingDate, pageRequest);
             logger.debug("{} requests to be archived based on End Time", requestsByEndTime.size());
