@@ -212,7 +212,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
         if (response.hasEntity()) {
             multicloudResponseBody = getCreateBody((java.io.InputStream) response.getEntity());
         }
-        if (response.getStatus() == Response.Status.CREATED.getStatusCode() && response.hasEntity()) {
+        if (response.getStatus() == Response.Status.CREATED.getStatusCode() && multicloudResponseBody != null) {
             String canonicalName = stackName + "/";
             if (multicloudResponseBody != null) {
                 canonicalName = canonicalName + multicloudResponseBody.getWorkloadId();

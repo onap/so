@@ -115,7 +115,7 @@ public class ASDCNotificationLoggingTest {
     @Test
     public void dumpVfModuleMetaDataListTest() {
         INotificationData asdcNotification = iNotificationDataObject();
-        List<IVfModuleData> list = new ArrayList<>();
+        List<VfModuleMetaData> list = new ArrayList<>();
         list.add(new VfModuleMetaData());
         String result = null;
         try {
