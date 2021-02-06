@@ -22,19 +22,6 @@
 
 package db.migration;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import org.flywaydb.core.api.MigrationVersion;
-import org.flywaydb.core.api.migration.MigrationChecksumProvider;
-import org.flywaydb.core.api.migration.MigrationInfoProvider;
-import org.flywaydb.core.api.migration.jdbc.JdbcMigration;
-import org.onap.so.db.catalog.beans.CloudIdentity;
-import org.onap.so.db.catalog.beans.CloudSite;
-import org.onap.so.db.catalog.beans.CloudifyManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,13 +32,24 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
+import org.flywaydb.core.api.MigrationVersion;
+import org.flywaydb.core.api.migration.BaseJavaMigration;
+import org.onap.so.db.catalog.beans.CloudIdentity;
+import org.onap.so.db.catalog.beans.CloudSite;
+import org.onap.so.db.catalog.beans.CloudifyManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 /**
  * Performs migration using JDBC Connection from the cloud config provided in the environment
  * (application-{profile}.yaml) and persist data (when not already present) to the catalod database.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class R__CloudConfigMigration implements JdbcMigration, MigrationInfoProvider, MigrationChecksumProvider {
+public class R__CloudConfigMigration extends BaseJavaMigration {
     public static final String FLYWAY = "FLYWAY";
 
     private static final Logger logger = LoggerFactory.getLogger(R__CloudConfigMigration.class);
@@ -63,7 +61,6 @@ public class R__CloudConfigMigration implements JdbcMigration, MigrationInfoProv
         return false;
     }
 
-    @Override
     public void migrate(Connection connection) throws Exception {
         logger.debug("Starting migration for CloudConfig");
 
@@ -237,6 +234,12 @@ public class R__CloudConfigMigration implements JdbcMigration, MigrationInfoProv
 
     public Integer getChecksum() {
         return Math.toIntExact(System.currentTimeMillis() / 1000);
+    }
+
+    @Override
+    public void migrate(org.flywaydb.core.api.migration.Context context) throws Exception {
+        migrate(context.getConnection());
+
     }
 }
 
