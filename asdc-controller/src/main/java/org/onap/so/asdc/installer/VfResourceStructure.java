@@ -68,7 +68,7 @@ public class VfResourceStructure extends ResourceStructure {
     /**
      * The list of VfModulesMetadata defined for this resource.
      */
-    private List<IVfModuleData> vfModulesMetadataList;
+    private List<VfModuleMetaData> vfModulesMetadataList;
 
     private VnfResource catalogVnfResource;
 
@@ -203,7 +203,7 @@ public class VfResourceStructure extends ResourceStructure {
         this.catalogService = catalogService;
     }
 
-    public List<IVfModuleData> decodeVfModuleArtifact(byte[] arg0) {
+    public List<VfModuleMetaData> decodeVfModuleArtifact(byte[] arg0) {
         try {
             return new ObjectMapper().readValue(arg0, new TypeReference<List<VfModuleMetaData>>() {});
 
