@@ -33,7 +33,7 @@
     </dependency>
   </dependencies>
   <packaging>jar</packaging>
-  <build>
+  <build> 
     <finalName>${project.artifactId}</finalName>
   </build>
 </project>

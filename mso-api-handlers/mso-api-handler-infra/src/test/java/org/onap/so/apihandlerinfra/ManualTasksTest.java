@@ -104,8 +104,8 @@ public class ManualTasksTest extends BaseTest {
         RequestError expectedResponse = new RequestError();
         ServiceException se = new ServiceException();
         se.setMessageId("SVC0002");
-        se.setText("Mapping of request to JSON object failed: Unrecognized token \'test\': "
-                + "was expecting \'null\', \'true\', \'false\' or NaN\n at [Source: (String)\"test\"; line: 1, column: 9]");
+        se.setText(
+                "Mapping of request to JSON object failed: Unrecognized token \u0027test\u0027: was expecting (JSON String, Number, Array, Object or token \u0027null\u0027, \u0027true\u0027 or \u0027false\u0027)\n at [Source: (String)\"test\"; line: 1, column: 5]");
         expectedResponse.setServiceException(se);
 
         HttpHeaders headers = new HttpHeaders();
