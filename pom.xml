@@ -67,16 +67,16 @@
     <snapshotNexusPath>content/repositories/snapshots/</snapshotNexusPath>
     <publicNexusPath>content/repositories/public/</publicNexusPath>
     <siteNexusPath>content/sites/site/org/onap/so/${project.version}/</siteNexusPath>
-    <cxf.version>3.3.3</cxf.version>
+    <cxf.version>3.4.1</cxf.version>
     <jax.ws.rs>2.1</jax.ws.rs>
-    <springboot.version>2.1.5.RELEASE</springboot.version>
+    <springboot.version>2.3.7.RELEASE</springboot.version>
     <aaf.version>2.1.21</aaf.version>
-    <camunda.springboot.version>3.2.0</camunda.springboot.version>
+    <camunda.springboot.version>7.14.0</camunda.springboot.version>
     <format.skipValidate>false</format.skipValidate>
     <format.skipExecute>true</format.skipExecute>
     <io.fabric8.version>0.33.0</io.fabric8.version>
     <appc.client.version>1.7.2</appc.client.version>
-    <bowman.client.version>0.8.0</bowman.client.version>
+    <bowman.client.version>0.9.0</bowman.client.version>
     <aaf.cadi.version>2.1.15</aaf.cadi.version>
   </properties>
   <distributionManagement>
@@ -936,6 +936,18 @@
             <groupId>com.vaadin.external.google</groupId>
             <artifactId>android-json</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
       <dependency>
@@ -951,7 +963,7 @@
       <dependency>
         <groupId>org.flywaydb</groupId>
         <artifactId>flyway-core</artifactId>
-        <version>5.2.4</version>
+        <version>6.5.7</version>
       </dependency>
       <dependency>
         <groupId>org.json</groupId>

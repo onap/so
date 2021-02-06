@@ -181,12 +181,12 @@ public class MsoMulticloudUtilsTest extends BaseTest {
 
     @Test
     public void createStackEmptyResponseEntity() throws MsoException {
-        wireMockServer.stubFor(post(urlPathEqualTo(MULTICLOUD_CREATE_PATH)).willReturn(
-                aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_CREATED)));
+        wireMockServer.stubFor(post(urlPathEqualTo(MULTICLOUD_CREATE_PATH)).willReturn(aResponse()
+                .withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_CREATED).withBody("{}")));
         StackInfo result = multicloudUtils.createStack("MTN14", "CloudOwner", "TEST-tenant", "TEST-stack",
                 new VduModelInfo(), "TEST-heat", new HashMap<>(), false, 200, "TEST-env", new HashMap<>(),
                 new HashMap<>(), false, false);
         assertNotNull(result);
-        assertEquals("TEST-stack/", result.getName());
+        assertEquals("TEST-stack", result.getName());
     }
 }
