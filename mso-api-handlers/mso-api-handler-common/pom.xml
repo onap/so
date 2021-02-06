@@ -1,16 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>org.onap.so</groupId>
     <artifactId>mso-api-handlers</artifactId>
     <version>1.7.1-SNAPSHOT</version>
   </parent>
-
-
   <artifactId>mso-api-handler-common</artifactId>
-
   <name>mso-api-handler-common</name>
   <description>ONAP SO API Handler Common Libraries</description>
   <properties>
@@ -78,8 +74,7 @@
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>2.5</version>
+      <artifactId>javax.servlet-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.json</groupId>

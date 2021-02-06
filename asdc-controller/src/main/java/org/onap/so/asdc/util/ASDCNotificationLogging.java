@@ -35,6 +35,7 @@ import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.so.asdc.installer.IVfModuleData;
 import org.onap.so.asdc.installer.ToscaResourceStructure;
+import org.onap.so.asdc.installer.VfModuleMetaData;
 import org.onap.so.asdc.installer.heat.ToscaResourceInstaller;
 
 public class ASDCNotificationLogging {
@@ -850,7 +851,7 @@ public class ASDCNotificationLogging {
         return buffer.toString();
     }
 
-    public static String dumpVfModuleMetaDataList(List<IVfModuleData> moduleMetaDataList) {
+    public static String dumpVfModuleMetaDataList(List<VfModuleMetaData> moduleMetaDataList) {
         if (moduleMetaDataList == null) {
             return null;
         }
