@@ -17,14 +17,19 @@ spring:
    datasource:
       hikari:
          nfvo:
-            jdbcUrl: jdbc:h2:mem:nfvo;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS nfvo;
+            jdbcUrl: jdbc:h2:mem:nfvo;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS nfvo;MODE=MYSQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE
             driver-class-name: org.h2.Driver
             pool-name: ns-lcm-bpmn-pool
             registerMbeans: true
+         test:
+            database:
+              replace: NONE
    jpa:
       generate-ddl: true
+      dialect: org.hibernate.dialect.MySQL5Dialect
       hibernate:
          ddl-auto: create
+      database-platform: org.hibernate.dialect.MariaDBDialect
 hibernate:
    dialect: org.hibernate.dialect.H2Dialect
    hbm2ddl:
