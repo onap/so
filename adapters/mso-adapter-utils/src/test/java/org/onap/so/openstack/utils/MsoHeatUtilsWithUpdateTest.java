@@ -95,7 +95,6 @@ public class MsoHeatUtilsWithUpdateTest extends TestDataSetup {
         StackInfo expectedStackInfo = new StackInfo("stackName", HeatStatus.UPDATED, "stackStatusReason", null);
         expectedStackInfo.setCanonicalName("stackName/id");
 
-        doReturn(Optional.of(cloudSite)).when(cloudConfig).getCloudSite(isA(String.class));
         doReturn(heatClient).when(heatUtils).getHeatClient(isA(String.class), isA(String.class));
         doReturn(null).when(heatUtils).executeAndRecordOpenstackRequest(isA(OpenStackRequest.class));
         doReturn("0").when(environment).getProperty(isA(String.class), isA(String.class));
@@ -120,7 +119,6 @@ public class MsoHeatUtilsWithUpdateTest extends TestDataSetup {
         StackInfo expectedStackInfo = new StackInfo("stackName", HeatStatus.UPDATED, "stackStatusReason", null);
         expectedStackInfo.setCanonicalName("stackName/id");
 
-        doReturn(Optional.of(cloudSite)).when(cloudConfig).getCloudSite(isA(String.class));
         doReturn(heatClient).when(heatUtils).getHeatClient(isA(String.class), isA(String.class));
 
         doReturn(null).when(heatUtils).executeAndRecordOpenstackRequest(isA(OpenStackRequest.class));
@@ -147,7 +145,6 @@ public class MsoHeatUtilsWithUpdateTest extends TestDataSetup {
         StackInfo expectedStackInfo = new StackInfo("stackName", HeatStatus.UPDATED, "stackStatusReason", null);
         expectedStackInfo.setCanonicalName("stackName/id");
 
-        doReturn(Optional.of(cloudSite)).when(cloudConfig).getCloudSite(isA(String.class));
         doReturn(heatClient).when(heatUtils).getHeatClient(isA(String.class), isA(String.class));
         doReturn(null).when(heatUtils).executeAndRecordOpenstackRequest(isA(OpenStackRequest.class));
         doReturn("0").when(environment).getProperty(isA(String.class), isA(String.class));
