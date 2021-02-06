@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -55,7 +56,7 @@ public class DatabaseServiceProviderTest {
 
     private static final String RANDOM_ID = UUID.randomUUID().toString();
     private static final String DUMMY_NAME = "NAME";
-    private static final LocalDateTime CURRENT_DATE_TIME = LocalDateTime.now();
+    private static final LocalDateTime CURRENT_DATE_TIME = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
     @Autowired
     private DatabaseServiceProvider databaseServiceProvider;
 
