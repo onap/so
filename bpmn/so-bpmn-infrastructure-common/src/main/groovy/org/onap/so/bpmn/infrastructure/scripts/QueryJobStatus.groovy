@@ -20,11 +20,9 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import groovy.json.JsonSlurper
 import org.json.JSONObject
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.so.beans.nsmf.JobStatusRequest
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.core.json.JsonUtils
@@ -45,7 +43,8 @@ public class QueryJobStatus extends AbstractServiceTaskProcessor{
         try{
             String requestId = execution.getVariable("msoRequestId")
             logger.debug("RequestId :" + requestId)
-            String jobId = execution.getVariable("jobId")
+            String responseId = execution.getVariable("responseId")
+            String jobId = execution.getVariable("jobId")   
             def jsonSlurper = new JsonSlurper()
             
             HashMap<String,?> esrInfo = jsonSlurper.parseText(execution.getVariable("esrInfo"))
@@ -53,7 +52,7 @@ public class QueryJobStatus extends AbstractServiceTaskProcessor{
             
             HashMap<String,?> serviceInfo = jsonSlurper.parseText(execution.getVariable("serviceInfo"))
             logger.debug("serviceInfo" + serviceInfo.toString())
-
+            
             execution.setVariable("esrInfo", esrInfo)
             execution.setVariable("serviceInfo", serviceInfo)
             
@@ -61,9 +60,10 @@ public class QueryJobStatus extends AbstractServiceTaskProcessor{
             String endPoint = String.format("/api/rest/provMns/v1/NSS/jobs/%s", jobId)          
             String url = nssmfEndpoint + endPoint 
             execution.setVariable("NSSMF_AdapterEndpoint", url)
-
+            
             String payload = """
                 {
+                  "responseId": "${responseId}",
                   "esrInfo":  ${execution.getVariable("esrInfo") as JSONObject},
                   "serviceInfo": ${execution.getVariable("serviceInfo") as JSONObject}
                 }
@@ -72,7 +72,7 @@ public class QueryJobStatus extends AbstractServiceTaskProcessor{
             execution.setVariable("NSSMF_AdapterRequest", payload.replaceAll("\\s+", ""))   
             execution.setVariable("startTime", System.currentTimeMillis())
             logger.debug("Outgoing NSSMF_AdapterRequest: \n" + payload)
-        }catch(Exception e){
+        }catch(Exception ex){
             String msg = "Exception in QueryJobStatus.preProcessRequest " + ex.getMessage()
             logger.error(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
@@ -107,7 +107,7 @@ public class QueryJobStatus extends AbstractServiceTaskProcessor{
                  responseDescriptorMap.put("statusDescription","Exception while querying job status")
                  String responseDescriptor = """
                  {
-                   "responseDescriptor": "${responseDescriptorMap}",
+                  "responseDescriptor": "${responseDescriptorMap as JSONObject}"
                  }
                """
                  execution.setVariable("JobStatusCompleted", "TRUE")
@@ -123,7 +123,7 @@ public class QueryJobStatus extends AbstractServiceTaskProcessor{
         responseDescriptorMap.put("statusDescription","timeout")
         String responseDescriptor = """
                 {
-                  "responseDescriptor": "${responseDescriptorMap}",
+                  "responseDescriptor": ${responseDescriptorMap as JSONObject}
                 }
               """
         execution.setVariable("JobStatusCompleted", "TRUE")

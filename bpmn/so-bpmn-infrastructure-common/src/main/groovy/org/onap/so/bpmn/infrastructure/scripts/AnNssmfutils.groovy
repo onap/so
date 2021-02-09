@@ -268,34 +268,39 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 	Map<String,Object> profile
 	switch(domainType) {
 		case "AN-NF":
-			profile = objectMapper.readValue(execution.getVariable("ranNfSliceProfile"), Map.class)//pending fields - maxBandwidth, sST, plmnIdList, cSReliabilityMeanTime, 
-																									//msgSizeByte, maxNumberofPDUSessions,overallUserDensity,transferIntervalTarget
+			profile = objectMapper.readValue(execution.getVariable("ranNfSliceProfile"), Map.class)//pending fields - cSReliabilityMeanTime, cSAvailabilityTarget, terminalDensity, msgSizeByte
 			result.setJitter(profile.get("jitter"))
 			result.setLatency(profile.get("latency"))
+                        result.setMaxBandwidth(profile.get("maxbandwidth"))
 			result.setResourceSharingLevel(profile.get("resourceSharingLevel"))
 			result.setUeMobilityLevel(profile.get("uEMobilityLevel"))
 			result.setMaxNumberOfUEs(profile.get("maxNumberofUEs"))
 			result.setActivityFactor(profile.get("activityFactor"))
-			result.setCoverageAreaTAList(profile.get("coverageAreaTAList"))
+			result.setCoverageAreaTAList(profile.get("coverageAreaTAList").toString())
 			result.setExpDataRateDL(profile.get("expDataRateDL"))
 			result.setExpDataRateUL(profile.get("expDataRateUL"))
 			result.setSurvivalTime(profile.get("survivalTime"))
+			result.setMaxNumberOfPDUSession(profile.get("maxNumberOfPDUSession")) 
 			result.setAreaTrafficCapDL(profile.get("areaTrafficCapDL"))
 			result.setAreaTrafficCapUL(profile.get("areaTrafficCapUL"))
+			result.setOverallUserDensity(profile.get("overallUserDensity")) 
+			result.setTransferIntervalTarget(profile.get("transferIntervalTarget"))
 			result.setExpDataRate(profile.get("expDataRate"))
 			result.setProfileId(execution.getVariable("ANNF_sliceProfileId"))
 			break
 		case "TN-FH":
-			profile = objectMapper.readValue(execution.getVariable("tnFhSliceProfile"), Map.class) //pending fields - maxBandwidth, sST, plmnIdList
+			profile = objectMapper.readValue(execution.getVariable("tnFhSliceProfile"), Map.class) 
 			result.setJitter(profile.get("jitter"))
 			result.setLatency(profile.get("latency"))
+                        result.setMaxBandwidth(profile.get("maxbandwidth"))
 			result.setResourceSharingLevel(profile.get("resourceSharingLevel"))
 			result.setProfileId(execution.getVariable("TNFH_sliceProfileId"))
 			break
 		case "TN-MH":
-			profile = objectMapper.readValue(execution.getVariable("tnMhSliceProfile"), Map.class)//pending fields - maxBandwidth, sST, plmnIdList
+			profile = objectMapper.readValue(execution.getVariable("tnMhSliceProfile"), Map.class)
 			result.setJitter(profile.get("jitter"))
 			result.setLatency(profile.get("latency"))
+                        result.setMaxBandwidth(profile.get("maxbandwidth"))
 			result.setResourceSharingLevel(profile.get("resourceSharingLevel"))
 			result.setProfileId(execution.getVariable("TNMH_sliceProfileId"))
 			break
@@ -356,6 +361,7 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 			if(domainType.equals("TN_FH")) {
 				serviceInfo.addProperty("serviceInvariantUuid", execution.getVariable("TNFH_modelInvariantUuid"))
 				serviceInfo.addProperty("serviceUuid", execution.getVariable("TNFH_modelUuid"))
+				serviceInfo.addProperty("nssiName", execution.getVariable("TNFH_modelName"))
 				allocateTnNssi.addProperty("nsstId", execution.getVariable("TNFH_modelUuid"))
 				allocateTnNssi.addProperty("nssiName", execution.getVariable("TNFH_modelName"))
 				Map<String,Object> sliceProfile = objectMapper.readValue(execution.getVariable("tnFhSliceProfile"), Map.class)
@@ -367,6 +373,7 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 			}else if(domainType.equals("TN_MH")) {
 				serviceInfo.addProperty("serviceInvariantUuid", execution.getVariable("TNMH_modelInvariantUuid"))
 				serviceInfo.addProperty("serviceUuid", execution.getVariable("TNMH_modelUuid"))
+				serviceInfo.addProperty("nssiName", execution.getVariable("TNMH_modelName"))
 				allocateTnNssi.addProperty("nsstId", execution.getVariable("TNMH_modelUuid"))
 				allocateTnNssi.addProperty("nssiName", execution.getVariable("TNMH_modelName"))
 				Map<String,Object> sliceProfile = objectMapper.readValue(execution.getVariable("tnMhSliceProfile"), Map.class)
