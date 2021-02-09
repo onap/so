@@ -31,7 +31,7 @@ qjs.preProcessRequest(execution)</bpmn:script>
         </camunda:connector>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0qhl0m8</bpmn:incoming>
-      <bpmn:incoming>Flow_1qqqckj</bpmn:incoming>
+      <bpmn:incoming>Flow_0akup2t</bpmn:incoming>
       <bpmn:outgoing>Flow_18di8yy</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_16nxw2f" sourceRef="StartEvent_1" targetRef="Activity_0cd23fy" />
@@ -64,17 +64,23 @@ qjs.updateJobStatusDetails(execution)</bpmn:script>
       <bpmn:incoming>Flow_0qqltc9</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_0qqltc9" sourceRef="Activity_0rtwx97" targetRef="Event_0p00z2s" />
-    <bpmn:sequenceFlow id="Flow_1qqqckj" name="No" sourceRef="Gateway_1ruy0j9" targetRef="Activity_1aivult">
+    <bpmn:sequenceFlow id="Flow_1qqqckj" name="No" sourceRef="Gateway_1ruy0j9" targetRef="Event_0dp6trf">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("JobStatusCompleted") == "FALSE"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
+    <bpmn:intermediateCatchEvent id="Event_0dp6trf" name="TimeDelay">
+      <bpmn:incoming>Flow_1qqqckj</bpmn:incoming>
+      <bpmn:outgoing>Flow_0akup2t</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0ncw0aa">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT100S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_0akup2t" sourceRef="Event_0dp6trf" targetRef="Activity_1aivult" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="QueryJobStatus">
       <bpmndi:BPMNEdge id="Flow_1qqqckj_di" bpmnElement="Flow_1qqqckj">
         <di:waypoint x="880" y="152" />
-        <di:waypoint x="880" y="280" />
-        <di:waypoint x="550" y="280" />
-        <di:waypoint x="550" y="167" />
+        <di:waypoint x="880" y="222" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="892" y="163" width="15" height="14" />
         </bpmndi:BPMNLabel>
@@ -106,6 +112,11 @@ qjs.updateJobStatusDetails(execution)</bpmn:script>
         <di:waypoint x="215" y="127" />
         <di:waypoint x="310" y="127" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0akup2t_di" bpmnElement="Flow_0akup2t">
+        <di:waypoint x="862" y="240" />
+        <di:waypoint x="570" y="240" />
+        <di:waypoint x="570" y="167" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="179" y="109" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -136,6 +147,13 @@ qjs.updateJobStatusDetails(execution)</bpmn:script>
           <dc:Bounds x="1160" y="152" width="20" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0wfgoh7_di" bpmnElement="Event_0dp6trf">
+        <dc:Bounds x="862" y="222" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="896" y="252" width="53" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
+
