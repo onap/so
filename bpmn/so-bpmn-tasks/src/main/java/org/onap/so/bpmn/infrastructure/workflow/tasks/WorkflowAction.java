@@ -46,10 +46,10 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.so.bpmn.common.BBConstants;
+import org.onap.so.bpmn.infrastructure.workflow.tasks.excpetion.VnfcMultipleRelationshipException;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.utils.WorkflowResourceIdsUtils;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
-import org.onap.so.bpmn.servicedecomposition.entities.ConfigurationResourceKeys;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetup;
@@ -490,7 +490,7 @@ public class WorkflowAction {
                 AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId).vfModule(vfModuleId));
         AAIResultWrapper vfModuleResultsWrapper = bbInputSetupUtils.getAAIResourceDepthOne(uri);
         Optional<Relationships> relationshipsOp = vfModuleResultsWrapper.getRelationships();
-        if (!relationshipsOp.isPresent()) {
+        if (relationshipsOp.isEmpty()) {
             logger.debug("No relationships were found for vfModule in AAI");
         } else {
             Relationships relationships = relationshipsOp.get();
@@ -503,21 +503,20 @@ public class WorkflowAction {
         return vnfcs;
     }
 
-    protected <T> T getRelatedResourcesInVnfc(Vnfc vnfc, Class<T> resultClass, AAIObjectName name) throws Exception {
+    protected <T> T getRelatedResourcesInVnfc(Vnfc vnfc, Class<T> resultClass, AAIObjectName name)
+            throws VnfcMultipleRelationshipException {
         T configuration = null;
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().vnfc(vnfc.getVnfcName()));
         AAIResultWrapper vnfcResultsWrapper = bbInputSetupUtils.getAAIResourceDepthOne(uri);
         Optional<Relationships> relationshipsOp = vnfcResultsWrapper.getRelationships();
-        if (!relationshipsOp.isPresent()) {
+        if (relationshipsOp.isEmpty()) {
             logger.debug("No relationships were found for VNFC in AAI");
         } else {
             Relationships relationships = relationshipsOp.get();
             List<AAIResultWrapper> configurationResultWrappers =
                     this.getResultWrappersFromRelationships(relationships, name);
             if (configurationResultWrappers.size() > 1) {
-                String multipleRelationshipsError =
-                        "Multiple relationships exist from VNFC " + vnfc.getVnfcName() + " to Configurations";
-                throw new Exception(multipleRelationshipsError);
+                throw new VnfcMultipleRelationshipException(vnfc.getVnfcName());
             }
             if (!configurationResultWrappers.isEmpty()) {
                 Optional<T> configurationOp = configurationResultWrappers.get(0).asBean(resultClass);
@@ -544,7 +543,7 @@ public class WorkflowAction {
     }
 
     protected List<ExecuteBuildingBlock> getConfigBuildingBlocks(ConfigBuildingBlocksDataObject dataObj)
-            throws Exception {
+            throws AAIEntityNotFoundException, VnfcMultipleRelationshipException {
 
         List<ExecuteBuildingBlock> flowsToExecuteConfigs = new ArrayList<>();
         List<OrchestrationFlow> result = dataObj.getOrchFlows().stream()
@@ -658,7 +657,7 @@ public class WorkflowAction {
         if (volumeGroupFromVfModule.isPresent()) {
             String volumeGroupId = volumeGroupFromVfModule.get().getVolumeGroupId();
             volumeGroupName = volumeGroupFromVfModule.get().getVolumeGroupName();
-            logger.debug("Volume group id of the existing volume group is: " + volumeGroupId);
+            logger.debug("Volume group id of the existing volume group is: {}", volumeGroupId);
             volumeGroupExisted = true;
             dataObj.getWorkflowResourceIds().setVolumeGroupId(volumeGroupId);
             dataObj.getReplaceInformation().setOldVolumeGroupName(volumeGroupName);
@@ -675,7 +674,7 @@ public class WorkflowAction {
                 String newVolumeGroupId = UUID.randomUUID().toString();
                 dataObj.getWorkflowResourceIds().setVolumeGroupId(newVolumeGroupId);
                 dataObj.getReplaceInformation().setOldVolumeGroupName(volumeGroupName);
-                logger.debug("newVolumeGroupId: " + newVolumeGroupId);
+                logger.debug("newVolumeGroupId: {}", newVolumeGroupId);
             }
         }
 
@@ -702,7 +701,7 @@ public class WorkflowAction {
     private void updateResourceIdsFromAAITraversal(List<ExecuteBuildingBlock> flowsToExecute,
             List<Resource> resourceList, List<Pair<WorkflowType, String>> aaiResourceIds, String serviceInstanceId) {
         for (Pair<WorkflowType, String> pair : aaiResourceIds) {
-            logger.debug(pair.getValue0() + ", " + pair.getValue1());
+            logger.debug("{}, {}", pair.getValue0(), pair.getValue1());
         }
 
         Arrays.stream(WorkflowType.values()).filter(type -> !type.equals(WorkflowType.SERVICE))
@@ -1322,15 +1321,6 @@ public class WorkflowAction {
             }
         }
         return sortedOrchFlows;
-    }
-
-    private ConfigurationResourceKeys getConfigurationResourceKeys(Resource resource, String vnfcName) {
-        ConfigurationResourceKeys configurationResourceKeys = new ConfigurationResourceKeys();
-        Optional.ofNullable(vnfcName).ifPresent(configurationResourceKeys::setVnfcName);
-        configurationResourceKeys.setCvnfcCustomizationUUID(resource.getCvnfModuleCustomizationId());
-        configurationResourceKeys.setVfModuleCustomizationUUID(resource.getVfModuleCustomizationId());
-        configurationResourceKeys.setVnfResourceCustomizationUUID(resource.getVnfCustomizationId());
-        return configurationResourceKeys;
     }
 
     protected List<OrchestrationFlow> queryNorthBoundRequestCatalogDb(DelegateExecution execution, String requestAction,
