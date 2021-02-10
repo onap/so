@@ -49,7 +49,8 @@ import org.slf4j.LoggerFactory
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.JsonObject
-
+import groovy.json.JsonSlurper
+import com.google.gson.Gson
 
 /**
  * Internal AN NSSMF to handle NSSI Activation/Deactivation
@@ -78,16 +79,16 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 	private static final String ACTIVATE = "activateInstance"
 	private static final String DEACTIVATE = "deactivateInstance"
 
-	private static final String VENDOR_ONAP = "ONAP"
+	private static final String VENDOR_ONAP = "ONAP_internal"
 
-	Map<String,String> orchStatusMap = new HashMap<>()
+        def orchStatusMap = [activateInstance:"activated",deactivateInstance:"deactivated"]
 
 	@Override
 	public void preProcessRequest(DelegateExecution execution) {
 		logger.debug("${Prefix} - Start preProcessRequest")
 
 		String sliceParams = execution.getVariable("sliceParams")
-		String sNssaiList = jsonUtil.getJsonValue(sliceParams, "snssaiList")
+		List<String> sNssaiList = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(sliceParams, "snssaiList"))
 		String anSliceProfileId = jsonUtil.getJsonValue(sliceParams, "sliceProfileId")
 		String nsiId = execution.getVariable("nsiId")
 		String globalSubscriberId = execution.getVariable("globalSubscriberId")
@@ -95,7 +96,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		String anNssiId = execution.getVariable("serviceInstanceID")
 		String operationType = execution.getVariable("operationType")
 
-		if(isBlank(sNssaiList) || isBlank(anSliceProfileId) || isBlank(nsiId)) {
+		if((sNssaiList.empty) || isBlank(anSliceProfileId) || isBlank(nsiId)) {
 			String msg = "Input fields cannot be null : Mandatory attributes : [snssaiList, sliceProfileId, nsiId]"
 			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
@@ -111,9 +112,6 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		execution.setVariable("anSliceProfileId", anSliceProfileId)
 		execution.setVariable("nsiId", nsiId)
 		execution.setVariable("anNssiId", anNssiId)
-
-		orchStatusMap.put(ACTIVATE, "activated")
-		orchStatusMap.put(DEACTIVATE, "deactivated")
 
 		logger.debug("${Prefix} - Preprocessing completed with sliceProfileId : ${anSliceProfileId} , nsiId : ${nsiId} , nssiId : ${anNssiId}")
 
@@ -145,11 +143,12 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		ServiceInstance sliceProfileInstance = execution.getVariable(KEY_SLICE_PROFILE)
 		String orchStatus = sliceProfileInstance.getOrchestrationStatus()
 		String operationType = execution.getVariable("operationType")
-		if(orchStatusMap.get(operationType).equalsIgnoreCase(orchStatus)) {
-			execution.setVariable("shouldChangeSPStatus", true)
-		}else {
+	 	if(orchStatusMap.get(operationType).equalsIgnoreCase(orchStatus)) {
 			execution.setVariable("shouldChangeSPStatus", false)
-		}
+		}else {
+			execution.setVariable("shouldChangeSPStatus", true)
+		
+                }
 		logger.debug("${Prefix} -  SPOrchStatus  : ${orchStatus}")
 	}
 	
@@ -168,9 +167,9 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		String orchStatus = sliceProfileInstance.getOrchestrationStatus()
 		String operationType = execution.getVariable("operationType")
 		if(orchStatusMap.get(operationType).equalsIgnoreCase(orchStatus)) {
-			execution.setVariable("shouldChangeAN_NF_SPStatus", true)
-		}else {
 			execution.setVariable("shouldChangeAN_NF_SPStatus", false)
+		}else {
+			execution.setVariable("shouldChangeAN_NF_SPStatus", true)
 		}
 		logger.debug("${Prefix} -  getAnNfSPOrchStatus AN_NF SP ID:${anNfSPId}  : ${orchStatus}")
 	}
@@ -181,7 +180,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		String action = operationType.equalsIgnoreCase(ACTIVATE) ? "activate":"deactivate"
 
 		String anNfNssiId = execution.getVariable("anNfNssiId")
-		String sNssai = execution.getVariable("sNssaiList")
+		List<String> sNssai = execution.getVariable("sNssaiList")
 		String reqId = execution.getVariable("msoRequestId")
 		String messageType = "SDNRActivateResponse"
 		StringBuilder callbackURL = new StringBuilder(UrnPropertiesReader.getVariable("mso.workflow.message.endpoint", execution))
@@ -190,7 +189,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		JsonObject input = new JsonObject()
 		input.addProperty("RANNFNSSIId", anNfNssiId)
 		input.addProperty("callbackURL", callbackURL.toString())
-		input.addProperty("s-NSSAI", sNssai)
+		input.addProperty("s-NSSAI", sNssai.toString())
 
 		JsonObject Payload = new JsonObject()
 		Payload.addProperty("version", "1.0")
@@ -202,7 +201,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		wrapinput.addProperty("Action", action)
 
 		JsonObject CommonHeader = new JsonObject()
-		CommonHeader.addProperty("TimeStamp", new Date(System.currentTimeMillis()).format("yyyy-MM-ddTHH:mm:ss.sss", TimeZone.getDefault()))
+		CommonHeader.addProperty("TimeStamp", new Date(System.currentTimeMillis()).format("yyyy-MM-dd'T'HH:mm:ss.sss", TimeZone.getDefault()))
 		CommonHeader.addProperty("APIver", "1.0")
 		CommonHeader.addProperty("RequestID", reqId)
 		CommonHeader.addProperty("SubRequestID", "1")
@@ -211,18 +210,18 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		body.add("input", wrapinput)
 
 		JsonObject sdnrRequest = new JsonObject()
-		Payload.add("input", input)
+		Payload.addProperty("input", input.toString())
 		wrapinput.add("Payload", Payload)
 		wrapinput.add("CommonHeader", CommonHeader)
 		body.add("input", wrapinput)
 		sdnrRequest.add("body", body)
 
 		String json = sdnrRequest.toString()
-		execution.setVariable("sdnrRequest", sdnrRequest)
+		execution.setVariable("sdnrRequest", json)
 		execution.setVariable("SDNR_messageType", messageType)
 		execution.setVariable("SDNR_timeout", "PT10M")
 
-		logger.debug("${Prefix} -  prepareSdnrActivationRequest : SDNR Request : ${json}")
+		logger.debug("${Prefix} -  Exit prepareSdnrActivationRequest ")
 	}
 
 	void processSdnrResponse(DelegateExecution execution) {
@@ -268,9 +267,9 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		String orchStatus = sliceProfileInstance.getOrchestrationStatus()
 		String operationType = execution.getVariable("operationType")
 		if(orchStatusMap.get(operationType).equalsIgnoreCase(orchStatus)) {
-			execution.setVariable("shouldChangeTN_FH_SPStatus", true)
-		}else {
 			execution.setVariable("shouldChangeTN_FH_SPStatus", false)
+		}else {
+			execution.setVariable("shouldChangeTN_FH_SPStatus", true)
 		}
 
 		logger.debug("${Prefix} Exit getTnFhSPOrchStatus TN_FH SP ID:${tnFhSPId}  : ${orchStatus}")
@@ -283,9 +282,8 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		String urlOpType = operationType.equalsIgnoreCase(ACTIVATE) ? "activation":"deactivation"
 
 		List<String> sNssaiList =  execution.getVariable("sNssaiList")
-		String snssai = sNssaiList != null ? sNssaiList.get(0) : ""
-
-		String urlString = "/api/rest/provMns/v1/NSS/" + snssai + urlOpType
+		String snssai = sNssaiList.get(0) 
+		String urlString = "/api/rest/provMns/v1/NSS/" + snssai + "/" + urlOpType
 				String nssmfResponse = nssmfAdapterUtils.sendPostRequestNSSMF(execution, urlString, nssmfRequest)
 				if (nssmfResponse != null) {
 					String jobId = jsonUtil.getJsonValue(nssmfResponse, "jobId")
@@ -308,9 +306,9 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		String orchStatus = sliceProfileInstance.getOrchestrationStatus()
 		String operationType = execution.getVariable("operationType")
 		if(orchStatusMap.get(operationType).equalsIgnoreCase(orchStatus)) {
-			execution.setVariable("shouldChangeTN_MH_SPStatus", true)
-		}else {
 			execution.setVariable("shouldChangeTN_MH_SPStatus", false)
+		}else {
+			execution.setVariable("shouldChangeTN_MH_SPStatus", true)
 		}
 			logger.debug("${Prefix} Exit getTnMhSPOrchStatus TN_MH SP ID:${tnFhSPId}  : ${orchStatus}")
 	}
@@ -322,9 +320,9 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		String urlOpType = operationType.equalsIgnoreCase(ACTIVATE) ? "activation":"deactivation"
 
 		List<String> sNssaiList =  execution.getVariable("sNssaiList")
-		String snssai = sNssaiList != null ? sNssaiList.get(0) : ""
+		String snssai = sNssaiList.get(0) 
 
-		String urlString = "/api/rest/provMns/v1/NSS/" + snssai + urlOpType
+		String urlString = "/api/rest/provMns/v1/NSS/" + snssai + "/"  + urlOpType
 				String nssmfResponse = nssmfAdapterUtils.sendPostRequestNSSMF(execution, urlString, nssmfRequest)
 				if (nssmfResponse != null) {
 					String jobId = jsonUtil.getJsonValue(nssmfResponse, "jobId")
@@ -378,7 +376,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		String anSliceProfileId =  execution.getVariable("anSliceProfileId")
 		updateOrchStatus(execution, anNssiId)
 		updateOrchStatus(execution, anSliceProfileId)
-		logger.debug("${Prefix} Start updateANStatus")
+		logger.debug("${Prefix} Exit updateANStatus")
 	}
 	
 	void prepareQueryJobStatus(DelegateExecution execution,String jobId,String networkType,String instanceId) {
@@ -463,7 +461,8 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		roStatus.setProgress(progress)
 		roStatus.setStatus(status)
 		roStatus.setStatusDescription(statusDescription)
-		requestDBUtil.prepareUpdateResourceOperationStatus(execution, status)
+		requestDBUtil.prepareUpdateResourceOperationStatus(execution, roStatus)
+                logger.debug("${Prefix} Exit prepareUpdateJobStatus : ${statusDescription}")
 	}
 	
 	
@@ -567,9 +566,9 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		actDeactNssi.setSliceProfileId(relatedSPs.get(serviceFunction).getServiceInstanceId())
 		actDeactNssi.setSnssaiList(sNssaiList)
 
-		EsrInfo esrInfo = new EsrInfo()
-		esrInfo.setVendor(VENDOR_ONAP)
-		esrInfo.setNetworkType("TN")
+		JsonObject esrInfo = new JsonObject()
+                esrInfo.addProperty("networkType", "tn")
+	        esrInfo.addProperty("vendor", VENDOR_ONAP)
 
 		ServiceInfo serviceInfo = new ServiceInfo()
 		serviceInfo.setServiceInvariantUuid(tnNssi.getModelInvariantId())
@@ -578,9 +577,10 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		serviceInfo.setSubscriptionServiceType(subscriptionServiceType)
 
 		JsonObject json = new JsonObject()
-		json.addProperty("actDeActNssi", objectMapper.writeValueAsString(actDeactNssi))
-		json.addProperty("esrInfo", objectMapper.writeValueAsString(esrInfo))
-		json.addProperty("serviceInfo", objectMapper.writeValueAsString(serviceInfo))
+                Gson jsonConverter = new Gson()
+		json.add("actDeActNssi", jsonConverter.toJsonTree(actDeactNssi))
+		json.add("esrInfo", esrInfo)
+		json.add("serviceInfo", jsonConverter.toJsonTree(serviceInfo))
 		return json.toString()
 		
 	}
