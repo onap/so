@@ -81,7 +81,17 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 
 	private static final String VENDOR_ONAP = "ONAP_internal"
 
-        def orchStatusMap = [activateInstance:"activated",deactivateInstance:"deactivated"]
+        enum orchStatusMap {
+		activateInstance("activated"),
+		deactivateInstance("deactivated")
+
+		private String value;
+
+		private orchStatusMap(String value) {
+			this.value = value;
+		}	
+	}
+
 
 	@Override
 	public void preProcessRequest(DelegateExecution execution) {
@@ -143,7 +153,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		ServiceInstance sliceProfileInstance = execution.getVariable(KEY_SLICE_PROFILE)
 		String orchStatus = sliceProfileInstance.getOrchestrationStatus()
 		String operationType = execution.getVariable("operationType")
-	 	if(orchStatusMap.get(operationType).equalsIgnoreCase(orchStatus)) {
+	 	if(orchStatusMap.valueOf(operationType).toString().equalsIgnoreCase(orchStatus)) {
 			execution.setVariable("shouldChangeSPStatus", false)
 		}else {
 			execution.setVariable("shouldChangeSPStatus", true)
@@ -166,7 +176,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 
 		String orchStatus = sliceProfileInstance.getOrchestrationStatus()
 		String operationType = execution.getVariable("operationType")
-		if(orchStatusMap.get(operationType).equalsIgnoreCase(orchStatus)) {
+		if(orchStatusMap.valueOf(operationType).toString().equalsIgnoreCase(orchStatus)) {
 			execution.setVariable("shouldChangeAN_NF_SPStatus", false)
 		}else {
 			execution.setVariable("shouldChangeAN_NF_SPStatus", true)
@@ -266,7 +276,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 
 		String orchStatus = sliceProfileInstance.getOrchestrationStatus()
 		String operationType = execution.getVariable("operationType")
-		if(orchStatusMap.get(operationType).equalsIgnoreCase(orchStatus)) {
+		if(orchStatusMap.valueOf(operationType).toString().equalsIgnoreCase(orchStatus)) {
 			execution.setVariable("shouldChangeTN_FH_SPStatus", false)
 		}else {
 			execution.setVariable("shouldChangeTN_FH_SPStatus", true)
@@ -305,7 +315,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 
 		String orchStatus = sliceProfileInstance.getOrchestrationStatus()
 		String operationType = execution.getVariable("operationType")
-		if(orchStatusMap.get(operationType).equalsIgnoreCase(orchStatus)) {
+		if(orchStatusMap.valueOf(operationType).toString().equalsIgnoreCase(orchStatus)) {
 			execution.setVariable("shouldChangeTN_MH_SPStatus", false)
 		}else {
 			execution.setVariable("shouldChangeTN_MH_SPStatus", true)
@@ -575,6 +585,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		serviceInfo.setServiceUuid(tnNssi.getModelVersionId())
 		serviceInfo.setGlobalSubscriberId(globalSubscriberId)
 		serviceInfo.setSubscriptionServiceType(subscriptionServiceType)
+            	serviceInfo.setNssiId(nssiId)
 
 		JsonObject json = new JsonObject()
                 Gson jsonConverter = new Gson()
