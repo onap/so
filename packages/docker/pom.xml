@@ -9,7 +9,7 @@
     <version>1.7.1-SNAPSHOT</version>
   </parent>
 
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
   <artifactId>docker</artifactId>
   <name>Docker Images</name>
   <description>Docker Images</description>
@@ -29,11 +29,6 @@
 
   <build>
     <finalName>${project.artifactId}-${project.version}</finalName>
-    <resources>
-        <resource>
-            <directory>src/main/docker</directory>
-        </resource>
-    </resources>
     <plugins>
       <plugin>
         <groupId>org.codehaus.groovy.maven</groupId>
