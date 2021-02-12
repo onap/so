@@ -11,6 +11,7 @@ ONAP SO
 
    installconfigure/Install_Configure_SO.rst
    architecture/architecture.rst
+   pnf_pnp_workflow_migration_to_BB/pnf_pnp_workflow_migration_to_BB.rst
    api/offered_consumed_apis.rst
    developer_info/developer_information.rst
    release-notes.rst
