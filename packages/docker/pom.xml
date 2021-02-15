@@ -102,7 +102,7 @@
                 </assembly>
               </build>
             </image>
-	     <image>
+	     <!--image>
               <name>${docker.image.prefix}/mso-cnf-adapter</name>
               <build>
                 <cleanup>try</cleanup>
@@ -125,7 +125,7 @@
                   </inline>
                 </assembly>
               </build>
-            </image>
+            </image-->
             <image>
               <name>${docker.image.prefix}/catalog-db-adapter</name>
               <build>
@@ -493,7 +493,7 @@
               <goal>push</goal>
             </goals>
             <configuration>
-              <image>${docker.image.prefix}/catalog-db-adapter,${docker.image.prefix}/request-db-adapter,${docker.image.prefix}/sdnc-adapter,${docker.image.prefix}/openstack-adapter,${docker.image.prefix}/vfc-adapter,${docker.image.prefix}/sdc-controller,${docker.image.prefix}/bpmn-infra,${docker.image.prefix}/api-handler-infra,${docker.image.prefix}/so-monitoring,${docker.image.prefix}/so-simulator,${docker.image.prefix}/mso-nssmf-adapter,${docker.image.prefix}/so-oof-adapter,${docker.image.prefix}/mso-cnf-adapter,${docker.image.prefix}/so-etsi-nfvo-ns-lcm</image>
+              <image>${docker.image.prefix}/catalog-db-adapter,${docker.image.prefix}/request-db-adapter,${docker.image.prefix}/sdnc-adapter,${docker.image.prefix}/openstack-adapter,${docker.image.prefix}/vfc-adapter,${docker.image.prefix}/sdc-controller,${docker.image.prefix}/bpmn-infra,${docker.image.prefix}/api-handler-infra,${docker.image.prefix}/so-monitoring,${docker.image.prefix}/so-simulator,${docker.image.prefix}/mso-nssmf-adapter,${docker.image.prefix}/so-oof-adapter,${docker.image.prefix}/so-etsi-nfvo-ns-lcm</image>
             </configuration>
           </execution>
         </executions>
