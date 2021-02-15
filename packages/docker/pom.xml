@@ -521,11 +521,11 @@
       <artifactId>mso-catalog-db-adapter</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
+    <!--dependency>
       <groupId>org.onap.so.adapters</groupId>
       <artifactId>mso-cnf-adapter</artifactId>
       <version>${project.version}</version>
-    </dependency>
+    </dependency-->
     <dependency>
       <groupId>org.onap.so.adapters</groupId>
       <artifactId>mso-requests-db-adapter</artifactId>
