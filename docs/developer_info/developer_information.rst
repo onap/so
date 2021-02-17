@@ -20,6 +20,7 @@ SO Developer Information
    BPMN_Subprocess_Process_Flows.rst
    BPMN_Project_Deployment_Strategy.rst
    BPMN-INFRA_Workflow_Understanding.rst
+   pnf_pnp_workflow_migration_to_BB/pnf_pnp_support_in_service_orchestration.rst
    Docker-Config_Understanding.rst
    Mso_Openstack_Adapter.rst
    Cxf_Logging.rst
