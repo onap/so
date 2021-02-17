@@ -55,14 +55,38 @@ public class PrepareSdncUpgradePreCheckPnfBBTest {
     }
 
     @Test
-    public void prepare_jsonWithoutActionPayload() {
+    public void prepareJson_payloadWithoutAction() {
         String payloadWithoutActionArray = "{\"json name\": \"test1\"}";
         ControllerContext<BuildingBlockExecution> controllerContext =
-                createControllerContext(payloadWithoutActionArray);
+                createControllerContext(payloadWithoutActionArray, "action1");
         testedObject.prepare(controllerContext);
 
         assertThat((String) controllerContext.getExecution().getVariable("payload"))
                 .isEqualTo(payloadWithoutActionArray);
+    }
+
+    @Test
+    public void prepareJson_payloadWithActionJsonObject() {
+        String jsonActionObjectKey = "action1";
+        String jsonActionObject = String.format("{\"%s\":\"act1\"}", jsonActionObjectKey);
+        String payloadWithActionArray = String.format("{\"json name\":\"test1\",\"action\": [%s]}", jsonActionObject);
+        ControllerContext<BuildingBlockExecution> controllerContext =
+                createControllerContext(payloadWithActionArray, jsonActionObjectKey);
+
+        testedObject.prepare(controllerContext);
+
+        assertThat((String) controllerContext.getExecution().getVariable("payload")).isEqualTo(jsonActionObject);
+    }
+
+    @Test
+    public void prepareJson_payloadWithActionJsonObjectButDifferentKey() {
+        String payloadWithActionArray = ("{\"json name\":\"test1\",\"action\": [{\"action1\":\"act1\"}]}");
+        ControllerContext<BuildingBlockExecution> controllerContext =
+                createControllerContext(payloadWithActionArray, "otherAction");
+
+        testedObject.prepare(controllerContext);
+
+        assertThat((String) controllerContext.getExecution().getVariable("payload")).isEqualTo(payloadWithActionArray);
     }
 
     private ControllerContext<BuildingBlockExecution> createControllerContext(String actor, String action,
@@ -74,9 +98,10 @@ public class PrepareSdncUpgradePreCheckPnfBBTest {
         return controllerContext;
     }
 
-    private ControllerContext<BuildingBlockExecution> createControllerContext(String payload) {
+    private ControllerContext<BuildingBlockExecution> createControllerContext(String payload, String action) {
         ControllerContext<BuildingBlockExecution> controllerContext = new ControllerContext<>();
         controllerContext.setExecution(prepareBuildingBlockExecution(payload));
+        controllerContext.setControllerAction(action);
         return controllerContext;
     }
 
