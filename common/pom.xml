@@ -8,7 +8,7 @@
     <version>1.8.0-SNAPSHOT</version>
   </parent>
   <artifactId>common</artifactId>
-  <name>MSO Common classes</name>
+  <name>common</name>
   <description>MSO Common classes:- Logger</description>
 
   <properties>
@@ -225,7 +225,7 @@
     <dependency>
       <groupId>org.camunda.bpm</groupId>
       <artifactId>camunda-external-task-client</artifactId>
-      <version>1.1.1</version>
+      <version>1.4.0</version>
     </dependency>
     <dependency>
       <groupId>org.onap.appc.client</groupId>
@@ -393,5 +393,23 @@
         </executions>
       </plugin>
     </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.20</version>
+          <configuration>
+            <systemPropertyVariables>
+              <so.log.level>DEBUG</so.log.level>
+            </systemPropertyVariables>
+            <rerunFailingTestsCount>2</rerunFailingTestsCount>
+            <parallel>suites</parallel>
+            <useUnlimitedThreads>false</useUnlimitedThreads>
+            <threadCount>1</threadCount>
+            <argLine>${surefireArgLine}</argLine>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 </project>
