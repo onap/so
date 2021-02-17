@@ -21,7 +21,6 @@
     <module>mso-catalog-db-adapter</module>
     <module>mso-openstack-adapters</module>
     <module>etsi-sol003-adapter</module>
-    <module>mso-oof-adapter</module>
     <module>so-appc-orchestrator</module>
   </modules>
 
