@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e3c89462_addf3a0f",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoActivateCoreNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-02-17T16:08:09Z",
+      "side": 1,
+      "message": "Move this invocation to:\nexecution.setVariable(\"sliceProfileServiceInstance\", sliceProfileServiceInstance.get())",
+      "range": {
+        "startLine": 143,
+        "startChar": 55,
+        "endLine": 143,
+        "endChar": 88
+      },
+      "revId": "db719a15c07da06f99c8ee61d7a61d0860c8ceb5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "737bd008_00fde5cf",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoActivateCoreNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-02-17T16:08:09Z",
+      "side": 1,
+      "message": "Why are you using \"\u003d\u003d\" to compare Strings? Do you want to compare the reference or the string value? I think that the second one. Use equals method.\nSo all this strings comparisons should be corrected in this method.",
+      "range": {
+        "startLine": 213,
+        "startChar": 28,
+        "endLine": 213,
+        "endChar": 88
+      },
+      "revId": "db719a15c07da06f99c8ee61d7a61d0860c8ceb5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "34e68065_cd8f2e08",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoActivateCoreNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-02-17T16:08:09Z",
+      "side": 1,
+      "message": "Suggestion for the future.\nIf you create an object in the code, try to do this close to the place where it is used. \nIn this example, vnfModelInfo object is created and you set the fields, but the first usage of this object is only in the line 433.",
+      "range": {
+        "startLine": 354,
+        "startChar": 8,
+        "endLine": 355,
+        "endChar": 65
+      },
+      "revId": "db719a15c07da06f99c8ee61d7a61d0860c8ceb5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1664dd86_ad42a43d",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoActivateCoreNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 585,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-02-17T16:08:09Z",
+      "side": 1,
+      "message": "not used parameter",
+      "range": {
+        "startLine": 585,
+        "startChar": 23,
+        "endLine": 585,
+        "endChar": 50
+      },
+      "revId": "db719a15c07da06f99c8ee61d7a61d0860c8ceb5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
