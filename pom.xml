@@ -33,7 +33,6 @@
     <module>so-sdn-clients</module>
     <module>bpmn</module>
     <module>cxf-logging</module>
-    <module>so-monitoring</module>
     <module>so-simulator</module>
     <module>so-etsi-nfvo</module>
     <module>packages</module>
