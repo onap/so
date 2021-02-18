@@ -34,7 +34,6 @@
     <module>bpmn</module>
     <module>cxf-logging</module>
     <module>so-simulator</module>
-    <module>so-etsi-nfvo</module>
     <module>packages</module>
   </modules>
   <properties>
