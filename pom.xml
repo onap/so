@@ -79,15 +79,15 @@
   </properties>
   <distributionManagement>
     <repository>
-      <id>ecomp-releases</id>
+      <id>onap-releases</id>
       <url>${nexusproxy}/${releaseNexusPath}</url>
     </repository>
     <snapshotRepository>
-      <id>ecomp-snapshots</id>
+      <id>onap-snapshots</id>
       <url>${nexusproxy}/${snapshotNexusPath}</url>
     </snapshotRepository>
     <site>
-      <id>ecomp-site</id>
+      <id>onap-site</id>
       <url>dav:${nexusproxy}${siteNexusPath}</url>
     </site>
   </distributionManagement>
@@ -124,21 +124,21 @@
       <url>http://maven.restlet.com</url>
     </pluginRepository>
     <pluginRepository>
-      <id>ecomp-public</id>
+      <id>onap-public</id>
       <url>${nexusproxy}/${publicNexusPath}</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
     </pluginRepository>
     <pluginRepository>
-      <id>ecomp-release</id>
+      <id>onap-release</id>
       <url>${nexusproxy}/${releaseNexusPath}</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
     </pluginRepository>
     <pluginRepository>
-      <id>ecomp-snapshots</id>
+      <id>onap-snapshots</id>
       <url>${nexusproxy}/${snapshotNexusPath}</url>
       <releases>
         <enabled>false</enabled>
@@ -147,25 +147,11 @@
   </pluginRepositories>
   <repositories>
     <repository>
-      <id>ecomp-public</id>
+      <id>onap-public</id>
       <url>https://nexus.onap.org/content/repositories/public/</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
-    </repository>
-    <repository>
-      <id>ecomp-releases</id>
-      <url>https://nexus.onap.org/content/repositories/releases/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>ecomp-snapshots</id>
-      <url>https://nexus.onap.org/content/repositories/snapshots/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
     </repository>
     <repository>
       <id>camunda-bpm</id>
@@ -176,7 +162,6 @@
       <url>https://app.camunda.com/nexus/content/groups/public</url>
     </repository>
     <repository>
-      <!-- TODO: remove from ONAP environemnt -->
       <id>onap-releases</id>
       <url>https://nexus.onap.org/content/repositories/releases/</url>
       <snapshots>
@@ -184,7 +169,6 @@
       </snapshots>
     </repository>
     <repository>
-      <!-- TODO: remove from ONAP environemnt -->
       <id>onap-snapshots</id>
       <url>https://nexus.onap.org/content/repositories/snapshots/</url>
       <releases>
@@ -215,10 +199,6 @@
       </resource>
     </resources>
     <plugins>
-      <!-- <plugin> <groupId>org.sonatype.plugins</groupId> <artifactId>nexus-staging-maven-plugin</artifactId> 
-        <version>1.6.7</version> <extensions>true</extensions> <configuration> <nexusUrl>${nexusproxy}</nexusUrl> 
-        <stagingProfileId>176c31dfe190a</stagingProfileId> <serverId>ecomp-staging</serverId> 
-        </configuration> </plugin> -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-deploy-plugin</artifactId>
