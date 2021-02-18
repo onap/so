@@ -27,6 +27,7 @@
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
 import org.junit.Test;
+import org.onap.so.bpmn.servicedecomposition.entities.ConfigurationResourceKeys;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 import java.util.ArrayList;
@@ -86,5 +87,27 @@ public class ExecuteBuildingBlockBuilderTest {
             fail("NullPointerException should not be thrown when 'resource' is null");
         }
         assertNotNull(result);
+    }
+
+    @Test
+    public void getConfigurationResourceKeysTest() {
+        String vnfcName = "vnfc";
+        String vfModuleCustomizationId = "1a2b3c4e5d";
+        String cvnfModuleCustomizationId = "2b1a3c";
+        String vnfCustomizationId = "zz12aa";
+
+        Resource resource = new Resource(WorkflowType.SERVICE, "123", true);
+
+        resource.setCvnfModuleCustomizationId(vfModuleCustomizationId);
+        resource.setCvnfModuleCustomizationId(cvnfModuleCustomizationId);
+        resource.setVnfCustomizationId(vnfCustomizationId);
+
+        ConfigurationResourceKeys confResourceKeys = executeBBBuilder.getConfigurationResourceKeys(resource, vnfcName);
+
+        assertNotNull(confResourceKeys);
+        assertEquals(vnfcName, confResourceKeys.getVnfcName());
+        assertEquals(cvnfModuleCustomizationId, confResourceKeys.getCvnfcCustomizationUUID());
+        assertEquals(vnfCustomizationId, confResourceKeys.getVnfResourceCustomizationUUID());
+
     }
 }

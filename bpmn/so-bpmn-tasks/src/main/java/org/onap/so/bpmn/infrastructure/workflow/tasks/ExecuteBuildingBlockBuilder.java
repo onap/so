@@ -204,7 +204,7 @@ public class ExecuteBuildingBlockBuilder {
                         isVirtualLink, resource.getVirtualLinkKey(), null, isConfiguration, null)));
     }
 
-    private ConfigurationResourceKeys getConfigurationResourceKeys(Resource resource, String vnfcName) {
+    protected ConfigurationResourceKeys getConfigurationResourceKeys(Resource resource, String vnfcName) {
         ConfigurationResourceKeys configurationResourceKeys = new ConfigurationResourceKeys();
         Optional.ofNullable(vnfcName).ifPresent(configurationResourceKeys::setVnfcName);
         configurationResourceKeys.setCvnfcCustomizationUUID(resource.getCvnfModuleCustomizationId());
