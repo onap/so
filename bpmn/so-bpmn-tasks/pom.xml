@@ -218,9 +218,9 @@
       <artifactId>commons-lang3</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.onap.so.adapters</groupId>
-      <artifactId>etsi-sol003-lcm-api</artifactId>
-      <version>${project.version}</version>
+        <groupId>org.onap.so.adapters.so-etsi-sol003-adapter.lcm</groupId>
+        <artifactId>so-etsi-sol003-adapter-lcm-api</artifactId>
+        <version>${so-etsi-sol003-adapter-version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
