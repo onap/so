@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c2f92374_21928d7f",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/service/level/ServiceLevelTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2021-02-19T15:16:12Z",
+      "side": 1,
+      "message": "Two semicolons. Surprised this didn\u0027t fail our formatter check 😊",
+      "revId": "a0a87bd052877847c71428ae3dcf27e76e6a905d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
