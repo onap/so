@@ -986,9 +986,28 @@ public class ToscaResourceInstaller {
         pnfResourceCustomization.setBlueprintVersion(getStringValue(properties.get(SDNC_MODEL_VERSION)));
         pnfResourceCustomization.setSkipPostInstConf(getBooleanValue(properties.get(SKIP_POST_INST_CONF)));
         pnfResourceCustomization.setControllerActor(getStringValue(properties.get(CONTROLLER_ACTOR)));
-        pnfResourceCustomization.setDefaultSoftwareVersion(getStringValue(properties.get(DEFAULT_SOFTWARE_VERSION)));
+        pnfResourceCustomization.setDefaultSoftwareVersion(extractDefaultSoftwareVersionFromSwVersions(properties));
         pnfResourceCustomization.setPnfResources(pnfResource);
         return pnfResourceCustomization;
+    }
+
+    private String extractDefaultSoftwareVersionFromSwVersions(Map<String, Property> properties) {
+        final String SOFTWARE_VERSIONS = "software_versions";
+        final String EMPTY_STRING = "";
+        String defaultSoftwareVersionValue = getStringValue(properties.get(DEFAULT_SOFTWARE_VERSION));
+        if (defaultSoftwareVersionValue != null && !defaultSoftwareVersionValue.isEmpty()) {
+            return defaultSoftwareVersionValue;
+        }
+        if (properties.containsKey(SOFTWARE_VERSIONS) && properties.get(SOFTWARE_VERSIONS).getValue() != null) {
+            if (properties.get(SOFTWARE_VERSIONS).getValue() instanceof List) {
+                List<String> propertyValueList = (List) properties.get(SOFTWARE_VERSIONS).getValue();
+                return propertyValueList.get(0);
+            } else if (properties.get(SOFTWARE_VERSIONS).getValue() instanceof String) {
+                return getStringValue(properties.get(SOFTWARE_VERSIONS));
+            }
+        }
+
+        return EMPTY_STRING;
     }
 
     /**
