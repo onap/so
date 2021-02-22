@@ -16,6 +16,24 @@
       "revId": "54d6db04adc2eb3f42dfadb25d3f7c09fb9ee4f8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "698716ae_8cb51990",
+        "filename": "packages/docker/src/main/docker/docker-files/Dockerfile.so-base-image",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 7352
+      },
+      "writtenOn": "2021-02-22T07:59:17Z",
+      "side": 1,
+      "message": "Switched to latest to follow current releases, or should master be update manually each ONAP (or java image if necessary) release?",
+      "parentUuid": "06ed1cdd_00e1e63d",
+      "revId": "54d6db04adc2eb3f42dfadb25d3f7c09fb9ee4f8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
