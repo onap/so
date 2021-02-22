@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e48e685f_85034e09",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoActivateCoreNSSI.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2021-02-22T13:37:51Z",
+      "side": 1,
+      "message": "please defer using +, use .append for anything more than 2.",
+      "revId": "b26e19b3caea807461e2242033ba09f5a24446ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "78fafa91_4ee666a2",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoActivateCoreNSSI.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2021-02-22T13:37:51Z",
+      "side": 1,
+      "message": "its better to use \"xxx\".equals(\u003cvar\u003e)    :)",
+      "revId": "b26e19b3caea807461e2242033ba09f5a24446ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "39e7e4b2_ff22d691",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateCoreNonSharedSlice.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 501,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2021-02-22T13:37:51Z",
+      "side": 1,
+      "message": "please use string.append() function instead of + for better use of the (I know this is not from your change, but would prefer if you could also take up the existing issues.\nThanks.",
+      "revId": "b26e19b3caea807461e2242033ba09f5a24446ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
