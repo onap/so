@@ -78,30 +78,19 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
 
         String operationType = execution.getVariable("operationType")
         String oStatus= ""
-
         if(operationType.equals("activateInstance")) {
             oStatus ="activated"
         } else {
             oStatus ="deactivated"
         }
-
         execution.setVariable("oStatus", oStatus)
         String sNssaiListAsString = jsonUtil.getJsonValue(execution.getVariable("sliceParams"), "snssaiList")
-
-        logger.debug("sNssaiListAsString "+sNssaiListAsString)
-
         List<String> sNssaiList = jsonUtil.StringArrayToList(sNssaiListAsString)
-
-        logger.debug("sNssaiList "+sNssaiList)
-
-
         String sNssai = sNssaiList.get(0)
         execution.setVariable("sNssai", sNssai)
-
-        logger.debug("sNssai: "+sNssai)
-
         String serviceType = execution.getVariable("subscriptionServiceType")
         execution.setVariable("serviceType", serviceType)
+        logger.debug("operationType: "+ operationType +" sNssai: "+sNssai+ " serviceType: " +serviceType)
         logger.debug(Prefix +" **** Exit DoActivateCoreNSSI ::: preProcessRequest ****")
     }
 
@@ -117,31 +106,30 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
         if(nsi.isPresent()) {
             List<Relationship> relationshipList = nsi.get().getRelationshipList()?.getRelationship()
             List spiWithsNssaiAndOrchStatusList = new ArrayList<>()
-
             for (Relationship relationship : relationshipList) {
                 String relatedTo = relationship.getRelatedTo()
-                if (relatedTo == "service-instance") {
+                if (relatedTo.equals("service-instance")) {
                     List<RelationshipData> relationshipDataList = relationship.getRelationshipData()
                     List<RelatedToProperty> relatedToPropertyList = relationship.getRelatedToProperty()
                     for (RelationshipData relationshipData : relationshipDataList) {
-                        if (relationshipData.getRelationshipKey() == "service-instance.service-instance-id") {
+                        if (relationshipData.getRelationshipKey().equals("service-instance.service-instance-id")) {
                             execution.setVariable("networkServiceInstanceId", relationshipData.getRelationshipValue())
                         }
                     }
                     for (RelatedToProperty relatedToProperty : relatedToPropertyList) {
-                        if (relatedToProperty.getPropertyKey() == "service-instance.service-instance-name") {
+                        if (relatedToProperty.getPropertyKey().equals("service-instance.service-instance-name")) {
                             execution.setVariable("networkServiceInstanceName", relatedToProperty.getPropertyValue())
                         }
                     }
                 }
 
                 //If related to is allotted-Resource
-                if (relatedTo == "allotted-resource") {
+                if (relatedTo.equals("allotted-resource")) {
                     //get slice Profile Instance Id from allotted resource in list by nssi
                     List<String> sliceProfileInstanceIdList = new ArrayList<>()
                     List<RelationshipData> relationshipDataList = relationship.getRelationshipData()
                     for (RelationshipData relationshipData : relationshipDataList) {
-                        if (relationshipData.getRelationshipKey() == "service-instance.service-instance-id") {
+                        if (relationshipData.getRelationshipKey().equals("service-instance.service-instance-id")) {
                             sliceProfileInstanceIdList.add(relationshipData.getRelationshipValue())
                         }
                     }
@@ -153,13 +141,13 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
                         Optional<ServiceInstance> sliceProfileServiceInstance = sliceProfileInstanceWrapper.asBean(ServiceInstance.class)
                         if (sliceProfileServiceInstance.isPresent()) {
                             String orchestrationStatus= sliceProfileServiceInstance.get().getOrchestrationStatus()
-                            String sNssai = sliceProfileServiceInstance.get().getSliceProfiles().getSliceProfile().get(0).getSNssai()
-                            if(sNssai.equals(execution.getVariable("sNssai"))) {
+                            String sNssai = sliceProfileServiceInstance.get().getEnvironmentContext()
+                            String sNssaiValueFromRequest = execution.getVariable("sNssai")
+                            if(sNssai.equals(sNssaiValueFromRequest)) {
                                 orchestrationStatus = execution.getVariable("oStatus")
                                 //Slice Profile Service Instance to be updated in AAI
-                                execution.setVariable("sliceProfileServiceInstance", sliceProfileServiceInstance)
+                                execution.setVariable("sliceProfileServiceInstance", sliceProfileServiceInstance.get())
                             }
-
                             Map<String, Object> spiWithsNssaiAndOrchStatus = new LinkedHashMap<>()
                             spiWithsNssaiAndOrchStatus.put("snssai", sNssai)
                             spiWithsNssaiAndOrchStatus.put("status", orchestrationStatus)
@@ -185,18 +173,13 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
         Map<String, Object> nSsai= new LinkedHashMap<>()
         nSsai.put("sNssai", instanceParamsvalues)
         String supportedsNssaiJson = mapper.writeValueAsString(nSsai)
-        //SupportedNssai
-        Map<String, Object> supportedNssai= new LinkedHashMap<>()
-        supportedNssai.put("supportedNssai", supportedsNssaiJson)
-        logger.debug("****  supportedsNssaiJson**** "+supportedNssai)
-        logger.debug(Prefix +" **** Exit DoActivateCoreNSSI ::: prepareVnfInstanceParamsJson ****")
-        return supportedNssai
+        logger.debug(Prefix+" **** Exit DoActivateCoreNSSI ::: prepareVnfInstanceParamsJson ****")
+        return supportedsNssaiJson
     }
 
     private void getServiceInstanceRelationships(DelegateExecution execution) {
         logger.debug(Prefix +" **** Enter DoActivateCoreNSSI ::: getServiceInstanceRelationships ****")
         String serviceInstanceId = execution.getVariable("networkServiceInstanceId")
-        logger.debug("**** serviceInstanceId :: getServiceInstanceRelationships  :: "+serviceInstanceId)
         String errorMsg = "query Network Service Instance from AAI failed"
         AAIResultWrapper wrapper = queryAAI(execution, Types.SERVICE_INSTANCE, serviceInstanceId, errorMsg)
         Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
@@ -207,29 +190,33 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
             List<Relationship> relationshipList = si.get().getRelationshipList()?.getRelationship()
             for (Relationship relationship : relationshipList) {
                 String relatedTo = relationship.getRelatedTo()
-                if (relatedTo == "owning-entity") {
+                if (relatedTo.equals("owning-entity")) {
                     List<RelationshipData> relationshipDataList = relationship.getRelationshipData()
                     for (RelationshipData relationshipData : relationshipDataList) {
-                        if (relationshipData.getRelationshipKey() == "owning-entity.owning-entity-id") {
+                        if (relationshipData.getRelationshipKey().equals("owning-entity.owning-entity-id")) {
                             execution.setVariable("owningEntityId", relationshipData.getRelationshipValue())
                         }
                     }
-                } else if (relatedTo == "generic-vnf") {
+                } else if (relatedTo.equals("generic-vnf")) {
                     List<RelationshipData> relationshipDataList = relationship.getRelationshipData()
                     List<RelatedToProperty> relatedToPropertyList = relationship.getRelatedToProperty()
 
                     //Get VnfId
                     for (RelationshipData relationshipData : relationshipDataList) {
-                        if (relationshipData.getRelationshipKey() == "generic-vnf.vnf-id") {
+                        if (relationshipData.getRelationshipKey().equals("generic-vnf.vnf-id")) {
                             execution.setVariable("vnfId", relationshipData.getRelationshipValue())
-                            String vnfId = relationshipData.getRelationshipValue()
-                            logger.debug("vnfId   :"+vnfId)
                         }
                     }
-                } else if (relatedTo == "project") {
+                    //Get Vnf Name Check If necessary
+                    for (RelatedToProperty relatedToProperty : relatedToPropertyList) {
+                        if (relatedToProperty.getPropertyKey().equals("generic-vnf.vnf-name")) {
+                            execution.setVariable("vnfName", relatedToProperty.getPropertyValue())
+                        }
+                    }
+                } else if (relatedTo.equals("project")) {
                     List<RelationshipData> relationshipDataList = relationship.getRelationshipData()
                     for (RelationshipData relationshipData : relationshipDataList) {
-                        if (relationshipData.getRelationshipKey() == "project.project-name") {
+                        if (relationshipData.getRelationshipKey().equals("project.project-name")) {
                             execution.setVariable("projectName", relationshipData.getRelationshipValue())
                         }
                     }
@@ -254,34 +241,34 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
                 List<Relationship> relationshipList = vnf.get().getRelationshipList()?.getRelationship()
                 for (Relationship relationship : relationshipList) {
                     String relatedTo = relationship.getRelatedTo()
-                    if (relatedTo == "tenant") {
+                    if (relatedTo.equals("tenant")) {
                         List<RelationshipData> relationshipDataList = relationship.getRelationshipData()
                         for (RelationshipData relationshipData : relationshipDataList) {
-                            if (relationshipData.getRelationshipKey() == "tenant.tenant-id") {
+                            if (relationshipData.getRelationshipKey().equals("tenant.tenant-id")) {
                                 execution.setVariable("tenantId", relationshipData.getRelationshipValue())
                             }
                         }
-                    } else if (relatedTo == "cloud-region") {
+                    } else if (relatedTo.equals("cloud-region")) {
                         List<RelationshipData> relationshipDataList = relationship.getRelationshipData()
 
                         for (RelationshipData relationshipData : relationshipDataList) {
-                            if (relationshipData.getRelationshipKey() == "cloud-region.cloud-owner") {
+                            if (relationshipData.getRelationshipKey().equals("cloud-region.cloud-owner")) {
                                 execution.setVariable("cloudOwner", relationshipData.getRelationshipValue())
-                            } else if (relationshipData.getRelationshipKey() == "cloud-region.cloud-region-id") {
+                            } else if (relationshipData.getRelationshipKey().equals("cloud-region.cloud-region-id")) {
                                 execution.setVariable("lcpCloudRegionId", relationshipData.getRelationshipValue())
                             }
                         }
-                    } else if (relatedTo == "platform") {
+                    } else if (relatedTo.equals("platform")) {
                         List<RelationshipData> relationshipDataList = relationship.getRelationshipData()
                         for (RelationshipData relationshipData : relationshipDataList) {
-                            if (relationshipData.getRelationshipKey() == "platform.platform-name") {
+                            if (relationshipData.getRelationshipKey().equals("platform.platform-name")) {
                                 execution.setVariable("platformName", relationshipData.getRelationshipValue())
                             }
                         }
-                    } else if (relatedTo == "line-of-business") {
+                    } else if (relatedTo.equals("line-of-business")) {
                         List<RelationshipData> relationshipDataList = relationship.getRelationshipData()
                         for (RelationshipData relationshipData : relationshipDataList) {
-                            if (relationshipData.getRelationshipKey() == "line-of-business.line-of-business-name") {
+                            if (relationshipData.getRelationshipKey().equals("line-of-business.line-of-business-name")) {
                                 execution.setVariable("lineOfBusinessName", relationshipData.getRelationshipValue())
                             }
                         }
@@ -334,11 +321,9 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
 
             String serviceVnfs = jsonUtil.getJsonValue(json, "serviceResources.serviceVnfs") ?: ""
             String serviceModelInfo = jsonUtil.getJsonValue(json, "serviceResources.modelInfo") ?: ""
-
-
             execution.setVariable("serviceVnfs",serviceVnfs)
             execution.setVariable("serviceModelInfo", serviceModelInfo)
-            logger.debug(Prefix +" ***** serviceVnfs is: "+ serviceVnfs)
+            logger.debug(Prefix +" ***** serviceVnfs : "+ serviceVnfs)
         }catch(BpmnError e){
             throw e
         } catch (Exception ex){
@@ -352,9 +337,7 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
     public void prepareSOMacroRequestPayLoad(DelegateExecution execution) {
         logger.debug("**** Enter DoActivateCoreNSSI ::: prepareSOMacroRequestPayLoad ****")
         String json = execution.getVariable("serviceVnfs")
-        logger.debug(">>>> json "+json)
         List<Object> vnfList = mapper.readValue(json, List.class);
-        logger.debug("vnfList:  "+vnfList)
         Map<String,Object> serviceMap = mapper.readValue(execution.getVariable("serviceModelInfo"), Map.class);
         ModelInfo serviceModelInfo = new ModelInfo()
         serviceModelInfo.setModelType(ModelType.service)
@@ -362,18 +345,11 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
         serviceModelInfo.setModelVersionId(serviceMap.get("modelUuid"))
         serviceModelInfo.setModelName(serviceMap.get("modelName"))
         serviceModelInfo.setModelVersion(serviceMap.get("modelVersion"))
-
-        logger.debug("serviceModelInfo:  "+serviceModelInfo)
         //List of Vnfs
         List<Object> vnfModelInfoList = new ArrayList<>()
 
-        Map vnfMap = vnfList.get(0)
-        ModelInfo vnfModelInfo = vnfMap.get("modelInfo")
-        logger.debug("vnfModelInfo "+vnfModelInfo)
-
         //List of VFModules
         List<Map<String, Object>> vfModuleList = vnfMap.get("vfModules")
-        logger.debug("vfModuleList "+vfModuleList)
 
         //List of VfModules
         List<ModelInfo> vfModelInfoList = new ArrayList<>()
@@ -381,17 +357,19 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
         //Traverse VFModules List and add in vfModelInfoList
         for (vfModule in vfModuleList) {
             ModelInfo vfModelInfo = vfModule.get("modelInfo")
-            logger.debug("vfModelInfo "+vfModelInfo)
+            vfModelInfo.setModelCustomizationId(vfModelInfo.getModelCustomizationUuid())
+            vfModelInfo.setModelVersionId(vfModelInfo.getModelId())
             vfModelInfoList.add(vfModelInfo)
         }
 
+        String networkServiceInstanceName = execution.getVariable("networkServiceInstanceName")
         //RequestInfo
         RequestInfo requestInfo = new RequestInfo()
 
         //Dummy Product FamilyId
         requestInfo.setProductFamilyId("test1234")
         requestInfo.setSource("VID")
-        requestInfo.setInstanceName(execution.getVariable("networkServiceInstanceName"))
+        requestInfo.setInstanceName(networkServiceInstanceName)
         requestInfo.setSuppressRollback(false)
         requestInfo.setRequestorId("NBI")
 
@@ -401,10 +379,13 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
         serviceParams.add(serviceParamsValues)
 
         //Cloud Configuration
+        String lcpCloudRegionId = execution.getVariable("lcpCloudRegionId")
+        String tenantId = execution.getVariable("tenantId")
+        String cloudOwner = execution.getVariable("cloudOwner")
         CloudConfiguration cloudConfiguration = new CloudConfiguration()
-        cloudConfiguration.setLcpCloudRegionId(execution.getVariable("lcpCloudRegionId"))
-        cloudConfiguration.setTenantId(execution.getVariable("tenantId"))
-        cloudConfiguration.setCloudOwner(execution.getVariable("cloudOwner"))
+        cloudConfiguration.setLcpCloudRegionId(lcpCloudRegionId)
+        cloudConfiguration.setTenantId(tenantId)
+        cloudConfiguration.setCloudOwner(cloudOwner)
 
         //VFModules List
         List<Map<String, Object>> vfModules = new ArrayList<>()
@@ -412,26 +393,34 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
             //Individual VFModule List
             Map<String, Object> vfModuleValues = new LinkedHashMap<>()
             vfModuleValues.put("modelInfo", vfModuleModelInfo)
-            vfModuleValues.put("instanceName", vfModuleModelInfo.getModelInstanceName())
+            vfModuleValues.put("instanceName", vfModuleModelInfo.getModelName())
 
             //VFModule InstanceParams should be empty or this field should not be there?
             List<Map<String, Object>> vfModuleInstanceParams = new ArrayList<>()
             vfModuleValues.put("instanceParams", vfModuleInstanceParams)
+            vfModules.add(vfModuleValues)
         }
 
         //Vnf intsanceParams
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, Object> sliceProfile = objectMapper.readValue(execution.getVariable("sliceProfile"), Map.class);
-
-        List vnfInstanceParamsList = new ArrayList<>()
+        List<Map<String, Object>> vnfInstanceParamsList = new ArrayList<>()
         String supportedsNssaiJson= prepareVnfInstanceParamsJson(execution)
-        vnfInstanceParamsList.add(supportedsNssaiJson)
+
+        Map<String, Object> supportedNssai= new LinkedHashMap<>()
+        supportedNssai.put("supportedsNssai", supportedsNssaiJson)
+        vnfInstanceParamsList.add(supportedNssai)
 
         Platform platform = new Platform()
-        platform.setPlatformName(execution.getVariable("platform"))
+        String platformName = execution.getVariable("platformName")
+        platform.setPlatformName(platformName)
 
         LineOfBusiness lineOfbusiness = new LineOfBusiness()
-        lineOfbusiness.setLineOfBusinessName(execution.getVariable("lineOfBusiness"))
+        String lineOfBusinessName = execution.getVariable("lineOfBusinessName")
+        lineOfbusiness.setLineOfBusinessName(lineOfBusinessName)
+
+        Map vnfMap = vnfList.get(0)
+        ModelInfo vnfModelInfo = vnfMap.get("modelInfo")
+        vnfModelInfo.setModelCustomizationId(vnfModelInfo.getModelCustomizationUuid())
+        vnfModelInfo.setModelVersionId(vnfModelInfo.getModelId())
 
         //Vnf Values
         Map<String, Object> vnfValues = new LinkedHashMap<>()
@@ -441,7 +430,7 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
         vnfValues.put("cloudConfiguration", cloudConfiguration)
         vnfValues.put("vfModules", vfModules)
         vnfValues.put("modelInfo", vnfModelInfo)
-        vnfValues.put("instanceName", execution.getVariable("vnfInstanceName"))
+        vnfValues.put("instanceName", vnfModelInfo.getModelInstanceName())
         vnfValues.put("instanceParams",vnfInstanceParamsList)
 
         vnfModelInfoList.add(vnfValues)
@@ -450,9 +439,10 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
         serviceResources.put("vnfs", vnfModelInfoList)
 
         //Service Values
+        String serviceInstanceName = execution.getVariable("networkServiceInstanceName")
         Map<String, Object> serviceValues = new LinkedHashMap<>()
         serviceValues.put("modelInfo", serviceModelInfo)
-        serviceValues.put("instanceName", execution.getVariable("networkServiceInstanceName"))
+        serviceValues.put("instanceName", serviceInstanceName)
         serviceValues.put("resources", serviceResources)
         serviceValues.put("instanceParams", serviceParams)
 
@@ -470,22 +460,26 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
         userParams.add(userParamsValues)
 
         //Request Parameters
+        String serviceType = execution.getVariable("serviceType")
         RequestParameters requestParameters = new RequestParameters()
         requestParameters.setaLaCarte(false)
-        requestParameters.setSubscriptionServiceType(execution.getVariable("serviceType"))
+        requestParameters.setSubscriptionServiceType(serviceType)
         requestParameters.setUserParams(userParams)
 
         //SubscriberInfo
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
         SubscriberInfo subscriberInfo = new SubscriberInfo()
-        subscriberInfo.setGlobalSubscriberId(execution.getVariable("globalSubscriberId"))
+        subscriberInfo.setGlobalSubscriberId(globalSubscriberId)
 
         //Owning Entity
+        String owningEntityId = execution.getVariable("owningEntityId")
         OwningEntity owningEntity = new OwningEntity()
-        owningEntity.setOwningEntityId(execution.getVariable("owningEntityId"))
+        owningEntity.setOwningEntityId(owningEntityId)
 
         //Project
+        String projectName = execution.getVariable("projectName")
         Project project = new Project()
-        project.setProjectName(execution.getVariable("projectName"))
+        project.setProjectName(projectName)
 
         RequestDetails requestDetails = new RequestDetails()
         requestDetails.setModelInfo(serviceModelInfo)
@@ -498,8 +492,7 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
 
         Map<String, Object> requestDetailsMap = new LinkedHashMap<>()
         requestDetailsMap.put("requestDetails", requestDetails)
-        String requestPayload = objectMapper.writeValueAsString(requestDetailsMap)
-
+        String requestPayload = mapper.writeValueAsString(requestDetailsMap)
         logger.debug("requestDetails "+requestPayload)
         execution.setVariable("requestPayload", requestPayload)
 
@@ -511,23 +504,23 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
         logger.debug(Prefix +" **** Enter DoActivateCoreNSSI ::: sendPutRequestToSOMacro ****")
         try {
             String msoEndpoint = UrnPropertiesReader.getVariable("mso.infra.endpoint.url", execution)
-            String url = msoEndpoint+"/serviceInstantiation/v7/serviceInstances/"+execution.getVariable("networkServiceInstanceId")+"/vnfs/"+execution.getVariable("vnfId")
+            String networkServiceInstanceId = execution.getVariable("networkServiceInstanceId")
+            String vnfId = execution.getVariable("vnfId")
+            String url = msoEndpoint+"/serviceInstantiation/v7/serviceInstances/"+networkServiceInstanceId+"/vnfs/"+vnfId
             String requestBody = execution.getVariable("requestPayload")
             String msoKey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
-            String basicAuth =  UrnPropertiesReader.getVariable("mso.infra.endpoint.auth", execution)
-            String basicAuthValue = utils.encrypt(basicAuth, msoKey)
-            String encodeString = utils.getBasicAuth(basicAuthValue, msoKey)
-
+            String basicAuth =  UrnPropertiesReader.getVariable("mso.adapters.po.auth", execution)
+            String encodeString = utils.getBasicAuth(basicAuth, msoKey)
+            logger.debug("msoEndpoint: "+msoEndpoint +"  "+ "url: "+url  +" requestBody: "+requestBody +"  "+ "encodeString: "+encodeString)
             HttpClient httpClient = getHttpClientFactory().newJsonClient(new URL(url), ONAPComponents.SO)
             httpClient.addAdditionalHeader("Authorization", encodeString)
             httpClient.addAdditionalHeader("Accept", "application/json")
             Response httpResponse = httpClient.put(requestBody)
             handleSOResponse(httpResponse, execution)
-
         } catch (BpmnError e) {
             throw e
         } catch (any) {
-            String msg = "Exception in DoActivateCoreNSSSI " + any.getCause()
+            String msg = Prefix+" Exception in DoActivateCoreNSSI " + any.getCause()
             logger.error(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
@@ -546,15 +539,15 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
 
         if (soResponseCode >= 200 && soResponseCode < 204 && httpResponse.hasEntity()) {
             String soResponse = httpResponse.readEntity(String.class)
-            String operationId = execution.getVariable("operationId")
-            def macroOperationId = jsonUtil.getJsonValue(soResponse, "operationId")
+            logger.debug("soResponse: "+soResponse)
+            String macroOperationId = jsonUtil.getJsonValue(soResponse, "requestReferences.requestId")
+            String requestSelfLink = jsonUtil.getJsonValue(soResponse, "requestReferences.requestSelfLink")
             execution.setVariable("macroOperationId", macroOperationId)
+            execution.setVariable("requestSelfLink", requestSelfLink)
             execution.setVariable("isSOTimeOut", "no")
             execution.setVariable("isSOResponseSucceed","yes")
         }
-        else
-        {
-            String serviceName = execution.getVariable("serviceInstanceName")
+        else {
             execution.setVariable("isSOResponseSucceed","no")
             prepareFailedOperationStatusUpdate(execution)
         }
@@ -562,37 +555,58 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
         logger.debug(Prefix +" **** Exit DoActivateCoreNSSI ::: handleSOResponse ****")
     }
 
-    /**
-     * prepare to call sub process CheckProcessStatus
-     * @param execution
-     */
-    void prepareCallCheckProcessStatus(DelegateExecution execution){
-        logger.debug(Prefix +" **** Enter DoActivateCoreNSSI ::: prepareCallCheckProcessStatus ****")
-        def successConditions = new ArrayList<>()
-        successConditions.add("finished")
-        execution.setVariable("successConditions", successConditions)
-        def errorConditions = new ArrayList<>()
-        errorConditions.add("error")
-        execution.setVariable("errorConditions", errorConditions)
-        execution.setVariable("processServiceType", "Network service")
-        execution.setVariable("subOperationType", "PUT")
-        execution.setVariable("initProgress", 20)
-        execution.setVariable("endProgress",90)
-        execution.setVariable("timeOut", TIMEOUT)
-        logger.debug(Prefix +" **** Exit DoActivateCoreNSSI ::: prepareCallCheckProcessStatus ****")
+    public void getSOPUTProgress(DelegateExecution execution) {
+        logger.debug(Prefix+ " **** Enter DoActivateCoreNSSI ::: getSOPUTProgress ****")
+        String url= execution.getVariable("requestSelfLink")
+        HttpClient httpClient = getHttpClientFactory().newJsonClient(new URL(url), ONAPComponents.SO)
+        String msoKey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
+        String basicAuth =  UrnPropertiesReader.getVariable("mso.adapters.po.auth", execution)
+        String encodeString = utils.getBasicAuth(basicAuth, msoKey)
+        httpClient.addAdditionalHeader("Authorization", encodeString)
+        httpClient.addAdditionalHeader("Accept", "application/json")
+        Response httpResponse = httpClient.get()
+        logger.debug("httpResponse "+httpResponse)
+        int soResponseCode = httpResponse.getStatus()
+        logger.debug("soResponseCode : "+soResponseCode)
+        if (soResponseCode >= 200 && soResponseCode < 204 && httpResponse.hasEntity()) {
+            String soResponse = httpResponse.readEntity(String.class)
+            logger.debug("soResponse: "+soResponse)
+            String requestState= jsonUtil.getJsonValue(soResponse, "request.requestStatus.requestState")
+            logger.debug("requestState: "+requestState)
+            execution.setVariable("requestState", requestState)
+        } else {
+            execution.setVariable("isSOResponseSucceed","no")
+            prepareFailedOperationStatusUpdate(execution)
+        }
+        logger.debug(Prefix+ " **** Exit DoActivateCoreNSSI ::: getSOPUTProgress ****")
     }
+
+	public void timeDelay() {
+		try {
+			logger.debug(Prefix+ " **** DoActivateCoreNSSI ::: timeDelay going to sleep for 5 sec")
+			Thread.sleep(5000)
+			logger.debug("**** DoActivateCoreNSSI ::: timeDelay wakeup after 5 sec")
+		} catch(InterruptedException e) {
+			logger.error(Prefix+ " **** DoActivateCoreNSSI ::: timeDelay exception" + e)
+		}
+	}
 
     void prepareUpdateResourceOperationStatus(DelegateExecution execution) {
 
         logger.debug(Prefix +" **** Enter DoActivateCoreNSSI ::: prepareUpdateResourceOperationStatus ****")
 
-        String nssiOperationId = execution.getVariable("nssiOperationId")
-        execution.setVariable("operationId", nssiOperationId)
+        String soRequestState = execution.getVariable("requestState")
         //Prepare Update Status for PUT failure and success
-        if(execution.getVariable("isTimeOut").equals("YES")) {
-            logger.debug("TIMEOUT - SO PUT Failure")
+        if("COMPLETE".equalsIgnoreCase(soRequestState)) {
+            execution.setVariable("progress", "100")
+            execution.setVariable("status", "finished")
+            execution.setVariable("operationContent", "AllocteCoreNSSI successful.")
+            logger.debug("Success ,result:${execution.getVariable("result")}, reason: ${execution.getVariable("reason")}")
+        } else {
+            logger.debug("SO PUT Failure with State: "+soRequestState)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "SO PUT Failure")
         }
+        setResourceOperationStatus(execution)
         logger.debug(Prefix +" **** Exit DoActivateCoreNSSI ::: prepareUpdateResourceOperationStatus ****")
     }
 
@@ -610,14 +624,8 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
 
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalCustId).serviceSubscription(serviceType).serviceInstance(sliceProfileInstanceId))
         try {
-
-            Response response = getAAIClient().update(uri, si)
-
-            if(response.getStatus()!=200 || response.getStatus()!=201 || response.getStatus()!=202) {
-                exceptionUtil.buildAndThrowWorkflowException(execution, response.getStatus(), "AAI failed to update sliceProlie service Instance orchestration status")
-            } else {
-                setResourceOperationStatus(execution)
-            }
+            getAAIClient().update(uri, si)
+            setResourceOperationStatus(execution)
         } catch (Exception e) {
             logger.info("Update OrchestrationStatus in AAI failed")
             String msg = "Update OrchestrationStatus in AAI failed, " + e.getMessage()
@@ -636,14 +644,17 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
 
         logger.debug(Prefix +" **** Enter DoActivateCoreNSSI ::: setResourceOperationStatus ****")
 
-        String serviceId = execution.getVariable("nssiId")
+        String serviceId = execution.getVariable("nsiId")
         String jobId = execution.getVariable("jobId")
-        String nsiId = execution.getVariable("nsiId")
+        String nssiId = execution.getVariable("serviceInstanceID")
+        String modelUuid= execution.getVariable("modelUuid")
         String operationType = execution.getVariable("operationType")
         ResourceOperationStatus resourceOperationStatus = new ResourceOperationStatus()
         resourceOperationStatus.setServiceId(serviceId)
+        resourceOperationStatus.setJobId(jobId)
         resourceOperationStatus.setOperationId(jobId)
-        resourceOperationStatus.setResourceTemplateUUID(nsiId)
+        resourceOperationStatus.setResourceTemplateUUID(modelUuid)
+        resourceOperationStatus.setResourceInstanceID(nssiId)
         resourceOperationStatus.setOperType(operationType)
         resourceOperationStatus.setStatus("finished")
         resourceOperationStatus.setProgress("100")
@@ -656,17 +667,20 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
     void prepareFailedOperationStatusUpdate(DelegateExecution execution){
         logger.debug(Prefix + " **** Enter DoActivateCoreNSSI ::: prepareFailedOperationStatusUpdate ****")
 
-        String serviceId = execution.getVariable("nssiId")
+        String serviceId = execution.getVariable("nsiId")
         String jobId = execution.getVariable("jobId")
-        String nsiId = execution.getVariable("nsiId")
+        String nssiId = execution.getVariable("serviceInstanceID")
         String operationType = execution.getVariable("operationType")
+        String modelUuid= execution.getVariable("modelUuid")
 
         ResourceOperationStatus resourceOperationStatus = new ResourceOperationStatus()
         resourceOperationStatus.setServiceId(serviceId)
+        resourceOperationStatus.setJobId(jobId)
         resourceOperationStatus.setOperationId(jobId)
-        resourceOperationStatus.setResourceTemplateUUID(nsiId)
+        resourceOperationStatus.setResourceInstanceID(nssiId)
+        resourceOperationStatus.setResourceTemplateUUID(modelUuid)
         resourceOperationStatus.setOperType(operationType)
-        resourceOperationStatus.setProgress(0)
+        resourceOperationStatus.setProgress("0")
         resourceOperationStatus.setStatus("failed")
         resourceOperationStatus.setStatusDescription("Core NSSI Activation Failed")
         requestDBUtil.prepareUpdateResourceOperationStatus(execution, resourceOperationStatus)
