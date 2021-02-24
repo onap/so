@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "90036dfa_960c94de",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/AnNssmfutils.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 454,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2021-02-24T12:34:10Z",
+      "side": 1,
+      "message": "could you remove leading tabs?",
+      "range": {
+        "startLine": 454,
+        "startChar": 3,
+        "endLine": 454,
+        "endChar": 32
+      },
+      "revId": "47bf9e3ce3fffd831b041b41f643ec8546e9dfb2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e6757a9f_427efd29",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoActivateAccessNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2021-02-24T12:34:10Z",
+      "side": 1,
+      "message": "could you remove leading tabs?",
+      "range": {
+        "startLine": 61,
+        "startChar": 0,
+        "endLine": 61,
+        "endChar": 28
+      },
+      "revId": "47bf9e3ce3fffd831b041b41f643ec8546e9dfb2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
