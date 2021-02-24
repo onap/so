@@ -450,4 +450,22 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 		return json.toString()
 	   
 	}
+
+        public String getModelUuid(DelegateExecution execution, String instanceId) {
+		String globalSubscriberId = execution.getVariable("globalSubscriberId")
+		String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+		ServiceInstance serviceInstance = new ServiceInstance()
+		AAIResourcesClient client = new AAIResourcesClient()
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(instanceId))
+		if (!client.exists(uri)) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai : ${instanceId}")
+		}
+		AAIResultWrapper wrapper = client.get(uri, NotFoundException.class)
+		Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
+		
+		if(si.isPresent()) {
+			serviceInstance = si.get()
+		}
+		return serviceInstance.getModelVersionId()
+	}
 }

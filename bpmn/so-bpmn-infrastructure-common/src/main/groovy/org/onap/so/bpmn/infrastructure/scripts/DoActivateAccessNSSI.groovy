@@ -63,6 +63,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 	RequestDBUtil requestDBUtil = new RequestDBUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 	ObjectMapper objectMapper = new ObjectMapper()
+	AnNssmfUtils anNssmfUtils = new AnNssmfUtils()
 	private NssmfAdapterUtils nssmfAdapterUtils = new NssmfAdapterUtils(httpClientFactory, jsonUtil)
 
 	private static final Logger logger = LoggerFactory.getLogger(DoActivateAccessNSSI.class)
@@ -197,15 +198,11 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		callbackURL.append("/").append(messageType).append("/").append(reqId)
 
 		JsonObject input = new JsonObject()
+		String sliceProfileId = execution.getVariable("anNfSPId")
+                input.addProperty("sliceProfileId",sliceProfileId)
 		input.addProperty("RANNFNSSIId", anNfNssiId)
 		input.addProperty("callbackURL", callbackURL.toString())
-		input.addProperty("s-NSSAI", sNssai.toString())
-
-		JsonObject Payload = new JsonObject()
-		Payload.addProperty("version", "1.0")
-		Payload.addProperty("rpc-name", "activateRANSlice")
-		Payload.addProperty("correlation-id", reqId)
-		Payload.addProperty("type", "request")
+		input.addProperty("sNSSAI", sNssai.toString())
 
 		JsonObject wrapinput = new JsonObject()
 		wrapinput.addProperty("Action", action)
@@ -220,11 +217,16 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		body.add("input", wrapinput)
 
 		JsonObject sdnrRequest = new JsonObject()
-		Payload.addProperty("input", input.toString())
-		wrapinput.add("Payload", Payload)
+		JsonObject payload = new JsonObject()
+		payload.add("input", input)
+		wrapinput.addProperty("Payload", payload.toString())
 		wrapinput.add("CommonHeader", CommonHeader)
 		body.add("input", wrapinput)
 		sdnrRequest.add("body", body)
+                sdnrRequest.addProperty("version", "1.0")
+		sdnrRequest.addProperty("rpc-name", "activateRANSlice")
+		sdnrRequest.addProperty("correlation-id", reqId)
+		sdnrRequest.addProperty("type", "request")
 
 		String json = sdnrRequest.toString()
 		execution.setVariable("sdnrRequest", json)
@@ -395,27 +397,29 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		String globalSubscriberId = execution.getVariable("globalSubscriberId")
 		String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
 
-		EsrInfo esrInfo = new EsrInfo()
-		esrInfo.setNetworkType(networkType)
-		esrInfo.setVendor(VENDOR_ONAP)
+                JsonObject esrInfo = new JsonObject()
+                esrInfo.addProperty("networkType", networkType)
+                esrInfo.addProperty("vendor", VENDOR_ONAP)
 
-		ServiceInfo serviceInfo = new ServiceInfo()
-		serviceInfo.setNssiId(instanceId)
-		serviceInfo.setNsiId(execution.getVariable("nsiId"))
-		serviceInfo.setGlobalSubscriberId(globalSubscriberId)
-		serviceInfo.setSubscriptionServiceType(subscriptionServiceType)
+                JsonObject serviceInfo = new JsonObject()
+                serviceInfo.addProperty("nsiId", execution.getVariable("nsiId"))
+		serviceInfo.addProperty("nssiId", instanceId)
+                serviceInfo.addProperty("globalSubscriberId", globalSubscriberId)
+		serviceInfo.addProperty("subscriptionServiceType", subscriptionServiceType)
 
-		execution.setVariable("${networkType}_esrInfo", esrInfo)
+		execution.setVariable("${networkType}_esrInfo", esrInfo.toString())
 		execution.setVariable("${networkType}_responseId", responseId)
-		execution.setVariable("${networkType}_serviceInfo", serviceInfo)
+		execution.setVariable("${networkType}_serviceInfo", serviceInfo.toString())
 		
 	}
 	
 	void validateJobStatus(DelegateExecution execution,String responseDescriptor) {
 		logger.debug("validateJobStatus ${responseDescriptor}")
-		String status = jsonUtil.getJsonValue(responseDescriptor, "responseDescriptor.status")
-		String statusDescription = jsonUtil.getJsonValue(responseDescriptor, "responseDescriptor.statusDescription")
-		if("finished".equalsIgnoreCase(status)) {
+		String jobResponse = execution.getVariable("tn_responseDescriptor")
+		logger.debug("Job status response "+jobResponse)
+		String status = jsonUtil.getJsonValue(jobResponse, "status")
+		String statusDescription = jsonUtil.getJsonValue(jobResponse, "statusDescription")
+                if("finished".equalsIgnoreCase(status)) {
 			execution.setVariable("isSuccess", true)
 		}else {
 			execution.setVariable("isSuccess", false)
@@ -458,15 +462,18 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 	
 	void prepareUpdateJobStatus(DelegateExecution execution,String status,String progress,String statusDescription) {
 		logger.debug("${Prefix} Start prepareUpdateJobStatus : ${statusDescription}")
-		String serviceId = execution.getVariable("anNssiId")
+		String nssiId = execution.getVariable("anNssiId")
 		String jobId = execution.getVariable("jobId")
 		String nsiId = execution.getVariable("nsiId")
+		//String modelUuid = execution.getVariable("modelUuid")
+                String modelUuid = anNssmfUtils.getModelUuid(execution, nssiId)
 		String operationType = execution.getVariable("operationType")
 
 		ResourceOperationStatus roStatus = new ResourceOperationStatus()
-		roStatus.setServiceId(serviceId)
+		roStatus.setServiceId(nsiId)
 		roStatus.setOperationId(jobId)
-		roStatus.setResourceTemplateUUID(nsiId)
+		roStatus.setResourceTemplateUUID(modelUuid)
+		roStatus.setResourceInstanceID(nssiId)
 		roStatus.setOperType(operationType)
 		roStatus.setProgress(progress)
 		roStatus.setStatus(status)
@@ -562,7 +569,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
 		Map<String, ServiceInstance> relatedNssis = execution.getVariable("relatedNssis")
 
-		String anNssiId = execution.getVariable("anNssiId")
+		String nsiId = execution.getVariable("nsiId")
 		List<String> sNssaiList =  execution.getVariable("sNssaiList")
 
 		ServiceInstance tnNssi = relatedNssis.get(serviceFunction)
@@ -572,11 +579,11 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 
 		ActDeActNssi actDeactNssi = new ActDeActNssi()
 		actDeactNssi.setNssiId(nssiId)
-		actDeactNssi.setNsiId(anNssiId)
+		actDeactNssi.setNsiId(nsiId)
 		actDeactNssi.setSliceProfileId(relatedSPs.get(serviceFunction).getServiceInstanceId())
 		actDeactNssi.setSnssaiList(sNssaiList)
 
-		JsonObject esrInfo = new JsonObject()
+                JsonObject esrInfo = new JsonObject()
                 esrInfo.addProperty("networkType", "tn")
 	        esrInfo.addProperty("vendor", VENDOR_ONAP)
 

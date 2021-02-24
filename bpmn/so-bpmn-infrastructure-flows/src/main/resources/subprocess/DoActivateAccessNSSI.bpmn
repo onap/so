@@ -284,7 +284,7 @@ String jobId = execution.getVariable("TN_FH_jobId")
 String networkType="tn"
 String nssiid=execution.getVariable("tnFhNssiId")
 
-def def activator = new DoActivateAccessNSSI()
+def activator = new DoActivateAccessNSSI()
 activator.prepareQueryJobStatus(execution, jobId,networkType, nssiid)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:callActivity id="Activity_03hbxfi" name="QueryJobStatus" calledElement="QueryJobStatus">
@@ -385,7 +385,7 @@ String jobId = execution.getVariable("TN_MH_jobId")
 String networkType="tn"
 String nssiid=execution.getVariable("tnMhNssiId")
 
-def def activator = new DoActivateAccessNSSI()
+def activator = new DoActivateAccessNSSI()
 activator.prepareQueryJobStatus(execution, jobId,networkType, nssiid)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:callActivity id="Activity_09jt4b0" name="QueryJobStatus" calledElement="QueryJobStatus">
@@ -466,13 +466,13 @@ activator.prepareUpdateJobStatus(execution,"processing","80","TN MH NSSI activat
 def activator = new DoActivateAccessNSSI()
 activator.updateTNFHStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:scriptTask id="Activity_0xmezab" name="Update TN FH SP and NSSI Orch Status" scriptFormat="groovy">
+    <bpmn:scriptTask id="Activity_0xmezab" name="Update TN MH SP and NSSI Orch Status" scriptFormat="groovy">
       <bpmn:incoming>Flow_1i4cc7e</bpmn:incoming>
       <bpmn:outgoing>Flow_0k5cyz7</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 
 def activator = new DoActivateAccessNSSI()
-activator.updateTNFHStatus(execution)</bpmn:script>
+activator.updateTNMHStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_0k5cyz7" sourceRef="Activity_0xmezab" targetRef="Activity_0ftm8b6" />
     <bpmn:scriptTask id="Activity_1j0xkqc" name="Check Orch status for AN NSSI activation" scriptFormat="groovy">
