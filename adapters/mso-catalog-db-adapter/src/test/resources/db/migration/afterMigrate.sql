@@ -70,11 +70,11 @@ insert into vnf_resource_customization(model_customization_uuid, model_instance_
 
 
 
-insert into vf_module(model_uuid, model_invariant_uuid, model_version, model_name, description, is_base, heat_template_artifact_uuid, vol_heat_template_artifact_uuid, creation_timestamp, vnf_resource_model_uuid) values
-('20c4431c-246d-11e7-93ae-92361f002671', '78ca26d0-246d-11e7-93ae-92361f002671', '2', 'vSAMP10aDEV::base::module-0', 'vSAMP10a DEV Base', '1', 'ff874603-4222-11e7-9252-005056850d2e', null, '2016-09-14 18:19:56', 'ff2ae348-214a-11e7-93ae-92361f002671'),
-('066de97e-253e-11e7-93ae-92361f002671', '64efd51a-2544-11e7-93ae-92361f002671', '2', 'vSAMP10aDEV::PCM::module-1', 'vSAMP10a DEV PCM', '0', 'ff87482f-4222-11e7-9252-005056850d2e', null, '2016-09-14 18:19:56', 'ff2ae348-214a-11e7-93ae-92361f002671'),
-('20c4431c-246d-11e7-93ae-92361f002672', '78ca26d0-246d-11e7-93ae-92361f002671', '2', 'vSAMP10aDEV::base::module-0', 'vSAMP10a DEV Base', '1', 'ff874603-4222-11e7-9252-005056850d2e', null, '2016-09-14 18:19:56', 'ff2ae348-214a-11e7-93ae-92361f002671'),
-('066de97e-253e-11e7-93ae-92361f002672', '64efd51a-2544-11e7-93ae-92361f002671', '2', 'vSAMP10aDEV::PCM::module-1', 'vSAMP10a DEV PCM', '0', 'ff87482f-4222-11e7-9252-005056850d2e', null, '2016-09-14 18:19:56', 'ff2ae348-214a-11e7-93ae-92361f002671');
+insert into vf_module(model_uuid, model_invariant_uuid, model_version, model_name, description, is_base, orch_template_artifact_type, heat_template_artifact_uuid, vol_heat_template_artifact_uuid, creation_timestamp, vnf_resource_model_uuid) values
+('20c4431c-246d-11e7-93ae-92361f002671', '78ca26d0-246d-11e7-93ae-92361f002671', '2',  'vSAMP10aDEV::base::module-0', 'vSAMP10a DEV Base', '1', 'HEAT', 'ff874603-4222-11e7-9252-005056850d2e', null, '2016-09-14 18:19:56', 'ff2ae348-214a-11e7-93ae-92361f002671'),
+('066de97e-253e-11e7-93ae-92361f002671', '64efd51a-2544-11e7-93ae-92361f002671', '2', 'vSAMP10aDEV::PCM::module-1', 'vSAMP10a DEV PCM', '0', 'HEAT', 'ff87482f-4222-11e7-9252-005056850d2e', null, '2016-09-14 18:19:56', 'ff2ae348-214a-11e7-93ae-92361f002671'),
+('20c4431c-246d-11e7-93ae-92361f002672', '78ca26d0-246d-11e7-93ae-92361f002671', '2',  'vSAMP10aDEV::base::module-0', 'vSAMP10a DEV Base', '1', 'HEAT','ff874603-4222-11e7-9252-005056850d2e', null, '2016-09-14 18:19:56', 'ff2ae348-214a-11e7-93ae-92361f002671'),
+('066de97e-253e-11e7-93ae-92361f002672', '64efd51a-2544-11e7-93ae-92361f002671', '2', 'vSAMP10aDEV::PCM::module-1', 'vSAMP10a DEV PCM', '0', 'HEAT','ff87482f-4222-11e7-9252-005056850d2e', null, '2016-09-14 18:19:56', 'ff2ae348-214a-11e7-93ae-92361f002671');
 
 
 insert into vf_module_customization(model_customization_uuid, label, initial_count, min_instances, max_instances, availability_zone_count, heat_environment_artifact_uuid, vol_environment_artifact_uuid, creation_timestamp, vf_module_model_uuid,VNF_RESOURCE_CUSTOMIZATION_ID) values
