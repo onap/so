@@ -27,6 +27,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -73,6 +75,10 @@ public class VfModule implements Serializable {
     @Column(name = "IS_BASE")
     private Boolean isBase;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ORCH_TEMPLATE_ARTIFACT_TYPE")
+    private OrchTemplateArtifactType orchTemplateArtifactType;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "VOL_HEAT_TEMPLATE_ARTIFACT_UUID")
     private HeatTemplate volumeHeatTemplate;
@@ -103,6 +109,7 @@ public class VfModule implements Serializable {
         return new ToStringBuilder(this).append("modelUUID", modelUUID).append("modelInvariantUUID", modelInvariantUUID)
                 .append("modelName", modelName).append("modelVersion", modelVersion).append("description", description)
                 .append("isBase", isBase).append("volumeHeatTemplate", volumeHeatTemplate)
+                .append("orchTemplateArtifactType", orchTemplateArtifactType)
                 .append("moduleHeatTemplate", moduleHeatTemplate).append("created", created)
                 .append("heatFiles", heatFiles).append("vfModuleCustomization", vfModuleCustomization)
                 .append("vnfResources", vnfResources).toString();
@@ -161,6 +168,14 @@ public class VfModule implements Serializable {
 
     public void setIsBase(Boolean isBase) {
         this.isBase = isBase;
+    }
+
+    public void setOrchTemplateArtifactType(OrchTemplateArtifactType orchTemplateArtifactType) {
+        this.orchTemplateArtifactType = orchTemplateArtifactType;
+    }
+
+    public OrchTemplateArtifactType getOrchTemplateArtifactType() {
+        return orchTemplateArtifactType;
     }
 
     @LinkedResource

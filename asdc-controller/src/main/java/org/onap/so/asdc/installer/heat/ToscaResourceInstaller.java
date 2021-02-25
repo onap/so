@@ -94,6 +94,11 @@ import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.NetworkInstanceGroup;
 import org.onap.so.db.catalog.beans.NetworkResource;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
+<<<<<<< HEAD   (7fabf0 Add NSI name to allocate request body)
+=======
+import org.onap.so.db.catalog.beans.OrchTemplateArtifactType;
+import org.onap.so.db.catalog.beans.OrchTemplateArtifactType;
+>>>>>>> CHANGE (8a7d4d Store the type of VF module orchestration template (HEAT or )
 import org.onap.so.db.catalog.beans.PnfResource;
 import org.onap.so.db.catalog.beans.PnfResourceCustomization;
 import org.onap.so.db.catalog.beans.Service;
@@ -2509,30 +2514,46 @@ public class ToscaResourceInstaller {
     protected void checkVfModuleArtifactType(VfModule vfModule, VfModuleCustomization vfModuleCustomization,
             List<HeatFiles> heatFilesList, VfModuleArtifact vfModuleArtifact, List<HeatTemplate> nestedHeatTemplates,
             HeatTemplate parentHeatTemplate, VfResourceStructure vfResourceStructure) {
-        if (vfModuleArtifact.getArtifactInfo().getArtifactType().equals(ASDCConfiguration.HEAT)) {
-            vfModuleArtifact.incrementDeployedInDB();
-            vfModule.setModuleHeatTemplate(vfModuleArtifact.getHeatTemplate());
-        } else if (vfModuleArtifact.getArtifactInfo().getArtifactType().equals(ASDCConfiguration.HEAT_VOL)) {
-            vfModule.setVolumeHeatTemplate(vfModuleArtifact.getHeatTemplate());
-            VfModuleArtifact volVfModuleArtifact =
-                    this.getHeatEnvArtifactFromGeneratedArtifact(vfResourceStructure, vfModuleArtifact);
-            vfModuleCustomization.setVolumeHeatEnv(volVfModuleArtifact.getHeatEnvironment());
-            vfModuleArtifact.incrementDeployedInDB();
-        } else if (vfModuleArtifact.getArtifactInfo().getArtifactType().equals(ASDCConfiguration.HEAT_ENV)) {
-            if (vfModuleArtifact.getHeatEnvironment() != null) {
-                if (vfModuleArtifact.getHeatEnvironment().getName().contains("volume")) {
-                    vfModuleCustomization.setVolumeHeatEnv(vfModuleArtifact.getHeatEnvironment());
-                } else {
-                    vfModuleCustomization.setHeatEnvironment(vfModuleArtifact.getHeatEnvironment());
+
+        switch (vfModuleArtifact.getArtifactInfo().getArtifactType()) {
+            case ASDCConfiguration.HEAT:
+                vfModuleArtifact.incrementDeployedInDB();
+                vfModule.setModuleHeatTemplate(vfModuleArtifact.getHeatTemplate());
+                vfModule.setOrchTemplateArtifactType(OrchTemplateArtifactType.HEAT);
+                break;
+            case ASDCConfiguration.HEAT_VOL:
+                vfModule.setVolumeHeatTemplate(vfModuleArtifact.getHeatTemplate());
+                VfModuleArtifact volVfModuleArtifact =
+                        this.getHeatEnvArtifactFromGeneratedArtifact(vfResourceStructure, vfModuleArtifact);
+                vfModuleCustomization.setVolumeHeatEnv(volVfModuleArtifact.getHeatEnvironment());
+                vfModuleArtifact.incrementDeployedInDB();
+                vfModule.setOrchTemplateArtifactType(OrchTemplateArtifactType.HEAT);
+                break;
+            case ASDCConfiguration.HEAT_ENV:
+                if (vfModuleArtifact.getHeatEnvironment() != null) {
+                    if (vfModuleArtifact.getHeatEnvironment().getName().contains("volume")) {
+                        vfModuleCustomization.setVolumeHeatEnv(vfModuleArtifact.getHeatEnvironment());
+                    } else {
+                        vfModuleCustomization.setHeatEnvironment(vfModuleArtifact.getHeatEnvironment());
+                    }
                 }
-            }
-            vfModuleArtifact.incrementDeployedInDB();
-        } else if (vfModuleArtifact.getArtifactInfo().getArtifactType().equals(ASDCConfiguration.HEAT_ARTIFACT)) {
-            heatFilesList.add(vfModuleArtifact.getHeatFiles());
-            vfModuleArtifact.incrementDeployedInDB();
-        } else if (vfModuleArtifact.getArtifactInfo().getArtifactType().equals(ASDCConfiguration.HEAT_NESTED)) {
-            nestedHeatTemplates.add(vfModuleArtifact.getHeatTemplate());
-            vfModuleArtifact.incrementDeployedInDB();
+                vfModuleArtifact.incrementDeployedInDB();
+                vfModule.setOrchTemplateArtifactType(OrchTemplateArtifactType.HEAT);
+                break;
+            case ASDCConfiguration.HEAT_ARTIFACT:
+                heatFilesList.add(vfModuleArtifact.getHeatFiles());
+                vfModuleArtifact.incrementDeployedInDB();
+                vfModule.setOrchTemplateArtifactType(OrchTemplateArtifactType.HEAT);
+                break;
+            case ASDCConfiguration.HEAT_NESTED:
+                nestedHeatTemplates.add(vfModuleArtifact.getHeatTemplate());
+                vfModuleArtifact.incrementDeployedInDB();
+                vfModule.setOrchTemplateArtifactType(OrchTemplateArtifactType.HEAT);
+                break;
+            case ASDCConfiguration.HELM:
+                vfModuleArtifact.incrementDeployedInDB();
+                vfModule.setOrchTemplateArtifactType(OrchTemplateArtifactType.HELM);
+                break;
         }
     }
 
