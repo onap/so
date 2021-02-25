@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4d289c1d_5acbf3ec",
+        "filename": "releases/1.8.0.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 481
+      },
+      "writtenOn": "2021-02-25T17:48:55Z",
+      "side": 1,
+      "message": "I am not able to pull this version of mso-cnf-adapter\n\nIs either not generated properly or expired in Nexus. Can you guys point me to the job that built it?",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 36
+      },
+      "revId": "5b8e1799d027b9f11d906686de1b6bfffb5ec421",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
