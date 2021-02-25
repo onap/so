@@ -75,8 +75,68 @@ import org.onap.so.asdc.installer.VfModuleStructure;
 import org.onap.so.asdc.installer.VfResourceStructure;
 import org.onap.so.asdc.installer.bpmn.WorkflowResource;
 import org.onap.so.asdc.util.YamlEditor;
-import org.onap.so.db.catalog.beans.*;
-import org.onap.so.db.catalog.data.repository.*;
+import org.onap.so.db.catalog.beans.AllottedResource;
+import org.onap.so.db.catalog.beans.AllottedResourceCustomization;
+import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
+import org.onap.so.db.catalog.beans.CollectionResource;
+import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
+import org.onap.so.db.catalog.beans.ConfigurationResource;
+import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
+import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
+import org.onap.so.db.catalog.beans.CvnfcCustomization;
+import org.onap.so.db.catalog.beans.HeatEnvironment;
+import org.onap.so.db.catalog.beans.HeatFiles;
+import org.onap.so.db.catalog.beans.HeatTemplate;
+import org.onap.so.db.catalog.beans.HeatTemplateParam;
+import org.onap.so.db.catalog.beans.InstanceGroup;
+import org.onap.so.db.catalog.beans.InstanceGroupType;
+import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
+import org.onap.so.db.catalog.beans.NetworkInstanceGroup;
+import org.onap.so.db.catalog.beans.NetworkResource;
+import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
+import org.onap.so.db.catalog.beans.OrchTemplateArtifactType;
+import org.onap.so.db.catalog.beans.OrchTemplateArtifactType;
+import org.onap.so.db.catalog.beans.PnfResource;
+import org.onap.so.db.catalog.beans.PnfResourceCustomization;
+import org.onap.so.db.catalog.beans.Service;
+import org.onap.so.db.catalog.beans.ServiceArtifact;
+import org.onap.so.db.catalog.beans.ServiceInfo;
+import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
+import org.onap.so.db.catalog.beans.SubType;
+import org.onap.so.db.catalog.beans.TempNetworkHeatTemplateLookup;
+import org.onap.so.db.catalog.beans.ToscaCsar;
+import org.onap.so.db.catalog.beans.VFCInstanceGroup;
+import org.onap.so.db.catalog.beans.VfModule;
+import org.onap.so.db.catalog.beans.VfModuleCustomization;
+import org.onap.so.db.catalog.beans.VnfResource;
+import org.onap.so.db.catalog.beans.VnfResourceCustomization;
+import org.onap.so.db.catalog.beans.VnfcCustomization;
+import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
+import org.onap.so.db.catalog.data.repository.AllottedResourceCustomizationRepository;
+import org.onap.so.db.catalog.data.repository.AllottedResourceRepository;
+import org.onap.so.db.catalog.data.repository.CollectionResourceCustomizationRepository;
+import org.onap.so.db.catalog.data.repository.CollectionResourceRepository;
+import org.onap.so.db.catalog.data.repository.ConfigurationResourceCustomizationRepository;
+import org.onap.so.db.catalog.data.repository.ConfigurationResourceRepository;
+import org.onap.so.db.catalog.data.repository.CvnfcCustomizationRepository;
+import org.onap.so.db.catalog.data.repository.ExternalServiceToInternalServiceRepository;
+import org.onap.so.db.catalog.data.repository.HeatEnvironmentRepository;
+import org.onap.so.db.catalog.data.repository.HeatFilesRepository;
+import org.onap.so.db.catalog.data.repository.HeatTemplateRepository;
+import org.onap.so.db.catalog.data.repository.InstanceGroupRepository;
+import org.onap.so.db.catalog.data.repository.NetworkResourceCustomizationRepository;
+import org.onap.so.db.catalog.data.repository.NetworkResourceRepository;
+import org.onap.so.db.catalog.data.repository.PnfCustomizationRepository;
+import org.onap.so.db.catalog.data.repository.PnfResourceRepository;
+import org.onap.so.db.catalog.data.repository.ServiceProxyResourceCustomizationRepository;
+import org.onap.so.db.catalog.data.repository.ServiceRepository;
+import org.onap.so.db.catalog.data.repository.TempNetworkHeatTemplateRepository;
+import org.onap.so.db.catalog.data.repository.ToscaCsarRepository;
+import org.onap.so.db.catalog.data.repository.VFModuleCustomizationRepository;
+import org.onap.so.db.catalog.data.repository.VFModuleRepository;
+import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
+import org.onap.so.db.catalog.data.repository.VnfcCustomizationRepository;
+import org.onap.so.db.catalog.data.repository.VnfcInstanceGroupCustomizationRepository;
 import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
 import org.onap.so.db.request.beans.WatchdogDistributionStatus;
 import org.onap.so.db.request.beans.WatchdogServiceModVerIdLookup;
@@ -2457,30 +2517,46 @@ public class ToscaResourceInstaller {
     protected void checkVfModuleArtifactType(VfModule vfModule, VfModuleCustomization vfModuleCustomization,
             List<HeatFiles> heatFilesList, VfModuleArtifact vfModuleArtifact, List<HeatTemplate> nestedHeatTemplates,
             HeatTemplate parentHeatTemplate, VfResourceStructure vfResourceStructure) {
-        if (vfModuleArtifact.getArtifactInfo().getArtifactType().equals(ASDCConfiguration.HEAT)) {
-            vfModuleArtifact.incrementDeployedInDB();
-            vfModule.setModuleHeatTemplate(vfModuleArtifact.getHeatTemplate());
-        } else if (vfModuleArtifact.getArtifactInfo().getArtifactType().equals(ASDCConfiguration.HEAT_VOL)) {
-            vfModule.setVolumeHeatTemplate(vfModuleArtifact.getHeatTemplate());
-            VfModuleArtifact volVfModuleArtifact =
-                    this.getHeatEnvArtifactFromGeneratedArtifact(vfResourceStructure, vfModuleArtifact);
-            vfModuleCustomization.setVolumeHeatEnv(volVfModuleArtifact.getHeatEnvironment());
-            vfModuleArtifact.incrementDeployedInDB();
-        } else if (vfModuleArtifact.getArtifactInfo().getArtifactType().equals(ASDCConfiguration.HEAT_ENV)) {
-            if (vfModuleArtifact.getHeatEnvironment() != null) {
-                if (vfModuleArtifact.getHeatEnvironment().getName().contains("volume")) {
-                    vfModuleCustomization.setVolumeHeatEnv(vfModuleArtifact.getHeatEnvironment());
-                } else {
-                    vfModuleCustomization.setHeatEnvironment(vfModuleArtifact.getHeatEnvironment());
+
+        switch (vfModuleArtifact.getArtifactInfo().getArtifactType()) {
+            case ASDCConfiguration.HEAT:
+                vfModuleArtifact.incrementDeployedInDB();
+                vfModule.setModuleHeatTemplate(vfModuleArtifact.getHeatTemplate());
+                vfModule.setOrchTemplateArtifactType(OrchTemplateArtifactType.HEAT);
+                break;
+            case ASDCConfiguration.HEAT_VOL:
+                vfModule.setVolumeHeatTemplate(vfModuleArtifact.getHeatTemplate());
+                VfModuleArtifact volVfModuleArtifact =
+                        this.getHeatEnvArtifactFromGeneratedArtifact(vfResourceStructure, vfModuleArtifact);
+                vfModuleCustomization.setVolumeHeatEnv(volVfModuleArtifact.getHeatEnvironment());
+                vfModuleArtifact.incrementDeployedInDB();
+                vfModule.setOrchTemplateArtifactType(OrchTemplateArtifactType.HEAT);
+                break;
+            case ASDCConfiguration.HEAT_ENV:
+                if (vfModuleArtifact.getHeatEnvironment() != null) {
+                    if (vfModuleArtifact.getHeatEnvironment().getName().contains("volume")) {
+                        vfModuleCustomization.setVolumeHeatEnv(vfModuleArtifact.getHeatEnvironment());
+                    } else {
+                        vfModuleCustomization.setHeatEnvironment(vfModuleArtifact.getHeatEnvironment());
+                    }
                 }
-            }
-            vfModuleArtifact.incrementDeployedInDB();
-        } else if (vfModuleArtifact.getArtifactInfo().getArtifactType().equals(ASDCConfiguration.HEAT_ARTIFACT)) {
-            heatFilesList.add(vfModuleArtifact.getHeatFiles());
-            vfModuleArtifact.incrementDeployedInDB();
-        } else if (vfModuleArtifact.getArtifactInfo().getArtifactType().equals(ASDCConfiguration.HEAT_NESTED)) {
-            nestedHeatTemplates.add(vfModuleArtifact.getHeatTemplate());
-            vfModuleArtifact.incrementDeployedInDB();
+                vfModuleArtifact.incrementDeployedInDB();
+                vfModule.setOrchTemplateArtifactType(OrchTemplateArtifactType.HEAT);
+                break;
+            case ASDCConfiguration.HEAT_ARTIFACT:
+                heatFilesList.add(vfModuleArtifact.getHeatFiles());
+                vfModuleArtifact.incrementDeployedInDB();
+                vfModule.setOrchTemplateArtifactType(OrchTemplateArtifactType.HEAT);
+                break;
+            case ASDCConfiguration.HEAT_NESTED:
+                nestedHeatTemplates.add(vfModuleArtifact.getHeatTemplate());
+                vfModuleArtifact.incrementDeployedInDB();
+                vfModule.setOrchTemplateArtifactType(OrchTemplateArtifactType.HEAT);
+                break;
+            case ASDCConfiguration.HELM:
+                vfModuleArtifact.incrementDeployedInDB();
+                vfModule.setOrchTemplateArtifactType(OrchTemplateArtifactType.HELM);
+                break;
         }
     }
 
