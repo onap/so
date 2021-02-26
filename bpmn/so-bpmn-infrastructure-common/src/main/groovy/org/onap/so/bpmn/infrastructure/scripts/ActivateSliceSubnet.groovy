@@ -35,6 +35,7 @@ class ActivateSliceSubnet extends AbstractServiceTaskProcessor {
     String Prefix="ActivateSliceSubnet_"
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     JsonUtils jsonUtil = new JsonUtils()
+    AnNssmfUtils anNssmfUtils = new AnNssmfUtils()
     RequestDBUtil requestDBUtil = new RequestDBUtil()
 
     private static final Logger logger = LoggerFactory.getLogger(ActivateSliceSubnet.class)
@@ -136,22 +137,24 @@ class ActivateSliceSubnet extends AbstractServiceTaskProcessor {
     def prepareInitOperationStatus = { DelegateExecution execution ->
         logger.debug(Prefix + "prepareInitOperationStatus Start")
 
-        String serviceId = execution.getVariable("serviceInstanceID")
+        String nssiId = execution.getVariable("serviceInstanceID")
         String jobId = execution.getVariable("jobId")
         String nsiId = execution.getVariable("nsiId")
         String operationType = execution.getVariable("operationType")
-        logger.debug("Generated new job for Service Instance serviceId:" + serviceId + " jobId:" + jobId)
+        String modelUuid = anNssmfUtils.getModelUuid(execution, nssiId)
+        logger.debug("Generated new job for Service Instance serviceId:" + nsiId + " jobId:" + jobId)
 
         ResourceOperationStatus initStatus = new ResourceOperationStatus()
-        initStatus.setServiceId(serviceId)
+
+        initStatus.setServiceId(nsiId)
         initStatus.setOperationId(jobId)
-        initStatus.setResourceTemplateUUID(nsiId)
+        initStatus.setResourceTemplateUUID(modelUuid)
+        initStatus.setResourceInstanceID(nssiId)
         initStatus.setOperType(operationType)
         requestDBUtil.prepareInitResourceOperationStatus(execution, initStatus)
 
         logger.debug(Prefix + "prepareInitOperationStatus Exit")
     }
-
 
 
     /**
