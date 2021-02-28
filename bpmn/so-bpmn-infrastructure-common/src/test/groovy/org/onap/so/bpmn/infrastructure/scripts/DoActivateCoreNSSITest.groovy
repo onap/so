@@ -184,10 +184,9 @@ class DoActivateCoreNSSITest extends MsoGroovyTest {
         when(mockExecution.getVariable("snssaiAndOrchStatusList")).thenReturn(snssaiList)
 
         String returnedJsonAsString= doActivate.prepareVnfInstanceParamsJson(mockExecution)
-
-        String expectedJsonAsString = """{supportedNssai={"sNssai":[{"snssai":"01-5C83F071","status":"activated"},{"snssai":"01-5B179BD4","status":"activated"}]}}"""
+        String expectedJsonAsString = """{"sNssai":[{"snssai":"01-5C83F071","status":"activated"},{"snssai":"01-5B179BD4","status":"activated"}]}"""
         assertEquals(expectedJsonAsString, returnedJsonAsString)
-    }
+   }
 
 
     String mockQueryNS() {
