@@ -34,8 +34,6 @@ import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.transport.servlet.CXFServlet;
 import org.onap.so.adapters.cloudregion.CloudRegionRestV1;
 import org.onap.so.adapters.network.MsoNetworkAdapterImpl;
-import org.onap.so.adapters.tenant.MsoTenantAdapterImpl;
-import org.onap.so.adapters.tenant.TenantAdapterRest;
 import org.onap.so.adapters.vnf.MsoVnfAdapterAsyncImpl;
 import org.onap.so.adapters.vnf.MsoVnfAdapterImpl;
 import org.onap.so.client.policy.JettisonStyleMapperProvider;
@@ -53,11 +51,7 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 @Configuration
 public class CXFConfiguration {
     @Autowired
-    private TenantAdapterRest tenantAdapterRest;
-    @Autowired
     private MsoNetworkAdapterImpl networkAdapterImpl;
-    @Autowired
-    private MsoTenantAdapterImpl tenantAdapterImpl;
     @Autowired
     private MsoVnfAdapterImpl vnfAdapterImpl;
     @Autowired
@@ -99,20 +93,6 @@ public class CXFConfiguration {
     }
 
     /*
-     * tenant adapter endpoint
-     */
-    @Bean
-    public Endpoint tenantAdapterEndpoint() {
-        EndpointImpl endpoint = new EndpointImpl(springBus(), tenantAdapterImpl);
-        endpoint.publish("/TenantAdapter");
-        endpoint.setWsdlLocation("TenantAdapter.wsdl");
-        endpoint.getInInterceptors().add(new SOAPLoggingInInterceptor());
-        endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
-        endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
-        return endpoint;
-    }
-
-    /*
      * vnfAdapterEndpoint VnfAsyncAdapterEndpoint VnfCloudAdapterEndpoint
      */
     @Bean
@@ -135,19 +115,6 @@ public class CXFConfiguration {
         endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
         endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
         return endpoint;
-    }
-
-    // Uses Jettson Style marshalling semantics
-    @Bean
-    public Server rsServer() {
-        JAXRSServerFactoryBean endpoint = new JAXRSServerFactoryBean();
-        endpoint.setBus(springBus());
-        endpoint.setServiceBeans(Arrays.<Object>asList(tenantAdapterRest));
-        endpoint.setAddress("/rest");
-        endpoint.setFeatures(Arrays.asList(createSwaggerFeature(), new LoggingFeature()));
-        endpoint.setProviders(Arrays.asList(new JacksonJsonProvider(jettisonStyleObjectMapper.getMapper()),
-                soAuditLogContainerFilter));
-        return endpoint.create();
     }
 
     // Uses normal Jackson marshalling semantics
