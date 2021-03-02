@@ -22,12 +22,17 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.LogicalLink
+import org.onap.aai.domain.yang.NetworkPolicy
 import org.onap.aai.domain.yang.Relationship
 import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.aaiclient.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.Relationships
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.Activities
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
@@ -42,6 +47,7 @@ import org.slf4j.LoggerFactory
 import static org.apache.commons.lang3.StringUtils.isBlank
 
 class TnNssmfUtils {
+    static final String AAI_VERSION = "v23"
     private static final Logger logger = LoggerFactory.getLogger(TnNssmfUtils.class);
 
 
@@ -428,5 +434,116 @@ class TnNssmfUtils {
         }
 
         return si.modelVersionId()
+    }
+
+    AAIResourceUri buildNetworkPolicyUri(String networkPolicyId) {
+        AAIResourceUri networkPolicyUri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkPolicy(networkPolicyId))
+
+        return networkPolicyUri
+    }
+
+    AAIResourceUri buildAllottedResourceUri(DelegateExecution execution, String serviceInstanceId,
+                                            String allottedResourceId) {
+
+        AAIResourceUri allottedResourceUri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                        .customer(execution.getVariable("globalSubscriberId"))
+                        .serviceSubscription(execution.getVariable("subscriptionServiceType"))
+                        .serviceInstance(serviceInstanceId)
+                        .allottedResource(allottedResourceId))
+
+        return allottedResourceUri
+    }
+
+
+    String getPolicyIdFromAr(DelegateExecution execution, String serviceInstanceId,
+                             String arId, boolean exceptionOnErr) {
+        String res
+        try {
+            AAIResourcesClient client = new AAIResourcesClient()
+
+            AAIResourceUri arUri = buildAllottedResourceUri(execution, serviceInstanceId, arId)
+            List<AAIResourceUri> logicalLinkUriList = getRelationshipUriListInAai(execution, arUri,
+                    AAIFluentTypeBuilder.Types.NETWORK_POLICY, exceptionOnErr)
+            for (AAIResourceUri logicalLinkUri : logicalLinkUriList) {
+                Optional<NetworkPolicy> policyOpt = client.get(NetworkPolicy.class, logicalLinkUri)
+                if (policyOpt.isPresent()) {
+                    NetworkPolicy policy = policyOpt.get()
+                    return policy.getNetworkPolicyId()
+                } else {
+                    String msg = String.format("ERROR: getLogicalLinkNamesFromAr: logicalLinkUri=%s", logicalLinkUri)
+                    logger.error(msg)
+                    exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
+                }
+            }
+        } catch (BpmnError e) {
+            if (exceptionOnErr) {
+                throw e;
+            }
+        } catch (Exception ex) {
+            if (exceptionOnErr) {
+                String msg = String.format("ERROR: getLogicalLinkNamesFromAr: %s", ex.getMessage())
+                logger.error(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
+            }
+        }
+
+        return res
+    }
+
+
+    List<AAIResourceUri> getRelationshipUriListInAai(DelegateExecution execution,
+                                                     AAIResourceUri uri, Activities.Info info,
+                                                     boolean exceptionOnErr) {
+        AAIResourcesClient client = new AAIResourcesClient()
+        AAIResultWrapper wrapper = client.get(uri);
+        Optional<Relationships> relationships = wrapper.getRelationships()
+        if (relationships.isPresent()) {
+            return relationships.get().getRelatedUris(info)
+        } else {
+            if (exceptionOnErr) {
+                String msg = "ERROR: getRelationshipUriListInAai: No relationship found"
+                logger.error(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
+            }
+        }
+
+        return null
+    }
+
+    List<String> getLogicalLinkNamesFromAr(DelegateExecution execution, String serviceInstanceId,
+                                           String arId, boolean exceptionOnErr) {
+        List<String> res = new ArrayList<>()
+        try {
+            AAIResourcesClient client = new AAIResourcesClient()
+
+            AAIResourceUri arUri = buildAllottedResourceUri(execution, serviceInstanceId, arId)
+            List<AAIResourceUri> logicalLinkUriList = getRelationshipUriListInAai(execution, arUri,
+                    AAIFluentTypeBuilder.Types.LOGICAL_LINK, exceptionOnErr)
+            for (AAIResourceUri logicalLinkUri : logicalLinkUriList) {
+                Optional<LogicalLink> logicalLinkOpt = client.get(LogicalLink.class, logicalLinkUri)
+                if (logicalLinkOpt.isPresent()) {
+                    LogicalLink logicalLink = logicalLinkOpt.get()
+                    res.add(logicalLink.getLinkName())
+                } else {
+                    String msg = String.format("ERROR: getLogicalLinkNamesFromAr: logicalLinkUri=%s", logicalLinkUri)
+                    logger.error(msg)
+                    exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
+                }
+            }
+        } catch (BpmnError e) {
+            if (exceptionOnErr) {
+                throw e;
+            }
+        } catch (Exception ex) {
+            if (exceptionOnErr) {
+                String msg = String.format("ERROR: getLogicalLinkNamesFromAr: %s", ex.getMessage())
+                logger.error(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
+            }
+        }
+
+        return res
     }
 }

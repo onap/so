@@ -24,9 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import groovy.json.JsonSlurper
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.aai.domain.yang.ServiceInstance
-import org.onap.aai.domain.yang.SliceProfile
-import org.onap.aaiclient.client.aai.AAIObjectType
+import org.onap.aai.domain.yang.*
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
@@ -40,7 +38,7 @@ import org.onap.so.db.request.beans.ResourceOperationStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import static org.apache.commons.lang3.StringUtils.isBlank
+import static org.apache.commons.lang3.StringUtils.*
 
 public class DoModifyTnNssi extends AbstractServiceTaskProcessor {
     String Prefix = "TNMOD_"
@@ -70,8 +68,18 @@ public class DoModifyTnNssi extends AbstractServiceTaskProcessor {
             logger.debug("SDNC Callback URL: " + execution.getVariable("sdncCallbackUrl"))
 
             String additionalPropJsonStr = execution.getVariable("sliceParams")
+            if (isBlank(additionalPropJsonStr)) {
+                msg = "ERROR: additionalPropJsonStr is null"
+                logger.debug(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+            }
 
             String sliceServiceInstanceId = execution.getVariable("serviceInstanceID")
+            if (isBlank(sliceServiceInstanceId)) {
+                msg = "ERROR: sliceServiceInstanceId is null"
+                logger.debug(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+            }
             execution.setVariable("sliceServiceInstanceId", sliceServiceInstanceId)
 
             String sliceServiceInstanceName = execution.getVariable("servicename")
@@ -82,7 +90,10 @@ public class DoModifyTnNssi extends AbstractServiceTaskProcessor {
 
             String modelInvariantUuid = execution.getVariable("modelInvariantUuid")
             String modelUuid = execution.getVariable("modelUuid")
-            //here modelVersion is not set, we use modelUuid to decompose the service.
+            if (isEmpty(modelUuid)) {
+                modelUuid = tnNssmfUtils.getModelUuidFromServiceInstance(execution.getVariable("serviceInstanceID"))
+            }
+
             def isDebugLogEnabled = true
             execution.setVariable("isDebugLogEnabled", isDebugLogEnabled)
             String serviceModelInfo = """{
@@ -92,34 +103,15 @@ public class DoModifyTnNssi extends AbstractServiceTaskProcessor {
              }"""
             execution.setVariable("serviceModelInfo", serviceModelInfo)
 
-            //additional properties
-            String sliceProfile = jsonUtil.getJsonValue(additionalPropJsonStr, "sliceProfile")
-            if (isBlank(sliceProfile)) {
-                msg = "Input sliceProfile is null"
-                logger.debug(msg)
-                exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-            } else {
-                execution.setVariable("sliceProfile", sliceProfile)
-            }
+            tnNssmfUtils.setExecVarFromJsonStr(execution, additionalPropJsonStr,
+                    "sliceProfile", "sliceProfile", true)
 
-            String transportSliceNetworks = jsonUtil.getJsonValue(additionalPropJsonStr, "transportSliceNetworks")
-            if (isBlank(transportSliceNetworks)) {
-                msg = "Input transportSliceNetworks is null"
-                logger.debug(msg)
-                exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-            } else {
-                execution.setVariable("transportSliceNetworks", transportSliceNetworks)
-            }
-            logger.debug("transportSliceNetworks: " + transportSliceNetworks)
+            tnNssmfUtils.setExecVarFromJsonStr(execution, additionalPropJsonStr,
+                    "transportSliceNetworks", "transportSliceNetworks", true)
+            logger.debug("transportSliceNetworks: " + execution.getVariable("transportSliceNetworks"))
 
-            String nsiInfo = jsonUtil.getJsonValue(additionalPropJsonStr, "nsiInfo")
-            if (isBlank(nsiInfo)) {
-                msg = "Input nsiInfo is null"
-                logger.debug(msg)
-                exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-            } else {
-                execution.setVariable("nsiInfo", nsiInfo)
-            }
+            tnNssmfUtils.setExecVarFromJsonStr(execution, additionalPropJsonStr,
+                    "nsiInfo", "nsiInfo", true)
 
             if (isBlank(tnNssmfUtils.setExecVarFromJsonIfExists(execution, additionalPropJsonStr,
                     "enableSdnc", "enableSdnc"))) {
@@ -152,27 +144,32 @@ public class DoModifyTnNssi extends AbstractServiceTaskProcessor {
 
 
     void getExistingServiceInstance(DelegateExecution execution) {
-        String serviceInstanceId = execution.getVariable("serviceInstanceID")
+        String serviceInstanceId = execution.getVariable("sliceServiceInstanceId")
 
         AAIResourcesClient resourceClient = getAAIClient()
         AAIResourceUri ssServiceuri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
 
         try {
             if (resourceClient.exists(ssServiceuri)) {
-                execution.setVariable("ssi_resourceLink", ssServiceuri.build().toString())
-                org.onap.aai.domain.yang.ServiceInstance ss =
-                        resourceClient.get(org.onap.aai.domain.yang.ServiceInstance.class, ssServiceuri)
-                org.onap.aai.domain.yang.SliceProfile sliceProfile = ss.getSliceProfiles().getSliceProfile().get(0)
-                execution.setVariable("sliceProfileId", sliceProfile.getProfileId())
+                ServiceInstance ss = resourceClient.get(ServiceInstance.class, ssServiceuri)
 
-                org.onap.aai.domain.yang.AllottedResources ars = ss.getAllottedResources()
-                List<org.onap.aai.domain.yang.AllottedResource> arList = ars.getAllottedResource()
+                AllottedResources ars = ss.getAllottedResources()
+                List<AllottedResource> arList = ars.getAllottedResource()
                 List<String> arIdList = new ArrayList<>()
-                for (org.onap.aai.domain.yang.AllottedResource ar : arList) {
+                Map<String, String> policyMap = new HashMap<>()
+                Map<String, List<String>> logicalLinksMap = new HashMap<>()
+                for (AllottedResource ar : arList) {
                     String arId = ar.getId()
                     arIdList.add(arId)
+                    String policyId = tnNssmfUtils.getPolicyIdFromAr(execution, serviceInstanceId, arId, true)
+                    policyMap.put(arId, policyId)
+                    List<String> logicalLinkList = tnNssmfUtils.getLogicalLinkNamesFromAr(execution,
+                            serviceInstanceId, arId, true)
+                    logicalLinksMap.put(arId, logicalLinkList)
                 }
                 execution.setVariable("arIdList", arIdList)
+                execution.setVariable("arPolicyMap", policyMap)
+                execution.setVariable("arLogicalLinkMap", logicalLinksMap)
             } else {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service instance was not found in aai to " +
                         "associate allotted resource for service :" + serviceInstanceId)
@@ -184,41 +181,26 @@ public class DoModifyTnNssi extends AbstractServiceTaskProcessor {
             logger.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
-
     }
 
-    public void updateTnNssiInAAI(DelegateExecution execution) {
+    void updateTnNssiInAAI(DelegateExecution execution) {
         getExistingServiceInstance(execution)
-
-        updateServiceInstance(execution)
-        updateSliceProfile(execution)
-        updateAllottedResource(execution)
+        updateTsciNetworks(execution)
     }
 
     void updateServiceInstance(DelegateExecution execution) {
-        String serviceRole = "TN"
-        String serviceType = execution.getVariable("subscriptionServiceType")
-        String sliceProfileStr = execution.getVariable("sliceProfile")
         String ssInstanceId = execution.getVariable("sliceServiceInstanceId")
         try {
-            org.onap.aai.domain.yang.ServiceInstance ss = new org.onap.aai.domain.yang.ServiceInstance()
-            ss.setServiceInstanceId(ssInstanceId)
-            String sliceInstanceName = execution.getVariable("sliceServiceInstanceName")
-            ss.setServiceInstanceName(sliceInstanceName)
-            ss.setServiceType(serviceType)
+            ServiceInstance ss = new ServiceInstance()
+            //ss.setServiceInstanceId(ssInstanceId)
             String serviceStatus = "modified"
             ss.setOrchestrationStatus(serviceStatus)
-            String modelInvariantUuid = execution.getVariable("modelInvariantUuid")
-            String modelUuid = execution.getVariable("modelUuid")
-            ss.setModelInvariantId(modelInvariantUuid)
-            ss.setModelVersionId(modelUuid)
-            String serviceInstanceLocationid = tnNssmfUtils.getFirstPlmnIdFromSliceProfile(sliceProfileStr)
-            ss.setServiceInstanceLocationId(serviceInstanceLocationid)
-            String snssai = tnNssmfUtils.getFirstSnssaiFromSliceProfile(sliceProfileStr)
-            ss.setEnvironmentContext(snssai)
-            ss.setServiceRole(serviceRole)
             AAIResourcesClient client = getAAIClient()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(ssInstanceId))
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(
+                    AAIFluentTypeBuilder.business()
+                            .customer(execution.getVariable("globalSubscriberId"))
+                            .serviceSubscription(execution.getVariable("subscriptionServiceType"))
+                            .serviceInstance(ssInstanceId))
             client.update(uri, ss)
         } catch (BpmnError e) {
             throw e
@@ -259,70 +241,180 @@ public class DoModifyTnNssi extends AbstractServiceTaskProcessor {
         }
     }
 
-    void updateAllottedResource(DelegateExecution execution) {
-        String serviceInstanceId = execution.getVariable('serviceInstanceID')
-
+    String getValidArId(DelegateExecution execution, String arIdStr) {
         List<String> arIdList = execution.getVariable("arIdList")
+        /*
+         * If arId is not specified by the caller, then we assume the caller
+         * wants to modify the first network (i.e., allotted resource) in the TSCi tree.
+         */
+        String arId = isBlank(arIdStr) ? arIdList.get(0) : arIdStr
+
+        return arId
+    }
+
+    void updateLogicalLinksInAr(DelegateExecution execution, String arId, String linkArrayJsonStr) {
         try {
-            for (String arId : arIdList) {
-                AAIResourceUri arUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(serviceInstanceId).allottedResource(arId))
+            String serviceInstanceId = execution.getVariable('sliceServiceInstanceId')
 
-                getAAIClient().delete(arUri)
+            /*
+             * Each TSCi connection-link in linkArrayJsonStr is considered as an "ADD" new
+             * link to allotted-resource. So, if the link already exists under AR, then do
+             * nothing. Otherwise, create logical-link.
+             */
+            List<String> linkStrList = jsonUtil.StringArrayToList(linkArrayJsonStr)
+            for (String linkStr : linkStrList) {
+                if (logicalLinkExists(execution, arId, linkStr)) {
+                    continue
+                }
+
+                createLogicalLinkForAllocatedResource(execution, linkStr, serviceInstanceId, arId)
             }
-
-            List<String> networkStrList = jsonUtil.StringArrayToList(execution.getVariable("transportSliceNetworks"))
-
-            for (String networkStr : networkStrList) {
-                String allottedResourceId = UUID.randomUUID().toString()
-                AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(execution.getVariable("sliceserviceInstanceId")).allottedResource(allottedResourceId))
-                execution.setVariable("allottedResourceUri", allottedResourceUri)
-                String modelInvariantId = execution.getVariable("modelInvariantUuid")
-                String modelVersionId = execution.getVariable("modelUuid")
-
-                org.onap.aai.domain.yang.AllottedResource resource = new org.onap.aai.domain.yang.AllottedResource()
-                resource.setId(allottedResourceId)
-                resource.setType("TsciNetwork")
-                resource.setAllottedResourceName("network_" + execution.getVariable("sliceServiceInstanceName"))
-                resource.setModelInvariantId(modelInvariantId)
-                resource.setModelVersionId(modelVersionId)
-                getAAIClient().create(allottedResourceUri, resource)
-
-                String linkArrayStr = jsonUtil.getJsonValue(networkStr, "connectionLinks")
-                createLogicalLinksForAllocatedResource(execution, linkArrayStr, serviceInstanceId, allottedResourceId)
-            }
-
+        } catch (BpmnError e) {
+            throw e
         } catch (Exception ex) {
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Exception in createAaiAR " + ex.getMessage())
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000,
+                    "Exception in updateLogicalLinksInAr" + ex.getMessage())
         }
     }
 
-    void createLogicalLinksForAllocatedResource(DelegateExecution execution,
-                                                String linkArrayStr, String serviceInstanceId,
-                                                String allottedResourceId) {
-
+    void updateLogicalLinksInNetwork(DelegateExecution execution, String networkJsonStr) {
         try {
-            List<String> linkStrList = jsonUtil.StringArrayToList(linkArrayStr)
-
-            for (String linkStr : linkStrList) {
-                String logicalLinkId = UUID.randomUUID().toString()
-                String epA = jsonUtil.getJsonValue(linkStr, "transportEndpointA")
-                String epB = jsonUtil.getJsonValue(linkStr, "transportEndpointB")
-                String modelInvariantId = execution.getVariable("modelInvariantUuid")
-                String modelVersionId = execution.getVariable("modelUuid")
-
-                org.onap.aai.domain.yang.LogicalLink resource = new org.onap.aai.domain.yang.LogicalLink()
-                resource.setLinkId(logicalLinkId)
-                resource.setLinkName(epA)
-                resource.setLinkName2(epB)
-                resource.setModelInvariantId(modelInvariantId)
-                resource.setModelVersionId(modelVersionId)
-
-                AAIResourceUri logicalLinkUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().logicalLink(logicalLinkId))
-                getAAIClient().create(logicalLinkUri, resource)
-            }
+            String arId = getValidArId(jsonUtil.getJsonValue(networkJsonStr, "id"))
+            String linkArrayStr = jsonUtil.getJsonValue(networkJsonStr, "connectionLinks")
+            updateLogicalLinksInAr(execution, arId, linkArrayStr)
+        } catch (BpmnError e) {
+            throw e
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000,
-                    "Exception in createLogicalLinksForAllocatedResource" + ex.getMessage())
+                    "Exception in updateLogicalLinksInNetwork" + ex.getMessage())
+        }
+    }
+
+    void updateTsciNetworks(DelegateExecution execution) {
+        try {
+            List<String> networkStrList = jsonUtil.StringArrayToList(execution.getVariable("transportSliceNetworks"))
+            for (String networkStr : networkStrList) {
+                updateLogicalLinksInNetwork(execution, networkStr)
+                updateNetworkPolicy(execution, networkStr)
+            }
+
+        } catch (BpmnError e) {
+            throw e
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000,
+                    "Exception in updateTsciNetworks" + ex.getMessage())
+        }
+    }
+
+    int getMaxBw(DelegateExecution execution) {
+        int maxBw = 0
+        try {
+            String sliceProfileStr = execution.getVariable("sliceProfile")
+            if (isBlank(sliceProfileStr)) {
+                String msg = "ERROR: getMaxBw: sliceProfile is null"
+                logger.error(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+            }
+            String bwStr = jsonUtil.getJsonValue(sliceProfileStr, "maxBandwidth")
+            if (isNotBlank(bwStr)) {
+                maxBw = Integer.parseInt(bwStr)
+            } else {
+                logger.error("ERROR: getMaxBw: maxBandwidth is null")
+            }
+        } catch (BpmnError e) {
+            throw e
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000,
+                    "Exception in getMaxBw" + ex.getMessage())
+        }
+
+        return maxBw
+    }
+
+    void updatePolicyMaxBandwidthInAAI(DelegateExecution execution, String policyId, int maxBw) {
+        try {
+            NetworkPolicy networkPolicy = new NetworkPolicy()
+            networkPolicy.setMaxBandwidth(maxBw)
+            AAIResourceUri networkPolicyUri =
+                    AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().networkPolicy(policyId))
+            getAAIClient().update(networkPolicyUri, networkPolicy)
+        } catch (BpmnError e) {
+            throw e
+        } catch (Exception ex) {
+            String msg = "Exception in DoCreateTnNssiInstance.createServiceInstance. " + ex.getMessage()
+            logger.info(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+    }
+
+    void updateNetworkPolicy(DelegateExecution execution, String networkJsonStr) {
+        try {
+            int maxBw = getMaxBw(execution)
+
+            String arId = getValidArId(jsonUtil.getJsonValue(networkJsonStr, "id"))
+            Map<String, String> policyMap = execution.getVariable("arPolicyMap")
+            String policyId = policyMap.get(arId)
+            if (isBlank(policyId)) {
+                String msg = String.format("ERROR: updateNetworkPolicy: policyId not found. arId=%s", arId)
+                logger.error(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+            }
+
+            updatePolicyMaxBandwidthInAAI(execution, policyId, maxBw)
+
+        } catch (BpmnError e) {
+            throw e
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000,
+                    "Exception in updateNetworkPolicy" + ex.getMessage())
+        }
+    }
+
+
+    void createLogicalLinkForAllocatedResource(DelegateExecution execution,
+                                               String linkJsonStr, String ssInstanceId,
+                                               String allottedResourceId) {
+        try {
+            AAIResourceUri allottedResourceUri = tnNssmfUtils.buildAllottedResourceUri(execution,
+                    ssInstanceId, allottedResourceId)
+
+            if (!getAAIClient().exists(allottedResourceUri)) {
+                logger.info("ERROR: createLogicalLinksForAllocatedResource: allottedResource not exist: uri={}",
+                        allottedResourceUri)
+                return
+            }
+
+            String linkId = jsonUtil.getJsonValue(linkJsonStr, "id")
+            if (isBlank(linkId)) {
+                linkId = "tn-nssmf-" + UUID.randomUUID().toString()
+            }
+            logger.debug("createLogicalLinkForAllocatedResource: linkId=" + linkId)
+
+            String epA = jsonUtil.getJsonValue(linkJsonStr, "transportEndpointA")
+            String epB = jsonUtil.getJsonValue(linkJsonStr, "transportEndpointB")
+            String modelInvariantId = execution.getVariable("modelInvariantUuid")
+            String modelVersionId = execution.getVariable("modelUuid")
+
+            org.onap.aai.domain.yang.LogicalLink resource = new org.onap.aai.domain.yang.LogicalLink()
+            resource.setLinkId(linkId)
+            resource.setLinkName(epA)
+            resource.setLinkName2(epB)
+            resource.setLinkType("TsciConnectionLink")
+            resource.setInMaint(false)
+
+            //epA is link-name
+            AAIResourceUri logicalLinkUri =
+                    AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().logicalLink(epA))
+            getAAIClient().create(logicalLinkUri, resource)
+
+            tnNssmfUtils.attachLogicalLinkToAllottedResource(execution, tnNssmfUtils.AAI_VERSION,
+                    allottedResourceUri, epA);
+        } catch (BpmnError e) {
+            throw e
+        } catch (Exception ex) {
+            String msg = "Exception in DoCreateTnNssiInstance.createLogicalLinksForAllocatedResource: " + ex.getMessage()
+            logger.error(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
     }
 
@@ -334,13 +426,15 @@ public class DoModifyTnNssi extends AbstractServiceTaskProcessor {
         logger.trace('Entered ' + method)
 
         try {
-            String serviceInstanceId = execution.getVariable("serviceInstanceID")
+            String serviceInstanceId = execution.getVariable("sliceServiceInstanceId")
 
             String sdncRequest = tnNssmfUtils.buildSDNCRequest(execution, serviceInstanceId, "modify")
 
             execution.setVariable("TNNSSMF_SDNCRequest", sdncRequest)
             logger.debug("Outgoing SDNCRequest is: \n" + sdncRequest)
 
+        } catch (BpmnError e) {
+            throw e
         } catch (Exception e) {
             logger.debug("Exception Occured Processing preprocessSdncModifyTnNssiRequest. Exception is:\n" + e)
             exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occured during  preProcessSDNCActivateRequest Method:\n" + e.getMessage())
@@ -380,20 +474,47 @@ public class DoModifyTnNssi extends AbstractServiceTaskProcessor {
                                 String status,
                                 String progress,
                                 String statusDescription) {
-        String serviceId = execution.getVariable("serviceInstanceID")
+        String ssInstanceId = execution.getVariable("sliceServiceInstanceId")
+        String modelUuid = execution.getVariable("modelUuid")
         String jobId = execution.getVariable("jobId")
         String nsiId = execution.getVariable("nsiId")
+        String operType = "MODIFY"
 
-        ResourceOperationStatus roStatus = new ResourceOperationStatus()
-        roStatus.setServiceId(serviceId)
-        roStatus.setOperationId(jobId)
-        roStatus.setResourceTemplateUUID(nsiId)
-        roStatus.setOperType("Modify")
-        roStatus.setProgress(progress)
-        roStatus.setStatus(status)
-        roStatus.setStatusDescription(statusDescription)
+        ResourceOperationStatus roStatus = tnNssmfUtils.buildRoStatus(modelUuid, ssInstanceId,
+                jobId, nsiId, operType, status, progress, statusDescription)
+
         requestDBUtil.prepareUpdateResourceOperationStatus(execution, roStatus)
     }
 
+    boolean logicalLinkExists(DelegateExecution execution, String arIdStr, String linkJsonStr) {
+        if (isBlank(arIdStr)) {
+            logger.error("ERROR: logicalLinkExists: arIdStr is empty")
+            return false
+        }
+        if (isBlank(linkJsonStr)) {
+            logger.error("ERROR: logicalLinkExists: linkJsonStr is empty")
+            return false
+        }
+
+        Map<String, List<String>> logicalLinksMap = execution.getVariable("arLogicalLinkMap")
+        if (logicalLinksMap == null) {
+            logger.error("ERROR: logicalLinkExists: logicalLinksMap is null")
+            return false
+        }
+
+        List<String> logicalLinkNameList = logicalLinksMap.get(arIdStr)
+        if (logicalLinksMap == null) {
+            logger.error("ERROR: logicalLinkExists: logicalLinkNameList is null. arIdStr=" + arIdStr)
+            return false
+        }
+
+        String linkName = jsonUtil.getJsonValue(linkJsonStr, "transportEndpointA")
+        if (isBlank(linkName)) {
+            logger.error("ERROR: logicalLinkExists: epA is empty")
+            return false
+        }
+
+        return logicalLinkNameList.contains(linkName)
+    }
 }
 

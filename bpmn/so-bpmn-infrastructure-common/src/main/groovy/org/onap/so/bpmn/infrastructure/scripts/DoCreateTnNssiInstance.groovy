@@ -40,7 +40,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank
 class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(DoCreateTnNssiInstance.class);
-    final String AAI_VERSION = "v21"
     JsonUtils jsonUtil = new JsonUtils()
     TnNssmfUtils tnNssmfUtils = new TnNssmfUtils()
     ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -226,7 +225,7 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
             if (bwStr != null && !bwStr.isEmpty()) {
                 networkPolicy.setMaxBandwidth(Integer.parseInt(bwStr))
             } else {
-                log.debug("ERROR: createNetworkPolicy: maxBandwidth is null")
+                logger.debug("ERROR: createNetworkPolicy: maxBandwidth is null")
             }
 
             //networkPolicy.setReliability(new Object())
@@ -264,7 +263,9 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
             String networkPolicyId = UUID.randomUUID().toString()
             createNetworkPolicy(execution, ssInstanceId, networkPolicyId)
 
-            tnNssmfUtils.attachNetworkPolicyToAllottedResource(execution, AAI_VERSION, allottedResourceUri, networkPolicyId);
+            tnNssmfUtils.attachNetworkPolicyToAllottedResource(execution, tnNssmfUtils.AAI_VERSION,
+                    allottedResourceUri,
+                    networkPolicyId);
 
         } catch (BpmnError e) {
             throw e
@@ -295,11 +296,11 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
             List<String> linkStrList = jsonUtil.StringArrayToList(linkArrayStr)
 
             for (String linkStr : linkStrList) {
-                String linkName = jsonUtil.getJsonValue(linkStr, "name")
-                if (isBlank(linkName)) {
-                    linkName = "tn-nssmf-" + UUID.randomUUID().toString()
+                String linkId = jsonUtil.getJsonValue(linkStr, "id")
+                if (isBlank(linkId)) {
+                    linkId = "tn-nssmf-" + UUID.randomUUID().toString()
                 }
-                logger.debug("createLogicalLinksForAllocatedResource: linkName=" + linkName)
+                logger.debug("createLogicalLinksForAllocatedResource: linkId=" + linkId)
 
                 String epA = jsonUtil.getJsonValue(linkStr, "transportEndpointA")
                 String epB = jsonUtil.getJsonValue(linkStr, "transportEndpointB")
@@ -307,18 +308,19 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
                 String modelVersionId = execution.getVariable("modelUuid")
 
                 org.onap.aai.domain.yang.LogicalLink resource = new org.onap.aai.domain.yang.LogicalLink()
-                resource.setLinkName(linkName)
-                resource.setLinkId(epA)
+                resource.setLinkId(linkId)
+                resource.setLinkName(epA)
                 resource.setLinkName2(epB)
                 resource.setLinkType("TsciConnectionLink")
                 resource.setInMaint(false)
 
                 //epA is link-name
                 AAIResourceUri logicalLinkUri =
-                        AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().logicalLink(linkName))
+                        AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().logicalLink(epA))
                 getAAIClient().create(logicalLinkUri, resource)
 
-                tnNssmfUtils.attachLogicalLinkToAllottedResource(execution, AAI_VERSION, allottedResourceUri, linkName);
+                tnNssmfUtils.attachLogicalLinkToAllottedResource(execution, tnNssmfUtils.AAI_VERSION,
+                        allottedResourceUri, epA);
             }
         } catch (BpmnError e) {
             throw e
