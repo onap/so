@@ -111,6 +111,7 @@ public class WorkflowActionTest extends BaseTaskTest {
     private static final String MACRO_ASSIGN_JSON = "Macro/ServiceMacroAssign.json";
     private static final String MACRO_ASSIGN_NO_CLOUD_JSON = "Macro/ServiceMacroAssignNoCloud.json";
     private static final String VF_MODULE_CREATE_WITH_FABRIC_JSON = "VfModuleCreateWithFabric.json";
+    private static final String VF_MODULE_CREATE_WITH_FABRIC_NO_PARAMS_JSON = "VfModuleCreateWithFabricNoParams.json";
     private static final String VF_MODULE_REPLACE_REBUILD_VOLUME_GROUPS_JSON =
             "VfModuleReplaceRebuildVolumeGroups.json";
     private static final String MACRO_CREATE_NETWORK_COLLECTION_JSON = "Macro/CreateNetworkCollection.json";
@@ -1490,6 +1491,27 @@ public class WorkflowActionTest extends BaseTaskTest {
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         assertEqualsBulkFlowName(ebbs, "DeactivateFabricConfigurationBB", "UnassignFabricConfigurationBB",
                 "DeactivateVfModuleBB", "DeleteVfModuleBB", "UnassignVfModuleBB");
+    }
+
+    @Test
+    public void selectExecutionListALaCarteNoRequestParametersTest() throws Exception {
+        String gAction = "createInstance";
+        String resource = "VfModule";
+        String bpmnRequest = readBpmnRequestFromFile(VF_MODULE_CREATE_WITH_FABRIC_NO_PARAMS_JSON);
+        initExecution(gAction, bpmnRequest, true);
+        execution.setVariable("requestUri",
+                "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules");
+
+        NorthBoundRequest northBoundRequest = new NorthBoundRequest();
+        List<OrchestrationFlow> orchFlows = createFlowList("AssignVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB",
+                "AssignFabricConfigurationBB", "ActivateFabricConfigurationBB");
+        northBoundRequest.setOrchestrationFlowList(orchFlows);
+
+        when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
+                true, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
+        workflowAction.selectExecutionList(execution);
+        List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+        assertEqualsBulkFlowName(ebbs, "AssignVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB");
     }
 
     @Test
