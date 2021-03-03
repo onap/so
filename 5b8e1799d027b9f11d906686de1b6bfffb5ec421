@@ -22,6 +22,30 @@
       "revId": "5b8e1799d027b9f11d906686de1b6bfffb5ec421",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "806f9f33_fbe397d2",
+        "filename": "releases/1.8.0.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2021-03-03T15:04:09Z",
+      "side": 1,
+      "message": "I have updated the cnf adapter to the 1.8.0-20210210T0420 version.\nhttps://nexus3.onap.org/#browse/search\u003dversion%3D1.8.0-20210210T0420:a5e575898d3470cc63d5f01527a2db2e:1ded724a0367dd823339186865473701\n\nall the other containers to the 1.8.0-20210215T1612 version\nhttps://nexus3.onap.org/#browse/search\u003dversion%3D1.8.0-20210215T1458\ntaken from the build:\nhttps://jenkins.onap.org/view/so/job/so-maven-docker-stage-master/635/",
+      "parentUuid": "4d289c1d_5acbf3ec",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 36
+      },
+      "revId": "5b8e1799d027b9f11d906686de1b6bfffb5ec421",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
