@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1032d364_cbba5d39",
+        "filename": "bpmn/so-bpmn-tasks/src/test/resources/__files/VfModuleCreateWithFabricNoParams.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2021-03-03T13:56:30Z",
+      "side": 1,
+      "message": "could you please remove leading tabs, substitute them with spaces",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 4,
+        "endChar": 16
+      },
+      "revId": "722c70fc1faa39e5e5d0875b9b2ef040995699a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
