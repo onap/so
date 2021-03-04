@@ -41,13 +41,18 @@ public class FlowManipulatorListenerRunner extends ListenerRunner {
 
     private static Logger logger = LoggerFactory.getLogger(FlowManipulatorListenerRunner.class);
 
-    protected List<FlowManipulator> flowManipulators;
+    protected List<PreFlowManipulator> flowManipulators;
+
+    protected List<PostFlowManipulator> postflowManipulators;
 
     @PostConstruct
     protected void init() {
 
         flowManipulators = new ArrayList<>(
-                Optional.ofNullable(context.getBeansOfType(FlowManipulator.class)).orElse(new HashMap<>()).values());
+                Optional.ofNullable(context.getBeansOfType(PreFlowManipulator.class)).orElse(new HashMap<>()).values());
+
+        postflowManipulators = new ArrayList<>(Optional.ofNullable(context.getBeansOfType(PostFlowManipulator.class))
+                .orElse(new HashMap<>()).values());
 
     }
 
@@ -56,11 +61,26 @@ public class FlowManipulatorListenerRunner extends ListenerRunner {
         do {
             sequenceBeforeFlowManipulator = execution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
             ExecuteBuildingBlock currentBB = flowsToExecute.get(execution.getCurrentSequence());
-            List<FlowManipulator> filtered = filterListeners(flowManipulators,
+            List<PreFlowManipulator> filtered = filterListeners(flowManipulators,
                     (item -> item.shouldRunFor(currentBB.getBuildingBlock().getBpmnFlowName(),
                             execution.getCurrentSequence() == 0, execution)));
 
-            logger.info("Running flow manipulators:\n{}",
+            logger.info("Running pre flow manipulators:\n{}",
+                    filtered.stream().map(item -> item.getClass().getName()).collect(Collectors.joining("\n")));
+            filtered.forEach(item -> item.run(flowsToExecute, currentBB, execution));
+        } while (isBuildingBlockSkipped(sequenceBeforeFlowManipulator, execution));
+    }
+
+    public void postModifyFlows(List<ExecuteBuildingBlock> flowsToExecute, BuildingBlockExecution execution) {
+        int sequenceBeforeFlowManipulator;
+        do {
+            sequenceBeforeFlowManipulator = execution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
+            ExecuteBuildingBlock currentBB = flowsToExecute.get(execution.getCurrentSequence());
+            List<PostFlowManipulator> filtered = filterListeners(postflowManipulators,
+                    (item -> item.shouldRunFor(currentBB.getBuildingBlock().getBpmnFlowName(),
+                            execution.getCurrentSequence() == 0, execution)));
+
+            logger.info("Running post flow manipulators:\n{}",
                     filtered.stream().map(item -> item.getClass().getName()).collect(Collectors.joining("\n")));
             filtered.forEach(item -> item.run(flowsToExecute, currentBB, execution));
         } while (isBuildingBlockSkipped(sequenceBeforeFlowManipulator, execution));

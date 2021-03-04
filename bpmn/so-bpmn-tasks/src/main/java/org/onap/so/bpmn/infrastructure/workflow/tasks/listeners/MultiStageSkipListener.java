@@ -26,7 +26,7 @@ import java.util.Optional;
 import org.onap.so.bpmn.common.BBConstants;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.listener.db.PostCompletionRequestsDbListener;
-import org.onap.so.bpmn.common.listener.flowmanipulator.FlowManipulator;
+import org.onap.so.bpmn.common.listener.flowmanipulator.PreFlowManipulator;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
@@ -36,7 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MultiStageSkipListener implements FlowManipulator, PostCompletionRequestsDbListener {
+public class MultiStageSkipListener implements PreFlowManipulator, PostCompletionRequestsDbListener {
 
     @Autowired
     protected BBInputSetupUtils bbInputSetupUtils;

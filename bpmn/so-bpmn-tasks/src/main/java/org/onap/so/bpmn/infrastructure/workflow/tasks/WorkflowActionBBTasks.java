@@ -430,6 +430,8 @@ public class WorkflowActionBBTasks {
         if ("ActivateVfModuleBB".equalsIgnoreCase(bbFlowName) && aLaCarte && "Success".equalsIgnoreCase(handlingCode)) {
             postProcessingExecuteBBActivateVfModule(execution, ebb, flowsToExecute);
         }
+
+        flowManipulatorListenerRunner.postModifyFlows(flowsToExecute, new DelegateExecutionImpl(execution));
     }
 
     protected void postProcessingExecuteBBActivateVfModule(DelegateExecution execution, ExecuteBuildingBlock ebb,
