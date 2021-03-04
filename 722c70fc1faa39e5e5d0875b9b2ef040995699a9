@@ -22,6 +22,30 @@
       "revId": "722c70fc1faa39e5e5d0875b9b2ef040995699a9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8bbf8319_8d438028",
+        "filename": "bpmn/so-bpmn-tasks/src/test/resources/__files/VfModuleCreateWithFabricNoParams.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2021-03-04T15:14:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1032d364_cbba5d39",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 4,
+        "endChar": 16
+      },
+      "revId": "722c70fc1faa39e5e5d0875b9b2ef040995699a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
