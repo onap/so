@@ -34,9 +34,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Optional;
+import javax.net.ssl.SSLException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.ResponseProcessingException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
@@ -71,6 +73,20 @@ public class RestClientTest {
         RestClient spy = buildSpy();
         doThrow(new WebApplicationException(new SocketTimeoutException())).when(spy).buildRequest(any(String.class),
                 ArgumentMatchers.isNull());
+        try {
+            spy.get();
+        } catch (Exception e) {
+            // ignore this exception for this test
+        }
+        verify(spy, times(3)).buildRequest(any(String.class), ArgumentMatchers.isNull());
+
+    }
+
+    @Test
+    public void retryOnChunkedNetworkIssue() throws Exception {
+        RestClient spy = buildSpy();
+        doThrow(new ResponseProcessingException(null, "something something", new SSLException("wow"))).when(spy)
+                .buildRequest(any(String.class), ArgumentMatchers.isNull());
         try {
             spy.get();
         } catch (Exception e) {

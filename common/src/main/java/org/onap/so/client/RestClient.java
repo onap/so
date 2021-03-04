@@ -248,7 +248,7 @@ public abstract class RestClient {
             return e.getCause() instanceof ConnectException;
         });
         result.add(e -> {
-            return e.getCause() instanceof ResponseProcessingException;
+            return e instanceof ResponseProcessingException;
         });
         return result;
     }
