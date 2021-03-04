@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2c46e23e_8289b70b",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/V1__Base_version.sql",
+        "patchSetId": 3
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-03-04T13:24:06Z",
+      "side": 1,
+      "message": "please remove",
+      "range": {
+        "startLine": 290,
+        "startChar": 2,
+        "endLine": 290,
+        "endChar": 57
+      },
+      "revId": "08040d54a6cd4763e34054cdb0255c13082dd017",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
