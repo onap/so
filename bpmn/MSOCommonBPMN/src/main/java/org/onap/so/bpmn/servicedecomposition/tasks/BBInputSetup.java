@@ -410,15 +410,7 @@ public class BBInputSetup implements JavaDelegate {
             parameter.getLookupKeyMap().put(ResourceKey.VOLUME_GROUP_ID, parameter.getResourceId());
             this.populateVolumeGroup(parameter);
         } else if (modelType.equals(ModelType.vfModule)) {
-            if (parameter.getBbName().contains("Configuration")) {
-                parameter.setResourceId(parameter.getLookupKeyMap().get(ResourceKey.CONFIGURATION_ID));
-                parameter.getModelInfo().setModelCustomizationUuid(parameter.getConfigurationKey());
-                populateConfiguration(parameter);
-            } else {
-                parameter.getLookupKeyMap().put(ResourceKey.VF_MODULE_ID, parameter.getResourceId());
-                parameter.setCloudConfiguration(parameter.getRequestDetails().getCloudConfiguration());
-                this.populateVfModule(parameter);
-            }
+            populateVfModuleOnAssignAndCreateFlows(parameter);
         } else if (modelType.equals(ModelType.instanceGroup)) {
             parameter.getLookupKeyMap().put(ResourceKey.INSTANCE_GROUP_ID, parameter.getResourceId());
             this.populateInstanceGroup(parameter);
@@ -433,6 +425,18 @@ public class BBInputSetup implements JavaDelegate {
         instanceGroup.setInstanceGroupName(parameter.getInstanceName());
         mapCatalogInstanceGroup(instanceGroup, parameter.getModelInfo(), parameter.getService());
         parameter.getServiceInstance().getInstanceGroups().add(instanceGroup);
+    }
+
+    protected void populateVfModuleOnAssignAndCreateFlows(BBInputSetupParameter parameter) throws Exception {
+        if (parameter.getBbName().contains("Configuration")) {
+            parameter.setResourceId(parameter.getLookupKeyMap().get(ResourceKey.CONFIGURATION_ID));
+            parameter.getModelInfo().setModelCustomizationUuid(parameter.getConfigurationKey());
+            populateConfiguration(parameter);
+        } else {
+            parameter.getLookupKeyMap().put(ResourceKey.VF_MODULE_ID, parameter.getResourceId());
+            parameter.setCloudConfiguration(parameter.getRequestDetails().getCloudConfiguration());
+            this.populateVfModule(parameter);
+        }
     }
 
     protected void mapCatalogInstanceGroup(InstanceGroup instanceGroup, ModelInfo modelInfo, Service service) {
