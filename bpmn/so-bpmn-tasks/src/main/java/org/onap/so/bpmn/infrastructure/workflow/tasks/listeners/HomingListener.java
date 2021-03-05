@@ -22,12 +22,12 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks.listeners;
 
 import java.util.List;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
-import org.onap.so.bpmn.common.listener.flowmanipulator.FlowManipulator;
+import org.onap.so.bpmn.common.listener.flowmanipulator.PreFlowManipulator;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.springframework.stereotype.Component;
 
 @Component
-public class HomingListener implements FlowManipulator {
+public class HomingListener implements PreFlowManipulator {
 
 
     @Override

@@ -3,7 +3,7 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks.listeners;
 import java.util.List;
 import org.onap.so.bpmn.common.BBConstants;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
-import org.onap.so.bpmn.common.listener.flowmanipulator.FlowManipulator;
+import org.onap.so.bpmn.common.listener.flowmanipulator.PreFlowManipulator;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SkipConfigVnfListener implements FlowManipulator {
+public class SkipConfigVnfListener implements PreFlowManipulator {
 
     private final CatalogDbClient catalogDbClient;
 

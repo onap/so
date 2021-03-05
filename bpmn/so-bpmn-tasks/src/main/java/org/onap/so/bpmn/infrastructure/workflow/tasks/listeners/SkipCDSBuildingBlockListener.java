@@ -27,7 +27,7 @@ import java.util.Set;
 import org.apache.logging.log4j.util.Strings;
 import org.onap.so.bpmn.common.BBConstants;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
-import org.onap.so.bpmn.common.listener.flowmanipulator.FlowManipulator;
+import org.onap.so.bpmn.common.listener.flowmanipulator.PreFlowManipulator;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.db.catalog.beans.PnfResourceCustomization;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
@@ -38,7 +38,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 @Component
-public class SkipCDSBuildingBlockListener implements FlowManipulator {
+public class SkipCDSBuildingBlockListener implements PreFlowManipulator {
 
     @Autowired
     private CatalogDbClient catalogDbClient;
