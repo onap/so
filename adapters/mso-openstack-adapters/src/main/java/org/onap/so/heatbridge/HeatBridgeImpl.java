@@ -488,7 +488,13 @@ public class HeatBridgeImpl implements HeatBridgeApi {
         for (Pserver pserver : serverHostnames.values()) {
             AAIResourceUri uri = AAIUriFactory
                     .createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().pserver(pserver.getHostname()));
-            resourcesClient.createIfNotExists(uri, Optional.of(pserver));
+            if (resourcesClient.exists(uri)) {
+                Pserver updatePserver = new Pserver();
+                updatePserver.setPserverId(pserver.getPserverId());
+                resourcesClient.update(uri, updatePserver);
+            } else {
+                resourcesClient.create(uri, pserver);
+            }
         }
     }
 

@@ -247,8 +247,8 @@ public class AaiHelper {
         Pserver pserver = new Pserver();
         pserver.setInMaint(false);
         pserver.setHostname(server.getHypervisorHostname());
-        if (server.getId() != null) {
-            pserver.setPserverId(server.getId());
+        if (server.getHostId() != null) {
+            pserver.setPserverId(server.getHostId());
         }
         if (server.getHost() != null) {
             pserver.setPserverName2(server.getHost());
