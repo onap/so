@@ -420,15 +420,24 @@ public class WorkflowActionBBTasks {
     }
 
     public void postProcessingExecuteBB(DelegateExecution execution) {
-        List<ExecuteBuildingBlock> flowsToExecute =
-                (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
-        String handlingCode = (String) execution.getVariable(HANDLINGCODE);
-        final boolean aLaCarte = (boolean) execution.getVariable(G_ALACARTE);
-        int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE);
-        ExecuteBuildingBlock ebb = flowsToExecute.get(currentSequence - 1);
-        String bbFlowName = ebb.getBuildingBlock().getBpmnFlowName();
-        if ("ActivateVfModuleBB".equalsIgnoreCase(bbFlowName) && aLaCarte && "Success".equalsIgnoreCase(handlingCode)) {
-            postProcessingExecuteBBActivateVfModule(execution, ebb, flowsToExecute);
+        try {
+            List<ExecuteBuildingBlock> flowsToExecute =
+                    (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+            String handlingCode = (String) execution.getVariable(HANDLINGCODE);
+            final boolean aLaCarte = (boolean) execution.getVariable(G_ALACARTE);
+            int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE);
+            logger.debug("Current Sequence: {}", currentSequence);
+            ExecuteBuildingBlock ebb = flowsToExecute.get(currentSequence - 1);
+            String bbFlowName = ebb.getBuildingBlock().getBpmnFlowName();
+            if ("ActivateVfModuleBB".equalsIgnoreCase(bbFlowName) && aLaCarte
+                    && "Success".equalsIgnoreCase(handlingCode)) {
+                postProcessingExecuteBBActivateVfModule(execution, ebb, flowsToExecute);
+            }
+
+            flowManipulatorListenerRunner.postModifyFlows(flowsToExecute, new DelegateExecutionImpl(execution));
+        } catch (Exception ex) {
+            logger.error("Exception in postProcessingExecuteBB", ex);
+            workflowAction.buildAndThrowException(execution, "Failed to post process Execute BB");
         }
 
         flowManipulatorListenerRunner.postModifyFlows(flowsToExecute, new DelegateExecutionImpl(execution));
