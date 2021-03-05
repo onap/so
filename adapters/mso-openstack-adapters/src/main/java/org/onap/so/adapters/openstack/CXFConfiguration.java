@@ -34,7 +34,6 @@ import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.transport.servlet.CXFServlet;
 import org.onap.so.adapters.cloudregion.CloudRegionRestV1;
 import org.onap.so.adapters.network.MsoNetworkAdapterImpl;
-import org.onap.so.adapters.vnf.MsoVnfAdapterAsyncImpl;
 import org.onap.so.adapters.vnf.MsoVnfAdapterImpl;
 import org.onap.so.client.policy.JettisonStyleMapperProvider;
 import org.onap.so.logging.cxf.interceptor.SOAPLoggingInInterceptor;
@@ -54,8 +53,6 @@ public class CXFConfiguration {
     private MsoNetworkAdapterImpl networkAdapterImpl;
     @Autowired
     private MsoVnfAdapterImpl vnfAdapterImpl;
-    @Autowired
-    private MsoVnfAdapterAsyncImpl vnfAdapterAsyncImpl;
     @Autowired
     private CloudRegionRestV1 cloudRegionRestV1;
     @Autowired
@@ -86,31 +83,6 @@ public class CXFConfiguration {
         EndpointImpl endpoint = new EndpointImpl(springBus(), networkAdapterImpl);
         endpoint.publish("/NetworkAdapter");
         endpoint.setWsdlLocation("NetworkAdapter.wsdl");
-        endpoint.getInInterceptors().add(new SOAPLoggingInInterceptor());
-        endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
-        endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
-        return endpoint;
-    }
-
-    /*
-     * vnfAdapterEndpoint VnfAsyncAdapterEndpoint VnfCloudAdapterEndpoint
-     */
-    @Bean
-    public Endpoint vnfAdapterEndpoint() {
-        EndpointImpl endpoint = new EndpointImpl(springBus(), vnfAdapterImpl);
-        endpoint.publish("/VnfAdapter");
-        endpoint.setWsdlLocation("VnfAdapter.wsdl");
-        endpoint.getInInterceptors().add(new SOAPLoggingInInterceptor());
-        endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
-        endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
-        return endpoint;
-    }
-
-    @Bean
-    public Endpoint vnfAsyncAdapterEndpoint() {
-        EndpointImpl endpoint = new EndpointImpl(springBus(), vnfAdapterAsyncImpl);
-        endpoint.publish("/VnfAsyncAdapter");
-        endpoint.setWsdlLocation("VnfAsyncAdapter.wsdl");
         endpoint.getInInterceptors().add(new SOAPLoggingInInterceptor());
         endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
         endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());

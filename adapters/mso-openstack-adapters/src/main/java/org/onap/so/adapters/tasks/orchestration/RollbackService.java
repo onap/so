@@ -61,8 +61,8 @@ public class RollbackService extends ExternalTaskUtils {
                             JAXB.unmarshal(new StringReader(xmlRequest), CreateVolumeGroupRequest.class);
                     boolean isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
                     if (!isMulticloud) {
-                        vnfAdapterImpl.deleteVnf(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
-                                req.getVolumeGroupName(), req.getMsoRequest(), false);
+                        vnfAdapterImpl.deleteVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
+                                req.getVolumeGroupName(), null, req.getMsoRequest(), new Holder<>());
                         pollRollbackStatus = true;
                         success = true;
                     } else {
@@ -78,16 +78,11 @@ public class RollbackService extends ExternalTaskUtils {
                     boolean isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
                     if (!isMulticloud) {
                         vnfAdapterImpl.deleteVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
-                                req.getVfModuleName(), req.getVnfId(), req.getVfModuleId(),
-                                req.getModelCustomizationUuid(), req.getMsoRequest(), new Holder<>());
+                                req.getVfModuleName(), req.getModelCustomizationUuid(), req.getMsoRequest(),
+                                new Holder<>());
                         pollRollbackStatus = true;
                         success = true;
                     } else {
-                        /*
-                         * vnfPluginImpl.deleteVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
-                         * req.getVfModuleName(),req.getMsoRequest(), new Holder<>()); TODO: Figure out how to properly
-                         * rollback
-                         */
                         pollRollbackStatus = false;
                         success = true;
                     }
