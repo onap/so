@@ -64,6 +64,7 @@ import org.onap.aai.domain.yang.SriovPf;
 import org.onap.aai.domain.yang.SriovVf;
 import org.onap.aai.domain.yang.Subnets;
 import org.onap.aai.domain.yang.Vlan;
+import org.onap.aai.domain.yang.Volume;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.aaiclient.client.aai.AAIDSLQueryClient;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
@@ -103,6 +104,7 @@ import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.NetworkType;
 import org.openstack4j.model.network.Port;
 import org.openstack4j.model.network.Subnet;
+import org.openstack4j.model.storage.block.VolumeAttachment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
@@ -418,6 +420,46 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                     updateSriovPfToSriovVF(port, lIf);
                 }
             }
+        }
+    }
+
+    @Override
+    public void buildAddVolumes(List<Resource> stackResources) throws HeatBridgeException {
+        try {
+            if (stackResources.stream().anyMatch(r -> r.getType().equals("OS::Cinder::Volume"))) {
+                stackResources.stream().filter(r -> r.getType().equalsIgnoreCase("OS::Cinder::Volume"))
+                        .forEach(r -> createVolume(r));
+            } else {
+                logger.debug("Heat stack contains no volumes");
+            }
+        } catch (Exception e) {
+            logger.error("Failed to add volumes to AAI", e);
+            throw new HeatBridgeException("Failed to add volumes to AAI", e);
+        }
+
+    }
+
+    protected void createVolume(Resource r) {
+        org.openstack4j.model.storage.block.Volume osVolume = osClient.getVolumeById(r.getPhysicalResourceId());
+        List<? extends VolumeAttachment> attachments = osVolume.getAttachments();
+        if (attachments != null) {
+            Optional<? extends VolumeAttachment> vserver = attachments.stream().findFirst();
+            if (vserver.isPresent()) {
+                Volume volume = new Volume();
+                volume.setVolumeId(r.getPhysicalResourceId());
+                AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                        .cloudRegion(cloudOwner, cloudRegionId).tenant(tenantId).vserver(vserver.get().getServerId())
+                        .volume(r.getPhysicalResourceId()));
+                transaction.createIfNotExists(uri, Optional.of(volume));
+            } else {
+                logger.warn(
+                        "Volume {} contains no attachments in openstack. Unable to determine which vserver volume belongs too.",
+                        r.getPhysicalResourceId());
+            }
+        } else {
+            logger.warn(
+                    "Volume {} contains no attachments in openstack. Unable to determine which vserver volume belongs too.",
+                    r.getPhysicalResourceId());
         }
     }
 

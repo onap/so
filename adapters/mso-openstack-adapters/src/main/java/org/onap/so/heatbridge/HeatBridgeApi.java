@@ -160,6 +160,13 @@ public interface HeatBridgeApi {
             String cloudOwner) throws HeatBridgeException;
 
     /**
+     * Query and build AAI actions for Openstack volumes
+     *
+     * @throws HeatBridgeException when failing to remove heatbridge data from AAI for a given vf-module
+     */
+    void buildAddVolumes(List<Resource> stackResources) throws HeatBridgeException;
+
+    /**
      * Query and build AAI actions for Openstack Compute resources to AAI's pserver and pinterface objects
      *
      * @param stackResources Openstack StackResources list
@@ -180,4 +187,6 @@ public interface HeatBridgeApi {
      * @throws HeatBridgeException when failing to remove heatbridge data from AAI for a given vf-module
      */
     void deleteVfModuleData(String vnfId, String vfModuleId) throws HeatBridgeException;
+
+
 }

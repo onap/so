@@ -106,6 +106,8 @@ import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.NetworkType;
 import org.openstack4j.model.network.Port;
 import org.openstack4j.model.network.Subnet;
+import org.openstack4j.model.storage.block.Volume;
+import org.openstack4j.model.storage.block.VolumeAttachment;
 import org.openstack4j.openstack.heat.domain.HeatResource;
 import org.openstack4j.openstack.heat.domain.HeatResource.Resources;
 import org.slf4j.Logger;
@@ -117,7 +119,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
-
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class HeatBridgeImplTest {
@@ -808,6 +809,28 @@ public class HeatBridgeImplTest {
         assertEquals(1, images.size());
     }
 
+    @Test
+    public void testBuildAddVolumes() throws HeatBridgeException {
+        List<Resource> stackResources = (List<Resource>) extractTestStackResources();
+        Volume volume = mock(Volume.class);
+        List<VolumeAttachment> attachments = new ArrayList<>();
+        VolumeAttachment server = mock(VolumeAttachment.class);
+        attachments.add(server);
+        when(volume.getAttachments()).thenAnswer(x -> attachments);
+        when(server.getServerId()).thenReturn("vserverIdTest");
+
+        when(osClient.getVolumeById("5ad95036-8daf-4379-a59c-865f35976ca3")).thenReturn(volume);
+
+        heatbridge.buildAddVolumes(stackResources);
+
+        verify(transaction, times(1)).createIfNotExists(
+                eq(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                        .cloudRegion("CloudOwner", "RegionOne").tenant("7320ec4a5b9d4589ba7c4412ccfd290f")
+                        .vserver("vserverIdTest").volume("5ad95036-8daf-4379-a59c-865f35976ca3"))),
+                any(Optional.class));
+        verify(osClient, times(1)).getVolumeById(eq("5ad95036-8daf-4379-a59c-865f35976ca3"));
+    }
+
     private List<? extends Resource> extractTestStackResources() {
         List<HeatResource> stackResources = null;
         try {
@@ -836,6 +859,7 @@ public class HeatBridgeImplTest {
     private String getJson(String filename) throws IOException {
         return new String(Files.readAllBytes(Paths.get("src/test/resources/__files/" + filename)));
     }
+
 
 
 }
