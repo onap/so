@@ -43,6 +43,7 @@ import org.openstack4j.model.heat.Resource;
 import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.Port;
 import org.openstack4j.model.network.Subnet;
+import org.openstack4j.model.storage.block.Volume;
 
 public interface OpenstackClient {
 
@@ -101,4 +102,11 @@ public interface OpenstackClient {
      * @return Subnet object.
      */
     Subnet getSubnetById(String subnetId);
+
+    /**
+     * Get a volume object by volume ID
+     * 
+     * @return Volume object.
+     */
+    Volume getVolumeById(String volumeId);
 }

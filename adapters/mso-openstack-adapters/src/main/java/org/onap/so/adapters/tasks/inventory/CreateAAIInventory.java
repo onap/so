@@ -121,6 +121,8 @@ public class CreateAAIInventory {
                 cloudInformation.getOwner());
         logger.debug("Successfully queried neutron resources and built AAI actions to add l-interfaces to vservers.");
 
+        heatBridgeClient.buildAddVolumes(stackResources);
+
         // Update AAI
         logger.debug("Current Dry Run Value: {}", env.getProperty("heatBridgeDryrun", Boolean.class, false));
         heatBridgeClient.submitToAai(env.getProperty("heatBridgeDryrun", Boolean.class, false));
