@@ -104,7 +104,8 @@ public class UserParamsServiceTraversal {
                                         if ((vfModuleCustomization.getVfModule() != null)
                                                 && ((vfModuleCustomization.getVfModule().getModuleHeatTemplate() != null
                                                         && vfModuleCustomization.getHeatEnvironment() != null))
-                                                || (vfModuleCustomization.getVfModule().getModelName() != null
+                                                || (vfModuleCustomization.getVfModule() != null
+                                                        && vfModuleCustomization.getVfModule().getModelName() != null
                                                         && vfModuleCustomization.getVfModule().getModelName()
                                                                 .contains("helm"))) {
                                             foundVfModuleOrVG = true;
