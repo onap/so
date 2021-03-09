@@ -78,6 +78,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader.VnfEBBLoader;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
@@ -135,6 +136,10 @@ public class WorkflowActionTest extends BaseTaskTest {
 
     @Spy
     protected ExecuteBuildingBlockBuilder executeBuildingBlockBuilder;
+
+    @InjectMocks
+    @Spy
+    protected VnfEBBLoader vnfEBBLoaderSpy;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
