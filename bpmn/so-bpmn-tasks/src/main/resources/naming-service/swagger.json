@@ -235,7 +235,7 @@
 					"type": "string",
 					"description": "Naming type of the resource"
 				},
-				"${naming-ingredients(zero or more)}": {
+				"{naming-ingredients(zero or more)}": {
 					"type": "string",
 					"description": "values to subsitute in the naming recipe"
 				}

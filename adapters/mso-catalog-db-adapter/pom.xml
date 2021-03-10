@@ -6,21 +6,18 @@
     <artifactId>adapters</artifactId>
     <version>1.8.0-SNAPSHOT</version>
   </parent>
-
   <groupId>org.onap.so.adapters</groupId>
   <artifactId>mso-catalog-db-adapter</artifactId>
   <packaging>jar</packaging>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <swagger.version>2.0.8</swagger.version>
   </properties>
   <build>
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>${springboot.version}</version>
         <configuration>
           <mainClass>org.onap.so.adapters.catalogdb.CatalogDBApplication</mainClass>
         </configuration>
@@ -120,33 +117,8 @@
   </dependencyManagement>
   <dependencies>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.fasterxml.jackson.dataformat</groupId>
-      <artifactId>jackson-dataformat-yaml</artifactId>
-      <version>2.9.9</version>
-    </dependency>
-
-    <dependency>
-      <groupId>io.swagger.core.v3</groupId>
-      <artifactId>swagger-annotations</artifactId>
-      <version>${swagger.version}</version>
-    </dependency>
-    <dependency>
       <groupId>io.swagger.core.v3</groupId>
       <artifactId>swagger-jaxrs2</artifactId>
-      <version>2.0.6</version>
-    </dependency>
-    <dependency>
-      <groupId>org.mariadb.jdbc</groupId>
-      <artifactId>mariadb-java-client</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -173,11 +145,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>uk.co.blackpepper.bowman</groupId>
-      <artifactId>bowman-client</artifactId>
-      <version>${bowman.client.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.javassist</groupId>
       <artifactId>javassist</artifactId>
       <version>3.25.0-GA</version>
@@ -185,16 +152,11 @@
     <dependency>
       <groupId>ch.vorburger.mariaDB4j</groupId>
       <artifactId>mariaDB4j</artifactId>
-      <version>2.3.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.micrometer</groupId>
-      <artifactId>micrometer-core</artifactId>
     </dependency>
     <dependency>
       <groupId>io.micrometer</groupId>

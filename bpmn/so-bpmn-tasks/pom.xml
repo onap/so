@@ -11,7 +11,6 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <grpc.version>1.17.1</grpc.version>
   </properties>
   <build>
     <plugins>
@@ -47,9 +46,9 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>io.swagger</groupId>
+        <groupId>io.swagger.codegen.v3</groupId>
         <artifactId>swagger-codegen-maven-plugin</artifactId>
-        <version>2.3.1</version>
+        <version>3.0.24</version>
         <executions>
           <execution>
             <goals>
@@ -163,11 +162,10 @@
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>org.camunda.bpm</groupId>
-        <artifactId>camunda-bom</artifactId>
-        <version>${camunda.version}</version>
-        <scope>import</scope>
-        <type>pom</type>
+        <groupId>io.grpc</groupId>
+        <artifactId>grpc-testing</artifactId>
+        <version>1.17.1</version>
+        <scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -180,7 +178,6 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-contract-wiremock</artifactId>
-      <version>1.2.4.RELEASE</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -210,7 +207,6 @@
     <dependency>
       <groupId>ch.vorburger.mariaDB4j</groupId>
       <artifactId>mariaDB4j</artifactId>
-      <version>2.3.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -229,11 +225,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-configuration-processor</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
       <groupId>nl.jqno.equalsverifier</groupId>
       <artifactId>equalsverifier</artifactId>
       <version>2.5.1</version>
@@ -242,7 +233,6 @@
     <dependency>
       <groupId>io.grpc</groupId>
       <artifactId>grpc-testing</artifactId>
-      <version>${grpc.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

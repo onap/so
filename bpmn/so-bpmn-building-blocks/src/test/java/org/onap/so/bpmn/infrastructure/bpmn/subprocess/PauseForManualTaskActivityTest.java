@@ -30,7 +30,6 @@ import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.Job;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.task.Task;
-import org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.onap.so.bpmn.BaseBPMNTest;
@@ -51,7 +50,7 @@ public class PauseForManualTaskActivityTest extends BaseBPMNTest {
         variables.put("taskTimeout", TIMEOUT_10_S);
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("PauseForManualTaskActivity", variables);
         assertThat(pi).isNotNull();
-        BpmnAwareAssertions.assertThat(pi).isWaitingAt("ManualUserTask");
+        assertThat(pi).isWaitingAt("ManualUserTask");
         Task task = taskService.createTaskQuery().active().list().get(0);
         assertThat(pi).task().isNotNull();
         assertNotNull(task);
@@ -70,7 +69,7 @@ public class PauseForManualTaskActivityTest extends BaseBPMNTest {
         variables.put("taskTimeout", TIMEOUT_10_S);
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("PauseForManualTaskActivity", variables);
         assertThat(pi).isNotNull();
-        BpmnAwareAssertions.assertThat(pi).isWaitingAt("ManualUserTask");
+        assertThat(pi).isWaitingAt("ManualUserTask");
         assertThat(pi).task().isNotNull();
         Task task = taskService.createTaskQuery().active().list().get(0);
         assertNotNull(task);

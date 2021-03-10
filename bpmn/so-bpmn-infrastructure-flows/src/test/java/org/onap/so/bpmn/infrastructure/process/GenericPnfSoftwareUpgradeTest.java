@@ -46,7 +46,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.assertj.core.api.Assertions.fail;
-import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
+import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Basic Integration test for GenericPnfSoftwareUpgrade.bpmn workflow.
@@ -120,13 +123,13 @@ public class GenericPnfSoftwareUpgradeTest extends BaseBPMNTest {
         }
 
         // Layout is to reflect the bpmn visual layout
-        assertThat(pi).isEnded().hasPassedInOrder("softwareUpgrade_startEvent", "ServiceTask_042uz7n",
+        assertThat(pi).isStarted().hasPassedInOrder("softwareUpgrade_startEvent", "ServiceTask_042uz7n",
                 "ScriptTask_10klpg8", "ServiceTask_0slpahe", "ExclusiveGateway_0x6h0ni", "ServiceTask_0x5cje8",
                 "ExclusiveGateway_0v3l3wv", "ServiceTask_02lxf48", "ExclusiveGateway_0ch3fef", "ServiceTask_0y2uysu",
                 "ExclusiveGateway_1ny9b1z", "ScriptTask_1igtc83", "CallActivity_0o1mi8u", "softwareUpgrade_endEvent");
 
         List<ExecutionServiceInput> detailedMessages = grpcNettyServer.getDetailedMessages();
-        assertThat(detailedMessages.size() == 4);
+        assertEquals(4, detailedMessages.size());
         int count = 0;
         try {
             for (ExecutionServiceInput eSI : detailedMessages) {
@@ -142,7 +145,8 @@ public class GenericPnfSoftwareUpgradeTest extends BaseBPMNTest {
             e.printStackTrace();
             fail("GenericPnfSoftwareUpgrade request exception", e);
         }
-        assertThat(count == actionNames.length);
+        assertTrue(count == actionNames.length);
+        grpcNettyServer.resetList();
     }
 
     private boolean isProcessInstanceEnded() {
@@ -159,27 +163,26 @@ public class GenericPnfSoftwareUpgradeTest extends BaseBPMNTest {
          * the fields of actionIdentifiers should match the one in the
          * response/GenericPnfSoftwareUpgrade_catalogdb.json.
          */
-        assertThat(actionIdentifiers.getBlueprintName()).isEqualTo("test_pnf_software_upgrade_restconf");
-        assertThat(actionIdentifiers.getBlueprintVersion()).isEqualTo("1.0.0");
-        assertThat(actionIdentifiers.getActionName()).isEqualTo(action);
-        assertThat(actionIdentifiers.getMode()).isEqualTo("async");
+        assertEquals("test_pnf_software_upgrade_restconf", actionIdentifiers.getBlueprintName());
+        assertEquals("1.0.0", actionIdentifiers.getBlueprintVersion());
+        assertEquals(action, actionIdentifiers.getActionName());
+        assertEquals("async", actionIdentifiers.getMode());
 
         CommonHeader commonHeader = executionServiceInput.getCommonHeader();
-        assertThat(commonHeader.getOriginatorId()).isEqualTo("SO");
+        assertEquals("SO", commonHeader.getOriginatorId());
 
         Struct payload = executionServiceInput.getPayload();
         Struct requeststruct = payload.getFieldsOrThrow(action + "-request").getStructValue();
 
-        assertThat(requeststruct.getFieldsOrThrow("resolution-key").getStringValue()).isEqualTo("PNFDemo");
+        assertEquals("PNFDemo", requeststruct.getFieldsOrThrow("resolution-key").getStringValue());
         Struct propertiesStruct = requeststruct.getFieldsOrThrow(action + "-properties").getStructValue();
 
-        assertThat(propertiesStruct.getFieldsOrThrow("pnf-name").getStringValue()).isEqualTo("PNFDemo");
-        assertThat(propertiesStruct.getFieldsOrThrow("service-model-uuid").getStringValue())
-                .isEqualTo("32daaac6-5017-4e1e-96c8-6a27dfbe1421");
-        assertThat(propertiesStruct.getFieldsOrThrow("pnf-customization-uuid").getStringValue())
-                .isEqualTo("38dc9a92-214c-11e7-93ae-92361f002680");
-        assertThat(propertiesStruct.getFieldsOrThrow("target-software-version").getStringValue())
-                .isEqualTo("demo-sw-ver2.0.0");
+        assertEquals("PNFDemo", propertiesStruct.getFieldsOrThrow("pnf-name").getStringValue());
+        assertEquals("32daaac6-5017-4e1e-96c8-6a27dfbe1421",
+                propertiesStruct.getFieldsOrThrow("service-model-uuid").getStringValue());
+        assertEquals("38dc9a92-214c-11e7-93ae-92361f002680",
+                propertiesStruct.getFieldsOrThrow("pnf-customization-uuid").getStringValue());
+        assertEquals("demo-sw-ver2.0.0", propertiesStruct.getFieldsOrThrow("target-software-version").getStringValue());
     }
 
     private void mockAai() {

@@ -55,11 +55,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
 
 @Path("/workflow")
-@Api(value = "/workflow", description = "Root of workflow services")
+@OpenAPIDefinition(info = @Info(title = "/workflow", description = "Root of workflow services"))
 @Component
 public class WorkflowResource extends ProcessEngineAwareService {
 
@@ -83,7 +84,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
      */
     @POST
     @Path("/services/{processKey}")
-    @ApiOperation(value = "Starts a new process with the appropriate process synchronously", notes = "d")
+    @Operation(description = "Starts a new process with the appropriate process synchronously")
     @Produces("application/json")
     @Consumes("application/json")
     public Response startProcessInstanceByKey(@PathParam("processKey") String processKey, VariableMapImpl variableMap) {
@@ -549,7 +550,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
     @Path("/services/{processKey}/{processInstanceId}")
     @Produces("application/json")
     @Consumes("application/json")
-    @ApiOperation(value = "Allows for retrieval of the variables for a given process", notes = "")
+    @Operation(description = "Allows for retrieval of the variables for a given process")
     public WorkflowResponse getProcessVariables(@PathParam("processKey") String processKey,
             @PathParam("processInstanceId") String processInstanceId) {
         // TODO filter only set of variables

@@ -20,9 +20,10 @@
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
 
-import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
-import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.job;
-import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.execute;
+import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.assertThat;
+import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.job;
+import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.execute;
+import org.camunda.bpm.engine.runtime.Job;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Test;
 import org.onap.so.bpmn.BaseBPMNTest;

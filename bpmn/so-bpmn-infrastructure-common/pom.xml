@@ -38,7 +38,6 @@
         <configuration>
           <compilerId>groovy-eclipse-compiler</compilerId>
         </configuration>
-
         <dependencies>
           <dependency>
             <groupId>org.codehaus.groovy</groupId>
@@ -114,19 +113,6 @@
     </pluginManagement>
     <finalName>${project.artifactId}-${project.version}</finalName>
   </build>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.camunda.bpm</groupId>
-        <artifactId>camunda-bom</artifactId>
-        <version>${camunda.version}</version>
-        <scope>import</scope>
-        <type>pom</type>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
   <dependencies>
     <dependency>
       <groupId>org.camunda.bpm.springboot</groupId>
@@ -146,10 +132,11 @@
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-spring-boot-starter-jaxrs</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-service-description-swagger</artifactId>
-    </dependency>
+ <dependency>
+    <groupId>org.apache.cxf</groupId>
+    <artifactId>cxf-rt-rs-service-description-openapi-v3</artifactId>
+    <version>3.4.2</version>
+</dependency>
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
@@ -254,7 +241,6 @@
     <dependency>
       <groupId>ch.vorburger.mariaDB4j</groupId>
       <artifactId>mariaDB4j</artifactId>
-      <version>2.3.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>

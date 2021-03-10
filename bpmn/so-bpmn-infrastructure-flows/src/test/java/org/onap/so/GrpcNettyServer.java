@@ -100,4 +100,8 @@ public class GrpcNettyServer extends BluePrintProcessingServiceImplBase {
         return this.detailedMessages;
     }
 
+    public void resetList() {
+        detailedMessages.clear();
+    }
+
 }

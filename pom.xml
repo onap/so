@@ -69,7 +69,6 @@
     <jax.ws.rs>2.1</jax.ws.rs>
     <springboot.version>2.3.7.RELEASE</springboot.version>
     <aaf.version>2.1.21</aaf.version>
-    <camunda.springboot.version>7.14.0</camunda.springboot.version>
     <format.skipValidate>false</format.skipValidate>
     <format.skipExecute>true</format.skipExecute>
     <io.fabric8.version>0.33.0</io.fabric8.version>
@@ -203,7 +202,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-deploy-plugin</artifactId>
-        <version>2.8</version>
         <!-- This version supports the "deployAtEnd" parameter -->
         <configuration>
           <skip />
@@ -283,7 +281,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>3.6</version>
         <dependencies>
           <dependency>
             <groupId>org.apache.maven.wagon</groupId>
@@ -731,7 +728,6 @@
     <dependency>
       <groupId>javax.annotation</groupId>
       <artifactId>javax.annotation-api</artifactId>
-      <version>1.3.1</version>
     </dependency>
     <dependency>
       <groupId>javax.inject</groupId>
@@ -1068,6 +1064,57 @@
         <artifactId>aaf-misc-rosetta</artifactId>
         <version>${aaf.version}</version>
         <scope>runtime</scope>
+      </dependency>
+	  <dependency>
+      	<groupId>io.swagger</groupId>
+      	<artifactId>swagger-jersey2-jaxrs</artifactId>
+      	<version>1.6.2</version>
+      </dependency>
+      <dependency>
+      	<groupId>ch.vorburger.mariaDB4j</groupId>
+      	<artifactId>mariaDB4j</artifactId>
+      	<version>2.3.0</version>
+      	<scope>test</scope>
+      </dependency>
+      <dependency>
+      	<groupId>org.springframework.cloud</groupId>
+      	<artifactId>spring-cloud-contract-wiremock</artifactId>
+      	<version>1.2.4.RELEASE</version>
+      	<scope>test</scope>
+      </dependency>
+      <dependency>
+      	<groupId>org.camunda.bpm.assert</groupId>
+      	<artifactId>camunda-bpm-assert</artifactId>
+      	<version>3.0.0</version>
+      	<scope>test</scope>
+      </dependency>
+      <dependency>
+      	<groupId>janino</groupId>
+      	<artifactId>janino</artifactId>
+      	<version>2.5.15</version>
+      </dependency>
+      <dependency>
+      	<groupId>org.camunda.bpm</groupId>
+      	<artifactId>camunda-external-task-client</artifactId>
+      	<version>1.4.0</version>
+      </dependency>
+      <dependency>
+      	<groupId>pl.pragmatists</groupId>
+      	<artifactId>JUnitParams</artifactId>
+      	<version>1.0.5</version>
+      	<scope>test</scope>
+   	  </dependency>
+   	  <dependency>
+      	<groupId>io.swagger.core.v3</groupId>
+      	<artifactId>swagger-jaxrs2</artifactId>
+      	<version>2.1.7</version>
+      </dependency>
+      <dependency>
+        <groupId>org.camunda.bpm</groupId>
+        <artifactId>camunda-bom</artifactId>
+        <version>7.14.0</version>
+        <scope>import</scope>
+        <type>pom</type>
       </dependency>
     </dependencies>
   </dependencyManagement>

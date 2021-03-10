@@ -23,12 +23,13 @@
 package org.onap.so.bpmn.infrastructure;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import javax.xml.ws.Endpoint;
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
-import org.apache.cxf.jaxrs.swagger.Swagger2Feature;
+import org.apache.cxf.jaxrs.openapi.OpenApiFeature;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.transport.servlet.CXFServlet;
 import org.onap.so.bpmn.common.adapter.sdnc.SDNCCallbackAdapterPortType;
@@ -112,14 +113,15 @@ public class CXFConfiguration {
     }
 
     @Bean
-    public Swagger2Feature createSwaggerFeature() {
-        Swagger2Feature swagger2Feature = new Swagger2Feature();
+    public OpenApiFeature createSwaggerFeature() {
+        OpenApiFeature swagger2Feature = new OpenApiFeature();
         swagger2Feature.setPrettyPrint(true);
         swagger2Feature.setTitle("SO Orchestration Application");
-        swagger2Feature.setContact("The ONAP SO team");
+        swagger2Feature.setContactName("The ONAP SO team");
         swagger2Feature.setDescription("This project is the SO Orchestration Engine");
         swagger2Feature.setVersion("1.0.0");
-        swagger2Feature.setResourcePackage("org.onap.so.bpmn.common.workflow.service");
+        swagger2Feature
+                .setResourcePackages(new HashSet<String>(Arrays.asList("org.onap.so.bpmn.common.workflow.service")));
         swagger2Feature.setScan(true);
         return swagger2Feature;
     }

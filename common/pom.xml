@@ -10,22 +10,16 @@
   <artifactId>common</artifactId>
   <name>common</name>
   <description>MSO Common classes:- Logger</description>
-
   <properties>
     <grpc.version>1.17.1</grpc.version>
     <protobuf.version>3.6.1</protobuf.version>
     <grpc.netty.version>4.1.30.Final</grpc.netty.version>
     <ccsdk.version>0.4.2</ccsdk.version>
   </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -59,14 +53,6 @@
       <groupId>org.modelmapper</groupId>
       <artifactId>modelmapper</artifactId>
       <version>2.3.2</version>
-    </dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
@@ -181,7 +167,6 @@
       <artifactId>proto-definition</artifactId>
       <version>${ccsdk.version}</version>
     </dependency>
-
     <!-- protobuf dependencies -->
     <dependency>
       <groupId>com.google.protobuf</groupId>
@@ -203,11 +188,6 @@
     </dependency>
     <dependency>
       <groupId>io.grpc</groupId>
-      <artifactId>grpc-stub</artifactId>
-      <version>${grpc.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.grpc</groupId>
       <artifactId>grpc-netty</artifactId>
       <version>${grpc.version}</version>
     </dependency>
@@ -225,7 +205,6 @@
     <dependency>
       <groupId>org.camunda.bpm</groupId>
       <artifactId>camunda-external-task-client</artifactId>
-      <version>1.4.0</version>
     </dependency>
     <dependency>
       <groupId>org.onap.appc.client</groupId>
@@ -297,11 +276,6 @@
       <artifactId>validation-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>javax.xml.bind</groupId>
-      <artifactId>jaxb-api</artifactId>
-      <version>2.3.0</version>
-    </dependency>
-    <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-core</artifactId>
       <version>2.3.0</version>
@@ -319,7 +293,6 @@
     <dependency>
       <groupId>org.ehcache</groupId>
       <artifactId>ehcache</artifactId>
-      <version>3.8.1</version>
     </dependency>
   </dependencies>
   <dependencyManagement>
@@ -378,7 +351,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>3.0.2</version>
         <executions>
           <execution>
             <id>tests-jar</id>

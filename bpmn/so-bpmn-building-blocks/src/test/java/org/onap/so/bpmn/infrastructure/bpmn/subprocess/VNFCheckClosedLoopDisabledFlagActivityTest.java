@@ -20,7 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
 
-import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
+import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
 import org.camunda.bpm.engine.delegate.BpmnError;

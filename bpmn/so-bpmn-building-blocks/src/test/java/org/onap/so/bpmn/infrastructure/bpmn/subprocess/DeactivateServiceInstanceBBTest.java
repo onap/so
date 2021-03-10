@@ -20,7 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
 
-import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
+import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.assertThat;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Test;
 import org.onap.so.bpmn.BaseBPMNTest;

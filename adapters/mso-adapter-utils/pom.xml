@@ -10,7 +10,6 @@
   <artifactId>mso-adapter-utils</artifactId>
   <name>mso-adapter-utils</name>
   <description>Common MSO utilities, including Openstack client wrappers.</description>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -27,7 +26,6 @@
     <finalName>${project.artifactId}</finalName>
     <sourceDirectory>src/main/java</sourceDirectory>
     <plugins>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
@@ -75,7 +73,6 @@
       </plugin>
     </plugins>
   </build>
-
   <dependencies>
     <dependency>
       <groupId>org.glassfish.jersey.core</groupId>
@@ -84,7 +81,6 @@
     <dependency>
       <groupId>ch.vorburger.mariaDB4j</groupId>
       <artifactId>mariaDB4j</artifactId>
-      <version>2.3.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
