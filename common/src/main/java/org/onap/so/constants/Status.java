@@ -27,6 +27,7 @@ package org.onap.so.constants;
 public enum Status {
     PENDING,
     IN_PROGRESS,
+    WAIT_COMPLETION_NOTIF,
     COMPLETE,
     COMPLETED,
     FAILED,

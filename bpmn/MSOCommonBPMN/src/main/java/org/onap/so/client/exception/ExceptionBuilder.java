@@ -207,7 +207,8 @@ public class ExceptionBuilder {
         }
     }
 
-    public void buildAndThrowWorkflowException(DelegateExecution execution, int errorCode, String errorMessage) {
+    public void buildAndThrowWorkflowException(DelegateExecution execution, int errorCode, String errorMessage)
+            throws BpmnError {
 
         buildWorkflowException(execution, errorCode, errorMessage);
         logger.info("Throwing MSOWorkflowException");
@@ -372,8 +373,18 @@ public class ExceptionBuilder {
         }
         buildWorkflowException(execution, 500, workflowExceptionMessage.toString(), Components.OPENSTACK);
         throw new BpmnError("MSOWorkflowException");
+    }
 
-
+    public void processSDNCException(DelegateExecution execution) {
+        logger.debug("Processing SDNC Exception");
+        String errorMessage = "";
+        try {
+            errorMessage = (String) execution.getVariable("errorMessage");
+        } catch (Exception e) {
+            logger.debug("Error while Processing SDNC Exception", e);
+        }
+        buildWorkflowException(execution, 500, errorMessage, ONAPComponents.SDNC);
+        throw new BpmnError("MSOWorkflowException");
     }
 
     public void processInventoryException(DelegateExecution execution) {

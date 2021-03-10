@@ -46,6 +46,8 @@ public class RequestClientParameter {
     private String instanceGroupId;
     private boolean generateIdsOnly;
     private String operationType;
+    private String migrationId;
+    private String circuitId;
 
     private RequestClientParameter(Builder builder) {
         requestId = builder.requestId;
@@ -71,6 +73,8 @@ public class RequestClientParameter {
         instanceGroupId = builder.instanceGroupId;
         generateIdsOnly = builder.generateIdsOnly;
         operationType = builder.operationType;
+        migrationId = builder.migrationId;
+        circuitId = builder.circuitId;
     }
 
     public String getOperationType() {
@@ -169,6 +173,22 @@ public class RequestClientParameter {
         this.generateIdsOnly = generateIdsOnly;
     }
 
+    public String getMigrationId() {
+        return migrationId;
+    }
+
+    public void setMigrationId(String migrationId) {
+        this.migrationId = migrationId;
+    }
+
+    public String getCircuitId() {
+        return circuitId;
+    }
+
+    public void setCircuitId(String circuitId) {
+        this.circuitId = circuitId;
+    }
+
     public static class Builder {
         private String requestId;
         private boolean isBaseVfModule = false;
@@ -193,6 +213,18 @@ public class RequestClientParameter {
         private String instanceGroupId;
         private boolean generateIdsOnly;
         private String operationType;
+        private String migrationId;
+        private String circuitId;
+
+        public Builder setCircuitId(String circuitId) {
+            this.circuitId = circuitId;
+            return this;
+        }
+
+        public Builder setMigrationId(String migrationId) {
+            this.migrationId = migrationId;
+            return this;
+        }
 
         public Builder setOperationType(String operationType) {
             this.operationType = operationType;
