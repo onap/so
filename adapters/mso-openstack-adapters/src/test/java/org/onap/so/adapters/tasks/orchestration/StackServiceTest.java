@@ -69,7 +69,7 @@ public class StackServiceTest {
         Mockito.doNothing().when(vnfAdapterImpl).createVfModule(Mockito.any(), Mockito.any(), Mockito.any(),
                 Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
                 Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
-                Mockito.any(), Mockito.any(), Mockito.any());
+                Mockito.any());
         Mockito.doNothing().when(mockExternalTaskService).complete(Mockito.any(), Mockito.any());
 
         stackService.executeExternalTask(mockExternalTask, mockExternalTaskService);
@@ -106,8 +106,7 @@ public class StackServiceTest {
                 Mockito.eq("1.0"), Mockito.eq("6640feba-55f6-4946-9694-4d9558c8870a"), Mockito.eq("dummy_id"),
                 Mockito.eq("985a468b-328b-4c2b-ad0e-b8f1e19501c4"), Mockito.eq(null), Mockito.eq(null),
                 Mockito.eq(null), Mockito.eq("074c64d0-7e13-4bcc-8bdb-ea922331102d"), Mockito.eq(paramsMap),
-                Mockito.eq(false), Mockito.eq(false), Mockito.eq(null), Mockito.any(), Mockito.any(), Mockito.any(),
-                Mockito.any());
+                Mockito.eq(false), Mockito.eq(false), Mockito.eq(null), Mockito.any(), Mockito.any());
         Mockito.verify(mockExternalTaskService).complete(Mockito.eq(mockExternalTask), Mockito.eq(variables));
 
     }

@@ -239,6 +239,7 @@ public class PollService extends ExternalTaskUtils {
                 StackInfo stack =
                         pollCreateResource(timeoutMinutes, req.getCloudSiteId(), req.getTenantId(), stackId, success);
                 outputs = vnfAdapterImpl.copyStringOutputs(stack.getOutputs());
+
             }
             VfModuleRollback modRollback = new VfModuleRollback(buildVnfRollback(req, stackId, isMulticloud),
                     req.getVfModuleId(), stackId, req.getMessageId());

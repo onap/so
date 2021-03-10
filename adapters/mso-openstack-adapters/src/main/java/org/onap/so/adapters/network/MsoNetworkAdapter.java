@@ -36,6 +36,7 @@ import org.onap.so.openstack.beans.NetworkStatus;
 import org.onap.so.openstack.beans.RouteTarget;
 import org.onap.so.openstack.beans.Subnet;
 
+@Deprecated
 @WebService(name = "NetworkAdapter", targetNamespace = "http://org.onap.so/network")
 public interface MsoNetworkAdapter {
     // TODO: Rename all of these to include Vlan in the service name? At least for the

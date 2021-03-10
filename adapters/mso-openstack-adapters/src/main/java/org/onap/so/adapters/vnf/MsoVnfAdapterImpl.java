@@ -184,7 +184,7 @@ public class MsoVnfAdapterImpl {
             }
             this.createVfModule(cloudSiteId, cloudOwner, tenantId, vnfType, vnfVersion, genericVnfId, vnfName,
                     vfModuleId, newRequestType, vfVolGroupHeatStackId, vfBaseHeatStackId, null, inputs, failIfExists,
-                    backout, enableBridge, msoRequest, vnfId, outputs, rollback);
+                    backout, enableBridge, msoRequest, vnfId);
             return;
         }
         // createVf will know if the requestType starts with "X" that it's the "old" way
@@ -196,87 +196,10 @@ public class MsoVnfAdapterImpl {
         }
         this.createVfModule(cloudSiteId, cloudOwner, tenantId, vnfType, vnfVersion, genericVnfId, vnfName, vfModuleId,
                 newRequestTypeSb.toString(), vfVolGroupHeatStackId, vfBaseHeatStackId, null, inputs, failIfExists,
-                backout, enableBridge, msoRequest, vnfId, outputs, rollback);
+                backout, enableBridge, msoRequest, vnfId);
         return;
         // End createVf shortcut
     }
-
-    /**
-     * This is the "Delete VNF" web service implementation. It will delete a VNF by name or ID in the specified cloud
-     * and tenant.
-     *
-     * The method has no outputs.
-     *
-     * @param cloudSiteId CLLI code of the cloud site in which to delete
-     * @param cloudOwner cloud owner of the cloud region in which to delete
-     * @param tenantId Openstack tenant identifier
-     * @param vnfName VNF Name or Openstack ID
-     * @param msoRequest Request tracking information for logs
-     */
-    @Deprecated
-    public void deleteVnf(String cloudSiteId, String cloudOwner, String tenantId, String vnfName, MsoRequest msoRequest)
-            throws VnfException {
-
-        logger.debug("Deleting VNF {} in {}", vnfName, cloudSiteId + "/" + tenantId);
-
-        try {
-            StackInfo stackInfo = msoHeatUtils.deleteStack(tenantId, cloudOwner, cloudSiteId, vnfName, true, 118);
-
-            msoHeatUtils.updateResourceStatus(msoRequest.getRequestId(),
-                    stackInfo.isOperationPerformed() ? String.format(RESOURCE_DELETED_STATUS_MESSAGE, VOLUME_GROUP)
-                            : String.format(RESOURCE_NOT_EXIST_STATUS_MESSAGE, VOLUME_GROUP, VOLUME_GROUP));
-        } catch (MsoException me) {
-            me.addContext(DELETE_VNF);
-            // Failed to query the Stack due to an openstack exception.
-            // Convert to a generic VnfException
-            String error =
-                    "Delete VNF: " + vnfName + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId + ": " + me;
-            logger.error(LoggingAnchor.NINE, MessageEnum.RA_DELETE_VNF_ERR.toString(), vnfName, cloudOwner, cloudSiteId,
-                    tenantId, OPENSTACK, DELETE_VNF, ErrorCode.DataError.getValue(), "Exception - " + DELETE_VNF, me);
-            logger.debug(error);
-            throw new VnfException(me);
-        }
-
-        // On success, nothing is returned.
-        return;
-    }
-
-    /**
-     * This is the "Delete VNF" web service implementation. It will delete a VNF by name or ID in the specified cloud
-     * and tenant.
-     *
-     * The method has no outputs.
-     *
-     * @param cloudSiteId CLLI code of the cloud site in which to delete
-     * @param cloudOwner cloud owner of the cloud region in which to delete
-     * @param tenantId Openstack tenant identifier
-     * @param vnfName VNF Name or Openstack ID
-     * @param msoRequest Request tracking information for logs
-     */
-    @Deprecated
-    public void deleteVnf(String cloudSiteId, String cloudOwner, String tenantId, String vnfName, MsoRequest msoRequest,
-            boolean pollStackStatus) throws VnfException {
-
-        logger.debug("Deleting VNF {} in {}", vnfName, cloudSiteId + "/" + tenantId);
-
-        try {
-            msoHeatUtils.deleteStack(tenantId, cloudOwner, cloudSiteId, vnfName, pollStackStatus, 118);
-        } catch (MsoException me) {
-            me.addContext(DELETE_VNF);
-            // Failed to query the Stack due to an openstack exception.
-            // Convert to a generic VnfException
-            String error =
-                    "Delete VNF: " + vnfName + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId + ": " + me;
-            logger.error(LoggingAnchor.NINE, MessageEnum.RA_DELETE_VNF_ERR.toString(), vnfName, cloudOwner, cloudSiteId,
-                    tenantId, OPENSTACK, DELETE_VNF, ErrorCode.DataError.getValue(), "Exception - " + DELETE_VNF, me);
-            logger.debug(error);
-            throw new VnfException(me);
-        }
-
-        // On success, nothing is returned.
-        return;
-    }
-
 
     /**
      * This web service endpoint will rollback a previous Create VNF operation. A rollback object is returned to the
@@ -408,14 +331,12 @@ public class MsoVnfAdapterImpl {
         return stringMap;
     }
 
-    // TODO remove rollback and outputs and polling
+    // TODO remove polling
     public void createVfModule(String cloudSiteId, String cloudOwner, String tenantId, String vnfType,
             String vnfVersion, String genericVnfName, String vnfName, String vfModuleId, String requestType,
             String volumeGroupHeatStackId, String baseVfHeatStackId, String modelCustomizationUuid,
             Map<String, Object> inputs, Boolean failIfExists, Boolean backout, Boolean enableBridge,
-            MsoRequest msoRequest, Holder<String> vnfId, Holder<Map<String, String>> outputs,
-            Holder<VnfRollback> rollback) throws VnfException {
-        boolean pollForCompletion = false;
+            MsoRequest msoRequest, Holder<String> stackId) throws VnfException {
         String vfModuleName = vnfName;
         String vfModuleType = vnfType;
         String vfVersion = vnfVersion;
@@ -464,19 +385,6 @@ public class MsoVnfAdapterImpl {
 
         logger.debug("requestTypeString = " + requestTypeString + ", nestedStackId = " + nestedStackId
                 + ", nestedBaseStackId = " + nestedBaseStackId);
-
-        // TODO remove
-        // Build a default rollback object (no actions performed)
-        VnfRollback vfRollback = new VnfRollback();
-        vfRollback.setCloudSiteId(cloudSiteId);
-        vfRollback.setCloudOwner(cloudOwner);
-        vfRollback.setTenantId(tenantId);
-        vfRollback.setMsoRequest(msoRequest);
-        vfRollback.setRequestType(requestTypeString);
-        vfRollback.setVolumeGroupHeatStackId(volumeGroupHeatStackId);
-        vfRollback.setBaseGroupHeatStackId(baseVfHeatStackId);
-        vfRollback.setIsBase(isBaseRequest);
-        vfRollback.setModelCustomizationUuid(mcu);
 
         // handle a nestedStackId if sent- this one would be for the volume - so applies to both Vf and Vnf
         StackInfo nestedHeatStack = null;
@@ -931,9 +839,8 @@ public class MsoVnfAdapterImpl {
                 }
                 if (msoHeatUtils != null) {
                     heatStack = msoHeatUtils.createStack(cloudSiteId, cloudOwner, tenantId, vfModuleName, null,
-                            template, goldenInputs, pollForCompletion, heatTemplate.getTimeoutMinutes(),
-                            newEnvironmentString, nestedTemplatesChecked, heatFilesObjects, backout.booleanValue(),
-                            failIfExists);
+                            template, goldenInputs, false, heatTemplate.getTimeoutMinutes(), newEnvironmentString,
+                            nestedTemplatesChecked, heatFilesObjects, backout.booleanValue(), failIfExists);
                     String resource = VF_MODULE;
                     if (isVolumeRequest) {
                         resource = VOLUME_GROUP;
@@ -958,14 +865,8 @@ public class MsoVnfAdapterImpl {
                 logger.error("Error creating Stack", e);
                 throw new VnfException("Exception during heat.createStack! " + e.getMessage());
             }
-            // Reach this point if createStack is successful.
-            // Populate remaining rollback info and response parameters.
-            vfRollback.setVnfId(heatStack.getCanonicalName());
-            vfRollback.setVnfCreated(true);
 
-            vnfId.value = heatStack.getCanonicalName();
-            outputs.value = copyStringOutputs(heatStack.getOutputs());
-            rollback.value = vfRollback; // TODO remove
+            stackId.value = heatStack.getCanonicalName();
             logger.debug("VF Module {} successfully created", vfModuleName);
         } catch (Exception e) {
             logger.debug("unhandled exception in create VF", e);
@@ -973,19 +874,19 @@ public class MsoVnfAdapterImpl {
         }
     }
 
-    public void deleteVfModule(String cloudSiteId, String cloudOwner, String tenantId, String vnfName, String vnfId,
-            String vfModuleId, String modelCustomizationUuid, MsoRequest msoRequest,
-            Holder<Map<String, String>> outputs) throws VnfException {
+    public void deleteVfModule(String cloudSiteId, String cloudOwner, String tenantId, String stackId,
+            String modelCustomizationUuid, MsoRequest msoRequest, Holder<Map<String, String>> outputs)
+            throws VnfException {
         Map<String, Object> stackOutputs;
         try {
-            stackOutputs = msoHeatUtils.queryStackForOutputs(cloudSiteId, cloudOwner, tenantId, vnfName);
+            stackOutputs = msoHeatUtils.queryStackForOutputs(cloudSiteId, cloudOwner, tenantId, stackId);
         } catch (MsoException me) {
             // Failed to query the Stack due to an openstack exception.
             // Convert to a generic VnfException
             me.addContext("DeleteVFModule");
-            String error = "Delete VFModule: Query to get outputs: " + vnfName + " in " + cloudOwner + "/" + cloudSiteId
+            String error = "Delete VFModule: Query to get outputs: " + stackId + " in " + cloudOwner + "/" + cloudSiteId
                     + "/" + tenantId + ": " + me;
-            logger.error(LoggingAnchor.NINE, MessageEnum.RA_QUERY_VNF_ERR.toString(), vnfName, cloudOwner, cloudSiteId,
+            logger.error(LoggingAnchor.NINE, MessageEnum.RA_QUERY_VNF_ERR.toString(), stackId, cloudOwner, cloudSiteId,
                     tenantId, OPENSTACK, QUERY_STACK, ErrorCode.DataError.getValue(), "Exception - " + QUERY_STACK, me);
             logger.debug(error);
             throw new VnfException(me);
@@ -993,11 +894,14 @@ public class MsoVnfAdapterImpl {
         // call method which handles the conversion from Map<String,Object> to Map<String,String> for our expected
         // Object types
         outputs.value = this.convertMapStringObjectToStringString(stackOutputs);
-        int timeoutMinutes = msoHeatUtils.getVfHeatTimeoutValue(modelCustomizationUuid, false);
+        int timeoutMinutes = 118;
+        if (modelCustomizationUuid != null) {
+            timeoutMinutes = msoHeatUtils.getVfHeatTimeoutValue(modelCustomizationUuid, false);
+        }
 
         try {
             StackInfo currentStack =
-                    msoHeatUtils.deleteStack(tenantId, cloudOwner, cloudSiteId, vnfName, false, timeoutMinutes);
+                    msoHeatUtils.deleteStack(tenantId, cloudOwner, cloudSiteId, stackId, false, timeoutMinutes);
             if (currentStack != null && outputs != null && outputs.value != null) {
                 logger.debug("Adding canonical stack id to outputs " + currentStack.getCanonicalName());
                 outputs.value.put("canonicalStackId", currentStack.getCanonicalName());
@@ -1010,8 +914,8 @@ public class MsoVnfAdapterImpl {
             // Failed to query the Stack due to an openstack exception.
             // Convert to a generic VnfException
             String error =
-                    "Delete VF: " + vnfName + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId + ": " + me;
-            logger.error(LoggingAnchor.NINE, MessageEnum.RA_DELETE_VNF_ERR.toString(), vnfName, cloudOwner, cloudSiteId,
+                    "Delete VF: " + stackId + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId + ": " + me;
+            logger.error(LoggingAnchor.NINE, MessageEnum.RA_DELETE_VNF_ERR.toString(), stackId, cloudOwner, cloudSiteId,
                     tenantId, OPENSTACK, "DeleteStack", ErrorCode.DataError.getValue(), "Exception - deleteStack", me);
             logger.error(error);
             throw new VnfException(me);

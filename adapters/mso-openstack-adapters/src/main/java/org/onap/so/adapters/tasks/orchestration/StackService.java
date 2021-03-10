@@ -55,7 +55,6 @@ import org.onap.so.adapters.vnfrest.DeleteVolumeGroupRequest;
 import org.onap.so.logging.tasks.AuditMDCSetup;
 import org.onap.so.openstack.beans.NetworkRollback;
 import org.onap.so.openstack.beans.RouteTarget;
-import org.onap.so.openstack.beans.VnfRollback;
 import org.onap.so.utils.ExternalTaskUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,33 +96,26 @@ public class StackService extends ExternalTaskUtils {
         String errorMessage = "";
         try {
             if (xmlRequest != null) {
-                Holder<Map<String, String>> outputs = new Holder<>();
-                Holder<VnfRollback> vnfRollback = new Holder<>();
                 Optional<String> requestType = findRequestType(xmlRequest);
-                Holder<String> networkId = new Holder<>();
-                Holder<String> neutronNetworkId = new Holder<>();
-                Holder<String> networkFqdn = new Holder<>();
                 Holder<Map<String, String>> subnetIdMap = new Holder<>();
                 Holder<NetworkRollback> networkRollback = new Holder<>();
                 if ("createVolumeGroupRequest".equals(requestType.get())) {
                     logger.debug("Executing External Task Stack Service For Create Volume Group");
-                    createVolumeGroup(xmlRequest, outputs, vnfRollback, canonicalStackId, backout, success);
+                    createVolumeGroup(xmlRequest, canonicalStackId, backout, success);
                 } else if ("createVfModuleRequest".equals(requestType.get())) {
                     logger.debug("Executing External Task Stack Service For Create Vf Module");
-                    createVfModule(xmlRequest, outputs, vnfRollback, canonicalStackId, backout, success);
+                    createVfModule(xmlRequest, canonicalStackId, backout, success);
                 } else if ("deleteVfModuleRequest".equals(requestType.get())) {
                     logger.debug("Executing External Task Stack Service For Delete Vf Module");
-                    deleteVfModule(xmlRequest, outputs, vnfRollback, canonicalStackId, backout, success);
+                    deleteVfModule(xmlRequest, canonicalStackId, backout, success);
                 } else if ("deleteVolumeGroupRequest".equals(requestType.get())) {
                     logger.debug("Executing External Task Stack Service For Delete Volume Group");
-                    deleteVolumeGroup(xmlRequest, outputs, vnfRollback, canonicalStackId, backout, success);
+                    deleteVolumeGroup(xmlRequest, canonicalStackId, backout, success);
                 } else if ("createNetworkRequest".equals(requestType.get())) {
-                    createNetwork(xmlRequest, networkId, neutronNetworkId, networkFqdn, subnetIdMap, networkRollback,
-                            canonicalStackId, backout, success, os3Nw);
+                    createNetwork(xmlRequest, subnetIdMap, networkRollback, canonicalStackId, backout, success, os3Nw);
                 } else if ("deleteNetworkRequest".equals(requestType.get())) {
                     deleteNetwork(xmlRequest, canonicalStackId, backout, success);
                 } else if ("updateNetworkRequest".equals(requestType.get())) {
-
                     updateNetwork(xmlRequest, subnetIdMap, networkRollback, canonicalStackId, backout, success);
                 } else if ("rollbackNetworkRequest".equals(requestType.get())) {
                     rollbackNetwork(xmlRequest, canonicalStackId, backout, success);
@@ -152,8 +144,7 @@ public class StackService extends ExternalTaskUtils {
         }
     }
 
-    private void createVolumeGroup(String xmlRequest, Holder<Map<String, String>> outputs,
-            Holder<VnfRollback> vnfRollback, Holder<String> canonicalStackId, MutableBoolean backout,
+    private void createVolumeGroup(String xmlRequest, Holder<String> canonicalStackId, MutableBoolean backout,
             MutableBoolean success) throws VnfException {
         CreateVolumeGroupRequest req = JAXB.unmarshal(new StringReader(xmlRequest), CreateVolumeGroupRequest.class);
         String completeVnfVfModuleType = req.getVnfType() + "::" + req.getVfModuleType();
@@ -162,19 +153,19 @@ public class StackService extends ExternalTaskUtils {
             vnfPluginImpl.createVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
                     completeVnfVfModuleType, req.getVnfVersion(), "", req.getVolumeGroupName(), "", "VOLUME", null,
                     null, req.getModelCustomizationUuid(), req.getVolumeGroupParams(), false, true,
-                    req.getEnableBridge(), req.getMsoRequest(), canonicalStackId, outputs, vnfRollback);
+                    req.getEnableBridge(), req.getMsoRequest(), canonicalStackId);
         } else {
             vnfAdapterImpl.createVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
                     completeVnfVfModuleType, req.getVnfVersion(), "", req.getVolumeGroupName(), "", "VOLUME", null,
                     null, req.getModelCustomizationUuid(), req.getVolumeGroupParams(), false, true,
-                    req.getEnableBridge(), req.getMsoRequest(), canonicalStackId, outputs, vnfRollback);
+                    req.getEnableBridge(), req.getMsoRequest(), canonicalStackId);
         }
         success.setTrue();
         backout.setValue(!req.getSuppressBackout());
     }
 
-    private void createVfModule(String xmlRequest, Holder<Map<String, String>> outputs, Holder<VnfRollback> vnfRollback,
-            Holder<String> canonicalStackId, MutableBoolean backout, MutableBoolean success) throws VnfException {
+    private void createVfModule(String xmlRequest, Holder<String> canonicalStackId, MutableBoolean backout,
+            MutableBoolean success) throws VnfException {
         CreateVfModuleRequest req = JAXB.unmarshal(new StringReader(xmlRequest), CreateVfModuleRequest.class);
         String completeVnfVfModuleType = req.getVnfType() + "::" + req.getVfModuleType();
         boolean isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
@@ -183,21 +174,22 @@ public class StackService extends ExternalTaskUtils {
                     completeVnfVfModuleType, req.getVnfVersion(), req.getVnfId(), req.getVfModuleName(),
                     req.getVfModuleId(), req.getRequestType(), req.getVolumeGroupStackId(),
                     req.getBaseVfModuleStackId(), req.getModelCustomizationUuid(), req.getVfModuleParams(), false,
-                    false, req.getEnableBridge(), req.getMsoRequest(), canonicalStackId, outputs, vnfRollback);
+                    false, req.getEnableBridge(), req.getMsoRequest(), canonicalStackId);
         } else {
             vnfAdapterImpl.createVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
                     completeVnfVfModuleType, req.getVnfVersion(), req.getVnfId(), req.getVfModuleName(),
                     req.getVfModuleId(), req.getRequestType(), req.getVolumeGroupStackId(),
                     req.getBaseVfModuleStackId(), req.getModelCustomizationUuid(), req.getVfModuleParams(), false,
-                    false, req.getEnableBridge(), req.getMsoRequest(), canonicalStackId, outputs, vnfRollback);
+                    false, req.getEnableBridge(), req.getMsoRequest(), canonicalStackId);
         }
         success.setTrue();
         backout.setValue(req.getBackout());
     }
 
-    private void deleteVfModule(String xmlRequest, Holder<Map<String, String>> outputs, Holder<VnfRollback> vnfRollback,
-            Holder<String> canonicalStackId, MutableBoolean backout, MutableBoolean success) throws VnfException {
+    private void deleteVfModule(String xmlRequest, Holder<String> canonicalStackId, MutableBoolean backout,
+            MutableBoolean success) throws VnfException {
         backout.setFalse();
+        Holder<Map<String, String>> outputs = new Holder<>();
         DeleteVfModuleRequest req = JAXB.unmarshal(new StringReader(xmlRequest), DeleteVfModuleRequest.class);
         boolean isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
         if (isMulticloud) {
@@ -205,8 +197,7 @@ public class StackService extends ExternalTaskUtils {
                     req.getVfModuleStackId(), req.getMsoRequest(), outputs);
         } else {
             vnfAdapterImpl.deleteVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
-                    req.getVfModuleStackId(), req.getVnfId(), req.getVfModuleId(), req.getModelCustomizationUuid(),
-                    req.getMsoRequest(), outputs);
+                    req.getVfModuleStackId(), req.getModelCustomizationUuid(), req.getMsoRequest(), outputs);
         }
         success.setTrue();
         if (outputs != null && outputs.value != null) {
@@ -216,21 +207,24 @@ public class StackService extends ExternalTaskUtils {
         }
     }
 
-    private void deleteVolumeGroup(String xmlRequest, Holder<Map<String, String>> outputs,
-            Holder<VnfRollback> vnfRollback, Holder<String> canonicalStackId, MutableBoolean backout,
+    private void deleteVolumeGroup(String xmlRequest, Holder<String> canonicalStackId, MutableBoolean backout,
             MutableBoolean success) throws VnfException {
         backout.setFalse();
         DeleteVolumeGroupRequest req = JAXB.unmarshal(new StringReader(xmlRequest), DeleteVolumeGroupRequest.class);
-        vnfAdapterImpl.deleteVnf(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
-                req.getVolumeGroupStackId(), req.getMsoRequest(), false);
+        vnfAdapterImpl.deleteVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
+                req.getVolumeGroupStackId(), null, req.getMsoRequest(), new Holder<>());
         success.setTrue();
         canonicalStackId.value = req.getVolumeGroupStackId();
     }
 
-    private void createNetwork(String xmlRequest, Holder<String> networkId, Holder<String> neutronNetworkId,
-            Holder<String> networkFqdn, Holder<Map<String, String>> subnetIdMap,
+    private void createNetwork(String xmlRequest, Holder<Map<String, String>> subnetIdMap,
             Holder<NetworkRollback> networkRollback, Holder<String> canonicalStackId, MutableBoolean backout,
             MutableBoolean success, MutableBoolean os3) throws NetworkException {
+
+        Holder<String> networkId = new Holder<>();
+        Holder<String> neutronNetworkId = new Holder<>();
+        Holder<String> networkFqdn = new Holder<>();
+
         CreateNetworkRequest req = JAXB.unmarshal(new StringReader(xmlRequest), CreateNetworkRequest.class);
         HashMap<String, String> params = (HashMap<String, String>) req.getNetworkParams();
         if (params == null) {

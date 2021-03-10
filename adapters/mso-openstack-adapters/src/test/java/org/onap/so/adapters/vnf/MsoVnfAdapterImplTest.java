@@ -25,6 +25,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.patch;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackGetStackVfModule_200;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackGetStackVfModule_404;
@@ -57,7 +58,6 @@ import org.onap.so.openstack.utils.MsoHeatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.stubbing.Scenario;
-import static org.junit.Assert.assertNotNull;
 
 
 public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
@@ -85,8 +85,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
         map.put("key1", "value1");
         instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "",
                 "VFMOD", null, null, "b4ea86b4-253f-11e7-93ae-92361f002671", map, Boolean.TRUE, Boolean.TRUE,
-                Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
-                new Holder<VnfRollback>());
+                Boolean.FALSE, msoRequest, new Holder<>());
         assertNotNull(map);
     }
 
@@ -102,7 +101,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
         map.put("key1", "value1");
         instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "",
                 "VFMOD", null, null, "b4ea86b4-253f-11e7-93ae-92361f002671", map, null, Boolean.TRUE, Boolean.FALSE,
-                msoRequest, new Holder<>(), new Holder<Map<String, String>>(), new Holder<VnfRollback>());
+                msoRequest, new Holder<>());
         assertNotNull(map);
     }
 
@@ -133,8 +132,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
         map.put("key1", "value1");
         instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "",
                 "VFMOD", null, null, "b4ea86b4-253f-11e7-93ae-92361f002671", map, Boolean.FALSE, Boolean.TRUE,
-                Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
-                new Holder<VnfRollback>());
+                Boolean.FALSE, msoRequest, new Holder<>());
         assertNotNull(map);
     }
 
@@ -151,8 +149,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
         map.put("key1", "value1");
         instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "",
                 "VFMOD", null, null, "b4ea86b4-253f-11e7-93ae-92361f002671", map, Boolean.TRUE, Boolean.TRUE,
-                Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
-                new Holder<VnfRollback>());
+                Boolean.FALSE, msoRequest, new Holder<>());
         assertNotNull(map);
     }
 
@@ -169,8 +166,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
         map.put("key1", "value1");
         instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "",
                 "VFMOD", "volumeGroupHeatStackId", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
-                Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(),
-                new Holder<Map<String, String>>(), new Holder<VnfRollback>());
+                Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>());
     }
 
     @Test
@@ -188,8 +184,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
         map.put("key1", "value1");
         instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "",
                 "VFMOD", "volumeGroupHeatStackId", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
-                Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(),
-                new Holder<Map<String, String>>(), new Holder<VnfRollback>());
+                Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>());
     }
 
     @Test
@@ -207,8 +202,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
         map.put("key1", "value1");
         instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "",
                 "VFMOD", "volumeGroupHeatStackId", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
-                Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(),
-                new Holder<Map<String, String>>(), new Holder<VnfRollback>());
+                Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>());
     }
 
     @Test
@@ -228,8 +222,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
         map.put("key1", "value1");
         instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "",
                 "VFMOD", "volumeGroupHeatStackId", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
-                Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(),
-                new Holder<Map<String, String>>(), new Holder<VnfRollback>());
+                Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>());
     }
 
     @Test
@@ -263,8 +256,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
         map.put("key1", "value1");
         instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "",
                 "VFMOD", "volumeGroupHeatStackId", "baseVfHeatStackId", "9b339a61-69ca-465f-86b8-1c72c582b8e8", map,
-                Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(),
-                new Holder<Map<String, String>>(), new Holder<VnfRollback>());
+                Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>());
     }
 
     @Test
@@ -303,8 +295,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
         map.put("key1", "value1");
         instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "",
                 "XVFMOD", "volumeGroupHeatStackId", "baseVfHeatStackId", null, map, Boolean.FALSE, Boolean.TRUE,
-                Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
-                new Holder<VnfRollback>());
+                Boolean.FALSE, msoRequest, new Holder<>());
     }
 
     @Test
@@ -324,8 +315,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
         map.put("key1", "value1");
         instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "",
                 "VFMOD", "volumeGroupHeatStackId", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
-                Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(),
-                new Holder<Map<String, String>>(), new Holder<VnfRollback>());
+                Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>());
     }
 
     private MsoRequest getMsoRequest() {
@@ -499,9 +489,8 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
         MsoVnfAdapterImpl instance = new MsoVnfAdapterImpl();
         MsoRequest msoRequest = getMsoRequest();
         try {
-            instance.deleteVfModule("mdt1", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12",
-                    "5aae1e49-805c-4f9f-bd78-055bf7451157", "11420693-3f69-4c61-b3ee-9787c744e760", null, msoRequest,
-                    new Holder<Map<String, String>>());
+            instance.deleteVfModule("mdt1", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12", null,
+                    msoRequest, new Holder<Map<String, String>>());
         } catch (Exception e) {
 
         }

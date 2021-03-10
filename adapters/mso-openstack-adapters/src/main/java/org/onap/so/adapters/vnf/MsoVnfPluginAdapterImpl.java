@@ -42,6 +42,7 @@ import java.util.Optional;
 import java.util.Set;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.adapters.vdu.CloudInfo;
 import org.onap.so.adapters.vdu.VduException;
 import org.onap.so.adapters.vdu.VduInstance;
@@ -63,11 +64,9 @@ import org.onap.so.db.catalog.beans.VnfResource;
 import org.onap.so.db.catalog.data.repository.VFModuleCustomizationRepository;
 import org.onap.so.db.catalog.utils.MavenLikeVersioning;
 import org.onap.so.entity.MsoRequest;
-import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.VnfRollback;
 import org.onap.so.openstack.beans.VnfStatus;
-import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 import org.onap.so.openstack.utils.MsoHeatEnvironmentEntry;
@@ -532,8 +531,8 @@ public class MsoVnfPluginAdapterImpl {
     public void createVfModule(String cloudSiteId, String cloudOwner, String tenantId, String vfModuleType,
             String vnfVersion, String genericVnfId, String vfModuleName, String vfModuleId, String requestType,
             String volumeGroupId, String baseVfModuleId, String modelCustomizationUuid, Map<String, Object> inputs,
-            Boolean failIfExists, Boolean backout, Boolean enableBridge, MsoRequest msoRequest, Holder<String> vnfId,
-            Holder<Map<String, String>> outputs, Holder<VnfRollback> rollback) throws VnfException {
+            Boolean failIfExists, Boolean backout, Boolean enableBridge, MsoRequest msoRequest, Holder<String> vnfId)
+            throws VnfException {
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis();
 
@@ -574,21 +573,6 @@ public class MsoVnfPluginAdapterImpl {
 
         logger.debug("requestType = " + requestType + ", volumeGroupStackId = " + volumeGroupId + ", baseStackId = "
                 + baseVfModuleId);
-
-        // Build a default rollback object (no actions performed)
-        VnfRollback vfRollback = new VnfRollback();
-        vfRollback.setCloudSiteId(cloudSiteId);
-        vfRollback.setCloudOwner(cloudOwner);
-        vfRollback.setTenantId(tenantId);
-        vfRollback.setMsoRequest(msoRequest);
-        vfRollback.setRequestType(requestType);
-        vfRollback.setIsBase(false); // Until we know better
-        vfRollback.setVolumeGroupHeatStackId(volumeGroupId);
-        vfRollback.setBaseGroupHeatStackId(baseVfModuleId);
-        vfRollback.setModelCustomizationUuid(modelCustomizationUuid);
-        vfRollback.setMode("CFY");
-
-        rollback.value = vfRollback; // Default rollback - no updates performed
 
         // Get the VNF/VF Module definition from the Catalog DB first.
         // There are three relevant records: VfModule, VfModuleCustomization, VnfResource
@@ -696,7 +680,6 @@ public class MsoVnfPluginAdapterImpl {
                     // Populate the outputs from the existing deployment.
 
                     vnfId.value = vduInstance.getVduInstanceId();
-                    outputs.value = copyStringOutputs(vduInstance.getOutputs());
                     return;
                 }
             }
@@ -794,7 +777,6 @@ public class MsoVnfPluginAdapterImpl {
 
         if (vfModule.getIsBase()) {
             logger.debug("This is a BASE Module request");
-            vfRollback.setIsBase(true);
         } else {
             logger.debug("This is an Add-On Module request");
 
@@ -1063,15 +1045,7 @@ public class MsoVnfPluginAdapterImpl {
             throw new VnfException("Exception during instantiateVdu: " + e.getMessage());
         }
 
-
-        // Reach this point if create is successful.
-        // Populate remaining rollback info and response parameters.
-        vfRollback.setVnfCreated(true);
-        vfRollback.setVnfId(vduInstance.getVduInstanceId());
         vnfId.value = vduInstance.getVduInstanceId();
-        outputs.value = copyStringOutputs(vduInstance.getOutputs());
-
-        rollback.value = vfRollback;
 
         logger.debug("VF Module " + vfModuleName + " successfully created");
         return;
