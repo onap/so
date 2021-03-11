@@ -30,6 +30,8 @@ import java.util.Scanner;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
+import org.onap.logging.filter.base.ErrorCode;
+import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.so.adapters.vdu.CloudInfo;
 import org.onap.so.adapters.vdu.PluginAction;
 import org.onap.so.adapters.vdu.VduArtifact;
@@ -43,7 +45,6 @@ import org.onap.so.adapters.vdu.VduStatus;
 import org.onap.so.client.HttpClient;
 import org.onap.so.client.HttpClientFactory;
 import org.onap.so.client.RestClient;
-import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.HeatStatus;
 import org.onap.so.openstack.beans.StackInfo;
@@ -51,7 +52,6 @@ import org.onap.so.openstack.exceptions.MsoAdapterException;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoOpenstackException;
 import org.onap.so.openstack.mappers.StackInfoMapper;
-import org.onap.logging.filter.base.ONAPComponents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,16 +151,16 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
 
         for (String key : MULTICLOUD_INPUTS) {
             if (!stackInputs.isEmpty() && stackInputs.containsKey(key)) {
-                if (key == OOF_DIRECTIVES) {
+                if (OOF_DIRECTIVES.equals(key)) {
                     oofDirectives = (String) stackInputs.get(key);
                 }
-                if (key == SDNC_DIRECTIVES) {
+                if (SDNC_DIRECTIVES.equals(key)) {
                     sdncDirectives = (String) stackInputs.get(key);
                 }
-                if (key == USER_DIRECTIVES) {
+                if (USER_DIRECTIVES.equals(key)) {
                     userDirectives = (String) stackInputs.get(key);
                 }
-                if (key == TEMPLATE_TYPE) {
+                if (TEMPLATE_TYPE.equals(key)) {
                     templateType = (String) stackInputs.get(key);
                 }
                 if (logger.isDebugEnabled()) {
