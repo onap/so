@@ -94,6 +94,9 @@ class AllocateSliceSubnet extends AbstractServiceTaskProcessor {
             String servicename = jsonUtil.getJsonValue(subnetInstanceReq, "name")
             execution.setVariable("servicename", servicename)
 
+            String sST = jsonUtil.getJsonValue(subnetInstanceReq, "sst")
+            execution.setVariable("sst", sST)
+
             String nsiId = jsonUtil.getJsonValue(subnetInstanceReq, "additionalProperties.nsiInfo.nsiId")
             if (isBlank(nsiId)) {
                 msg = "Input nsiId is null"

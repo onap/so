@@ -136,6 +136,7 @@ css.prepareOofSelection(execution)</bpmn:script>
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:out source="rollbackData" target="rollbackData" />
         <camunda:out source="rolledBack" target="rolledBack" />
+        <camunda:in source="sst" target="sst" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1bevt3a</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0mlrlbv</bpmn:outgoing>

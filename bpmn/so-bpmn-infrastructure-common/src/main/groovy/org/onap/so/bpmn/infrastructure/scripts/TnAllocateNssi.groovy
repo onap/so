@@ -87,6 +87,9 @@ class TnAllocateNssi extends AbstractServiceTaskProcessor {
             String sliceServiceInstanceName = execution.getVariable("servicename")
             execution.setVariable("sliceServiceInstanceName", sliceServiceInstanceName)
 
+            String sst = execution.getVariable("sst")
+            execution.setVariable("sst", sst)
+
             //additional properties
             String sliceProfile = jsonUtil.getJsonValue(additionalPropJsonStr, "sliceProfile")
             if (isBlank(sliceProfile)) {

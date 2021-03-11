@@ -43,6 +43,8 @@ public class NssmfRequest implements Serializable {
 
     private NetworkType networkType;
 
+    private String sST;
+
     private Object additionalProperties;
 
     public NssmfRequest() {}
@@ -56,7 +58,9 @@ public class NssmfRequest implements Serializable {
         this.additionalProperties = additionalProperties;
         this.serviceInstanceID = serviceInfo.getNssiId();
         this.name = serviceInfo.getNssiName();
+        this.sST = serviceInfo.getSST();
     }
+
 
 }
 

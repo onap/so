@@ -125,6 +125,7 @@ nss.prepareInitOperationStatus(execution)</bpmn:script>
         <camunda:in source="sliceParams" target="sliceParams" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:in source="servicename" target="servicename" />
+        <camunda:in source="sst" target="sst" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0g7721r</bpmn:incoming>
       <bpmn:outgoing>Flow_189zwjw</bpmn:outgoing>

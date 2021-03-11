@@ -263,9 +263,10 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
                 execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
         SliceTaskInfo<SliceProfileAdapter> sliceTaskInfo = sliceParams.anSliceTaskInfo
         sliceTaskInfo.setSliceInstanceId(serviceInstanceId)
+        String sliceProfileName = "an_" + sliceParams.serviceName
 
         // create slice profile
-        ServiceInstance rspi = createSliceProfileInstance(sliceTaskInfo, oStatus)
+        ServiceInstance rspi = createSliceProfileInstance(sliceTaskInfo, sliceProfileName, oStatus)
 
         //timestamp format YYYY-MM-DD hh:mm:ss
         rspi.setCreatedAt(new Date(System.currentTimeMillis()).format("yyyy-MM-dd HH:mm:ss", TimeZone.getDefault()))
@@ -338,10 +339,11 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         String routeId = UUID.randomUUID().toString()
         route.setRouteId(routeId)
         route.setType("endpoint")
-        route.setRole("an")
+        route.setRole("AN")
         route.setFunction("3gppTransportEP")
         route.setIpAddress( sliceTaskInfo.sliceProfile.ipAddress)
         route.setNextHop(sliceTaskInfo.sliceProfile.nextHopInfo)
+        route.setLogicalInterfaceId(sliceTaskInfo.sliceProfile.logicInterfaceId)
         route.setAddressFamily("ipv4")
         route.setPrefixLength(24)
         sliceTaskInfo.setEndPointId(routeId)
@@ -363,10 +365,11 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         String routeId = UUID.randomUUID().toString()
         route.setRouteId(routeId)
         route.setType("endpoint")
-        route.setRole("cn")
+        route.setRole("CN")
         route.setFunction("3gppTransportEP")
         route.setIpAddress( sliceTaskInfo.sliceProfile.ipAddress)
         route.setNextHop(sliceTaskInfo.sliceProfile.nextHopInfo)
+        route.setLogicalInterfaceId(sliceTaskInfo.sliceProfile.logicInterfaceId)
         route.setAddressFamily("ipv4")
         route.setPrefixLength(24)
 
@@ -454,9 +457,10 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
                 execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
         SliceTaskInfo<SliceProfileAdapter> sliceTaskInfo = sliceParams.cnSliceTaskInfo
         sliceTaskInfo.setSliceInstanceId(serviceInstanceId)
+        String sliceProfileName = "cn_"+sliceParams.serviceName
 
         // create slice profile
-        ServiceInstance rspi = createSliceProfileInstance(sliceTaskInfo, oStatus)
+        ServiceInstance rspi = createSliceProfileInstance(sliceTaskInfo, sliceProfileName, oStatus)
 
         //timestamp format YYYY-MM-DD hh:mm:ss
         rspi.setCreatedAt(new Date(System.currentTimeMillis()).format("yyyy-MM-dd HH:mm:ss", TimeZone.getDefault()))
@@ -597,10 +601,11 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         String serviceInstanceId = UUID.randomUUID().toString()
 
         sliceTaskInfo.setSliceInstanceId(serviceInstanceId)
+        String sliceProfileName = "tn_" + sliceParams.serviceName
         //execution.setVariable("cnSliceProfileInstanceId", serviceInstanceId) //todo:
 
         // create slice profile
-        ServiceInstance rspi = createSliceProfileInstance(sliceTaskInfo, oStatus)
+        ServiceInstance rspi = createSliceProfileInstance(sliceTaskInfo, sliceProfileName, oStatus)
 
         //timestamp format YYYY-MM-DD hh:mm:ss
         rspi.setCreatedAt(new Date(System.currentTimeMillis()).format("yyyy-MM-dd HH:mm:ss", TimeZone.getDefault()))
@@ -701,6 +706,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         serviceInfo.serviceUuid = sliceTaskInfo.NSSTInfo.UUID
         serviceInfo.nssiId = sliceTaskInfo.suggestNssiId
         serviceInfo.sST = sliceTaskInfo.sliceProfile.sST ?: sliceParams.serviceProfile.get("sST")
+        serviceInfo.nssiName = "nssi_tn" + execution.getVariable("sliceServiceInstanceName")
 
         nbiRequest.setServiceInfo(serviceInfo)
         nbiRequest.setEsrInfo(esrInfo)
@@ -923,10 +929,10 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         client.create(sourceInstanceUri, relationship)
     }
 
-    static def createSliceProfileInstance(SliceTaskInfo<SliceProfileAdapter> sliceTaskInfo, String oStatus) {
+    static def createSliceProfileInstance(SliceTaskInfo<SliceProfileAdapter> sliceTaskInfo, String sliceProfileName, String oStatus) {
         // create slice profile
         ServiceInstance rspi = new ServiceInstance()
-        rspi.setServiceInstanceName(sliceTaskInfo.NSSTInfo.name)
+        rspi.setServiceInstanceName(sliceProfileName)
         rspi.setServiceType(sliceTaskInfo.sliceProfile.getSST())
         rspi.setServiceRole("slice-profile")
         rspi.setOrchestrationStatus(oStatus)

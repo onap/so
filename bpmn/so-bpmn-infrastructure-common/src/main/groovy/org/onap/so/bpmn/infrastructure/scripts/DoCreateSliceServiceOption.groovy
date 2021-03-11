@@ -22,6 +22,7 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.so.beans.nsmf.EsrInfo
 import org.onap.so.beans.nsmf.NetworkType
 import org.onap.so.beans.nsmf.NssmfAdapterNBIRequest
@@ -55,6 +56,8 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
 
     OofUtils oofUtils = new OofUtils()
 
+    AAISliceUtil aaiSliceUtil = new AAISliceUtil()
+
     private static final ObjectMapper objectMapper = new ObjectMapper()
 
     private NssmfAdapterUtils nssmfAdapterUtils = new NssmfAdapterUtils(httpClientFactory, jsonUtil)
@@ -70,7 +73,7 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
      * prepare the params for decompose nst
      * @param execution
      */
-    public void prepareDecomposeNST(DelegateExecution execution) {
+    void prepareDecomposeNST(DelegateExecution execution) {
 
         SliceTaskParamsAdapter sliceTaskParams =
                 execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
@@ -346,7 +349,6 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
     }
 
     /**
-     * todo: need rewrite
      * process select nsi response
      * @param execution
      */
@@ -369,10 +371,7 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
 
         List<Map<String, Object>> nsiSolutions = (List<Map<String, Object>>) resMap.get("solutions")
 
-        Map<String, Object> solution = nsiSolutions.get(0)
-
-        //String resourceSharingLevel = execution.getVariable("resourceSharingLevel")
-        //Boolean isSharable = resourceSharingLevel == "shared"
+        Map<String, Object> solution = nsiSolutions?.get(0)
 
         if (solution != null) {
             if (execution.getVariable("queryNsiFirst")) {
@@ -384,7 +383,7 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
                 }
                 execution.setVariable("queryNsiFirst", false)
             } else {
-                processSharedNSI(solution, sliceTaskParams)
+                processSharedNSI(solution, sliceTaskParams, execution)
                 execution.setVariable("needQuerySliceProfile", false)
             }
         }
@@ -393,18 +392,28 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
         logger.debug("*** Completed options Call to OOF ***")
     }
 
-    private static void processSharedNSI(Map<String, Object> solution, SliceTaskParamsAdapter sliceParams) {
+    private void processSharedNSI(Map<String, Object> solution, SliceTaskParamsAdapter sliceParams, DelegateExecution execution) {
         Map<String, Object> sharedNSISolution = solution.get("sharedNSISolution") as Map
         String nsiId = sharedNSISolution.get("NSIId")
         String nsiName = sharedNSISolution.get("NSIName")
         sliceParams.setSuggestNsiId(nsiId)
         sliceParams.setSuggestNsiName(nsiName)
 
+        List<String> nssiId = aaiSliceUtil.getNSSIIdList(execution,nsiId)
+        List<ServiceInstance> nssiInstances = aaiSliceUtil.getNSSIListFromAAI(execution, nssiId)
+
         List<Map> sliceProfiles = sharedNSISolution.get("sliceProfiles") as List<Map>
         handleSliceProfiles(sliceProfiles, sliceParams)
+        Map<String, Object> nssiSolution = new HashMap<>()
+        for(ServiceInstance instance: nssiInstances){
+            nssiSolution.put("NSSIId", instance.getServiceInstanceId())
+            nssiSolution.put("NSSIName", instance.getServiceInstanceName())
+            processNssiResult(sliceParams, instance.getEnvironmentContext(), nssiSolution)
+        }
+
     }
 
-    private static void processNewNSI(Map<String, Object> solution, SliceTaskParamsAdapter sliceParams) {
+    private void processNewNSI(Map<String, Object> solution, SliceTaskParamsAdapter sliceParams) {
         Map<String, Object> newNSISolution = solution.get("newNSISolution") as Map
         List<Map> sliceProfiles = newNSISolution.get("sliceProfiles") as List<Map>
         handleSliceProfiles(sliceProfiles, sliceParams)
@@ -436,7 +445,7 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
      * get NSSI Selection Capability for AN
      * @param execution
      */
-    public void getNSSISelectionCap4AN(DelegateExecution execution) {
+    void getNSSISelectionCap4AN(DelegateExecution execution) {
 
         def vendor = execution.getVariable("vendor") as String
 
@@ -458,7 +467,7 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
      * get NSSI Selection Capability for TN
      * @param execution
      */
-    public void getNSSISelectionCap4TN(DelegateExecution execution) {
+    void getNSSISelectionCap4TN(DelegateExecution execution) {
 
         def vendor = execution.getVariable("vendor") as String
 
@@ -479,7 +488,7 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
      * get NSSI Selection Capability for CN
      * @param execution
      */
-    public void getNSSISelectionCap4CN(DelegateExecution execution) {
+    void getNSSISelectionCap4CN(DelegateExecution execution) {
 
         def vendor = execution.getVariable("vendor") as String
 
@@ -513,7 +522,7 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
     }
 
     /**
-     * if exist nssi need to select?
+     * if exist nssi need to select
      * @param execution
      */
     public void handleNssiSelect(DelegateExecution execution) {

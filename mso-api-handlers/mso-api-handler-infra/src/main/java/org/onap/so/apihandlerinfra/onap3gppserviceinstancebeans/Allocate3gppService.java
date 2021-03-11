@@ -47,6 +47,9 @@ public class Allocate3gppService {
     @JsonProperty("networkType")
     private String networkType;
 
+    @JsonProperty("sst")
+    private String sST;
+
     @JsonProperty("additionalProperties")
     private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -104,6 +107,14 @@ public class Allocate3gppService {
 
     public void setAdditionalProperties(Map<String, Object> additionalProperties) {
         this.additionalProperties = additionalProperties;
+    }
+
+    public String getsST() {
+        return sST;
+    }
+
+    public void setsST(String sST) {
+        this.sST = sST;
     }
 
     @Override

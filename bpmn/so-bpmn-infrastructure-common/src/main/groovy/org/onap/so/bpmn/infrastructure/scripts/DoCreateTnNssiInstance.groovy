@@ -111,6 +111,7 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
         String serviceType = execution.getVariable("subscriptionServiceType")
         String ssInstanceId = execution.getVariable("sliceServiceInstanceId")
         String sliceProfileStr = execution.getVariable("sliceProfile")
+        String sst = execution.getVariable("sst")
         try {
             if (sliceProfileStr == null || sliceProfileStr.isEmpty()) {
                 String msg = "ERROR: createServiceInstance: sliceProfile is null"
@@ -126,7 +127,7 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
                 sliceInstanceName = ssInstanceId
             }
             ss.setServiceInstanceName(sliceInstanceName)
-            ss.setServiceType(serviceType)
+            ss.setServiceType(sst)
             String serviceStatus = "deactivated"
             ss.setOrchestrationStatus(serviceStatus)
             String modelInvariantUuid = execution.getVariable("modelInvariantUuid")

@@ -183,6 +183,7 @@ class DoCreateSliceServiceInstance extends AbstractServiceTaskProcessor{
         serviceProfile.setUlThptPerSlice(Integer.parseInt(serviceProfileMap.get("uLThptPerSlice").toString()))
         serviceProfile.setUlThptPerUE(Integer.parseInt(serviceProfileMap.get("uLThptPerUE").toString()))
         serviceProfile.setActivityFactor(Integer.parseInt(serviceProfileMap.get("activityFactor").toString()))
+        serviceProfile.setMaxNumberOfConns(Integer.parseInt(serviceProfileMap.get("maxNumberofConns").toString()))
 
         serviceProfile.setJitter(Integer.parseInt(serviceProfileMap.get("jitter").toString()))
         serviceProfile.setSurvivalTime("0")
