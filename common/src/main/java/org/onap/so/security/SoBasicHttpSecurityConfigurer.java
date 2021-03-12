@@ -28,7 +28,7 @@ import org.springframework.util.StringUtils;
  * @author Waqas Ikram (waqas.ikram@est.tech)
  *
  */
-@Component
+@Component("basic")
 public class SoBasicHttpSecurityConfigurer implements HttpSecurityConfigurer {
 
     @Autowired

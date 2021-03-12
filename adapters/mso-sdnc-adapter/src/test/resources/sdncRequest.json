@@ -1,0 +1,12 @@
+{
+  "request_control": { 
+    "transaction_id": "migId", 
+    "request_id": "reqId", 
+    "invocation_id": "subReqId",
+    "async": true, 
+    "callback_url": "host/callback" 
+  }, 
+  "input": { 
+    "id": "id" 
+  }
+}
