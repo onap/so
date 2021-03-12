@@ -134,7 +134,6 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
             "modelVersion":""
              }"""
         execution.setVariable("nsstServiceModelInfo", serviceModelInfo)
-
     }
 
     /**
@@ -165,7 +164,6 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
         } else {
             execution.setVariable("nsstHandleContinue", true)
         }
-
     }
 
     /**
@@ -193,7 +191,7 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
     }
 
     private void handleByType(DelegateExecution execution, ServiceDecomposition serviceDecomposition,
-                              SliceTaskParamsAdapter sliceParams, List<SubnetCapability> subnetCapabilities) {
+            SliceTaskParamsAdapter sliceParams, List<SubnetCapability> subnetCapabilities) {
         ModelInfo modelInfo = serviceDecomposition.getModelInfo()
         String vendor = serviceDecomposition.getServiceRole()
         SubnetType subnetType = convertServiceCategory(serviceDecomposition.getServiceCategory())
@@ -535,20 +533,6 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
         boolean needAnNssiSelection = execution.getVariable("NEED_AN_NSSI_SELECTION") as Boolean
         boolean needTnNssiSelection = execution.getVariable("NEED_TN_NSSI_SELECTION") as Boolean
 
-        /**
-         * [
-         * ​	{
-         * ​		"subType":  subtype,
-         * ​		"nsstInfo": object,
-         * ​		"sliceProfile": object
-         * ​	},
-         *      {
-         *          "subType":  subtype,
-         *          "nsstInfo": object,
-         *          "sliceProfile": object
-         *      }
-         * ]
-         */
         List<Map> nssiNeedHandlerInfos = new ArrayList<>()
         Map<String, Object> nssiNeedHandlerMap = new HashMap()
 
@@ -685,7 +669,7 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
     }
 
     private void processNssiResult(SliceTaskParamsAdapter sliceTaskParams, SubnetType subnetType,
-                                   Map<String, Object> solution) {
+            Map<String, Object> solution) {
         switch (subnetType) {
             case SubnetType.CN:
                 sliceTaskParams.cnSliceTaskInfo.suggestNssiId = solution.get("NSSIId")

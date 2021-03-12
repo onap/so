@@ -160,7 +160,6 @@
     <dependency>
       <groupId>janino</groupId>
       <artifactId>janino</artifactId>
-      <version>2.5.15</version>
     </dependency>
     <dependency>
       <groupId>org.pacesys.openstack4j.connectors</groupId>
@@ -224,13 +223,11 @@
     <dependency>
       <groupId>ch.vorburger.mariaDB4j</groupId>
       <artifactId>mariaDB4j</artifactId>
-      <version>2.3.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-contract-wiremock</artifactId>
-      <version>1.2.4.RELEASE</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -246,7 +243,6 @@
     <dependency>
       <groupId>org.camunda.bpm</groupId>
       <artifactId>camunda-external-task-client</artifactId>
-      <version>1.4.0</version>
     </dependency>
     <dependency>
       <groupId>com.github.seancfoley</groupId>

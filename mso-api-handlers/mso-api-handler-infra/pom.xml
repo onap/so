@@ -10,17 +10,8 @@
   <name>mso-api-handler-infra</name>
   <description>ONAP SO API Handler Infra</description>
   <properties>
-    <camunda.version>7.14.0</camunda.version>
-    <camunda.bpm.assert.version>1.2</camunda.bpm.assert.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <swagger.version>2.0.8</swagger.version>
-    <jax-rs-version>1.1.1</jax-rs-version>
-    <json4s-jackson-version>3.6.0</json4s-jackson-version>
-    <json4s-core-version>3.6.0</json4s-core-version>
-    <reflections-version>0.9.9-RC1</reflections-version>
-    <paranamer-version>2.5.2</paranamer-version>
-    <scannotation-version>1.0.3</scannotation-version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -31,14 +22,6 @@
         <version>${springboot.version}</version>
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-      <dependency>
-        <!-- Import dependency management from camunda -->
-        <groupId>org.camunda.bpm</groupId>
-        <artifactId>camunda-bom</artifactId>
-        <version>${camunda.version}</version>
-        <scope>import</scope>
-        <type>pom</type>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -55,7 +38,6 @@
     <dependency>
       <groupId>io.swagger.core.v3</groupId>
       <artifactId>swagger-jaxrs2</artifactId>
-      <version>2.0.8</version>
     </dependency>
     <dependency>
       <groupId>com.h2database</groupId>
@@ -100,7 +82,6 @@
     <dependency>
       <groupId>pl.pragmatists</groupId>
       <artifactId>JUnitParams</artifactId>
-      <version>1.0.5</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -137,7 +118,6 @@
     <dependency>
       <groupId>ch.vorburger.mariaDB4j</groupId>
       <artifactId>mariaDB4j</artifactId>
-      <version>2.3.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -148,7 +128,6 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-contract-wiremock</artifactId>
-      <version>1.2.4.RELEASE</version>
       <scope>test</scope>
     </dependency>
     <dependency>

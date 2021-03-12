@@ -6,7 +6,6 @@
     <artifactId>adapters</artifactId>
     <version>1.8.0-SNAPSHOT</version>
   </parent>
-
   <groupId>org.onap.so.adapters</groupId>
   <artifactId>so-appc-orchestrator</artifactId>
   <packaging>jar</packaging>
@@ -21,7 +20,6 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>${springboot.version}</version>
         <configuration>
           <mainClass>org.onap.so.adapters.appc.orchestrator.AppcOrchestratorApplication</mainClass>
         </configuration>
@@ -153,7 +151,6 @@
     <dependency>
       <groupId>org.camunda.bpm</groupId>
       <artifactId>camunda-external-task-client</artifactId>
-      <version>1.4.0</version>
     </dependency>
     <dependency>
       <groupId>org.onap.so</groupId>
@@ -199,7 +196,6 @@
     <dependency>
       <groupId>pl.pragmatists</groupId>
       <artifactId>JUnitParams</artifactId>
-      <version>1.0.5</version>
       <scope>test</scope>
     </dependency>
     <dependency>

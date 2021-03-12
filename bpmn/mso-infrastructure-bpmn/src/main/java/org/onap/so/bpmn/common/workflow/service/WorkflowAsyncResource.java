@@ -46,8 +46,9 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.core.env.Environment;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
 
 
 /**
@@ -61,7 +62,7 @@ import io.swagger.annotations.ApiOperation;
  *          further on executing the process
  */
 @Path("/async")
-@Api(value = "/async", description = "Provides asynchronous starting of a bpmn process")
+@OpenAPIDefinition(info = @Info(title = "/async", description = "Provides asynchronous starting of a bpmn process"))
 @Provider
 @Component
 public class WorkflowAsyncResource extends ProcessEngineAwareService {
@@ -97,8 +98,7 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
 
     @POST
     @Path("/services/{processKey}")
-    @ApiOperation(value = "Starts a new process with the appropriate process Key",
-            notes = "Aysnc fall outs are only logged")
+    @Operation(description = "Starts a new process with the appropriate process Key. Aysnc fall outs are only logged")
     @Produces("application/json")
     @Consumes("application/json")
     public Response startProcessInstanceByKey(@PathParam("processKey") String processKey, VariableMapImpl variableMap) {

@@ -41,8 +41,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
 
 /**
  * Generalized REST interface that injects a message event into a waiting BPMN process. Examples:
@@ -53,7 +54,8 @@ import io.swagger.annotations.ApiOperation;
  * </pre>
  */
 @Path("/")
-@Api(description = "Provides a generic service to inject messages into a waiting BPMN Proccess")
+@OpenAPIDefinition(info = @Info(title = "/",
+        description = "Provides a generic service to inject messages into a waiting BPMN Proccess"))
 @Component
 public class WorkflowMessageResource {
     private static final Logger logger = LoggerFactory.getLogger(WorkflowMessageResource.class);
@@ -64,7 +66,7 @@ public class WorkflowMessageResource {
 
     @POST
     @Path("/WorkflowMessage/{messageType}/{correlator}")
-    @ApiOperation(value = "Workflow message correlator", notes = "")
+    @Operation(description = "Workflow message correlator")
     @Consumes("*/*")
     @Produces(MediaType.TEXT_PLAIN)
     public Response deliver(@HeaderParam("Content-Type") String contentType,

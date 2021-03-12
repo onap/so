@@ -20,7 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
 
-import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
+import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
@@ -30,7 +30,6 @@ import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.Job;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.task.Task;
-import org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.so.bpmn.BaseBPMNTest;
@@ -52,7 +51,7 @@ public class PauseForManualTaskRainyDayTest extends BaseBPMNTest {
         variables.put("taskTimeout", TIMEOUT_10_S);
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("PauseForManualTaskRainyDay", variables);
         assertThat(pi).isNotNull();
-        BpmnAwareAssertions.assertThat(pi).isWaitingAt("ManualUserTask");
+        assertThat(pi).isWaitingAt("ManualUserTask");
         Task task = taskService.createTaskQuery().active().list().get(0);
         assertThat(pi).task().isNotNull();
         assertNotNull(task);
@@ -71,7 +70,7 @@ public class PauseForManualTaskRainyDayTest extends BaseBPMNTest {
         variables.put("taskTimeout", TIMEOUT_10_S);
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("PauseForManualTaskRainyDay", variables);
         assertThat(pi).isNotNull();
-        BpmnAwareAssertions.assertThat(pi).isWaitingAt("ManualUserTask");
+        assertThat(pi).isWaitingAt("ManualUserTask");
         assertThat(pi).task().isNotNull();
         Task task = taskService.createTaskQuery().active().list().get(0);
         assertNotNull(task);

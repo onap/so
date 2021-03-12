@@ -19,7 +19,7 @@
  */
 package org.onap.so.bpmn;
 
-import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
+import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.assertThat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

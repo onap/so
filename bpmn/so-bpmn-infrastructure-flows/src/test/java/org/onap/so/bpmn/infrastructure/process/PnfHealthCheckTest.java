@@ -41,7 +41,9 @@ import java.util.Map;
 import java.util.UUID;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.fail;
-import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
+import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Basic Integration test for GenericPnfHealthCheck.bpmn workflow.
@@ -118,7 +120,7 @@ public class PnfHealthCheckTest extends BaseBPMNTest {
 
         List<ExecutionServiceInput> detailedMessages = grpcNettyServer.getDetailedMessages();
         logger.debug("Size of detailedMessage is {}", detailedMessages.size());
-        assertThat(detailedMessages.size() == 1).isTrue();
+        assertTrue(detailedMessages.size() == 1);
         int count = 0;
         try {
             for (ExecutionServiceInput eSI : detailedMessages) {
@@ -132,7 +134,7 @@ public class PnfHealthCheckTest extends BaseBPMNTest {
             e.printStackTrace();
             fail("PNFHealthCheck request exception", e);
         }
-        assertThat(count == 1).isTrue();
+        assertTrue(count == 1);
     }
 
     private boolean isProcessInstanceEnded() {
@@ -148,25 +150,25 @@ public class PnfHealthCheckTest extends BaseBPMNTest {
         /**
          * the fields of actionIdentifiers should match the one in the response/PnfHealthCheck_catalogdb.json.
          */
-        assertThat(actionIdentifiers.getBlueprintName()).isEqualTo("test_pnf_health_check_restconf");
-        assertThat(actionIdentifiers.getBlueprintVersion()).isEqualTo("1.0.0");
-        assertThat(actionIdentifiers.getActionName()).isEqualTo(action);
-        assertThat(actionIdentifiers.getMode()).isEqualTo("async");
+        assertEquals("test_pnf_health_check_restconf", actionIdentifiers.getBlueprintName());
+        assertEquals("1.0.0", actionIdentifiers.getBlueprintVersion());
+        assertEquals(action, actionIdentifiers.getActionName());
+        assertEquals("async", actionIdentifiers.getMode());
 
         CommonHeader commonHeader = executionServiceInput.getCommonHeader();
-        assertThat(commonHeader.getOriginatorId()).isEqualTo("SO");
+        assertEquals("SO", commonHeader.getOriginatorId());
 
         Struct payload = executionServiceInput.getPayload();
         Struct requeststruct = payload.getFieldsOrThrow(action + "-request").getStructValue();
 
-        assertThat(requeststruct.getFieldsOrThrow("resolution-key").getStringValue()).isEqualTo("PNFDemo");
+        assertEquals("PNFDemo", requeststruct.getFieldsOrThrow("resolution-key").getStringValue());
         Struct propertiesStruct = requeststruct.getFieldsOrThrow(action + "-properties").getStructValue();
 
-        assertThat(propertiesStruct.getFieldsOrThrow("pnf-name").getStringValue()).isEqualTo("PNFDemo");
-        assertThat(propertiesStruct.getFieldsOrThrow("service-model-uuid").getStringValue())
-                .isEqualTo("32daaac6-5017-4e1e-96c8-6a27dfbe1421");
-        assertThat(propertiesStruct.getFieldsOrThrow("pnf-customization-uuid").getStringValue())
-                .isEqualTo("38dc9a92-214c-11e7-93ae-92361f002680");
+        assertEquals("PNFDemo", propertiesStruct.getFieldsOrThrow("pnf-name").getStringValue());
+        assertEquals("32daaac6-5017-4e1e-96c8-6a27dfbe1421",
+                propertiesStruct.getFieldsOrThrow("service-model-uuid").getStringValue());
+        assertEquals("38dc9a92-214c-11e7-93ae-92361f002680",
+                propertiesStruct.getFieldsOrThrow("pnf-customization-uuid").getStringValue());
     }
 
     private void mockAai() {

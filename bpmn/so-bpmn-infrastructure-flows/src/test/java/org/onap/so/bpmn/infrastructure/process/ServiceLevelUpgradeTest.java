@@ -26,8 +26,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.assertj.core.api.Assertions.fail;
-import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
-import com.google.protobuf.Struct;
+import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +48,7 @@ import org.onap.so.bpmn.mock.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.google.protobuf.Struct;
 
 /**
  * Basic Integration test for ServiceLevelUpgrade.bpmn workflow.
@@ -125,6 +127,7 @@ public class ServiceLevelUpgradeTest extends BaseBPMNTest {
         mockCatalogDb();
         mockRequestDb();
         mockAai();
+        grpcNettyServer.resetList();
 
         final String msoRequestId = UUID.randomUUID().toString();
         executionVariables.put(ExecutionVariableNames.MSO_REQUEST_ID, msoRequestId);
@@ -148,7 +151,7 @@ public class ServiceLevelUpgradeTest extends BaseBPMNTest {
                 "Gateway_1vq11i7", "Activity_0o2rrag", "Activity_1n4rk7m", "Activity_1lz38px", "Event_12983th");
 
         List<ExecutionServiceInput> detailedMessages = grpcNettyServer.getDetailedMessages();
-        assertThat(detailedMessages.size() == 5);
+        assertEquals(10, detailedMessages.size());
         int count = 0;
         String action = "";
         try {
@@ -164,7 +167,7 @@ public class ServiceLevelUpgradeTest extends BaseBPMNTest {
             e.printStackTrace();
             fail("GenericPnfSoftwareUpgrade request exception", e);
         }
-        assertThat(count == actionNames.length);
+        assertTrue(count == actionNames.length);
     }
 
     private boolean isProcessInstanceEnded() {
@@ -181,25 +184,25 @@ public class ServiceLevelUpgradeTest extends BaseBPMNTest {
         /**
          * the fields of actionIdentifiers should match the one in the response/PnfHealthCheck_catalogdb.json.
          */
-        assertThat(actionIdentifiers.getBlueprintName()).isEqualTo("test_pnf_software_upgrade_restconf");
-        assertThat(actionIdentifiers.getBlueprintVersion()).isEqualTo("1.0.0");
-        assertThat(actionIdentifiers.getActionName()).isEqualTo(action);
-        assertThat(actionIdentifiers.getMode()).isEqualTo("async");
+        assertEquals("test_pnf_software_upgrade_restconf", actionIdentifiers.getBlueprintName());
+        assertEquals("1.0.0", actionIdentifiers.getBlueprintVersion());
+        assertEquals(action, actionIdentifiers.getActionName());
+        assertEquals("async", actionIdentifiers.getMode());
 
         CommonHeader commonHeader = executionServiceInput.getCommonHeader();
-        assertThat(commonHeader.getOriginatorId()).isEqualTo("SO");
+        assertEquals("SO", commonHeader.getOriginatorId());
 
         Struct payload = executionServiceInput.getPayload();
         Struct requeststruct = payload.getFieldsOrThrow(action + "-request").getStructValue();
 
-        assertThat(requeststruct.getFieldsOrThrow("resolution-key").getStringValue()).isEqualTo(pnfName);
+        assertEquals(pnfName, requeststruct.getFieldsOrThrow("resolution-key").getStringValue());
         Struct propertiesStruct = requeststruct.getFieldsOrThrow(action + "-properties").getStructValue();
 
-        assertThat(propertiesStruct.getFieldsOrThrow("pnf-name").getStringValue()).isEqualTo(pnfName);
-        assertThat(propertiesStruct.getFieldsOrThrow("service-model-uuid").getStringValue())
-                .isEqualTo("d88da85c-d9e8-4f73-b837-3a72a431622b");
-        assertThat(propertiesStruct.getFieldsOrThrow("pnf-customization-uuid").getStringValue())
-                .isEqualTo("38dc9a92-214c-11e7-93ae-92361f002680");
+        assertEquals(pnfName, propertiesStruct.getFieldsOrThrow("pnf-name").getStringValue());
+        assertEquals("d88da85c-d9e8-4f73-b837-3a72a431622b",
+                propertiesStruct.getFieldsOrThrow("service-model-uuid").getStringValue());
+        assertEquals("38dc9a92-214c-11e7-93ae-92361f002680",
+                propertiesStruct.getFieldsOrThrow("pnf-customization-uuid").getStringValue());
     }
 
     private void mockAai() {

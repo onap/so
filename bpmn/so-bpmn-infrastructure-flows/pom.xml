@@ -9,13 +9,10 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>so-bpmn-infrastructure-flows</artifactId>
   <packaging>jar</packaging>
-
   <properties>
-    <camunda.bpm.assert.version>2.0-alpha2</camunda.bpm.assert.version>
     <assertj.core.version>1.7.0</assertj.core.version>
     <grpc.version>1.17.1</grpc.version>
   </properties>
-
   <build>
     <plugins>
       <plugin>
@@ -138,17 +135,6 @@
     </pluginManagement>
     <finalName>${project.artifactId}-${project.version}</finalName>
   </build>
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.camunda.bpm</groupId>
-        <artifactId>camunda-bom</artifactId>
-        <version>${camunda.version}</version>
-        <scope>import</scope>
-        <type>pom</type>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>org.camunda.bpm.springboot</groupId>
@@ -190,7 +176,8 @@
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-service-description-swagger</artifactId>
+      <artifactId>cxf-rt-rs-service-description-openapi-v3</artifactId>
+      <version>3.4.2</version>
     </dependency>
     <dependency>
       <groupId>com.h2database</groupId>
@@ -200,8 +187,6 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>1.10.19</version>
-      <!-- remove -->
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -258,15 +243,13 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.camunda.bpm.extension</groupId>
+      <groupId>org.camunda.bpm.assert</groupId>
       <artifactId>camunda-bpm-assert</artifactId>
-      <version>${camunda.bpm.assert.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>${assertj.core.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -277,7 +260,6 @@
     <dependency>
       <groupId>ch.vorburger.mariaDB4j</groupId>
       <artifactId>mariaDB4j</artifactId>
-      <version>2.3.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -285,6 +267,10 @@
       <artifactId>grpc-testing</artifactId>
       <version>${grpc.version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-contract-wiremock</artifactId>
     </dependency>
   </dependencies>
 </project>

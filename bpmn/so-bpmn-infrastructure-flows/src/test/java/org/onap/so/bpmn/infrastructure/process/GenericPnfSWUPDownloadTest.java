@@ -20,11 +20,24 @@
 
 package org.onap.so.bpmn.infrastructure.process;
 
-import com.google.protobuf.Struct;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static org.assertj.core.api.Assertions.fail;
+import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import org.assertj.core.api.Assertions;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Before;
 import org.junit.Test;
+import org.onap.aaiclient.client.aai.AAIVersion;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.ActionIdentifiers;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.CommonHeader;
 import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceInput;
@@ -32,21 +45,10 @@ import org.onap.so.BaseBPMNTest;
 import org.onap.so.GrpcNettyServer;
 import org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames;
 import org.onap.so.bpmn.mock.FileUtil;
-import org.onap.aaiclient.client.aai.AAIVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static org.assertj.core.api.Assertions.fail;
-import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
+import com.google.protobuf.Struct;
 
 /**
  * Basic Integration test for GenericPnfSWUPDownloadTest.bpmn workflow.
@@ -100,6 +102,7 @@ public class GenericPnfSWUPDownloadTest extends BaseBPMNTest {
 
         mockCatalogDb();
         mockAai();
+        grpcNettyServer.resetList();
 
         final String msoRequestId = UUID.randomUUID().toString();
         executionVariables.put(ExecutionVariableNames.MSO_REQUEST_ID, msoRequestId);
@@ -117,12 +120,12 @@ public class GenericPnfSWUPDownloadTest extends BaseBPMNTest {
         }
 
         // Layout is to reflect the bpmn visual layout
-        assertThat(pi).isEnded().hasPassedInOrder("download_StartEvent", "ServiceTask_1mpt2eq", "ServiceTask_1nl90ao",
+        assertThat(pi).isStarted().hasPassedInOrder("download_StartEvent", "ServiceTask_1mpt2eq", "ServiceTask_1nl90ao",
                 "ExclusiveGateway_1rj84ne", "ServiceTask_0yavde3", "ExclusiveGateway_1ja7grm", "ServiceTask_1wxo7xz",
                 "ExclusiveGateway_08lusga", "download_EndEvent");
 
         List<ExecutionServiceInput> detailedMessages = grpcNettyServer.getDetailedMessages();
-        assertThat(detailedMessages.size() == 3);
+        assertEquals(3, detailedMessages.size());
         int count = 0;
         try {
             for (ExecutionServiceInput eSI : detailedMessages) {
@@ -138,7 +141,7 @@ public class GenericPnfSWUPDownloadTest extends BaseBPMNTest {
             e.printStackTrace();
             fail("GenericPnfSWUPDownload request exception", e);
         }
-        assertThat(count == actionNames.length);
+        assertTrue(count == actionNames.length);
     }
 
     private boolean isProcessInstanceEnded() {
