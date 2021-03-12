@@ -138,11 +138,8 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		String timeout = UrnPropertiesReader.getVariable("mso.adapters.oof.timeout", execution);
 		String serviceInstanceId = execution.getVariable("nsiId")
 		String anNssiId = execution.getVariable("anNssiId")
-        String oofRequest = oofUtils.buildTerminateNxiRequest(requestId,anNssiId, ROLE_NSSI,messageType,serviceInstanceId)
-        OofRequest oofPayload = new OofRequest()
-		oofPayload.setApiPath("/api/oof/terminate/nxi/v1")
-		oofPayload.setRequestDetails(oofRequest)
-		execution.setVariable("oofAnNssiPayload", oofPayload)
+        String oofRequest = oofUtils.buildTerminateNxiRequest(requestId,anNssiId, "NSSI",messageType,serviceInstanceId)
+		execution.setVariable("oofAnNssiPayload", oofRequest)
         logger.debug("Finish prepareOOFTerminationRequest")
 
 	}
@@ -165,11 +162,8 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		String anNfNssiId = getInstanceIdByWorkloadContext(execution.getVariable("relatedNssis"),AN_NF)
 		execution.setVariable("anNfNssiId", anNfNssiId)
 
-		String oofRequest = oofUtils.buildTerminateNxiRequest(requestId,anNfNssiId, ROLE_NSSI,messageType,serviceInstanceId)
-		OofRequest oofPayload = new OofRequest()
-		oofPayload.setApiPath("/api/oof/terminate/nxi/v1")
-		oofPayload.setRequestDetails(oofRequest)
-		execution.setVariable("oofAnNfNssiPayload", oofPayload)
+		String oofRequest = oofUtils.buildTerminateNxiRequest(requestId,anNfNssiId, "NSSI",messageType,serviceInstanceId)
+		execution.setVariable("oofAnNfNssiPayload", oofRequest)
 		logger.debug("Finish prepareOOFAnNfNssiTerminationRequest")
 
 	}
@@ -198,26 +192,26 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 
 		JsonObject Payload = new JsonObject()
 		Payload.addProperty("version", "1.0")
-		Payload.addProperty("rpc-name", "TerminateRANSlice")
+		Payload.addProperty("rpc-name", "terminateRANSliceInstance")
 		Payload.addProperty("correlation-id", reqId)
 		Payload.addProperty("type", "request")
 
 		JsonObject wrapinput = new JsonObject()
-		wrapinput.addProperty("Action", "deallocate")
+		wrapinput.addProperty("action", "deallocate")
 
 		JsonObject CommonHeader = new JsonObject()
-		CommonHeader.addProperty("TimeStamp", new Date(System.currentTimeMillis()).format("yyyy-MM-ddTHH:mm:ss.sss", TimeZone.getDefault()))
-		CommonHeader.addProperty("APIver", "1.0")
-		CommonHeader.addProperty("RequestID", reqId)
-		CommonHeader.addProperty("SubRequestID", "1")
+		CommonHeader.addProperty("time-stamp", new Date(System.currentTimeMillis()).format("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", TimeZone.getDefault()))
+		CommonHeader.addProperty("api-ver", "1.0")
+		CommonHeader.addProperty("request-id", reqId)
+		CommonHeader.addProperty("sub-request-id", "1")
 
 		JsonObject body = new JsonObject()
 		body.add("input", wrapinput)
 
 		JsonObject sdnrRequest = new JsonObject()
 		Payload.add("input", input)
-		wrapinput.add("Payload", Payload)
-		wrapinput.add("CommonHeader", CommonHeader)
+		wrapinput.add("payload", Payload)
+		wrapinput.add("common-header", CommonHeader)
 		body.add("input", wrapinput)
 		sdnrRequest.add("body", body)
 
@@ -247,17 +241,21 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 	 * @param oofRequest - Request payload to be sent to adapter
 	 * @return
 	 */
-	boolean callOofAdapter(DelegateExecution execution, OofRequest oofRequest) {
+	boolean callOofAdapter(DelegateExecution execution, Object oofRequest) {
 		logger.debug("Start callOofAdapter")
 		String requestId = execution.getVariable("msoRequestId")
 		String oofAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.oof.endpoint", execution)
 		URL requestUrl = new URL(oofAdapterEndpoint)
-		logger.debug("Calling OOF adapter  : ${requestUrl} with payload : ${oofRequest}")
+		OofRequest oofPayload = new OofRequest()
+		oofPayload.setApiPath("/api/oof/terminate/nxi/v1")
+		oofPayload.setRequestDetails(oofRequest)
+		String requestJson = objectMapper.writeValueAsString(oofPayload)
+		logger.debug("Calling OOF adapter  : ${requestUrl} with payload : ${requestJson}")
 		HttpClient httpClient = new HttpClientFactory().newJsonClient(requestUrl, ONAPComponents.EXTERNAL)
-		Response httpResponse = httpClient.post(oofRequest)
+		Response httpResponse = httpClient.post(requestJson)
 		int responseCode = httpResponse.getStatus()
 		logger.debug("OOF sync response code is: " + responseCode)
-		if(responseCode != 200){
+		if(responseCode < 200 || responseCode >= 300){
 			logger.debug("OOF request failed with reason : " + httpResponse)
 			exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from OOF.")
 		}else {
@@ -316,9 +314,9 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 
 		Map<String,Object> sliceParams = objectMapper.readValue(execution.getVariable("sliceParams"), Map.class)
 		sliceParams.put("modifyAction", "deallocate")
-		execution.setVariable("modificationsliceParams", sliceParams)
+		execution.setVariable("modificationsliceParams", objectMapper.writeValueAsString(sliceParams))
 
-		String serviceId = execution.getVariable("serviceInstanceId")
+		String serviceId = execution.getVariable("serviceInstanceID")
 		String nsiId = execution.getVariable("nsiId")
 		logger.debug("Generated new job for Service Instance serviceId:" + serviceId + " operationId:" + modificationJobId)
 
@@ -378,15 +376,15 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		roStatus.setProgress(progress)
 		roStatus.setStatus(status)
 		roStatus.setStatusDescription(statusDescription)
-		requestDBUtil.prepareUpdateResourceOperationStatus(execution, status)
+		requestDBUtil.prepareUpdateResourceOperationStatus(execution, roStatus)
 	}
 	
 	void terminateTNFHNssi(DelegateExecution execution) {
 		logger.debug("Start terminateTNFHNssi in ${Prefix}")
 		String nssmfRequest = buildDeallocateNssiRequest(execution, TN_FH)
-		String nssiId = getInstanceIdByWorkloadContext(execution.getVariable("relatedNssis"), TN_FH)
+		String nssiId = getInstanceIdByWorkloadContext(execution.getVariable("relatedSPs"), TN_FH)
 		execution.setVariable("tnFHNSSIId", nssiId)
-		String urlString = "/api/rest/provMns/v1/NSS/nssi/" + nssiId
+		String urlString = "/api/rest/provMns/v1/NSS/SliceProfiles/" + nssiId
 				String nssmfResponse = nssmfAdapterUtils.sendPostRequestNSSMF(execution, urlString, nssmfRequest)
 				if (nssmfResponse != null) {
 					String jobId = jsonUtil.getJsonValue(nssmfResponse, "jobId")
@@ -401,9 +399,9 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 	void terminateTNMHNssi(DelegateExecution execution) {
 		logger.debug("Start terminateTNMHNssi in ${Prefix}")
 		String nssmfRequest = buildDeallocateNssiRequest(execution, TN_MH)
-		String nssiId = getInstanceIdByWorkloadContext(execution.getVariable("relatedNssis"), TN_MH)
+		String nssiId = getInstanceIdByWorkloadContext(execution.getVariable("relatedSPs"), TN_MH)
 		execution.setVariable("tnMHNSSIId", nssiId)
-		String urlString = "/api/rest/provMns/v1/NSS/nssi/" + nssiId
+		String urlString = "/api/rest/provMns/v1/NSS/SliceProfiles/" + nssiId
 				String nssmfResponse = nssmfAdapterUtils.sendPostRequestNSSMF(execution, urlString, nssmfRequest)
 				if (nssmfResponse != null) {
 					String jobId = jsonUtil.getJsonValue(nssmfResponse, "jobId")

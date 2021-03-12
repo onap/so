@@ -75,6 +75,10 @@ class DoModifyRanNfNssi extends AbstractServiceTaskProcessor {
 						String sliceProfile = execution.getVariable("additionalProperties")
 						execution.setVariable("sliceProfile", sliceProfile)
 						break
+                                        case "deallocate":
+                                                String sliceProfile = execution.getVariable("additionalProperties")
+                                                execution.setVariable("sliceProfile", sliceProfile)
+                                                break
 					case "reconfigure":
                                                 String resourceConfig = execution.getVariable("additionalProperties")
 						execution.setVariable("resourceConfig", resourceConfig)
@@ -110,7 +114,7 @@ class DoModifyRanNfNssi extends AbstractServiceTaskProcessor {
 		logger.debug(Prefix+"createSdnrRequest method start")
 		String callbackUrl = UrnPropertiesReader.getVariable("mso.workflow.message.endpoint") + "/AsyncSdnrResponse/"+execution.getVariable("msoRequestId")
 		String modifyAction = execution.getVariable("modifyAction")
-		String sdnrRequest = buildSdnrAllocateRequest(execution, modifyAction, "instantiateRANSlice", callbackUrl)
+		String sdnrRequest = buildSdnrAllocateRequest(execution, modifyAction, "InstantiateRANSlice", callbackUrl)
 		execution.setVariable("createNSSI_sdnrRequest", sdnrRequest)
 		execution.setVariable("createNSSI_timeout", "PT10M")
 		execution.setVariable("createNSSI_correlator", execution.getVariable("msoRequestId"))

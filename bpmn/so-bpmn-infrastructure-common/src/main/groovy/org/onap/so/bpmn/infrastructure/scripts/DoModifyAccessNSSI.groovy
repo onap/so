@@ -42,10 +42,14 @@ import org.onap.so.beans.nsmf.EsrInfo
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.ServiceProxy
-
+import com.google.gson.JsonParser
 import org.onap.aai.domain.yang.Relationship
 import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.aai.domain.yang.SliceProfile
+import org.onap.aai.domain.yang.SliceProfiles
+import org.onap.aaiclient.client.aai.entities.uri.AAISimplePluralUri
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.databind.SerializationFeature
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
@@ -113,6 +117,11 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 						exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Invalid modify Action : "+modifyAction)
 				}
 			}
+                        String modelUuid = execution.getVariable("modelUuid")
+                        if (isBlank(modelUuid)) {
+                                 modelUuid = anNssmfUtils.getModelUuid(execution, execution.getVariable("serviceInstanceID"))
+                        }
+                        execution.setVariable("modelUuid",modelUuid)
 			List<String> snssaiList = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(sliceParams, "snssaiList"))
 			String sliceProfileId = jsonUtil.getJsonValue(sliceParams, "sliceProfileId")
 			if (isBlank(sliceProfileId) || (snssaiList.empty)) {
@@ -143,9 +152,29 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 		logger.debug(Prefix + "getSliceProfiles Start")
 		String instanceId = execution.getVariable("sliceProfileId")
 		ServiceInstance sliceProfileInstance = getServiceInstance(execution, instanceId)
-		SliceProfile ranSliceProfile = sliceProfileInstance.getSliceProfiles().getSliceProfile().get(0)
-		logger.debug("RAN slice profile : "+ranSliceProfile.toString())
-		execution.setVariable("RANSliceProfile", ranSliceProfile)
+		String globalSubscriberId = execution.getVariable("globalSubscriberId")
+		String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+		SliceProfile ranSliceProfile = new SliceProfile()
+		AAIResourcesClient client = new AAIResourcesClient()
+		AAISimplePluralUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                 .customer(globalSubscriberId)
+                 .serviceSubscription(subscriptionServiceType)
+                 .serviceInstance(instanceId)
+                 .sliceProfiles())
+	
+        if (!client.exists(uri)) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Slice Profiles of service Instance was not found in aai : ${instanceId}")
+		}
+
+		AAIResultWrapper wrapper = client.get(uri, NotFoundException.class)
+		Optional<SliceProfiles> si = wrapper.asBean(SliceProfiles.class)
+		if(si.isPresent()) {
+		 ranSliceProfile = si.get().getSliceProfile().get(0)
+		}
+		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+                objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL)
+                logger.debug("RAN slice profile : "+objectMapper.writeValueAsString(ranSliceProfile))
+		execution.setVariable("RANSliceProfile", objectMapper.writeValueAsString(ranSliceProfile))
 		execution.setVariable("ranSliceProfileInstance", sliceProfileInstance)
 	}
 	
@@ -194,15 +223,18 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 
 		String urlString = UrnPropertiesReader.getVariable("mso.oof.endpoint", execution)
 		logger.debug( "get NSSI option OOF Url: " + urlString)
-
+                JsonParser parser = new JsonParser()
 		//build oof request body
 		boolean ranNssiPreferReuse = execution.getVariable("ranNssiPreferReuse");
 		String requestId = execution.getVariable("msoRequestId")
 		String messageType = "NSISelectionResponse"
 		Map<String, Object> profileInfo = objectMapper.readValue(execution.getVariable("RANSliceProfile"), Map.class)
-		ServiceInstance ranSliceProfileInstance = objectMapper.readValue(execution.getVariable("ranSliceProfileInstance"), ServiceInstance.class)
-		String modelUuid = ranSliceProfileInstance.getModelVersionId()
-		String modelInvariantUuid = ranSliceProfileInstance.getModelInvariantId()
+                ServiceInstance ranSliceProfileInstance = execution.getVariable("ranSliceProfileInstance")
+                profileInfo.put("sST",ranSliceProfileInstance.getServiceType())
+                profileInfo.put("snssaiList",ranSliceProfileInstance.getEnvironmentContext())
+                profileInfo.put("plmnIdList",ranSliceProfileInstance.getServiceInstanceLocationId())
+                String modelUuid = ranSliceProfileInstance.getModelVersionId()
+                String modelInvariantUuid = ranSliceProfileInstance.getModelInvariantId()
 		String modelName = execution.getVariable("servicename")
 		String timeout = UrnPropertiesReader.getVariable("mso.adapters.oof.timeout", execution);
 		List<String> nsstInfoList =  new ArrayList<>()
@@ -213,12 +245,12 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 		JsonObject FH = new JsonObject()
 		JsonObject MH = new JsonObject()
 		JsonObject ANNF = new JsonObject()
-		FH.addProperty("domainType", "TN_FH")
-		FH.addProperty("capabilityDetails", FHCapabilities)
+                FH.addProperty("domainType", "TN_FH")
+		FH.add("capabilityDetails", (JsonObject) parser.parse(FHCapabilities))
 		MH.addProperty("domainType", "TN_MH")
-		MH.addProperty("capabilityDetails", MHCapabilities)
+		MH.add("capabilityDetails", (JsonObject) parser.parse(MHCapabilities))
 		ANNF.addProperty("domainType", "AN_NF")
-		ANNF.addProperty("capabilityDetails", FHCapabilities)
+		ANNF.add("capabilityDetails", (JsonObject) parser.parse(ANNFCapabilities))
 		capabilitiesList.add(FH)
 		capabilitiesList.add(MH)
 		capabilitiesList.add(ANNF)
@@ -242,12 +274,18 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 		String oofResponse = execution.getVariable("nssiSelection_asyncCallbackResponse")
 		String requestStatus = jsonUtil.getJsonValue(oofResponse, "requestStatus")
 		if(requestStatus.equals("completed")) {
-			List<String> solution = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(oofResponse, "solutions"))
-			boolean existingNSI = jsonUtil.getJsonValue(solution.get(0), "existingNSI")
+                        String solutions = jsonUtil.getJsonValue(oofResponse, "solutions")
+			logger.debug("solutions value : "+solutions)
+			JsonParser parser = new JsonParser()
+			JsonArray solution = parser.parse(solutions)
+			boolean existingNSI = solution.get(0).get("existingNSI").getAsBoolean()
+			logger.debug("existingNSI value : "+existingNSI)
 			if(!existingNSI) {
-				def sliceProfiles = jsonUtil.getJsonValue(solution.get(0), "newNSISolution.sliceProfiles")
-				execution.setVariable("RanConstituentSliceProfiles", sliceProfiles)
-				List<String> ranConstituentSliceProfiles = jsonUtil.StringArrayToList(sliceProfiles)
+                                JsonObject newNSISolution =  solution.get(0).get("newNSISolution").getAsJsonObject()
+				JsonArray sliceProfiles =  newNSISolution.get("sliceProfiles")
+				logger.debug("sliceProfiles: "+ sliceProfiles.toString())
+				execution.setVariable("RanConstituentSliceProfiles", sliceProfiles.toString())
+				List<String> ranConstituentSliceProfiles = jsonUtil.StringArrayToList(sliceProfiles.toString())
 				anNssmfUtils.createDomainWiseSliceProfiles(ranConstituentSliceProfiles, execution)
 				logger.debug("RanConstituentSliceProfiles list from OOF "+sliceProfiles)
 			}else {
@@ -273,14 +311,20 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 				case "AN-NF":
 					execution.setVariable("ANNF_NSSI", val.getServiceInstanceId())
 					execution.setVariable("ANNF_nssiName", val.getServiceInstanceName())
+                                        execution.setVariable("ANNF_modelInvariantUuid", val.getModelInvariantId())
+					execution.setVariable("ANNF_modelUuid", val.getModelVersionId())
 					break
 				case "TN-FH":
 					execution.setVariable("TNFH_NSSI", val.getServiceInstanceId())
 					execution.setVariable("TNFH_nssiName", val.getServiceInstanceName())
-					break
+                                        execution.setVariable("TNFH_modelInvariantUuid", val.getModelInvariantId())
+					execution.setVariable("TNFH_modelUuid", val.getModelVersionId())
+				        break
 				case "TN-MH":
-					execution.setVariable("TNMH_NSSI", val.getServiceInstanceId())
+				        execution.setVariable("TNMH_NSSI", val.getServiceInstanceId())
 					execution.setVariable("TNMH_nssiName", val.getServiceInstanceName())
+                                        execution.setVariable("TNMH_modelInvariantUuid", val.getModelInvariantId())
+					execution.setVariable("TNMH_modelUuid", val.getModelVersionId())
 					break
 				default:
 					logger.error("No expected match found for current domainType "+ key)
@@ -395,11 +439,10 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 	}
 	
 	private void createTnAllocateNssiJobQuery(DelegateExecution execution, String domainType) {
-		EsrInfo esrInfo = new EsrInfo()
-		esrInfo.setNetworkType("TN")
-		esrInfo.setVendor("ONAP")
-		String esrInfoString = objectMapper.writeValueAsString(esrInfo)
-		execution.setVariable("esrInfo", esrInfoString)
+                JsonObject esrInfo = new JsonObject()
+		esrInfo.addProperty("networkType", "tn")
+	        esrInfo.addProperty("vendor", "ONAP_internal")
+		execution.setVariable("esrInfo", esrInfo.toString())
 		JsonObject serviceInfo = new JsonObject()
 		
 		serviceInfo.addProperty("nsiId", execution.getVariable("nsiId"))
@@ -408,50 +451,52 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 		serviceInfo.addProperty("PLMNIdList", objectMapper.writeValueAsString(execution.getVariable("plmnIdList")))
 		serviceInfo.addProperty("globalSubscriberId", execution.getVariable("globalSubscriberId"))
 		serviceInfo.addProperty("subscriptionServiceType", execution.getVariable("subscriptionServiceType"))
-		serviceInfo.addProperty("serviceInvariantUuid", null)
-		serviceInfo.addProperty("serviceUuid", null)
 		if(domainType.equals("TN_FH")) {
 			serviceInfo.addProperty("nssiId", execution.getVariable("TNFH_NSSI"))
 			serviceInfo.addProperty("nssiName", execution.getVariable("TNFH_nssiName"))
+                        serviceInfo.addProperty("serviceInvariantUuid", execution.getVariable("TNFH_modelInvariantUuid"))
+			serviceInfo.addProperty("serviceUuid", execution.getVariable("TNFH_modelUuid"))
 		}else if(domainType.equals("TN_MH")) {
 			serviceInfo.addProperty("nssiId", execution.getVariable("TNMH_NSSI"))
 			serviceInfo.addProperty("nssiName", execution.getVariable("TNMH_nssiName"))
+                        serviceInfo.addProperty("serviceInvariantUuid", execution.getVariable("TNMH_modelInvariantUuid"))
+			serviceInfo.addProperty("serviceUuid", execution.getVariable("TNMH_modelUuid"))
 		}
 		execution.setVariable("serviceInfo", serviceInfo.toString())
 		execution.setVariable("responseId", "")
 	}
 	
-	def processFhAllocateNssiJobStatusRsp = { DelegateExecution execution ->
-		logger.debug(Prefix+"processJobStatusRsp method start")
-		String jobResponse = execution.getVariable("TNFH_jobResponse")
-		logger.debug("Job status response "+jobResponse)
-		String status = jsonUtil.getJsonValue(jobResponse, "responseDescriptor.status")
-		String nssi = jsonUtil.getJsonValue(jobResponse, "responseDescriptor.nssi")
-		if(status.equalsIgnoreCase("finished")) {
-			logger.debug("Job successfully completed ... proceeding with flow for nssi : "+nssi)
-		}
-		else {
-			String statusDescription = jsonUtil.getJsonValue(jobResponse, "responseDescriptor.statusDescription")
-			logger.error("received failed status from job status query for nssi : "+nssi+" with status description : "+ statusDescription)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000,"received failed status from job status query for nssi : "+nssi+" with status description : "+ statusDescription)
-		}
-	}
-	
-	def processMhAllocateNssiJobStatusRsp = { DelegateExecution execution ->
-		logger.debug(Prefix+"processJobStatusRsp method start")
-		String jobResponse = execution.getVariable("TNMH_jobResponse")
-		logger.debug("Job status response "+jobResponse)
-		String status = jsonUtil.getJsonValue(jobResponse, "responseDescriptor.status")
-		String nssi = jsonUtil.getJsonValue(jobResponse, "responseDescriptor.nssi")
-		if(status.equalsIgnoreCase("finished")) {
-			logger.debug("Job successfully completed ... proceeding with flow for nssi : "+nssi)
-		}
-		else {
-			String statusDescription = jsonUtil.getJsonValue(jobResponse, "responseDescriptor.statusDescription")
-			logger.error("received failed status from job status query for nssi : "+nssi+" with status description : "+ statusDescription)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000,"received failed status from job status query for nssi : "+nssi+" with status description : "+ statusDescription)
-		}
-	}
+        def processFhAllocateNssiJobStatusRsp = { DelegateExecution execution ->
+                logger.debug(Prefix+"processJobStatusRsp method start")
+                String jobResponse = execution.getVariable("TNFH_jobResponse")
+                logger.debug("Job status response "+jobResponse)
+                String status = jsonUtil.getJsonValue(jobResponse, "status")
+                String nssi = jsonUtil.getJsonValue(jobResponse, "nssi")
+                if(status.equalsIgnoreCase("finished")) {
+                        logger.debug("Job successfully completed ... proceeding with flow for nssi : "+nssi)
+                }
+                else {
+                        String statusDescription = jsonUtil.getJsonValue(jobResponse, "statusDescription")
+                        logger.error("received failed status from job status query for nssi : "+nssi+" with status description : "+ statusDescription)
+                        exceptionUtil.buildAndThrowWorkflowException(execution, 7000,"received failed status from job status query for nssi : "+nssi+" with status description : "+ statusDescription)
+                }
+        }
+
+        def processMhAllocateNssiJobStatusRsp = { DelegateExecution execution ->
+                logger.debug(Prefix+"processJobStatusRsp method start")
+                String jobResponse = execution.getVariable("TNMH_jobResponse")
+                logger.debug("Job status response "+jobResponse)
+                String status = jsonUtil.getJsonValue(jobResponse, "status")
+                String nssi = jsonUtil.getJsonValue(jobResponse, "nssi")
+                if(status.equalsIgnoreCase("finished")) {
+                        logger.debug("Job successfully completed ... proceeding with flow for nssi : "+nssi)
+                }
+                else {
+                        String statusDescription = jsonUtil.getJsonValue(jobResponse, "statusDescription")
+                        logger.error("received failed status from job status query for nssi : "+nssi+" with status description : "+ statusDescription)
+                        exceptionUtil.buildAndThrowWorkflowException(execution, 7000,"received failed status from job status query for nssi : "+nssi+" with status description : "+ statusDescription)
+                }
+        }
 	
 	def getSliceProfilesFromAai = { DelegateExecution execution ->
 		logger.debug(Prefix+"getSliceProfilesFromAai method start")
@@ -482,7 +527,7 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 		String nssmfRequest = anNssmfUtils.buildDeallocateNssiRequest(execution, "TN_FH")
 		String nssiId = execution.getVariable("TNFH_NSSI")
 		execution.setVariable("tnFHNSSIId", nssiId)
-		String urlString = "/api/rest/provMns/v1/NSS/nssi/" + nssiId
+		String urlString = "/api/rest/provMns/v1/NSS/SliceProfiles/" + nssiId
 				String nssmfResponse = nssmfAdapterUtils.sendPostRequestNSSMF(execution, urlString, nssmfRequest)
 				if (nssmfResponse != null) {
 					String jobId = jsonUtil.getJsonValue(nssmfResponse, "jobId")
@@ -498,7 +543,7 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 		String nssmfRequest = anNssmfUtils.buildDeallocateNssiRequest(execution, "TN_FH")
 		String nssiId = execution.getVariable("TNFH_NSSI")
 		execution.setVariable("tnFHNSSIId", nssiId)
-		String urlString = "/api/rest/provMns/v1/NSS/nssi/" + nssiId
+		String urlString = "/api/rest/provMns/v1/NSS/SliceProfiles/" + nssiId
 				String nssmfResponse = nssmfAdapterUtils.sendPostRequestNSSMF(execution, urlString, nssmfRequest)
 				if (nssmfResponse != null) {
 					String jobId = jsonUtil.getJsonValue(nssmfResponse, "jobId")
@@ -537,16 +582,16 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 	def prepareOperationStatusUpdate = { DelegateExecution execution ->
 		logger.debug(Prefix + "prepareOperationStatusUpdate Start")
 
-		String serviceId = execution.getVariable("serviceInstanceID")
 		String jobId = execution.getVariable("jobId")
 		String nsiId = execution.getVariable("nsiId")
 		String nssiId = execution.getVariable("serviceInstanceID")
-		logger.debug("Service Instance serviceId:" + serviceId + " jobId:" + jobId)
+                String modelUuid = execution.getVariable("modelUuid")
+		logger.debug("Service Instance serviceId:" + nsiId + " jobId:" + jobId)
 
 		ResourceOperationStatus updateStatus = new ResourceOperationStatus()
-		updateStatus.setServiceId(serviceId)
+		updateStatus.setServiceId(nsiId)
 		updateStatus.setOperationId(jobId)
-		updateStatus.setResourceTemplateUUID(nsiId)
+		updateStatus.setResourceTemplateUUID(modelUuid)
 		updateStatus.setResourceInstanceID(nssiId)
 		updateStatus.setOperType("Modify")
 		updateStatus.setProgress("100")
@@ -558,17 +603,16 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 
 	def prepareFailedOperationStatusUpdate = { DelegateExecution execution ->
 		logger.debug(Prefix + "prepareFailedOperationStatusUpdate Start")
-		
-		String serviceId = execution.getVariable("serviceInstanceID")
 		String jobId = execution.getVariable("jobId")
 		String nsiId = execution.getVariable("nsiId")
 		String nssiId = execution.getVariable("serviceInstanceID")
-		logger.debug("Service Instance serviceId:" + serviceId + " jobId:" + jobId)
+                String modelUuid = execution.getVariable("modelUuid")
+		logger.debug("Service Instance serviceId:" + nsiId + " jobId:" + jobId)
 
 		ResourceOperationStatus updateStatus = new ResourceOperationStatus()
-		updateStatus.setServiceId(serviceId)
+		updateStatus.setServiceId(nsiId)
 		updateStatus.setOperationId(jobId)
-		updateStatus.setResourceTemplateUUID(nsiId)
+		updateStatus.setResourceTemplateUUID(modelUuid)
 		updateStatus.setResourceInstanceID(nssiId)
 		updateStatus.setOperType("Modify")
 		updateStatus.setProgress("0")
@@ -639,7 +683,7 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 		Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
 		
 		if(si.isPresent()) {
-			serviceInstance = si
+			serviceInstance = si.get()
 		}
 		return serviceInstance
 	}
