@@ -260,7 +260,7 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
         if(serviceCategory ==~ /CN.*/){
             return SubnetType.CN
         }
-        if (serviceCategory ==~ /AN.*NF.*/){
+        if (serviceCategory ==~ /AN.*/){
             return SubnetType.AN
         }
         if (serviceCategory ==~ /TN.*BH.*/){
