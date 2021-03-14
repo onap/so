@@ -36,6 +36,8 @@ class DeAllocateSliceSubnet extends AbstractServiceTaskProcessor {
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     JsonUtils jsonUtil = new JsonUtils()
     RequestDBUtil requestDBUtil = new RequestDBUtil()
+    AnNssmfUtils anNssmfUtils = new AnNssmfUtils()
+
     private static final Logger logger = LoggerFactory.getLogger(DeAllocateSliceSubnet.class)
 
      @Override
@@ -128,15 +130,16 @@ class DeAllocateSliceSubnet extends AbstractServiceTaskProcessor {
     def prepareInitOperationStatus = { DelegateExecution execution ->
         logger.debug(Prefix + "prepareInitOperationStatus Start")
 
-        String serviceId = execution.getVariable("serviceInstanceID")
+        String nssiId = execution.getVariable("serviceInstanceID")
         String jobId = execution.getVariable("jobId")
         String nsiId = execution.getVariable("nsiId")
-        logger.debug("Generated new job for Service Instance serviceId:" + serviceId + " jobId:" + jobId)
+        String modelUuid = anNssmfUtils.getModelUuid(execution, nssiId)
+        logger.debug("Generated new job for Service Instance serviceId:" + nsiId + " jobId:" + jobId)
 
         ResourceOperationStatus initStatus = new ResourceOperationStatus()
-        initStatus.setServiceId(serviceId)
+        initStatus.setServiceId(nsiId)
         initStatus.setOperationId(jobId)
-        initStatus.setResourceTemplateUUID(nsiId)
+        initStatus.setResourceTemplateUUID(modelUuid)
         initStatus.setOperType("Deallocate")
         requestDBUtil.prepareInitResourceOperationStatus(execution, initStatus)
 
@@ -167,3 +170,4 @@ class DeAllocateSliceSubnet extends AbstractServiceTaskProcessor {
     }
 
 }
+
