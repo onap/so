@@ -33,6 +33,24 @@
       "revId": "1390709516d9d88cb498dd9d02ca39515eb59c24",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3fe4193f_ad4634b2",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowActionTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 2807
+      },
+      "writtenOn": "2021-03-15T16:43:23Z",
+      "side": 1,
+      "message": "VnfEBBLoader is required due to NPE (appears in pathchset1, you can check it on your own - https://jenkins.onap.org/job/so-master-verify-java/5456/console) \n\nFor some reason Intellij IDE is showing that vnfEBBLoaderSpy is not used.",
+      "parentUuid": "815e9bb0_ab2a8f48",
+      "revId": "1390709516d9d88cb498dd9d02ca39515eb59c24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
