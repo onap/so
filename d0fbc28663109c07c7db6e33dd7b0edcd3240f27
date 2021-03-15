@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d8fad911_f1cbdb4b",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ebb/loader/VnfEBBLoaderTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2021-03-15T13:54:04Z",
+      "side": 1,
+      "message": "Personally I would not add this class if there are no tests.\n\nAlso I wonder if copyright notice is correct if it\u0027s new file.",
+      "revId": "d0fbc28663109c07c7db6e33dd7b0edcd3240f27",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
