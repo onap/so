@@ -16,6 +16,24 @@
       "revId": "d0fbc28663109c07c7db6e33dd7b0edcd3240f27",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7f3975fa_b950b041",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ebb/loader/VnfEBBLoaderTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 2807
+      },
+      "writtenOn": "2021-03-15T14:43:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d8fad911_f1cbdb4b",
+      "revId": "d0fbc28663109c07c7db6e33dd7b0edcd3240f27",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
