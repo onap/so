@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c3dd7805_9eb71a00",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowActionTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2021-03-15T15:41:17Z",
+      "side": 1,
+      "message": "not needed?",
+      "revId": "1390709516d9d88cb498dd9d02ca39515eb59c24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "815e9bb0_ab2a8f48",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowActionTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2021-03-15T15:41:17Z",
+      "side": 1,
+      "message": "not needed?",
+      "revId": "1390709516d9d88cb498dd9d02ca39515eb59c24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
