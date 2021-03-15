@@ -39,15 +39,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 
 @Path("/v1/cloud-region")
-@Api(value = "/v1/cloud-region", description = "root of cloud region adapter")
+@OpenAPIDefinition(info = @Info(title = "/v1/cloud-region", description = "root of cloud region adapter"))
 @Component
 public class CloudRegionRestV1 {
     private static Logger logger = LoggerFactory.getLogger(CloudRegionRestV1.class);
@@ -58,13 +61,12 @@ public class CloudRegionRestV1 {
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    @ApiOperation(value = "CreateCloudRegion", response = Response.class,
-            notes = "Create a cloud site in MSO and Region In AAI")
-    @ApiResponses({@ApiResponse(code = 201, message = "Cloud Region has been created"),
-            @ApiResponse(code = 500, message = "Create Cloud Region has failed")})
+    @Operation(description = "CreateCloudRegion", summary = "Create a cloud site in MSO and Region In AAI")
+    @ApiResponses({@ApiResponse(responseCode = "201", description = "Cloud Region has been created"),
+            @ApiResponse(responseCode = "500", description = "Create Cloud Region has failed")})
     public Response createCloudRegion(
-            @ApiParam(value = "cloud-region-id", required = true) @PathParam("cloud-region-id") String cloudRegionId,
-            @ApiParam(value = "CloudSite", required = true) final CloudSite cloudSite) {
+            @Parameter(name = "cloud-region-id", required = true) @PathParam("cloud-region-id") String cloudRegionId,
+            @Parameter(name = "CloudSite", required = true) final CloudSite cloudSite) {
         cloudRestImpl.createCloudRegion(cloudSite);
         return Response.status(HttpStatus.SC_CREATED).build();
     }
@@ -73,12 +75,12 @@ public class CloudRegionRestV1 {
     @Path("{cloud-region-id}/{cloud-owner}")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    @ApiOperation(value = "CreateCloudRegion", response = Response.class, notes = "Delete an cloud Region in SO")
-    @ApiResponses({@ApiResponse(code = 204, message = "cloud Region has been deleted"),
-            @ApiResponse(code = 500, message = "Cloud Region delete has failed")})
+    @Operation(description = "CreateCloudRegion", summary = "Delete an cloud Region in SO")
+    @ApiResponses({@ApiResponse(responseCode = "204", description = "cloud Region has been deleted"),
+            @ApiResponse(responseCode = "500", description = "Cloud Region delete has failed")})
     public Response deleteCloudRegion(
-            @ApiParam(value = "cloud-region-id", required = true) @PathParam("cloud-region-id") String cloudRegionId,
-            @ApiParam(value = "cloud-owner", required = true) @PathParam("cloud-owner") String cloudOwner) {
+            @Parameter(name = "cloud-region-id", required = true) @PathParam("cloud-region-id") String cloudRegionId,
+            @Parameter(name = "cloud-owner", required = true) @PathParam("cloud-owner") String cloudOwner) {
         cloudRestImpl.deleteCloudRegion(cloudRegionId);
         return Response.status(HttpStatus.SC_NO_CONTENT).build();
     }
@@ -87,13 +89,13 @@ public class CloudRegionRestV1 {
     @Path("{cloud-region-id}/{cloud-owner}")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    @ApiOperation(value = "CreateCloudRegion", response = Response.class, notes = "Update an existing Cloud Region")
-    @ApiResponses({@ApiResponse(code = 200, message = "Cloud Region has been updated"),
-            @ApiResponse(code = 500, message = "Update Cloud Region has failed examine entity object for details")})
+    @Operation(description = "CreateCloudRegion", summary = "Update an existing Cloud Region")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Cloud Region has been updated"), @ApiResponse(
+            responseCode = "500", description = "Update Cloud Region has failed examine entity object for details")})
     public Response updateCloudRegion(
-            @ApiParam(value = "cloud-region-id", required = true) @PathParam("cloud-region-id") String cloudRegionId,
-            @ApiParam(value = "cloud-owner", required = true) @PathParam("cloud-owner") String cloudOwner,
-            @ApiParam(value = "CloudSite", required = true) final CloudSite cloudSite) {
+            @Parameter(name = "cloud-region-id", required = true) @PathParam("cloud-region-id") String cloudRegionId,
+            @Parameter(name = "cloud-owner", required = true) @PathParam("cloud-owner") String cloudOwner,
+            @Parameter(name = "CloudSite", required = true) final CloudSite cloudSite) {
         cloudRestImpl.updateCloudRegion(cloudSite);
         return Response.status(HttpStatus.SC_OK).build();
     }

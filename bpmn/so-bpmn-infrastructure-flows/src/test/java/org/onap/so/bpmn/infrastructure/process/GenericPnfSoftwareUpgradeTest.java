@@ -107,6 +107,8 @@ public class GenericPnfSoftwareUpgradeTest extends BaseBPMNTest {
         mockRequestDb();
         mockAai();
 
+        grpcNettyServer.resetList();
+
         final String msoRequestId = UUID.randomUUID().toString();
         executionVariables.put(ExecutionVariableNames.MSO_REQUEST_ID, msoRequestId);
 
@@ -146,7 +148,6 @@ public class GenericPnfSoftwareUpgradeTest extends BaseBPMNTest {
             fail("GenericPnfSoftwareUpgrade request exception", e);
         }
         assertTrue(count == actionNames.length);
-        grpcNettyServer.resetList();
     }
 
     private boolean isProcessInstanceEnded() {

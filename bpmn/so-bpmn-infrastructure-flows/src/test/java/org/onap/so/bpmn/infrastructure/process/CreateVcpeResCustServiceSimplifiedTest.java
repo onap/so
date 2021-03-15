@@ -116,6 +116,8 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
         mockAai();
         mockDmaapForPnf();
 
+        grpcNettyServer.resetList();
+
         final String msoRequestId = UUID.randomUUID().toString();
         executionVariables.put("mso-request-id", msoRequestId);
 

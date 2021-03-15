@@ -23,13 +23,14 @@
 package org.onap.so.adapters.openstack;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import javax.xml.ws.Endpoint;
 import org.apache.cxf.Bus;
 import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
-import org.apache.cxf.jaxrs.swagger.Swagger2Feature;
+import org.apache.cxf.jaxrs.openapi.OpenApiFeature;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.transport.servlet.CXFServlet;
 import org.onap.so.adapters.cloudregion.CloudRegionRestV1;
@@ -101,18 +102,17 @@ public class CXFConfiguration {
         return endpoint.create();
     }
 
-
     @Bean
-    public Swagger2Feature createSwaggerFeature() {
-        Swagger2Feature swagger2Feature = new Swagger2Feature();
-        swagger2Feature.setPrettyPrint(true);
-        swagger2Feature.setTitle("SO Orchestration Application");
-        swagger2Feature.setContact("The ONAP SO team");
-        swagger2Feature.setDescription("This project is the SO Orchestration Engine");
-        swagger2Feature.setVersion("1.0.0");
-        swagger2Feature.setResourcePackage(
-                "org.onap.so.adapters.network,org.onap.so.adapters.tenant,org.onap.so.adapters.vnf");
-        swagger2Feature.setScan(true);
-        return swagger2Feature;
+    public OpenApiFeature createSwaggerFeature() {
+        OpenApiFeature openApiFeature = new OpenApiFeature();
+        openApiFeature.setPrettyPrint(true);
+        openApiFeature.setTitle("SO Orchestration Application");
+        openApiFeature.setContactName("The ONAP SO team");
+        openApiFeature.setDescription("This project is the SO Orchestration Engine");
+        openApiFeature.setVersion("1.0.0");
+        openApiFeature.setResourcePackages(
+                new HashSet<String>(Arrays.asList("org.onap.so.adapters.network,org.onap.so.adapters.vnf")));
+        openApiFeature.setScan(true);
+        return openApiFeature;
     }
 }
