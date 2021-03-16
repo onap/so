@@ -571,6 +571,23 @@ public class ToscaResourceInstallerTest extends BaseTest {
         doReturn(namingPolicy).when(metadata).getValue("namingPolicy");
         doReturn(ecompGeneratedNaming).when(metadata).getValue("ecompGeneratedNaming");
 
+        List<Input> serviceInputs = new ArrayList<Input>() ;
+        LinkedHashMap<String, Object> value = new LinkedHashMap<String, Object>();
+        value.put("controller_actor", "SO-REF-DATA");
+        Input input = new Input("controller_actor", value, null);
+        serviceInputs.add(0, input);
+
+        value = new LinkedHashMap<String, Object>();
+        value.put("cds_model_version", "v1.4.0");
+        input = new Input("cds_model_version", value, null);
+        serviceInputs.add(1, input);
+
+        value = new LinkedHashMap<String, Object>();
+        value.put("cds_model_name", "Blueprint140");
+        input = new Input("cds_model_name", value, null);
+        serviceInputs.add(2, input);
+        doReturn(serviceInputs).when(toscaResourceStructure).getSdcCsarHelper().getServiceInputs();
+
         Service service = toscaInstaller.createService(toscaResourceStructure, resourceStructure);
 
         assertNotNull(service);
