@@ -28,7 +28,6 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.javatuples.Pair;
-import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.Relationships;
@@ -36,7 +35,10 @@ import org.onap.so.bpmn.infrastructure.workflow.tasks.Resource;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionExtractResourcesAAI;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowType;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetup;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.client.exception.ExceptionBuilder;
@@ -69,35 +71,11 @@ public class VnfEBBLoader {
     public void traverseAAIVnf(DelegateExecution execution, List<Resource> resourceList, String serviceId, String vnfId,
             List<Pair<WorkflowType, String>> aaiResourceIds) {
         try {
-            ServiceInstance serviceInstanceAAI = bbInputSetupUtils.getAAIServiceInstanceById(serviceId);
-            org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO =
-                    bbInputSetup.getExistingServiceInstance(serviceInstanceAAI);
+            org.onap.aai.domain.yang.ServiceInstance serviceInstanceAAI = bbInputSetupUtils.getAAIServiceInstanceById(serviceId);
+            ServiceInstance serviceInstanceMSO = bbInputSetup.getExistingServiceInstance(serviceInstanceAAI);
             resourceList.add(new Resource(WorkflowType.SERVICE, serviceInstanceMSO.getServiceInstanceId(), false));
             if (serviceInstanceMSO.getVnfs() != null) {
-                for (org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf : serviceInstanceMSO.getVnfs()) {
-                    if (vnf.getVnfId().equals(vnfId)) {
-                        aaiResourceIds.add(new Pair<>(WorkflowType.VNF, vnf.getVnfId()));
-                        resourceList.add(new Resource(WorkflowType.VNF, vnf.getVnfId(), false));
-                        if (vnf.getVfModules() != null) {
-                            for (VfModule vfModule : vnf.getVfModules()) {
-                                aaiResourceIds.add(new Pair<>(WorkflowType.VFMODULE, vfModule.getVfModuleId()));
-                                resourceList.add(new Resource(WorkflowType.VFMODULE, vfModule.getVfModuleId(), false));
-                                findConfigurationsInsideVfModule(execution, vnf.getVnfId(), vfModule.getVfModuleId(),
-                                        resourceList, aaiResourceIds);
-                            }
-                        }
-                        if (vnf.getVolumeGroups() != null) {
-                            for (org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup volumeGroup : vnf
-                                    .getVolumeGroups()) {
-                                aaiResourceIds
-                                        .add(new Pair<>(WorkflowType.VOLUMEGROUP, volumeGroup.getVolumeGroupId()));
-                                resourceList.add(
-                                        new Resource(WorkflowType.VOLUMEGROUP, volumeGroup.getVolumeGroupId(), false));
-                            }
-                        }
-                        break;
-                    }
-                }
+                findVnfWithGivenId(serviceInstanceMSO, vnfId, aaiResourceIds, resourceList, execution);
             }
         } catch (Exception ex) {
             logger.error("Exception in traverseAAIVnf", ex);
@@ -109,39 +87,11 @@ public class VnfEBBLoader {
     public void customTraverseAAIVnf(DelegateExecution execution, List<Resource> resourceList, String serviceId,
             String vnfId, List<Pair<WorkflowType, String>> aaiResourceIds) {
         try {
-            ServiceInstance serviceInstanceAAI = bbInputSetupUtils.getAAIServiceInstanceById(serviceId);
-            org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO =
-                    bbInputSetup.getExistingServiceInstance(serviceInstanceAAI);
+            org.onap.aai.domain.yang.ServiceInstance serviceInstanceAAI = bbInputSetupUtils.getAAIServiceInstanceById(serviceId);
+            ServiceInstance serviceInstanceMSO = bbInputSetup.getExistingServiceInstance(serviceInstanceAAI);
             resourceList.add(new Resource(WorkflowType.SERVICE, serviceInstanceMSO.getServiceInstanceId(), false));
             if (serviceInstanceMSO.getVnfs() != null) {
-                for (org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf : serviceInstanceMSO.getVnfs()) {
-                    if (vnf.getVnfId().equals(vnfId)) {
-                        aaiResourceIds.add(new Pair<>(WorkflowType.VNF, vnf.getVnfId()));
-
-                        String vnfCustomizationUUID =
-                                bbInputSetupUtils.getAAIGenericVnf(vnfId).getModelCustomizationId();
-                        resourceList.add(new Resource(WorkflowType.VNF, vnfCustomizationUUID, false));
-
-                        if (vnf.getVfModules() != null) {
-                            for (VfModule vfModule : vnf.getVfModules()) {
-                                aaiResourceIds.add(new Pair<>(WorkflowType.VFMODULE, vfModule.getVfModuleId()));
-                                resourceList.add(new Resource(WorkflowType.VFMODULE, vfModule.getVfModuleId(), false));
-                                findConfigurationsInsideVfModule(execution, vnf.getVnfId(), vfModule.getVfModuleId(),
-                                        resourceList, aaiResourceIds);
-                            }
-                        }
-                        if (vnf.getVolumeGroups() != null) {
-                            for (org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup volumeGroup : vnf
-                                    .getVolumeGroups()) {
-                                aaiResourceIds
-                                        .add(new Pair<>(WorkflowType.VOLUMEGROUP, volumeGroup.getVolumeGroupId()));
-                                resourceList.add(
-                                        new Resource(WorkflowType.VOLUMEGROUP, volumeGroup.getVolumeGroupId(), false));
-                            }
-                        }
-                        break;
-                    }
-                }
+                findVnfWithGivenIdAndAddCustomizationUUID(serviceInstanceMSO, vnfId, aaiResourceIds, resourceList, execution);
             }
         } catch (Exception ex) {
             logger.error("Exception in customTraverseAAIVnf", ex);
@@ -151,8 +101,36 @@ public class VnfEBBLoader {
 
     }
 
+    private void findVnfWithGivenId(ServiceInstance serviceInstanceMSO, String vnfId, List<Pair<WorkflowType, String>> aaiResourceIds,
+                              List<Resource> resourceList, DelegateExecution execution) {
+        for (GenericVnf vnf : serviceInstanceMSO.getVnfs()) {
+            if (vnf.getVnfId().equals(vnfId)) {
+                aaiResourceIds.add(new Pair<>(WorkflowType.VNF, vnf.getVnfId()));
+                resourceList.add(new Resource(WorkflowType.VNF, vnf.getVnfId(), false));
+                processVfModules(vnf, aaiResourceIds, resourceList, execution);
+                processVolumeGroups(vnf, aaiResourceIds, resourceList);
+                break;
+            }
+        }
+    }
+
+    private void findVnfWithGivenIdAndAddCustomizationUUID(ServiceInstance serviceInstanceMSO, String vnfId,
+                                                           List<Pair<WorkflowType, String>> aaiResourceIds,
+                                                           List<Resource> resourceList, DelegateExecution execution) {
+        for (GenericVnf vnf : serviceInstanceMSO.getVnfs()) {
+            if (vnf.getVnfId().equals(vnfId)) {
+                aaiResourceIds.add(new Pair<>(WorkflowType.VNF, vnf.getVnfId()));
+                resourceList.add(new Resource(WorkflowType.VNF,
+                        bbInputSetupUtils.getAAIGenericVnf(vnfId).getModelCustomizationId(), false));
+                processVfModules(vnf, aaiResourceIds, resourceList, execution);
+                processVolumeGroups(vnf, aaiResourceIds, resourceList);
+                break;
+            }
+        }
+    }
+
     private void findConfigurationsInsideVfModule(DelegateExecution execution, String vnfId, String vfModuleId,
-            List<Resource> resourceList, List<Pair<WorkflowType, String>> aaiResourceIds) {
+                                                  List<Resource> resourceList, List<Pair<WorkflowType, String>> aaiResourceIds) {
         try {
             org.onap.aai.domain.yang.VfModule aaiVfModule = bbInputSetupUtils.getAAIVfModule(vnfId, vfModuleId);
             AAIResultWrapper vfModuleWrapper = new AAIResultWrapper(
@@ -161,19 +139,44 @@ public class VnfEBBLoader {
             relationshipsOp = vfModuleWrapper.getRelationships();
             if (relationshipsOp.isPresent()) {
                 relationshipsOp = workflowActionUtils.extractRelationshipsVnfc(relationshipsOp.get());
-                if (relationshipsOp.isPresent()) {
-                    Optional<Configuration> config =
-                            workflowActionUtils.extractRelationshipsConfiguration(relationshipsOp.get());
-                    if (config.isPresent()) {
-                        aaiResourceIds.add(new Pair<>(WorkflowType.CONFIGURATION, config.get().getConfigurationId()));
-                        resourceList.add(
-                                new Resource(WorkflowType.CONFIGURATION, config.get().getConfigurationId(), false));
-                    }
-                }
+                addConfigToResources(relationshipsOp, resourceList, aaiResourceIds);
             }
         } catch (Exception ex) {
             logger.error("Exception in findConfigurationsInsideVfModule", ex);
             buildAndThrowException(execution, "Failed to find Configuration object from the vfModule.");
+        }
+    }
+
+    private void processVfModules(GenericVnf vnf, List<Pair<WorkflowType, String>> aaiResourceIds,
+                                  List<Resource> resourceList, DelegateExecution execution) {
+        if (vnf.getVfModules() != null) {
+            for (VfModule vfModule : vnf.getVfModules()) {
+                aaiResourceIds.add(new Pair<>(WorkflowType.VFMODULE, vfModule.getVfModuleId()));
+                resourceList.add(new Resource(WorkflowType.VFMODULE, vfModule.getVfModuleId(), false));
+                findConfigurationsInsideVfModule(execution, vnf.getVnfId(), vfModule.getVfModuleId(),
+                        resourceList, aaiResourceIds);
+            }
+        }
+    }
+
+    private void processVolumeGroups(GenericVnf vnf, List<Pair<WorkflowType, String>> aaiResourceIds,
+                                  List<Resource> resourceList) {
+        if (vnf.getVolumeGroups() != null) {
+            for (VolumeGroup volumeGroup : vnf.getVolumeGroups()) {
+                aaiResourceIds.add(new Pair<>(WorkflowType.VOLUMEGROUP, volumeGroup.getVolumeGroupId()));
+                resourceList.add(new Resource(WorkflowType.VOLUMEGROUP, volumeGroup.getVolumeGroupId(), false));
+            }
+        }
+    }
+
+    private void addConfigToResources(Optional<Relationships> relationshipsOp, List<Resource> resourceList,
+                          List<Pair<WorkflowType, String>> aaiResourceIds) {
+        if (relationshipsOp.isPresent()) {
+            Optional<Configuration> config = workflowActionUtils.extractRelationshipsConfiguration(relationshipsOp.get());
+            if (config.isPresent()) {
+                aaiResourceIds.add(new Pair<>(WorkflowType.CONFIGURATION, config.get().getConfigurationId()));
+                resourceList.add(new Resource(WorkflowType.CONFIGURATION, config.get().getConfigurationId(), false));
+            }
         }
     }
 
