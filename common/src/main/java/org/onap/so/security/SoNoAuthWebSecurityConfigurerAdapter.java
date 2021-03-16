@@ -34,7 +34,7 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
 @EnableWebSecurity
 @Configuration
 @Order(2)
-@Profile({"aaf", "test"})
+@Profile({"aaf", "test", "serviceMesh"})
 public class SoNoAuthWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(final WebSecurity web) throws Exception {
