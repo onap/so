@@ -1,0 +1,26 @@
+{
+    "auth": {
+        "identity": {
+            "password": {
+                "user": {
+                    "name": "j0000",
+                    "domain": {
+                        "name": "name"
+                    },
+                    "password": "my-password-wow"
+                }
+            },
+            "methods": [
+                "password"
+            ]
+        },
+        "scope": {
+            "project": {
+                "id": "ad299b37da30413391e9c28138f0b0dd",
+                "domain": {
+                    "name": "name"
+                }
+            }
+        }
+    }
+}
