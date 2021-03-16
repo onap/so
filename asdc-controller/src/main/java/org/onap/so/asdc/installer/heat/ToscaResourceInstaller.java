@@ -1471,13 +1471,27 @@ public class ToscaResourceInstaller {
                 generateNamingValue = "true".equalsIgnoreCase(generateNaming);
             }
             service.setOnapGeneratedNaming(generateNamingValue);
-            service.setBlueprintName(serviceMetadata.getValue(CDS_MODEL_NAME));
-            service.setBlueprintVersion(serviceMetadata.getValue(CDS_MODEL_VERSION));
             service.setSkipPostInstConf(Boolean.valueOf(serviceMetadata.getValue(SKIP_POST_INST_CONF)));
-            service.setControllerActor(serviceMetadata.getValue(CONTROLLER_ACTOR));
+
+            List<Input> serviceInputs = toscaResourceStructure.getSdcCsarHelper().getServiceInputs();
+            logger.debug("serviceInputs: {} " + serviceInputs);
+            if (!serviceInputs.isEmpty()) {
+                serviceInputs.forEach(input -> {
+                    if (CDS_MODEL_NAME.equalsIgnoreCase(input.getName())) {
+                        String value = input.getDefault() != null ? input.getDefault().toString() : null;
+                        service.setBlueprintName(value);
+                    }
+                    if (CDS_MODEL_VERSION.equalsIgnoreCase(input.getName())) {
+                        String value = input.getDefault() != null ? input.getDefault().toString() : null;
+                        service.setBlueprintVersion(value);
+                    }
+                    if (CONTROLLER_ACTOR.equalsIgnoreCase(input.getName())) {
+                        String value = input.getDefault() != null ? input.getDefault().toString() : null;
+                        service.setControllerActor(value);
+                    }
+                });
+            }
         }
-
-
         toscaResourceStructure.setCatalogService(service);
         return service;
     }
