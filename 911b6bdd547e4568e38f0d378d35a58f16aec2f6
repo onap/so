@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ccb7245c_70a0b5da",
+        "filename": "common/src/main/java/org/onap/so/utils/ExternalTaskServiceUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2021-03-17T20:46:58Z",
+      "side": 1,
+      "message": "Instead of getting properties and values from the override.yaml and values.yaml, it seems that the values are hardcoded here?",
+      "range": {
+        "startLine": 42,
+        "startChar": 16,
+        "endLine": 42,
+        "endChar": 89
+      },
+      "revId": "911b6bdd547e4568e38f0d378d35a58f16aec2f6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
