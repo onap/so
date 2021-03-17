@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "a4db2cf8_06067a3d",
+        "filename": "common/src/main/java/org/onap/so/utils/ExternalTaskServiceUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2021-03-17T22:17:40Z",
+      "side": 1,
+      "message": "getProperty allows you to set a default value for when the value is not present. That is what is happening here.",
+      "parentUuid": "09274e44_445f6af2",
+      "range": {
+        "startLine": 42,
+        "startChar": 16,
+        "endLine": 42,
+        "endChar": 89
+      },
+      "revId": "911b6bdd547e4568e38f0d378d35a58f16aec2f6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8daee464_4c365007",
         "filename": "common/src/main/java/org/onap/so/utils/ExternalTaskServiceUtils.java",
         "patchSetId": 1
@@ -84,6 +108,24 @@
       "writtenOn": "2021-03-17T21:50:38Z",
       "side": 1,
       "message": "Putting hard coded key here is not the right idea as we can’t change it easily. \nPlease set it into OOM",
+      "revId": "911b6bdd547e4568e38f0d378d35a58f16aec2f6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "427183f0_a6335295",
+        "filename": "common/src/main/java/org/onap/so/utils/ExternalTaskServiceUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2021-03-17T22:17:40Z",
+      "side": 1,
+      "message": "getProperty allows you to set a default value for when the value is not present. That is what is happening here.",
+      "parentUuid": "8daee464_4c365007",
       "revId": "911b6bdd547e4568e38f0d378d35a58f16aec2f6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
