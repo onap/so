@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "13f13dd5_0b00ef4e",
+        "filename": "common/src/main/java/org/onap/so/utils/ExternalTaskServiceUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 4965
+      },
+      "writtenOn": "2021-03-17T22:23:12Z",
+      "side": 1,
+      "message": "such properties should be explicitly received from the helm charts at the deployment time see for example how so-cnf-adapter is doing that. We even have dedicated common secret template for that.\n\nPutting this \"to unlock the gating\" is a terrible practice and should never be done. This just hides the fact that your component needs this password from the end user",
+      "parentUuid": "193f027f_69d6e935",
+      "revId": "e5c088138d87b47762b54d6b24fdfb8c91bb10b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "27d92697_4b608835",
         "filename": "common/src/main/java/org/onap/so/utils/ExternalTaskServiceUtils.java",
         "patchSetId": 2
