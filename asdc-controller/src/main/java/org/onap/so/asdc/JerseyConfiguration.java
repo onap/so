@@ -20,41 +20,51 @@
 
 package org.onap.so.asdc;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.PostConstruct;
 import javax.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.onap.so.asdc.client.test.rest.ASDCRestInterface;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
-import io.swagger.jaxrs.config.BeanConfig;
-import io.swagger.jaxrs.listing.ApiListingResource;
-import io.swagger.jaxrs.listing.SwaggerSerializers;
+import io.swagger.v3.jaxrs2.SwaggerSerializers;
+import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
+import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
+import io.swagger.v3.oas.integration.OpenApiConfigurationException;
+import io.swagger.v3.oas.integration.SwaggerConfiguration;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
 
 @Configuration
 @ApplicationPath("/test")
 public class JerseyConfiguration extends ResourceConfig {
 
-    private Environment environment;
-
-    @Autowired
-    public JerseyConfiguration(final Environment environment) {
-        this.environment = environment;
-    }
+    private static final Logger logger = LoggerFactory.getLogger(JerseyConfiguration.class);
 
     @PostConstruct
     public void setUp() {
         register(ASDCRestInterface.class);
-        register(ApiListingResource.class);
+        register(OpenApiResource.class);
         register(SwaggerSerializers.class);
 
-        final BeanConfig beanConfig = new BeanConfig();
-        beanConfig.setVersion("1.0.2");
-        beanConfig.setSchemes(new String[] {"http"});
-        beanConfig.setHost("localhost:" + environment.getProperty("server.port"));
-        beanConfig.setBasePath("/mso");
-        beanConfig.setResourcePackage("org.onap.so.apihandlerinfra");
-        beanConfig.setPrettyPrint(true);
-        beanConfig.setScan(true);
+        final OpenAPI openApi = new OpenAPI();
+        Info info = new Info();
+        info.setVersion("1.0.2");
+        info.setTitle("Swagger asdc-controller code");
+        openApi.setInfo(info);
+
+        SwaggerConfiguration swaggerConfig = new SwaggerConfiguration().openAPI(openApi).prettyPrint(true)
+                .resourcePackages(Stream.of("org.onap.so.asdc").collect(Collectors.toSet()));
+
+        try {
+            JaxrsOpenApiContextBuilder jaxrsConfig = new JaxrsOpenApiContextBuilder();
+            jaxrsConfig.application(this).openApiConfiguration(swaggerConfig).buildContext(true);
+        } catch (OpenApiConfigurationException e) {
+            logger.error("Error during jersey configuration", e);
+            throw new RuntimeException(e.getMessage(), e);
+        }
+
     }
 }

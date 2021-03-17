@@ -1007,17 +1007,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
-        <artifactId>cxf-rt-rs-service-description-swagger</artifactId>
-        <version>${cxf.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.jboss.spec.javax.rmi</groupId>
-            <artifactId>jboss-rmi-api_1.0_spec</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-service-description-openapi-v3</artifactId>
         <version>${cxf.version}</version>
         <exclusions>
@@ -1064,11 +1053,6 @@
         <artifactId>aaf-misc-rosetta</artifactId>
         <version>${aaf.version}</version>
         <scope>runtime</scope>
-      </dependency>
-	  <dependency>
-      	<groupId>io.swagger</groupId>
-      	<artifactId>swagger-jersey2-jaxrs</artifactId>
-      	<version>1.6.2</version>
       </dependency>
       <dependency>
       	<groupId>ch.vorburger.mariaDB4j</groupId>
