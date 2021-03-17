@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "09274e44_445f6af2",
+        "filename": "common/src/main/java/org/onap/so/utils/ExternalTaskServiceUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 4965
+      },
+      "writtenOn": "2021-03-17T22:14:27Z",
+      "side": 1,
+      "message": "Think about user who have just deployed ONAP and change mso password.\nHow he is supposed to know that somewhere deep inside your code you are hardcoding a default value for your password?\n\nYou cannot expect msoKey which is hardcoded here to be correct",
+      "parentUuid": "810576bf_bb018eff",
+      "range": {
+        "startLine": 42,
+        "startChar": 16,
+        "endLine": 42,
+        "endChar": 89
+      },
+      "revId": "911b6bdd547e4568e38f0d378d35a58f16aec2f6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8daee464_4c365007",
         "filename": "common/src/main/java/org/onap/so/utils/ExternalTaskServiceUtils.java",
         "patchSetId": 1
