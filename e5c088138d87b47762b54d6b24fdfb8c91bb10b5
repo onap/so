@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "193f027f_69d6e935",
+        "filename": "common/src/main/java/org/onap/so/utils/ExternalTaskServiceUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2021-03-17T22:15:28Z",
+      "side": 1,
+      "message": "This is just a default value when the property is not there, it will still read from the configuration as well",
+      "revId": "e5c088138d87b47762b54d6b24fdfb8c91bb10b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "27d92697_4b608835",
+        "filename": "common/src/main/java/org/onap/so/utils/ExternalTaskServiceUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2021-03-17T22:15:28Z",
+      "side": 1,
+      "message": "This is just a default value when the property is not there, it will still read from the configuration as well",
+      "revId": "e5c088138d87b47762b54d6b24fdfb8c91bb10b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "66c53813_520dfa68",
+        "filename": "common/src/main/java/org/onap/so/utils/ExternalTaskServiceUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2021-03-17T22:15:28Z",
+      "side": 1,
+      "message": "This is a default value to unblock this. It\u0027s not actually a real password.",
+      "revId": "e5c088138d87b47762b54d6b24fdfb8c91bb10b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
