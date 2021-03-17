@@ -16,8 +16,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-
-
 @Component
 public class ExternalTaskServiceUtils {
 
@@ -40,20 +38,23 @@ public class ExternalTaskServiceUtils {
     public ExternalTaskClient createExternalTaskClient() throws Exception {
         String auth = getAuth();
         ClientRequestInterceptor interceptor = createClientInterceptor(auth);
-        ExternalTaskClient client =
-                ExternalTaskClient.create().baseUrl(env.getRequiredProperty("mso.workflow.endpoint")).maxTasks(1)
-                        .addInterceptor(interceptor).asyncResponseTimeout(120000).build();
+        ExternalTaskClient client = ExternalTaskClient.create()
+                .baseUrl(env.getProperty("mso.workflow.endpoint", "http://default-bpmn:9200/sobpmnengine")).maxTasks(1)
+                .addInterceptor(interceptor).asyncResponseTimeout(120000).build();
         taskClients.add(client);
         return client;
     }
 
     protected ClientRequestInterceptor createClientInterceptor(String auth) {
-        return new BasicAuthProvider(env.getRequiredProperty("mso.config.cadi.aafId"), auth);
+        return new BasicAuthProvider(env.getProperty("mso.config.cadi.aafId", "default"), auth);
     }
 
     protected String getAuth() throws Exception {
         try {
-            return CryptoUtils.decrypt(env.getRequiredProperty("mso.auth"), env.getRequiredProperty("mso.msoKey"));
+            return CryptoUtils.decrypt(
+                    env.getProperty("mso.auth",
+                            "2E9994B328CEDF961D464EE556F8C93AC6F4D813600A5D2CD0D1CF83C5816790793CD0CF7224FB"),
+                    env.getProperty("mso.msoKey", "77a7299d3bf51a1e53be7a8f86699be9"));
         } catch (IllegalStateException | GeneralSecurityException e) {
             logger.error("Error Decrypting Password", e);
             throw new Exception("Cannot load password");
@@ -84,15 +85,15 @@ public class ExternalTaskServiceUtils {
     }
 
     public long getLockDurationLong() {
-        return env.getProperty(LOCK_DURATION_LONG, Long.class, new Long(DEFAULT_LOCK_DURATION_LONG));
+        return env.getProperty(LOCK_DURATION_LONG, Long.class, Long.valueOf(DEFAULT_LOCK_DURATION_LONG));
     }
 
     public long getLockDurationMedium() {
-        return env.getProperty(LOCK_DURATION_MEDIUM, Long.class, new Long(DEFAULT_LOCK_DURATION_MEDIUM));
+        return env.getProperty(LOCK_DURATION_MEDIUM, Long.class, Long.valueOf(DEFAULT_LOCK_DURATION_MEDIUM));
     }
 
     public long getLockDurationShort() {
-        return env.getProperty(LOCK_DURATION_SHORT, Long.class, new Long(DEFAULT_LOCK_DURATION_SHORT));
+        return env.getProperty(LOCK_DURATION_SHORT, Long.class, Long.valueOf(DEFAULT_LOCK_DURATION_SHORT));
     }
 
 }
