@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "57f87689_217f5f97",
+        "filename": "common/src/main/java/org/onap/so/utils/ExternalTaskServiceUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 3667
+      },
+      "writtenOn": "2021-03-18T03:09:15Z",
+      "side": 1,
+      "message": "As Max stated, it is getting the property from the helm chart, hence the env.getProperty.",
+      "parentUuid": "13f13dd5_0b00ef4e",
+      "revId": "e5c088138d87b47762b54d6b24fdfb8c91bb10b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "27d92697_4b608835",
         "filename": "common/src/main/java/org/onap/so/utils/ExternalTaskServiceUtils.java",
         "patchSetId": 2
