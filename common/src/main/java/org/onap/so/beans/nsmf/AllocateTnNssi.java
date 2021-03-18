@@ -39,4 +39,6 @@ public class AllocateTnNssi implements Serializable {
     private NsiInfo nsiInfo;
 
     private String scriptName;
+
+    private String nssiId;
 }
