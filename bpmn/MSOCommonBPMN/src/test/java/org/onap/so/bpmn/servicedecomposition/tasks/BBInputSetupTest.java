@@ -29,6 +29,7 @@ import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
@@ -110,6 +111,7 @@ import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.InstanceGroupType;
 import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
+import org.onap.so.db.catalog.beans.OrchTemplateArtifactType;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
@@ -3278,6 +3280,9 @@ public class BBInputSetupTest {
         serviceInstance.getVnfs().add(vnf);
         VfModule vfModule1 = new VfModule();
         vfModule1.setVfModuleId("vfModuleId1");
+        ModelInfoVfModule modelInfoVfModule = new ModelInfoVfModule();
+        modelInfoVfModule.setModelUUID("uuidTest");
+        vfModule1.setModelInfoVfModule(modelInfoVfModule);
         VfModule vfModule2 = new VfModule();
         vfModule2.setVfModuleId("vfModuleId2");
         vnf.getVfModules().add(vfModule1);
@@ -3309,6 +3314,9 @@ public class BBInputSetupTest {
         org.onap.aai.domain.yang.VfModule vfModuleAAI = new org.onap.aai.domain.yang.VfModule();
         vfModuleAAI.setModelCustomizationId(vfModuleCustomizationId);
 
+        org.onap.so.db.catalog.beans.VfModule vfModuleFromDatabase = new org.onap.so.db.catalog.beans.VfModule();
+        vfModuleFromDatabase.setOrchTemplateArtifactType(OrchTemplateArtifactType.HELM);
+        doReturn(vfModuleFromDatabase).when(SPY_bbInputSetupUtils).getVfModuleByModelUUID("uuidTest");
         doReturn(vnfAAI).when(SPY_bbInputSetupUtils).getAAIGenericVnf(vnf.getVnfId());
         doReturn(volumeGroupAAI).when(SPY_bbInputSetupUtils).getAAIVolumeGroup(CLOUD_OWNER,
                 cloudConfiguration.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
@@ -3333,6 +3341,7 @@ public class BBInputSetupTest {
                 lookupKeyMap.get(ResourceKey.VF_MODULE_ID));
         assertEquals("Lookup Key Map populated with VolumeGroup Id", volumeGroupId,
                 lookupKeyMap.get(ResourceKey.VOLUME_GROUP_ID));
+        assertTrue(parameter.getIsHelm());
     }
 
     @Test

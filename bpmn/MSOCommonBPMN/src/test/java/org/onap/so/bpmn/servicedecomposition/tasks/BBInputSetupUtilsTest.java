@@ -79,7 +79,9 @@ import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.MultipleObjectsFoundException;
 import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.NoServiceInstanceFoundException;
 import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
+import org.onap.so.db.catalog.beans.OrchTemplateArtifactType;
 import org.onap.so.db.catalog.beans.Service;
+import org.onap.so.db.catalog.beans.VfModule;
 import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -828,6 +830,16 @@ public class BBInputSetupUtilsTest {
         GenericVnfs actualGenericVnfs = bbInputSetupUtils.getAAIVnfsGloballyByName(vnfName);
 
         assertNull(actualGenericVnfs);
+    }
+
+    @Test
+    public void getVfModuleByModelUUID_success() {
+        org.onap.so.db.catalog.beans.VfModule vfModuleFromDatabase = new VfModule();
+        vfModuleFromDatabase.setOrchTemplateArtifactType(OrchTemplateArtifactType.HELM);
+        doReturn(vfModuleFromDatabase).when(MOCK_catalogDbClient).getVfModuleByModelUUID("modelUuidTest");
+        org.onap.so.db.catalog.beans.VfModule vfModuleFromDatabaseResult =
+                bbInputSetupUtils.getVfModuleByModelUUID("modelUuidTest");
+        assertEquals(OrchTemplateArtifactType.HELM, vfModuleFromDatabaseResult.getOrchTemplateArtifactType());
     }
 
     private InfraActiveRequests loadExpectedInfraActiveRequest() throws IOException {
