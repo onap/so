@@ -669,6 +669,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         NssmfAdapterNBIRequest nbiRequest = new NssmfAdapterNBIRequest()
 
         AllocateTnNssi allocateTnNssi = new AllocateTnNssi()
+        allocateTnNssi.setNssiId(sliceTaskInfo.suggestNssiId)
         //todo: AllocateTnNssi
         //todo: endPointId -> set into tn
         List<TransportSliceNetwork> transportSliceNetworks = new ArrayList<>()
