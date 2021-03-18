@@ -6,6 +6,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Modifications Copyright (C) 2021 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -552,5 +554,9 @@ public class BBInputSetupUtils {
                 .createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
                 .relatedTo(Types.CONFIGURATIONS.getFragment()).queryParam("configuration-name", configurationName);
         return injectionHelper.getAaiClient().getOne(Configurations.class, Configuration.class, uri);
+    }
+
+    public org.onap.so.db.catalog.beans.VfModule getVfModuleByModelUUID(String modelUUID) {
+        return catalogDbClient.getVfModuleByModelUUID(modelUUID);
     }
 }

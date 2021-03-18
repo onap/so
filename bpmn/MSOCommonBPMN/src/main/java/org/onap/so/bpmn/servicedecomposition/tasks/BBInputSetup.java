@@ -83,6 +83,7 @@ import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
 import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
+import org.onap.so.db.catalog.beans.OrchTemplateArtifactType;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
@@ -645,9 +646,14 @@ public class BBInputSetup implements JavaDelegate {
                 }
             }
             if (vfModule != null && vfModule.getModelInfoVfModule() != null
+<<<<<<< HEAD   (8950f0 Merge "SO refactor - extract Workflow type Service Issue-ID:)
                     && vfModule.getModelInfoVfModule().getModelName() != null
                     && vfModule.getModelInfoVfModule().getModelName().contains("helm")) {
                 parameter.setIsHelm(true);
+=======
+                    && vfModule.getModelInfoVfModule().getModelUUID() != null) {
+                parameter.setIsHelm(isVfModuleHelm(vfModule.getModelInfoVfModule().getModelUUID()));
+>>>>>>> CHANGE (46a0ed helm orchestration artifact type handling)
             }
         } else {
             logger.debug("Related VNF instance Id not found: {}",
@@ -1484,9 +1490,9 @@ public class BBInputSetup implements JavaDelegate {
                             }
                         }
                         if (vfModule.getModelInfoVfModule() != null
-                                && vfModule.getModelInfoVfModule().getModelName() != null
-                                && vfModule.getModelInfoVfModule().getModelName().contains("helm")) {
-                            gBB.getRequestContext().setIsHelm(true);
+                                && vfModule.getModelInfoVfModule().getModelUUID() != null) {
+                            gBB.getRequestContext()
+                                    .setIsHelm(isVfModuleHelm(vfModule.getModelInfoVfModule().getModelUUID()));
                         }
                         break;
                     }
@@ -2168,5 +2174,11 @@ public class BBInputSetup implements JavaDelegate {
             customer.setServiceSubscription(serviceSubscription);
         }
         return customer;
+    }
+
+    private boolean isVfModuleHelm(String vfModuleId) {
+        org.onap.so.db.catalog.beans.VfModule vfModuleFromDatabase =
+                bbInputSetupUtils.getVfModuleByModelUUID(vfModuleId);
+        return OrchTemplateArtifactType.HELM.equals(vfModuleFromDatabase.getOrchTemplateArtifactType());
     }
 }
