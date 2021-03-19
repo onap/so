@@ -48,4 +48,7 @@ public class TnSliceProfile implements Serializable {
 
     @JsonProperty(value = "jitter")
     private int jitter;
+
+    @JsonProperty(value = "resourceSharingLevel")
+    private ResourceSharingLevel resourceSharingLevel;
 }
