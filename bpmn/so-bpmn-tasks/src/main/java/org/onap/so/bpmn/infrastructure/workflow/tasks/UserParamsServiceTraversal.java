@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.CREATE_INSTANCE;
@@ -59,6 +60,8 @@ public class UserParamsServiceTraversal {
     private final CatalogDbClient catalogDbClient;
     private final ExceptionBuilder exceptionBuilder;
     private boolean foundVfModuleOrVG;
+    private String vnfCustomizationUUID;
+    private String vfModuleCustomizationUUID;
 
     UserParamsServiceTraversal(CatalogDbClient catalogDbClient, ExceptionBuilder exceptionBuilder) {
         this.catalogDbClient = catalogDbClient;
@@ -68,23 +71,22 @@ public class UserParamsServiceTraversal {
     protected List<Resource> getResourceListFromUserParams(DelegateExecution execution,
             List<Map<String, Object>> userParams, String serviceModelVersionId, String requestAction)
             throws IOException {
-        List<Resource> resourceList = new ArrayList<>();
         if (userParams != null) {
             for (Map<String, Object> params : userParams) {
                 if (params.containsKey(USER_PARAM_SERVICE)) {
                     ObjectMapper obj = new ObjectMapper();
                     String input = obj.writeValueAsString(params.get(USER_PARAM_SERVICE));
                     Service validate = obj.readValue(input, Service.class);
-                    setResourceList(execution, serviceModelVersionId, requestAction, resourceList, validate);
-                    break;
+                    return getResourceList(execution, serviceModelVersionId, requestAction, validate);
                 }
             }
         }
-        return resourceList;
+        return Collections.emptyList();
     }
 
-    private void setResourceList(DelegateExecution execution, String serviceModelVersionId, String requestAction,
-            List<Resource> resourceList, Service validate) {
+    private List<Resource> getResourceList(DelegateExecution execution, String serviceModelVersionId,
+            String requestAction, Service validate) {
+        List<Resource> resourceList = new ArrayList<>();
         resourceList.add(new Resource(WorkflowType.SERVICE, validate.getModelInfo().getModelVersionId(), false));
         if (validate.getResources().getVnfs() != null) {
             setResourceListForVnfs(execution, resourceList, validate);
@@ -95,11 +97,12 @@ public class UserParamsServiceTraversal {
         if (validate.getResources().getNetworks() != null) {
             setResourceListForNetworks(execution, serviceModelVersionId, requestAction, resourceList, validate);
         }
+        return resourceList;
     }
 
     private void setResourceListForVnfs(DelegateExecution execution, List<Resource> resourceList, Service validate) {
-        foundVfModuleOrVG = false;
         for (Vnfs vnf : validate.getResources().getVnfs()) {
+            setVnfCustomizationUUID(vnf);
             resourceList.add(new Resource(WorkflowType.VNF, vnf.getModelInfo().getModelCustomizationId(), false));
             setResourceListForVfModules(execution, resourceList, validate, vnf);
         }
@@ -109,10 +112,10 @@ public class UserParamsServiceTraversal {
             Vnfs vnf) {
         if (vnf.getVfModules() != null) {
             for (VfModules vfModule : vnf.getVfModules()) {
+                setVfModuleCustomizationUUID(vfModule);
                 VfModuleCustomization vfModuleCustomization =
-                        catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID(
-                                vfModule.getModelInfo().getModelCustomizationUuid());
-                if (vfModuleCustomization != null) {
+                        catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID(vfModuleCustomizationUUID);
+                if (vfModuleCustomization != null && vfModuleCustomization.getVfModule() != null) {
                     setVolumeGroupWorkFlowTypeToResourceList(resourceList, vfModuleCustomization);
                     setVfModuleAndConfigurationWorkFlowTypeToResourceList(resourceList, validate, vnf, vfModule,
                             vfModuleCustomization);
@@ -127,8 +130,7 @@ public class UserParamsServiceTraversal {
 
     private void setVolumeGroupWorkFlowTypeToResourceList(List<Resource> resourceList,
             VfModuleCustomization vfModuleCustomization) {
-        if (vfModuleCustomization.getVfModule() != null
-                && vfModuleCustomization.getVfModule().getVolumeHeatTemplate() != null
+        if (vfModuleCustomization.getVfModule().getVolumeHeatTemplate() != null
                 && vfModuleCustomization.getVolumeHeatEnv() != null) {
             foundVfModuleOrVG = true;
             resourceList.add(
@@ -138,11 +140,9 @@ public class UserParamsServiceTraversal {
 
     private void setVfModuleAndConfigurationWorkFlowTypeToResourceList(List<Resource> resourceList, Service validate,
             Vnfs vnf, VfModules vfModule, VfModuleCustomization vfModuleCustomization) {
-        if ((vfModuleCustomization.getVfModule() != null)
-                && ((vfModuleCustomization.getVfModule().getModuleHeatTemplate() != null
-                        && vfModuleCustomization.getHeatEnvironment() != null))
-                || (vfModuleCustomization.getVfModule() != null
-                        && vfModuleCustomization.getVfModule().getModelName() != null
+        if ((vfModuleCustomization.getVfModule().getModuleHeatTemplate() != null
+                && vfModuleCustomization.getHeatEnvironment() != null)
+                || (vfModuleCustomization.getVfModule().getModelName() != null
                         && vfModuleCustomization.getVfModule().getModelName().contains("helm"))) {
             foundVfModuleOrVG = true;
             Resource resource = setVfModuleWorkFlowTypeToResourceList(resourceList, vfModuleCustomization);
@@ -162,11 +162,9 @@ public class UserParamsServiceTraversal {
 
     private void setConfigurationWorkFlowTypeToResourceList(List<Resource> resourceList, Service validate, Vnfs vnf,
             VfModules vfModule, Resource resource) {
-        String vfModuleCustomizationUUID = getVfModuleCustomizationUUID(vfModule);
-        String vnfCustomizationUUID = getVnfCustomizationUUID(vnf);
         if (!vnfCustomizationUUID.isEmpty() && !vfModuleCustomizationUUID.isEmpty()) {
-            List<CvnfcConfigurationCustomization> configs = traverseCatalogDbForConfiguration(
-                    validate.getModelInfo().getModelVersionId(), vnfCustomizationUUID, vfModuleCustomizationUUID);
+            List<CvnfcConfigurationCustomization> configs =
+                    traverseCatalogDbForConfiguration(validate.getModelInfo().getModelVersionId());
             for (CvnfcConfigurationCustomization config : configs) {
                 Resource configResource = new Resource(WorkflowType.CONFIGURATION,
                         config.getConfigurationResource().getModelUUID(), false);
@@ -177,24 +175,20 @@ public class UserParamsServiceTraversal {
         }
     }
 
-    private String getVfModuleCustomizationUUID(VfModules vfModule) {
-        String vfModuleCustomizationUUID;
+    private void setVfModuleCustomizationUUID(VfModules vfModule) {
         if (vfModule.getModelInfo() != null && vfModule.getModelInfo().getModelCustomizationUuid() != null) {
             vfModuleCustomizationUUID = vfModule.getModelInfo().getModelCustomizationUuid();
         } else {
             vfModuleCustomizationUUID = "";
         }
-        return vfModuleCustomizationUUID;
     }
 
-    private String getVnfCustomizationUUID(Vnfs vnf) {
-        String vnfCustomizationUUID;
+    private void setVnfCustomizationUUID(Vnfs vnf) {
         if (vnf.getModelInfo() != null && vnf.getModelInfo().getModelCustomizationUuid() != null) {
             vnfCustomizationUUID = vnf.getModelInfo().getModelCustomizationUuid();
         } else {
             vnfCustomizationUUID = "";
         }
-        return vnfCustomizationUUID;
     }
 
     private void setResourceListForPnfs(List<Resource> resourceList, Service validate) {
@@ -218,25 +212,29 @@ public class UserParamsServiceTraversal {
     }
 
 
-    private List<CvnfcConfigurationCustomization> traverseCatalogDbForConfiguration(String serviceModelUUID,
-            String vnfCustomizationUUID, String vfModuleCustomizationUUID) {
-        List<CvnfcConfigurationCustomization> configurations = new ArrayList<>();
+    private List<CvnfcConfigurationCustomization> traverseCatalogDbForConfiguration(String serviceModelUUID) {
         try {
             List<CvnfcCustomization> cvnfcCustomizations = catalogDbClient.getCvnfcCustomization(serviceModelUUID,
                     vnfCustomizationUUID, vfModuleCustomizationUUID);
-            for (CvnfcCustomization cvnfc : cvnfcCustomizations) {
-                for (CvnfcConfigurationCustomization customization : cvnfc.getCvnfcConfigurationCustomization()) {
-                    if (customization.getConfigurationResource().getToscaNodeType().contains(FABRIC_CONFIGURATION)) {
-                        configurations.add(customization);
-                    }
-                }
-            }
-            logger.debug("found {} fabric configuration(s)", configurations.size());
-            return configurations;
+            return getCvnfcConfigurationCustomizations(cvnfcCustomizations);
         } catch (Exception ex) {
             logger.error("Error in finding configurations", ex);
-            return configurations;
+            return Collections.emptyList();
         }
+    }
+
+    private List<CvnfcConfigurationCustomization> getCvnfcConfigurationCustomizations(
+            List<CvnfcCustomization> cvnfcCustomizations) {
+        List<CvnfcConfigurationCustomization> configurations = new ArrayList<>();
+        for (CvnfcCustomization cvnfc : cvnfcCustomizations) {
+            for (CvnfcConfigurationCustomization customization : cvnfc.getCvnfcConfigurationCustomization()) {
+                if (customization.getConfigurationResource().getToscaNodeType().contains(FABRIC_CONFIGURATION)) {
+                    configurations.add(customization);
+                }
+            }
+        }
+        logger.debug("found {} fabric configuration(s)", configurations.size());
+        return configurations;
     }
 
     private String queryCatalogDbForNetworkCollection(DelegateExecution execution, String serviceModelVersionId) {
@@ -261,9 +259,7 @@ public class UserParamsServiceTraversal {
                 count++;
             }
         }
-        if (count == 0) {
-            return null;
-        } else if (count > 1) {
+        if (count > 1) {
             buildAndThrowException(execution,
                     "Found multiple Network Collections in the Service model, only one per Service is supported.");
         }
