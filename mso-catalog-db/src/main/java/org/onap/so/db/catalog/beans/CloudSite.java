@@ -31,6 +31,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -140,6 +141,11 @@ public class CloudSite {
     @PrePersist
     protected void onCreate() {
         this.created = new Date();
+        this.updated = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
         this.updated = new Date();
     }
 
