@@ -275,8 +275,7 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
 
         execution.setVariable("sliceTaskParams", sliceTaskParams)
 
-        String paramJson = sliceTaskParams.convertToJson()
-        execution.setVariable("CSSOT_paramJson", paramJson)
+        execution.setVariable("CSSOT_paramJson", objectMapper.writeValueAsString(sliceTaskParams))
 
         logger.debug("Finish createOrchestrationTask")
     }
@@ -372,9 +371,9 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
         String taskStatus = execution.getVariable("taskStatus")
         SliceTaskParamsAdapter sliceTaskParams =
                 execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
-        String paramJson = sliceTaskParams.convertToJson()
+
         execution.setVariable("CSSOT_status", taskStatus)
-        execution.setVariable("CSSOT_paramJson", paramJson)
+        execution.setVariable("CSSOT_paramJson", objectMapper.writeValueAsString(sliceTaskParams))
         execution.setVariable("CSSOT_requestMethod", requestMethod)
         logger.debug("Finish prepareUpdateOrchestrationTask")
     }
@@ -402,10 +401,8 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
         String paramJson = orchestrationTask.getParams()
         logger.debug("paramJson: " + paramJson)
 
-        SliceTaskParamsAdapter sliceTaskParams =
-                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+        SliceTaskParamsAdapter sliceTaskParams = objectMapper.readValue(paramJson, SliceTaskParamsAdapter.class)
 
-        sliceTaskParams.convertFromJson(paramJson)
         execution.setVariable("sliceTaskParams", sliceTaskParams)
         logger.debug("Finish processUserOptions")
     }

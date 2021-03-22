@@ -131,8 +131,7 @@ class DoAllocateNSSI extends AbstractServiceTaskProcessor {
         sliceTaskInfo.statusDescription = response.getStatusDescription()
         updateNssiResult(sliceParams, subnetType, sliceTaskInfo)
 
-        String paramJson = sliceParams.convertToJson()
-        execution.setVariable("CSSOT_paramJson", paramJson)
+        execution.setVariable("CSSOT_paramJson", objectMapper.writeValueAsString(sliceParams))
         execution.setVariable("CSSOT_requestMethod", requestMethod)
 
         execution.setVariable("sliceTaskParams", sliceParams)
