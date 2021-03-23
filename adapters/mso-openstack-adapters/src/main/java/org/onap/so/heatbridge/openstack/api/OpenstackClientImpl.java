@@ -36,18 +36,24 @@
 
 package org.onap.so.heatbridge.openstack.api;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import org.onap.so.heatbridge.HeatBridgeException;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.compute.Server;
 import org.openstack4j.model.heat.Resource;
+import org.openstack4j.model.identity.v2.Access.Service;
 import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.Port;
 import org.openstack4j.model.network.Subnet;
 import org.openstack4j.model.storage.block.Volume;
 import org.openstack4j.model.storage.block.VolumeBackup;
+import com.woorea.openstack.base.client.OpenStackClient;
 
 abstract class OpenstackClientImpl implements OpenstackClient {
     @Override
@@ -91,11 +97,19 @@ abstract class OpenstackClientImpl implements OpenstackClient {
         return getClient().blockStorage().volumes().get(id);
     }
 
+    @Override
+    public URI getVolumeEndpoint() throws Exception {
+        return getServiceCatalog();
+
+    }
+
     /**
      * Retrieves the specific client to utilize.
      * 
      * @return The specific client to utilize
      */
     protected abstract OSClient getClient();
+
+    protected abstract URI getServiceCatalog() throws Exception;
 
 }

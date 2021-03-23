@@ -36,6 +36,7 @@
 
 package org.onap.so.heatbridge.openstack.api;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import org.openstack4j.model.compute.Server;
@@ -109,4 +110,6 @@ public interface OpenstackClient {
      * @return Volume object.
      */
     Volume getVolumeById(String volumeId);
+
+    URI getVolumeEndpoint() throws Exception;
 }

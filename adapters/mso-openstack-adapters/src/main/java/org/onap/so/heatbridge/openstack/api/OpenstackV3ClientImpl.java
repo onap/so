@@ -36,6 +36,7 @@
 
 package org.onap.so.heatbridge.openstack.api;
 
+import java.net.URI;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.api.OSClient.OSClientV3;
 
@@ -52,6 +53,12 @@ public class OpenstackV3ClientImpl extends OpenstackClientImpl {
      */
     protected OSClient getClient() {
         return client;
+    }
+
+    protected URI getServiceCatalog() throws Exception {
+        return client.getToken().getCatalog().stream().filter(e -> e.getName().equals("volume")).findFirst()
+                .orElseThrow().getEndpoints().stream().filter(e -> e.getIface().equals("public")).findFirst()
+                .orElseThrow().getUrl().toURI();
     }
 
 }
