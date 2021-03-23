@@ -36,6 +36,7 @@
 
 package org.onap.so.heatbridge.openstack.api;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -47,9 +48,11 @@ import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.Port;
 import org.openstack4j.model.network.Subnet;
 import org.openstack4j.model.storage.block.Volume;
-import org.openstack4j.model.storage.block.VolumeBackup;
 
 abstract class OpenstackClientImpl implements OpenstackClient {
+
+    protected static final String osVolumeType = "volumev2";
+
     @Override
     public Server getServerById(String serverId) {
         return getClient().compute().servers().get(serverId);
@@ -91,11 +94,19 @@ abstract class OpenstackClientImpl implements OpenstackClient {
         return getClient().blockStorage().volumes().get(id);
     }
 
+    @Override
+    public URI getVolumeEndpoint() throws Exception {
+        return getServiceCatalog();
+
+    }
+
     /**
      * Retrieves the specific client to utilize.
      * 
      * @return The specific client to utilize
      */
     protected abstract OSClient getClient();
+
+    protected abstract URI getServiceCatalog() throws Exception;
 
 }
