@@ -49,6 +49,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -810,16 +812,20 @@ public class HeatBridgeImplTest {
     }
 
     @Test
-    public void testBuildAddVolumes() throws HeatBridgeException {
+    public void testBuildAddVolumes() throws URISyntaxException, Exception {
         List<Resource> stackResources = (List<Resource>) extractTestStackResources();
         Volume volume = mock(Volume.class);
         List<VolumeAttachment> attachments = new ArrayList<>();
         VolumeAttachment server = mock(VolumeAttachment.class);
         attachments.add(server);
         when(volume.getAttachments()).thenAnswer(x -> attachments);
+        when(volume.getId()).thenReturn("volumeId");
         when(server.getServerId()).thenReturn("vserverIdTest");
 
         when(osClient.getVolumeById("5ad95036-8daf-4379-a59c-865f35976ca3")).thenReturn(volume);
+        when(osClient.getVolumeById("5ad95036-8daf-4379-a59c-865f35976cb4")).thenReturn(volume);
+        when(osClient.getVolumeEndpoint())
+                .thenReturn(new URI("https://volume.abc54a.ccc.att.com/v1/7320ec4a5b9d4589ba7c4412ccfd290f"));
 
         heatbridge.buildAddVolumes(stackResources);
 
@@ -828,7 +834,13 @@ public class HeatBridgeImplTest {
                         .cloudRegion("CloudOwner", "RegionOne").tenant("7320ec4a5b9d4589ba7c4412ccfd290f")
                         .vserver("vserverIdTest").volume("5ad95036-8daf-4379-a59c-865f35976ca3"))),
                 any(Optional.class));
+        verify(transaction, times(1)).createIfNotExists(
+                eq(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                        .cloudRegion("CloudOwner", "RegionOne").tenant("7320ec4a5b9d4589ba7c4412ccfd290f")
+                        .vserver("vserverIdTest").volume("5ad95036-8daf-4379-a59c-865f35976cb4"))),
+                any(Optional.class));
         verify(osClient, times(1)).getVolumeById(eq("5ad95036-8daf-4379-a59c-865f35976ca3"));
+        verify(osClient, times(1)).getVolumeById(eq("5ad95036-8daf-4379-a59c-865f35976cb4"));
     }
 
     private List<? extends Resource> extractTestStackResources() {

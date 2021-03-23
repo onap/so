@@ -33,6 +33,7 @@
 package org.onap.so.heatbridge;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -133,6 +134,9 @@ public class HeatBridgeImpl implements HeatBridgeApi {
 
     protected static final Object PRIVATE_VLANS = "private_vlans";
     protected static final Object PUBLIC_VLANS = "public_vlans";
+
+    protected static final String OS_VOLUME = "OS::Cinder::Volume";
+    protected static final String OS_VOLUME_ATTACHMENT = "OS::Cinder::VolumeAttachment";
 
     protected ObjectMapper mapper = new ObjectMapper();
 
@@ -426,9 +430,14 @@ public class HeatBridgeImpl implements HeatBridgeApi {
     @Override
     public void buildAddVolumes(List<Resource> stackResources) throws HeatBridgeException {
         try {
-            if (stackResources.stream().anyMatch(r -> r.getType().equals("OS::Cinder::Volume"))) {
-                stackResources.stream().filter(r -> r.getType().equalsIgnoreCase("OS::Cinder::Volume"))
-                        .forEach(r -> createVolume(r));
+            if (stackResources.stream()
+                    .anyMatch(r -> r.getType().equals(OS_VOLUME) || r.getType().equals(OS_VOLUME_ATTACHMENT))) {
+                List<Resource> volumeResources = stackResources.stream()
+                        .filter(r -> r.getType().equals(OS_VOLUME) || r.getType().equals(OS_VOLUME_ATTACHMENT))
+                        .collect(Collectors.toList());
+                for (Resource v : volumeResources) {
+                    createVolume(v);
+                }
             } else {
                 logger.debug("Heat stack contains no volumes");
             }
@@ -439,7 +448,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
 
     }
 
-    protected void createVolume(Resource r) {
+    protected void createVolume(Resource r) throws Exception {
         org.openstack4j.model.storage.block.Volume osVolume = osClient.getVolumeById(r.getPhysicalResourceId());
         List<? extends VolumeAttachment> attachments = osVolume.getAttachments();
         if (attachments != null) {
@@ -447,6 +456,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             if (vserver.isPresent()) {
                 Volume volume = new Volume();
                 volume.setVolumeId(r.getPhysicalResourceId());
+                volume.setVolumeSelflink(getVolumeSelfLink(osVolume));
                 AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
                         .cloudRegion(cloudOwner, cloudRegionId).tenant(tenantId).vserver(vserver.get().getServerId())
                         .volume(r.getPhysicalResourceId()));
@@ -461,6 +471,12 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                     "Volume {} contains no attachments in openstack. Unable to determine which vserver volume belongs too.",
                     r.getPhysicalResourceId());
         }
+    }
+
+    protected String getVolumeSelfLink(org.openstack4j.model.storage.block.Volume volume) throws Exception {
+        URI endpoint = osClient.getVolumeEndpoint();
+        URI selflink = UriBuilder.fromUri(endpoint).path("volumes").path(volume.getId()).build();
+        return selflink.toString();
     }
 
     protected String getInterfaceType(NodeType nodeType, String nicType) {
@@ -916,4 +932,5 @@ public class HeatBridgeImpl implements HeatBridgeApi {
         }
         return aaiDSLClient;
     }
+
 }
