@@ -79,266 +79,266 @@ public class BBInputSetupParameter {
     }
 
 
-    protected CloudConfiguration getCloudConfiguration() {
+    public CloudConfiguration getCloudConfiguration() {
         return cloudConfiguration;
     }
 
 
-    protected void setCloudConfiguration(CloudConfiguration cloudConfiguration) {
+    public void setCloudConfiguration(CloudConfiguration cloudConfiguration) {
         this.cloudConfiguration = cloudConfiguration;
     }
 
 
-    protected ConfigurationResourceKeys getConfigurationResourceKeys() {
+    public ConfigurationResourceKeys getConfigurationResourceKeys() {
         return configurationResourceKeys;
     }
 
 
-    protected void setConfigurationResourceKeys(ConfigurationResourceKeys configurationResourceKeys) {
+    public void setConfigurationResourceKeys(ConfigurationResourceKeys configurationResourceKeys) {
         this.configurationResourceKeys = configurationResourceKeys;
     }
 
 
-    protected List<Map<String, String>> getInstanceParams() {
+    public List<Map<String, String>> getInstanceParams() {
         return instanceParams;
     }
 
 
-    protected void setInstanceParams(List<Map<String, String>> instanceParams) {
+    public void setInstanceParams(List<Map<String, String>> instanceParams) {
         this.instanceParams = instanceParams;
     }
 
 
-    protected Map<ResourceKey, String> getLookupKeyMap() {
+    public Map<ResourceKey, String> getLookupKeyMap() {
         return lookupKeyMap;
     }
 
 
-    protected void setLookupKeyMap(Map<ResourceKey, String> lookupKeyMap) {
+    public void setLookupKeyMap(Map<ResourceKey, String> lookupKeyMap) {
         this.lookupKeyMap = lookupKeyMap;
     }
 
 
-    protected ModelInfo getModelInfo() {
+    public ModelInfo getModelInfo() {
         return modelInfo;
     }
 
 
-    protected void setModelInfo(ModelInfo modelInfo) {
+    public void setModelInfo(ModelInfo modelInfo) {
         this.modelInfo = modelInfo;
     }
 
 
-    protected LineOfBusiness getLineOfBusiness() {
+    public LineOfBusiness getLineOfBusiness() {
         return lineOfBusiness;
     }
 
 
-    protected void setLineOfBusiness(LineOfBusiness lineOfBusiness) {
+    public void setLineOfBusiness(LineOfBusiness lineOfBusiness) {
         this.lineOfBusiness = lineOfBusiness;
     }
 
 
-    protected Platform getPlatform() {
+    public Platform getPlatform() {
         return platform;
     }
 
 
-    protected void setPlatform(Platform platform) {
+    public void setPlatform(Platform platform) {
         this.platform = platform;
     }
 
 
-    protected RelatedInstanceList[] getRelatedInstanceList() {
+    public RelatedInstanceList[] getRelatedInstanceList() {
         return relatedInstanceList;
     }
 
 
-    protected void setRelatedInstanceList(RelatedInstanceList[] relatedInstanceList) {
+    public void setRelatedInstanceList(RelatedInstanceList[] relatedInstanceList) {
         this.relatedInstanceList = relatedInstanceList;
     }
 
 
-    protected RequestDetails getRequestDetails() {
+    public RequestDetails getRequestDetails() {
         return requestDetails;
     }
 
 
-    protected void setRequestDetails(RequestDetails requestDetails) {
+    public void setRequestDetails(RequestDetails requestDetails) {
         this.requestDetails = requestDetails;
     }
 
 
-    protected Service getService() {
+    public Service getService() {
         return service;
     }
 
 
-    protected void setService(Service service) {
+    public void setService(Service service) {
         this.service = service;
     }
 
 
-    protected ServiceInstance getServiceInstance() {
+    public ServiceInstance getServiceInstance() {
         return serviceInstance;
     }
 
 
-    protected void setServiceInstance(ServiceInstance serviceInstance) {
+    public void setServiceInstance(ServiceInstance serviceInstance) {
         this.serviceInstance = serviceInstance;
     }
 
 
-    protected String getBbName() {
+    public String getBbName() {
         return bbName;
     }
 
 
-    protected void setBbName(String bbName) {
+    public void setBbName(String bbName) {
         this.bbName = bbName;
     }
 
 
-    protected String getInstanceGroupId() {
+    public String getInstanceGroupId() {
         return instanceGroupId;
     }
 
 
-    protected void setInstanceGroupId(String instanceGroupId) {
+    public void setInstanceGroupId(String instanceGroupId) {
         this.instanceGroupId = instanceGroupId;
     }
 
 
-    protected String getInstanceName() {
+    public String getInstanceName() {
         return instanceName;
     }
 
 
-    protected void setInstanceName(String instanceName) {
+    public void setInstanceName(String instanceName) {
         this.instanceName = instanceName;
     }
 
 
-    protected String getProductFamilyId() {
+    public String getProductFamilyId() {
         return productFamilyId;
     }
 
 
-    protected void setProductFamilyId(String productFamilyId) {
+    public void setProductFamilyId(String productFamilyId) {
         this.productFamilyId = productFamilyId;
     }
 
 
-    protected String getResourceId() {
+    public String getResourceId() {
         return resourceId;
     }
 
 
-    protected void setResourceId(String resourceId) {
+    public void setResourceId(String resourceId) {
         this.resourceId = resourceId;
     }
 
 
-    protected String getVnfType() {
+    public String getVnfType() {
         return vnfType;
     }
 
 
-    protected void setVnfType(String vnfType) {
+    public void setVnfType(String vnfType) {
         this.vnfType = vnfType;
     }
 
 
-    protected ExecuteBuildingBlock getExecuteBB() {
+    public ExecuteBuildingBlock getExecuteBB() {
         return executeBB;
     }
 
 
-    protected void setExecuteBB(ExecuteBuildingBlock executeBB) {
+    public void setExecuteBB(ExecuteBuildingBlock executeBB) {
         this.executeBB = executeBB;
     }
 
 
-    protected String getRequestAction() {
+    public String getRequestAction() {
         return requestAction;
     }
 
 
-    protected void setRequestAction(String requestAction) {
+    public void setRequestAction(String requestAction) {
         this.requestAction = requestAction;
     }
 
 
-    protected boolean getaLaCarte() {
+    public boolean getaLaCarte() {
         return aLaCarte;
     }
 
-    protected void setaLaCarte(boolean aLaCarte) {
+    public void setaLaCarte(boolean aLaCarte) {
         this.aLaCarte = aLaCarte;
     }
 
-    protected Customer getCustomer() {
+    public Customer getCustomer() {
         return customer;
     }
 
-    protected void setCustomer(Customer customer) {
+    public void setCustomer(Customer customer) {
         this.customer = customer;
     }
 
-    protected void setRequestId(String requestId) {
+    public void setRequestId(String requestId) {
         this.requestId = requestId;
     }
 
-    protected String getRequestId() {
+    public String getRequestId() {
         return requestId;
     }
 
-    protected void setConfigurationKey(String configurationKey) {
+    public void setConfigurationKey(String configurationKey) {
         this.configurationKey = configurationKey;
     }
 
-    protected String getConfigurationKey() {
+    public String getConfigurationKey() {
         return configurationKey;
     }
 
-    protected String getKey() {
+    public String getKey() {
         return key;
     }
 
-    protected void setKey(String key) {
+    public void setKey(String key) {
         this.key = key;
     }
 
-    protected String getApplicationId() {
+    public String getApplicationId() {
         return applicationId;
     }
 
-    protected void setApplicationId(String applicationId) {
+    public void setApplicationId(String applicationId) {
         this.applicationId = applicationId;
     }
 
-    protected boolean getIsReplace() {
+    public boolean getIsReplace() {
         return isReplace;
     }
 
-    protected void setIsReplace(boolean isReplace) {
+    public void setIsReplace(boolean isReplace) {
         this.isReplace = isReplace;
     }
 
-    protected ServiceModel getServiceModel() {
+    public ServiceModel getServiceModel() {
         return this.serviceModel;
     }
 
-    protected void setServiceModel(ServiceModel serviceModel) {
+    public void setServiceModel(ServiceModel serviceModel) {
         this.serviceModel = serviceModel;
     }
 
-    protected boolean getIsHelm() {
+    public boolean getIsHelm() {
         return isHelm;
     }
 
 
-    protected void setIsHelm(boolean isHelm) {
+    public void setIsHelm(boolean isHelm) {
         this.isHelm = isHelm;
     }
 
@@ -492,27 +492,27 @@ public class BBInputSetupParameter {
             return this;
         }
 
-        protected Builder setApplicationId(String applicationId) {
+        public Builder setApplicationId(String applicationId) {
             this.applicationId = applicationId;
             return this;
         }
 
-        protected Builder setIsReplace(boolean isReplace) {
+        public Builder setIsReplace(boolean isReplace) {
             this.isReplace = isReplace;
             return this;
         }
 
-        protected Builder setServiceModel(ServiceModel serviceModel) {
+        public Builder setServiceModel(ServiceModel serviceModel) {
             this.serviceModel = serviceModel;
             return this;
         }
 
-        protected boolean getIsHelm() {
+        public boolean getIsHelm() {
             return isHelm;
         }
 
 
-        protected void setIsHelm(boolean isHelm) {
+        public void setIsHelm(boolean isHelm) {
             this.isHelm = isHelm;
         }
 

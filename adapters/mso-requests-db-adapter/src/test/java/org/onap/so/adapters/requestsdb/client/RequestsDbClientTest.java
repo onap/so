@@ -26,6 +26,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -330,5 +331,15 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
 
         List<InfraActiveRequests> infraActiveRequests = requestsDbClient.getInProgressVolumeGroupsAndVfModules();
         assertThat(request, sameBeanAs(infraActiveRequests.get(0)).ignoring("modifyTime"));
+    }
+
+    @Test
+    public void getRequestProcessingDataBySoRequestIdAndNameAndTag() {
+        List<RequestProcessingData> requestProcessingData =
+                requestsDbClient.getRequestProcessingDataBySoRequestIdAndNameAndTagOrderByCreateTimeDesc(
+                        "00032ab7-na18-42e5-965d-8ea592502018", "requestAction", "pincFabricConfigRequest");
+        assertNotNull(requestProcessingData);
+        assertTrue(requestProcessingData.size() == 1);
+        assertEquals("assign", requestProcessingData.get(0).getValue());
     }
 }

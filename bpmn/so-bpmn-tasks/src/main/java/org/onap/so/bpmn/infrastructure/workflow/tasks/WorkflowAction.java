@@ -26,9 +26,27 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.ASSIGNINSTANCE;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.CONTROLLER;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.CREATE_INSTANCE;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.FABRIC_CONFIGURATION;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.NETWORKCOLLECTION;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.REPLACEINSTANCE;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.REPLACEINSTANCERETAINASSIGNMENTS;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.SERVICE;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.USER_PARAM_SERVICE;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.WORKFLOW_ACTION_ERROR_MESSAGE;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.SerializationUtils;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.javatuples.Pair;
@@ -79,26 +97,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.ASSIGNINSTANCE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.CONTROLLER;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.CREATE_INSTANCE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.FABRIC_CONFIGURATION;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.NETWORKCOLLECTION;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.REPLACEINSTANCE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.REPLACEINSTANCERETAINASSIGNMENTS;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.SERVICE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.USER_PARAM_SERVICE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.WORKFLOW_ACTION_ERROR_MESSAGE;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class WorkflowAction {

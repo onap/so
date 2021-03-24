@@ -232,7 +232,6 @@ public class WorkflowActionTest extends BaseTaskTest {
 
         when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
                 true, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
-
         workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         assertEqualsBulkFlowName(ebbs, "AssignServiceInstanceBB", "ActivateServiceInstanceBB");
@@ -1044,7 +1043,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
         List<OrchestrationFlow> orchFlows = createFlowList("AssignVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB",
-                "AssignFabricConfigurationBB", "ActivateFabricConfigurationBB");
+                "AddFabricConfigurationBB");
         northBoundRequest.setOrchestrationFlowList(orchFlows);
 
         List<CvnfcCustomization> cvnfcCustomizations = new ArrayList<CvnfcCustomization>();
@@ -1078,14 +1077,13 @@ public class WorkflowActionTest extends BaseTaskTest {
 
         when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
                 true, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
-        // when(catalogDbClient.getCvnfcCustomizationByVnfCustomizationUUIDAndVfModuleCustomizationUUID("fc25201d-36d6-43a3-8d39-fdae88e526ae",
-        // "9a6d01fd-19a7-490a-9800-460830a12e0b")).thenReturn(cvnfcCustomizations);
+
         workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
-        assertEqualsBulkFlowName(ebbs, "AssignVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB",
-                "AssignFabricConfigurationBB", "ActivateFabricConfigurationBB", "AssignFabricConfigurationBB",
-                "ActivateFabricConfigurationBB");
+        assertEqualsBulkFlowName(ebbs, "AssignVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB");
     }
+
+
 
     @Test
     public void selectExecutionListALaCarteVfModuleNoVolumeGroupReplaceTest() throws Exception {
@@ -1449,7 +1447,6 @@ public class WorkflowActionTest extends BaseTaskTest {
                 "CreateVolumeGroupBB", "ActivateVolumeGroupBB", "CreateVfModuleBB", "ActivateVfModuleBB",
                 "ChangeModelVnfBB", "ChangeModelServiceInstanceBB");
     }
-
 
     @Test
     public void selectExecutionListALaCarteVfModuleFabricDeleteTest() throws Exception {
@@ -2249,6 +2246,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         for (int i = 0; i < ebbs.size(); i++) {
             assertEquals(ebbs.get(i).getBuildingBlock().getBpmnFlowName(), flowNames[i]);
         }
+        assertEquals(ebbs.size(), flowNames.length);
     }
 
     private void initExecution(String gAction, String bpmnRequest, boolean isAlaCarte) {

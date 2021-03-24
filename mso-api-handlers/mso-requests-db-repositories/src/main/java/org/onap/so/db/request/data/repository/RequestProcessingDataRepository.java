@@ -23,6 +23,7 @@ package org.onap.so.db.request.data.repository;
 import java.util.List;
 import org.onap.so.db.request.beans.RequestProcessingData;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
@@ -43,5 +44,8 @@ public interface RequestProcessingDataRepository extends JpaRepository<RequestPr
             @Param("SO_REQUEST_ID") String soRequestId, @Param("IS_INTERNAL_DATA") Boolean isDataInternal);
 
     RequestProcessingData[] findByGroupingIdAndNameAndTag(@Param("GROUPING_ID") String groupingId,
+            @Param("NAME") String name, @Param("TAG") String tag);
+
+    RequestProcessingData[] findBySoRequestIdAndNameAndTagOrderByCreatedDesc(@Param("SO_REQUEST_ID") String soRequestId,
             @Param("NAME") String name, @Param("TAG") String tag);
 }

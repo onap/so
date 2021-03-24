@@ -37,6 +37,7 @@ import org.onap.aai.domain.yang.Vnfc;
 import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.aaiclient.client.aai.entities.Configuration;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
+import org.onap.so.bpmn.common.BBConstants;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
 import org.onap.so.bpmn.common.listener.db.RequestsDbListenerRunner;
 import org.onap.so.bpmn.common.listener.flowmanipulator.FlowManipulatorListenerRunner;
@@ -68,10 +69,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Component
 public class WorkflowActionBBTasks {
 
-    private static final String G_CURRENT_SEQUENCE = "gCurrentSequence";
-    private static final String G_REQUEST_ID = "mso-request-id";
-    private static final String G_ALACARTE = "aLaCarte";
-    private static final String G_ACTION = "requestAction";
     private static final String RETRY_COUNT = "retryCount";
     private static final String FABRIC_CONFIGURATION = "FabricConfiguration";
     private static final String ADD_FABRIC_CONFIGURATION_BB = "AddFabricConfigurationBB";
@@ -112,14 +109,15 @@ public class WorkflowActionBBTasks {
             } catch (NullPointerException ex) {
                 workflowAction.buildAndThrowException(execution, "Error in FlowManipulator Modify Flows", ex);
             }
-            int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE);
+            int currentSequence = (int) execution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
 
             ExecuteBuildingBlock ebb = flowsToExecute.get(currentSequence);
 
             execution.setVariable("buildingBlock", ebb);
             currentSequence++;
             execution.setVariable(COMPLETED, currentSequence >= flowsToExecute.size());
-            execution.setVariable(G_CURRENT_SEQUENCE, currentSequence);
+            execution.setVariable(BBConstants.G_CURRENT_SEQUENCE, currentSequence);
+
         } catch (Exception e) {
             workflowAction.buildAndThrowException(execution, "Internal Error occured during selectBB", e);
         }
@@ -127,7 +125,7 @@ public class WorkflowActionBBTasks {
 
     public void updateFlowStatistics(DelegateExecution execution) {
         try {
-            int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE);
+            int currentSequence = (int) execution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
             if (currentSequence > 1) {
                 InfraActiveRequests request = this.getUpdatedRequest(execution, currentSequence);
                 requestDbclient.updateInfraActiveRequests(request);
@@ -142,7 +140,7 @@ public class WorkflowActionBBTasks {
     protected InfraActiveRequests getUpdatedRequest(DelegateExecution execution, int currentSequence) {
         List<ExecuteBuildingBlock> flowsToExecute =
                 (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
-        String requestId = (String) execution.getVariable(G_REQUEST_ID);
+        String requestId = (String) execution.getVariable(BBConstants.G_REQUEST_ID);
         InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
         ExecuteBuildingBlock completedBB = flowsToExecute.get(currentSequence - 2);
         ExecuteBuildingBlock nextBB = flowsToExecute.get(currentSequence - 1);
@@ -171,7 +169,7 @@ public class WorkflowActionBBTasks {
     }
 
     public void sendSyncAck(DelegateExecution execution) {
-        final String requestId = (String) execution.getVariable(G_REQUEST_ID);
+        final String requestId = (String) execution.getVariable(BBConstants.G_REQUEST_ID);
         final String resourceId = (String) execution.getVariable("resourceId");
         ServiceInstancesResponse serviceInstancesResponse = new ServiceInstancesResponse();
         RequestReferences requestRef = new RequestReferences();
@@ -199,7 +197,7 @@ public class WorkflowActionBBTasks {
     }
 
     public void sendErrorSyncAck(DelegateExecution execution) {
-        final String requestId = (String) execution.getVariable(G_REQUEST_ID);
+        final String requestId = (String) execution.getVariable(BBConstants.G_REQUEST_ID);
         try {
             ExceptionBuilder exceptionBuilder = new ExceptionBuilder();
             String errorMsg = (String) execution.getVariable("WorkflowActionErrorMessage");
@@ -225,10 +223,10 @@ public class WorkflowActionBBTasks {
 
     public void updateRequestStatusToComplete(DelegateExecution execution) {
         try {
-            final String requestId = (String) execution.getVariable(G_REQUEST_ID);
+            final String requestId = (String) execution.getVariable(BBConstants.G_REQUEST_ID);
             InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
-            final String action = (String) execution.getVariable(G_ACTION);
-            final boolean aLaCarte = (boolean) execution.getVariable(G_ALACARTE);
+            final String action = (String) execution.getVariable(BBConstants.G_ACTION);
+            final boolean aLaCarte = (boolean) execution.getVariable(BBConstants.G_ALACARTE);
             final String resourceName = (String) execution.getVariable("resourceName");
             String statusMessage = (String) execution.getVariable("StatusMessage");
             String macroAction;
@@ -258,7 +256,7 @@ public class WorkflowActionBBTasks {
 
     public void checkRetryStatus(DelegateExecution execution) {
         String handlingCode = (String) execution.getVariable(HANDLINGCODE);
-        String requestId = (String) execution.getVariable(G_REQUEST_ID);
+        String requestId = (String) execution.getVariable(BBConstants.G_REQUEST_ID);
         String retryDuration = (String) execution.getVariable("RetryDuration");
         int retryCount = (int) execution.getVariable(RETRY_COUNT);
         int envMaxRetries;
@@ -280,8 +278,8 @@ public class WorkflowActionBBTasks {
                 logger.warn("Failed to update Request Db Infra Active Requests with Retry Status", ex);
             }
             if (retryCount < envMaxRetries) {
-                int currSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE);
-                execution.setVariable(G_CURRENT_SEQUENCE, currSequence - 1);
+                int currSequence = (int) execution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
+                execution.setVariable(BBConstants.G_CURRENT_SEQUENCE, currSequence - 1);
                 execution.setVariable(RETRY_COUNT, nextCount);
             } else {
                 workflowAction.buildAndThrowException(execution,
@@ -297,7 +295,7 @@ public class WorkflowActionBBTasks {
      * working on.
      */
     public void rollbackExecutionPath(DelegateExecution execution) {
-        final String action = (String) execution.getVariable(G_ACTION);
+        final String action = (String) execution.getVariable(BBConstants.G_ACTION);
         final String resourceName = (String) execution.getVariable("resourceName");
         if (!(boolean) execution.getVariable("isRollback")) {
             List<ExecuteBuildingBlock> flowsToExecute =
@@ -308,7 +306,7 @@ public class WorkflowActionBBTasks {
                     .collect(Collectors.toList());
 
             List<ExecuteBuildingBlock> rollbackFlows = new ArrayList<>();
-            int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE);
+            int currentSequence = (int) execution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
             int listSize = flowsToExecute.size();
 
             for (int i = listSize - 1; i >= 0; i--) {
@@ -381,7 +379,7 @@ public class WorkflowActionBBTasks {
             execution.setVariable("flowsToExecute", rollbackFlowsFiltered);
             execution.setVariable(HANDLINGCODE, "PreformingRollback");
             execution.setVariable("isRollback", true);
-            execution.setVariable(G_CURRENT_SEQUENCE, 0);
+            execution.setVariable(BBConstants.G_CURRENT_SEQUENCE, 0);
             execution.setVariable(RETRY_COUNT, 0);
         } else {
             workflowAction.buildAndThrowException(execution,
@@ -391,7 +389,7 @@ public class WorkflowActionBBTasks {
 
     protected void updateInstanceId(DelegateExecution execution) {
         try {
-            String requestId = (String) execution.getVariable(G_REQUEST_ID);
+            String requestId = (String) execution.getVariable(BBConstants.G_REQUEST_ID);
             String resourceId = (String) execution.getVariable("resourceId");
             WorkflowType resourceType = (WorkflowType) execution.getVariable("resourceType");
             InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
@@ -424,8 +422,8 @@ public class WorkflowActionBBTasks {
             List<ExecuteBuildingBlock> flowsToExecute =
                     (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
             String handlingCode = (String) execution.getVariable(HANDLINGCODE);
-            final boolean aLaCarte = (boolean) execution.getVariable(G_ALACARTE);
-            int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE);
+            final boolean aLaCarte = (boolean) execution.getVariable(BBConstants.G_ALACARTE);
+            int currentSequence = (int) execution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
             logger.debug("Current Sequence: {}", currentSequence);
             ExecuteBuildingBlock ebb = flowsToExecute.get(currentSequence - 1);
             String bbFlowName = ebb.getBuildingBlock().getBpmnFlowName();
@@ -444,7 +442,7 @@ public class WorkflowActionBBTasks {
     protected void postProcessingExecuteBBActivateVfModule(DelegateExecution execution, ExecuteBuildingBlock ebb,
             List<ExecuteBuildingBlock> flowsToExecute) {
         try {
-            String requestAction = (String) execution.getVariable(G_ACTION);
+            String requestAction = (String) execution.getVariable(BBConstants.G_ACTION);
             String serviceInstanceId = ebb.getWorkflowResourceIds().getServiceInstanceId();
             String vnfId = ebb.getWorkflowResourceIds().getVnfId();
             String vfModuleId = ebb.getResourceId();
