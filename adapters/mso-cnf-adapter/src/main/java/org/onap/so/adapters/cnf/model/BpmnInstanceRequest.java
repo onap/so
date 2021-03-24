@@ -13,6 +13,9 @@ public class BpmnInstanceRequest {
     @JsonProperty(value = "modelVersionId")
     private String modelVersionId;
 
+    @JsonProperty(value = "k8sRBInstanceReleaseName")
+    private String k8sRBInstanceReleaseName;
+
     @JsonProperty(value = "k8sRBProfileName")
     private String k8sRBProfileName;
 
@@ -50,6 +53,14 @@ public class BpmnInstanceRequest {
 
     public void setK8sRBProfileName(String k8sRBProfileName) {
         this.k8sRBProfileName = k8sRBProfileName;
+    }
+
+    public String getK8sRBInstanceReleaseName() {
+        return k8sRBInstanceReleaseName;
+    }
+
+    public void setK8sRBInstanceReleaseName(String k8sRBInstanceReleaseName) {
+        this.k8sRBInstanceReleaseName = k8sRBInstanceReleaseName;
     }
 
     public String getCloudRegionId() {
