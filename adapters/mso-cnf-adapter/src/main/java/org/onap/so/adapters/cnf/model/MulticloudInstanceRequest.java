@@ -26,7 +26,7 @@ public class MulticloudInstanceRequest {
     private Map<String, String> overrideValues;
 
     @JsonProperty(value = "release-name")
-    private String vfModuleUuid;
+    private String releaseName;
 
     public String getCloudRegion() {
         return cloudRegion;
@@ -76,12 +76,12 @@ public class MulticloudInstanceRequest {
         this.overrideValues = overrideValues;
     }
 
-    public String getVfModuleUuid() {
-        return vfModuleUuid;
+    public String getReleaseName() {
+        return releaseName;
     }
 
-    public void setVfModuleUuid(String vfModuleUuid) {
-        this.vfModuleUuid = vfModuleUuid;
+    public void setReleaseName(String releaseName) {
+        this.releaseName = releaseName;
     }
 
 }
