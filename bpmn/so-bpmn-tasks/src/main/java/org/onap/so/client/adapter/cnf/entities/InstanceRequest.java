@@ -17,6 +17,8 @@ public class InstanceRequest {
     private String rbVersion;
     @JsonProperty("k8sRBProfileName")
     private String profileName;
+    @JsonProperty("k8sRBInstanceReleaseName")
+    private String releaseName;
     @JsonProperty("vfModuleUUID")
     private String vfModuleUUID;
     @JsonProperty("cloudRegionId")
@@ -54,6 +56,16 @@ public class InstanceRequest {
     @JsonProperty("profile-name")
     public void setProfileName(String profileName) {
         this.profileName = profileName;
+    }
+
+    @JsonProperty("release-name")
+    public String getReleaseName() {
+        return releaseName;
+    }
+
+    @JsonProperty("release-name")
+    public void setReleaseName(String releaseName) {
+        this.releaseName = releaseName;
     }
 
     @JsonProperty("cloud-region")
