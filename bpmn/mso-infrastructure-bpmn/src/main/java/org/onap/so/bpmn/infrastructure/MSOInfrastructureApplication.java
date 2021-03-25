@@ -79,6 +79,7 @@ public class MSOInfrastructureApplication {
     private static final String LOGS_DIR = "logs_dir";
     private static final String BPMN_SUFFIX = ".bpmn";
     private static final String SDC_SOURCE = "sdc";
+    private static final int CANNOT_INVOKE_COMMAND = 126;
 
 
     private static void setLogsDir() {
@@ -88,9 +89,14 @@ public class MSOInfrastructureApplication {
     }
 
     public static void main(String... args) {
-        SpringApplication.run(MSOInfrastructureApplication.class, args);
-        System.getProperties().setProperty("mso.config.path", ".");
-        setLogsDir();
+        try {
+            SpringApplication.run(MSOInfrastructureApplication.class, args);
+            System.getProperties().setProperty("mso.config.path", ".");
+            setLogsDir();
+        } catch (Exception e) {
+            logger.error("Exception has occurred during application startup. App will exit. ", e);
+            System.exit(CANNOT_INVOKE_COMMAND);
+        }
     }
 
     @PostConstruct
