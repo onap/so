@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "63541aad_d325b6fc",
+        "filename": "adapters/mso-cnf-adapter/src/main/java/org/onap/so/adapters/cnf/service/CnfAdapterService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-03-25T15:44:55Z",
+      "side": 1,
+      "message": "I see that the following line has been removed:\nmulticloudInstanceRequest.setVfModuleUuid(bpmnInstanceRequest.getVfModuleUUID());\n\nIs it done by purpose or by mistake?",
+      "revId": "a11600939784ed7d4f53e60436474a04b2c196c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
