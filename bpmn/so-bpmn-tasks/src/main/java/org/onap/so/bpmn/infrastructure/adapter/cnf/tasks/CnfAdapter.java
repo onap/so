@@ -28,6 +28,7 @@ public class CnfAdapter {
             request.setCloudRegion("krd");
             request.setVfModuleUUID("VF module UUID");
             request.setProfileName("p1");
+            request.setReleaseName("test");
             Map<String, String> overrideValues = new HashMap<>();
             overrideValues.put("image.tag", "latest");
             overrideValues.put("dcae_collector_ip", "1.2.3.4");
