@@ -24,21 +24,15 @@ package org.onap.so.adapters.openstack;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import javax.xml.ws.Endpoint;
 import org.apache.cxf.Bus;
 import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.openapi.OpenApiFeature;
-import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.transport.servlet.CXFServlet;
 import org.onap.so.adapters.cloudregion.CloudRegionRestV1;
-import org.onap.so.adapters.network.MsoNetworkAdapterImpl;
-import org.onap.so.adapters.vnf.MsoVnfAdapterImpl;
 import org.onap.so.client.policy.JettisonStyleMapperProvider;
-import org.onap.so.logging.cxf.interceptor.SOAPLoggingInInterceptor;
-import org.onap.so.logging.cxf.interceptor.SOAPLoggingOutInterceptor;
 import org.onap.so.logging.jaxrs.filter.SOAuditLogContainerFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
@@ -50,10 +44,6 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 @Configuration
 public class CXFConfiguration {
-    @Autowired
-    private MsoNetworkAdapterImpl networkAdapterImpl;
-    @Autowired
-    private MsoVnfAdapterImpl vnfAdapterImpl;
     @Autowired
     private CloudRegionRestV1 cloudRegionRestV1;
     @Autowired
@@ -74,20 +64,6 @@ public class CXFConfiguration {
         ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(new CXFServlet(), "/services/*");
         servletRegistrationBean.setName("services");
         return servletRegistrationBean;
-    }
-
-    /*
-     * network adapter endpoint
-     */
-    @Bean
-    public Endpoint networkAdapterEndpoint() {
-        EndpointImpl endpoint = new EndpointImpl(springBus(), networkAdapterImpl);
-        endpoint.publish("/NetworkAdapter");
-        endpoint.setWsdlLocation("NetworkAdapter.wsdl");
-        endpoint.getInInterceptors().add(new SOAPLoggingInInterceptor());
-        endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
-        endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
-        return endpoint;
     }
 
     // Uses normal Jackson marshalling semantics

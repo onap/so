@@ -38,6 +38,7 @@ import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.adapters.nwrest.DeleteNetworkRequest;
 import org.onap.so.adapters.nwrest.DeleteNetworkResponse;
+import org.onap.so.adapters.nwrest.RollbackNetworkRequest;
 import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
 import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
 import org.onap.so.adapters.vnf.MsoVnfAdapterImpl;
@@ -157,6 +158,13 @@ public class PollService extends ExternalTaskUtils {
                     UpdateNetworkResponse updateResponse =
                             new UpdateNetworkResponse(req.getNetworkId(), null, null, req.getMessageId());
                     response = Optional.of(updateResponse.toXmlString());
+                } else if ("rollbackNetworkRequest".equals(requestType.get())) {
+                    logger.debug("Executing External Task Poll Service for Rollback Network");
+                    String stackId = externalTask.getVariable("stackId");
+                    RollbackNetworkRequest req =
+                            JAXB.unmarshal(new StringReader(xmlRequest), RollbackNetworkRequest.class);
+                    pollDeleteResource(118, req.getNetworkRollback().getCloudId(),
+                            req.getNetworkRollback().getTenantId(), stackId, success);
                 }
             }
         } catch (Exception e) {

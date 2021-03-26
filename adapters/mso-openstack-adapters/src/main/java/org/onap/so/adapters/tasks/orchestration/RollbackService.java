@@ -88,11 +88,9 @@ public class RollbackService extends ExternalTaskUtils {
                     }
                 } else if ("createNetworkRequest".equals(requestType.get())) {
                     logger.debug("Executing External Task Rollback Service for Create Network");
-                    Holder<Boolean> networkDeleted = new Holder<>();
                     CreateNetworkRequest req = JAXB.unmarshal(new StringReader(xmlRequest), CreateNetworkRequest.class);
                     networkAdapterImpl.deleteNetwork(req.getCloudSiteId(), req.getTenantId(), req.getNetworkType(),
-                            req.getModelCustomizationUuid(), req.getNetworkName(), req.getMsoRequest(), networkDeleted,
-                            false);
+                            req.getModelCustomizationUuid(), req.getNetworkName(), req.getMsoRequest());
                     pollRollbackStatus = true;
                     success = true;
                 }
