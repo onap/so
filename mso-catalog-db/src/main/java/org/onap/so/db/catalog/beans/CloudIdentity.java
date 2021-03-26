@@ -27,6 +27,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -74,7 +75,7 @@ public class CloudIdentity {
     @Column(name = "PROJECT_DOMAIN_NAME")
     private String projectDomainName;
 
-    @JsonProperty("admin_project_domain_name ")
+    @JsonProperty("admin_project_domain_name")
     @BusinessKey
     @Column(name = "ADMIN_PROJECT_DOMAIN_NAME", nullable = false)
     private String adminProjectDomainName = "Default";
@@ -94,7 +95,7 @@ public class CloudIdentity {
     @Column(name = "MEMBER_ROLE")
     private String memberRole;
 
-    @JsonProperty("tenant_metadata")
+    @JsonProperty("tenant_meta_data")
     @BusinessKey
     @Column(name = "TENANT_METADATA")
     private Boolean tenantMetadata;
@@ -133,6 +134,11 @@ public class CloudIdentity {
     @PrePersist
     protected void onCreate() {
         this.created = new Date();
+        this.updated = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
         this.updated = new Date();
     }
 
