@@ -25,7 +25,7 @@ public class BpmnInstanceRequest {
     @JsonProperty(value = "labels")
     private Map<String, String> labels;
 
-    @JsonProperty(value = "overrideValues")
+    @JsonProperty(value = "override-values")
     private Map<String, String> overrideValues;
 
     public String getModelInvariantId() {
