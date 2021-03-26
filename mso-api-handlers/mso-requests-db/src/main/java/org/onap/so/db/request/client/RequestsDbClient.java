@@ -127,6 +127,9 @@ public class RequestsDbClient {
     private static final String findByGroupingIdAndNameAndTag =
             "/requestProcessingData/search/findByGroupingIdAndNameAndTag";
 
+    private static final String findBySoRequestIdAndNameAndTagOrderByCreateTimeDesc =
+            "/requestProcessingData/search/findBySoRequestIdAndNameAndTagOrderByCreatedDesc";
+
     @Autowired
     protected RestTemplate restTemplate;
 
@@ -401,6 +404,15 @@ public class RequestsDbClient {
         return getSingleResponse(getUri(UriBuilder.fromUri(endpoint + findBySoRequestIdAndName)
                 .queryParam(SO_REQUEST_ID, soRequestId).queryParam(NAME, name).build().toString()),
                 RequestProcessingData.class);
+    }
+
+    public List<RequestProcessingData> getRequestProcessingDataBySoRequestIdAndNameAndTagOrderByCreateTimeDesc(
+            String soRequestId, String name, String tag) {
+
+        return getMultipleResponse(getUri(UriBuilder
+                .fromUri(endpoint + findBySoRequestIdAndNameAndTagOrderByCreateTimeDesc)
+                .queryParam(SO_REQUEST_ID, soRequestId).queryParam(NAME, name).queryParam(TAG, tag).build().toString()),
+                new ParameterizedTypeReference<List<RequestProcessingData>>() {});
     }
 
 
