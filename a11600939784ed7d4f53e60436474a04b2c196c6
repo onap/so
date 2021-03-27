@@ -16,6 +16,24 @@
       "revId": "a11600939784ed7d4f53e60436474a04b2c196c6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dcfad7e1_6615cb37",
+        "filename": "adapters/mso-cnf-adapter/src/main/java/org/onap/so/adapters/cnf/service/CnfAdapterService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2021-03-27T01:20:12Z",
+      "side": 1,
+      "message": "This is replaced with releasename. The attribute is renamed to meet the k8s plug in needs.",
+      "parentUuid": "63541aad_d325b6fc",
+      "revId": "a11600939784ed7d4f53e60436474a04b2c196c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
