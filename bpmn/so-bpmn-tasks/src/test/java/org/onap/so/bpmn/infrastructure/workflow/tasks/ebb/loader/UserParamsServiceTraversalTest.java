@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.infrastructure.workflow.tasks;
+package org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -28,6 +28,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BBConstants;
+import org.onap.so.bpmn.infrastructure.workflow.tasks.Resource;
+import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowType;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.db.catalog.beans.ConfigurationResource;
 import org.onap.so.db.catalog.beans.CvnfcCustomization;

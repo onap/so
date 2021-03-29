@@ -24,10 +24,12 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.infrastructure.workflow.tasks;
+package org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.onap.so.bpmn.infrastructure.workflow.tasks.Resource;
+import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowType;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
@@ -68,7 +70,7 @@ public class UserParamsServiceTraversal {
         this.exceptionBuilder = exceptionBuilder;
     }
 
-    protected List<Resource> getResourceListFromUserParams(DelegateExecution execution,
+    public List<Resource> getResourceListFromUserParams(DelegateExecution execution,
             List<Map<String, Object>> userParams, String serviceModelVersionId, String requestAction)
             throws IOException {
         if (userParams != null) {
