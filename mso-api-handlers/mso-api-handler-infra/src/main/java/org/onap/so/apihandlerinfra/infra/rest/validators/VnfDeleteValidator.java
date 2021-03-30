@@ -19,7 +19,8 @@ public class VnfDeleteValidator implements RequestValidator {
     @Override
     public boolean shouldRunFor(String requestUri, ServiceInstancesRequest request, Actions action) {
         return Pattern.compile("[Vv][5-8]/serviceInstances/[^/]+/vnfs/[^/]+").matcher(requestUri).matches()
-                && action.equals(Action.deleteInstance);
+                && action.equals(Action.deleteInstance)
+                && Boolean.TRUE.equals(request.getRequestDetails().getRequestParameters().getALaCarte());
     }
 
     @Override
