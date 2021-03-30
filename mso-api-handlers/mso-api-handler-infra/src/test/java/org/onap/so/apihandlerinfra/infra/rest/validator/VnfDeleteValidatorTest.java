@@ -15,6 +15,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.apihandlerinfra.Action;
 import org.onap.so.apihandlerinfra.infra.rest.AAIDataRetrieval;
 import org.onap.so.apihandlerinfra.infra.rest.validators.VnfDeleteValidator;
+import org.onap.so.serviceinstancebeans.RequestDetails;
+import org.onap.so.serviceinstancebeans.RequestParameters;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 
 
@@ -31,10 +33,24 @@ public class VnfDeleteValidatorTest {
 
     private Map<String, String> instanceIdMap = new HashMap<>();
 
+    public ServiceInstancesRequest createServiceInstancesRequest(boolean alacarte) {
+        ServiceInstancesRequest sir = new ServiceInstancesRequest();
+        sir.setRequestDetails(new RequestDetails());
+        sir.getRequestDetails().setRequestParameters(new RequestParameters());
+        sir.getRequestDetails().getRequestParameters().setaLaCarte(alacarte);
+        return sir;
+    }
+
     @Test
     public void validateURIMatchTest() {
         assertEquals(true, vnfValidator.shouldRunFor("v8/serviceInstances/uasdfasdf/vnfs/asdfasdf",
-                new ServiceInstancesRequest(), Action.deleteInstance));
+                createServiceInstancesRequest(true), Action.deleteInstance));
+    }
+
+    @Test
+    public void validateURIMatchNonAlacarteTest() {
+        assertEquals(false, vnfValidator.shouldRunFor("v8/serviceInstances/uasdfasdf/vnfs/asdfasdf",
+                createServiceInstancesRequest(false), Action.deleteInstance));
     }
 
     @Test
