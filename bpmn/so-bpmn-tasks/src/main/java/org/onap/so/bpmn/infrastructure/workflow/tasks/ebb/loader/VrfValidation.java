@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.infrastructure.workflow.tasks;
+package org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +26,7 @@ import org.onap.aai.domain.yang.L3Network;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
+import org.onap.so.bpmn.infrastructure.workflow.tasks.VrfBondingServiceException;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
 import org.springframework.beans.factory.annotation.Autowired;

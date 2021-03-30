@@ -32,15 +32,15 @@ public final class WorkflowActionConstants {
         throw new IllegalStateException("Utility class");
     }
 
-    static final String USER_PARAM_SERVICE = "service";
-    static final String CREATE_INSTANCE = "createInstance";
-    static final String FABRIC_CONFIGURATION = "FabricConfiguration";
+    public static final String USER_PARAM_SERVICE = "service";
+    public static final String CREATE_INSTANCE = "createInstance";
+    public static final String FABRIC_CONFIGURATION = "FabricConfiguration";
     public static final String WORKFLOW_ACTION_ERROR_MESSAGE = "WorkflowActionErrorMessage";
     static final String SERVICE = "Service";
     static final String CONTROLLER = "Controller";
-    static final String NETWORKCOLLECTION = "NetworkCollection";
+    public static final String NETWORKCOLLECTION = "NetworkCollection";
     static final String CONFIGURATION = "Configuration";
-    static final String ASSIGNINSTANCE = "assignInstance";
+    public static final String ASSIGNINSTANCE = "assignInstance";
     static final String REPLACEINSTANCE = "replaceInstance";
     static final String VOLUMEGROUP = "VolumeGroup";
     static final String REPLACEINSTANCERETAINASSIGNMENTS = "replaceInstanceRetainAssignments";

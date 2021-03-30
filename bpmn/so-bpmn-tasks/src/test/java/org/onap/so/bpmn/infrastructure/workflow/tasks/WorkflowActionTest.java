@@ -78,6 +78,8 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader.ServiceEBBLoader;
+import org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader.UserParamsServiceTraversal;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader.VnfEBBLoader;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
@@ -140,6 +142,10 @@ public class WorkflowActionTest extends BaseTaskTest {
     @InjectMocks
     @Spy
     protected VnfEBBLoader vnfEBBLoaderSpy;
+
+    @InjectMocks
+    @Spy
+    protected ServiceEBBLoader serviceEBBLoader;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -2094,7 +2100,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         List<Resource> resourceCounter = new ArrayList<>();
         thrown.expect(BpmnError.class);
         List<Pair<WorkflowType, String>> aaiResourceIds = new ArrayList<>();
-        workflowAction.traverseCatalogDbService(execution, sIRequest, resourceCounter, aaiResourceIds);
+        serviceEBBLoader.traverseCatalogDbService(execution, sIRequest, resourceCounter, aaiResourceIds);
     }
 
 
@@ -2106,7 +2112,8 @@ public class WorkflowActionTest extends BaseTaskTest {
         networkCustomization.setModelCustomizationUUID("123");
         service.getCollectionResourceCustomizations().add(networkCustomization);
         doReturn(networkCustomization).when(catalogDbClient).getNetworkCollectionResourceCustomizationByID("123");
-        CollectionResourceCustomization customization = workflowAction.findCatalogNetworkCollection(execution, service);
+        CollectionResourceCustomization customization =
+                serviceEBBLoader.findCatalogNetworkCollection(execution, service);
         assertNotNull(customization);
     }
 
@@ -2116,7 +2123,8 @@ public class WorkflowActionTest extends BaseTaskTest {
         NetworkCollectionResourceCustomization networkCustomization = new NetworkCollectionResourceCustomization();
         networkCustomization.setModelCustomizationUUID("123");
         service.getCollectionResourceCustomizations().add(networkCustomization);
-        CollectionResourceCustomization customization = workflowAction.findCatalogNetworkCollection(execution, service);
+        CollectionResourceCustomization customization =
+                serviceEBBLoader.findCatalogNetworkCollection(execution, service);
         assertNull(customization);
     }
 
@@ -2131,7 +2139,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         service.getCollectionResourceCustomizations().add(networkCustomization2);
         doReturn(networkCustomization1).when(catalogDbClient).getNetworkCollectionResourceCustomizationByID("123");
         doReturn(networkCustomization2).when(catalogDbClient).getNetworkCollectionResourceCustomizationByID("321");
-        workflowAction.findCatalogNetworkCollection(execution, service);
+        serviceEBBLoader.findCatalogNetworkCollection(execution, service);
         assertEquals("Found multiple Network Collections in the Service model, only one per Service is supported.",
                 execution.getVariable("WorkflowActionErrorMessage"));
     }
@@ -2183,7 +2191,7 @@ public class WorkflowActionTest extends BaseTaskTest {
                     .getConfiguration("testConfigurationId");
             doReturn(Optional.of(aaiConfiguration2)).when(aaiConfigurationResources)
                     .getConfiguration("testConfigurationId2");
-            workflowAction.traverseAAIService(execution, resourceCounter, resourceId, aaiResourceIds);
+            serviceEBBLoader.traverseAAIService(execution, resourceCounter, resourceId, aaiResourceIds);
             assertEquals(8, resourceCounter.size());
             assertTrue(resourceCounter.get(2).isBaseVfModule());
             assertThat(aaiResourceIds, sameBeanAs(getExpectedResourceIds()));
@@ -2200,7 +2208,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         resourceList.add(new Resource(WorkflowType.NETWORK, "model customization id", false));
         resourceList.add(new Resource(WorkflowType.NETWORKCOLLECTION, "model customization id", false));
 
-        assertEquals(workflowAction.foundRelated(resourceList), true);
+        assertEquals(serviceEBBLoader.foundRelated(resourceList), true);
     }
 
     @Test
@@ -2211,11 +2219,11 @@ public class WorkflowActionTest extends BaseTaskTest {
         resourceList.add(new Resource(WorkflowType.NETWORK, "model customization id", false));
         resourceList.add(new Resource(WorkflowType.NETWORKCOLLECTION, "model customization id", false));
 
-        assertEquals(workflowAction.containsWorkflowType(resourceList, WorkflowType.PNF), true);
-        assertEquals(workflowAction.containsWorkflowType(resourceList, WorkflowType.VNF), true);
-        assertEquals(workflowAction.containsWorkflowType(resourceList, WorkflowType.NETWORK), true);
-        assertEquals(workflowAction.containsWorkflowType(resourceList, WorkflowType.NETWORKCOLLECTION), true);
-        assertEquals(workflowAction.containsWorkflowType(resourceList, WorkflowType.CONFIGURATION), false);
+        assertEquals(serviceEBBLoader.containsWorkflowType(resourceList, WorkflowType.PNF), true);
+        assertEquals(serviceEBBLoader.containsWorkflowType(resourceList, WorkflowType.VNF), true);
+        assertEquals(serviceEBBLoader.containsWorkflowType(resourceList, WorkflowType.NETWORK), true);
+        assertEquals(serviceEBBLoader.containsWorkflowType(resourceList, WorkflowType.NETWORKCOLLECTION), true);
+        assertEquals(serviceEBBLoader.containsWorkflowType(resourceList, WorkflowType.CONFIGURATION), false);
     }
 
     private List<Pair<WorkflowType, String>> getExpectedResourceIds() {
