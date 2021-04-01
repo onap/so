@@ -120,16 +120,16 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
                 execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
 
         //set new nsiId to sliceParams suggestNsiId
-        sliceParams.setSuggestNsiId(sliceInstanceId)
-
         ServiceInstance nsi = new ServiceInstance()
-
 
         String sliceInstanceName = "nsi_"+execution.getVariable("sliceServiceInstanceName")
         String serviceType = sliceParams.serviceProfile.get("sST")
         String serviceStatus = "deactivated"
         String modelInvariantUuid = sliceParams.getNSTInfo().invariantUUID
         String modelUuid = sliceParams.getNSTInfo().UUID
+
+        sliceParams.setSuggestNsiId(sliceInstanceId)
+        sliceParams.setSuggestNsiName(sliceInstanceName)
 
         String uuiRequest = execution.getVariable("uuiRequest")
         String serviceInstanceLocationid = jsonUtil.getJsonValue(uuiRequest, "service.parameters.requestInputs.plmnIdList")
