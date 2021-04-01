@@ -34,6 +34,24 @@
       "revId": "a11600939784ed7d4f53e60436474a04b2c196c6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c08a8f7e_de3d2222",
+        "filename": "adapters/mso-cnf-adapter/src/main/java/org/onap/so/adapters/cnf/service/CnfAdapterService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 2701
+      },
+      "writtenOn": "2021-04-01T16:33:26Z",
+      "side": 1,
+      "message": "Lukasz, that is ok. There was initial assumption to use vf-module-id as a release-name in the k8s-plugin request but we realized it is wrong assumption as release-name attribute cannot start with a cipher. In consequence we have changed the way of taking the value of release name and hence this is not vf-module-id the name of the attribute was changed, however the json name of the parameter before, and after the change is still the same - \"release-name\".",
+      "parentUuid": "dcfad7e1_6615cb37",
+      "revId": "a11600939784ed7d4f53e60436474a04b2c196c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
