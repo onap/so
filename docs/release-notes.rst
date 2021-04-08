@@ -14,6 +14,133 @@ The SO provides the highest level of service orchestration in the ONAP architect
 Release Notes
 =============
 
+Version: 1.8.3
+==============
+
+:Release Date: 2021-04-10
+
+SO Release Image Versions
+--------------------------
+ - so-bpmn-infra
+
+    :Version: 1.8.1
+
+ - so-catalog-db-adapter
+
+    :Version: 1.8.1
+
+ - so-admin-cockpit
+
+    :Version: 1.8.2
+
+ - so-nssmf-adapter
+
+    :Version: 1.8.3
+
+ - so-openstack-adapter
+
+    :Version: 1.8.1
+
+ - so-request-db-adapter
+
+    :Version: 1.8.1
+
+ - so-sdc-controller
+
+    :Version: 1.8.1
+
+ - so-sdnc-adapter
+
+    :Version: 1.8.1
+
+ - so-sol003-adapter
+
+    :Version: 1.8.2
+
+ - so-api-handler-infra
+
+    :Version: 1.8.1
+
+ - so-etsi-nfvo-ns-lcm
+
+    :Version: 1.8.2
+
+ - so-oof-adapter
+
+    :Version: 1.8.3
+
+ - so-cnf-adapter
+
+    :Version: 1.8.3
+
+Release Purpose
+----------------
+SO Honolulu Release.
+The key delivereable for this release is refactoring SO for better internal architecture.
+
+
+**Epics**
+
+
+**Stories**
+
+The full list of implemented tasks is available on `JIRA GUILIN STORY <https://jira.onap.org/issues/?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20story%20AND%20fixVersion%20%3D%20%22honolulu%20Release%22>`_
+Listed below are key functional jira stories handled in the Honolulu release:
+
+
+**Tasks**
+
+The full list of implemented tasks is available on `JIRA GUILIN TASKS <https://jira.onap.org/issues/?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20Task%20AND%20fixVersion%20%3D%20%22honolulu%20Release%22>`_
+Listed below are highest and high piority jira tasks handled in the Guilin release:
+
+*  `SO-3205 <https://jira.onap.org/browse/SO-3205>`_ - E2E Network Slicing: Improvements for NST/NSI Selection callback
+*  `SO-3120 <https://jira.onap.org/browse/SO-3120>`_ - Create swagger api for software upgrade in SO
+*  `SO-2915 <https://jira.onap.org/browse/SO-2915>`_ - Upgrade Vulnerable Direct Dependencies
+
+
+**Bug Fixes**
+
+The full list of fixed bugs is available on `JIRA GUILIN BUGS 
+<https://jira.onap.org/issues/?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20Bug%20AND%20fixVersion%20%3D%20%22honolulu%20Release%22>`_
+Listed below are highest and high piority jira tasks handled in the Guilin release:
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+*Known Security Issues*
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1702>`__
+
+**Known Issues**
+*  `SO-3403 <https://jira.onap.org/browse/SO-3403>`_ - The functionality of the SO cnf-adapter will be tested further and will be delivered by the Guilin Maintenance Release as a 1.7.11 patch.
+*  `SO-3237 <https://jira.onap.org/browse/SO-SO-3237>`_ - Exposed HTTP port. 
+*  `SO-3414 <https://jira.onap.org/browse/SO-SO-3414>`_ - Search Query does not contain get model data for vFW closed loop. 
+
+
+**Upgrade Notes**
+
+	N/A
+
+**Deprecation Notes**
+
+	SO modules Ve-Vnfm-adapter and appc-orchestrator are deprectaed for the Guilin release.
+
+**Other**
+
+	N/A
+***************************************************************************************
+
+
+
+
 Version: 1.7.10
 ==============
 
