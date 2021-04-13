@@ -77,7 +77,8 @@ nss.sendSyncResponse(execution)</bpmn:script>
         <camunda:in source="jobId" target="jobId" />
         <camunda:in source="sliceParams" target="sliceParams" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
-        <camunda:in source="servicename" target="servicename" />
+	<camunda:in source="servicename" target="servicename" />
+	<camunda:in source="sst" target="sst" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1kk0exp</bpmn:incoming>
       <bpmn:outgoing>Flow_09b50tn</bpmn:outgoing>
@@ -105,7 +106,8 @@ nss.prepareInitOperationStatus(execution)</bpmn:script>
         <camunda:in source="jobId" target="jobId" />
         <camunda:in source="sliceParams" target="sliceParams" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
-        <camunda:in source="servicename" target="servicename" />
+	<camunda:in source="servicename" target="servicename" />
+	<camunda:in source="sst" target="sst" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1fij4ds</bpmn:incoming>
       <bpmn:outgoing>Flow_1coedjo</bpmn:outgoing>
