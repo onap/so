@@ -53,6 +53,7 @@ import org.onap.aaiclient.client.aai.AAINamespaceConstants
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aai.domain.yang.NetworkPolicy
 import org.onap.aai.domain.yang.NetworkRoute
+import org.json.JSONArray
 
 class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 
@@ -85,7 +86,8 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 					" subscriptionServiceType - "+execution.getVariable("subscriptionServiceType")+
 					" jobId - "+execution.getVariable("jobId")+
 					" sliceParams - "+execution.getVariable("sliceParams")+
-					" servicename - "+ execution.getVariable("servicename"))
+					" servicename - "+ execution.getVariable("servicename")+
+                                        " sst - "+ execution.getVariable("sst"))
 
 			//validate slice subnet inputs
 
@@ -101,7 +103,14 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 			String sliceProfileId = jsonUtil.getJsonValue(sliceProfile, "sliceProfileId")
 			def snssaiList = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(sliceProfile, "snssaiList"))
 			def plmnIdList = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(sliceProfile, "plmnIdList"))
-			def coverageAreaTAList = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(sliceProfile, "coverageAreaTAList"))
+                        String jsonArray = jsonUtil.getJsonValue(sliceProfile, "coverageAreaTAList")
+                        List<Integer> list = new ArrayList<>();
+                        JSONArray arr = new JSONArray(jsonArray);
+                        for (int i = 0; i < arr.length(); i++) {
+                                 int s = (int) arr.get(i);
+                                 list.add(s);
+                        }
+                        def coverageAreaTAList = list;
 
 			if (isBlank(sliceProfileId) || (snssaiList.empty) || (plmnIdList.empty)
 			|| (coverageAreaTAList.empty)) {
@@ -131,16 +140,16 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 			execution.setVariable("job_timeout", 10)
 			
 			//set BH end point
-			List<String> BH_endPoints = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(sliceParams, "endPoints"))
-			logger.debug("BH end points list : "+BH_endPoints)
-			if(BH_endPoints.empty) {
-				msg = "End point info is empty"
-				logger.debug(msg)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			}else {
-				execution.setVariable("bh_endpoint", BH_endPoints.get(0))
-			}
-			
+			def BH_endPoints = jsonUtil.getJsonValue(sliceParams, "endPoint")
+                        logger.debug("BH end points list : "+BH_endPoints)
+                        if(isBlank(BH_endPoints)) {
+                                msg = "End point info is empty"
+                                logger.debug(msg)
+                                exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+                        }else {
+                                execution.setVariable("bh_endpoint", BH_endPoints)
+                        }
+
 		} catch(BpmnError e) {
 			throw e
 		} catch(Exception ex) {
@@ -261,6 +270,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		String requestId = execution.getVariable("msoRequestId")
 		String messageType = "NSISelectionResponse"
 		Map<String, Object> profileInfo = objectMapper.readValue(execution.getVariable("sliceProfile"), Map.class)
+                profileInfo.put("sST",execution.getVariable("sst"))
 		String modelUuid = execution.getVariable("modelUuid")
 		String modelInvariantUuid = execution.getVariable("modelInvariantUuid")
 		String modelName = execution.getVariable("ranModelName")
@@ -320,6 +330,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 				ServiceDecomposition serviceDecomposition = execution.getVariable("ranNsstServiceDecomposition")
 				serviceDecomposition.setServiceInstance(serviceInstance);
 				execution.setVariable("ranNsstServiceDecomposition", serviceDecomposition)
+                                execution.setVariable("modifyAction","allocate")
 				execution.setVariable("isRspRanNssi", true)
 			}else {
 				JsonObject newNSISolution = sol.get("newNSISolution").getAsJsonObject()
@@ -475,6 +486,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		List<String> ranConstituentSliceProfiles = jsonUtil.StringArrayToList(execution.getVariable("RanConstituentSliceProfiles"))
 		anNssmfUtils.createDomainWiseSliceProfiles(ranConstituentSliceProfiles, execution)
 		Map<String, Object> profileInfo = objectMapper.readValue(execution.getVariable("ranNfSliceProfile"), Map.class)
+		profileInfo.put("sST",execution.getVariable("sst"))
 		String modelUuid = execution.getVariable("ANNF_modelUuid")
 		String modelInvariantUuid = execution.getVariable("ANNF_modelInvariantUuid")
 		String modelName = execution.getVariable("ANNF_modelName")
@@ -544,14 +556,14 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		String sliceInstanceName = execution.getVariable("servicename")
 		ANServiceInstance.setServiceInstanceName(sliceInstanceName)
 		String serviceType = jsonUtil.getJsonValue(execution.getVariable("sliceProfile"), "sST")
-		ANServiceInstance.setServiceType(serviceType)
+                ANServiceInstance.setServiceType(execution.getVariable("sst"))
 		String serviceStatus = "deactivated"
 		ANServiceInstance.setOrchestrationStatus(serviceStatus)
 		String serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("sliceProfile"), "plmnIdList")
 		ANServiceInstance.setServiceInstanceLocationId(serviceInstanceLocationid)
 		String serviceRole = "nssi"
 		ANServiceInstance.setServiceRole(serviceRole)
-		List<String> snssaiList = objectMapper.readValue(execution.getVariable("snssaiList"), List.class)
+                List<String> snssaiList = execution.getVariable("snssaiList")
 		String snssai = snssaiList.get(0)
 		ANServiceInstance.setEnvironmentContext(snssai)
 		ANServiceInstance.setWorkloadContext("AN")
@@ -610,7 +622,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		String sliceInstanceName = execution.getVariable("servicename")
 		ANServiceInstance.setServiceInstanceName(sliceInstanceName)
 		String serviceType = jsonUtil.getJsonValue(execution.getVariable("sliceProfile"), "sST")
-		ANServiceInstance.setServiceType(serviceType)
+                ANServiceInstance.setServiceType(execution.getVariable("sst"))
 		String serviceStatus = "deactivated"
 		ANServiceInstance.setOrchestrationStatus(serviceStatus)
 		String serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("sliceProfile"), "plmnIdList")
@@ -632,7 +644,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		ANNFServiceInstance.setServiceInstanceId(execution.getVariable("RANNFServiceInstanceId"))
 		sliceInstanceName = execution.getVariable("ANNF_modelName")
 		ANNFServiceInstance.setServiceInstanceName(sliceInstanceName)
-		ANNFServiceInstance.setServiceType(serviceType)
+		ANNFServiceInstance.setServiceType(execution.getVariable("sst"))
 		ANNFServiceInstance.setOrchestrationStatus(serviceStatus)
 		serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("ranNfSliceProfile"), "plmnIdList")
 		ANNFServiceInstance.setServiceInstanceLocationId(serviceInstanceLocationid)
@@ -720,8 +732,6 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		execution.setVariable("esrInfo", esrInfo.toString())
 		JsonObject serviceInfo = new JsonObject()
 		serviceInfo.addProperty("nsiId", execution.getVariable("nsiId"))
-		String sST = jsonUtil.getJsonValue(execution.getVariable("sliceProfile"), "sST")
-		serviceInfo.addProperty("sST", sST)
 		serviceInfo.addProperty("PLMNIdList", objectMapper.writeValueAsString(execution.getVariable("plmnIdList")))
 		serviceInfo.addProperty("globalSubscriberId", execution.getVariable("globalSubscriberId"))
 		serviceInfo.addProperty("subscriptionServiceType", execution.getVariable("subscriptionServiceType"))
@@ -948,8 +958,8 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		String bh_routeId = UUID.randomUUID().toString()
 		execution.setVariable("tranportEp_ID_bh", bh_routeId)
 		String role = "CU"
-		String CU_IpAddress = jsonUtil.getJsonValue(bh_endpoint, "IpAddress")
-		String LogicalLinkId = jsonUtil.getJsonValue(bh_endpoint, "LogicalLinkId")
+                String CU_IpAddress = jsonUtil.getJsonValue(bh_endpoint, "ipAddress")
+                String LogicalLinkId = jsonUtil.getJsonValue(bh_endpoint, "logicInterfaceId")
 		String nextHopInfo = jsonUtil.getJsonValue(bh_endpoint, "nextHopInfo")
 		NetworkRoute bh_ep = new NetworkRoute()
 		bh_ep.setRouteId(bh_routeId)

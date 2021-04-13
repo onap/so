@@ -500,7 +500,7 @@ nss.prepareFailedOperationStatusUpdate(execution)</bpmn:script>
       <bpmn:extensionElements>
         <camunda:in source="msoRequestId" target="msoRequestId" />
         <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
-        <camunda:in source="ANNF_NSSI" target="serviceInstanceID" />
+        <camunda:in source="RANNFServiceInstanceId" target="serviceInstanceID" />
         <camunda:in source="subscriptionServiceType" target="subscriptionServiceType" />
         <camunda:in source="ANNF_sliceProfileInstanceId" target="sliceProfileId" />
         <camunda:in source="snssaiList" target="snssaiList" />
