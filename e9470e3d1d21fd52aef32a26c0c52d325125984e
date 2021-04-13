@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0fa0cbee_c586077c",
+        "filename": "INFO.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 4677
+      },
+      "writtenOn": "2021-04-13T10:01:24Z",
+      "side": 1,
+      "message": "Please remove empty characters at end of row.\nAnd empty blank row at end",
+      "range": {
+        "startLine": 103,
+        "startChar": 0,
+        "endLine": 103,
+        "endChar": 32
+      },
+      "revId": "e9470e3d1d21fd52aef32a26c0c52d325125984e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
