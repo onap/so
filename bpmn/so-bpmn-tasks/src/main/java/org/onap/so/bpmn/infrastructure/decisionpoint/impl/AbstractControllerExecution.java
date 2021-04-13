@@ -157,6 +157,16 @@ public abstract class AbstractControllerExecution<T> {
     }
 
     /**
+     * Check whether the controller scope is SERVICE
+     *
+     * @param controllerScope controller scope, e.g, pnf, vnf, vfModule, service
+     * @return true if the controller scope is service, else return false
+     */
+    protected boolean isServiceResourceScope(final String controllerScope) {
+        return "service".equalsIgnoreCase(controllerScope);
+    }
+
+    /**
      * Check whether the controller scope is VNF resource related.
      * 
      * @param controllerScope controller scope, e.g, pnf, vnf, vfModule
