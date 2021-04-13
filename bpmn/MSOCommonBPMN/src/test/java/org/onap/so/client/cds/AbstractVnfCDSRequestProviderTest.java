@@ -20,6 +20,7 @@
 package org.onap.so.client.cds;
 
 import com.google.gson.JsonParser;
+import java.util.Optional;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
 import org.junit.Before;
@@ -142,12 +143,12 @@ public abstract class AbstractVnfCDSRequestProviderTest {
         return userParams;
     }
 
-    protected Service getUserParams() {
+    protected Optional<Service> getUserParams() {
         Service service = new Service();
         Resources resources = new Resources();
         resources.setVnfs(createVnfList());
         service.setResources(resources);
-        return service;
+        return Optional.of(service);
     }
 
     protected List<Vnfs> createVnfList() {

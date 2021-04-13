@@ -28,6 +28,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.onap.so.bpmn.common.BBConstants;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.listener.flowmanipulator.PreFlowManipulator;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.db.catalog.beans.PnfResourceCustomization;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
@@ -75,7 +76,10 @@ public class SkipCDSBuildingBlockListener implements PreFlowManipulator {
             return;
         }
 
-        if (currentBB.getBuildingBlock().getBpmnScope().equalsIgnoreCase("VNF")
+        if ("SERVICE".equalsIgnoreCase(currentBB.getBuildingBlock().getBpmnScope())) {
+            ServiceInstance serviceInstance = execution.getGeneralBuildingBlock().getServiceInstance();
+            currentSequenceSkipCheck(execution, serviceInstance.getModelInfoServiceInstance().isSkipPostInstConf());
+        } else if (currentBB.getBuildingBlock().getBpmnScope().equalsIgnoreCase("VNF")
                 && containsIgnoreCaseAction(currentBB, vnfActions)) {
             List<VnfResourceCustomization> vnfResourceCustomizations =
                     catalogDbClient.getVnfResourceCustomizationByModelUuid(
