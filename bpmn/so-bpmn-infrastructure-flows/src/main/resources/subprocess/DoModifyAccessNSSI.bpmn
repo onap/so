@@ -73,7 +73,7 @@ nss.getNssisFromAai(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1fpw4gf" sourceRef="Activity_0c8tzf1" targetRef="Activity_1so8vif" />
     <bpmn:sequenceFlow id="Flow_05cl21h" sourceRef="Activity_1so8vif" targetRef="Activity_0uxxkp1" />
-    <bpmn:scriptTask id="Activity_0uxxkp1" name="update AAI relationships">
+    <bpmn:scriptTask id="Activity_0uxxkp1" name="update AAI relationships" scriptFormat="groovy">
       <bpmn:incoming>Flow_05cl21h</bpmn:incoming>
       <bpmn:outgoing>Flow_1jwk3jy</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*

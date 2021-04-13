@@ -28,6 +28,7 @@ import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.core.json.JsonUtils
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import java.time.Instant
@@ -114,7 +115,7 @@ class DoModifyRanNfNssi extends AbstractServiceTaskProcessor {
 		logger.debug(Prefix+"createSdnrRequest method start")
 		String callbackUrl = UrnPropertiesReader.getVariable("mso.workflow.message.endpoint") + "/AsyncSdnrResponse/"+execution.getVariable("msoRequestId")
 		String modifyAction = execution.getVariable("modifyAction")
-		String sdnrRequest = buildSdnrAllocateRequest(execution, modifyAction, "InstantiateRANSlice", callbackUrl)
+		String sdnrRequest = buildSdnrAllocateRequest(execution, modifyAction, "instantiateRANSlice", callbackUrl)
 		execution.setVariable("createNSSI_sdnrRequest", sdnrRequest)
 		execution.setVariable("createNSSI_timeout", "PT10M")
 		execution.setVariable("createNSSI_correlator", execution.getVariable("msoRequestId"))
@@ -152,7 +153,7 @@ class DoModifyRanNfNssi extends AbstractServiceTaskProcessor {
 		if(action.equals("allocate")) {
 			sliceProfile = objectMapper.readValue(execution.getVariable("sliceProfile"), Map.class)
 			sliceProfile.put("sliceProfileId", execution.getVariable("sliceProfileId"))
-			sliceProfile.put("maxNumberofConns", sliceProfile.get("maxNumberofPDUSessions"))
+			sliceProfile.put("maxNumberofConns", sliceProfile.get("maxNumberofPDUSession"))
 			sliceProfile.put("uLThptPerSlice", sliceProfile.get("expDataRateUL"))
 			sliceProfile.put("dLThptPerSlice", sliceProfile.get("expDataRateDL"))
 			action = "modify-"+action
@@ -174,9 +175,12 @@ class DoModifyRanNfNssi extends AbstractServiceTaskProcessor {
 		commonHeader.addProperty("request-id", requestId)
 		commonHeader.addProperty("sub-request-id", "1")
 		commonHeader.add("flags", new JsonObject())
-		payloadInput.addProperty("sliceProfile", sliceProfile.toString())
+                Gson jsonConverter = new Gson()
+                payloadInput.add("sliceProfile", jsonConverter.toJsonTree(sliceProfile))
 		payloadInput.addProperty("RANNFNSSIId", execution.getVariable("serviceInstanceID"))
 		payloadInput.addProperty("callbackURL", callbackUrl)
+                payloadInput.addProperty("globalSubscriberId", execution.getVariable("globalSubscriberId"))
+		payloadInput.addProperty("subscriptionServiceType", execution.getVariable("subscriptionServiceType"))
 		payload.add("input", payloadInput)
 		input.add("common-header", commonHeader)
 		input.addProperty("action", action)

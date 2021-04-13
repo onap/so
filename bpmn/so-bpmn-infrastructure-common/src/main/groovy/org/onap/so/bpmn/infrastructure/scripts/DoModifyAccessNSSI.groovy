@@ -28,6 +28,8 @@ import org.onap.so.bpmn.common.scripts.NssmfAdapterUtils
 import org.onap.so.bpmn.common.scripts.OofUtils
 import org.onap.so.bpmn.common.scripts.RequestDBUtil
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.beans.nsmf.PerfReqEmbb
+import org.onap.so.beans.nsmf.PerfReq
 import org.onap.so.db.request.beans.ResourceOperationStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -47,6 +49,9 @@ import org.onap.aai.domain.yang.Relationship
 import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.aai.domain.yang.SliceProfile
 import org.onap.aai.domain.yang.SliceProfiles
+import org.onap.aai.domain.yang.AllottedResource
+import org.onap.aai.domain.yang.AllottedResources
+import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
 import org.onap.aaiclient.client.aai.entities.uri.AAISimplePluralUri
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -231,8 +236,28 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 		Map<String, Object> profileInfo = objectMapper.readValue(execution.getVariable("RANSliceProfile"), Map.class)
                 ServiceInstance ranSliceProfileInstance = execution.getVariable("ranSliceProfileInstance")
                 profileInfo.put("sST",ranSliceProfileInstance.getServiceType())
-                profileInfo.put("snssaiList",ranSliceProfileInstance.getEnvironmentContext())
-                profileInfo.put("plmnIdList",ranSliceProfileInstance.getServiceInstanceLocationId())
+                profileInfo.put("snssaiList",execution.getVariable("snssaiList"))
+                profileInfo.put("plmnIdList",Arrays.asList(ranSliceProfileInstance.getServiceInstanceLocationId()))
+                profileInfo.put("uEMobilityLevel",profileInfo.get("ueMobilityLevel"))
+                profileInfo.put("cSAvailabilityTarget",profileInfo.get("csAvailabilityTarget"))
+                profileInfo.put("maxNumberofPDUSession",profileInfo.get("maxNumberOfPDUSession"))
+                profileInfo.put("maxNumberofUEs",profileInfo.get("maxNumberOfUEs"))
+
+                PerfReq perfReq = new PerfReq();
+                List<PerfReqEmbb> perfReqEmbbs = new ArrayList<>();
+                PerfReqEmbb perfReqEmbb = new PerfReqEmbb();
+                perfReqEmbb.setExpDataRateDL(profileInfo.get("expDataRateDL"));
+                perfReqEmbb.setExpDataRateUL(profileInfo.get("expDataRateUL"));
+                perfReqEmbbs.add(perfReqEmbb);
+                perfReq.setPerfReqEmbbList(perfReqEmbbs);
+                profileInfo.put("perfReq",perfReq)
+
+                profileInfo.remove("maxNumberOfUEs")
+                profileInfo.remove("resourceVersion")
+                profileInfo.remove("csAvailabilityTarget")
+                profileInfo.remove("ueMobilityLevel")
+                profileInfo.remove("maxNumberOfPDUSession")
+                profileInfo.remove("profileId")
                 String modelUuid = ranSliceProfileInstance.getModelVersionId()
                 String modelInvariantUuid = ranSliceProfileInstance.getModelInvariantId()
 		String modelName = execution.getVariable("servicename")
@@ -308,23 +333,25 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 		logger.debug("getNssisFromAai ranConstituentNssis : "+ranConstituentNssis.toString())
 		ranConstituentNssis.each { key, val -> 
 			switch(key) {
-				case "AN-NF":
+				case "AN_NF":
 					execution.setVariable("ANNF_NSSI", val.getServiceInstanceId())
 					execution.setVariable("ANNF_nssiName", val.getServiceInstanceName())
                                         execution.setVariable("ANNF_modelInvariantUuid", val.getModelInvariantId())
 					execution.setVariable("ANNF_modelUuid", val.getModelVersionId())
 					break
-				case "TN-FH":
+				case "TN_FH":
 					execution.setVariable("TNFH_NSSI", val.getServiceInstanceId())
 					execution.setVariable("TNFH_nssiName", val.getServiceInstanceName())
                                         execution.setVariable("TNFH_modelInvariantUuid", val.getModelInvariantId())
 					execution.setVariable("TNFH_modelUuid", val.getModelVersionId())
+                                        getConnectionLinks(execution, key, val)
 				        break
-				case "TN-MH":
+				case "TN_MH":
 				        execution.setVariable("TNMH_NSSI", val.getServiceInstanceId())
 					execution.setVariable("TNMH_nssiName", val.getServiceInstanceName())
                                         execution.setVariable("TNMH_modelInvariantUuid", val.getModelInvariantId())
 					execution.setVariable("TNMH_modelUuid", val.getModelVersionId())
+                                        getConnectionLinks(execution, key, val)
 					break
 				default:
 					logger.error("No expected match found for current domainType "+ key)
@@ -333,6 +360,50 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 		}
 		
 	}
+
+        private void getConnectionLinks(DelegateExecution execution, String domainType, ServiceInstance instance) {
+                AllottedResources allottedResources = instance.getAllottedResources()
+				if(allottedResources == null) {
+				String msg = "AllottedResourceFromAAI doesn't exist. " + instance
+                logger.debug(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+				}
+
+                List<AllottedResource> AllottedResourceList = allottedResources.getAllottedResource()
+                for(AllottedResource allottedResource : AllottedResourceList) {
+                List<Relationship> relationshipList = allottedResource.getRelationshipList().getRelationship()
+                    for (Relationship relationship : relationshipList) {
+                        String relatedTo = relationship.getRelatedTo()
+                        if (relatedTo.toLowerCase() == "logical-link") {
+                                String relatioshipurl = relationship.getRelatedLink()
+                                String logicalLinkId=
+                                                relatioshipurl.substring(relatioshipurl.lastIndexOf("/") + 1, relatioshipurl.length())
+                                AAIResourcesClient client = new AAIResourcesClient()
+                                AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().logicalLink(logicalLinkId))
+                                if (!client.exists(uri)) {
+                                        exceptionUtil.buildAndThrowWorkflowException(execution, 2500,
+                                                        "Resource was not found in aai: ${logicalLinkId}")
+                                }
+                                AAIResultWrapper wrapper01 = client.get(uri, NotFoundException.class)
+                                Optional<org.onap.aai.domain.yang.LogicalLink> resource = wrapper01.asBean(org.onap.aai.domain.yang.LogicalLink.class)
+                                if (resource.isPresent()) {
+                                        org.onap.aai.domain.yang.LogicalLink logicalLinkInstance = resource.get()
+                                        if(domainType.equalsIgnoreCase("TN-FH"))
+                                        {
+                                        execution.setVariable("tranportEp_ID_RU",logicalLinkInstance.getLinkName())
+                                        execution.setVariable("tranportEp_ID_DUIN",logicalLinkInstance.getLinkName2())
+                                        }
+                                        else if(domainType.equalsIgnoreCase("TN-MH"))
+                                        {
+                                        execution.setVariable("tranportEp_ID_DUEG",logicalLinkInstance.getLinkName())
+                                        execution.setVariable("tranportEp_ID_CUIN",logicalLinkInstance.getLinkName2())
+                                        }
+                                }
+                        }
+                    }
+                }
+        }
+
 	def createSliceProfiles = { DelegateExecution execution ->
 		logger.debug(Prefix+"createSliceProfiles method start")
 		anNssmfUtils.createSliceProfilesInAai(execution)
@@ -446,8 +517,6 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 		JsonObject serviceInfo = new JsonObject()
 		
 		serviceInfo.addProperty("nsiId", execution.getVariable("nsiId"))
-		String sST = jsonUtil.getJsonValue(execution.getVariable("sliceProfile"), "sST")
-		serviceInfo.addProperty("sST", sST)
 		serviceInfo.addProperty("PLMNIdList", objectMapper.writeValueAsString(execution.getVariable("plmnIdList")))
 		serviceInfo.addProperty("globalSubscriberId", execution.getVariable("globalSubscriberId"))
 		serviceInfo.addProperty("subscriptionServiceType", execution.getVariable("subscriptionServiceType"))
@@ -506,13 +575,13 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 		logger.debug("getSliceProfilesFromAai ranConstituentSliceProfiles : "+ranConstituentSliceProfiles.toString())
 		ranConstituentSliceProfiles.each { key, val ->
 			switch(key) {
-				case "AN-NF":
+				case "AN_NF":
 					execution.setVariable("ANNF_sliceProfileInstanceId", val.getServiceInstanceId())
 					break
-				case "TN-FH":
+				case "TN_FH":
 					execution.setVariable("TNFH_sliceProfileInstanceId", val.getServiceInstanceId())
 					break
-				case "TN-MH":
+				case "TN_MH":
 					execution.setVariable("TNMH_sliceProfileInstanceId", val.getServiceInstanceId())
 					break
 				default:
@@ -655,7 +724,7 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2500,
 							"Service Instance was not found in aai: ${serviceInstanceId} related to ${instanceId}")
 				}
-				AAIResultWrapper wrapper01 = client01.get(uri01, NotFoundException.class)
+				AAIResultWrapper wrapper01 = client01.get(uri01.depth(Depth.TWO), NotFoundException.class)
 				Optional<ServiceInstance> serviceInstance = wrapper01.asBean(ServiceInstance.class)
 				if (serviceInstance.isPresent()) {
 					ServiceInstance instance = serviceInstance.get()
