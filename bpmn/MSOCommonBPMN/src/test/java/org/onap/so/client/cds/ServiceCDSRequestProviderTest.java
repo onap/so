@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,13 +36,15 @@ public class ServiceCDSRequestProviderTest extends AbstractVnfCDSRequestProvider
     @InjectMocks
     private ServiceCDSRequestProvider serviceCDSRequestProvider;
 
+    @Mock
+    private ConfigureInstanceParamsForService configureInstanceParamsForService;
+
     @Test
     public void testRequestPayloadForCreateService() throws Exception {
         // given
         setScopeAndAction(SERVICE_SCOPE, SERVICE_ACTION);
         ServiceInstance instance = createServiceInstance();
-        doReturn(instance).when(extractPojosForBB).extractByKey(buildingBlockExecution,
-                ResourceKey.SERVICE_INSTANCE_ID);
+        buildingBlockExecution.getGeneralBuildingBlock().setServiceInstance(instance);
 
         // when
         serviceCDSRequestProvider.setExecutionObject(buildingBlockExecution);

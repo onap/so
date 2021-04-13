@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -67,7 +68,7 @@ public class ConfigureInstanceParamsForVfModuleTest {
         resources.setVnfs(createVnfs());
         service.setResources(resources);
 
-        when(extractServiceFromUserParameters.getServiceFromRequestUserParams(any())).thenReturn(service);
+        when(extractServiceFromUserParameters.getServiceFromRequestUserParams(any())).thenReturn(Optional.of(service));
         JsonObject jsonObject = new JsonObject();
 
         configureInstanceParamsForVfModule.populateInstanceParams(jsonObject, new ArrayList<>(), VNF_CUSTOMIZATION_ID,
@@ -85,7 +86,7 @@ public class ConfigureInstanceParamsForVfModuleTest {
         resources.setVnfs(createVnfs());
         service.setResources(resources);
 
-        when(extractServiceFromUserParameters.getServiceFromRequestUserParams(any())).thenReturn(service);
+        when(extractServiceFromUserParameters.getServiceFromRequestUserParams(any())).thenReturn(Optional.of(service));
         JsonObject jsonObject = new JsonObject();
 
         // No instance name is passed

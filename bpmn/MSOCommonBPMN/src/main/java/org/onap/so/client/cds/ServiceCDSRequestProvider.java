@@ -21,8 +21,11 @@
 package org.onap.so.client.cds;
 
 import com.google.gson.JsonObject;
+import java.util.List;
+import java.util.Map;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.PayloadGenerationException;
@@ -38,21 +41,22 @@ import static org.onap.so.client.cds.PayloadConstants.SEPARATOR;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ServiceCDSRequestProvider implements CDSRequestProvider {
 
-    private static final String EMPTY_STRING = "";
     private String resolutionKey;
     private BuildingBlockExecution execution;
+    private String bluePrintName;
+    private String bluePrintVersion;
 
     @Autowired
-    private ExtractPojosForBB extractPojosForBB;
+    private ConfigureInstanceParamsForService configureInstanceParamsForService;
 
     @Override
     public String getBlueprintName() {
-        return EMPTY_STRING;
+        return bluePrintName;
     }
 
     @Override
     public String getBlueprintVersion() {
-        return EMPTY_STRING;
+        return bluePrintVersion;
     }
 
     @Override
@@ -65,17 +69,21 @@ public class ServiceCDSRequestProvider implements CDSRequestProvider {
         JsonObject cdsPropertyObject = new JsonObject();
         JsonObject serviceObject = new JsonObject();
         try {
-            ServiceInstance serviceInstance =
-                    extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-
+            ServiceInstance serviceInstance = execution.getGeneralBuildingBlock().getServiceInstance();
+            bluePrintName = serviceInstance.getModelInfoServiceInstance().getBlueprintName();
+            bluePrintVersion = serviceInstance.getModelInfoServiceInstance().getBlueprintVersion();
             resolutionKey = serviceInstance.getServiceInstanceName();
-
-            // TODO Need to figure out how to populate blueprint name and version for service.
 
             serviceObject.addProperty("service-instance-id", serviceInstance.getServiceInstanceId());
             serviceObject.addProperty("service-model-uuid",
                     serviceInstance.getModelInfoServiceInstance().getModelUuid());
 
+            final GeneralBuildingBlock buildingBlock = execution.getGeneralBuildingBlock();
+            List<Map<String, Object>> userParamsFromRequest =
+                    buildingBlock.getRequestContext().getRequestParameters().getUserParams();
+            if (userParamsFromRequest != null && userParamsFromRequest.size() != 0) {
+                configureInstanceParamsForService.populateInstanceParams(serviceObject, userParamsFromRequest);
+            }
         } catch (Exception e) {
             throw new PayloadGenerationException("Failed to buildPropertyObjectForService", e);
         }
