@@ -446,8 +446,6 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 		JsonObject serviceInfo = new JsonObject()
 		
 		serviceInfo.addProperty("nsiId", execution.getVariable("nsiId"))
-		String sST = jsonUtil.getJsonValue(execution.getVariable("sliceProfile"), "sST")
-		serviceInfo.addProperty("sST", sST)
 		serviceInfo.addProperty("PLMNIdList", objectMapper.writeValueAsString(execution.getVariable("plmnIdList")))
 		serviceInfo.addProperty("globalSubscriberId", execution.getVariable("globalSubscriberId"))
 		serviceInfo.addProperty("subscriptionServiceType", execution.getVariable("subscriptionServiceType"))
