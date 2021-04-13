@@ -109,6 +109,8 @@ public class ControllerExecutionBB extends AbstractControllerExecution<BuildingB
                 PnfResourceCustomization pnfResourceCustomization =
                         catalogDbClient.getPnfResourceCustomizationByModelCustomizationUUID(resourceCustomizationUuid);
                 controllerActor = pnfResourceCustomization.getControllerActor();
+            } else if (isServiceResourceScope(controllerScope)) {
+                return controllerActor;
             } else if (isVnfResourceScope(controllerScope)) {
                 VnfResourceCustomization vnfResourceCustomization =
                         catalogDbClient.getVnfResourceCustomizationByModelCustomizationUUID(resourceCustomizationUuid);

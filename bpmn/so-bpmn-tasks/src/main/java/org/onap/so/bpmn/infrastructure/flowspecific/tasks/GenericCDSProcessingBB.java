@@ -46,6 +46,7 @@ public class GenericCDSProcessingBB implements ControllerRunnable<BuildingBlockE
     public static final String CDS_ACTOR = "cds";
     public static final String VNF_SCOPE = "vnf";
     public static final String VF_MODULE_SCOPE = "vfmodule";
+    public static final String SERVICE_SCOPE = "service";
 
     @Autowired
     private ExceptionBuilder exceptionBuilder;
@@ -59,8 +60,8 @@ public class GenericCDSProcessingBB implements ControllerRunnable<BuildingBlockE
     @Override
     public Boolean understand(ControllerContext<BuildingBlockExecution> context) {
         String scope = context.getControllerScope();
-        return CDS_ACTOR.equalsIgnoreCase(context.getControllerActor())
-                && (VNF_SCOPE.equalsIgnoreCase(scope) || VF_MODULE_SCOPE.equalsIgnoreCase(scope));
+        return CDS_ACTOR.equalsIgnoreCase(context.getControllerActor()) && (SERVICE_SCOPE.equalsIgnoreCase(scope)
+                || VNF_SCOPE.equalsIgnoreCase(scope) || VF_MODULE_SCOPE.equalsIgnoreCase(scope));
     }
 
     @Override

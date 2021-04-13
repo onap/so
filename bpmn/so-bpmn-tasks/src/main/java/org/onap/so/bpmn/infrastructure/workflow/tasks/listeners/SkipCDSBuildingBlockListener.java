@@ -29,8 +29,10 @@ import org.onap.so.bpmn.common.BBConstants;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.listener.flowmanipulator.FlowManipulatorListenerRunner;
 import org.onap.so.bpmn.common.listener.flowmanipulator.PreFlowManipulator;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.db.catalog.beans.PnfResourceCustomization;
+import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
@@ -76,11 +78,11 @@ public class SkipCDSBuildingBlockListener implements PreFlowManipulator {
             BuildingBlockExecution execution) {
         String customizationUUID = currentBB.getBuildingBlock().getKey();
 
-        if (Strings.isEmpty(customizationUUID)) {
-            return;
-        }
-
-        if (currentBB.getBuildingBlock().getBpmnScope().equalsIgnoreCase("VNF")
+        if ("SERVICE".equalsIgnoreCase(currentBB.getBuildingBlock().getBpmnScope())) {
+            String modelUUID = currentBB.getRequestDetails().getModelInfo().getModelUuid();
+            Service service = catalogDbClient.getServiceByID(modelUUID);
+            currentSequenceSkipCheck(execution, service.getSkipPostInstConf());
+        } else if (currentBB.getBuildingBlock().getBpmnScope().equalsIgnoreCase("VNF")
                 && containsIgnoreCaseAction(currentBB, vnfActions)) {
             List<VnfResourceCustomization> vnfResourceCustomizations =
                     catalogDbClient.getVnfResourceCustomizationByModelUuid(

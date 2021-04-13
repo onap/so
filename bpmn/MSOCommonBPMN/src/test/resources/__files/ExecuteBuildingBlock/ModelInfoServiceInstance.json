@@ -8,5 +8,6 @@
 	"service-type": "serviceType",
 	"service-role": "serviceRole",
 	"environment-context": "environmentContext",
-	"workload-context": "workloadContext"
+	"workload-context": "workloadContext",
+	"skip-post-instantiation-configuration": true
 }

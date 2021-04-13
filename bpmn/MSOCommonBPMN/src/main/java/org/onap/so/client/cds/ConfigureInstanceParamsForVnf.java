@@ -20,6 +20,7 @@
 
 package org.onap.so.client.cds;
 
+import static org.onap.so.client.cds.ConfigureInstanceParamsUtil.applyParamsToObject;
 import com.google.gson.JsonObject;
 import org.onap.so.client.exception.PayloadGenerationException;
 import org.onap.so.serviceinstancebeans.Service;
@@ -47,13 +48,16 @@ public class ConfigureInstanceParamsForVnf {
     public void populateInstanceParams(JsonObject jsonObject, List<Map<String, Object>> userParamsFromRequest,
             String modelCustomizationUuid) throws PayloadGenerationException {
         try {
-            Service service = extractServiceFromUserParameters.getServiceFromRequestUserParams(userParamsFromRequest);
-            List<Map<String, String>> instanceParamsList = getInstanceParamForVnf(service, modelCustomizationUuid);
+            Optional<Service> service =
+                    extractServiceFromUserParameters.getServiceFromRequestUserParams(userParamsFromRequest);
 
-            instanceParamsList.stream().flatMap(instanceParamsMap -> instanceParamsMap.entrySet().stream())
-                    .forEachOrdered(entry -> jsonObject.addProperty(entry.getKey(), entry.getValue()));
+            if (service.isPresent()) {
+                List<Map<String, String>> instanceParamsList =
+                        getInstanceParamForVnf(service.get(), modelCustomizationUuid);
+                applyParamsToObject(instanceParamsList, jsonObject);
+            }
         } catch (Exception e) {
-            throw new PayloadGenerationException("Couldn't able to resolve instance parameters", e);
+            throw new PayloadGenerationException("Failed to resolve instance parameters", e);
         }
     }
 
