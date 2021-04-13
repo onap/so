@@ -26,7 +26,9 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
+import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
+import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.ExceptionBuilder;
@@ -87,6 +89,11 @@ public class ControllerExecution {
                         execution.getGeneralBuildingBlock().getRequestContext().getMsoRequestId());
                 execution.setVariable(PRC_BLUEPRINT_VERSION, pnfResourceCustomization.getBlueprintVersion());
                 execution.setVariable(PRC_BLUEPRINT_NAME, pnfResourceCustomization.getBlueprintName());
+            } else if ("service".equalsIgnoreCase(scope)) {
+                GeneralBuildingBlock gbb = execution.getGeneralBuildingBlock();
+                ModelInfoServiceInstance modelInfoServiceInstance =
+                        gbb.getServiceInstance().getModelInfoServiceInstance();
+                controllerActor = Optional.ofNullable(modelInfoServiceInstance.getControllerActor()).orElse("CDS");
             } else {
                 GenericVnf genericVnf = getGenericVnf(execution);
                 String modelUuid = genericVnf.getModelInfoGenericVnf().getModelCustomizationUuid();

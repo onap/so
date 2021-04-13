@@ -45,6 +45,14 @@ public class ModelInfoServiceInstance extends ModelInfoMetadata implements Seria
     private String namingPolicy;
     @JsonProperty("onap-generated-naming")
     private Boolean onapGeneratedNaming;
+    @JsonProperty("cds-blueprint-name")
+    private String blueprintName;
+    @JsonProperty("cds-blueprint-version")
+    private String blueprintVersion;
+    @JsonProperty("controller-actor")
+    private String controllerActor;
+    @JsonProperty("skip-post-instantiation-configuration")
+    private boolean skipPostInstConf;
 
 
     public String getDescription() {
@@ -118,5 +126,37 @@ public class ModelInfoServiceInstance extends ModelInfoMetadata implements Seria
 
     public void setOnapGeneratedNaming(Boolean onapGeneratedNaming) {
         this.onapGeneratedNaming = onapGeneratedNaming;
+    }
+
+    public String getBlueprintName() {
+        return blueprintName;
+    }
+
+    public void setBlueprintName(String blueprintName) {
+        this.blueprintName = blueprintName;
+    }
+
+    public String getBlueprintVersion() {
+        return blueprintVersion;
+    }
+
+    public void setBlueprintVersion(String blueprintVersion) {
+        this.blueprintVersion = blueprintVersion;
+    }
+
+    public String getControllerActor() {
+        return controllerActor;
+    }
+
+    public void setControllerActor(String controllerActor) {
+        this.controllerActor = controllerActor;
+    }
+
+    public boolean isSkipPostInstConf() {
+        return skipPostInstConf;
+    }
+
+    public void setSkipPostInstConf(boolean skipPostInstConf) {
+        this.skipPostInstConf = skipPostInstConf;
     }
 }

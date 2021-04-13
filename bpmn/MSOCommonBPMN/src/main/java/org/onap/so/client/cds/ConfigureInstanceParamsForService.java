@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2019 Bell Canada
+ * Copyright (C) 2021 Bell Canada
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,41 +17,41 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.so.client.cds;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.onap.so.client.cds.ConfigureInstanceParamsUtil.applyParamsToObject;
+import com.google.gson.JsonObject;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.onap.so.client.exception.PayloadGenerationException;
 import org.onap.so.serviceinstancebeans.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import java.util.List;
-import java.util.Map;
 
 @Component
-public class ExtractServiceFromUserParameters {
-
-    private static final String SERVICE_KEY = "service";
+public class ConfigureInstanceParamsForService {
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private ExtractServiceFromUserParameters extractServiceFromUserParameters;
 
-    public Optional<Service> getServiceFromRequestUserParams(List<Map<String, Object>> userParams) throws Exception {
-        Optional<Map<String, Object>> serviceMap =
-                userParams.stream().filter(key -> key.containsKey(SERVICE_KEY)).findFirst();
-        if (serviceMap.isPresent()) {
-            return Optional.of(getServiceObjectFromServiceMap(serviceMap.get()));
-        }
-        return Optional.empty();
-    }
-
-    private Service getServiceObjectFromServiceMap(Map<String, Object> serviceMap) throws PayloadGenerationException {
+    /**
+     * Read instance parameters for Service and put into JsonObject.
+     *
+     * @param jsonObject - JsonObject which will hold the payload to send to CDS.
+     * @param userParamsFromRequest - User parameters.
+     * @throws PayloadGenerationException if it doesn't able to populate instance parameters from SO payload.
+     */
+    public void populateInstanceParams(JsonObject jsonObject, List<Map<String, Object>> userParamsFromRequest)
+            throws PayloadGenerationException {
         try {
-            String serviceFromJson = objectMapper.writeValueAsString(serviceMap.get(SERVICE_KEY));
-            return objectMapper.readValue(serviceFromJson, Service.class);
+            Optional<Service> service =
+                    extractServiceFromUserParameters.getServiceFromRequestUserParams(userParamsFromRequest);
+
+            service.map(Service::getInstanceParams).ifPresent(p -> applyParamsToObject(p, jsonObject));
         } catch (Exception e) {
-            throw new PayloadGenerationException("An exception occurred while converting json object to Service object",
-                    e);
+            throw new PayloadGenerationException("Couldn't able to resolve instance parameters", e);
         }
     }
 }

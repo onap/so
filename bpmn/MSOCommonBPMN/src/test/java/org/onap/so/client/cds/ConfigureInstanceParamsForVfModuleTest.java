@@ -21,6 +21,7 @@
 package org.onap.so.client.cds;
 
 import com.google.gson.JsonObject;
+import java.util.Optional;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -80,12 +81,12 @@ public class ConfigureInstanceParamsForVfModuleTest {
         return userParams;
     }
 
-    private Service getUserParams() {
+    private Optional<Service> getUserParams() {
         Service service = new Service();
         Resources resources = new Resources();
         resources.setVnfs(createVnfs());
         service.setResources(resources);
-        return service;
+        return Optional.of(service);
     }
 
     private List<Vnfs> createVnfs() {
