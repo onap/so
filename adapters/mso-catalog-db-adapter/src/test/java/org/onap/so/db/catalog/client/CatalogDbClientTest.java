@@ -197,8 +197,8 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         assertNotNull(vnfResourceCustomization.getVnfResources());
         assertNotNull(vnfResourceCustomization.getVfModuleCustomizations());
         assertEquals("vSAMP10a", vnfResourceCustomization.getVnfResources().getModelName());
-        assertTrue("skip post instantiation configuration",
-                vnfResourceCustomization.isSkipPostInstConf().booleanValue());
+        assertFalse("skip post instantiation configuration",
+                vnfResourceCustomization.getSkipPostInstConf().booleanValue());
     }
 
     @Test
@@ -617,7 +617,7 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         assertEquals("modelInstanceName", "PNF routing", pnfResourceCustomization.getModelInstanceName());
         assertEquals("blueprintName", "test_configuration_restconf", pnfResourceCustomization.getBlueprintName());
         assertEquals("blueprintVersion", "1.0.0", pnfResourceCustomization.getBlueprintVersion());
-        assertTrue("skip post instantiation configuration", pnfResourceCustomization.isSkipPostInstConf());
+        assertTrue("skip post instantiation configuration", pnfResourceCustomization.getSkipPostInstConf());
         PnfResource pnfResource = pnfResourceCustomization.getPnfResources();
         assertNotNull(pnfResource);
         assertEquals("PNFResource modelUUID", "ff2ae348-214a-11e7-93ae-92361f002680", pnfResource.getModelUUID());

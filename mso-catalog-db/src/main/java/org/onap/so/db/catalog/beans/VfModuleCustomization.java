@@ -243,7 +243,7 @@ public class VfModuleCustomization implements Serializable {
         this.cvnfcCustomization = cvnfcCustomization;
     }
 
-    public Boolean isSkipPostInstConf() {
+    public Boolean getSkipPostInstConf() {
         return skipPostInstConf;
     }
 

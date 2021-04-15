@@ -262,7 +262,7 @@ public class ASDCControllerITTest extends BaseTest {
                     pnfCustomization.getBlueprintName());
             assertEquals("cds blueprint version(sdnc_model_version property)", "v1.4.0",
                     pnfCustomization.getBlueprintVersion());
-            assertTrue("skip post instantiation configuration", pnfCustomization.isSkipPostInstConf());
+            assertTrue("skip post instantiation configuration", pnfCustomization.getSkipPostInstConf());
             assertEquals("controller actor", "SO-REF-DATA", pnfCustomization.getControllerActor());
 
             /**
@@ -533,7 +533,7 @@ public class ASDCControllerITTest extends BaseTest {
             assertEquals("cds blueprint version(sdnc_model_version property)", "1.0.0",
                     pnfCustomization.getBlueprintVersion());
             assertEquals("default software version", "4.0.0", pnfCustomization.getDefaultSoftwareVersion());
-            assertTrue("skip post instantiation configuration", pnfCustomization.isSkipPostInstConf());
+            assertTrue("skip post instantiation configuration", pnfCustomization.getSkipPostInstConf());
             assertEquals("controller actor", "SO-REF-DATA", pnfCustomization.getControllerActor());
 
             /**
@@ -643,7 +643,7 @@ public class ASDCControllerITTest extends BaseTest {
             assertEquals("cds blueprint version(sdnc_model_version property)", "1.0.0",
                     pnfCustomization.getBlueprintVersion());
             assertEquals("default software version", "foo-123", pnfCustomization.getDefaultSoftwareVersion());
-            assertTrue("skip post instantiation configuration", pnfCustomization.isSkipPostInstConf());
+            assertTrue("skip post instantiation configuration", pnfCustomization.getSkipPostInstConf());
             assertEquals("controller actor", "SO-REF-DATA", pnfCustomization.getControllerActor());
 
             /**

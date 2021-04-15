@@ -34,7 +34,7 @@ public class SkipConfigVnfListener implements PreFlowManipulator {
         if (vnfResourceCustomizations != null && !vnfResourceCustomizations.isEmpty()) {
             VnfResourceCustomization vrc =
                     catalogDbClient.findVnfResourceCustomizationInList(vnfCustomizationUUID, vnfResourceCustomizations);
-            boolean skipConfigVNF = vrc.isSkipPostInstConf().booleanValue();
+            boolean skipConfigVNF = vrc.getSkipPostInstConf().booleanValue();
             if (skipConfigVNF) {
                 execution.setVariable(BBConstants.G_CURRENT_SEQUENCE,
                         ((int) execution.getVariable(BBConstants.G_CURRENT_SEQUENCE)) + 1);
