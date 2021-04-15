@@ -197,8 +197,8 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         assertNotNull(vnfResourceCustomization.getVnfResources());
         assertNotNull(vnfResourceCustomization.getVfModuleCustomizations());
         assertEquals("vSAMP10a", vnfResourceCustomization.getVnfResources().getModelName());
-        assertTrue("skip post instantiation configuration",
-                vnfResourceCustomization.isSkipPostInstConf().booleanValue());
+        assertFalse("skip post instantiation configuration",
+                vnfResourceCustomization.getSkipPostInstConf().booleanValue());
     }
 
     @Test
