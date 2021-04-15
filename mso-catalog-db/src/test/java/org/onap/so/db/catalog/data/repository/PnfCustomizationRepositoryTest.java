@@ -50,7 +50,7 @@ public class PnfCustomizationRepositoryTest extends BaseTest {
         assertEquals("modelInstanceName", "PNF routing", pnfResourceCustomization.getModelInstanceName());
         assertEquals("blueprintName", "test_configuration_restconf", pnfResourceCustomization.getBlueprintName());
         assertEquals("blueprintVersion", "1.0.0", pnfResourceCustomization.getBlueprintVersion());
-        assertTrue("skip post instantiation configuration", pnfResourceCustomization.isSkipPostInstConf());
+        assertTrue("skip post instantiation configuration", pnfResourceCustomization.getSkipPostInstConf());
         PnfResource pnfResource = pnfResourceCustomization.getPnfResources();
         assertNotNull(pnfResource);
 

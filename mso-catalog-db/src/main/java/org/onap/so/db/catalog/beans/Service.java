@@ -460,7 +460,7 @@ public class Service implements Serializable {
         this.blueprintVersion = blueprintVersion;
     }
 
-    public Boolean isSkipPostInstConf() {
+    public Boolean getSkipPostInstConf() {
         return skipPostInstConf;
     }
 
