@@ -12,7 +12,6 @@ import org.onap.aaiclient.client.aai.entities.Relationships;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.Resource;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.VrfBondingServiceException;
-import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionExtractResourcesAAI;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowType;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
