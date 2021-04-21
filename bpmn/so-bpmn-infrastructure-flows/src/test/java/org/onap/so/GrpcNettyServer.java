@@ -26,7 +26,7 @@ import javax.annotation.PostConstruct;
 import org.junit.Rule;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.EventType;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.Status;
-import org.onap.ccsdk.cds.controllerblueprints.processing.api.BluePrintProcessingServiceGrpc.BluePrintProcessingServiceImplBase;
+import org.onap.ccsdk.cds.controllerblueprints.processing.api.BlueprintProcessingServiceGrpc.BlueprintProcessingServiceImplBase;
 import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceInput;
 import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceOutput;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GrpcNettyServer extends BluePrintProcessingServiceImplBase {
+public class GrpcNettyServer extends BlueprintProcessingServiceImplBase {
 
     private static final Logger logger = LoggerFactory.getLogger(GrpcNettyServer.class);
 
@@ -55,7 +55,7 @@ public class GrpcNettyServer extends BluePrintProcessingServiceImplBase {
     @PostConstruct
     public void start() throws IOException {
 
-        final BluePrintProcessingServiceImplBase blueprintPrcessorImpl = new BluePrintProcessingServiceImplBase() {
+        final BlueprintProcessingServiceImplBase blueprintPrcessorImpl = new BlueprintProcessingServiceImplBase() {
             @Override
             public StreamObserver<ExecutionServiceInput> process(
                     StreamObserver<ExecutionServiceOutput> responseObserver) {
