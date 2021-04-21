@@ -22,7 +22,6 @@ package org.onap.so.client.cds;
 
 import io.grpc.ManagedChannel;
 import io.grpc.internal.DnsNameResolverProvider;
-import io.grpc.internal.PickFirstLoadBalancerProvider;
 import io.grpc.netty.GrpcSslContexts;
 import io.grpc.netty.NettyChannelBuilder;
 import java.security.KeyStore;
@@ -81,8 +80,7 @@ public class CDSProcessingClient implements AutoCloseable {
                     "No RestProperty.CDSProperties implementation found on classpath, can't create client.");
         }
         NettyChannelBuilder builder = NettyChannelBuilder.forAddress(props.getHost(), props.getPort())
-                .nameResolverFactory(new DnsNameResolverProvider())
-                .loadBalancerFactory(new PickFirstLoadBalancerProvider());
+                .nameResolverFactory(new DnsNameResolverProvider());
         if (props.getUseSSL()) {
             log.info("Configure SSL connection");
             KeyStore ks = KeyStoreLoader.getKeyStore();

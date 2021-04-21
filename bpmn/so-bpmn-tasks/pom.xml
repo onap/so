@@ -11,7 +11,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <grpc.version>1.17.1</grpc.version>
+    <grpc.version>1.25.0</grpc.version>
   </properties>
   <build>
     <plugins>

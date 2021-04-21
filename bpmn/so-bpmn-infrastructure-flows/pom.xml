@@ -13,7 +13,7 @@
   <properties>
     <camunda.bpm.assert.version>2.0-alpha2</camunda.bpm.assert.version>
     <assertj.core.version>1.7.0</assertj.core.version>
-    <grpc.version>1.17.1</grpc.version>
+    <grpc.version>1.25.0</grpc.version>
   </properties>
 
   <build>
