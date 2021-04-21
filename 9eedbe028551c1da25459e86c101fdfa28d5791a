@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8e8b51a9_eea58e23",
+        "filename": "INFO.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 4677
+      },
+      "writtenOn": "2021-04-21T09:29:21Z",
+      "side": 1,
+      "message": "These lines here should never really be removed, since they are a history of who has been a committer...\nBut two options.\n1) Remove them\n2) fix them so only each name has its own type and link. Type/Name/Link.",
+      "revId": "9eedbe028551c1da25459e86c101fdfa28d5791a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
