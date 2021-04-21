@@ -27,18 +27,23 @@ import java.util.Set;
 import org.apache.logging.log4j.util.Strings;
 import org.onap.so.bpmn.common.BBConstants;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.common.listener.flowmanipulator.FlowManipulatorListenerRunner;
 import org.onap.so.bpmn.common.listener.flowmanipulator.PreFlowManipulator;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.db.catalog.beans.PnfResourceCustomization;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 @Component
 public class SkipCDSBuildingBlockListener implements PreFlowManipulator {
+
+    private static Logger logger = LoggerFactory.getLogger(SkipCDSBuildingBlockListener.class);
 
     @Autowired
     private CatalogDbClient catalogDbClient;
@@ -84,7 +89,8 @@ public class SkipCDSBuildingBlockListener implements PreFlowManipulator {
                 VnfResourceCustomization vrc = catalogDbClient.findVnfResourceCustomizationInList(customizationUUID,
                         vnfResourceCustomizations);
                 if (null != vrc) {
-                    boolean skipConfigVNF = vrc.isSkipPostInstConf().booleanValue();
+                    logger.debug("getSkipPostInstConf value: " + vrc.getSkipPostInstConf().booleanValue());
+                    boolean skipConfigVNF = vrc.getSkipPostInstConf().booleanValue();
                     currentSequenceSkipCheck(execution, skipConfigVNF);
                 }
 
@@ -96,7 +102,8 @@ public class SkipCDSBuildingBlockListener implements PreFlowManipulator {
                     catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID(customizationUUID);
 
             if (null != vfc) {
-                boolean skipVfModule = vfc.isSkipPostInstConf();
+                logger.debug("getSkipPostInstConf value: " + vfc.getSkipPostInstConf().booleanValue());
+                boolean skipVfModule = vfc.getSkipPostInstConf();
                 currentSequenceSkipCheck(execution, skipVfModule);
             }
 
@@ -106,6 +113,7 @@ public class SkipCDSBuildingBlockListener implements PreFlowManipulator {
                     catalogDbClient.getPnfResourceCustomizationByModelCustomizationUUID(customizationUUID);
 
             if (null != pnfResourceCustomization) {
+                logger.debug("isSkipPostInstConf value: " + pnfResourceCustomization.isSkipPostInstConf());
                 boolean skipConfigPNF = pnfResourceCustomization.isSkipPostInstConf();
                 currentSequenceSkipCheck(execution, skipConfigPNF);
             }
