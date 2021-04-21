@@ -113,8 +113,8 @@ public class SkipCDSBuildingBlockListener implements PreFlowManipulator {
                     catalogDbClient.getPnfResourceCustomizationByModelCustomizationUUID(customizationUUID);
 
             if (null != pnfResourceCustomization) {
-                logger.debug("isSkipPostInstConf value: " + pnfResourceCustomization.isSkipPostInstConf());
-                boolean skipConfigPNF = pnfResourceCustomization.isSkipPostInstConf();
+                logger.debug("getSkipPostInstConf value: " + pnfResourceCustomization.getSkipPostInstConf());
+                boolean skipConfigPNF = pnfResourceCustomization.getSkipPostInstConf();
                 currentSequenceSkipCheck(execution, skipConfigPNF);
             }
         }

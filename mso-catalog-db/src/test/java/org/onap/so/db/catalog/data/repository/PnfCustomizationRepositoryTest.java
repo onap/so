@@ -16,7 +16,7 @@ package org.onap.so.db.catalog.data.repository;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import java.util.List;
 import org.junit.Test;
 import org.onap.so.db.catalog.BaseTest;
@@ -50,7 +50,7 @@ public class PnfCustomizationRepositoryTest extends BaseTest {
         assertEquals("modelInstanceName", "PNF routing", pnfResourceCustomization.getModelInstanceName());
         assertEquals("blueprintName", "test_configuration_restconf", pnfResourceCustomization.getBlueprintName());
         assertEquals("blueprintVersion", "1.0.0", pnfResourceCustomization.getBlueprintVersion());
-        assertTrue("skip post instantiation configuration", pnfResourceCustomization.isSkipPostInstConf());
+        assertFalse("skip post instantiation configuration", pnfResourceCustomization.getSkipPostInstConf());
         PnfResource pnfResource = pnfResourceCustomization.getPnfResources();
         assertNotNull(pnfResource);
 

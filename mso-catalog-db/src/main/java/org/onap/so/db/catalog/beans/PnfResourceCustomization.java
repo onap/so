@@ -223,7 +223,7 @@ public class PnfResourceCustomization implements Serializable {
         this.blueprintVersion = blueprintVersion;
     }
 
-    public boolean isSkipPostInstConf() {
+    public boolean getSkipPostInstConf() {
         return skipPostInstConf;
     }
 
