@@ -114,6 +114,7 @@ public class CnfAdapterCreateTasks {
         request.setCloudRegion(cloudRegion.getLcpCloudRegionId());
         request.setVfModuleUUID(vfModule.getVfModuleId());
         request.setProfileName(sdncDirectives.get("k8s-rb-profile-name"));
+        request.setReleaseName(sdncDirectives.get("k8s-rb-instance-release-name"));
         request.setOverrideValues(sdncDirectives);
         return request;
     }
