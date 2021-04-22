@@ -297,7 +297,7 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
             List<String> linkStrList = jsonUtil.StringArrayToList(linkArrayStr)
 
             for (String linkStr : linkStrList) {
-                String linkId = jsonUtil.getJsonValue(linkStr, "id")
+                String linkId = jsonUtil.getJsonValue(linkStr, "name")
                 if (isBlank(linkId)) {
                     linkId = "tn-nssmf-" + UUID.randomUUID().toString()
                 }

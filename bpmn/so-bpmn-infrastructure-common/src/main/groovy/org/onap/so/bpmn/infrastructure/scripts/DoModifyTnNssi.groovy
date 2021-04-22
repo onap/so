@@ -24,7 +24,11 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import groovy.json.JsonSlurper
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.aai.domain.yang.*
+import org.onap.aai.domain.yang.AllottedResource
+import org.onap.aai.domain.yang.AllottedResources
+import org.onap.aai.domain.yang.NetworkPolicy
+import org.onap.aai.domain.yang.ServiceInstance
+import org.onap.aai.domain.yang.SliceProfile
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
@@ -38,7 +42,9 @@ import org.onap.so.db.request.beans.ResourceOperationStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import static org.apache.commons.lang3.StringUtils.*
+import static org.apache.commons.lang3.StringUtils.isBlank
+import static org.apache.commons.lang3.StringUtils.isEmpty
+import static org.apache.commons.lang3.StringUtils.isNotBlank
 
 public class DoModifyTnNssi extends AbstractServiceTaskProcessor {
     String Prefix = "TNMOD_"
@@ -150,26 +156,31 @@ public class DoModifyTnNssi extends AbstractServiceTaskProcessor {
         AAIResourceUri ssServiceuri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
 
         try {
-            if (resourceClient.exists(ssServiceuri)) {
-                ServiceInstance ss = resourceClient.get(ServiceInstance.class, ssServiceuri)
-
-                AllottedResources ars = ss.getAllottedResources()
-                List<AllottedResource> arList = ars.getAllottedResource()
-                List<String> arIdList = new ArrayList<>()
-                Map<String, String> policyMap = new HashMap<>()
-                Map<String, List<String>> logicalLinksMap = new HashMap<>()
-                for (AllottedResource ar : arList) {
-                    String arId = ar.getId()
-                    arIdList.add(arId)
-                    String policyId = tnNssmfUtils.getPolicyIdFromAr(execution, serviceInstanceId, arId, true)
-                    policyMap.put(arId, policyId)
-                    List<String> logicalLinkList = tnNssmfUtils.getLogicalLinkNamesFromAr(execution,
-                            serviceInstanceId, arId, true)
-                    logicalLinksMap.put(arId, logicalLinkList)
+            Optional<ServiceInstance> ssOpt = resourceClient.get(ServiceInstance.class, ssServiceuri)
+            if (ssOpt.isPresent()) {
+                ServiceInstance ss = ssOpt.get()
+                AllottedResources ars = tnNssmfUtils.getAllottedResourcesFromAai(execution, serviceInstanceId, true)
+                if (ars != null) {
+                    List<AllottedResource> arList = ars.getAllottedResource()
+                    List<String> arIdList = new ArrayList<>()
+                    Map<String, String> policyMap = new HashMap<>()
+                    Map<String, List<String>> logicalLinksMap = new HashMap<>()
+                    for (AllottedResource ar : arList) {
+                        String arId = ar.getId()
+                        arIdList.add(arId)
+                        String policyId = tnNssmfUtils.getPolicyIdFromAr(execution, serviceInstanceId, arId, true)
+                        policyMap.put(arId, policyId)
+                        List<String> logicalLinkList = tnNssmfUtils.getLogicalLinkNamesFromAr(execution,
+                                serviceInstanceId, arId, true)
+                        logicalLinksMap.put(arId, logicalLinkList)
+                    }
+                    execution.setVariable("arIdList", arIdList)
+                    execution.setVariable("arPolicyMap", policyMap)
+                    execution.setVariable("arLogicalLinkMap", logicalLinksMap)
+                } else {
+                    logger.error("ERROR: getExistingServiceInstance: getAllottedResources() returned null. ss=" + ss
+                            .toString())
                 }
-                execution.setVariable("arIdList", arIdList)
-                execution.setVariable("arPolicyMap", policyMap)
-                execution.setVariable("arLogicalLinkMap", logicalLinksMap)
             } else {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service instance was not found in aai to " +
                         "associate allotted resource for service :" + serviceInstanceId)
@@ -177,7 +188,7 @@ public class DoModifyTnNssi extends AbstractServiceTaskProcessor {
         } catch (BpmnError e) {
             throw e;
         } catch (Exception ex) {
-            String msg = "Exception in getServiceInstance. " + ex.getMessage()
+            String msg = "Exception in getExistingServiceInstance. " + ex.getMessage()
             logger.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
@@ -195,6 +206,7 @@ public class DoModifyTnNssi extends AbstractServiceTaskProcessor {
             //ss.setServiceInstanceId(ssInstanceId)
             String serviceStatus = "modified"
             ss.setOrchestrationStatus(serviceStatus)
+            ss.setEnvironmentContext("tn")
             AAIResourcesClient client = getAAIClient()
             AAIResourceUri uri = AAIUriFactory.createResourceUri(
                     AAIFluentTypeBuilder.business()
@@ -279,14 +291,15 @@ public class DoModifyTnNssi extends AbstractServiceTaskProcessor {
 
     void updateLogicalLinksInNetwork(DelegateExecution execution, String networkJsonStr) {
         try {
-            String arId = getValidArId(jsonUtil.getJsonValue(networkJsonStr, "id"))
+            String arId = getValidArId(execution, jsonUtil.getJsonValue(networkJsonStr, "id"))
             String linkArrayStr = jsonUtil.getJsonValue(networkJsonStr, "connectionLinks")
             updateLogicalLinksInAr(execution, arId, linkArrayStr)
         } catch (BpmnError e) {
             throw e
         } catch (Exception ex) {
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000,
-                    "Exception in updateLogicalLinksInNetwork" + ex.getMessage())
+            String msg = String.format("ERROR: updateLogicalLinksInNetwork: exception: %s", ex.getMessage())
+            logger.error(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
         }
     }
 
@@ -351,7 +364,7 @@ public class DoModifyTnNssi extends AbstractServiceTaskProcessor {
         try {
             int maxBw = getMaxBw(execution)
 
-            String arId = getValidArId(jsonUtil.getJsonValue(networkJsonStr, "id"))
+            String arId = getValidArId(execution, jsonUtil.getJsonValue(networkJsonStr, "id"))
             Map<String, String> policyMap = execution.getVariable("arPolicyMap")
             String policyId = policyMap.get(arId)
             if (isBlank(policyId)) {
@@ -365,8 +378,9 @@ public class DoModifyTnNssi extends AbstractServiceTaskProcessor {
         } catch (BpmnError e) {
             throw e
         } catch (Exception ex) {
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000,
-                    "Exception in updateNetworkPolicy" + ex.getMessage())
+            String msg = String.format("ERROR: updateNetworkPolicy: exception: %s", ex.getMessage())
+            logger.error(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
         }
     }
 
@@ -428,7 +442,7 @@ public class DoModifyTnNssi extends AbstractServiceTaskProcessor {
         try {
             String serviceInstanceId = execution.getVariable("sliceServiceInstanceId")
 
-            String sdncRequest = tnNssmfUtils.buildSDNCRequest(execution, serviceInstanceId, "modify")
+            String sdncRequest = tnNssmfUtils.buildSDNCRequest(execution, serviceInstanceId, "update")
 
             execution.setVariable("TNNSSMF_SDNCRequest", sdncRequest)
             logger.debug("Outgoing SDNCRequest is: \n" + sdncRequest)
@@ -483,6 +497,7 @@ public class DoModifyTnNssi extends AbstractServiceTaskProcessor {
         ResourceOperationStatus roStatus = tnNssmfUtils.buildRoStatus(modelUuid, ssInstanceId,
                 jobId, nsiId, operType, status, progress, statusDescription)
 
+        logger.debug("prepareUpdateJobStatus: roStatus={}", roStatus)
         requestDBUtil.prepareUpdateResourceOperationStatus(execution, roStatus)
     }
 
