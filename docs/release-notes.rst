@@ -14,20 +14,20 @@ The SO provides the highest level of service orchestration in the ONAP architect
 Release Notes
 =============
 
-Version: 1.8.3
+Version: 8.0
 ==============
 
-:Release Date: 2021-04-10
+:Release Date: 2021-04-19
 
 SO Release Image Versions
 --------------------------
  - so-bpmn-infra
 
-    :Version: 1.8.1
+    :Version: 1.8.2
 
  - so-catalog-db-adapter
 
-    :Version: 1.8.1
+    :Version: 1.8.2
 
  - so-admin-cockpit
 
@@ -39,19 +39,19 @@ SO Release Image Versions
 
  - so-openstack-adapter
 
-    :Version: 1.8.1
+    :Version: 1.8.2
 
  - so-request-db-adapter
 
-    :Version: 1.8.1
+    :Version: 1.8.2
 
  - so-sdc-controller
 
-    :Version: 1.8.1
+    :Version: 1.8.2
 
  - so-sdnc-adapter
 
-    :Version: 1.8.1
+    :Version: 1.8.2
 
  - so-sol003-adapter
 
@@ -59,7 +59,7 @@ SO Release Image Versions
 
  - so-api-handler-infra
 
-    :Version: 1.8.1
+    :Version: 1.8.2
 
  - so-etsi-nfvo-ns-lcm
 
@@ -81,28 +81,26 @@ The key delivereable for this release is refactoring SO for better internal arch
 
 **Epics**
 
+*  `SO-3473 <https://jira.onap.org/browse/SO-3473>`_ - Refactor SO to enhance the usability
+*  `SO-3381 <https://jira.onap.org/browse/SO-3381>`_ - SO Impacts for E2E Network Slicing in Honolulu
+*  `SO-3206 <https://jira.onap.org/browse/SO-3206>`_ - Support for NS LCM and Workflows Management
+*  `SO-3493 <https://jira.onap.org/browse/SO-3493>`_ - Java 11 and Python 3 upgrades
 
 **Stories**
 
-The full list of implemented tasks is available on `JIRA GUILIN STORY <https://jira.onap.org/issues/?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20story%20AND%20fixVersion%20%3D%20%22honolulu%20Release%22>`_
+The full list of implemented tasks is available on `JIRA Honolulu STORY <https://jira.onap.org/issues/?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20story%20AND%20fixVersion%20%3D%20%22honolulu%20Release%22>`_
 Listed below are key functional jira stories handled in the Honolulu release:
 
 
 **Tasks**
 
-The full list of implemented tasks is available on `JIRA GUILIN TASKS <https://jira.onap.org/issues/?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20Task%20AND%20fixVersion%20%3D%20%22honolulu%20Release%22>`_
-Listed below are highest and high piority jira tasks handled in the Guilin release:
-
-*  `SO-3205 <https://jira.onap.org/browse/SO-3205>`_ - E2E Network Slicing: Improvements for NST/NSI Selection callback
-*  `SO-3120 <https://jira.onap.org/browse/SO-3120>`_ - Create swagger api for software upgrade in SO
-*  `SO-2915 <https://jira.onap.org/browse/SO-2915>`_ - Upgrade Vulnerable Direct Dependencies
-
+The full list of implemented tasks is available on `JIRA Honolulu TASKS <https://jira.onap.org/issues/?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20Task%20AND%20fixVersion%20%3D%20%22honolulu%20Release%22>`_
 
 **Bug Fixes**
 
-The full list of fixed bugs is available on `JIRA GUILIN BUGS 
+The full list of fixed bugs is available on `JIRA Honolulu BUGS 
 <https://jira.onap.org/issues/?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20Bug%20AND%20fixVersion%20%3D%20%22honolulu%20Release%22>`_
-Listed below are highest and high piority jira tasks handled in the Guilin release:
+
 
 
 Security Notes
@@ -120,9 +118,9 @@ Quick Links:
 - `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1702>`__
 
 **Known Issues**
-*  `SO-3403 <https://jira.onap.org/browse/SO-3403>`_ - The functionality of the SO cnf-adapter will be tested further and will be delivered by the Guilin Maintenance Release as a 1.7.11 patch.
-*  `SO-3237 <https://jira.onap.org/browse/SO-SO-3237>`_ - Exposed HTTP port. 
-*  `SO-3414 <https://jira.onap.org/browse/SO-SO-3414>`_ - Search Query does not contain get model data for vFW closed loop. 
+*  `SO-3628 <https://jira.onap.org/browse/SO-3628>`_ - SO cannot send CDS request due to grpc schema problem.
+*  `SO-3626 <https://jira.onap.org/browse/SO-3626>`_ - SO does not requests CDS for skipPostInstantiation flag set to False.
+*  `SO-3237 <https://jira.onap.org/browse/SO-3237>`_ - Exposed HTTP port. 
 
 
 **Upgrade Notes**
@@ -131,7 +129,7 @@ Quick Links:
 
 **Deprecation Notes**
 
-	SO modules Ve-Vnfm-adapter and appc-orchestrator are deprectaed for the Guilin release.
+	SO modules Ve-Vnfm-adapter and appc-orchestrator are deprectaed for the Honolulu release.
 
 **Other**
 
