@@ -1,0 +1,22 @@
+
+---
+distribution_type: 'container'
+container_release_tag: '1.8.2'
+project: 'so'
+log_dir: 'so-maven-docker-stage-honolulu/40/'
+ref: 'd1fd3425400c5aca66258a486f6c8ec0a62b9526'
+containers:
+    - name: 'so/catalog-db-adapter'
+      version: '1.8.1-20210422T1331'
+    - name: 'so/request-db-adapter'
+      version: '1.8.1-20210422T1331'
+    - name: 'so/openstack-adapter'
+      version: '1.8.1-20210422T1331'
+    - name: 'so/sdnc-adapter'
+      version: '1.8.1-20210422T1331'
+    - name: 'so/sdc-controller'
+      version: '1.8.1-20210422T1331'
+    - name: 'so/bpmn-infra'
+      version: '1.8.1-20210422T1331'
+    - name: 'so/api-handler-infra'
+      version: '1.8.1-20210422T1331'
