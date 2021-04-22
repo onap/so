@@ -22,17 +22,19 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.AllottedResources
 import org.onap.aai.domain.yang.LogicalLink
 import org.onap.aai.domain.yang.NetworkPolicy
 import org.onap.aai.domain.yang.Relationship
 import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.aaiclient.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.AAIVersion
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.Relationships
+import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
-import org.onap.aaiclient.client.generated.fluentbuilders.Activities
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
@@ -47,7 +49,7 @@ import org.slf4j.LoggerFactory
 import static org.apache.commons.lang3.StringUtils.isBlank
 
 class TnNssmfUtils {
-    static final String AAI_VERSION = "v23"
+    static final String AAI_VERSION = AAIVersion.LATEST
     private static final Logger logger = LoggerFactory.getLogger(TnNssmfUtils.class);
 
 
@@ -433,7 +435,7 @@ class TnNssmfUtils {
             return null
         }
 
-        return si.modelVersionId()
+        return si.getModelVersionId()
     }
 
     AAIResourceUri buildNetworkPolicyUri(String networkPolicyId) {
@@ -456,6 +458,52 @@ class TnNssmfUtils {
         return allottedResourceUri
     }
 
+    AAIPluralResourceUri buildAllottedResourcesUri(DelegateExecution execution, String serviceInstanceId) {
+
+        AAIPluralResourceUri arsUri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                        .customer(execution.getVariable("globalSubscriberId"))
+                        .serviceSubscription(execution.getVariable("subscriptionServiceType"))
+                        .serviceInstance(serviceInstanceId)
+                        .allottedResources())
+
+        return arsUri
+    }
+
+    AllottedResources getAllottedResourcesFromAai(DelegateExecution execution, String serviceInstanceId, boolean exceptionOnErr) {
+        AllottedResources res
+        try {
+            AAIResourcesClient client = new AAIResourcesClient()
+
+            AAIPluralResourceUri arsUri = buildAllottedResourcesUri(execution, serviceInstanceId)
+
+            //AAIResultWrapper wrapperAllotted = client.get(arsUri, NotFoundException.class)
+            //Optional<AllottedResources> allAllotted = wrapperAllotted.asBean(AllottedResources.class)
+            //AllottedResources allottedResources = allAllotted.get()
+
+            Optional<AllottedResources> arsOpt = client.get(AllottedResources.class, arsUri)
+            if (arsOpt.isPresent()) {
+                res = arsOpt.get()
+                return res
+            } else {
+                String msg = String.format("ERROR: getAllottedResourcesFromAai: ars not found. nssiId=%s", serviceInstanceId)
+                logger.error(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
+            }
+        } catch (BpmnError e) {
+            if (exceptionOnErr) {
+                throw e;
+            }
+        } catch (Exception ex) {
+            if (exceptionOnErr) {
+                String msg = String.format("ERROR: getAllottedResourcesFromAai: %s", ex.getMessage())
+                logger.error(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
+            }
+        }
+
+        return res
+    }
 
     String getPolicyIdFromAr(DelegateExecution execution, String serviceInstanceId,
                              String arId, boolean exceptionOnErr) {
@@ -464,15 +512,15 @@ class TnNssmfUtils {
             AAIResourcesClient client = new AAIResourcesClient()
 
             AAIResourceUri arUri = buildAllottedResourceUri(execution, serviceInstanceId, arId)
-            List<AAIResourceUri> logicalLinkUriList = getRelationshipUriListInAai(execution, arUri,
+            List<AAIResourceUri> policyUriList = getRelationshipUriListInAai(execution, arUri,
                     AAIFluentTypeBuilder.Types.NETWORK_POLICY, exceptionOnErr)
-            for (AAIResourceUri logicalLinkUri : logicalLinkUriList) {
-                Optional<NetworkPolicy> policyOpt = client.get(NetworkPolicy.class, logicalLinkUri)
+            for (AAIResourceUri policyUri : policyUriList) {
+                Optional<NetworkPolicy> policyOpt = client.get(NetworkPolicy.class, policyUri)
                 if (policyOpt.isPresent()) {
                     NetworkPolicy policy = policyOpt.get()
                     return policy.getNetworkPolicyId()
                 } else {
-                    String msg = String.format("ERROR: getLogicalLinkNamesFromAr: logicalLinkUri=%s", logicalLinkUri)
+                    String msg = String.format("ERROR: getPolicyIdFromAr: arUri=%s", policyUri)
                     logger.error(msg)
                     exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
                 }
@@ -483,7 +531,7 @@ class TnNssmfUtils {
             }
         } catch (Exception ex) {
             if (exceptionOnErr) {
-                String msg = String.format("ERROR: getLogicalLinkNamesFromAr: %s", ex.getMessage())
+                String msg = String.format("ERROR: getPolicyIdFromAr: %s", ex.getMessage())
                 logger.error(msg)
                 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
             }
@@ -494,7 +542,8 @@ class TnNssmfUtils {
 
 
     List<AAIResourceUri> getRelationshipUriListInAai(DelegateExecution execution,
-                                                     AAIResourceUri uri, Activities.Info info,
+                                                     AAIResourceUri uri,
+                                                     Object info,
                                                      boolean exceptionOnErr) {
         AAIResourcesClient client = new AAIResourcesClient()
         AAIResultWrapper wrapper = client.get(uri);
