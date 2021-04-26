@@ -1,5 +1,8 @@
 package org.onap.so.simulator.actions.aai;
 
+import com.consol.citrus.actions.AbstractTestAction;
+import com.consol.citrus.context.TestContext;
+import java.security.SecureRandom;
 import org.onap.aai.domain.yang.L3Network;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
@@ -7,8 +10,6 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.consol.citrus.actions.AbstractTestAction;
-import com.consol.citrus.context.TestContext;
 
 
 public class ProcessNetwork extends AbstractTestAction {
@@ -17,7 +18,7 @@ public class ProcessNetwork extends AbstractTestAction {
     public void doExecute(TestContext context) {
         final Logger logger = LoggerFactory.getLogger(ProcessNetwork.class);
         try {
-            int random = (int) (Math.random() * 50 + 1);
+            int random = (new SecureRandom()).nextInt(50) + 1;
 
             AAIResourcesClient aaiResourceClient = new AAIResourcesClient();
 
