@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import com.consol.citrus.actions.AbstractTestAction;
 import com.consol.citrus.context.TestContext;
 
+import java.security.SecureRandom;
+
 
 public class ProcessNetwork extends AbstractTestAction {
 
@@ -17,7 +19,7 @@ public class ProcessNetwork extends AbstractTestAction {
     public void doExecute(TestContext context) {
         final Logger logger = LoggerFactory.getLogger(ProcessNetwork.class);
         try {
-            int random = (int) (Math.random() * 50 + 1);
+            int random = (new SecureRandom()).nextInt(50) + 1;
 
             AAIResourcesClient aaiResourceClient = new AAIResourcesClient();
 

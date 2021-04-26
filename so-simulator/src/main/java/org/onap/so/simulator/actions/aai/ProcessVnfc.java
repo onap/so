@@ -14,19 +14,21 @@ import com.consol.citrus.context.TestContext;
 
 public class ProcessVnfc extends AbstractTestAction {
 
+    private static final String VNF_SERVER_1_NAME = "ssc_server_1";
+
     @Override
     public void doExecute(TestContext context) {
 
         final Logger logger = LoggerFactory.getLogger(ProcessVnfc.class);
         try {
             logger.debug("running ProcessVnfc scenario");
-            logger.debug("requestAction: " + context.getVariable("requestAction"));
-            logger.debug("serviceAction: " + context.getVariable("serviceAction"));
-            logger.debug("cloudOwner: " + context.getVariable("cloudOwner"));
-            logger.debug("cloundRegion: " + context.getVariable("cloudRegion"));
-            logger.debug("tenant: " + context.getVariable("tenant"));
-            logger.debug("vfModuleId: " + context.getVariable("vfModuleId"));
-            logger.debug("vnfId: " + context.getVariable("vnfId"));
+            logger.debug("requestAction: {}", context.getVariable("requestAction"));
+            logger.debug("serviceAction: {}", context.getVariable("serviceAction"));
+            logger.debug("cloudOwner: {}", context.getVariable("cloudOwner"));
+            logger.debug("cloundRegion: {}", context.getVariable("cloudRegion"));
+            logger.debug("tenant: {}", context.getVariable("tenant"));
+            logger.debug("vfModuleId: {}", context.getVariable("vfModuleId"));
+            logger.debug("vnfId: {}", context.getVariable("vnfId"));
 
             AAIResourcesClient aaiResourceClient = new AAIResourcesClient();
 
@@ -34,9 +36,9 @@ public class ProcessVnfc extends AbstractTestAction {
                     && context.getVariable("serviceAction").equals("assign")) {
 
                 AAIResourceUri vnfcURI =
-                        AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().vnfc("ssc_server_1"));
+                        AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().vnfc(VNF_SERVER_1_NAME));
                 Vnfc vnfc = new Vnfc();
-                vnfc.setVnfcName("ssc_server_1");
+                vnfc.setVnfcName(VNF_SERVER_1_NAME);
                 vnfc.setNfcNamingCode("oamfw");
                 vnfc.setNfcFunction("EPC-OAM-FIREWALL");
                 vnfc.setProvStatus("PREPROV");
@@ -53,8 +55,8 @@ public class ProcessVnfc extends AbstractTestAction {
 
                 if (aaiResourceClient.exists(vnfcURI)) {
                     Optional<VfModule> vfModule = aaiResourceClient.get(vfModuleURI).asBean(VfModule.class);
-                    if (vfModule.get().getVfModuleName().contains("macro")) {
-                        String vnfcName = "ssc_server_1" + vfModule.get().getVfModuleName()
+                    if (vfModule.isPresent() && vfModule.get().getVfModuleName().contains("macro")) {
+                        String vnfcName = VNF_SERVER_1_NAME + vfModule.get().getVfModuleName()
                                 .substring(vfModule.get().getVfModuleName().length() - 1);
                         vnfc.setVnfcName(vnfcName);
                         vnfcURI = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().vnfc(vnfcName));

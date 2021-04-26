@@ -17,6 +17,8 @@ import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 @RequestMapping(value = "/sim/v1/tenantOne/stacks/macro_module_3/*", method = RequestMethod.GET)
 public class QueryStackByIdMacro3 extends AbstractSimulatorScenario {
 
+    private static final String FILE_STACK_CREATED_PATH = "openstack/gr_api/Stack_Created.json";
+    private static final String FILE_STACK_DELETED_PATH = "openstack/gr_api/Stack_Deleted.json";
 
     @Override
     public void run(ScenarioDesigner scenario) {
@@ -32,21 +34,21 @@ public class QueryStackByIdMacro3 extends AbstractSimulatorScenario {
 
         // Poll
         scenario.http().send().response(HttpStatus.OK)
-                .payload(new ClassPathResource("openstack/gr_api/Stack_Created.json"));
+                .payload(new ClassPathResource(FILE_STACK_CREATED_PATH));
 
         // Delete
         scenario.http().receive().get();
         scenario.http().send().response(HttpStatus.OK)
-                .payload(new ClassPathResource("openstack/gr_api/Stack_Created.json"));
+                .payload(new ClassPathResource(FILE_STACK_CREATED_PATH));
 
         scenario.http().receive().get();
         scenario.http().send().response(HttpStatus.OK)
-                .payload(new ClassPathResource("openstack/gr_api/Stack_Deleted.json"));
+                .payload(new ClassPathResource(FILE_STACK_DELETED_PATH));
 
         // Poll
         scenario.http().receive().get();
         scenario.http().send().response(HttpStatus.OK)
-                .payload(new ClassPathResource("openstack/gr_api/Stack_Deleted.json"));
+                .payload(new ClassPathResource(FILE_STACK_DELETED_PATH));
 
     }
 

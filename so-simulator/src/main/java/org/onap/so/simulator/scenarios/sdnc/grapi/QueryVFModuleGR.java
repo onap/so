@@ -8,6 +8,8 @@ import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
 import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 
+import java.security.SecureRandom;
+
 @Scenario("SDNC-GRAPI-QueryVFModule")
 @RequestMapping(
         value = "/sim/restconf/config/GENERIC-RESOURCE-API:services/service/*/service-data/vnfs/vnf/*/vnf-data/vf-modules/vf-module/dummy_id/vf-module-data/vf-module-topology/",
@@ -17,7 +19,7 @@ public class QueryVFModuleGR extends AbstractSimulatorScenario {
     @Override
     public void run(ScenarioDesigner scenario) {
         scenario.http().receive().get();
-        int random = (int) (Math.random() * 50 + 1);
+        int random = (new SecureRandom()).nextInt(50) + 1;
 
         scenario.variable("vfModuleName", "vfModuleName" + random);
 
