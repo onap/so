@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cc005c24_b083be92",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ebb/loader/VnfEBBLoaderTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-04-30T11:24:58Z",
+      "side": 1,
+      "message": "not needed",
+      "range": {
+        "startLine": 50,
+        "startChar": 30,
+        "endLine": 50,
+        "endChar": 51
+      },
+      "revId": "d555e9b410c7034dd7cd3112a53dc267861a0381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7a0f6ef5_244eb775",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ebb/loader/VnfEBBLoaderTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-04-30T11:24:58Z",
+      "side": 1,
+      "message": "you should not write test when npe is expected",
+      "range": {
+        "startLine": 88,
+        "startChar": 4,
+        "endLine": 88,
+        "endChar": 48
+      },
+      "revId": "d555e9b410c7034dd7cd3112a53dc267861a0381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
