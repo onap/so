@@ -24,16 +24,13 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyObject;
@@ -57,7 +54,6 @@ import java.util.UUID;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
-import org.javatuples.Pair;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -2062,180 +2058,6 @@ public class WorkflowActionTest extends BaseTaskTest {
         } catch (BpmnError wfe) {
             assertEquals("MSOWorkflowException", wfe.getErrorCode());
         }
-    }
-
-    @Ignore
-    @Test
-    public void traverseCatalogDbServiceMultipleNetworkTest() throws IOException, VrfBondingServiceException {
-        execution.setVariable("testProcessKey", "testProcessKeyValue");
-        Service service = new Service();
-        List<NetworkResourceCustomization> networkCustomizations = new ArrayList<>();
-        NetworkResourceCustomization networkCust = new NetworkResourceCustomization();
-        networkCust.setModelCustomizationUUID("123");
-        networkCustomizations.add(networkCust);
-        service.setNetworkCustomizations(networkCustomizations);
-        NetworkCollectionResourceCustomization collectionResourceCustomization =
-                new NetworkCollectionResourceCustomization();
-        collectionResourceCustomization.setModelCustomizationUUID("123");
-        CollectionResource collectionResource = new CollectionResource();
-        collectionResource.setToscaNodeType("NetworkCollection");
-        InstanceGroup instanceGroup = new InstanceGroup();
-        List<CollectionResourceInstanceGroupCustomization> collectionInstanceGroupCustomizations = new ArrayList<>();
-        CollectionResourceInstanceGroupCustomization collectionInstanceGroupCustomization =
-                new CollectionResourceInstanceGroupCustomization();
-        collectionInstanceGroupCustomization.setSubInterfaceNetworkQuantity(3);
-        collectionInstanceGroupCustomizations.add(collectionInstanceGroupCustomization);
-        instanceGroup.setCollectionInstanceGroupCustomizations(collectionInstanceGroupCustomizations);
-        collectionResource.setInstanceGroup(instanceGroup);
-        collectionResourceCustomization.setCollectionResource(collectionResource);;
-        service.setModelUUID("abc");
-        service.getCollectionResourceCustomizations().add(collectionResourceCustomization);
-        service.getCollectionResourceCustomizations().add(collectionResourceCustomization);
-        doReturn(service).when(catalogDbClient).getServiceByID("3c40d244-808e-42ca-b09a-256d83d19d0a");
-        doReturn(collectionResourceCustomization).when(catalogDbClient)
-                .getNetworkCollectionResourceCustomizationByID("123");
-        String bpmnRequest = readBpmnRequestFromFile(MACRO_ACTIVATE_DELETE_UNASSIGN_JSON);
-        ObjectMapper mapper = new ObjectMapper();
-        ServiceInstancesRequest sIRequest = mapper.readValue(bpmnRequest, ServiceInstancesRequest.class);
-        List<Resource> resourceCounter = new ArrayList<>();
-        thrown.expect(BpmnError.class);
-        List<Pair<WorkflowType, String>> aaiResourceIds = new ArrayList<>();
-        serviceEBBLoader.traverseCatalogDbService(execution, sIRequest, resourceCounter, aaiResourceIds);
-    }
-
-
-
-    @Test
-    public void findCatalogNetworkCollectionTest() {
-        Service service = new Service();
-        NetworkCollectionResourceCustomization networkCustomization = new NetworkCollectionResourceCustomization();
-        networkCustomization.setModelCustomizationUUID("123");
-        service.getCollectionResourceCustomizations().add(networkCustomization);
-        doReturn(networkCustomization).when(catalogDbClient).getNetworkCollectionResourceCustomizationByID("123");
-        CollectionResourceCustomization customization =
-                serviceEBBLoader.findCatalogNetworkCollection(execution, service);
-        assertNotNull(customization);
-    }
-
-    @Test
-    public void findCatalogNetworkCollectionEmptyTest() {
-        Service service = new Service();
-        NetworkCollectionResourceCustomization networkCustomization = new NetworkCollectionResourceCustomization();
-        networkCustomization.setModelCustomizationUUID("123");
-        service.getCollectionResourceCustomizations().add(networkCustomization);
-        CollectionResourceCustomization customization =
-                serviceEBBLoader.findCatalogNetworkCollection(execution, service);
-        assertNull(customization);
-    }
-
-    @Test
-    public void findCatalogNetworkCollectionMoreThanOneTest() {
-        Service service = new Service();
-        NetworkCollectionResourceCustomization networkCustomization1 = new NetworkCollectionResourceCustomization();
-        networkCustomization1.setModelCustomizationUUID("123");
-        NetworkCollectionResourceCustomization networkCustomization2 = new NetworkCollectionResourceCustomization();
-        networkCustomization2.setModelCustomizationUUID("321");
-        service.getCollectionResourceCustomizations().add(networkCustomization1);
-        service.getCollectionResourceCustomizations().add(networkCustomization2);
-        doReturn(networkCustomization1).when(catalogDbClient).getNetworkCollectionResourceCustomizationByID("123");
-        doReturn(networkCustomization2).when(catalogDbClient).getNetworkCollectionResourceCustomizationByID("321");
-        serviceEBBLoader.findCatalogNetworkCollection(execution, service);
-        assertEquals("Found multiple Network Collections in the Service model, only one per Service is supported.",
-                execution.getVariable("WorkflowActionErrorMessage"));
-    }
-
-
-    @Test
-    public void traverseAAIServiceTest() {
-        List<Resource> resourceCounter = new ArrayList<>();
-        String resourceId = "si0";
-        List<Pair<WorkflowType, String>> aaiResourceIds = new ArrayList<>();
-
-        ServiceInstance serviceInstanceAAI = new ServiceInstance();
-        serviceInstanceAAI.setServiceInstanceId(resourceId);
-
-        org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstance = setServiceInstance();
-        setGenericVnf();
-        setVfModule(true);
-        setVolumeGroup();
-        setL3Network();
-        setCollection();
-        setConfiguration();
-
-        Configuration config = new Configuration();
-        config.setConfigurationId("testConfigurationId2");
-        serviceInstance.getConfigurations().add(config);
-
-        Relationship relationship1 = new Relationship();
-        relationship1.setRelatedTo("vnfc");
-        RelationshipList relationshipList1 = new RelationshipList();
-        relationshipList1.getRelationship().add(relationship1);
-
-        Relationship relationship2 = new Relationship();
-        relationship2.setRelatedTo("vpn-binding");
-        RelationshipList relationshipList2 = new RelationshipList();
-        relationshipList2.getRelationship().add(relationship2);
-
-        org.onap.aai.domain.yang.Configuration aaiConfiguration1 = new org.onap.aai.domain.yang.Configuration();
-        aaiConfiguration1.setConfigurationId("testConfigurationId");
-        aaiConfiguration1.setRelationshipList(relationshipList1);
-
-        org.onap.aai.domain.yang.Configuration aaiConfiguration2 = new org.onap.aai.domain.yang.Configuration();
-        aaiConfiguration2.setConfigurationId("testConfigurationId2");
-        aaiConfiguration2.setRelationshipList(relationshipList1);
-
-        try {
-            doReturn(serviceInstanceAAI).when(bbSetupUtils).getAAIServiceInstanceById(resourceId);
-            doReturn(serviceInstance).when(bbInputSetup).getExistingServiceInstance(serviceInstanceAAI);
-            doReturn(Optional.of(aaiConfiguration1)).when(aaiConfigurationResources)
-                    .getConfiguration("testConfigurationId");
-            doReturn(Optional.of(aaiConfiguration2)).when(aaiConfigurationResources)
-                    .getConfiguration("testConfigurationId2");
-            serviceEBBLoader.traverseAAIService(execution, resourceCounter, resourceId, aaiResourceIds);
-            assertEquals(8, resourceCounter.size());
-            assertTrue(resourceCounter.get(2).isBaseVfModule());
-            assertThat(aaiResourceIds, sameBeanAs(getExpectedResourceIds()));
-        } catch (Exception e) {
-            fail("Unexpected exception was thrown.");
-        }
-    }
-
-    @Test
-    public void foundRelatedTest() {
-        List<Resource> resourceList = new ArrayList<>();
-        resourceList.add(new Resource(WorkflowType.PNF, "model customization id", false));
-        resourceList.add(new Resource(WorkflowType.VNF, "model customization id", false));
-        resourceList.add(new Resource(WorkflowType.NETWORK, "model customization id", false));
-        resourceList.add(new Resource(WorkflowType.NETWORKCOLLECTION, "model customization id", false));
-
-        assertEquals(serviceEBBLoader.foundRelated(resourceList), true);
-    }
-
-    @Test
-    public void containsWorkflowTypeTest() {
-        List<Resource> resourceList = new ArrayList<>();
-        resourceList.add(new Resource(WorkflowType.PNF, "resource id", false));
-        resourceList.add(new Resource(WorkflowType.VNF, "model customization id", false));
-        resourceList.add(new Resource(WorkflowType.NETWORK, "model customization id", false));
-        resourceList.add(new Resource(WorkflowType.NETWORKCOLLECTION, "model customization id", false));
-
-        assertEquals(serviceEBBLoader.containsWorkflowType(resourceList, WorkflowType.PNF), true);
-        assertEquals(serviceEBBLoader.containsWorkflowType(resourceList, WorkflowType.VNF), true);
-        assertEquals(serviceEBBLoader.containsWorkflowType(resourceList, WorkflowType.NETWORK), true);
-        assertEquals(serviceEBBLoader.containsWorkflowType(resourceList, WorkflowType.NETWORKCOLLECTION), true);
-        assertEquals(serviceEBBLoader.containsWorkflowType(resourceList, WorkflowType.CONFIGURATION), false);
-    }
-
-    private List<Pair<WorkflowType, String>> getExpectedResourceIds() {
-        List<Pair<WorkflowType, String>> resourceIds = new ArrayList<>();
-        resourceIds.add(new Pair<WorkflowType, String>(WorkflowType.VNF, "testVnfId1"));
-        resourceIds.add(new Pair<WorkflowType, String>(WorkflowType.VFMODULE, "testVfModuleId1"));
-        resourceIds.add(new Pair<WorkflowType, String>(WorkflowType.VOLUMEGROUP, "testVolumeGroupId1"));
-        resourceIds.add(new Pair<WorkflowType, String>(WorkflowType.NETWORK, "testNetworkId1"));
-        resourceIds.add(new Pair<WorkflowType, String>(WorkflowType.NETWORKCOLLECTION, "testId"));
-        resourceIds.add(new Pair<WorkflowType, String>(WorkflowType.CONFIGURATION, "testConfigurationId"));
-        resourceIds.add(new Pair<WorkflowType, String>(WorkflowType.CONFIGURATION, "testConfigurationId2"));
-        return resourceIds;
     }
 
     private List<OrchestrationFlow> createFlowList(String... flowNames) {

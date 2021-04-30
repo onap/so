@@ -61,6 +61,7 @@ public class UserParamsServiceTraversalTest extends BaseTaskTest {
     private static final String MACRO_ASSIGN_JSON = "Macro/ServiceMacroAssign.json";
     private static final String MACRO_ASSIGN_PNF_JSON = "Macro/ServiceMacroAssignPnf.json";
     private static final String NETWORK_COLLECTION_JSON = "Macro/CreateNetworkCollection.json";
+    private static final String MACRO_CREATE_WITHOUT_RESOURCES_JSON = "Macro/ServiceMacroCreateWithoutResources.json";
     private static final String serviceInstanceId = "123";
     private DelegateExecution execution;
     private CatalogDbClient mockCatalogDbClient;
@@ -73,6 +74,24 @@ public class UserParamsServiceTraversalTest extends BaseTaskTest {
         mockCatalogDbClient = mock(CatalogDbClient.class);
         userParamsServiceTraversal = new UserParamsServiceTraversal(mockCatalogDbClient, mock(ExceptionBuilder.class));
         requestAction = "assignInstance";
+    }
+
+    @Test
+    public void getResourceListFromUserParams() throws Exception {
+        initExecution(requestAction, readBpmnRequestFromFile(MACRO_CREATE_WITHOUT_RESOURCES_JSON), false);
+        Mockito.doReturn(getVfModuleCustomization()).when(mockCatalogDbClient)
+                .getVfModuleCustomizationByModelCuztomizationUUID("a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f");
+        Mockito.doReturn(getCvnfcCustomizations()).when(mockCatalogDbClient).getCvnfcCustomization(anyString(),
+                anyString(), anyString());
+
+        List<Resource> resourceListFromUserParams = userParamsServiceTraversal.getResourceListFromUserParams(execution,
+                getUserParams(), serviceInstanceId, requestAction);
+        List<WorkflowType> expected = List.of(WorkflowType.SERVICE);
+        List<WorkflowType> result =
+                resourceListFromUserParams.stream().map(Resource::getResourceType).collect(Collectors.toList());
+
+        assertEquals(1, resourceListFromUserParams.size());
+        assertThat(expected, is(result));
     }
 
     @Test

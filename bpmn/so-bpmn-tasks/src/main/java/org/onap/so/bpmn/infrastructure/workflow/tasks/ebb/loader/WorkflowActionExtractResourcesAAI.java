@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.infrastructure.workflow.tasks;
+package org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader;
 
 import java.util.List;
 import java.util.Optional;

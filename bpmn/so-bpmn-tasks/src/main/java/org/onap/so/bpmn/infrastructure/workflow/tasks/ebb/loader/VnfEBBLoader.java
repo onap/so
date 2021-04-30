@@ -32,7 +32,6 @@ import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.Relationships;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.Resource;
-import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionExtractResourcesAAI;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowType;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
