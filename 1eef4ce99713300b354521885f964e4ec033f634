@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3b05350b_afea801f",
+        "filename": "INFO.yaml",
+        "patchSetId": 5
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 4677
+      },
+      "writtenOn": "2021-04-30T05:12:49Z",
+      "side": 1,
+      "message": "Add the following lint rule before\n# yamllint disable rule:line-length",
+      "revId": "1eef4ce99713300b354521885f964e4ec033f634",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b2faddb2_fcb3ee77",
+        "filename": "INFO.yaml",
+        "patchSetId": 5
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 4677
+      },
+      "writtenOn": "2021-04-30T05:12:49Z",
+      "side": 1,
+      "message": "Add the following lint rule before\n# yamllint disable rule:line-length",
+      "revId": "1eef4ce99713300b354521885f964e4ec033f634",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "199ebcc0_2759b6a9",
+        "filename": "INFO.yaml",
+        "patchSetId": 5
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 4677
+      },
+      "writtenOn": "2021-04-30T05:12:49Z",
+      "side": 1,
+      "message": "Duplicated name, need to break one of them out into its own type/link",
+      "range": {
+        "startLine": 130,
+        "startChar": 0,
+        "endLine": 132,
+        "endChar": 0
+      },
+      "revId": "1eef4ce99713300b354521885f964e4ec033f634",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
