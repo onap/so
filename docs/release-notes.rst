@@ -14,6 +14,139 @@ The SO provides the highest level of service orchestration in the ONAP architect
 Release Notes
 =============
 
+Version: 1.7.12
+==============
+
+:Release Date: 2021-04-27
+
+SO Release Image Versions
+--------------------------
+ - so-bpmn-infra
+
+    :Version: 1.7.12
+
+ - so-catalog-db-adapter
+
+    :Version: 1.7.12
+
+ - so-monitoring
+
+    :Version: 1.7.12
+
+ - so/nssmf-adapter
+
+    :Version: 1.7.12
+
+ - so/openstack-adapter
+
+    :Version: 1.7.12
+
+ - so/request-db-adapter
+
+    :Version: 1.7.12
+
+ - so/sdc-controller
+
+    :Version: 1.7.12
+
+ - so/sdnc-adapter
+
+    :Version: 1.7.12
+
+ - so/vnfm-adapter
+
+    :Version: 1.7.12
+
+ - so/api-handler-infra
+
+    :Version: 1.7.12
+
+ - so/api-handler-infra
+
+    :Version: 1.7.12
+
+ - so/so-etsi-nfvo-ns-lcm
+
+    :Version: 1.7.12
+
+ - so/so-oof-adapter
+
+    :Version: 1.7.12
+
+ - so/cnf-adapter
+
+    :Version: 1.7.12
+
+Release Purpose
+----------------
+SO Guilin maintenance Release
+
+**Epics**
+
+	N/A
+
+**Stories**
+
+	N/A
+
+**Tasks**
+
+	N/A
+
+**Bug Fixes**
+
+*  `SO-3401 <https://jira.onap.org/browse/SO-3401>`_ 
+*  `SO-3484 <https://jira.onap.org/browse/SO-3484>`_ 
+*  `SO-3397 <https://jira.onap.org/browse/SO-3397>`_ 
+*  `SO-3465 <https://jira.onap.org/browse/SO-3465>`_ 
+*  `SO-3470 <https://jira.onap.org/browse/SO-3470>`_ 
+*  `SO-3484 <https://jira.onap.org/browse/SO-3484>`_ 
+*  `SO-3607 <https://jira.onap.org/browse/SO-3607>`_ 
+*  `SO-3609 <https://jira.onap.org/browse/SO-3609>`_ 
+*  `SO-3432 <https://jira.onap.org/browse/SO-3432>`_ 
+*  `SO-3401 <https://jira.onap.org/browse/SO-3401>`_ 
+*  `SO-3468 <https://jira.onap.org/browse/SO-3468>`_ 
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+	N/A
+
+*Known Security Issues*
+
+*   `SO-3237 <https://jira.onap.org/browse/SO-SO-3237>`_ - Exposed HTTP port. 
+
+*Known Vulnerabilities in Used Modules*
+
+	N/A
+
+Quick Links:
+
+- `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1702>`__
+
+**Known Issues**
+
+*   `SO-3237 <https://jira.onap.org/browse/SO-SO-3237>`_ - Exposed HTTP port. 
+
+**Upgrade Notes**
+
+	N/A
+
+**Deprecation Notes**
+
+	SO modules Ve-Vnfm-adapter and appc-orchestrator are deprectaed for the Guilin release.
+
+**Other**
+
+	N/A
+***************************************************************************************
+
+
+
 Version: 1.7.10
 ==============
 
