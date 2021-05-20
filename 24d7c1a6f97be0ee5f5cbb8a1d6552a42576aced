@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ec61afd_a98464f6",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/service/level/ServiceLevelTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 2807
+      },
+      "writtenOn": "2021-05-20T07:51:49Z",
+      "side": 1,
+      "message": "Consider to initialize an ArrayList earlier as you do it twice with the same value which causes duplication of code.\nString \"scope\" can be declared as a constant as you use it twice and its value is always the same.",
+      "range": {
+        "startLine": 67,
+        "startChar": 7,
+        "endLine": 69,
+        "endChar": 32
+      },
+      "revId": "24d7c1a6f97be0ee5f5cbb8a1d6552a42576aced",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "11fe903c_4fa4c76c",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/service/level/ServiceLevelTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 2807
+      },
+      "writtenOn": "2021-05-20T07:51:49Z",
+      "side": 1,
+      "message": "Duplicated code.",
+      "range": {
+        "startLine": 77,
+        "startChar": 8,
+        "endLine": 79,
+        "endChar": 32
+      },
+      "revId": "24d7c1a6f97be0ee5f5cbb8a1d6552a42576aced",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
