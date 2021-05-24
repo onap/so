@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "2ca6e567_c831f1e3",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ebb/loader/VnfEBBLoaderTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 2807
+      },
+      "writtenOn": "2021-05-24T08:43:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cc005c24_b083be92",
+      "range": {
+        "startLine": 50,
+        "startChar": 30,
+        "endLine": 50,
+        "endChar": 51
+      },
+      "revId": "d555e9b410c7034dd7cd3112a53dc267861a0381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a0f6ef5_244eb775",
         "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ebb/loader/VnfEBBLoaderTest.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "d555e9b410c7034dd7cd3112a53dc267861a0381",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "02a6050f_15f4745a",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ebb/loader/VnfEBBLoaderTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 2807
+      },
+      "writtenOn": "2021-05-24T08:43:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a0f6ef5_244eb775",
+      "range": {
+        "startLine": 88,
+        "startChar": 4,
+        "endLine": 88,
+        "endChar": 48
+      },
+      "revId": "d555e9b410c7034dd7cd3112a53dc267861a0381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
