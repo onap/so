@@ -68,14 +68,22 @@ Now simply go to the “Application Catalog” tab on the left of the page, then
 Searching/Viewing BPMN Workflows
 --------------------------------
 
+.. image:: ../images/soAdminCockpitUi.png
+
 In order to find the workflow that you are attempting to monitor you will need at least one of the following values of the service instance: Service Instance ID, Request ID, Service Name or the time/date range in which the workflow started/ended. You can use the filter drop-down boxes to the left of the parameter boxes, i.e. “EQUAL”, “NOT EQUAL” and “LIKE”. Also, you can filter by the status of a workflow, with the status drop-down box, to further filter your results. Simply enter any of these pieces of information into the search page, ensure the start and end date range includes when the workflow would have run and press the search button. Once your results list has been returned you can click on a result to see the workflow in the graphical BPMN viewer.
 
+.. image:: ../images/soAdminCockpitUi2.png
+
 From here you can inspect the different calls and variables throughout the workflow, by using the "Activity Instances" and "Variable Instances" tabs. Clicking on one of the sub process call, within the diagram, to open them in the graphical BPMN viewer (The boxes with a + at the bottom of them are call activities to sub processes. This is how you drill down through a workflow, you can also safely traverse back “up” through the flows with your browser’s back button. The cyan highlighting shows the flow of the path taken by the workflow, and this will go down through each of the sub processes as well.
+
+.. image:: ../images/soAdminCockpitUi3.png
 
 In the BPMN viewer, manipulation of the returned illustrated flow is possible by using the following methods. On the left side of the viewer window there are three symbols for Zooming in/out and fitting the flow to the full window. Along with these controls, the user can left-click and drag to move the flow within the canvas to the user desired position.
 
 SO-Monitoring Service Statistics
 --------------------------------
+
+.. image:: ../images/soAdminCockpitStatistics.png
 
 You can see a summary of the status of all of the workflows from one of your search results by clicking on the "Service Statistics" tab, found just above your list of results. Here you can find a percentile breakdown of each workflow's, in the list of results you received, statuses.
 
@@ -104,6 +112,8 @@ This can be dealt with in two ways. Either using an extension or by disabling CO
 
 Internal Service Error occurred for operation : GET please check backend  service log. status code: 500
 -------------------------------------------------------------------------------------------------------
+
+.. image:: ../images/soAdminCockpitGetError.png
 
 This can be checked by following the below steps:
 
