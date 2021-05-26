@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "85385f80_88fbcb51",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/service/level/ServiceLevelTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-05-26T09:21:48Z",
+      "side": 1,
+      "message": "Good point. By the way, I corrected this test a little to watch out that ExceptionBuilder is not invoked it this case.",
+      "parentUuid": "9ec61afd_a98464f6",
+      "range": {
+        "startLine": 67,
+        "startChar": 7,
+        "endLine": 69,
+        "endChar": 32
+      },
+      "revId": "24d7c1a6f97be0ee5f5cbb8a1d6552a42576aced",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "11fe903c_4fa4c76c",
         "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/service/level/ServiceLevelTest.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "24d7c1a6f97be0ee5f5cbb8a1d6552a42576aced",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4f416758_560e23fa",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/service/level/ServiceLevelTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-05-26T09:21:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "11fe903c_4fa4c76c",
+      "range": {
+        "startLine": 77,
+        "startChar": 8,
+        "endLine": 79,
+        "endChar": 32
+      },
+      "revId": "24d7c1a6f97be0ee5f5cbb8a1d6552a42576aced",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
