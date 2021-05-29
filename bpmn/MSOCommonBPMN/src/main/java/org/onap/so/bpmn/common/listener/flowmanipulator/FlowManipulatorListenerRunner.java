@@ -60,6 +60,9 @@ public class FlowManipulatorListenerRunner extends ListenerRunner {
         int sequenceBeforeFlowManipulator;
         do {
             sequenceBeforeFlowManipulator = execution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
+            if (sequenceBeforeFlowManipulator >= flowsToExecute.size()) {
+                break;
+            }
             ExecuteBuildingBlock currentBB = flowsToExecute.get(execution.getCurrentSequence());
             List<PreFlowManipulator> filtered = filterListeners(flowManipulators,
                     (item -> item.shouldRunFor(currentBB.getBuildingBlock().getBpmnFlowName(),

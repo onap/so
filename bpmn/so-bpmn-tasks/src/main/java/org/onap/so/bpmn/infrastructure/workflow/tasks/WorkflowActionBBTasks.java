@@ -111,13 +111,15 @@ public class WorkflowActionBBTasks {
             }
             int currentSequence = (int) execution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
 
-            ExecuteBuildingBlock ebb = flowsToExecute.get(currentSequence);
-
-            execution.setVariable("buildingBlock", ebb);
-            currentSequence++;
-            execution.setVariable(COMPLETED, currentSequence >= flowsToExecute.size());
-            execution.setVariable(BBConstants.G_CURRENT_SEQUENCE, currentSequence);
-
+            boolean completed = false;
+            if (currentSequence < flowsToExecute.size()) {
+                ExecuteBuildingBlock ebb = flowsToExecute.get(currentSequence);
+                execution.setVariable("buildingBlock", ebb);
+                execution.setVariable(BBConstants.G_CURRENT_SEQUENCE, currentSequence + 1);
+            } else {
+                completed = true;
+            }
+            execution.setVariable(COMPLETED, completed);
         } catch (Exception e) {
             workflowAction.buildAndThrowException(execution, "Internal Error occured during selectBB", e);
         }
@@ -425,6 +427,9 @@ public class WorkflowActionBBTasks {
             final boolean aLaCarte = (boolean) execution.getVariable(BBConstants.G_ALACARTE);
             int currentSequence = (int) execution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
             logger.debug("Current Sequence: {}", currentSequence);
+            if (currentSequence >= flowsToExecute.size()) {
+                execution.setVariable(COMPLETED, true);
+            }
             ExecuteBuildingBlock ebb = flowsToExecute.get(currentSequence - 1);
             String bbFlowName = ebb.getBuildingBlock().getBpmnFlowName();
             if ("ActivateVfModuleBB".equalsIgnoreCase(bbFlowName) && aLaCarte
