@@ -79,6 +79,8 @@ public class VfModuleCDSRequestProvider implements CDSRequestProvider {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+            String vfModuleInstanceName =
+                    execution.getLookupMap().getOrDefault(ResourceKey.VF_MODULE_INSTANCE_NAME, "");
 
             final String modelCustomizationUuidForVnf = genericVnf.getModelInfoGenericVnf().getModelCustomizationUuid();
 
@@ -106,7 +108,7 @@ public class VfModuleCDSRequestProvider implements CDSRequestProvider {
                     buildingBlock.getRequestContext().getRequestParameters().getUserParams();
             if (userParamsFromRequest != null && userParamsFromRequest.size() != 0) {
                 configureInstanceParamsForVfModule.populateInstanceParams(vfModuleObject, userParamsFromRequest,
-                        modelCustomizationUuidForVnf, modelCustomizationUuidForVfModule);
+                        modelCustomizationUuidForVnf, modelCustomizationUuidForVfModule, vfModuleInstanceName);
             }
         } catch (Exception e) {
             throw new PayloadGenerationException("Failed to buildPropertyObject for VF-Module", e);

@@ -82,6 +82,7 @@ public abstract class AbstractVnfCDSRequestProviderTest {
     @Before
     public void setUp() {
         buildingBlockExecution = createBuildingBlockExecution();
+        buildingBlockExecution.setVariable("lookupKeyMap", new HashMap<>());
         executeBuildingBlock = new ExecuteBuildingBlock();
     }
 

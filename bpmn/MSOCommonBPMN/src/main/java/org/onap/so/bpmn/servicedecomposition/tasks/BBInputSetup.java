@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import org.apache.commons.lang3.StringUtils;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.javatuples.Pair;
@@ -258,6 +259,8 @@ public class BBInputSetup implements JavaDelegate {
         lookupKeyMap.put(ResourceKey.VOLUME_GROUP_ID, workflowResourceIds.getVolumeGroupId());
         lookupKeyMap.put(ResourceKey.CONFIGURATION_ID, workflowResourceIds.getConfigurationId());
         lookupKeyMap.put(ResourceKey.INSTANCE_GROUP_ID, workflowResourceIds.getInstanceGroupId());
+        lookupKeyMap.put(ResourceKey.VNF_INSTANCE_NAME, workflowResourceIds.getVnfInstanceName());
+        lookupKeyMap.put(ResourceKey.VF_MODULE_INSTANCE_NAME, workflowResourceIds.getVfModuleInstanceName());
     }
 
     protected GeneralBuildingBlock getGBBALaCarteNonService(ExecuteBuildingBlock executeBB,
@@ -1581,7 +1584,13 @@ public class BBInputSetup implements JavaDelegate {
                         .setBbName(bbName).setServiceInstance(serviceInstance).setLookupKeyMap(lookupKeyMap).build();
         if (bbName.contains(VNF) || (bbName.contains(CONTROLLER)
                 && (VNF).equalsIgnoreCase(executeBB.getBuildingBlock().getBpmnScope()))) {
-            vnfs = findVnfsByKey(key, resources, vnfs);
+            String vnfInstanceName = lookupKeyMap.get(ResourceKey.VNF_INSTANCE_NAME);
+            if (StringUtils.isNotBlank(vnfInstanceName)) {
+                vnfs = findVnfsByInstanceName(vnfInstanceName, resources);
+            } else {
+                vnfs = findVnfsByKey(key, resources);
+            }
+
             String vnfId = lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID);
             // This stores the vnf id in request db to be retrieved later when
             // working on a vf module or volume group
@@ -1611,15 +1620,15 @@ public class BBInputSetup implements JavaDelegate {
                     .ifPresent(pnfs -> BBInputSetupPnf.populatePnfToServiceInstance(pnfs, pnfId, serviceInstance));
         } else if (bbName.contains(VF_MODULE) || bbName.contains(VOLUME_GROUP) || (bbName.contains(CONTROLLER)
                 && (VF_MODULE).equalsIgnoreCase(executeBB.getBuildingBlock().getBpmnScope()))) {
-            Pair<Vnfs, VfModules> vnfsAndVfModules = getVfModulesAndItsVnfsByKey(key, resources);
-            if (vnfsAndVfModules != null) {
-                vfModules = vnfsAndVfModules.getValue1();
-                vnfs = vnfsAndVfModules.getValue0();
+            String vfModuleInstanceName = lookupKeyMap.get(ResourceKey.VF_MODULE_INSTANCE_NAME);
+            if (StringUtils.isNotBlank(vfModuleInstanceName)) {
+                vfModules = getVfModulesByInstanceName(vfModuleInstanceName, resources);
+            } else {
+                vfModules = getVfModulesByKey(key, resources);
             }
+
             lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, getVnfId(executeBB, lookupKeyMap));
-            if (vnfs == null) {
-                throw new Exception("Could not find Vnf to orchestrate VfModule");
-            }
+
             parameter.setModelInfo(vfModules.getModelInfo());
             if (bbName.contains(VOLUME_GROUP)) {
                 parameter.setResourceId(lookupKeyMap.get(ResourceKey.VOLUME_GROUP_ID));
@@ -1682,25 +1691,45 @@ public class BBInputSetup implements JavaDelegate {
         return null;
     }
 
-    protected Pair<Vnfs, VfModules> getVfModulesAndItsVnfsByKey(String key, Resources resources) {
+    protected VfModules getVfModulesByInstanceName(String vfModuleInstanceName, Resources resources) {
         for (Vnfs vnfs : resources.getVnfs()) {
             for (VfModules vfModules : vnfs.getVfModules()) {
-                if (vfModules.getModelInfo().getModelCustomizationId().equalsIgnoreCase(key)) {
-                    return new Pair<Vnfs, VfModules>(vnfs, vfModules);
+                if (vfModules.getInstanceName().equals(vfModuleInstanceName)) {
+                    return vfModules;
                 }
             }
         }
-        return null;
+        throw new RuntimeException(
+                "Could not find vf-module with instanceName: " + vfModuleInstanceName + " in userparams");
     }
 
-    protected Vnfs findVnfsByKey(String key, Resources resources, Vnfs vnfs) {
-        for (Vnfs tempVnfs : resources.getVnfs()) {
-            if (tempVnfs.getModelInfo().getModelCustomizationId().equalsIgnoreCase(key)) {
-                vnfs = tempVnfs;
-                break;
+    protected VfModules getVfModulesByKey(String key, Resources resources) {
+        for (Vnfs vnfs : resources.getVnfs()) {
+            for (VfModules vfModules : vnfs.getVfModules()) {
+                if (vfModules.getModelInfo().getModelCustomizationId().equalsIgnoreCase(key)) {
+                    return vfModules;
+                }
             }
         }
-        return vnfs;
+        throw new RuntimeException("Could not find vf-module with key: " + key + " in userparams");
+    }
+
+    protected Vnfs findVnfsByInstanceName(String instanceName, Resources resources) {
+        for (Vnfs tempVnfs : resources.getVnfs()) {
+            if (tempVnfs.getInstanceName().equals(instanceName)) {
+                return tempVnfs;
+            }
+        }
+        throw new RuntimeException("Could not find vnf with instanceName: " + instanceName + " in userparams");
+    }
+
+    protected Vnfs findVnfsByKey(String key, Resources resources) {
+        for (Vnfs tempVnfs : resources.getVnfs()) {
+            if (tempVnfs.getModelInfo().getModelCustomizationId().equalsIgnoreCase(key)) {
+                return tempVnfs;
+            }
+        }
+        throw new RuntimeException("Could not find vnf with key: " + key + " in userparams");
     }
 
     protected CloudRegion getCloudRegionFromMacroRequest(CloudConfiguration cloudConfiguration, Resources resources) {

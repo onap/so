@@ -32,6 +32,8 @@ public class Resource {
     private String vnfCustomizationId;
     private String vfModuleCustomizationId;
     private String cvnfModuleCustomizationId;
+    private String instanceName;
+    private Resource parent;
 
     public static final Comparator<Resource> sortBaseFirst = Comparator.comparingInt(x -> x.isBaseVfModule() ? 0 : 1);
     public static final Comparator<Resource> sortBaseLast = Comparator.comparingInt(x -> x.isBaseVfModule() ? 1 : 0);
@@ -104,5 +106,21 @@ public class Resource {
 
     public void setCvnfModuleCustomizationId(String cvnfModuleCustomizationId) {
         this.cvnfModuleCustomizationId = cvnfModuleCustomizationId;
+    }
+
+    public String getInstanceName() {
+        return instanceName;
+    }
+
+    public void setInstanceName(String instanceName) {
+        this.instanceName = instanceName;
+    }
+
+    public Resource getParent() {
+        return parent;
+    }
+
+    public void setParent(Resource parent) {
+        this.parent = parent;
     }
 }

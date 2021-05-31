@@ -41,14 +41,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.javatuples.Pair;
 import org.onap.aai.domain.yang.Vnfc;
@@ -646,11 +650,12 @@ public class WorkflowAction {
         for (Pair<WorkflowType, String> pair : aaiResourceIds) {
             logger.debug("{}, {}", pair.getValue0(), pair.getValue1());
         }
-
+        Map<Resource, String> resourceInstanceIds = new HashMap<>();
         Arrays.stream(WorkflowType.values()).filter(type -> !type.equals(WorkflowType.SERVICE))
                 .forEach(type -> resourceList.stream().filter(resource -> type.equals(resource.getResourceType()))
-                        .forEach(resource -> updateWorkflowResourceIds(flowsToExecute, type, resource.getResourceId(),
-                                retrieveAAIResourceId(aaiResourceIds, type), null, serviceInstanceId)));
+                        .forEach(resource -> updateWorkflowResourceIds(flowsToExecute, type, resource,
+                                retrieveAAIResourceId(aaiResourceIds, type), null, serviceInstanceId,
+                                resourceInstanceIds)));
     }
 
     private String retrieveAAIResourceId(List<Pair<WorkflowType, String>> aaiResourceIds, WorkflowType resource) {
@@ -667,27 +672,45 @@ public class WorkflowAction {
 
     private void generateResourceIds(List<ExecuteBuildingBlock> flowsToExecute, List<Resource> resourceList,
             String serviceInstanceId) {
+        Map<Resource, String> resourceInstanceIds = new HashMap<>();
         Arrays.stream(WorkflowType.values()).filter(type -> !type.equals(WorkflowType.SERVICE))
                 .forEach(type -> resourceList.stream().filter(resource -> type.equals(resource.getResourceType()))
-                        .forEach(resource -> updateWorkflowResourceIds(flowsToExecute, type, resource.getResourceId(),
-                                null, resource.getVirtualLinkKey(), serviceInstanceId)));
+                        .forEach(resource -> updateWorkflowResourceIds(flowsToExecute, type, resource, null,
+                                resource.getVirtualLinkKey(), serviceInstanceId, resourceInstanceIds)));
     }
 
     protected void updateWorkflowResourceIds(List<ExecuteBuildingBlock> flowsToExecute, WorkflowType resourceType,
-            String key, String id, String virtualLinkKey, String serviceInstanceId) {
+            Resource resource, String id, String virtualLinkKey, String serviceInstanceId,
+            Map<Resource, String> resourceInstanceIds) {
+        String key = resource.getResourceId();
         String resourceId = id;
         if (resourceId == null) {
             resourceId = UUID.randomUUID().toString();
         }
+        resourceInstanceIds.put(resource, resourceId);
+        Set<String> assignedFlows = new LinkedHashSet<>();
         for (ExecuteBuildingBlock ebb : flowsToExecute) {
-            if (key != null && key.equalsIgnoreCase(ebb.getBuildingBlock().getKey()) && (ebb.getBuildingBlock()
-                    .getBpmnFlowName().contains(resourceType.toString())
-                    || (ebb.getBuildingBlock().getBpmnFlowName().contains(CONTROLLER)
-                            && ebb.getBuildingBlock().getBpmnScope().equalsIgnoreCase(resourceType.toString())))) {
+            String resourceTypeStr = resourceType.toString();
+            String flowName = ebb.getBuildingBlock().getBpmnFlowName();
+            String scope = StringUtils.defaultString(ebb.getBuildingBlock().getBpmnScope());
+            String action = StringUtils.defaultString(ebb.getBuildingBlock().getBpmnAction());
+
+            if (key != null && key.equalsIgnoreCase(ebb.getBuildingBlock().getKey())
+                    && isFlowAssignable(assignedFlows, ebb, resourceType, flowName + action)
+                    && (flowName.contains(resourceTypeStr)
+                            || (flowName.contains(CONTROLLER) && resourceTypeStr.equalsIgnoreCase(scope)))) {
                 WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
                 workflowResourceIds.setServiceInstanceId(serviceInstanceId);
+                Resource parent = resource.getParent();
+                if (parent != null && resourceInstanceIds.containsKey(parent)) {
+                    WorkflowResourceIdsUtils.setResourceIdByWorkflowType(workflowResourceIds, parent.getResourceType(),
+                            resourceInstanceIds.get(parent));
+                }
+                WorkflowResourceIdsUtils.setInstanceNameByWorkflowType(workflowResourceIds, resourceType,
+                        resource.getInstanceName());
                 WorkflowResourceIdsUtils.setResourceIdByWorkflowType(workflowResourceIds, resourceType, resourceId);
                 ebb.setWorkflowResourceIds(workflowResourceIds);
+                assignedFlows.add(flowName + action);
             }
             if (virtualLinkKey != null && ebb.getBuildingBlock().isVirtualLink()
                     && virtualLinkKey.equalsIgnoreCase(ebb.getBuildingBlock().getVirtualLinkKey())) {
@@ -697,6 +720,12 @@ public class WorkflowAction {
                 ebb.setWorkflowResourceIds(workflowResourceIds);
             }
         }
+    }
+
+    private boolean isFlowAssignable(Set<String> assignedFlows, ExecuteBuildingBlock ebb, WorkflowType resourceType,
+            String assignedFlowName) {
+        String id = WorkflowResourceIdsUtils.getResourceIdByWorkflowType(ebb.getWorkflowResourceIds(), resourceType);
+        return !assignedFlows.contains(assignedFlowName) && id.isEmpty();
     }
 
     protected WorkflowResourceIds populateResourceIdsFromApiHandler(DelegateExecution execution) {
