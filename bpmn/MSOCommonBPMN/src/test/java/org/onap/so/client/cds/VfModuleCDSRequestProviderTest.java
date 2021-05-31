@@ -22,18 +22,28 @@ package org.onap.so.client.cds;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.UUID;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
-import org.onap.so.client.exception.PayloadGenerationException;
+import org.onap.so.serviceinstancebeans.ModelInfo;
+import org.onap.so.serviceinstancebeans.Resources;
 import org.onap.so.serviceinstancebeans.Service;
+import org.onap.so.serviceinstancebeans.VfModules;
+import org.onap.so.serviceinstancebeans.Vnfs;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
@@ -68,7 +78,7 @@ public class VfModuleCDSRequestProviderTest extends AbstractVnfCDSRequestProvide
                 ResourceKey.VF_MODULE_ID);
         doReturn(getUserParams()).when(extractServiceFromUserParameters).getServiceFromRequestUserParams(anyList());
         doCallRealMethod().when(configureInstanceParamsForVfModule).populateInstanceParams(any(), any(), anyString(),
-                anyString());
+                anyString(), any());
 
         // when
         vfModuleCDSRequestProvider.setExecutionObject(buildingBlockExecution);
@@ -105,7 +115,7 @@ public class VfModuleCDSRequestProviderTest extends AbstractVnfCDSRequestProvide
                 ResourceKey.VF_MODULE_ID);
         doReturn(getUserParams()).when(extractServiceFromUserParameters).getServiceFromRequestUserParams(anyList());
         doCallRealMethod().when(configureInstanceParamsForVfModule).populateInstanceParams(any(), any(), anyString(),
-                anyString());
+                anyString(), any());
 
         vfModuleCDSRequestProvider.setExecutionObject(buildingBlockExecution);
         String payload = vfModuleCDSRequestProvider.buildRequestPayload(DEPLOY_ACTION).get();

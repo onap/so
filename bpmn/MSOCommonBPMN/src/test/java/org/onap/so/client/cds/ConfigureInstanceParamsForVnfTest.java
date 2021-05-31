@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2019 Bell Canada
+ * Copyright (C) 2021 Bell Canada
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,26 +37,24 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.Resources;
 import org.onap.so.serviceinstancebeans.Service;
-import org.onap.so.serviceinstancebeans.VfModules;
 import org.onap.so.serviceinstancebeans.Vnfs;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ConfigureInstanceParamsForVfModuleTest {
+public class ConfigureInstanceParamsForVnfTest {
 
     @InjectMocks
-    private ConfigureInstanceParamsForVfModule configureInstanceParamsForVfModule;
+    private ConfigureInstanceParamsForVnf configureInstanceParamsForVnf;
 
     @Mock
     private ExtractServiceFromUserParameters extractServiceFromUserParameters;
 
-    private static final String VNF_CUSTOMIZATION_ID = UUID.randomUUID().toString();
-    private static final String VFMODULE_1_CUSTOMIZATION_ID = UUID.randomUUID().toString();
-    private static final String VFMODULE_2_CUSTOMIZATION_ID = UUID.randomUUID().toString();
-    private static final String VFMODULE_1_INSTANCE_NAME = "vfmodule-instance-1";
-    private static final String VFMODULE_2_INSTANCE_NAME = "vfmodule-instance-2";
-    private static final List<Map<String, String>> VFMODULE_1_INSTANCE_PARAMS =
+    private static final String VNF_1_CUSTOMIZATION_ID = UUID.randomUUID().toString();
+    private static final String VNF_2_CUSTOMIZATION_ID = UUID.randomUUID().toString();
+    private static final String VNF_1_INSTANCE_NAME = "vnf-instance-1";
+    private static final String VNF_2_INSTANCE_NAME = "vnf-instance-2";
+    private static final List<Map<String, String>> VNF_1_INSTANCE_PARAMS =
             Arrays.asList(Map.of("param-1", "xyz", "param-2", "123"), Map.of("param-3", "CCC"));
-    private static final List<Map<String, String>> VFMODULE_2_INSTANCE_PARAMS =
+    private static final List<Map<String, String>> VNF_2_INSTANCE_PARAMS =
             Arrays.asList(Map.of("param-1", "abc", "param-2", "999"), Map.of("param-3", "AAA"));
 
 
@@ -66,12 +64,11 @@ public class ConfigureInstanceParamsForVfModuleTest {
         Resources resources = new Resources();
         resources.setVnfs(createVnfs());
         service.setResources(resources);
-
         when(extractServiceFromUserParameters.getServiceFromRequestUserParams(any())).thenReturn(service);
         JsonObject jsonObject = new JsonObject();
 
-        configureInstanceParamsForVfModule.populateInstanceParams(jsonObject, new ArrayList<>(), VNF_CUSTOMIZATION_ID,
-                VFMODULE_2_CUSTOMIZATION_ID, VFMODULE_2_INSTANCE_NAME);
+        configureInstanceParamsForVnf.populateInstanceParams(jsonObject, new ArrayList<>(), VNF_2_CUSTOMIZATION_ID,
+                VNF_2_INSTANCE_NAME);
 
         assertEquals("abc", jsonObject.get("param-1").getAsString());
         assertEquals("999", jsonObject.get("param-2").getAsString());
@@ -84,13 +81,12 @@ public class ConfigureInstanceParamsForVfModuleTest {
         Resources resources = new Resources();
         resources.setVnfs(createVnfs());
         service.setResources(resources);
-
         when(extractServiceFromUserParameters.getServiceFromRequestUserParams(any())).thenReturn(service);
         JsonObject jsonObject = new JsonObject();
 
         // No instance name is passed
-        configureInstanceParamsForVfModule.populateInstanceParams(jsonObject, new ArrayList<>(), VNF_CUSTOMIZATION_ID,
-                VFMODULE_1_CUSTOMIZATION_ID, null);
+        configureInstanceParamsForVnf.populateInstanceParams(jsonObject, new ArrayList<>(), VNF_1_CUSTOMIZATION_ID,
+                null);
 
         assertEquals("xyz", jsonObject.get("param-1").getAsString());
         assertEquals("123", jsonObject.get("param-2").getAsString());
@@ -99,27 +95,20 @@ public class ConfigureInstanceParamsForVfModuleTest {
 
     private List<Vnfs> createVnfs() {
         Vnfs vnf1 = new Vnfs();
+        vnf1.setInstanceName(VNF_1_INSTANCE_NAME);
         ModelInfo modelInfo = new ModelInfo();
-        modelInfo.setModelCustomizationId(VNF_CUSTOMIZATION_ID);
+        modelInfo.setModelCustomizationId(VNF_1_CUSTOMIZATION_ID);
         vnf1.setModelInfo(modelInfo);
+        vnf1.setInstanceParams(VNF_1_INSTANCE_PARAMS);
 
-        VfModules vfModule1 = new VfModules();
+        Vnfs vnf2 = new Vnfs();
         modelInfo = new ModelInfo();
-        modelInfo.setModelCustomizationId(VFMODULE_1_CUSTOMIZATION_ID);
-        vfModule1.setModelInfo(modelInfo);
-        vfModule1.setInstanceName(VFMODULE_1_INSTANCE_NAME);
-        vfModule1.setInstanceParams(VFMODULE_1_INSTANCE_PARAMS);
+        modelInfo.setModelCustomizationId(VNF_2_CUSTOMIZATION_ID);
+        vnf2.setModelInfo(modelInfo);
+        vnf2.setInstanceName(VNF_2_INSTANCE_NAME);
+        vnf2.setInstanceParams(VNF_2_INSTANCE_PARAMS);
 
-        VfModules vfModule2 = new VfModules();
-        modelInfo = new ModelInfo();
-        modelInfo.setModelCustomizationId(VFMODULE_2_CUSTOMIZATION_ID);
-        vfModule2.setModelInfo(modelInfo);
-        vfModule2.setInstanceName(VFMODULE_2_INSTANCE_NAME);
-        vfModule2.setInstanceParams(VFMODULE_2_INSTANCE_PARAMS);
-
-        vnf1.setVfModules(Arrays.asList(vfModule1, vfModule2));
-
-        return Arrays.asList(vnf1);
+        return Arrays.asList(vnf1, vnf2);
     }
 
 }

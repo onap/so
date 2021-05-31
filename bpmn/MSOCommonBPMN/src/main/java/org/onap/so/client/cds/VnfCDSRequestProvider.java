@@ -23,6 +23,7 @@
 package org.onap.so.client.cds;
 
 import com.google.gson.JsonObject;
+import org.apache.commons.lang3.StringUtils;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
@@ -93,9 +94,10 @@ public class VnfCDSRequestProvider implements CDSRequestProvider {
             final GeneralBuildingBlock buildingBlock = execution.getGeneralBuildingBlock();
             List<Map<String, Object>> userParamsFromRequest =
                     buildingBlock.getRequestContext().getRequestParameters().getUserParams();
+            String vnfInstanceName = execution.getLookupMap().getOrDefault(ResourceKey.VNF_INSTANCE_NAME, "");
             if (userParamsFromRequest != null && userParamsFromRequest.size() != 0) {
                 configureInstanceParamsForVnf.populateInstanceParams(vnfObject, userParamsFromRequest,
-                        modelCustomizationUuid);
+                        modelCustomizationUuid, vnfInstanceName);
             }
         } catch (Exception e) {
             throw new PayloadGenerationException("Failed to buildPropertyObjectForVnf", e);

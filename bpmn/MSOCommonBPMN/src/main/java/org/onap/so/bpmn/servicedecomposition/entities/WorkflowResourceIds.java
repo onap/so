@@ -40,6 +40,8 @@ public class WorkflowResourceIds implements Serializable {
     private String networkCollectionId;
     private String configurationId;
     private String instanceGroupId;
+    private String vnfInstanceName;
+    private String vfModuleInstanceName;
 
 
     public WorkflowResourceIds() {
@@ -138,5 +140,21 @@ public class WorkflowResourceIds implements Serializable {
 
     public void setInstanceGroupId(String instanceGroupId) {
         this.instanceGroupId = instanceGroupId;
+    }
+
+    public String getVnfInstanceName() {
+        return vnfInstanceName;
+    }
+
+    public void setVnfInstanceName(String vnfInstanceName) {
+        this.vnfInstanceName = vnfInstanceName;
+    }
+
+    public String getVfModuleInstanceName() {
+        return vfModuleInstanceName;
+    }
+
+    public void setVfModuleInstanceName(String vfModuleInstanceName) {
+        this.vfModuleInstanceName = vfModuleInstanceName;
     }
 }

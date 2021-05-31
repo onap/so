@@ -131,6 +131,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.onap.so.serviceinstancebeans.VfModules;
+import org.onap.so.serviceinstancebeans.Vnfs;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BBInputSetupTest {
@@ -2116,6 +2118,8 @@ public class BBInputSetupTest {
         String volumeGroupId = "volumeGroupId";
         String configurationId = "configurationId";
         String instanceGroupId = "instancegroupId";
+        String vnfInstanceName = "vnfInstanceName";
+        String vfModuleInstanceName = "vfModuleInstanceName";
 
         expected.put(ResourceKey.SERVICE_INSTANCE_ID, serviceInstanceId);
         expected.put(ResourceKey.NETWORK_ID, networkId);
@@ -2125,6 +2129,8 @@ public class BBInputSetupTest {
         expected.put(ResourceKey.VOLUME_GROUP_ID, volumeGroupId);
         expected.put(ResourceKey.CONFIGURATION_ID, configurationId);
         expected.put(ResourceKey.INSTANCE_GROUP_ID, instanceGroupId);
+        expected.put(ResourceKey.VNF_INSTANCE_NAME, vnfInstanceName);
+        expected.put(ResourceKey.VF_MODULE_INSTANCE_NAME, vfModuleInstanceName);
 
         WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
         workflowResourceIds.setServiceInstanceId(serviceInstanceId);
@@ -2135,10 +2141,50 @@ public class BBInputSetupTest {
         workflowResourceIds.setVolumeGroupId(volumeGroupId);
         workflowResourceIds.setConfigurationId(configurationId);
         workflowResourceIds.setInstanceGroupId(instanceGroupId);
+        workflowResourceIds.setVnfInstanceName(vnfInstanceName);
+        workflowResourceIds.setVfModuleInstanceName(vfModuleInstanceName);
 
         SPY_bbInputSetup.populateLookupKeyMapWithIds(workflowResourceIds, actual);
 
         assertThat(actual, sameBeanAs(expected));
+    }
+
+    @Test
+    public void testGetVfModulesByInstanceName() throws IOException {
+        org.onap.so.serviceinstancebeans.Service serviceMacro = mapper.readValue(
+                new File(RESOURCE_PATH + "ServiceMacroVfModules.json"), org.onap.so.serviceinstancebeans.Service.class);
+        Resources resources = serviceMacro.getResources();
+        VfModules expectedVfModule = resources.getVnfs().get(0).getVfModules().get(2);
+        assertEquals(expectedVfModule,
+                SPY_bbInputSetup.getVfModulesByInstanceName("vmxnjr001_AVPN_base_vRE_BV_expansion_002", resources));
+    }
+
+    @Test
+    public void testGetVfModulesByKey() throws IOException {
+        org.onap.so.serviceinstancebeans.Service serviceMacro = mapper.readValue(
+                new File(RESOURCE_PATH + "ServiceMacroVfModules.json"), org.onap.so.serviceinstancebeans.Service.class);
+        Resources resources = serviceMacro.getResources();
+        VfModules expectedVfModule = resources.getVnfs().get(0).getVfModules().get(0);
+        assertEquals(expectedVfModule,
+                SPY_bbInputSetup.getVfModulesByKey("a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f", resources));
+    }
+
+    @Test
+    public void testFindVnfsByInstanceName() throws IOException {
+        org.onap.so.serviceinstancebeans.Service serviceMacro = mapper.readValue(
+                new File(RESOURCE_PATH + "ServiceMacroVfModules.json"), org.onap.so.serviceinstancebeans.Service.class);
+        Resources resources = serviceMacro.getResources();
+        Vnfs expectedVnf = resources.getVnfs().get(0);
+        assertEquals(expectedVnf, SPY_bbInputSetup.findVnfsByInstanceName("vmxnjr001", resources));
+    }
+
+    @Test
+    public void testVnfsByKey() throws IOException {
+        org.onap.so.serviceinstancebeans.Service serviceMacro = mapper.readValue(
+                new File(RESOURCE_PATH + "ServiceMacroVfModules.json"), org.onap.so.serviceinstancebeans.Service.class);
+        Resources resources = serviceMacro.getResources();
+        Vnfs expectedVnf = resources.getVnfs().get(0);
+        assertEquals(expectedVnf, SPY_bbInputSetup.findVnfsByKey("ab153b6e-c364-44c0-bef6-1f2982117f04", resources));
     }
 
     @Test

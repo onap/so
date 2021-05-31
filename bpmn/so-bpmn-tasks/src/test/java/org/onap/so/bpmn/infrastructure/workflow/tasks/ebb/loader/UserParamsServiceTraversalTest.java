@@ -53,6 +53,7 @@ import java.util.stream.Collectors;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 
@@ -63,6 +64,8 @@ public class UserParamsServiceTraversalTest extends BaseTaskTest {
     private static final String MACRO_ASSIGN_PNF_JSON = "Macro/ServiceMacroAssignPnf.json";
     private static final String NETWORK_COLLECTION_JSON = "Macro/CreateNetworkCollection.json";
     private static final String MACRO_CREATE_WITHOUT_RESOURCES_JSON = "Macro/ServiceMacroCreateWithoutResources.json";
+    private static final String MACRO_CREATE_SVC_SAME_MODEL_VNF_VFMODULE =
+            "Macro/ServiceMacroCreateMultipleSameModelVnfsAndVfModules.json";
     private static final String serviceInstanceId = "123";
     private DelegateExecution execution;
     private CatalogDbClient mockCatalogDbClient;
@@ -80,8 +83,6 @@ public class UserParamsServiceTraversalTest extends BaseTaskTest {
     @Test
     public void getResourceListFromUserParams() throws Exception {
         initExecution(requestAction, readBpmnRequestFromFile(MACRO_CREATE_WITHOUT_RESOURCES_JSON), false);
-        Mockito.doReturn(getVfModuleCustomization()).when(mockCatalogDbClient)
-                .getVfModuleCustomizationByModelCuztomizationUUID("a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f");
         Mockito.doReturn(getCvnfcCustomizations()).when(mockCatalogDbClient).getCvnfcCustomization(anyString(),
                 anyString(), anyString());
 
@@ -96,9 +97,62 @@ public class UserParamsServiceTraversalTest extends BaseTaskTest {
     }
 
     @Test
+    public void getResourceListFromUserParamsMultipleSameModelVnfVfModule() throws Exception {
+        initExecution("createInstance", readBpmnRequestFromFile(MACRO_CREATE_SVC_SAME_MODEL_VNF_VFMODULE), false);
+        Mockito.doReturn(getVfModuleCustomization("3bd19000-6d21-49f1-9eb3-ea76a6eac5e0", false))
+                .when(mockCatalogDbClient)
+                .getVfModuleCustomizationByModelCuztomizationUUID("3bd19000-6d21-49f1-9eb3-ea76a6eac5e0");
+        Mockito.doReturn(getVfModuleCustomization("83677d89-428a-407b-b4ec-738e68275d84", false))
+                .when(mockCatalogDbClient)
+                .getVfModuleCustomizationByModelCuztomizationUUID("83677d89-428a-407b-b4ec-738e68275d84");
+
+        List<Resource> resources = userParamsServiceTraversal.getResourceListFromUserParams(execution, getUserParams(),
+                serviceInstanceId, requestAction);
+
+        assertEquals(7, resources.size());
+
+        Resource service = resources.get(0);
+        assertTrue(service.getResourceType() == WorkflowType.SERVICE);
+        assertEquals(2, service.getChildren().size());
+
+        Resource vnf1 = service.getChildren().get(0);
+        assertEquals(service, vnf1.getParent());
+        assertEquals("vnf-instanceName-1", vnf1.getInstanceName());
+        assertEquals("0d0ba1ee-6b7f-47fe-8266-2967993b2c08", vnf1.getResourceId());
+        assertEquals(2, vnf1.getChildren().size());
+
+        Resource vnf2 = service.getChildren().get(1);
+        assertEquals(service, vnf2.getParent());
+        assertEquals("vnf-instanceName-2", vnf2.getInstanceName());
+        assertEquals("0d0ba1ee-6b7f-47fe-8266-2967993b2c08", vnf2.getResourceId());
+        assertEquals(2, vnf2.getChildren().size());
+
+        Resource vfmodule1 = vnf1.getChildren().get(0);
+        assertEquals(vnf1, vfmodule1.getParent());
+        assertEquals("demo-network-1", vfmodule1.getInstanceName());
+        assertEquals("3bd19000-6d21-49f1-9eb3-ea76a6eac5e0", vfmodule1.getResourceId());
+
+        Resource vfmodule2 = vnf1.getChildren().get(1);
+        assertEquals(vnf1, vfmodule2.getParent());
+        assertEquals("demo-1", vfmodule2.getInstanceName());
+        assertEquals("83677d89-428a-407b-b4ec-738e68275d84", vfmodule2.getResourceId());
+
+        Resource vfmodule3 = vnf2.getChildren().get(0);
+        assertEquals(vnf2, vfmodule3.getParent());
+        assertEquals("demo-2", vfmodule3.getInstanceName());
+        assertEquals("83677d89-428a-407b-b4ec-738e68275d84", vfmodule3.getResourceId());
+
+        Resource vfmodule4 = vnf2.getChildren().get(1);
+        assertEquals(vnf2, vfmodule4.getParent());
+        assertEquals("demo-3", vfmodule4.getInstanceName());
+        assertEquals("83677d89-428a-407b-b4ec-738e68275d84", vfmodule4.getResourceId());
+    }
+
+    @Test
     public void getResourceListFromUserParamsForVnfs() throws Exception {
         initExecution(requestAction, readBpmnRequestFromFile(MACRO_ASSIGN_JSON), false);
-        Mockito.doReturn(getVfModuleCustomization()).when(mockCatalogDbClient)
+        Mockito.doReturn(getVfModuleCustomization("a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f", true))
+                .when(mockCatalogDbClient)
                 .getVfModuleCustomizationByModelCuztomizationUUID("a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f");
         Mockito.doReturn(getCvnfcCustomizations()).when(mockCatalogDbClient).getCvnfcCustomization(anyString(),
                 anyString(), anyString());
@@ -117,7 +171,8 @@ public class UserParamsServiceTraversalTest extends BaseTaskTest {
     @Test
     public void getResourceListFromUserParamsForVnfsWithPriorities() throws Exception {
         initExecution(requestAction, readBpmnRequestFromFile(MACRO_CREATE_JSON), false);
-        Mockito.doReturn(getVfModuleCustomization()).when(mockCatalogDbClient)
+        Mockito.doReturn(getVfModuleCustomization("a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f", true))
+                .when(mockCatalogDbClient)
                 .getVfModuleCustomizationByModelCuztomizationUUID("a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f");
         Mockito.doReturn(getCvnfcCustomizations()).when(mockCatalogDbClient).getCvnfcCustomization(anyString(),
                 anyString(), anyString());
@@ -137,8 +192,6 @@ public class UserParamsServiceTraversalTest extends BaseTaskTest {
     @Test
     public void getResourceListFromUserParamsForPnfs() throws Exception {
         initExecution(requestAction, readBpmnRequestFromFile(MACRO_ASSIGN_PNF_JSON), false);
-        Mockito.doReturn(getVfModuleCustomization()).when(mockCatalogDbClient)
-                .getVfModuleCustomizationByModelCuztomizationUUID("a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f");
         Mockito.doReturn(getCvnfcCustomizations()).when(mockCatalogDbClient).getCvnfcCustomization(anyString(),
                 anyString(), anyString());
 
@@ -156,8 +209,6 @@ public class UserParamsServiceTraversalTest extends BaseTaskTest {
     public void getResourceListFromUserParamsForNetworks() throws Exception {
         requestAction = "createInstance";
         initExecution(requestAction, readBpmnRequestFromFile(NETWORK_COLLECTION_JSON), false);
-        Mockito.doReturn(getVfModuleCustomization()).when(mockCatalogDbClient)
-                .getVfModuleCustomizationByModelCuztomizationUUID("a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f");
         Mockito.doReturn(getCvnfcCustomizations()).when(mockCatalogDbClient).getCvnfcCustomization(anyString(),
                 anyString(), anyString());
         Mockito.doReturn(getService()).when(mockCatalogDbClient).getServiceByID(anyString());
@@ -230,13 +281,17 @@ public class UserParamsServiceTraversalTest extends BaseTaskTest {
         return service;
     }
 
-    private VfModuleCustomization getVfModuleCustomization() {
+    private VfModuleCustomization getVfModuleCustomization(String modelCustomizationUUID, boolean includeVolumeGroup) {
         VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
-        vfModuleCustomization.setVolumeHeatEnv(new HeatEnvironment());
-        vfModuleCustomization.setModelCustomizationUUID("a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f");
+        vfModuleCustomization.setModelCustomizationUUID(modelCustomizationUUID);
         VfModule vfModule = new VfModule();
-        vfModule.setVolumeHeatTemplate(new HeatTemplate());
-        vfModule.setModelName("helm");
+        if (includeVolumeGroup) {
+            vfModuleCustomization.setVolumeHeatEnv(new HeatEnvironment());
+            vfModule.setVolumeHeatTemplate(new HeatTemplate());
+            vfModule.setModelName("helm");
+        } else {
+            vfModuleCustomization.setHeatEnvironment(new HeatEnvironment());
+        }
         vfModule.setModuleHeatTemplate(new HeatTemplate());
         vfModuleCustomization.setVfModule(vfModule);
         return vfModuleCustomization;
