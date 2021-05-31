@@ -40,7 +40,8 @@ public class WorkflowResourceIdsUtilsTest {
     private static final String PNF_ID = "pnfId";
     private static final String NETWORK_COLLECTION_ID = "networkCollectionId";
     private static final String CONFIGURATION_ID = "configurationId";
-
+    private static final String VNF_INSTANCE_NAME = "vnfInstanceNameId";
+    private static final String VF_MODULE_INSTANCE_NAME = "vfModuleInstanceNameId";
     private WorkflowResourceIds workflowResourceIds;
 
     @Before
@@ -57,6 +58,8 @@ public class WorkflowResourceIdsUtilsTest {
         execution.setVariable("vnfId", VNF_ID);
         execution.setVariable("volumeGroupId", VOLUME_GROUP_ID);
         execution.setVariable("instanceGroupId", INSTANCE_GROUP_ID);
+        execution.setVariable("vnfInstanceName", VNF_INSTANCE_NAME);
+        execution.setVariable("vfModuleInstanceName", VF_MODULE_INSTANCE_NAME);
 
         workflowResourceIds = WorkflowResourceIdsUtils.getWorkflowResourceIdsFromExecution(execution);
 
@@ -66,54 +69,84 @@ public class WorkflowResourceIdsUtilsTest {
         assertEquals(VNF_ID, workflowResourceIds.getVnfId());
         assertEquals(VOLUME_GROUP_ID, workflowResourceIds.getVolumeGroupId());
         assertEquals(INSTANCE_GROUP_ID, workflowResourceIds.getInstanceGroupId());
+        assertEquals(VNF_INSTANCE_NAME, workflowResourceIds.getVnfInstanceName());
+        assertEquals(VF_MODULE_INSTANCE_NAME, workflowResourceIds.getVfModuleInstanceName());
     }
 
     @Test
     public void shouldProperlySetServiceInstanceId() {
         assertFieldSetProperly(WorkflowType.SERVICE, SERVICE_ID, workflowResourceIds::getServiceInstanceId);
+        assertEquals(SERVICE_ID,
+                WorkflowResourceIdsUtils.getResourceIdByWorkflowType(workflowResourceIds, WorkflowType.SERVICE));
     }
 
     @Test
     public void shouldProperlySetVnfId() {
         assertFieldSetProperly(WorkflowType.VNF, VNF_ID, workflowResourceIds::getVnfId);
-
+        assertEquals(VNF_ID,
+                WorkflowResourceIdsUtils.getResourceIdByWorkflowType(workflowResourceIds, WorkflowType.VNF));
     }
 
     @Test
     public void shouldProperlySetPnfId() {
         assertFieldSetProperly(WorkflowType.PNF, PNF_ID, workflowResourceIds::getPnfId);
+        assertEquals(PNF_ID,
+                WorkflowResourceIdsUtils.getResourceIdByWorkflowType(workflowResourceIds, WorkflowType.PNF));
     }
 
     @Test
     public void shouldProperlySetVfModuleId() {
         assertFieldSetProperly(WorkflowType.VFMODULE, VF_MODULE_ID, workflowResourceIds::getVfModuleId);
+        assertEquals(VF_MODULE_ID,
+                WorkflowResourceIdsUtils.getResourceIdByWorkflowType(workflowResourceIds, WorkflowType.VFMODULE));
     }
 
     @Test
     public void shouldProperlySetVolumeGroupId() {
         assertFieldSetProperly(WorkflowType.VOLUMEGROUP, VOLUME_GROUP_ID, workflowResourceIds::getVolumeGroupId);
+        assertEquals(VOLUME_GROUP_ID,
+                WorkflowResourceIdsUtils.getResourceIdByWorkflowType(workflowResourceIds, WorkflowType.VOLUMEGROUP));
     }
 
     @Test
     public void shouldProperlySetNetworkId() {
         assertFieldSetProperly(WorkflowType.NETWORK, NETWORK_ID, workflowResourceIds::getNetworkId);
+        assertEquals(NETWORK_ID,
+                WorkflowResourceIdsUtils.getResourceIdByWorkflowType(workflowResourceIds, WorkflowType.NETWORK));
     }
 
     @Test
     public void shouldProperlySetNetworkCollectionId() {
         assertFieldSetProperly(WorkflowType.NETWORKCOLLECTION, NETWORK_COLLECTION_ID,
                 workflowResourceIds::getNetworkCollectionId);
-
+        assertEquals(NETWORK_COLLECTION_ID, WorkflowResourceIdsUtils.getResourceIdByWorkflowType(workflowResourceIds,
+                WorkflowType.NETWORKCOLLECTION));
     }
 
     @Test
     public void shouldProperlySetConfigurationId() {
         assertFieldSetProperly(WorkflowType.CONFIGURATION, CONFIGURATION_ID, workflowResourceIds::getConfigurationId);
+        assertEquals(CONFIGURATION_ID,
+                WorkflowResourceIdsUtils.getResourceIdByWorkflowType(workflowResourceIds, WorkflowType.CONFIGURATION));
     }
 
     @Test
     public void shouldProperlySetInstanceGroupId() {
         assertFieldSetProperly(WorkflowType.INSTANCE_GROUP, INSTANCE_GROUP_ID, workflowResourceIds::getInstanceGroupId);
+        assertEquals(INSTANCE_GROUP_ID,
+                WorkflowResourceIdsUtils.getResourceIdByWorkflowType(workflowResourceIds, WorkflowType.INSTANCE_GROUP));
+    }
+
+    @Test
+    public void shouldPropertySetVnfInstanceName() {
+        assertFieldSetProperlyInstanceName(WorkflowType.VNF, VNF_INSTANCE_NAME,
+                workflowResourceIds::getVnfInstanceName);
+    }
+
+    @Test
+    public void shouldPropertySetVfModuleInstanceName() {
+        assertFieldSetProperlyInstanceName(WorkflowType.VFMODULE, VF_MODULE_INSTANCE_NAME,
+                workflowResourceIds::getVfModuleInstanceName);
     }
 
     private void assertFieldSetProperly(WorkflowType workflowType, String expectedId,
@@ -121,4 +154,13 @@ public class WorkflowResourceIdsUtilsTest {
         WorkflowResourceIdsUtils.setResourceIdByWorkflowType(workflowResourceIds, workflowType, expectedId);
         assertEquals(expectedId, testedObjectField.get());
     }
+
+    private void assertFieldSetProperlyInstanceName(WorkflowType workflowType, String expectedId,
+            Supplier<String> testedObjectField) {
+        WorkflowResourceIdsUtils.setInstanceNameByWorkflowType(workflowResourceIds, workflowType, expectedId);
+        assertEquals(expectedId, testedObjectField.get());
+    }
+
+
+
 }
