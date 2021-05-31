@@ -20,7 +20,9 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class Resource {
 
@@ -32,6 +34,9 @@ public class Resource {
     private String vnfCustomizationId;
     private String vfModuleCustomizationId;
     private String cvnfModuleCustomizationId;
+    private String instanceName;
+    private Resource parent;
+    private List<Resource> children;
 
     public static final Comparator<Resource> sortBaseFirst = Comparator.comparingInt(x -> x.isBaseVfModule() ? 0 : 1);
     public static final Comparator<Resource> sortBaseLast = Comparator.comparingInt(x -> x.isBaseVfModule() ? 1 : 0);
@@ -41,6 +46,17 @@ public class Resource {
         this.resourceType = resourceType;
         this.generated = generated;
     }
+
+    public Resource(WorkflowType resourceType, String resourceId, boolean generated, Resource parent) {
+        this.resourceId = resourceId;
+        this.resourceType = resourceType;
+        this.generated = generated;
+        this.children = new ArrayList<>();
+        this.parent = parent;
+        if (parent != null)
+            this.parent.children.add(this);
+    }
+
 
     public String getResourceId() {
         return resourceId;
@@ -104,5 +120,21 @@ public class Resource {
 
     public void setCvnfModuleCustomizationId(String cvnfModuleCustomizationId) {
         this.cvnfModuleCustomizationId = cvnfModuleCustomizationId;
+    }
+
+    public String getInstanceName() {
+        return instanceName;
+    }
+
+    public void setInstanceName(String instanceName) {
+        this.instanceName = instanceName;
+    }
+
+    public Resource getParent() {
+        return this.parent;
+    }
+
+    public List<Resource> getChildren() {
+        return this.children;
     }
 }

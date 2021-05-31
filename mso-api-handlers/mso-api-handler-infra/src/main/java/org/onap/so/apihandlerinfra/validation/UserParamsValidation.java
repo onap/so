@@ -22,7 +22,13 @@
 package org.onap.so.apihandlerinfra.validation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
 import org.onap.so.apihandlerinfra.Action;
 import org.onap.so.apihandlerinfra.Actions;
 import org.onap.so.exceptions.ValidationException;
@@ -37,6 +43,9 @@ public class UserParamsValidation implements ValidationRule {
     public ValidationInformation validate(ValidationInformation info) throws ValidationException {
         Service validate = info.getUserParams();
         Actions action = info.getAction();
+
+        Map<String, Set<String>> vnfCustomIdToInstanceNames = new HashMap<>();
+        Map<String, Set<String>> vfModuleCustomIdToInstanceNames = new HashMap<>();
 
         if (validate.getModelInfo() == null) {
             throw new ValidationException("modelInfo in userParams", true);
@@ -71,19 +80,42 @@ public class UserParamsValidation implements ValidationRule {
             if (vnf.getPlatform() != null && vnf.getPlatform().getPlatformName() == null) {
                 throw new ValidationException("platformName in userParams vnf resources", true);
             }
+
+            String vnfCustomizationId = vnf.getModelInfo().getModelCustomizationId();
+            vnfCustomIdToInstanceNames.putIfAbsent(vnfCustomizationId, new HashSet<>());
+            String vnfInstanceName = StringUtils.defaultString(vnf.getInstanceName());
+            Set<String> vnfVisitedInstanceNames = vnfCustomIdToInstanceNames.get(vnfCustomizationId);
+            if (!vnfVisitedInstanceNames.add(vnfInstanceName)) {
+                throw new ValidationException(
+                        "instanceName: same instanceName with same modelCustomizationId in userParams vnf resources",
+                        true);
+            }
             if (vnf.getVfModules().isEmpty()) {
                 throw new ValidationException("vfModules in userParams vnf resources", true);
             }
-            for (VfModules vfModules : vnf.getVfModules()) {
-                if (vfModules.getModelInfo() == null) {
+
+            for (VfModules vfModule : vnf.getVfModules()) {
+                if (vfModule.getModelInfo() == null) {
                     throw new ValidationException("modelInfo in userParams vfModules resources", true);
-                } else if (vfModules.getModelInfo().getModelCustomizationId() == null) {
+                } else if (vfModule.getModelInfo().getModelCustomizationId() == null) {
                     throw new ValidationException("modelCustomizationId in userParams vfModule resources", true);
-                } else if (vfModules.getModelInfo().getModelVersionId() == null) {
+                } else if (vfModule.getModelInfo().getModelVersionId() == null) {
                     throw new ValidationException("modelVersionId in userParams vfModule resources", true);
+                }
+
+                String vfModulecustomizationId = vfModule.getModelInfo().getModelCustomizationId();
+                vfModuleCustomIdToInstanceNames.putIfAbsent(vfModulecustomizationId, new HashSet<>());
+                String vfModuleInstanceName = StringUtils.defaultString(vfModule.getInstanceName());
+                Set<String> vfModuleVisitedInstanceNames = vfModuleCustomIdToInstanceNames.get(vfModulecustomizationId);
+                if (!vfModuleVisitedInstanceNames.add(vfModuleInstanceName)) {
+                    throw new ValidationException(
+                            "instanceName: same instanceName with same modelCustomizationId in userParams vfModule resources",
+                            true);
                 }
             }
         }
+        validateDuplicateInstanceNames(vnfCustomIdToInstanceNames, "vnf");
+        validateDuplicateInstanceNames(vfModuleCustomIdToInstanceNames, "vfModule");
 
         List<Networks> validateNetworks = new ArrayList<>();
         validateNetworks = validate.getResources().getNetworks();
@@ -133,6 +165,26 @@ public class UserParamsValidation implements ValidationRule {
                 && (!info.getModelCustomizationId().equals(userParamInfo.getModelCustomizationId()))) {
             throw new ValidationException("modelCustomizationId in modelInfo",
                     "modelCustomizationId in userParams service");
+        }
+    }
+
+    private void validateDuplicateInstanceNames(Map<String, Set<String>> duplicateValidator, String type)
+            throws ValidationException {
+        Set<String> allInstanceNames = new HashSet<>();
+        for (Map.Entry<String, Set<String>> entry : duplicateValidator.entrySet()) {
+            Set<String> instanceNames = entry.getValue();
+            if (instanceNames.size() > 1 && instanceNames.contains(""))
+                throw new ValidationException(String.format(
+                        "instanceName: instanceName is missing or empty with same modelCustomizationId in userParams %s resources",
+                        type), true);
+
+            for (String instanceName : instanceNames) {
+                if (!instanceName.isBlank() && !allInstanceNames.add(instanceName)) {
+                    throw new ValidationException(String.format(
+                            "instanceName: same instanceName but different modelCustomizationId (instanceName should be unique)  in userParams %s resources",
+                            type), true);
+                }
+            }
         }
     }
 }

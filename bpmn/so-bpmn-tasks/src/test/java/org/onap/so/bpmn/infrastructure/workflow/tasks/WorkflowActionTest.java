@@ -28,6 +28,8 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -49,8 +51,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
@@ -115,6 +120,8 @@ public class WorkflowActionTest extends BaseTaskTest {
             "VfModuleReplaceRebuildVolumeGroups.json";
     private static final String MACRO_CREATE_NETWORK_COLLECTION_JSON = "Macro/CreateNetworkCollection.json";
     private static final String MACRO_VNF_MACRO_REPLACE_JSON = "Macro/VnfMacroReplace.json";
+    private static final String MACRO_CREATE_SERVICE_MULTIPLE_SAME_MODEL_VNF_VFMODULE =
+            "Macro/ServiceMacroCreateMultipleSameModelVnfsAndVfModules.json";
 
     @Mock
     protected Environment environment;
@@ -660,6 +667,139 @@ public class WorkflowActionTest extends BaseTaskTest {
         assertEquals(randomUUIDLength, ebbs.get(14).getWorkflowResourceIds().getVnfId().length());
         assertEquals(3, ebbs.get(0).getWorkflowResourceIds().getServiceInstanceId().length());
         assertEquals(true, execution.getVariable("homing"));
+    }
+
+    @Test
+    public void selectExecutionListServiceMacroCreateWithMultipleSameModelVnfAndVfModules() throws Exception {
+        String gAction = "createInstance";
+        String resource = "Service";
+        String bpmnRequest = readBpmnRequestFromFile(MACRO_CREATE_SERVICE_MULTIPLE_SAME_MODEL_VNF_VFMODULE);
+        initExecution(gAction, bpmnRequest, false);
+        execution.setVariable("requestUri", "v7/serviceInstances");
+        execution.setVariable("serviceInstanceId", UUID.randomUUID().toString());
+
+        // Service-Macro-Create
+        NorthBoundRequest northBoundRequest = new NorthBoundRequest();
+        List<OrchestrationFlow> orchFlows = createFlowList("AssignServiceInstanceBB", "CreateNetworkCollectionBB",
+                "AssignNetworkBB", "AssignVnfBB", "AssignVolumeGroupBB", "AssignVfModuleBB", "ControllerExecutionBB",
+                "AssignPnfBB", "WaitForPnfReadyBB", "ControllerExecutionBB", "ControllerExecutionBB", "ActivatePnfBB",
+                "CreateNetworkBB", "ActivateNetworkBB", "CreateVolumeGroupBB", "ActivateVolumeGroupBB",
+                "CreateVfModuleBB", "ActivateVfModuleBB", "ControllerExecutionBB", "ActivateVnfBB",
+                "ActivateNetworkCollectionBB", "ActivateServiceInstanceBB");
+        orchFlows.get(6).setBpmnAction("config-assign");
+        orchFlows.get(6).setBpmnScope("vnf");
+        orchFlows.get(9).setBpmnAction("config-assign");
+        orchFlows.get(9).setBpmnScope("pnf");
+        orchFlows.get(10).setBpmnAction("config-deploy");
+        orchFlows.get(10).setBpmnScope("pnf");
+        orchFlows.get(18).setBpmnAction("config-deploy");
+        orchFlows.get(18).setBpmnScope("vnf");
+        northBoundRequest.setOrchestrationFlowList(orchFlows);
+
+        Service service = new Service();
+        service.setModelUUID("f2444885-3c76-4ddc-8668-7741c0631495");
+
+        VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
+        vfModuleCustomization.setModelCustomizationUUID("3bd19000-6d21-49f1-9eb3-ea76a6eac5e0");
+        vfModuleCustomization.setVolumeHeatEnv(new HeatEnvironment());
+        org.onap.so.db.catalog.beans.VfModule vfModule = new org.onap.so.db.catalog.beans.VfModule();
+        vfModule.setVolumeHeatTemplate(new HeatTemplate());
+        vfModuleCustomization.setVfModule(vfModule);
+
+        VfModuleCustomization vfModuleCustomization2 = new VfModuleCustomization();
+        vfModuleCustomization2.setModelCustomizationUUID("83677d89-428a-407b-b4ec-738e68275d84");
+        vfModuleCustomization2.setHeatEnvironment(new HeatEnvironment());
+        org.onap.so.db.catalog.beans.VfModule vfModule2 = new org.onap.so.db.catalog.beans.VfModule();
+        vfModule2.setModuleHeatTemplate(new HeatTemplate());
+        vfModuleCustomization2.setVfModule(vfModule2);
+
+        when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
+                false, "DEFAULT")).thenReturn(northBoundRequest);
+        when(catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID("3bd19000-6d21-49f1-9eb3-ea76a6eac5e0"))
+                .thenReturn(vfModuleCustomization);
+        when(catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID("83677d89-428a-407b-b4ec-738e68275d84"))
+                .thenReturn(vfModuleCustomization2);
+        when(catalogDbClient.getServiceByID("f2444885-3c76-4ddc-8668-7741c0631495")).thenReturn(service);
+
+
+        Resource serviceResource =
+                new Resource(WorkflowType.SERVICE, "f2444885-3c76-4ddc-8668-7741c0631495", false, null);
+        Resource vnfResource1 =
+                new Resource(WorkflowType.VNF, "0d0ba1ee-6b7f-47fe-8266-2967993b2c08", false, serviceResource);
+        vnfResource1.setInstanceName("vnf-instanceName-1");
+        Resource vfmResource1 =
+                new Resource(WorkflowType.VFMODULE, "3bd19000-6d21-49f1-9eb3-ea76a6eac5e0", false, vnfResource1);
+        vfmResource1.setInstanceName("demo-network-1");
+        Resource vfmResource2 =
+                new Resource(WorkflowType.VFMODULE, "83677d89-428a-407b-b4ec-738e68275d84", false, vnfResource1);
+        vfmResource2.setInstanceName("demo-1");
+        Resource vnfResource2 =
+                new Resource(WorkflowType.VNF, "0d0ba1ee-6b7f-47fe-8266-2967993b2c08", false, serviceResource);
+        vnfResource2.setInstanceName("vnf-instanceName-2");
+        Resource vfmResource3 =
+                new Resource(WorkflowType.VFMODULE, "83677d89-428a-407b-b4ec-738e68275d84", false, vnfResource2);
+        vfmResource3.setInstanceName("demo-2");
+        Resource vfmResource4 =
+                new Resource(WorkflowType.VFMODULE, "83677d89-428a-407b-b4ec-738e68275d84", false, vnfResource2);
+        vfmResource4.setInstanceName("demo-3");
+
+        when(userParamsServiceTraversal.getResourceListFromUserParams(any(), anyList(), anyString(), any()))
+                .thenReturn(Arrays.asList(serviceResource, vnfResource1, vnfResource2, vfmResource1, vfmResource2,
+                        vfmResource3, vfmResource4));
+
+        workflowAction.selectExecutionList(execution);
+
+        List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+
+        Map<String, List<ExecuteBuildingBlock>> flowNamesToEbbList =
+                ebbs.stream().collect(Collectors.groupingBy(e -> e.getBuildingBlock().getBpmnFlowName()));
+
+        assertEquals(1, flowNamesToEbbList.get("AssignServiceInstanceBB").size());
+        assertEquals(2, flowNamesToEbbList.get("AssignVnfBB").size());
+        assertEquals(4, flowNamesToEbbList.get("AssignVfModuleBB").size());
+        assertEquals(4, flowNamesToEbbList.get("ControllerExecutionBB").size());
+        assertEquals(4, flowNamesToEbbList.get("CreateVfModuleBB").size());
+        assertEquals(4, flowNamesToEbbList.get("ActivateVfModuleBB").size());
+        assertEquals(2, flowNamesToEbbList.get("ActivateVnfBB").size());
+        assertEquals(1, flowNamesToEbbList.get("ActivateServiceInstanceBB").size());
+
+        String vnfInstanceId1 = flowNamesToEbbList.get("AssignVnfBB").get(0).getWorkflowResourceIds().getVnfId();
+        String vnfInstanceId2 = flowNamesToEbbList.get("AssignVnfBB").get(1).getWorkflowResourceIds().getVnfId();
+
+        // should be 3 = 1 AssignVfModuleBB + 1 CreateVfModuleBB + 1 ActivateVfModuleBB
+        boolean allEbbsForVfModule1HaveCorrectParentVnfId =
+                3 == ebbs.stream().map(ExecuteBuildingBlock::getWorkflowResourceIds)
+                        .filter(w -> "demo-network-1".equals(w.getVfModuleInstanceName())
+                                && vnfInstanceId1.equals(w.getVnfId()))
+                        .count();
+        boolean allEbbsForVfModule2HaveCorrectParentVnfId = 3 == ebbs.stream()
+                .map(ExecuteBuildingBlock::getWorkflowResourceIds)
+                .filter(w -> "demo-1".equals(w.getVfModuleInstanceName()) && vnfInstanceId1.equals(w.getVnfId()))
+                .count();
+        boolean allEbbsForVfModule3HaveCorrectParentVnfId = 3 == ebbs.stream()
+                .map(ExecuteBuildingBlock::getWorkflowResourceIds)
+                .filter(w -> "demo-2".equals(w.getVfModuleInstanceName()) && vnfInstanceId2.equals(w.getVnfId()))
+                .count();
+        boolean allEbbsForVfModule4HaveCorrectParentVnfId = 3 == ebbs.stream()
+                .map(ExecuteBuildingBlock::getWorkflowResourceIds)
+                .filter(w -> "demo-3".equals(w.getVfModuleInstanceName()) && vnfInstanceId2.equals(w.getVnfId()))
+                .count();
+        assertTrue(allEbbsForVfModule1HaveCorrectParentVnfId);
+        assertTrue(allEbbsForVfModule2HaveCorrectParentVnfId);
+        assertTrue(allEbbsForVfModule3HaveCorrectParentVnfId);
+        assertTrue(allEbbsForVfModule4HaveCorrectParentVnfId);
+
+        boolean controllerExecutionBBsforVnf1HaveCorrectVnfId = flowNamesToEbbList.get("ControllerExecutionBB").stream()
+                .filter(e -> vnfInstanceId1.equals(e.getWorkflowResourceIds().getVnfId()))
+                .map(ExecuteBuildingBlock::getBuildingBlock).map(BuildingBlock::getBpmnAction)
+                .collect(Collectors.toSet()).containsAll(Set.of("config-assign", "config-deploy"));
+        assertTrue(controllerExecutionBBsforVnf1HaveCorrectVnfId);
+
+        boolean controllerExecutionBBsforVnf2HaveCorrectVnfId = flowNamesToEbbList.get("ControllerExecutionBB").stream()
+                .filter(e -> vnfInstanceId2.equals(e.getWorkflowResourceIds().getVnfId()))
+                .map(ExecuteBuildingBlock::getBuildingBlock).map(BuildingBlock::getBpmnAction)
+                .collect(Collectors.toSet()).containsAll(Set.of("config-assign", "config-deploy"));
+        assertTrue(controllerExecutionBBsforVnf2HaveCorrectVnfId);
     }
 
     @Test

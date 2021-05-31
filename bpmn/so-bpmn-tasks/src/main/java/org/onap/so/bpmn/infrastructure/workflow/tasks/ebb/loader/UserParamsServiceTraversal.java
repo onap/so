@@ -89,38 +89,45 @@ public class UserParamsServiceTraversal {
     private List<Resource> getResourceList(DelegateExecution execution, String serviceModelVersionId,
             String requestAction, Service validate) {
         List<Resource> resourceList = new ArrayList<>();
-        resourceList.add(new Resource(WorkflowType.SERVICE, validate.getModelInfo().getModelVersionId(), false));
+        Resource serviceResource =
+                new Resource(WorkflowType.SERVICE, validate.getModelInfo().getModelVersionId(), false, null);
+        resourceList.add(serviceResource);
         if (validate.getResources().getVnfs() != null) {
-            setResourceListForVnfs(execution, resourceList, validate);
+            setResourceListForVnfs(execution, resourceList, serviceResource, validate);
         }
         if (validate.getResources().getPnfs() != null) {
-            setResourceListForPnfs(resourceList, validate);
+            setResourceListForPnfs(resourceList, serviceResource, validate);
         }
         if (validate.getResources().getNetworks() != null) {
-            setResourceListForNetworks(execution, serviceModelVersionId, requestAction, resourceList, validate);
+            setResourceListForNetworks(execution, serviceResource, serviceModelVersionId, requestAction, resourceList,
+                    validate);
         }
         return resourceList;
     }
 
-    private void setResourceListForVnfs(DelegateExecution execution, List<Resource> resourceList, Service validate) {
+    private void setResourceListForVnfs(DelegateExecution execution, List<Resource> resourceList,
+            Resource serviceResource, Service validate) {
         for (Vnfs vnf : validate.getResources().getVnfs()) {
             setVnfCustomizationUUID(vnf);
-            resourceList.add(new Resource(WorkflowType.VNF, vnf.getModelInfo().getModelCustomizationId(), false));
-            setResourceListForVfModules(execution, resourceList, validate, vnf);
+            Resource vnfResource = new Resource(WorkflowType.VNF, vnf.getModelInfo().getModelCustomizationId(), false,
+                    serviceResource);
+            vnfResource.setInstanceName(vnf.getInstanceName());
+            resourceList.add(vnfResource);
+            setResourceListForVfModules(execution, resourceList, vnfResource, validate, vnf);
         }
     }
 
-    private void setResourceListForVfModules(DelegateExecution execution, List<Resource> resourceList, Service validate,
-            Vnfs vnf) {
+    private void setResourceListForVfModules(DelegateExecution execution, List<Resource> resourceList,
+            Resource vnfResource, Service validate, Vnfs vnf) {
         if (vnf.getVfModules() != null) {
             for (VfModules vfModule : vnf.getVfModules()) {
                 setVfModuleCustomizationUUID(vfModule);
                 VfModuleCustomization vfModuleCustomization =
                         catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID(vfModuleCustomizationUUID);
                 if (vfModuleCustomization != null && vfModuleCustomization.getVfModule() != null) {
-                    setVolumeGroupWorkFlowTypeToResourceList(resourceList, vfModuleCustomization);
-                    setVfModuleAndConfigurationWorkFlowTypeToResourceList(resourceList, validate, vnf, vfModule,
-                            vfModuleCustomization);
+                    setVolumeGroupWorkFlowTypeToResourceList(resourceList, vnfResource, vfModuleCustomization);
+                    setVfModuleAndConfigurationWorkFlowTypeToResourceList(resourceList, vnfResource, validate, vnf,
+                            vfModule, vfModuleCustomization);
                     if (!foundVfModuleOrVG) {
                         buildAndThrowException(execution,
                                 "Could not determine if vfModule was a vfModule or volume group. Heat template and Heat env are null");
@@ -130,46 +137,49 @@ public class UserParamsServiceTraversal {
         }
     }
 
-    private void setVolumeGroupWorkFlowTypeToResourceList(List<Resource> resourceList,
+    private void setVolumeGroupWorkFlowTypeToResourceList(List<Resource> resourceList, Resource vnfResource,
             VfModuleCustomization vfModuleCustomization) {
         if (vfModuleCustomization.getVfModule().getVolumeHeatTemplate() != null
                 && vfModuleCustomization.getVolumeHeatEnv() != null) {
             foundVfModuleOrVG = true;
-            resourceList.add(
-                    new Resource(WorkflowType.VOLUMEGROUP, vfModuleCustomization.getModelCustomizationUUID(), false));
+            resourceList.add(new Resource(WorkflowType.VOLUMEGROUP, vfModuleCustomization.getModelCustomizationUUID(),
+                    false, vnfResource));
         }
     }
 
-    private void setVfModuleAndConfigurationWorkFlowTypeToResourceList(List<Resource> resourceList, Service validate,
-            Vnfs vnf, VfModules vfModule, VfModuleCustomization vfModuleCustomization) {
+    private void setVfModuleAndConfigurationWorkFlowTypeToResourceList(List<Resource> resourceList,
+            Resource vnfResource, Service validate, Vnfs vnf, VfModules vfModule,
+            VfModuleCustomization vfModuleCustomization) {
         if ((vfModuleCustomization.getVfModule().getModuleHeatTemplate() != null
                 && vfModuleCustomization.getHeatEnvironment() != null)
                 || (vfModuleCustomization.getVfModule().getModelName() != null
                         && vfModuleCustomization.getVfModule().getModelName().contains("helm"))) {
             foundVfModuleOrVG = true;
-            Resource resource = setVfModuleWorkFlowTypeToResourceList(resourceList, vfModuleCustomization);
-            setConfigurationWorkFlowTypeToResourceList(resourceList, validate, vnf, vfModule, resource);
+            Resource resource =
+                    setVfModuleWorkFlowTypeToResourceList(resourceList, vnfResource, vfModule, vfModuleCustomization);
+            setConfigurationWorkFlowTypeToResourceList(resourceList, vnfResource, validate, vnf, vfModule, resource);
         }
     }
 
-    private Resource setVfModuleWorkFlowTypeToResourceList(List<Resource> resourceList,
-            VfModuleCustomization vfModuleCustomization) {
-        Resource resource =
-                new Resource(WorkflowType.VFMODULE, vfModuleCustomization.getModelCustomizationUUID(), false);
+    private Resource setVfModuleWorkFlowTypeToResourceList(List<Resource> resourceList, Resource vnfResource,
+            VfModules vfModule, VfModuleCustomization vfModuleCustomization) {
+        Resource resource = new Resource(WorkflowType.VFMODULE, vfModuleCustomization.getModelCustomizationUUID(),
+                false, vnfResource);
         resource.setBaseVfModule(vfModuleCustomization.getVfModule().getIsBase() != null
                 && vfModuleCustomization.getVfModule().getIsBase());
+        resource.setInstanceName(vfModule.getInstanceName());
         resourceList.add(resource);
         return resource;
     }
 
-    private void setConfigurationWorkFlowTypeToResourceList(List<Resource> resourceList, Service validate, Vnfs vnf,
-            VfModules vfModule, Resource resource) {
+    private void setConfigurationWorkFlowTypeToResourceList(List<Resource> resourceList, Resource vnfResource,
+            Service validate, Vnfs vnf, VfModules vfModule, Resource resource) {
         if (!vnfCustomizationUUID.isEmpty() && !vfModuleCustomizationUUID.isEmpty()) {
             List<CvnfcConfigurationCustomization> configs =
                     traverseCatalogDbForConfiguration(validate.getModelInfo().getModelVersionId());
             for (CvnfcConfigurationCustomization config : configs) {
                 Resource configResource = new Resource(WorkflowType.CONFIGURATION,
-                        config.getConfigurationResource().getModelUUID(), false);
+                        config.getConfigurationResource().getModelUUID(), false, vnfResource);
                 resource.setVnfCustomizationId(vnf.getModelInfo().getModelCustomizationId());
                 resource.setVfModuleCustomizationId(vfModule.getModelInfo().getModelCustomizationId());
                 resourceList.add(configResource);
@@ -193,22 +203,24 @@ public class UserParamsServiceTraversal {
         }
     }
 
-    private void setResourceListForPnfs(List<Resource> resourceList, Service validate) {
+    private void setResourceListForPnfs(List<Resource> resourceList, Resource serviceResource, Service validate) {
         for (Pnfs pnf : validate.getResources().getPnfs()) {
-            resourceList.add(new Resource(WorkflowType.PNF, pnf.getModelInfo().getModelCustomizationId(), false));
+            resourceList.add(new Resource(WorkflowType.PNF, pnf.getModelInfo().getModelCustomizationId(), false,
+                    serviceResource));
         }
     }
 
-    private void setResourceListForNetworks(DelegateExecution execution, String serviceModelVersionId,
-            String requestAction, List<Resource> resourceList, Service validate) {
+    private void setResourceListForNetworks(DelegateExecution execution, Resource serviceResource,
+            String serviceModelVersionId, String requestAction, List<Resource> resourceList, Service validate) {
         for (Networks network : validate.getResources().getNetworks()) {
-            resourceList
-                    .add(new Resource(WorkflowType.NETWORK, network.getModelInfo().getModelCustomizationId(), false));
+            resourceList.add(new Resource(WorkflowType.NETWORK, network.getModelInfo().getModelCustomizationId(), false,
+                    serviceResource));
         }
         if (requestAction.equals(CREATE_INSTANCE)) {
             String networkColCustId = queryCatalogDbForNetworkCollection(execution, serviceModelVersionId);
             if (networkColCustId != null) {
-                resourceList.add(new Resource(WorkflowType.NETWORKCOLLECTION, networkColCustId, false));
+                resourceList
+                        .add(new Resource(WorkflowType.NETWORKCOLLECTION, networkColCustId, false, serviceResource));
             }
         }
     }

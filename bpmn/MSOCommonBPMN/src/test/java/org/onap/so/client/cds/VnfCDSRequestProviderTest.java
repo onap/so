@@ -50,8 +50,7 @@ public class VnfCDSRequestProviderTest extends AbstractVnfCDSRequestProviderTest
                 ResourceKey.SERVICE_INSTANCE_ID);
         doReturn(createGenericVnf()).when(extractPojosForBB).extractByKey(buildingBlockExecution,
                 ResourceKey.GENERIC_VNF_ID);
-        doNothing().when(configureInstanceParamsForVnf).populateInstanceParams(any(), any(), anyString());
-
+        doNothing().when(configureInstanceParamsForVnf).populateInstanceParams(any(), any(), anyString(), any());
         // when
         vnfCDSRequestProvider.setExecutionObject(buildingBlockExecution);
         String payload = vnfCDSRequestProvider.buildRequestPayload(ASSIGN_ACTION).get();
@@ -81,7 +80,7 @@ public class VnfCDSRequestProviderTest extends AbstractVnfCDSRequestProviderTest
                 ResourceKey.SERVICE_INSTANCE_ID);
         doReturn(createGenericVnf()).when(extractPojosForBB).extractByKey(buildingBlockExecution,
                 ResourceKey.GENERIC_VNF_ID);
-        doNothing().when(configureInstanceParamsForVnf).populateInstanceParams(any(), any(), any());
+        doNothing().when(configureInstanceParamsForVnf).populateInstanceParams(any(), any(), any(), any());
 
         // when
         vnfCDSRequestProvider.setExecutionObject(buildingBlockExecution);

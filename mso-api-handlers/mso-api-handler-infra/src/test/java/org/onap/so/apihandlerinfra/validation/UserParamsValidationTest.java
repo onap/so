@@ -32,6 +32,7 @@ import org.onap.so.exceptions.ValidationException;
 import org.onap.so.serviceinstancebeans.Service;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.onap.so.serviceinstancebeans.VfModules;
 
 public class UserParamsValidationTest {
 
@@ -63,6 +64,182 @@ public class UserParamsValidationTest {
         thrown.expectMessage("No valid modelType in userParams service modelInfo is specified");
         validation.validate(setupValidationInformation(
                 "src/test/resources/Validation/UserParamsValidation/ModelInfoNoModelType.json"));
+    }
+
+    @Test
+    public void validateDuplicateInstanceNameDifferentCustomizationIdVnfTest() throws IOException, ValidationException {
+        thrown.expect(ValidationException.class);
+        thrown.expectMessage(
+                "No valid instanceName: same instanceName but different modelCustomizationId (instanceName should be unique)  in userParams vnf resources is specified");
+        ValidationInformation info = setupValidationInformation(
+                "src/test/resources/Validation/UserParamsValidation/DuplicateInstanceNames.json");
+        info.getUserParams().getResources().getVnfs().get(0).setInstanceName("UbuntuVNF2");
+        validation.validate(info);
+    }
+
+    @Test
+    public void validateDuplicateInstanceNameSameCustomizationIdVnfTest() throws IOException, ValidationException {
+        thrown.expect(ValidationException.class);
+        thrown.expectMessage(
+                "No valid instanceName: same instanceName with same modelCustomizationId in userParams vnf resources is specified");
+        ValidationInformation info = setupValidationInformation(
+                "src/test/resources/Validation/UserParamsValidation/DuplicateInstanceNames.json");
+        info.getUserParams().getResources().getVnfs().get(2).setInstanceName("UbuntuVNF2");
+        validation.validate(info);
+    }
+
+    @Test
+    public void validateNullInstanceNameSameCustomizationIdVnfTest() throws IOException, ValidationException {
+        thrown.expect(ValidationException.class);
+        thrown.expectMessage(
+                "No valid instanceName: instanceName is missing or empty with same modelCustomizationId in userParams vnf resources is specified");
+        ValidationInformation info = setupValidationInformation(
+                "src/test/resources/Validation/UserParamsValidation/DuplicateInstanceNames.json");
+        info.getUserParams().getResources().getVnfs().get(1).setInstanceName(null);
+        validation.validate(info);
+    }
+
+    @Test
+    public void validateDuplicateNullInstanceNameSameCustomizationIdVnfTest() throws IOException, ValidationException {
+        thrown.expect(ValidationException.class);
+        thrown.expectMessage(
+                "No valid instanceName: same instanceName with same modelCustomizationId in userParams vnf resources is specified");
+        ValidationInformation info = setupValidationInformation(
+                "src/test/resources/Validation/UserParamsValidation/DuplicateInstanceNames.json");
+        info.getUserParams().getResources().getVnfs().get(1).setInstanceName(null);
+        info.getUserParams().getResources().getVnfs().get(2).setInstanceName(null);
+        validation.validate(info);
+    }
+
+    @Test
+    public void validateDifferentInstanceNameSameCustomizationIdVnfTest() throws IOException, ValidationException {
+        ValidationInformation info = setupValidationInformation(
+                "src/test/resources/Validation/UserParamsValidation/DuplicateInstanceNames.json");
+        validation.validate(info);
+    }
+
+    @Test
+    public void validateNullInstanceNameDifferentCustomizationIdVnfTest() throws IOException, ValidationException {
+        ValidationInformation info = setupValidationInformation(
+                "src/test/resources/Validation/UserParamsValidation/DuplicateInstanceNames.json");
+        info.getUserParams().getResources().getVnfs().get(0).setInstanceName(null);
+        validation.validate(info);
+    }
+
+    @Test
+    public void validateDuplicateInstanceNameDifferentCustomizationIdVfModuleInOneVnfTest()
+            throws IOException, ValidationException {
+        thrown.expect(ValidationException.class);
+        thrown.expectMessage(
+                "No valid instanceName: same instanceName but different modelCustomizationId (instanceName should be unique)  in userParams vfModule resources is specified");
+        ValidationInformation info = setupValidationInformation(
+                "src/test/resources/Validation/UserParamsValidation/DuplicateInstanceNames.json");
+        info.getUserParams().getResources().getVnfs().get(2).getVfModules().get(2).setInstanceName("lcm-demo-ubuntu-3");
+        validation.validate(info);
+    }
+
+    @Test
+    public void validateDuplicateInstanceNameDifferentCustomizationIdVfModuleInMultipleVnfTest()
+            throws IOException, ValidationException {
+        thrown.expect(ValidationException.class);
+        thrown.expectMessage(
+                "No valid instanceName: same instanceName but different modelCustomizationId (instanceName should be unique)  in userParams vfModule resources is specified");
+        ValidationInformation info = setupValidationInformation(
+                "src/test/resources/Validation/UserParamsValidation/DuplicateInstanceNames.json");
+        info.getUserParams().getResources().getVnfs().get(0).getVfModules().get(0).setInstanceName("lcm-demo-ubuntu-3");
+        validation.validate(info);
+    }
+
+    @Test
+    public void validateDuplicateInstanceNameSameCustomizationIdVfModuleInOneVnfTest()
+            throws IOException, ValidationException {
+        thrown.expect(ValidationException.class);
+        thrown.expectMessage(
+                "No valid instanceName: same instanceName with same modelCustomizationId in userParams vfModule resources is specified");
+        ValidationInformation info = setupValidationInformation(
+                "src/test/resources/Validation/UserParamsValidation/DuplicateInstanceNames.json");
+        info.getUserParams().getResources().getVnfs().get(2).getVfModules().get(1).setInstanceName("lcm-demo-ubuntu-2");
+        validation.validate(info);
+    }
+
+    @Test
+    public void validateDuplicateInstanceNameSameCustomizationIdVfModuleInMultipleVnfTest()
+            throws IOException, ValidationException {
+        thrown.expect(ValidationException.class);
+        thrown.expectMessage(
+                "No valid instanceName: same instanceName with same modelCustomizationId in userParams vfModule resources is specified");
+        ValidationInformation info = setupValidationInformation(
+                "src/test/resources/Validation/UserParamsValidation/DuplicateInstanceNames.json");
+        VfModules vfModule1 = info.getUserParams().getResources().getVnfs().get(0).getVfModules().get(0);
+        VfModules vfModule2 = info.getUserParams().getResources().getVnfs().get(1).getVfModules().get(0);
+        vfModule2.setInstanceName(vfModule1.getInstanceName());
+        vfModule2.getModelInfo().setModelCustomizationId(vfModule1.getModelInfo().getModelCustomizationId());
+        validation.validate(info);
+    }
+
+    @Test
+    public void validateNullInstanceNameSameCustomizationIdVfModuleInOneVnfTest()
+            throws IOException, ValidationException {
+        thrown.expect(ValidationException.class);
+        thrown.expectMessage(
+                "No valid instanceName: instanceName is missing or empty with same modelCustomizationId in userParams vfModule resources is specified");
+        ValidationInformation info = setupValidationInformation(
+                "src/test/resources/Validation/UserParamsValidation/DuplicateInstanceNames.json");
+        info.getUserParams().getResources().getVnfs().get(2).getVfModules().get(1).setInstanceName(null);
+        validation.validate(info);
+    }
+
+    @Test
+    public void validateNullInstanceNameSameCustomizationIdVfModuleInMultipleVnfTest()
+            throws IOException, ValidationException {
+        thrown.expect(ValidationException.class);
+        thrown.expectMessage(
+                "No valid instanceName: instanceName is missing or empty with same modelCustomizationId in userParams vfModule resources is specified");
+        ValidationInformation info = setupValidationInformation(
+                "src/test/resources/Validation/UserParamsValidation/DuplicateInstanceNames.json");
+        VfModules vfModule1 = info.getUserParams().getResources().getVnfs().get(0).getVfModules().get(0);
+        VfModules vfModule2 = info.getUserParams().getResources().getVnfs().get(1).getVfModules().get(0);
+        vfModule2.setInstanceName(null);
+        vfModule2.getModelInfo().setModelCustomizationId(vfModule1.getModelInfo().getModelCustomizationId());
+        validation.validate(info);
+    }
+
+    @Test
+    public void validateDuplicateNullInstanceNameSameCustomizationIdVfModuleInMultipleVnfTest()
+            throws IOException, ValidationException {
+        thrown.expect(ValidationException.class);
+        thrown.expectMessage(
+                "No valid instanceName: same instanceName with same modelCustomizationId in userParams vfModule resources is specified");
+        ValidationInformation info = setupValidationInformation(
+                "src/test/resources/Validation/UserParamsValidation/DuplicateInstanceNames.json");
+        VfModules vfModule1 = info.getUserParams().getResources().getVnfs().get(0).getVfModules().get(0);
+        VfModules vfModule2 = info.getUserParams().getResources().getVnfs().get(1).getVfModules().get(0);
+        vfModule1.setInstanceName(null);
+        vfModule2.setInstanceName(null);
+        vfModule2.getModelInfo().setModelCustomizationId(vfModule1.getModelInfo().getModelCustomizationId());
+        validation.validate(info);
+    }
+
+    @Test
+    public void validateInstanceNameSameCustomizationIdVfModuleInVnfTest() throws IOException, ValidationException {
+        ValidationInformation info = setupValidationInformation(
+                "src/test/resources/Validation/UserParamsValidation/DuplicateInstanceNames.json");
+        VfModules vfModule1 = info.getUserParams().getResources().getVnfs().get(0).getVfModules().get(0);
+        VfModules vfModule2 = info.getUserParams().getResources().getVnfs().get(1).getVfModules().get(0);
+        vfModule2.getModelInfo().setModelCustomizationId(vfModule1.getModelInfo().getModelCustomizationId());
+        validation.validate(info);
+    }
+
+    @Test
+    public void validateNullInstanceNameDifferentCustomizationIdVfModuleInVnfTest()
+            throws IOException, ValidationException {
+        ValidationInformation info = setupValidationInformation(
+                "src/test/resources/Validation/UserParamsValidation/DuplicateInstanceNames.json");
+        VfModules vfModule1 = info.getUserParams().getResources().getVnfs().get(0).getVfModules().get(0);
+        vfModule1.setInstanceName(null);
+        VfModules vfModule2 = info.getUserParams().getResources().getVnfs().get(2).getVfModules().get(2);
+        vfModule2.setInstanceName(null);
+        validation.validate(info);
     }
 
     @Test
