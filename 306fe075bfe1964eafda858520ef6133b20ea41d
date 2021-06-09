@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8430db24_3e2f626e",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ExecuteBuildingBlockBuilderTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-06-09T10:12:21Z",
+      "side": 0,
+      "message": "Why these tests have been removed?",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 78,
+        "endChar": 5
+      },
+      "revId": "306fe075bfe1964eafda858520ef6133b20ea41d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}

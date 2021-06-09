@@ -1,0 +1,136 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3d0ab4f3_28344529",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1062,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-06-09T10:12:21Z",
+      "side": 1,
+      "message": "break;\nDon\u0027t you want to break the loop when you find a proper modelVersionId?",
+      "revId": "871040f79719857f2126166b0cd8152e3376a8a5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5500885b_2015fd35",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ExecuteBuildingBlockBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-06-09T10:12:21Z",
+      "side": 1,
+      "message": "Please extract the logic from this \"if\" statement to private method. We have a little to much code here.",
+      "range": {
+        "startLine": 96,
+        "startChar": 14,
+        "endLine": 97,
+        "endChar": 77
+      },
+      "revId": "871040f79719857f2126166b0cd8152e3376a8a5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fce163b7_1cd13deb",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ExecuteBuildingBlockBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-06-09T10:12:21Z",
+      "side": 1,
+      "message": "const ACTIVATE_INSTANCE, please correct this by the way",
+      "range": {
+        "startLine": 100,
+        "startChar": 49,
+        "endLine": 100,
+        "endChar": 65
+      },
+      "revId": "871040f79719857f2126166b0cd8152e3376a8a5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b8876016_74b6bb7b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/Resource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-06-09T10:12:21Z",
+      "side": 1,
+      "message": "sonar issue: make these public static final",
+      "range": {
+        "startLine": 36,
+        "startChar": 4,
+        "endLine": 37,
+        "endChar": 111
+      },
+      "revId": "871040f79719857f2126166b0cd8152e3376a8a5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "791b34b7_6fd62a88",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-06-09T10:12:21Z",
+      "side": 1,
+      "message": "Please separate this to boolean private method \"isVNFCreateOrDelete\". We have to much code in this method.",
+      "range": {
+        "startLine": 285,
+        "startChar": 8,
+        "endLine": 286,
+        "endChar": 120
+      },
+      "revId": "871040f79719857f2126166b0cd8152e3376a8a5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bf6fe409_f47773e8",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowActionConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-06-09T10:12:21Z",
+      "side": 1,
+      "message": "change to \"ASSIGN_INSTANCE\"",
+      "range": {
+        "startLine": 36,
+        "startChar": 31,
+        "endLine": 36,
+        "endChar": 45
+      },
+      "revId": "871040f79719857f2126166b0cd8152e3376a8a5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
