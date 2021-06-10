@@ -136,7 +136,7 @@ class AAISliceUtil {
             exceptionUtil.buildAndThrowWorkflowException(execution, 2500, errorMsg)
         }
         AAIResultWrapper wrapper = getAAIClient().get(uri, NotFoundException.class)
-        LOGGER.trace(" *****${PREFIX} Exit queryAAI *****")
+        LOGGER.trace(" ***** Exit queryAAI *****")
         return wrapper
     }
 

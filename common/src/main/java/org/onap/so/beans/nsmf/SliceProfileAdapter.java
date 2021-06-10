@@ -131,6 +131,7 @@ public class SliceProfileAdapter implements Serializable {
 
         anSliceProfile.setUeMobilityLevel(UeMobilityLevel.fromString(this.ueMobilityLevel));
         anSliceProfile.setResourceSharingLevel(ResourceSharingLevel.fromString(this.resourceSharingLevel));
+        anSliceProfile.setMaxNumberOfPDUSession(this.maxNumberOfPDUSession);
         anSliceProfile.setPerfReq(generatePerfReq());
 
         return anSliceProfile;
@@ -158,6 +159,8 @@ public class SliceProfileAdapter implements Serializable {
             List<PerfReqEmbb> perfReqEmbbs = new ArrayList<>();
             PerfReqEmbb perfReqEmbb = new PerfReqEmbb();
             BeanUtils.copyProperties(this, perfReqEmbb);
+            perfReqEmbb.setExpDataRateDL(this.expDataRateDL);
+            perfReqEmbb.setExpDataRateUL(this.expDataRateUL);
             perfReqEmbbs.add(perfReqEmbb);
             perfReq.setPerfReqEmbbList(perfReqEmbbs);
         } else if ("ullc".equalsIgnoreCase(sST)) {

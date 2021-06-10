@@ -677,7 +677,7 @@ return json.toString()
         requestInfo.setCallbackUrl(callbackUrl)
         requestInfo.setSourceId("so")
         requestInfo.setTimeout(timeOut)
-        requestInfo.setNumSolutions(100)
+        requestInfo.setNumSolutions(1)
 
         nsiReqBody.setRequestInfo(requestInfo)
         nsiReqBody.setNSTInfo(nstInfo)
