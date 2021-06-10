@@ -66,4 +66,7 @@ public class AnSliceProfile implements Serializable {
     @JsonProperty(value = "resourceSharingLevel")
     private ResourceSharingLevel resourceSharingLevel;
 
+    @JsonProperty(value = "maxNumberofPDUSession")
+    private int maxNumberOfPDUSession;
+
 }

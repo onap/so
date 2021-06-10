@@ -428,7 +428,8 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         serviceInfo.serviceInvariantUuid = sliceTaskInfo.NSSTInfo.invariantUUID
         serviceInfo.serviceUuid = sliceTaskInfo.NSSTInfo.UUID
         serviceInfo.sST = sliceTaskInfo.sliceProfile.sST ?: sliceParams.serviceProfile.get("sST")
-        serviceInfo.nssiName = allocateAnNssi.nssiName
+        serviceInfo.nssiName = sliceTaskInfo.suggestNssiId ? sliceTaskInfo.NSSTInfo.name : allocateAnNssi.nssiName
+        serviceInfo.nssiId = sliceTaskInfo.suggestNssiId
 
         nbiRequest.setServiceInfo(serviceInfo)
         nbiRequest.setEsrInfo(esrInfo)

@@ -374,14 +374,15 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
         if (solution != null) {
             if (execution.getVariable("queryNsiFirst")) {
                 if (solution.get("existingNSI")) {
+                    processSharedNSI(solution, sliceTaskParams, execution)
                     execution.setVariable("needQuerySliceProfile", true)
                 } else {
-                    processNewNSI(solution, sliceTaskParams)
+                    processNewSliceProfiles(solution, sliceTaskParams)
                     execution.setVariable("needQuerySliceProfile", false)
                 }
                 execution.setVariable("queryNsiFirst", false)
             } else {
-                processSharedNSI(solution, sliceTaskParams, execution)
+                processNewSliceProfiles(solution, sliceTaskParams)
                 execution.setVariable("needQuerySliceProfile", false)
             }
         }
@@ -400,18 +401,17 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
         List<String> nssiId = aaiSliceUtil.getNSSIIdList(execution,nsiId)
         List<ServiceInstance> nssiInstances = aaiSliceUtil.getNSSIListFromAAI(execution, nssiId)
 
-        List<Map> sliceProfiles = sharedNSISolution.get("sliceProfiles") as List<Map>
-        handleSliceProfiles(sliceProfiles, sliceParams)
         Map<String, Object> nssiSolution = new HashMap<>()
         for(ServiceInstance instance: nssiInstances){
             nssiSolution.put("NSSIId", instance.getServiceInstanceId())
             nssiSolution.put("NSSIName", instance.getServiceInstanceName())
-            processNssiResult(sliceParams, instance.getEnvironmentContext(), nssiSolution)
+            SubnetType subnetType = instance.getWorkloadContext() as SubnetType
+            processNssiResult(sliceParams, subnetType, nssiSolution)
         }
 
     }
 
-    private void processNewNSI(Map<String, Object> solution, SliceTaskParamsAdapter sliceParams) {
+    private void processNewSliceProfiles(Map<String, Object> solution, SliceTaskParamsAdapter sliceParams) {
         Map<String, Object> newNSISolution = solution.get("newNSISolution") as Map
         List<Map> sliceProfiles = newNSISolution.get("sliceProfiles") as List<Map>
         handleSliceProfiles(sliceProfiles, sliceParams)
