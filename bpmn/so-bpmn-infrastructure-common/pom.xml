@@ -132,11 +132,11 @@
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-spring-boot-starter-jaxrs</artifactId>
     </dependency>
- <dependency>
-    <groupId>org.apache.cxf</groupId>
-    <artifactId>cxf-rt-rs-service-description-openapi-v3</artifactId>
-    <version>3.4.2</version>
-</dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-service-description-openapi-v3</artifactId>
+      <version>3.4.2</version>
+    </dependency>
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>

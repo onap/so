@@ -45,7 +45,6 @@
     <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
     <sonar.surefire.reportsPath>${project.build.directory}/surefire-reports</sonar.surefire.reportsPath>
     <sonar.coverage.jacoco.xmlReportPaths>${project.reporting.outputDirectory}/jacoco-ut/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-    <!--sonar.jacoco.itReportPath>${project.mso.base.folder}/packages/arquillian-unit-tests/target/mso-automated-tests/jacoco-it.exec</sonar.jacoco.itReportPath -->
     <sonar.jacoco.reportMissing.force.zero>true</sonar.jacoco.reportMissing.force.zero>
     <sonar.projectVersion>${project.version}</sonar.projectVersion>
     <sonar.cpd.exclusions>**/*</sonar.cpd.exclusions>
@@ -76,6 +75,7 @@
     <bowman.client.version>0.9.0</bowman.client.version>
     <aaf.cadi.version>2.1.15</aaf.cadi.version>
     <so-etsi-sol003-adapter-version>1.8.1-SNAPSHOT</so-etsi-sol003-adapter-version>
+    <onap-logging-version>1.6.9</onap-logging-version>
   </properties>
   <distributionManagement>
     <repository>
@@ -849,17 +849,17 @@
       <dependency>
         <groupId>org.onap.logging-analytics</groupId>
         <artifactId>logging-slf4j</artifactId>
-        <version>1.6.10-SNAPSHOT</version>
+        <version>${onap-logging-version}</version>
       </dependency>
       <dependency>
         <groupId>org.onap.logging-analytics</groupId>
         <artifactId>logging-filter-base</artifactId>
-        <version>1.6.10-SNAPSHOT</version>
+        <version>${onap-logging-version}</version>
       </dependency>
       <dependency>
         <groupId>org.onap.logging-analytics</groupId>
         <artifactId>logging-filter-spring</artifactId>
-        <version>1.6.10-SNAPSHOT</version>
+        <version>${onap-logging-version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
@@ -1055,43 +1055,43 @@
         <scope>runtime</scope>
       </dependency>
       <dependency>
-      	<groupId>ch.vorburger.mariaDB4j</groupId>
-      	<artifactId>mariaDB4j</artifactId>
-      	<version>2.3.0</version>
-      	<scope>test</scope>
+        <groupId>ch.vorburger.mariaDB4j</groupId>
+        <artifactId>mariaDB4j</artifactId>
+        <version>2.3.0</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
-      	<groupId>org.springframework.cloud</groupId>
-      	<artifactId>spring-cloud-contract-wiremock</artifactId>
-      	<version>1.2.4.RELEASE</version>
-      	<scope>test</scope>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-contract-wiremock</artifactId>
+        <version>1.2.4.RELEASE</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
-      	<groupId>org.camunda.bpm.assert</groupId>
-      	<artifactId>camunda-bpm-assert</artifactId>
-      	<version>3.0.0</version>
-      	<scope>test</scope>
+        <groupId>org.camunda.bpm.assert</groupId>
+        <artifactId>camunda-bpm-assert</artifactId>
+        <version>3.0.0</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
-      	<groupId>janino</groupId>
-      	<artifactId>janino</artifactId>
-      	<version>2.5.15</version>
+        <groupId>janino</groupId>
+        <artifactId>janino</artifactId>
+        <version>2.5.15</version>
       </dependency>
       <dependency>
-      	<groupId>org.camunda.bpm</groupId>
-      	<artifactId>camunda-external-task-client</artifactId>
-      	<version>1.4.0</version>
+        <groupId>org.camunda.bpm</groupId>
+        <artifactId>camunda-external-task-client</artifactId>
+        <version>1.4.0</version>
       </dependency>
       <dependency>
-      	<groupId>pl.pragmatists</groupId>
-      	<artifactId>JUnitParams</artifactId>
-      	<version>1.0.5</version>
-      	<scope>test</scope>
-   	  </dependency>
-   	  <dependency>
-      	<groupId>io.swagger.core.v3</groupId>
-      	<artifactId>swagger-jaxrs2</artifactId>
-      	<version>2.1.7</version>
+        <groupId>pl.pragmatists</groupId>
+        <artifactId>JUnitParams</artifactId>
+        <version>1.0.5</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.swagger.core.v3</groupId>
+        <artifactId>swagger-jaxrs2</artifactId>
+        <version>2.1.7</version>
       </dependency>
       <dependency>
         <groupId>org.camunda.bpm</groupId>

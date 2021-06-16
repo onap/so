@@ -163,7 +163,7 @@
     <dependency>
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils</artifactId>
-      </dependency>
+    </dependency>
     <dependency>
       <!-- Needed for InMemoryH2Test -->
       <groupId>com.h2database</groupId>
