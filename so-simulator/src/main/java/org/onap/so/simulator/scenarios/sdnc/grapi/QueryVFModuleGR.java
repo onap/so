@@ -1,12 +1,13 @@
 package org.onap.so.simulator.scenarios.sdnc.grapi;
 
+import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
+import com.consol.citrus.simulator.scenario.Scenario;
+import com.consol.citrus.simulator.scenario.ScenarioDesigner;
+import java.security.SecureRandom;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
-import com.consol.citrus.simulator.scenario.Scenario;
-import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 
 @Scenario("SDNC-GRAPI-QueryVFModule")
 @RequestMapping(
@@ -17,7 +18,7 @@ public class QueryVFModuleGR extends AbstractSimulatorScenario {
     @Override
     public void run(ScenarioDesigner scenario) {
         scenario.http().receive().get();
-        int random = (int) (Math.random() * 50 + 1);
+        int random = (new SecureRandom()).nextInt(50) + 1;
 
         scenario.variable("vfModuleName", "vfModuleName" + random);
 
