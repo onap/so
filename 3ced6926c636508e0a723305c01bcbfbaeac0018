@@ -1,0 +1,320 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "632dd961_ae4f7bed",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2957,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-06-17T10:32:36Z",
+      "side": 1,
+      "message": "I commented these lines and test passed. Means it is not needed or test is designed wrongly.",
+      "range": {
+        "startLine": 2954,
+        "startChar": 0,
+        "endLine": 2957,
+        "endChar": 48
+      },
+      "revId": "3ced6926c636508e0a723305c01bcbfbaeac0018",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c674fe48_2eae9d0e",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2969,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-06-17T10:32:36Z",
+      "side": 1,
+      "message": "The same as above.",
+      "range": {
+        "startLine": 2960,
+        "startChar": 0,
+        "endLine": 2969,
+        "endChar": 64
+      },
+      "revId": "3ced6926c636508e0a723305c01bcbfbaeac0018",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "34e03837_d8d1e113",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2975,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-06-17T10:32:36Z",
+      "side": 1,
+      "message": "The same as above.",
+      "range": {
+        "startLine": 2975,
+        "startChar": 7,
+        "endLine": 2975,
+        "endChar": 104
+      },
+      "revId": "3ced6926c636508e0a723305c01bcbfbaeac0018",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e2313ce9_e0b1321e",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/Resource.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-06-17T10:32:36Z",
+      "side": 1,
+      "message": "It is needed only if class implements Serializable.",
+      "range": {
+        "startLine": 25,
+        "startChar": 4,
+        "endLine": 25,
+        "endChar": 70
+      },
+      "revId": "3ced6926c636508e0a723305c01bcbfbaeac0018",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7c73636d_758c3c6a",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/validators/UpgradePreWorkflowValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-06-17T10:32:36Z",
+      "side": 1,
+      "message": "ERR_MSG would be cleaner.",
+      "range": {
+        "startLine": 26,
+        "startChar": 32,
+        "endLine": 26,
+        "endChar": 38
+      },
+      "revId": "3ced6926c636508e0a723305c01bcbfbaeac0018",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "93c1ba1c_e29b8b66",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/validators/UpgradePreWorkflowValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-06-17T10:32:36Z",
+      "side": 1,
+      "message": "The same as above.",
+      "range": {
+        "startLine": 28,
+        "startChar": 32,
+        "endLine": 28,
+        "endChar": 38
+      },
+      "revId": "3ced6926c636508e0a723305c01bcbfbaeac0018",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "690616b9_46db634e",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/validators/UpgradePreWorkflowValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-06-17T10:32:36Z",
+      "side": 1,
+      "message": "sir.isEmpty() is cleaner, please replace",
+      "range": {
+        "startLine": 51,
+        "startChar": 12,
+        "endLine": 51,
+        "endChar": 28
+      },
+      "revId": "3ced6926c636508e0a723305c01bcbfbaeac0018",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "19c5c2db_b95f51c9",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/validators/UpgradePreWorkflowValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-06-17T10:32:36Z",
+      "side": 1,
+      "message": "vnfResourceCustomizations.isEmpty()",
+      "range": {
+        "startLine": 70,
+        "startChar": 12,
+        "endLine": 70,
+        "endChar": 50
+      },
+      "revId": "3ced6926c636508e0a723305c01bcbfbaeac0018",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b6d2cd2d_94c4c75b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/orchestration/AAIServiceInstanceResources.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-06-17T10:32:36Z",
+      "side": 1,
+      "message": "Empty",
+      "range": {
+        "startLine": 194,
+        "startChar": 20,
+        "endLine": 194,
+        "endChar": 25
+      },
+      "revId": "3ced6926c636508e0a723305c01bcbfbaeac0018",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "39e7b35d_92755112",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/validators/UpgradePreWorkflowValidatorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-06-17T10:32:36Z",
+      "side": 1,
+      "message": "Put objectMapper initialization here:\nobjectMapper \u003d new ObjectMapper();",
+      "revId": "3ced6926c636508e0a723305c01bcbfbaeac0018",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "05210567_5b9ed943",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/validators/UpgradePreWorkflowValidatorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-06-17T10:32:36Z",
+      "side": 1,
+      "message": "Not needed, when commented - the test passes.",
+      "range": {
+        "startLine": 64,
+        "startChar": 8,
+        "endLine": 64,
+        "endChar": 97
+      },
+      "revId": "3ced6926c636508e0a723305c01bcbfbaeac0018",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bb2e2691_d15c6147",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/validators/UpgradePreWorkflowValidatorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-06-17T10:32:36Z",
+      "side": 1,
+      "message": "in future, consider to use org.assertj.core.api.Assertions.assertThat\n\nFor example, in this case \"assertThat(message).isEmpty();\" is much cleaner for me.",
+      "range": {
+        "startLine": 93,
+        "startChar": 8,
+        "endLine": 93,
+        "endChar": 41
+      },
+      "revId": "3ced6926c636508e0a723305c01bcbfbaeac0018",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6ecd0e3e_038cb2c0",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/validators/UpgradePreWorkflowValidatorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-06-17T10:32:36Z",
+      "side": 1,
+      "message": "Not needed, when commented - the test passes.",
+      "range": {
+        "startLine": 108,
+        "startChar": 8,
+        "endLine": 108,
+        "endChar": 72
+      },
+      "revId": "3ced6926c636508e0a723305c01bcbfbaeac0018",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "56a16bfe_2e19c147",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/validators/UpgradePreWorkflowValidatorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-06-17T10:32:36Z",
+      "side": 1,
+      "message": "Not needed, when commented - the test passes.",
+      "range": {
+        "startLine": 111,
+        "startChar": 8,
+        "endLine": 113,
+        "endChar": 70
+      },
+      "revId": "3ced6926c636508e0a723305c01bcbfbaeac0018",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
