@@ -36,6 +36,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -570,6 +571,36 @@ public class ToscaResourceInstallerTest extends BaseTest {
         doReturn(invariantUUID).when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID);
         doReturn(namingPolicy).when(metadata).getValue("namingPolicy");
         doReturn(ecompGeneratedNaming).when(metadata).getValue("ecompGeneratedNaming");
+
+        ISdcCsarHelper iSdcCsarHelper = mock(ISdcCsarHelper.class);
+        List<Input> serviceInputs = new ArrayList<Input>();
+
+        LinkedHashMap<String, Object> value = new LinkedHashMap<String, Object>();
+        value.put("controller_actor", "SO-REF-DATA");
+        value.put("type", "string");
+        Input input = new Input("controller_actor", value, null);
+        serviceInputs.add(0, input);
+
+        value = new LinkedHashMap<String, Object>();
+        value.put("cds_model_version", "v1.4.0");
+        value.put("type", "string");
+        input = new Input("cds_model_version", value, null);
+        serviceInputs.add(1, input);
+
+        value = new LinkedHashMap<String, Object>();
+        value.put("cds_model_name", "Blueprint140");
+        value.put("type", "string");
+        input = new Input("cds_model_name", value, null);
+        serviceInputs.add(2, input);
+
+        value = new LinkedHashMap<String, Object>();
+        value.put("skip_post_instantiation_configuration", "false");
+        value.put("type", "boolean");
+        input = new Input("skip_post_instantiation_configuration", value, null);
+        serviceInputs.add(3, input);
+
+        doReturn(iSdcCsarHelper).when(toscaResourceStructure).getSdcCsarHelper();
+        doReturn(serviceInputs).when(iSdcCsarHelper).getServiceInputs();
 
         Service service = toscaInstaller.createService(toscaResourceStructure, resourceStructure);
 
