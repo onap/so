@@ -95,7 +95,7 @@ public class CloudIdentity {
     @Column(name = "MEMBER_ROLE")
     private String memberRole;
 
-    @JsonProperty("tenant_meta_data")
+    @JsonProperty("tenant_metadata")
     @BusinessKey
     @Column(name = "TENANT_METADATA")
     private Boolean tenantMetadata;

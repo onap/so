@@ -70,6 +70,7 @@ import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
+import org.onap.so.rest.catalog.beans.Vnf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -275,6 +276,8 @@ public class CatalogDbClient {
     private final Client<CollectionNetworkResourceCustomization> collectionNetworkResourceCustomizationClient;
 
     private final Client<ServiceRecipe> serviceRecipeClient;
+    
+    private final Client<NetworkResource> networkResourceClient;
 
     private final Client<ExternalServiceToInternalService> externalServiceToInternalServiceClient;
 
@@ -441,6 +444,7 @@ public class CatalogDbClient {
         workflowClient = clientFactory.create(Workflow.class);
         bbNameSelectionReferenceClient = clientFactory.create(BBNameSelectionReference.class);
         processingFlagsClient = clientFactory.create(ProcessingFlags.class);
+        networkResourceClient= clientFactory.create(NetworkResource.class);
 
     }
 
@@ -494,6 +498,7 @@ public class CatalogDbClient {
         workflowClient = clientFactory.create(Workflow.class);
         bbNameSelectionReferenceClient = clientFactory.create(BBNameSelectionReference.class);
         processingFlagsClient = clientFactory.create(ProcessingFlags.class);
+        networkResourceClient= clientFactory.create(NetworkResource.class);
     }
 
     public NetworkCollectionResourceCustomization getNetworkCollectionResourceCustomizationByID(
@@ -1057,7 +1062,90 @@ public class CatalogDbClient {
             throw e;
         }
     }
+    
+    public void deleteServiceRecipe(String recipeId) {
+		this.deleteSingleResource(serviceRecipeClient,
+				UriBuilder.fromUri(endpoint + SERVICE_RECIPE + URI_SEPARATOR + recipeId).build());
+	}
 
+	public void postServiceRecipe(ServiceRecipe recipe) {
+		
+		   try {
+	            HttpHeaders headers = getHttpHeaders();
+	            HttpEntity<ServiceRecipe> entity = new HttpEntity<>(recipe, headers);
+	            restTemplate
+	                    .exchange(UriComponentsBuilder.fromUriString(endpoint + "/serviceRecipe").build().encode().toString(),
+	                            HttpMethod.POST, entity, ServiceRecipe.class)
+	                    .getBody();
+	        } catch (HttpClientErrorException e) {
+	            if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
+	                throw new EntityNotFoundException("Unable to find ServiceRecipe with  Id: " + recipe.getId());
+	            }
+	            throw e;
+	        }
+	}
+    
+	public void postVnfRecipe(VnfRecipe recipe) {
+		try {
+			HttpHeaders headers = getHttpHeaders();
+			HttpEntity<VnfRecipe> entity = new HttpEntity<>(recipe, headers);
+			restTemplate
+					.exchange(UriComponentsBuilder.fromUriString(endpoint + "/vnfRecipe").build().encode().toString(),
+							HttpMethod.POST, entity, VnfRecipe.class)
+					.getBody();
+		} catch (HttpClientErrorException e) {
+			if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
+				throw new EntityNotFoundException("Unable to find VnfRecipe with  Id: " + recipe.getId());
+			}
+			throw e;
+		}
+	}
+	
+	public void postNetworkRecipe(NetworkRecipe recipe) {
+		try {
+			HttpHeaders headers = getHttpHeaders();
+			HttpEntity<NetworkRecipe> entity = new HttpEntity<>(recipe, headers);
+			restTemplate
+					.exchange(UriComponentsBuilder.fromUriString(endpoint + "/networkRecipe").build().encode().toString(),
+							HttpMethod.POST, entity, NetworkRecipe.class)
+					.getBody();
+		} catch (HttpClientErrorException e) {
+			if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
+				throw new EntityNotFoundException("Unable to find NetworkRecipe with  Id: " + recipe.getId());
+			}
+			throw e;
+		}
+	}
+	
+    public List<ServiceRecipe> getServiceRecipes() {
+            return this.getMultipleResources(serviceRecipeClient,
+                    UriBuilder.fromUri(endpoint + SERVICE_RECIPE).queryParam("size", "1000").build());
+    }
+    
+    public List<NetworkRecipe> getNetworkRecipes() {
+        return this.getMultipleResources(networkRecipeClient,
+                UriBuilder.fromUri(endpoint + NETWORK_RECIPE).queryParam("size", "1000").build());
+  }
+    
+    public List<NetworkResource> getNetworkResources() {
+        return this.getMultipleResources(networkResourceClient,
+                UriBuilder.fromUri(endpoint + "/networkResource").queryParam("size", "1000").build());
+  }
+    
+    public List<VnfResource> getVnfResources() {
+    	return this.getMultipleResources(vnfResourceClient,
+                UriBuilder.fromUri(endpoint + "/vnfResource").queryParam("size", "1000").build());
+    }
+    
+    public List<VnfRecipe> getVnfRecipes() {
+        return this.getMultipleResources(vnfRecipeClient,
+                UriBuilder.fromUri(endpoint + VNF_RECIPE).queryParam("size", "1000").build());
+  }
+    
+    private <T> void deleteSingleResource(Client<T> client, URI uri) {
+    	client.delete(uri);
+    }
+    
     public org.onap.so.rest.catalog.beans.Vnf getVnfModelInformation(String serviceModelUUID,
             String vnfCustomizationUUID, String depth) {
         if (Strings.isNullOrEmpty(serviceModelUUID)) {

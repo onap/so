@@ -87,11 +87,13 @@
     <dependency>
       <groupId>org.camunda.bpm.springboot</groupId>
       <artifactId>camunda-bpm-spring-boot-starter</artifactId>
+      <version>${camunda.springboot.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.camunda.bpm.springboot</groupId>
       <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
+      <version>${camunda.springboot.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

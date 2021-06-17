@@ -7,7 +7,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>mso-infrastructure-bpmn</artifactId>
-  <packaging>jar</packaging>
+  <packaging>war</packaging>
   <build>
     <pluginManagement>
       <plugins>
@@ -48,8 +48,17 @@
               <goal>unpack</goal>
             </goals>
             <configuration>
-              <skip>true</skip>
+              <!--              <skip>true</skip>-->
               <artifactItems>
+                <artifactItem>
+                  <groupId>org.onap.so</groupId>
+                  <artifactId>so-bpmn-tasks</artifactId>
+                  <version>${project.version}</version>
+                  <type>jar</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                  <includes>**/*</includes>
+                </artifactItem>
                 <artifactItem>
                   <groupId>org.onap.so</groupId>
                   <artifactId>MSOCommonBPMN</artifactId>
@@ -170,6 +179,12 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
+      </plugin>
     </plugins>
     <resources>
       <resource>
@@ -204,28 +219,13 @@
   </dependencyManagement>
   <dependencies>
     <dependency>
-      <groupId>org.camunda.bpm.springboot</groupId>
-      <artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.camunda.bpmn</groupId>
-          <artifactId>camunda-engine-rest-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-fileupload</groupId>
-          <artifactId>commons-fileupload</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-tomcat</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.camunda.bpm.springboot</groupId>
-      <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.camunda.bpmn</groupId>
-          <artifactId>camunda-engine-rest-core</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -237,6 +237,37 @@
         </exclusion>
       </exclusions>
       <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.camunda.bpm</groupId>
+      <artifactId>camunda-engine</artifactId>
+      <version>7.8.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.camunda.spin</groupId>
+      <artifactId>camunda-spin-core</artifactId>
+      <version>1.0.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.camunda.bpm</groupId>
+      <artifactId>camunda-engine-spring</artifactId>
+      <version>7.1.0-alpha2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-jdbc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.so</groupId>
+      <artifactId>so-bpmn-infrastructure-common</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.onap.so</groupId>
@@ -315,12 +346,18 @@
     <dependency>
       <groupId>org.camunda.bpm.springboot</groupId>
       <artifactId>camunda-bpm-spring-boot-starter-test</artifactId>
+      <version>${camunda.springboot.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.onap.aaf.authz</groupId>
       <artifactId>aaf-misc-rosetta</artifactId>
       <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-annotations</artifactId>
+      <version>1.6.2</version>
     </dependency>
   </dependencies>
 </project>

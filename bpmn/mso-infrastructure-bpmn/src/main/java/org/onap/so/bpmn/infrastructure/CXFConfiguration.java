@@ -36,6 +36,7 @@ import org.onap.so.bpmn.common.adapter.sdnc.SDNCCallbackAdapterPortType;
 import org.onap.so.bpmn.common.adapter.vnf.VnfAdapterNotify;
 import org.onap.so.bpmn.common.workflow.service.WorkflowAsyncResource;
 import org.onap.so.bpmn.common.workflow.service.WorkflowMessageResource;
+import org.onap.so.bpmn.common.workflow.service.WorkflowOnboardingSupport;
 import org.onap.so.bpmn.common.workflow.service.WorkflowResource;
 import org.onap.so.logging.cxf.interceptor.SOAPLoggingInInterceptor;
 import org.onap.so.logging.cxf.interceptor.SOAPLoggingOutInterceptor;
@@ -64,6 +65,9 @@ public class CXFConfiguration {
     private WorkflowAsyncResource workflowAsyncResource;
 
     @Autowired
+    private WorkflowOnboardingSupport workflowOnboardingSupport;
+    
+    @Autowired
     private SOAuditLogContainerFilter soAuditLogContainerFilter;
 
     @Autowired
@@ -77,7 +81,7 @@ public class CXFConfiguration {
 
     @Bean
     public ServletRegistrationBean cxfServlet() {
-        return new ServletRegistrationBean(new CXFServlet(), "/mso/*");
+        return new ServletRegistrationBean(new CXFServlet(), "/*");
     }
 
     @Bean
@@ -104,7 +108,7 @@ public class CXFConfiguration {
     public Server rsServer() {
         JAXRSServerFactoryBean endpoint = new JAXRSServerFactoryBean();
         endpoint.setBus(bus);
-        endpoint.setServiceBeans(Arrays.<Object>asList(wmr, workflowResource, workflowAsyncResource));
+        endpoint.setServiceBeans(Arrays.<Object>asList(wmr, workflowResource, workflowAsyncResource, workflowOnboardingSupport));
         endpoint.setAddress("/");
         endpoint.setFeatures(Arrays.asList(createSwaggerFeature(), new LoggingFeature()));
         endpoint.setProviders(Arrays.asList(new JacksonJsonProvider(mapper), soAuditLogContainerFilter));
