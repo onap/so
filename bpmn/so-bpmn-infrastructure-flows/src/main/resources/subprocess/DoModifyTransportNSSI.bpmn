@@ -29,7 +29,7 @@ ex.processJavaException(execution)</bpmn:script>
       <bpmn:incoming>SequenceFlow_0kixzdj</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1qv8qw1</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
-def runScript = new DoActivateTnNssi()
+def runScript = new DoModifyTnNssi()
 runScript.prepareUpdateJobStatus(execution,"FINISHED","100","Modified TN NSSI successfully")</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_03s744c" sourceRef="StartEvent_1nbljfd" targetRef="ScriptTask_1tc44ge" />
@@ -73,8 +73,8 @@ runScript.preprocessSdncModifyTnNssiRequest(execution)</bpmn:script>
       <bpmn:extensionElements>
         <camunda:in source="TNNSSMF_SDNCRequest" target="sdncAdapterWorkflowRequest" />
         <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
-        <camunda:in source="mso-request-id" target="mso-request-id" />
-        <camunda:in source="mso-service-instance-id" target="mso-service-instance-id" />
+        <camunda:in source="msoRequestId" target="mso-request-id" />
+        <camunda:in source="sliceServiceInstanceId" target="mso-service-instance-id" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:out source="sdncAdapterResponse" target="TNNSSMF_SDNCAdapterResponse" />
         <camunda:out source="SDNCA_SuccessIndicator" target="SDNCA_SuccessIndicator" />
@@ -132,6 +132,20 @@ runScript.validateSDNCResponse(execution, response, "modify")</bpmn:script>
   <bpmn:error id="Error_0p2naox" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoModifyTransportNSSI">
+      <bpmndi:BPMNEdge id="Flow_0b3rxne_di" bpmnElement="Flow_0b3rxne">
+        <di:waypoint x="690" y="146" />
+        <di:waypoint x="690" y="360" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="698" y="203" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cm9i4m_di" bpmnElement="Flow_0cm9i4m">
+        <di:waypoint x="715" y="121" />
+        <di:waypoint x="789" y="121" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="743" y="103" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1akxvak_di" bpmnElement="Flow_1akxvak">
         <di:waypoint x="1230" y="400" />
         <di:waypoint x="1372" y="400" />
@@ -171,60 +185,10 @@ runScript.validateSDNCResponse(execution, response, "modify")</bpmn:script>
         <di:waypoint x="208" y="121" />
         <di:waypoint x="290" y="121" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0cm9i4m_di" bpmnElement="Flow_0cm9i4m">
-        <di:waypoint x="715" y="121" />
-        <di:waypoint x="789" y="121" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="743" y="103" width="19" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0b3rxne_di" bpmnElement="Flow_0b3rxne">
-        <di:waypoint x="690" y="146" />
-        <di:waypoint x="690" y="360" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="698" y="203" width="15" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Activity_1vtz33q_di" bpmnElement="Activity_1vtz33q">
-        <dc:Bounds x="1229" y="74" width="121" height="94" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_14ab476_di" bpmnElement="Activity_14ab476">
-        <dc:Bounds x="989" y="74" width="121" height="94" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0h1vr2l_di" bpmnElement="Activity_0h1vr2l">
-        <dc:Bounds x="789" y="74" width="121" height="94" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_1nbljfd_di" bpmnElement="StartEvent_1nbljfd">
         <dc:Bounds x="172" y="103" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="155" y="146" width="86" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ScriptTask_1tc44ge_di" bpmnElement="ScriptTask_1tc44ge">
-        <dc:Bounds x="290" y="81" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0phv8e5_di" bpmnElement="Activity_0phv8e5">
-        <dc:Bounds x="479" y="74" width="121" height="94" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1o68a9z_di" bpmnElement="Gateway_1o68a9z" isMarkerVisible="true">
-        <dc:Bounds x="665" y="96" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="653" y="73" width="75" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ScriptTask_19uxoi8_di" bpmnElement="ScriptTask_19uxoi8">
-        <dc:Bounds x="640" y="360" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ScriptTask_1ssh2l9_di" bpmnElement="ScriptTask_1ssh2l9">
-        <dc:Bounds x="860" y="360" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0ziz3ti_di" bpmnElement="Activity_0ziz3ti">
-        <dc:Bounds x="1130" y="360" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_05h01gx_di" bpmnElement="EndEvent_05h01gx">
-        <dc:Bounds x="1372" y="382" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1380" y="425" width="20" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="SubProcess_1yv9i68_di" bpmnElement="SubProcess_1yv9i68" isExpanded="true">
@@ -246,6 +210,42 @@ runScript.validateSDNCResponse(execution, response, "modify")</bpmn:script>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_1swzdpw_di" bpmnElement="ScriptTask_1swzdpw">
         <dc:Bounds x="1029" y="1144" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_05h01gx_di" bpmnElement="EndEvent_05h01gx">
+        <dc:Bounds x="1372" y="382" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1380" y="425" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1ssh2l9_di" bpmnElement="ScriptTask_1ssh2l9">
+        <dc:Bounds x="860" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_19uxoi8_di" bpmnElement="ScriptTask_19uxoi8">
+        <dc:Bounds x="640" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0phv8e5_di" bpmnElement="Activity_0phv8e5">
+        <dc:Bounds x="479" y="74" width="121" height="94" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1tc44ge_di" bpmnElement="ScriptTask_1tc44ge">
+        <dc:Bounds x="290" y="81" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0h1vr2l_di" bpmnElement="Activity_0h1vr2l">
+        <dc:Bounds x="789" y="74" width="121" height="94" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_14ab476_di" bpmnElement="Activity_14ab476">
+        <dc:Bounds x="989" y="74" width="121" height="94" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1vtz33q_di" bpmnElement="Activity_1vtz33q">
+        <dc:Bounds x="1229" y="74" width="121" height="94" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ziz3ti_di" bpmnElement="Activity_0ziz3ti">
+        <dc:Bounds x="1130" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1o68a9z_di" bpmnElement="Gateway_1o68a9z" isMarkerVisible="true">
+        <dc:Bounds x="665" y="96" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="653" y="73" width="75" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
