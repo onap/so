@@ -80,15 +80,15 @@
   </properties>
   <distributionManagement>
     <repository>
-      <id>onap-releases</id>
+      <id>ecomp-releases</id>
       <url>${nexusproxy}/${releaseNexusPath}</url>
     </repository>
     <snapshotRepository>
-      <id>onap-snapshots</id>
+      <id>ecomp-snapshots</id>
       <url>${nexusproxy}/${snapshotNexusPath}</url>
     </snapshotRepository>
     <site>
-      <id>onap-site</id>
+      <id>ecomp-site</id>
       <url>dav:${nexusproxy}${siteNexusPath}</url>
     </site>
   </distributionManagement>
@@ -132,14 +132,14 @@
       </snapshots>
     </pluginRepository>
     <pluginRepository>
-      <id>onap-release</id>
+      <id>ecomp-release</id>
       <url>${nexusproxy}/${releaseNexusPath}</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
     </pluginRepository>
     <pluginRepository>
-      <id>onap-snapshots</id>
+      <id>ecomp-snapshots</id>
       <url>${nexusproxy}/${snapshotNexusPath}</url>
       <releases>
         <enabled>false</enabled>
@@ -148,11 +148,25 @@
   </pluginRepositories>
   <repositories>
     <repository>
-      <id>onap-public</id>
+      <id>ecomp-public</id>
       <url>https://nexus.onap.org/content/repositories/public/</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
+    </repository>
+    <repository>
+      <id>ecomp-releases</id>
+      <url>https://nexus.onap.org/content/repositories/releases/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>ecomp-snapshots</id>
+      <url>https://nexus.onap.org/content/repositories/snapshots/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
     </repository>
     <repository>
       <id>camunda-bpm</id>
