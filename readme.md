@@ -41,7 +41,7 @@ If you want to build docker images with out executing test and javadoc, then run
 
 # Getting the containers
 
-ONAP SO containers are stored on [here](https://nexus3.onap.org:10002) for the releases, and [here](https://nexus3.onap.org:10003) for the snapshots
+ONAP SO containers are stored on [here](https://nexus3.onap.org:10002) for the releases, and [here] (https://nexus3.onap.org:10003) for the snapshots
 
 The following Docker images are the actual deployment images used for running SO
 
