@@ -86,6 +86,24 @@
       "revId": "e5c088138d87b47762b54d6b24fdfb8c91bb10b5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cc903e34_03bbf832",
+        "filename": "common/src/main/java/org/onap/so/utils/ExternalTaskServiceUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2021-06-24T17:47:49Z",
+      "side": 1,
+      "message": "the switch to getRequiredProperty satisfies the requirement to have no auth tokens or keys in the code",
+      "parentUuid": "66c53813_520dfa68",
+      "revId": "e5c088138d87b47762b54d6b24fdfb8c91bb10b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }

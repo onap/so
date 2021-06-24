@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "adc8ad77_04baef68",
+        "filename": "common/src/main/java/org/onap/so/utils/ExternalTaskServiceUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2021-06-24T17:47:49Z",
+      "side": 1,
+      "message": "The license+copyright block is completely missing",
+      "revId": "0f83c5b40b5bf5ad5653c83835395625661d30aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "12df5f48_d3265a74",
+        "filename": "common/src/main/java/org/onap/so/utils/ExternalTaskUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2021-06-24T17:47:49Z",
+      "side": 1,
+      "message": "The license+copyright block is completely missing",
+      "revId": "0f83c5b40b5bf5ad5653c83835395625661d30aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "967a1909_7c5df700",
+        "filename": "common/src/test/java/org/onap/so/utils/ExternalTaskServiceUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2021-06-24T17:47:49Z",
+      "side": 1,
+      "message": "The license+copyright block is completely missing",
+      "revId": "0f83c5b40b5bf5ad5653c83835395625661d30aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
