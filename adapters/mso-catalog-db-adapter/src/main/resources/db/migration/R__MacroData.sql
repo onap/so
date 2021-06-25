@@ -38,8 +38,8 @@ INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, I
 --
 --  northbound_request_ref_lookup for updateInstance (Macro Flow)
 --
-INSERT INTO northbound_request_ref_lookup(ID, REQUEST_SCOPE, MACRO_ACTION, ACTION, IS_ALACARTE, MIN_API_VERSION, MAX_API_VERSION, IS_TOPLEVELFLOW, CLOUD_OWNER, SERVICE_TYPE)
-VALUES (500, 'Vnf', 'VNF-Macro-Modify', 'updateInstance', 0, 7, 7, 1, 'k8scloudowner4', '*');
+INSERT INTO northbound_request_ref_lookup(REQUEST_SCOPE, MACRO_ACTION, ACTION, IS_ALACARTE, MIN_API_VERSION, MAX_API_VERSION, IS_TOPLEVELFLOW, CLOUD_OWNER, SERVICE_TYPE)
+VALUES ('Vnf', 'VNF-Macro-Modify', 'updateInstance', 0, 7, 7, 1, 'k8scloudowner4', '*');
 
 
 INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID) VALUES
@@ -253,10 +253,10 @@ INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FL
 --
 --  orchestration_flow_reference for updateInstance (Macro Flow)
 --
-insert into orchestration_flow_reference (id,COMPOSITE_ACTION,SEQ_NO,FLOW_NAME,FLOW_VERSION,NB_REQ_REF_LOOKUP_ID,SCOPE,ACTION)
-values (901, 'VNF-Macro-Modify',1,'ControllerExecutionBB',1,500,'vnf','config-assign');
-insert into orchestration_flow_reference (id,COMPOSITE_ACTION,SEQ_NO,FLOW_NAME,FLOW_VERSION,NB_REQ_REF_LOOKUP_ID,SCOPE,ACTION)
-values (902, 'VNF-Macro-Modify',2,'ControllerExecutionBB',1,500,'vnf','config-deploy');
+insert into orchestration_flow_reference (COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, SCOPE, ACTION, NB_REQ_REF_LOOKUP_ID)
+values ('VNF-Macro-Modify', 1, 'ControllerExecutionBB', 1, 'vnf', 'config-assign', (SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Modify' and CLOUD_OWNER = 'k8scloudowner4'));
+insert into orchestration_flow_reference (COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, SCOPE, ACTION, NB_REQ_REF_LOOKUP_ID)
+values ('VNF-Macro-Modify', 2, 'ControllerExecutionBB', 1, 'vnf', 'config-deploy', (SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Modify' and CLOUD_OWNER = 'k8scloudowner4'));
 
 
 INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID, SCOPE, ACTION) VALUES
