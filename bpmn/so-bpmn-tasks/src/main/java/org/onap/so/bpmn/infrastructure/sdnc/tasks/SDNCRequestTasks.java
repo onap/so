@@ -31,13 +31,13 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.so.bpmn.infrastructure.sdnc.exceptions.SDNCErrorResponseException;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.exception.MapperException;
 import org.onap.so.client.sdnc.SDNCClient;
 import org.onap.so.client.sdnc.beans.SDNCRequest;
-import org.onap.logging.filter.base.ONAPComponents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,9 +47,16 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
+import net.sf.saxon.lib.NamespaceConstant;
+import net.sf.saxon.xpath.XPathFactoryImpl;
 
 @Component
 public class SDNCRequestTasks {
+
+    private static final String NET_SF_SAXON_XPATH_IMPL = "net.sf.saxon.xpath.XPathFactoryImpl";
+
+    private static final String XPATH_FACTORY_PROPERTY_NAME =
+            "javax.xml.xpath.XPathFactory:" + NamespaceConstant.OBJECT_MODEL_SAXON;
 
     private static final Logger logger = LoggerFactory.getLogger(SDNCRequestTasks.class);
 
@@ -143,14 +150,17 @@ public class SDNCRequestTasks {
         return "Y".equals(finalMessageIndicator);
     }
 
-    protected String getXmlElement(Document doc, String exp) throws Exception {
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer transformer = tf.newTransformer();
-        StringWriter writer = new StringWriter();
+    protected String getXmlElement(final Document doc, final String exp) throws Exception {
+        final TransformerFactory tf = TransformerFactory.newInstance();
+        final Transformer transformer = tf.newTransformer();
+        final StringWriter writer = new StringWriter();
         transformer.transform(new DOMSource(doc), new StreamResult(writer));
         logger.debug(writer.getBuffer().toString());
-        XPath xPath = XPathFactory.newInstance().newXPath();
-        String result = xPath.evaluate(exp, doc);
+
+        System.setProperty(XPATH_FACTORY_PROPERTY_NAME, NET_SF_SAXON_XPATH_IMPL);
+        final XPathFactory xPathFactory = XPathFactoryImpl.newInstance(NamespaceConstant.OBJECT_MODEL_SAXON);
+        final XPath xPath = xPathFactory.newXPath();
+        final String result = xPath.evaluate(exp, doc);
         if (result == null || result.isEmpty()) {
             throw new Exception("XPath Failed to find element expression: " + exp);
         }

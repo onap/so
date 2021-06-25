@@ -49,6 +49,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -87,44 +88,47 @@ public final class XmlTool {
      * @throws SAXException
      * @throws XPathExpressionException
      */
-    public static String normalize(Object xml) throws IOException, TransformerException, ParserConfigurationException,
-            SAXException, XPathExpressionException {
+    public static String normalize(final Object xml) throws IOException, TransformerException,
+            ParserConfigurationException, SAXException, XPathExpressionException {
 
         if (xml == null) {
             return null;
         }
 
-        Source xsltSource = new StreamSource(new StringReader(readResourceFile("normalize-namespaces.xsl")));
+        final Source xsltSource = new StreamSource(new StringReader(readResourceFile("normalize-namespaces.xsl")));
 
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
         dbFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         dbFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-        DocumentBuilder db = dbFactory.newDocumentBuilder();
-        InputSource source = new InputSource(new StringReader(String.valueOf(xml)));
-        Document doc = db.parse(source);
+        final DocumentBuilder db = dbFactory.newDocumentBuilder();
+        final InputSource source = new InputSource(new StringReader(String.valueOf(xml)));
+        final Document doc = db.parse(source);
 
         // Start of code to remove whitespace outside of tags
-        XPath xPath = XPathFactory.newInstance().newXPath();
-        NodeList nodeList = (NodeList) xPath.evaluate("//text()[normalize-space()='']", doc, XPathConstants.NODESET);
+        final XPath xPath = XPathFactory.newInstance().newXPath();
+        final NodeList nodeList =
+                (NodeList) xPath.evaluate("//text()[normalize-space()='']", doc, XPathConstants.NODESET);
 
         for (int i = 0; i < nodeList.getLength(); ++i) {
-            Node node = nodeList.item(i);
+            final Node node = nodeList.item(i);
             node.getParentNode().removeChild(node);
         }
         // End of code to remove whitespace outside of tags
 
         // the factory pattern supports different XSLT processors
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, StringUtils.EMPTY);
+        transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, StringUtils.EMPTY);
         transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        Transformer transformer = transformerFactory.newTransformer(xsltSource);
+        final Transformer transformer = transformerFactory.newTransformer(xsltSource);
 
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
-        StringWriter writer = new StringWriter();
+        final StringWriter writer = new StringWriter();
         transformer.transform(new DOMSource(doc), new StreamResult(writer));
         return writer.toString().trim();
     }
