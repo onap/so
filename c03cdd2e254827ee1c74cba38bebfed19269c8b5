@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "04bbc463_f94a7696",
+        "filename": "readme.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-06-25T06:31:52Z",
+      "side": 1,
+      "message": "What has changed here?",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 149
+      },
+      "revId": "c03cdd2e254827ee1c74cba38bebfed19269c8b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
