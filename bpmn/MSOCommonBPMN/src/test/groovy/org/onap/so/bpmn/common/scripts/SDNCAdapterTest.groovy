@@ -22,7 +22,7 @@ package org.onap.so.bpmn.common.scripts
 
 
 import static org.mockito.Mockito.*
-
+import javax.sound.midi.SysexMessage
 import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
@@ -48,10 +48,10 @@ public class SDNCAdapterTest {
 	}
 
 
-	String workflowResponse = """<sdncadapterworkflow:SDNCAdapterWorkflowResponse xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1"
+	String workflowResponse = """<sdncadapterworkflow:SDNCAdapterWorkflowResponse xmlns="com:att:sdnctl:l3api"
+                                                 xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1"
                                                  xmlns:tag0="http://org.onap/workflow/sdnc/adapter/schema/v1"
-                                                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                                                 xmlns="com:att:sdnctl:l3api">
+                                                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <sdncadapterworkflow:response-data>
       <tag0:CallbackHeader>
          <tag0:RequestId>testRequestId</tag0:RequestId>
