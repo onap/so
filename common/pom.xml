@@ -15,6 +15,7 @@
     <protobuf.version>3.10.0</protobuf.version>
     <grpc.netty.version>4.1.30.Final</grpc.netty.version>
     <ccsdk.version>1.1.2</ccsdk.version>
+    <spring-cloud-sleuth.version>2.0.2.RELEASE</spring-cloud-sleuth.version>
   </properties>
   <dependencies>
     <dependency>
@@ -300,6 +301,10 @@
       <groupId>org.ehcache</groupId>
       <artifactId>ehcache</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-sleuth</artifactId>
+    </dependency>
   </dependencies>
   <dependencyManagement>
     <dependencies>
@@ -307,6 +312,13 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
         <version>${springboot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-sleuth</artifactId>
+        <version>${spring-cloud-sleuth.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
