@@ -24,9 +24,11 @@ package org.onap.so.adapters.tasks.orchestration;
 
 import java.io.ByteArrayInputStream;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXB;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -66,12 +68,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.Document;
 import com.woorea.openstack.heat.model.Stack;
 
 @Component
 public class PollService extends ExternalTaskUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(PollService.class);
+
+    private static final String EMPTY_STRING = "";
 
     @Autowired
     private MsoVnfAdapterImpl vnfAdapterImpl;
@@ -318,14 +323,16 @@ public class PollService extends ExternalTaskUtils {
         success.setTrue();
     }
 
-    protected Optional<String> findRequestType(String xmlString) {
+    protected Optional<String> findRequestType(final String xmlString) {
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            org.w3c.dom.Document doc;
-            doc = builder.parse(new ByteArrayInputStream(xmlString.getBytes("UTF-8")));
+            final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, EMPTY_STRING);
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, EMPTY_STRING);
+
+            final DocumentBuilder builder = factory.newDocumentBuilder();
+            final Document doc = builder.parse(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8)));
             return Optional.of(doc.getDocumentElement().getNodeName());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Error Finding Request Type", e);
             return Optional.empty();
         }
