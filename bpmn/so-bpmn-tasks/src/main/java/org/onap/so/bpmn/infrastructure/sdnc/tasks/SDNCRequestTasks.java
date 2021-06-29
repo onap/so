@@ -22,6 +22,7 @@ package org.onap.so.bpmn.infrastructure.sdnc.tasks;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
@@ -65,6 +66,8 @@ public class SDNCRequestTasks {
     private static final String CORRELATOR = "_CORRELATOR";
     protected static final String IS_CALLBACK_COMPLETED = "isCallbackCompleted";
     protected static final String SDNC_SUCCESS = "200";
+
+    private static final String EMPTY_STRING = "";
 
     @Autowired
     private ExceptionBuilder exceptionBuilder;
@@ -151,8 +154,11 @@ public class SDNCRequestTasks {
     }
 
     protected String getXmlElement(final Document doc, final String exp) throws Exception {
-        final TransformerFactory tf = TransformerFactory.newInstance();
-        final Transformer transformer = tf.newTransformer();
+        final TransformerFactory factory = TransformerFactory.newInstance();
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, EMPTY_STRING);
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, EMPTY_STRING);
+
+        final Transformer transformer = factory.newTransformer();
         final StringWriter writer = new StringWriter();
         transformer.transform(new DOMSource(doc), new StreamResult(writer));
         logger.debug(writer.getBuffer().toString());
