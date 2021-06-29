@@ -22,6 +22,7 @@ package org.onap.so.bpmn.infrastructure.sdnc.tasks;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
@@ -30,6 +31,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.so.bpmn.infrastructure.sdnc.exceptions.SDNCErrorResponseException;
@@ -151,8 +153,11 @@ public class SDNCRequestTasks {
     }
 
     protected String getXmlElement(final Document doc, final String exp) throws Exception {
-        final TransformerFactory tf = TransformerFactory.newInstance();
-        final Transformer transformer = tf.newTransformer();
+        final TransformerFactory factory = TransformerFactory.newInstance();
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, StringUtils.EMPTY);
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, StringUtils.EMPTY);
+
+        final Transformer transformer = factory.newTransformer();
         final StringWriter writer = new StringWriter();
         transformer.transform(new DOMSource(doc), new StreamResult(writer));
         logger.debug(writer.getBuffer().toString());

@@ -32,6 +32,7 @@ import javax.xml.XMLConstants;
 import javax.xml.bind.JAXB;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
@@ -75,8 +76,6 @@ import com.woorea.openstack.heat.model.Stack;
 public class PollService extends ExternalTaskUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(PollService.class);
-
-    private static final String EMPTY_STRING = "";
 
     @Autowired
     private MsoVnfAdapterImpl vnfAdapterImpl;
@@ -326,8 +325,8 @@ public class PollService extends ExternalTaskUtils {
     protected Optional<String> findRequestType(final String xmlString) {
         try {
             final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, EMPTY_STRING);
-            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, EMPTY_STRING);
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, StringUtils.EMPTY);
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, StringUtils.EMPTY);
 
             final DocumentBuilder builder = factory.newDocumentBuilder();
             final Document doc = builder.parse(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8)));
