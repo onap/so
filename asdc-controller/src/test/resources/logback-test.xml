@@ -1,7 +1,5 @@
 <configuration>
 
-
-
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] |%X{RequestId}| %-5level
@@ -23,17 +21,17 @@
     </logger>
 
     <logger name="org.onap" level="${so.log.level:-DEBUG}" additivity="false">
-		<appender-ref ref="STDOUT" />
-	</logger>
-    
+        <appender-ref ref="STDOUT" />
+    </logger>
 
     <logger name="ch.vorburger" level="WARN" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
 
+    <logger name="org.reflections" level="ERROR" />
+
     <root level="WARN">
         <appender-ref ref="STDOUT" />
     </root>
-
 
 </configuration>

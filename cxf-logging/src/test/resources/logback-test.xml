@@ -65,6 +65,7 @@
 		<appender-ref ref="STDOUT" />
 	</logger>
 	
+    <logger name="org.reflections" level="ERROR" />
 
 	<root level="WARN">
 		<appender-ref ref="STDOUT" />

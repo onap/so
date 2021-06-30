@@ -27,5 +27,6 @@
   </root>
 
   <logger name="wiremock.org" level="DEBUG" />
+  <logger name="org.reflections" level="ERROR" />
 
 </configuration>
