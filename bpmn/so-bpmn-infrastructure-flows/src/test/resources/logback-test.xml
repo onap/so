@@ -45,6 +45,8 @@
   <logger name="AUDIT" level="info" additivity="true">
     <appender-ref ref="STDOUT"/>
   </logger>
+  
+  <logger name="org.reflections" level="ERROR" />
 
   <!-- suppress the amount of org.apache.tomcat.util.net.NioEndpoint log-->
   <logger name="org.apache.tomcat" level="WARN" />

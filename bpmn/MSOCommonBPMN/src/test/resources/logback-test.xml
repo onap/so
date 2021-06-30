@@ -24,7 +24,7 @@
   <root level="WARN">
     <appender-ref ref="STDOUT" />
   </root>
-
+  <logger name="org.reflections" level="ERROR" />
   <logger name="wiremock.org" level="ERROR" />
 
 </configuration>
