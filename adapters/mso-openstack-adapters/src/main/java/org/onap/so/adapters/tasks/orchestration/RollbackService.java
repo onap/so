@@ -2,13 +2,16 @@ package org.onap.so.adapters.tasks.orchestration;
 
 import java.io.ByteArrayInputStream;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXB;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.ws.Holder;
+import org.apache.commons.lang3.StringUtils;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
 import org.onap.so.adapters.network.MsoNetworkAdapterImpl;
@@ -24,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.Document;
 
 @Component
 public class RollbackService extends ExternalTaskUtils {
@@ -110,14 +114,16 @@ public class RollbackService extends ExternalTaskUtils {
         }
     }
 
-    protected Optional<String> findRequestType(String xmlString) {
+    protected Optional<String> findRequestType(final String xmlString) {
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            org.w3c.dom.Document doc;
-            doc = builder.parse(new ByteArrayInputStream(xmlString.getBytes("UTF-8")));
+            final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, StringUtils.EMPTY);
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, StringUtils.EMPTY);
+
+            final DocumentBuilder builder = factory.newDocumentBuilder();
+            final Document doc = builder.parse(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8)));
             return Optional.of(doc.getDocumentElement().getNodeName());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Error Finding Request Type", e);
             return Optional.empty();
         }

@@ -224,7 +224,7 @@ public final class XmlTool {
      * @return the contents of the modified XML document as a String or null/empty if the modification failed.
      * @throws IOException, TransformerException, ParserConfigurationException, SAXException
      */
-    public static Optional<String> modifyElement(String xml, String elementTag, String newValue)
+    public static Optional<String> modifyElement(final String xml, final String elementTag, final String newValue)
             throws IOException, TransformerException, ParserConfigurationException, SAXException {
 
         if (xml == null || xml.isEmpty()) {
@@ -232,15 +232,15 @@ public final class XmlTool {
             return Optional.empty();
         }
 
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
         dbFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         dbFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-        DocumentBuilder db = dbFactory.newDocumentBuilder();
-        InputSource source = new InputSource(new StringReader(xml));
-        Document doc = db.parse(source);
+        final DocumentBuilder db = dbFactory.newDocumentBuilder();
+        final InputSource source = new InputSource(new StringReader(xml));
+        final Document doc = db.parse(source);
 
-        Node modNode = doc.getElementsByTagName(elementTag).item(0);
+        final Node modNode = doc.getElementsByTagName(elementTag).item(0);
         if (modNode == null) {
             // did not find the specified element to be modified, return empty
             // System.out.println("Did not find element tag " + elementTag + " in XML");
@@ -249,9 +249,12 @@ public final class XmlTool {
             modNode.setTextContent(newValue);
         }
 
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        StringWriter writer = new StringWriter();
+        final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, StringUtils.EMPTY);
+        transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, StringUtils.EMPTY);
+
+        final Transformer transformer = transformerFactory.newTransformer();
+        final StringWriter writer = new StringWriter();
         transformer.transform(new DOMSource(doc), new StreamResult(writer));
         // return the modified String representation of the XML
         return Optional.of(writer.toString().trim());

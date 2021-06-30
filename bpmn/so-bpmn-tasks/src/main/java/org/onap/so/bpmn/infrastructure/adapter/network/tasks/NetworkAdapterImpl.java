@@ -2,12 +2,15 @@ package org.onap.so.bpmn.infrastructure.adapter.network.tasks;
 
 import java.io.ByteArrayInputStream;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.adapters.nwrest.DeleteNetworkResponse;
 import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
@@ -22,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.Document;
 
 @Component
 public class NetworkAdapterImpl {
@@ -80,14 +84,16 @@ public class NetworkAdapterImpl {
         return unmarshaller.unmarshal(reader);
     }
 
-    protected Optional<String> findResponseType(String xmlString) {
+    protected Optional<String> findResponseType(final String xmlString) {
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            org.w3c.dom.Document doc;
-            doc = builder.parse(new ByteArrayInputStream(xmlString.getBytes("UTF-8")));
+            final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, StringUtils.EMPTY);
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, StringUtils.EMPTY);
+
+            final DocumentBuilder builder = factory.newDocumentBuilder();
+            final Document doc = builder.parse(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8)));
             return Optional.of(doc.getDocumentElement().getNodeName());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Error Finding Response Type", e);
             return Optional.empty();
         }
