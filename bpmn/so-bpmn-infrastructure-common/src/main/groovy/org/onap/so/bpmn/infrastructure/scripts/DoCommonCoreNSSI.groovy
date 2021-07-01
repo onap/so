@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONArray
 import org.json.JSONObject
@@ -42,6 +43,7 @@ import org.onap.so.serviceinstancebeans.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import javax.ws.rs.NotFoundException
 import javax.ws.rs.core.Response
 
 import static org.apache.commons.lang3.StringUtils.isBlank
@@ -58,7 +60,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
     @Override
     void preProcessRequest(DelegateExecution execution) {
-        LOGGER.trace("${getPrefix()} Start preProcessRequest")
+        LOGGER.debug("${getPrefix()} Start preProcessRequest")
 
         def currentNSSI = execution.getVariable("currentNSSI")
         if (!currentNSSI) {
@@ -110,8 +112,16 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
         execution.setVariable("currentNSSI", currentNSSI)
 
+        String createSliceProfileInstance = jsonUtil.getJsonValue(execution.getVariable("sliceParams"), "isCreateSliceProfileInstance")
+        if (isBlank(createSliceProfileInstance)) {
+            String msg = "isCreateSliceProfileInstance is mandatory parameter"
+            exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+        }
+        else {
+            execution.setVariable("isCreateSliceProfileInstance", createSliceProfileInstance)
+        }
 
-        LOGGER.trace("***** ${getPrefix()} Exit preProcessRequest")
+        LOGGER.debug("***** ${getPrefix()} Exit preProcessRequest")
     }
 
 
@@ -120,7 +130,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @param execution
      */
     void getNetworkServiceInstance(DelegateExecution execution) {
-        LOGGER.trace("${getPrefix()} Start getNetworkServiceInstance")
+        LOGGER.debug("${getPrefix()} Start getNetworkServiceInstance")
 
         AAIResourcesClient client = getAAIClient()
 
@@ -144,7 +154,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
             exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
         }
 
-        LOGGER.trace("${getPrefix()} Exit getNetworkServiceInstance")
+        LOGGER.debug("${getPrefix()} Exit getNetworkServiceInstance")
     }
 
 
@@ -156,6 +166,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @return Network Service Instance
      */
     private ServiceInstance handleNetworkInstance(DelegateExecution execution, String nssiId, AAIResourceUri nssiUri, AAIResourcesClient client ) {
+        LOGGER.debug("${getPrefix()} Start handleNetworkInstance")
+
         ServiceInstance networkServiceInstance = null
 
         def currentNSSI = execution.getVariable("currentNSSI")
@@ -169,7 +181,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
                 if (networkServiceInstanceOpt.isPresent()) {
                     networkServiceInstance = networkServiceInstanceOpt.get()
 
-                    if (networkServiceInstance.getServiceRole() == "Network Service") { // Network Service role
+                    if (networkServiceInstance.getServiceRole() == null /* WorkAround */ ||  networkServiceInstance.getServiceRole() == "Network Service") { // Network Service role
                         currentNSSI['networkServiceInstanceUri'] = networkServiceInstanceUri
                         break
                     }
@@ -179,6 +191,12 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
                     LOGGER.error(msg)
                     exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
                 }
+            }
+
+            if (currentNSSI['networkServiceInstanceUri'] == null) {
+                String msg = String.format("Network Service Instance URI is null")
+                LOGGER.error(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
             }
         }
         else {
@@ -193,6 +211,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
             exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
         }
 
+        LOGGER.debug("${getPrefix()} Exit handleNetworkInstance")
+
         return networkServiceInstance
     }
 
@@ -202,7 +222,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @param execution
      */
     void getConstituteVNFFromNetworkServiceInst(DelegateExecution execution) {
-        LOGGER.trace("${getPrefix()} Start getConstituteVNFFromNetworkServiceInst")
+        LOGGER.debug("${getPrefix()} Start getConstituteVNFFromNetworkServiceInst")
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
@@ -211,6 +231,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
         AAIResourceUri networkServiceInstanceUri = (AAIResourceUri)currentNSSI['networkServiceInstanceUri']
         AAIResultWrapper wrapper = client.get(networkServiceInstanceUri);
         Optional<Relationships> relationships = wrapper.getRelationships()
+
         if (relationships.isPresent()) {
             for (AAIResourceUri constituteVnfUri : relationships.get().getRelatedUris(Types.GENERIC_VNF)) {
                 currentNSSI['constituteVnfUri'] = constituteVnfUri
@@ -234,7 +255,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
             exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
         }
 
-        LOGGER.trace("${getPrefix()} Exit getConstituteVNFFromNetworkServiceInst")
+        LOGGER.debug("${getPrefix()} Exit getConstituteVNFFromNetworkServiceInst")
 
     }
 
@@ -244,7 +265,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @param execution
      */
     void getNSSIAssociatedProfiles(DelegateExecution execution) {
-        LOGGER.trace("${getPrefix()} Start getNSSIAssociatedProfiles")
+        LOGGER.debug("${getPrefix()} Start getNSSIAssociatedProfiles")
 
         List<SliceProfile> associatedProfiles = new ArrayList<>()
 
@@ -276,7 +297,28 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
                         if (sliceProfileInstanceOpt.isPresent()) {
                             ServiceInstance sliceProfileInstance = sliceProfileInstanceOpt.get()
                             if(sliceProfileInstance.getServiceRole().equals("slice-profile-instance")) { // Service instance as a Slice Profile Instance
-                                associatedProfiles = sliceProfileInstance.getSliceProfiles()?.getSliceProfile()
+
+                                String globalSubscriberId = execution.getVariable("globalSubscriberId")
+                                String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+
+                                org.onap.aaiclient.client.generated.fluentbuilders.SliceProfiles sliceProfilesType =
+                                AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(sliceProfileInstance.getServiceInstanceId()).sliceProfiles()
+
+                                def sliceProfilesUri = AAIUriFactory.createResourceUri(sliceProfilesType)
+                                LOGGER.debug("client.exists(sliceProfilesUri = " + client.exists(sliceProfilesUri))
+                                if (!client.exists(sliceProfilesUri)) {
+                                    exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Slice Profiles URI doesn't exist")
+                                }
+
+                                AAIResultWrapper sliceProfilesWrapper = client.get(sliceProfilesUri)
+                                Optional<SliceProfiles> sliceProfilesOpt = sliceProfilesWrapper.asBean(SliceProfiles.class)
+                                if(sliceProfilesOpt.isPresent()) {
+                                    SliceProfiles sliceProfiles = sliceProfilesOpt.get()
+
+                                    associatedProfiles = sliceProfiles.getSliceProfile()
+                                }
+
+                                // associatedProfiles = sliceProfileInstance.getSliceProfiles()?.getSliceProfile()
 
                                 currentNSSI['sliceProfileInstanceUri'] = sliceProfileInstanceUri
 
@@ -302,16 +344,21 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
             exceptionUtil.buildAndThrowWorkflowException(execution, 500, "No relationships  found for nssi id = " + nssiId)
         }
 
-        if(associatedProfiles.isEmpty()) {
-            String msg = String.format("No associated profiles found for NSSI %s in AAI", nssi.getServiceInstanceId())
-            LOGGER.error(msg)
-            exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
-        }
-        else {
-            currentNSSI['associatedProfiles'] =  associatedProfiles
+        LOGGER.debug("associatedProfiles == null = " + (associatedProfiles == null))
+        if(associatedProfiles != null && associatedProfiles.isEmpty()) {
+            String isCreateSliceProfileInstanceVar = execution.getVariable("isCreateSliceProfileInstance" )
+            boolean isCreateSliceProfileInstance = Boolean.parseBoolean(isCreateSliceProfileInstanceVar)
+
+            if(!isCreateSliceProfileInstance) { // New Slice Profile Instance should not be created
+                String msg = String.format("No associated profiles found for NSSI %s in AAI", nssi.getServiceInstanceId())
+                LOGGER.error(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
+            }
         }
 
-        LOGGER.trace("${getPrefix()} Exit getNSSIAssociatedProfiles")
+        currentNSSI['associatedProfiles'] =  associatedProfiles
+
+        LOGGER.debug("${getPrefix()} Exit getNSSIAssociatedProfiles")
     }
 
 
@@ -320,7 +367,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @param execution
      */
     void calculateSNSSAI(DelegateExecution execution) {
-        LOGGER.trace("${getPrefix()} Start calculateSNSSAI")
+        LOGGER.debug("${getPrefix()} Start calculateSNSSAI")
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
@@ -342,8 +389,10 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
             snssais.add(currentSNSSAI)
         }
         else { // Slice profile instance has to be deleted
+            LOGGER.debug("calculateSNSSAI: associatedProfiles.size()" + associatedProfiles.size())
             for (SliceProfile associatedProfile : associatedProfiles) {
                 if (!associatedProfile.getSNssai().equals(currentSNSSAI)) { // not current S-NSSAI
+                    LOGGER.debug("calculateSNSSAI: associatedProfile.getSNssai()" + associatedProfile.getSNssai())
                     snssais.add(associatedProfile.getSNssai())
                 } else {
                     currentNSSI['sliceProfileS-NSSAI'] = associatedProfile
@@ -353,7 +402,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
         currentNSSI['S-NSSAIs'] = snssais
 
-        LOGGER.trace("${getPrefix()} Exit calculateSNSSAI")
+        LOGGER.debug("${getPrefix()} Exit calculateSNSSAI")
     }
 
 
@@ -362,7 +411,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @param execution
      */
     void invokePUTServiceInstance(DelegateExecution execution) {
-        LOGGER.trace("${getPrefix()} Start invokePUTServiceInstance")
+        LOGGER.debug("${getPrefix()} Start invokePUTServiceInstance")
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
@@ -372,15 +421,18 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
             ServiceInstance networkServiceInstance = (ServiceInstance)currentNSSI['networkServiceInstance']
 
-            String url = String.format("${nsmfЕndPoint}/serviceInstantiation/v7/serviceInstances/%s", networkServiceInstance.getServiceInstanceId())
+            GenericVnf constituteVnf = (GenericVnf)currentNSSI['constituteVnf']
 
-            currentNSSI['putServiceInstanceURL'] = url
+            // http://so.onap:8080/onap/so/infra/serviceInstantiation/v7/serviceInstances/de6a0aa2-19f2-41fe-b313-a5a9f159acd7/vnfs/3abbb373-8d33-4977-aa4b-2bfee496b6d5
+            String url = String.format("${nsmfЕndPoint}/serviceInstantiation/v7/serviceInstances/%s/vnfs/%s", networkServiceInstance.getServiceInstanceId(), constituteVnf.getVnfId())
 
             String msoKey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
-            String basicAuth =  UrnPropertiesReader.getVariable("mso.infra.endpoint.auth", execution)
 
-            def authHeader = ""
-            String basicAuthValue = encryptBasicAuth(basicAuth, msoKey) //utils.encrypt(basicAuth, msoKey)
+            String basicAuth =  UrnPropertiesReader.getVariable("mso.adapters.po.auth", execution)
+
+            def authHeader = utils.getBasicAuth(basicAuth, msoKey) // ""
+         /*   String basicAuthValue = encryptBasicAuth(basicAuth, msoKey) //utils.encrypt(basicAuth, msoKey)
+
             String responseAuthHeader = getAuthHeader(execution, basicAuthValue, msoKey) //utils.getBasicAuth(basicAuthValue, msoKey)
 
             String errorCode = jsonUtil.getJsonValue(responseAuthHeader, "errorCode")
@@ -389,11 +441,15 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
             }
             else {
                 exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(errorCode), jsonUtil.getJsonValue(responseAuthHeader, "errorMessage"))
-            }
+            } */
 
             def requestDetails = ""
+
             String prepareRequestDetailsResponse = prepareRequestDetails(execution)
-            errorCode = jsonUtil.getJsonValue(prepareRequestDetailsResponse, "errorCode")
+            LOGGER.debug("invokePUTServiceInstance: prepareRequestDetailsResponse=" + prepareRequestDetailsResponse)
+
+            String errorCode = jsonUtil.getJsonValue(prepareRequestDetailsResponse, "errorCode")
+            LOGGER.debug("invokePUTServiceInstance: errorCode=" + errorCode)
             if(errorCode == null || errorCode.isEmpty()) { // No error
                 requestDetails = prepareRequestDetailsResponse
             }
@@ -402,15 +458,12 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
             }
 
             String callPUTServiceInstanceResponse = callPUTServiceInstance(url, authHeader, requestDetails)
-            String putServiceInstanceResponse = ""
 
-            if(errorCode == null || errorCode.isEmpty()) { // No error
-                putServiceInstanceResponse = callPUTServiceInstanceResponse
-            }
-            else {
-                LOGGER.error(jsonUtil.getJsonValue(callPUTServiceInstanceResponse, "errorMessage"))
-                exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(errorCode), jsonUtil.getJsonValue(callPUTServiceInstanceResponse, "errorMessage"))
-            }
+            String macroOperationId = jsonUtil.getJsonValue(callPUTServiceInstanceResponse, "requestReferences.requestId")
+            String requestSelfLink = jsonUtil.getJsonValue(callPUTServiceInstanceResponse, "requestReferences.requestSelfLink")
+
+            currentNSSI['macroOperationId'] = macroOperationId
+            currentNSSI['requestSelfLink'] = requestSelfLink
 
         } catch (any) {
             String msg = "Exception in ${getPrefix()}.invokePUTServiceInstance. " + any.getCause()
@@ -418,29 +471,36 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
 
-        LOGGER.trace("${getPrefix()} Exit invokePUTServiceInstance")
+        LOGGER.debug("${getPrefix()} Exit invokePUTServiceInstance")
     }
 
 
     String callPUTServiceInstance(String url, String authHeader, String requestDetailsStr) {
+        LOGGER.debug("${getPrefix()} Start callPUTServiceInstance")
+
         String errorCode = ""
         String errorMessage = ""
         String response
 
+        LOGGER.debug("callPUTServiceInstance: url = " + url)
+        LOGGER.debug("callPUTServiceInstance: authHeader = " + authHeader)
+
         try {
-            HttpClient httpClient = getHttpClientFactory().newJsonClient(new URL(url), ONAPComponents.EXTERNAL)
+            HttpClient httpClient = getHttpClientFactory().newJsonClient(new URL(url), ONAPComponents.SO)
             httpClient.addAdditionalHeader("Authorization", authHeader)
             httpClient.addAdditionalHeader("Accept", "application/json")
 
-            Response httpResponse = httpClient.put(requestDetailsStr) // check http code ???
+            Response httpResponse = httpClient.put(requestDetailsStr)
 
-
-            if (httpResponse.hasEntity()) {
+            int soResponseCode = httpResponse.getStatus()
+            if (soResponseCode >= 200 && soResponseCode < 204 && httpResponse.hasEntity()) {
                 response = httpResponse.readEntity(String.class)
+
+                LOGGER.debug("callPUTServiceInstance: response = " + response)
             }
             else {
                 errorCode = 500
-                errorMessage = "No response received."
+                errorMessage = "Response code is " + soResponseCode
 
                 response =  "{\n" +
                         " \"errorCode\": \"${errorCode}\",\n" +
@@ -461,6 +521,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
         return response
 
+        LOGGER.debug("${getPrefix()} Exit callPUTServiceInstance")
     }
 
 
@@ -471,6 +532,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @return ModelInfo
      */
     ModelInfo prepareModelInfo(DelegateExecution execution) {
+        LOGGER.debug("${getPrefix()} Start prepareModelInfo")
 
         def currentNSSI = execution.getVariable("currentNSSI")
         ServiceInstance networkServiceInstance = (ServiceInstance)currentNSSI['networkServiceInstance']
@@ -491,6 +553,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
             modelInfo.setModelVersion(modelVerOpt.get().getModelVersion())
         }
 
+        LOGGER.debug("${getPrefix()} Exit prepareModelInfo")
+
         return modelInfo
     }
 
@@ -501,6 +565,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @return SubscriberInfo
      */
     SubscriberInfo prepareSubscriberInfo(DelegateExecution execution) {
+        LOGGER.debug("${getPrefix()} Start prepareSubscriberInfo")
+
         def currentNSSI = execution.getVariable("currentNSSI")
 
         String globalSubscriberId = execution.getVariable("globalSubscriberId")
@@ -545,6 +611,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
         } */
 
+        LOGGER.debug("${getPrefix()} Exit prepareSubscriberInfo")
+
         return subscriberInfo
     }
 
@@ -555,6 +623,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @return RequestInfo
      */
     RequestInfo prepareRequestInfo(DelegateExecution execution, ServiceInstance networkServiceInstance) {
+        LOGGER.debug("${getPrefix()} Start prepareRequestInfo")
+
         def currentNSSI = execution.getVariable("currentNSSI")
 
         String productFamilyId = execution.getVariable("productFamilyId")
@@ -565,6 +635,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
         requestInfo.setSource("VID")
         requestInfo.setProductFamilyId(productFamilyId)
         requestInfo.setRequestorId("NBI")
+
+        LOGGER.debug("${getPrefix()} Exit prepareRequestInfo")
 
         return requestInfo
     }
@@ -577,6 +649,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @return ModelInfo
      */
     ModelInfo prepareServiceModelInfo(ServiceInstance networkServiceInstance, ModelInfo modelInfo) {
+        LOGGER.debug("${getPrefix()} Start prepareServiceModelInfo")
 
         ModelInfo serviceModelInfo = new ModelInfo()
         serviceModelInfo.setModelType(ModelType.service)
@@ -585,6 +658,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
         serviceModelInfo.setModelVersionId(modelInfo.getModelVersionId())
         serviceModelInfo.setModelName(modelInfo.getModelName())
         serviceModelInfo.setModelVersion(modelInfo.getModelVersion())
+
+        LOGGER.debug("${getPrefix()} Exit prepareServiceModelInfo")
 
         return serviceModelInfo
     }
@@ -596,6 +671,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @return CloudConfiguration
      */
     CloudConfiguration prepareCloudConfiguration(DelegateExecution execution) {
+        LOGGER.debug("${getPrefix()} Start prepareCloudConfiguration")
+
         def currentNSSI = execution.getVariable("currentNSSI")
 
         CloudConfiguration cloudConfiguration = new CloudConfiguration()
@@ -603,6 +680,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
         AAIResourcesClient client = getAAIClient()
 
         AAIResourceUri constituteVnfUri = currentNSSI['constituteVnfUri']
+
         AAIResultWrapper wrapper = client.get(constituteVnfUri)
         Optional<Relationships> cloudRegionRelationshipsOps = wrapper.getRelationships()
 
@@ -617,15 +695,37 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
                 if (cloudRegionrOpt.isPresent()) {
                     cloudRegion = cloudRegionrOpt.get()
                     cloudConfiguration.setLcpCloudRegionId(cloudRegion.getCloudRegionId())
-                    for (Tenant tenant : cloudRegion.getTenants().getTenant()) {
-                        cloudConfiguration.setTenantId(tenant.getTenantId())
-                        break // only one is required
+
+                    if(cloudRegion.getTenants() != null && cloudRegion.getTenants().getTenant() != null) {
+                        for (Tenant tenant : cloudRegion.getTenants().getTenant()) {
+                            cloudConfiguration.setTenantId(tenant.getTenantId())
+                            cloudConfiguration.setTenantName(tenant.getTenantName())
+                            break // only one is required
+                        }
+                    }
+                    else {
+                        List<AAIResourceUri> tenantRelatedAAIUris = cloudRegionRelationshipsOps.get().getRelatedUris(Types.TENANT)
+                        if (!(tenantRelatedAAIUris == null || tenantRelatedAAIUris.isEmpty())) {
+                            Optional<Tenant> tenantOpt = client.get(Tenant.class, tenantRelatedAAIUris.get(0))
+                            Tenant tenant = null
+                            if (tenantOpt.isPresent()) {
+                                tenant = tenantOpt.get()
+
+                                LOGGER.debug("prepareCloudConfiguration: tenantId=" + tenant.getTenantId())
+                                LOGGER.debug("prepareCloudConfiguration: tenantName=" + tenant.getTenantName())
+
+                                cloudConfiguration.setTenantId(tenant.getTenantId())
+                                cloudConfiguration.setTenantName(tenant.getTenantName())
+                            }
+                        }
                     }
 
                     cloudConfiguration.setCloudOwner(cloudRegion.getCloudOwner())
                 }
             }
         }
+
+        LOGGER.debug("${getPrefix()} Exit prepareCloudConfiguration")
 
         return cloudConfiguration
     }
@@ -638,32 +738,99 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @return List<VfModules>
      */
     List<org.onap.so.serviceinstancebeans.VfModules> prepareVfModules(DelegateExecution execution, GenericVnf constituteVnf) {
+        LOGGER.debug("${getPrefix()} Start prepareVfModules")
 
         AAIResourcesClient client = getAAIClient()
 
+        def currentNSSI = execution.getVariable("currentNSSI")
+
         List<org.onap.so.serviceinstancebeans.VfModules> vfModuless = new ArrayList<>()
-        for (VfModule vfModule : constituteVnf.getVfModules().getVfModule()) {
-            org.onap.so.serviceinstancebeans.VfModules vfmodules = new org.onap.so.serviceinstancebeans.VfModules()
 
-            ModelInfo vfModuleModelInfo = new ModelInfo()
-            vfModuleModelInfo.setModelInvariantUuid(vfModule.getModelInvariantId())
-            vfModuleModelInfo.setModelCustomizationId(vfModule.getModelCustomizationId())
+        ServiceInstance networkServiceInstance = (ServiceInstance)currentNSSI['networkServiceInstance']
 
-            AAIResourceUri vfModuleUrl = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.serviceDesignAndCreation().model(vfModule.getModelInvariantId()).modelVer(vfModule.getModelVersionId()))
+        String networkServiceModelInvariantUuid = networkServiceInstance.getModelInvariantId()
 
-            Optional<ModelVer> vfModuleModelVerOpt = client.get(ModelVer.class, vfModuleUrl)
+        String serviceVnfs="";
+        String msg=""
+        try{
+            CatalogDbUtils catalogDbUtils = new CatalogDbUtilsFactory().create()
 
-            if (vfModuleModelVerOpt.isPresent()) {
-                vfModuleModelInfo.setModelVersionId(vfModuleModelVerOpt.get().getModelVersionId())
-                vfModuleModelInfo.setModelName(vfModuleModelVerOpt.get().getModelName())
-                vfModuleModelInfo.setModelVersion(vfModuleModelVerOpt.get().getModelVersion())
+            String json = catalogDbUtils.getServiceResourcesByServiceModelInvariantUuidString(execution, networkServiceModelInvariantUuid)
+            LOGGER.debug("***** JSON IS: "+json)
+
+            serviceVnfs = jsonUtil.getJsonValue(json, "serviceResources.serviceVnfs") ?: ""
+
+            ObjectMapper mapper = new ObjectMapper()
+
+            List<Object> vnfList = mapper.readValue(serviceVnfs, List.class)
+            LOGGER.debug("vnfList:  "+vnfList)
+
+            Map vnfMap = vnfList.get(0)
+            ModelInfo vnfModelInfo = vnfMap.get("modelInfo")
+            vnfModelInfo.setModelCustomizationId(vnfModelInfo.getModelCustomizationUuid())
+            vnfModelInfo.setModelVersionId(vnfModelInfo.getModelId())
+            LOGGER.debug("vnfModelInfo "+vnfModelInfo)
+
+            //List of VFModules
+            List<Map<String, Object>> vfModuleList = vnfMap.get("vfModules")
+            LOGGER.debug("vfModuleList "+vfModuleList)
+
+            //List of VfModules
+            List<ModelInfo> vfModelInfoList = new ArrayList<>()
+
+            //Traverse VFModules List and add in vfModelInfoList
+            for (vfModule in vfModuleList) {
+                ModelInfo vfModelInfo = vfModule.get("modelInfo")
+                vfModelInfo.setModelCustomizationId(vfModelInfo.getModelCustomizationUuid())
+                vfModelInfo.setModelVersionId(vfModelInfo.getModelId())
+                LOGGER.debug("vfModelInfo "+vfModelInfo)
+                vfModelInfoList.add(vfModelInfo)
             }
-            vfmodules.setModelInfo(vfModuleModelInfo)
 
-            vfmodules.setInstanceName(vfModule.getVfModuleName())
+            for (ModelInfo vfModuleModelInfo : vfModelInfoList) {
+                org.onap.so.serviceinstancebeans.VfModules vfModules = new org.onap.so.serviceinstancebeans.VfModules()
+                vfModules.setModelInfo(vfModuleModelInfo)
+                vfModules.setInstanceName(vfModuleModelInfo.getModelName())
 
-            vfModuless.add(vfmodules)
+                List<Map<String, Object>> vfModuleInstanceParams = new ArrayList<>()
+                vfModules.setInstanceParams(vfModuleInstanceParams)
+                vfModuless.add(vfModules)
+            }
+
+        } catch (Exception ex){
+            msg = "Exception in prepareVfModules " + ex.getMessage()
+            LOGGER.error(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
+
+        /*
+        List<org.onap.so.serviceinstancebeans.VfModules> vfModuless = new ArrayList<>()
+        if(constituteVnf.getVfModules() != null && constituteVnf.getVfModules().getVfModule() != null) {
+            for (VfModule vfModule : constituteVnf.getVfModules().getVfModule()) {
+                org.onap.so.serviceinstancebeans.VfModules vfmodules = new org.onap.so.serviceinstancebeans.VfModules()
+
+                ModelInfo vfModuleModelInfo = new ModelInfo()
+                vfModuleModelInfo.setModelInvariantUuid(vfModule.getModelInvariantId())
+                vfModuleModelInfo.setModelCustomizationId(vfModule.getModelCustomizationId())
+
+                AAIResourceUri vfModuleUrl = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.serviceDesignAndCreation().model(vfModule.getModelInvariantId()).modelVer(vfModule.getModelVersionId()))
+
+                Optional<ModelVer> vfModuleModelVerOpt = client.get(ModelVer.class, vfModuleUrl)
+
+                if (vfModuleModelVerOpt.isPresent()) {
+                    vfModuleModelInfo.setModelVersionId(vfModuleModelVerOpt.get().getModelVersionId())
+                    vfModuleModelInfo.setModelName(vfModuleModelVerOpt.get().getModelName())
+                    vfModuleModelInfo.setModelVersion(vfModuleModelVerOpt.get().getModelVersion())
+                }
+                vfmodules.setModelInfo(vfModuleModelInfo)
+
+                vfmodules.setInstanceName(vfModule.getVfModuleName())
+
+                vfModuless.add(vfmodules)
+            }
+        } */
+
+        LOGGER.debug("${getPrefix()} Exit prepareVfModules")
 
         return vfModuless
     }
@@ -676,6 +843,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @return ModelInfo
      */
     ModelInfo prepareVNFModelInfo(DelegateExecution execution, GenericVnf constituteVnf) {
+        LOGGER.debug("${getPrefix()} Start prepareVNFModelInfo")
+
         ModelInfo vnfModelInfo = new ModelInfo()
 
         AAIResourcesClient client = getAAIClient()
@@ -694,11 +863,15 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
             vnfModelInfo.setModelVersion(vnfModelVerOpt.get().getModelVersion())
         }
 
+        LOGGER.debug("${getPrefix()} Exit prepareVNFModelInfo")
+
         return vnfModelInfo
     }
 
 
     List<Map<String, Object>> prepareInstanceParams(DelegateExecution execution) {
+        LOGGER.debug("${getPrefix()} Start prepareInstanceParams")
+
         def currentNSSI = execution.getVariable("currentNSSI")
 
         List<Map<String, Object>> instanceParams = new ArrayList<>()
@@ -734,6 +907,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
         instanceParamsMap.put("supportedNssai", supportedNssaiDetailsStr)
         instanceParams.add(instanceParamsMap)
 
+        LOGGER.debug("${getPrefix()} Exit prepareInstanceParams")
+
         return instanceParams
     }
 
@@ -743,6 +918,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @return Resources
      */
     Resources prepareResources(DelegateExecution execution) {
+        LOGGER.debug("${getPrefix()} Start prepareResources")
+
         def currentNSSI = execution.getVariable("currentNSSI")
 
         Resources resources = new Resources()
@@ -781,6 +958,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
         vnfs.add(vnf)
         resources.setVnfs(vnfs)
 
+        LOGGER.debug("${getPrefix()} Exit prepareResources")
+
         return resources
     }
 
@@ -790,6 +969,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @return Service
      */
     org.onap.so.serviceinstancebeans.Service prepareService(DelegateExecution execution, ServiceInstance networkServiceInstance, ModelInfo modelInfo) {
+        LOGGER.debug("${getPrefix()} Start prepareService")
+
         org.onap.so.serviceinstancebeans.Service service = new org.onap.so.serviceinstancebeans.Service()
 
         // Model Info
@@ -799,6 +980,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
         // Resources
         service.setResources(prepareResources(execution))
+
+        LOGGER.debug("${getPrefix()} Exit prepareService")
 
         return service
 
@@ -811,6 +994,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @return RequestParameters
      */
     RequestParameters prepareRequestParameters(DelegateExecution execution, ServiceInstance networkServiceInstance, ModelInfo modelInfo) {
+        LOGGER.debug("${getPrefix()} Start prepareRequestParameters")
+
         def currentNSSI = execution.getVariable("currentNSSI")
 
         RequestParameters requestParameters = new RequestParameters()
@@ -834,6 +1019,10 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
         userParams.add(serviceMap)
         requestParameters.setUserParams(userParams)
 
+        requestParameters.setaLaCarte(false)
+
+        LOGGER.debug("${getPrefix()} Exit prepareRequestParameters")
+
         return requestParameters
     }
 
@@ -844,6 +1033,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @return OwningEntity
      */
     org.onap.so.serviceinstancebeans.OwningEntity prepareOwningEntity(DelegateExecution execution) {
+        LOGGER.debug("${getPrefix()} Start prepareOwningEntity")
+
         def currentNSSI = execution.getVariable("currentNSSI")
 
         AAIResourcesClient client = getAAIClient()
@@ -866,6 +1057,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
             }
         }
 
+        LOGGER.debug("${getPrefix()} Exit prepareOwningEntity")
+
         return owningEntity
     }
 
@@ -876,6 +1069,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @return Project
      */
     org.onap.so.serviceinstancebeans.Project prepareProject(DelegateExecution execution) {
+        LOGGER.debug("${getPrefix()} Start prepareProject")
+
         def currentNSSI = execution.getVariable("currentNSSI")
 
         AAIResourcesClient client = getAAIClient()
@@ -898,6 +1093,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
             }
         }
 
+        LOGGER.debug("${getPrefix()} Exit prepareProject")
+
         return project
     }
 
@@ -908,6 +1105,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @return
      */
     String prepareRequestDetails(DelegateExecution execution) {
+        LOGGER.debug("${getPrefix()} Start prepareRequestDetails")
+
         String errorCode = ""
         String errorMessage = ""
         String response
@@ -941,9 +1140,12 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
             // Project
             requestDetails.setProject(prepareProject(execution))
 
+            Map<String, Object> requestDetailsMap = new LinkedHashMap<>()
+            requestDetailsMap.put("requestDetails", requestDetails)
+
             ObjectMapper mapper = new ObjectMapper()
 
-            response = mapper.writeValueAsString(requestDetails)
+            response = mapper.writeValueAsString(requestDetailsMap)
         }
         catch (any) {
             String msg = "Exception in ${getPrefix()}.prepareRequestDetails. " + any.getCause()
@@ -955,6 +1157,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
                     "}"
 
         }
+
+        LOGGER.debug("${getPrefix()} Exit prepareRequestDetails")
 
         return response
     }
@@ -994,7 +1198,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @param execution
      */
     void removeSPAssociationWithNSSI(DelegateExecution execution) {
-        LOGGER.trace("${getPrefix()} Start removeSPAssociationWithNSSI")
+        LOGGER.debug("${getPrefix()} Start removeSPAssociationWithNSSI")
 
         AAIResourcesClient client = getAAIClient()
 
@@ -1005,6 +1209,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
         AAIResourceUri sliceProfileInstanceUri = (AAIResourceUri)currentNSSI['sliceProfileInstanceUri']
 
+        /*
         Optional<ServiceInstance> sliceProfileInstanceOpt = client.get(ServiceInstance.class, sliceProfileInstanceUri)
         if (sliceProfileInstanceOpt.isPresent()) {
             ServiceInstance sliceProfileInstance = sliceProfileInstanceOpt.get()
@@ -1032,7 +1237,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
         }
         else {
             exceptionUtil.buildAndThrowWorkflowException(execution, 500, "No slice profile instance found")
-        }
+        } */
 
         // Removes SLice Profile Instance association with NSSI
         try {
@@ -1043,7 +1248,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
         }
 
 
-        LOGGER.trace("${getPrefix()} Exit removeSPAssociationWithNSSI")
+        LOGGER.debug("${getPrefix()} Exit removeSPAssociationWithNSSI")
     }
 
 
@@ -1052,7 +1257,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @param execution
      */
     void deleteSliceProfileInstance(DelegateExecution execution) {
-        LOGGER.trace("${getPrefix()} Start deleteSliceProfileInstance")
+        LOGGER.debug("${getPrefix()} Start deleteSliceProfileInstance")
 
         AAIResourcesClient client = getAAIClient()
 
@@ -1066,7 +1271,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
             exceptionUtil.buildAndThrowWorkflowException(execution, 25000, "Exception occured while Slice Profile Instance delete call: " + e.getMessage())
         }
 
-        LOGGER.trace("${getPrefix()} Exit deleteSliceProfileInstance")
+        LOGGER.debug("${getPrefix()} Exit deleteSliceProfileInstance")
     }
 
 
@@ -1075,7 +1280,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @param execution
      */
     void prepareUpdateResourceOperationStatus(DelegateExecution execution) {
-        LOGGER.trace("${getPrefix()} Start updateServiceOperationStatus")
+        LOGGER.debug("${getPrefix()} Start updateServiceOperationStatus")
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
@@ -1092,7 +1297,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
         setResourceOperationStatus(execution, "finished", "100", "Core NSSI ${getAction()} successful")
 
-        LOGGER.trace("${getPrefix()} Exit updateServiceOperationStatus")
+        LOGGER.debug("${getPrefix()} Exit updateServiceOperationStatus")
     }
 
 
@@ -1102,7 +1307,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @param operationType
      */
     void setResourceOperationStatus(DelegateExecution execution, String status, String progress, String statusDesc) {
-        LOGGER.trace("${getPrefix()} Start setResourceOperationStatus")
+        LOGGER.debug("${getPrefix()} Start setResourceOperationStatus")
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
@@ -1121,7 +1326,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
         resourceOperationStatus.setStatusDescription(statusDesc)
         requestDBUtil.prepareUpdateResourceOperationStatus(execution, resourceOperationStatus)
 
-        LOGGER.trace("${getPrefix()} Exit setResourceOperationStatus")
+        LOGGER.debug("${getPrefix()} Exit setResourceOperationStatus")
     }
 
 
@@ -1130,11 +1335,11 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @param execution
      */
     void prepareFailedOperationStatusUpdate(DelegateExecution execution) {
-        LOGGER.trace("${getPrefix()} Start prepareFailedOperationStatusUpdate")
+        LOGGER.debug("${getPrefix()} Start prepareFailedOperationStatusUpdate")
 
         setResourceOperationStatus(execution, "failed", "0", "Core NSSI ${getAction()} Failed")
 
-        LOGGER.trace("${getPrefix()} Exit prepareFailedOperationStatusUpdate")
+        LOGGER.debug("${getPrefix()} Exit prepareFailedOperationStatusUpdate")
     }
 
 
@@ -1143,42 +1348,58 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @param execution
      */
     public void getPUTServiceInstanceProgress(DelegateExecution execution) {
-        LOGGER.trace("${getPrefix()} Start getPUTServiceInstanceProgress")
+        LOGGER.debug("${getPrefix()} Start getPUTServiceInstanceProgress")
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
-        String url = currentNSSI['putServiceInstanceURL']
+        ServiceInstance networkServiceInstance = (ServiceInstance)currentNSSI['networkServiceInstance']
 
-        getProgress(execution, url, "putStatus")
+        String url = currentNSSI['requestSelfLink']
 
-        LOGGER.trace("${getPrefix()} Exit getPUTServiceInstanceProgress")
+        String msoKey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
+
+        String basicAuth =  UrnPropertiesReader.getVariable("mso.adapters.po.auth", execution)
+
+        def authHeader = ""
+        String basicAuthValue = utils.getBasicAuth(basicAuth, msoKey)
+
+        getProgress(execution, url, basicAuthValue, "putStatus")
+
+        LOGGER.debug("${getPrefix()} Exit getPUTServiceInstanceProgress")
     }
 
 
-    void getProgress(DelegateExecution execution, String url, String statusVariableName) {
+    void getProgress(DelegateExecution execution, String url, String authHeader, String statusVariableName) {
+        LOGGER.debug("${getPrefix()} Start getProgress")
+
+        LOGGER.debug("getProgress: url = " + url)
+        LOGGER.debug("getProgress: authHeader = " + authHeader)
+
         String msg=""
         try {
 
-            ExternalAPIUtil externalAPIUtil = getExternalAPIUtilFactory().create()
-            Response response = externalAPIUtil.executeExternalAPIGetCall(execution, url)
+            HttpClient httpClient = getHttpClientFactory().newJsonClient(new URL(url), ONAPComponents.SO)
+            httpClient.addAdditionalHeader("Authorization", authHeader)
+            httpClient.addAdditionalHeader("Accept", "application/json")
+
+            Response response = httpClient.get()
             int responseCode = response.getStatus()
-            execution.setVariable("GetServiceOrderResponseCode", responseCode)
+          //  execution.setVariable("GetServiceOrderResponseCode", responseCode)
             LOGGER.debug("Get ServiceOrder response code is: " + responseCode)
 
-            String extApiResponse = response.readEntity(String.class)
-            JSONObject responseObj = new JSONObject(extApiResponse)
-            execution.setVariable("GetServiceOrderResponse", extApiResponse)
-            LOGGER.debug("Create response body is: " + extApiResponse)
-            //Process Response //200 OK 201 CREATED 202 ACCEPTED
-            if(responseCode == 200 || responseCode == 201 || responseCode == 202 )
-            {
-                LOGGER.debug("Get Create ServiceOrder Received a Good Response")
-                String orderState = responseObj.get("state")
-                if("REJECTED".equalsIgnoreCase(orderState)) {
-                    prepareFailedOperationStatusUpdate(execution)
-                    return
-                }
+            String soResponse = ""
+            if(response.hasEntity()) {
+                soResponse = response.readEntity(String.class)
+         //       execution.setVariable("GetServiceOrderResponse", extApiResponse)
+                LOGGER.debug("Create response body is: " + soResponse)
+            }
 
+            //Process Response //200 OK 201 CREATED 202 ACCEPTED
+            if (responseCode >= 200 && responseCode < 204) {
+                LOGGER.debug("Get Create ServiceOrder Received a Good Response")
+                String requestState = jsonUtil.getJsonValue(soResponse, "request.requestStatus.requestState")
+
+                /*
                 JSONArray items = responseObj.getJSONArray("orderItem")
                 JSONObject item = items.get(0)
                 JSONObject service = item.get("service")
@@ -1190,20 +1411,24 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
                 execution.setVariable("networkServiceId", networkServiceId)
                 String serviceOrderState = item.get("state")
-                execution.setVariable("ServiceOrderState", serviceOrderState)
+                execution.setVariable("ServiceOrderState", serviceOrderState) */
+
                 // Get serviceOrder State and process progress
-                if("ACKNOWLEDGED".equalsIgnoreCase(serviceOrderState)) {
+                if("ACKNOWLEDGED".equalsIgnoreCase(requestState)) {
                     execution.setVariable(statusVariableName, "processing")
                 }
-                else if("INPROGRESS".equalsIgnoreCase(serviceOrderState)) {
+                else if("IN_PROGRESS".equalsIgnoreCase(requestState)) {
                     execution.setVariable(statusVariableName, "processing")
                 }
-                else if("COMPLETED".equalsIgnoreCase(serviceOrderState)) {
+                else if("COMPLETE".equalsIgnoreCase(requestState)) {
                     execution.setVariable(statusVariableName, "completed")
                 }
-                else if("FAILED".equalsIgnoreCase(serviceOrderState)) {
+                else if("FAILED".equalsIgnoreCase(requestState)) {
                     msg = "ServiceOrder failed"
                     exceptionUtil.buildAndThrowWorkflowException(execution, 7000,  msg)
+                }
+                else if("REJECTED".equalsIgnoreCase(requestState)) {
+                    prepareFailedOperationStatusUpdate(execution)
                 }
                 else {
                     msg = "ServiceOrder failed"
@@ -1219,6 +1444,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000,  e.getMessage())
         }
 
+        LOGGER.debug("${getPrefix()} Exit getProgress")
     }
 
 
@@ -1228,7 +1454,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      * @param execution
      */
     void timeDelay(DelegateExecution execution) {
-        LOGGER.trace("${getPrefix()} Start timeDelay")
+        LOGGER.debug("${getPrefix()} Start timeDelay")
 
         try {
             LOGGER.debug("${getPrefix()} timeDelay going to sleep for 5 sec")
@@ -1240,8 +1466,18 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
             LOGGER.error("${getPrefix()} ::: timeDelay exception" + e)
         }
 
-        LOGGER.trace("${getPrefix()} Exit timeDelay")
+        LOGGER.debug("${getPrefix()} Exit timeDelay")
     }
+
+
+    void postProcessRequest(DelegateExecution execution) {
+        LOGGER.debug("${getPrefix()} Start postProcessRequest")
+
+        execution.removeVariable("currentNSSI")
+
+        LOGGER.debug("***** ${getPrefix()} Exit postProcessRequest")
+    }
+
 
 
     /**

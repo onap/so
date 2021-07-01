@@ -62,9 +62,11 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
      * @return SLice Profile
      */
     SliceProfile prepareSliceProfile(DelegateExecution execution) {
+        LOGGER.debug("${PREFIX} Start prepareSliceProfile")
+
         def currentNSSI = execution.getVariable("currentNSSI")
 
-        String sliceProfileID = currentNSSI['sliceProfileId']
+        String sliceProfileID = UUID.randomUUID().toString() //currentNSSI['sliceProfileId']
         Map<String,Object> sliceProfileMap = new ObjectMapper().readValue(currentNSSI['sliceProfile'], Map.class)
 
         SliceProfile sliceProfile = new SliceProfile()
@@ -77,40 +79,42 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
         sliceProfile.setConnDensity(0)
         sliceProfile.setSNssai(currentNSSI['S-NSSAI'])
 
-        if(!isBlank(sliceProfileMap.get("expDataRateUL"))) {
+        if(sliceProfileMap.get("expDataRateUL") != null) {
             sliceProfile.setExpDataRateUL(Integer.parseInt(sliceProfileMap.get("expDataRateUL").toString()))
         }
 
-        if(!isBlank(sliceProfileMap.get("expDataRateDL"))) {
+        if(sliceProfileMap.get("expDataRateDL") != null) {
             sliceProfile.setExpDataRateDL(Integer.parseInt(sliceProfileMap.get("expDataRateDL").toString()))
         }
 
-        if(!isBlank(sliceProfileMap.get("activityFactor"))) {
+        if(sliceProfileMap.get("activityFactor") != null) {
             sliceProfile.setActivityFactor(Integer.parseInt(sliceProfileMap.get("activityFactor").toString()))
         }
 
-        if(!isBlank(sliceProfileMap.get("resourceSharingLevel"))) {
+        if(sliceProfileMap.get("resourceSharingLevel") != null) {
             sliceProfile.setResourceSharingLevel(sliceProfileMap.get("resourceSharingLevel").toString())
         }
 
-        if(!isBlank(sliceProfileMap.get("uEMobilityLevel"))) {
+        if(sliceProfileMap.get("uEMobilityLevel") != null) {
             sliceProfile.setUeMobilityLevel(sliceProfileMap.get("uEMobilityLevel").toString())
         }
 
-        if(!isBlank(sliceProfileMap.get("coverageAreaTAList"))) {
+        if(sliceProfileMap.get("coverageAreaTAList") != null) {
             sliceProfile.setCoverageAreaTAList(sliceProfileMap.get("coverageAreaTAList").toString())
         }
 
-        if(!isBlank(sliceProfileMap.get("maxNumberofUEs"))) {
+        if(sliceProfileMap.get("maxNumberofUEs") != null) {
             sliceProfile.setMaxNumberOfUEs(Integer.parseInt(sliceProfileMap.get("maxNumberofUEs").toString()))
         }
 
-        if(!isBlank(sliceProfileMap.get("latency"))) {
+        if(sliceProfileMap.get("latency") != null) {
             sliceProfile.setLatency(Integer.parseInt(sliceProfileMap.get("latency").toString()))
         }
 
         sliceProfile.setProfileId(sliceProfileID)
         sliceProfile.setE2ELatency(0)
+
+        LOGGER.debug("${PREFIX} Exit prepareSliceProfile")
 
         return sliceProfile
     }
@@ -122,6 +126,7 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
      * @return Slice Profile Instance
      */
     ServiceInstance prepareSliceProfileInstance(DelegateExecution execution) {
+        LOGGER.debug("${PREFIX} Start prepareSliceProfileInstance")
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
@@ -152,6 +157,8 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
 
         // TO DO: Model info
 
+        LOGGER.debug("${PREFIX} Exit prepareSliceProfileInstance")
+
         return sliceProfileInstance
     }
 
@@ -162,7 +169,7 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
      * @param execution
      */
     void createSliceProfileInstance(DelegateExecution execution) {
-        LOGGER.trace("${PREFIX} Start createSliceProfileInstance")
+        LOGGER.debug("${PREFIX} Start createSliceProfileInstance")
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
@@ -188,7 +195,7 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
             exceptionUtil.buildAndThrowWorkflowException(execution, 25000, "Exception occurred while Slice Profile create call:" + ex.getMessage())
         }
 
-        LOGGER.trace("${PREFIX} Exit createSliceProfileInstance")
+        LOGGER.debug("${PREFIX} Exit createSliceProfileInstance")
     }
 
 
@@ -198,6 +205,8 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
      * @return AllottedResource
      */
     AllottedResource createAllottedResource(DelegateExecution execution) {
+        LOGGER.debug("${PREFIX} Start createAllottedResource")
+
         def currentNSSI = execution.getVariable("currentNSSI")
 
         String globalSubscriberId = execution.getVariable("globalSubscriberId")
@@ -223,6 +232,8 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
             exceptionUtil.buildAndThrowWorkflowException(execution, 25000, "Exception occurred while Allotted Resource create call:" + ex.getMessage())
         }
 
+        LOGGER.debug("${PREFIX} Exit createAllottedResource")
+
         return allottedResource
     }
 
@@ -233,7 +244,7 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
      * @param execution
      */
     void associateSliceProfileInstanceWithNSSI(DelegateExecution execution) {
-        LOGGER.trace("${PREFIX} Start associateSliceProfileInstanceWithNSSI")
+        LOGGER.debug("${PREFIX} Start associateSliceProfileInstanceWithNSSI")
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
@@ -247,12 +258,12 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
         AllottedResource allottedResource = createAllottedResource(execution)
         AAIResourceUri allottedResourceUri = (AAIResourceUri)currentNSSI['allottedResourceUri']
 
-        // Updates Slice Profile Instance with Allotted Resource
+        // Associates Allotted Resource with Slice Profile Instance
         try {
             AAIResourceUri sliceProfileInstanceUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(sliceProfileInstanceId))
             Optional<ServiceInstance> sliceProfileInstanceOpt = client.get(ServiceInstance.class, sliceProfileInstanceUri)
             if (sliceProfileInstanceOpt.isPresent()) {
-                ServiceInstance sliceProfileInstance = sliceProfileInstanceOpt.get()
+             /*   ServiceInstance sliceProfileInstance = sliceProfileInstanceOpt.get()
 
                 AllottedResources allottedResources = sliceProfileInstance.getAllottedResources()
                 if(allottedResources == null) {
@@ -262,7 +273,9 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
                 allottedResources.getAllottedResource().add(allottedResource)
                 sliceProfileInstance.setAllottedResources(allottedResources)
 
-                client.update(sliceProfileInstanceUri, sliceProfileInstance)
+                client.update(sliceProfileInstanceUri, sliceProfileInstance) */
+
+                client.connect(sliceProfileInstanceUri, allottedResourceUri)
             }
             else {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 500, "No slice profile instance found with id = " + sliceProfileInstanceId)
@@ -276,12 +289,12 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
         // Associates NSSI with Allotted Resource
         try {
             AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
-            client.connect(nssiUri, allottedResourceUri, AAIEdgeLabel.USES)
+            client.connect(allottedResourceUri, nssiUri)
         } catch(Exception e){
             exceptionUtil.buildAndThrowWorkflowException(execution, 25000, "Exception occured while NSSI with Allotted Resource connect call: " + e.getMessage())
         }
 
-        LOGGER.trace("${PREFIX} Exit associateSliceProfileInstanceWithNSSI")
+        LOGGER.debug("${PREFIX} Exit associateSliceProfileInstanceWithNSSI")
     }
 
 
