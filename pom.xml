@@ -45,7 +45,6 @@
     <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
     <sonar.surefire.reportsPath>${project.build.directory}/surefire-reports</sonar.surefire.reportsPath>
     <sonar.coverage.jacoco.xmlReportPaths>${project.reporting.outputDirectory}/jacoco-ut/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-    <!--sonar.jacoco.itReportPath>${project.mso.base.folder}/packages/arquillian-unit-tests/target/mso-automated-tests/jacoco-it.exec</sonar.jacoco.itReportPath -->
     <sonar.jacoco.reportMissing.force.zero>true</sonar.jacoco.reportMissing.force.zero>
     <sonar.projectVersion>${project.version}</sonar.projectVersion>
     <sonar.cpd.exclusions>**/*</sonar.cpd.exclusions>
