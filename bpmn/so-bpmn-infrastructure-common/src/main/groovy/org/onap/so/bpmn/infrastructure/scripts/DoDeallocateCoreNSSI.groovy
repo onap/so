@@ -60,7 +60,7 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
      * @param execution
      */
     void executeTerminateNSSIQuery(DelegateExecution execution) {
-        LOGGER.trace("${PREFIX} Start executeTerminateNSSIQuery")
+        LOGGER.debug("${PREFIX} Start executeTerminateNSSIQuery")
 
         String urlString = UrnPropertiesReader.getVariable("mso.oof.endpoint", execution)
 
@@ -102,7 +102,7 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
         }
 
 
-        LOGGER.trace("${PREFIX} Exit executeTerminateNSSIQuery")
+        LOGGER.debug("${PREFIX} Exit executeTerminateNSSIQuery")
     }
 
 
@@ -111,6 +111,8 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
      * @return OOF response
      */
     String callOOF(String urlString, String authHeader, String oofRequest) {
+        LOGGER.debug("${PREFIX} Start callOOF")
+
         String errorCode = ""
         String errorMessage = ""
         String response = ""
@@ -161,6 +163,7 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
                     "}"
         }
 
+        LOGGER.debug("${PREFIX} Exit callOOF")
 
         return response
     }
@@ -172,6 +175,7 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
      * @return
      */
     private String buildOOFRequest(DelegateExecution execution) {
+        LOGGER.debug("${PREFIX} Start buildOOFRequest")
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
@@ -188,6 +192,7 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
                             "    }\n" +
                             "}"
 
+        LOGGER.debug("${PREFIX} Exit buildOOFRequest")
         return request
     }
 
@@ -198,7 +203,7 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
      * @param execution
      */
     void deleteServiceOrder(DelegateExecution execution) {
-        LOGGER.trace("${PREFIX} Start deleteServiceOrder")
+        LOGGER.debug("${PREFIX} Start deleteServiceOrder")
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
@@ -249,11 +254,13 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
 
-        LOGGER.trace("${PREFIX} Exit deleteServiceOrder")
+        LOGGER.debug("${PREFIX} Exit deleteServiceOrder")
     }
 
 
     String callDeleteServiceOrder(DelegateExecution execution, String urlString, String authHeader) {
+        LOGGER.debug("${PREFIX} Start callDeleteServiceOrder")
+
         String errorCode = ""
         String errorMessage = ""
         String response = ""
@@ -286,6 +293,8 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
                     "}"
         }
 
+        LOGGER.debug("${PREFIX} Exit callDeleteServiceOrder")
+
         return response
     }
 
@@ -295,7 +304,7 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
      * @param execution
      */
     void removeNSSIAssociationWithNSI(DelegateExecution execution) {
-        LOGGER.trace("${PREFIX} Start removeNSSIAssociationWithNSI")
+        LOGGER.debug("${PREFIX} Start removeNSSIAssociationWithNSI")
 
         AAIResourcesClient client = getAAIClient()
 
@@ -339,7 +348,7 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
             exceptionUtil.buildAndThrowWorkflowException(execution, 25000, "Exception occured while NSSI association with NSI disconnect call: " + e.getMessage())
         }
 
-        LOGGER.trace("${PREFIX} Exit removeNSSIAssociationWithNSI")
+        LOGGER.debug("${PREFIX} Exit removeNSSIAssociationWithNSI")
     }
 
 
@@ -348,7 +357,7 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
      * @param execution
      */
     void deleteNSSIServiceInstance(DelegateExecution execution) {
-        LOGGER.trace("${PREFIX} Start deleteNSSIServiceInstance")
+        LOGGER.debug("${PREFIX} Start deleteNSSIServiceInstance")
 
         AAIResourcesClient client = getAAIClient()
 
@@ -363,7 +372,7 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
             exceptionUtil.buildAndThrowWorkflowException(execution, 25000, "Exception occurred while NSSI Service Instance delete call: " + e.getMessage())
         }
 
-        LOGGER.trace("${PREFIX} Exit deleteNSSIServiceInstance")
+        LOGGER.debug("${PREFIX} Exit deleteNSSIServiceInstance")
     }
 
 
@@ -372,7 +381,7 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
      * @param execution
      */
     void getDeleteServiceOrderProgress(DelegateExecution execution) {
-        LOGGER.trace("${getPrefix()} Start getDeleteServiceOrderProgress")
+        LOGGER.debug("${getPrefix()} Start getDeleteServiceOrderProgress")
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
@@ -380,6 +389,7 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
 
         getProgress(execution, url, "deleteStatus")
 
+        LOGGER.debug("${getPrefix()} Exit getDeleteServiceOrderProgress")
     }
 
 
