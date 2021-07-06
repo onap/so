@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2021 Orange
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -53,6 +55,8 @@ public class Vnfs implements Serializable {
     private List<VfModules> vfModules = new ArrayList<>();
     @JsonProperty("applicationId")
     protected String applicationId;
+    @JsonProperty("processingPriority")
+    protected Integer processingPriority = 0;
 
     public ModelInfo getModelInfo() {
         return modelInfo;
@@ -126,12 +130,20 @@ public class Vnfs implements Serializable {
         this.applicationId = applicationId;
     }
 
+    public Integer getProcessingPriority() {
+        return processingPriority;
+    }
+
+    public void setProcessingPriority(Integer processingPriority) {
+        this.processingPriority = processingPriority;
+    }
+
     @Override
     public String toString() {
         return "Vnfs [modelInfo=" + modelInfo + ", cloudConfiguration=" + cloudConfiguration + ", instanceName="
                 + instanceName + ", platform=" + platform + ", " + "lineOfBusiness=" + lineOfBusiness
                 + ", productFamilyId=" + productFamilyId + ", instanceParams=" + instanceParams + ", vfModules="
-                + vfModules + ", applicaionId=" + applicationId + " ]";
+                + vfModules + ", applicaionId=" + applicationId + ", processingPriority=" + processingPriority + " ]";
     }
 
 }

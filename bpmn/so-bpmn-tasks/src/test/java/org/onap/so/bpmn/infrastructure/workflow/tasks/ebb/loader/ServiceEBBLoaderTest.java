@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (c) 2020 Nokia
  * ================================================================================
+ * Modifications Copyright (c) 2021 Orange
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -171,10 +173,10 @@ public class ServiceEBBLoaderTest extends BaseTaskTest {
     @Test
     public void foundRelatedTest() {
         List<Resource> resourceList = new ArrayList<>();
-        resourceList.add(new Resource(WorkflowType.PNF, "model customization id", false));
-        resourceList.add(new Resource(WorkflowType.VNF, "model customization id", false));
-        resourceList.add(new Resource(WorkflowType.NETWORK, "model customization id", false));
-        resourceList.add(new Resource(WorkflowType.NETWORKCOLLECTION, "model customization id", false));
+        resourceList.add(new Resource(WorkflowType.PNF, "model customization id", false, null));
+        resourceList.add(new Resource(WorkflowType.VNF, "model customization id", false, null));
+        resourceList.add(new Resource(WorkflowType.NETWORK, "model customization id", false, null));
+        resourceList.add(new Resource(WorkflowType.NETWORKCOLLECTION, "model customization id", false, null));
 
         assertTrue(serviceEBBLoader.foundRelated(resourceList));
     }
@@ -182,10 +184,10 @@ public class ServiceEBBLoaderTest extends BaseTaskTest {
     @Test
     public void containsWorkflowTypeTest() {
         List<Resource> resourceList = new ArrayList<>();
-        resourceList.add(new Resource(WorkflowType.PNF, "resource id", false));
-        resourceList.add(new Resource(WorkflowType.VNF, "model customization id", false));
-        resourceList.add(new Resource(WorkflowType.NETWORK, "model customization id", false));
-        resourceList.add(new Resource(WorkflowType.NETWORKCOLLECTION, "model customization id", false));
+        resourceList.add(new Resource(WorkflowType.PNF, "resource id", false, null));
+        resourceList.add(new Resource(WorkflowType.VNF, "model customization id", false, null));
+        resourceList.add(new Resource(WorkflowType.NETWORK, "model customization id", false, null));
+        resourceList.add(new Resource(WorkflowType.NETWORKCOLLECTION, "model customization id", false, null));
 
         assertTrue(serviceEBBLoader.containsWorkflowType(resourceList, WorkflowType.PNF));
         assertTrue(serviceEBBLoader.containsWorkflowType(resourceList, WorkflowType.VNF));
@@ -280,7 +282,8 @@ public class ServiceEBBLoaderTest extends BaseTaskTest {
 
         doReturn(aaiLocalNetwork).when(mockBbInputSetupUtils).getAAIL3Network("localNetworkInstanceId");
 
-        serviceEBBLoader.traverseVrfConfiguration(aaiResourceIds, resource, service, relatedVpnBinding,
+        Resource serviceResource = new Resource(WorkflowType.SERVICE, "1", false, null);
+        serviceEBBLoader.traverseVrfConfiguration(aaiResourceIds, resource, serviceResource, service, relatedVpnBinding,
                 relatedLocalNetwork);
         assertEquals(resource.size(), 1);
         assertEquals(aaiResourceIds.size(), 0);
@@ -346,12 +349,14 @@ public class ServiceEBBLoaderTest extends BaseTaskTest {
 
     private List<Resource> prepareListWithResources() {
         List<Resource> resourceList = new ArrayList<>();
-        resourceList.add(new Resource(WorkflowType.SERVICE, "3c40d244-808e-42ca-b09a-256d83d19d0a", false));
-        resourceList.add(new Resource(WorkflowType.VNF, "ab153b6e-c364-44c0-bef6-1f2982117f04", false));
-        resourceList.add(new Resource(WorkflowType.VOLUMEGROUP, "a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f", false));
-        resourceList.add(new Resource(WorkflowType.VFMODULE, "72d9d1cd-f46d-447a-abdb-451d6fb05fa8", false));
-        resourceList.add(new Resource(WorkflowType.VFMODULE, "3c40d244-808e-42ca-b09a-256d83d19d0a", false));
-        resourceList.add(new Resource(WorkflowType.VFMODULE, "72d9d1cd-f46d-447a-abdb-451d6fb05fa8", false));
+        Resource r1 = new Resource(WorkflowType.SERVICE, "3c40d244-808e-42ca-b09a-256d83d19d0a", false, null);
+        resourceList.add(r1);
+        Resource r2 = new Resource(WorkflowType.VNF, "ab153b6e-c364-44c0-bef6-1f2982117f04", false, r1);
+        resourceList.add(r2);
+        resourceList.add(new Resource(WorkflowType.VOLUMEGROUP, "a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f", false, r2));
+        resourceList.add(new Resource(WorkflowType.VFMODULE, "72d9d1cd-f46d-447a-abdb-451d6fb05fa8", false, r2));
+        resourceList.add(new Resource(WorkflowType.VFMODULE, "3c40d244-808e-42ca-b09a-256d83d19d0a", false, r2));
+        resourceList.add(new Resource(WorkflowType.VFMODULE, "72d9d1cd-f46d-447a-abdb-451d6fb05fa8", false, r2));
         return resourceList;
     }
 }
