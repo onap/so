@@ -26,7 +26,7 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
-import java.util.Comparator;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ConfigurationResourceKeys;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
@@ -36,21 +36,9 @@ import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.ACTIVATE_INSTANCE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.ASSIGN_INSTANCE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.CONFIGURATION;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.CONTROLLER;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.CREATE_INSTANCE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.NETWORKCOLLECTION;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.REPLACEINSTANCE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.REPLACEINSTANCERETAINASSIGNMENTS;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.SERVICE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.VOLUMEGROUP;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.*;
 
 @Component
 public class ExecuteBuildingBlockBuilder {
@@ -63,6 +51,82 @@ public class ExecuteBuildingBlockBuilder {
     private static final String NETWORK = "Network";
 
     protected List<ExecuteBuildingBlock> buildExecuteBuildingBlockList(List<OrchestrationFlow> orchFlows,
+            List<Resource> originalResourceList, String requestId, String apiVersion, String resourceId,
+            String requestAction, String vnfType, WorkflowResourceIds workflowResourceIds,
+            RequestDetails requestDetails, boolean replaceVnf) {
+        List<Resource> resourceList = getOnlyRootResourceList(originalResourceList);
+
+        List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
+
+        boolean ascendingOrder = requestAction.equals(CREATE_INSTANCE) || requestAction.equals(ASSIGN_INSTANCE)
+                || requestAction.equals(ACTIVATE_INSTANCE);
+
+        ExecutionPlan plan = new ExecutionPlan(null, null);
+        buildExecutionPlan(plan, resourceList, ascendingOrder);
+        if (plan.getNestedExecutions().size() == 1
+                && plan.getNestedExecutions().get(0).getNestedExecutions().size() == 1)
+            plan = plan.getNestedExecutions().get(0).getNestedExecutions().get(0);
+
+        logger.info("Orchestration Flows");
+        for (OrchestrationFlow orchFlow : orchFlows) {
+            String flowDetails = new ToStringBuilder(this).append("id", orchFlow.getId())
+                    .append("action", orchFlow.getAction()).append("sequenceNumber", orchFlow.getSequenceNumber())
+                    .append("flowName", orchFlow.getFlowName()).append("flowVersion", orchFlow.getFlowVersion())
+                    .append("bpmnAction", orchFlow.getBpmnAction()).append("bpmnScope", orchFlow.getBpmnScope())
+                    .toString();
+            logger.info("Flow: " + flowDetails);
+            buildExecuteBuildingBlockListPlan(orchFlow, plan, requestId, apiVersion, resourceId, requestAction, vnfType,
+                    workflowResourceIds, requestDetails, replaceVnf);
+        }
+
+        plan.flushBlocksFromCache(flowsToExecute);
+
+        return flowsToExecute;
+    }
+
+    private void buildExecutionPlan(ExecutionPlan plan, List<Resource> resourceList, boolean ascendingOrder) {
+        Map<WorkflowType, List<Resource>> resourceGroups = new TreeMap<WorkflowType, List<Resource>>();
+        for (Resource resource : resourceList) {
+            if (!resourceGroups.containsKey(resource.getResourceType())) {
+                resourceGroups.put(resource.getResourceType(), new ArrayList<>());
+            }
+            resourceGroups.get(resource.getResourceType()).add(resource);
+        }
+        for (WorkflowType type : resourceGroups.keySet()) {
+            ExecutionGroup nestedGroup = new ExecutionGroup(type, plan);
+            List<Resource> resourceGroupSorted = resourceGroups.get(type).stream()
+                    .sorted(ascendingOrder ? Resource.sortByPriorityAsc : Resource.sortByPriorityDesc)
+                    .collect(Collectors.toList());
+            for (Resource resource : resourceGroupSorted) {
+                ExecutionPlan planInGroup = new ExecutionPlan(resource, nestedGroup);
+                if (resource.getChildren().size() > 0)
+                    buildExecutionPlan(planInGroup, resource.getChildren(), ascendingOrder);
+            }
+        }
+    }
+
+    protected void buildExecuteBuildingBlockListPlan(OrchestrationFlow flow, ExecutionPlan plan, String requestId,
+            String apiVersion, String resourceId, String requestAction, String vnfType,
+            WorkflowResourceIds workflowResourceIds, RequestDetails requestDetails, boolean replaceVnf) {
+
+        List<OrchestrationFlow> orchFlows = Collections.singletonList(flow);
+        List<ExecuteBuildingBlock> mainFlows =
+                buildExecuteBuildingBlockListRaw(orchFlows, plan.getResourceAsList(), requestId, apiVersion, resourceId,
+                        requestAction, vnfType, workflowResourceIds, requestDetails, replaceVnf);
+
+        plan.pushBlockToCache(mainFlows);
+
+        for (ExecutionGroup nestedGroup : plan.getNestedExecutions()) {
+            for (ExecutionPlan nestedPlan : nestedGroup.getNestedExecutions()) {
+                buildExecuteBuildingBlockListPlan(flow, nestedPlan, requestId, apiVersion, resourceId, requestAction,
+                        vnfType, workflowResourceIds, requestDetails, replaceVnf);
+            }
+            if (nestedGroup.getCacheSize() > 0)
+                plan.changeCurrentGroup(nestedGroup);
+        }
+    }
+
+    private List<ExecuteBuildingBlock> buildExecuteBuildingBlockListRaw(List<OrchestrationFlow> orchFlows,
             List<Resource> resourceList, String requestId, String apiVersion, String resourceId, String requestAction,
             String vnfType, WorkflowResourceIds workflowResourceIds, RequestDetails requestDetails,
             boolean replaceVnf) {
@@ -98,9 +162,9 @@ public class ExecuteBuildingBlockBuilder {
                 Comparator<Resource> resourceComparator;
                 if (requestAction.equals(CREATE_INSTANCE) || requestAction.equals(ASSIGN_INSTANCE)
                         || requestAction.equals(ACTIVATE_INSTANCE)) {
-                    resourceComparator = Resource.sortBaseFirst;
+                    resourceComparator = Resource.sortByPriorityAsc;
                 } else {
-                    resourceComparator = Resource.sortBaseLast;
+                    resourceComparator = Resource.sortByPriorityDesc;
                 }
                 List<Resource> vfModuleResourcesSorted =
                         resourceList.stream().filter(x -> WorkflowType.VFMODULE == x.getResourceType())
@@ -135,6 +199,18 @@ public class ExecuteBuildingBlockBuilder {
             }
         }
         return flowsToExecute;
+    }
+
+    protected List<Resource> getOnlyRootResourceList(List<Resource> resourceList) {
+        return resourceList.stream().filter(x -> countResourceOnTheResourceList(x, resourceList) == 1)
+                .collect(Collectors.toList());
+    }
+
+    protected int countResourceOnTheResourceList(Resource resource, List<Resource> resourceList) {
+        int count = resourceList.stream()
+                .mapToInt(x -> (x.equals(resource) ? 1 : 0) + countResourceOnTheResourceList(resource, x.getChildren()))
+                .reduce(0, Integer::sum);
+        return count;
     }
 
     protected ExecuteBuildingBlock buildExecuteBuildingBlock(OrchestrationFlow orchFlow, String requestId,
@@ -192,5 +268,108 @@ public class ExecuteBuildingBlockBuilder {
         return configurationResourceKeys;
     }
 
+    private static class ExecutionPlan extends ExecutionCollection<ExecutionGroup> {
+        private final Resource resource;
+        private ExecutionGroup currentGroup = null;
 
+        public ExecutionPlan(Resource resource, ExecutionGroup group) {
+            super(resource != null ? resource.getResourceType() : WorkflowType.SERVICE);
+            this.resource = resource;
+            if (group != null) {
+                group.addNestedPlans(Collections.singletonList(this));
+            }
+        }
+
+        public void changeCurrentGroup(ExecutionGroup group) {
+            if (currentGroup == null || !currentGroup.equals(group)) {
+                logger.info("Change " + getName() + " group[" + group.getName() + "]");
+                if (currentGroup != null)
+                    currentGroup.flushBlocksFromCache(this.blocksBuiltCache);
+            }
+            currentGroup = group;
+        }
+
+        List<Resource> getResourceAsList() {
+            if (resource != null)
+                return Collections.singletonList(resource);
+            else
+                return Collections.emptyList();
+        }
+
+        protected String getName() {
+            return super.getName() + "["
+                    + (resource != null ? (resource.getProcessingPriority() + ", " + resource.getResourceId()) : "")
+                    + "]";
+        }
+    }
+
+    private static class ExecutionGroup extends ExecutionCollection<ExecutionPlan> {
+
+        public ExecutionGroup(WorkflowType groupType, ExecutionPlan plan) {
+            super(groupType);
+            plan.addNestedPlans(Collections.singletonList(this));
+        }
+    }
+
+    private static class ExecutionCollection<T extends ExecutionCollection<?>> {
+        protected final WorkflowType type;
+        protected List<ExecuteBuildingBlock> blocksBuiltCache;
+        protected final List<T> nestedExecutions;
+
+        public ExecutionCollection(WorkflowType type) {
+            this.type = type;
+            this.nestedExecutions = new ArrayList<>();
+            this.blocksBuiltCache = new ArrayList<>();
+        }
+
+        public WorkflowType getType() {
+            return type;
+        }
+
+        public List<T> getNestedExecutions() {
+            return nestedExecutions;
+        }
+
+        public void addNestedPlans(List<T> executions) {
+            nestedExecutions.addAll(executions);
+        }
+
+        public void pushBlockToCache(List<ExecuteBuildingBlock> blocksCache) {
+            if (blocksCache.size() == 0)
+                return;
+            this.flushNestedBlocksToCache();
+            String blocks = blocksCache.stream().map(x -> x.getBuildingBlock().getBpmnFlowName() + ", ").reduce("",
+                    String::concat);
+            blocks = blocks.substring(0, blocks.length() - 2);
+            logger.info("Push " + getName() + " (" + blocksCache.size() + ") blocks [" + blocks + "]");
+            this.blocksBuiltCache.addAll(blocksCache);
+        }
+
+        private void flushNestedBlocksToCache() {
+            for (T collection : nestedExecutions) {
+                collection.flushBlocksFromCache(this.blocksBuiltCache);
+            }
+        }
+
+        public void flushBlocksFromCache(List<ExecuteBuildingBlock> blockList) {
+            flushNestedBlocksToCache();
+            if (this.blocksBuiltCache.size() > 0) {
+                String blocks = this.blocksBuiltCache.stream().map(x -> x.getBuildingBlock().getBpmnFlowName() + ", ")
+                        .reduce("", String::concat);
+                blocks = blocks.substring(0, blocks.length() - 2);
+                logger.info("Flush " + getName() + " (" + blocksBuiltCache.size() + ") blocks [" + blocks + "]");
+                blockList.addAll(this.blocksBuiltCache);
+                this.blocksBuiltCache.clear();
+            }
+        }
+
+        public int getCacheSize() {
+            return blocksBuiltCache.size()
+                    + getNestedExecutions().stream().mapToInt(x -> x.getCacheSize()).reduce(0, Integer::sum);
+        }
+
+        protected String getName() {
+            return type.name();
+        }
+    }
 }

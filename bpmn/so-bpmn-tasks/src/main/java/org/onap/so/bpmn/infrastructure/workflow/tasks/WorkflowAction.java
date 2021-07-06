@@ -318,6 +318,24 @@ public class WorkflowAction {
             logger.info("Sorting for Vlan Tagging");
             flowsToExecute = sortExecutionPathByObjectForVlanTagging(flowsToExecute, requestAction);
         }
+        logger.info("Building Block Execution Order");
+        for (ExecuteBuildingBlock block : flowsToExecute) {
+            Resource res = resourceList.stream()
+                    .filter(resource -> resource.getResourceId() == block.getBuildingBlock().getKey()).findAny()
+                    .orElse(null);
+            String log = "Block: " + block.getBuildingBlock().getBpmnFlowName();
+            if (res != null) {
+                log += ", Resource: " + res.getResourceType() + "[" + res.getResourceId() + "]";
+                log += ", Priority: " + res.getProcessingPriority();
+                if (res.getResourceType() == WorkflowType.VFMODULE)
+                    log += ", Base: " + res.isBaseVfModule();
+            }
+            if (block.getBuildingBlock().getBpmnScope() != null)
+                log += ", Scope: " + block.getBuildingBlock().getBpmnScope();
+            if (block.getBuildingBlock().getBpmnAction() != null)
+                log += ", Action: " + block.getBuildingBlock().getBpmnAction();
+            logger.info(log);
+        }
         // By default, enable homing at VNF level for CREATE_INSTANCE and ASSIGNINSTANCE
         if (resourceType == WorkflowType.SERVICE
                 && (requestAction.equals(CREATE_INSTANCE) || requestAction.equals(ASSIGN_INSTANCE))
