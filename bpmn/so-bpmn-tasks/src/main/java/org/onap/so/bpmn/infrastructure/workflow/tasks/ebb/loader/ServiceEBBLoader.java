@@ -121,7 +121,7 @@ public class ServiceEBBLoader {
             // to query the SI in AAI to find related instances.
             traverseAAIService(execution, resourceList, resourceId, aaiResourceIds);
         } else if (DEACTIVATE_INSTANCE.equalsIgnoreCase(requestAction)) {
-            resourceList.add(new Resource(WorkflowType.SERVICE, "", false));
+            resourceList.add(new Resource(WorkflowType.SERVICE, "", false, null));
         }
         return resourceList;
     }
@@ -142,16 +142,18 @@ public class ServiceEBBLoader {
         if (service == null) {
             buildAndThrowException(execution, "Could not find the service model in catalog db.");
         } else {
-            resourceList.add(new Resource(WorkflowType.SERVICE, service.getModelUUID(), false));
+            Resource serviceResource = new Resource(WorkflowType.SERVICE, service.getModelUUID(), false, null);
+            resourceList.add(serviceResource);
             RelatedInstance relatedVpnBinding =
                     bbInputSetupUtils.getRelatedInstanceByType(sIRequest.getRequestDetails(), ModelType.vpnBinding);
             RelatedInstance relatedLocalNetwork =
                     bbInputSetupUtils.getRelatedInstanceByType(sIRequest.getRequestDetails(), ModelType.network);
 
             if (relatedVpnBinding != null && relatedLocalNetwork != null) {
-                traverseVrfConfiguration(aaiResourceIds, resourceList, service, relatedVpnBinding, relatedLocalNetwork);
+                traverseVrfConfiguration(aaiResourceIds, resourceList, serviceResource, service, relatedVpnBinding,
+                        relatedLocalNetwork);
             } else {
-                traverseNetworkCollection(execution, resourceList, service);
+                traverseNetworkCollection(execution, resourceList, serviceResource, service);
             }
         }
     }
@@ -169,14 +171,17 @@ public class ServiceEBBLoader {
             ServiceInstance serviceInstanceAAI = bbInputSetupUtils.getAAIServiceInstanceById(resourceId);
             org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO =
                     bbInputSetup.getExistingServiceInstance(serviceInstanceAAI);
-            resourceList.add(new Resource(WorkflowType.SERVICE, serviceInstanceMSO.getServiceInstanceId(), false));
-            traverseServiceInstanceMSOVnfs(resourceList, aaiResourceIds, serviceInstanceMSO);
-            traverseServiceInstanceMSOPnfs(resourceList, aaiResourceIds, serviceInstanceMSO);
+            Resource serviceResource =
+                    new Resource(WorkflowType.SERVICE, serviceInstanceMSO.getServiceInstanceId(), false, null);
+            resourceList.add(serviceResource);
+            traverseServiceInstanceMSOVnfs(resourceList, serviceResource, aaiResourceIds, serviceInstanceMSO);
+            traverseServiceInstanceMSOPnfs(resourceList, serviceResource, aaiResourceIds, serviceInstanceMSO);
             if (serviceInstanceMSO.getNetworks() != null) {
                 for (org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network network : serviceInstanceMSO
                         .getNetworks()) {
                     aaiResourceIds.add(new Pair<>(WorkflowType.NETWORK, network.getNetworkId()));
-                    resourceList.add(new Resource(WorkflowType.NETWORK, network.getNetworkId(), false));
+                    resourceList
+                            .add(new Resource(WorkflowType.NETWORK, network.getNetworkId(), false, serviceResource));
                 }
             }
             if (serviceInstanceMSO.getCollection() != null) {
@@ -184,7 +189,7 @@ public class ServiceEBBLoader {
                 aaiResourceIds
                         .add(new Pair<>(WorkflowType.NETWORKCOLLECTION, serviceInstanceMSO.getCollection().getId()));
                 resourceList.add(new Resource(WorkflowType.NETWORKCOLLECTION,
-                        serviceInstanceMSO.getCollection().getId(), false));
+                        serviceInstanceMSO.getCollection().getId(), false, serviceResource));
             }
             if (serviceInstanceMSO.getConfigurations() != null) {
                 for (Configuration config : serviceInstanceMSO.getConfigurations()) {
@@ -195,8 +200,8 @@ public class ServiceEBBLoader {
                             if (relationship.getRelatedTo().contains("vnfc")
                                     || relationship.getRelatedTo().contains("vpn-binding")) {
                                 aaiResourceIds.add(new Pair<>(WorkflowType.CONFIGURATION, config.getConfigurationId()));
-                                resourceList.add(
-                                        new Resource(WorkflowType.CONFIGURATION, config.getConfigurationId(), false));
+                                resourceList.add(new Resource(WorkflowType.CONFIGURATION, config.getConfigurationId(),
+                                        false, serviceResource));
                                 break;
                             }
                         }
@@ -210,7 +215,7 @@ public class ServiceEBBLoader {
         }
     }
 
-    private void traverseServiceInstanceMSOVnfs(List<Resource> resourceList,
+    private void traverseServiceInstanceMSOVnfs(List<Resource> resourceList, Resource serviceResource,
             List<Pair<WorkflowType, String>> aaiResourceIds,
             org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO) {
         if (serviceInstanceMSO.getVnfs() == null) {
@@ -218,18 +223,20 @@ public class ServiceEBBLoader {
         }
         for (org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf : serviceInstanceMSO.getVnfs()) {
             aaiResourceIds.add(new Pair<>(WorkflowType.VNF, vnf.getVnfId()));
-            resourceList.add(new Resource(WorkflowType.VNF, vnf.getVnfId(), false));
-            traverseVnfModules(resourceList, aaiResourceIds, vnf);
+            Resource vnfResource = new Resource(WorkflowType.VNF, vnf.getVnfId(), false, serviceResource);
+            resourceList.add(vnfResource);
+            traverseVnfModules(resourceList, vnfResource, aaiResourceIds, vnf);
             if (vnf.getVolumeGroups() != null) {
                 for (org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup volumeGroup : vnf.getVolumeGroups()) {
                     aaiResourceIds.add(new Pair<>(WorkflowType.VOLUMEGROUP, volumeGroup.getVolumeGroupId()));
-                    resourceList.add(new Resource(WorkflowType.VOLUMEGROUP, volumeGroup.getVolumeGroupId(), false));
+                    resourceList.add(
+                            new Resource(WorkflowType.VOLUMEGROUP, volumeGroup.getVolumeGroupId(), false, vnfResource));
                 }
             }
         }
     }
 
-    private void traverseServiceInstanceMSOPnfs(List<Resource> resourceList,
+    private void traverseServiceInstanceMSOPnfs(List<Resource> resourceList, Resource serviceResource,
             List<Pair<WorkflowType, String>> aaiResourceIds,
             org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO) {
         if (serviceInstanceMSO.getPnfs() == null) {
@@ -237,12 +244,12 @@ public class ServiceEBBLoader {
         }
         for (org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf pnf : serviceInstanceMSO.getPnfs()) {
             aaiResourceIds.add(new Pair<>(WorkflowType.PNF, pnf.getPnfId()));
-            resourceList.add(new Resource(WorkflowType.PNF, pnf.getPnfId(), false));
+            resourceList.add(new Resource(WorkflowType.PNF, pnf.getPnfId(), false, serviceResource));
         }
     }
 
     protected void traverseVrfConfiguration(List<Pair<WorkflowType, String>> aaiResourceIds,
-            List<Resource> resourceList, org.onap.so.db.catalog.beans.Service service,
+            List<Resource> resourceList, Resource serviceResource, org.onap.so.db.catalog.beans.Service service,
             RelatedInstance relatedVpnBinding, RelatedInstance relatedLocalNetwork)
             throws VrfBondingServiceException, JsonProcessingException {
         org.onap.aai.domain.yang.L3Network aaiLocalNetwork =
@@ -260,12 +267,12 @@ public class ServiceEBBLoader {
             aaiResourceIds.add(new Pair<>(WorkflowType.CONFIGURATION, existingAAIVrfConfiguration));
         }
         resourceList.add(new Resource(WorkflowType.CONFIGURATION,
-                service.getConfigurationCustomizations().get(0).getModelCustomizationUUID(), false));
+                service.getConfigurationCustomizations().get(0).getModelCustomizationUUID(), false, serviceResource));
 
     }
 
     protected void traverseNetworkCollection(DelegateExecution execution, List<Resource> resourceList,
-            org.onap.so.db.catalog.beans.Service service) {
+            Resource serviceResource, org.onap.so.db.catalog.beans.Service service) {
         if (isVnfCustomizationsInTheService(service)) {
             buildAndThrowException(execution,
                     "Cannot orchestrate Service-Macro-Create without user params with a vnf. Please update ASDC model for new macro orchestration support or add service_recipe records to route to old macro flows");
@@ -280,14 +287,16 @@ public class ServiceEBBLoader {
         } else {
             CollectionResourceCustomization collectionResourceCustomization =
                     findCatalogNetworkCollection(execution, service);
-            traverseNetworkCollectionResourceCustomization(resourceList, collectionResourceCustomization);
+            traverseNetworkCollectionResourceCustomization(resourceList, serviceResource,
+                    collectionResourceCustomization);
         }
-        traverseNetworkCollectionCustomization(resourceList, service);
+        traverseNetworkCollectionCustomization(resourceList, serviceResource, service);
     }
 
-    private void traverseNetworkCollectionResourceCustomization(List<Resource> resourceList,
+    private void traverseNetworkCollectionResourceCustomization(List<Resource> resourceList, Resource serviceResource,
             CollectionResourceCustomization collectionResourceCustomization) {
-        if (collectionResourceCustomizationShouldNotBeProcessed(resourceList, collectionResourceCustomization))
+        if (collectionResourceCustomizationShouldNotBeProcessed(resourceList, serviceResource,
+                collectionResourceCustomization))
             return;
         int minNetworks = 0;
         org.onap.so.db.catalog.beans.InstanceGroup instanceGroup =
@@ -312,7 +321,7 @@ public class ServiceEBBLoader {
         for (int i = 0; i < minNetworks; i++) {
             if (collectionNetworkResourceCust != null) {
                 Resource resource = new Resource(WorkflowType.VIRTUAL_LINK,
-                        collectionNetworkResourceCust.getModelCustomizationUUID(), false);
+                        collectionNetworkResourceCust.getModelCustomizationUUID(), false, serviceResource);
                 resource.setVirtualLinkKey(Integer.toString(i));
                 resourceList.add(resource);
             }
@@ -334,13 +343,13 @@ public class ServiceEBBLoader {
     }
 
     private boolean collectionResourceCustomizationShouldNotBeProcessed(List<Resource> resourceList,
-            CollectionResourceCustomization collectionResourceCustomization) {
+            Resource serviceResource, CollectionResourceCustomization collectionResourceCustomization) {
         if (collectionResourceCustomization == null) {
             logger.debug("No Network Collection Customization found");
             return true;
         }
         resourceList.add(new Resource(WorkflowType.NETWORKCOLLECTION,
-                collectionResourceCustomization.getModelCustomizationUUID(), false));
+                collectionResourceCustomization.getModelCustomizationUUID(), false, serviceResource));
         logger.debug("Found a network collection");
         if (collectionResourceCustomization.getCollectionResource() == null) {
             logger.debug("No Network Collection found. collectionResource is null");
@@ -368,7 +377,7 @@ public class ServiceEBBLoader {
         return toscaNodeType != null && toscaNodeType.contains(NETWORKCOLLECTION);
     }
 
-    private void traverseNetworkCollectionCustomization(List<Resource> resourceList,
+    private void traverseNetworkCollectionCustomization(List<Resource> resourceList, Resource serviceResource,
             org.onap.so.db.catalog.beans.Service service) {
         if (isNetworkCollectionInTheResourceList(resourceList)) {
             return;
@@ -379,7 +388,7 @@ public class ServiceEBBLoader {
         }
         for (int i = 0; i < service.getNetworkCustomizations().size(); i++) {
             resourceList.add(new Resource(WorkflowType.NETWORK,
-                    service.getNetworkCustomizations().get(i).getModelCustomizationUUID(), false));
+                    service.getNetworkCustomizations().get(i).getModelCustomizationUUID(), false, serviceResource));
         }
     }
 
@@ -391,14 +400,15 @@ public class ServiceEBBLoader {
         return !(service.getPnfCustomizations() == null || service.getPnfCustomizations().isEmpty());
     }
 
-    private void traverseVnfModules(List<Resource> resourceList, List<Pair<WorkflowType, String>> aaiResourceIds,
+    private void traverseVnfModules(List<Resource> resourceList, Resource vnfResource,
+            List<Pair<WorkflowType, String>> aaiResourceIds,
             org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf) {
         if (vnf.getVfModules() == null) {
             return;
         }
         for (VfModule vfModule : vnf.getVfModules()) {
             aaiResourceIds.add(new Pair<>(WorkflowType.VFMODULE, vfModule.getVfModuleId()));
-            Resource resource = new Resource(WorkflowType.VFMODULE, vfModule.getVfModuleId(), false);
+            Resource resource = new Resource(WorkflowType.VFMODULE, vfModule.getVfModuleId(), false, vnfResource);
             resource.setBaseVfModule(vfModule.getModelInfoVfModule().getIsBaseBoolean());
             resourceList.add(resource);
         }

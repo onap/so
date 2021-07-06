@@ -406,13 +406,13 @@ public class WorkflowActionTest extends BaseTaskTest {
         workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         assertEqualsBulkFlowName(ebbs, "CreateVolumeGroupBB", "ActivateVolumeGroupBB", "CreateVfModuleBB",
-                "CreateVfModuleBB", "ActivateVfModuleBB", "ActivateVfModuleBB", "ActivateVnfBB",
+                "ActivateVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB", "ActivateVnfBB",
                 "ActivateServiceInstanceBB");
         assertEquals("volumeGroup0", ebbs.get(0).getWorkflowResourceIds().getVolumeGroupId());
         assertEquals("volumeGroup0", ebbs.get(1).getWorkflowResourceIds().getVolumeGroupId());
         assertEquals("testVfModuleId1", ebbs.get(2).getWorkflowResourceIds().getVfModuleId());
-        assertEquals("testVfModuleId2", ebbs.get(3).getWorkflowResourceIds().getVfModuleId());
-        assertEquals("testVfModuleId1", ebbs.get(4).getWorkflowResourceIds().getVfModuleId());
+        assertEquals("testVfModuleId1", ebbs.get(3).getWorkflowResourceIds().getVfModuleId());
+        assertEquals("testVfModuleId2", ebbs.get(4).getWorkflowResourceIds().getVfModuleId());
         assertEquals("testVfModuleId2", ebbs.get(5).getWorkflowResourceIds().getVfModuleId());
         assertEquals("vnf0", ebbs.get(6).getWorkflowResourceIds().getVnfId());
         assertEquals("si0", ebbs.get(7).getWorkflowResourceIds().getServiceInstanceId());
@@ -638,8 +638,8 @@ public class WorkflowActionTest extends BaseTaskTest {
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         assertEqualsBulkFlowName(ebbs, "AssignServiceInstanceBB", "AssignVnfBB", "AssignVolumeGroupBB",
                 "AssignVfModuleBB", "AssignVfModuleBB", "AssignVfModuleBB", "CreateVolumeGroupBB",
-                "ActivateVolumeGroupBB", "CreateVfModuleBB", "CreateVfModuleBB", "CreateVfModuleBB",
-                "ActivateVfModuleBB", "ActivateVfModuleBB", "ActivateVfModuleBB", "ActivateVnfBB",
+                "ActivateVolumeGroupBB", "CreateVfModuleBB", "ActivateVfModuleBB", "CreateVfModuleBB",
+                "ActivateVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB", "ActivateVnfBB",
                 "ActivateServiceInstanceBB");
 
         assertEquals(3, ebbs.get(0).getWorkflowResourceIds().getServiceInstanceId().length());
@@ -708,7 +708,7 @@ public class WorkflowActionTest extends BaseTaskTest {
                 false, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
         workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
-        assertEqualsBulkFlowName(ebbs, "DeactivateVfModuleBB", "DeactivateVfModuleBB", "DeleteVfModuleBB",
+        assertEqualsBulkFlowName(ebbs, "DeactivateVfModuleBB", "DeleteVfModuleBB", "DeactivateVfModuleBB",
                 "DeleteVfModuleBB", "DeactivateVolumeGroupBB", "DeleteVolumeGroupBB", "DeactivateVnfBB",
                 "DeactivatePnfBB", "DeactivateServiceInstanceBB", "UnassignVfModuleBB", "UnassignVfModuleBB",
                 "UnassignVolumeGroupBB", "UnassignVnfBB", "UnassignServiceInstanceBB");
@@ -879,8 +879,8 @@ public class WorkflowActionTest extends BaseTaskTest {
         workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         assertEqualsBulkFlowName(ebbs, "AAICheckVnfInMaintBB", "AAISetVnfInMaintBB", "DeactivateVfModuleBB",
-                "DeactivateVfModuleBB", "DeleteVfModuleBB", "DeleteVfModuleBB", "DeactivateVnfBB", "CreateVfModuleBB",
-                "CreateVfModuleBB", "ActivateVfModuleBB", "ActivateVfModuleBB", "ActivateVnfBB", "SDNOVnfHealthCheckBB",
+                "DeleteVfModuleBB", "DeactivateVfModuleBB", "DeleteVfModuleBB", "DeactivateVnfBB", "CreateVfModuleBB",
+                "ActivateVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB", "ActivateVnfBB", "SDNOVnfHealthCheckBB",
                 "AAIUnsetVnfInMaintBB");
     }
 
@@ -940,12 +940,13 @@ public class WorkflowActionTest extends BaseTaskTest {
                 false, "cloud-owner")).thenReturn(northBoundRequest);
         workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
-        assertEqualsBulkFlowName(ebbs, "AAICheckVnfInMaintBB", "AAISetVnfInMaintBB", "DeactivateFabricConfigurationBB",
-                "UnassignFabricConfigurationBB", "DeactivateVfModuleBB", "DeactivateVfModuleBB", "DeleteVfModuleBB",
-                "DeleteVfModuleBB", "DeactivateVnfBB", "ChangeModelVfModuleBB", "ChangeModelVfModuleBB",
-                "CreateVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB", "ActivateVfModuleBB",
-                "AssignFabricConfigurationBB", "ActivateFabricConfigurationBB", "ChangeModelVnfBB", "ActivateVnfBB",
-                "ChangeModelServiceInstanceBB", "SDNOVnfHealthCheckBB", "AAIUnsetVnfInMaintBB");
+        assertEqualsBulkFlowName(ebbs, "AAICheckVnfInMaintBB", "AAISetVnfInMaintBB", "DeactivateVfModuleBB",
+                "DeleteVfModuleBB", "DeactivateFabricConfigurationBB", "UnassignFabricConfigurationBB",
+                "DeactivateVfModuleBB", "DeleteVfModuleBB", "DeactivateVnfBB", "ChangeModelVfModuleBB",
+                "CreateVfModuleBB", "ActivateVfModuleBB", "ChangeModelVfModuleBB", "CreateVfModuleBB",
+                "ActivateVfModuleBB", "AssignFabricConfigurationBB", "ActivateFabricConfigurationBB",
+                "ChangeModelVnfBB", "ActivateVnfBB", "ChangeModelServiceInstanceBB", "SDNOVnfHealthCheckBB",
+                "AAIUnsetVnfInMaintBB");
         for (ExecuteBuildingBlock executeBuildingBlock : ebbs) {
             assertEquals("123", executeBuildingBlock.getWorkflowResourceIds().getServiceInstanceId());
         }
@@ -1540,7 +1541,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         String vnfType = "vnfType";
         String key = "00d15ebb-c80e-43c1-80f0-90c40dde70b0";
         String resourceId = "d1d35800-783d-42d3-82f6-d654c5054a6e";
-        Resource resourceKey = new Resource(resourceType, key, aLaCarte);
+        Resource resourceKey = new Resource(resourceType, key, aLaCarte, null);
         WorkflowResourceIds workflowResourceIds = SPY_workflowAction.populateResourceIdsFromApiHandler(execution);
 
         thrown.expect(AAIEntityNotFoundException.class);
@@ -1592,7 +1593,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         String vnfType = "vnfType";
         String key = "00d15ebb-c80e-43c1-80f0-90c40dde70b0";
         String resourceId = "d1d35800-783d-42d3-82f6-d654c5054a6e";
-        Resource resourceKey = new Resource(resourceType, key, aLaCarte);
+        Resource resourceKey = new Resource(resourceType, key, aLaCarte, null);
         WorkflowResourceIds workflowResourceIds = SPY_workflowAction.populateResourceIdsFromApiHandler(execution);
 
         List<OrchestrationFlow> orchFlows = createFlowList("DeactivateVfModuleBB", "DeleteVfModuleBB",
@@ -1667,7 +1668,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         String vnfType = "vnfType";
         String key = "00d15ebb-c80e-43c1-80f0-90c40dde70b0";
         String resourceId = "d1d35800-783d-42d3-82f6-d654c5054a6e";
-        Resource resourceKey = new Resource(resourceType, key, aLaCarte);
+        Resource resourceKey = new Resource(resourceType, key, aLaCarte, null);
         WorkflowResourceIds workflowResourceIds = SPY_workflowAction.populateResourceIdsFromApiHandler(execution);
 
         List<OrchestrationFlow> orchFlows = createFlowList("DeactivateVfModuleBB", "DeleteVfModuleBB",
@@ -1948,10 +1949,10 @@ public class WorkflowActionTest extends BaseTaskTest {
         String uri6 = "/v6/serviceInstances/123/vnfs/1234/someAction";
         String uri7 = "/v6/serviceInstances/123/vnfs/1234/vfModules/5678/replace";
         String uri8 = "/v6/serviceInstances/123/vnfs/1234/vfModules/scaleOut";
-        Resource expected1 = new Resource(WorkflowType.SERVICE, "123", true);
-        Resource expected2 = new Resource(WorkflowType.VNF, "1234", false);
-        Resource expected3 = new Resource(WorkflowType.VNF, "1234", false);
-        Resource expected4 = new Resource(WorkflowType.VFMODULE, "5678", false);
+        Resource expected1 = new Resource(WorkflowType.SERVICE, "123", true, null);
+        Resource expected2 = new Resource(WorkflowType.VNF, "1234", false, expected1);
+        Resource expected3 = new Resource(WorkflowType.VNF, "1234", false, expected1);
+        Resource expected4 = new Resource(WorkflowType.VFMODULE, "5678", false, expected2);
         Resource result = workflowAction.extractResourceIdAndTypeFromUri(uri);
         assertEquals(expected1.getResourceId(), result.getResourceId());
         assertEquals(expected1.getResourceType(), result.getResourceType());
@@ -2093,12 +2094,14 @@ public class WorkflowActionTest extends BaseTaskTest {
 
     private List<Resource> prepareListWithResources() {
         List<Resource> resourceList = new ArrayList<>();
-        resourceList.add(new Resource(WorkflowType.SERVICE, "3c40d244-808e-42ca-b09a-256d83d19d0a", false));
-        resourceList.add(new Resource(WorkflowType.VNF, "ab153b6e-c364-44c0-bef6-1f2982117f04", false));
-        resourceList.add(new Resource(WorkflowType.VOLUMEGROUP, "a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f", false));
-        resourceList.add(new Resource(WorkflowType.VFMODULE, "72d9d1cd-f46d-447a-abdb-451d6fb05fa8", false));
-        resourceList.add(new Resource(WorkflowType.VFMODULE, "3c40d244-808e-42ca-b09a-256d83d19d0a", false));
-        resourceList.add(new Resource(WorkflowType.VFMODULE, "72d9d1cd-f46d-447a-abdb-451d6fb05fa8", false));
+        Resource r1 = new Resource(WorkflowType.SERVICE, "3c40d244-808e-42ca-b09a-256d83d19d0a", false, null);
+        resourceList.add(r1);
+        Resource r2 = new Resource(WorkflowType.VNF, "ab153b6e-c364-44c0-bef6-1f2982117f04", false, r1);
+        resourceList.add(r2);
+        resourceList.add(new Resource(WorkflowType.VOLUMEGROUP, "a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f", false, r2));
+        resourceList.add(new Resource(WorkflowType.VFMODULE, "72d9d1cd-f46d-447a-abdb-451d6fb05fa8", false, r2));
+        resourceList.add(new Resource(WorkflowType.VFMODULE, "3c40d244-808e-42ca-b09a-256d83d19d0a", false, r2));
+        resourceList.add(new Resource(WorkflowType.VFMODULE, "72d9d1cd-f46d-447a-abdb-451d6fb05fa8", false, r2));
         return resourceList;
     }
 }

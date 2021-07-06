@@ -20,7 +20,10 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 public class Resource {
 
@@ -32,14 +35,24 @@ public class Resource {
     private String vnfCustomizationId;
     private String vfModuleCustomizationId;
     private String cvnfModuleCustomizationId;
+    private int processingPriority;
+    private Resource parent;
+    private List<Resource> children;
 
-    public static final Comparator<Resource> sortBaseFirst = Comparator.comparingInt(x -> x.isBaseVfModule() ? 0 : 1);
-    public static final Comparator<Resource> sortBaseLast = Comparator.comparingInt(x -> x.isBaseVfModule() ? 1 : 0);
+    public static final Comparator<Resource> sortByPriorityAsc =
+            Comparator.comparingInt(Resource::getProcessingPriority);
+    public static final Comparator<Resource> sortByPriorityDesc =
+            Comparator.comparingInt(x -> -x.getProcessingPriority());
 
-    public Resource(WorkflowType resourceType, String resourceId, boolean generated) {
+    public Resource(WorkflowType resourceType, String resourceId, boolean generated, Resource parent) {
         this.resourceId = resourceId;
         this.resourceType = resourceType;
         this.generated = generated;
+        this.processingPriority = 0;
+        this.children = new ArrayList<>();
+        this.parent = parent;
+        if (parent != null)
+            this.parent.children.add(this);
     }
 
     public String getResourceId() {
@@ -104,5 +117,21 @@ public class Resource {
 
     public void setCvnfModuleCustomizationId(String cvnfModuleCustomizationId) {
         this.cvnfModuleCustomizationId = cvnfModuleCustomizationId;
+    }
+
+    public int getProcessingPriority() {
+        return processingPriority == 0 ? (isBaseVfModule() ? Integer.MIN_VALUE + 1 : 0) : processingPriority;
+    }
+
+    public void setProcessingPriority(int processingPriority) {
+        this.processingPriority = processingPriority;
+    }
+
+    public Resource getParent() {
+        return this.parent;
+    }
+
+    public List<Resource> getChildren() {
+        return this.children;
     }
 }
