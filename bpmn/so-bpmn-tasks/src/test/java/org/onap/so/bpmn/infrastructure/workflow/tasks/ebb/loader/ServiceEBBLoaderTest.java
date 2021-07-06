@@ -280,7 +280,8 @@ public class ServiceEBBLoaderTest extends BaseTaskTest {
 
         doReturn(aaiLocalNetwork).when(mockBbInputSetupUtils).getAAIL3Network("localNetworkInstanceId");
 
-        serviceEBBLoader.traverseVrfConfiguration(aaiResourceIds, resource, service, relatedVpnBinding,
+        Resource serviceResource = new Resource(WorkflowType.SERVICE, "1", false);
+        serviceEBBLoader.traverseVrfConfiguration(aaiResourceIds, resource, serviceResource, service, relatedVpnBinding,
                 relatedLocalNetwork);
         assertEquals(resource.size(), 1);
         assertEquals(aaiResourceIds.size(), 0);
