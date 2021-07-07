@@ -1054,18 +1054,8 @@ public class BBInputSetup implements JavaDelegate {
             if (requestDetails.getOwningEntity() != null)
                 owningEntity = mapperLayer.mapRequestOwningEntity(requestDetails.getOwningEntity());
 
-            String modelVersionId = requestDetails.getModelInfo().getModelVersionId();
-
-            if (ModelType.vnf == requestDetails.getModelInfo().getModelType()) {
-                for (RelatedInstanceList relatedInstanceList : requestDetails.getRelatedInstanceList()) {
-                    if (ModelType.service == relatedInstanceList.getRelatedInstance().getModelInfo().getModelType()) {
-                        modelVersionId = relatedInstanceList.getRelatedInstance().getModelInfo().getModelVersionId();
-                        break;
-                    }
-                }
-            }
-
-            Service service = bbInputSetupUtils.getCatalogServiceByModelUUID(modelVersionId);
+            Service service =
+                    bbInputSetupUtils.getCatalogServiceByModelUUID(requestDetails.getModelInfo().getModelVersionId());
             if (service == null) {
                 service = bbInputSetupUtils.getCatalogServiceByModelVersionAndModelInvariantUUID(
                         requestDetails.getModelInfo().getModelVersion(),
