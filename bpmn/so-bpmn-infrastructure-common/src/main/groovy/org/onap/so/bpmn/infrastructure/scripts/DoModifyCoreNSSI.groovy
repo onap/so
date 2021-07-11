@@ -29,6 +29,8 @@ import org.onap.aai.domain.yang.v19.SliceProfile
 import org.onap.aai.domain.yang.v19.SliceProfiles
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.AAIEdgeLabel
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.Relationships
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
@@ -56,15 +58,50 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
     private static final Logger LOGGER = LoggerFactory.getLogger( DoModifyCoreNSSI.class)
 
 
+    @Override
+    void preProcessRequest(DelegateExecution execution) {
+        LOGGER.debug("${getPrefix()} Start preProcessRequest")
+
+        super.preProcessRequest(execution)
+
+        String modifyAction = jsonUtil.getJsonValue(execution.getVariable("sliceParams"), "modifyAction")
+        if (isBlank(modifyAction)) {
+            String msg = "modifyAction is mandatory parameter"
+            exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+        }
+        else {
+            String createSliceProfileInstance = ""
+            if(modifyAction.equals("allocate")) { // In case Slice Profile should be created
+                createSliceProfileInstance = "true"
+            }
+            else if(modifyAction.equals("deallocate")) { // In case Slice Profile should be created
+                createSliceProfileInstance = "false"
+            }
+            else {
+                String msg = "Value of modifyAction parameter should be either allocate or deallocate"
+                exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+            }
+
+            execution.setVariable("isCreateSliceProfileInstance", createSliceProfileInstance)
+        }
+
+        execution.setVariable("operationType", "MODIFY")
+
+        LOGGER.debug("${getPrefix()} Exit preProcessRequest")
+    }
+
+
     /**
      * Prepares Slice Profile
      * @param execution
      * @return SLice Profile
      */
     SliceProfile prepareSliceProfile(DelegateExecution execution) {
+        LOGGER.debug("${PREFIX} Start prepareSliceProfile")
+
         def currentNSSI = execution.getVariable("currentNSSI")
 
-        String sliceProfileID = currentNSSI['sliceProfileId']
+        String givenSliceProfileId = currentNSSI['sliceProfileId'] //UUID.randomUUID().toString()
         Map<String,Object> sliceProfileMap = new ObjectMapper().readValue(currentNSSI['sliceProfile'], Map.class)
 
         SliceProfile sliceProfile = new SliceProfile()
@@ -77,40 +114,42 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
         sliceProfile.setConnDensity(0)
         sliceProfile.setSNssai(currentNSSI['S-NSSAI'])
 
-        if(!isBlank(sliceProfileMap.get("expDataRateUL"))) {
+        if(sliceProfileMap.get("expDataRateUL") != null) {
             sliceProfile.setExpDataRateUL(Integer.parseInt(sliceProfileMap.get("expDataRateUL").toString()))
         }
 
-        if(!isBlank(sliceProfileMap.get("expDataRateDL"))) {
+        if(sliceProfileMap.get("expDataRateDL") != null) {
             sliceProfile.setExpDataRateDL(Integer.parseInt(sliceProfileMap.get("expDataRateDL").toString()))
         }
 
-        if(!isBlank(sliceProfileMap.get("activityFactor"))) {
+        if(sliceProfileMap.get("activityFactor") != null) {
             sliceProfile.setActivityFactor(Integer.parseInt(sliceProfileMap.get("activityFactor").toString()))
         }
 
-        if(!isBlank(sliceProfileMap.get("resourceSharingLevel"))) {
+        if(sliceProfileMap.get("resourceSharingLevel") != null) {
             sliceProfile.setResourceSharingLevel(sliceProfileMap.get("resourceSharingLevel").toString())
         }
 
-        if(!isBlank(sliceProfileMap.get("uEMobilityLevel"))) {
+        if(sliceProfileMap.get("uEMobilityLevel") != null) {
             sliceProfile.setUeMobilityLevel(sliceProfileMap.get("uEMobilityLevel").toString())
         }
 
-        if(!isBlank(sliceProfileMap.get("coverageAreaTAList"))) {
+        if(sliceProfileMap.get("coverageAreaTAList") != null) {
             sliceProfile.setCoverageAreaTAList(sliceProfileMap.get("coverageAreaTAList").toString())
         }
 
-        if(!isBlank(sliceProfileMap.get("maxNumberofUEs"))) {
-            sliceProfile.setMaxNumberOfUEs(Integer.parseInt(sliceProfileMap.get("maxNumberofUEs").toString()))
+        if(sliceProfileMap.get("maxNumberOfUEs") != null) {
+            sliceProfile.setMaxNumberOfUEs(Integer.parseInt(sliceProfileMap.get("maxNumberOfUEs").toString()))
         }
 
-        if(!isBlank(sliceProfileMap.get("latency"))) {
+        if(sliceProfileMap.get("latency") != null) {
             sliceProfile.setLatency(Integer.parseInt(sliceProfileMap.get("latency").toString()))
         }
 
-        sliceProfile.setProfileId(sliceProfileID)
+        sliceProfile.setProfileId(givenSliceProfileId)
         sliceProfile.setE2ELatency(0)
+
+        LOGGER.debug("${PREFIX} Exit prepareSliceProfile")
 
         return sliceProfile
     }
@@ -122,6 +161,7 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
      * @return Slice Profile Instance
      */
     ServiceInstance prepareSliceProfileInstance(DelegateExecution execution) {
+        LOGGER.debug("${PREFIX} Start prepareSliceProfileInstance")
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
@@ -152,6 +192,8 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
 
         // TO DO: Model info
 
+        LOGGER.debug("${PREFIX} Exit prepareSliceProfileInstance")
+
         return sliceProfileInstance
     }
 
@@ -162,7 +204,7 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
      * @param execution
      */
     void createSliceProfileInstance(DelegateExecution execution) {
-        LOGGER.trace("${PREFIX} Start createSliceProfileInstance")
+        LOGGER.debug("${PREFIX} Start createSliceProfileInstance")
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
@@ -188,7 +230,7 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
             exceptionUtil.buildAndThrowWorkflowException(execution, 25000, "Exception occurred while Slice Profile create call:" + ex.getMessage())
         }
 
-        LOGGER.trace("${PREFIX} Exit createSliceProfileInstance")
+        LOGGER.debug("${PREFIX} Exit createSliceProfileInstance")
     }
 
 
@@ -198,6 +240,8 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
      * @return AllottedResource
      */
     AllottedResource createAllottedResource(DelegateExecution execution) {
+        LOGGER.debug("${PREFIX} Start createAllottedResource")
+
         def currentNSSI = execution.getVariable("currentNSSI")
 
         String globalSubscriberId = execution.getVariable("globalSubscriberId")
@@ -223,6 +267,8 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
             exceptionUtil.buildAndThrowWorkflowException(execution, 25000, "Exception occurred while Allotted Resource create call:" + ex.getMessage())
         }
 
+        LOGGER.debug("${PREFIX} Exit createAllottedResource")
+
         return allottedResource
     }
 
@@ -233,7 +279,7 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
      * @param execution
      */
     void associateSliceProfileInstanceWithNSSI(DelegateExecution execution) {
-        LOGGER.trace("${PREFIX} Start associateSliceProfileInstanceWithNSSI")
+        LOGGER.debug("${PREFIX} Start associateSliceProfileInstanceWithNSSI")
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
@@ -247,12 +293,12 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
         AllottedResource allottedResource = createAllottedResource(execution)
         AAIResourceUri allottedResourceUri = (AAIResourceUri)currentNSSI['allottedResourceUri']
 
-        // Updates Slice Profile Instance with Allotted Resource
+        // Associates Allotted Resource with Slice Profile Instance
         try {
             AAIResourceUri sliceProfileInstanceUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(sliceProfileInstanceId))
             Optional<ServiceInstance> sliceProfileInstanceOpt = client.get(ServiceInstance.class, sliceProfileInstanceUri)
             if (sliceProfileInstanceOpt.isPresent()) {
-                ServiceInstance sliceProfileInstance = sliceProfileInstanceOpt.get()
+             /*   ServiceInstance sliceProfileInstance = sliceProfileInstanceOpt.get()
 
                 AllottedResources allottedResources = sliceProfileInstance.getAllottedResources()
                 if(allottedResources == null) {
@@ -262,7 +308,9 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
                 allottedResources.getAllottedResource().add(allottedResource)
                 sliceProfileInstance.setAllottedResources(allottedResources)
 
-                client.update(sliceProfileInstanceUri, sliceProfileInstance)
+                client.update(sliceProfileInstanceUri, sliceProfileInstance) */
+
+                client.connect(sliceProfileInstanceUri, allottedResourceUri)
             }
             else {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 500, "No slice profile instance found with id = " + sliceProfileInstanceId)
@@ -276,17 +324,83 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
         // Associates NSSI with Allotted Resource
         try {
             AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
-            client.connect(nssiUri, allottedResourceUri, AAIEdgeLabel.USES)
+            client.connect(allottedResourceUri, nssiUri)
         } catch(Exception e){
             exceptionUtil.buildAndThrowWorkflowException(execution, 25000, "Exception occured while NSSI with Allotted Resource connect call: " + e.getMessage())
         }
 
-        LOGGER.trace("${PREFIX} Exit associateSliceProfileInstanceWithNSSI")
+        LOGGER.debug("${PREFIX} Exit associateSliceProfileInstanceWithNSSI")
     }
 
 
     @Override
-    String getPrefix() {
+    void checkAssociatedProfiles(DelegateExecution execution, List<SliceProfile> associatedProfiles, ServiceInstance nssi) {
+        LOGGER.debug("${PREFIX} Start checkAssociatedProfiles")
+
+        LOGGER.debug("associatedProfiles == null = " + (associatedProfiles == null))
+        if(associatedProfiles == null || associatedProfiles.isEmpty()) {
+            String isCreateSliceProfileInstanceVar = execution.getVariable("isCreateSliceProfileInstance" )
+            boolean isCreateSliceProfileInstance = Boolean.parseBoolean(isCreateSliceProfileInstanceVar)
+
+            if(!isCreateSliceProfileInstance) { // New Slice Profile Instance should not be created
+                String msg = String.format("No associated profiles found for NSSI %s in AAI", nssi.getServiceInstanceId())
+                LOGGER.error(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
+            }
+        }
+
+        LOGGER.debug("${PREFIX} Exit checkAssociatedProfiles")
+    }
+
+
+    /**
+     * Calculates a final list of S-NSSAI
+     * @param execution
+     */
+    void calculateSNSSAI(DelegateExecution execution) {
+        LOGGER.debug("${getPrefix()} Start calculateSNSSAI")
+
+        def currentNSSI = execution.getVariable("currentNSSI")
+
+        List<SliceProfile> associatedProfiles = (List<SliceProfile>)currentNSSI['associatedProfiles']
+
+        String currentSNSSAI = currentNSSI['S-NSSAI']
+
+        String givenSliceProfileId = currentNSSI['sliceProfileId']
+
+        List<String> snssais = new ArrayList<>()
+
+        String isCreateSliceProfileInstanceVar = execution.getVariable("isCreateSliceProfileInstance" )
+
+        boolean isCreateSliceProfileInstance = Boolean.parseBoolean(isCreateSliceProfileInstanceVar)
+
+        if(isCreateSliceProfileInstance) { // Slice Profile Instance has to be created
+            for (SliceProfile associatedProfile : associatedProfiles) {
+                snssais.add(associatedProfile.getSNssai())
+            }
+
+            snssais.add(currentSNSSAI)
+        }
+        else { // Slice profile instance has to be deleted
+            if(associatedProfiles != null) {
+                for (SliceProfile associatedProfile : associatedProfiles) {
+                    if (!associatedProfile.getProfileId().equals(givenSliceProfileId)) { // not given profile id
+                        LOGGER.debug("calculateSNSSAI: associatedProfile.getSNssai()" + associatedProfile.getSNssai())
+                        snssais.add(associatedProfile.getSNssai())
+                    } else {
+                        currentNSSI['sliceProfileS-NSSAI'] = associatedProfile
+                    }
+                }
+            }
+        }
+
+        currentNSSI['S-NSSAIs'] = snssais
+
+        LOGGER.debug("${getPrefix()} Exit calculateSNSSAI")
+    }
+
+
+    private String getPrefix() {
         return PREFIX
     }
 
