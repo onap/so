@@ -94,12 +94,12 @@ class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
         execution.setVariable("networkServiceModelUuid", networkServiceModelUuid)
         String sliceParams = execution.getVariable("sliceParams")
         logger.debug("sliceParams "+sliceParams)
-        List<String> bhEndPoints = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(sliceParams, "endPoints"))
+        String bhEndPoints = jsonUtil.getJsonValue(sliceParams, "endPoint")
         if(bhEndPoints.empty) {
             logger.debug("End point info is empty")
             exceptionUtil.buildAndThrowWorkflowException(execution, 500, "End point info is empty")
         }else {
-            execution.setVariable("bh_endpoint", bhEndPoints.get(0))
+            execution.setVariable("bh_endpoint", bhEndPoints)
         }
         logger.debug(Prefix+ " **** Exit DoAllocateCoreNonSharedSlice:::  preProcessRequest ****")
     }
@@ -130,6 +130,10 @@ class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
                 logger.debug(msg)
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
             }
+            //set shared or non shared value from sliceProfile object in request
+            String additionalParams = execution.getVariable("sliceParams")
+            //Get resourceSharingLevel from sliceProfile
+            String serviceFunction = jsonUtil.getJsonValue(additionalParams, "sliceProfile.resourceSharingLevel")
             String serviceInstanceName = "nssi_"+execution.getVariable("nsstName")
             ServiceInstance si = new ServiceInstance()
             si.setServiceInstanceId(execution.getVariable("nssiServiceInstanceId"))
@@ -141,6 +145,7 @@ class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
             si.setModelVersionId(execution.getVariable("modelUuid"))
             si.setEnvironmentContext(environmentContext)
             si.setWorkloadContext(workloadContext)
+            si.setServiceFunction(serviceFunction)
             logger.debug("AAI service Instance Request Payload : "+si.toString())
             AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(serviceType).serviceInstance(serviceInstanceId))
             getAAIClient().create(uri, si)
@@ -225,7 +230,7 @@ class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
         logger.debug(("Service Vnfs JSON: "+jsonUtil.getJsonValue(json, "serviceResources.serviceVnfs")))
         List serviceVnfs = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(json, "serviceResources.serviceVnfs"))
         String networkServiceVnfJson = serviceVnfs.get(0)
-        String vnfInstanceName = (jsonUtil.getJsonValue(networkServiceVnfJson, "modelInfo.modelInstanceName")).trim() ?: ""
+        String vnfInstanceName = (jsonUtil.getJsonValue(networkServiceVnfJson, "modelInfo.modelInstanceName")).replace(" ","") ?: ""
         execution.setVariable("vnfInstanceName", vnfInstanceName)
     }
 
@@ -420,8 +425,8 @@ class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
         String bh_routeId = UUID.randomUUID().toString()
         execution.setVariable("coreEp_ID_bh", bh_routeId)
         String role = "CN"
-        String cnIpAddress = jsonUtil.getJsonValue(bh_endpoint, "IpAddress")
-        String LogicalLinkId = jsonUtil.getJsonValue(bh_endpoint, "LogicalLinkId")
+        String cnIpAddress = jsonUtil.getJsonValue(bh_endpoint, "ipAddress")
+        String LogicalLinkId = jsonUtil.getJsonValue(bh_endpoint, "logicInterfaceId")
         String nextHopInfo = jsonUtil.getJsonValue(bh_endpoint, "nextHopInfo")
         NetworkRoute bh_ep = new NetworkRoute()
         logger.debug("bh_endpoint: {}, bh_routeId: {}, cnIpAddress: {}, role: {}, LogicalLinkId: {}, nextHopInfo: {}, bh_ep: {}", bh_endpoint, bh_routeId, cnIpAddress, role, LogicalLinkId, nextHopInfo, bh_ep)

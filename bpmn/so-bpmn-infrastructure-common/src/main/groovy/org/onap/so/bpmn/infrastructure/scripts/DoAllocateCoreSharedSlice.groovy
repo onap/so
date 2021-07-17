@@ -80,14 +80,7 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
         logger.debug(Prefix+" **** Enter DoAllocateCoreSharedSlice ::: preProcessRequest ****")
         //Get NSSI Solutions
         String nssisolutions = execution.getVariable("solutions")
-
-        //Get First Object
-        List<String> nssiSolutionList = jsonUtil.StringArrayToList(nssisolutions)
-
-        logger.debug("nssiSolutionList : "+nssiSolutionList)
-
-        String nssiId = jsonUtil.getJsonValue(nssiSolutionList.get(0), "NSSIId")
-        logger.debug("NSSIId  : "+nssiId)
+        String nssiId = jsonUtil.getJsonValue(nssisolutions, "NSSIId")
 
         if (isBlank(nssiId)) {
             String msg = "solution nssiId is null"
@@ -98,12 +91,20 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
         }
 
         String sNssaiListAsString = jsonUtil.getJsonValue(execution.getVariable("sliceProfile"), "snssaiList")
-        logger.debug("sNssaiListAsString "+sNssaiListAsString)
         List<String> sNssaiList = jsonUtil.StringArrayToList(sNssaiListAsString)
-        logger.debug("sNssaiList "+sNssaiList)
         String sNssai = sNssaiList.get(0)
         execution.setVariable("sNssai", sNssai)
-        logger.debug("sNssai: "+sNssai)
+
+        //Setting this value in Map
+        Map<String, Object> spiWithsNssaiAndOrchStatus = new LinkedHashMap<>()
+        spiWithsNssaiAndOrchStatus.put("snssai", sNssai)
+        spiWithsNssaiAndOrchStatus.put("status", "created")
+
+        List <Map<String, Object>> spiWithsNssaiAndOrchStatusList = new ArrayList<>();
+        spiWithsNssaiAndOrchStatusList.add(spiWithsNssaiAndOrchStatus)
+
+        execution.setVariable("snssaiAndOrchStatusList", spiWithsNssaiAndOrchStatusList)
+        logger.debug("service Profile's NSSAI And Orchestration Status:  "+spiWithsNssaiAndOrchStatus)
 
         String serviceType = execution.getVariable("subscriptionServiceType")
         execution.setVariable("serviceType", serviceType)
@@ -125,79 +126,77 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
         String networkServiceInstanceId =""
         if(nsi.isPresent()) {
             List<Relationship> relationshipList = nsi.get().getRelationshipList()?.getRelationship()
-            List spiWithsNssaiAndOrchStatusList = new ArrayList<>()
+
+            List spiWithsNssaiAndOrchStatusList = execution.getVariable("snssaiAndOrchStatusList")
+
+            if(spiWithsNssaiAndOrchStatusList == null) {
+                spiWithsNssaiAndOrchStatusList = new ArrayList<>();
+            }
 
             for (Relationship relationship : relationshipList) {
                 String relatedTo = relationship.getRelatedTo()
-                if (relatedTo == "service-instance") {
+                if ("service-instance".equals(relatedTo)) {
                     List<RelationshipData> relationshipDataList = relationship.getRelationshipData()
                     List<RelatedToProperty> relatedToPropertyList = relationship.getRelatedToProperty()
                     for (RelationshipData relationshipData : relationshipDataList) {
-                        if (relationshipData.getRelationshipKey() == "service-instance.service-instance-id") {
+                        if ("service-instance.service-instance-id".equals(relationshipData.getRelationshipKey())) {
                             logger.debug("**** service-instance.service-instance-id 1 :: getServiceInstanceRelationships  :: "+ relationshipData.getRelationshipValue())
-                            execution.setVariable("networkServiceInstanceId", relationshipData.getRelationshipValue())
-                        }
-                    }
-                    for (RelatedToProperty relatedToProperty : relatedToPropertyList) {
-                        if (relatedToProperty.getPropertyKey() == "service-instance.service-instance-name") {
-                            execution.setVariable("networkServiceInstanceName", relatedToProperty.getPropertyValue())
-                        }
-                    }
-                }
-                //If related to is allotted-Resource
-                if (relatedTo == "allotted-resource") {
-                    //get slice Profile Instance Id from allotted resource in list by nssi
-                    List<String> sliceProfileInstanceIdList = new ArrayList<>()
-                    List<RelationshipData> relationshipDataList = relationship.getRelationshipData()
-                    for (RelationshipData relationshipData : relationshipDataList) {
-                        if (relationshipData.getRelationshipKey() == "service-instance.service-instance-id") {
-                            sliceProfileInstanceIdList.add(relationshipData.getRelationshipValue())
-                        }
-                    }
-                    for (String sliceProfileServiceInstanceId : sliceProfileInstanceIdList) {
-                        String errorSliceProfileMsg = "Slice Profile Service Instance was not found in aai"
 
-                        //Query Slice Profile Service Instance From AAI by sliceProfileServiceInstanceId
-                        AAIResultWrapper sliceProfileInstanceWrapper = queryAAI(execution, Types.SERVICE_INSTANCE, sliceProfileServiceInstanceId, errorSliceProfileMsg)
-                        Optional<ServiceInstance> sliceProfileServiceInstance = sliceProfileInstanceWrapper.asBean(ServiceInstance.class)
-                        if (sliceProfileServiceInstance.isPresent()) {
-                            String orchestrationStatus= sliceProfileServiceInstance.get().getOrchestrationStatus()
-                            String sNssai = sliceProfileServiceInstance.get().getSliceProfiles().getSliceProfile().get(0).getSNssai()
-                            if(sNssai.equals(execution.getVariable("sNssai"))) {
-                                orchestrationStatus = execution.getVariable("oStatus")
-                                //Slice Profile Service Instance to be updated in AAI
-                                execution.setVariable("sliceProfileServiceInstance", sliceProfileServiceInstance)
-                            }
+                            //Query Every related Service Instance From AAI by service Instance ID
+                            AAIResultWrapper instanceWrapper = queryAAI(execution, Types.SERVICE_INSTANCE, relationshipData.getRelationshipValue(), "No Instance Present")
+                            Optional<ServiceInstance> relatedServiceInstance = instanceWrapper.asBean(ServiceInstance.class)
+                            if (relatedServiceInstance.isPresent()) {
+                                ServiceInstance relatedServiceInstanceObj = relatedServiceInstance.get()
 
-                            Map<String, Object> spiWithsNssaiAndOrchStatus = new LinkedHashMap<>()
-                            spiWithsNssaiAndOrchStatus.put("snssai", sNssai)
-                            spiWithsNssaiAndOrchStatus.put("status", orchestrationStatus)
-                            spiWithsNssaiAndOrchStatusList.add(spiWithsNssaiAndOrchStatus)
-                            logger.debug("service Profile's NSSAI And Orchestration Status:  "+spiWithsNssaiAndOrchStatus)
+                                String role = relatedServiceInstanceObj.getServiceRole();
+
+                                if(role == null || role.isEmpty()) {
+                                    networkServiceInstanceId = relatedServiceInstanceObj.getServiceInstanceId()
+                                    networkServiceInstanceName = relatedServiceInstanceObj.getServiceInstanceName()
+
+                                    logger.debug("networkServiceInstanceId: {} networkServiceInstanceName: {} ",networkServiceInstanceId, networkServiceInstanceName)
+
+                                    execution.setVariable("networkServiceInstanceId", networkServiceInstanceId)
+                                    execution.setVariable("networkServiceInstanceName", networkServiceInstanceName)
+
+                                } else if("slice-profile-instance".equals(role)) {
+
+                                    String orchestrationStatus= relatedServiceInstanceObj.getOrchestrationStatus()
+                                    String sNssai = relatedServiceInstanceObj.getEnvironmentContext()
+                                    if(sNssai.equals(execution.getVariable("sNssai"))) {
+                                        orchestrationStatus = execution.getVariable("oStatus")
+                                        //Slice Profile Service Instance to be updated in AAI
+                                        execution.setVariable("sliceProfileServiceInstance", relatedServiceInstanceObj)
+                                    }
+
+                                    Map<String, Object> spiWithsNssaiAndOrchStatus = new LinkedHashMap<>()
+                                    spiWithsNssaiAndOrchStatus.put("snssai", sNssai)
+                                    spiWithsNssaiAndOrchStatus.put("status", orchestrationStatus)
+                                    spiWithsNssaiAndOrchStatusList.add(spiWithsNssaiAndOrchStatus)
+                                    logger.debug("service Profile's NSSAI And Orchestration Status:  "+spiWithsNssaiAndOrchStatus)
+                                }
+
+                           }
                         }
+
                     }
+
                 }
             }
             execution.setVariable("snssaiAndOrchStatusList", spiWithsNssaiAndOrchStatusList)
         }
-
         logger.debug("NSSI Id: ${serviceInstanceId}, network Service Instance Id: ${networkServiceInstanceId}, serviceName: ${networkServiceInstanceName}")
-
         //Get ServiceInstance Relationships
         getServiceInstanceRelationships(execution)
-
         //Get Vnf Relationships
         getVnfRelationships(execution)
 
         logger.debug(Prefix+" **** Exit DoAllocateCoreSharedSlice ::: getNetworkInstanceAssociatedWithNssiId ****")
-    }
+	}
 
     private void getServiceInstanceRelationships(DelegateExecution execution) {
-
-        logger.debug(Prefix+" **** Enter DoAllocateCoreSharedSlice ::: getServiceInstanceRelationships ****")
-
+        logger.debug(Prefix +" **** Enter DoAllocateCoreSharedSlice ::: getServiceInstanceRelationships ****")
         String serviceInstanceId = execution.getVariable("networkServiceInstanceId")
-
         String errorMsg = "query Network Service Instance from AAI failed"
         AAIResultWrapper wrapper = queryAAI(execution, Types.SERVICE_INSTANCE, serviceInstanceId, errorMsg)
         Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
@@ -208,47 +207,45 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
             List<Relationship> relationshipList = si.get().getRelationshipList()?.getRelationship()
             for (Relationship relationship : relationshipList) {
                 String relatedTo = relationship.getRelatedTo()
-                if (relatedTo == "owning-entity") {
+                if (("owning-entity").equals(relatedTo)) {
                     List<RelationshipData> relationshipDataList = relationship.getRelationshipData()
                     for (RelationshipData relationshipData : relationshipDataList) {
-                        if (relationshipData.getRelationshipKey() == "owning-entity.owning-entity-id") {
+                        if (("owning-entity.owning-entity-id").equals(relationshipData.getRelationshipKey())) {
                             execution.setVariable("owningEntityId", relationshipData.getRelationshipValue())
                         }
                     }
-                } else if (relatedTo == "generic-vnf") {
+                } else if (("generic-vnf").equals(relatedTo)) {
                     List<RelationshipData> relationshipDataList = relationship.getRelationshipData()
                     List<RelatedToProperty> relatedToPropertyList = relationship.getRelatedToProperty()
 
                     //Get VnfId
                     for (RelationshipData relationshipData : relationshipDataList) {
-                        if (relationshipData.getRelationshipKey() == "generic-vnf.vnf-id") {
+                        if (("generic-vnf.vnf-id").equals(relationshipData.getRelationshipKey())) {
                             execution.setVariable("vnfId", relationshipData.getRelationshipValue())
                         }
                     }
-
                     //Get Vnf Name Check If necessary
                     for (RelatedToProperty relatedToProperty : relatedToPropertyList) {
-                        if (relatedToProperty.getPropertyKey() == "generic-vnf.vnf-name") {
+                        if (("generic-vnf.vnf-name").equals(relatedToProperty.getPropertyKey())) {
                             execution.setVariable("vnfName", relatedToProperty.getPropertyValue())
                         }
                     }
-                } else if (relatedTo == "project") {
+                } else if (("project").equals(relatedTo)) {
                     List<RelationshipData> relationshipDataList = relationship.getRelationshipData()
                     for (RelationshipData relationshipData : relationshipDataList) {
-                        if (relationshipData.getRelationshipKey() == "project.project-name") {
+                        if (("project.project-name").equals(relationshipData.getRelationshipKey())) {
                             execution.setVariable("projectName", relationshipData.getRelationshipValue())
                         }
                     }
                 }
             }
-
-            logger.debug(Prefix+" **** Exit DoAllocateCoreSharedSlice ::: getServiceInstanceRelationships ****")
+            logger.debug(Prefix +" **** Exit DoAllocateCoreSharedSlice ::: getServiceInstanceRelationships ****")
         }
     }
 
     private void getVnfRelationships(DelegateExecution execution) {
 
-        logger.debug(Prefix+" **** Enter DoAllocateCoreSharedSlice ::: getVnfRelationships ****")
+        logger.debug(Prefix +" **** Enter DoAllocateCoreSharedSlice ::: getVnfRelationships ****")
         String msg = "query Generic Vnf from AAI failed"
         try {
             AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(execution.getVariable('vnfId')))
@@ -261,33 +258,34 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
                 List<Relationship> relationshipList = vnf.get().getRelationshipList()?.getRelationship()
                 for (Relationship relationship : relationshipList) {
                     String relatedTo = relationship.getRelatedTo()
-                    if (relatedTo == "tenant") {
+                    if (("tenant").equals(relatedTo)) {
                         List<RelationshipData> relationshipDataList = relationship.getRelationshipData()
                         for (RelationshipData relationshipData : relationshipDataList) {
-                            if (relationshipData.getRelationshipKey() == "tenant.tenant-id") {
+                            if (("tenant.tenant-id").equals(relationshipData.getRelationshipKey())) {
                                 execution.setVariable("tenantId", relationshipData.getRelationshipValue())
                             }
                         }
-                    } else if (relatedTo == "cloud-region") {
+                    } else if (("cloud-region").equals(relatedTo)) {
                         List<RelationshipData> relationshipDataList = relationship.getRelationshipData()
+
                         for (RelationshipData relationshipData : relationshipDataList) {
-                            if (relationshipData.getRelationshipKey() == "cloud-region.cloud-owner") {
+                            if (("cloud-region.cloud-owner").equals(relationshipData.getRelationshipKey())) {
                                 execution.setVariable("cloudOwner", relationshipData.getRelationshipValue())
-                            } else if (relationshipData.getRelationshipKey() == "cloud-region.cloud-region-id") {
+                            } else if (("cloud-region.cloud-region-id").equals(relationshipData.getRelationshipKey())) {
                                 execution.setVariable("lcpCloudRegionId", relationshipData.getRelationshipValue())
                             }
                         }
-                    } else if (relatedTo == "platform") {
+                    } else if (("platform").equals(relatedTo)) {
                         List<RelationshipData> relationshipDataList = relationship.getRelationshipData()
                         for (RelationshipData relationshipData : relationshipDataList) {
-                            if (relationshipData.getRelationshipKey() == "platform.platform-name") {
+                            if (("platform.platform-name").equals(relationshipData.getRelationshipKey())) {
                                 execution.setVariable("platformName", relationshipData.getRelationshipValue())
                             }
                         }
-                    } else if (relatedTo == "line-of-business") {
+                    } else if (("line-of-business").equals(relatedTo)) {
                         List<RelationshipData> relationshipDataList = relationship.getRelationshipData()
                         for (RelationshipData relationshipData : relationshipDataList) {
-                            if (relationshipData.getRelationshipKey() == "line-of-business.line-of-business-name") {
+                            if (("line-of-business.line-of-business-name").equals(relationshipData.getRelationshipKey())) {
                                 execution.setVariable("lineOfBusinessName", relationshipData.getRelationshipValue())
                             }
                         }
@@ -301,9 +299,16 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
             logger.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
-        logger.debug(Prefix+" **** Exit DoAllocateCoreSharedSlice ::: getVnfRelationships ****")
+        logger.debug(Prefix +" **** Exit DoAllocateCoreSharedSlice ::: getVnfRelationships ****")
     }
 
+	/**
+	 * query AAI
+	 * @param execution
+	 * @param aaiObjectName
+	 * @param instanceId
+	 * @return AAIResultWrapper
+	 */
     private AAIResultWrapper queryAAI(DelegateExecution execution, AAIObjectName aaiObjectName, String instanceId, String errorMsg) {
         logger.debug(Prefix+" **** Enter DoAllocateCoreSharedSlice ::: queryAAI ****")
         String globalSubscriberId = execution.getVariable("globalSubscriberId")
@@ -344,9 +349,7 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
     public void prepareSOMacroRequestPayload(DelegateExecution execution) {
         logger.debug(Prefix+" **** Enter DoAllocateCoreSharedSlice ::: prepareSOMacroRequestPayLoad ****")
         String json = execution.getVariable("serviceVnfs")
-        logger.debug(">>>> json "+json)
         List<Object> vnfList = mapper.readValue(json, List.class);
-        logger.debug("vnfList:  "+vnfList)
         Map<String,Object> serviceMap = mapper.readValue(execution.getVariable("serviceModelInfo"), Map.class);
         ModelInfo serviceModelInfo = new ModelInfo()
         serviceModelInfo.setModelType(ModelType.service)
@@ -354,19 +357,12 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
         serviceModelInfo.setModelVersionId(serviceMap.get("modelUuid"))
         serviceModelInfo.setModelName(serviceMap.get("modelName"))
         serviceModelInfo.setModelVersion(serviceMap.get("modelVersion"))
-        logger.debug("serviceModelInfo:  "+serviceModelInfo)
         //List of Vnfs
         List<Object> vnfModelInfoList = new ArrayList<>()
 
         Map vnfMap = vnfList.get(0)
-        ModelInfo vnfModelInfo = vnfMap.get("modelInfo")
-        vnfModelInfo.setModelCustomizationId(vnfModelInfo.getModelCustomizationUuid())
-        vnfModelInfo.setModelVersionId(vnfModelInfo.getModelId())
-        logger.debug("vnfModelInfo "+vnfModelInfo)
-
         //List of VFModules
         List<Map<String, Object>> vfModuleList = vnfMap.get("vfModules")
-        logger.debug("vfModuleList "+vfModuleList)
 
         //List of VfModules
         List<ModelInfo> vfModelInfoList = new ArrayList<>()
@@ -376,16 +372,17 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
             ModelInfo vfModelInfo = vfModule.get("modelInfo")
             vfModelInfo.setModelCustomizationId(vfModelInfo.getModelCustomizationUuid())
             vfModelInfo.setModelVersionId(vfModelInfo.getModelId())
-            logger.debug("vfModelInfo "+vfModelInfo)
             vfModelInfoList.add(vfModelInfo)
         }
+
+        String networkServiceInstanceName = execution.getVariable("networkServiceInstanceName")
         //RequestInfo
         RequestInfo requestInfo = new RequestInfo()
 
         //Dummy Product FamilyId
         requestInfo.setProductFamilyId("test1234")
         requestInfo.setSource("VID")
-        requestInfo.setInstanceName(execution.getVariable("networkServiceInstanceName"))
+        requestInfo.setInstanceName(networkServiceInstanceName)
         requestInfo.setSuppressRollback(false)
         requestInfo.setRequestorId("NBI")
 
@@ -395,10 +392,13 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
         serviceParams.add(serviceParamsValues)
 
         //Cloud Configuration
+        String lcpCloudRegionId = execution.getVariable("lcpCloudRegionId")
+        String tenantId = execution.getVariable("tenantId")
+        String cloudOwner = execution.getVariable("cloudOwner")
         CloudConfiguration cloudConfiguration = new CloudConfiguration()
-        cloudConfiguration.setLcpCloudRegionId(execution.getVariable("lcpCloudRegionId"))
-        cloudConfiguration.setTenantId(execution.getVariable("tenantId"))
-        cloudConfiguration.setCloudOwner(execution.getVariable("cloudOwner"))
+        cloudConfiguration.setLcpCloudRegionId(lcpCloudRegionId)
+        cloudConfiguration.setTenantId(tenantId)
+        cloudConfiguration.setCloudOwner(cloudOwner)
 
         //VFModules List
         List<Map<String, Object>> vfModules = new ArrayList<>()
@@ -415,8 +415,6 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
         }
 
         //Vnf intsanceParams
-        Map<String, Object> sliceProfile = mapper.readValue(execution.getVariable("sliceProfile"), Map.class);
-
         List<Map<String, Object>> vnfInstanceParamsList = new ArrayList<>()
         String supportedsNssaiJson= prepareVnfInstanceParamsJson(execution)
 
@@ -425,12 +423,16 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
         vnfInstanceParamsList.add(supportedNssai)
 
         Platform platform = new Platform()
-		String platformName = execution.getVariable("platformName")
+        String platformName = execution.getVariable("platformName")
         platform.setPlatformName(platformName)
 
         LineOfBusiness lineOfbusiness = new LineOfBusiness()
         String lineOfBusinessName = execution.getVariable("lineOfBusinessName")
         lineOfbusiness.setLineOfBusinessName(lineOfBusinessName)
+
+        ModelInfo vnfModelInfo = vnfMap.get("modelInfo")
+        vnfModelInfo.setModelCustomizationId(vnfModelInfo.getModelCustomizationUuid())
+        vnfModelInfo.setModelVersionId(vnfModelInfo.getModelId())
 
         //Vnf Values
         Map<String, Object> vnfValues = new LinkedHashMap<>()
@@ -449,9 +451,10 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
         serviceResources.put("vnfs", vnfModelInfoList)
 
         //Service Values
+        String serviceInstanceName = execution.getVariable("networkServiceInstanceName")
         Map<String, Object> serviceValues = new LinkedHashMap<>()
         serviceValues.put("modelInfo", serviceModelInfo)
-        serviceValues.put("instanceName", execution.getVariable("networkServiceInstanceName"))
+        serviceValues.put("instanceName", serviceInstanceName)
         serviceValues.put("resources", serviceResources)
         serviceValues.put("instanceParams", serviceParams)
 
@@ -469,22 +472,26 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
         userParams.add(userParamsValues)
 
         //Request Parameters
+        String serviceType = execution.getVariable("serviceType")
         RequestParameters requestParameters = new RequestParameters()
         requestParameters.setaLaCarte(false)
-        requestParameters.setSubscriptionServiceType(execution.getVariable("serviceType"))
+        requestParameters.setSubscriptionServiceType(serviceType)
         requestParameters.setUserParams(userParams)
 
         //SubscriberInfo
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
         SubscriberInfo subscriberInfo = new SubscriberInfo()
-        subscriberInfo.setGlobalSubscriberId(execution.getVariable("globalSubscriberId"))
+        subscriberInfo.setGlobalSubscriberId(globalSubscriberId)
 
         //Owning Entity
+        String owningEntityId = execution.getVariable("owningEntityId")
         OwningEntity owningEntity = new OwningEntity()
-        owningEntity.setOwningEntityId(execution.getVariable("owningEntityId"))
+        owningEntity.setOwningEntityId(owningEntityId)
 
         //Project
+        String projectName = execution.getVariable("projectName")
         Project project = new Project()
-        project.setProjectName(execution.getVariable("projectName"))
+        project.setProjectName(projectName)
 
         RequestDetails requestDetails = new RequestDetails()
         requestDetails.setModelInfo(serviceModelInfo)
@@ -500,17 +507,16 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
         String requestPayload = mapper.writeValueAsString(requestDetailsMap)
         logger.debug("requestDetails "+requestPayload)
         execution.setVariable("requestPayload", requestPayload)
+
         logger.debug(Prefix+" **** Exit DoAllocateCoreSharedSlice ::: prepareSOMacroRequestPayLoad ****")
     }
 
     private String prepareVnfInstanceParamsJson(DelegateExecution execution) {
-        logger.debug(Prefix+" **** Enter DoAllocateCoreSharedSlice ::: prepareVnfInstanceParamsJson ****")
+        logger.debug(Prefix +" **** Enter DoAllocateCoreSharedSlice ::: prepareVnfInstanceParamsJson ****")
         List instanceParamsvalues = execution.getVariable("snssaiAndOrchStatusList")
         Map<String, Object> nSsai= new LinkedHashMap<>()
         nSsai.put("sNssai", instanceParamsvalues)
         String supportedsNssaiJson = mapper.writeValueAsString(nSsai)
-        //SupportedNssai
-        logger.debug("****  supportedsNssaiJson**** "+supportedsNssaiJson)
         logger.debug(Prefix+" **** Exit DoAllocateCoreSharedSlice ::: prepareVnfInstanceParamsJson ****")
         return supportedsNssaiJson
     }
@@ -519,9 +525,13 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
         logger.debug(Prefix+" **** Enter DoAllocateCoreSharedSlice ::: sendPutRequestToSOMacro ****")
         try {
             String msoEndpoint = UrnPropertiesReader.getVariable("mso.infra.endpoint.url", execution)
-            String url = msoEndpoint+"/serviceInstantiation/v7/serviceInstances/"+execution.getVariable("networkServiceInstanceId")+"/vnfs/"+execution.getVariable("vnfId")
+            String networkServiceInstanceId = execution.getVariable("networkServiceInstanceId")
+            String vnfId = execution.getVariable("vnfId")
+            String url = msoEndpoint+"/serviceInstantiation/v7/serviceInstances/"+networkServiceInstanceId+"/vnfs/"+vnfId
             String requestBody = execution.getVariable("requestPayload")
-            String encodeString = "Basic SW5mcmFQb3J0YWxDbGllbnQ6cGFzc3dvcmQxJA=="
+            String msoKey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
+            String basicAuth =  UrnPropertiesReader.getVariable("mso.adapters.po.auth", execution)
+            String encodeString = utils.getBasicAuth(basicAuth, msoKey)
             logger.debug("msoEndpoint: "+msoEndpoint +"  "+ "url: "+url  +" requestBody: "+requestBody +"  "+ "encodeString: "+encodeString)
             HttpClient httpClient = getHttpClientFactory().newJsonClient(new URL(url), ONAPComponents.SO)
             httpClient.addAdditionalHeader("Authorization", encodeString)
@@ -531,24 +541,28 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
         } catch (BpmnError e) {
             throw e
         } catch (any) {
-            String msg = Prefix+" Exception in DoAllocateCoreSharedSlice " + any.getCause()
+            String msg = Prefix+" Exception in DoAllocate Shared " + any.getCause()
             logger.error(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
         logger.debug(Prefix+" **** Exit DoAllocateCoreSharedSlice ::: sendPostRequestToSOMacro ****")
     }
 
+	/**
+	 * Handle SO Response for PUT and prepare update operation status
+	 * @param execution
+	 */
     private void handleSOResponse(Response httpResponse, DelegateExecution execution){
         logger.debug(Prefix+" **** Enter DoAllocateCoreSharedSlice ::: handleSOResponse ****")
+
         int soResponseCode = httpResponse.getStatus()
         logger.debug("soResponseCode : "+soResponseCode)
 
         if (soResponseCode >= 200 && soResponseCode < 204 && httpResponse.hasEntity()) {
             String soResponse = httpResponse.readEntity(String.class)
             logger.debug("soResponse: "+soResponse)
-            logger.debug("soResponse JsonUtil: "+jsonUtil.getJsonValue(soResponse, "requestReferences.requestId"))
-            def macroOperationId = jsonUtil.getJsonValue(soResponse, "requestReferences.requestId")
-            def requestSelfLink = jsonUtil.getJsonValue(soResponse, "requestReferences.requestSelfLink")
+            String macroOperationId = jsonUtil.getJsonValue(soResponse, "requestReferences.requestId")
+            String requestSelfLink = jsonUtil.getJsonValue(soResponse, "requestReferences.requestSelfLink")
             execution.setVariable("macroOperationId", macroOperationId)
             execution.setVariable("requestSelfLink", requestSelfLink)
             execution.setVariable("isSOTimeOut", "no")
@@ -564,10 +578,11 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
     public void getSOPUTProgress(DelegateExecution execution) {
         logger.debug(Prefix+ " **** Enter DoAllocateCoreSharedSlice ::: getSOPUTProgress ****")
         String url= execution.getVariable("requestSelfLink")
-        logger.debug("url  "+url)
         HttpClient httpClient = getHttpClientFactory().newJsonClient(new URL(url), ONAPComponents.SO)
-		//Hardcoding for now, will be updated in next patch
-        httpClient.addAdditionalHeader("Authorization", "Basic SW5mcmFQb3J0YWxDbGllbnQ6cGFzc3dvcmQxJA==")
+        String msoKey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
+        String basicAuth =  UrnPropertiesReader.getVariable("mso.adapters.po.auth", execution)
+        String encodeString = utils.getBasicAuth(basicAuth, msoKey)
+        httpClient.addAdditionalHeader("Authorization", encodeString)
         httpClient.addAdditionalHeader("Accept", "application/json")
         Response httpResponse = httpClient.get()
         logger.debug("httpResponse "+httpResponse)
@@ -586,71 +601,80 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
         logger.debug(Prefix+ " **** Exit DoAllocateCoreSharedSlice ::: getSOPUTProgress ****")
     }
 
-    public void timeDelay(DelegateExecution execution) {
+    public void timeDelay() {
         try {
             logger.debug(Prefix+ " **** DoAllocateCoreSharedSlice ::: timeDelay going to sleep for 5 sec")
             Thread.sleep(5000)
-            logger.debug("**** DoAllocateCoreNonSharedSlice ::: timeDelay wakeup after 5 sec")
+            logger.debug("**** DoActivateCoreNSSI ::: timeDelay wakeup after 5 sec")
         } catch(InterruptedException e) {
             logger.error(Prefix+ " **** DoAllocateCoreSharedSlice ::: timeDelay exception" + e)
         }
-    }
+	}
 
     void prepareUpdateResourceOperationStatus(DelegateExecution execution) {
 
         logger.debug(Prefix+" **** Enter DoAllocateCoreSharedSlice ::: prepareUpdateResourceOperationStatus ****")
         //Prepare Update Status for PUT failure and success
-        if("COMPLETED".equals(execution.getVariable("requestState"))) {
+        if(execution.getVariable("isTimeOut").equals("YES")) {
+            logger.debug("TIMEOUT - SO PUT Failure")
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "SO PUT Failure")
+        } else {
             execution.setVariable("progress", "100")
             execution.setVariable("status", "finished")
-            execution.setVariable("operationContent", "AllocteCoreNSSI successful.")
-            logger.debug("Success ,result:${execution.getVariable("result")}, reason: ${execution.getVariable("reason")}")
-        } else {
-            logger.debug("SO PUT Failure")
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "SO PUT Failure")
+            execution.setVariable("operationContent", "AllocteCoreNSSI Shared successful.")
+            logger.debug("prepareFailureStatus,result:${execution.getVariable("result")}, reason: ${execution.getVariable("reason")}")
         }
         setResourceOperationStatus(execution)
         logger.debug(Prefix+" **** Exit DoAllocateCoreSharedSlice ::: prepareUpdateResourceOperationStatus ****")
     }
 
+	/**
+	 * prepare ResourceOperation status
+	 * @param execution
+	 * @param operationType
+	 */
     private void setResourceOperationStatus(DelegateExecution execution) {
         logger.debug(Prefix+" **** Enter DoAllocateCoreSharedSlice ::: setResourceOperationStatus ****")
-        String serviceId = execution.getVariable("nssiId")
-        String jobId = execution.getVariable("jobId")
-        String nsiId = execution.getVariable("nsiId")
-        String operationType = execution.getVariable("operationType")
-		logger.debug("serviceId: "+serviceId +"  "+ " jobId: "+jobId +"  "+ " nsiId: "+nsiId+" nssiId: "+nssiId+" operationType: "+operationType)
-        ResourceOperationStatus resourceOperationStatus = new ResourceOperationStatus()
-        resourceOperationStatus.setServiceId(serviceId)
-        resourceOperationStatus.setOperationId(jobId)
-        resourceOperationStatus.setResourceTemplateUUID(nsiId)
-		resourceOperationStatus.setResourceInstanceID(nssiId)
-        resourceOperationStatus.setOperType(operationType)
-        resourceOperationStatus.setStatus("finished")
-        resourceOperationStatus.setProgress("100")
-        resourceOperationStatus.setStatusDescription("Core Allocate successful")
-        requestDBUtil.prepareUpdateResourceOperationStatus(execution, resourceOperationStatus)
-        logger.debug(Prefix+" **** Exit DoAllocateCoreSharedSlice ::: setResourceOperationStatus ****")
-    }
-
-    void prepareFailedOperationStatusUpdate(DelegateExecution execution){
-        logger.debug(Prefix + " **** Enter DoAllocateCoreSharedSlice ::: prepareFailedOperationStatusUpdate ****")
         String serviceId = execution.getVariable("nsiId")
         String jobId = execution.getVariable("jobId")
-        String nsiId = execution.getVariable("nsiId")
+        String nssiId = execution.getVariable("nssiId")
         String operationType = "ALLOCATE"
-        logger.debug("serviceId: "+serviceId +"  "+ " jobId: "+jobId +"  "+ " nsiId: "+nsiId+" operationType: "+operationType)
         String modelUuid= execution.getVariable("modelUuid")
         ResourceOperationStatus resourceOperationStatus = new ResourceOperationStatus()
         resourceOperationStatus.setServiceId(serviceId)
         resourceOperationStatus.setJobId(jobId)
         resourceOperationStatus.setOperationId(jobId)
         resourceOperationStatus.setResourceTemplateUUID(modelUuid)
+        resourceOperationStatus.setResourceInstanceID(nssiId)
+        resourceOperationStatus.setOperType(operationType)
+        resourceOperationStatus.setStatus(execution.getVariable("status"))
+        resourceOperationStatus.setProgress(execution.getVariable("progress"))
+        resourceOperationStatus.setStatusDescription(execution.getVariable("statusDescription"))
+        requestDBUtil.prepareUpdateResourceOperationStatus(execution, resourceOperationStatus)
+        logger.debug(Prefix+" **** Exit DoAllocateCoreSharedSlice ::: setResourceOperationStatus ****")
+    }
+
+    void prepareFailedOperationStatusUpdate(DelegateExecution execution){
+        logger.debug(Prefix + " **** Enter DoAllocateCoreSharedSlice ::: prepareFailedOperationStatusUpdate ****")
+         String serviceId = execution.getVariable("nsiId")
+        String jobId = execution.getVariable("jobId")
+        String nssiId = execution.getVariable("nssiId")
+        String operationType = "ALLOCATE"
+        //modelUuid
+        String modelUuid= execution.getVariable("modelUuid")
+        logger.debug("serviceId: {}, jobId: {}, nssiId: {}, operationType: {}.", serviceId, jobId, nssiId, operationType)
+        ResourceOperationStatus resourceOperationStatus = new ResourceOperationStatus()
+        resourceOperationStatus.setServiceId(serviceId)
+        resourceOperationStatus.setJobId(jobId)
+        resourceOperationStatus.setOperationId(jobId)
+        resourceOperationStatus.setResourceInstanceID(nssiId)
+        resourceOperationStatus.setResourceTemplateUUID(modelUuid)
         resourceOperationStatus.setOperType(operationType)
         resourceOperationStatus.setProgress("0")
         resourceOperationStatus.setStatus("failed")
-        resourceOperationStatus.setStatusDescription("Core NSSI Allocate Failed")
+        resourceOperationStatus.setStatusDescription("Core NSSI Shared Allocate Failed")
         requestDBUtil.prepareUpdateResourceOperationStatus(execution, resourceOperationStatus)
         logger.debug(Prefix + " **** Exit DoAllocateCoreSharedSlice ::: prepareFailedOperationStatusUpdate ****")
     }
 }
+
