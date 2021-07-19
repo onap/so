@@ -8,6 +8,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2020 Nokia
  * ================================================================================
+ * Modifications Copyright (c) 2021 Orange
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -115,6 +117,7 @@ public class WorkflowActionTest extends BaseTaskTest {
             "VfModuleReplaceRebuildVolumeGroups.json";
     private static final String MACRO_CREATE_NETWORK_COLLECTION_JSON = "Macro/CreateNetworkCollection.json";
     private static final String MACRO_VNF_MACRO_REPLACE_JSON = "Macro/VnfMacroReplace.json";
+    private static final String MACRO_CREATE_JSON = "Macro/ServiceMacroAssignVnfAndPnf.json";
 
     @Mock
     protected Environment environment;
@@ -298,7 +301,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         vfModuleCustomization3.setModelCustomizationUUID("72d9d1cd-f46d-447a-abdb-451d6fb05fa8");
 
         when(userParamsServiceTraversal.getResourceListFromUserParams(any(), anyList(), anyString(), anyString()))
-                .thenReturn(prepareListWithResources());
+                .thenReturn(prepareListWithResources(false, false));
         when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
                 false, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
         when(catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID("a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f"))
@@ -349,7 +352,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         vfModuleCustomization3.setModelCustomizationUUID("72d9d1cd-f46d-447a-abdb-451d6fb05fa8");
 
         when(userParamsServiceTraversal.getResourceListFromUserParams(any(), anyList(), anyString(), anyString()))
-                .thenReturn(prepareListWithResources());
+                .thenReturn(prepareListWithResources(false, false));
         when(environment.getProperty("org.onap.so.cloud-owner")).thenReturn("att-aic");
         when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
                 false, "att-aic")).thenReturn(northBoundRequest);
@@ -406,13 +409,13 @@ public class WorkflowActionTest extends BaseTaskTest {
         workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         assertEqualsBulkFlowName(ebbs, "CreateVolumeGroupBB", "ActivateVolumeGroupBB", "CreateVfModuleBB",
-                "CreateVfModuleBB", "ActivateVfModuleBB", "ActivateVfModuleBB", "ActivateVnfBB",
+                "ActivateVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB", "ActivateVnfBB",
                 "ActivateServiceInstanceBB");
         assertEquals("volumeGroup0", ebbs.get(0).getWorkflowResourceIds().getVolumeGroupId());
         assertEquals("volumeGroup0", ebbs.get(1).getWorkflowResourceIds().getVolumeGroupId());
         assertEquals("testVfModuleId1", ebbs.get(2).getWorkflowResourceIds().getVfModuleId());
-        assertEquals("testVfModuleId2", ebbs.get(3).getWorkflowResourceIds().getVfModuleId());
-        assertEquals("testVfModuleId1", ebbs.get(4).getWorkflowResourceIds().getVfModuleId());
+        assertEquals("testVfModuleId1", ebbs.get(3).getWorkflowResourceIds().getVfModuleId());
+        assertEquals("testVfModuleId2", ebbs.get(4).getWorkflowResourceIds().getVfModuleId());
         assertEquals("testVfModuleId2", ebbs.get(5).getWorkflowResourceIds().getVfModuleId());
         assertEquals("vnf0", ebbs.get(6).getWorkflowResourceIds().getVnfId());
         assertEquals("si0", ebbs.get(7).getWorkflowResourceIds().getServiceInstanceId());
@@ -624,7 +627,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         vfModuleCustomization3.setModelCustomizationUUID("72d9d1cd-f46d-447a-abdb-451d6fb05fa8");
 
         when(userParamsServiceTraversal.getResourceListFromUserParams(any(), anyList(), anyString(), anyString()))
-                .thenReturn(prepareListWithResources());
+                .thenReturn(prepareListWithResources(false, false));
         when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
                 false, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
         when(catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID("a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f"))
@@ -638,8 +641,8 @@ public class WorkflowActionTest extends BaseTaskTest {
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         assertEqualsBulkFlowName(ebbs, "AssignServiceInstanceBB", "AssignVnfBB", "AssignVolumeGroupBB",
                 "AssignVfModuleBB", "AssignVfModuleBB", "AssignVfModuleBB", "CreateVolumeGroupBB",
-                "ActivateVolumeGroupBB", "CreateVfModuleBB", "CreateVfModuleBB", "CreateVfModuleBB",
-                "ActivateVfModuleBB", "ActivateVfModuleBB", "ActivateVfModuleBB", "ActivateVnfBB",
+                "ActivateVolumeGroupBB", "CreateVfModuleBB", "ActivateVfModuleBB", "CreateVfModuleBB",
+                "ActivateVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB", "ActivateVnfBB",
                 "ActivateServiceInstanceBB");
 
         assertEquals(3, ebbs.get(0).getWorkflowResourceIds().getServiceInstanceId().length());
@@ -658,6 +661,92 @@ public class WorkflowActionTest extends BaseTaskTest {
         assertEquals(randomUUIDLength, ebbs.get(12).getWorkflowResourceIds().getVfModuleId().length());
         assertEquals(randomUUIDLength, ebbs.get(13).getWorkflowResourceIds().getVfModuleId().length());
         assertEquals(randomUUIDLength, ebbs.get(14).getWorkflowResourceIds().getVnfId().length());
+        assertEquals(3, ebbs.get(0).getWorkflowResourceIds().getServiceInstanceId().length());
+        assertEquals(true, execution.getVariable("homing"));
+    }
+
+    @Test
+    public void selectExecutionListServiceMacroCreateWithUserParamsAndPriorities() throws Exception {
+        String gAction = "createInstance";
+        String resource = "Service";
+        String bpmnRequest = readBpmnRequestFromFile(MACRO_CREATE_JSON);
+        initExecution(gAction, bpmnRequest, false);
+        execution.setVariable("requestUri", "v6/serviceInstances/123");
+
+        NorthBoundRequest northBoundRequest = new NorthBoundRequest();
+        List<OrchestrationFlow> orchFlows = createFlowList("AssignServiceInstanceBB", "CreateNetworkCollectionBB",
+                "AssignNetworkBB", "AssignVnfBB", "AssignVolumeGroupBB", "AssignVfModuleBB", "AssignPnfBB",
+                "WaitForPnfReadyBB", "ActivatePnfBB", "CreateNetworkBB", "ActivateNetworkBB", "CreateVolumeGroupBB",
+                "ActivateVolumeGroupBB", "CreateVfModuleBB", "ActivateVfModuleBB", "AssignFabricConfigurationBB",
+                "ActivateFabricConfigurationBB", "ActivateVnfBB", "ActivateNetworkCollectionBB",
+                "ActivateServiceInstanceBB");
+        northBoundRequest.setOrchestrationFlowList(orchFlows);
+
+        Service service = new Service();
+        service.setModelUUID("3c40d244-808e-42ca-b09a-256d83d19d0a");
+
+        VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
+        vfModuleCustomization.setModelCustomizationUUID("a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f");
+        HeatEnvironment volumeHeatEnv = new HeatEnvironment();
+        vfModuleCustomization.setVolumeHeatEnv(volumeHeatEnv);
+        org.onap.so.db.catalog.beans.VfModule vfModule = new org.onap.so.db.catalog.beans.VfModule();
+        HeatTemplate volumeHeatTemplate = new HeatTemplate();
+        vfModule.setVolumeHeatTemplate(volumeHeatTemplate);
+        vfModuleCustomization.setVfModule(vfModule);
+
+        VfModuleCustomization vfModuleCustomization2 = new VfModuleCustomization();
+        vfModuleCustomization2.setModelCustomizationUUID("72d9d1cd-f46d-447a-abdb-451d6fb05fa8");
+        HeatEnvironment heatEnvironment = new HeatEnvironment();
+        vfModuleCustomization2.setHeatEnvironment(heatEnvironment);
+        org.onap.so.db.catalog.beans.VfModule vfModule2 = new org.onap.so.db.catalog.beans.VfModule();
+        HeatTemplate moduleHeatTemplate = new HeatTemplate();
+        vfModule2.setModuleHeatTemplate(moduleHeatTemplate);
+        vfModuleCustomization2.setVfModule(vfModule2);
+
+        VfModuleCustomization vfModuleCustomization3 = vfModuleCustomization2;
+        vfModuleCustomization3.setModelCustomizationUUID("72d9d1cd-f46d-447a-abdb-451d6fb05fa8");
+
+        when(userParamsServiceTraversal.getResourceListFromUserParams(any(), anyList(), anyString(), anyString()))
+                .thenReturn(prepareListWithResources(true, true));
+        when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
+                false, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
+        when(catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID("a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f"))
+                .thenReturn(vfModuleCustomization);
+        when(catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID("72d9d1cd-f46d-447a-abdb-451d6fb05fa8"))
+                .thenReturn(vfModuleCustomization2);
+        when(catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID("da4d4327-fb7d-4311-ac7a-be7ba60cf969"))
+                .thenReturn(vfModuleCustomization3);
+        when(catalogDbClient.getServiceByID("3c40d244-808e-42ca-b09a-256d83d19d0a")).thenReturn(service);
+        workflowAction.selectExecutionList(execution);
+        List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+        assertEqualsBulkFlowName(ebbs, "AssignServiceInstanceBB", "AssignVnfBB", "AssignVolumeGroupBB",
+                "AssignVfModuleBB", "AssignVfModuleBB", "AssignVfModuleBB", "AssignPnfBB", "WaitForPnfReadyBB",
+                "ActivatePnfBB", "CreateVolumeGroupBB", "ActivateVolumeGroupBB", "CreateVfModuleBB",
+                "ActivateVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB", "CreateVfModuleBB",
+                "ActivateVfModuleBB", "ActivateVnfBB", "ActivateServiceInstanceBB");
+
+        assertEquals(3, ebbs.get(0).getWorkflowResourceIds().getServiceInstanceId().length());
+        int randomUUIDLength = UUID.randomUUID().toString().length();
+        assertEquals(randomUUIDLength, ebbs.get(1).getWorkflowResourceIds().getVnfId().length());
+        assertEquals(randomUUIDLength, ebbs.get(2).getWorkflowResourceIds().getVolumeGroupId().length());
+        assertEquals(randomUUIDLength, ebbs.get(3).getWorkflowResourceIds().getVfModuleId().length());
+        assertEquals(randomUUIDLength, ebbs.get(4).getWorkflowResourceIds().getVfModuleId().length());
+        assertEquals(randomUUIDLength, ebbs.get(5).getWorkflowResourceIds().getVfModuleId().length());
+        assertEquals("72d9d1cd-f46d-447a-abdb-451d6fb05fa8", ebbs.get(3).getBuildingBlock().getKey());
+        assertEquals("da4d4327-fb7d-4311-ac7a-be7ba60cf969", ebbs.get(4).getBuildingBlock().getKey());
+        assertEquals("3c40d244-808e-42ca-b09a-256d83d19d0a", ebbs.get(5).getBuildingBlock().getKey());
+        assertEquals(randomUUIDLength, ebbs.get(6).getWorkflowResourceIds().getPnfId().length());
+        assertEquals(randomUUIDLength, ebbs.get(7).getWorkflowResourceIds().getPnfId().length());
+        assertEquals(randomUUIDLength, ebbs.get(8).getWorkflowResourceIds().getPnfId().length());
+        assertEquals(randomUUIDLength, ebbs.get(9).getWorkflowResourceIds().getVolumeGroupId().length());
+        assertEquals(randomUUIDLength, ebbs.get(10).getWorkflowResourceIds().getVolumeGroupId().length());
+        assertEquals(randomUUIDLength, ebbs.get(11).getWorkflowResourceIds().getVfModuleId().length());
+        assertEquals(randomUUIDLength, ebbs.get(12).getWorkflowResourceIds().getVfModuleId().length());
+        assertEquals(randomUUIDLength, ebbs.get(13).getWorkflowResourceIds().getVfModuleId().length());
+        assertEquals(randomUUIDLength, ebbs.get(14).getWorkflowResourceIds().getVfModuleId().length());
+        assertEquals(randomUUIDLength, ebbs.get(15).getWorkflowResourceIds().getVfModuleId().length());
+        assertEquals(randomUUIDLength, ebbs.get(16).getWorkflowResourceIds().getVfModuleId().length());
+        assertEquals(randomUUIDLength, ebbs.get(17).getWorkflowResourceIds().getVnfId().length());
         assertEquals(3, ebbs.get(0).getWorkflowResourceIds().getServiceInstanceId().length());
         assertEquals(true, execution.getVariable("homing"));
     }
@@ -708,7 +797,7 @@ public class WorkflowActionTest extends BaseTaskTest {
                 false, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
         workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
-        assertEqualsBulkFlowName(ebbs, "DeactivateVfModuleBB", "DeactivateVfModuleBB", "DeleteVfModuleBB",
+        assertEqualsBulkFlowName(ebbs, "DeactivateVfModuleBB", "DeleteVfModuleBB", "DeactivateVfModuleBB",
                 "DeleteVfModuleBB", "DeactivateVolumeGroupBB", "DeleteVolumeGroupBB", "DeactivateVnfBB",
                 "DeactivatePnfBB", "DeactivateServiceInstanceBB", "UnassignVfModuleBB", "UnassignVfModuleBB",
                 "UnassignVolumeGroupBB", "UnassignVnfBB", "UnassignServiceInstanceBB");
@@ -879,8 +968,8 @@ public class WorkflowActionTest extends BaseTaskTest {
         workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         assertEqualsBulkFlowName(ebbs, "AAICheckVnfInMaintBB", "AAISetVnfInMaintBB", "DeactivateVfModuleBB",
-                "DeactivateVfModuleBB", "DeleteVfModuleBB", "DeleteVfModuleBB", "DeactivateVnfBB", "CreateVfModuleBB",
-                "CreateVfModuleBB", "ActivateVfModuleBB", "ActivateVfModuleBB", "ActivateVnfBB", "SDNOVnfHealthCheckBB",
+                "DeleteVfModuleBB", "DeactivateVfModuleBB", "DeleteVfModuleBB", "DeactivateVnfBB", "CreateVfModuleBB",
+                "ActivateVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB", "ActivateVnfBB", "SDNOVnfHealthCheckBB",
                 "AAIUnsetVnfInMaintBB");
     }
 
@@ -940,12 +1029,13 @@ public class WorkflowActionTest extends BaseTaskTest {
                 false, "cloud-owner")).thenReturn(northBoundRequest);
         workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
-        assertEqualsBulkFlowName(ebbs, "AAICheckVnfInMaintBB", "AAISetVnfInMaintBB", "DeactivateFabricConfigurationBB",
-                "UnassignFabricConfigurationBB", "DeactivateVfModuleBB", "DeactivateVfModuleBB", "DeleteVfModuleBB",
-                "DeleteVfModuleBB", "DeactivateVnfBB", "ChangeModelVfModuleBB", "ChangeModelVfModuleBB",
-                "CreateVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB", "ActivateVfModuleBB",
-                "AssignFabricConfigurationBB", "ActivateFabricConfigurationBB", "ChangeModelVnfBB", "ActivateVnfBB",
-                "ChangeModelServiceInstanceBB", "SDNOVnfHealthCheckBB", "AAIUnsetVnfInMaintBB");
+        assertEqualsBulkFlowName(ebbs, "AAICheckVnfInMaintBB", "AAISetVnfInMaintBB", "DeactivateVfModuleBB",
+                "DeleteVfModuleBB", "DeactivateFabricConfigurationBB", "UnassignFabricConfigurationBB",
+                "DeactivateVfModuleBB", "DeleteVfModuleBB", "DeactivateVnfBB", "ChangeModelVfModuleBB",
+                "CreateVfModuleBB", "ActivateVfModuleBB", "ChangeModelVfModuleBB", "CreateVfModuleBB",
+                "ActivateVfModuleBB", "AssignFabricConfigurationBB", "ActivateFabricConfigurationBB",
+                "ChangeModelVnfBB", "ActivateVnfBB", "ChangeModelServiceInstanceBB", "SDNOVnfHealthCheckBB",
+                "AAIUnsetVnfInMaintBB");
         for (ExecuteBuildingBlock executeBuildingBlock : ebbs) {
             assertEquals("123", executeBuildingBlock.getWorkflowResourceIds().getServiceInstanceId());
         }
@@ -1540,7 +1630,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         String vnfType = "vnfType";
         String key = "00d15ebb-c80e-43c1-80f0-90c40dde70b0";
         String resourceId = "d1d35800-783d-42d3-82f6-d654c5054a6e";
-        Resource resourceKey = new Resource(resourceType, key, aLaCarte);
+        Resource resourceKey = new Resource(resourceType, key, aLaCarte, null);
         WorkflowResourceIds workflowResourceIds = SPY_workflowAction.populateResourceIdsFromApiHandler(execution);
 
         thrown.expect(AAIEntityNotFoundException.class);
@@ -1592,7 +1682,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         String vnfType = "vnfType";
         String key = "00d15ebb-c80e-43c1-80f0-90c40dde70b0";
         String resourceId = "d1d35800-783d-42d3-82f6-d654c5054a6e";
-        Resource resourceKey = new Resource(resourceType, key, aLaCarte);
+        Resource resourceKey = new Resource(resourceType, key, aLaCarte, null);
         WorkflowResourceIds workflowResourceIds = SPY_workflowAction.populateResourceIdsFromApiHandler(execution);
 
         List<OrchestrationFlow> orchFlows = createFlowList("DeactivateVfModuleBB", "DeleteVfModuleBB",
@@ -1667,7 +1757,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         String vnfType = "vnfType";
         String key = "00d15ebb-c80e-43c1-80f0-90c40dde70b0";
         String resourceId = "d1d35800-783d-42d3-82f6-d654c5054a6e";
-        Resource resourceKey = new Resource(resourceType, key, aLaCarte);
+        Resource resourceKey = new Resource(resourceType, key, aLaCarte, null);
         WorkflowResourceIds workflowResourceIds = SPY_workflowAction.populateResourceIdsFromApiHandler(execution);
 
         List<OrchestrationFlow> orchFlows = createFlowList("DeactivateVfModuleBB", "DeleteVfModuleBB",
@@ -1948,10 +2038,10 @@ public class WorkflowActionTest extends BaseTaskTest {
         String uri6 = "/v6/serviceInstances/123/vnfs/1234/someAction";
         String uri7 = "/v6/serviceInstances/123/vnfs/1234/vfModules/5678/replace";
         String uri8 = "/v6/serviceInstances/123/vnfs/1234/vfModules/scaleOut";
-        Resource expected1 = new Resource(WorkflowType.SERVICE, "123", true);
-        Resource expected2 = new Resource(WorkflowType.VNF, "1234", false);
-        Resource expected3 = new Resource(WorkflowType.VNF, "1234", false);
-        Resource expected4 = new Resource(WorkflowType.VFMODULE, "5678", false);
+        Resource expected1 = new Resource(WorkflowType.SERVICE, "123", true, null);
+        Resource expected2 = new Resource(WorkflowType.VNF, "1234", false, expected1);
+        Resource expected3 = new Resource(WorkflowType.VNF, "1234", false, expected1);
+        Resource expected4 = new Resource(WorkflowType.VFMODULE, "5678", false, expected2);
         Resource result = workflowAction.extractResourceIdAndTypeFromUri(uri);
         assertEquals(expected1.getResourceId(), result.getResourceId());
         assertEquals(expected1.getResourceType(), result.getResourceType());
@@ -2091,14 +2181,31 @@ public class WorkflowActionTest extends BaseTaskTest {
         return new String(Files.readAllBytes(Paths.get("src/test/resources/__files/" + fileName)));
     }
 
-    private List<Resource> prepareListWithResources() {
+    private List<Resource> prepareListWithResources(boolean addPnf, boolean addPriorites) {
         List<Resource> resourceList = new ArrayList<>();
-        resourceList.add(new Resource(WorkflowType.SERVICE, "3c40d244-808e-42ca-b09a-256d83d19d0a", false));
-        resourceList.add(new Resource(WorkflowType.VNF, "ab153b6e-c364-44c0-bef6-1f2982117f04", false));
-        resourceList.add(new Resource(WorkflowType.VOLUMEGROUP, "a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f", false));
-        resourceList.add(new Resource(WorkflowType.VFMODULE, "72d9d1cd-f46d-447a-abdb-451d6fb05fa8", false));
-        resourceList.add(new Resource(WorkflowType.VFMODULE, "3c40d244-808e-42ca-b09a-256d83d19d0a", false));
-        resourceList.add(new Resource(WorkflowType.VFMODULE, "72d9d1cd-f46d-447a-abdb-451d6fb05fa8", false));
+        Resource r1 = new Resource(WorkflowType.SERVICE, "3c40d244-808e-42ca-b09a-256d83d19d0a", false, null);
+        resourceList.add(r1);
+        Resource r2 = new Resource(WorkflowType.VNF, "ab153b6e-c364-44c0-bef6-1f2982117f04", false, r1);
+        resourceList.add(r2);
+        Resource r3 = new Resource(WorkflowType.VOLUMEGROUP, "a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f", false, r2);
+        resourceList.add(r3);
+        Resource r4 = new Resource(WorkflowType.VFMODULE, "72d9d1cd-f46d-447a-abdb-451d6fb05fa8", false, r2);
+        resourceList.add(r4);
+        Resource r5 = new Resource(WorkflowType.VFMODULE, "3c40d244-808e-42ca-b09a-256d83d19d0a", false, r2);
+        resourceList.add(r5);
+        Resource r6 = new Resource(WorkflowType.VFMODULE, "da4d4327-fb7d-4311-ac7a-be7ba60cf969", false, r2);
+        resourceList.add(r6);
+        if (addPnf) {
+            Resource r7 = new Resource(WorkflowType.PNF, "aa153b6e-c364-44c0-bef6-1f2982117f04", false, r1);
+            resourceList.add(r7);
+        }
+        if (addPriorites) {
+            r3.setProcessingPriority(2);
+            r4.setProcessingPriority(1);
+            r5.setProcessingPriority(4);
+            r5.setBaseVfModule(true);
+            r6.setProcessingPriority(3);
+        }
         return resourceList;
     }
 }

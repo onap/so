@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2021 Orange
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,7 +47,8 @@ public class VfModules implements Serializable {
     protected String volumeGroupInstanceName;
     @JsonProperty("instanceParams")
     private List<Map<String, String>> instanceParams = new ArrayList<>();
-
+    @JsonProperty("processingPriority")
+    protected Integer processingPriority = 0;
 
     public ModelInfo getModelInfo() {
         return modelInfo;
@@ -87,11 +90,19 @@ public class VfModules implements Serializable {
         this.instanceParams = instanceParams;
     }
 
+    public Integer getProcessingPriority() {
+        return processingPriority;
+    }
+
+    public void setProcessingPriority(Integer processingPriority) {
+        this.processingPriority = processingPriority;
+    }
+
     @Override
     public String toString() {
         return "VfModules [modelInfo=" + modelInfo + ", cloudConfiguration=" + cloudConfiguration + ", instanceName="
                 + instanceName + ", volumeGroupInstanceName=" + volumeGroupInstanceName + ", instanceParams="
-                + instanceParams + "]";
+                + instanceParams + ", processingPriority=" + processingPriority + "]";
     }
 
 }
