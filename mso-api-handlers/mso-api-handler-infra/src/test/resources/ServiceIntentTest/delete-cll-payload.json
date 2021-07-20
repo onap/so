@@ -1,0 +1,9 @@
+{
+  "serviceInstanceID": "cll-101",
+  "globalSubscriberId": "IBNCustomer",
+  "subscriptionServiceType": "IBN",
+  "serviceType": "CLL",
+  "additionalProperties": {
+    "enableSdnc": "false"
+  }
+}
