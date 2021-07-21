@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Copyright (C) 2021 - Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,8 +20,9 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.client.sdn.common;
+package org.onap.so.client.sdnc;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import java.util.LinkedHashMap;
@@ -29,7 +32,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.MapperException;
-import org.onap.so.client.sdnc.SdnCommonTasks;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
@@ -101,4 +103,31 @@ public class SdnCommonTasksTest {
         sdnCommonTasks.validateSDNResponse(responseMap);
     }
 
+    @Test
+    public void validateSDNResponse_emptyWhenNoSerializerFoundForValue() throws Exception {
+        LinkedHashMap<String, Object> output = new LinkedHashMap<>();
+        output.put("key1", new Object());
+        String result = sdnCommonTasks.validateSDNResponse(output);
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    public void validateSDNGetResponse_success() throws Exception {
+        LinkedHashMap<String, Object> output = new LinkedHashMap<>();
+        output.put("key1", "value1");
+        String result = sdnCommonTasks.validateSDNGetResponse(output);
+        assertThat(result).isEqualTo("{\"key1\":\"value1\"}");
+    }
+
+    @Test(expected = BadResponseException.class)
+    public void validateSDNGetResponse_exWhenNoSerializerFoundForValue() throws Exception {
+        LinkedHashMap<String, Object> output = new LinkedHashMap<>();
+        output.put("key1", new Object());
+        sdnCommonTasks.validateSDNGetResponse(output);
+    }
+
+    @Test(expected = BadResponseException.class)
+    public void validateSDNGetResponse_exWhenMapEmpty() throws Exception {
+        sdnCommonTasks.validateSDNGetResponse(new LinkedHashMap<>());
+    }
 }
