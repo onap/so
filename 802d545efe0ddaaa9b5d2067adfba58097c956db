@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7a555d1e_c707afc3",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ebb/loader/ServiceEBBLoader.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-21T13:05:06Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "de120589_4ab132d7",
+      "range": {
+        "startLine": 174,
+        "startChar": 12,
+        "endLine": 174,
+        "endChar": 20
+      },
+      "revId": "802d545efe0ddaaa9b5d2067adfba58097c956db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "58122482_6f6d0c77",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/validators/UpgradePreWorkflowValidator.java",
         "patchSetId": 5
@@ -71,6 +95,30 @@
     },
     {
       "key": {
+        "uuid": "8e9a4392_599339be",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/validators/UpgradePreWorkflowValidator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-21T13:05:06Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "fdf612d5_ab93b584",
+      "range": {
+        "startLine": 108,
+        "startChar": 0,
+        "endLine": 112,
+        "endChar": 5
+      },
+      "revId": "802d545efe0ddaaa9b5d2067adfba58097c956db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dde6d920_ca9e0e1c",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/orchestration/AAIServiceInstanceResources.java",
         "patchSetId": 5
@@ -94,6 +142,30 @@
     },
     {
       "key": {
+        "uuid": "b0487b58_18302974",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/orchestration/AAIServiceInstanceResources.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-21T13:05:06Z",
+      "side": 1,
+      "message": "Thank you good catch!",
+      "parentUuid": "dde6d920_ca9e0e1c",
+      "range": {
+        "startLine": 199,
+        "startChar": 32,
+        "endLine": 199,
+        "endChar": 46
+      },
+      "revId": "802d545efe0ddaaa9b5d2067adfba58097c956db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2491ab54_a0168012",
         "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/validators/UpgradePreWorkflowValidatorTest.java",
         "patchSetId": 5
@@ -105,6 +177,30 @@
       "writtenOn": "2021-07-21T11:56:09Z",
       "side": 1,
       "message": "When commented, test passes, means it is not needed.",
+      "range": {
+        "startLine": 66,
+        "startChar": 8,
+        "endLine": 66,
+        "endChar": 97
+      },
+      "revId": "802d545efe0ddaaa9b5d2067adfba58097c956db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f764dc02_c0152e3b",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/validators/UpgradePreWorkflowValidatorTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-21T13:05:06Z",
+      "side": 1,
+      "message": "Yes test would pass with null value, but for the clarity of what this code does I will leave it there.",
+      "parentUuid": "2491ab54_a0168012",
       "range": {
         "startLine": 66,
         "startChar": 8,
@@ -137,6 +233,30 @@
       "revId": "802d545efe0ddaaa9b5d2067adfba58097c956db",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a115d523_8978c57e",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/ServiceInstances.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-21T13:05:06Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "33efc752_1fdc2945",
+      "range": {
+        "startLine": 397,
+        "startChar": 10,
+        "endLine": 397,
+        "endChar": 31
+      },
+      "revId": "802d545efe0ddaaa9b5d2067adfba58097c956db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
