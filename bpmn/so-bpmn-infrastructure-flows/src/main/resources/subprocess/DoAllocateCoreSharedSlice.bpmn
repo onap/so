@@ -170,12 +170,28 @@ allocateNssi.prepareFailedOperationStatusUpdate(execution)</bpmn:script>
       <bpmn:outgoing>Flow_163kxug</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def allocateNssi = new DoAllocateCoreSharedSlice()
-allocateNssi.timeDelay(execution)</bpmn:script>
+allocateNssi.timeDelay()</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_163kxug" sourceRef="Activity_1qm4des" targetRef="Activity_0ge2y0l" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoAllocateCoreSharedSlice">
+      <bpmndi:BPMNEdge id="Flow_163kxug_di" bpmnElement="Flow_163kxug">
+        <di:waypoint x="630" y="380" />
+        <di:waypoint x="534" y="380" />
+        <di:waypoint x="534" y="321" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lzv4jo_di" bpmnElement="Flow_1lzv4jo">
+        <di:waypoint x="680" y="306" />
+        <di:waypoint x="680" y="340" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="591" y="299" width="78" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15lksyg_di" bpmnElement="Flow_15lksyg">
+        <di:waypoint x="705" y="281" />
+        <di:waypoint x="778" y="281" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1nn15tq_di" bpmnElement="Flow_1nn15tq">
         <di:waypoint x="420" y="256" />
         <di:waypoint x="420" y="200" />
@@ -259,22 +275,6 @@ allocateNssi.timeDelay(execution)</bpmn:script>
           <dc:Bounds x="207" y="179" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_15lksyg_di" bpmnElement="Flow_15lksyg">
-        <di:waypoint x="705" y="281" />
-        <di:waypoint x="778" y="281" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1lzv4jo_di" bpmnElement="Flow_1lzv4jo">
-        <di:waypoint x="680" y="306" />
-        <di:waypoint x="680" y="340" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="603" y="315" width="78" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_163kxug_di" bpmnElement="Flow_163kxug">
-        <di:waypoint x="630" y="380" />
-        <di:waypoint x="534" y="380" />
-        <di:waypoint x="534" y="321" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="248" y="102" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -329,12 +329,6 @@ allocateNssi.timeDelay(execution)</bpmn:script>
           <dc:Bounds x="380" y="315.5" width="80" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1boyqt9_di" bpmnElement="Gateway_1boyqt9" isMarkerVisible="true">
-        <dc:Bounds x="655" y="256" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1iksno7_di" bpmnElement="Activity_1qm4des">
-        <dc:Bounds x="630" y="340" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_08h38js_di" bpmnElement="Activity_08h38js" isExpanded="true">
         <dc:Bounds x="250" y="440" width="781" height="196" />
       </bpmndi:BPMNShape>
@@ -368,6 +362,12 @@ allocateNssi.timeDelay(execution)</bpmn:script>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1btidug_di" bpmnElement="Activity_1btidug">
         <dc:Bounds x="540" y="504" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1boyqt9_di" bpmnElement="Gateway_1boyqt9" isMarkerVisible="true">
+        <dc:Bounds x="655" y="256" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1iksno7_di" bpmnElement="Activity_1qm4des">
+        <dc:Bounds x="630" y="340" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

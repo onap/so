@@ -59,17 +59,12 @@ class DoAllocateCoreSharedSliceTest extends MsoGroovyTest {
     @Test
     void testPreProcessRequest(){
 
-        String solutions = """ [
-          {
-            "invariantUUID": "y7685f64-5717-4562-b3fc-2c963f66afa6",
-            "UUID": "8u785f64-5717-4562-b3fc-2c963f66afa6",
-            "NSSIName": "embb-core-ser",
-            "NSSIId": "f4485f64-5717-4562-b3fc-2c963f66afa6",
-            "matchLevel": {
-            "blob":"content"
-             }
-          }
-        ]"""
+    String solutions = """ {
+    "NSSIId": "11c0c52a-d748-48aa-86e3-c783cbf5026f",
+    "invariantUUID": "8ebba719-f815-47e3-8473-c5f0db801356",
+    "NSSIName": "nssi_CN_NSST",
+    "UUID": "70e2b55b-8dca-4ff3-8f47-374c2965b731"
+     }"""
         String sliceProfile = "{\r\n      \"snssaiList\": [ \r\n        \"001-100001\"\r\n      ],\r\n      \"sliceProfileId\": \"ab9af40f13f721b5f13539d87484098\",\r\n      \"plmnIdList\": [\r\n        \"460-00\",\r\n        \"460-01\"\r\n      ],\r\n      \"perfReq\": {\r\n        \"perfReqEmbbList \": [\r\n          {\r\n            \"activityFactor\": 50\r\n          }\r\n        ]\r\n      },\r\n      \"maxNumberofUEs\": 200, \r\n      \"coverageAreaTAList\": [ \r\n        \"1\",\r\n        \"2\",\r\n        \"3\",\r\n        \"4\"\r\n      ],\r\n      \"latency\": 2,\r\n      \"resourceSharingLevel\": \"non-shared\" \r\n    }"
 
         setUpBaseMockData()
@@ -81,13 +76,13 @@ class DoAllocateCoreSharedSliceTest extends MsoGroovyTest {
 
         Mockito.verify(mockExecution, times(1)).setVariable(eq("nssiId"), captor.capture())
         def nssiId = captor.getValue()
-        assertEquals("f4485f64-5717-4562-b3fc-2c963f66afa6", nssiId)
+        assertEquals("11c0c52a-d748-48aa-86e3-c783cbf5026f", nssiId)
 
         Mockito.verify(mockExecution, times(1)).setVariable(eq("sNssai"), captor.capture())
         def sNssai = captor.getValue()
         assertEquals("001-100001", sNssai)
 
-        Mockito.verify(mockExecution,times(3)).setVariable(captor.capture() as String, captor.capture())
+        Mockito.verify(mockExecution,times(4)).setVariable(captor.capture() as String, captor.capture())
         List<ExecutionEntity> values = captor.getAllValues()
         assertNotNull(values)
     }
@@ -155,6 +150,14 @@ class DoAllocateCoreSharedSliceTest extends MsoGroovyTest {
         //Check Vnf
         when(mockExecution.getVariable("vnfId")).thenReturn("eeb66c6f-36bd-47ad-8294-48f46b1aa912")
 
+        Map<String, Object> spiWithsNssaiAndOrchStatus = new LinkedHashMap<>()
+        spiWithsNssaiAndOrchStatus.put("snssai", "01-5C83F071")
+        spiWithsNssaiAndOrchStatus.put("status", "activated")
+        List <Map<String, Object>> spiWithsNssaiAndOrchStatusList = new ArrayList<>();
+        spiWithsNssaiAndOrchStatusList.add(spiWithsNssaiAndOrchStatus)
+        //snssaiAndOrchStatusList
+        when(mockExecution.getVariable("snssaiAndOrchStatusList")).thenReturn(spiWithsNssaiAndOrchStatusList)
+
         AAIResourceUri resourceUri3 = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(mockExecution.getVariable("vnfId")))
         when(client.exists(resourceUri3)).thenReturn(true)
         AAIResultWrapper wrapper3 = new AAIResultWrapper(mockQueryVnf())
@@ -197,10 +200,7 @@ class DoAllocateCoreSharedSliceTest extends MsoGroovyTest {
         snssaiMap.put("snssai", "01-5C83F071")
         snssaiMap.put("status", "activated")
         snssaiList.add(snssaiMap)
-        Map<String, Object> snssaiMap1 = new LinkedHashMap<>()
-        snssaiMap1.put("snssai", "01-5B179BD4")
-        snssaiMap1.put("status", "activated")
-        snssaiList.add(snssaiMap1)
+
         assertEquals(snssaiList, captor.getValue())
 
         //Verify Project
@@ -227,12 +227,12 @@ class DoAllocateCoreSharedSliceTest extends MsoGroovyTest {
     void setUpBaseMockData() {
 
         String sliceParams ="""{
-					"nsiId": "NSI-M-001-HDBNJ-NSMF-01-A-ZX",
-					"snssaiList": [
-									"01-5B179BD4"
-								],
-					"sliceProfileId": "ab9af40f13f721b5f13539d87484098"
-				}"""
+                    "nsiId": "NSI-M-001-HDBNJ-NSMF-01-A-ZX",
+                    "snssaiList": [
+                                    "01-5B179BD4"
+                                ],
+                    "sliceProfileId": "ab9af40f13f721b5f13539d87484098"
+                }"""
 
         when(mockExecution.getVariable("msoRequestId")).thenReturn("5ad89cf9-0569-4a93-4509-d8324321e2be")
         when(mockExecution.getVariable("serviceInstanceID")).thenReturn("NSSI-C-7Q4-HDBNJ-NSSMF-01-A-ZX")
@@ -247,55 +247,55 @@ class DoAllocateCoreSharedSliceTest extends MsoGroovyTest {
 
     String mockQueryNS() {
         return """
-			{
-	"service-instance-id": "206535e7-77c9-4036-9387-3f1cf57b4379",
-	"service-instance-name": "nsi_DemoEmbb",
-	"environment-context": "General_Revenue-Bearing",
-	"workload-context": "Production",
-	"model-invariant-id": "848c5656-5594-4d41-84bb-7afc7c64765c",
-	"model-version-id": "2de92587-3395-44e8-bb2c-b9529747e580",
-	"resource-version": "1599228110527",
-	"selflink": "restconf/config/GENERIC-RESOURCE-API:services/service/206535e7-77c9-4036-9387-3f1cf57b4379/service-data/service-topology/",
-	"orchestration-status": "Assigned",
-	"relationship-list": {
-		"relationship": [{
-			"related-to": "owning-entity",
-			"relationship-label": "org.onap.relationships.inventory.BelongsTo",
-			"related-link": "/aai/v19/business/owning-entities/owning-entity/OE-generic",
-			"relationship-data": [{
-				"relationship-key": "owning-entity.owning-entity-id",
-				"relationship-value": "OE-generic"
-			}]
-		}, {
-			"related-to": "generic-vnf",
-			"relationship-label": "org.onap.relationships.inventory.ComposedOf",
-			"related-link": "/aai/v19/network/generic-vnfs/generic-vnf/eeb66c6f-36bd-47ad-8294-48f46b1aa912",
-			"relationship-data": [{
-				"relationship-key": "generic-vnf.vnf-id",
-				"relationship-value": "eeb66c6f-36bd-47ad-8294-48f46b1aa912"
-			}],
-			"related-to-property": [{
-				"property-key": "generic-vnf.vnf-name",
-				"property-value": "vfwuctest 0"
-			}]
-		}, {
-			"related-to": "project",
-			"relationship-label": "org.onap.relationships.inventory.Uses",
-			"related-link": "/aai/v19/business/projects/project/Project-generic",
-			"relationship-data": [{
-				"relationship-key": "project.project-name",
-				"relationship-value": "Project-generic"
-			}]
-		}]
-	}
+                 {
+    "service-instance-id": "206535e7-77c9-4036-9387-3f1cf57b4379",
+    "service-instance-name": "nsi_DemoEmbb",
+    "environment-context": "General_Revenue-Bearing",
+    "workload-context": "Production",
+    "model-invariant-id": "848c5656-5594-4d41-84bb-7afc7c64765c",
+    "model-version-id": "2de92587-3395-44e8-bb2c-b9529747e580",
+    "resource-version": "1599228110527",
+    "selflink": "restconf/config/GENERIC-RESOURCE-API:services/service/206535e7-77c9-4036-9387-3f1cf57b4379/service-data/service-topology/",
+    "orchestration-status": "Assigned",
+    "relationship-list": {
+        "relationship": [{
+            "related-to": "owning-entity",
+            "relationship-label": "org.onap.relationships.inventory.BelongsTo",
+            "related-link": "/aai/v19/business/owning-entities/owning-entity/OE-generic",
+            "relationship-data": [{
+                "relationship-key": "owning-entity.owning-entity-id",
+                "relationship-value": "OE-generic"
+            }]
+        }, {
+            "related-to": "generic-vnf",
+            "relationship-label": "org.onap.relationships.inventory.ComposedOf",
+            "related-link": "/aai/v19/network/generic-vnfs/generic-vnf/eeb66c6f-36bd-47ad-8294-48f46b1aa912",
+            "relationship-data": [{
+                "relationship-key": "generic-vnf.vnf-id",
+                "relationship-value": "eeb66c6f-36bd-47ad-8294-48f46b1aa912"
+            }],
+            "related-to-property": [{
+                "property-key": "generic-vnf.vnf-name",
+                "property-value": "vfwuctest 0"
+            }]
+        }, {
+            "related-to": "project",
+            "relationship-label": "org.onap.relationships.inventory.Uses",
+            "related-link": "/aai/v19/business/projects/project/Project-generic",
+            "relationship-data": [{
+                "relationship-key": "project.project-name",
+                "relationship-value": "Project-generic"
+            }]
+        }]
+    }
 }
-		"""
+        """
     }
 
     String mockQueryVnf() {
 
         return """
-		{
+        {
   "vnf-id": "eeb66c6f-36bd-47ad-8294-48f46b1aa912",
   "vnf-name": "vfwuctest 0",
   "vnf-type": "vfwuctest/null",
@@ -379,7 +379,7 @@ class DoAllocateCoreSharedSliceTest extends MsoGroovyTest {
     }]
   }
 }
-		"""
+        """
     }
 
     String mockQuerySliceServiceReturn(){
@@ -414,7 +414,7 @@ class DoAllocateCoreSharedSliceTest extends MsoGroovyTest {
         "property-value": "nsi_DemoEmbb"
       }]
     },
-	{
+    {
       "related-to": "allotted-resource",
       "relationship-label": "org.onap.relationships.inventory.Uses",
       "related-link": "/aai/v19/business/customers/customer/5GCustomer/service-subscriptions/service-subscription/5G/service-instances/service-instance/0d3d3cce-46a8-486d-816a-954e71697c4e/allotted-resources/allotted-resource/d63c241a-4c0b-4294-b4c3-5a57421a1769",
@@ -461,7 +461,7 @@ class DoAllocateCoreSharedSliceTest extends MsoGroovyTest {
         "property-value": "Allotted_DemoEmbb"
       }]
     }
-	]
+    ]
   }
 }
                 """
