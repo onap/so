@@ -44,6 +44,7 @@
     <bpmn:sequenceFlow id="SequenceFlow_1lspfyy" sourceRef="ServiceTask_0inxg9l" targetRef="ExclusiveGateway_0plxwkg" />
     <bpmn:callActivity id="BBToExecute" name="BB to Execute&#10;" calledElement="${bbName}">
       <bpmn:extensionElements>
+        <camunda:in source="gBuildingBlockExecution" target="gBuildingBlockExecution" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:out source="WorkflowExceptionErrorMessage" target="WorkflowExceptionErrorMessage" />
         <camunda:in source="executionObject" target="executionObject" />
