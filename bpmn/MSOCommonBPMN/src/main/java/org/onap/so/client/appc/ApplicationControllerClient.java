@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,15 +20,12 @@
 
 package org.onap.so.client.appc;
 
+import static org.onap.so.bpmn.common.util.TimestampGeneratorUtil.generateCurrentTimestamp;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.time.Instant;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import org.onap.so.bpmn.core.UrnPropertiesReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.onap.appc.client.lcm.api.AppcClientServiceFactoryProvider;
 import org.onap.appc.client.lcm.api.AppcLifeCycleManagerServiceFactory;
 import org.onap.appc.client.lcm.api.ApplicationContext;
@@ -43,6 +40,9 @@ import org.onap.appc.client.lcm.model.Flags.Mode;
 import org.onap.appc.client.lcm.model.Payload;
 import org.onap.appc.client.lcm.model.Status;
 import org.onap.appc.client.lcm.model.ZULU;
+import org.onap.so.bpmn.core.UrnPropertiesReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ApplicationControllerClient {
 
@@ -77,7 +77,7 @@ public class ApplicationControllerClient {
 
     /**
      * Creates an ApplicationControllerClient for the specified controller type.
-     * 
+     *
      * @param controllerType the controller type: "appc" or "sdnc".
      */
     public ApplicationControllerClient(String controllerType) {
@@ -90,7 +90,7 @@ public class ApplicationControllerClient {
 
     /**
      * Gets the controller type.
-     * 
+     *
      * @return the controllertype
      */
     public String getControllerType() {
@@ -100,11 +100,11 @@ public class ApplicationControllerClient {
     /**
      * Returns the AppC client object associated with this ApplicationControllerClient. AppC client objects are shared
      * objects. One is created if it does not exist.
-     * 
+     *
      * @return the client object, or null if creation failed
      */
     public LifeCycleManagerStateful getAppCClient() {
-        return appCClients.computeIfAbsent(controllerType, k -> createAppCClient(k));
+        return appCClients.computeIfAbsent(controllerType, this::createAppCClient);
     }
 
     protected LifeCycleManagerStateful createAppCClient(String controllerType) {
@@ -194,8 +194,7 @@ public class ApplicationControllerClient {
         flags.setForce(force);
         flags.setTtl(FLAGS_TTL);
         commonHeader.setFlags(flags);
-        Instant timestamp = Instant.now();
-        ZULU zulu = new ZULU(timestamp.toString());
+        ZULU zulu = new ZULU(generateCurrentTimestamp(this.controllerType));
         commonHeader.setTimestamp(zulu);
         return commonHeader;
     }
