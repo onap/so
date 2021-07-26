@@ -1,24 +1,41 @@
 #!/bin/sh
 
+#Copying mariadb-java-client for connectivity to mariadb
+unzip /camunda/webapps/mso.war
+cp /camunda/WEB-INF/lib/mariadb-java-client-2.6.2.jar /camunda/lib
+
 if [ `id -u` = 0 ]
 then
 	# Install certificates found in the /app/ca-certificates volume, if any.
 
 	needUpdate=FALSE
-
-	for certificate in `ls -1 /app/ca-certificates`; do
-		echo "Installing $certificate in /usr/local/share/ca-certificates"
-		cp /app/ca-certificates/$certificate /usr/local/share/ca-certificates/$certificate
-		needUpdate=TRUE
-	done
+	if [ ${APP} = "bpmn-infra" ]; then
+        for certificate in `ls -1 /camunda/app/ca-certificates`; do
+            echo "Installing $certificate in /usr/local/share/ca-certificates"
+            cp /camunda/app/ca-certificates/$certificate /usr/local/share/ca-certificates/$certificate
+            needUpdate=TRUE
+        done
+    else
+         for certificate in `ls -1 /app/ca-certificates`; do
+            echo "Installing $certificate in /usr/local/share/ca-certificates"
+            cp /app/ca-certificates/$certificate /usr/local/share/ca-certificates/$certificate
+            needUpdate=TRUE
+         done
+    fi
 
 	if [ $needUpdate = TRUE ]; then
 		update-ca-certificates --fresh
 	fi
 
-	# Re-exec this script as the 'onap' user.
-	this=`readlink -f $0`
-	exec su so -c  "$this"
+    if [ ${APP} = "bpmn-infra" ]; then
+        # Re-exec this script as the 'camunda' user.
+        this=`readlink -f $0`
+        exec su camunda -c  "$this"
+    else
+        # Re-exec this script as the 'onap' user.
+        this=`readlink -f $0`
+        exec su so -c  "$this"
+    fi
 fi
 
 touch /app/app.jar
@@ -98,21 +115,30 @@ read_properties(){
 }
 
 
-
-if [ -n "${AAF_SSL_CERTS_ENABLED}" ]; then
-read_properties "$(head -n 4 /app/certs/.passphrases)"
+if [ ${APP} = "bpmn-infra" ]; then
+    if [ -n "${AAF_SSL_CERTS_ENABLED}" ]; then
+      read_properties "$(head -n 4 /camunda/app/certs/.passphrases)"
+    fi
+else
+   if [ -n "${AAF_SSL_CERTS_ENABLED}" ]; then
+     read_properties "$(head -n 4 /app/certs/.passphrases)"
+   fi
 fi
+
 
 echo "JVM Arguments: ${jvmargs}"
 
-java ${jvmargs} -jar app.jar
-rc=$?
+if [ ! ${APP} = "bpmn-infra" ]; then
+	java ${jvmargs} -jar app.jar
+    rc=$?
+    echo "Application exiting with status code $rc"
 
-echo "Application exiting with status code $rc"
+    if [ ! -z "${EXIT_DELAY}" -a "${EXIT_DELAY}" != 0 ]; then
+        echo "Delaying $APP exit for $EXIT_DELAY seconds"
+        sleep $EXIT_DELAY
+    fi
 
-if [ ! -z "${EXIT_DELAY}" -a "${EXIT_DELAY}" != 0 ]; then
-	echo "Delaying $APP exit for $EXIT_DELAY seconds"
-	sleep $EXIT_DELAY
+    exit $rc
+else
+   ./camunda.sh
 fi
-
-exit $rc
