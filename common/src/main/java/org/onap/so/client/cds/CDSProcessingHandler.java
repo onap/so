@@ -24,8 +24,8 @@ import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
 import java.util.concurrent.CountDownLatch;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.ActionIdentifiers;
-import org.onap.ccsdk.cds.controllerblueprints.processing.api.BlueprintProcessingServiceGrpc;
-import org.onap.ccsdk.cds.controllerblueprints.processing.api.BlueprintProcessingServiceGrpc.BlueprintProcessingServiceStub;
+import org.onap.ccsdk.cds.controllerblueprints.processing.api.BluePrintProcessingServiceGrpc;
+import org.onap.ccsdk.cds.controllerblueprints.processing.api.BluePrintProcessingServiceGrpc.BluePrintProcessingServiceStub;
 import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceInput;
 import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceOutput;
 import org.slf4j.Logger;
@@ -50,7 +50,7 @@ class CDSProcessingHandler {
 
         final CountDownLatch finishLatch = new CountDownLatch(1);
 
-        final BlueprintProcessingServiceStub asyncStub = BlueprintProcessingServiceGrpc.newStub(channel);
+        final BluePrintProcessingServiceStub asyncStub = BluePrintProcessingServiceGrpc.newStub(channel);
 
         final StreamObserver<ExecutionServiceOutput> responseObserver = new StreamObserver<ExecutionServiceOutput>() {
             @Override
