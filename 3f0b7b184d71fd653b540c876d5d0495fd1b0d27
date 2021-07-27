@@ -16,6 +16,24 @@
       "revId": "3f0b7b184d71fd653b540c876d5d0495fd1b0d27",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f4efe755_d1c30cdb",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/common/util/TimestampGeneratorUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2021-07-27T15:55:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2999a19f_db1560df",
+      "revId": "3f0b7b184d71fd653b540c876d5d0495fd1b0d27",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
