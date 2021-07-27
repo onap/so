@@ -25,6 +25,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
@@ -35,6 +36,7 @@ import org.onap.logging.filter.base.Constants;
 import org.onap.logging.filter.spring.SpringClientPayloadFilter;
 import org.onap.so.db.catalog.beans.BBNameSelectionReference;
 import org.onap.so.db.catalog.beans.BuildingBlockDetail;
+import org.onap.so.db.catalog.beans.BuildingBlockRollback;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
 import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
@@ -126,6 +128,7 @@ public class CatalogDbClient {
     private static final String WORKFLOW = "/workflow";
     private static final String BB_NAME_SELECTION_REFERENCE = "/bbNameSelectionReference";
     private static final String PROCESSING_FLAGS = "/processingFlags";
+    private static final String BB_ROLLBACK = "/buildingBlockRollback";
 
 
     private static final String SEARCH = "/search";
@@ -236,6 +239,7 @@ public class CatalogDbClient {
     private String pnfResourceURI;
     private String pnfResourceCustomizationURI;
     private String workflowURI;
+    private String buildingBlockRollbacksURI;
 
     private final Client<Service> serviceClient;
 
@@ -298,6 +302,8 @@ public class CatalogDbClient {
     private final Client<BBNameSelectionReference> bbNameSelectionReferenceClient;
 
     private final Client<ProcessingFlags> processingFlagsClient;
+
+    private final Client<BuildingBlockRollback> buildingBlockRollbackClient;
 
     @Value("${mso.catalog.db.spring.endpoint:#{null}}")
     private String endpoint;
@@ -391,7 +397,7 @@ public class CatalogDbClient {
         pnfResourceURI = endpoint + PNF_RESOURCE + URI_SEPARATOR;
         pnfResourceCustomizationURI = endpoint + PNF_RESOURCE_CUSTOMIZATION + URI_SEPARATOR;
         workflowURI = endpoint + WORKFLOW + URI_SEPARATOR;
-
+        buildingBlockRollbacksURI = endpoint + BB_ROLLBACK + URI_SEPARATOR;
     }
 
     public CatalogDbClient() {
@@ -445,6 +451,7 @@ public class CatalogDbClient {
         bbNameSelectionReferenceClient = clientFactory.create(BBNameSelectionReference.class);
         processingFlagsClient = clientFactory.create(ProcessingFlags.class);
         networkResourceClient = clientFactory.create(NetworkResource.class);
+        buildingBlockRollbackClient = clientFactory.create(BuildingBlockRollback.class);
     }
 
     public CatalogDbClient(String baseUri, String auth) {
@@ -498,6 +505,7 @@ public class CatalogDbClient {
         bbNameSelectionReferenceClient = clientFactory.create(BBNameSelectionReference.class);
         processingFlagsClient = clientFactory.create(ProcessingFlags.class);
         networkResourceClient = clientFactory.create(NetworkResource.class);
+        buildingBlockRollbackClient = clientFactory.create(BuildingBlockRollback.class);
     }
 
     public NetworkCollectionResourceCustomization getNetworkCollectionResourceCustomizationByID(
@@ -1222,6 +1230,20 @@ public class CatalogDbClient {
     public ProcessingFlags findProcessingFlagsByFlag(String flag) {
         return this.getSingleResource(processingFlagsClient,
                 getUri(UriBuilder.fromUri(findProcessingFlagsByFlag).queryParam(FLAG, flag).build().toString()));
+    }
+
+    // TODO: redo using buildingBlockRollbackClient
+    public List<BuildingBlockRollback> getBuildingBlockRollbackEntries() {
+        try {
+            HttpEntity<?> entity = getHttpEntity();
+            return restTemplate.exchange(
+                    UriComponentsBuilder.fromUriString(endpoint + "/ecomp/mso/catalog/v1/buildingBlockRollback").build()
+                            .encode().toString(),
+                    HttpMethod.GET, entity, new ParameterizedTypeReference<List<BuildingBlockRollback>>() {}).getBody();
+        } catch (HttpClientErrorException e) {
+            logger.error("Error Calling catalog database", e);
+            throw e;
+        }
     }
 
     public String getEndpoint() {

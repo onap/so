@@ -27,6 +27,7 @@ import javax.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.onap.logging.filter.base.Constants;
 import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.adapters.catalogdb.rest.BuildingBlockRollbackRestImpl;
 import org.onap.so.adapters.catalogdb.rest.CatalogDbAdapterRest;
 import org.onap.so.adapters.catalogdb.rest.ServiceRestImpl;
 import org.onap.so.adapters.catalogdb.rest.VnfRestImpl;
@@ -53,6 +54,7 @@ public class JerseyConfiguration extends ResourceConfig {
         register(AcceptHeaderOpenApiResource.class);
         register(ServiceRestImpl.class);
         register(VnfRestImpl.class);
+        register(BuildingBlockRollbackRestImpl.class);
 
         OpenAPI oas = new OpenAPI();
         Info info = new Info();
