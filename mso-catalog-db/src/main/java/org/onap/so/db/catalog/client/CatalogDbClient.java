@@ -25,6 +25,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
@@ -35,6 +36,7 @@ import org.onap.logging.filter.base.Constants;
 import org.onap.logging.filter.spring.SpringClientPayloadFilter;
 import org.onap.so.db.catalog.beans.BBNameSelectionReference;
 import org.onap.so.db.catalog.beans.BuildingBlockDetail;
+import org.onap.so.db.catalog.beans.BuildingBlockRollback;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
 import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
@@ -125,6 +127,7 @@ public class CatalogDbClient {
     private static final String WORKFLOW = "/workflow";
     private static final String BB_NAME_SELECTION_REFERENCE = "/bbNameSelectionReference";
     private static final String PROCESSING_FLAGS = "/processingFlags";
+    private static final String BB_ROLLBACK = "/buildingBlockRollback";
 
 
     private static final String SEARCH = "/search";
@@ -219,6 +222,7 @@ public class CatalogDbClient {
     private String findWorkflowByResourceTarget = "/findByResourceTarget";
     private String findProcessingFlagsByFlag = "/findByFlag";
     private String findWorkflowByOperationName = "/findByOperationName";
+    private String findAllBuildingBlockRollbacks = "/finalAll";
 
     private String serviceURI;
     private String vfModuleURI;
@@ -295,6 +299,8 @@ public class CatalogDbClient {
     private final Client<BBNameSelectionReference> bbNameSelectionReferenceClient;
 
     private final Client<ProcessingFlags> processingFlagsClient;
+
+    private final Client<BuildingBlockRollback> buildingBlockRollbackClient;
 
     @Value("${mso.catalog.db.spring.endpoint:#{null}}")
     private String endpoint;
@@ -388,7 +394,7 @@ public class CatalogDbClient {
         pnfResourceURI = endpoint + PNF_RESOURCE + URI_SEPARATOR;
         pnfResourceCustomizationURI = endpoint + PNF_RESOURCE_CUSTOMIZATION + URI_SEPARATOR;
         workflowURI = endpoint + WORKFLOW + URI_SEPARATOR;
-
+        findAllBuildingBlockRollbacks = endpoint + BB_ROLLBACK + URI_SEPARATOR + findAllBuildingBlockRollbacks;
     }
 
     public CatalogDbClient() {
@@ -441,7 +447,7 @@ public class CatalogDbClient {
         workflowClient = clientFactory.create(Workflow.class);
         bbNameSelectionReferenceClient = clientFactory.create(BBNameSelectionReference.class);
         processingFlagsClient = clientFactory.create(ProcessingFlags.class);
-
+        buildingBlockRollbackClient = clientFactory.create(BuildingBlockRollback.class);
     }
 
     public CatalogDbClient(String baseUri, String auth) {
@@ -494,6 +500,7 @@ public class CatalogDbClient {
         workflowClient = clientFactory.create(Workflow.class);
         bbNameSelectionReferenceClient = clientFactory.create(BBNameSelectionReference.class);
         processingFlagsClient = clientFactory.create(ProcessingFlags.class);
+        buildingBlockRollbackClient = clientFactory.create(BuildingBlockRollback.class);
     }
 
     public NetworkCollectionResourceCustomization getNetworkCollectionResourceCustomizationByID(
@@ -1140,6 +1147,11 @@ public class CatalogDbClient {
     public ProcessingFlags findProcessingFlagsByFlag(String flag) {
         return this.getSingleResource(processingFlagsClient,
                 getUri(UriBuilder.fromUri(findProcessingFlagsByFlag).queryParam(FLAG, flag).build().toString()));
+    }
+
+    public List<BuildingBlockRollback> getBuildingBlockRollbackEntries() {
+        return this.getMultipleResources(buildingBlockRollbackClient,
+                getUri((UriBuilder.fromUri(findAllBuildingBlockRollbacks)).build().toString()));
     }
 
     public String getEndpoint() {
