@@ -41,7 +41,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mock;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.ActionIdentifiers;
-import org.onap.ccsdk.cds.controllerblueprints.processing.api.BlueprintProcessingServiceGrpc.BlueprintProcessingServiceImplBase;
+import org.onap.ccsdk.cds.controllerblueprints.processing.api.BluePrintProcessingServiceGrpc.BluePrintProcessingServiceImplBase;
 import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceInput;
 import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceOutput;
 
@@ -72,7 +72,7 @@ public class CDSProcessingClientTest {
 
         client = new CDSProcessingClient(InProcessChannelBuilder.forName(serverName).directExecutor().build(), handler);
 
-        final BlueprintProcessingServiceImplBase routeChatImpl = new BlueprintProcessingServiceImplBase() {
+        final BluePrintProcessingServiceImplBase routeChatImpl = new BluePrintProcessingServiceImplBase() {
             @Override
             public StreamObserver<ExecutionServiceInput> process(
                     StreamObserver<ExecutionServiceOutput> responseObserver) {
