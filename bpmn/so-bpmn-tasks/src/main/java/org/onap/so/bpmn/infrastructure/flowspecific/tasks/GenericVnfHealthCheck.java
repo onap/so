@@ -21,11 +21,12 @@
  */
 package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 
+import static org.onap.so.bpmn.infrastructure.decisionpoint.impl.camunda.controller.common.SoPropertyConstants.CONTROLLER_STATUS;
 import java.util.HashMap;
 import java.util.Optional;
-import org.onap.so.logger.LoggingAnchor;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.onap.appc.client.lcm.model.Action;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
@@ -33,9 +34,9 @@ import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.appc.ApplicationControllerAction;
 import org.onap.so.client.exception.ExceptionBuilder;
-import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.db.catalog.client.CatalogDbClient;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,13 +91,12 @@ public class GenericVnfHealthCheck {
     public void callAppcClient(BuildingBlockExecution execution) {
         logger.trace("Start runAppcCommand ");
         String appcCode = "1002";
-        String appcMessage = "";
+        String appcMessage;
         try {
-            Action action = null;
-            action = Action.valueOf(execution.getVariable("action"));
+            Action action = Action.valueOf(execution.getVariable("action"));
             String msoRequestId = execution.getVariable("msoRequestId");
             String vnfId = execution.getVariable("vnfId");
-            Optional<String> payload = null;
+            Optional<String> payload = Optional.empty();
             if (execution.getVariable("payload") != null) {
                 String pay = execution.getVariable("payload");
                 payload = Optional.of(pay);
@@ -108,7 +108,7 @@ public class GenericVnfHealthCheck {
             payloadInfo.put(OAM_IP_ADDRESS, execution.getVariable(OAM_IP_ADDRESS));
             payloadInfo.put(VNF_HOST_IP_ADDRESS, execution.getVariable(VNF_HOST_IP_ADDRESS));
 
-            logger.debug("Running APP-C action: {}", action.toString());
+            logger.debug("Running APP-C action: {}", action);
             logger.debug("VNFID: {}", vnfId);
             // PayloadInfo contains extra information that adds on to payload before making request to appc
             appCClient.runAppCCommand(action, msoRequestId, vnfId, payload, payloadInfo, controllerType);
@@ -134,11 +134,14 @@ public class GenericVnfHealthCheck {
                 exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(appcCode), appcMessage);
             }
         }
+
         logger.error("Error Message: " + appcMessage);
         logger.error("ERROR CODE: " + appcCode);
-        logger.trace("End of runAppCommand ");
         if (appcCode != null && !("0").equals(appcCode)) {
             exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(appcCode), appcMessage);
         }
+
+        execution.setVariable(CONTROLLER_STATUS, "Success");
+        logger.debug("Successfully end of runAppCommand ");
     }
 }
