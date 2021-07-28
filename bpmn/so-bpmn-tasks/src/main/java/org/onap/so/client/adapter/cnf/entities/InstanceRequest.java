@@ -7,18 +7,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"rb-name", "rb-version", "profile-name", "release-name", "cloud-region", "labels",
-        "override-values"})
 public class InstanceRequest {
 
     @JsonProperty("modelInvariantId")
-    private String rbName;
+    private String modelInvariantId;
     @JsonProperty("modelVersionId")
-    private String rbVersion;
+    private String modelVersionId;
+    @JsonProperty(value = "modelCustomizationId")
+    private String modelCustomizationId;
     @JsonProperty("k8sRBProfileName")
     private String profileName;
     @JsonProperty("k8sRBInstanceReleaseName")
     private String releaseName;
+    @JsonProperty("k8sRBInstanceStatusCheck")
+    private Boolean statusCheck = false;
     @JsonProperty("vfModuleUUID")
     private String vfModuleUUID;
     @JsonProperty("cloudRegionId")
@@ -28,62 +30,66 @@ public class InstanceRequest {
     @JsonProperty(value = "override-values")
     private Map<String, String> overrideValues;
 
-    @JsonProperty("rb-name")
-    public String getRbName() {
-        return rbName;
+    public String getModelInvariantId() {
+        return modelInvariantId;
     }
 
-    @JsonProperty("rb-name")
-    public void setRbName(String rbName) {
-        this.rbName = rbName;
+    public void setModelInvariantId(String modelInvariantId) {
+        this.modelInvariantId = modelInvariantId;
     }
 
-    @JsonProperty("rb-version")
-    public String getRbVersion() {
-        return rbVersion;
+    public String getModelVersionId() {
+        return modelVersionId;
     }
 
-    @JsonProperty("rb-version")
-    public void setRbVersion(String rbVersion) {
-        this.rbVersion = rbVersion;
+    public void setModelVersionId(String modelVersionId) {
+        this.modelVersionId = modelVersionId;
     }
 
-    @JsonProperty("profile-name")
+    public String getModelCustomizationId() {
+        return modelCustomizationId;
+    }
+
+    public void setModelCustomizationId(String modelCustomizationId) {
+        this.modelCustomizationId = modelCustomizationId;
+    }
+
     public String getProfileName() {
         return profileName;
     }
 
-    @JsonProperty("profile-name")
     public void setProfileName(String profileName) {
         this.profileName = profileName;
     }
 
-    @JsonProperty("release-name")
+    public Boolean getStatusCheck() {
+        return statusCheck;
+    }
+
+    public void setStatusCheck(Boolean statusCheck) {
+        this.statusCheck = statusCheck;
+    }
+
     public String getReleaseName() {
         return releaseName;
     }
 
-    @JsonProperty("release-name")
     public void setReleaseName(String releaseName) {
         this.releaseName = releaseName;
     }
 
-    @JsonProperty("cloud-region")
     public String getCloudRegion() {
         return cloudRegion;
     }
 
-    @JsonProperty("cloud-region")
     public void setCloudRegion(String cloudRegion) {
         this.cloudRegion = cloudRegion;
     }
 
-    @JsonProperty("labels")
     public Map<String, String> getLabels() {
         return labels;
     }
 
-    @JsonProperty("labels")
     public void setLabels(Map<String, String> labels) {
         this.labels = labels;
     }
