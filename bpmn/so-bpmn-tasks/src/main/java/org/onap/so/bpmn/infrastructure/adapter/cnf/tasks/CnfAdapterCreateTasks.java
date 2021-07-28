@@ -109,12 +109,15 @@ public class CnfAdapterCreateTasks {
     protected InstanceRequest createInstanceRequest(VfModule vfModule, CloudRegion cloudRegion,
             Map<String, String> sdncDirectives) {
         InstanceRequest request = new InstanceRequest();
-        request.setRbName(vfModule.getModelInfoVfModule().getModelInvariantUUID());
-        request.setRbVersion(vfModule.getModelInfoVfModule().getModelUUID());
+        request.setModelInvariantId(vfModule.getModelInfoVfModule().getModelInvariantUUID());
+        request.setModelVersionId(vfModule.getModelInfoVfModule().getModelUUID());
+        request.setModelCustomizationId(vfModule.getModelInfoVfModule().getModelCustomizationUUID());
         request.setCloudRegion(cloudRegion.getLcpCloudRegionId());
         request.setVfModuleUUID(vfModule.getVfModuleId());
         request.setProfileName(sdncDirectives.get("k8s-rb-profile-name"));
         request.setReleaseName(sdncDirectives.get("k8s-rb-instance-release-name"));
+        if (sdncDirectives.containsKey("k8s-rb-instance-status-check"))
+            request.setStatusCheck(sdncDirectives.get("k8s-rb-instance-status-check").equalsIgnoreCase("true"));
         request.setOverrideValues(sdncDirectives);
         return request;
     }
