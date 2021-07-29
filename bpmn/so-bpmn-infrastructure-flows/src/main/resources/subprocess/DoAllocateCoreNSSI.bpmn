@@ -42,7 +42,7 @@ allocateNssi.getNSSTName(execution)</bpmn:script>
 def allocateNssi = new DoAllocateCoreNSSI()
 allocateNssi.prepareOOFRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:callActivity id="CallActivity_0ue7vug" name="Call non-shared slice flow" calledElement="DoAllocateCoreNonSharedSlice">
+    <bpmn:callActivity id="CallActivity_0ue7vug" name="Call non-shared slice flow" calledElement="DoAllocateCoreNonSharedSlice">
       <bpmn:extensionElements>
         <camunda:in source="coreServiceInstanceId" target="serviceInstanceId" />
         <camunda:in source="networkServiceModelInfo" target="networkServiceModelInfo" />
@@ -58,6 +58,8 @@ allocateNssi.prepareOOFRequest(execution)</bpmn:script>
         <camunda:in source="servicename" target="servicename" />
         <camunda:in source="msoRequestId" target="msoRequestId" />
         <camunda:in source="sliceProfile" target="sliceProfile" />
+        <camunda:in source="networkType" target="networkType" />
+        <camunda:in source="sst" target="sst" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1scva4p</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0tubodn</bpmn:outgoing>

@@ -136,18 +136,6 @@ class DoActivateCoreNSSITest extends MsoGroovyTest {
         Mockito.verify(mockExecution, times(1)).setVariable(eq("vnfId"), captor.capture())
         assertEquals("eeb66c6f-36bd-47ad-8294-48f46b1aa912", captor.getValue())
 
-        Mockito.verify(mockExecution, times(1)).setVariable(eq("snssaiAndOrchStatusList"), captor.capture())
-        List<Map<String, Object>> snssaiList = new ArrayList<>()
-        Map<String, Object> snssaiMap = new LinkedHashMap<>()
-        snssaiMap.put("snssai", "01-5C83F071")
-        snssaiMap.put("status", "activated")
-        snssaiList.add(snssaiMap)
-        Map<String, Object> snssaiMap1 = new LinkedHashMap<>()
-        snssaiMap1.put("snssai", "01-5B179BD4")
-        snssaiMap1.put("status", "activated")
-        snssaiList.add(snssaiMap1)
-        assertEquals(snssaiList, captor.getValue())
-
         //Verify Project
         Mockito.verify(mockExecution, times(1)).setVariable(eq("projectName"), captor.capture())
         assertEquals("Project-generic", captor.getValue())
