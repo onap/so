@@ -112,33 +112,19 @@ class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
         try {
             String serviceType = execution.getVariable("subscriptionServiceType")
             String oStatus = execution.getVariable("orchestrationStatus")
-            //Get workload context and environment context from DB
-            String environmentContext = ""
-            String workloadContext =""
+            String environmentContext = execution.getVariable("networkType")
+            String workloadContext = "CN"
             String modelInvariantUuid = execution.getVariable("modelInvariantUuid")
-            try{
-                String json = catalogDbUtils.getServiceResourcesByServiceModelInvariantUuidString(execution,modelInvariantUuid )
-                logger.debug("JSON Response from DB: "+json)
-                environmentContext = jsonUtil.getJsonValue(json, "serviceResources.environmentContext") ?: ""
-                workloadContext = jsonUtil.getJsonValue(json, "serviceResources.workloadContext") ?: ""
-                logger.debug("Env Context is: "+ environmentContext)
-                logger.debug("Workload Context is: "+ workloadContext)
-            } catch(BpmnError e){
-                throw e
-            } catch (Exception ex){
-                msg = "Exception in createNSSIinAAI ::: DoAllocateCoreNonSharedSlice  " + ex.getMessage()
-                logger.debug(msg)
-                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-            }
+            String nssiServiceType = execution.getVariable("sst")
             //set shared or non shared value from sliceProfile object in request
             String additionalParams = execution.getVariable("sliceParams")
             //Get resourceSharingLevel from sliceProfile
             String serviceFunction = jsonUtil.getJsonValue(additionalParams, "sliceProfile.resourceSharingLevel")
-            String serviceInstanceName = "nssi_"+execution.getVariable("nsstName")
+            String serviceInstanceName = execution.getVariable("servicename")
             ServiceInstance si = new ServiceInstance()
             si.setServiceInstanceId(execution.getVariable("nssiServiceInstanceId"))
             si.setServiceInstanceName(serviceInstanceName)
-            si.setServiceType(serviceType)
+            si.setServiceType(nssiServiceType)
             si.setServiceRole("nssi")
             si.setOrchestrationStatus(oStatus)
             si.setModelInvariantId(modelInvariantUuid)
@@ -378,7 +364,7 @@ class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
             //Update NSSI orchestration status nssiServiceInstance
             ServiceInstance si = execution.getVariable("nssiServiceInstance")
             logger.debug("nssiServiceInstance "+si)
-            si.setOrchestrationStatus("activated")
+            si.setOrchestrationStatus("deactivated")
             AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalCustId).serviceSubscription(serviceType).serviceInstance(nssiId))
             logger.debug("uri to call:  "+uri)
 
