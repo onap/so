@@ -1,8 +1,10 @@
 #!/bin/sh
 
 #Copying mariadb-java-client for connectivity to mariadb
-unzip /camunda/webapps/mso.war
-cp /camunda/WEB-INF/lib/mariadb-java-client-2.6.2.jar /camunda/lib
+if [ ${APP} = "bpmn-infra" ]; then
+    unzip /camunda/webapps/mso.war
+    cp /camunda/WEB-INF/lib/mariadb-java-client-2.6.2.jar /camunda/lib
+fi
 
 if [ `id -u` = 0 ]
 then
