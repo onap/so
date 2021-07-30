@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e60b41ff_58e4ef70",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1694,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-30T16:25:39Z",
+      "side": 1,
+      "message": "I completely agree. We can move all of these to BBInputSetupUtils. Since this is already an XL change, let\u0027s do that separately so that we don\u0027t lose focus in this commit on the bug we are solving.",
+      "parentUuid": "b7638a39_33740fec",
+      "range": {
+        "startLine": 1694,
+        "startChar": 4,
+        "endLine": 1694,
+        "endChar": 13
+      },
+      "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e028f96a_364b3cce",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java",
         "patchSetId": 3
@@ -45,6 +69,30 @@
       "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "61182f65_ca034779",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1702,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-30T16:25:39Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "e028f96a_364b3cce",
+      "range": {
+        "startLine": 1702,
+        "startChar": 8,
+        "endLine": 1702,
+        "endChar": 34
+      },
+      "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "1bf3fa58_2ccc976c",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1714,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-30T16:25:39Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "b519da16_b300d594",
+      "range": {
+        "startLine": 1714,
+        "startChar": 8,
+        "endLine": 1714,
+        "endChar": 34
+      },
+      "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c630e67e_b8a321a7",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java",
         "patchSetId": 3
@@ -91,6 +163,30 @@
       "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "560190e4_59c54c3a",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1723,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-30T16:25:39Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "c630e67e_b8a321a7",
+      "range": {
+        "startLine": 1723,
+        "startChar": 8,
+        "endLine": 1723,
+        "endChar": 34
+      },
+      "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "afa9898d_008e2950",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1732,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-30T16:25:39Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "34ebc9a2_f61d06c7",
+      "range": {
+        "startLine": 1732,
+        "startChar": 8,
+        "endLine": 1732,
+        "endChar": 34
+      },
+      "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a63c64f5_e2139954",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/VfModuleCDSRequestProvider.java",
         "patchSetId": 3
@@ -137,6 +257,30 @@
       "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a813d261_428e229f",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/VfModuleCDSRequestProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-30T16:25:39Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "a63c64f5_e2139954",
+      "range": {
+        "startLine": 82,
+        "startChar": 12,
+        "endLine": 83,
+        "endChar": 99
+      },
+      "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "e9aa7f37_99556a8b",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/VnfCDSRequestProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-30T16:25:39Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "25364553_698e0aed",
+      "range": {
+        "startLine": 81,
+        "startChar": 19,
+        "endLine": 81,
+        "endChar": 34
+      },
+      "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27b814dd_a4b323cf",
         "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/client/cds/ConfigureInstanceParamsForVfModuleTest.java",
         "patchSetId": 3
@@ -183,6 +351,30 @@
       "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d371bb61_8793cdf6",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/client/cds/ConfigureInstanceParamsForVfModuleTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-30T16:25:39Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "27b814dd_a4b323cf",
+      "range": {
+        "startLine": 76,
+        "startChar": 3,
+        "endLine": 78,
+        "endChar": 69
+      },
+      "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -209,6 +401,30 @@
     },
     {
       "key": {
+        "uuid": "b6ec49dd_7c53f0f7",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/client/cds/ConfigureInstanceParamsForVfModuleTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-30T16:25:39Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "9e8c851f_a46b65c1",
+      "range": {
+        "startLine": 95,
+        "startChar": 7,
+        "endLine": 97,
+        "endChar": 69
+      },
+      "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f19d41de_d9d9adda",
         "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/client/cds/ConfigureInstanceParamsForVnfTest.java",
         "patchSetId": 3
@@ -229,6 +445,30 @@
       "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4c499c9e_93a4462b",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/client/cds/ConfigureInstanceParamsForVnfTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-30T16:25:39Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "f19d41de_d9d9adda",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 26
+      },
+      "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -255,6 +495,30 @@
     },
     {
       "key": {
+        "uuid": "fe037d4b_427a8ed5",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/client/cds/ConfigureInstanceParamsForVnfTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-30T16:25:39Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "996c4563_70fdd750",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 63
+      },
+      "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bbce613a_55ac718e",
         "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/client/cds/ConfigureInstanceParamsForVnfTest.java",
         "patchSetId": 3
@@ -275,6 +539,30 @@
       "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9ff2355e_2a1aa091",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/client/cds/ConfigureInstanceParamsForVnfTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-30T16:25:39Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "bbce613a_55ac718e",
+      "range": {
+        "startLine": 75,
+        "startChar": 7,
+        "endLine": 77,
+        "endChar": 69
+      },
+      "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -301,6 +589,30 @@
     },
     {
       "key": {
+        "uuid": "6a4c0547_2cf9b761",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/client/cds/ConfigureInstanceParamsForVnfTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-30T16:25:39Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "a5e838ad_b46b4694",
+      "range": {
+        "startLine": 93,
+        "startChar": 3,
+        "endLine": 95,
+        "endChar": 69
+      },
+      "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "97357146_316d95d7",
         "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/client/cds/VfModuleCDSRequestProviderTest.java",
         "patchSetId": 3
@@ -321,6 +633,30 @@
       "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "264c44ee_7b7376d4",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/client/cds/VfModuleCDSRequestProviderTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-30T16:25:39Z",
+      "side": 1,
+      "message": "Mistake, drag and drop magic in intelliJ. Good catch",
+      "parentUuid": "97357146_316d95d7",
+      "range": {
+        "startLine": 141,
+        "startChar": 24,
+        "endLine": 141,
+        "endChar": 62
+      },
+      "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -393,6 +729,30 @@
     },
     {
       "key": {
+        "uuid": "8beedd35_e4667f94",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/client/cds/VnfCDSRequestProviderTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-30T16:25:39Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "79b83e3c_dc8e23b1",
+      "range": {
+        "startLine": 53,
+        "startChar": 7,
+        "endLine": 53,
+        "endChar": 113
+      },
+      "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "41e7e172_2aabdc18",
         "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/client/cds/VnfCDSRequestProviderTest.java",
         "patchSetId": 3
@@ -413,6 +773,30 @@
       "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c10d6766_cd155709",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/client/cds/VnfCDSRequestProviderTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-30T16:25:39Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "41e7e172_2aabdc18",
+      "range": {
+        "startLine": 83,
+        "startChar": 5,
+        "endLine": 83,
+        "endChar": 107
+      },
+      "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -439,6 +823,30 @@
     },
     {
       "key": {
+        "uuid": "ef9e143a_47d4998f",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/utils/WorkflowResourceIdsUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-30T16:25:39Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "b35c4b0a_644a8dc8",
+      "range": {
+        "startLine": 69,
+        "startChar": 8,
+        "endLine": 69,
+        "endChar": 14
+      },
+      "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0c16159e_795f862c",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/utils/WorkflowResourceIdsUtils.java",
         "patchSetId": 3
@@ -462,6 +870,30 @@
     },
     {
       "key": {
+        "uuid": "e8034450_f41926a9",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/utils/WorkflowResourceIdsUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-30T16:25:39Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "0c16159e_795f862c",
+      "range": {
+        "startLine": 81,
+        "startChar": 8,
+        "endLine": 81,
+        "endChar": 14
+      },
+      "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "778f9dce_113c36ba",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/utils/WorkflowResourceIdsUtils.java",
         "patchSetId": 3
@@ -473,6 +905,30 @@
       "writtenOn": "2021-07-30T12:14:02Z",
       "side": 1,
       "message": "missing break;?",
+      "range": {
+        "startLine": 82,
+        "startChar": 12,
+        "endLine": 99,
+        "endChar": 91
+      },
+      "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6900a358_414fd0f0",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/utils/WorkflowResourceIdsUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-30T16:25:39Z",
+      "side": 1,
+      "message": "Where would you need a break if every case returns?",
+      "parentUuid": "778f9dce_113c36ba",
       "range": {
         "startLine": 82,
         "startChar": 12,
@@ -508,6 +964,30 @@
     },
     {
       "key": {
+        "uuid": "93f61c51_37e920f2",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ebb/loader/UserParamsServiceTraversalTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-30T16:25:39Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "a8959942_bc6b98ed",
+      "range": {
+        "startLine": 86,
+        "startChar": 4,
+        "endLine": 86,
+        "endChar": 116
+      },
+      "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cd1644b4_64f27e7f",
         "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ebb/loader/UserParamsServiceTraversalTest.java",
         "patchSetId": 3
@@ -528,6 +1008,30 @@
       "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f8b2de72_70add127",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ebb/loader/UserParamsServiceTraversalTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-30T16:25:39Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "cd1644b4_64f27e7f",
+      "range": {
+        "startLine": 195,
+        "startChar": 8,
+        "endLine": 195,
+        "endChar": 116
+      },
+      "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -554,6 +1058,30 @@
     },
     {
       "key": {
+        "uuid": "27ab55fa_5a7e0d27",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ebb/loader/UserParamsServiceTraversalTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-30T16:25:39Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "b40224db_4e0f5cea",
+      "range": {
+        "startLine": 214,
+        "startChar": 7,
+        "endLine": 214,
+        "endChar": 116
+      },
+      "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "83086762_f8fad8e0",
         "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ebb/loader/UserParamsServiceTraversalTest.java",
         "patchSetId": 3
@@ -574,6 +1102,30 @@
       "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2d58cb02_4f038297",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ebb/loader/UserParamsServiceTraversalTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-30T16:25:39Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "83086762_f8fad8e0",
+      "range": {
+        "startLine": 288,
+        "startChar": 66,
+        "endLine": 288,
+        "endChar": 88
+      },
+      "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -600,6 +1152,30 @@
     },
     {
       "key": {
+        "uuid": "9dd44478_9780b2ab",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ebb/loader/UserParamsServiceTraversalTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-30T16:25:39Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "15f6cc9d_e824154e",
+      "range": {
+        "startLine": 292,
+        "startChar": 98,
+        "endLine": 292,
+        "endChar": 116
+      },
+      "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8743ffc8_574fb5fd",
         "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/validation/UserParamsValidation.java",
         "patchSetId": 3
@@ -611,6 +1187,24 @@
       "writtenOn": "2021-07-30T12:14:02Z",
       "side": 1,
       "message": "Move variables near the place where they are used:\n    Map\u003cString, Set\u003cString\u003e\u003e vnfCustomIdToInstanceNames \u003d new HashMap\u003c\u003e();\n    Map\u003cString, Set\u003cString\u003e\u003e vfModuleCustomIdToInstanceNames \u003d new HashMap\u003c\u003e();",
+      "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c00edd99_c1eca1a6",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/validation/UserParamsValidation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-07-30T16:25:39Z",
+      "side": 1,
+      "message": "In this case it barely makes any difference, but sure :)",
+      "parentUuid": "8743ffc8_574fb5fd",
       "revId": "b0878d95c0de61a8f9575cfc308cae62688162b0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
