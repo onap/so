@@ -55,13 +55,13 @@ nss.sendSyncResponse(execution)</bpmn:script>
     <bpmn:sequenceFlow id="Flow_0ayd6dj" sourceRef="Activity_0qlstj2" targetRef="Activity_1usi32q" />
     <bpmn:sequenceFlow id="Flow_0m5n6md" sourceRef="Activity_1usi32q" targetRef="Gateway_15a04ct" />
     <bpmn:sequenceFlow id="Flow_1fij4ds" name="Is CN ?" sourceRef="Gateway_15a04ct" targetRef="CallDoAllocateCoreNSSI">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("networkType") == "CN"}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("networkType") == "cn"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0g7721r" name="Is TN ?" sourceRef="Gateway_15a04ct" targetRef="CallDoAllocateTransportNSSI">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("networkType") == "TN"}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("networkType") == "tn"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1kk0exp" name="Is AN ?" sourceRef="Gateway_15a04ct" targetRef="CallDoAllocateAccessNSSI">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("networkType") == "AN"}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("networkType") == "an"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_09b50tn" sourceRef="CallDoAllocateAccessNSSI" targetRef="Event_18u424w" />
     <bpmn:callActivity id="CallDoAllocateAccessNSSI" name="Call ANAllocateNSSI" calledElement="DoAllocateAccessNSSI">

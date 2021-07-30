@@ -114,7 +114,7 @@ class AllocateSliceSubnet extends AbstractServiceTaskProcessor {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
             } else
             {
-                execution.setVariable("networkType", networkType.toUpperCase())
+                execution.setVariable("networkType", networkType.toLowerCase())
             }
 
             //requestParameters, subscriptionServiceType is 5G

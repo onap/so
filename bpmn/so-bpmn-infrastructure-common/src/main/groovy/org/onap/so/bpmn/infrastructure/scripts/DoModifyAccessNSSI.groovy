@@ -388,12 +388,12 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
                                 Optional<org.onap.aai.domain.yang.LogicalLink> resource = wrapper01.asBean(org.onap.aai.domain.yang.LogicalLink.class)
                                 if (resource.isPresent()) {
                                         org.onap.aai.domain.yang.LogicalLink logicalLinkInstance = resource.get()
-                                        if(domainType.equalsIgnoreCase("TN-FH"))
+                                        if(domainType.equalsIgnoreCase("TN_FH"))
                                         {
                                         execution.setVariable("tranportEp_ID_RU",logicalLinkInstance.getLinkName())
                                         execution.setVariable("tranportEp_ID_DUIN",logicalLinkInstance.getLinkName2())
                                         }
-                                        else if(domainType.equalsIgnoreCase("TN-MH"))
+                                        else if(domainType.equalsIgnoreCase("TN_MH"))
                                         {
                                         execution.setVariable("tranportEp_ID_DUEG",logicalLinkInstance.getLinkName())
                                         execution.setVariable("tranportEp_ID_CUIN",logicalLinkInstance.getLinkName2())
