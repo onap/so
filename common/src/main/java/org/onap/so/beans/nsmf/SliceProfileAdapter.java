@@ -159,8 +159,6 @@ public class SliceProfileAdapter implements Serializable {
             List<PerfReqEmbb> perfReqEmbbs = new ArrayList<>();
             PerfReqEmbb perfReqEmbb = new PerfReqEmbb();
             BeanUtils.copyProperties(this, perfReqEmbb);
-            perfReqEmbb.setExpDataRateDL(this.expDataRateDL);
-            perfReqEmbb.setExpDataRateUL(this.expDataRateUL);
             perfReqEmbbs.add(perfReqEmbb);
             perfReq.setPerfReqEmbbList(perfReqEmbbs);
         } else if ("ullc".equalsIgnoreCase(sST)) {

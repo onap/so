@@ -395,6 +395,10 @@ class CreateCommunicationService extends AbstractServiceTaskProcessor {
             e2eInputMap.put("dLThptPerSlice", dLThptPerSlice)
             e2eInputMap.put("uLThptPerSlice", uLThptPerSlice)
             e2eInputMap.put("maxNumberofConns", maxNumberofConns)
+            //TODO temp solution - service to slice profile mapping
+            e2eInputMap.put("expDataRateDL", dLThptPerSlice)
+            e2eInputMap.put("expDataRateUL", uLThptPerSlice)
+            e2eInputMap.put("maxNumberofPDUSession", maxNumberofConns)
 
             execution.setVariable("e2eInputMap", e2eInputMap)
             execution.setVariable("e2eServiceType", e2eServiceDecomposition.getServiceType())
