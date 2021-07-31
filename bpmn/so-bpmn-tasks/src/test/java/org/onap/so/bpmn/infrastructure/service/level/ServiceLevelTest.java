@@ -25,7 +25,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
@@ -37,6 +39,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.infrastructure.service.level.impl.ServiceLevelConstants;
 import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.db.catalog.beans.Workflow;
+import org.onap.so.db.catalog.client.CatalogDbClient;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ServiceLevelTest {
@@ -44,11 +48,15 @@ public class ServiceLevelTest {
     private static final String EXECUTION_KEY_PNF_NAME_LIST = "pnfNameList";
     private static final String EXECUTION_KEY_PNF_COUNTER = "pnfCounter";
     private static final String PARAM_NAME = "param1";
-    private static final String SCOPE = "scope1";
     private static final String PNF_NAME = "pnfName1";
+    private static final String OPERATION_NAME = ServiceLevelConstants.HEALTH_CHECK_OPERATION;
+    private static final String SCOPE = ServiceLevelConstants.PNF;
+    private static final String WORKFLOW_NAME = "workflowTestName";
 
     @Mock
     private ExceptionBuilder exceptionBuilderMock;
+    @Mock
+    private CatalogDbClient catalogDbClientMock;
     @InjectMocks
     private ServiceLevel testedObject;
 
@@ -57,6 +65,31 @@ public class ServiceLevelTest {
     @Before
     public void init() {
         execution = new DelegateExecutionFake();
+    }
+
+    @Test
+    public void fetchWorkflowUsingScope_catalogDBReturnsEmpty() {
+        // given
+        when(catalogDbClientMock.findWorkflowByOperationName(OPERATION_NAME)).thenReturn(Collections.emptyList());
+        // when
+        String workflowResult = testedObject.fetchWorkflowUsingScope(SCOPE, OPERATION_NAME);
+        // then
+        assertThat(workflowResult).isEqualTo("GenericPnfHealthCheck");
+    }
+
+    @Test
+    public void fetchWorkflowUsingScope_catalogDBReturnsNotEmpty() {
+        // given
+        Workflow workflow = new Workflow();
+        workflow.setResourceTarget(SCOPE);
+        workflow.setName(WORKFLOW_NAME);
+        List<Workflow> workflowList = new ArrayList<>();
+        workflowList.add(workflow);
+        when(catalogDbClientMock.findWorkflowByOperationName(OPERATION_NAME)).thenReturn(workflowList);
+        // when
+        String workflowResult = testedObject.fetchWorkflowUsingScope(SCOPE, OPERATION_NAME);
+        // then
+        assertThat(workflowResult).isEqualTo(WORKFLOW_NAME);
     }
 
     @Test
