@@ -23,7 +23,6 @@
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -37,6 +36,7 @@ public class Resource {
     private String vnfCustomizationId;
     private String vfModuleCustomizationId;
     private String cvnfModuleCustomizationId;
+    private String instanceName;
     private int processingPriority;
     private Resource parent;
     private List<Resource> children;
@@ -119,6 +119,14 @@ public class Resource {
 
     public void setCvnfModuleCustomizationId(String cvnfModuleCustomizationId) {
         this.cvnfModuleCustomizationId = cvnfModuleCustomizationId;
+    }
+
+    public String getInstanceName() {
+        return instanceName;
+    }
+
+    public void setInstanceName(String instanceName) {
+        this.instanceName = instanceName;
     }
 
     public int getProcessingPriority() {

@@ -1,0 +1,187 @@
+{
+  "requestDetails": {
+    "subscriberInfo": {
+      "globalSubscriberId": "test-customer"
+    },
+    "requestInfo": {
+      "suppressRollback": false,
+      "instanceName": "test",
+      "productFamilyId": "6ea37d21-1a8d-4cd5-a727-e543191a5bb6",
+      "requestorId": "portal",
+      "source": "source"
+    },
+    "cloudConfiguration": {
+      "lcpCloudRegionId": "cloudid",
+      "tenantId": "tenantid",
+      "cloudOwner": "cloudowner"
+    },
+    "requestParameters": {
+      "subscriptionServiceType": "ubuntu",
+      "userParams": [
+        {
+          "Homing_Solution": "none"
+        },
+        {
+          "service": {
+            "instanceParams": [],
+            "resources": {
+              "vnfs": [
+                {
+                  "modelInfo": {
+                    "modelName": "UbuntuVF",
+                    "modelVersionId": "744a1610-782e-47cf-bb45-d83319e33e17",
+                    "modelInvariantUuid": "fc573bb4-d312-48ab-b81d-8b3313df4d07",
+                    "modelVersion": "1.0",
+                    "modelCustomizationId": "0d0ba1ee-6b7f-47fe-8266-2967993b2c08",
+                    "modelInstanceName": "Ubuntu VF 0"
+                  },
+                  "cloudConfiguration": {
+                    "lcpCloudRegionId": "cloudid",
+                    "tenantId": "tenantid",
+                    "cloudOwner": "cloudowner"
+                  },
+                  "platform": {
+                    "platformName": "platform"
+                  },
+                  "lineOfBusiness": {
+                    "lineOfBusinessName": "lob"
+                  },
+                  "productFamilyId": "6ea37d21-1a8d-4cd5-a727-e543191a5bb6\n",
+                  "instanceName": "vnf-instanceName-1",
+                  "instanceParams": [
+                    {
+                      "vnf-name": "vnf-vnf-name",
+                      "vnf_name": "UbuntuVNFName"
+                    }
+                  ],
+                  "vfModules": [
+                    {
+                      "modelInfo": {
+                        "modelName": "UbuntuVF..base..module-0",
+                        "modelVersionId": "8fa495ac-d057-4060-b772-868d8e97766e",
+                        "modelInvariantUuid": "71dcbf41-9838-4b3d-baa4-4024d22ef0cc",
+                        "modelVersion": "1",
+                        "modelCustomizationId": "3bd19000-6d21-49f1-9eb3-ea76a6eac5e0"
+                      },
+                      "instanceName": "demo-network-1",
+                      "instanceParams": [
+                        {
+                          "name": "demo-network-1",
+                          "cidr": "10.10.10.0/24"
+                        }
+                      ]
+                    },
+                    {
+                      "modelInfo": {
+                        "modelName": "UbuntuVF..base..module-1",
+                        "modelVersionId": "21954495-830f-48b7-b7b2-030d837789b3",
+                        "modelInvariantUuid": "90355af6-55f3-460e-abe6-bec9a27a15e6",
+                        "modelVersion": "1",
+                        "modelCustomizationId": "83677d89-428a-407b-b4ec-738e68275d84"
+                      },
+                      "instanceName": "demo-1",
+                      "instanceParams": [
+                        {
+                          "name": "demo-ubuntu-1",
+                          "network_mgmt": "vlan101",
+                          "network_name": "demo-network-1"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "modelInfo": {
+                    "modelName": "UbuntuVF",
+                    "modelVersionId": "744a1610-782e-47cf-bb45-d83319e33e17",
+                    "modelInvariantUuid": "fc573bb4-d312-48ab-b81d-8b3313df4d07",
+                    "modelVersion": "1.0",
+                    "modelCustomizationId": "0d0ba1ee-6b7f-47fe-8266-2967993b2c08",
+                    "modelInstanceName": "Ubuntu VF 0"
+                  },
+                  "cloudConfiguration": {
+                    "lcpCloudRegionId": "cloudid",
+                    "tenantId": "tenantid",
+                    "cloudOwner": "cloudowner"
+                  },
+                  "platform": {
+                    "platformName": "platform"
+                  },
+                  "lineOfBusiness": {
+                    "lineOfBusinessName": "lob"
+                  },
+                  "productFamilyId": "6ea37d21-1a8d-4cd5-a727-e543191a5bb6\n",
+                  "instanceName": "vnf-instanceName-2",
+                  "instanceParams": [
+                    {
+                      "vnf-name": "vnf-vnf-name",
+                      "vnf_name": "UbuntuVNFName"
+                    }
+                  ],
+                  "vfModules": [
+                    {
+                      "modelInfo": {
+                        "modelName": "UbuntuVF..base..module-1",
+                        "modelVersionId": "21954495-830f-48b7-b7b2-030d837789b3",
+                        "modelInvariantUuid": "90355af6-55f3-460e-abe6-bec9a27a15e6",
+                        "modelVersion": "1",
+                        "modelCustomizationId": "83677d89-428a-407b-b4ec-738e68275d84"
+                      },
+                      "instanceName": "demo-2",
+                      "instanceParams": [
+                        {
+                          "name": "demo-ubuntu-2",
+                          "network_mgmt": "vlan101",
+                          "network_name": "demo-network-1"
+                        }
+                      ]
+                    },
+                    {
+                      "modelInfo": {
+                        "modelName": "UbuntuVF..base..module-1",
+                        "modelVersionId": "21954495-830f-48b7-b7b2-030d837789b3",
+                        "modelInvariantUuid": "90355af6-55f3-460e-abe6-bec9a27a15e6",
+                        "modelVersion": "1",
+                        "modelCustomizationId": "83677d89-428a-407b-b4ec-738e68275d84"
+                      },
+                      "instanceName": "demo-3",
+                      "instanceParams": [
+                        {
+                          "name": "demo-ubuntu-3",
+                          "network_mgmt": "vlan101",
+                          "network_name": "demo-network-1"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "modelInfo": {
+              "modelVersion": "1.0",
+              "modelVersionId": "f2444885-3c76-4ddc-8668-7741c0631495",
+              "modelInvariantId": "3bd19000-6d21-49f1-9eb3-ea76a6eac5e0",
+              "modelName": "UbuntuSVC",
+              "modelType": "service"
+            }
+          }
+        }
+      ],
+      "aLaCarte": false
+    },
+    "project": {
+      "projectName": "Project-UbuntuDemo"
+    },
+    "owningEntity": {
+      "owningEntityId": "33a8b609-1cfe-4d19-8dc2-5b95b921de1e",
+      "owningEntityName": "demo"
+    },
+    "modelInfo": {
+      "modelVersion": "1.0",
+      "modelVersionId": "f2444885-3c76-4ddc-8668-7741c0631495",
+      "modelInvariantId": "3bd19000-6d21-49f1-9eb3-ea76a6eac5e0",
+      "modelName": "UbuntuSVC",
+      "modelType": "service"
+    }
+  }
+}

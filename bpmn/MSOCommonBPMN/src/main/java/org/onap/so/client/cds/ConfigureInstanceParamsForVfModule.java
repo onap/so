@@ -21,7 +21,7 @@
 package org.onap.so.client.cds;
 
 import com.google.gson.JsonObject;
-import org.onap.so.client.cds.ExtractServiceFromUserParameters;
+import org.apache.commons.lang3.StringUtils;
 import org.onap.so.client.exception.PayloadGenerationException;
 import org.onap.so.serviceinstancebeans.Service;
 import org.onap.so.serviceinstancebeans.VfModules;
@@ -47,18 +47,31 @@ public class ConfigureInstanceParamsForVfModule {
      * @throws PayloadGenerationException- If it doesn't able to populate instance parameters from SO payload.
      */
     public void populateInstanceParams(JsonObject jsonObject, List<Map<String, Object>> userParamsFromRequest,
-            String vnfCustomizationUuid, String vfModuleCustomizationUuid) throws PayloadGenerationException {
+            String vnfCustomizationUuid, String vfModuleCustomizationUuid, String vfModuleInstanceName)
+            throws PayloadGenerationException {
         try {
             Service service = extractServiceFromUserParameters.getServiceFromRequestUserParams(userParamsFromRequest);
 
-            List<Map<String, String>> instanceParamsList =
-                    getInstanceParams(service, vnfCustomizationUuid, vfModuleCustomizationUuid);
+            List<Map<String, String>> instanceParamsList;
+            if (StringUtils.isNotBlank(vfModuleInstanceName)) {
+                instanceParamsList = getInstanceParamsByInstanceNames(service, vfModuleInstanceName);
+            } else {
+                instanceParamsList = getInstanceParams(service, vnfCustomizationUuid, vfModuleCustomizationUuid);
+            }
 
             instanceParamsList.stream().flatMap(instanceParamsMap -> instanceParamsMap.entrySet().stream())
                     .forEachOrdered(entry -> jsonObject.addProperty(entry.getKey(), entry.getValue()));
         } catch (Exception e) {
             throw new PayloadGenerationException("Couldn't able to resolve instance parameters", e);
         }
+    }
+
+    private List<Map<String, String>> getInstanceParamsByInstanceNames(Service service, String vfModuleInstanceName)
+            throws PayloadGenerationException {
+        return service.getResources().getVnfs().stream().map(Vnfs::getVfModules).flatMap(List::stream)
+                .filter(vfm -> vfModuleInstanceName.equals(vfm.getInstanceName())).findFirst()
+                .map(VfModules::getInstanceParams).orElseThrow(() -> new PayloadGenerationException(
+                        "Could not find vfModule with instanceName: " + vfModuleInstanceName));
     }
 
     private List<Map<String, String>> getInstanceParams(Service service, String vnfCustomizationUuid,

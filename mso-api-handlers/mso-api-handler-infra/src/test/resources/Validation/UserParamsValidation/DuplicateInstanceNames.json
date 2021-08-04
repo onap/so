@@ -1,0 +1,193 @@
+{
+  "requestDetails": {
+    "subscriberInfo": {
+      "globalSubscriberId": "ubuntu-customer"
+    },
+    "requestInfo": {
+      "suppressRollback": false,
+      "instanceName": "ThreeVNFTest",
+      "productFamilyId": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",
+      "requestorId": "portal",
+      "source": "postman"
+    },
+    "requestParameters": {
+      "subscriptionServiceType": "ubuntu",
+      "userParams": [
+        {
+          "service": {
+            "instanceParams": [],
+            "resources": {
+              "vnfs": [
+                {
+                  "modelInfo": {
+                    "modelName": "UbuntuVF",
+                    "modelVersionId": "9306f24c-2b99-46d9-a92c-2236199555bd",
+                    "modelInvariantUuid": "5bd13140-11b6-4975-b6ee-e496d9a0cf0d",
+                    "modelVersion": "3.0",
+                    "modelCustomizationId": "435f34f8-1701-4276-ae39-47ad03bad782",
+                    "modelInstanceName": "UbuntuVF 0"
+                  },
+                  "cloudConfiguration": {
+                  },
+                  "platform": {
+                    "platformName": "test"
+                  },
+                  "productFamilyId": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",
+                  "instanceName": "UbuntuVNF1",
+                  "instanceParams": [
+                    {
+                      "vnf-name": "vnf-vnf-name",
+                      "vnf_name": "UbuntuVNFName"
+                    }
+                  ],
+                  "vfModules": [
+                    {
+                      "modelInfo": {
+                        "modelName": "Ubuntuvf..base..module-0",
+                        "modelVersionId": "c9de87ba-9d2a-44df-94c4-68aad72947e8",
+                        "modelInvariantUuid": "51aaa747-68e7-4313-9717-9d32c752bbdf",
+                        "modelVersion": "1",
+                        "modelCustomizationId": "25409778-c4b0-448c-aa45-89c0a2cc4165"
+                      },
+                      "instanceName": "lcm-demo-network-1",
+                      "instanceParams": [
+                        {
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "modelInfo": {
+                    "modelName": "UbuntuBVF",
+                    "modelVersionId": "0e5c37c2-8c35-4ff8-a538-803a5f44aeb5",
+                    "modelInvariantUuid": "cf4ac32e-88b8-4fff-b5fc-9ebe2b7251f8",
+                    "modelVersion": "1.0",
+                    "modelCustomizationId": "e774a853-4a47-4a88-b5b4-9324f1d7f6a7",
+                    "modelInstanceName": "UbuntuBVF 0"
+                  },
+                  "cloudConfiguration": {
+                  },
+                  "platform": {
+                    "platformName": "test"
+                  },
+                  "productFamilyId": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",
+                  "instanceName": "UbuntuVNF2",
+                  "instanceParams": [
+                    {
+                      "vnf-name": "vnf-vnf-name",
+                      "vnf_name": "UbuntuVNFName2"
+                    }
+                  ],
+                  "vfModules": [
+                    {
+                      "modelInfo": {
+                        "modelName": "Ubuntubvf..ubuntu-vf-module..module-1",
+                        "modelVersionId": "548fa27f-d9d7-498f-9292-4c1ddcf79d2d",
+                        "modelInvariantUuid": "7689624d-fdcd-40a5-acf1-93f5ef1a5a59",
+                        "modelVersion": "1",
+                        "modelCustomizationId": "c8db1431-ffbe-4978-9b28-b310ca2c7d93"
+                      },
+                      "instanceName": "lcm-demo-ubuntu-1",
+                      "instanceParams": [
+                        {
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "modelInfo": {
+                    "modelName": "UbuntuBVF",
+                    "modelVersionId": "0e5c37c2-8c35-4ff8-a538-803a5f44aeb5",
+                    "modelInvariantUuid": "cf4ac32e-88b8-4fff-b5fc-9ebe2b7251f8",
+                    "modelVersion": "1.0",
+                    "modelCustomizationId": "e774a853-4a47-4a88-b5b4-9324f1d7f6a7",
+                    "modelInstanceName": "UbuntuBVF 0"
+                  },
+                  "cloudConfiguration": {
+                  },
+                  "platform": {
+                    "platformName": "test"
+                  },
+                  "productFamilyId": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",
+                  "instanceName": "UbuntuVNF3",
+                  "instanceParams": [
+                    {
+                      "vnf-name": "vnf-vnf-name",
+                      "vnf_name": "UbuntuVNFName3"
+                    }
+                  ],
+                  "vfModules": [
+                    {
+                      "modelInfo": {
+                        "modelName": "Ubuntubvf..ubuntu-vf-module..module-1",
+                        "modelVersionId": "548fa27f-d9d7-498f-9292-4c1ddcf79d2d",
+                        "modelInvariantUuid": "7689624d-fdcd-40a5-acf1-93f5ef1a5a59",
+                        "modelVersion": "1",
+                        "modelCustomizationId": "c8db1431-ffbe-4978-9b28-b310ca2c7d93"
+                      },
+                      "instanceName": "lcm-demo-ubuntu-2",
+                      "instanceParams": [
+                        {
+                        }
+                      ]
+                    },
+                    {
+                      "modelInfo": {
+                        "modelName": "Ubuntubvf..ubuntu-vf-module..module-1",
+                        "modelVersionId": "548fa27f-d9d7-498f-9292-4c1ddcf79d2d",
+                        "modelInvariantUuid": "7689624d-fdcd-40a5-acf1-93f5ef1a5a59",
+                        "modelVersion": "1",
+                        "modelCustomizationId": "c8db1431-ffbe-4978-9b28-b310ca2c7d93"
+                      },
+                      "instanceName": "lcm-demo-ubuntu-3",
+                      "instanceParams": [
+                        {
+                        }
+                      ]
+                    },
+                    {
+                      "modelInfo": {
+                        "modelName": "Ubuntunosriov..base..module-0",
+                        "modelVersionId": "bcc8ef84-b367-40c0-8a5d-ceabdc1785e0",
+                        "modelInvariantUuid": "f3927419-9e68-4883-b861-20c8412872d7",
+                        "modelVersion": "1",
+                        "modelCustomizationId": "ee848516-4e08-4b30-8ed0-d411bb059842"
+                      },
+                      "instanceName": "ubuntu-demo-mp-network-1",
+                      "instanceParams": [
+                        {
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "modelInfo": {
+              "modelVersion": "2.0",
+              "modelVersionId": "3a9ff92f-dc19-4f05-930d-d238939d508b",
+              "modelInvariantId": "115405d8-6944-407d-b0ae-6b7155754643",
+              "modelName": "Ubuntu3VNFService",
+              "modelType": "service"
+            }
+          }
+        }
+      ],
+      "aLaCarte": false
+    },
+    "project": {
+      "projectName": "Project-test"
+    },
+    "owningEntity": {
+    },
+    "modelInfo": {
+      "modelVersion": "2.0",
+      "modelVersionId": "3a9ff92f-dc19-4f05-930d-d238939d508b",
+      "modelInvariantId": "115405d8-6944-407d-b0ae-6b7155754643",
+      "modelName": "Ubuntu3VNFService",
+      "modelType": "service"
+    }
+  }
+}

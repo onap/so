@@ -114,6 +114,7 @@ public class UserParamsServiceTraversal {
             Resource vnfResource = new Resource(WorkflowType.VNF, vnf.getModelInfo().getModelCustomizationId(), false,
                     serviceResource);
             vnfResource.setProcessingPriority(vnf.getProcessingPriority());
+            vnfResource.setInstanceName(vnf.getInstanceName());
             resourceList.add(vnfResource);
             setResourceListForVfModules(execution, resourceList, vnfResource, validate, vnf);
         }
@@ -170,6 +171,7 @@ public class UserParamsServiceTraversal {
         resource.setProcessingPriority(vfModule.getProcessingPriority());
         resource.setBaseVfModule(vfModuleCustomization.getVfModule().getIsBase() != null
                 && vfModuleCustomization.getVfModule().getIsBase());
+        resource.setInstanceName(vfModule.getInstanceName());
         resourceList.add(resource);
         return resource;
     }

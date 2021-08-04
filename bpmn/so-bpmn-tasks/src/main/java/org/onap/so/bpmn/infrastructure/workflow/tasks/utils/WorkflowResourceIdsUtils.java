@@ -20,6 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.tasks.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowType;
 import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
@@ -63,6 +64,42 @@ public final class WorkflowResourceIdsUtils {
         }
     }
 
+    public static void setInstanceNameByWorkflowType(WorkflowResourceIds workflowResourceIds, WorkflowType resourceType,
+            String instanceName) {
+        if (resourceType == WorkflowType.VNF) {
+            workflowResourceIds.setVnfInstanceName(instanceName);
+        } else if (resourceType == WorkflowType.VFMODULE) {
+            workflowResourceIds.setVfModuleInstanceName(instanceName);
+        }
+    }
+
+    public static String getResourceIdByWorkflowType(WorkflowResourceIds workflowResourceIds,
+            WorkflowType resourceType) {
+        switch (resourceType) {
+            case SERVICE:
+                return StringUtils.defaultString(workflowResourceIds.getServiceInstanceId());
+            case VNF:
+                return StringUtils.defaultString(workflowResourceIds.getVnfId());
+            case PNF:
+                return StringUtils.defaultString(workflowResourceIds.getPnfId());
+            case VFMODULE:
+                return StringUtils.defaultString(workflowResourceIds.getVfModuleId());
+            case VOLUMEGROUP:
+                return StringUtils.defaultString(workflowResourceIds.getVolumeGroupId());
+            case NETWORK:
+                return StringUtils.defaultString(workflowResourceIds.getNetworkId());
+            case NETWORKCOLLECTION:
+                return StringUtils.defaultString(workflowResourceIds.getNetworkCollectionId());
+            case CONFIGURATION:
+                return StringUtils.defaultString(workflowResourceIds.getConfigurationId());
+            case INSTANCE_GROUP:
+                return StringUtils.defaultString(workflowResourceIds.getInstanceGroupId());
+            default:
+                return "";
+        }
+    }
+
+
     public static WorkflowResourceIds getWorkflowResourceIdsFromExecution(DelegateExecution execution) {
         WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
         workflowResourceIds.setServiceInstanceId((String) execution.getVariable("serviceInstanceId"));
@@ -71,6 +108,8 @@ public final class WorkflowResourceIdsUtils {
         workflowResourceIds.setVnfId((String) execution.getVariable("vnfId"));
         workflowResourceIds.setVolumeGroupId((String) execution.getVariable("volumeGroupId"));
         workflowResourceIds.setInstanceGroupId((String) execution.getVariable("instanceGroupId"));
+        workflowResourceIds.setVnfInstanceName((String) execution.getVariable("vnfInstanceName"));
+        workflowResourceIds.setVfModuleInstanceName((String) execution.getVariable("vfModuleInstanceName"));
         return workflowResourceIds;
     }
 
