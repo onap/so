@@ -127,6 +127,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         String serviceStatus = "deactivated"
         String modelInvariantUuid = sliceParams.getNSTInfo().invariantUUID
         String modelUuid = sliceParams.getNSTInfo().UUID
+        String serviceFunction = sliceParams.serviceProfile.get("resourceSharingLevel")
 
         sliceParams.setSuggestNsiId(sliceInstanceId)
         sliceParams.setSuggestNsiName(sliceInstanceName)
@@ -144,6 +145,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         nsi.setModelVersionId(modelUuid)
         nsi.setServiceInstanceLocationId(serviceInstanceLocationid)
         nsi.setServiceRole(serviceRole)
+        nsi.setServiceFunction(serviceFunction)
         String msg
         try {
 
@@ -263,7 +265,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
                 execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
         SliceTaskInfo<SliceProfileAdapter> sliceTaskInfo = sliceParams.anSliceTaskInfo
         sliceTaskInfo.setSliceInstanceId(serviceInstanceId)
-        String sliceProfileName = "an_" + sliceParams.serviceName
+        String sliceProfileName = "sliceprofile_an_" + sliceParams.serviceName
 
         // create slice profile
         ServiceInstance rspi = createSliceProfileInstance(sliceTaskInfo, sliceProfileName, oStatus)
@@ -401,6 +403,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         allocateAnNssi.nsstId = sliceTaskInfo.NSSTInfo.UUID
         allocateAnNssi.nssiId = sliceTaskInfo.suggestNssiId
         allocateAnNssi.nssiName = "nssi_an" + execution.getVariable("sliceServiceInstanceName")
+        allocateAnNssi.scriptName = sliceTaskInfo.getScriptName()
         NsiInfo nsiInfo = new NsiInfo()
         nsiInfo.nsiId = sliceParams.suggestNsiId
         nsiInfo.nsiName = sliceParams.suggestNsiName
@@ -458,7 +461,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
                 execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
         SliceTaskInfo<SliceProfileAdapter> sliceTaskInfo = sliceParams.cnSliceTaskInfo
         sliceTaskInfo.setSliceInstanceId(serviceInstanceId)
-        String sliceProfileName = "cn_"+sliceParams.serviceName
+        String sliceProfileName = "sliceprofile_cn_"+sliceParams.serviceName
 
         // create slice profile
         ServiceInstance rspi = createSliceProfileInstance(sliceTaskInfo, sliceProfileName, oStatus)
@@ -544,6 +547,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         allocateCnNssi.nssiName = "nssi_cn" + execution.getVariable("sliceServiceInstanceName")
         allocateCnNssi.sliceProfile = sliceTaskInfo.sliceProfile.trans2CnProfile()
         allocateCnNssi.sliceProfile.sliceProfileId = sliceTaskInfo.sliceInstanceId
+        allocateCnNssi.scriptName = sliceTaskInfo.getScriptName()
 
         NsiInfo nsiInfo = new NsiInfo()
         nsiInfo.nsiId = sliceParams.suggestNsiId
@@ -602,7 +606,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         String serviceInstanceId = UUID.randomUUID().toString()
 
         sliceTaskInfo.setSliceInstanceId(serviceInstanceId)
-        String sliceProfileName = "tn_" + sliceParams.serviceName
+        String sliceProfileName = "sliceprofile_tn_" + sliceParams.serviceName
         //execution.setVariable("cnSliceProfileInstanceId", serviceInstanceId) //todo:
 
         // create slice profile
@@ -671,6 +675,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         AllocateTnNssi allocateTnNssi = new AllocateTnNssi()
         allocateTnNssi.setNssiId(sliceTaskInfo.suggestNssiId)
+        allocateTnNssi.scriptName = sliceTaskInfo.getScriptName()
         //todo: AllocateTnNssi
         //todo: endPointId -> set into tn
         List<TransportSliceNetwork> transportSliceNetworks = new ArrayList<>()
@@ -943,6 +948,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         rspi.setModelVersionId(sliceTaskInfo.NSSTInfo.UUID)
         rspi.setWorkloadContext(sliceTaskInfo.subnetType.subnetType)
         rspi.setEnvironmentContext(sliceTaskInfo.sliceProfile.getSNSSAIList())
+        rspi.setServiceFunction(sliceTaskInfo.sliceProfile.getResourceSharingLevel())
 
         //timestamp format YYYY-MM-DD hh:mm:ss
         rspi.setCreatedAt(new Date(System.currentTimeMillis()).format("yyyy-MM-dd HH:mm:ss", TimeZone.getDefault()))
