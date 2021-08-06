@@ -149,7 +149,7 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         workflowActionBBTasks.selectBB(execution);
         boolean success = (boolean) execution.getVariable("completed");
         int currentSequence = (int) execution.getVariable("gCurrentSequence");
-        assertTrue(success);
+        assertFalse(success);
         assertEquals(1, currentSequence);
     }
 
