@@ -74,7 +74,7 @@
     <appc.client.version>1.7.2</appc.client.version>
     <bowman.client.version>0.9.0</bowman.client.version>
     <aaf.cadi.version>2.1.15</aaf.cadi.version>
-    <so-etsi-sol003-adapter-version>1.8.1-SNAPSHOT</so-etsi-sol003-adapter-version>
+    <so-etsi-sol003-adapter-version>1.9.0-SNAPSHOT</so-etsi-sol003-adapter-version>
     <onap-logging-version>1.6.9</onap-logging-version>
   </properties>
   <distributionManagement>
