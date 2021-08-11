@@ -565,7 +565,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
                 List<String> snssaiList = execution.getVariable("snssaiList")
 		String snssai = snssaiList.get(0)
 		//ANServiceInstance.setEnvironmentContext(snssai)
-                ANServiceInstance.setEnvironmentContext("an") //Network Type
+                ANServiceInstance.setEnvironmentContext(execution.getVariable("networkType")) //Network Type
 		ANServiceInstance.setWorkloadContext("AN") //domain Type
 		
 		logger.debug("completed AN service instance build "+ ANServiceInstance.toString())
@@ -631,7 +631,8 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		ANServiceInstance.setServiceRole(serviceRole)
 		List<String> snssaiList = execution.getVariable("snssaiList")
 		String snssai = snssaiList.get(0)
-		ANServiceInstance.setEnvironmentContext(snssai)
+		//ANServiceInstance.setEnvironmentContext(snssai)
+                ANServiceInstance.setEnvironmentContext(execution.getVariable("networkType"))
                 String modelInvariantUuid = execution.getVariable("modelInvariantUuid")
                 String modelUuid = execution.getVariable("modelUuid")
                 ANServiceInstance.setModelInvariantId(modelInvariantUuid)
@@ -651,7 +652,8 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		ANNFServiceInstance.setServiceRole(serviceRole)
 		snssaiList = execution.getVariable("snssaiList")
 		snssai = snssaiList.get(0)
-		ANNFServiceInstance.setEnvironmentContext(snssai)
+		//ANNFServiceInstance.setEnvironmentContext(snssai)
+                ANNFServiceInstance.setEnvironmentContext(execution.getVariable("networkType"))
                 ANNFServiceInstance.setModelInvariantId(execution.getVariable("ANNF_modelInvariantUuid"))
                 ANNFServiceInstance.setModelVersionId(execution.getVariable("ANNF_modelUuid"))
 		ANNFServiceInstance.setWorkloadContext("AN_NF")
@@ -923,7 +925,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		JsonObject commonHeader = new JsonObject()
 		JsonObject payload = new JsonObject()
 		JsonObject payloadInput = new JsonObject()
-		commonHeader.addProperty("timeStamp",new Date(System.currentTimeMillis()).format("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", TimeZone.getDefault()))
+		commonHeader.addProperty("timestamp",new Date(System.currentTimeMillis()).format("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", TimeZone.getDefault()))
 		commonHeader.addProperty("api-ver", "1.0")
                 commonHeader.addProperty("originator-id", "testing")
 		commonHeader.addProperty("request-id", requestId)
