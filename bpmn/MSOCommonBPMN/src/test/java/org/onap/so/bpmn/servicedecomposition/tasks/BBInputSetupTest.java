@@ -46,6 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -2981,6 +2982,31 @@ public class BBInputSetupTest {
         // then
         verify(SPY_bbInputSetup, times(1)).mapCatalogConfiguration(any(Configuration.class), any(ModelInfo.class),
                 any(Service.class), isA(ConfigurationResourceKeys.class));
+    }
+
+    @Test
+    public void testGetGBBMacroExistingServiceUpgrade() throws Exception {
+        String requestAction = "upgradeInstance";
+        GeneralBuildingBlock gBB = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
+                GeneralBuildingBlock.class);
+        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
+                ExecuteBuildingBlock.class);
+        RequestDetails requestDetails = mapper
+                .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_serviceUpgrade.json"), RequestDetails.class);
+        Map<ResourceKey, String> lookupKeyMap = prepareLookupKeyMap();
+        executeBB.setRequestDetails(requestDetails);
+
+        doReturn(new Service()).when(SPY_bbInputSetupUtils)
+                .getCatalogServiceByModelUUID(requestDetails.getModelInfo().getModelVersionId());
+        doReturn(new org.onap.aai.domain.yang.ServiceInstance()).when(SPY_bbInputSetupUtils)
+                .getAAIServiceInstanceById(lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
+        doReturn(gBB).when(SPY_bbInputSetup).populateGBBWithSIAndAdditionalInfo(any(BBInputSetupParameter.class));
+
+        SPY_bbInputSetup.getGBBMacroExistingService(executeBB, lookupKeyMap,
+                executeBB.getBuildingBlock().getBpmnFlowName(), requestAction, null);
+
+        verify(SPY_bbInputSetupUtils, times(1))
+                .getCatalogServiceByModelUUID(requestDetails.getModelInfo().getModelVersionId());
     }
 
     @Test

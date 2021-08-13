@@ -22,12 +22,14 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class Resource {
+public class Resource implements Serializable {
 
+    private static final long serialVersionUID = 4259534487473481127L;
     private String resourceId;
     private WorkflowType resourceType;
     private boolean generated;
@@ -37,6 +39,7 @@ public class Resource {
     private String vfModuleCustomizationId;
     private String cvnfModuleCustomizationId;
     private String instanceName;
+    private String modelInvariantId;
     private int processingPriority;
     private Resource parent;
     private List<Resource> children;
@@ -128,6 +131,15 @@ public class Resource {
     public void setInstanceName(String instanceName) {
         this.instanceName = instanceName;
     }
+
+    public String getModelInvariantId() {
+        return modelInvariantId;
+    }
+
+    public void setModelInvariantId(String modelInvariantId) {
+        this.modelInvariantId = modelInvariantId;
+    }
+
 
     public int getProcessingPriority() {
         return processingPriority == 0 ? (isBaseVfModule() ? Integer.MIN_VALUE + 1 : 0) : processingPriority;
