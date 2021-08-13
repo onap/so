@@ -37,6 +37,7 @@ import org.onap.so.bpmn.common.DelegateExecutionImpl;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.db.catalog.beans.PnfResourceCustomization;
+import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
@@ -46,6 +47,7 @@ import org.onap.so.serviceinstancebeans.RequestDetails;
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class SkipCDSBuildingBlockListenerTest {
 
+    private static final String SERVICE_SCOPE = "service";
     private static final String VNF_SCOPE = "VNF";
     private static final String VF_SCOPE = "VFModule";
     private static final String PNF_SCOPE = "pnf";
@@ -87,6 +89,18 @@ public class SkipCDSBuildingBlockListenerTest {
         BuildingBlockExecution execution = new DelegateExecutionImpl(new DelegateExecutionFake());
         skipCDSBuildingBlockListener.shouldRunFor(BBNAME, ISFIRST, execution);
         assertEquals("ControllerExecutionBB", BBNAME);
+    }
+
+    @Test
+    public void testSkipCDSforService() {
+        setBuildingBlockAndCurrentSequence(SERVICE_SCOPE, "service-config-assign", 0);
+        Service service = new Service();
+        when(catalogDbClient.getServiceByID(TEST_MODELUUID)).thenReturn(service);
+
+        skipCDSBuildingBlockListener.run(flowsToExecute, executeBuildingBlock, buildingBlockExecution);
+
+        actual = buildingBlockExecution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
+        assertEquals(1, actual);
     }
 
     @Test

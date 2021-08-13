@@ -20,7 +20,9 @@
 
 package org.onap.so.client.cds;
 
+import static org.onap.so.client.cds.ConfigureInstanceParamsUtil.applyParamsToObject;
 import com.google.gson.JsonObject;
+import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.onap.so.client.exception.PayloadGenerationException;
 import org.onap.so.serviceinstancebeans.Service;
@@ -50,19 +52,22 @@ public class ConfigureInstanceParamsForVfModule {
             String vnfCustomizationUuid, String vfModuleCustomizationUuid, String vfModuleInstanceName)
             throws PayloadGenerationException {
         try {
-            Service service = extractServiceFromUserParameters.getServiceFromRequestUserParams(userParamsFromRequest);
+            Optional<Service> service =
+                    extractServiceFromUserParameters.getServiceFromRequestUserParams(userParamsFromRequest);
 
-            List<Map<String, String>> instanceParamsList;
-            if (StringUtils.isNotBlank(vfModuleInstanceName)) {
-                instanceParamsList = getInstanceParamsByInstanceNames(service, vfModuleInstanceName);
-            } else {
-                instanceParamsList = getInstanceParams(service, vnfCustomizationUuid, vfModuleCustomizationUuid);
+            if (service.isPresent()) {
+                List<Map<String, String>> instanceParamsList;
+                if (StringUtils.isNotBlank(vfModuleInstanceName)) {
+                    instanceParamsList = getInstanceParamsByInstanceNames(service.get(), vfModuleInstanceName);
+                } else {
+                    instanceParamsList =
+                            getInstanceParams(service.get(), vnfCustomizationUuid, vfModuleCustomizationUuid);
+                }
+
+                applyParamsToObject(instanceParamsList, jsonObject);
             }
-
-            instanceParamsList.stream().flatMap(instanceParamsMap -> instanceParamsMap.entrySet().stream())
-                    .forEachOrdered(entry -> jsonObject.addProperty(entry.getKey(), entry.getValue()));
         } catch (Exception e) {
-            throw new PayloadGenerationException("Couldn't able to resolve instance parameters", e);
+            throw new PayloadGenerationException("Failed to resolve instance parameters", e);
         }
     }
 
