@@ -1,0 +1,29 @@
+{
+  "name": "cloud-leased-line-101",
+  "modelInvariantUuid": "6790ab0e-034f-11eb-adc1-0242ac120002",
+  "modelUuid": "6790ab0e-034f-11eb-adc1-0242ac120002",
+  "globalSubscriberId": "IBNCustomer",
+  "subscriptionServiceType": "IBN",
+  "serviceType": "CLL",
+  "additionalProperties": {
+    "enableSdnc": "false",
+    "serviceInstanceID": "cll-101",
+    "transportNetworks": [
+            {
+                "id": "cll-101-network-001",
+                "sla": {
+                    "latency": 2,
+                    "maxBandwidth": 3000
+                },
+                "connectionLinks": [
+                    {
+                        "name": "cll-link-1",
+                        "transportEndpointA": "tranportEp_UNI_ID_311_1",
+                        "transportEndpointB": "tranportEp_ROOT_ID_512_1"
+                    }
+                ]
+            }
+    ]
+  }
+}
+
