@@ -1,0 +1,22 @@
+
+---
+distribution_type: 'container'
+container_release_tag: '1.9.0'
+project: 'so'
+log_dir: 'so-maven-docker-stage-master/818/'
+ref: '27c3d83a8b8c70aa923896fd655e739f2b013c3b'
+containers:
+    - name: 'so/catalog-db-adapter'
+      version: '1.9.0-20210813T1422'
+    - name: 'so/request-db-adapter'
+      version: '1.9.0-20210813T1422'
+    - name: 'so/openstack-adapter'
+      version: '1.9.0-20210813T1422'
+    - name: 'so/sdnc-adapter'
+      version: '1.9.0-20210813T1422'
+    - name: 'so/sdc-controller'
+      version: '1.9.0-20210813T1422'
+    - name: 'so/bpmn-infra'
+      version: '1.9.0-20210813T1422'
+    - name: 'so/api-handler-infra'
+      version: '1.9.0-20210813T1422'
