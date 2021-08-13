@@ -107,6 +107,7 @@
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-web</artifactId>
+      <version>5.4.6</version>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
