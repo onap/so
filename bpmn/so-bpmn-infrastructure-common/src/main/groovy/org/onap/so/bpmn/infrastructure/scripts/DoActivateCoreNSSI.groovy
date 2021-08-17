@@ -90,7 +90,7 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
         execution.setVariable("sNssai", sNssai)
         String serviceType = execution.getVariable("subscriptionServiceType")
         execution.setVariable("serviceType", serviceType)
-        logger.debug("operationType: {} , sNssai: {}, serviceType: {}.",operationType, sNssai, serviceType)
+		logger.debug("operationType: {} , sNssai: {}, serviceType: {}.",operationType, sNssai, serviceType)
         logger.debug(Prefix +" **** Exit DoActivateCoreNSSI ::: preProcessRequest ****")
     }
 
@@ -106,52 +106,42 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
         if(nsi.isPresent()) {
             List<Relationship> relationshipList = nsi.get().getRelationshipList()?.getRelationship()
             List spiWithsNssaiAndOrchStatusList = new ArrayList<>()
+
             for (Relationship relationship : relationshipList) {
                 String relatedTo = relationship.getRelatedTo()
-                if (("service-instance").equals(relatedTo)) {
+                if ("service-instance".equals(relatedTo)) {
                     List<RelationshipData> relationshipDataList = relationship.getRelationshipData()
                     List<RelatedToProperty> relatedToPropertyList = relationship.getRelatedToProperty()
                     for (RelationshipData relationshipData : relationshipDataList) {
-                        if (("service-instance.service-instance-id").equals(relationshipData.getRelationshipKey())) {
-                            execution.setVariable("networkServiceInstanceId", relationshipData.getRelationshipValue())
-                        }
-                    }
-                    for (RelatedToProperty relatedToProperty : relatedToPropertyList) {
-                        if (("service-instance.service-instance-name").equals(relatedToProperty.getPropertyKey())) {
-                            execution.setVariable("networkServiceInstanceName", relatedToProperty.getPropertyValue())
-                        }
-                    }
-                }
+                        if ("service-instance.service-instance-id".equals(relationshipData.getRelationshipKey())) {
+                            //Query Every related Service Instance From AAI by service Instance ID
+                            AAIResultWrapper instanceWrapper = queryAAI(execution, Types.SERVICE_INSTANCE, relationshipData.getRelationshipValue(), "No Instance Present")
+                            Optional<ServiceInstance> relatedServiceInstance = instanceWrapper.asBean(ServiceInstance.class)
+                            if (relatedServiceInstance.isPresent()) {
+                                ServiceInstance relatedServiceInstanceObj = relatedServiceInstance.get()
+                                String role = relatedServiceInstanceObj.getServiceRole();
 
-                //If related to is allotted-Resource
-                if (("allotted-resource").equals(relatedTo)) {
-                    //get slice Profile Instance Id from allotted resource in list by nssi
-                    List<String> sliceProfileInstanceIdList = new ArrayList<>()
-                    List<RelationshipData> relationshipDataList = relationship.getRelationshipData()
-                    for (RelationshipData relationshipData : relationshipDataList) {
-                        if (relationshipData.getRelationshipKey().equals("service-instance.service-instance-id")) {
-                            sliceProfileInstanceIdList.add(relationshipData.getRelationshipValue())
-                        }
-                    }
-                    for (String sliceProfileServiceInstanceId : sliceProfileInstanceIdList) {
-                        String errorSliceProfileMsg = "Slice Profile Service Instance was not found in aai"
-
-                        //Query Slice Profile Service Instance From AAI by sliceProfileServiceInstanceId
-                        AAIResultWrapper sliceProfileInstanceWrapper = queryAAI(execution, Types.SERVICE_INSTANCE, sliceProfileServiceInstanceId, errorSliceProfileMsg)
-                        Optional<ServiceInstance> sliceProfileServiceInstance = sliceProfileInstanceWrapper.asBean(ServiceInstance.class)
-                        if (sliceProfileServiceInstance.isPresent()) {
-                            String orchestrationStatus= sliceProfileServiceInstance.get().getOrchestrationStatus()
-                            String sNssai = sliceProfileServiceInstance.get().getEnvironmentContext()
-                            String sNssaiValueFromRequest = execution.getVariable("sNssai")
-                            if(sNssai.equals(sNssaiValueFromRequest)) {
-                                orchestrationStatus = execution.getVariable("oStatus")
-                                //Slice Profile Service Instance to be updated in AAI
-                                execution.setVariable("sliceProfileServiceInstance", sliceProfileServiceInstance.get())
+                                if(role == null || role.isEmpty()) {
+                                    networkServiceInstanceId = relatedServiceInstanceObj.getServiceInstanceId()
+                                    networkServiceInstanceName = relatedServiceInstanceObj.getServiceInstanceName()
+                                    logger.debug("networkServiceInstanceId: {} networkServiceInstanceName: {} ",networkServiceInstanceId, networkServiceInstanceName)
+                                    execution.setVariable("networkServiceInstanceId", networkServiceInstanceId)
+                                    execution.setVariable("networkServiceInstanceName", networkServiceInstanceName)
+                                } else if("slice-profile-instance".equals(role)) {
+                                    String orchestrationStatus= relatedServiceInstanceObj.getOrchestrationStatus()
+                                    String sNssai = relatedServiceInstanceObj.getEnvironmentContext()
+                                    if(sNssai.equals(execution.getVariable("sNssai"))) {
+                                        orchestrationStatus = execution.getVariable("oStatus")
+                                        //Slice Profile Service Instance to be updated in AAI
+                                        execution.setVariable("sliceProfileServiceInstance", relatedServiceInstanceObj)
+                                    }
+                                    Map<String, Object> spiWithsNssaiAndOrchStatus = new LinkedHashMap<>()
+                                    spiWithsNssaiAndOrchStatus.put("snssai", sNssai)
+                                    spiWithsNssaiAndOrchStatus.put("status", orchestrationStatus)
+                                    spiWithsNssaiAndOrchStatusList.add(spiWithsNssaiAndOrchStatus)
+                                    logger.debug("service Profile's NSSAI And Orchestration Status:  "+spiWithsNssaiAndOrchStatus)
+                                }
                             }
-                            Map<String, Object> spiWithsNssaiAndOrchStatus = new LinkedHashMap<>()
-                            spiWithsNssaiAndOrchStatus.put("snssai", sNssai)
-                            spiWithsNssaiAndOrchStatus.put("status", orchestrationStatus)
-                            spiWithsNssaiAndOrchStatusList.add(spiWithsNssaiAndOrchStatus)
                         }
                     }
                 }
@@ -620,6 +610,10 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
 
         ServiceInstance si = execution.getVariable("sliceProfileServiceInstance")
         String sliceProfileInstanceId = si.getServiceInstanceId()
+
+        if(sliceProfileInstanceId==null) {
+              exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Slice Profile Instance Update failed")
+        }
         si.setOrchestrationStatus(oStatus)
 
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalCustId).serviceSubscription(serviceType).serviceInstance(sliceProfileInstanceId))
