@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9e7dd78f_e5a386cc",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/subprocess/DoAllocateCoreNSSI.bpmn",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2021-08-17T02:11:59Z",
+      "side": 1,
+      "message": "Is there any reason why there is a special character here?",
+      "range": {
+        "startLine": 45,
+        "startChar": 76,
+        "endLine": 45,
+        "endChar": 77
+      },
+      "revId": "a1b72aafdaff05b6755574d1edee61cc7b48f0d1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
