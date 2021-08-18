@@ -160,7 +160,7 @@ public class SliceProfileAdapter implements Serializable {
             BeanUtils.copyProperties(this, perfReqEmbb);
             perfReqEmbbs.add(perfReqEmbb);
             perfReq.setPerfReqEmbbList(perfReqEmbbs);
-        } else if ("ullc".equalsIgnoreCase(sST)) {
+        } else if ("urllc".equalsIgnoreCase(sST)) {
             List<PerfReqUrllc> perfReqUrllcs = new ArrayList<>();
             PerfReqUrllc perfReqUrllc = new PerfReqUrllc();
             BeanUtils.copyProperties(this, perfReqUrllc);
