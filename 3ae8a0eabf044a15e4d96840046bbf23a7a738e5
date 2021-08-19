@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "6fb1dbe3_9d6b2261",
+        "filename": "packages/docker/src/main/docker/docker-files/Dockerfile.so-bpmn-infra",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2021-08-19T05:20:50Z",
+      "side": 1,
+      "message": "We will have the camunda and mso as two applications of the tomcat.\nThe camunda will be the engine part and the mso will be the busieness logic\nthe current URLs of the Rest will be refering to the /mso not sobmpnengine/mso so its fine for me.",
+      "parentUuid": "82bed648_076f6754",
+      "range": {
+        "startLine": 15,
+        "startChar": 19,
+        "endLine": 15,
+        "endChar": 43
+      },
+      "revId": "3ae8a0eabf044a15e4d96840046bbf23a7a738e5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f854dbe1_327079e5",
         "filename": "packages/docker/src/main/docker/docker-files/Dockerfile.so-bpmn-infra",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2021-08-18T13:11:42Z",
       "side": 1,
       "message": "webapps directory contains following folders/web applications in tar.zip \n\n- camunda\n- camunda-invoice\n- camunda-welcome\n- docs\n- engine-rest\n- examples\n- h2\n- host-manager\netc etc\n\nyou should remove all folders under webapps and just copy mso.war into sobpmnengine rather then renaming engine-rest to sobpmnengine",
+      "range": {
+        "startLine": 19,
+        "startChar": 7,
+        "endLine": 19,
+        "endChar": 35
+      },
+      "revId": "3ae8a0eabf044a15e4d96840046bbf23a7a738e5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e57f216e_4483f0c1",
+        "filename": "packages/docker/src/main/docker/docker-files/Dockerfile.so-bpmn-infra",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2021-08-19T05:20:50Z",
+      "side": 1,
+      "message": "Since the sobpmnengine constitues of the camunda engine the content of this includes These files, they are part of the camunda distro package.",
+      "parentUuid": "f854dbe1_327079e5",
       "range": {
         "startLine": 19,
         "startChar": 7,
