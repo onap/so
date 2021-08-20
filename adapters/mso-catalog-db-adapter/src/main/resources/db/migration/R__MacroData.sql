@@ -42,6 +42,12 @@ INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, I
 INSERT INTO northbound_request_ref_lookup(REQUEST_SCOPE, MACRO_ACTION, ACTION, IS_ALACARTE, MIN_API_VERSION, MAX_API_VERSION, IS_TOPLEVELFLOW, CLOUD_OWNER, SERVICE_TYPE)
 VALUES ('Vnf', 'VNF-Macro-Modify', 'updateInstance', 0, 7, 7, 1, 'k8scloudowner4', '*');
 
+--
+--  northbound_request_ref_lookup for CNF healthCheck (Macro Flow)
+--
+INSERT INTO northbound_request_ref_lookup(REQUEST_SCOPE, MACRO_ACTION, ACTION, IS_ALACARTE, MIN_API_VERSION, MAX_API_VERSION, IS_TOPLEVELFLOW, CLOUD_OWNER, SERVICE_TYPE)
+VALUES ('Vnf', 'VNF-Macro-HealthCheck', 'healthCheck', 0, 7, 7, 1, 'DEFAULT', '*');
+
 
 INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID) VALUES
 ('Service-Create', '1', 'AssignServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Create' and CLOUD_OWNER = 'DEFAULT')),
@@ -260,6 +266,13 @@ values ('VNF-Macro-Modify', 1, 'ControllerExecutionBB', 1, 'vnf', 'config-assign
 insert into orchestration_flow_reference (COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, SCOPE, ACTION, NB_REQ_REF_LOOKUP_ID)
 values ('VNF-Macro-Modify', 2, 'ControllerExecutionBB', 1, 'vnf', 'config-deploy', (SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Modify' and CLOUD_OWNER = 'k8scloudowner4'));
 
+--
+--  orchestration_flow_reference for CNF healthCheck (Macro Flow)
+--
+insert into orchestration_flow_reference (COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, SCOPE, ACTION, NB_REQ_REF_LOOKUP_ID)
+values ('VNF-Macro-HealthCheck', 1, 'HealthCheckBB', 1, 'vnf', 'status-check', (SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-HealthCheck' and CLOUD_OWNER = 'DEFAULT'));
+insert into orchestration_flow_reference (COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, SCOPE, ACTION, NB_REQ_REF_LOOKUP_ID)
+values ('VNF-Macro-HealthCheck', 2, 'HealthCheckBB', 1, 'vnf', 'health-check', (SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-HealthCheck' and CLOUD_OWNER = 'DEFAULT'));
 
 INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID, SCOPE, ACTION) VALUES
 ('Service-Macro-Create', '10', 'ControllerExecutionBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT'), 'pnf', 'config-assign');
@@ -947,6 +960,12 @@ VALUES
 ('ConfigAssignVnfBB', 'NO_VALIDATE', 'CUSTOM'),
 ('ConfigDeployVnfBB', 'NO_VALIDATE', 'CUSTOM'),
 ('ControllerExecutionBB', 'NO_VALIDATE', 'CUSTOM');
+
+INSERT INTO building_block_detail(BUILDING_BLOCK_NAME, RESOURCE_TYPE, TARGET_ACTION)
+VALUES
+('StatusCheckBB', 'NO_VALIDATE', 'CUSTOM'),
+('HealthCheckBB', 'NO_VALIDATE', 'CUSTOM');
+
 
 UPDATE rainy_day_handler_macro SET reg_ex_error_message = '*' WHERE reg_ex_error_message IS null;
 
