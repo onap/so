@@ -45,6 +45,7 @@ public enum Action implements Actions {
     deactivateAndCloudDelete,
     scaleOut,
     recreateInstance,
+    healthCheck,
     addMembers,
     removeMembers,
     forCustomWorkflow
