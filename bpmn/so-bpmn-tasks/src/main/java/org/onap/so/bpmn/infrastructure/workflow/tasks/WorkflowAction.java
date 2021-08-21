@@ -38,6 +38,7 @@ import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConst
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.REPLACEINSTANCERETAINASSIGNMENTS;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.SERVICE;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.UPDATE_INSTANCE;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.HEALTH_CHECK;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.WORKFLOW_ACTION_ERROR_MESSAGE;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -195,7 +196,8 @@ public class WorkflowAction {
                             serviceType, requestId, apiVersion, vnfType, requestDetails);
                 }
             }
-            // If the user set "Homing_Solution" to "none", disable homing, else if "Homing_Solution" is specified,
+            // If the user set "Homing_Solution" to "none", disable homing, else if
+            // "Homing_Solution" is specified,
             // enable it.
             if (sIRequest.getRequestDetails().getRequestParameters() != null
                     && sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
@@ -295,7 +297,8 @@ public class WorkflowAction {
                 || (RECREATE_INSTANCE.equalsIgnoreCase(requestAction)))) {
             vnfEBBLoader.traverseAAIVnf(execution, resourceList, workflowResourceIds.getServiceInstanceId(),
                     workflowResourceIds.getVnfId(), aaiResourceIds);
-        } else if (resourceType == WorkflowType.VNF && UPDATE_INSTANCE.equalsIgnoreCase(requestAction)) {
+        } else if ((resourceType == WorkflowType.VNF && UPDATE_INSTANCE.equalsIgnoreCase(requestAction))
+                || (resourceType == WorkflowType.VNF && HEALTH_CHECK.equalsIgnoreCase(requestAction))) {
             vnfEBBLoader.customTraverseAAIVnf(execution, resourceList, workflowResourceIds.getServiceInstanceId(),
                     workflowResourceIds.getVnfId(), aaiResourceIds);
         } else {
