@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0xinghn" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.0.0">
+  <bpmn:process id="CNFAdapterAsyncCall" name="CNFAdapterAsyncCall" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="CNFAdapterAsyncCall_start">
+      <bpmn:outgoing>Flow_0q7kp9w</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_15f5cnf" name="CNFAdapterAsyncCall_end">
+      <bpmn:incoming>Flow_0cy88g6</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:callActivity id="Activity_0fhymrt" name="Receive Async Callback" camunda:modelerTemplate="receiveWorkflowMessage" calledElement="ReceiveWorkflowMessage">
+      <bpmn:extensionElements>
+        <camunda:in source="true" target="isDebugLogEnabled" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="messageType" target="RCVWFMSG_messageType" />
+        <camunda:in source="correlator" target="RCVWFMSG_correlator" />
+        <camunda:in source="timeout" target="RCVWFMSG_timeout" />
+        <camunda:out source="WorkflowResponse" target="asyncCallbackResponse" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0njjlbm</bpmn:incoming>
+      <bpmn:outgoing>Flow_0cy88g6</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_0njjlbm" sourceRef="Activity_1ttieoz" targetRef="Activity_0fhymrt" />
+    <bpmn:sequenceFlow id="Flow_0q7kp9w" sourceRef="StartEvent_1" targetRef="Activity_0lttdg6" />
+    <bpmn:sequenceFlow id="Flow_0cy88g6" sourceRef="Activity_0fhymrt" targetRef="Event_15f5cnf" />
+    <bpmn:sequenceFlow id="Flow_04o97wl" sourceRef="Activity_0lttdg6" targetRef="Activity_1ttieoz" />
+    <bpmn:scriptTask id="Activity_0lttdg6" name="Preprocess request" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0q7kp9w</bpmn:incoming>
+      <bpmn:outgoing>Flow_04o97wl</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.common.scripts.*
+def cnf= new CNFAdapterAsync()
+cnf.preProcessRequest(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_1ttieoz" name="Call CnfAdapter" scriptFormat="groovy">
+      <bpmn:incoming>Flow_04o97wl</bpmn:incoming>
+      <bpmn:outgoing>Flow_0njjlbm</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.common.scripts.*
+def cnf= new CNFAdapterAsync()
+cnf.callCnfAdapter(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:subProcess id="Activity_06t66qc" name="Error Handling&#10;&#10;" triggeredByEvent="true">
+      <bpmn:startEvent id="Event_0ny1qj3">
+        <bpmn:outgoing>Flow_0xo7st8</bpmn:outgoing>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_0ta0yq5" />
+      </bpmn:startEvent>
+      <bpmn:endEvent id="Event_1t6t0h6">
+        <bpmn:incoming>Flow_0xo7st8</bpmn:incoming>
+        <bpmn:terminateEventDefinition id="TerminateEventDefinition_1i0gtkr" />
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_0xo7st8" sourceRef="Event_0ny1qj3" targetRef="Event_1t6t0h6" />
+    </bpmn:subProcess>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CNFAdapterAsyncCall">
+      <bpmndi:BPMNEdge id="Flow_04o97wl_di" bpmnElement="Flow_04o97wl">
+        <di:waypoint x="330" y="120" />
+        <di:waypoint x="370" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cy88g6_di" bpmnElement="Flow_0cy88g6">
+        <di:waypoint x="610" y="120" />
+        <di:waypoint x="682" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0q7kp9w_di" bpmnElement="Flow_0q7kp9w">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="230" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0njjlbm_di" bpmnElement="Flow_0njjlbm">
+        <di:waypoint x="470" y="120" />
+        <di:waypoint x="510" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="128" y="145" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_15f5cnf_di" bpmnElement="Event_15f5cnf">
+        <dc:Bounds x="682" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="658" y="145" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0fhymrt_di" bpmnElement="Activity_0fhymrt">
+        <dc:Bounds x="510" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0j7hue7_di" bpmnElement="Activity_0lttdg6">
+        <dc:Bounds x="230" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0o6kxz9_di" bpmnElement="Activity_1ttieoz">
+        <dc:Bounds x="370" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_06t66qc_di" bpmnElement="Activity_06t66qc" isExpanded="true">
+        <dc:Bounds x="210" y="220" width="460" height="135" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0xo7st8_di" bpmnElement="Flow_0xo7st8">
+        <di:waypoint x="328" y="294" />
+        <di:waypoint x="562" y="294" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0ny1qj3_di" bpmnElement="Event_0ny1qj3">
+        <dc:Bounds x="292" y="276" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1t6t0h6_di" bpmnElement="Event_1t6t0h6">
+        <dc:Bounds x="562" y="276" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
