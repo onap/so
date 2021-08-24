@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d0f4a80d_ccec9edc",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ExecuteBuildingBlockBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 2701
+      },
+      "writtenOn": "2021-08-24T15:54:00Z",
+      "side": 1,
+      "message": "we have also GenericHealthCheck operation, if I am not wrong, that will pass this condition as well. we should use equals instead.",
+      "range": {
+        "startLine": 123,
+        "startChar": 18,
+        "endLine": 123,
+        "endChar": 67
+      },
+      "revId": "4df4ed405053a2b6bac7f5f48c5233923b76e20d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
