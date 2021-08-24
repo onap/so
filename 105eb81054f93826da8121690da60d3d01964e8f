@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fc79823d_d86acf5f",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/R__MacroData.sql",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 2701
+      },
+      "writtenOn": "2021-08-24T15:50:13Z",
+      "side": 1,
+      "message": "why such value? Why we can\u0027t use DEFAULT?",
+      "range": {
+        "startLine": 49,
+        "startChar": 68,
+        "endLine": 49,
+        "endChar": 82
+      },
+      "revId": "105eb81054f93826da8121690da60d3d01964e8f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c8cc21b9_a93b1881",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/R__MacroData.sql",
+        "patchSetId": 2
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 2701
+      },
+      "writtenOn": "2021-08-24T15:50:13Z",
+      "side": 1,
+      "message": "why it cannot be DEFAULT?",
+      "range": {
+        "startLine": 273,
+        "startChar": 189,
+        "endLine": 273,
+        "endChar": 203
+      },
+      "revId": "105eb81054f93826da8121690da60d3d01964e8f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
