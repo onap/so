@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.1.1">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.0.0">
   <bpmn:process id="CreateVfModuleBB" name="CreateVfModuleBB" isExecutable="true">
     <bpmn:startEvent id="CreateVfModuleBB_Start">
       <bpmn:outgoing>SequenceFlow_1xr6chl</bpmn:outgoing>
@@ -47,7 +47,7 @@
     <bpmn:sequenceFlow id="SequenceFlow_1vbwdaw" sourceRef="UpdateVfModuleStatus" targetRef="CreateVfModuleBB_End" />
     <bpmn:serviceTask id="CreateNetworkPolicies" name="AAI Create (network policies)" camunda:expression="${AAICreateTasks.createNetworkPolicies(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>Flow_10aq7a8</bpmn:incoming>
-      <bpmn:incoming>Flow_1il4743</bpmn:incoming>
+      <bpmn:incoming>Flow_1xlm2ij</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0xqhep5</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_0xqhep5" sourceRef="CreateNetworkPolicies" targetRef="UpdateVnfIpv4OamAddress" />
@@ -107,11 +107,31 @@
       <bpmn:sequenceFlow id="Flow_03q6ty9" sourceRef="Activity_1p8hxyt" targetRef="Event_108oetk" />
     </bpmn:subProcess>
     <bpmn:sequenceFlow id="Flow_10aq7a8" sourceRef="ServiceTask_00d84m7" targetRef="CreateNetworkPolicies" />
-    <bpmn:sequenceFlow id="Flow_1il4743" sourceRef="CnfAdapter" targetRef="CreateNetworkPolicies" />
+    <bpmn:sequenceFlow id="Flow_1il4743" sourceRef="CnfAdapter" targetRef="UpdateCnfAai" />
+    <bpmn:sequenceFlow id="Flow_1xlm2ij" sourceRef="UpdateCnfAai" targetRef="CreateNetworkPolicies" />
+    <bpmn:callActivity id="UpdateCnfAai" name="Update Cnf Data in AAI" calledElement="UpdateCnfAai">
+      <bpmn:extensionElements>
+        <camunda:in source="gBuildingBlockExecution" target="gBuildingBlockExecution" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="heatStackId" target="heatStackId" />
+        <camunda:out source="heatStackId" target="heatStackId" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1il4743</bpmn:incoming>
+      <bpmn:outgoing>Flow_1xlm2ij</bpmn:outgoing>
+    </bpmn:callActivity>
   </bpmn:process>
   <bpmn:error id="Error_0t7oivz" name="AAIInventoryFailure" errorCode="AAIInventoryFailure" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CreateVfModuleBB">
+      <bpmndi:BPMNEdge id="Flow_1il4743_di" bpmnElement="Flow_1il4743">
+        <di:waypoint x="646" y="250" />
+        <di:waypoint x="424" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10aq7a8_di" bpmnElement="Flow_10aq7a8">
+        <di:waypoint x="646" y="366" />
+        <di:waypoint x="374" y="366" />
+        <di:waypoint x="374" y="428" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0uetprw_di" bpmnElement="SequenceFlow_0uetprw">
         <di:waypoint x="1009" y="146" />
         <di:waypoint x="1009" y="326" />
@@ -212,15 +232,10 @@
           <dc:Bounds x="156" y="91" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_10aq7a8_di" bpmnElement="Flow_10aq7a8">
-        <di:waypoint x="646" y="366" />
-        <di:waypoint x="374" y="366" />
-        <di:waypoint x="374" y="428" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1il4743_di" bpmnElement="Flow_1il4743">
-        <di:waypoint x="646" y="250" />
-        <di:waypoint x="200" y="250" />
-        <di:waypoint x="200" y="468" />
+      <bpmndi:BPMNEdge id="Flow_1xlm2ij_di" bpmnElement="Flow_1xlm2ij">
+        <di:waypoint x="324" y="250" />
+        <di:waypoint x="190" y="250" />
+        <di:waypoint x="190" y="468" />
         <di:waypoint x="324" y="468" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="StartEvent_0kxwniy_di" bpmnElement="CreateVfModuleBB_Start">
@@ -271,14 +286,17 @@
       <bpmndi:BPMNShape id="ServiceTask_00d84m7_di" bpmnElement="ServiceTask_00d84m7">
         <dc:Bounds x="646" y="326" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_0tag50w_di" bpmnElement="CnfAdapter">
-        <dc:Bounds x="646" y="210" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_1g3vemz_di" bpmnElement="CheckIfIsHelm" isMarkerVisible="true">
         <dc:Bounds x="671" y="81" width="50" height="50" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="655" y="48" width="82" height="14" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0tag50w_di" bpmnElement="CnfAdapter">
+        <dc:Bounds x="646" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_08npiny_di" bpmnElement="UpdateCnfAai">
+        <dc:Bounds x="324" y="210" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_10eqhmz_di" bpmnElement="Activity_10eqhmz" isExpanded="true">
         <dc:Bounds x="240" y="590" width="340" height="180" />
