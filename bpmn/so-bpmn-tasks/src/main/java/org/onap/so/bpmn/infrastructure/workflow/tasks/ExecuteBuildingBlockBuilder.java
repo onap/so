@@ -54,6 +54,7 @@ public class ExecuteBuildingBlockBuilder {
     private static final String PNF = "Pnf";
     private static final String VFMODULE = "VfModule";
     private static final String NETWORK = "Network";
+    private static final String HEALTH_CHECK = "HealthCheckBB";
 
     protected List<ExecuteBuildingBlock> buildExecuteBuildingBlockList(List<OrchestrationFlow> orchFlows,
             List<Resource> originalResourceList, String requestId, String apiVersion, String resourceId,
@@ -117,6 +118,10 @@ public class ExecuteBuildingBlockBuilder {
                     apiVersion, resourceId, requestAction, vnfType, workflowResourceIds, requestDetails, false, false);
         } else if (orchFlow.getFlowName().contains(VNF)
                 || (orchFlow.getFlowName().contains(CONTROLLER) && (VNF).equalsIgnoreCase(orchFlow.getBpmnScope()))) {
+            addBuildingBlockToExecuteBBList(flowsToExecute, resource, WorkflowType.VNF, orchFlow, requestId, apiVersion,
+                    resourceId, requestAction, vnfType, workflowResourceIds, requestDetails, false, false);
+        } else if ((orchFlow.getFlowName().equalsIgnoreCase(HEALTH_CHECK))
+                && (VNF).equalsIgnoreCase(orchFlow.getBpmnScope())) {
             addBuildingBlockToExecuteBBList(flowsToExecute, resource, WorkflowType.VNF, orchFlow, requestId, apiVersion,
                     resourceId, requestAction, vnfType, workflowResourceIds, requestDetails, false, false);
         } else if (orchFlow.getFlowName().contains(PNF)

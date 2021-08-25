@@ -50,6 +50,7 @@ public final class WorkflowActionConstants {
     public static final String UPDATE_INSTANCE = "updateInstance";
     public static final String USER_PARAM_SERVICE = "service";
     public static final String VOLUMEGROUP = "VolumeGroup";
+    public static final String HEALTH_CHECK = "healthCheck";
     public static final String WORKFLOW_ACTION_ERROR_MESSAGE = "WorkflowActionErrorMessage";
 
 }
