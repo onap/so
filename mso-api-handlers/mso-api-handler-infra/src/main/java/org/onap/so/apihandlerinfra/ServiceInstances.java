@@ -414,6 +414,24 @@ public class ServiceInstances extends AbstractRestHandler {
                 requestHandlerUtils.getRequestUri(requestContext, uriPrefix));
     }
 
+    @POST
+    @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/healthcheck")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "HealthCheck for provided VNF instance", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Transactional
+    public Response cnfHealthCheck(String request, @PathParam("version") String version,
+            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
+            @Context ContainerRequestContext requestContext) throws ApiException {
+        String requestId = requestHandlerUtils.getRequestId(requestContext);
+        HashMap<String, String> instanceIdMap = new HashMap<>();
+        instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+        instanceIdMap.put("vnfInstanceId", vnfInstanceId);
+        return serviceInstances(request, Action.healthCheck, instanceIdMap, version, requestId,
+                requestHandlerUtils.getRequestUri(requestContext, uriPrefix));
+    }
+
     @PUT
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}")
     @Consumes(MediaType.APPLICATION_JSON)
