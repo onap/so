@@ -20,10 +20,14 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.gson.JsonObject
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.v19.AllottedResource
+import org.onap.aai.domain.yang.v19.GenericVnf
 import org.onap.aai.domain.yang.v19.ServiceInstance
+import org.onap.aai.domain.yang.v19.SliceProfile
+import org.onap.aai.domain.yang.v19.SliceProfiles
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.Relationships
@@ -34,15 +38,22 @@ import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.T
 import org.onap.logging.filter.base.ONAPComponents
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
+import org.onap.so.bpmn.common.scripts.OofUtils
 import org.onap.so.bpmn.common.scripts.RequestDBUtil
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
+import org.onap.so.client.oof.adapter.beans.payload.OofRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 import javax.ws.rs.core.Response
+
+import static org.apache.commons.lang3.StringUtils.isBlank
+import static org.apache.commons.lang3.StringUtils.isBlank
+import static org.onap.so.bpmn.common.scripts.GenericUtils.isBlank
+import static org.onap.so.bpmn.common.scripts.GenericUtils.isBlank
 
 class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
     private final String PREFIX ="DoDeallocateCoreNSSI"
@@ -55,54 +66,84 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
 
     private static final Logger LOGGER = LoggerFactory.getLogger( DoDeallocateCoreNSSI.class)
 
+
+    @Override
+    void preProcessRequest(DelegateExecution execution) {
+        LOGGER.debug("${getPrefix()} Start preProcessRequest")
+
+        super.preProcessRequest(execution)
+
+        execution.setVariable("operationType", "DEALLOCATE")
+
+        LOGGER.debug("${getPrefix()} Exit preProcessRequest")
+    }
+
+
+
     /**
      * Queries OOF for NSSI termination
      * @param execution
      */
     void executeTerminateNSSIQuery(DelegateExecution execution) {
-        LOGGER.trace("${PREFIX} Start executeTerminateNSSIQuery")
+        LOGGER.debug("${PREFIX} Start executeTerminateNSSIQuery")
 
         String urlString = UrnPropertiesReader.getVariable("mso.oof.endpoint", execution)
+       // String urlString = UrnPropertiesReader.getVariable("mso.adapters.oof.endpoint", execution)
+
+        //API Path
+        String apiPath =  "/api/oof/terminate/nxi/v1"
+        LOGGER.debug("API path for DoAllocateCoreNSSI: "+apiPath)
+
+        urlString = urlString + apiPath
 
         //Prepare auth for OOF
         def authHeader = ""
         String basicAuth = UrnPropertiesReader.getVariable("mso.oof.auth", execution)
         String msokey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
 
-        String basicAuthValue = encryptBasicAuth(basicAuth, msokey)
-        if (basicAuthValue != null) {
-            String responseAuthHeader = getAuthHeader(execution, basicAuthValue, msokey)
-            String errorCode = jsonUtil.getJsonValue(responseAuthHeader, "errorCode")
-            if(errorCode == null || errorCode.isEmpty()) { // No error
-                authHeader = responseAuthHeader
-            }
-            else {
-                exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(errorCode), jsonUtil.getJsonValue(responseAuthHeader, "errorMessage"))
+        String basicAuthValue = utils.encrypt(basicAuth, msokey)
+     /*   if (basicAuthValue != null) {
+            LOGGER.debug( "Obtained BasicAuth username and password for OOF Adapter: " + basicAuthValue)
+            try {
+                authHeader = utils.getBasicAuth(basicAuthValue, msokey)
+                execution.setVariable("BasicAuthHeaderValue", authHeader)
+            } catch (Exception ex) {
+                LOGGER.error( "Unable to encode username and password string: " + ex)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Internal Error - Unable to encode username and password string")
             }
         } else {
             LOGGER.error( "Unable to obtain BasicAuth - BasicAuth value null")
-            exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Internal Error - BasicAuth " +
-                    "value null")
+            exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Internal Error - BasicAuth value null")
+        } */
+
+
+        try {
+            authHeader = utils.getBasicAuth(basicAuthValue, msokey)
+            execution.setVariable("BasicAuthHeaderValue", authHeader)
+        } catch (Exception ex) {
+            LOGGER.error( "Unable to encode username and password string: " + ex)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Internal Error - Unable to encode username and password string")
         }
 
         //Prepare send request to OOF
         String oofRequest = buildOOFRequest(execution)
 
         String callOOFResponse = callOOF(urlString, authHeader, oofRequest)
+        LOGGER.debug("callOOFResponse=" + callOOFResponse)
+
         String errorCode = jsonUtil.getJsonValue(callOOFResponse, "errorCode")
         if(errorCode == null || errorCode.isEmpty()) { // No error
-            String oofResponse = callOOFResponse
-            String isTerminateNSSI = jsonUtil.getJsonValue(oofResponse, "terminateResponse")
+            String terminateNSSI = jsonUtil.getJsonValue(callOOFResponse, "terminateResponse")
+            LOGGER.debug("isTerminateNSSI=" + terminateNSSI)
 
-            execution.setVariable("isTerminateNSSI", Boolean.parseBoolean(isTerminateNSSI))
+            execution.setVariable("isTerminateNSSI", terminateNSSI)
         }
         else {
             LOGGER.error(jsonUtil.getJsonValue(callOOFResponse, "errorMessage"))
             exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(errorCode), jsonUtil.getJsonValue(callOOFResponse, "errorMessage"))
         }
 
-
-        LOGGER.trace("${PREFIX} Exit executeTerminateNSSIQuery")
+        LOGGER.debug("${PREFIX} Exit executeTerminateNSSIQuery")
     }
 
 
@@ -111,15 +152,16 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
      * @return OOF response
      */
     String callOOF(String urlString, String authHeader, String oofRequest) {
+        LOGGER.debug("${PREFIX} Start callOOF")
+
         String errorCode = ""
         String errorMessage = ""
         String response = ""
 
         try {
-            URL url = new URL(urlString + "/api/oof/terminate/nxi/v1")
-            HttpClient httpClient = new HttpClientFactory().newJsonClient(url, ONAPComponents.OOF)
+            URL url = new URL(urlString)
+            HttpClient httpClient = getHttpClientFactory().newJsonClient(url, ONAPComponents.OOF)
             httpClient.addAdditionalHeader("Authorization", authHeader)
-            httpClient.addAdditionalHeader("Accept", "application/json")
             httpClient.addAdditionalHeader("Content-Type", "application/json")
 
             Response httpResponse = httpClient.post(oofRequest)
@@ -127,7 +169,7 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
             int responseCode = httpResponse.getStatus()
             LOGGER.debug("OOF sync response code is: " + responseCode)
 
-            if (responseCode != 202) { // Accepted
+            if(responseCode < 200 || responseCode >= 300) { // Wrong code
                 errorCode = responseCode
                 errorMessage = "Received a Bad Sync Response from OOF."
 
@@ -161,6 +203,7 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
                     "}"
         }
 
+        LOGGER.debug("${PREFIX} Exit callOOF")
 
         return response
     }
@@ -172,23 +215,54 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
      * @return
      */
     private String buildOOFRequest(DelegateExecution execution) {
+        LOGGER.debug("${PREFIX} Start buildOOFRequest")
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
         String nssiId = currentNSSI['nssiId']
-        String requestId = execution.getVariable("mso-request-id")
 
-        String request =    "{\n" +
-                            "  \"type\": \"NSSI\",\n" +
-                            "  \"NxIId\": \"${nssiId}\",\n" +
-                            "  \"requestInfo\": {\n" +
-                            "    \"transactionId\": \"${requestId}\",\n" +
-                            "    \"requestId\": \"${requestId}\",\n" +
-                            "    \"sourceId\": \"so\",\n" +
-                            "    }\n" +
-                            "}"
+        ServiceInstance nssi = null
 
-        return request
+        AAIResourcesClient client = getAAIClient()
+
+        // NSSI
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+        Optional<ServiceInstance> nssiOpt = client.get(ServiceInstance.class, nssiUri)
+
+        if (nssiOpt.isPresent()) {
+            nssi = nssiOpt.get()
+        }
+        else {
+            String msg = "NSSI service instance not found in AAI for nssi id " + nssiId
+            LOGGER.error(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+        }
+
+        //Setting correlator as requestId
+        String requestId = execution.getVariable("msoRequestId")
+        execution.setVariable("NSSI_correlator", requestId)
+
+        //Setting messageType for all Core slice as cn
+        String messageType = "cn"
+        execution.setVariable("NSSI_messageType", messageType)
+
+        //Prepare Callback
+        String timeout = execution.getVariable("timeout")
+        if (isBlank(timeout)) {
+            timeout = UrnPropertiesReader.getVariable("mso.oof.timeout", execution);
+            if (isBlank(timeout)) {
+                timeout = "PT30M"
+            }
+        }
+
+        String nxlId = nssi.getServiceInstanceId()
+        String nxlType = "NSSI"
+        String oofRequest = getOofUtils().buildTerminateNxiRequest(requestId, nxlId, nxlType, messageType, nssi.getServiceInstanceId())
+        LOGGER.debug("**** Terminate Nxi Request: "+oofRequest)
+
+        LOGGER.debug("${PREFIX} Exit buildOOFRequest")
+
+        return oofRequest
     }
 
 
@@ -198,24 +272,29 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
      * @param execution
      */
     void deleteServiceOrder(DelegateExecution execution) {
-        LOGGER.trace("${PREFIX} Start deleteServiceOrder")
+        LOGGER.debug("${PREFIX} Start deleteServiceOrder")
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
         try {
             //url:/nbi/api/v4/serviceOrder/"
-            def nbiEndpointUrl = UrnPropertiesReader.getVariable("nbi.endpoint.url", execution)
+            def nsmfЕndPoint = UrnPropertiesReader.getVariable("mso.infra.endpoint.url", execution)
 
             ServiceInstance networkServiceInstance = (ServiceInstance)currentNSSI['networkServiceInstance']
 
-            String url = String.format("${nbiEndpointUrl}/api/v4/serviceOrder/%s", networkServiceInstance.getServiceInstanceId())
+            //String url = String.format("${nbiEndpointUrl}/api/v4/serviceOrder/%s", networkServiceInstance.getServiceInstanceId())
+
+            GenericVnf constituteVnf = (GenericVnf)currentNSSI['constituteVnf']
+
+            // http://so.onap:8080/onap/so/infra/serviceInstantiation/v7/serviceInstances/de6a0aa2-19f2-41fe-b313-a5a9f159acd7/vnfs/3abbb373-8d33-4977-aa4b-2bfee496b6d5
+            String url = String.format("${nsmfЕndPoint}/serviceInstantiation/v7/serviceInstances/%s/vnfs/%s", networkServiceInstance.getServiceInstanceId(), constituteVnf.getVnfId())
 
             currentNSSI['deleteServiceOrderURL'] = url
 
             String msoKey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
-            String basicAuth =  UrnPropertiesReader.getVariable("mso.infra.endpoint.auth", execution)
+            String basicAuth =  UrnPropertiesReader.getVariable("mso.adapters.po.auth", execution)
 
-            String basicAuthValue = encryptBasicAuth(basicAuth, msoKey)
+            /*String basicAuthValue = encryptBasicAuth(basicAuth, msoKey)
             def authHeader = ""
             if (basicAuthValue != null) {
                 String responseAuthHeader = getAuthHeader(execution, basicAuthValue, msoKey)
@@ -230,14 +309,21 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
                 LOGGER.error( "Unable to obtain BasicAuth - BasicAuth value null")
                 exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Internal Error - BasicAuth " +
                         "value null")
-            }
+            } */
+
+            def authHeader = utils.getBasicAuth(basicAuth, msoKey)
 
             String callDeleteServiceOrderResponse = callDeleteServiceOrder(execution, url, authHeader)
             String errorCode = jsonUtil.getJsonValue(callDeleteServiceOrderResponse, "errorCode")
-            String deleteServcieResponse = ""
 
             if(errorCode == null || errorCode.isEmpty()) { // No error
-                deleteServcieResponse = callDeleteServiceOrderResponse // check the response ???
+                String macroOperationId = jsonUtil.getJsonValue(callDeleteServiceOrderResponse, "requestReferences.requestId")
+                String requestSelfLink = jsonUtil.getJsonValue(callDeleteServiceOrderResponse, "requestReferences.requestSelfLink")
+
+                execution.setVariable("macroOperationId",  macroOperationId)
+                execution.setVariable("requestSelfLink", requestSelfLink)
+
+                currentNSSI['requestSelfLink'] = requestSelfLink
             }
             else {
                 LOGGER.error(jsonUtil.getJsonValue(callDeleteServiceOrderResponse, "errorMessage"))
@@ -249,27 +335,34 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
 
-        LOGGER.trace("${PREFIX} Exit deleteServiceOrder")
+        LOGGER.debug("${PREFIX} Exit deleteServiceOrder")
     }
 
 
-    String callDeleteServiceOrder(DelegateExecution execution, String urlString, String authHeader) {
+    String callDeleteServiceOrder(DelegateExecution execution, String url, String authHeader) {
+        LOGGER.debug("${PREFIX} Start callDeleteServiceOrder")
+
         String errorCode = ""
         String errorMessage = ""
         String response = ""
 
         try {
-            HttpClient httpClient = getHttpClientFactory().newJsonClient(new URL(urlString), ONAPComponents.EXTERNAL)
+            HttpClient httpClient = getHttpClientFactory().newJsonClient(new URL(url), ONAPComponents.SO)
             httpClient.addAdditionalHeader("Authorization", authHeader)
             httpClient.addAdditionalHeader("Accept", "application/json")
             Response httpResponse = httpClient.delete()
 
-            if (httpResponse.hasEntity()) {
+            int soResponseCode = httpResponse.getStatus()
+            LOGGER.debug("callDeleteServiceInstance: soResponseCode = " + soResponseCode)
+
+            if (soResponseCode >= 200 && soResponseCode < 204 && httpResponse.hasEntity()) {
                 response = httpResponse.readEntity(String.class)
+
+                LOGGER.debug("callDeleteServiceInstance: response = " + response)
             }
             else {
                 errorCode = 500
-                errorMessage = "No response received."
+                errorMessage = "Response code is " + soResponseCode
 
                 response =  "{\n" +
                         " \"errorCode\": \"${errorCode}\",\n" +
@@ -278,13 +371,15 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
             }
         }
         catch (any) {
-            String msg = "Exception in DoDeallocateCoreNSSI.deleteServiceOrder. " + any.getCause()
+            String msg = "Exception in DoDeallocateCoreNSSI.callDeleteServiceOrder. " + any.getCause()
 
             response =  "{\n" +
                     " \"errorCode\": \"7000\",\n" +
                     " \"errorMessage\": \"${msg}\"\n" +
                     "}"
         }
+
+        LOGGER.debug("${PREFIX} Exit callDeleteServiceOrder")
 
         return response
     }
@@ -295,7 +390,7 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
      * @param execution
      */
     void removeNSSIAssociationWithNSI(DelegateExecution execution) {
-        LOGGER.trace("${PREFIX} Start removeNSSIAssociationWithNSI")
+        LOGGER.debug("${PREFIX} Start removeNSSIAssociationWithNSI")
 
         AAIResourcesClient client = getAAIClient()
 
@@ -308,38 +403,54 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
 
         // NSSI
         AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
-        ServiceInstance nssi = currentNSSI['nssi']
+
 
         String allottedResourceId = null
 
-        // Removes Allotted resource
-        List<AllottedResource> allottedResources = nssi.getAllottedResources()?.getAllottedResource()
-        if(allottedResources != null && allottedResources.size() == 1) { // Shouldn contain one allotted resource
-            allottedResourceId = allottedResources.get(0).getId()
-            allottedResources.remove(0)
+
+        AAIResultWrapper nssiWrapper = client.get(nssiUri)
+        Optional<Relationships> nssiRelationships = nssiWrapper.getRelationships()
+
+        if (nssiRelationships.isPresent()) {
+            // Allotted Resource
+            for (AAIResourceUri allottedResourceUri : nssiRelationships.get().getRelatedUris(Types.ALLOTTED_RESOURCE)) {
+                AAIResultWrapper arWrapper = client.get(allottedResourceUri)
+                Optional<Relationships> arRelationships = arWrapper.getRelationships()
+
+                if(arRelationships.isPresent()) {
+                    // NSI
+                    for (AAIResourceUri nsiUri : arRelationships.get().getRelatedUris(Types.SERVICE_INSTANCE)) {
+                        Optional<ServiceInstance> nsiOpt = client.get(ServiceInstance.class, nsiUri)
+
+                        if (nsiOpt.isPresent()) {
+                            ServiceInstance nsi = nsiOpt.get()
+                            if(nsi.getServiceRole().equals("nsi")) { // Service instance as NSI
+                                // Removes NSSI association with NSI
+                                try {
+                                    client.disconnect(nssiUri, nsiUri)
+                                }
+                                catch (Exception e) {
+                                    exceptionUtil.buildAndThrowWorkflowException(execution, 25000, "Exception occured while NSSI association with NSI dosconnect call: " + e.getMessage())
+                                }
+                            }
+                        }
+                        else {
+                            LOGGER.warn("No NSI found for NSSI id " + nssiId)
+                        }
+                    }
+                }
+                else {
+                    LOGGER.warn("No relationships found for Allotted Resource for NSSI id " + nssiId)
+                }
+
+            }
         }
         else {
-            exceptionUtil.buildAndThrowWorkflowException(execution, 500, "No allotted resource found for NSSI id = " + nssiId)
-        }
-
-        try {
-            client.update(nssiUri, nssi)
-        }catch(Exception e){
-            exceptionUtil.buildAndThrowWorkflowException(execution, 25000, "Exception occured while NSSI association with NSI disconnect call: " + e.getMessage())
+            LOGGER.warn("No relationships  found for nssi id = " + nssiId)
         }
 
 
-        // Remove association between NSI and Allotted Resource
-        AAIResourceUri nsiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nsiId))
-        AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(nssiId).allottedResource(allottedResourceId))
-
-        try {
-            client.disconnect(nsiUri, allottedResourceUri)
-        }catch(Exception e){
-            exceptionUtil.buildAndThrowWorkflowException(execution, 25000, "Exception occured while NSSI association with NSI disconnect call: " + e.getMessage())
-        }
-
-        LOGGER.trace("${PREFIX} Exit removeNSSIAssociationWithNSI")
+        LOGGER.debug("${PREFIX} Exit removeNSSIAssociationWithNSI")
     }
 
 
@@ -348,7 +459,7 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
      * @param execution
      */
     void deleteNSSIServiceInstance(DelegateExecution execution) {
-        LOGGER.trace("${PREFIX} Start deleteNSSIServiceInstance")
+        LOGGER.debug("${PREFIX} Start deleteNSSIServiceInstance")
 
         AAIResourcesClient client = getAAIClient()
 
@@ -358,12 +469,12 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
         AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
 
         try {
-            getAAIClient().delete(nssiUri)
+            client.delete(nssiUri)
         }catch(Exception e){
             exceptionUtil.buildAndThrowWorkflowException(execution, 25000, "Exception occurred while NSSI Service Instance delete call: " + e.getMessage())
         }
 
-        LOGGER.trace("${PREFIX} Exit deleteNSSIServiceInstance")
+        LOGGER.debug("${PREFIX} Exit deleteNSSIServiceInstance")
     }
 
 
@@ -372,19 +483,72 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
      * @param execution
      */
     void getDeleteServiceOrderProgress(DelegateExecution execution) {
-        LOGGER.trace("${getPrefix()} Start getDeleteServiceOrderProgress")
+        LOGGER.debug("${getPrefix()} Start getDeleteServiceOrderProgress")
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
-        String url = currentNSSI['deleteServiceOrderURL']
+        String url = currentNSSI['requestSelfLink']
 
-        getProgress(execution, url, "deleteStatus")
+        String msoKey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
 
+        String basicAuth =  UrnPropertiesReader.getVariable("mso.adapters.po.auth", execution)
+
+        def authHeader = ""
+        String basicAuthValue = utils.getBasicAuth(basicAuth, msoKey)
+
+        getProgress(execution, url, basicAuthValue, "deleteStatus")
+
+        LOGGER.debug("${getPrefix()} Exit getDeleteServiceOrderProgress")
     }
 
 
-    @Override
-    String getPrefix() {
+    /**
+     * Calculates a final list of S-NSSAI
+     * @param execution
+     */
+    void calculateSNSSAI(DelegateExecution execution) {
+        LOGGER.debug("${getPrefix()} Start calculateSNSSAI")
+
+        def currentNSSI = execution.getVariable("currentNSSI")
+
+        List<SliceProfile> associatedProfiles = (List<SliceProfile>)currentNSSI['associatedProfiles']
+
+        String givenSliceProfileId = currentNSSI['sliceProfileId']
+
+        List<String> snssais = new ArrayList<>()
+
+        String isTerminateNSSIVar = execution.getVariable("isTerminateNSSI" )
+
+        boolean isTerminateNSSI = Boolean.parseBoolean(isTerminateNSSIVar)
+
+        if(!isTerminateNSSI) { // NSSI should not be terminated
+            LOGGER.debug("calculateSNSSAI: associatedProfiles.size()" + associatedProfiles.size())
+            for (SliceProfile associatedProfile : associatedProfiles) {
+                if (!associatedProfile.getProfileId().equals(givenSliceProfileId)) { // not given profile id
+                    LOGGER.debug("calculateSNSSAI: associatedProfile.getSNssai()" + associatedProfile.getSNssai())
+                    snssais.add(associatedProfile.getSNssai())
+                } else {
+                    currentNSSI['sliceProfileS-NSSAI'] = associatedProfile
+                }
+            }
+        }
+
+        currentNSSI['S-NSSAIs'] = snssais
+
+        LOGGER.debug("${getPrefix()} Exit calculateSNSSAI")
+    }
+
+
+    /**
+     * OofUtils
+     * @return new OofUtils()
+     */
+    OofUtils getOofUtils() {
+        return new OofUtils()
+    }
+
+
+    private String getPrefix() {
         return PREFIX
     }
 
