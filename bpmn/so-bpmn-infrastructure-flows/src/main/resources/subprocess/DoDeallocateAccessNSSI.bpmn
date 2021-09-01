@@ -639,7 +639,7 @@ deallocator.deleteANNSSI(execution)</bpmn:script>
     <bpmn:callActivity id="Activity_0umktii" name="Modify RAN NF NSSI" calledElement="DoModifyRanNfNssi">
       <bpmn:extensionElements>
         <camunda:in source="anNfNssiId" target="serviceInstanceID" />
-        <camunda:in source="anNfSliceProfileId" target="SliceProfileId" />
+        <camunda:in source="anNfSliceProfileId" target="sliceProfileId" />
         <camunda:in source="msoRequestId" target="msoRequestId" />
         <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
         <camunda:in source="subscriptionServiceType" target="subscriptionServiceType" />

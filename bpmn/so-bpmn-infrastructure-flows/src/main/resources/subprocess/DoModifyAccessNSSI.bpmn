@@ -236,7 +236,7 @@ nss.createFhAllocateNssiJobQuery(execution)</bpmn:script>
         <camunda:in source="esrInfo" target="esrInfo" />
         <camunda:in source="serviceInfo" target="serviceInfo" />
         <camunda:in source="TN_FH_jobId" target="jobId" />
-        <camunda:out source="jobResponse" target="TNFH_jobResponse" />
+        <camunda:out source="responseDescriptor" target="TNFH_jobResponse" />
         <camunda:in source="responseId" target="responseId" />
         <camunda:in source="job_timeout" target="timeout" />
       </bpmn:extensionElements>
@@ -280,7 +280,7 @@ nss.createMhAllocateNssiJobQuery(execution)</bpmn:script>
         <camunda:in source="esrInfo" target="esrInfo" />
         <camunda:in source="serviceInfo" target="serviceInfo" />
         <camunda:in source="TN_MH_jobId" target="jobId" />
-        <camunda:out source="jobResponse" target="TNMH_jobResponse" />
+        <camunda:out source="responseDescriptor" target="TNMH_jobResponse" />
         <camunda:in source="responseId" target="responseId" />
         <camunda:in source="job_timeout" target="timeout" />
       </bpmn:extensionElements>

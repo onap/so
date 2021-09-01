@@ -609,7 +609,7 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 	
 	def prepareTnMhDeallocateRequest = { DelegateExecution execution ->
 		logger.debug(Prefix+"prepareTnFhDeallocateRequest method start")
-		String nssmfRequest = anNssmfUtils.buildDeallocateNssiRequest(execution, "TN_FH")
+		String nssmfRequest = anNssmfUtils.buildDeallocateNssiRequest(execution, "TN_MH")
 		String nssiId = execution.getVariable("TNFH_NSSI")
 		execution.setVariable("tnFHNSSIId", nssiId)
 		String urlString = "/api/rest/provMns/v1/NSS/SliceProfiles/" + nssiId
@@ -758,8 +758,9 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
 	}
 	private void deleteServiceInstanceInAAI(DelegateExecution execution,String instanceId) {
 		try {
-			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("serviceType")).serviceInstance(instanceId))
-			getAAIClient().delete(serviceInstanceUri)
+                        AAIResourcesClient client = getAAIClient()
+                        AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(instanceId))
+                        client.delete(serviceInstanceUri)
 			logger.debug("${Prefix} Exited deleteServiceInstance")
 		}catch(Exception e){
 			logger.debug("Error occured within deleteServiceInstance method: " + e)
