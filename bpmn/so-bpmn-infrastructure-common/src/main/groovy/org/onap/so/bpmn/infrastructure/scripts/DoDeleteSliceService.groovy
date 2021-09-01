@@ -31,6 +31,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
+import org.onap.so.client.oof.adapter.beans.payload.OofRequest
 import org.onap.logging.filter.base.ONAPComponents
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -40,6 +41,7 @@ import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import com.fasterxml.jackson.databind.ObjectMapper
 
 import javax.ws.rs.NotFoundException
 import javax.ws.rs.core.Response
@@ -404,11 +406,10 @@ class DoDeleteSliceService extends AbstractServiceTaskProcessor {
     {
         LOGGER.debug("Start terminateNSIQuery")
 
-        return
 
         //To test
         String requestId = execution.getVariable("msoRequestId")
-        String nxlId = currentNSSI['nsiServiceInstanceId']
+        String nxlId = execution.getVariable("nsiId")
         String nxlType = "NSI"
         String messageType = "nsiTerminationResponse"
         String serviceInstanceId = execution.getVariable("serviceInstanceId")
@@ -433,12 +434,17 @@ class DoDeleteSliceService extends AbstractServiceTaskProcessor {
             exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Internal Error - BasicAuth " +
                     "value null")
         }
-
-        URL requestUrl = new URL(oofUrl + "/api/oof/terminate/nxi/v1")
+        String oofUrl = UrnPropertiesReader.getVariable("mso.adapters.oof.endpoint", execution)
+        URL requestUrl = new URL(oofUrl)
         String oofRequest = oofUtils.buildTerminateNxiRequest(requestId, nxlId, nxlType, messageType, serviceInstanceId)
+        OofRequest oofPayload = new OofRequest()
+        oofPayload.setApiPath("/api/oof/terminate/nxi/v1")
+        oofPayload.setRequestDetails(oofRequest)
+        ObjectMapper objectMapper = new ObjectMapper()
+        String requestJson = objectMapper.writeValueAsString(oofPayload)
         HttpClient httpClient = new HttpClientFactory().newJsonClient(requestUrl, ONAPComponents.OOF)
         httpClient.addAdditionalHeader("Authorization", authHeader)
-        Response httpResponse = httpClient.post(oofRequest)
+        Response httpResponse = httpClient.post(requestJson)
 
         int responseCode = httpResponse.getStatus()
         LOGGER.debug("OOF sync response code is: " + responseCode)

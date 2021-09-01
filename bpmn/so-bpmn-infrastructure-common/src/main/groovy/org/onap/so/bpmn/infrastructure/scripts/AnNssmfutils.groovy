@@ -356,12 +356,15 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 		JsonArray connectionLinksList = new JsonArray()
 		JsonObject connectionLinks = new JsonObject()
 		Gson jsonConverter = new Gson()
+         	String TNFH_nssiInstanceId = UUID.randomUUID().toString()
+                String TNMH_nssiInstanceId = UUID.randomUUID().toString()
+
 		if(action.equals("allocate")){
 			JsonObject endpoints = new JsonObject()
 			if(domainType.equals("TN_FH")) {
 				serviceInfo.addProperty("serviceInvariantUuid", execution.getVariable("TNFH_modelInvariantUuid"))
 				serviceInfo.addProperty("serviceUuid", execution.getVariable("TNFH_modelUuid"))
-				serviceInfo.addProperty("nssiName", "nssi_"+execution.getVariable("TNFH_modelName"))
+				serviceInfo.addProperty("nssiName", "nssi_tn_fh_"+TNFH_nssiInstanceId)
 				serviceInfo.addProperty("sst",  execution.getVariable("sst"))
 				allocateTnNssi.addProperty("nsstId", execution.getVariable("TNFH_modelUuid"))
 				allocateTnNssi.addProperty("nssiName", execution.getVariable("TNFH_modelName"))
@@ -374,7 +377,7 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 			}else if(domainType.equals("TN_MH")) {
 				serviceInfo.addProperty("serviceInvariantUuid", execution.getVariable("TNMH_modelInvariantUuid"))
 				serviceInfo.addProperty("serviceUuid", execution.getVariable("TNMH_modelUuid"))
-				serviceInfo.addProperty("nssiName", "nssi_"+execution.getVariable("TNMH_modelName"))
+				serviceInfo.addProperty("nssiName", "nssi_tn_mh_"+TNMH_nssiInstanceId)
 				serviceInfo.addProperty("sst",  execution.getVariable("sst"))
 				allocateTnNssi.addProperty("nsstId", execution.getVariable("TNMH_modelUuid"))
 				allocateTnNssi.addProperty("nssiName", execution.getVariable("TNMH_modelName"))
@@ -435,15 +438,15 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 	public String buildDeallocateNssiRequest(DelegateExecution execution,String domainType) {
 		String globalSubscriberId = execution.getVariable("globalSubscriberId")
 		String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+
+                List<String> sNssaiList =  execution.getVariable("snssaiList")
+
+	        DeAllocateNssi deallocateNssi = new DeAllocateNssi()
+		deallocateNssi.setNsiId(execution.getVariable("nsiId"))
+		deallocateNssi.setScriptName("TN1")
+		deallocateNssi.setSnssaiList(sNssaiList)
+                deallocateNssi.setTerminateNssiOption(0)
 	   
-		JsonObject deAllocateNssi = new JsonObject()
-		deAllocateNssi.addProperty("snssaiList", execution.getVariable("snssaiList"))
-		deAllocateNssi.addProperty("nsiId", execution.getVariable("nsiId"))
-		deAllocateNssi.addProperty("modifyAction", true)
-		deAllocateNssi.addProperty("terminateNssiOption", 0)
-		deAllocateNssi.addProperty("scriptName", "TN1")
-		
-		
 		JsonObject esrInfo = new JsonObject()
 	        esrInfo.addProperty("networkType", "tn")
 	        esrInfo.addProperty("vendor", "ONAP_internal")
@@ -451,19 +454,21 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 		JsonObject serviceInfo = new JsonObject()
 		serviceInfo.addProperty("globalSubscriberId", globalSubscriberId)
 		serviceInfo.addProperty("subscriptionServiceType", subscriptionServiceType)
-	        
+       		serviceInfo.addProperty("modifyAction", true)
+
                 if(domainType.equals("TN_FH")) {
-                        deAllocateNssi.addProperty("nssiId", execution.getVariable("TNFH_NSSI"))
+			deallocateNssi.setNssiId(execution.getVariable("TNFH_NSSI"))
+			deallocateNssi.setSliceProfileId(execution.getVariable("TNFH_sliceProfileInstanceId"))
                         serviceInfo.addProperty("nssiId", execution.getVariable("TNFH_NSSI"))
-                        deAllocateNssi.addProperty("sliceProfileId", execution.getVariable("TNFH_sliceProfileInstanceId"))
                 }else if(domainType.equals("TN_MH")) {
-                        deAllocateNssi.addProperty("nssiId", execution.getVariable("TNMH_NSSI"))
+			deallocateNssi.setNssiId(execution.getVariable("TNMH_NSSI"))
+			deallocateNssi.setSliceProfileId(execution.getVariable("TNMH_sliceProfileInstanceId"))
                         serviceInfo.addProperty("nssiId", execution.getVariable("TNMH_NSSI"))
-                        deAllocateNssi.addProperty("sliceProfileId", execution.getVariable("TNMH_sliceProfileInstanceId"))
                 }
 
 		JsonObject json = new JsonObject()
-		json.add("deAllocateNssi", deAllocateNssi)
+                Gson jsonConverter = new Gson()
+                json.add("deAllocateNssi", jsonConverter.toJsonTree(deallocateNssi))
 		json.add("esrInfo", esrInfo)
 		json.add("serviceInfo", serviceInfo)
 		return json.toString()
