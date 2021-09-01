@@ -139,7 +139,8 @@ class DeAllocateSliceSubnet extends AbstractServiceTaskProcessor {
         ResourceOperationStatus initStatus = new ResourceOperationStatus()
         initStatus.setServiceId(nsiId)
         initStatus.setOperationId(jobId)
-        initStatus.setResourceTemplateUUID(modelUuid)
+        //initStatus.setResourceTemplateUUID(modelUuid)
+        initStatus.setResourceInstanceID(nssiId)
         initStatus.setOperType("Deallocate")
         requestDBUtil.prepareInitResourceOperationStatus(execution, initStatus)
 
