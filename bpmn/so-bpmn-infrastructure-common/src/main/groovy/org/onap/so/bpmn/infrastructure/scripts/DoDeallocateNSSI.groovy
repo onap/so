@@ -129,7 +129,7 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
         if(serviceCategory ==~ /CN.*/){
             return SubnetType.CN.getNetworkType()
         }
-        if (serviceCategory ==~ /AN.*NF.*/){
+        if (serviceCategory ==~ /AN.*/){
             return SubnetType.AN.getNetworkType()
         }
         if (serviceCategory ==~ /TN.*BH.*/){
@@ -166,6 +166,7 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
         deAllocateNssi.setTerminateNssiOption(0)
         deAllocateNssi.setSnssaiList(Arrays.asList(snssai))
         deAllocateNssi.setScriptName(scriptName)
+        deAllocateNssi.setSliceProfileId(profileId)
         
         ServiceInfo serviceInfo = new ServiceInfo()
         serviceInfo.setServiceInvariantUuid(serviceInvariantUuid)
