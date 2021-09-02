@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "23ec3793_6f745ee5",
+        "filename": "packages/docker/src/main/docker/docker-files/Dockerfile.so-bpmn-infra",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2021-09-02T13:22:03Z",
+      "side": 1,
+      "message": "why not try below:\n\naddgroup -g 1000 so \u0026\u0026 adduser -S -u 1000 -G so -s /bin/sh so",
+      "range": {
+        "startLine": 16,
+        "startChar": 4,
+        "endLine": 16,
+        "endChar": 19
+      },
+      "revId": "2f9df255cc2af42a0785bac1cb40747e28c1d802",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6ae0b7d0_bb0ecf5d",
+        "filename": "packages/docker/src/main/docker/docker-files/Dockerfile.so-bpmn-infra",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2021-09-02T13:22:03Z",
+      "side": 1,
+      "message": "May be i am missing something why \"disabled-password\"???",
+      "range": {
+        "startLine": 16,
+        "startChar": 42,
+        "endLine": 16,
+        "endChar": 59
+      },
+      "revId": "2f9df255cc2af42a0785bac1cb40747e28c1d802",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
