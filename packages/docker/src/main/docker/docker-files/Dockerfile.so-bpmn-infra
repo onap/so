@@ -1,5 +1,9 @@
 FROM camunda/camunda-bpm-platform:7.12.0
 
+
+ARG user=so
+ARG group=so
+
 RUN sed -i 's/port="8080"/port="8081"/' /camunda/conf/server.xml
 
 RUN rm -r /camunda/webapps/examples /camunda/webapps/docs /camunda/webapps/camunda-invoice
@@ -7,7 +11,13 @@ RUN rm -r /camunda/webapps/examples /camunda/webapps/docs /camunda/webapps/camun
 USER root
 COPY ca-certificates/onap-ca.crt /usr/local/share/ca-certificates/onap-ca.crt
 RUN update-ca-certificates --fresh
-USER camunda
+
+
+RUN addgroup $group && adduser --system --disabled-password --no-create-home --ingroup $group $user && \
+    chown -R $user:$group /camunda && \
+    chmod -R u+rw /camunda
+
+USER $user
 
 # Springboot configuration (required)
 VOLUME /camunda/app/config
