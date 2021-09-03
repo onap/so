@@ -45,6 +45,54 @@
       "revId": "2f9df255cc2af42a0785bac1cb40747e28c1d802",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b3b02f3a_d3b1d5c7",
+        "filename": "packages/docker/src/main/docker/docker-files/Dockerfile.so-bpmn-infra",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 6073
+      },
+      "writtenOn": "2021-09-03T12:16:13Z",
+      "side": 1,
+      "message": "Not required to create user with uid and gid. If it is needed I can do like this.",
+      "parentUuid": "23ec3793_6f745ee5",
+      "range": {
+        "startLine": 16,
+        "startChar": 4,
+        "endLine": 16,
+        "endChar": 19
+      },
+      "revId": "2f9df255cc2af42a0785bac1cb40747e28c1d802",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e789399d_79174e36",
+        "filename": "packages/docker/src/main/docker/docker-files/Dockerfile.so-bpmn-infra",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 6073
+      },
+      "writtenOn": "2021-09-03T12:16:13Z",
+      "side": 1,
+      "message": "Created new user without password authentication",
+      "parentUuid": "6ae0b7d0_bb0ecf5d",
+      "range": {
+        "startLine": 16,
+        "startChar": 42,
+        "endLine": 16,
+        "endChar": 59
+      },
+      "revId": "2f9df255cc2af42a0785bac1cb40747e28c1d802",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
