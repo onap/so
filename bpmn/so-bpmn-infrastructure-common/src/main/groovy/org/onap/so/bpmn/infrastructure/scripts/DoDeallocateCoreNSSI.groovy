@@ -238,6 +238,22 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
             exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
         }
 
+
+        // NSI
+        String nsiId = currentNSSI['nsiId']
+        ServiceInstance nsi = null
+        AAIResourceUri nsiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nsiId))
+        Optional<ServiceInstance> nsiOpt = client.get(ServiceInstance.class, nsiUri)
+        if (nsiOpt.isPresent()) {
+            nsi = nsiOpt.get()
+        }
+        else {
+            String msg = "NSI service instance not found in AAI for nsi id " + nsiId
+            LOGGER.error(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+        }
+
+
         //Setting correlator as requestId
         String requestId = execution.getVariable("msoRequestId")
         execution.setVariable("NSSI_correlator", requestId)
@@ -257,7 +273,7 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
 
         String nxlId = nssi.getServiceInstanceId()
         String nxlType = "NSSI"
-        String oofRequest = getOofUtils().buildTerminateNxiRequest(requestId, nxlId, nxlType, messageType, nssi.getServiceInstanceId())
+        String oofRequest = getOofUtils().buildTerminateNxiRequest(requestId, nxlId, nxlType, messageType, nsi.getServiceInstanceId())
         LOGGER.debug("**** Terminate Nxi Request: "+oofRequest)
 
         LOGGER.debug("${PREFIX} Exit buildOOFRequest")
