@@ -20,11 +20,11 @@ def dcnssi= new DoDeallocateCoreNSSI()
         dcnssi.getNetworkServiceInstance(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:exclusiveGateway id="Gateway_1dqw1bg" name="Is terminateNSSI=true?" default="Flow_0e3yvck">
-      <bpmn:incoming>Flow_16192dm</bpmn:incoming>
+      <bpmn:incoming>Flow_01q7kcf</bpmn:incoming>
       <bpmn:outgoing>Flow_15ew9rs</bpmn:outgoing>
       <bpmn:outgoing>Flow_0e3yvck</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_16192dm" sourceRef="Activity_0wswwhj" targetRef="Gateway_1dqw1bg" />
+    <bpmn:sequenceFlow id="Flow_16192dm" sourceRef="Activity_0wswwhj" targetRef="Activity_1anr9ry" />
     <bpmn:scriptTask id="Activity_1kne6ot" name="Invoke DeleteServiceOrder API" scriptFormat="groovy">
       <bpmn:incoming>Flow_15ew9rs</bpmn:incoming>
       <bpmn:outgoing>Flow_1b14can</bpmn:outgoing>
@@ -33,14 +33,14 @@ def dcnssi= new DoDeallocateCoreNSSI()
         dcnssi.deleteServiceOrder(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_1anr9ry" name="Get constitute VNF from Network Service Instance" scriptFormat="groovy">
-      <bpmn:incoming>Flow_1v68jns</bpmn:incoming>
-      <bpmn:outgoing>Flow_1eev81t</bpmn:outgoing>
+      <bpmn:incoming>Flow_16192dm</bpmn:incoming>
+      <bpmn:outgoing>Flow_01q7kcf</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcnssi= new DoDeallocateCoreNSSI()
         dcnssi.getConstituteVNFFromNetworkServiceInst(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_16wfqhu" name="Get NSSI associated profiles" scriptFormat="groovy">
-      <bpmn:incoming>Flow_1eev81t</bpmn:incoming>
+      <bpmn:incoming>Flow_1v68jns</bpmn:incoming>
       <bpmn:outgoing>Flow_0xrq94a</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcnssi= new DoDeallocateCoreNSSI()
@@ -113,8 +113,7 @@ def dcnssi= new DoDeallocateCoreNSSI()
     <bpmn:sequenceFlow id="Flow_15ew9rs" name="yes" sourceRef="Gateway_1dqw1bg" targetRef="Activity_1kne6ot">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{(execution.getVariable("isTerminateNSSI" )  == true)}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1v68jns" sourceRef="Event_1mk9pgp" targetRef="Activity_1anr9ry" />
-    <bpmn:sequenceFlow id="Flow_1eev81t" sourceRef="Activity_1anr9ry" targetRef="Activity_16wfqhu" />
+    <bpmn:sequenceFlow id="Flow_1v68jns" sourceRef="Event_1mk9pgp" targetRef="Activity_16wfqhu" />
     <bpmn:sequenceFlow id="Flow_0xrq94a" sourceRef="Activity_16wfqhu" targetRef="Activity_0es9or8" />
     <bpmn:sequenceFlow id="Flow_1qwi2ka" sourceRef="Activity_0es9or8" targetRef="Activity_0mnkgd6" />
     <bpmn:sequenceFlow id="Flow_0e3yvck" name="no" sourceRef="Gateway_1dqw1bg" targetRef="Event_016dxue" />
@@ -282,9 +281,18 @@ dcnssi.timeDelay(execution)</bpmn:script>
     <bpmn:sequenceFlow id="Flow_0eigzrb" sourceRef="Activity_03j1rrj" targetRef="Event_0zbwefx" />
     <bpmn:sequenceFlow id="Flow_16bwdkl" sourceRef="Activity_13qnpcn" targetRef="Activity_0wswwhj" />
     <bpmn:sequenceFlow id="Flow_0zxtlgn" sourceRef="Activity_1ym1op6" targetRef="Activity_1a5fd5v" />
+    <bpmn:sequenceFlow id="Flow_01q7kcf" sourceRef="Activity_1anr9ry" targetRef="Gateway_1dqw1bg" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoDeallocateCoreNSSI">
+      <bpmndi:BPMNEdge id="Flow_0zxtlgn_di" bpmnElement="Flow_0zxtlgn">
+        <di:waypoint x="1010" y="320" />
+        <di:waypoint x="1010" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16bwdkl_di" bpmnElement="Flow_16bwdkl">
+        <di:waypoint x="500" y="117" />
+        <di:waypoint x="540" y="117" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0eigzrb_di" bpmnElement="Flow_0eigzrb">
         <di:waypoint x="1470" y="670" />
         <di:waypoint x="1532" y="670" />
@@ -295,8 +303,8 @@ dcnssi.timeDelay(execution)</bpmn:script>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0att74c_di" bpmnElement="Flow_0att74c">
         <di:waypoint x="990" y="560" />
-        <di:waypoint x="930" y="560" />
-        <di:waypoint x="930" y="490" />
+        <di:waypoint x="850" y="560" />
+        <di:waypoint x="850" y="490" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0afgah7_di" bpmnElement="Flow_0afgah7">
         <di:waypoint x="1040" y="475" />
@@ -326,14 +334,14 @@ dcnssi.timeDelay(execution)</bpmn:script>
         <di:waypoint x="1100" y="710" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0pvh1x9_di" bpmnElement="Flow_0pvh1x9">
-        <di:waypoint x="980" y="450" />
+        <di:waypoint x="900" y="450" />
         <di:waypoint x="1015" y="450" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1j1en2h_di" bpmnElement="Flow_1j1en2h">
         <di:waypoint x="1105" y="350" />
-        <di:waypoint x="1000" y="350" />
+        <di:waypoint x="1060" y="350" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1019" y="352" width="18" height="14" />
+          <dc:Bounds x="1063" y="352" width="18" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1mrr969_di" bpmnElement="Flow_1mrr969">
@@ -344,13 +352,13 @@ dcnssi.timeDelay(execution)</bpmn:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1h8q1h1_di" bpmnElement="Flow_1h8q1h1">
-        <di:waypoint x="1000" y="230" />
+        <di:waypoint x="1060" y="230" />
         <di:waypoint x="1130" y="230" />
         <di:waypoint x="1130" y="325" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0g84uy5_di" bpmnElement="Flow_0g84uy5">
         <di:waypoint x="360" y="117" />
-        <di:waypoint x="440" y="117" />
+        <di:waypoint x="400" y="117" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_15rk73d_di" bpmnElement="Flow_15rk73d">
         <di:waypoint x="1150" y="670" />
@@ -376,41 +384,37 @@ dcnssi.timeDelay(execution)</bpmn:script>
         <di:waypoint x="260" y="670" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1b14can_di" bpmnElement="Flow_1b14can">
-        <di:waypoint x="820" y="230" />
-        <di:waypoint x="900" y="230" />
+        <di:waypoint x="890" y="230" />
+        <di:waypoint x="960" y="230" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_178myd8_di" bpmnElement="Flow_178myd8">
-        <di:waypoint x="820" y="450" />
-        <di:waypoint x="880" y="450" />
+        <di:waypoint x="710" y="450" />
+        <di:waypoint x="800" y="450" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0e3yvck_di" bpmnElement="Flow_0e3yvck">
-        <di:waypoint x="795" y="117" />
-        <di:waypoint x="885" y="117" />
+        <di:waypoint x="865" y="117" />
+        <di:waypoint x="962" y="117" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="807" y="95" width="13" height="14" />
+          <dc:Bounds x="879" y="95" width="13" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1qwi2ka_di" bpmnElement="Flow_1qwi2ka">
-        <di:waypoint x="680" y="450" />
-        <di:waypoint x="720" y="450" />
+        <di:waypoint x="540" y="450" />
+        <di:waypoint x="610" y="450" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0xrq94a_di" bpmnElement="Flow_0xrq94a">
-        <di:waypoint x="510" y="450" />
-        <di:waypoint x="580" y="450" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1eev81t_di" bpmnElement="Flow_1eev81t">
         <di:waypoint x="360" y="450" />
-        <di:waypoint x="410" y="450" />
+        <di:waypoint x="440" y="450" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1v68jns_di" bpmnElement="Flow_1v68jns">
         <di:waypoint x="215" y="450" />
         <di:waypoint x="260" y="450" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_15ew9rs_di" bpmnElement="Flow_15ew9rs">
-        <di:waypoint x="770" y="142" />
-        <di:waypoint x="770" y="190" />
+        <di:waypoint x="840" y="142" />
+        <di:waypoint x="840" y="190" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="751" y="157" width="17" height="14" />
+          <dc:Bounds x="831" y="167" width="17" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0nvtepd_di" bpmnElement="Flow_0nvtepd">
@@ -418,20 +422,16 @@ dcnssi.timeDelay(execution)</bpmn:script>
         <di:waypoint x="410" y="670" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_16192dm_di" bpmnElement="Flow_16192dm">
-        <di:waypoint x="691" y="117" />
-        <di:waypoint x="745" y="117" />
+        <di:waypoint x="640" y="117" />
+        <di:waypoint x="680" y="117" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0xxq2h8_di" bpmnElement="Flow_0xxq2h8">
         <di:waypoint x="215" y="117" />
         <di:waypoint x="260" y="117" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_16bwdkl_di" bpmnElement="Flow_16bwdkl">
-        <di:waypoint x="540" y="117" />
-        <di:waypoint x="591" y="117" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0zxtlgn_di" bpmnElement="Flow_0zxtlgn">
-        <di:waypoint x="950" y="310" />
-        <di:waypoint x="950" y="270" />
+      <bpmndi:BPMNEdge id="Flow_01q7kcf_di" bpmnElement="Flow_01q7kcf">
+        <di:waypoint x="780" y="117" />
+        <di:waypoint x="815" y="117" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="179" y="99" width="36" height="36" />
@@ -441,18 +441,6 @@ dcnssi.timeDelay(execution)</bpmn:script>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0u06qij_di" bpmnElement="Activity_0u06qij">
         <dc:Bounds x="260" y="77" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1anr9ry_di" bpmnElement="Activity_1anr9ry">
-        <dc:Bounds x="260" y="410" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_16wfqhu_di" bpmnElement="Activity_16wfqhu">
-        <dc:Bounds x="410" y="410" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0es9or8_di" bpmnElement="Activity_0es9or8">
-        <dc:Bounds x="580" y="410" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0mnkgd6_di" bpmnElement="Activity_0mnkgd6">
-        <dc:Bounds x="720" y="410" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_19z90sm_di" bpmnElement="Activity_19z90sm">
         <dc:Bounds x="260" y="630" width="100" height="80" />
@@ -493,32 +481,47 @@ dcnssi.timeDelay(execution)</bpmn:script>
           <dc:Bounds x="160" y="695" width="88" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_16wfqhu_di" bpmnElement="Activity_16wfqhu">
+        <dc:Bounds x="260" y="410" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0mnkgd6_di" bpmnElement="Activity_0mnkgd6">
+        <dc:Bounds x="610" y="410" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_07qrjro_di" bpmnElement="Activity_07qrjro">
+        <dc:Bounds x="800" y="410" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0es9or8_di" bpmnElement="Activity_0es9or8">
+        <dc:Bounds x="440" y="410" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_13qnpcn_di" bpmnElement="Activity_13qnpcn">
-        <dc:Bounds x="440" y="77" width="100" height="80" />
+        <dc:Bounds x="400" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0wswwhj_di" bpmnElement="Activity_0wswwhj">
-        <dc:Bounds x="591" y="77" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1dqw1bg_di" bpmnElement="Gateway_1dqw1bg" isMarkerVisible="true">
-        <dc:Bounds x="745" y="92" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="728" y="53" width="86" height="40" />
-        </bpmndi:BPMNLabel>
+        <dc:Bounds x="540" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_016dxue_di" bpmnElement="Event_016dxue">
-        <dc:Bounds x="885" y="99" width="36" height="36" />
+        <dc:Bounds x="962" y="99" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="874" y="140" width="74" height="40" />
+          <dc:Bounds x="951" y="140" width="74" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1ym1op6_di" bpmnElement="Activity_1ym1op6">
-        <dc:Bounds x="900" y="310" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1kne6ot_di" bpmnElement="Activity_1kne6ot">
-        <dc:Bounds x="720" y="190" width="100" height="80" />
+      <bpmndi:BPMNShape id="Gateway_1dqw1bg_di" bpmnElement="Gateway_1dqw1bg" isMarkerVisible="true">
+        <dc:Bounds x="815" y="92" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="799" y="53" width="85" height="40" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1a5fd5v_di" bpmnElement="Activity_1a5fd5v">
-        <dc:Bounds x="900" y="190" width="100" height="80" />
+        <dc:Bounds x="960" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1kne6ot_di" bpmnElement="Activity_1kne6ot">
+        <dc:Bounds x="790" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1anr9ry_di" bpmnElement="Activity_1anr9ry">
+        <dc:Bounds x="680" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ym1op6_di" bpmnElement="Activity_1ym1op6">
+        <dc:Bounds x="960" y="320" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_14l5j2f_di" bpmnElement="Activity_14l5j2f" isExpanded="true">
         <dc:Bounds x="250" y="910" width="781" height="196" />
@@ -562,9 +565,6 @@ dcnssi.timeDelay(execution)</bpmn:script>
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1165" y="336" width="54" height="27" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_07qrjro_di" bpmnElement="Activity_07qrjro">
-        <dc:Bounds x="880" y="410" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1yftwt8_di" bpmnElement="Gateway_1yftwt8" isMarkerVisible="true">
         <dc:Bounds x="1015" y="425" width="50" height="50" />

@@ -381,9 +381,10 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
         }
 
+        LOGGER.debug("${getPrefix()} Exit callPUTServiceInstance")
+
         return response
 
-        LOGGER.debug("${getPrefix()} Exit callPUTServiceInstance")
     }
 
 
@@ -1177,9 +1178,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
                 sliceProfileInstanceUri = (AAIResourceUri)spURI
             }
             else {
-                String msg = "Slice Profile URI not found"
-                LOGGER.error(msg)
-                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+                String msg = "Slice Profile association with NSSI was already removed"
+                LOGGER.info(msg)
             }
         }
 
@@ -1220,13 +1220,12 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
                 sliceProfileInstanceUri = (AAIResourceUri)spURI
             }
             else {
-                String msg = "Slice Profile URI not found"
-                LOGGER.error(msg)
-                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+                String msg = "Slice Profile instance was already deleted"
+                LOGGER.info(msg)
             }
         }
 
-        if(sliceProfileInstanceUri != null) { // NSSI should not be terminated
+        if(sliceProfileInstanceUri != null) {
             try {
                 client.delete(sliceProfileInstanceUri)
             } catch (Exception e) {
