@@ -121,6 +121,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
             currentNSSI['S-NSSAI'] = sNssai
         }
 
+        LOGGER.debug("S-NSSAI=" + currentNSSI['S-NSSAI'])
 
         // Slice Profile id
         String sliceProfileId = jsonUtil.getJsonValue(sliceProfile, "sliceProfileId")
@@ -381,9 +382,10 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
         }
 
+        LOGGER.debug("${getPrefix()} Exit callPUTServiceInstance")
+
         return response
 
-        LOGGER.debug("${getPrefix()} Exit callPUTServiceInstance")
     }
 
 
@@ -742,6 +744,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
         // Supported S-NSSAI
         List<String> snssais = (List<String>) currentNSSI['S-NSSAIs']
 
+        LOGGER.debug("prepareInstanceParams: snssais size = " + snssais.size())
+
         ServiceInstance nssi = (ServiceInstance) currentNSSI['nssi']
 
         String orchStatus = nssi.getOrchestrationStatus()
@@ -750,6 +754,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
         List<Map<String, String>> snssaiList = new ArrayList<>()
 
         for(String snssai:snssais) {
+            LOGGER.debug("prepareInstanceParams: snssai = " + snssai)
             Map<String, String> snssaisMap = new HashMap<>()
             snssaisMap.put("snssai", snssai)
             snssaisMap.put("status", orchStatus)
@@ -761,12 +766,15 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
         ObjectMapper mapper = new ObjectMapper()
 
-        String supportedNssaiDetailsStr = mapper.writeValueAsString(snssaiList)
+        Map<String, Object> nSsai= new LinkedHashMap<>()
+        nSsai.put("sNssai", snssaiList)
 
+       // String supportedsNssaiJson = mapper.writeValueAsString(snssaiList)
+        String supportedsNssaiJson = mapper.writeValueAsString(nSsai)
 
         instanceParamsMap.put("k8s-rb-profile-name", "default") // ???
         instanceParamsMap.put("config-type", "day2") // ???
-        instanceParamsMap.put("supportedNssai", supportedNssaiDetailsStr)
+        instanceParamsMap.put("supportedsNssai", supportedsNssaiJson)
         instanceParams.add(instanceParamsMap)
 
         LOGGER.debug("${getPrefix()} Exit prepareInstanceParams")
@@ -1177,9 +1185,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
                 sliceProfileInstanceUri = (AAIResourceUri)spURI
             }
             else {
-                String msg = "Slice Profile URI not found"
-                LOGGER.error(msg)
-                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+                String msg = "Slice Profile association with NSSI was already removed"
+                LOGGER.info(msg)
             }
         }
 
@@ -1220,13 +1227,12 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
                 sliceProfileInstanceUri = (AAIResourceUri)spURI
             }
             else {
-                String msg = "Slice Profile URI not found"
-                LOGGER.error(msg)
-                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+                String msg = "Slice Profile instance was already deleted"
+                LOGGER.info(msg)
             }
         }
 
-        if(sliceProfileInstanceUri != null) { // NSSI should not be terminated
+        if(sliceProfileInstanceUri != null) {
             try {
                 client.delete(sliceProfileInstanceUri)
             } catch (Exception e) {
