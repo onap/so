@@ -24,4 +24,4 @@ VOLUME /camunda/app/config
 
 COPY maven/app.war /camunda/webapps/mso.war
 COPY scripts/wait-for.sh /camunda
-COPY scripts/start-app.sh /camunda
+COPY scripts/bpmn-script/start-app.sh /camunda
