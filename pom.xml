@@ -701,14 +701,17 @@
     <dependency>
       <groupId>org.onap.logging-analytics</groupId>
       <artifactId>logging-slf4j</artifactId>
+      <version>${onap-logging-version}</version>
     </dependency>
     <dependency>
       <groupId>org.onap.logging-analytics</groupId>
       <artifactId>logging-filter-base</artifactId>
+      <version>${onap-logging-version}</version>
     </dependency>
     <dependency>
       <groupId>org.onap.logging-analytics</groupId>
       <artifactId>logging-filter-spring</artifactId>
+      <version>${onap-logging-version}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
