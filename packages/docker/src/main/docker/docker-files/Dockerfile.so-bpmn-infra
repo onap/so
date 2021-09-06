@@ -22,6 +22,7 @@ USER $user
 # Springboot configuration (required)
 VOLUME /camunda/app/config
 
-COPY maven/app.war /camunda/webapps/mso.war
+COPY maven/mso.war /camunda/webapps
 COPY scripts/wait-for.sh /camunda
-COPY scripts/start-app.sh /camunda
+COPY scripts/bpmn-script/start-camunda-app.sh /camunda
+COPY maven/mariadb-java-client.jar /camunda/lib

@@ -239,8 +239,14 @@
                         <includes>
                           <include>org.onap.so:mso-infrastructure-bpmn:war</include>
                         </includes>
-                        <outputFileNameMapping>app.war</outputFileNameMapping>
+                        <outputFileNameMapping>mso.war</outputFileNameMapping>
                       </dependencySet>
+                      <dependencySet>
+                        <includes>
+                          <include>org.mariadb.jdbc:mariadb-java-client:jar</include>
+                        </includes>
+                      </dependencySet>
+                      <outputFileNameMapping>mariadb-java-client.jar</outputFileNameMapping>
                     </dependencySets>
                   </inline>
                 </assembly>
