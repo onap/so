@@ -241,6 +241,12 @@
                         </includes>
                         <outputFileNameMapping>app.war</outputFileNameMapping>
                       </dependencySet>
+                      <dependencySet>
+                        <includes>
+                          <include>org.mariadb.jdbc:mariadb-java-client:jar</include>
+                        </includes>
+                      </dependencySet>
+                      <outputFileNameMapping>mariadb-java-client.jar</outputFileNameMapping>
                     </dependencySets>
                   </inline>
                 </assembly>
