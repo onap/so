@@ -25,6 +25,29 @@
     },
     {
       "key": {
+        "uuid": "b406391b_823886b3",
+        "filename": "packages/docker/src/main/docker/docker-files/scripts/bpmn-script/start-app.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 6750
+      },
+      "writtenOn": "2021-09-07T15:07:16Z",
+      "side": 1,
+      "message": "could you check the presence of this file before doing any operation?",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 4,
+        "endChar": 30
+      },
+      "revId": "d32b78a61b6597bfbd62a91eddd378b6259e6649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f2370c8d_cb72c3cc",
         "filename": "packages/docker/src/main/docker/docker-files/scripts/bpmn-script/start-app.sh",
         "patchSetId": 1
