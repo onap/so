@@ -48,6 +48,29 @@
     },
     {
       "key": {
+        "uuid": "7acee059_55cf74c5",
+        "filename": "packages/docker/src/main/docker/docker-files/scripts/bpmn-script/start-app.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2021-09-07T15:20:24Z",
+      "side": 1,
+      "message": "why need to unzip ??? why not add mariadb-java-client as dependency in pom and copy it to the lib directory",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 4,
+        "endChar": 30
+      },
+      "revId": "d32b78a61b6597bfbd62a91eddd378b6259e6649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f2370c8d_cb72c3cc",
         "filename": "packages/docker/src/main/docker/docker-files/scripts/bpmn-script/start-app.sh",
         "patchSetId": 1
