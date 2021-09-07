@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f2370c8d_cb72c3cc",
+        "filename": "packages/docker/src/main/docker/docker-files/scripts/bpmn-script/start-app.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2021-09-07T08:09:35Z",
+      "side": 1,
+      "message": "APP variable is not used anywhere",
+      "range": {
+        "startLine": 28,
+        "startChar": 10,
+        "endLine": 28,
+        "endChar": 13
+      },
+      "revId": "d32b78a61b6597bfbd62a91eddd378b6259e6649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d71079a7_0431fce6",
+        "filename": "packages/docker/src/main/docker/docker-files/scripts/bpmn-script/start-app.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2021-09-07T08:09:35Z",
+      "side": 1,
+      "message": "DB_HOST and DB_PORT not used anywhere",
+      "range": {
+        "startLine": 33,
+        "startChar": 12,
+        "endLine": 33,
+        "endChar": 19
+      },
+      "revId": "d32b78a61b6597bfbd62a91eddd378b6259e6649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a05cdb29_f83f0a72",
+        "filename": "packages/docker/src/main/docker/docker-files/scripts/bpmn-script/start-app.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2021-09-07T08:09:35Z",
+      "side": 1,
+      "message": "also set CONFIG_PATH as JVM property so that application can read it",
+      "range": {
+        "startLine": 37,
+        "startChar": 11,
+        "endLine": 37,
+        "endChar": 22
+      },
+      "revId": "d32b78a61b6597bfbd62a91eddd378b6259e6649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
