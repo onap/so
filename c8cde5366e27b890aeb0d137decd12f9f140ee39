@@ -16,6 +16,24 @@
       "revId": "c8cde5366e27b890aeb0d137decd12f9f140ee39",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7a3c814f_459864ca",
+        "filename": "packages/docker/src/main/docker/docker-files/scripts/bpmn-script/start-camunda-app.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 6750
+      },
+      "writtenOn": "2021-09-08T12:01:20Z",
+      "side": 1,
+      "message": "Hi Irshad, As Waqas suggested you can go to below path and do following changes :\n\nPath : so/packages/docker/pom.xml\n\n1. Replace current image with given content , just a little add on (\n\u003coutputFileNameMapping\u003emariadb-java-client.jar\u003c/outputFileNameMapping\u003e\n) here on top of waqas changes ,\n\n\u003cimage\u003e\n              \u003cname\u003e${docker.image.prefix}/bpmn-infra\u003c/name\u003e\n              \u003cbuild\u003e\n                \u003ccleanup\u003etry\u003c/cleanup\u003e\n                \u003cdockerFile\u003edocker-files/Dockerfile.so-bpmn-infra\u003c/dockerFile\u003e\n                \u003ctags\u003e\n                  \u003ctag\u003e${project.version}\u003c/tag\u003e\n                  \u003ctag\u003e${project.version}-${maven.build.timestamp}\u003c/tag\u003e\n                  \u003ctag\u003e${project.docker.latesttag.version}\u003c/tag\u003e\n                \u003c/tags\u003e\n                \u003cassembly\u003e\n                  \u003cinline\u003e\n                    \u003cdependencySets\u003e\n                      \u003cdependencySet\u003e\n                        \u003cincludes\u003e\n                          \u003cinclude\u003eorg.onap.so:mso-infrastructure-bpmn:war\u003c/include\u003e\n                        \u003c/includes\u003e\n                        \u003coutputFileNameMapping\u003eapp.war\u003c/outputFileNameMapping\u003e\n                      \u003c/dependencySet\u003e\n                      \u003cdependencySet\u003e\n                        \u003cincludes\u003e\n                          \u003cinclude\u003eorg.mariadb.jdbc:mariadb-java-client:jar\u003c/include\u003e\n                        \u003c/includes\u003e\n                        \u003coutputFileNameMapping\u003emariadb-java-client.jar\u003c/outputFileNameMapping\u003e\n                      \u003c/dependencySet\u003e\n                    \u003c/dependencySets\u003e\n                  \u003c/inline\u003e\n                \u003c/assembly\u003e\n              \u003c/build\u003e\n            \u003c/image\u003e\n\n2. Go to Dockerfile.so-bpmn-infra and COPY below snippet :\n\nCOPY maven/mariadb-java-client.jar /camunda/lib\n\nI hope , I am not missing something important..",
+      "parentUuid": "5a45c9c4_2891d4cc",
+      "revId": "c8cde5366e27b890aeb0d137decd12f9f140ee39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
