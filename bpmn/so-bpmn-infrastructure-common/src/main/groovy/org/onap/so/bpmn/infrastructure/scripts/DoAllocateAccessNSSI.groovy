@@ -102,7 +102,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 			}
 			String sliceProfileId = jsonUtil.getJsonValue(sliceProfile, "sliceProfileId")
 			def snssaiList = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(sliceProfile, "snssaiList"))
-			def plmnIdList = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(sliceProfile, "plmnIdList"))
+			def plmnIdList = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(sliceProfile, "pLMNIdList"))
                         String jsonArray = jsonUtil.getJsonValue(sliceProfile, "coverageAreaTAList")
                         List<Integer> list = new ArrayList<>();
                         JSONArray arr = new JSONArray(jsonArray);
@@ -121,7 +121,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 			} else {
 				execution.setVariable("sliceProfileId", sliceProfileId)
 				execution.setVariable("snssaiList", snssaiList)
-				execution.setVariable("plmnIdList", plmnIdList)
+				execution.setVariable("pLMNIdList", plmnIdList)
 				execution.setVariable("coverageAreaTAList", coverageAreaTAList)
 			}
 			String nsiName = jsonUtil.getJsonValue(sliceParams, "nsiInfo.nsiName")
@@ -388,7 +388,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		serviceInfo.addProperty("nsiId", execution.getVariable("nsiId"))
 		serviceInfo.addProperty("nssiName", execution.getVariable("servicename"))
                 serviceInfo.addProperty("sST", execution.getVariable("sst"))
-		serviceInfo.addProperty("PLMNIdList", objectMapper.writeValueAsString(execution.getVariable("plmnIdList")))
+		serviceInfo.addProperty("PLMNIdList", objectMapper.writeValueAsString(execution.getVariable("pLMNIdList")))
 		serviceInfo.addProperty("globalSubscriberId", execution.getVariable("globalSubscriberId"))
 		serviceInfo.addProperty("subscriptionServiceType", execution.getVariable("subscriptionServiceType"))
 		serviceInfo.addProperty("serviceInvariantUuid", execution.getVariable("modelInvariantUuid"))
@@ -558,7 +558,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
                 ANServiceInstance.setServiceType(execution.getVariable("sst"))
 		String serviceStatus = "deactivated"
 		ANServiceInstance.setOrchestrationStatus(serviceStatus)
-		String serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("sliceProfile"), "plmnIdList")
+		String serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("sliceProfile"), "pLMNIdList")
                 ANServiceInstance.setServiceInstanceLocationId(jsonUtil.StringArrayToList(serviceInstanceLocationid).get(0))
 		String serviceRole = "nssi"
 		ANServiceInstance.setServiceRole(serviceRole)
@@ -625,7 +625,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
                 ANServiceInstance.setServiceType(execution.getVariable("sst"))
 		String serviceStatus = "deactivated"
 		ANServiceInstance.setOrchestrationStatus(serviceStatus)
-		String serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("sliceProfile"), "plmnIdList")
+		String serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("sliceProfile"), "pLMNIdList")
 		ANServiceInstance.setServiceInstanceLocationId(serviceInstanceLocationid)
 		String serviceRole = "nssi"
 		ANServiceInstance.setServiceRole(serviceRole)
@@ -647,7 +647,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		ANNFServiceInstance.setServiceInstanceName(sliceInstanceName)
 		ANNFServiceInstance.setServiceType(execution.getVariable("sst"))
 		ANNFServiceInstance.setOrchestrationStatus(serviceStatus)
-		serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("ranNfSliceProfile"), "plmnIdList")
+		serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("ranNfSliceProfile"), "pLMNIdList")
                 ANNFServiceInstance.setServiceInstanceLocationId(jsonUtil.StringArrayToList(serviceInstanceLocationid).get(0))
 		ANNFServiceInstance.setServiceRole(serviceRole)
 		snssaiList = execution.getVariable("snssaiList")
@@ -735,7 +735,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		JsonObject serviceInfo = new JsonObject()
 		serviceInfo.addProperty("nsiId", execution.getVariable("nsiId"))
                 serviceInfo.addProperty("sST", execution.getVariable("sst"))
-		serviceInfo.addProperty("PLMNIdList", objectMapper.writeValueAsString(execution.getVariable("plmnIdList")))
+		serviceInfo.addProperty("PLMNIdList", objectMapper.writeValueAsString(execution.getVariable("pLMNIdList")))
 		serviceInfo.addProperty("globalSubscriberId", execution.getVariable("globalSubscriberId"))
 		serviceInfo.addProperty("subscriptionServiceType", execution.getVariable("subscriptionServiceType"))
 		if(domainType.equals("TN_FH")) {

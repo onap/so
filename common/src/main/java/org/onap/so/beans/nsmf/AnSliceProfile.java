@@ -43,7 +43,7 @@ public class AnSliceProfile implements Serializable {
     @JsonProperty(value = "snssaiList", required = true)
     private List<String> sNSSAIList;
 
-    @JsonProperty(value = "plmnIdList", required = true)
+    @JsonProperty(value = "pLMNIdList", required = true)
     private List<String> pLMNIdList;
 
     @JsonProperty(value = "perfReq", required = true)
