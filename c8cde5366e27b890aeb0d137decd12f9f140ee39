@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a45c9c4_2891d4cc",
+        "filename": "packages/docker/src/main/docker/docker-files/scripts/bpmn-script/start-camunda-app.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2021-09-08T11:05:46Z",
+      "side": 1,
+      "message": "you can avoid unzipping war file if you add following in docker pom.xml while creating bpmn-infra image then you would only need to add COPY line in Dockerfile.so-bpmn-infra\n\n                     \u003cdependencySet\u003e\n                        \u003cincludes\u003e\n                          \u003cinclude\u003eorg.mariadb.jdbc:mariadb-java-client:jar\u003c/include\u003e\n                        \u003c/includes\u003e\n                      \u003c/dependencySet\u003e",
+      "revId": "c8cde5366e27b890aeb0d137decd12f9f140ee39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
