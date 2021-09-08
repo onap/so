@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1db2b630_6f285d1b",
+        "filename": "packages/docker/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 242,
+      "author": {
+        "id": 6750
+      },
+      "writtenOn": "2021-09-08T12:39:27Z",
+      "side": 1,
+      "message": "would prefer to name it as mso.war instead of app.war for better readability ..",
+      "range": {
+        "startLine": 242,
+        "startChar": 24,
+        "endLine": 242,
+        "endChar": 78
+      },
+      "revId": "74b906b22cf3e356da2f584cd4b0c98a20219a20",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f97f25ab_762b02dc",
+        "filename": "packages/docker/src/main/docker/docker-files/Dockerfile.so-bpmn-infra",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 6750
+      },
+      "writtenOn": "2021-09-08T12:39:27Z",
+      "side": 1,
+      "message": "just noticed why name is app.war , can you change the name in pom to mso.war instead of app.war ??\nand then do copy below :\n\nCOPY maven/mso.war /camunda/webapps",
+      "range": {
+        "startLine": 25,
+        "startChar": 14,
+        "endLine": 25,
+        "endChar": 15
+      },
+      "revId": "74b906b22cf3e356da2f584cd4b0c98a20219a20",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
