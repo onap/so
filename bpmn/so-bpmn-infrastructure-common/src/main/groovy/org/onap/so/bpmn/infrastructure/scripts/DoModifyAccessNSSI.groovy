@@ -237,7 +237,7 @@ class DoModifyAccessNSSI extends AbstractServiceTaskProcessor {
                 ServiceInstance ranSliceProfileInstance = execution.getVariable("ranSliceProfileInstance")
                 profileInfo.put("sST",ranSliceProfileInstance.getServiceType())
                 profileInfo.put("snssaiList",execution.getVariable("snssaiList"))
-                profileInfo.put("plmnIdList",Arrays.asList(ranSliceProfileInstance.getServiceInstanceLocationId()))
+                profileInfo.put("pLMNIdList",Arrays.asList(ranSliceProfileInstance.getServiceInstanceLocationId()))
                 profileInfo.put("uEMobilityLevel",profileInfo.get("ueMobilityLevel"))
                 profileInfo.put("cSAvailabilityTarget",profileInfo.get("csAvailabilityTarget"))
                 profileInfo.put("maxNumberofPDUSession",profileInfo.get("maxNumberOfPDUSession"))

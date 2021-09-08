@@ -293,7 +293,7 @@ class TnNssmfUtils {
     }
 
     String getFirstPlmnIdFromSliceProfile(String sliceProfileStr) {
-        String plmnListStr = jsonUtil.getJsonValue(sliceProfileStr, "plmnIdList")
+        String plmnListStr = jsonUtil.getJsonValue(sliceProfileStr, "pLMNIdList")
         String res = jsonUtil.StringArrayToList(plmnListStr).get(0)
 
         return res
