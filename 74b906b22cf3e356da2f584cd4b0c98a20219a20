@@ -69,6 +69,52 @@
       "revId": "74b906b22cf3e356da2f584cd4b0c98a20219a20",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ef8be0a9_8c3de860",
+        "filename": "packages/docker/src/main/docker/docker-files/scripts/start-app.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 6750
+      },
+      "writtenOn": "2021-09-08T12:45:47Z",
+      "side": 1,
+      "message": "looks like formatting problem, recheck once",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 0
+      },
+      "revId": "74b906b22cf3e356da2f584cd4b0c98a20219a20",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1aaac05f_eecc961f",
+        "filename": "packages/docker/src/main/docker/docker-files/scripts/start-app.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 6750
+      },
+      "writtenOn": "2021-09-08T12:45:47Z",
+      "side": 1,
+      "message": "not required anymore , remove it",
+      "range": {
+        "startLine": 47,
+        "startChar": 3,
+        "endLine": 50,
+        "endChar": 0
+      },
+      "revId": "74b906b22cf3e356da2f584cd4b0c98a20219a20",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
