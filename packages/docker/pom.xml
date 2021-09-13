@@ -245,8 +245,8 @@
                         <includes>
                           <include>org.mariadb.jdbc:mariadb-java-client:jar</include>
                         </includes>
+                        <outputFileNameMapping>mariadb-java-client.jar</outputFileNameMapping>
                       </dependencySet>
-                      <outputFileNameMapping>mariadb-java-client.jar</outputFileNameMapping>
                     </dependencySets>
                   </inline>
                 </assembly>
