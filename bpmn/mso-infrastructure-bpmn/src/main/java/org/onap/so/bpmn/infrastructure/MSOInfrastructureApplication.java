@@ -28,7 +28,10 @@ import javax.annotation.PostConstruct;
 import org.camunda.bpm.application.PreUndeploy;
 import org.camunda.bpm.application.ProcessApplicationInfo;
 import org.camunda.bpm.engine.ProcessEngine;
+import org.camunda.bpm.engine.RepositoryService;
+import org.camunda.bpm.engine.repository.Deployment;
 import org.camunda.bpm.engine.repository.DeploymentBuilder;
+import org.camunda.bpm.engine.repository.ProcessDefinition;
 import org.onap.logging.filter.spring.MDCTaskDecorator;
 import org.onap.so.bpmn.common.DefaultToShortClassNameBeanNameGenerator;
 import org.onap.so.db.catalog.beans.Workflow;
@@ -76,6 +79,9 @@ public class MSOInfrastructureApplication {
     @Value("${mso.async.queue-capacity}")
     private int queueCapacity;
 
+    @Value("${mso.bpmn-history-ttl:14}")
+    private Integer bpmnHistoryTtl;
+
     private static final String LOGS_DIR = "logs_dir";
     private static final String BPMN_SUFFIX = ".bpmn";
     private static final String SDC_SOURCE = "sdc";
@@ -102,8 +108,10 @@ public class MSOInfrastructureApplication {
     @PostConstruct
     public void postConstruct() {
         try {
-            DeploymentBuilder deploymentBuilder = processEngine.getRepositoryService().createDeployment();
+            RepositoryService repositoryService = processEngine.getRepositoryService();
+            DeploymentBuilder deploymentBuilder = repositoryService.createDeployment();
             deployCustomWorkflows(deploymentBuilder);
+            setBpmnTTL(repositoryService, bpmnHistoryTtl);
         } catch (Exception e) {
             logger.warn("Unable to invoke deploymentBuilder ", e);
         }
@@ -147,6 +155,20 @@ public class MSOInfrastructureApplication {
             }
         } catch (Exception e) {
             logger.warn("Unable to deploy custom workflows ", e);
+        }
+    }
+
+    private void setBpmnTTL(RepositoryService repositoryService, Integer ttl) {
+        List<Deployment> deployments = repositoryService.createDeploymentQuery().list();
+        for (Deployment deployment : deployments) {
+            List<ProcessDefinition> processDefinitions =
+                    repositoryService.createProcessDefinitionQuery().deploymentId(deployment.getId()).list();
+            for (ProcessDefinition processDefinition : processDefinitions) {
+                if (!ttl.equals(processDefinition.getHistoryTimeToLive())) {
+                    logger.info("Setting ttl {} for processdefinition {}", ttl, processDefinition.getName());
+                    repositoryService.updateProcessDefinitionHistoryTimeToLive(processDefinition.getId(), ttl);
+                }
+            }
         }
     }
 }
