@@ -14,6 +14,14 @@ The SO provides the highest level of service orchestration in the ONAP architect
 Release Notes
 =============
 
+Version: 9.0
+==============
+
+**Epics**
+
+*  `REQ-883 <https://jira.onap.org/browse/REQ-883>`_ - VNF LCM Support in SO
+
+
 Version: 8.0
 ==============
 
