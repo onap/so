@@ -23,6 +23,13 @@ public class CnfAaiUpdateRequest {
     @JsonProperty("callbackUrl")
     private String callbackUrl;
 
+    @JsonProperty("genericVnfId")
+    private String genericVnfId;
+
+    @JsonProperty("vfModuleId")
+    private String vfModuleId;
+
+
     public String getInstanceId() {
         return instanceId;
     }
@@ -63,10 +70,27 @@ public class CnfAaiUpdateRequest {
         this.callbackUrl = callbackUrl;
     }
 
+    public String getGenericVnfId() {
+        return genericVnfId;
+    }
+
+    public void setGenericVnfId(String genericVnfId) {
+        this.genericVnfId = genericVnfId;
+    }
+
+    public String getVfModuleId() {
+        return vfModuleId;
+    }
+
+    public void setVfModuleId(String vfModuleId) {
+        this.vfModuleId = vfModuleId;
+    }
+
     @Override
     public String toString() {
         return "CnfAaiUpdateRequest [instanceId=" + instanceId + ", cloudRegion=" + cloudRegion + ", cloudOwner="
-                + cloudOwner + ", tenantId=" + tenantId + ", callbackUrl=" + callbackUrl + "]";
+                + cloudOwner + ", tenantId=" + tenantId + ", callbackUrl=" + callbackUrl + ", genericVnfId="
+                + genericVnfId + ", vfModuleId=" + vfModuleId + " ]";
     }
 
 }

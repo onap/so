@@ -130,6 +130,14 @@ public class CnfAdapterCreateTasks {
     public void prepareForCnfUpdateOrDelete(BuildingBlockExecution execution) {
 
         GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
+        GenericVnf genericVnfId = null;
+        VfModule vfModuleId = null;
+        try {
+            genericVnfId = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+            vfModuleId = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
+        } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
+        }
 
         String heatStackId = execution.getVariable("heatStackId");
 
@@ -140,7 +148,9 @@ public class CnfAdapterCreateTasks {
         String callbackUrl =
                 "http://so-bpmn-infra.onap:8081/mso/WorkflowMessage/" + CNF_ADAPTER_MESSAGE_TYPE + "/" + requestId;
 
-        CnfAaiUpdateRequest aaiRequest = createCnfAaiUpdateRequest(heatStackId, cloudRegion, callbackUrl);
+        CnfAaiUpdateRequest aaiRequest =
+                createCnfAaiUpdateRequest(heatStackId, cloudRegion, callbackUrl, genericVnfId, vfModuleId);
+
         logger.debug("aaiRequest: {}", aaiRequest);
 
         String cnfRequestPayload = "";
@@ -192,14 +202,15 @@ public class CnfAdapterCreateTasks {
     }
 
     protected CnfAaiUpdateRequest createCnfAaiUpdateRequest(String heatStackId, CloudRegion cloudRegion,
-            String callbackUrl) {
+            String callbackUrl, GenericVnf genericVnfId, VfModule vfModuleId) {
         CnfAaiUpdateRequest request = new CnfAaiUpdateRequest();
         request.setCallbackUrl(callbackUrl);
         request.setCloudOwner(cloudRegion.getCloudOwner());
         request.setCloudRegion(cloudRegion.getLcpCloudRegionId());
         request.setTenantId(cloudRegion.getTenantId());
         request.setInstanceId(heatStackId);
-
+        request.setGenericVnfId(genericVnfId.getVnfId());
+        request.setVfModuleId(vfModuleId.getVfModuleId());
         return request;
     }
 
