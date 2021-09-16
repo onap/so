@@ -14,6 +14,17 @@ The SO provides the highest level of service orchestration in the ONAP architect
 Release Notes
 =============
 
+Version: 9.0
+==============
+
+Release Purpose
+----------------
+SO Istanbul Release
+
+**Epics**
+
+*  `REQ-627 <https://jira.onap.org/browse/REQ-627>`_ - ONAP CNF orchestration - Istanbul Enhancements
+
 Version: 8.0
 ==============
 
