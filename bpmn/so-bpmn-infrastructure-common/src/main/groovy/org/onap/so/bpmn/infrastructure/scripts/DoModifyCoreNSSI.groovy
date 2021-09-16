@@ -179,7 +179,7 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
         String serviceStatus = "deactivated"
         sliceProfileInstance.setOrchestrationStatus(serviceStatus)
 
-        String serviceInstanceLocationid = jsonUtil.getJsonValue(currentNSSI['sliceProfile'], "plmnIdList")
+        String serviceInstanceLocationid = jsonUtil.getJsonValue(currentNSSI['sliceProfile'], "pLMNIdList")
         sliceProfileInstance.setServiceInstanceLocationId(serviceInstanceLocationid)
 
         String serviceRole = "slice-profile-instance"

@@ -193,7 +193,7 @@ public void createSliceProfilesInAai(DelegateExecution execution) {
 	ANNF_sliceProfileInstance.setServiceType(serviceType)
 	String serviceStatus = "deactivated"
 	ANNF_sliceProfileInstance.setOrchestrationStatus(serviceStatus)
-	String serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("ranNfSliceProfile"), "plmnIdList")
+	String serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("ranNfSliceProfile"), "pLMNIdList")
         ANNF_sliceProfileInstance.setServiceInstanceLocationId(jsonUtil.StringArrayToList(serviceInstanceLocationid).get(0))
 	String serviceRole = "slice-profile-instance"
 	ANNF_sliceProfileInstance.setServiceRole(serviceRole)
@@ -213,7 +213,7 @@ public void createSliceProfilesInAai(DelegateExecution execution) {
 	serviceType = jsonUtil.getJsonValue(execution.getVariable("tnFhSliceProfile"), "sST")
 	TNFH_sliceProfileInstance.setServiceType(serviceType)
 	TNFH_sliceProfileInstance.setOrchestrationStatus(serviceStatus)
-	serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("tnFhSliceProfile"), "plmnIdList")
+	serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("tnFhSliceProfile"), "pLMNIdList")
         TNFH_sliceProfileInstance.setServiceInstanceLocationId(jsonUtil.StringArrayToList(serviceInstanceLocationid).get(0))
 	TNFH_sliceProfileInstance.setServiceRole(serviceRole)
 	TNFH_sliceProfileInstance.setEnvironmentContext(snssai)
@@ -230,7 +230,7 @@ public void createSliceProfilesInAai(DelegateExecution execution) {
 	serviceType = jsonUtil.getJsonValue(execution.getVariable("tnMhSliceProfile"), "sST")
 	TNMH_sliceProfileInstance.setServiceType(serviceType)
 	TNMH_sliceProfileInstance.setOrchestrationStatus(serviceStatus)
-	serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("tnMhSliceProfile"), "plmnIdList")
+	serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("tnMhSliceProfile"), "pLMNIdList")
         TNMH_sliceProfileInstance.setServiceInstanceLocationId(jsonUtil.StringArrayToList(serviceInstanceLocationid).get(0))
 	TNMH_sliceProfileInstance.setServiceRole(serviceRole)
 	TNMH_sliceProfileInstance.setEnvironmentContext(snssai)
