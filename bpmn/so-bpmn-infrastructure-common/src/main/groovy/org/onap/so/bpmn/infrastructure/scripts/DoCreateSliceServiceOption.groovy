@@ -213,6 +213,22 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
                 sliceParams.tnMHSliceTaskInfo.NSSTInfo.invariantUUID = modelInfo.getModelInvariantUuid()
                 sliceParams.tnMHSliceTaskInfo.NSSTInfo.name = modelInfo.getModelName()
                 break
+            case SubnetType.TN_FH:
+                sliceParams.tnFHSliceTaskInfo.vendor = vendor
+                sliceParams.tnFHSliceTaskInfo.subnetType = subnetType
+                sliceParams.tnFHSliceTaskInfo.networkType = subnetType.networkType
+                sliceParams.tnFHSliceTaskInfo.NSSTInfo.UUID = modelInfo.getModelUuid()
+                sliceParams.tnFHSliceTaskInfo.NSSTInfo.invariantUUID = modelInfo.getModelInvariantUuid()
+                sliceParams.tnFHSliceTaskInfo.NSSTInfo.name = modelInfo.getModelName()
+                break
+            case SubnetType.AN_NF:
+                sliceParams.anNFSliceTaskInfo.vendor = vendor
+                sliceParams.anNFSliceTaskInfo.subnetType = subnetType
+                sliceParams.anNFSliceTaskInfo.networkType = subnetType.networkType
+                sliceParams.anNFSliceTaskInfo.NSSTInfo.UUID = modelInfo.getModelUuid()
+                sliceParams.anNFSliceTaskInfo.NSSTInfo.invariantUUID = modelInfo.getModelInvariantUuid()
+                sliceParams.anNFSliceTaskInfo.NSSTInfo.name = modelInfo.getModelName()
+                break
             case SubnetType.AN:
                 sliceParams.anSliceTaskInfo.vendor = vendor
                 sliceParams.anSliceTaskInfo.subnetType = subnetType
@@ -255,17 +271,23 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
      * @return
      */
     private SubnetType convertServiceCategory(String serviceCategory){
-        if(serviceCategory ==~ /CN.*/){
+        if("CN NSST".equals(serviceCategory)){
             return SubnetType.CN
         }
-        if (serviceCategory ==~ /AN.*/){
+        if ("AN NF NSST".equals(serviceCategory)){
+            return SubnetType.AN_NF
+        }
+        if ("AN NSST".equals(serviceCategory)){
             return SubnetType.AN
         }
-        if (serviceCategory ==~ /TN.*BH.*/){
+        if ("TN BH NSST".equals(serviceCategory)){
             return SubnetType.TN_BH
         }
-        if(serviceCategory ==~ /TN.*MH.*/){
+        if("TN MH NSST".equals(serviceCategory)){
             return SubnetType.TN_MH
+        }
+        if("TN FH NSST".equals(serviceCategory)){
+            return SubnetType.TN_FH
         }
         return null
     }
@@ -426,7 +448,15 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
                 case "tn_bh":
                     sliceParams.tnBHSliceTaskInfo.sliceProfile = adapter
                     break
+                case "tn_fh":
+                    sliceParams.tnFHSliceTaskInfo.sliceProfile = adapter
+                    break
+                case "tn_mh":
+                    sliceParams.tnMHSliceTaskInfo.sliceProfile = adapter
+                    break
                 case "an_nf":
+                    sliceParams.anNFSliceTaskInfo.sliceProfile = adapter
+                    break
                 case "an":
                     sliceParams.anSliceTaskInfo.sliceProfile = adapter
                     break
