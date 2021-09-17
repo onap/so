@@ -371,7 +371,9 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
         String taskStatus = execution.getVariable("taskStatus")
         SliceTaskParamsAdapter sliceTaskParams =
                 execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
-
+        int nsstCount=execution.getVariable("nsstCount") as int
+	nsstCount=nsstCount+1
+        execution.setVariable("nsstCount", nsstCount)
         execution.setVariable("CSSOT_status", taskStatus)
         execution.setVariable("CSSOT_paramJson", objectMapper.writeValueAsString(sliceTaskParams))
         execution.setVariable("CSSOT_requestMethod", requestMethod)

@@ -190,6 +190,8 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		//RAN NSST decomposition
 		String ranModelVersion = ranNsstServiceDecomposition.getModelInfo().getModelVersion()
 		String ranModelName = ranNsstServiceDecomposition.getModelInfo().getModelName()
+		String serviceCategory=ranNsstServiceDecomposition.getServiceCategory()
+		logger.debug("serviceCategory : "+serviceCategory)
 		List<ServiceProxy> serviceProxyList = ranNsstServiceDecomposition.getServiceProxy()
 		List<String> nsstInfoList = new ArrayList<>()
 		for(ServiceProxy serviceProxy : serviceProxyList)
@@ -198,10 +200,10 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 			String nsstModelInvariantUuid = serviceProxy.getModelInfo().getModelInvariantUuid()
 			String name = serviceProxy.getModelInfo().getModelName()
 			String nsstServiceModelInfo = """{
-            "UUID":"${nsstModelUuid}",
-            "invariantUUID":"${nsstModelInvariantUuid}",
-            "name":"${name}"
-             }"""
+                               "UUID":"${nsstModelUuid}",
+                               "invariantUUID":"${nsstModelInvariantUuid}",
+                               "name":"${name}"
+                        }"""
 			nsstInfoList.add(nsstServiceModelInfo)
 		}
 		int currentIndex=0
@@ -212,12 +214,19 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 			logger.info(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
+                if(maxIndex == 1) {
+                        logger.info("RAN NSST have only RAN NF NSST")
+                        execution.setVariable("ranNfSliceProfile", execution.getVariable("sliceProfile"))
+                        execution.setVariable("IsRANNfAlonePresent", true)
+                }
 		execution.setVariable("ranNsstInfoList", objectMapper.writeValueAsString(nsstInfoList))
-		execution.setVariable("ranModelVersion", ranModelVersion)
-		execution.setVariable("ranModelName", ranModelName)
 		execution.setVariable("currentIndex",currentIndex)
 		execution.setVariable("maxIndex",maxIndex)
+		execution.setVariable("ranModelVersion", ranModelVersion)
+		execution.setVariable("ranModelName", ranModelName)
 		logger.debug(Prefix+"processDecomposition maxIndex value - "+maxIndex)
+
+		execution.setVariable("serviceCategory",serviceCategory)
 	}
 
 	/*
@@ -428,28 +437,28 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		ServiceDecomposition decomposedNsst = execution.getVariable("nsstServiceDecomposition")
 		logger.debug("decomposedNsst : "+decomposedNsst.toString())
 		
-		String nsstType = decomposedNsst.getServiceRole() //domainType
+		String nsstType = decomposedNsst.getServiceCategory() //domainType
 		String modelVersion = decomposedNsst.getModelInfo().getModelVersion()
 		String modelName = decomposedNsst.getModelInfo().getModelName()
 		String modelUuid = decomposedNsst.getModelInfo().getModelUuid()
 		String modelInvariantUuid = decomposedNsst.getModelInfo().getModelInvariantUuid()
 		
 		switch(nsstType) {
-			case "AN_NF":
+			case "AN NF NSST":
 				execution.setVariable("ANNF_modelInvariantUuid", modelInvariantUuid)
 				execution.setVariable("ANNF_modelUuid", modelUuid)
 				execution.setVariable("ANNF_modelVersion", modelVersion)
 				execution.setVariable("ANNF_modelName", modelName)
 				execution.setVariable("ANNF_ServiceDecomposition", decomposedNsst)
 				break
-			case "TN_FH":
+			case "TN FH NSST":
 				execution.setVariable("TNFH_modelInvariantUuid", modelInvariantUuid)
 				execution.setVariable("TNFH_modelUuid", modelUuid)
 				execution.setVariable("TNFH_modelVersion", modelVersion)
 				execution.setVariable("TNFH_modelName", modelName)
 				execution.setVariable("TNFH_ServiceDecomposition", decomposedNsst)
 				break
-			case "TN_MH":
+			case "TN MH NSST":
 				execution.setVariable("TNMH_modelInvariantUuid", modelInvariantUuid)
 				execution.setVariable("TNMH_modelUuid", modelUuid)
 				execution.setVariable("TNMH_modelVersion", modelVersion)
@@ -480,9 +489,12 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		//build oof request body
 		boolean ranNfNssiPreferReuse = execution.getVariable("ranNfNssiPreferReuse");
 		String requestId = execution.getVariable("msoRequestId")
+		String serviceCategory = execution.getVariable("serviceCategory")
 		String messageType = "NSSISelectionResponse"
-		List<String> ranConstituentSliceProfiles = jsonUtil.StringArrayToList(execution.getVariable("RanConstituentSliceProfiles"))
-		anNssmfUtils.createDomainWiseSliceProfiles(ranConstituentSliceProfiles, execution)
+                if(execution.getVariable("maxIndex") > 1) {
+                    List<String> ranConstituentSliceProfiles = jsonUtil.StringArrayToList(execution.getVariable("RanConstituentSliceProfiles") as String)
+                    anNssmfUtils.createDomainWiseSliceProfiles(ranConstituentSliceProfiles, execution)
+                }
 		Map<String, Object> profileInfo = objectMapper.readValue(execution.getVariable("ranNfSliceProfile"), Map.class)
 		profileInfo.put("sST",execution.getVariable("sst"))
 		String modelUuid = execution.getVariable("ANNF_modelUuid")
@@ -617,48 +629,45 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		//create RAN NSSI 
 		org.onap.aai.domain.yang.ServiceInstance ANServiceInstance = new org.onap.aai.domain.yang.ServiceInstance();
 		org.onap.aai.domain.yang.ServiceInstance ANNFServiceInstance = new org.onap.aai.domain.yang.ServiceInstance();
+		String serviceCategory = execution.getVariable("serviceCategory")
+		String serviceStatus = "deactivated"
+		String serviceRole = "nssi"
 		//AN instance creation
-		ANServiceInstance.setServiceInstanceId(execution.getVariable("RANServiceInstanceId"))
+		ANServiceInstance.setServiceInstanceId(execution.getVariable("RANServiceInstanceId") as String)
 		String sliceInstanceName = execution.getVariable("servicename")
 		ANServiceInstance.setServiceInstanceName(sliceInstanceName)
-		String serviceType = jsonUtil.getJsonValue(execution.getVariable("sliceProfile"), "sST")
-                ANServiceInstance.setServiceType(execution.getVariable("sst"))
-		String serviceStatus = "deactivated"
+		ANServiceInstance.setServiceType(execution.getVariable("sst") as String)
 		ANServiceInstance.setOrchestrationStatus(serviceStatus)
-		String serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("sliceProfile"), "pLMNIdList")
+		String serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("sliceProfile"), "pLMNIdList") as String
 		ANServiceInstance.setServiceInstanceLocationId(serviceInstanceLocationid)
-		String serviceRole = "nssi"
 		ANServiceInstance.setServiceRole(serviceRole)
-		List<String> snssaiList = execution.getVariable("snssaiList")
+		List<String> snssaiList = jsonUtil.StringArrayToList(execution.getVariable("snssaiList") as String)
 		String snssai = snssaiList.get(0)
-		//ANServiceInstance.setEnvironmentContext(snssai)
-                ANServiceInstance.setEnvironmentContext(execution.getVariable("networkType"))
-                String modelInvariantUuid = execution.getVariable("modelInvariantUuid")
-                String modelUuid = execution.getVariable("modelUuid")
-                ANServiceInstance.setModelInvariantId(modelInvariantUuid)
-                ANServiceInstance.setModelVersionId(modelUuid)
+		ANServiceInstance.setEnvironmentContext(snssai)
+		String modelInvariantUuid = execution.getVariable("modelInvariantUuid")
+		String modelUuid = execution.getVariable("modelUuid") as String
+		ANServiceInstance.setModelInvariantId(modelInvariantUuid)
+		ANServiceInstance.setModelVersionId(modelUuid)
 		ANServiceInstance.setWorkloadContext("AN")
-		String serviceFunctionAn = jsonUtil.getJsonValue(execution.getVariable("sliceProfile"), "resourceSharingLevel")
+		String serviceFunctionAn = jsonUtil.getJsonValue(execution.getVariable("sliceProfile") as String, "resourceSharingLevel")
 		ANServiceInstance.setServiceFunction(serviceFunctionAn)
-		logger.debug("completed AN service instance build "+ ANServiceInstance.toString())
+		logger.debug("completed AN service instance build " + ANServiceInstance.toString())
 		//create RAN NF NSSI
-		ANNFServiceInstance.setServiceInstanceId(execution.getVariable("RANNFServiceInstanceId"))
-                String ANNF_nssiInstanceId = UUID.randomUUID().toString()
-                sliceInstanceName = "nssi_an_nf_"+ANNF_nssiInstanceId
+		ANNFServiceInstance.setServiceInstanceId(execution.getVariable("RANNFServiceInstanceId") as String)
+		sliceInstanceName = "nssi_"+execution.getVariable("ANNF_modelName")
 		ANNFServiceInstance.setServiceInstanceName(sliceInstanceName)
-		ANNFServiceInstance.setServiceType(execution.getVariable("sst"))
+		ANNFServiceInstance.setServiceType(execution.getVariable("sst") as String)
 		ANNFServiceInstance.setOrchestrationStatus(serviceStatus)
-		serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("ranNfSliceProfile"), "pLMNIdList")
+		serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("ranNfSliceProfile") as String, "pLMNIdList")
                 ANNFServiceInstance.setServiceInstanceLocationId(jsonUtil.StringArrayToList(serviceInstanceLocationid).get(0))
 		ANNFServiceInstance.setServiceRole(serviceRole)
-		snssaiList = execution.getVariable("snssaiList")
+		snssaiList = jsonUtil.StringArrayToList(execution.getVariable("snssaiList") as String)
 		snssai = snssaiList.get(0)
-		//ANNFServiceInstance.setEnvironmentContext(snssai)
-                ANNFServiceInstance.setEnvironmentContext(execution.getVariable("networkType"))
+		ANNFServiceInstance.setEnvironmentContext(snssai)
                 ANNFServiceInstance.setModelInvariantId(execution.getVariable("ANNF_modelInvariantUuid"))
                 ANNFServiceInstance.setModelVersionId(execution.getVariable("ANNF_modelUuid"))
 		ANNFServiceInstance.setWorkloadContext("AN_NF")
-		String serviceFunctionAnnf = jsonUtil.getJsonValue(execution.getVariable("ranNfSliceProfile"), "resourceSharingLevel")
+		serviceFunctionAnnf = jsonUtil.getJsonValue(execution.getVariable("ranNfSliceProfile") as String, "resourceSharingLevel")
 		ANNFServiceInstance.setServiceFunction(serviceFunctionAnnf)
 		logger.debug("completed AN service instance build "+ ANNFServiceInstance.toString())
 		
@@ -666,10 +675,10 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		try {
 	
 			AAIResourcesClient client = new AAIResourcesClient()
-			AAIResourceUri nssiServiceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(execution.getVariable("RANServiceInstanceId")))
+	                AAIResourceUri nssiServiceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId") as String).serviceSubscription(execution.getVariable("subscriptionServiceType") as String).serviceInstance(execution.getVariable("RANServiceInstanceId") as String))
 			client.create(nssiServiceUri, ANServiceInstance)
 	
-			AAIResourceUri nssiServiceUri1 = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(execution.getVariable("RANNFServiceInstanceId")))
+			AAIResourceUri nssiServiceUri1 = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId") as String).serviceSubscription(execution.getVariable("subscriptionServiceType") as String).serviceInstance(execution.getVariable("RANNFServiceInstanceId") as String))
 			client.create(nssiServiceUri1, ANNFServiceInstance)
 	
 		} catch (BpmnError e) {
@@ -680,7 +689,9 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
 		//end point update
-		createEndPointsInAai(execution)
+		if (!execution.getVariable("IsRANNfAlonePresent")) {
+			createEndPointsInAai(execution)
+		}
 	}
 	def prepareTnFhRequest = { DelegateExecution execution ->
 		logger.debug(Prefix+"prepareTnFhRequest method start")
@@ -804,64 +815,96 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 
 	def updateAairelationships = { DelegateExecution execution ->
 		logger.debug(Prefix + "updateAairelationships Start")
+		String serviceCategory = execution.getVariable("serviceCategory")
 		String msg = ""
-		try {
-			def ANNF_serviceInstanceId = execution.getVariable("RANNFServiceInstanceId")
-			def TNFH_serviceInstanceId = execution.getVariable("TNFH_NSSI")
-			def TNMH_serviceInstanceId = execution.getVariable("TNMH_NSSI")
-			def AN_profileInstanceId = execution.getVariable("sliceProfileId")
-			def AN_NSSI = execution.getVariable("RANServiceInstanceId")
-			def ANNF_profileInstanceId = execution.getVariable("ANNF_sliceProfileInstanceId")
-			def TNFH_profileInstanceId = execution.getVariable("TNFH_sliceProfileInstanceId")
-			def TNMH_profileInstanceId = execution.getVariable("TNMH_sliceProfileInstanceId")
-			String globalSubscriberId = execution.getVariable("globalSubscriberId")
-			String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+		if (execution.getVariable("IsRANNfAlonePresent")) {
+			try {
+				def ANNF_serviceInstanceId = execution.getVariable("RANNFServiceInstanceId")
+				def AN_profileInstanceId = execution.getVariable("sliceProfileId")
+                                def AN_NSSI = execution.getVariable("RANServiceInstanceId")
+				def ANNF_profileInstanceId = execution.getVariable("ANNF_sliceProfileInstanceId")
+				String globalSubscriberId = execution.getVariable("globalSubscriberId")
+				String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
 
-			Relationship ANNF_relationship = new Relationship()
-			Relationship TNFH_relationship = new Relationship()
-			Relationship TNMH_relationship = new Relationship()
-			
-			String ANNF_relatedLink = "aai/v21/business/customers/customer/${globalSubscriberId}/service-subscriptions/service-subscription/${subscriptionServiceType}/service-instances/service-instance/${ANNF_profileInstanceId}"
-			String TNFH_relatedLink = "aai/v21/business/customers/customer/${globalSubscriberId}/service-subscriptions/service-subscription/${subscriptionServiceType}/service-instances/service-instance/${TNFH_profileInstanceId}"
-			String TNMH_relatedLink = "aai/v21/business/customers/customer/${globalSubscriberId}/service-subscriptions/service-subscription/${subscriptionServiceType}/service-instances/service-instance/${TNMH_profileInstanceId}"
-			
-			String ANNF_NSSI_relatedLink = "aai/v21/business/customers/customer/${globalSubscriberId}/service-subscriptions/service-subscription/${subscriptionServiceType}/service-instances/service-instance/${ANNF_serviceInstanceId}"
-			String TNFH_NSSI_relatedLink = "aai/v21/business/customers/customer/${globalSubscriberId}/service-subscriptions/service-subscription/${subscriptionServiceType}/service-instances/service-instance/${TNFH_serviceInstanceId}"
-			String TNMH_NSSI_relatedLink = "aai/v21/business/customers/customer/${globalSubscriberId}/service-subscriptions/service-subscription/${subscriptionServiceType}/service-instances/service-instance/${TNMH_serviceInstanceId}"
-			
-			ANNF_relationship.setRelatedLink(ANNF_relatedLink)
-			ANNF_relationship.setRelatedTo("service-instance")
-			ANNF_relationship.setRelationshipLabel("org.onap.relationships.inventory.ComposedOf")
-			TNFH_relationship.setRelatedLink(TNFH_relatedLink)
-			TNFH_relationship.setRelatedTo("service-instance")
-			TNFH_relationship.setRelationshipLabel("org.onap.relationships.inventory.ComposedOf")
-			TNMH_relationship.setRelatedLink(TNMH_relatedLink)
-			TNMH_relationship.setRelatedTo("service-instance")
-			TNMH_relationship.setRelationshipLabel("org.onap.relationships.inventory.ComposedOf")
-			
-			// create SliceProfile and NSSI relationship in AAI
-			anNssmfUtils.createRelationShipInAAI(execution, ANNF_relationship,ANNF_serviceInstanceId)
-			anNssmfUtils.createRelationShipInAAI(execution, TNFH_relationship,TNFH_serviceInstanceId)
-			anNssmfUtils.createRelationShipInAAI(execution, TNMH_relationship,TNMH_serviceInstanceId)
-			anNssmfUtils.createRelationShipInAAI(execution, ANNF_relationship,AN_profileInstanceId)
-			anNssmfUtils.createRelationShipInAAI(execution, TNFH_relationship,AN_profileInstanceId)
-			anNssmfUtils.createRelationShipInAAI(execution, TNMH_relationship,AN_profileInstanceId)
-			
-			//create AN NSSI and ANNF,TNFH,TNMH relationship in AAI
-			ANNF_relationship.setRelatedLink(ANNF_NSSI_relatedLink)
-			TNFH_relationship.setRelatedLink(TNFH_NSSI_relatedLink)
-			TNMH_relationship.setRelatedLink(TNMH_NSSI_relatedLink)
-			anNssmfUtils.createRelationShipInAAI(execution, ANNF_relationship,AN_NSSI)
-			anNssmfUtils.createRelationShipInAAI(execution, TNFH_relationship,AN_NSSI)
-			anNssmfUtils.createRelationShipInAAI(execution, TNMH_relationship,AN_NSSI)
+				Relationship ANNF_relationship = new Relationship()
+				String ANNF_relatedLink = "aai/v21/business/customers/customer/${globalSubscriberId}/service-subscriptions/service-subscription/${subscriptionServiceType}/service-instances/service-instance/${ANNF_profileInstanceId}"
+				String ANNF_NSSI_relatedLink = "aai/v21/business/customers/customer/${globalSubscriberId}/service-subscriptions/service-subscription/${subscriptionServiceType}/service-instances/service-instance/${ANNF_serviceInstanceId}"
+				ANNF_relationship.setRelatedLink(ANNF_relatedLink)
+				ANNF_relationship.setRelatedTo("service-instance")
+				ANNF_relationship.setRelationshipLabel("org.onap.relationships.inventory.ComposedOf")
+				anNssmfUtils.createRelationShipInAAI(execution, ANNF_relationship, ANNF_serviceInstanceId)
+				anNssmfUtils.createRelationShipInAAI(execution, ANNF_relationship, AN_profileInstanceId)
+				ANNF_relationship.setRelatedLink(ANNF_NSSI_relatedLink)
+				anNssmfUtils.createRelationShipInAAI(execution, ANNF_relationship, AN_NSSI)
 
-		} catch (BpmnError e) {
-			throw e
-		} catch (Exception ex) {
+			} catch (BpmnError e) {
+				throw e
+			} catch (Exception ex) {
 
-			msg = "Exception in DoCreateE2EServiceInstance.createCustomRelationship. " + ex.getMessage()
-			logger.info(msg)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+				msg = "Exception in DoCreateE2EServiceInstance.createCustomRelationship. " + ex.getMessage()
+				logger.info(msg)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+			}
+		}
+		else {
+			try {
+				def ANNF_serviceInstanceId = execution.getVariable("RANNFServiceInstanceId")
+				def TNFH_serviceInstanceId = execution.getVariable("TNFH_NSSI")
+				def TNMH_serviceInstanceId = execution.getVariable("TNMH_NSSI")
+				def AN_profileInstanceId = execution.getVariable("sliceProfileId")
+				def AN_NSSI = execution.getVariable("RANServiceInstanceId")
+				def ANNF_profileInstanceId = execution.getVariable("ANNF_sliceProfileInstanceId")
+				def TNFH_profileInstanceId = execution.getVariable("TNFH_sliceProfileInstanceId")
+				def TNMH_profileInstanceId = execution.getVariable("TNMH_sliceProfileInstanceId")
+				String globalSubscriberId = execution.getVariable("globalSubscriberId")
+				String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+
+				Relationship ANNF_relationship = new Relationship()
+				Relationship TNFH_relationship = new Relationship()
+				Relationship TNMH_relationship = new Relationship()
+
+				String ANNF_relatedLink = "aai/v21/business/customers/customer/${globalSubscriberId}/service-subscriptions/service-subscription/${subscriptionServiceType}/service-instances/service-instance/${ANNF_profileInstanceId}"
+				String TNFH_relatedLink = "aai/v21/business/customers/customer/${globalSubscriberId}/service-subscriptions/service-subscription/${subscriptionServiceType}/service-instances/service-instance/${TNFH_profileInstanceId}"
+				String TNMH_relatedLink = "aai/v21/business/customers/customer/${globalSubscriberId}/service-subscriptions/service-subscription/${subscriptionServiceType}/service-instances/service-instance/${TNMH_profileInstanceId}"
+
+				String ANNF_NSSI_relatedLink = "aai/v21/business/customers/customer/${globalSubscriberId}/service-subscriptions/service-subscription/${subscriptionServiceType}/service-instances/service-instance/${ANNF_serviceInstanceId}"
+				String TNFH_NSSI_relatedLink = "aai/v21/business/customers/customer/${globalSubscriberId}/service-subscriptions/service-subscription/${subscriptionServiceType}/service-instances/service-instance/${TNFH_serviceInstanceId}"
+				String TNMH_NSSI_relatedLink = "aai/v21/business/customers/customer/${globalSubscriberId}/service-subscriptions/service-subscription/${subscriptionServiceType}/service-instances/service-instance/${TNMH_serviceInstanceId}"
+
+				ANNF_relationship.setRelatedLink(ANNF_relatedLink)
+				ANNF_relationship.setRelatedTo("service-instance")
+				ANNF_relationship.setRelationshipLabel("org.onap.relationships.inventory.ComposedOf")
+				TNFH_relationship.setRelatedLink(TNFH_relatedLink)
+				TNFH_relationship.setRelatedTo("service-instance")
+				TNFH_relationship.setRelationshipLabel("org.onap.relationships.inventory.ComposedOf")
+				TNMH_relationship.setRelatedLink(TNMH_relatedLink)
+				TNMH_relationship.setRelatedTo("service-instance")
+				TNMH_relationship.setRelationshipLabel("org.onap.relationships.inventory.ComposedOf")
+
+				// create SliceProfile and NSSI relationship in AAI
+				anNssmfUtils.createRelationShipInAAI(execution, ANNF_relationship, ANNF_serviceInstanceId)
+				anNssmfUtils.createRelationShipInAAI(execution, TNFH_relationship, TNFH_serviceInstanceId)
+				anNssmfUtils.createRelationShipInAAI(execution, TNMH_relationship, TNMH_serviceInstanceId)
+				anNssmfUtils.createRelationShipInAAI(execution, ANNF_relationship, AN_profileInstanceId)
+				anNssmfUtils.createRelationShipInAAI(execution, TNFH_relationship, AN_profileInstanceId)
+				anNssmfUtils.createRelationShipInAAI(execution, TNMH_relationship, AN_profileInstanceId)
+
+				//create AN NSSI and ANNF,TNFH,TNMH relationship in AAI
+				ANNF_relationship.setRelatedLink(ANNF_NSSI_relatedLink)
+				TNFH_relationship.setRelatedLink(TNFH_NSSI_relatedLink)
+				TNMH_relationship.setRelatedLink(TNMH_NSSI_relatedLink)
+				anNssmfUtils.createRelationShipInAAI(execution, ANNF_relationship, AN_NSSI)
+				anNssmfUtils.createRelationShipInAAI(execution, TNFH_relationship, AN_NSSI)
+				anNssmfUtils.createRelationShipInAAI(execution, TNMH_relationship, AN_NSSI)
+
+			} catch (BpmnError e) {
+				throw e
+			} catch (Exception ex) {
+
+				msg = "Exception in DoCreateE2EServiceInstance.createCustomRelationship. " + ex.getMessage()
+				logger.info(msg)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+			}
 		}
 	}
 	
