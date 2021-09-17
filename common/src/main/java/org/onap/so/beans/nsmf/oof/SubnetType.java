@@ -26,6 +26,8 @@ import org.onap.so.beans.nsmf.NetworkType;
 public enum SubnetType {
     AN("AN", NetworkType.ACCESS),
 
+    AN_NF("AN_NF", NetworkType.ACCESS),
+
     CN("CN", NetworkType.CORE),
 
     TN_FH("TN_FH", NetworkType.TRANSPORT),

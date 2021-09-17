@@ -67,6 +67,8 @@ public class SliceTaskParamsAdapter implements Serializable {
 
     private SliceTaskInfo<SliceProfileAdapter> anSliceTaskInfo = new SliceTaskInfo<>();
 
+    private SliceTaskInfo<SliceProfileAdapter> anNFSliceTaskInfo = new SliceTaskInfo<>();
+
     @SuppressWarnings("unchecked")
     public void convertFromJson(String jsonString) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
@@ -100,6 +102,10 @@ public class SliceTaskParamsAdapter implements Serializable {
         SliceProfileAdapter anSliceProfile = mapper.readValue(
                 mapper.writeValueAsString(replaceHeader(paramMap, "SliceProfile.AN.")), SliceProfileAdapter.class);
         this.anSliceTaskInfo.setSliceProfile(anSliceProfile);
+
+        SliceProfileAdapter anNFSliceProfile = mapper.readValue(
+                mapper.writeValueAsString(replaceHeader(paramMap, "SliceProfile.AN.NF")), SliceProfileAdapter.class);
+        this.anNFSliceTaskInfo.setSliceProfile(anNFSliceProfile);
 
         this.tnBHSliceTaskInfo.setSuggestNssiId(paramMap.get("TN.BH.SuggestNSSIId"));
         this.tnBHSliceTaskInfo.setSuggestNssiName(paramMap.get("TN.BH.SuggestNSSIName"));
@@ -135,6 +141,13 @@ public class SliceTaskParamsAdapter implements Serializable {
         this.anSliceTaskInfo.setStatus(paramMap.get("AN.status"));
         this.anSliceTaskInfo.setStatusDescription(paramMap.get("AN.statusDescription"));
         this.anSliceTaskInfo.setScriptName(paramMap.get("AN.ScriptName"));
+
+        this.anNFSliceTaskInfo.setSuggestNssiId(paramMap.get("AN.NF.SuggestNSSIId"));
+        this.anNFSliceTaskInfo.setSuggestNssiName(paramMap.get("AN.NF.SuggestNSSIName"));
+        this.anNFSliceTaskInfo.setProgress(paramMap.get("AN.NF.progress"));
+        this.anNFSliceTaskInfo.setStatus(paramMap.get("AN.NF.status"));
+        this.anNFSliceTaskInfo.setStatusDescription(paramMap.get("AN.NF.statusDescription"));
+        this.anNFSliceTaskInfo.setScriptName(paramMap.get("AN.NF.ScriptName"));
     }
 
     public String convertToJson() {
@@ -153,6 +166,11 @@ public class SliceTaskParamsAdapter implements Serializable {
         for (Map.Entry<String, Object> entry : sliceProfileAn.entrySet()) {
             String value = entry.getValue() == null ? "" : entry.getValue().toString();
             jsonObject.addProperty("SliceProfile.AN." + entry.getKey(), value);
+        }
+        Map<String, Object> sliceProfileAnNF = bean2Map(anNFSliceTaskInfo.getSliceProfile());
+        for (Map.Entry<String, Object> entry : sliceProfileAnNF.entrySet()) {
+            String value = entry.getValue() == null ? "" : entry.getValue().toString();
+            jsonObject.addProperty("SliceProfile.AN.NF" + entry.getKey(), value);
         }
         Map<String, Object> sliceProfileCn = bean2Map(cnSliceTaskInfo.getSliceProfile());
         for (Map.Entry<String, Object> entry : sliceProfileCn.entrySet()) {
@@ -208,6 +226,13 @@ public class SliceTaskParamsAdapter implements Serializable {
         jsonObject.addProperty("AN.status", anSliceTaskInfo.getStatus());
         jsonObject.addProperty("AN.statusDescription", anSliceTaskInfo.getStatusDescription());
         jsonObject.addProperty("AN.ScriptName", anSliceTaskInfo.getScriptName());
+
+        jsonObject.addProperty("AN.NF.SuggestNSSIId", anNFSliceTaskInfo.getSuggestNssiId());
+        jsonObject.addProperty("AN.NF.SuggestNSSIName", anNFSliceTaskInfo.getSuggestNssiName());
+        jsonObject.addProperty("AN.NF.progress", anNFSliceTaskInfo.getProgress());
+        jsonObject.addProperty("AN.NF.status", anNFSliceTaskInfo.getStatus());
+        jsonObject.addProperty("AN.NF.statusDescription", anNFSliceTaskInfo.getStatusDescription());
+        jsonObject.addProperty("AN.NF.ScriptName", anNFSliceTaskInfo.getScriptName());
 
         return jsonObject.toString();
     }
@@ -266,3 +291,4 @@ public class SliceTaskParamsAdapter implements Serializable {
         return sliceProfileMap;
     }
 }
+

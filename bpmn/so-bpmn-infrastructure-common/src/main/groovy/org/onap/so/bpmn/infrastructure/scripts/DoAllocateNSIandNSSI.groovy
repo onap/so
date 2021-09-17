@@ -53,6 +53,7 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import static org.apache.commons.lang3.StringUtils.isBlank
+import org.onap.aaiclient.client.aai.AAIObjectType
 
 class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
@@ -75,6 +76,13 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         String msg = ""
         logger.trace("Enter preProcessRequest()")
         Map<String, Object> nssiMap = new HashMap<>()
+        int nsstCount=execution.getVariable("nsstCount")
+        if(nsstCount==5){
+            execution.setVariable("processFHandMH", true)
+        }
+        else{
+            execution.setVariable("processFHandMH", false)
+        }
         execution.setVariable("nssiMap", nssiMap)
         boolean isMoreNSSTtoProcess = true
         execution.setVariable("isMoreNSSTtoProcess", isMoreNSSTtoProcess)
@@ -955,4 +963,464 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         return rspi
     }
 
+    public void createTNEndPoints(DelegateExecution execution) {
+        String type = "endpoint"
+        String function = "transport_EP"
+        int prefixLength = 24
+        String addressFamily = "ipv4"
+        //BH RAN end point update
+        //set BH end point
+        String sliceParams = execution.getVariable("sliceParams")
+        List<String> BH_endPoints = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(sliceParams, "endPoints"))
+        logger.debug("BH end points list : "+BH_endPoints)
+        if(BH_endPoints.empty) {
+            msg = "End point info is empty"
+            logger.debug(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+        }
+//        String bh_endpoint = execution.getVariable("bh_endpoint")
+        String bh_routeId = UUID.randomUUID().toString()
+        execution.setVariable("tranportEp_ID_bh", bh_routeId)
+        String role = "CU"
+        String CU_IpAddress = jsonUtil.getJsonValue(bh_endpoint, "IpAddress")
+        String LogicalLinkId = jsonUtil.getJsonValue(bh_endpoint, "LogicalLinkId")
+        String nextHopInfo = jsonUtil.getJsonValue(bh_endpoint, "nextHopInfo")
+        NetworkRoute bh_ep = new NetworkRoute()
+        bh_ep.setRouteId(bh_routeId)
+        bh_ep.setFunction(function)
+        bh_ep.setRole(role)
+        bh_ep.setType(type)
+        bh_ep.setIpAddress(CU_IpAddress)
+        bh_ep.setLogicalInterfaceId(LogicalLinkId)
+        bh_ep.setNextHop(nextHopInfo)
+        bh_ep.setPrefixLength(prefixLength)
+        bh_ep.setAddressFamily(addressFamily)
+        //FH RAN end points update
+        //RU
+        String RU_routeId = UUID.randomUUID().toString()
+        execution.setVariable("tranportEp_ID_RU", RU_routeId)
+        role = "RU"
+        NetworkRoute RU_ep = new NetworkRoute()
+        RU_ep.setRouteId(RU_routeId)
+        RU_ep.setFunction(function)
+        RU_ep.setRole(role)
+        RU_ep.setType(type)
+        RU_ep.setIpAddress("192.168.100.4")
+        RU_ep.setLogicalInterfaceId("1234")
+        RU_ep.setNextHop("Host1")
+        RU_ep.setPrefixLength(prefixLength)
+        RU_ep.setAddressFamily(addressFamily)
+        //DU Ingress
+        String DUIN_routeId = UUID.randomUUID().toString()
+        execution.setVariable("tranportEp_ID_DUIN", DUIN_routeId)
+        role = "DU"
+        NetworkRoute DU_ep = new NetworkRoute()
+        DU_ep.setRouteId(DUIN_routeId)
+        DU_ep.setFunction(function)
+        DU_ep.setRole(role)
+        DU_ep.setType(type)
+        DU_ep.setIpAddress("192.168.100.5")
+        DU_ep.setLogicalInterfaceId("1234")
+        DU_ep.setNextHop("Host2")
+        DU_ep.setPrefixLength(prefixLength)
+        DU_ep.setAddressFamily(addressFamily)
+        //MH RAN end point update
+        //DUEG
+        String DUEG_routeId = UUID.randomUUID().toString()
+        execution.setVariable("tranportEp_ID_DUEG", DUEG_routeId)
+        NetworkRoute DUEG_ep = new NetworkRoute()
+        DUEG_ep.setRouteId(DUEG_routeId)
+        DUEG_ep.setFunction(function)
+        DUEG_ep.setRole(role)
+        DUEG_ep.setType(type)
+        DUEG_ep.setIpAddress("192.168.100.5")
+        DUEG_ep.setLogicalInterfaceId("1234")
+        DUEG_ep.setPrefixLength(prefixLength)
+        DUEG_ep.setAddressFamily(addressFamily)
+        DUEG_ep.setNextHop("Host3")
+        //CUIN
+        String CUIN_routeId = UUID.randomUUID().toString()
+        execution.setVariable("tranportEp_ID_CUIN", CUIN_routeId)
+        NetworkRoute CUIN_ep = new NetworkRoute()
+        CUIN_ep.setRouteId(CUIN_routeId)
+        CUIN_ep.setFunction(function)
+        CUIN_ep.setRole(role)
+        CUIN_ep.setType(type)
+        CUIN_ep.setIpAddress("192.168.100.6")
+        CUIN_ep.setLogicalInterfaceId("1234")
+        CUIN_ep.setNextHop("Host4")
+        CUIN_ep.setPrefixLength(prefixLength)
+        CUIN_ep.setAddressFamily(addressFamily)
+        try {
+            AAIResourcesClient client = new AAIResourcesClient()
+            logger.debug("creating bh endpoint . ID : "+bh_routeId+" node details : "+bh_ep.toString())
+            AAIResourceUri networkRouteUri = AAIUriFactory.createResourceUri( new AAIObjectType(AAINamespaceConstants.NETWORK, NetworkRoute.class), bh_routeId)
+            client.create(networkRouteUri, bh_ep)
+            logger.debug("creating RU endpoint . ID : "+RU_routeId+" node details : "+RU_ep.toString())
+            networkRouteUri = AAIUriFactory.createResourceUri( new AAIObjectType(AAINamespaceConstants.NETWORK, NetworkRoute.class), RU_routeId)
+            client.create(networkRouteUri, RU_ep)
+            logger.debug("creating DUIN endpoint . ID : "+DUIN_routeId+" node details : "+DU_ep.toString())
+            networkRouteUri = AAIUriFactory.createResourceUri( new AAIObjectType(AAINamespaceConstants.NETWORK, NetworkRoute.class), DUIN_routeId)
+            client.create(networkRouteUri, DU_ep)
+            logger.debug("creating DUEG endpoint . ID : "+DUEG_routeId+" node details : "+DUEG_ep.toString())
+            networkRouteUri = AAIUriFactory.createResourceUri( new AAIObjectType(AAINamespaceConstants.NETWORK, NetworkRoute.class), DUEG_routeId)
+            client.create(networkRouteUri, DUEG_ep)
+            logger.debug("creating CUIN endpoint . ID : "+CUIN_routeId+" node details : "+CUIN_ep.toString())
+            networkRouteUri = AAIUriFactory.createResourceUri( new AAIObjectType(AAINamespaceConstants.NETWORK, NetworkRoute.class), CUIN_routeId)
+            client.create(networkRouteUri, CUIN_ep)
+            //relationship b/w bh_ep and RAN NSSI
+            def AN_NSSI = execution.getVariable("RANServiceInstanceId")
+            Relationship relationship = new Relationship()
+            String relatedLink = "aai/v21/network/network-routes/network-route/${bh_routeId}"
+            relationship.setRelatedLink(relatedLink)
+            relationship.setRelatedTo("network-route")
+            relationship.setRelationshipLabel("org.onap.relationships.inventory.ComposedOf")
+            anNssmfUtils.createRelationShipInAAI(execution, relationship, AN_NSSI)
+            def ANNF_serviceInstanceId = execution.getVariable("RANNFServiceInstanceId")
+            relatedLink = "aai/v21/network/network-routes/network-route/${RU_routeId}"
+            relationship.setRelatedLink(relatedLink)
+            anNssmfUtils.createRelationShipInAAI(execution, relationship, ANNF_serviceInstanceId)
+            relatedLink = "aai/v21/network/network-routes/network-route/${DUIN_routeId}"
+            relationship.setRelatedLink(relatedLink)
+            anNssmfUtils.createRelationShipInAAI(execution, relationship, ANNF_serviceInstanceId)
+            relatedLink = "aai/v21/network/network-routes/network-route/${DUEG_routeId}"
+            relationship.setRelatedLink(relatedLink)
+            anNssmfUtils.createRelationShipInAAI(execution, relationship, ANNF_serviceInstanceId)
+            relatedLink = "aai/v21/network/network-routes/network-route/${CUIN_routeId}"
+            relationship.setRelatedLink(relatedLink)
+            anNssmfUtils.createRelationShipInAAI(execution, relationship, ANNF_serviceInstanceId)
+        } catch (BpmnError e) {
+            throw e
+        } catch (Exception ex) {
+            String msg = "Exception in createEndPointsInAai " + ex.getMessage()
+            logger.info(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+    }
+
+    /**
+     * create TN Slice Profile Instance
+     * @param execution
+     */
+    void createTnFHSliceProfileInstance(DelegateExecution execution) {
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
+        String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+
+        String oStatus = "deactivated"
+
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
+        SliceTaskInfo<SliceProfileAdapter> sliceTaskInfo = sliceParams.tnFHSliceTaskInfo
+        String serviceInstanceId = UUID.randomUUID().toString()
+
+        sliceTaskInfo.setSliceInstanceId(serviceInstanceId)
+        String sliceProfileName = "tn_fh" + sliceParams.serviceName
+        //execution.setVariable("cnSliceProfileInstanceId", serviceInstanceId) //todo:
+
+        // create slice profile
+        ServiceInstance rspi = createSliceProfileInstance(sliceTaskInfo, sliceProfileName, oStatus)
+
+        //timestamp format YYYY-MM-DD hh:mm:ss
+        rspi.setCreatedAt(new Date(System.currentTimeMillis()).format("yyyy-MM-dd HH:mm:ss", TimeZone.getDefault()))
+
+        execution.setVariable("communicationServiceInstance", rspi)
+
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                .customer(globalSubscriberId)
+                .serviceSubscription(subscriptionServiceType)
+                .serviceInstance(serviceInstanceId))
+        client.create(uri, rspi)
+
+        execution.setVariable("sliceTaskParams", sliceParams)
+    }
+
+    /**
+     * create Tn Slice Profile
+     * @param execution
+     */
+    void createTnFHSliceProfile(DelegateExecution execution) {
+
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
+        String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
+        SliceTaskInfo<SliceProfileAdapter> sliceTaskInfo = sliceParams.tnFHSliceTaskInfo
+
+        SliceProfileAdapter tnSliceProfile = sliceTaskInfo.sliceProfile
+        String profileId = UUID.randomUUID().toString()
+        tnSliceProfile.setSliceProfileId(profileId)
+
+        SliceProfile sliceProfile = new SliceProfile()
+        sliceProfile.setProfileId(profileId)
+        sliceProfile.setLatency(tnSliceProfile.latency)
+        sliceProfile.setMaxBandwidth(tnSliceProfile.maxBandwidth)
+        sliceProfile.setJitter(tnSliceProfile.jitter)
+
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                .customer(globalSubscriberId)
+                .serviceSubscription(subscriptionServiceType)
+                .serviceInstance(sliceTaskInfo.sliceInstanceId)
+                .sliceProfile(profileId))
+        client.create(uri, sliceProfile)
+
+        execution.setVariable("sliceTaskParams", sliceParams)
+    }
+
+    /**
+     * prepare AllocateCnNssi
+     * @param execution
+     */
+    void prepareAllocateTnFHNssi(DelegateExecution execution) {
+
+        //todo:
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+        SliceTaskInfo<SliceProfileAdapter> sliceTaskInfo = sliceParams.tnFHSliceTaskInfo
+
+        NssmfAdapterNBIRequest nbiRequest = new NssmfAdapterNBIRequest()
+
+        AllocateTnNssi allocateTnNssi = new AllocateTnNssi()
+        allocateTnNssi.setNssiId(sliceTaskInfo.suggestNssiId)
+        //todo: AllocateTnNssi
+        //todo: endPointId -> set into tn
+        List<TransportSliceNetwork> transportSliceNetworks = new ArrayList<>()
+        TransportSliceNetwork transportSliceNetwork = new TransportSliceNetwork()
+        List<ConnectionLink> connectionLinks = new ArrayList<>()
+        ConnectionLink connectionLink = new ConnectionLink()
+        connectionLink.setTransportEndpointA(execution.getVariable("tranportEp_ID_RU"))
+        connectionLink.setTransportEndpointB(execution.getVariable("tranportEp_ID_DUIN"))
+        connectionLinks.add(connectionLink)
+        transportSliceNetwork.setConnectionLinks(connectionLinks)
+        transportSliceNetworks.add(transportSliceNetwork)
+        allocateTnNssi.setTransportSliceNetworks(transportSliceNetworks)
+
+        allocateTnNssi.setNetworkSliceInfos()
+        allocateTnNssi.setSliceProfile(sliceTaskInfo.sliceProfile.trans2TnProfile())
+        NsiInfo nsiInfo = new NsiInfo()
+        nsiInfo.setNsiId(sliceParams.suggestNsiId)
+        nsiInfo.setNsiName(sliceParams.suggestNsiName)
+        allocateTnNssi.setNsiInfo(nsiInfo)
+
+        //allocateTnNssi.networkSliceInfos
+
+        EsrInfo esrInfo = new EsrInfo()
+        esrInfo.setVendor(sliceTaskInfo.getVendor())
+        esrInfo.setNetworkType(sliceTaskInfo.getNetworkType())
+
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
+        String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+
+        ServiceInfo serviceInfo = new ServiceInfo()
+        serviceInfo.globalSubscriberId = globalSubscriberId
+        serviceInfo.subscriptionServiceType = subscriptionServiceType
+        serviceInfo.nsiId = sliceParams.suggestNsiId
+        serviceInfo.serviceInvariantUuid = sliceTaskInfo.NSSTInfo.invariantUUID
+        serviceInfo.serviceUuid = sliceTaskInfo.NSSTInfo.UUID
+        serviceInfo.nssiId = sliceTaskInfo.suggestNssiId
+        serviceInfo.sST = sliceTaskInfo.sliceProfile.sST ?: sliceParams.serviceProfile.get("sST")
+        serviceInfo.nssiName = "nssi_tn_fh_" + execution.getVariable("sliceServiceInstanceName")
+
+        nbiRequest.setServiceInfo(serviceInfo)
+        nbiRequest.setEsrInfo(esrInfo)
+        nbiRequest.setAllocateTnNssi(allocateTnNssi)
+
+        execution.setVariable("TnFHAllocateNssiNbiRequest", nbiRequest)
+        execution.setVariable("tnFHSliceTaskInfo", sliceTaskInfo)
+        execution.setVariable("tnFHSubnetType", SubnetType.TN_BH)
+    }
+
+    /**
+     * Update relationship between
+     * 1. NSI and NSSI
+     * 2. Slice Profile and Service Profile
+     * 3. SliceProfile and NSSI
+     *
+     * @param execution
+     */
+    public void updateTnFHRelationship(DelegateExecution execution) {
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
+        NssiResponse result = execution.getVariable("tnFHNssiAllocateResult") as NssiResponse
+        String nssiId = result.getNssiId()
+        String nsiId = sliceParams.getSuggestNsiId()
+        String sliceProfileInstanceId = sliceParams.tnFHSliceTaskInfo.sliceInstanceId
+        String serviceProfileInstanceId = sliceParams.serviceId
+        //nsi id
+
+        updateRelationship(execution, nsiId, nssiId)
+
+        updateRelationship(execution, serviceProfileInstanceId, sliceProfileInstanceId)
+
+        updateRelationship(execution,sliceProfileInstanceId, nssiId)
+
+        sliceParams.tnFHSliceTaskInfo.suggestNssiId = nssiId
+        execution.setVariable("sliceTaskParams", sliceParams)
+    }
+
+    /**
+     * create TN Slice Profile Instance
+     * @param execution
+     */
+    void createTnMHSliceProfileInstance(DelegateExecution execution) {
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
+        String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+
+        String oStatus = "deactivated"
+
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
+        SliceTaskInfo<SliceProfileAdapter> sliceTaskInfo = sliceParams.tnMHSliceTaskInfo
+        String serviceInstanceId = UUID.randomUUID().toString()
+
+        sliceTaskInfo.setSliceInstanceId(serviceInstanceId)
+        String sliceProfileName = "tn_mh_" + sliceParams.serviceName
+        //execution.setVariable("cnSliceProfileInstanceId", serviceInstanceId) //todo:
+
+        // create slice profile
+        ServiceInstance rspi = createSliceProfileInstance(sliceTaskInfo, sliceProfileName, oStatus)
+
+        //timestamp format YYYY-MM-DD hh:mm:ss
+        rspi.setCreatedAt(new Date(System.currentTimeMillis()).format("yyyy-MM-dd HH:mm:ss", TimeZone.getDefault()))
+
+        execution.setVariable("communicationServiceInstance", rspi)
+
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                .customer(globalSubscriberId)
+                .serviceSubscription(subscriptionServiceType)
+                .serviceInstance(serviceInstanceId))
+        client.create(uri, rspi)
+
+        execution.setVariable("sliceTaskParams", sliceParams)
+    }
+
+    /**
+     * create Tn Slice Profile
+     * @param execution
+     */
+    void createTnMHSliceProfile(DelegateExecution execution) {
+
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
+        String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
+        SliceTaskInfo<SliceProfileAdapter> sliceTaskInfo = sliceParams.tnMHSliceTaskInfo
+
+        SliceProfileAdapter tnSliceProfile = sliceTaskInfo.sliceProfile
+        String profileId = UUID.randomUUID().toString()
+        tnSliceProfile.setSliceProfileId(profileId)
+
+        SliceProfile sliceProfile = new SliceProfile()
+        sliceProfile.setProfileId(profileId)
+        sliceProfile.setLatency(tnSliceProfile.latency)
+        sliceProfile.setMaxBandwidth(tnSliceProfile.maxBandwidth)
+        sliceProfile.setJitter(tnSliceProfile.jitter)
+
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                .customer(globalSubscriberId)
+                .serviceSubscription(subscriptionServiceType)
+                .serviceInstance(sliceTaskInfo.sliceInstanceId)
+                .sliceProfile(profileId))
+        client.create(uri, sliceProfile)
+
+        execution.setVariable("sliceTaskParams", sliceParams)
+    }
+
+    /**
+     * prepare AllocateCnNssi
+     * @param execution
+     */
+    void prepareAllocateTnMHNssi(DelegateExecution execution) {
+
+        //todo:
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+        SliceTaskInfo<SliceProfileAdapter> sliceTaskInfo = sliceParams.tnMHSliceTaskInfo
+
+        NssmfAdapterNBIRequest nbiRequest = new NssmfAdapterNBIRequest()
+
+        AllocateTnNssi allocateTnNssi = new AllocateTnNssi()
+        allocateTnNssi.setNssiId(sliceTaskInfo.suggestNssiId)
+        //todo: AllocateTnNssi
+        //todo: endPointId -> set into tn
+        List<TransportSliceNetwork> transportSliceNetworks = new ArrayList<>()
+        TransportSliceNetwork transportSliceNetwork = new TransportSliceNetwork()
+        List<ConnectionLink> connectionLinks = new ArrayList<>()
+        ConnectionLink connectionLink = new ConnectionLink()
+        connectionLink.setTransportEndpointA(execution.getVariable("tranportEp_ID_DUEG"))
+        connectionLink.setTransportEndpointB(execution.getVariable("tranportEp_ID_CUIN"))
+        connectionLinks.add(connectionLink)
+        transportSliceNetwork.setConnectionLinks(connectionLinks)
+        transportSliceNetworks.add(transportSliceNetwork)
+        allocateTnNssi.setTransportSliceNetworks(transportSliceNetworks)
+
+        allocateTnNssi.setNetworkSliceInfos()
+        allocateTnNssi.setSliceProfile(sliceTaskInfo.sliceProfile.trans2TnProfile())
+        NsiInfo nsiInfo = new NsiInfo()
+        nsiInfo.setNsiId(sliceParams.suggestNsiId)
+        nsiInfo.setNsiName(sliceParams.suggestNsiName)
+        allocateTnNssi.setNsiInfo(nsiInfo)
+
+        //allocateTnNssi.networkSliceInfos
+
+        EsrInfo esrInfo = new EsrInfo()
+        esrInfo.setVendor(sliceTaskInfo.getVendor())
+        esrInfo.setNetworkType(sliceTaskInfo.getNetworkType())
+
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
+        String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+
+        ServiceInfo serviceInfo = new ServiceInfo()
+        serviceInfo.globalSubscriberId = globalSubscriberId
+        serviceInfo.subscriptionServiceType = subscriptionServiceType
+        serviceInfo.nsiId = sliceParams.suggestNsiId
+        serviceInfo.serviceInvariantUuid = sliceTaskInfo.NSSTInfo.invariantUUID
+        serviceInfo.serviceUuid = sliceTaskInfo.NSSTInfo.UUID
+        serviceInfo.nssiId = sliceTaskInfo.suggestNssiId
+        serviceInfo.sST = sliceTaskInfo.sliceProfile.sST ?: sliceParams.serviceProfile.get("sST")
+        serviceInfo.nssiName = "nssi_tn_bh_" + execution.getVariable("sliceServiceInstanceName")
+
+        nbiRequest.setServiceInfo(serviceInfo)
+        nbiRequest.setEsrInfo(esrInfo)
+        nbiRequest.setAllocateTnNssi(allocateTnNssi)
+
+        execution.setVariable("TnMHAllocateNssiNbiRequest", nbiRequest)
+        execution.setVariable("tnMHSliceTaskInfo", sliceTaskInfo)
+        execution.setVariable("tnMHSubnetType", SubnetType.TN_BH)
+    }
+
+    /**
+     * Update relationship between
+     * 1. NSI and NSSI
+     * 2. Slice Profile and Service Profile
+     * 3. SliceProfile and NSSI
+     *
+     * @param execution
+     */
+    public void updateTnMHRelationship(DelegateExecution execution) {
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
+        NssiResponse result = execution.getVariable("tnMHNssiAllocateResult") as NssiResponse
+        String nssiId = result.getNssiId()
+        String nsiId = sliceParams.getSuggestNsiId()
+        String sliceProfileInstanceId = sliceParams.tnMHSliceTaskInfo.sliceInstanceId
+        String serviceProfileInstanceId = sliceParams.serviceId
+        //nsi id
+
+        updateRelationship(execution, nsiId, nssiId)
+
+        updateRelationship(execution, serviceProfileInstanceId, sliceProfileInstanceId)
+
+        updateRelationship(execution,sliceProfileInstanceId, nssiId)
+
+        sliceParams.tnMHSliceTaskInfo.suggestNssiId = nssiId
+        execution.setVariable("sliceTaskParams", sliceParams)
+    }
 }

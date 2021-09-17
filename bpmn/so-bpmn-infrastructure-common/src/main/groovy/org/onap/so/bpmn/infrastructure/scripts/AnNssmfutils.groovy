@@ -153,6 +153,53 @@ public void createDomainWiseSliceProfiles(List<String> ranConstituentSliceProfil
 
 public void createSliceProfilesInAai(DelegateExecution execution) {
 	
+	String serviceCategory = execution.getVariable("serviceCategory")
+	if ("AN NF NSST".equals(serviceCategory)) {
+		org.onap.aai.domain.yang.ServiceInstance ANNF_sliceProfileInstance = new ServiceInstance();
+		String ANNF_sliceProfileInstanceId = UUID.randomUUID().toString()
+		String ANNF_sliceProfileId = UUID.randomUUID().toString()
+		execution.setVariable("ANNF_sliceProfileInstanceId", ANNF_sliceProfileInstanceId)
+		execution.setVariable("ANNF_sliceProfileId", ANNF_sliceProfileId)
+		org.onap.aai.domain.yang.SliceProfiles ANNF_SliceProfiles = new SliceProfiles()
+		org.onap.aai.domain.yang.SliceProfile ANNF_SliceProfile = new SliceProfile()
+		ANNF_SliceProfile = createSliceProfile("AN_NF", execution)
+		ANNF_SliceProfiles.getSliceProfile().add(ANNF_SliceProfile)
+		logger.debug("sliceProfiles : 1. " + ANNF_SliceProfiles.toString())
+		//ANNF slice profile instance creation
+		ANNF_sliceProfileInstance.setServiceInstanceId(ANNF_sliceProfileInstanceId)
+		String sliceInstanceName = "sliceprofile_" + ANNF_sliceProfileId
+		ANNF_sliceProfileInstance.setServiceInstanceName(sliceInstanceName)
+		String serviceType = jsonUtil.getJsonValue(execution.getVariable("ranNfSliceProfile"), "sST")
+		ANNF_sliceProfileInstance.setServiceType(serviceType)
+		String serviceStatus = "deactivated"
+		ANNF_sliceProfileInstance.setOrchestrationStatus(serviceStatus)
+		String serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("ranNfSliceProfile"), "plmnIdList")
+		ANNF_sliceProfileInstance.setServiceInstanceLocationId(jsonUtil.StringArrayToList(serviceInstanceLocationid).get(0))
+		String serviceRole = "slice-profile-instance"
+		ANNF_sliceProfileInstance.setServiceRole(serviceRole)
+		ArrayList<String> snssaiList = execution.getVariable("snssaiList")
+		String snssai = snssaiList.get(0)
+		ANNF_sliceProfileInstance.setEnvironmentContext(snssai)
+		ANNF_sliceProfileInstance.setWorkloadContext("AN_NF")
+		ANNF_sliceProfileInstance.setSliceProfiles(ANNF_SliceProfiles)
+		String serviceFunctionAnnf = jsonUtil.getJsonValue(execution.getVariable("ranNfSliceProfile"), "resourceSharingLevel")
+		ANNF_sliceProfileInstance.setServiceFunction(serviceFunctionAnnf)
+		logger.debug("completed ANNF sliceprofileinstance build : " + ANNF_sliceProfileInstance.toString())
+		String msg = ""
+		try {
+
+			AAIResourcesClient client = new AAIResourcesClient()
+			AAIResourceUri sliceProfileUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(ANNF_sliceProfileInstanceId))
+			client.create(sliceProfileUri, ANNF_sliceProfileInstance)
+		} catch (BpmnError e) {
+			throw e
+		} catch (Exception ex) {
+			msg = "Exception in AnNssmfUtils.createSliceProfilesInAai " + ex.getMessage()
+			logger.info(msg)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+		}
+	}
+else{
 	org.onap.aai.domain.yang.ServiceInstance ANNF_sliceProfileInstance = new ServiceInstance();
 	org.onap.aai.domain.yang.ServiceInstance TNFH_sliceProfileInstance = new ServiceInstance();
 	org.onap.aai.domain.yang.ServiceInstance TNMH_sliceProfileInstance = new ServiceInstance();
@@ -163,12 +210,12 @@ public void createSliceProfilesInAai(DelegateExecution execution) {
 	String TNFH_sliceProfileId = UUID.randomUUID().toString()
 	String TNMH_sliceProfileInstanceId = UUID.randomUUID().toString()
 	String TNMH_sliceProfileId = UUID.randomUUID().toString()
-	execution.setVariable("ANNF_sliceProfileInstanceId",ANNF_sliceProfileInstanceId)
-	execution.setVariable("ANNF_sliceProfileId",ANNF_sliceProfileId)
-	execution.setVariable("TNFH_sliceProfileInstanceId",TNFH_sliceProfileInstanceId)
-	execution.setVariable("TNFH_sliceProfileId",TNFH_sliceProfileId)
-	execution.setVariable("TNMH_sliceProfileInstanceId",TNMH_sliceProfileInstanceId)
-	execution.setVariable("TNMH_sliceProfileId",TNMH_sliceProfileId)
+	execution.setVariable("ANNF_sliceProfileInstanceId", ANNF_sliceProfileInstanceId)
+	execution.setVariable("ANNF_sliceProfileId", ANNF_sliceProfileId)
+	execution.setVariable("TNFH_sliceProfileInstanceId", TNFH_sliceProfileInstanceId)
+	execution.setVariable("TNFH_sliceProfileId", TNFH_sliceProfileId)
+	execution.setVariable("TNMH_sliceProfileInstanceId", TNMH_sliceProfileInstanceId)
+	execution.setVariable("TNMH_sliceProfileId", TNMH_sliceProfileId)
 	//slice profiles assignment
 	org.onap.aai.domain.yang.SliceProfiles ANNF_SliceProfiles = new SliceProfiles()
 	org.onap.aai.domain.yang.SliceProfiles TNFH_SliceProfiles = new SliceProfiles()
@@ -177,17 +224,17 @@ public void createSliceProfilesInAai(DelegateExecution execution) {
 	org.onap.aai.domain.yang.SliceProfile TNFH_SliceProfile = new SliceProfile()
 	org.onap.aai.domain.yang.SliceProfile TNMH_SliceProfile = new SliceProfile()
 	ANNF_SliceProfile = createSliceProfile("AN_NF", execution)
-	TNFH_SliceProfile = createSliceProfile("TN_FH",execution)
-	TNMH_SliceProfile = createSliceProfile("TN_MH",execution)
-	
+	TNFH_SliceProfile = createSliceProfile("TN_FH", execution)
+	TNMH_SliceProfile = createSliceProfile("TN_MH", execution)
+
 	ANNF_SliceProfiles.getSliceProfile().add(ANNF_SliceProfile)
 	TNFH_SliceProfiles.getSliceProfile().add(TNFH_SliceProfile)
 	TNMH_SliceProfiles.getSliceProfile().add(TNMH_SliceProfile)
-	
-	logger.debug("sliceProfiles : 1. "+ANNF_SliceProfiles.toString()+"\n 2. "+TNFH_SliceProfiles.toString()+"\n 3. "+TNMH_SliceProfiles.toString())
+
+	logger.debug("sliceProfiles : 1. " + ANNF_SliceProfiles.toString() + "\n 2. " + TNFH_SliceProfiles.toString() + "\n 3. " + TNMH_SliceProfiles.toString())
 	//ANNF slice profile instance creation
 	ANNF_sliceProfileInstance.setServiceInstanceId(ANNF_sliceProfileInstanceId)
-	String sliceInstanceName = "sliceprofile_"+ANNF_sliceProfileId
+	String sliceInstanceName = "sliceprofile_" + ANNF_sliceProfileId
 	ANNF_sliceProfileInstance.setServiceInstanceName(sliceInstanceName)
 	String serviceType = jsonUtil.getJsonValue(execution.getVariable("ranNfSliceProfile"), "sST")
 	ANNF_sliceProfileInstance.setServiceType(serviceType)
@@ -197,18 +244,18 @@ public void createSliceProfilesInAai(DelegateExecution execution) {
         ANNF_sliceProfileInstance.setServiceInstanceLocationId(jsonUtil.StringArrayToList(serviceInstanceLocationid).get(0))
 	String serviceRole = "slice-profile-instance"
 	ANNF_sliceProfileInstance.setServiceRole(serviceRole)
-        ArrayList<String> snssaiList = execution.getVariable("snssaiList")
+	ArrayList<String> snssaiList = execution.getVariable("snssaiList")
 	String snssai = snssaiList.get(0)
 	ANNF_sliceProfileInstance.setEnvironmentContext(snssai)
-	ANNF_sliceProfileInstance.setWorkloadContext("AN_NF")	 
+	ANNF_sliceProfileInstance.setWorkloadContext("AN_NF")
 	ANNF_sliceProfileInstance.setSliceProfiles(ANNF_SliceProfiles)
 	String serviceFunctionAnnf = jsonUtil.getJsonValue(execution.getVariable("ranNfSliceProfile"), "resourceSharingLevel")
 	ANNF_sliceProfileInstance.setServiceFunction(serviceFunctionAnnf)
-	logger.debug("completed ANNF sliceprofileinstance build : "+ ANNF_sliceProfileInstance.toString())
+	logger.debug("completed ANNF sliceprofileinstance build :  "+ ANNF_sliceProfileInstance.toString())
 	
 	//TNFH slice profile instance creation
 	TNFH_sliceProfileInstance.setServiceInstanceId(TNFH_sliceProfileInstanceId)
-	sliceInstanceName = "sliceprofile_"+TNFH_sliceProfileId
+	sliceInstanceName = "sliceprofile _ "+TNFH_sliceProfileId
 	TNFH_sliceProfileInstance.setServiceInstanceName(sliceInstanceName)
 	serviceType = jsonUtil.getJsonValue(execution.getVariable("tnFhSliceProfile"), "sST")
 	TNFH_sliceProfileInstance.setServiceType(serviceType)
@@ -221,11 +268,11 @@ public void createSliceProfilesInAai(DelegateExecution execution) {
 	TNFH_sliceProfileInstance.setSliceProfiles(TNFH_SliceProfiles)
 	String serviceFunctionTnFH = jsonUtil.getJsonValue(execution.getVariable("tnFhSliceProfile"), "resourceSharingLevel")
 	TNFH_sliceProfileInstance.setServiceFunction(serviceFunctionTnFH)
-	logger.debug("completed TNFH sliceprofileinstance build : "+TNFH_sliceProfileInstance)
+	logger.debug("completed TNFH sliceprofileinstance build :   "+TNFH_sliceProfileInstance)
 	
 	//TNMH slice profile instance creation
 	TNMH_sliceProfileInstance.setServiceInstanceId(TNMH_sliceProfileInstanceId)
-	sliceInstanceName = "sliceprofile_"+TNMH_sliceProfileId
+	sliceInstanceName = "sliceprofile _ "+TNMH_sliceProfileId
 	TNMH_sliceProfileInstance.setServiceInstanceName(sliceInstanceName)
 	serviceType = jsonUtil.getJsonValue(execution.getVariable("tnMhSliceProfile"), "sST")
 	TNMH_sliceProfileInstance.setServiceType(serviceType)
@@ -238,7 +285,7 @@ public void createSliceProfilesInAai(DelegateExecution execution) {
 	TNMH_sliceProfileInstance.setSliceProfiles(TNMH_SliceProfiles)
 	String serviceFunctionTnMH = jsonUtil.getJsonValue(execution.getVariable("tnMhSliceProfile"), "resourceSharingLevel")
 	TNMH_sliceProfileInstance.setServiceFunction(serviceFunctionTnMH)
-	logger.debug("completed TNMH sliceprofileinstance build : "+TNMH_sliceProfileInstance)
+	logger.debug("completed TNMH sliceprofileinstance build :   "+TNMH_sliceProfileInstance)
 	
 	String msg = ""
 	try {
@@ -259,6 +306,7 @@ public void createSliceProfilesInAai(DelegateExecution execution) {
 		msg = "Exception in AnNssmfUtils.createSliceProfilesInAai " + ex.getMessage()
 		logger.info(msg)
 		exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+	}
 	}
 
 }
