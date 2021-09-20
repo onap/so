@@ -1,0 +1,981 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c9be2e4a_122caa54",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/AnNssmfutils.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "replace with import",
+      "range": {
+        "startLine": 158,
+        "startChar": 2,
+        "endLine": 158,
+        "endChar": 42
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1be3b9de_91d9dee4",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/AnNssmfutils.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "replace with import",
+      "range": {
+        "startLine": 163,
+        "startChar": 2,
+        "endLine": 164,
+        "endChar": 40
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3622e8d9_3e992053",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/AnNssmfutils.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "cast to String",
+      "range": {
+        "startLine": 172,
+        "startChar": 45,
+        "endLine": 172,
+        "endChar": 94
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4fb9daea_227b78fe",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/AnNssmfutils.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "cast to String",
+      "range": {
+        "startLine": 176,
+        "startChar": 59,
+        "endLine": 176,
+        "endChar": 115
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4b12ffeb_ef833bae",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/AnNssmfutils.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "cast to ArrayList",
+      "range": {
+        "startLine": 180,
+        "startChar": 33,
+        "endLine": 180,
+        "endChar": 68
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0abb629b_7a058cf5",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/AnNssmfutils.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "cast to String",
+      "range": {
+        "startLine": 185,
+        "startChar": 53,
+        "endLine": 185,
+        "endChar": 95
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5708bdd5_03d507ac",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/AnNssmfutils.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "cast to string:\n\nAAIResourceUri sliceProfileUri \u003d AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable(\"globalSubscriberId\") as String).serviceSubscription(execution.getVariable(\"subscriptionServiceType\") as String).serviceInstance(ANNF_sliceProfileInstanceId))",
+      "range": {
+        "startLine": 192,
+        "startChar": 2,
+        "endLine": 192,
+        "endChar": 269
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8d5da5af_9604e57c",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/AnNssmfutils.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "cast to ArrayList",
+      "range": {
+        "startLine": 247,
+        "startChar": 32,
+        "endLine": 247,
+        "endChar": 67
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9e87a64e_c349e1f2",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/CreateSliceService.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 374,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "cast to int",
+      "range": {
+        "startLine": 374,
+        "startChar": 22,
+        "endLine": 374,
+        "endChar": 56
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0e2a1169_1556ab6e",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateAccessNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 504,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "cast to JsonArray",
+      "range": {
+        "startLine": 504,
+        "startChar": 82,
+        "endLine": 504,
+        "endChar": 134
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2e9fe550_bc83f72c",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateAccessNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 646,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "cast to String",
+      "range": {
+        "startLine": 646,
+        "startChar": 42,
+        "endLine": 646,
+        "endChar": 87
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ae279f42_1ef37b14",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateAccessNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 649,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "not used",
+      "range": {
+        "startLine": 649,
+        "startChar": 3,
+        "endLine": 649,
+        "endChar": 21
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "49c358c4_45097ad7",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateAccessNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 650,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "cast to String",
+      "range": {
+        "startLine": 650,
+        "startChar": 36,
+        "endLine": 650,
+        "endChar": 64
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6a7eb196_cbd7e55c",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateAccessNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 652,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "cast to String",
+      "range": {
+        "startLine": 652,
+        "startChar": 60,
+        "endLine": 652,
+        "endChar": 97
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b4cc6ed3_d23b6452",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateAccessNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 655,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "cast to List",
+      "range": {
+        "startLine": 655,
+        "startChar": 29,
+        "endLine": 655,
+        "endChar": 64
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7cbc96e5_ae708358",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateAccessNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 663,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "cast to String",
+      "range": {
+        "startLine": 663,
+        "startChar": 52,
+        "endLine": 663,
+        "endChar": 89
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ca5b8600_010f53fd",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateAccessNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 673,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "cast to String",
+      "range": {
+        "startLine": 673,
+        "startChar": 59,
+        "endLine": 673,
+        "endChar": 100
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9d080492_4643e776",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateAccessNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 676,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "cast to List",
+      "range": {
+        "startLine": 676,
+        "startChar": 28,
+        "endLine": 676,
+        "endChar": 63
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1b089651_9f61a233",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateAccessNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 691,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "casting:\n\nAAIResourceUri nssiServiceUri \u003d AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable(\"globalSubscriberId\") as String).serviceSubscription(execution.getVariable(\"subscriptionServiceType\") as String).serviceInstance(execution.getVariable(\"RANServiceInstanceId\") as String))",
+      "range": {
+        "startLine": 691,
+        "startChar": 4,
+        "endLine": 691,
+        "endChar": 287
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9d0d5198_00ff672c",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "cast to int",
+      "range": {
+        "startLine": 79,
+        "startChar": 22,
+        "endLine": 79,
+        "endChar": 56
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "37fa3a49_5d5cac18",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 977,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "String msg \u003d",
+      "range": {
+        "startLine": 977,
+        "startChar": 12,
+        "endLine": 977,
+        "endChar": 43
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "224896e2_689766c2",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 981,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "remove if not needed",
+      "range": {
+        "startLine": 981,
+        "startChar": 10,
+        "endLine": 981,
+        "endChar": 67
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a9e1a9de_3af43d79",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 1057,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "Two issues here:\n1. Now the enumeration that you use here, is not available, you have to make an import:\n   import org.onap.aaiclient.client.aai.AAINamespaceConstants\n\n2. Access to AAIObjectType exceeds its access rights. This object is protected in its class and it is not accessible here.",
+      "range": {
+        "startLine": 1057,
+        "startChar": 12,
+        "endLine": 1057,
+        "endChar": 159
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9d8d3821_26548af0",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 1060,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "as above",
+      "range": {
+        "startLine": 1060,
+        "startChar": 30,
+        "endLine": 1060,
+        "endChar": 144
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ab5b6abc_c9ddb43f",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 1063,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "as above",
+      "range": {
+        "startLine": 1063,
+        "startChar": 30,
+        "endLine": 1063,
+        "endChar": 146
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a58b9c17_0d7a0878",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 1066,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "as above",
+      "range": {
+        "startLine": 1066,
+        "startChar": 30,
+        "endLine": 1066,
+        "endChar": 146
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "791231d1_b091e074",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 1069,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "as above",
+      "range": {
+        "startLine": 1069,
+        "startChar": 30,
+        "endLine": 1069,
+        "endChar": 146
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "571732e2_151925ad",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 1082,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "Where is object created for this reference? For now there are no candidates for this method call.",
+      "range": {
+        "startLine": 1082,
+        "startChar": 12,
+        "endLine": 1082,
+        "endChar": 24
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "40bc03b7_6a336aa2",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 1194,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "execution.getVariable - cast to String",
+      "range": {
+        "startLine": 1193,
+        "startChar": 8,
+        "endLine": 1194,
+        "endChar": 89
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "19e9f8af_ab844b91",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 1200,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "I think you have to put an argument here.",
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "36d12616_10b1eff7",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 1207,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 1206,
+        "startChar": 0,
+        "endLine": 1207,
+        "endChar": 42
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e85ab754_4933053d",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 1224,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "For the ServiceInfo object, use setters to set the value of its field. \nThe fields of ServiceInfo are private, there are no accessible this way.\nFor example, make:\nserviceInfo.setGlobalSubscriberId(globalSubscriberId) instead of serviceInfo.globalSubscriberId \u003d globalSubscriberId",
+      "range": {
+        "startLine": 1216,
+        "startChar": 8,
+        "endLine": 1224,
+        "endChar": 96
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "da9e1948_5696d661",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 1252,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "remove, this comment is redundant",
+      "range": {
+        "startLine": 1252,
+        "startChar": 6,
+        "endLine": 1252,
+        "endChar": 16
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9a9de409_8e8009d9",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 1284,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "remove, not needed",
+      "range": {
+        "startLine": 1284,
+        "startChar": 8,
+        "endLine": 1284,
+        "endChar": 31
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "25df2cef_d692353a",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 1287,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "remove, not needed",
+      "range": {
+        "startLine": 1287,
+        "startChar": 8,
+        "endLine": 1287,
+        "endChar": 46
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e1bcf56d_6ce6121b",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 1341,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "To do what? If you use this statement, describe please what is to do.",
+      "range": {
+        "startLine": 1341,
+        "startChar": 8,
+        "endLine": 1341,
+        "endChar": 15
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3fcfc3ce_8d46be90",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 1357,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "execution.getVariable - cast to String",
+      "range": {
+        "startLine": 1356,
+        "startChar": 4,
+        "endLine": 1357,
+        "endChar": 89
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "af198e4b_4e1bc74f",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 1363,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "Argument needed here.",
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "837ecc56_7ce56416",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 1370,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 1370,
+        "startChar": 8,
+        "endLine": 1370,
+        "endChar": 42
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "810005eb_b8121ea9",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 1387,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "The same as above:\nFor the ServiceInfo object, use setters to set the value of its field. \nThe fields of ServiceInfo are private, there are no accessible this way.\nFor example, make:\nserviceInfo.setGlobalSubscriberId(globalSubscriberId) instead of serviceInfo.globalSubscriberId \u003d globalSubscriberId",
+      "range": {
+        "startLine": 1379,
+        "startChar": 8,
+        "endLine": 1387,
+        "endChar": 96
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b2ce6f09_84f2d335",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 1415,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 1415,
+        "startChar": 8,
+        "endLine": 1415,
+        "endChar": 16
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a30a166c_d9ca93f4",
+        "filename": "common/src/main/java/org/onap/so/beans/nsmf/SliceTaskParamsAdapter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "You made the changes in this method. I do not see this method is used anywhere. So, it should be removed.",
+      "range": {
+        "startLine": 73,
+        "startChar": 16,
+        "endLine": 73,
+        "endChar": 31
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6036259a_a6141e49",
+        "filename": "common/src/main/java/org/onap/so/beans/nsmf/SliceTaskParamsAdapter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-09-20T12:36:06Z",
+      "side": 1,
+      "message": "The same here, this method is not used anywhere right now.",
+      "range": {
+        "startLine": 153,
+        "startChar": 18,
+        "endLine": 153,
+        "endChar": 31
+      },
+      "revId": "9205c8f93f62a99e781eb0c957336a27c316c54f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
