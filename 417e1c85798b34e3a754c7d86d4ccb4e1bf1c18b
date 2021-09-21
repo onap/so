@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "474da94e_9fb7b6c4",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/resources/logback-spring.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2021-09-21T11:04:37Z",
+      "side": 1,
+      "message": "having this outside the web application will allow user to change it at runtime as we do it for other pods in SO",
+      "parentUuid": "7140e2f7_009abc0f",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 1
+      },
+      "revId": "417e1c85798b34e3a754c7d86d4ccb4e1bf1c18b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ae1fed3e_f5845aee",
         "filename": "bpmn/mso-infrastructure-bpmn/src/main/resources/logback-spring.xml",
         "patchSetId": 2
