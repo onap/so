@@ -1,10 +1,10 @@
-.. This work is licensed under a Creative Commons Attribution 4.0 International License.
+.. This work is licensed under a Creative Commons Attribution 4.0
+   International License.
 .. http://creativecommons.org/licenses/by/4.0
-.. Copyright 2018 Huawei Technologies Co., Ltd.
+.. (c) ONAP Project and its contributors
 
 serviceInstances API
 ====================
-
 
 This API allows to generate some requests to manage:
 
@@ -13,8 +13,9 @@ This API allows to generate some requests to manage:
 - vfModules attached to a vnf instance (create, delete)
 - vnfs attached to a service instance (create, delete)
 - orchestrationRequests (get)
+- cnf healthCheck
 
-links:
+links::
 
 - :ref:`create_service_instance`
 - :ref:`delete_service_instance`
@@ -26,7 +27,7 @@ links:
 - :ref:`delete_vnf`
 - :ref:`get_orchestration_request_by_id`
 - :ref:`get_orchestration_request_all`
-
+- :ref:`healthCheck`
 
 .. _create_service_instance:
 
@@ -59,7 +60,7 @@ Request Body:
 |requestDetails  |M        |1          |requestDetails Object     |Content of requestDetails object.          |
 +----------------+---------+-----------+--------------------------+-------------------------------------------+
 
-RequestDetails Object 
+RequestDetails Object
 
 +-------------------+--------------------------+-------------------------------------------------+
 |Attribute          |Content                   |Description                                      |
@@ -85,7 +86,7 @@ RequestDetails Object
 |lineOfBusiness     |lineOfBusiness Object     |Content of lineOfBusiness object.                |
 +-------------------+--------------------------+-------------------------------------------------+
 
-ModelInfo Object 
+ModelInfo Object
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -114,7 +115,7 @@ ModelInfo Object
 +-------------------------+------------------+-------------------------------------------------+
 
 
-SubscriberInfo Object 
+SubscriberInfo Object
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -124,7 +125,7 @@ SubscriberInfo Object
 |SubscriberName           |String            |Name of the Subscriber                           |
 +-------------------------+------------------+-------------------------------------------------+
 
-RequestInfo Object 
+RequestInfo Object
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -150,7 +151,7 @@ RequestInfo Object
 |requestorId              |String            |requestorId of the request                       |
 +-------------------------+------------------+-------------------------------------------------+
 
-RequestParameters Object 
+RequestParameters Object
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -174,7 +175,7 @@ RequestParameters Object
 |controllerType           |String            |controllerType                                   |
 +-------------------------+------------------+-------------------------------------------------+
 
-UserParams Object 
+UserParams Object
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -184,7 +185,7 @@ UserParams Object
 |value                    |String            |Value of the tag                                 |
 +-------------------------+------------------+-------------------------------------------------+
 
-CloudConfiguration Object 
+CloudConfiguration Object
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -380,7 +381,7 @@ ModelInfo Object
 |modelInstanceName        |String            |The Model Instance  name                         |
 +-------------------------+------------------+-------------------------------------------------+
 
-CloudConfiguration Object 
+CloudConfiguration Object
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -392,7 +393,7 @@ CloudConfiguration Object
 |aicNodeClli              |String            |aicNodeClli property                             |
 +-------------------------+------------------+-------------------------------------------------+
 
-RequestInfo Object 
+RequestInfo Object
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -418,7 +419,7 @@ RequestInfo Object
 |requestorId              |String            |requestorId of the request                       |
 +-------------------------+------------------+-------------------------------------------------+
 
-relatedInstance List  
+relatedInstance List
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -426,7 +427,7 @@ relatedInstance List
 |relatedInstance          |Object            |relatedInstance Object                           |
 +-------------------------+------------------+-------------------------------------------------+
 
-relatedInstance List  
+relatedInstance List
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -592,7 +593,7 @@ RequestInfo Object
 |SuppressRollback         |Boolean           |SuppressRollback                                 |
 +-------------------------+------------------+-------------------------------------------------+
 
-relatedInstance List  
+relatedInstance List
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -600,7 +601,7 @@ relatedInstance List
 |relatedInstance          |Object            |relatedInstance Object                           |
 +-------------------------+------------------+-------------------------------------------------+
 
-relatedInstance List  
+relatedInstance List
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -723,7 +724,7 @@ Request Body:
 |requestDetails  |M        |1          |requestDetails Object     |Content of requestDetails object.          |
 +----------------+---------+-----------+--------------------------+-------------------------------------------+
 
-RequestDetails Object 
+RequestDetails Object
 
 +-------------------+--------------------------+-------------------------------------------------+
 |Attribute          |Content                   |Description                                      |
@@ -749,7 +750,7 @@ RequestDetails Object
 |lineOfBusiness     |lineOfBusiness Object     |Content of lineOfBusiness object.                |
 +-------------------+--------------------------+-------------------------------------------------+
 
-ModelInfo Object 
+ModelInfo Object
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -777,7 +778,7 @@ ModelInfo Object
 |modelInstanceName        |String            |The Model Instance  name                         |
 +-------------------------+------------------+-------------------------------------------------+
 
-CloudConfiguration Object 
+CloudConfiguration Object
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -787,7 +788,7 @@ CloudConfiguration Object
 |tenantId                 |String            |Name of the Subscriber                           |
 +-------------------------+------------------+-------------------------------------------------+
 
-RequestInfo Object 
+RequestInfo Object
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -813,7 +814,7 @@ RequestInfo Object
 |requestorId              |String            |requestorId of the request                       |
 +-------------------------+------------------+-------------------------------------------------+
 
-relatedInstance List  
+relatedInstance List
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -821,7 +822,7 @@ relatedInstance List
 |relatedInstance          |Object            |relatedInstance Object                           |
 +-------------------------+------------------+-------------------------------------------------+
 
-relatedInstance List  
+relatedInstance List
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -831,7 +832,7 @@ relatedInstance List
 |modelInfo                |Object            |Content of modelInfo object.                     |
 +-------------------------+------------------+-------------------------------------------------+
 
-RequestParameters Object 
+RequestParameters Object
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -839,7 +840,7 @@ RequestParameters Object
 |UserParams               |Array             |The product family Id.                           |
 +-------------------------+------------------+-------------------------------------------------+
 
-UserParams Object 
+UserParams Object
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -880,7 +881,7 @@ Request Body:
 |requestDetails  |M        |1          |requestDetails Object     |Content of requestDetails object.          |
 +----------------+---------+-----------+--------------------------+-------------------------------------------+
 
-RequestDetails Object 
+RequestDetails Object
 
 +---------------------+-------------------------+-------------------------------------------------+
 |Attribute            |Content                  |Description                                      |
@@ -894,7 +895,7 @@ RequestDetails Object
 |requestParameters    |requestParameters Object |Content of requestParameters object.             |
 +---------------------+-------------------------+-------------------------------------------------+
 
-ModelInfo Object 
+ModelInfo Object
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -904,7 +905,7 @@ ModelInfo Object
 |ModelName                |String            |Name of the Model                                |
 +-------------------------+------------------+-------------------------------------------------+
 
-CloudConfiguration Object 
+CloudConfiguration Object
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -922,7 +923,7 @@ RequestInfo Object
 |Source                   |String            |source of the request                            |
 +-------------------------+------------------+-------------------------------------------------+
 
-RequestParameters Object 
+RequestParameters Object
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -989,7 +990,7 @@ Request Object
 |requestStatus      |M        |1          |requestStatus Object      |Type of the request.                       |
 +-------------------+---------+-----------+--------------------------+-------------------------------------------+
 
-RequestDetails Object 
+RequestDetails Object
 
 +-------------------+--------------------------+-------------------------------------------------+
 |Attribute          |Content                   |Description                                      |
@@ -1015,7 +1016,7 @@ RequestDetails Object
 |lineOfBusiness     |lineOfBusiness Object     |Content of lineOfBusiness object.                |
 +-------------------+--------------------------+-------------------------------------------------+
 
-ModelInfo Object 
+ModelInfo Object
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -1043,7 +1044,7 @@ ModelInfo Object
 |modelInstanceName        |String            |The Model Instance  name                         |
 +-------------------------+------------------+-------------------------------------------------+
 
-SubscriberInfo Object 
+SubscriberInfo Object
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -1053,7 +1054,7 @@ SubscriberInfo Object
 |SubscriberName           |String            |Name of the Subscriber                           |
 +-------------------------+------------------+-------------------------------------------------+
 
-RequestInfo Object 
+RequestInfo Object
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -1079,7 +1080,7 @@ RequestInfo Object
 |requestorId              |String            |requestorId of the request                       |
 +-------------------------+------------------+-------------------------------------------------+
 
-RequestParameters Object 
+RequestParameters Object
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -1156,7 +1157,7 @@ Response Body:
 |requestList     |M        |1          |Array                     |Content of request List.                   |
 +----------------+---------+-----------+--------------------------+-------------------------------------------+
 
-RequestList : 
+RequestList:
 
 +----------------+---------+-----------+--------------------------+-------------------------------------------+
 |Attribute       |Qualifier|Cardinality|Content                   |Description                                |
@@ -1182,7 +1183,7 @@ Request Object
 |requestStatus      |M        |1          |requestStatus Object      |Type of the request.                       |
 +-------------------+---------+-----------+--------------------------+-------------------------------------------+
 
-RequestDetails Object 
+RequestDetails Object
 
 +-------------------+--------------------------+-------------------------------------------------+
 |Attribute          |Content                   |Description                                      |
@@ -1208,7 +1209,7 @@ RequestDetails Object
 |lineOfBusiness     |lineOfBusiness Object     |Content of lineOfBusiness object.                |
 +-------------------+--------------------------+-------------------------------------------------+
 
-ModelInfo Object 
+ModelInfo Object
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -1236,7 +1237,7 @@ ModelInfo Object
 |modelInstanceName        |String            |The Model Instance  name                         |
 +-------------------------+------------------+-------------------------------------------------+
 
-SubscriberInfo Object 
+SubscriberInfo Object
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -1246,7 +1247,7 @@ SubscriberInfo Object
 |SubscriberName           |String            |Name of the Subscriber                           |
 +-------------------------+------------------+-------------------------------------------------+
 
-RequestInfo Object 
+RequestInfo Object
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -1272,7 +1273,7 @@ RequestInfo Object
 |requestorId              |String            |requestorId of the request                       |
 +-------------------------+------------------+-------------------------------------------------+
 
-RequestParameters Object 
+RequestParameters Object
 
 +-------------------------+------------------+-------------------------------------------------+
 |Attribute                |Content           |Description                                      |
@@ -1292,4 +1293,109 @@ RequestStatus Object
 |statusMessage            |String            |statusMessage                                    |
 +-------------------------+------------------+-------------------------------------------------+
 |percentProgress          |String            |percentage of progress                           |
++-------------------------+------------------+-------------------------------------------------+
+
+.. _healthCheck:
+
+CNF healthCheck
+++++++++++++++++
+
++--------------------+---------------------------------------------------------------------------------------------------------------+
+|Interface Definition|Description                                                                                                    |
++====================+===============================================================================================================+
+|URI                 |/onap/so/infra/serviceInstantiation/v7/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/healthcheck   |
++--------------------+---------------------------------------------------------------------------------------------------------------+
+|Operation Type      |POST                                                                                                           |
++--------------------+---------------------------------------------------------------------------------------------------------------+
+|Content-Type        |application/json                                                                                               |
++--------------------+---------------------------------------------------------------------------------------------------------------+
+
+Request Headers:
+
++-------------------+---------+-----------------------------------------------------------------------------------------+
+|Header Name        |Required |Description                                                                              |
++===================+=========+=========================================================================================+
+|Authorization      |Y        |Base64 encoded username:password                                                         |
++-------------------+---------+-----------------------------------------------------------------------------------------+
+
+Request Body:
+
++----------------+---------+-----------+--------------------------+-------------------------------------------+
+|Attribute       |Qualifier|Cardinality|Content                   |Description                                |
++================+=========+===========+==========================+===========================================+
+|requestDetails  |M        |1          |requestDetails Object     |Content of requestDetails object.          |
++----------------+---------+-----------+--------------------------+-------------------------------------------+
+
+RequestDetails Object
+
++---------------------+-------------------------+-------------------------------------------------+
+|Attribute            |Content                  |Description                                      |
++=====================+=========================+=================================================+
+|modelInfo            |modelInfo Object         |Content of modelInfo object.                     |
++---------------------+-------------------------+-------------------------------------------------+
+|cloudConfiguration   |cloudConfiguration Object|Content of cloudConfiguration object.            |
++---------------------+-------------------------+-------------------------------------------------+
+|requestInfo          |requestInfo Object       |Content of requestInfo object.                   |
++---------------------+-------------------------+-------------------------------------------------+
+|relatedInstanceList  |List                     |Content of relatedInstanceList.                  |
++---------------------+-------------------------+-------------------------------------------------+
+
+ModelInfo Object
+
++-------------------------+------------------+-------------------------------------------------+
+|Attribute                |Content           |Description                                      |
++=========================+==================+=================================================+
+|ModelType                |String            |Type of model                                    |
++-------------------------+------------------+-------------------------------------------------+
+|ModelInvariantId         |String            |The Model Invariant Id.                          |
++-------------------------+------------------+-------------------------------------------------+
+|ModelNameVersionId       |String            |The modelname Version Id                         |
++-------------------------+------------------+-------------------------------------------------+
+|ModelName                |String            |Name of the Model                                |
++-------------------------+------------------+-------------------------------------------------+
+|ModelVersion             |String            |Version of the model                             |
++-------------------------+------------------+-------------------------------------------------+
+|ModelCustomization Name  |String            |The Model Customization name                     |
++-------------------------+------------------+-------------------------------------------------+
+
+CloudConfiguration Object
+
++-------------------------+------------------+-------------------------------------------------+
+|Attribute                |Content           |Description                                      |
++=========================+==================+=================================================+
+|lcpCloudRegionId         |String            |CloudRegion Id (in A&AI)                         |
++-------------------------+------------------+-------------------------------------------------+
+|tenantId                 |String            |Name of the Subscriber                           |
++-------------------------+------------------+-------------------------------------------------+
+
+RequestInfo Object
+
++-------------------------+------------------+-------------------------------------------------+
+|Attribute                |Content           |Description                                      |
++=========================+==================+=================================================+
+|InstanceName             |String            |The instance Name                                |
++-------------------------+------------------+-------------------------------------------------+
+|Source                   |String            |source of the request                            |
++-------------------------+------------------+-------------------------------------------------+
+|SuppressRollback         |Boolean           |SuppressRollback                                 |
++-------------------------+------------------+-------------------------------------------------+
+
+relatedInstance List
+
++-------------------------+------------------+-------------------------------------------------+
+|Attribute                |Content           |Description                                      |
++=========================+==================+=================================================+
+|relatedInstance          |Object            |relatedInstance Object                           |
++-------------------------+------------------+-------------------------------------------------+
+
+relatedInstance List
+
++-------------------------+------------------+-------------------------------------------------+
+|Attribute                |Content           |Description                                      |
++=========================+==================+=================================================+
+|instanceId               |String            |instanceId                                       |
++-------------------------+------------------+-------------------------------------------------+
+|modelInfo                |Object            |Content of modelInfo object.                     |
++-------------------------+------------------+-------------------------------------------------+
+|instanceName             |String            |Name of the instance                             |
 +-------------------------+------------------+-------------------------------------------------+
