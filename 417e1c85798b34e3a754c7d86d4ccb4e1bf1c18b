@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "910f3103_af732f74",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/resources/logback-spring.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2021-09-21T08:37:31Z",
+      "side": 1,
+      "message": "i think we should put this in docker module rather then in mso-infrastructure-bpmn same as before so that it is consistent",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 1
+      },
+      "revId": "417e1c85798b34e3a754c7d86d4ccb4e1bf1c18b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ae1fed3e_f5845aee",
         "filename": "bpmn/mso-infrastructure-bpmn/src/main/resources/logback-spring.xml",
         "patchSetId": 2
