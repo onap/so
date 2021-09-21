@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "7140e2f7_009abc0f",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/resources/logback-spring.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 6073
+      },
+      "writtenOn": "2021-09-21T10:08:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e36a5c03_dd660e58",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 1
+      },
+      "revId": "417e1c85798b34e3a754c7d86d4ccb4e1bf1c18b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ae1fed3e_f5845aee",
         "filename": "bpmn/mso-infrastructure-bpmn/src/main/resources/logback-spring.xml",
         "patchSetId": 2
@@ -93,6 +117,30 @@
       "revId": "417e1c85798b34e3a754c7d86d4ccb4e1bf1c18b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "82f59773_685bf443",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/resources/logback-spring.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 6073
+      },
+      "writtenOn": "2021-09-21T10:08:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eba5c6ec_9774f195",
+      "range": {
+        "startLine": 153,
+        "startChar": 16,
+        "endLine": 153,
+        "endChar": 24
+      },
+      "revId": "417e1c85798b34e3a754c7d86d4ccb4e1bf1c18b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -143,6 +191,30 @@
     },
     {
       "key": {
+        "uuid": "a510ecb7_be2713af",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/resources/logback-spring.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 6073
+      },
+      "writtenOn": "2021-09-21T10:08:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f6c6cdee_0bb088f6",
+      "range": {
+        "startLine": 181,
+        "startChar": 3,
+        "endLine": 181,
+        "endChar": 44
+      },
+      "revId": "417e1c85798b34e3a754c7d86d4ccb4e1bf1c18b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "aa494571_54d1198d",
         "filename": "bpmn/mso-infrastructure-bpmn/src/main/resources/logback-spring.xml",
         "patchSetId": 2
@@ -163,6 +235,30 @@
       "revId": "417e1c85798b34e3a754c7d86d4ccb4e1bf1c18b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "16e658f0_d5b7a079",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/resources/logback-spring.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 6073
+      },
+      "writtenOn": "2021-09-21T10:08:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aa494571_54d1198d",
+      "range": {
+        "startLine": 200,
+        "startChar": 0,
+        "endLine": 200,
+        "endChar": 2
+      },
+      "revId": "417e1c85798b34e3a754c7d86d4ccb4e1bf1c18b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
