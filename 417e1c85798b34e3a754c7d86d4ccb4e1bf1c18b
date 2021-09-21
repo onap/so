@@ -48,6 +48,29 @@
     },
     {
       "key": {
+        "uuid": "d6033e15_d39a2fa0",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/resources/logback-spring.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 6750
+      },
+      "writtenOn": "2021-09-21T09:47:52Z",
+      "side": 1,
+      "message": "won\u0027t prefer root package here as it may fill file system .You may refine package to org.onap.so or you may check if further level is required ?",
+      "range": {
+        "startLine": 181,
+        "startChar": 3,
+        "endLine": 181,
+        "endChar": 44
+      },
+      "revId": "417e1c85798b34e3a754c7d86d4ccb4e1bf1c18b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "aa494571_54d1198d",
         "filename": "bpmn/mso-infrastructure-bpmn/src/main/resources/logback-spring.xml",
         "patchSetId": 2
