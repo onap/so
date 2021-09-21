@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ae1fed3e_f5845aee",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/resources/logback-spring.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2021-09-21T08:35:21Z",
+      "side": 1,
+      "message": "you would need to pass logs_dir as JVM parameter Yes?",
+      "range": {
+        "startLine": 153,
+        "startChar": 16,
+        "endLine": 153,
+        "endChar": 24
+      },
+      "revId": "417e1c85798b34e3a754c7d86d4ccb4e1bf1c18b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa494571_54d1198d",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/resources/logback-spring.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2021-09-21T08:35:21Z",
+      "side": 1,
+      "message": "remove STDOUT",
+      "range": {
+        "startLine": 200,
+        "startChar": 0,
+        "endLine": 200,
+        "endChar": 2
+      },
+      "revId": "417e1c85798b34e3a754c7d86d4ccb4e1bf1c18b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
