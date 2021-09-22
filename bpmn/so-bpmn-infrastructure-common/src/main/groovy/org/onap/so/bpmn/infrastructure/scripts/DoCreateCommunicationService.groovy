@@ -150,15 +150,15 @@ class DoCreateCommunicationService extends AbstractServiceTaskProcessor{
         logger.trace("create communication service")
         String msg
         String serviceInstanceId = execution.getVariable("serviceInstanceId")
+        String csServiceType = execution.getVariable("csServiceType")
         try {
             //generate S-NSSAI Id and communication service profile
-            String sNSSAI_id = generateNSSAI(serviceInstanceId)
+            String sNSSAI_id = generateNSSAI(serviceInstanceId, csServiceType)
 
             execution.setVariable("sNSSAI_id", sNSSAI_id)
             // create communication service
             String serviceInstanceName = execution.getVariable("serviceInstanceName")
             String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
-            String csServiceType = execution.getVariable("csServiceType")
             String aaiServiceRole = "communication-service"
 
             String oStatus = "processing"
@@ -198,10 +198,18 @@ class DoCreateCommunicationService extends AbstractServiceTaskProcessor{
         logger.trace("exit communication service")
     }
 
-    private static generateNSSAI = { final String instanceId ->
+    private static generateNSSAI(final String instanceId, String csServiceType) {
         int h, res
+        String nssai
         res = (instanceId == null) ? 0 : (h = instanceId.hashCode()) ^ (h >>> 16)
-        res = res >>> 1
-        return "01-" + Integer.toHexString(res).toUpperCase()
+        res = res >>> 8
+        if ("embb".equalsIgnoreCase(csServiceType)) {
+            nssai = "01-" + String.format("%06x", res).toUpperCase()
+        } else if ("urllc".equalsIgnoreCase(csServiceType)) {
+            nssai = "02-" + String.format("%06x", res).toUpperCase()
+        } else if ("miot".equalsIgnoreCase(csServiceType)) {
+            nssai = "03-" + String.format("%06x", res).toUpperCase()
+        }
+        return nssai
     }
 }
