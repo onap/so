@@ -691,6 +691,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         allocateTnNssi.setNetworkSliceInfos()
         allocateTnNssi.setSliceProfile(sliceTaskInfo.sliceProfile.trans2TnProfile())
+        allocateTnNssi.getSliceProfile().setDomainType(sliceTaskInfo.subnetType.subnetType)
         NsiInfo nsiInfo = new NsiInfo()
         nsiInfo.setNsiId(sliceParams.suggestNsiId)
         nsiInfo.setNsiName(sliceParams.suggestNsiName)
