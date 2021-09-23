@@ -145,6 +145,30 @@
     },
     {
       "key": {
+        "uuid": "e0d089cc_92904f45",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/resources/logback-spring.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 6073
+      },
+      "writtenOn": "2021-09-23T08:15:12Z",
+      "side": 1,
+      "message": "Yes, It is inside mso.war. When deployed mso.war in tomcat it will create mso folder where we can go to mso/WEB-INF/classes/logback-spring.xml and modify it.",
+      "parentUuid": "b57f9d16_34292e4f",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 1
+      },
+      "revId": "417e1c85798b34e3a754c7d86d4ccb4e1bf1c18b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ae1fed3e_f5845aee",
         "filename": "bpmn/mso-infrastructure-bpmn/src/main/resources/logback-spring.xml",
         "patchSetId": 2
