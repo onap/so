@@ -95,6 +95,9 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
         String nssiId = "5G-999"
         currentNSSI.put("nssiId", nssiId)
 
+        String nsiId = "ns-777"
+        currentNSSI.put("nsiId", nsiId)
+
         when(mockExecution.getVariable("currentNSSI")).thenReturn(currentNSSI)
 
         when(mockExecution.getVariable("mso.oof.endpoint")).thenReturn("http://oof.onap:8088")
@@ -127,6 +130,14 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
 
         when(client.get(ServiceInstance.class, nssiUri)).thenReturn(nssiOpt)
 
+        AAIResourceUri nsiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nsiId))
+
+        ServiceInstance nsi = new ServiceInstance()
+        nsi.setServiceInstanceId("5G-777")
+        Optional<ServiceInstance> nsiOpt = Optional.of(nsi)
+
+        when(client.get(ServiceInstance.class, nsiUri)).thenReturn(nsiOpt)
+
         String urlString = "http://oof.onap:8088"
 
         String httpRequest =    "{\n" +
@@ -143,7 +154,7 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
         String nxlId = nssi.getServiceInstanceId()
         String nxlType = "NSSI"
         String messageType = "cn"
-        String serviceInstanceId = nssi.getServiceInstanceId()
+        String serviceInstanceId = nsi.getServiceInstanceId()
 
         when(mockExecution.getVariable("msoRequestId")).thenReturn(requestId)
         when(oofUtilsMock.buildTerminateNxiRequest(requestId, nxlId, nxlType, messageType, serviceInstanceId)).thenReturn(httpRequest)
@@ -213,6 +224,7 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
         genericVnf.setVnfName("vnf-name")
         genericVnf.setVnfId("vnf-id")
 
+
         currentNSSI.put("constituteVnf", genericVnf)
 
         String urlString = String.format("http://mso.onap:8088/serviceInstantiation/v7/serviceInstances/%s/vnfs/%s", networkServiceInstance.getServiceInstanceId(), genericVnf.getVnfId())
@@ -235,7 +247,7 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
 
         when(httpClientFactoryMock.newJsonClient(any(), any())).thenReturn(httpClientMock)
 
-        when(httpClientMock.delete()).thenReturn(responseMock)
+        when(httpClientMock.delete(requestDetailsStr)).thenReturn(responseMock)
 
         when(responseMock.getStatus()).thenReturn(200)
         when(responseMock.hasEntity()).thenReturn(true)

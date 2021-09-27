@@ -238,6 +238,22 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
             exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
         }
 
+
+        // NSI
+        String nsiId = currentNSSI['nsiId']
+        ServiceInstance nsi = null
+        AAIResourceUri nsiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nsiId))
+        Optional<ServiceInstance> nsiOpt = client.get(ServiceInstance.class, nsiUri)
+        if (nsiOpt.isPresent()) {
+            nsi = nsiOpt.get()
+        }
+        else {
+            String msg = "NSI service instance not found in AAI for nsi id " + nsiId
+            LOGGER.error(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+        }
+
+
         //Setting correlator as requestId
         String requestId = execution.getVariable("msoRequestId")
         execution.setVariable("NSSI_correlator", requestId)
@@ -257,7 +273,7 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
 
         String nxlId = nssi.getServiceInstanceId()
         String nxlType = "NSSI"
-        String oofRequest = getOofUtils().buildTerminateNxiRequest(requestId, nxlId, nxlType, messageType, nssi.getServiceInstanceId())
+        String oofRequest = getOofUtils().buildTerminateNxiRequest(requestId, nxlId, nxlType, messageType, nsi.getServiceInstanceId())
         LOGGER.debug("**** Terminate Nxi Request: "+oofRequest)
 
         LOGGER.debug("${PREFIX} Exit buildOOFRequest")
@@ -289,32 +305,31 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
             // http://so.onap:8080/onap/so/infra/serviceInstantiation/v7/serviceInstances/de6a0aa2-19f2-41fe-b313-a5a9f159acd7/vnfs/3abbb373-8d33-4977-aa4b-2bfee496b6d5
             String url = String.format("${nsmfЕndPoint}/serviceInstantiation/v7/serviceInstances/%s/vnfs/%s", networkServiceInstance.getServiceInstanceId(), constituteVnf.getVnfId())
 
+            LOGGER.debug("url = " + url)
+
             currentNSSI['deleteServiceOrderURL'] = url
 
             String msoKey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
             String basicAuth =  UrnPropertiesReader.getVariable("mso.adapters.po.auth", execution)
 
-            /*String basicAuthValue = encryptBasicAuth(basicAuth, msoKey)
-            def authHeader = ""
-            if (basicAuthValue != null) {
-                String responseAuthHeader = getAuthHeader(execution, basicAuthValue, msoKey)
-                String errorCode = jsonUtil.getJsonValue(responseAuthHeader, "errorCode")
-                if(errorCode == null || errorCode.isEmpty()) { // No error
-                    authHeader = responseAuthHeader
-                }
-                else {
-                    exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(errorCode), jsonUtil.getJsonValue(responseAuthHeader, "errorMessage"))
-                }
-            } else {
-                LOGGER.error( "Unable to obtain BasicAuth - BasicAuth value null")
-                exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Internal Error - BasicAuth " +
-                        "value null")
-            } */
-
             def authHeader = utils.getBasicAuth(basicAuth, msoKey)
 
-            String callDeleteServiceOrderResponse = callDeleteServiceOrder(execution, url, authHeader)
-            String errorCode = jsonUtil.getJsonValue(callDeleteServiceOrderResponse, "errorCode")
+            def requestDetails = ""
+
+            String prepareRequestDetailsResponse = prepareRequestDetails(execution)
+            LOGGER.debug("deleteServiceOrder: prepareRequestDetailsResponse=" + prepareRequestDetailsResponse)
+
+            String errorCode = jsonUtil.getJsonValue(prepareRequestDetailsResponse, "errorCode")
+            LOGGER.debug("deleteServiceOrder: errorCode=" + errorCode)
+            if(errorCode == null || errorCode.isEmpty()) { // No error
+                requestDetails = prepareRequestDetailsResponse
+            }
+            else {
+                exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(errorCode), jsonUtil.getJsonValue(prepareRequestDetailsResponse, "errorMessage"))
+            }
+
+            String callDeleteServiceOrderResponse = callDeleteServiceOrder(url, authHeader, requestDetails)
+            errorCode = jsonUtil.getJsonValue(callDeleteServiceOrderResponse, "errorCode")
 
             if(errorCode == null || errorCode.isEmpty()) { // No error
                 String macroOperationId = jsonUtil.getJsonValue(callDeleteServiceOrderResponse, "requestReferences.requestId")
@@ -339,21 +354,24 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
     }
 
 
-    String callDeleteServiceOrder(DelegateExecution execution, String url, String authHeader) {
+    String callDeleteServiceOrder(String url, String authHeader, String requestDetailsStr) {
         LOGGER.debug("${PREFIX} Start callDeleteServiceOrder")
 
         String errorCode = ""
         String errorMessage = ""
         String response = ""
 
+        LOGGER.debug("callDeleteServiceOrder: url = " + url)
+        LOGGER.debug("callDeleteServiceOrder: authHeader = " + authHeader)
+
         try {
             HttpClient httpClient = getHttpClientFactory().newJsonClient(new URL(url), ONAPComponents.SO)
             httpClient.addAdditionalHeader("Authorization", authHeader)
             httpClient.addAdditionalHeader("Accept", "application/json")
-            Response httpResponse = httpClient.delete()
+            Response httpResponse = httpClient.delete(requestDetailsStr)
 
             int soResponseCode = httpResponse.getStatus()
-            LOGGER.debug("callDeleteServiceInstance: soResponseCode = " + soResponseCode)
+            LOGGER.debug("callDeleteServiceOrder: soResponseCode = " + soResponseCode)
 
             if (soResponseCode >= 200 && soResponseCode < 204 && httpResponse.hasEntity()) {
                 response = httpResponse.readEntity(String.class)
