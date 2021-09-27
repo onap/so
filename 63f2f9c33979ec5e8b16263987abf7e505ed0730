@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a6ab00d_f928a60c",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/OrchestrationRequests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 372,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2021-09-27T17:27:01Z",
+      "side": 1,
+      "message": "I understand the intension here, but a little worried of the flows that continue inspite of a malfunction.\nCould you please help me with this issue further.",
+      "revId": "63f2f9c33979ec5e8b16263987abf7e505ed0730",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
