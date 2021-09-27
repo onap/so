@@ -643,7 +643,8 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		logger.debug("completed AN service instance build "+ ANServiceInstance.toString())
 		//create RAN NF NSSI
 		ANNFServiceInstance.setServiceInstanceId(execution.getVariable("RANNFServiceInstanceId"))
-		sliceInstanceName = "nssi_"+execution.getVariable("ANNF_modelName")
+                String ANNF_nssiInstanceId = UUID.randomUUID().toString()
+                sliceInstanceName = "nssi_an_nf_"+ANNF_nssiInstanceId
 		ANNFServiceInstance.setServiceInstanceName(sliceInstanceName)
 		ANNFServiceInstance.setServiceType(execution.getVariable("sst"))
 		ANNFServiceInstance.setOrchestrationStatus(serviceStatus)

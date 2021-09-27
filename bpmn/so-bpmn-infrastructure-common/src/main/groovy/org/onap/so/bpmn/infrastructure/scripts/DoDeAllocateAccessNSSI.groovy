@@ -38,6 +38,7 @@ import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.T
 import org.onap.logging.filter.base.ONAPComponents
 import org.onap.so.beans.nsmf.DeAllocateNssi
 import org.onap.so.beans.nsmf.EsrInfo
+import org.onap.so.beans.nsmf.NetworkType
 import org.onap.so.beans.nsmf.ServiceInfo
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -55,6 +56,7 @@ import org.slf4j.LoggerFactory
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.JsonObject
+import com.google.gson.Gson
 
 
 /**
@@ -74,23 +76,23 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 	private static final String ROLE_SLICE_PROFILE = "slice-profile-instance"
 	private static final String ROLE_NSSI = "nssi"
 
-	private static final String AN_NF = "AN-NF"
-	private static final String TN_FH = "TN-FH"
-	private static final String TN_MH = "TN-MH"
+	private static final String AN_NF = "AN_NF"
+	private static final String TN_FH = "TN_FH"
+	private static final String TN_MH = "TN_MH"
 
 	@Override
 	public void preProcessRequest(DelegateExecution execution) {
 		logger.debug("${Prefix} - Start preProcessRequest")
 
 		String sliceParams = execution.getVariable("sliceParams")
-		String sNssaiList = jsonUtil.getJsonValue(sliceParams, "snssaiList")
+	        def sNssaiList = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(sliceParams, "snssaiList"))
 		String anSliceProfileId = jsonUtil.getJsonValue(sliceParams, "sliceProfileId")
 		String nsiId = jsonUtil.getJsonValue(sliceParams, "nsiId")
 		String globalSubscriberId = execution.getVariable("globalSubscriberId")
 		String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
 		String anNssiId = execution.getVariable("serviceInstanceID")
 
-		if(isBlank(sNssaiList) || isBlank(anSliceProfileId) || isBlank(nsiId)) {
+		if((sNssaiList.empty) || isBlank(anSliceProfileId) || isBlank(nsiId)) {
 			String msg = "Input fields cannot be null : Mandatory attributes : [snssaiList, sliceProfileId, nsiId]"
 			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
@@ -172,14 +174,15 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		boolean terminateAnNfNSSI = callOofAdapter(execution,execution.getVariable("oofAnNfNssiPayload"))
 		execution.setVariable("terminateAnNfNSSI", terminateAnNfNSSI)
 		if(!terminateAnNfNSSI) {
-			execution.setVariable("modifyAction",true)
+			execution.setVariable("modifyAction","deallocate")
 		}
 	}
 	
 	void prepareSdnrRequest(DelegateExecution execution) {
 
 		String anNfNssiId = execution.getVariable("anNfNssiId")
-		String sNssai = execution.getVariable("sNssaiList")
+		String sNssai = execution.getVariable("sNssaiList").get(0)
+		String sliceProfileId = execution.getVariable("anNfSliceProfileId")
 		String reqId = execution.getVariable("msoRequestId")
 		String messageType = "SDNRTerminateResponse"
 		StringBuilder callbackURL = new StringBuilder(UrnPropertiesReader.getVariable("mso.workflow.message.endpoint", execution))
@@ -188,35 +191,38 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		JsonObject input = new JsonObject()
 		input.addProperty("RANNFNSSIId", anNfNssiId)
 		input.addProperty("callbackURL", callbackURL.toString())
-		input.addProperty("s-NSSAI", sNssai)
+		input.addProperty("sNSSAI", sNssai)
+                input.addProperty("sliceProfileId",sliceProfileId)
+		input.add("additionalproperties", new JsonObject())
 
 		JsonObject Payload = new JsonObject()
-		Payload.addProperty("version", "1.0")
-		Payload.addProperty("rpc-name", "terminateRANSliceInstance")
-		Payload.addProperty("correlation-id", reqId)
-		Payload.addProperty("type", "request")
 
 		JsonObject wrapinput = new JsonObject()
 		wrapinput.addProperty("action", "deallocate")
 
 		JsonObject CommonHeader = new JsonObject()
-		CommonHeader.addProperty("time-stamp", new Date(System.currentTimeMillis()).format("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", TimeZone.getDefault()))
+		CommonHeader.addProperty("timestamp", new Date(System.currentTimeMillis()).format("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", TimeZone.getDefault()))
 		CommonHeader.addProperty("api-ver", "1.0")
+		CommonHeader.addProperty("originator-id", "testing")
 		CommonHeader.addProperty("request-id", reqId)
 		CommonHeader.addProperty("sub-request-id", "1")
+		CommonHeader.add("flags", new JsonObject())
 
 		JsonObject body = new JsonObject()
-		body.add("input", wrapinput)
 
 		JsonObject sdnrRequest = new JsonObject()
 		Payload.add("input", input)
-		wrapinput.add("payload", Payload)
+		wrapinput.addProperty("payload", Payload.toString())
 		wrapinput.add("common-header", CommonHeader)
 		body.add("input", wrapinput)
 		sdnrRequest.add("body", body)
+                sdnrRequest.addProperty("version", "1.0")
+		sdnrRequest.addProperty("rpc-name", "terminateRANSliceInstance")
+		sdnrRequest.addProperty("correlation-id", reqId)
+		sdnrRequest.addProperty("type", "request")
 
 		String json = sdnrRequest.toString()
-		execution.setVariable("sdnrRequest", sdnrRequest)
+		execution.setVariable("sdnrRequest", json)
 		execution.setVariable("SDNR_messageType", messageType)
 		execution.setVariable("SDNR_timeout", "PT10M")
 
@@ -336,26 +342,26 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		String globalSubscriberId = execution.getVariable("globalSubscriberId")
 		String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
 
-		EsrInfo esrInfo = new EsrInfo()
-		esrInfo.setNetworkType(networkType)
-		esrInfo.setVendor("ONAP")
+                JsonObject esrInfo = new JsonObject()
+                esrInfo.addProperty("networkType", networkType)
+                esrInfo.addProperty("vendor", "ONAP_internal")
 
-		ServiceInfo serviceInfo = new ServiceInfo()
-		serviceInfo.setNssiId(instanceId)
-		serviceInfo.setNsiId(execution.getVariable("nsiId"))
-		serviceInfo.setGlobalSubscriberId(globalSubscriberId)
-		serviceInfo.setSubscriptionServiceType(subscriptionServiceType)
+                JsonObject serviceInfo = new JsonObject()
+                serviceInfo.addProperty("nsiId", execution.getVariable("nsiId"))
+		serviceInfo.addProperty("nssiId", instanceId)
+                serviceInfo.addProperty("globalSubscriberId", globalSubscriberId)
+		serviceInfo.addProperty("subscriptionServiceType", subscriptionServiceType)
 
-		execution.setVariable("${networkType}_esrInfo", esrInfo)
+		execution.setVariable("${networkType}_esrInfo", esrInfo.toString())
 		execution.setVariable("${networkType}_responseId", responseId)
-		execution.setVariable("${networkType}_serviceInfo", serviceInfo)
+		execution.setVariable("${networkType}_serviceInfo", serviceInfo.toString())
 
 	}
 
 	void validateJobStatus(DelegateExecution execution,String responseDescriptor) {
 		logger.debug("validateJobStatus ${responseDescriptor}")
-		String status = jsonUtil.getJsonValue(responseDescriptor, "responseDescriptor.status")
-		String statusDescription = jsonUtil.getJsonValue(responseDescriptor, "responseDescriptor.statusDescription")
+		String status = jsonUtil.getJsonValue(responseDescriptor, "status")
+		String statusDescription = jsonUtil.getJsonValue(responseDescriptor, "statusDescription")
 		if("finished".equalsIgnoreCase(status)) {
 			execution.setVariable("isSuccess", true)
 		}else {
@@ -364,14 +370,15 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 	}
 	
 	void prepareUpdateJobStatus(DelegateExecution execution,String status,String progress,String statusDescription) {
-		String serviceId = execution.getVariable("anNssiId")
+		String nssiId = execution.getVariable("anNssiId")
 		String jobId = execution.getVariable("jobId")
 		String nsiId = execution.getVariable("nsiId")
 
 		ResourceOperationStatus roStatus = new ResourceOperationStatus()
-		roStatus.setServiceId(serviceId)
+		roStatus.setServiceId(nsiId)
 		roStatus.setOperationId(jobId)
-		roStatus.setResourceTemplateUUID(nsiId)
+		//roStatus.setResourceTemplateUUID(nsiId)
+		roStatus.setResourceInstanceID(nssiId)
 		roStatus.setOperType("DeAllocate")
 		roStatus.setProgress(progress)
 		roStatus.setStatus(status)
@@ -382,7 +389,7 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 	void terminateTNFHNssi(DelegateExecution execution) {
 		logger.debug("Start terminateTNFHNssi in ${Prefix}")
 		String nssmfRequest = buildDeallocateNssiRequest(execution, TN_FH)
-		String nssiId = getInstanceIdByWorkloadContext(execution.getVariable("relatedSPs"), TN_FH)
+		String nssiId = getInstanceIdByWorkloadContext(execution.getVariable("relatedNssis"), TN_FH)
 		execution.setVariable("tnFHNSSIId", nssiId)
 		String urlString = "/api/rest/provMns/v1/NSS/SliceProfiles/" + nssiId
 				String nssmfResponse = nssmfAdapterUtils.sendPostRequestNSSMF(execution, urlString, nssmfRequest)
@@ -399,7 +406,7 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 	void terminateTNMHNssi(DelegateExecution execution) {
 		logger.debug("Start terminateTNMHNssi in ${Prefix}")
 		String nssmfRequest = buildDeallocateNssiRequest(execution, TN_MH)
-		String nssiId = getInstanceIdByWorkloadContext(execution.getVariable("relatedSPs"), TN_MH)
+		String nssiId = getInstanceIdByWorkloadContext(execution.getVariable("relatedNssis"), TN_MH)
 		execution.setVariable("tnMHNSSIId", nssiId)
 		String urlString = "/api/rest/provMns/v1/NSS/SliceProfiles/" + nssiId
 				String nssmfResponse = nssmfAdapterUtils.sendPostRequestNSSMF(execution, urlString, nssmfRequest)
@@ -430,7 +437,7 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 	
 	void deleteANNSSI(DelegateExecution execution) {
 		logger.debug("${Prefix} delete AN NSSI")
-		String nssiId = execution.getVariable("serviceInstanceID")
+		String nssiId = execution.getVariable("anNssiId")
 		deleteServiceInstanceInAAI(execution, nssiId)
 	}
 	
@@ -508,42 +515,46 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		Map<String, ServiceInstance> relatedNssis = execution.getVariable("relatedNssis")
 
 		String anNssiId = execution.getVariable("anNssiId")
-		List<String> sNssaiList =  execution.getVariable("sNssaiList")
+                List<String> sNssaiList = execution.getVariable("sNssaiList")
 
 		Map<String, ServiceInstance> relatedSPs = execution.getVariable("relatedSPs")
 
 		DeAllocateNssi deallocateNssi = new DeAllocateNssi()
-		deallocateNssi.setNsiId(anNssiId)
+		deallocateNssi.setNsiId(execution.getVariable("nsiId"))
 		ServiceInstance tnNssi = relatedNssis.get(serviceFunction)
 		String nssiId = tnNssi.getServiceInstanceId()
 
 		deallocateNssi.setNssiId(nssiId)
-		deallocateNssi.setScriptName(tnNssi.getServiceInstanceName())
+		deallocateNssi.setScriptName("TN1")
 		deallocateNssi.setSnssaiList(sNssaiList)
 		deallocateNssi.setSliceProfileId(relatedSPs.get(serviceFunction).getServiceInstanceId())
 
-		EsrInfo esrInfo = new EsrInfo()
-		esrInfo.setVendor("ONAP")
-		esrInfo.setNetworkType("TN")
+		JsonObject esrInfo = new JsonObject() 
+                esrInfo.addProperty("networkType", "tn")
+                esrInfo.addProperty("vendor", "ONAP_internal")
 
 		ServiceInfo serviceInfo = new ServiceInfo()
 		serviceInfo.setServiceInvariantUuid(tnNssi.getModelInvariantId())
 		serviceInfo.setServiceUuid(tnNssi.getModelVersionId())
 		serviceInfo.setGlobalSubscriberId(globalSubscriberId)
 		serviceInfo.setSubscriptionServiceType(subscriptionServiceType)
+                serviceInfo.setNssiId(nssiId)
+		serviceInfo.setNssiName(tnNssi.getServiceInstanceName())
 
 		JsonObject json = new JsonObject()
-		json.addProperty("deAllocateNssi", objectMapper.writeValueAsString(deallocateNssi))
-		json.addProperty("esrInfo", objectMapper.writeValueAsString(esrInfo))
-		json.addProperty("serviceInfo", objectMapper.writeValueAsString(serviceInfo))
+                Gson jsonConverter = new Gson()
+                json.add("deAllocateNssi", jsonConverter.toJsonTree(deallocateNssi))
+		json.add("esrInfo", esrInfo)
+		json.add("serviceInfo", jsonConverter.toJsonTree(serviceInfo))
 		return json.toString()
 		
 	}
 	
 	private void deleteServiceInstanceInAAI(DelegateExecution execution,String instanceId) {
 		try {
-			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("serviceType")).serviceInstance(instanceId))
-			getAAIClient().delete(serviceInstanceUri)
+			AAIResourcesClient client = getAAIClient()
+			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(execution.getVariable("globalSubscriberId")).serviceSubscription(execution.getVariable("subscriptionServiceType")).serviceInstance(instanceId))
+                        client.delete(serviceInstanceUri)
 			logger.debug("${Prefix} Exited deleteServiceInstance")
 		}catch(Exception e){
 			logger.debug("Error occured within deleteServiceInstance method: " + e)
