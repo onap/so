@@ -4,12 +4,19 @@ ARG user=so
 ARG group=so
 
 RUN echo "org.apache.tomcat.util.digester.PROPERTY_SOURCE=org.apache.tomcat.util.digester.EnvironmentPropertySource" >> /camunda/conf/catalina.properties
+RUN echo $'JAVA_OPTS="$JAVA_OPTS -Dlogs_dir=logs/bpmn -Dspring.config.additional-location=$CATALINA_BASE/config/override.yaml -Dlogging.config=$CATALINA_BASE/logback-spring.xml"' >> /camunda/bin/setenv.sh
 
 RUN rm -r /camunda/webapps/examples /camunda/webapps/docs /camunda/webapps/camunda-invoice
 
 USER root
 COPY ca-certificates/onap-ca.crt /usr/local/share/ca-certificates/onap-ca.crt
 RUN update-ca-certificates --fresh
+
+COPY configs/logging/logback-spring.xml /camunda
+COPY maven/mso.war /camunda/webapps
+COPY scripts/wait-for.sh /camunda
+COPY scripts/bpmn-script/start-camunda-app.sh /camunda
+COPY maven/mariadb-java-client.jar /camunda/lib
 
 RUN addgroup $group && adduser --system --disabled-password --no-create-home --ingroup $group $user && \
     chown -R $user:$group /camunda && \
@@ -20,7 +27,5 @@ USER $user
 # Springboot configuration (required)
 VOLUME /camunda/app/config
 
-COPY maven/mso.war /camunda/webapps
-COPY scripts/wait-for.sh /camunda
-COPY scripts/bpmn-script/start-camunda-app.sh /camunda
-COPY maven/mariadb-java-client.jar /camunda/lib
+WORKDIR /camunda
+ENTRYPOINT ["/camunda/start-camunda-app.sh"]

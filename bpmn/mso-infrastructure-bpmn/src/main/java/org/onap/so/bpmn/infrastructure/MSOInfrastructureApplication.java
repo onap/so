@@ -70,14 +70,12 @@ import static org.springframework.boot.context.config.ConfigFileApplicationListe
 @EnableAutoConfiguration(exclude= FreeMarkerAutoConfiguration.class)
 public class MSOInfrastructureApplication extends SpringBootServletInitializer {
 
-    private static final String ADDITIONAL_CONFIG = "file:/camunda/app/config/override.yaml";
     private static final Logger logger = LoggerFactory.getLogger(MSOInfrastructureApplication.class);
     
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application
-                .sources(MSOInfrastructureApplication.class)
-                .properties(singletonMap(CONFIG_ADDITIONAL_LOCATION_PROPERTY, ADDITIONAL_CONFIG));
+                .sources(MSOInfrastructureApplication.class);
     }
     @Autowired
     private ProcessEngine processEngine;
