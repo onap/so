@@ -14,6 +14,106 @@ The SO provides the highest level of service orchestration in the ONAP architect
 Release Notes
 =============
 
+Version: 1.8.3
+==============
+
+:Release Date: 2021-09-15
+
+SO Release Image Versions
+--------------------------
+ - so-bpmn-infra
+
+    :Version: 1.8.3
+
+ - so-catalog-db-adapter
+
+    :Version: 1.8.3
+
+ - so-nssmf-adapter
+
+    :Version: 1.8.3
+
+ - so-openstack-adapter
+
+    :Version: 1.8.3
+
+ - so-request-db-adapter
+
+    :Version: 1.8.3
+
+ - so-sdc-controller
+
+    :Version: 1.8.3
+
+ - so-sdnc-adapter
+
+    :Version: 1.8.3
+
+ - so-api-handler-infra
+
+    :Version: 1.8.3
+
+Release Purpose
+----------------
+SO Honolulu Maintence Release.
+The key delivereable for this release is fixing the known issues of H release of SO and sync up with the latest CDS client version.
+
+
+**Epics**
+
+	N/A
+
+**Stories**
+
+	N/A
+
+**Tasks**
+
+	N/A
+
+**Bug Fixes**
+
+*  `SO-3626 <https://jira.onap.org/browse/SO-3626>`_ - SO does not requests CDS for skipPostInstantiation flag set to False.
+*  `SO-3628 <https://jira.onap.org/browse/SO-3628>`_ - SO cannot send CDS request due to grpc schema problem.
+*  `SO-3703 <https://jira.onap.org/browse/SO-3703>`_ - Changes in Modify and Deallocate Core NSST flows
+*  `SO-3721 <https://jira.onap.org/browse/SO-3721>`_ - Fix some attribute issues
+*  `SO-3260 <https://jira.onap.org/browse/SO-3260>`_ - Wrong additional parameter for OOF's terminateNxiRequest
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+*Known Security Issues*
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1702>`__
+
+**Known Issues**
+
+*  `SO-3237 <https://jira.onap.org/browse/SO-3237>`_ - Exposed HTTP port. 
+
+
+**Upgrade Notes**
+
+	N/A
+
+**Deprecation Notes**
+
+	SO modules Ve-Vnfm-adapter and appc-orchestrator are deprectaed for the Honolulu release.
+
+**Other**
+
+	N/A
+***************************************************************************************
+
+
+
 Version: 8.0
 ==============
 
