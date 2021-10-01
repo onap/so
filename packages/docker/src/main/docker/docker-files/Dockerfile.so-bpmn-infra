@@ -11,16 +11,22 @@ USER root
 COPY ca-certificates/onap-ca.crt /usr/local/share/ca-certificates/onap-ca.crt
 RUN update-ca-certificates --fresh
 
-RUN addgroup $group && adduser --system --disabled-password --no-create-home --ingroup $group $user && \
-    chown -R $user:$group /camunda && \
-    chmod -R u+rw /camunda
+RUN addgroup $group && adduser --system --disabled-password --no-create-home --ingroup $group $user
+
+COPY maven/mso.war /camunda/webapps
+COPY scripts/wait-for.sh /camunda
+COPY scripts/bpmn-script/start-camunda-app.sh /camunda
+COPY maven/mariadb-java-client.jar /camunda/lib
+
+RUN chown -R $user:$group /camunda
+RUN chmod +x /camunda/start-camunda-app.sh
 
 USER $user
 
 # Springboot configuration (required)
 VOLUME /camunda/app/config
 
-COPY maven/mso.war /camunda/webapps
-COPY scripts/wait-for.sh /camunda
-COPY scripts/bpmn-script/start-camunda-app.sh /camunda
-COPY maven/mariadb-java-client.jar /camunda/lib
+WORKDIR /camunda
+
+ENTRYPOINT ["/camunda/start-camunda-app.sh"]
+
