@@ -35,21 +35,37 @@ import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.appc.client.lcm.model.Action;
-import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
+import org.onap.so.client.appc.ApplicationControllerAction;
 import org.onap.so.client.exception.BBObjectNotFoundException;
+import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
+import org.onap.so.db.catalog.client.CatalogDbClient;
 
-public class GenericVnfHealthCheckTest extends BaseTaskTest {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class GenericVnfHealthCheckTest extends TestDataSetup {
 
+    @Mock
+    protected ExceptionBuilder exceptionUtil;
+    @Mock
+    protected CatalogDbClient catalogDbClient;
+    @Mock
+    protected ApplicationControllerAction appCClient;
+    @Mock
+    protected ExtractPojosForBB extractPojosForBBMock;
     @InjectMocks
-    private GenericVnfHealthCheck genericVnfHealthCheck = new GenericVnfHealthCheck();
+    private GenericVnfHealthCheck genericVnfHealthCheck;
 
     private GenericVnf genericVnf;
     private RequestContext requestContext;
@@ -65,12 +81,12 @@ public class GenericVnfHealthCheckTest extends BaseTaskTest {
 
         doThrow(new BpmnError("BPMN Error")).when(exceptionUtil)
                 .buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
-        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID)))
+        when(extractPojosForBBMock.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID)))
                 .thenReturn(genericVnf);
     }
 
     @Test
-    public void setParamsForGenericVnfHealthCheckTest() throws Exception {
+    public void setParamsForGenericVnfHealthCheckTest() {
         ControllerSelectionReference controllerSelectionReference = new ControllerSelectionReference();
         controllerSelectionReference.setControllerName("testName");
         controllerSelectionReference.setActionCategory("testAction");
@@ -91,12 +107,12 @@ public class GenericVnfHealthCheckTest extends BaseTaskTest {
     }
 
     @Test
-    public void callAppcClientTest() throws Exception {
+    public void callAppcClientTest() {
         Action action = Action.HealthCheck;
         String vnfId = genericVnf.getVnfId();
         String payload = "{\"testName\":\"testValue\",}";
         String controllerType = "testType";
-        HashMap<String, String> payloadInfo = new HashMap<String, String>();
+        HashMap<String, String> payloadInfo = new HashMap<>();
         payloadInfo.put("vnfName", "testVnfName");
         payloadInfo.put("vfModuleId", "testVfModuleId");
         payloadInfo.put("oamIpAddress", "testOamIpAddress");
@@ -120,13 +136,13 @@ public class GenericVnfHealthCheckTest extends BaseTaskTest {
     }
 
     @Test
-    public void callAppcClientExceptionTest() throws Exception {
+    public void callAppcClientExceptionTest() {
         expectedException.expect(BpmnError.class);
         Action action = Action.HealthCheck;
         String vnfId = genericVnf.getVnfId();
         String payload = "{\"testName\":\"testValue\",}";
         String controllerType = "testType";
-        HashMap<String, String> payloadInfo = new HashMap<String, String>();
+        HashMap<String, String> payloadInfo = new HashMap<>();
         payloadInfo.put("vnfName", "testVnfName");
         payloadInfo.put("vfModuleId", "testVfModuleId");
         payloadInfo.put("oamIpAddress", "testOamIpAddress");
@@ -160,7 +176,7 @@ public class GenericVnfHealthCheckTest extends BaseTaskTest {
         String vnfId = genericVnf.getVnfId();
         String payload = "{\"testName\":\"testValue\",}";
         String controllerType = "testType";
-        HashMap<String, String> payloadInfo = new HashMap<String, String>();
+        HashMap<String, String> payloadInfo = new HashMap<>();
         payloadInfo.put("vnfName", "testVnfName");
         payloadInfo.put("vfModuleId", "testVfModuleId");
         payloadInfo.put("oamIpAddress", "testOamIpAddress");

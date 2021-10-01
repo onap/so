@@ -59,6 +59,8 @@ import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.springframework.core.env.Environment;
 
+// deprecated because of task SO-3772, this class will be deleted after all its usage is removed
+@Deprecated
 @RunWith(MockitoJUnitRunner.Silent.class)
 public abstract class BaseTaskTest extends TestDataSetup {
     @Mock

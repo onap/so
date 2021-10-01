@@ -37,7 +37,6 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.common.data.TestDataSetup;
@@ -45,29 +44,34 @@ import org.onap.so.bpmn.infrastructure.aai.tasks.AAIFlagTasks;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
-import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.AAIVnfResources;
-import org.springframework.beans.factory.annotation.Autowired;
 
-
-public class AAIFlagTasksTest extends BaseTaskTest {
-
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class AAIFlagTasksTest extends TestDataSetup {
+    @Mock
+    protected AAIResourcesClient MOCK_aaiResourcesClient;
+    @Mock
+    protected InjectionHelper MOCK_injectionHelper;
+    @Mock
+    protected ExceptionBuilder exceptionUtil;
+    @Mock
+    protected AAIVnfResources aaiVnfResources;
+    @Mock
+    protected ExtractPojosForBB extractPojosForBBMock;
     @InjectMocks
-    private AAIFlagTasks aaiFlagTasks = new AAIFlagTasks();
-
-    private GenericVnf genericVnf;
+    private AAIFlagTasks aaiFlagTasks;
 
     @Before
     public void before() throws BBObjectNotFoundException {
-        genericVnf = setGenericVnf();
+        GenericVnf genericVnf = setGenericVnf();
         doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
-        when(extractPojosForBB.extractByKey(any(), any())).thenReturn(genericVnf);
+        when(extractPojosForBBMock.extractByKey(any(), any())).thenReturn(genericVnf);
     }
 
     @Test
-    public void checkVnfInMaintTestTrue() throws Exception {
+    public void checkVnfInMaintTestTrue() {
         doThrow(new BpmnError("VNF is in maintenance in A&AI")).when(exceptionUtil)
                 .buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
         doReturn(false).when(aaiVnfResources).checkInMaintFlag(isA(String.class));
@@ -82,7 +86,7 @@ public class AAIFlagTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void checkVnfInMaintTestFalse() throws Exception {
+    public void checkVnfInMaintTestFalse() {
         doReturn(false).when(aaiVnfResources).checkInMaintFlag(isA(String.class));
         aaiFlagTasks.checkVnfInMaintFlag(execution);
         verify(exceptionUtil, times(0)).buildAndThrowWorkflowException(any(BuildingBlockExecution.class),
@@ -106,7 +110,7 @@ public class AAIFlagTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void modifyVnfInMaintFlagTest() throws Exception {
+    public void modifyVnfInMaintFlagTest() {
         doNothing().when(aaiVnfResources).updateObjectVnf(ArgumentMatchers.any(GenericVnf.class));
         aaiFlagTasks.modifyVnfInMaintFlag(execution, true);
         verify(aaiVnfResources, times(1)).updateObjectVnf(ArgumentMatchers.any(GenericVnf.class));
@@ -128,7 +132,7 @@ public class AAIFlagTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void checkVnfClosedLoopDisabledTestTrue() throws Exception {
+    public void checkVnfClosedLoopDisabledTestTrue() {
         doThrow(new BpmnError("VNF Closed Loop Disabled in A&AI")).when(exceptionUtil)
                 .buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
         doReturn(false).when(aaiVnfResources).checkVnfClosedLoopDisabledFlag(isA(String.class));
@@ -142,7 +146,7 @@ public class AAIFlagTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void checkVnfClosedLoopDisabledTestFalse() throws Exception {
+    public void checkVnfClosedLoopDisabledTestFalse() {
         doReturn(false).when(aaiVnfResources).checkVnfClosedLoopDisabledFlag(isA(String.class));
         aaiFlagTasks.checkVnfClosedLoopDisabledFlag(execution);
         verify(exceptionUtil, times(0)).buildAndThrowWorkflowException(any(BuildingBlockExecution.class),
@@ -165,7 +169,7 @@ public class AAIFlagTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void modifyVnfClosedLoopDisabledFlagTest() throws Exception {
+    public void modifyVnfClosedLoopDisabledFlagTest() {
         doNothing().when(aaiVnfResources).updateObjectVnf(ArgumentMatchers.any(GenericVnf.class));
         aaiFlagTasks.modifyVnfClosedLoopDisabledFlag(execution, true);
         verify(aaiVnfResources, times(1)).updateObjectVnf(ArgumentMatchers.any(GenericVnf.class));

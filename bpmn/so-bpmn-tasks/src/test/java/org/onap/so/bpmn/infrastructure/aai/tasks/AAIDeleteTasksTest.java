@@ -35,13 +35,16 @@ import java.util.Optional;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.NetworkPolicies;
-import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -53,14 +56,41 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.uri.AAIBaseResourceUri;
+import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.BBObjectNotFoundException;
+import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.client.orchestration.AAIConfigurationResources;
+import org.onap.so.client.orchestration.AAIInstanceGroupResources;
+import org.onap.so.client.orchestration.AAINetworkResources;
+import org.onap.so.client.orchestration.AAIServiceInstanceResources;
+import org.onap.so.client.orchestration.AAIVfModuleResources;
+import org.onap.so.client.orchestration.AAIVnfResources;
+import org.onap.so.client.orchestration.AAIVolumeGroupResources;
 
-
-public class AAIDeleteTasksTest extends BaseTaskTest {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class AAIDeleteTasksTest extends TestDataSetup {
     private final static String JSON_FILE_LOCATION = "src/test/resources/__files/BuildingBlocks/";
 
+    @Mock
+    protected ExceptionBuilder exceptionUtil;
+    @Mock
+    protected AAIVfModuleResources aaiVfModuleResources;
+    @Mock
+    protected AAIServiceInstanceResources aaiServiceInstanceResources;
+    @Mock
+    protected AAIVnfResources aaiVnfResources;
+    @Mock
+    protected AAINetworkResources aaiNetworkResources;
+    @Mock
+    protected AAIVolumeGroupResources aaiVolumeGroupResources;
+    @Mock
+    protected AAIConfigurationResources aaiConfigurationResources;
+    @Mock
+    protected AAIInstanceGroupResources aaiInstanceGroupResources;
+    @Mock
+    protected ExtractPojosForBB extractPojosForBBMock;
     @InjectMocks
-    private AAIDeleteTasks aaiDeleteTasks = new AAIDeleteTasks();
+    private AAIDeleteTasks aaiDeleteTasks;
 
     private L3Network network;
     private ServiceInstance serviceInstance;
@@ -85,17 +115,19 @@ public class AAIDeleteTasksTest extends BaseTaskTest {
         configuration = setConfiguration();
         instanceGroup = setInstanceGroupVnf();
 
-        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID)))
+        when(extractPojosForBBMock.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID)))
                 .thenReturn(genericVnf);
-        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
-        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.NETWORK_ID))).thenReturn(network);
-        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VOLUME_GROUP_ID)))
+        when(extractPojosForBBMock.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID)))
+                .thenReturn(vfModule);
+        when(extractPojosForBBMock.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.NETWORK_ID)))
+                .thenReturn(network);
+        when(extractPojosForBBMock.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VOLUME_GROUP_ID)))
                 .thenReturn(volumeGroup);
-        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID)))
+        when(extractPojosForBBMock.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID)))
                 .thenReturn(serviceInstance);
-        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.CONFIGURATION_ID)))
+        when(extractPojosForBBMock.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.CONFIGURATION_ID)))
                 .thenReturn(configuration);
-        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.INSTANCE_GROUP_ID)))
+        when(extractPojosForBBMock.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.INSTANCE_GROUP_ID)))
                 .thenReturn(instanceGroup);
 
 
@@ -195,7 +227,7 @@ public class AAIDeleteTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void deleteConfigurationTest() throws Exception {
+    public void deleteConfigurationTest() {
         gBBInput = execution.getGeneralBuildingBlock();
         doNothing().when(aaiConfigurationResources).deleteConfiguration(configuration);
         aaiDeleteTasks.deleteConfiguration(execution);
@@ -203,7 +235,7 @@ public class AAIDeleteTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void deleteInstanceGroupVnfTest() throws Exception {
+    public void deleteInstanceGroupVnfTest() {
         doNothing().when(aaiInstanceGroupResources).deleteInstanceGroup(instanceGroup);
         aaiDeleteTasks.deleteInstanceGroupVnf(execution);
         verify(aaiInstanceGroupResources, times(1)).deleteInstanceGroup(instanceGroup);
@@ -231,7 +263,7 @@ public class AAIDeleteTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void deleteNetworkPolicyNeedToDeleteNoneTest() throws Exception {
+    public void deleteNetworkPolicyNeedToDeleteNoneTest() {
         execution.setVariable("contrailNetworkPolicyFqdnList", "ABC123");
         Optional<NetworkPolicies> networkPolicies = Optional.empty();
         doReturn(networkPolicies).when(aaiNetworkResources).getNetworkPolicies(any(AAIBaseResourceUri.class));
@@ -240,7 +272,7 @@ public class AAIDeleteTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void deleteNetworkPolicyNoNetworkPoliciesTest() throws Exception {
+    public void deleteNetworkPolicyNoNetworkPoliciesTest() {
         aaiDeleteTasks.deleteNetworkPolicies(execution);
         verify(aaiNetworkResources, times(0)).deleteNetworkPolicy(any(String.class));
     }

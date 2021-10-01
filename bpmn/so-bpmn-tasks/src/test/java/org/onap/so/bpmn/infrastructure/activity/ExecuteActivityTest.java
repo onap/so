@@ -20,7 +20,6 @@
 
 package org.onap.so.bpmn.infrastructure.activity;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -33,19 +32,22 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.onap.so.bpmn.BaseTaskTest;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionBBFailure;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.client.exception.ExceptionBuilder;
 
-public class ExecuteActivityTest extends BaseTaskTest {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class ExecuteActivityTest extends TestDataSetup {
     @InjectMocks
-    protected ExecuteActivity executeActivity = new ExecuteActivity();
+    protected ExecuteActivity executeActivity;
 
     @InjectMocks
     @Spy
@@ -105,7 +107,7 @@ public class ExecuteActivityTest extends BaseTaskTest {
     }
 
     @Test
-    public void buildAndThrowException_Test() throws Exception {
+    public void buildAndThrowException_Test() {
         doNothing().when(workflowActionBBFailure).updateRequestStatusToFailed(execution);
         doReturn("Process key").when(exceptionBuilder).getProcessKey(execution);
         thrown.expect(BpmnError.class);
