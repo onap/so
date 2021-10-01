@@ -1,0 +1,9 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+2: Yan Yang <yangyanyj@chinamobile.com>
+Code-Review+1: Waqas Ikram <waqas.ikram@est.tech>
+Code-Review+2: Lukasz Muszkieta <lukasz.muszkieta@nokia.com>
+Submitted-by: Lukasz Muszkieta <lukasz.muszkieta@nokia.com>
+Submitted-at: Fri, 01 Oct 2021 10:45:25 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/so/+/124563
+Project: so
+Branch: refs/heads/Custom_Workflow
