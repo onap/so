@@ -12,15 +12,17 @@ USER root
 COPY ca-certificates/onap-ca.crt /usr/local/share/ca-certificates/onap-ca.crt
 RUN update-ca-certificates --fresh
 
+RUN addgroup $group && adduser --system --disabled-password --no-create-home --ingroup $group $user
+
 COPY configs/logging/logback-spring.xml /camunda
 COPY maven/mso.war /camunda/webapps
 COPY scripts/wait-for.sh /camunda
 COPY scripts/bpmn-script/start-camunda-app.sh /camunda
 COPY maven/mariadb-java-client.jar /camunda/lib
 
-RUN addgroup $group && adduser --system --disabled-password --no-create-home --ingroup $group $user && \
-    chown -R $user:$group /camunda && \
-    chmod -R u+rw /camunda
+RUN chown -R $user:$group /camunda
+RUN chmod -R u+rw /camunda
+RUN chmod +x /camunda/start-camunda-app.sh
 
 USER $user
 
