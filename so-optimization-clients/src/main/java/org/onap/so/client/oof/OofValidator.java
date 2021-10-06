@@ -21,12 +21,12 @@
 package org.onap.so.client.oof;
 
 
+import java.util.Map;
 import org.json.JSONObject;
 import org.onap.so.client.exception.BadResponseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import java.util.LinkedHashMap;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 
@@ -38,9 +38,9 @@ public class OofValidator {
     /**
      * Validates the synchronous homing response from oof
      *
-     * @throws BadResponseException
+     * @throws BadResponseException when validation failed
      */
-    public void validateDemandsResponse(LinkedHashMap<?, ?> response) throws BadResponseException {
+    public void validateDemandsResponse(Map<?, ?> response) throws BadResponseException {
         logger.debug("Validating oofs synchronous response");
         if (!response.isEmpty()) {
             JSONObject jsonResponse = new JSONObject(response);
@@ -51,12 +51,12 @@ public class OofValidator {
                 } else {
                     String message = jsonResponse.getString("statusMessage");
                     if (isNotBlank(message)) {
-                        logger.debug("oofs response indicates failed: " + message);
+                        logger.debug("oofs response indicates failed: {}", message);
                     } else {
                         logger.debug("oofs response indicates failed: no status message provided");
                         message = "error message not provided";
                     }
-                    throw new BadResponseException("oofs synchronous response indicates failed: " + message);
+                    throw new BadResponseException("oofs synchronous response indicates failed: {}", message);
                 }
             } else {
                 logger.debug("oofs synchronous response does not contain: request status");
@@ -71,7 +71,7 @@ public class OofValidator {
     /**
      * Validates the asynchronous/callback response from oof which contains the homing and licensing solutions
      *
-     * @throws BadResponseException
+     * @throws BadResponseException when validation failed
      */
     public void validateSolution(String response) throws BadResponseException {
         logger.debug("Validating oofs asynchronous callback response");
@@ -82,7 +82,7 @@ public class OofValidator {
             } else {
                 String message = jsonResponse.getJSONObject("serviceException").getString("text");
                 if (isNotBlank(message)) {
-                    logger.debug("oofs response contains a service exception: " + message);
+                    logger.debug("oofs response contains a service exception: {}", message);
                 } else {
                     logger.debug("oofs response contains a service exception: no service exception text provided");
                     message = "error message not provided";
