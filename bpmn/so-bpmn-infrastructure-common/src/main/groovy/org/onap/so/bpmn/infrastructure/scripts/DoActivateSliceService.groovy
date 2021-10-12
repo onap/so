@@ -158,6 +158,8 @@ class DoActivateSliceService extends AbstractServiceTaskProcessor {
             ActDeActNssi actDeActNssi = new ActDeActNssi()
             actDeActNssi.setNsiId(customerInfo.nsiId)
             actDeActNssi.setNssiId(nssInstance.nssiId)
+            actDeActNssi.setSnssaiList(Arrays.asList(customerInfo.snssai))
+
 
 			nbiRequest.setEsrInfo(esrInfo)
             nbiRequest.setServiceInfo(serviceInfo)

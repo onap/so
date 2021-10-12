@@ -73,9 +73,9 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 	private static final String KEY_SLICE_PROFILE = "SliceProfile"
 	private static final String KEY_NSSI = "NSSI"
 
-	private static final String AN_NF = "AN-NF"
-	private static final String TN_FH = "TN-FH"
-	private static final String TN_MH = "TN-MH"
+	private static final String AN_NF = "AN_NF"
+	private static final String TN_FH = "TN_FH"
+	private static final String TN_MH = "TN_MH"
 
 	private static final String ACTIVATE = "activateInstance"
 	private static final String DEACTIVATE = "deactivateInstance"
@@ -205,13 +205,13 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		input.addProperty("sNSSAI", sNssai.toString())
 
 		JsonObject wrapinput = new JsonObject()
-		wrapinput.addProperty("Action", action)
+		wrapinput.addProperty("action", action)
 
 		JsonObject CommonHeader = new JsonObject()
-		CommonHeader.addProperty("TimeStamp", new Date(System.currentTimeMillis()).format("yyyy-MM-dd'T'HH:mm:ss.sss", TimeZone.getDefault()))
-		CommonHeader.addProperty("APIver", "1.0")
-		CommonHeader.addProperty("RequestID", reqId)
-		CommonHeader.addProperty("SubRequestID", "1")
+		CommonHeader.addProperty("timestamp",new Date(System.currentTimeMillis()).format("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", TimeZone.getDefault()))
+		CommonHeader.addProperty("api-ver", "1.0")
+		CommonHeader.addProperty("request-id", reqId)
+		CommonHeader.addProperty("sub-request-id", "1")
 
 		JsonObject body = new JsonObject()
 		body.add("input", wrapinput)
@@ -219,12 +219,12 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		JsonObject sdnrRequest = new JsonObject()
 		JsonObject payload = new JsonObject()
 		payload.add("input", input)
-		wrapinput.addProperty("Payload", payload.toString())
-		wrapinput.add("CommonHeader", CommonHeader)
+		wrapinput.addProperty("payload", payload.toString())
+		wrapinput.add("common-header", CommonHeader)
 		body.add("input", wrapinput)
 		sdnrRequest.add("body", body)
                 sdnrRequest.addProperty("version", "1.0")
-		sdnrRequest.addProperty("rpc-name", "activateRANSlice")
+		sdnrRequest.addProperty("rpc-name", "activateRANSliceInstance")
 		sdnrRequest.addProperty("correlation-id", reqId)
 		sdnrRequest.addProperty("type", "request")
 
