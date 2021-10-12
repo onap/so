@@ -73,9 +73,9 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 	private static final String KEY_SLICE_PROFILE = "SliceProfile"
 	private static final String KEY_NSSI = "NSSI"
 
-	private static final String AN_NF = "AN-NF"
-	private static final String TN_FH = "TN-FH"
-	private static final String TN_MH = "TN-MH"
+	private static final String AN_NF = "AN_NF"
+	private static final String TN_FH = "TN_FH"
+	private static final String TN_MH = "TN_MH"
 
 	private static final String ACTIVATE = "activateInstance"
 	private static final String DEACTIVATE = "deactivateInstance"
