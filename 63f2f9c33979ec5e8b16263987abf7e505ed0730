@@ -16,6 +16,24 @@
       "revId": "63f2f9c33979ec5e8b16263987abf7e505ed0730",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "465b9d88_a9777620",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/OrchestrationRequests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 372,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-10-13T20:14:42Z",
+      "side": 1,
+      "message": "Hi Seshu, as discussed this will not allow flows to continue. This is only called by the endpoint which returns requests which are already in the database.\n\nMalformed requests will be rejected, but persisted in the database. When a frontend client calls this endpoint to retrieve requests, it would fail because of parsing error and not return any data at all. This allows returning requests even though the payload body was not parsed successfully. In most cases the request would carry an error message which would be useful to present to the user, and this allows that.",
+      "parentUuid": "9a6ab00d_f928a60c",
+      "revId": "63f2f9c33979ec5e8b16263987abf7e505ed0730",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
