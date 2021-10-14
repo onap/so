@@ -444,6 +444,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
                 .sST(sliceTaskInfo.getSliceProfile().getSST() ?: sliceParams.getServiceProfile().get("sST") as String)
                 .nssiName(sliceTaskInfo.getSuggestNssiId() ? sliceTaskInfo.getNSSTInfo().getName() : allocateAnNssi.getNssiName())
                 .nssiId(sliceTaskInfo.getSuggestNssiId())
+                .resourceSharingLevel(sliceParams.serviceProfile.get("resourceSharingLevel"))
                 .build()
 
         nbiRequest.setServiceInfo(serviceInfo)
@@ -590,6 +591,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         serviceInfo.nssiId = sliceTaskInfo.suggestNssiId //if shared
         serviceInfo.sST = sliceTaskInfo.sliceProfile.sST ?: sliceParams.serviceProfile.get("sST")
         serviceInfo.nssiName = allocateCnNssi.nssiName
+        serviceInfo.resourceSharingLevel = sliceParams.serviceProfile.get("resourceSharingLevel")
 
         nbiRequest.setServiceInfo(serviceInfo)
         nbiRequest.setEsrInfo(esrInfo)
@@ -727,6 +729,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         serviceInfo.nssiId = sliceTaskInfo.suggestNssiId
         serviceInfo.sST = sliceTaskInfo.sliceProfile.sST ?: sliceParams.serviceProfile.get("sST")
         serviceInfo.nssiName = "nssi_tn" + execution.getVariable("sliceServiceInstanceName")
+        serviceInfo.resourceSharingLevel = sliceParams.serviceProfile.get("resourceSharingLevel")
 
         nbiRequest.setServiceInfo(serviceInfo)
         nbiRequest.setEsrInfo(esrInfo)
