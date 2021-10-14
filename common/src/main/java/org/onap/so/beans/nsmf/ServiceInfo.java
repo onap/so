@@ -56,4 +56,7 @@ public class ServiceInfo implements Serializable {
     private String pLMNIdList;
 
     private String actionType;
+
+    private String resourceSharingLevel;
+
 }
