@@ -28,4 +28,4 @@ if [ -n "${AAF_SSL_CERTS_ENABLED}" ]; then
 fi
 
 # Running camunda.sh
-./camunda.sh
+/bin/bash "/camunda/camunda.sh"
