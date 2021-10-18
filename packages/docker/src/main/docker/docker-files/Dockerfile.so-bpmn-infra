@@ -4,7 +4,7 @@ ARG user=so
 ARG group=so
 
 RUN echo "org.apache.tomcat.util.digester.PROPERTY_SOURCE=org.apache.tomcat.util.digester.EnvironmentPropertySource" >> /camunda/conf/catalina.properties
-RUN echo $'JAVA_OPTS="$JAVA_OPTS -Dlogs_dir=logs/bpmn -Dspring.config.additional-location=$CATALINA_BASE/config/override.yaml -Dlogging.config=$CATALINA_BASE/logback-spring.xml"' >> /camunda/bin/setenv.sh
+RUN echo $'JAVA_OPTS="$JAVA_OPTS -Dlogs_dir=/camunda/logs/bpmn -Dspring.config.additional-location=$CATALINA_BASE/config/override.yaml -Dlogging.config=$CATALINA_BASE/logback-spring.xml"' >> /camunda/bin/setenv.sh
 
 RUN rm -r /camunda/webapps/examples /camunda/webapps/docs /camunda/webapps/camunda-invoice
 
