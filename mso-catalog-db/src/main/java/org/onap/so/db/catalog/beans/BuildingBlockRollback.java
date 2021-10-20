@@ -65,6 +65,17 @@ public class BuildingBlockRollback implements Serializable {
     @Column(name = "ROLLBACK_ACTION", length = 200)
     private String rollbackAction;
 
+    public BuildingBlockRollback() {}
+
+    public BuildingBlockRollback(Integer id, String buildingBlockName, String action, String rollbackBuildingBlockName,
+            String rollbackAction) {
+        this.id = id;
+        this.buildingBlockName = buildingBlockName;
+        this.action = action;
+        this.rollbackBuildingBlockName = rollbackBuildingBlockName;
+        this.rollbackAction = rollbackAction;
+    }
+
     public Integer getId() {
         return id;
     }
