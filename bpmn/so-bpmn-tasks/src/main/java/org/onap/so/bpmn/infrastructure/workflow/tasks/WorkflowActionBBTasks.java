@@ -23,6 +23,7 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -49,6 +50,7 @@ import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.db.catalog.beans.BuildingBlockRollback;
 import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -80,6 +82,9 @@ public class WorkflowActionBBTasks {
     private static final String VFMODULE = "VfModule";
     private static final String CONFIGURATION_PATTERN = "(Ad|De)(.*)FabricConfiguration(.*)";
     protected String maxRetries = "mso.rainyDay.maxRetries";
+    private static final String ROLLBACK_TO_ASSIGNED = "RollbackToAssigned";
+    private static final String UNASSIGN = "Unassign";
+    private static final String DELETE = "Delete";
     private static final Logger logger = LoggerFactory.getLogger(WorkflowActionBBTasks.class);
 
     @Autowired
@@ -299,94 +304,98 @@ public class WorkflowActionBBTasks {
     public void rollbackExecutionPath(DelegateExecution execution) {
         final String action = (String) execution.getVariable(BBConstants.G_ACTION);
         final String resourceName = (String) execution.getVariable("resourceName");
-        if (!(boolean) execution.getVariable("isRollback")) {
-            List<ExecuteBuildingBlock> flowsToExecute =
-                    (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
-
-            List<ExecuteBuildingBlock> flowsToExecuteChangeBBs = flowsToExecute.stream()
-                    .filter(buildingBlock -> buildingBlock.getBuildingBlock().getBpmnFlowName().startsWith("Change"))
-                    .collect(Collectors.toList());
-
-            List<ExecuteBuildingBlock> rollbackFlows = new ArrayList<>();
-            int currentSequence = (int) execution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
-            int listSize = flowsToExecute.size();
-
-            for (int i = listSize - 1; i >= 0; i--) {
-                if (i > currentSequence - 1) {
-                    flowsToExecute.remove(i);
-                } else {
-                    String flowName = flowsToExecute.get(i).getBuildingBlock().getBpmnFlowName();
-                    if (flowName.startsWith("Assign")) {
-                        flowName = flowName.replaceFirst("Assign", "Unassign");
-                    } else if (flowName.startsWith("Create")) {
-                        flowName = flowName.replaceFirst("Create", "Delete");
-                    } else if (flowName.startsWith("Activate")) {
-                        flowName = flowName.replaceFirst("Activate", "Deactivate");
-                    } else if (flowName.startsWith("Add")) {
-                        flowName = flowName.replaceFirst("Add", "Delete");
-                    } else if (flowName.startsWith("VNF")) {
-                        if (flowName.startsWith("VNFSet")) {
-                            flowName = flowName.replaceFirst("VNFSet", "VNFUnset");
-                        } else if (flowName.startsWith("VNFLock")) {
-                            flowName = flowName.replaceFirst("VNFLock", "VNFUnlock");
-                        } else if (flowName.startsWith("VNFStop")) {
-                            flowName = flowName.replaceFirst("VNFStop", "VNFStart");
-                        } else if (flowName.startsWith("VNFQuiesce")) {
-                            flowName = flowName.replaceFirst("VNFQuiesce", "VNFResume");
-                        } else {
-                            continue;
-                        }
-                    } else {
-                        continue;
-                    }
-                    flowsToExecute.get(i).getBuildingBlock().setBpmnFlowName(flowName);
-                    rollbackFlows.add(flowsToExecute.get(i));
-                }
-            }
-
-            String handlingCode = (String) execution.getVariable(HANDLINGCODE);
-            List<ExecuteBuildingBlock> rollbackFlowsFiltered = new ArrayList<>(rollbackFlows);
-            if ("RollbackToAssigned".equals(handlingCode) || ROLLBACKTOCREATED.equals(handlingCode)
-                    || ROLLBACKTOCREATEDNOCONFIGURATION.equals(handlingCode)) {
-                for (ExecuteBuildingBlock rollbackFlow : rollbackFlows) {
-                    if (rollbackFlow.getBuildingBlock().getBpmnFlowName().contains("Unassign")
-                            && !rollbackFlow.getBuildingBlock().getBpmnFlowName().contains("FabricConfiguration")) {
-                        rollbackFlowsFiltered.remove(rollbackFlow);
-                    } else if (rollbackFlow.getBuildingBlock().getBpmnFlowName().contains("Delete")
-                            && ((!rollbackFlow.getBuildingBlock().getBpmnFlowName().contains("FabricConfiguration")
-                                    && (ROLLBACKTOCREATED.equals(handlingCode)
-                                            || ROLLBACKTOCREATEDNOCONFIGURATION.equals(handlingCode)))
-                                    || (rollbackFlow.getBuildingBlock().getBpmnFlowName()
-                                            .contains("FabricConfiguration")
-                                            && ROLLBACKTOCREATEDNOCONFIGURATION.equals(handlingCode)))) {
-                        rollbackFlowsFiltered.remove(rollbackFlow);
-                    }
-                }
-            }
-
-            List<ExecuteBuildingBlock> rollbackFlowsFilteredNonChangeBBs = new ArrayList<>();
-            if (action.equals(REPLACEINSTANCE) && resourceName.equals(VFMODULE)) {
-                for (ExecuteBuildingBlock executeBuildingBlock : rollbackFlowsFiltered) {
-                    if (!executeBuildingBlock.getBuildingBlock().getBpmnFlowName().startsWith("Change")) {
-                        rollbackFlowsFilteredNonChangeBBs.add(executeBuildingBlock);
-                    }
-                }
-                rollbackFlowsFiltered.clear();
-                rollbackFlowsFiltered.addAll(flowsToExecuteChangeBBs);
-                rollbackFlowsFiltered.addAll(rollbackFlowsFilteredNonChangeBBs);
-            }
-
-            workflowActionBBFailure.updateRequestErrorStatusMessage(execution);
-            execution.setVariable("isRollbackNeeded", !rollbackFlows.isEmpty());
-            execution.setVariable("flowsToExecute", rollbackFlowsFiltered);
-            execution.setVariable(HANDLINGCODE, "PreformingRollback");
-            execution.setVariable("isRollback", true);
-            execution.setVariable(BBConstants.G_CURRENT_SEQUENCE, 0);
-            execution.setVariable(RETRY_COUNT, 0);
-        } else {
+        if ((boolean) execution.getVariable("isRollback")) {
             workflowAction.buildAndThrowException(execution,
                     "Rollback has already been called. Cannot rollback a request that is currently in the rollback state.");
         }
+        List<ExecuteBuildingBlock> flowsToExecute =
+                (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+
+        List<ExecuteBuildingBlock> flowsToExecuteChangeBBs = flowsToExecute.stream()
+                .filter(buildingBlock -> buildingBlock.getBuildingBlock().getBpmnFlowName().startsWith("Change"))
+                .collect(Collectors.toList());
+        List<ExecuteBuildingBlock> rollbackFlows = new ArrayList<>();
+        int currentSequence = (int) execution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
+        int listSize = flowsToExecute.size();
+        List<BuildingBlockRollback> bbRollbackList = catalogDbClient.getBuildingBlockRollbackEntries();
+
+        for (int i = listSize - 1; i >= 0; i--) {
+            if (i > currentSequence - 1) {
+                flowsToExecute.remove(i);
+            } else {
+                // filter bbRollbackList for bbrollback, and check if action exists, then filter by action
+                BuildingBlock bb = flowsToExecute.get(i).getBuildingBlock();
+                String flowName = bb.getBpmnFlowName();
+                String scope = Objects.toString(bb.getBpmnScope(), "");
+                String bbAction = Objects.toString(bb.getBpmnAction(), "");
+                ExecuteBuildingBlock currentBB = (ExecuteBuildingBlock) execution.getVariable("buildingBlock");
+
+                List<BuildingBlockRollback> filteredList = bbRollbackList.stream()
+                        .filter(k -> k.getBuildingBlockName().equals((flowName))).collect(Collectors.toList());
+                Optional<BuildingBlockRollback> matchedBBRollback =
+                        "".equals(bbAction) ? filteredList.stream().findFirst()
+                                : filteredList.stream().filter(k -> bbAction.equals(k.getAction())).findFirst();
+                if (matchedBBRollback.isPresent()) {
+                    final BuildingBlockRollback buildingBlockRollbackItem = matchedBBRollback.get();
+                    String rollbackFlow = buildingBlockRollbackItem.getRollbackBuildingBlockName();
+                    flowsToExecute.get(i).getBuildingBlock().setBpmnFlowName(rollbackFlow);
+                    // if we have an action, search the filtered list for the bbrollback that matches the given action.
+                    if (null != buildingBlockRollbackItem.getRollbackAction()) {
+                        logger.info("Setting rollback_action {} for BB: {} action: {}",
+                                buildingBlockRollbackItem.getRollbackAction(),
+                                buildingBlockRollbackItem.getBuildingBlockName(),
+                                buildingBlockRollbackItem.getAction());
+                        flowsToExecute.get(i).getBuildingBlock()
+                                .setBpmnAction(buildingBlockRollbackItem.getRollbackAction());
+                    }
+                    rollbackFlows.add(flowsToExecute.get(i));
+                }
+            }
+        }
+
+        String handlingCode = (String) execution.getVariable(HANDLINGCODE);
+        List<ExecuteBuildingBlock> rollbackFlowsFiltered = new ArrayList<>(rollbackFlows);
+        if (ROLLBACK_TO_ASSIGNED.equals(handlingCode) || ROLLBACKTOCREATED.equals(handlingCode)
+                || ROLLBACKTOCREATEDNOCONFIGURATION.equals(handlingCode)) {
+            for (ExecuteBuildingBlock rollbackFlow : rollbackFlows) {
+                if (rollbackFlow.getBuildingBlock().getBpmnFlowName().contains(UNASSIGN)
+                        && !rollbackFlow.getBuildingBlock().getBpmnFlowName().contains(FABRIC_CONFIGURATION)) {
+                    rollbackFlowsFiltered.remove(rollbackFlow);
+                } else if (rollbackFlow.getBuildingBlock().getBpmnFlowName().contains(DELETE)
+                        && ((!rollbackFlow.getBuildingBlock().getBpmnFlowName().contains(FABRIC_CONFIGURATION)
+                                && (ROLLBACKTOCREATED.equals(handlingCode)
+                                        || ROLLBACKTOCREATEDNOCONFIGURATION.equals(handlingCode)))
+                                || (rollbackFlow.getBuildingBlock().getBpmnFlowName().contains(FABRIC_CONFIGURATION)
+                                        && ROLLBACKTOCREATEDNOCONFIGURATION.equals(handlingCode)))) {
+                    rollbackFlowsFiltered.remove(rollbackFlow);
+                }
+            }
+        }
+
+        List<ExecuteBuildingBlock> rollbackFlowsFilteredNonChangeBBs = new ArrayList<>();
+        if (action.equals(REPLACEINSTANCE) && resourceName.equals(VFMODULE)) {
+            for (ExecuteBuildingBlock executeBuildingBlock : rollbackFlowsFiltered) {
+                if (!executeBuildingBlock.getBuildingBlock().getBpmnFlowName().startsWith("Change")) {
+                    rollbackFlowsFilteredNonChangeBBs.add(executeBuildingBlock);
+                }
+            }
+            rollbackFlowsFiltered.clear();
+            rollbackFlowsFiltered.addAll(flowsToExecuteChangeBBs);
+            rollbackFlowsFiltered.addAll(rollbackFlowsFilteredNonChangeBBs);
+        }
+
+        logger.info("List of BuildingBlocks to execute for rollback");
+        rollbackFlowsFiltered.forEach(item -> {
+            logger.info(item.getBuildingBlock().getBpmnFlowName());
+        });
+
+        workflowActionBBFailure.updateRequestErrorStatusMessage(execution);
+        execution.setVariable("isRollbackNeeded", !rollbackFlows.isEmpty());
+        execution.setVariable("flowsToExecute", rollbackFlowsFiltered);
+        execution.setVariable(HANDLINGCODE, "PreformingRollback");
+        execution.setVariable("isRollback", true);
+        execution.setVariable(BBConstants.G_CURRENT_SEQUENCE, 0);
+        execution.setVariable(RETRY_COUNT, 0);
     }
 
     protected void updateInstanceId(DelegateExecution execution) {
