@@ -32,8 +32,11 @@ import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
 import org.javatuples.Pair;
 import org.junit.Before;
 import org.junit.Test;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowType;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
+import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetup;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.client.exception.ExceptionBuilder;
@@ -41,6 +44,7 @@ import org.onap.so.bpmn.infrastructure.workflow.tasks.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -81,5 +85,32 @@ public class VnfEBBLoaderTest {
         cut = new VnfEBBLoader(bbInputSetupUtils, bbInputSetup, workflowActionUtils, exceptionBuilder);
         cut.traverseAAIVnf(delegateExecution, resourceList, serviceId, vnfId, aaiResourceIds);
         assertEquals(WorkflowType.SERVICE, resourceList.get(0).getResourceType());
+    }
+
+    @Test
+    public void traverseAAIVnf_should_add_vnfs_and_vfmodules() throws Exception {
+        List<Resource> resourceList = new ArrayList<>();
+        List<Pair<WorkflowType, String>> aaiResourceIds = new ArrayList<>();
+
+        GenericVnf genericVnf = mock(GenericVnf.class);
+        doReturn(vnfId).when(genericVnf).getVnfId();
+
+        VfModule vfModule = mock(VfModule.class);
+        ModelInfoVfModule modelInfoVfModule = new ModelInfoVfModule();
+        modelInfoVfModule.setIsBaseBoolean(true);
+        doReturn(modelInfoVfModule).when(vfModule).getModelInfoVfModule();
+
+        doReturn(serviceInstanceAAI).when(bbInputSetupUtils).getAAIServiceInstanceById(serviceId);
+        doReturn(serviceInstanceMSO).when(bbInputSetup).getExistingServiceInstance(serviceInstanceAAI);
+        doReturn(List.of(genericVnf)).when(serviceInstanceMSO).getVnfs();
+        doReturn(List.of(vfModule)).when(genericVnf).getVfModules();
+        cut = new VnfEBBLoader(bbInputSetupUtils, bbInputSetup, workflowActionUtils, exceptionBuilder);
+
+        cut.traverseAAIVnf(delegateExecution, resourceList, serviceId, vnfId, aaiResourceIds);
+
+        assertEquals(3, resourceList.size());
+        assertEquals(WorkflowType.VNF, resourceList.get(1).getResourceType());
+        assertEquals(WorkflowType.VFMODULE, resourceList.get(2).getResourceType());
+        assertTrue(resourceList.get(2).isBaseVfModule());
     }
 }
