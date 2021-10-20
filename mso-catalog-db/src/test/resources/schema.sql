@@ -1424,3 +1424,27 @@ CREATE TABLE IF NOT EXISTS `building_block_rollback` (
     `ROLLBACK_ACTION` varchar(200) NULL,
     PRIMARY KEY (`ID`)
 )  ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO building_block_rollback(BUILDING_BLOCK_NAME,ACTION,ROLLBACK_BUILDING_BLOCK_NAME,ROLLBACK_ACTION)
+VALUES ("ActivateNetworkBB",NULL,"DeactivateNetworkBB",NULL),
+("ActivatePnfBB",NULL,"DeactivatePnfBB",NULL),
+("ActivateServiceInstanceBB",NULL,"DeactivateServiceInstanceBB",NULL),
+("ActivateVfModuleBB",NULL,"DeactivateVfModuleBB",NULL),
+("ActivateVnfBB",NULL,"DeactivateVnfBB",NULL),
+("ActivateVolumeGroupBB",NULL,"DeactivateVolumeGroupBB",NULL),
+("AssignNetworkBB",NULL,"UnassignNetworkBB",NULL),
+("AssignServiceInstanceBB",NULL,"UnassignServiceInstanceBB",NULL),
+("AssignVfModuleBB",NULL,"UnassignVfModuleBB",NULL),
+("AssignVnfBB",NULL,"UnassignVnfBB",NULL),
+("AssignVolumeGroupBB",NULL,"UnassignVolumeGroupBB",NULL),
+("CreateNetworkBB",NULL,"DeleteNetworkBB",NULL),
+("CreateNetworkCollectionBB",NULL,"DeleteNetworkCollectionBB",NULL),
+("CreateVfModuleBB",NULL,"DeleteVfModuleBB",NULL),
+("CreateVolumeGroupBB",NULL,"DeleteVolumeGroupBB",NULL),
+("VNFSetInMaintFlagActivity",NULL,"VNFUnsetInMaintFlagActivity",NULL),
+("VNFSetClosedLoopDisabledFlagActivity",NULL,"VNFUnsetClosedLoopDisabledFlagActivity",NULL),
+("VNFLockActivity",NULL,"VNFUnlockActivity",NULL),
+("VNFStopActivity",NULL,"VNFStartActivity",NULL),
+("VNFQuiesceTrafficActivity",NULL,"VNFResumeTrafficActivity",NULL),
+("EtsiVnfInstantiateBB", null, "EtsiVnfDeleteBB", null),
+("AddFabricConfigurationBB", null, "DeleteFabricConfigurationBB", null);

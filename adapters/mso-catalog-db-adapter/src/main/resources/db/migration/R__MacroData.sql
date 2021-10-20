@@ -90,7 +90,6 @@ INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, SC
 ('Service-Macro-Create', '20', 'ActivateVnfBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
 ('Service-Macro-Create', '21', 'ActivateNetworkCollectionBB', NULL, NULL,1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
 ('Service-Macro-Create', '22', 'ActivateServiceInstanceBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
-('Service-Macro-Delete', '1', 'DeactivateVfModuleBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'DEFAULT')),
 ('Service-Macro-Delete', '2', 'DeleteVfModuleBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'DEFAULT')),
 ('Service-Macro-Delete', '3', 'DeactivateVolumeGroupBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'DEFAULT')),
 ('Service-Macro-Delete', '4', 'DeleteVolumeGroupBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'DEFAULT')),
@@ -860,3 +859,28 @@ DELETE FROM service_recipe where ACTION = 'upgradeInstance';
 INSERT INTO service_recipe (ACTION, VERSION_STR, DESCRIPTION, ORCHESTRATION_URI, RECIPE_TIMEOUT, SERVICE_MODEL_UUID)
 VALUES
 ('upgradeInstance', '1.0', 'Gr api recipe to upgrade service-instance', '/mso/async/services/WorkflowActionBB', 180, 'd88da85c-d9e8-4f73-b837-3a72a431622b');
+
+INSERT INTO building_block_rollback(BUILDING_BLOCK_NAME,ACTION,ROLLBACK_BUILDING_BLOCK_NAME,ROLLBACK_ACTION)
+VALUES
+('ActivateNetworkBB',NULL,'DeactivateNetworkBB',NULL),
+('ActivatePnfBB',NULL,'DeactivatePnfBB',NULL),
+('ActivateServiceInstanceBB',NULL,'DeactivateServiceInstanceBB',NULL),
+('ActivateVfModuleBB',NULL,'DeactivateVfModuleBB',NULL),
+('ActivateVnfBB',NULL,'DeactivateVnfBB',NULL),
+('ActivateVolumeGroupBB',NULL,'DeactivateVolumeGroupBB',NULL),
+('AssignNetworkBB',NULL,'UnassignNetworkBB',NULL),
+('AssignServiceInstanceBB',NULL,'UnassignServiceInstanceBB',NULL),
+('AssignVfModuleBB',NULL,'UnassignVfModuleBB',NULL),
+('AssignVnfBB',NULL,'UnassignVnfBB',NULL),
+('AssignVolumeGroupBB',NULL,'UnassignVolumeGroupBB',NULL),
+('CreateNetworkBB',NULL,'DeleteNetworkBB',NULL),
+('CreateNetworkCollectionBB',NULL,'DeleteNetworkCollectionBB',NULL),
+('CreateVfModuleBB',NULL,'DeleteVfModuleBB',NULL),
+('CreateVolumeGroupBB',NULL,'DeleteVolumeGroupBB',NULL),
+('VNFSetInMaintFlagActivity',NULL,'VNFUnsetInMaintFlagActivity',NULL),
+('VNFSetClosedLoopDisabledFlagActivity',NULL,'VNFUnsetClosedLoopDisabledFlagActivity',NULL),
+('VNFLockActivity',NULL,'VNFUnlockActivity',NULL),
+('VNFStopActivity',NULL,'VNFStartActivity',NULL),
+('VNFQuiesceTrafficActivity',NULL,'VNFResumeTrafficActivity',NULL),
+('EtsiVnfInstantiateBB',NULL,'EtsiVnfDeleteBB',NULL),
+('AddFabricConfigurationBB',NULL,'DeleteFabricConfigurationBB',NULL);
