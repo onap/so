@@ -25,6 +25,7 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.javatuples.Pair;
+import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.VpnBinding;
@@ -248,7 +249,9 @@ public class ServiceEBBLoader {
         }
         for (org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf : serviceInstanceMSO.getVnfs()) {
             aaiResourceIds.add(new Pair<>(WorkflowType.VNF, vnf.getVnfId()));
+            GenericVnf genericVnf = bbInputSetupUtils.getAAIGenericVnf(vnf.getVnfId());
             Resource vnfResource = new Resource(WorkflowType.VNF, vnf.getVnfId(), false, serviceResource);
+            vnfResource.setVnfCustomizationId(genericVnf.getModelCustomizationId());
             resourceList.add(vnfResource);
             traverseVnfModules(resourceList, vnfResource, aaiResourceIds, vnf);
             if (vnf.getVolumeGroups() != null) {

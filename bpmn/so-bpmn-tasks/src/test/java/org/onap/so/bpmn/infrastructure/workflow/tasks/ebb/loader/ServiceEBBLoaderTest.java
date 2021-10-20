@@ -41,6 +41,7 @@ import org.onap.so.bpmn.infrastructure.workflow.tasks.Resource;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.VrfBondingServiceException;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowType;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetup;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.client.exception.ExceptionBuilder;
@@ -206,12 +207,15 @@ public class ServiceEBBLoaderTest extends BaseTaskTest {
         serviceInstanceAAI.setServiceInstanceId(resourceId);
 
         org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstance = setServiceInstance();
-        setGenericVnf();
+        GenericVnf genericVnf = setGenericVnf();
         setVfModule(true);
         setVolumeGroup();
         setL3Network();
         setCollection();
         setConfiguration();
+
+        org.onap.aai.domain.yang.GenericVnf genericVnfAai = new org.onap.aai.domain.yang.GenericVnf();
+        genericVnfAai.setModelCustomizationId(genericVnf.getModelInfoGenericVnf().getModelCustomizationUuid());
 
         Configuration config = new Configuration();
         config.setConfigurationId("testConfigurationId2");
@@ -236,6 +240,7 @@ public class ServiceEBBLoaderTest extends BaseTaskTest {
         aaiConfiguration2.setRelationshipList(relationshipList1);
 
         try {
+            doReturn(genericVnfAai).when(mockBbInputSetupUtils).getAAIGenericVnf(genericVnf.getVnfId());
             doReturn(serviceInstanceAAI).when(mockBbInputSetupUtils).getAAIServiceInstanceById(resourceId);
             doReturn(serviceInstance).when(mockBbInputSetup).getExistingServiceInstance(serviceInstanceAAI);
             doReturn(Optional.of(aaiConfiguration1)).when(mockAaiConfigurationResources)
