@@ -35,6 +35,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -64,6 +66,7 @@ import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ConfigurationResourceKeys;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
+import org.onap.so.db.catalog.beans.BuildingBlockRollback;
 import org.onap.so.db.catalog.beans.ConfigurationResource;
 import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
@@ -107,6 +110,11 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 
     @Mock
     private DelegateExecution mockExecution;
+
+    @Before
+    public void initCatalogDBRollbackTable() {
+        when(catalogDbClient.getBuildingBlockRollbackEntries()).thenReturn(getRollbackBuildingBlockList());
+    }
 
     @Before
     public void before() throws Exception {
@@ -614,6 +622,52 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
     }
 
     @Test
+    public void rollbackExecutionRollbackControllerExecutionBBTest() {
+        execution.setVariable("isRollback", false);
+        execution.setVariable("handlingCode", "Rollback");
+        execution.setVariable("requestAction", EMPTY_STRING);
+        execution.setVariable("resourceName", EMPTY_STRING);
+        List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
+        BuildingBlock buildingBlock1 = new BuildingBlock().setBpmnFlowName("AssignServiceInstanceBB");
+        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock1);
+        flowsToExecute.add(ebb1);
+
+        BuildingBlock buildingBlock2 = new BuildingBlock().setBpmnFlowName("AssignNetworkBB");
+        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock2);
+        flowsToExecute.add(ebb2);
+
+        BuildingBlock buildingBlock3 = new BuildingBlock().setBpmnFlowName("AssignVnfBB");
+        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock3);
+        flowsToExecute.add(ebb3);
+
+        BuildingBlock buildingBlock4 = new BuildingBlock().setBpmnFlowName("AssignVfModuleBB");
+        ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock4);
+        flowsToExecute.add(ebb4);
+
+        BuildingBlock buildingBlock5 = new BuildingBlock().setBpmnFlowName("ControllerExecutionBB");
+        buildingBlock5.setBpmnScope("vnf");
+        buildingBlock5.setBpmnAction("config-assign");
+        ExecuteBuildingBlock ebb5 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock5);
+        flowsToExecute.add(ebb5);
+
+        BuildingBlock buildingBlock6 = new BuildingBlock().setBpmnFlowName("CreateVfModuleBB");
+        ExecuteBuildingBlock ebb6 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock6);
+        flowsToExecute.add(ebb6);
+
+        execution.setVariable("flowsToExecute", flowsToExecute);
+        execution.setVariable("gCurrentSequence", 5);
+
+        workflowActionBBTasks.rollbackExecutionPath(execution);
+        List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+        BuildingBlock bb = ebbs.get(0).getBuildingBlock();
+        assertEquals("ControllerExecutionBB", bb.getBpmnFlowName());
+        assertEquals("vnf", bb.getBpmnScope());
+        assertEquals("config-unassign", bb.getBpmnAction());
+        assertEquals(0, execution.getVariable("gCurrentSequence"));
+        assertEquals(5, ebbs.size());
+    }
+
+    @Test
     public void postProcessingExecuteBBActivateVfModuleNotReplaceInstanceTest() throws CloneNotSupportedException {
         WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
         workflowResourceIds.setServiceInstanceId("1");
@@ -1061,4 +1115,42 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         execution.setVariable("homing", false);
         execution.setVariable("calledHoming", false);
     }
+
+    private List<BuildingBlockRollback> getRollbackBuildingBlockList() {
+        List<BuildingBlockRollback> rollbackBBList = Collections.unmodifiableList(Arrays.asList(
+                new BuildingBlockRollback(1, "ActivateNetworkBB", null, "DeactivateNetworkBB", null),
+                new BuildingBlockRollback(2, "ActivatePnfBB", null, "DeactivatePnfBB", null),
+                new BuildingBlockRollback(3, "ActivateServiceInstanceBB", null, "DeactivateServiceInstanceBB", null),
+                new BuildingBlockRollback(4, "ActivateVfModuleBB", null, "DeactivateVfModuleBB", null),
+                new BuildingBlockRollback(5, "ActivateVnfBB", null, "DeactivateVnfBB", null),
+                new BuildingBlockRollback(6, "ActivateVolumeGroupBB", null, "DeactivateVolumeGroupBB", null),
+                new BuildingBlockRollback(7, "AssignNetworkBB", null, "UnassignNetworkBB", null),
+                new BuildingBlockRollback(8, "AssignServiceInstanceBB", null, "UnassignServiceInstanceBB", null),
+                new BuildingBlockRollback(9, "AssignVfModuleBB", null, "UnassignVfModuleBB", null),
+                new BuildingBlockRollback(10, "AssignVnfBB", null, "UnassignVnfBB", null),
+                new BuildingBlockRollback(11, "AssignVolumeGroupBB", null, "UnassignVolumeGroupBB", null),
+                new BuildingBlockRollback(12, "ControllerExecutionBB", "config-assign", "ControllerExecutionBB",
+                        "config-unassign"),
+                new BuildingBlockRollback(13, "ControllerExecutionBB", "config-deploy", "ControllerExecutionBB",
+                        "config-undeploy"),
+                new BuildingBlockRollback(14, "ControllerExecutionBB", "service-config-assign", "ControllerExecutionBB",
+                        "service-config-unassign"),
+                new BuildingBlockRollback(15, "ControllerExecutionBB", "service-config-deploy", "ControllerExecutionBB",
+                        "service-config-undeploy"),
+                new BuildingBlockRollback(16, "CreateNetworkBB", null, "DeleteNetworkBB", null),
+                new BuildingBlockRollback(17, "CreateNetworkCollectionBB", null, "DeleteNetworkCollectionBB", null),
+                new BuildingBlockRollback(18, "CreateVfModuleBB", null, "DeleteVfModuleBB", null),
+                new BuildingBlockRollback(19, "CreateVolumeGroupBB", null, "DeleteVolumeGroupBB", null),
+                new BuildingBlockRollback(20, "VNFSetInMaintFlagActivity", null, "VNFUnsetInMaintFlagActivity", null),
+                new BuildingBlockRollback(21, "VNFSetClosedLoopDisabledFlagActivity", null,
+                        "VNFUnsetClosedLoopDisabledFlagActivity", null),
+                new BuildingBlockRollback(22, "VNFLockActivity", null, "VNFUnlockActivity", null),
+                new BuildingBlockRollback(23, "VNFStopActivity", null, "VNFStartActivity", null),
+                new BuildingBlockRollback(24, "VNFQuiesceTrafficActivity", null, "VNFResumeTrafficActivity", null),
+                new BuildingBlockRollback(25, "EtsiVnfInstantiateBB", null, "EtsiVnfDeleteBB", null),
+                // AddFabricConfigurationBB this does not seem to be present as a bpmn in Guilin
+                new BuildingBlockRollback(26, "AddFabricConfigurationBB", null, "DeleteFabricConfigurationBB", null)));
+        return rollbackBBList;
+    }
+
 }
