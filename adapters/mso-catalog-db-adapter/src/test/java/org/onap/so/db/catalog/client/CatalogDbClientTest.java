@@ -34,6 +34,7 @@ import org.junit.Test;
 import org.onap.so.adapters.catalogdb.CatalogDbAdapterBaseTest;
 import org.onap.so.db.catalog.beans.AuthenticationType;
 import org.onap.so.db.catalog.beans.BBNameSelectionReference;
+import org.onap.so.db.catalog.beans.BuildingBlockRollback;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
@@ -778,6 +779,12 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         ProcessingFlags processingFlags = client.findProcessingFlagsByFlag("TESTFLAG");
         assertNotNull(processingFlags);
         assertEquals(processingFlags.getEndpoint(), "TESTENDPOINT");
+    }
+
+    @Test
+    public void testGetBuildingBlocksList() {
+        List<BuildingBlockRollback> rollbackEntries = client.getBuildingBlockRollbackEntries();
+        assertTrue(rollbackEntries.size() > 1);
     }
 
 
