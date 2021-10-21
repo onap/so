@@ -63,7 +63,7 @@ public class SliceProfileAdapter implements Serializable {
     private int maxBandwidth;
 
     @JsonProperty(value = "sST")
-    private String sST;
+    private String sST = "embb";
 
     @JsonProperty(value = "activityFactor")
     private int activityFactor;
