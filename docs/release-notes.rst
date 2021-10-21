@@ -14,16 +14,227 @@ The SO provides the highest level of service orchestration in the ONAP architect
 Release Notes
 =============
 
-Version: 9.0
+Version: 1.9.2
 ==============
+
+    :Release Date: 2021-10-14
+
+SO Release Image Versions
+--------------------------
+ - so-bpmn-infra
+
+    :Version: 1.9.2
+
+ - so-catalog-db-adapter
+
+    :Version: 1.9.2
+
+ - so-admin-cockpit
+
+    :Version: 1.8.3
+
+ - so-nssmf-adapter
+
+    :Version: 1.9.1
+
+ - so-openstack-adapter
+
+    :Version: 1.9.2
+
+ - so-request-db-adapter
+
+    :Version: 1.9.2
+
+ - so-sdc-controller
+
+    :Version: 1.9.2
+
+ - so-sdnc-adapter
+
+    :Version: 1.9.2
+
+ - so-sol003-adapter
+
+    :Version: 1.8.2
+
+ - so-api-handler-infra
+
+    :Version: 1.9.2
+
+ - so-etsi-nfvo-ns-lcm
+
+    :Version: 1.8.2
+
+ - so-oof-adapter
+
+    :Version: 1.8.3
+
+ - so-cnf-adapter
+
+    :Version: 1.9.1
 
 Release Purpose
 ----------------
-SO Istanbul Release
+SO Istanbul Release.
+The key deliverable for this release is refactoring SO for better internal architecture.
+
 
 **Epics**
 
 *  `REQ-627 <https://jira.onap.org/browse/REQ-627>`_ - ONAP CNF orchestration - Istanbul Enhancements
+*  `SO-3649 <https://jira.onap.org/browse/SO-3649>`_ - SO impacts for E2E Network Slicing in Istanbul Release
+*  `SO-3637 <https://jira.onap.org/browse/SO-3637>`_ - Global Requirements Approval
+*  `SO-3473 <https://jira.onap.org/browse/SO-3473>`_ - Refactor SO to enhance the usability
+
+
+**Stories**
+
+The full list of implemented tasks is available on `JIRA Istanbul STORY <https://jira.onap.org/issues/?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20story%20AND%20fixVersion%20%3D%20%22istanbul%20Release%22>`_
+
+
+**Tasks**
+
+The full list of implemented tasks is available on `JIRA Istanbul TASKS <https://jira.onap.org/issues/?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20Task%20AND%20fixVersion%20%3D%20%22istanbul%20Release%22>`_
+
+**Bug Fixes**
+
+The full list of fixed bugs is available on `JIRA Istanbul BUGS 
+<https://jira.onap.org/issues/?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20Bug%20AND%20fixVersion%20%3D%20%22istanbul%20Release%22>`_
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+*  `SO-3642 <https://jira.onap.org/browse/SO-3642>`_
+*  `SO-3724 <https://jira.onap.org/browse/SO-3724>`_
+
+
+Quick Links:
+
+- `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1702>`__
+
+**Known Issues**
+
+*  `SO-3237 <https://jira.onap.org/browse/SO-3237>`_ - Exposed HTTP port. 
+
+
+**Upgrade Notes**
+
+	N/A
+
+**Deprecation Notes**
+
+	SO modules Ve-Vnfm-adapter and appc-orchestrator are deprectaed for the Istanbul release.
+
+**Other**
+
+	N/A
+***************************************************************************************
+
+=============
+Release Notes
+=============
+
+Version: 1.8.3
+==============
+
+:Release Date: 2021-09-15
+
+SO Release Image Versions
+--------------------------
+ - so-bpmn-infra
+
+    :Version: 1.8.3
+
+ - so-catalog-db-adapter
+
+    :Version: 1.8.3
+
+ - so-nssmf-adapter
+
+    :Version: 1.8.3
+
+ - so-openstack-adapter
+
+    :Version: 1.8.3
+
+ - so-request-db-adapter
+
+    :Version: 1.8.3
+
+ - so-sdc-controller
+
+    :Version: 1.8.3
+
+ - so-sdnc-adapter
+
+    :Version: 1.8.3
+
+ - so-api-handler-infra
+
+    :Version: 1.8.3
+
+Release Purpose
+----------------
+SO Honolulu Maintence Release.
+The key delivereable for this release is fixing the known issues of H release of SO and sync up with the latest CDS client version.
+
+
+**Epics**
+
+	N/A
+
+**Stories**
+
+	N/A
+
+**Tasks**
+
+	N/A
+
+**Bug Fixes**
+
+*  `SO-3626 <https://jira.onap.org/browse/SO-3626>`_ - SO does not requests CDS for skipPostInstantiation flag set to False.
+*  `SO-3628 <https://jira.onap.org/browse/SO-3628>`_ - SO cannot send CDS request due to grpc schema problem.
+*  `SO-3703 <https://jira.onap.org/browse/SO-3703>`_ - Changes in Modify and Deallocate Core NSST flows
+*  `SO-3721 <https://jira.onap.org/browse/SO-3721>`_ - Fix some attribute issues
+*  `SO-3260 <https://jira.onap.org/browse/SO-3260>`_ - Wrong additional parameter for OOF's terminateNxiRequest
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+*Known Security Issues*
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1702>`__
+
+**Known Issues**
+
+*  `SO-3237 <https://jira.onap.org/browse/SO-3237>`_ - Exposed HTTP port. 
+
+
+**Upgrade Notes**
+
+	N/A
+
+**Deprecation Notes**
+
+	SO modules Ve-Vnfm-adapter and appc-orchestrator are deprectaed for the Honolulu release.
+
+**Other**
+
+	N/A
+***************************************************************************************
+
 
 Version: 8.0
 ==============
@@ -82,7 +293,7 @@ SO Release Image Versions
 
  - so-cnf-adapter
 
-    :Version: 1.8.3
+    :Version: 1.9.1
 
 Release Purpose
 ----------------
