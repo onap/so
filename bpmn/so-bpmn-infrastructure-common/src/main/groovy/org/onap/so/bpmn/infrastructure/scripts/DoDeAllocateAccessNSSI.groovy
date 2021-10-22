@@ -126,7 +126,11 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		execution.setVariable("anNfSliceProfileId", getInstanceIdByWorkloadContext(execution.getVariable("relatedSPs"), AN_NF))
 
 		Map<String,ServiceInstance> relatedNssis = new HashMap<>()
-		execution.setVariable("relatedNssis", getRelatedInstancesByRole(execution, ROLE_NSSI, anNssiId))
+                relatedNssis = getRelatedInstancesByRole(execution, ROLE_NSSI, anNssiId)
+                if(relatedNssis.size() == 1) {
+                        execution.setVariable("IsRANNfAlonePresent", true)
+                }
+		execution.setVariable("relatedNssis", relatedNssis)
 	}
 	
 
