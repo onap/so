@@ -20,10 +20,13 @@
 
 package org.onap.so.client.oof;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.apache.logging.log4j.util.Strings;
 import org.junit.Test;
 import org.onap.so.client.exception.BadResponseException;
 
@@ -54,5 +57,42 @@ public class OofValidatorTest {
         map.put("requestStatus", "a");
         map.put("statusMessage", "a");
         new OofValidator().validateDemandsResponse(map);
+    }
+
+    @Test
+    public void validateSolution_success() throws Exception {
+        String json = "{\"value\" : \"test1\"}";
+        new OofValidator().validateSolution(json);
+    }
+
+    @Test
+    public void validateSolution_EmptyResponse() {
+        try {
+            new OofValidator().validateSolution("");
+        } catch (BadResponseException e) {
+            assertThat(e.getMessage()).contains("oofs asynchronous response is empty");
+        }
+    }
+
+    @Test
+    public void validateSolution_serviceExceptionWithMessage() {
+        String json = "{\"serviceException\" : {\"text\" : \"serviceExceptionOccurred\"}}";
+        try {
+            new OofValidator().validateSolution(json);
+            fail("Exception should be thrown");
+        } catch (BadResponseException e) {
+            assertThat(e.getMessage()).contains("serviceExceptionOccurred");
+        }
+    }
+
+    @Test
+    public void validateSolution_serviceExceptionWithEmptyMessage() {
+        String json = "{\"serviceException\" : {\"text\" : \"\"}}";
+        try {
+            new OofValidator().validateSolution(json);
+            fail("Exception should be thrown");
+        } catch (BadResponseException e) {
+            assertThat(e.getMessage()).contains("error message not provided");
+        }
     }
 }
