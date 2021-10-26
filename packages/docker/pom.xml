@@ -247,6 +247,12 @@
                         </includes>
                         <outputFileNameMapping>mariadb-java-client.jar</outputFileNameMapping>
                       </dependencySet>
+                      <dependencySet>
+                        <includes>
+                          <include>com.zaxxer:HikariCP:jar</include>
+                        </includes>
+                        <outputFileNameMapping>HikariCP.jar</outputFileNameMapping>
+                      </dependencySet>
                     </dependencySets>
                   </inline>
                 </assembly>

@@ -19,6 +19,7 @@ COPY maven/mso.war /camunda/webapps
 COPY scripts/wait-for.sh /camunda
 COPY scripts/bpmn-script/start-camunda-app.sh /camunda
 COPY maven/mariadb-java-client.jar /camunda/lib
+COPY maven/HikariCP.jar /camunda/lib
 
 RUN chown -R $user:$group /camunda
 RUN chmod -R u+rw /camunda
