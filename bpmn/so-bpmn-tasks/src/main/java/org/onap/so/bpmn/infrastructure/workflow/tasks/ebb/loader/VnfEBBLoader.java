@@ -40,6 +40,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
+import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetup;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.client.exception.ExceptionBuilder;
@@ -165,6 +166,8 @@ public class VnfEBBLoader {
                 aaiResourceIds.add(new Pair<>(WorkflowType.VFMODULE, vfModule.getVfModuleId()));
                 Resource vfModuleResource =
                         new Resource(WorkflowType.VFMODULE, vfModule.getVfModuleId(), false, vnfResource);
+                Optional.ofNullable(vfModule.getModelInfoVfModule()).map(ModelInfoVfModule::getIsBaseBoolean)
+                        .ifPresent(vfModuleResource::setBaseVfModule);
                 resourceList.add(vfModuleResource);
                 findConfigurationsInsideVfModule(execution, vnf.getVnfId(), vfModule.getVfModuleId(), resourceList,
                         vfModuleResource, aaiResourceIds);

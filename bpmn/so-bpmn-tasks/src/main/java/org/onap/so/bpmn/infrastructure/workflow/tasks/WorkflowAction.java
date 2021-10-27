@@ -289,11 +289,12 @@ public class WorkflowAction {
         List<Resource> resourceList = new ArrayList<>();
         List<Pair<WorkflowType, String>> aaiResourceIds = new ArrayList<>();
 
-        if (resourceType == WorkflowType.SERVICE || isVNFCreateOrDelete(resourceType, requestAction)) {
+        if (resourceType == WorkflowType.SERVICE || isVNFCreate(resourceType, requestAction)) {
             resourceList = serviceEBBLoader.getResourceListForService(sIRequest, requestAction, execution,
                     serviceInstanceId, resourceId, aaiResourceIds);
-        } else if (resourceType == WorkflowType.VNF && (REPLACEINSTANCE.equalsIgnoreCase(requestAction)
-                || (RECREATE_INSTANCE.equalsIgnoreCase(requestAction)))) {
+        } else if (resourceType == WorkflowType.VNF
+                && (DELETE_INSTANCE.equalsIgnoreCase(requestAction) || REPLACEINSTANCE.equalsIgnoreCase(requestAction)
+                        || (RECREATE_INSTANCE.equalsIgnoreCase(requestAction)))) {
             vnfEBBLoader.traverseAAIVnf(execution, resourceList, workflowResourceIds.getServiceInstanceId(),
                     workflowResourceIds.getVnfId(), aaiResourceIds);
         } else if (resourceType == WorkflowType.VNF && UPDATE_INSTANCE.equalsIgnoreCase(requestAction)) {
@@ -363,9 +364,8 @@ public class WorkflowAction {
         return flowsToExecute;
     }
 
-    private boolean isVNFCreateOrDelete(WorkflowType resourceType, String requestAction) {
-        return resourceType == WorkflowType.VNF
-                && (CREATE_INSTANCE.equalsIgnoreCase(requestAction) || DELETE_INSTANCE.equalsIgnoreCase(requestAction));
+    private boolean isVNFCreate(WorkflowType resourceType, String requestAction) {
+        return resourceType == WorkflowType.VNF && CREATE_INSTANCE.equalsIgnoreCase(requestAction);
     }
 
     private void setExecutionVariables(DelegateExecution execution, List<ExecuteBuildingBlock> flowsToExecute,

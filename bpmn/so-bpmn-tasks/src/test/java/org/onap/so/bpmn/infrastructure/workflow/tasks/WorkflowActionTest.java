@@ -66,7 +66,9 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
+import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.aai.domain.yang.RelationshipList;
 import org.onap.aai.domain.yang.ServiceInstance;
@@ -409,6 +411,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 
         doReturn(serviceInstanceAAI).when(bbSetupUtils).getAAIServiceInstanceById("si0");
         doReturn(serviceInstanceMSO).when(bbInputSetup).getExistingServiceInstance(serviceInstanceAAI);
+        doReturn(Mockito.mock(GenericVnf.class)).when(bbSetupUtils).getAAIGenericVnf(any());
         when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
                 false, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
         workflowAction.selectExecutionList(execution);
@@ -931,6 +934,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 
         doReturn(serviceInstanceAAI).when(bbSetupUtils).getAAIServiceInstanceById("123");
         doReturn(serviceInstanceMSO).when(bbInputSetup).getExistingServiceInstance(serviceInstanceAAI);
+        doReturn(Mockito.mock(GenericVnf.class)).when(bbSetupUtils).getAAIGenericVnf(any());
         when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
                 false, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
         workflowAction.selectExecutionList(execution);
@@ -1011,6 +1015,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 
         doReturn(serviceInstanceAAI).when(bbSetupUtils).getAAIServiceInstanceById("123");
         doReturn(serviceInstanceMSO).when(bbInputSetup).getExistingServiceInstance(serviceInstanceAAI);
+        doReturn(Mockito.mock(GenericVnf.class)).when(bbSetupUtils).getAAIGenericVnf(any());
         when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
                 false, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
         workflowAction.selectExecutionList(execution);
