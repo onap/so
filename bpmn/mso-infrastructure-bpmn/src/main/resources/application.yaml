@@ -323,14 +323,6 @@ server:
   tomcat:
     max-threads: 50
 spring:
-  datasource:
-    hikari:
-      jdbcUrl: jdbc:mariadb://${DB_HOST}:3306/camundabpmn
-      username: ${DB_ADMIN_USERNAME}
-      password: ${DB_ADMIN_PASSWORD}
-      driver-class-name: org.mariadb.jdbc.Driver
-      pool-name: bpmn-pool
-      registerMbeans: true
   security:
     usercredentials:
     -
