@@ -1,0 +1,9 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Eric Debeau <eric.debeau@orange.com>
+Code-Review+1: Bengt Thuree <bthuree@linuxfoundation.org>
+Code-Review+2: Seshu Kumar M <seshu.kumar.m@huawei.com>
+Submitted-by: Seshu Kumar M <seshu.kumar.m@huawei.com>
+Submitted-at: Sat, 30 Oct 2021 17:37:08 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/so/+/125191
+Project: so
+Branch: refs/heads/istanbul
