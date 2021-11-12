@@ -404,7 +404,7 @@ dcnsio.updateTnMHRelationship(execution)</bpmn:script>
       <bpmn:incoming>Flow_0imtsjm</bpmn:incoming>
       <bpmn:linkEventDefinition id="LinkEventDefinition_0pcw91e" name="CreateTnSliceProfile" />
     </bpmn:intermediateThrowEvent>
-    <bpmn:exclusiveGateway id="Gateway_0tpcoai" name="Is FH/MH need to be process?">
+    <bpmn:exclusiveGateway id="Gateway_0tpcoai" name="Is FH/MH need to be process?" default="Flow_0ehx22x">
       <bpmn:incoming>SequenceFlow_0ax2c4p</bpmn:incoming>
       <bpmn:outgoing>Flow_0ehx22x</bpmn:outgoing>
       <bpmn:outgoing>Flow_13i03hb</bpmn:outgoing>

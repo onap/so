@@ -80,12 +80,6 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         logger.trace("Enter preProcessRequest()")
         Map<String, Object> nssiMap = new HashMap<>()
         int nsstCount=execution.getVariable("nsstCount") as int
-        if(nsstCount==5){
-            execution.setVariable("processFHandMH", true)
-        }
-        else{
-            execution.setVariable("processFHandMH", false)
-        }
         execution.setVariable("nssiMap", nssiMap)
         boolean isMoreNSSTtoProcess = true
         execution.setVariable("isMoreNSSTtoProcess", isMoreNSSTtoProcess)
@@ -113,6 +107,12 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
             isNSIOptionAvailable = true
             execution.setVariable('nsiServiceInstanceId', sliceParams.getSuggestNsiId())
             execution.setVariable('nsiServiceInstanceName', sliceParams.getSuggestNsiName())
+        }
+        if(sliceParams.getTnFHSliceTaskInfo() != null) {
+            execution.setVariable("processFHandMH", true)
+        }
+        else {
+            execution.setVariable("processFHandMH", false)
         }
         execution.setVariable("isNSIOptionAvailable", isNSIOptionAvailable)
         logger.trace("Exit retriveSliceOption() of DoAllocateNSIandNSSI")
@@ -1037,7 +1037,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         DUEG_ep.setFunction(function)
         DUEG_ep.setRole(role)
         DUEG_ep.setType(type)
-        DUEG_ep.setIpAddress("192.168.100.5")
+        DUEG_ep.setIpAddress("192.168.100.6")
         DUEG_ep.setLogicalInterfaceId("1234")
         DUEG_ep.setPrefixLength(prefixLength)
         DUEG_ep.setAddressFamily(addressFamily)
@@ -1050,7 +1050,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         CUIN_ep.setFunction(function)
         CUIN_ep.setRole(role)
         CUIN_ep.setType(type)
-        CUIN_ep.setIpAddress("192.168.100.6")
+        CUIN_ep.setIpAddress("192.168.100.7")
         CUIN_ep.setLogicalInterfaceId("1234")
         CUIN_ep.setNextHop("Host4")
         CUIN_ep.setPrefixLength(prefixLength)
@@ -1194,8 +1194,8 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         TransportSliceNetwork transportSliceNetwork = new TransportSliceNetwork()
         List<ConnectionLink> connectionLinks = new ArrayList<>()
         ConnectionLink connectionLink = new ConnectionLink()
-        connectionLink.setTransportEndpointA(execution.getVariable("tranportEp_ID_RU") as String)
-        connectionLink.setTransportEndpointB(execution.getVariable("tranportEp_ID_DUIN") as String)
+        connectionLink.setTransportEndpointA(UUID.randomUUID().toString())
+        connectionLink.setTransportEndpointB(UUID.randomUUID().toString())
         connectionLinks.add(connectionLink)
         transportSliceNetwork.setConnectionLinks(connectionLinks)
         transportSliceNetworks.add(transportSliceNetwork)
@@ -1219,7 +1219,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
                 .subscriptionServiceType(subscriptionServiceType)
                 .nsiId(sliceParams.getSuggestNsiId())
                 .serviceInvariantUuid(sliceTaskInfo.getNSSTInfo().getInvariantUUID())
-                .setServiceUuid(sliceTaskInfo.getNSSTInfo().getUUID())
+                .serviceUuid(sliceTaskInfo.getNSSTInfo().getUUID())
                 .nssiId(sliceTaskInfo.getSuggestNssiId())
                 .sST(sliceTaskInfo.getSliceProfile().getSST() ?: sliceParams.getServiceProfile().get("sST"))
                 .nssiName("nssi_tn_fh_" + execution.getVariable("sliceServiceInstanceName") as String)
@@ -1231,7 +1231,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         execution.setVariable("TnFHAllocateNssiNbiRequest", nbiRequest)
         execution.setVariable("tnFHSliceTaskInfo", sliceTaskInfo)
-        execution.setVariable("tnFHSubnetType", SubnetType.TN_BH)
+        execution.setVariable("tnFHSubnetType", SubnetType.TN_FH)
     }
 
     /**
@@ -1347,8 +1347,8 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         TransportSliceNetwork transportSliceNetwork = new TransportSliceNetwork()
         List<ConnectionLink> connectionLinks = new ArrayList<>()
         ConnectionLink connectionLink = new ConnectionLink()
-        connectionLink.setTransportEndpointA(execution.getVariable("tranportEp_ID_DUEG") as String)
-        connectionLink.setTransportEndpointB(execution.getVariable("tranportEp_ID_CUIN") as String)
+        connectionLink.setTransportEndpointA(UUID.randomUUID().toString())
+        connectionLink.setTransportEndpointB(UUID.randomUUID().toString())
         connectionLinks.add(connectionLink)
         transportSliceNetwork.setConnectionLinks(connectionLinks)
         transportSliceNetworks.add(transportSliceNetwork)
@@ -1375,7 +1375,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
                 .serviceUuid(sliceTaskInfo.getNSSTInfo().getUUID())
                 .nssiId(sliceTaskInfo.getSuggestNssiId())
                 .sST(sliceTaskInfo.getSliceProfile().getSST() ?: sliceParams.getServiceProfile().get("sST"))
-                .nssiName("nssi_tn_bh_" + execution.getVariable("sliceServiceInstanceName") as String)
+                .nssiName("nssi_tn_mh_" + execution.getVariable("sliceServiceInstanceName") as String)
                 .build()
 
         nbiRequest.setServiceInfo(serviceInfo)
@@ -1384,7 +1384,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         execution.setVariable("TnMHAllocateNssiNbiRequest", nbiRequest)
         execution.setVariable("tnMHSliceTaskInfo", sliceTaskInfo)
-        execution.setVariable("tnMHSubnetType", SubnetType.TN_BH)
+        execution.setVariable("tnMHSubnetType", SubnetType.TN_MH)
     }
 
     /**
