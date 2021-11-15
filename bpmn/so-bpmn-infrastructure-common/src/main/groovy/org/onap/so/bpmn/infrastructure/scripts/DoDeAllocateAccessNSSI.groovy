@@ -192,6 +192,8 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		input.addProperty("RANNFNSSIId", anNfNssiId)
 		input.addProperty("callbackURL", callbackURL.toString())
 		input.addProperty("sNSSAI", sNssai)
+                input.addProperty("globalSubscriberId", execution.getVariable("globalSubscriberId") as String)
+		input.addProperty("subscriptionServiceType", execution.getVariable("subscriptionServiceType") as String)
                 input.addProperty("sliceProfileId",sliceProfileId)
 		input.add("additionalproperties", new JsonObject())
 
