@@ -22,6 +22,30 @@
       "revId": "a439adba21814a27975b80faefe6e7336f2afa9b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d7e2c106_b7cf33a9",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeAllocateAccessNSSI.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-11-15T14:27:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6b88c6c0_92f6addb",
+      "range": {
+        "startLine": 195,
+        "startChar": 9,
+        "endLine": 196,
+        "endChar": 96
+      },
+      "revId": "a439adba21814a27975b80faefe6e7336f2afa9b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
