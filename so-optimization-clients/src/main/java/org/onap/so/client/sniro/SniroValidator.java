@@ -24,7 +24,7 @@ package org.onap.so.client.sniro;
 
 
 import static org.apache.commons.lang3.StringUtils.*;
-import java.util.LinkedHashMap;
+import java.util.Map;
 import org.json.JSONObject;
 import org.onap.so.client.exception.BadResponseException;
 import org.slf4j.Logger;
@@ -38,12 +38,14 @@ public class SniroValidator {
 
     private static final Logger logger = LoggerFactory.getLogger(SniroValidator.class);
 
+    private static final String MESSAGE_NOT_PROVIDED = "error message not provided";
+
     /**
      * Validates the synchronous homing response from sniro manager
      *
      * @throws BadResponseException
      */
-    public void validateDemandsResponse(LinkedHashMap<String, Object> response) throws BadResponseException {
+    public void validateDemandsResponse(Map<String, Object> response) throws BadResponseException {
         logger.debug("Validating Sniro Managers synchronous response");
         if (!response.isEmpty()) {
             JSONObject jsonResponse = new JSONObject(response);
@@ -54,10 +56,10 @@ public class SniroValidator {
                 } else {
                     String message = jsonResponse.getString("statusMessage");
                     if (isNotBlank(message)) {
-                        logger.debug("Sniro Managers response indicates failed: " + message);
+                        logger.debug("Sniro Managers response indicates failed: {}", message);
                     } else {
                         logger.debug("Sniro Managers response indicates failed: no status message provided");
-                        message = "error message not provided";
+                        message = MESSAGE_NOT_PROVIDED;
                     }
                     throw new BadResponseException("Sniro Managers synchronous response indicates failed: " + message);
                 }
@@ -67,7 +69,7 @@ public class SniroValidator {
             }
         } else {
             logger.debug("Sniro Managers synchronous response is empty");
-            throw new BadResponseException("Sniro Managers synchronous response i is empty");
+            throw new BadResponseException("Sniro Managers synchronous response is empty");
         }
     }
 
@@ -85,11 +87,11 @@ public class SniroValidator {
             } else {
                 String message = jsonResponse.getJSONObject("serviceException").getString("text");
                 if (isNotBlank(message)) {
-                    logger.debug("Sniro Managers response contains a service exception: " + message);
+                    logger.debug("Sniro Managers response contains a service exception: {}", message);
                 } else {
                     logger.debug(
                             "Sniro Managers response contains a service exception: no service exception text provided");
-                    message = "error message not provided";
+                    message = MESSAGE_NOT_PROVIDED;
                 }
                 throw new BadResponseException(
                         "Sniro Managers asynchronous response contains a service exception: " + message);
@@ -106,7 +108,7 @@ public class SniroValidator {
      *
      * @throws BadResponseException
      */
-    public void validateReleaseResponse(LinkedHashMap<String, Object> response) throws BadResponseException {
+    public void validateReleaseResponse(Map<String, Object> response) throws BadResponseException {
         logger.debug("Validating Sniro Conductors response");
         if (!response.isEmpty()) {
             String status = (String) response.get("status");
@@ -116,10 +118,10 @@ public class SniroValidator {
                 } else {
                     String message = (String) response.get("message");
                     if (isNotBlank(message)) {
-                        logger.debug("Sniro Conductors response indicates failed: " + message);
+                        logger.debug("Sniro Conductors response indicates failed: {}", message);
                     } else {
                         logger.debug("Sniro Conductors response indicates failed: error message not provided");
-                        message = "error message not provided";
+                        message = MESSAGE_NOT_PROVIDED;
                     }
                     throw new BadResponseException(
                             "Sniro Conductors synchronous response indicates failed: " + message);
