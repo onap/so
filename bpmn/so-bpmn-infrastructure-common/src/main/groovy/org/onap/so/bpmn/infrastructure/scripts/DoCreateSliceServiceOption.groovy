@@ -271,24 +271,22 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
      * @return
      */
     private SubnetType convertServiceCategory(String serviceCategory){
-        if("CN NSST".equals(serviceCategory)){
+        if(serviceCategory ==~ /CN.*/){
             return SubnetType.CN
         }
-        if ("AN NF NSST".equals(serviceCategory)){
-            return SubnetType.AN_NF
-        }
-        if ("AN NSST".equals(serviceCategory)){
+        if (serviceCategory ==~ /AN.*/){
             return SubnetType.AN
         }
-        if ("TN BH NSST".equals(serviceCategory)){
+        if (serviceCategory ==~ /TN.*BH.*/){
             return SubnetType.TN_BH
         }
-        if("TN MH NSST".equals(serviceCategory)){
+        if(serviceCategory ==~ /TN.*MH.*/){
             return SubnetType.TN_MH
         }
-        if("TN FH NSST".equals(serviceCategory)){
+        if(serviceCategory ==~ /TN.*FH.*/){
             return SubnetType.TN_FH
         }
+
         return null
     }
 

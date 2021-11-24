@@ -254,7 +254,7 @@ else{
 	
 	//TNFH slice profile instance creation
 	TNFH_sliceProfileInstance.setServiceInstanceId(TNFH_sliceProfileInstanceId)
-	sliceInstanceName = "sliceprofile _ "+TNFH_sliceProfileId
+	sliceInstanceName = "sliceprofile_"+TNFH_sliceProfileId
 	TNFH_sliceProfileInstance.setServiceInstanceName(sliceInstanceName)
 	serviceType = jsonUtil.getJsonValue(execution.getVariable("tnFhSliceProfile"), "sST")
 	TNFH_sliceProfileInstance.setServiceType(serviceType)
@@ -271,7 +271,7 @@ else{
 	
 	//TNMH slice profile instance creation
 	TNMH_sliceProfileInstance.setServiceInstanceId(TNMH_sliceProfileInstanceId)
-	sliceInstanceName = "sliceprofile _ "+TNMH_sliceProfileId
+	sliceInstanceName = "sliceprofile_"+TNMH_sliceProfileId
 	TNMH_sliceProfileInstance.setServiceInstanceName(sliceInstanceName)
 	serviceType = jsonUtil.getJsonValue(execution.getVariable("tnMhSliceProfile"), "sST")
 	TNMH_sliceProfileInstance.setServiceType(serviceType)

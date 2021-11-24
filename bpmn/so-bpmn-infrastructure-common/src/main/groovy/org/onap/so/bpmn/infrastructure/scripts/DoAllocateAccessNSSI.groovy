@@ -654,7 +654,8 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		logger.debug("completed AN service instance build " + ANServiceInstance.toString())
 		//create RAN NF NSSI
 		ANNFServiceInstance.setServiceInstanceId(execution.getVariable("RANNFServiceInstanceId") as String)
-		sliceInstanceName = "nssi_"+execution.getVariable("ANNF_modelName")
+                String ANNF_nssiInstanceId = UUID.randomUUID().toString()
+		sliceInstanceName = "nssi_an_nf_" + ANNF_nssiInstanceId
 		ANNFServiceInstance.setServiceInstanceName(sliceInstanceName)
 		ANNFServiceInstance.setServiceType(execution.getVariable("sst") as String)
 		ANNFServiceInstance.setOrchestrationStatus(serviceStatus)
@@ -663,7 +664,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		ANNFServiceInstance.setServiceRole(serviceRole)
 		snssaiList = jsonUtil.StringArrayToList(execution.getVariable("snssaiList") as String)
 		snssai = snssaiList.get(0)
-		ANNFServiceInstance.setEnvironmentContext(snssai)
+		ANNFServiceInstance.setEnvironmentContext(execution.getVariable("networkType") as String)
                 ANNFServiceInstance.setModelInvariantId(execution.getVariable("ANNF_modelInvariantUuid"))
                 ANNFServiceInstance.setModelVersionId(execution.getVariable("ANNF_modelUuid"))
 		ANNFServiceInstance.setWorkloadContext("AN_NF")

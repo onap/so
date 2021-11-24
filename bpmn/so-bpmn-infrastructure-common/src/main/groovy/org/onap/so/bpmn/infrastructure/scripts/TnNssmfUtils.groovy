@@ -377,7 +377,6 @@ class TnNssmfUtils {
             logger.debug("mso.workflow.TnNssmf.enableSDNCNetworkConfig is undefined, so use default value (true)")
             enableSdnc = "true"
         }
-	enableSdnc = "false"
         logger.debug("setEnableSdncConfig: enableSdnc=" + enableSdnc)
 
         execution.setVariable("enableSdnc", enableSdnc)
