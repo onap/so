@@ -1,0 +1,257 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c59acfae_a9d3bddb",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeallocateCoreNSSI.groovy",
+        "patchSetId": 10
+      },
+      "lineNbr": 334,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-11-25T16:12:47Z",
+      "side": 1,
+      "message": "not used",
+      "range": {
+        "startLine": 334,
+        "startChar": 7,
+        "endLine": 334,
+        "endChar": 38
+      },
+      "revId": "9b3a58f52e0ebe1df34a37d2902a366faee8eb7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "01b934a8_d61a63fb",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeallocateCoreNSSI.groovy",
+        "patchSetId": 10
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-11-25T16:12:47Z",
+      "side": 1,
+      "message": "Reference networkServiceName is not used, reduntant code, please remove.",
+      "range": {
+        "startLine": 341,
+        "startChar": 2,
+        "endLine": 344,
+        "endChar": 9
+      },
+      "revId": "9b3a58f52e0ebe1df34a37d2902a366faee8eb7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fe56f61c_0ae9c5c8",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeallocateCoreNSSI.groovy",
+        "patchSetId": 10
+      },
+      "lineNbr": 388,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-11-25T16:12:47Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 388,
+        "startChar": 7,
+        "endLine": 388,
+        "endChar": 21
+      },
+      "revId": "9b3a58f52e0ebe1df34a37d2902a366faee8eb7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c13af0d8_5036a686",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeallocateCoreNSSI.groovy",
+        "patchSetId": 10
+      },
+      "lineNbr": 401,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-11-25T16:12:47Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 401,
+        "startChar": 11,
+        "endLine": 401,
+        "endChar": 75
+      },
+      "revId": "9b3a58f52e0ebe1df34a37d2902a366faee8eb7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "33b67cf0_644214b4",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeallocateCoreNSSI.groovy",
+        "patchSetId": 10
+      },
+      "lineNbr": 417,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-11-25T16:12:47Z",
+      "side": 1,
+      "message": "String msg",
+      "range": {
+        "startLine": 417,
+        "startChar": 12,
+        "endLine": 417,
+        "endChar": 15
+      },
+      "revId": "9b3a58f52e0ebe1df34a37d2902a366faee8eb7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b1d1a02f_0ca81102",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeallocateCoreNSSI.groovy",
+        "patchSetId": 10
+      },
+      "lineNbr": 505,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-11-25T16:12:47Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 495,
+        "startChar": 0,
+        "endLine": 505,
+        "endChar": 65
+      },
+      "revId": "9b3a58f52e0ebe1df34a37d2902a366faee8eb7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3b1c1a1d_0d6f59ae",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeallocateCoreNSSI.groovy",
+        "patchSetId": 10
+      },
+      "lineNbr": 523,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-11-25T16:12:47Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 523,
+        "startChar": 15,
+        "endLine": 523,
+        "endChar": 65
+      },
+      "revId": "9b3a58f52e0ebe1df34a37d2902a366faee8eb7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f570884e_df93ed6c",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeallocateCoreNSSI.groovy",
+        "patchSetId": 10
+      },
+      "lineNbr": 558,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-11-25T16:12:47Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 537,
+        "startChar": 0,
+        "endLine": 558,
+        "endChar": 17
+      },
+      "revId": "9b3a58f52e0ebe1df34a37d2902a366faee8eb7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "98248ebe_0df6cf04",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeallocateCoreNSSI.groovy",
+        "patchSetId": 10
+      },
+      "lineNbr": 687,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-11-25T16:12:47Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 675,
+        "startChar": 6,
+        "endLine": 687,
+        "endChar": 70
+      },
+      "revId": "9b3a58f52e0ebe1df34a37d2902a366faee8eb7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "85f9e4ea_bbb5942c",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeallocateCoreNSSI.groovy",
+        "patchSetId": 10
+      },
+      "lineNbr": 715,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-11-25T16:12:47Z",
+      "side": 1,
+      "message": "Cast to JSONObject:\n JSONObject item \u003d items.get(0) as JSONObject\n JSONObject service \u003d item.get(\"service\") as JSONObject",
+      "range": {
+        "startLine": 714,
+        "startChar": 16,
+        "endLine": 715,
+        "endChar": 55
+      },
+      "revId": "9b3a58f52e0ebe1df34a37d2902a366faee8eb7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b47b1c74_78a0cb21",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeallocateCoreNSSITest.groovy",
+        "patchSetId": 10
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-11-25T16:12:47Z",
+      "side": 1,
+      "message": "Why did you remove tests logic in this class, or in some case also verify statements? \nIf your logic changes the behavior, you should adjust the tests, not remove them.",
+      "range": {
+        "startLine": 201,
+        "startChar": 5,
+        "endLine": 265,
+        "endChar": 77
+      },
+      "revId": "9b3a58f52e0ebe1df34a37d2902a366faee8eb7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
