@@ -34,13 +34,16 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Optional;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.appc.client.lcm.model.Action;
 import org.onap.so.appc.orchestrator.service.beans.ApplicationControllerTaskRequest;
 import org.onap.so.appc.orchestrator.service.beans.ApplicationControllerVnf;
-import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
@@ -48,14 +51,23 @@ import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestParameters;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
+import org.onap.so.client.orchestration.AAIVnfResources;
 import org.onap.so.client.policy.JettisonStyleMapperProvider;
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.onap.so.db.catalog.client.CatalogDbClient;
 
-public class AppcOrchestratorPreProcessorTest extends BaseTaskTest {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class AppcOrchestratorPreProcessorTest extends TestDataSetup {
 
     private final static String JSON_FILE_LOCATION = "src/test/resources/__files/BuildingBlocks/";
-
+    @Mock
+    protected ExtractPojosForBB extractPojosForBB;
+    @Mock
+    protected AAIVnfResources aaiVnfResources;
+    @Mock
+    protected CatalogDbClient catalogDbClient;
     @InjectMocks
     private AppcOrchestratorPreProcessor appcOrchestratorPreProcessor = new AppcOrchestratorPreProcessor();
 
@@ -111,7 +123,7 @@ public class AppcOrchestratorPreProcessorTest extends BaseTaskTest {
     }
 
     @Test
-    public void addVmInfoToAppcTaskRequestTest() throws Exception {
+    public void addVmInfoToAppcTaskRequestTest() {
         ApplicationControllerTaskRequest appcTaskRequest = new ApplicationControllerTaskRequest();
         ApplicationControllerVnf applicationControllerVnf = new ApplicationControllerVnf();
         appcTaskRequest.setApplicationControllerVnf(applicationControllerVnf);

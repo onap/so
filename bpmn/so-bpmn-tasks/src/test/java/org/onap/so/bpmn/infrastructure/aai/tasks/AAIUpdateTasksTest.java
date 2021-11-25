@@ -25,13 +25,16 @@ package org.onap.so.bpmn.infrastructure.aai.tasks;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
-import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -42,7 +45,17 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
+import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.BBObjectNotFoundException;
+import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.client.orchestration.AAICollectionResources;
+import org.onap.so.client.orchestration.AAIConfigurationResources;
+import org.onap.so.client.orchestration.AAINetworkResources;
+import org.onap.so.client.orchestration.AAIPnfResources;
+import org.onap.so.client.orchestration.AAIServiceInstanceResources;
+import org.onap.so.client.orchestration.AAIVfModuleResources;
+import org.onap.so.client.orchestration.AAIVnfResources;
+import org.onap.so.client.orchestration.AAIVolumeGroupResources;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import java.util.HashMap;
 import static org.junit.Assert.assertEquals;
@@ -57,8 +70,29 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class AAIUpdateTasksTest extends BaseTaskTest {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class AAIUpdateTasksTest extends TestDataSetup {
 
+    @Mock
+    protected ExtractPojosForBB extractPojosForBB;
+    @Mock
+    protected ExceptionBuilder exceptionUtil;
+    @Mock
+    protected AAIServiceInstanceResources aaiServiceInstanceResources;
+    @Mock
+    protected AAIPnfResources aaiPnfResources;
+    @Mock
+    protected AAIVnfResources aaiVnfResources;
+    @Mock
+    protected AAIVfModuleResources aaiVfModuleResources;
+    @Mock
+    protected AAIVolumeGroupResources aaiVolumeGroupResources;
+    @Mock
+    protected AAINetworkResources aaiNetworkResources;
+    @Mock
+    protected AAICollectionResources aaiCollectionResources;
+    @Mock
+    protected AAIConfigurationResources aaiConfigurationResources;
     @InjectMocks
     private AAIUpdateTasks aaiUpdateTasks = new AAIUpdateTasks();
 
@@ -99,7 +133,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusAssignedServiceTest() throws Exception {
+    public void updateOrchestrationStatusAssignedServiceTest() {
         doNothing().when(aaiServiceInstanceResources).updateOrchestrationStatusServiceInstance(serviceInstance,
                 OrchestrationStatus.ASSIGNED);
 
@@ -110,7 +144,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusAssignedServiceExceptionTest() throws Exception {
+    public void updateOrchestrationStatusAssignedServiceExceptionTest() {
         expectedException.expect(BpmnError.class);
 
         doThrow(RuntimeException.class).when(aaiServiceInstanceResources)
@@ -120,7 +154,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusActiveServiceTest() throws Exception {
+    public void updateOrchestrationStatusActiveServiceTest() {
         doNothing().when(aaiServiceInstanceResources).updateOrchestrationStatusServiceInstance(serviceInstance,
                 OrchestrationStatus.ACTIVE);
 
@@ -131,7 +165,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusActiveServiceExceptionTest() throws Exception {
+    public void updateOrchestrationStatusActiveServiceExceptionTest() {
         expectedException.expect(BpmnError.class);
 
         doThrow(RuntimeException.class).when(aaiServiceInstanceResources)
@@ -221,7 +255,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusAssignedVnfTest() throws Exception {
+    public void updateOrchestrationStatusAssignedVnfTest() {
         doNothing().when(aaiVnfResources).updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.ASSIGNED);
 
         aaiUpdateTasks.updateOrchestrationStatusAssignedVnf(execution);
@@ -230,7 +264,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusAssignedVnfExceptionTest() throws Exception {
+    public void updateOrchestrationStatusAssignedVnfExceptionTest() {
         expectedException.expect(BpmnError.class);
 
         doThrow(RuntimeException.class).when(aaiVnfResources).updateOrchestrationStatusVnf(genericVnf,
@@ -240,7 +274,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusActiveVnfTest() throws Exception {
+    public void updateOrchestrationStatusActiveVnfTest() {
         doNothing().when(aaiVnfResources).updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.ACTIVE);
 
         aaiUpdateTasks.updateOrchestrationStatusActiveVnf(execution);
@@ -249,7 +283,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusActiveVnfExceptionTest() throws Exception {
+    public void updateOrchestrationStatusActiveVnfExceptionTest() {
         expectedException.expect(BpmnError.class);
 
         doThrow(RuntimeException.class).when(aaiVnfResources).updateOrchestrationStatusVnf(genericVnf,
@@ -259,7 +293,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusAssignVfModuleTest() throws Exception {
+    public void updateOrchestrationStatusAssignVfModuleTest() {
         doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
                 OrchestrationStatus.ASSIGNED);
         aaiUpdateTasks.updateOrchestrationStatusAssignedVfModule(execution);
@@ -269,7 +303,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusAssignVfModuleExceptionTest() throws Exception {
+    public void updateOrchestrationStatusAssignVfModuleExceptionTest() {
         doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule,
                 genericVnf, OrchestrationStatus.ASSIGNED);
 
@@ -279,7 +313,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusCreatedVfModuleTest() throws Exception {
+    public void updateOrchestrationStatusCreatedVfModuleTest() {
         doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
                 OrchestrationStatus.CREATED);
         aaiUpdateTasks.updateOrchestrationStatusCreatedVfModule(execution);
@@ -288,7 +322,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusCreatedVfModuleExceptionTest() throws Exception {
+    public void updateOrchestrationStatusCreatedVfModuleExceptionTest() {
         doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule,
                 genericVnf, OrchestrationStatus.CREATED);
 
@@ -298,7 +332,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusPendingActivatefModuleTest() throws Exception {
+    public void updateOrchestrationStatusPendingActivatefModuleTest() {
         doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
                 OrchestrationStatus.PENDING_ACTIVATION);
 
@@ -309,7 +343,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusPendingActivatefModuleExceptionTest() throws Exception {
+    public void updateOrchestrationStatusPendingActivatefModuleExceptionTest() {
         doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule,
                 genericVnf, OrchestrationStatus.PENDING_ACTIVATION);
 
@@ -319,7 +353,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusDectivateVfModuleTest() throws Exception {
+    public void updateOrchestrationStatusDectivateVfModuleTest() {
         doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
                 OrchestrationStatus.CREATED);
 
@@ -330,7 +364,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusDectivateVfModuleExceptionTest() throws Exception {
+    public void updateOrchestrationStatusDectivateVfModuleExceptionTest() {
         doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule,
                 genericVnf, OrchestrationStatus.CREATED);
 
@@ -340,7 +374,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateHeatStackIdVfModuleTest() throws Exception {
+    public void updateHeatStackIdVfModuleTest() {
         execution.setVariable("heatStackId", "newHeatStackId");
         doNothing().when(aaiVfModuleResources).updateHeatStackIdVfModule(vfModule, genericVnf);
 
@@ -351,18 +385,18 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateHeatStackIdVfModuleToNullTest() throws Exception {
+    public void updateHeatStackIdVfModuleToNullTest() {
         execution.setVariable("heatStackId", null);
         doNothing().when(aaiVfModuleResources).updateHeatStackIdVfModule(vfModule, genericVnf);
 
         aaiUpdateTasks.updateHeatStackIdVfModule(execution);
 
         verify(aaiVfModuleResources, times(1)).updateHeatStackIdVfModule(vfModule, genericVnf);
-        assertEquals(vfModule.getHeatStackId(), "");
+        assertEquals("", vfModule.getHeatStackId());
     }
 
     @Test
-    public void updateHeatStackIdVfModuleExceptionTest() throws Exception {
+    public void updateHeatStackIdVfModuleExceptionTest() {
         doThrow(RuntimeException.class).when(aaiVfModuleResources).updateHeatStackIdVfModule(vfModule, genericVnf);
 
         expectedException.expect(BpmnError.class);
@@ -371,7 +405,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusActiveVolumeGroupTest() throws Exception {
+    public void updateOrchestrationStatusActiveVolumeGroupTest() {
         doNothing().when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion,
                 OrchestrationStatus.ACTIVE);
 
@@ -382,7 +416,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusActiveVolumeGroupExceptionTest() throws Exception {
+    public void updateOrchestrationStatusActiveVolumeGroupExceptionTest() {
         expectedException.expect(BpmnError.class);
         doThrow(RuntimeException.class).when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup,
                 cloudRegion, OrchestrationStatus.ACTIVE);
@@ -390,7 +424,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusCreatedVolumeGroupTest() throws Exception {
+    public void updateOrchestrationStatusCreatedVolumeGroupTest() {
         doNothing().when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion,
                 OrchestrationStatus.CREATED);
 
@@ -401,7 +435,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusCreatedVolumeGroupExceptionTest() throws Exception {
+    public void updateOrchestrationStatusCreatedVolumeGroupExceptionTest() {
         expectedException.expect(BpmnError.class);
         doThrow(RuntimeException.class).when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup,
                 cloudRegion, OrchestrationStatus.CREATED);
@@ -409,7 +443,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void test_updateOrchestrationStatusAssignedVolumeGroup() throws Exception {
+    public void test_updateOrchestrationStatusAssignedVolumeGroup() {
         doNothing().when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion,
                 OrchestrationStatus.ASSIGNED);
 
@@ -421,7 +455,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void test_updateOrchestrationStatusAssignedVolumeGroup_exception() throws Exception {
+    public void test_updateOrchestrationStatusAssignedVolumeGroup_exception() {
         expectedException.expect(BpmnError.class);
         doThrow(RuntimeException.class).when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup,
                 cloudRegion, OrchestrationStatus.ASSIGNED);
@@ -429,7 +463,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateHeatStackIdVolumeGroupTest() throws Exception {
+    public void updateHeatStackIdVolumeGroupTest() {
         execution.setVariable("heatStackId", "newHeatStackId");
         doNothing().when(aaiVolumeGroupResources).updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
 
@@ -440,18 +474,18 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateHeatStackIdVolumeGroupToNullTest() throws Exception {
+    public void updateHeatStackIdVolumeGroupToNullTest() {
         execution.setVariable("heatStackId", null);
         doNothing().when(aaiVolumeGroupResources).updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
 
         aaiUpdateTasks.updateHeatStackIdVolumeGroup(execution);
 
         verify(aaiVolumeGroupResources, times(1)).updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
-        assertEquals(volumeGroup.getHeatStackId(), "");
+        assertEquals("", volumeGroup.getHeatStackId());
     }
 
     @Test
-    public void updateHeatStackIdVolumeGroupExceptionTest() throws Exception {
+    public void updateHeatStackIdVolumeGroupExceptionTest() {
         expectedException.expect(BpmnError.class);
         doThrow(RuntimeException.class).when(aaiVolumeGroupResources).updateHeatStackIdVolumeGroup(volumeGroup,
                 cloudRegion);
@@ -459,7 +493,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateNetworkExceptionTest() throws Exception {
+    public void updateNetworkExceptionTest() {
         expectedException.expect(BpmnError.class);
 
         doThrow(RuntimeException.class).when(aaiNetworkResources).updateNetwork(network);
@@ -468,21 +502,21 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOstatusActivedNetworkCollectionTest() throws Exception {
+    public void updateOstatusActivedNetworkCollectionTest() {
         doNothing().when(aaiCollectionResources).updateCollection(serviceInstance.getCollection());
         aaiUpdateTasks.updateOrchestrationStatusActiveNetworkCollection(execution);
         verify(aaiCollectionResources, times(1)).updateCollection(serviceInstance.getCollection());
     }
 
     @Test
-    public void updateOstatusActiveNetworkColectionExceptionTest() throws Exception {
+    public void updateOstatusActiveNetworkColectionExceptionTest() {
         expectedException.expect(BpmnError.class);
         doThrow(RuntimeException.class).when(aaiCollectionResources).updateCollection(serviceInstance.getCollection());
         aaiUpdateTasks.updateOrchestrationStatusActiveNetworkCollection(execution);
     }
 
     @Test
-    public void updateOrchestrationStatusActivateVfModuleTest() throws Exception {
+    public void updateOrchestrationStatusActivateVfModuleTest() {
         doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
                 OrchestrationStatus.ACTIVE);
 
@@ -493,7 +527,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusActivateVfModuleExceptionTest() throws Exception {
+    public void updateOrchestrationStatusActivateVfModuleExceptionTest() {
         doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule,
                 genericVnf, OrchestrationStatus.ACTIVE);
 
@@ -642,7 +676,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusDeleteVfModuleTest() throws Exception {
+    public void updateOrchestrationStatusDeleteVfModuleTest() {
         doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
                 OrchestrationStatus.ASSIGNED);
 
@@ -668,7 +702,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusDeactivateFabricConfigurationTest() throws Exception {
+    public void updateOrchestrationStatusDeactivateFabricConfigurationTest() {
         gBBInput = execution.getGeneralBuildingBlock();
         doNothing().when(aaiConfigurationResources).updateOrchestrationStatusConfiguration(configuration,
                 OrchestrationStatus.ASSIGNED);
@@ -680,7 +714,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusActivateFabricConfigurationTest() throws Exception {
+    public void updateOrchestrationStatusActivateFabricConfigurationTest() {
         gBBInput = execution.getGeneralBuildingBlock();
         doNothing().when(aaiConfigurationResources).updateOrchestrationStatusConfiguration(configuration,
                 OrchestrationStatus.ACTIVE);
@@ -692,7 +726,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusAssignedFabricConfigurationTest() throws Exception {
+    public void updateOrchestrationStatusAssignedFabricConfigurationTest() {
         gBBInput = execution.getGeneralBuildingBlock();
         doNothing().when(aaiConfigurationResources).updateOrchestrationStatusConfiguration(configuration,
                 OrchestrationStatus.ASSIGNED);
@@ -704,7 +738,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateContrailServiceInstanceFqdnVfModuleTest() throws Exception {
+    public void updateContrailServiceInstanceFqdnVfModuleTest() {
         execution.setVariable("contrailServiceInstanceFqdn", "newContrailServiceInstanceFqdn");
         doNothing().when(aaiVfModuleResources).updateContrailServiceInstanceFqdnVfModule(vfModule, genericVnf);
 
@@ -715,13 +749,13 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateContrailServiceInstanceFqdnVfModuleNoUpdateTest() throws Exception {
+    public void updateContrailServiceInstanceFqdnVfModuleNoUpdateTest() {
         aaiUpdateTasks.updateContrailServiceInstanceFqdnVfModule(execution);
         verify(aaiVfModuleResources, times(0)).updateContrailServiceInstanceFqdnVfModule(vfModule, genericVnf);
     }
 
     @Test
-    public void updateIpv4OamAddressVnfTest() throws Exception {
+    public void updateIpv4OamAddressVnfTest() {
         execution.setVariable("oamManagementV4Address", "newIpv4OamAddress");
         doNothing().when(aaiVnfResources).updateObjectVnf(genericVnf);
 
@@ -732,13 +766,13 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateIpv4OamAddressVnfNoUpdateTest() throws Exception {
+    public void updateIpv4OamAddressVnfNoUpdateTest() {
         aaiUpdateTasks.updateIpv4OamAddressVnf(execution);
         verify(aaiVnfResources, times(0)).updateObjectVnf(genericVnf);
     }
 
     @Test
-    public void updateManagementV6AddressVnfTest() throws Exception {
+    public void updateManagementV6AddressVnfTest() {
         execution.setVariable("oamManagementV6Address", "newManagementV6Address");
         doNothing().when(aaiVnfResources).updateObjectVnf(genericVnf);
 
@@ -749,13 +783,13 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateManagementV6AddressVnfNoUpdateTest() throws Exception {
+    public void updateManagementV6AddressVnfNoUpdateTest() {
         aaiUpdateTasks.updateManagementV6AddressVnf(execution);
         verify(aaiVnfResources, times(0)).updateObjectVnf(genericVnf);
     }
 
     @Test
-    public void updateOrchestrationStatusVnfConfigureTest() throws Exception {
+    public void updateOrchestrationStatusVnfConfigureTest() {
         doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
                 OrchestrationStatus.CONFIGURE);
 
@@ -763,7 +797,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusVnfConfiguredTest() throws Exception {
+    public void updateOrchestrationStatusVnfConfiguredTest() {
         doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
                 OrchestrationStatus.CONFIGURED);
 
@@ -777,7 +811,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusVnfConfigAssignedTest() throws Exception {
+    public void updateOrchestrationStatusVnfConfigAssignedTest() {
         doNothing().when(aaiVnfResources).updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.CONFIGASSIGNED);
 
         aaiUpdateTasks.updateOrchestrationStatus(execution, "vnf", "config-assign");
@@ -786,7 +820,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusVnfConfigDeployedTest() throws Exception {
+    public void updateOrchestrationStatusVnfConfigDeployedTest() {
         doNothing().when(aaiVnfResources).updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.CONFIGDEPLOYED);
 
         aaiUpdateTasks.updateOrchestrationStatus(execution, "vnf", "config-deploy");
@@ -795,7 +829,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusVfModuleConfigDeployedTest() throws Exception {
+    public void updateOrchestrationStatusVfModuleConfigDeployedTest() {
         doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
                 OrchestrationStatus.CONFIGDEPLOYED);
         aaiUpdateTasks.updateOrchestrationStatus(execution, "vfmodule", "config-deploy");
@@ -804,7 +838,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateOrchestrationStatusVfModuleConfigAssignedTest() throws Exception {
+    public void updateOrchestrationStatusVfModuleConfigAssignedTest() {
         doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
                 OrchestrationStatus.CONFIGASSIGNED);
         aaiUpdateTasks.updateOrchestrationStatus(execution, "vfmodule", "config-assign");

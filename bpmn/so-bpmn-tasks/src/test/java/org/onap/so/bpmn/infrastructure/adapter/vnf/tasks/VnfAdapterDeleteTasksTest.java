@@ -31,12 +31,15 @@ import static org.mockito.Mockito.when;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.adapters.vnfrest.DeleteVfModuleRequest;
 import org.onap.so.adapters.vnfrest.DeleteVolumeGroupRequest;
-import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
@@ -45,8 +48,22 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
+import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.client.orchestration.VnfAdapterVfModuleResources;
+import org.onap.so.client.orchestration.VnfAdapterVolumeGroupResources;
 
-public class VnfAdapterDeleteTasksTest extends BaseTaskTest {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class VnfAdapterDeleteTasksTest extends TestDataSetup {
+
+    @Mock
+    protected ExceptionBuilder exceptionUtil;
+    @Mock
+    protected ExtractPojosForBB extractPojosForBB;
+    @Mock
+    protected VnfAdapterVfModuleResources vnfAdapterVfModuleResources;
+    @Mock
+    protected VnfAdapterVolumeGroupResources vnfAdapterVolumeGroupResources;
     @InjectMocks
     private VnfAdapterDeleteTasks vnfAdapterDeleteTasks = new VnfAdapterDeleteTasks();
 

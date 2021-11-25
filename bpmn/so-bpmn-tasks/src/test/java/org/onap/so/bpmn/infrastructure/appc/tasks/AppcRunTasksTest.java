@@ -37,25 +37,43 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.appc.client.lcm.model.Action;
-import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
+import org.onap.so.client.appc.ApplicationControllerAction;
 import org.onap.so.client.exception.BBObjectNotFoundException;
+import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.client.orchestration.AAIVnfResources;
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.onap.so.db.catalog.client.CatalogDbClient;
 
-public class AppcRunTasksTest extends BaseTaskTest {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class AppcRunTasksTest extends TestDataSetup {
 
     private final static String JSON_FILE_LOCATION = "src/test/resources/__files/BuildingBlocks/";
-
+    @Mock
+    protected ExtractPojosForBB extractPojosForBB;
+    @Mock
+    protected CatalogDbClient catalogDbClient;
+    @Mock
+    protected ExceptionBuilder exceptionUtil;
+    @Mock
+    protected ApplicationControllerAction appCClient;
+    @Mock
+    protected AAIVnfResources aaiVnfResources;
     @InjectMocks
     private AppcRunTasks appcRunTasks = new AppcRunTasks();
 
@@ -171,7 +189,7 @@ public class AppcRunTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void testUserParams() throws Exception {
+    public void testUserParams() {
         Map<String, Object> userParams = new HashMap<String, Object>();
         userParams.put("existing_software_version", "3.1");
         userParams.put("new_software_version", "3.2");

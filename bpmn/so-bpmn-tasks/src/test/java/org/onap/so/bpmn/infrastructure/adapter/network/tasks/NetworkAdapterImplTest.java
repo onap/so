@@ -5,13 +5,20 @@ import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertNotNull;
 import javax.xml.bind.JAXBException;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.FileUtil;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
-import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.common.data.TestDataSetup;
+import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 
-public class NetworkAdapterImplTest extends BaseTaskTest {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class NetworkAdapterImplTest extends TestDataSetup {
 
+    @Mock
+    protected ExtractPojosForBB extractPojosForBB;
     @InjectMocks
     private NetworkAdapterImpl networkAdapterImpl = new NetworkAdapterImpl();
 

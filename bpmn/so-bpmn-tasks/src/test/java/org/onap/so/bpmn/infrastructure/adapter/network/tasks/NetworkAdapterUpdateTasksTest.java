@@ -21,28 +21,22 @@
 package org.onap.so.bpmn.infrastructure.adapter.network.tasks;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
-import java.util.Optional;
-import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
-import org.onap.so.adapters.nwrest.CreateNetworkRequest;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
-import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
-import org.onap.so.bpmn.BaseTaskTest;
-import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
@@ -50,11 +44,16 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
-import org.onap.so.client.adapter.network.NetworkAdapterClientException;
+import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
+import org.onap.so.client.adapter.network.mapper.NetworkAdapterObjectMapper;
 import org.onap.so.client.exception.BBObjectNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 
-public class NetworkAdapterUpdateTasksTest extends BaseTaskTest {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class NetworkAdapterUpdateTasksTest extends TestDataSetup {
+    @Mock
+    protected ExtractPojosForBB extractPojosForBB;
+    @Mock
+    protected NetworkAdapterObjectMapper networkAdapterObjectMapper;
     @InjectMocks
     private NetworkAdapterUpdateTasks networkAdapterUpdateTasks = new NetworkAdapterUpdateTasks();
 
@@ -84,7 +83,7 @@ public class NetworkAdapterUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateNetworkTest() throws Exception {
+    public void updateNetworkTest() {
         String cloudRegionPo = "cloudRegionPo";
         UpdateNetworkRequest updateNetworkRequest = new UpdateNetworkRequest();
         execution.setVariable("cloudRegionPo", cloudRegionPo);
