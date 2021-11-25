@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "93de9054_aef42dc6",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/infra/rest/validator/VnfDeleteValidatorTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-11-25T15:20:39Z",
+      "side": 1,
+      "message": "assertFalse would be better",
+      "range": {
+        "startLine": 52,
+        "startChar": 8,
+        "endLine": 52,
+        "endChar": 20
+      },
+      "revId": "d84cfb0bd5806af231e01ef1bc9271bf25f89ad9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
