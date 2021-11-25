@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6fa253d3_265d9255",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-11-25T15:36:59Z",
+      "side": 1,
+      "message": "resourceSharingLevel(sliceParams.serviceProfile.get(\"resourceSharingLevel\") as String)",
+      "range": {
+        "startLine": 447,
+        "startChar": 16,
+        "endLine": 447,
+        "endChar": 93
+      },
+      "revId": "d5ae211c885c0e0d2c3eb289293581eebff644c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
