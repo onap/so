@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1qv87sb" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.6.0">
+  <bpmn:process id="CreateChildServiceBB" name="CreateChildServiceBB" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>SequenceFlow_14q7e7i</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="EndEvent_0il9cjn">
+      <bpmn:incoming>SequenceFlow_143mdyp</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_14q7e7i" sourceRef="StartEvent_1" targetRef="Task_1axdixm" />
+    <bpmn:sequenceFlow id="SequenceFlow_0n5pwwk" sourceRef="Task_1axdixm" targetRef="Task_0892y22" />
+    <bpmn:sequenceFlow id="SequenceFlow_0x6xxb8" sourceRef="Task_0892y22" targetRef="Task_1olljx2" />
+    <bpmn:sequenceFlow id="SequenceFlow_0jahgui" sourceRef="Task_1olljx2" targetRef="ExclusiveGateway_1otl9mn" />
+    <bpmn:sequenceFlow id="SequenceFlow_143mdyp" sourceRef="Task_1oyb4b5" targetRef="EndEvent_0il9cjn" />
+    <bpmn:receiveTask id="Task_1olljx2" name="Wait for Completion" messageRef="Message_0kfkpsv">
+      <bpmn:incoming>SequenceFlow_0x6xxb8</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0jahgui</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:boundaryEvent id="IntermediateThrowEvent_1gh5vds" name="Timeout" attachedToRef="Task_1olljx2">
+      <bpmn:outgoing>SequenceFlow_0hmy1qr</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_13keqs7">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT5H</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="EndEvent_11rdhm9">
+      <bpmn:incoming>SequenceFlow_0hmy1qr</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_12rxrrg" errorRef="Error_1d6c5q3" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0hmy1qr" sourceRef="IntermediateThrowEvent_1gh5vds" targetRef="EndEvent_11rdhm9" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1otl9mn" name="Child Request Status" default="SequenceFlow_052tga4">
+      <bpmn:incoming>SequenceFlow_0jahgui</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0zfixj7</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_052tga4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0zfixj7" name="Completed" sourceRef="ExclusiveGateway_1otl9mn" targetRef="Task_1oyb4b5">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${execution.getVariable("CHILD_SVC_REQ_STATUS")=="COMPLETED"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_052tga4" name="Failed" sourceRef="ExclusiveGateway_1otl9mn" targetRef="Task_0jc8k6m" />
+    <bpmn:serviceTask id="Task_1axdixm" name="Build Create Request" camunda:expression="${CreateChildServiceBB.buildRequest(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_14q7e7i</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0n5pwwk</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_0892y22" name="Send Request" camunda:expression="${CreateChildServiceBB.sendRequest(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_0n5pwwk</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0x6xxb8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_0jc8k6m" name="Handle Failure" camunda:expression="${CreateChildServiceBB.handleFailure(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_052tga4</bpmn:incoming>
+    </bpmn:serviceTask>
+    <bpmn:task id="Task_1oyb4b5" name="Update AAI">
+      <bpmn:incoming>SequenceFlow_0zfixj7</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_143mdyp</bpmn:outgoing>
+    </bpmn:task>
+  </bpmn:process>
+  <bpmn:error id="Error_1d6c5q3" name="MSO Workflow Exception" errorCode="MSOWorkflowException" camunda:errorMessage="Child service creation timeout reached" />
+  <bpmn:message id="Message_0kfkpsv" name="ChildServiceRequest" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CreateChildServiceBB">
+      <bpmndi:BPMNEdge id="SequenceFlow_052tga4_di" bpmnElement="SequenceFlow_052tga4">
+        <di:waypoint x="900" y="145" />
+        <di:waypoint x="900" y="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="905" y="173" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0zfixj7_di" bpmnElement="SequenceFlow_0zfixj7">
+        <di:waypoint x="925" y="120" />
+        <di:waypoint x="1040" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="957" y="102" width="54" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0hmy1qr_di" bpmnElement="SequenceFlow_0hmy1qr">
+        <di:waypoint x="730" y="178" />
+        <di:waypoint x="730" y="252" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_143mdyp_di" bpmnElement="SequenceFlow_143mdyp">
+        <di:waypoint x="1140" y="120" />
+        <di:waypoint x="1232" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0jahgui_di" bpmnElement="SequenceFlow_0jahgui">
+        <di:waypoint x="750" y="120" />
+        <di:waypoint x="875" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0x6xxb8_di" bpmnElement="SequenceFlow_0x6xxb8">
+        <di:waypoint x="570" y="120" />
+        <di:waypoint x="650" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0n5pwwk_di" bpmnElement="SequenceFlow_0n5pwwk">
+        <di:waypoint x="380" y="120" />
+        <di:waypoint x="470" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_14q7e7i_di" bpmnElement="SequenceFlow_14q7e7i">
+        <di:waypoint x="178" y="120" />
+        <di:waypoint x="280" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="142" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0il9cjn_di" bpmnElement="EndEvent_0il9cjn">
+        <dc:Bounds x="1232" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ReceiveTask_1bptt2c_di" bpmnElement="Task_1olljx2">
+        <dc:Bounds x="650" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_03unhuu_di" bpmnElement="EndEvent_11rdhm9">
+        <dc:Bounds x="712" y="252" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1otl9mn_di" bpmnElement="ExclusiveGateway_1otl9mn" isMarkerVisible="true">
+        <dc:Bounds x="875" y="95" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="866" y="65" width="70" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0t3ilvf_di" bpmnElement="Task_1axdixm">
+        <dc:Bounds x="280" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0hbcben_di" bpmnElement="Task_0892y22">
+        <dc:Bounds x="470" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1j024ya_di" bpmnElement="Task_0jc8k6m">
+        <dc:Bounds x="850" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_0g07oag_di" bpmnElement="IntermediateThrowEvent_1gh5vds">
+        <dc:Bounds x="712" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="750" y="173" width="40" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_1hukudm_di" bpmnElement="Task_1oyb4b5">
+        <dc:Bounds x="1040" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
