@@ -31,6 +31,7 @@ import org.junit.rules.ExpectedException;
 import org.onap.so.apihandlerinfra.Action;
 import org.onap.so.apihandlerinfra.BaseTest;
 import org.onap.so.exceptions.ValidationException;
+import org.onap.so.serviceinstancebeans.InstanceDirection;
 import org.onap.so.serviceinstancebeans.RelatedInstanceList;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -132,5 +133,22 @@ public class RelatedInstancesValidationTest extends BaseTest {
         thrown.expectMessage("No valid modelInvariantId in relatedInstance is specified");
         validation.validate(setupValidationInformation(
                 "src/test/resources/Validation/VpnBondingValidation/NoModelInvariantId.json"));
+    }
+
+    @Test
+    public void validateRelatedInstanceInstanceIdTest() throws IOException, ValidationException {
+        validation.validate(setupValidationInformation(
+                "src/test/resources/Validation/UserParamsValidation/RelatedInstanceInstanceId.json"));
+    }
+
+    @Test
+    public void validateRelatedInstanceInstanceIdExceptionTest() throws IOException, ValidationException {
+        thrown.expect(ValidationException.class);
+        thrown.expectMessage("serviceInstanceId matching the serviceInstanceId in request URI");
+        ValidationInformation info = setupValidationInformation(
+                "src/test/resources/Validation/UserParamsValidation/RelatedInstanceInstanceId.json");
+        RelatedInstanceList[] instanceList = info.sir.getRequestDetails().getRelatedInstanceList();
+        instanceList[0].getRelatedInstance().setInstanceDirection(InstanceDirection.fromValue("destination"));
+        validation.validate(info);
     }
 }

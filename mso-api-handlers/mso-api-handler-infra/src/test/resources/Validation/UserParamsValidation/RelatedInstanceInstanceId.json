@@ -1,0 +1,138 @@
+{
+  "requestDetails": {
+    "subscriberInfo": {
+      "globalSubscriberId": "ubuntu-customer"
+    },
+    "requestInfo": {
+      "suppressRollback": false,
+      "instanceName": "Onap-Unit-Test",
+      "productFamilyId": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",
+      "requestorId": "portal",
+      "source": "postman"
+    },
+    "cloudConfiguration": {
+      "lcpCloudRegionId": "Onap215",
+      "tenantId": "e2710e84063b421fab08189818761d55",
+      "cloudOwner": "Onap"
+    },
+    "requestParameters": {
+      "subscriptionServiceType": "ubuntu",
+      "userParams": [
+        {
+          "Homing_Solution": "none"
+        },
+        {
+          "service": {
+            "instanceParams": [],
+            "resources": {
+              "vnfs": [
+                {
+                  "modelInfo": {
+                    "modelName": "UbuntuVF",
+                    "modelVersionId": "3b6cb925-b583-4c5d-8200-62212258dd03",
+                    "modelInvariantUuid": "dcbd2b4f-86a9-48f2-9149-9fbd506cb0f5",
+                    "modelVersion": "1.0",
+                    "modelCustomizationId": "1aa2ae52-f3c8-4c52-91eb-54a23104cff8",
+                    "modelInstanceName": "UbuntuVF 0"
+                  },
+                  "cloudConfiguration": {
+                    "lcpCloudRegionId": "lcp",
+                    "tenantId": "e2710e84063b421fab08189818761d55",
+                    "cloudOwner": "Onap"
+                  },
+                  "platform": {
+                    "platformName": "openstack"
+                  },
+                  "lineOfBusiness": {
+                    "lineOfBusinessName": "wireless"
+                  },
+                  "productFamilyId": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",
+                  "instanceName": "vnf-instanceName",
+                  "instanceParams": [
+                    {
+                      "vnf-name": "vnf-vnf-name",
+                      "vnf_name": "UbuntuVNFName"
+                    }
+                  ],
+                  "vfModules": [
+                    {
+                      "modelInfo": {
+                        "modelName": "UbuntuVF..base..module-0",
+                        "modelVersionId": "2bb60c6b-2bfb-4162-b95b-74d81916aa25",
+                        "modelInvariantUuid": "fb8af74c-83a6-4c27-b2db-b414bf70062a",
+                        "modelVersion": "1",
+                        "modelCustomizationId": "cd530d5b-b24b-4d2c-9987-5179075c9381"
+                      },
+                      "instanceName": "Openstack-fail-network-1",
+                      "instanceParams": [
+                        {
+                          "name": "Openstack-fail-network-1",
+                          "cidr": "10.10.10.0/24"
+                        }
+                      ]
+                    },
+                    {
+                      "modelInfo": {
+                        "modelName": "UbuntuVF..ubuntu-vf-module..module-1",
+                        "modelVersionId": "73fb74e8-f7cc-4927-9cc2-bb5c7b36c109",
+                        "modelInvariantUuid": "51d1c820-7578-4c5d-8fc7-fcf975800059",
+                        "modelVersion": "1",
+                        "modelCustomizationId": "67b4547c-b059-4a45-8b0b-12ce6bb3cf2f"
+                      },
+                      "instanceName": "Openstack-fail-ubuntu-1",
+                      "instanceParams": [
+                        {
+                          "name": "Openstack-fail-ubuntu-1",
+                          "network_mgmt": "vlan666_net",
+                          "key_name": "mykey",
+                          "network_name": "Openstack-fail-network-1"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "modelInfo": {
+              "modelVersion": "1.0",
+              "modelVersionId": "b0dce97c-e320-4dea-bd4a-7e398b4f5199",
+              "modelInvariantId": "577d7107-53ab-4f3d-a5a4-f4e9295312d8",
+              "modelName": "UbuntuSVC",
+              "modelType": "service"
+            }
+          }
+        }
+      ],
+      "aLaCarte": false
+    },
+    "project": {
+      "projectName": "Project-UbuntuDemo"
+    },
+    "owningEntity": {
+      "owningEntityId": "33a8b609-1cfe-4d19-8dc2-5b95b921de1e",
+      "owningEntityName": "owner"
+    },
+    "modelInfo": {
+      "modelVersion": "1.0",
+      "modelVersionId": "b0dce97c-e320-4dea-bd4a-7e398b4f5199",
+      "modelInvariantId": "577d7107-53ab-4f3d-a5a4-f4e9295312d8",
+      "modelName": "UbuntuSVC",
+      "modelType": "service"
+    },
+    "relatedInstanceList": [
+      {
+        "relatedInstance": {
+          "instanceId": "351262fb-4a32-4c43-b600-c6514f6ff808",
+          "modelInfo": {
+            "modelVersion": "1.0",
+            "modelVersionId": "b0dce97c-e320-4dea-bd4a-7e398b4f5199",
+            "modelInvariantId": "577d7107-53ab-4f3d-a5a4-f4e9295312d8",
+            "modelName": "UbuntuSVC",
+            "modelType": "service"
+          },
+          "instanceDirection": "source"
+        }
+      }
+    ]
+  }
+}
