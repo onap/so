@@ -35,6 +35,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.CHILD_SVC_REQ_CORRELATION_ID;
+import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.CHILD_SVC_REQ_ERROR;
+import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.CHILD_SVC_REQ_MESSAGE_NAME;
+import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.CHILD_SVC_REQ_STATUS;
+import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.IS_CHILD_PROCESS;
+import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.PARENT_CORRELATION_ID;
 
 @Component
 public class WorkflowActionBBFailure {
@@ -44,6 +50,7 @@ public class WorkflowActionBBFailure {
     private static final String DELETE_FABRIC_CONFIGURATION_FLOW = "DeleteFabricConfigurationBB";
     private static final Logger logger = LoggerFactory.getLogger(WorkflowActionBBFailure.class);
     public static final String ROLLBACK_TARGET_STATE = "rollbackTargetState";
+
     @Autowired
     private RequestsDbClient requestDbclient;
     @Autowired
@@ -83,6 +90,7 @@ public class WorkflowActionBBFailure {
             InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
             String rollbackErrorMsg = "";
             String errorMsg = "";
+            String childErrorMessage = "";
             Boolean rollbackCompletedSuccessfully = (Boolean) execution.getVariable("isRollbackComplete");
             Boolean isRollbackFailure = (Boolean) execution.getVariable("isRollback");
             ExecuteBuildingBlock ebb = (ExecuteBuildingBlock) execution.getVariable("buildingBlock");
@@ -94,6 +102,7 @@ public class WorkflowActionBBFailure {
 
             if (rollbackCompletedSuccessfully) {
                 rollbackErrorMsg = "Rollback has been completed successfully.";
+                childErrorMessage = rollbackErrorMsg;
                 request.setRollbackStatusMessage(rollbackErrorMsg);
                 execution.setVariable("RollbackErrorMessage", rollbackErrorMsg);
                 String rollbackTargetState = (String) execution.getVariable(ROLLBACK_TARGET_STATE);
@@ -116,6 +125,7 @@ public class WorkflowActionBBFailure {
                 } else {
                     rollbackErrorMsg = "Failed to determine rollback error message.";
                 }
+                childErrorMessage = rollbackErrorMsg;
                 request.setRollbackStatusMessage(rollbackErrorMsg);
                 execution.setVariable("RollbackErrorMessage", rollbackErrorMsg);
                 request.setRequestStatus(Status.FAILED.toString());
@@ -126,6 +136,7 @@ public class WorkflowActionBBFailure {
                 } else {
                     errorMsg = "Failed to determine error message";
                 }
+                childErrorMessage = errorMsg;
                 request.setStatusMessage(errorMsg);
                 execution.setVariable("ErrorMessage", errorMsg);
                 String handlingCode = (String) execution.getVariable("handlingCode");
@@ -144,6 +155,16 @@ public class WorkflowActionBBFailure {
                 }
                 request.setFlowStatus(flowStatus);
                 execution.setVariable("flowStatus", flowStatus);
+            }
+
+            if (Boolean.TRUE.equals(execution.getVariable(IS_CHILD_PROCESS))) {
+                String parentCorrelationId = (String) execution.getVariable(PARENT_CORRELATION_ID);
+                logger.info("Child service creation failed. Sending message to parent with correlationId: "
+                        + parentCorrelationId);
+                execution.getProcessEngineServices().getRuntimeService()
+                        .createMessageCorrelation(CHILD_SVC_REQ_MESSAGE_NAME)
+                        .setVariable(CHILD_SVC_REQ_STATUS, "FAILED").setVariable(CHILD_SVC_REQ_ERROR, childErrorMessage)
+                        .processInstanceVariableEquals(CHILD_SVC_REQ_CORRELATION_ID, parentCorrelationId).correlate();
             }
 
             request.setProgress(Long.valueOf(100));

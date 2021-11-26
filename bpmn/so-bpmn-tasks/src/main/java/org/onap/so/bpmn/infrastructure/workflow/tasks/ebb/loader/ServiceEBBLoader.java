@@ -133,7 +133,7 @@ public class ServiceEBBLoader {
                 resourceList = userParamsServiceTraversal.getResourceListFromUserParams(execution, userParams,
                         serviceInstanceId, requestAction);
             }
-            if (!foundRelated(resourceList)) {
+            if (!isComposedService(resourceList) && !foundRelated(resourceList)) {
                 traverseCatalogDbService(execution, sIRequest, resourceList, aaiResourceIds);
             }
         } else if ((ACTIVATE_INSTANCE.equalsIgnoreCase(requestAction)
@@ -188,6 +188,10 @@ public class ServiceEBBLoader {
                 || containsWorkflowType(resourceList, WorkflowType.PNF)
                 || containsWorkflowType(resourceList, WorkflowType.NETWORK)
                 || containsWorkflowType(resourceList, WorkflowType.NETWORKCOLLECTION));
+    }
+
+    public boolean isComposedService(List<Resource> resourceList) {
+        return resourceList.stream().anyMatch(s -> s.getResourceType() == WorkflowType.SERVICE && s.hasParent());
     }
 
     public void traverseAAIService(DelegateExecution execution, List<Resource> resourceList, String resourceId,

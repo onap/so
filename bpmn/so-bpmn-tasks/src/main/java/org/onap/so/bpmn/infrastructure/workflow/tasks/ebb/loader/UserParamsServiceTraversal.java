@@ -94,6 +94,9 @@ public class UserParamsServiceTraversal {
         Resource serviceResource =
                 new Resource(WorkflowType.SERVICE, validate.getModelInfo().getModelVersionId(), false, null);
         resourceList.add(serviceResource);
+        if (validate.getResources().getServices() != null) {
+            setResourceListForChildServices(execution, resourceList, serviceResource, validate);
+        }
         if (validate.getResources().getVnfs() != null) {
             setResourceListForVnfs(execution, resourceList, serviceResource, validate);
         }
@@ -105,6 +108,16 @@ public class UserParamsServiceTraversal {
                     validate);
         }
         return resourceList;
+    }
+
+    private void setResourceListForChildServices(DelegateExecution execution, List<Resource> resourceList,
+            Resource serviceResource, Service validate) {
+        for (Service childService : validate.getResources().getServices()) {
+            Resource childServiceResource = new Resource(WorkflowType.SERVICE,
+                    childService.getModelInfo().getModelVersionId(), false, serviceResource);
+            childServiceResource.setInstanceName(childService.getInstanceName());
+            resourceList.add(childServiceResource);
+        }
     }
 
     private void setResourceListForVnfs(DelegateExecution execution, List<Resource> resourceList,

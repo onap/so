@@ -28,6 +28,8 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
+import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.IS_CHILD_PROCESS;
+import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.PARENT_CORRELATION_ID;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.ASSIGN_INSTANCE;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.CONTROLLER;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.CREATE_INSTANCE;
@@ -96,6 +98,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.onap.so.serviceinstancebeans.InstanceDirection;
 
 @Component
 public class WorkflowAction {
@@ -347,6 +350,19 @@ public class WorkflowAction {
                 log += ", Action: " + block.getBuildingBlock().getBpmnAction();
             logger.info(log);
         }
+
+        RelatedInstanceList[] instanceList = sIRequest.getRequestDetails().getRelatedInstanceList();
+        execution.setVariable(IS_CHILD_PROCESS, Boolean.FALSE);
+        if (instanceList != null) {
+            for (RelatedInstanceList relatedInstanceList : instanceList) {
+                RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
+                if (InstanceDirection.source.equals(relatedInstance.getInstanceDirection())) {
+                    execution.setVariable(IS_CHILD_PROCESS, Boolean.TRUE);
+                    execution.setVariable(PARENT_CORRELATION_ID, requestDetails.getRequestInfo().getCorrelator());
+                }
+            }
+        }
+
         // By default, enable homing at VNF level for CREATE_INSTANCE and ASSIGNINSTANCE
         if (resourceType == WorkflowType.SERVICE
                 && (requestAction.equals(CREATE_INSTANCE) || requestAction.equals(ASSIGN_INSTANCE))
@@ -698,8 +714,9 @@ public class WorkflowAction {
     private void generateResourceIds(List<ExecuteBuildingBlock> flowsToExecute, List<Resource> resourceList,
             String serviceInstanceId) {
         Map<Resource, String> resourceInstanceIds = new HashMap<>();
-        Arrays.stream(WorkflowType.values()).filter(type -> !type.equals(WorkflowType.SERVICE))
-                .forEach(type -> resourceList.stream().filter(resource -> type.equals(resource.getResourceType()))
+        Arrays.stream(WorkflowType.values())
+                .forEach(type -> resourceList.stream()
+                        .filter(resource -> resource.hasParent() && type.equals(resource.getResourceType()))
                         .forEach(resource -> updateWorkflowResourceIds(flowsToExecute, type, resource, null,
                                 resource.getVirtualLinkKey(), serviceInstanceId, resourceInstanceIds)));
     }
@@ -727,13 +744,19 @@ public class WorkflowAction {
                 WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
                 workflowResourceIds.setServiceInstanceId(serviceInstanceId);
                 Resource parent = resource.getParent();
-                if (parent != null && resourceInstanceIds.containsKey(parent)) {
+                if (resource.hasParent() && resourceInstanceIds.containsKey(parent)) {
                     WorkflowResourceIdsUtils.setResourceIdByWorkflowType(workflowResourceIds, parent.getResourceType(),
                             resourceInstanceIds.get(parent));
                 }
-                WorkflowResourceIdsUtils.setInstanceNameByWorkflowType(workflowResourceIds, resourceType,
-                        resource.getInstanceName());
-                WorkflowResourceIdsUtils.setResourceIdByWorkflowType(workflowResourceIds, resourceType, resourceId);
+                if (resource.hasParent() && WorkflowType.SERVICE.equals(resourceType)
+                        && WorkflowType.SERVICE.equals(parent.getResourceType())) {
+                    workflowResourceIds.setChildServiceInstanceId(resourceId);
+                    workflowResourceIds.setChildServiceInstanceName(resource.getInstanceName());
+                } else {
+                    WorkflowResourceIdsUtils.setInstanceNameByWorkflowType(workflowResourceIds, resourceType,
+                            resource.getInstanceName());
+                    WorkflowResourceIdsUtils.setResourceIdByWorkflowType(workflowResourceIds, resourceType, resourceId);
+                }
                 ebb.setWorkflowResourceIds(workflowResourceIds);
                 assignedFlows.add(flowName + action);
             }
@@ -749,7 +772,9 @@ public class WorkflowAction {
 
     private boolean isFlowAssignable(Set<String> assignedFlows, ExecuteBuildingBlock ebb, WorkflowType resourceType,
             String assignedFlowName) {
-        String id = WorkflowResourceIdsUtils.getResourceIdByWorkflowType(ebb.getWorkflowResourceIds(), resourceType);
+        String id = WorkflowType.SERVICE.equals(resourceType)
+                ? StringUtils.defaultString(ebb.getWorkflowResourceIds().getChildServiceInstanceId())
+                : WorkflowResourceIdsUtils.getResourceIdByWorkflowType(ebb.getWorkflowResourceIds(), resourceType);
         return !assignedFlows.contains(assignedFlowName) && id.isEmpty();
     }
 

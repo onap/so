@@ -42,6 +42,9 @@ public class WorkflowResourceIds implements Serializable {
     private String instanceGroupId;
     private String vnfInstanceName;
     private String vfModuleInstanceName;
+    private String childServiceInstanceId;
+    private String childServiceInstanceName;
+
 
 
     public WorkflowResourceIds() {
@@ -58,6 +61,8 @@ public class WorkflowResourceIds implements Serializable {
         this.networkCollectionId = workflowResourceIds.networkCollectionId;
         this.configurationId = workflowResourceIds.configurationId;
         this.instanceGroupId = workflowResourceIds.instanceGroupId;
+        this.childServiceInstanceId = workflowResourceIds.childServiceInstanceId;
+        this.childServiceInstanceName = workflowResourceIds.childServiceInstanceName;
     }
 
 
@@ -156,5 +161,21 @@ public class WorkflowResourceIds implements Serializable {
 
     public void setVfModuleInstanceName(String vfModuleInstanceName) {
         this.vfModuleInstanceName = vfModuleInstanceName;
+    }
+
+    public String getChildServiceInstanceId() {
+        return childServiceInstanceId;
+    }
+
+    public void setChildServiceInstanceId(String childServiceInstanceId) {
+        this.childServiceInstanceId = childServiceInstanceId;
+    }
+
+    public String getChildServiceInstanceName() {
+        return childServiceInstanceName;
+    }
+
+    public void setChildServiceInstanceName(String childServiceInstanceName) {
+        this.childServiceInstanceName = childServiceInstanceName;
     }
 }
