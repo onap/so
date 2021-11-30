@@ -24,12 +24,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.apache.logging.log4j.util.Strings;
 import org.onap.so.bpmn.common.BBConstants;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
-import org.onap.so.bpmn.common.listener.flowmanipulator.FlowManipulatorListenerRunner;
 import org.onap.so.bpmn.common.listener.flowmanipulator.PreFlowManipulator;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.infrastructure.workflow.tasks.Resource;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.db.catalog.beans.PnfResourceCustomization;
 import org.onap.so.db.catalog.beans.Service;
@@ -40,7 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 @Component
 public class SkipCDSBuildingBlockListener implements PreFlowManipulator {
@@ -76,43 +73,37 @@ public class SkipCDSBuildingBlockListener implements PreFlowManipulator {
     @Override
     public void run(List<ExecuteBuildingBlock> flowsToExecute, ExecuteBuildingBlock currentBB,
             BuildingBlockExecution execution) {
-        String customizationUUID = currentBB.getBuildingBlock().getKey();
+        String resourceKey = currentBB.getBuildingBlock().getKey();
+        List<Resource> resources = execution.getVariable("resources");
+        Resource resource = resources.stream().filter(r -> resourceKey.equals(r.getResourceId())).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Resource not found for key:" + resourceKey));
 
-        if ("SERVICE".equalsIgnoreCase(currentBB.getBuildingBlock().getBpmnScope())) {
-            String modelUUID = currentBB.getRequestDetails().getModelInfo().getModelUuid();
-            Service service = catalogDbClient.getServiceByID(modelUUID);
+        String scope = currentBB.getBuildingBlock().getBpmnScope();
+
+        if ("SERVICE".equalsIgnoreCase(scope)) {
+            Service service = catalogDbClient.getServiceByID(resource.getModelVersionId());
             currentSequenceSkipCheck(execution, service.getSkipPostInstConf());
-        } else if (currentBB.getBuildingBlock().getBpmnScope().equalsIgnoreCase("VNF")
-                && containsIgnoreCaseAction(currentBB, vnfActions)) {
-            List<VnfResourceCustomization> vnfResourceCustomizations =
-                    catalogDbClient.getVnfResourceCustomizationByModelUuid(
-                            currentBB.getRequestDetails().getModelInfo().getModelUuid());
-            if (!CollectionUtils.isEmpty(vnfResourceCustomizations)) {
-                VnfResourceCustomization vrc = catalogDbClient.findVnfResourceCustomizationInList(customizationUUID,
-                        vnfResourceCustomizations);
-                if (null != vrc) {
-                    logger.debug("getSkipPostInstConf value: " + vrc.getSkipPostInstConf().booleanValue());
-                    boolean skipConfigVNF = vrc.getSkipPostInstConf().booleanValue();
-                    currentSequenceSkipCheck(execution, skipConfigVNF);
-                }
-
+        } else if ("VNF".equalsIgnoreCase(scope) && containsIgnoreCaseAction(currentBB, vnfActions)) {
+            VnfResourceCustomization vrc = catalogDbClient
+                    .getVnfResourceCustomizationByModelCustomizationUUID(resource.getModelCustomizationId());
+            if (vrc != null) {
+                logger.debug("getSkipPostInstConf value: " + vrc.getSkipPostInstConf());
+                boolean skipConfigVNF = vrc.getSkipPostInstConf();
+                currentSequenceSkipCheck(execution, skipConfigVNF);
             }
         } else if (currentBB.getBuildingBlock().getBpmnScope().equalsIgnoreCase("VFModule")
                 && containsIgnoreCaseAction(currentBB, vFModuleAction)) {
-
-            VfModuleCustomization vfc =
-                    catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID(customizationUUID);
-
+            VfModuleCustomization vfc = catalogDbClient
+                    .getVfModuleCustomizationByModelCuztomizationUUID(resource.getModelCustomizationId());
             if (null != vfc) {
                 logger.debug("getSkipPostInstConf value: " + vfc.getSkipPostInstConf().booleanValue());
                 boolean skipVfModule = vfc.getSkipPostInstConf();
                 currentSequenceSkipCheck(execution, skipVfModule);
             }
-
         } else if (currentBB.getBuildingBlock().getBpmnScope().equalsIgnoreCase("PNF")
                 && containsIgnoreCaseAction(currentBB, pnfActions)) {
-            PnfResourceCustomization pnfResourceCustomization =
-                    catalogDbClient.getPnfResourceCustomizationByModelCustomizationUUID(customizationUUID);
+            PnfResourceCustomization pnfResourceCustomization = catalogDbClient
+                    .getPnfResourceCustomizationByModelCustomizationUUID(resource.getModelCustomizationId());
 
             if (null != pnfResourceCustomization) {
                 logger.debug("getSkipPostInstConf value: " + pnfResourceCustomization.getSkipPostInstConf());

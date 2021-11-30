@@ -38,6 +38,8 @@ import org.onap.so.bpmn.infrastructure.workflow.tasks.VrfBondingServiceException
 import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowType;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
+import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoNetwork;
+import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoPnf;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetup;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.client.exception.ExceptionBuilder;
@@ -199,6 +201,7 @@ public class ServiceEBBLoader {
             var serviceResource =
                     new Resource(WorkflowType.SERVICE, serviceInstanceMSO.getServiceInstanceId(), false, null);
             serviceResource.setModelInvariantId(serviceInstanceAAI.getModelInvariantId());
+            serviceResource.setModelVersionId(serviceInstanceAAI.getModelVersionId());
             resourceList.add(serviceResource);
             traverseServiceInstanceMSOVnfs(resourceList, serviceResource, aaiResourceIds, serviceInstanceMSO);
             traverseServiceInstanceMSOPnfs(resourceList, serviceResource, aaiResourceIds, serviceInstanceMSO);
@@ -206,8 +209,15 @@ public class ServiceEBBLoader {
                 for (org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network network : serviceInstanceMSO
                         .getNetworks()) {
                     aaiResourceIds.add(new Pair<>(WorkflowType.NETWORK, network.getNetworkId()));
-                    resourceList
-                            .add(new Resource(WorkflowType.NETWORK, network.getNetworkId(), false, serviceResource));
+                    Resource networkResource =
+                            new Resource(WorkflowType.NETWORK, network.getNetworkId(), false, serviceResource);
+                    ModelInfoNetwork modelInfoNetwork = network.getModelInfoNetwork();
+                    if (modelInfoNetwork != null) {
+                        networkResource.setModelCustomizationId(modelInfoNetwork.getModelCustomizationUUID());
+                        networkResource.setModelVersionId(modelInfoNetwork.getModelUUID());
+                        networkResource.setModelCustomizationId(modelInfoNetwork.getModelCustomizationUUID());
+                    }
+                    resourceList.add(networkResource);
                 }
             }
             if (serviceInstanceMSO.getCollection() != null) {
@@ -252,6 +262,8 @@ public class ServiceEBBLoader {
             GenericVnf genericVnf = bbInputSetupUtils.getAAIGenericVnf(vnf.getVnfId());
             Resource vnfResource = new Resource(WorkflowType.VNF, vnf.getVnfId(), false, serviceResource);
             vnfResource.setVnfCustomizationId(genericVnf.getModelCustomizationId());
+            vnfResource.setModelCustomizationId(genericVnf.getModelCustomizationId());
+            vnfResource.setModelVersionId(genericVnf.getModelVersionId());
             resourceList.add(vnfResource);
             traverseVnfModules(resourceList, vnfResource, aaiResourceIds, vnf);
             if (vnf.getVolumeGroups() != null) {
@@ -272,7 +284,13 @@ public class ServiceEBBLoader {
         }
         for (org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf pnf : serviceInstanceMSO.getPnfs()) {
             aaiResourceIds.add(new Pair<>(WorkflowType.PNF, pnf.getPnfId()));
-            resourceList.add(new Resource(WorkflowType.PNF, pnf.getPnfId(), false, serviceResource));
+            Resource resource = new Resource(WorkflowType.PNF, pnf.getPnfId(), false, serviceResource);
+            ModelInfoPnf modelInfo = pnf.getModelInfoPnf();
+            if (modelInfo != null) {
+                resource.setModelVersionId(modelInfo.getModelUuid());
+                resource.setModelCustomizationId(modelInfo.getModelCustomizationUuid());
+            }
+            resourceList.add(resource);
         }
     }
 
@@ -437,6 +455,10 @@ public class ServiceEBBLoader {
         for (VfModule vfModule : vnf.getVfModules()) {
             aaiResourceIds.add(new Pair<>(WorkflowType.VFMODULE, vfModule.getVfModuleId()));
             Resource resource = new Resource(WorkflowType.VFMODULE, vfModule.getVfModuleId(), false, vnfResource);
+            org.onap.aai.domain.yang.VfModule aaiVfModule =
+                    bbInputSetupUtils.getAAIVfModule(vnf.getVnfId(), vfModule.getVfModuleId());
+            resource.setModelCustomizationId(aaiVfModule.getModelCustomizationId());
+            resource.setModelInvariantId(aaiVfModule.getModelInvariantId());
             resource.setBaseVfModule(vfModule.getModelInfoVfModule().getIsBaseBoolean());
             resourceList.add(resource);
         }
