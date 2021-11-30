@@ -409,6 +409,10 @@ public class WorkflowActionTest extends BaseTaskTest {
 
         serviceInstanceMSO.getVnfs().add(vnf);
 
+        VfModule aaiVfModule = new VfModule();
+        aaiVfModule.setIsBaseVfModule(false);
+
+        doReturn(aaiVfModule).when(bbSetupUtils).getAAIVfModule(any(), any());
         doReturn(serviceInstanceAAI).when(bbSetupUtils).getAAIServiceInstanceById("si0");
         doReturn(serviceInstanceMSO).when(bbInputSetup).getExistingServiceInstance(serviceInstanceAAI);
         doReturn(Mockito.mock(GenericVnf.class)).when(bbSetupUtils).getAAIGenericVnf(any());
@@ -932,6 +936,10 @@ public class WorkflowActionTest extends BaseTaskTest {
         serviceInstanceMSO.getVnfs().add(vnf);
         serviceInstanceMSO.getPnfs().add(pnf);
 
+        VfModule aaiVfModule = new VfModule();
+        aaiVfModule.setIsBaseVfModule(false);
+
+        doReturn(aaiVfModule).when(bbSetupUtils).getAAIVfModule(any(), any());
         doReturn(serviceInstanceAAI).when(bbSetupUtils).getAAIServiceInstanceById("123");
         doReturn(serviceInstanceMSO).when(bbInputSetup).getExistingServiceInstance(serviceInstanceAAI);
         doReturn(Mockito.mock(GenericVnf.class)).when(bbSetupUtils).getAAIGenericVnf(any());
@@ -1013,6 +1021,10 @@ public class WorkflowActionTest extends BaseTaskTest {
 
         serviceInstanceMSO.getVnfs().add(vnf);
 
+        VfModule aaiVfModule = new VfModule();
+        aaiVfModule.setIsBaseVfModule(false);
+
+        doReturn(aaiVfModule).when(bbSetupUtils).getAAIVfModule(any(), any());
         doReturn(serviceInstanceAAI).when(bbSetupUtils).getAAIServiceInstanceById("123");
         doReturn(serviceInstanceMSO).when(bbInputSetup).getExistingServiceInstance(serviceInstanceAAI);
         doReturn(Mockito.mock(GenericVnf.class)).when(bbSetupUtils).getAAIGenericVnf(any());
@@ -1104,6 +1116,11 @@ public class WorkflowActionTest extends BaseTaskTest {
 
         serviceInstanceMSO.getVnfs().add(vnf);
 
+        org.onap.aai.domain.yang.VfModule aaiVfModule = new org.onap.aai.domain.yang.VfModule();
+        aaiVfModule.setIsBaseVfModule(false);
+
+        doReturn(aaiVfModule).when(bbSetupUtils).getAAIVfModule(any(), any());
+        doReturn(new org.onap.aai.domain.yang.GenericVnf()).when(bbSetupUtils).getAAIGenericVnf(vnf.getVnfId());
         doReturn(serviceInstanceAAI).when(bbSetupUtils).getAAIServiceInstanceById("123");
         doReturn(serviceInstanceMSO).when(bbInputSetup).getExistingServiceInstance(serviceInstanceAAI);
         when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
@@ -1151,21 +1168,26 @@ public class WorkflowActionTest extends BaseTaskTest {
         vfModule2.setVfModuleId("vfModule2");
         vnf.getVfModules().add(vfModule2);
         serviceInstanceMSO.getVnfs().add(vnf);
-        VfModule vfModuleAAI = new VfModule();
-        vfModuleAAI.setVfModuleId("vfModule2");
+        VfModule vfModuleAAI1 = new VfModule();
+        vfModuleAAI1.setIsBaseVfModule(false);
+        VfModule vfModuleAAI2 = new VfModule();
+        vfModuleAAI2.setIsBaseVfModule(false);
+        vfModuleAAI2.setVfModuleId("vfModule2");
         RelationshipList relationshipList = new RelationshipList();
         Relationship relationship = new Relationship();
         relationshipList.getRelationship().add(relationship);
-        vfModuleAAI.setRelationshipList(relationshipList);
+        vfModuleAAI2.setRelationshipList(relationshipList);
         Relationships relationships = new Relationships("abc");
         Configuration config = new Configuration();
         config.setConfigurationId("configId");
         Optional<Configuration> configOp = Optional.of(config);
         Optional<Relationships> relationshipsOp = Optional.of(relationships);
 
+        doReturn(new org.onap.aai.domain.yang.GenericVnf()).when(bbSetupUtils).getAAIGenericVnf(vnf.getVnfId());
         doReturn(relationshipsOp).when(workflowActionUtils).extractRelationshipsVnfc(isA(Relationships.class));
         doReturn(configOp).when(workflowActionUtils).extractRelationshipsConfiguration(isA(Relationships.class));
-        doReturn(vfModuleAAI).when(bbSetupUtils).getAAIVfModule("1234", "vfModule2");
+        doReturn(vfModuleAAI1).when(bbSetupUtils).getAAIVfModule("1234", "vfModule1");
+        doReturn(vfModuleAAI2).when(bbSetupUtils).getAAIVfModule("1234", "vfModule2");
         doReturn(serviceInstanceAAI).when(bbSetupUtils).getAAIServiceInstanceById("123");
         doReturn(serviceInstanceMSO).when(bbInputSetup).getExistingServiceInstance(serviceInstanceAAI);
         when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,

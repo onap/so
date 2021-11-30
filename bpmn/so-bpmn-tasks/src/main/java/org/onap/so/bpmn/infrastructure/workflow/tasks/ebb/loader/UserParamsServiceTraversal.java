@@ -38,6 +38,7 @@ import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.CvnfcCustomization;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
+import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.Networks;
 import org.onap.so.serviceinstancebeans.Pnfs;
 import org.onap.so.serviceinstancebeans.Service;
@@ -93,6 +94,11 @@ public class UserParamsServiceTraversal {
         List<Resource> resourceList = new ArrayList<>();
         Resource serviceResource =
                 new Resource(WorkflowType.SERVICE, validate.getModelInfo().getModelVersionId(), false, null);
+        ModelInfo modelInfo = validate.getModelInfo();
+        if (modelInfo != null) {
+            serviceResource.setModelVersionId(modelInfo.getModelVersionId());
+            serviceResource.setModelInvariantId(modelInfo.getModelInvariantUuid());
+        }
         resourceList.add(serviceResource);
         if (validate.getResources().getVnfs() != null) {
             setResourceListForVnfs(execution, resourceList, serviceResource, validate);
@@ -115,6 +121,11 @@ public class UserParamsServiceTraversal {
                     serviceResource);
             vnfResource.setProcessingPriority(vnf.getProcessingPriority());
             vnfResource.setInstanceName(vnf.getInstanceName());
+            ModelInfo modelInfo = vnf.getModelInfo();
+            if (modelInfo != null) {
+                vnfResource.setModelCustomizationId(modelInfo.getModelCustomizationUuid());
+                vnfResource.setModelVersionId(modelInfo.getModelVersionId());
+            }
             resourceList.add(vnfResource);
             setResourceListForVfModules(execution, resourceList, vnfResource, validate, vnf);
         }
@@ -160,6 +171,11 @@ public class UserParamsServiceTraversal {
             foundVfModuleOrVG = true;
             Resource resource =
                     setVfModuleWorkFlowTypeToResourceList(resourceList, vnfResource, vfModuleCustomization, vfModule);
+            if (vnf.getModelInfo() != null) {
+                resource.setModelVersionId(vnf.getModelInfo().getModelVersionId());
+            }
+            resource.setVfModuleCustomizationId(vfModuleCustomization.getModelCustomizationUUID());
+            resource.setModelCustomizationId(vfModuleCustomization.getModelCustomizationUUID());
             setConfigurationWorkFlowTypeToResourceList(resourceList, vnfResource, validate, vnf, vfModule, resource);
         }
     }
@@ -211,6 +227,11 @@ public class UserParamsServiceTraversal {
         for (Pnfs pnf : validate.getResources().getPnfs()) {
             Resource pnfResource = new Resource(WorkflowType.PNF, pnf.getModelInfo().getModelCustomizationId(), false,
                     serviceResource);
+            ModelInfo modelInfo = pnf.getModelInfo();
+            if (modelInfo != null) {
+                pnfResource.setModelCustomizationId(modelInfo.getModelCustomizationUuid());
+                pnfResource.setModelVersionId(modelInfo.getModelVersionId());
+            }
             pnfResource.setProcessingPriority(pnf.getProcessingPriority());
             resourceList.add(pnfResource);
         }
@@ -222,6 +243,11 @@ public class UserParamsServiceTraversal {
             Resource networkResource = new Resource(WorkflowType.NETWORK,
                     network.getModelInfo().getModelCustomizationId(), false, serviceResource);
             networkResource.setProcessingPriority(network.getProcessingPriority());
+            ModelInfo modelInfo = network.getModelInfo();
+            if (modelInfo != null) {
+                networkResource.setModelCustomizationId(modelInfo.getModelCustomizationUuid());
+                networkResource.setModelVersionId(modelInfo.getModelVersionId());
+            }
             resourceList.add(networkResource);
         }
         if (requestAction.equals(CREATE_INSTANCE)) {

@@ -40,6 +40,8 @@ public class Resource implements Serializable {
     private String cvnfModuleCustomizationId;
     private String instanceName;
     private String modelInvariantId;
+    private String modelVersionId;
+    private String modelCustomizationId;
     private int processingPriority;
     private Resource parent;
     private List<Resource> children;
@@ -140,6 +142,21 @@ public class Resource implements Serializable {
         this.modelInvariantId = modelInvariantId;
     }
 
+    public String getModelVersionId() {
+        return modelVersionId;
+    }
+
+    public void setModelVersionId(String modelVersionId) {
+        this.modelVersionId = modelVersionId;
+    }
+
+    public String getModelCustomizationId() {
+        return modelCustomizationId;
+    }
+
+    public void setModelCustomizationId(String modelCustomizationId) {
+        this.modelCustomizationId = modelCustomizationId;
+    }
 
     public int getProcessingPriority() {
         return processingPriority == 0 ? (isBaseVfModule() ? Integer.MIN_VALUE + 1 : 0) : processingPriority;
