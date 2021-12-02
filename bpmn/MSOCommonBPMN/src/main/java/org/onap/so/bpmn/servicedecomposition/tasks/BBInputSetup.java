@@ -1599,6 +1599,17 @@ public class BBInputSetup implements JavaDelegate {
                 vnfs = findVnfsByKey(key, resources);
             }
 
+            // Vnf level cloud configuration takes precedence over service level cloud configuration.
+            if (vnfs.getCloudConfiguration() != null) {
+                cloudConfiguration = vnfs.getCloudConfiguration();
+                org.onap.aai.domain.yang.CloudRegion aaiCloudRegion =
+                        bbInputSetupUtils.getCloudRegion(cloudConfiguration);
+                Tenant tenant = getTenant(cloudConfiguration, aaiCloudRegion);
+                gBB.setTenant(tenant);
+                cloudRegion = mapperLayer.mapCloudRegion(cloudConfiguration, aaiCloudRegion);
+                gBB.setCloudRegion(cloudRegion);
+            }
+
             String vnfId = lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID);
             // This stores the vnf id in request db to be retrieved later when
             // working on a vf module or volume group
