@@ -1250,7 +1250,7 @@ public class BBInputSetup implements JavaDelegate {
                 || requestAction.equalsIgnoreCase("activateFabricConfiguration")
                 || requestAction.equalsIgnoreCase("recreateInstance")
                 || requestAction.equalsIgnoreCase("replaceInstance")
-                || requestAction.equalsIgnoreCase("upgradeInstance")) {
+                || requestAction.equalsIgnoreCase("upgradeInstance") || requestAction.equalsIgnoreCase("healthCheck")) {
             return getGBBMacroExistingService(executeBB, lookupKeyMap, bbName, requestAction,
                     requestDetails.getCloudConfiguration());
         }
@@ -1562,6 +1562,28 @@ public class BBInputSetup implements JavaDelegate {
                     this.mapCatalogConfiguration(configuration, modelInfo, service,
                             executeBB.getConfigurationResourceKeys());
                     break;
+                }
+            }
+        } else if (bbName.equals("HealthCheckBB")
+                && (VNF).equalsIgnoreCase(executeBB.getBuildingBlock().getBpmnScope())) {
+            for (GenericVnf vnf : serviceInstance.getVnfs()) {
+                for (VfModule vfModule : vnf.getVfModules()) {
+                    String vnfModelCustomizationUUID =
+                            this.bbInputSetupUtils.getAAIGenericVnf(vnf.getVnfId()).getModelCustomizationId();
+                    ModelInfo vnfModelInfo = new ModelInfo();
+                    vnfModelInfo.setModelCustomizationUuid(vnfModelCustomizationUUID);
+                    this.mapCatalogVnf(vnf, vnfModelInfo, service);
+                    String vfModuleCustomizationUUID = this.bbInputSetupUtils
+                            .getAAIVfModule(vnf.getVnfId(), vfModule.getVfModuleId()).getModelCustomizationId();
+                    ModelInfo vfModuleModelInfo = new ModelInfo();
+                    vfModuleModelInfo.setModelCustomizationId(vfModuleCustomizationUUID);
+                    this.mapCatalogVfModule(vfModule, vfModuleModelInfo, service, vnfModelCustomizationUUID);
+                    if (vfModule.getModelInfoVfModule() != null
+                            && vfModule.getModelInfoVfModule().getModelName() != null
+                            && vfModule.getModelInfoVfModule().getModelName().contains("helm")) {
+                        gBB.getRequestContext().setIsHelm(true);
+                        break;
+                    }
                 }
             }
         }
