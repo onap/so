@@ -27,5 +27,9 @@ if [ -n "${AAF_SSL_CERTS_ENABLED}" ]; then
   read_properties "$(head -n 4 /camunda/app/certs/.passphrases)"
 fi
 
+if [ -z "${ACTIVE_PROFILE}" ]; then
+    export ACTIVE_PROFILE="basic"
+fi
+
 # Running camunda.sh
 /bin/bash "/camunda/camunda.sh"
