@@ -1033,7 +1033,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		RU_ep.setType(type)
 		RU_ep.setIpAddress("192.168.100.4")
 		RU_ep.setLogicalInterfaceId("1234")
-		RU_ep.setNextHop("Host1")
+		RU_ep.setNextHop("networkId-providerId-10-clientId-0-topologyId-2-nodeId-10.1.1.1-ltpId-512")
 		RU_ep.setPrefixLength(prefixLength)
 		RU_ep.setAddressFamily(addressFamily)
 		//DU Ingress
@@ -1047,7 +1047,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		DU_ep.setType(type)
 		DU_ep.setIpAddress("192.168.100.5")
 		DU_ep.setLogicalInterfaceId("1234")
-		DU_ep.setNextHop("Host2")
+		DU_ep.setNextHop("networkId-providerId-20-clientId-0-topologyId-2-nodeId-10.2.1.2-ltpId-512")
 		DU_ep.setPrefixLength(prefixLength)
 		DU_ep.setAddressFamily(addressFamily)
 		//MH RAN end point update
@@ -1063,7 +1063,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
                 DUEG_ep.setLogicalInterfaceId("1234")
                 DUEG_ep.setPrefixLength(prefixLength)
                 DUEG_ep.setAddressFamily(addressFamily)
-		DUEG_ep.setNextHop("Host3")
+		DUEG_ep.setNextHop("networkId-providerId-10-clientId-0-topologyId-2-nodeId-10.1.1.1-ltpId-512")
 		//CUIN
 		String CUIN_routeId = UUID.randomUUID().toString()
 		execution.setVariable("tranportEp_ID_CUIN", CUIN_routeId)
@@ -1074,7 +1074,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		CUIN_ep.setType(type)
 		CUIN_ep.setIpAddress("192.168.100.6")
 		CUIN_ep.setLogicalInterfaceId("1234")
-		CUIN_ep.setNextHop("Host4")
+		CUIN_ep.setNextHop("networkId-providerId-20-clientId-0-topologyId-2-nodeId-10.2.1.2-ltpId-512")
 		CUIN_ep.setPrefixLength(prefixLength)
 		CUIN_ep.setAddressFamily(addressFamily)
 		try {

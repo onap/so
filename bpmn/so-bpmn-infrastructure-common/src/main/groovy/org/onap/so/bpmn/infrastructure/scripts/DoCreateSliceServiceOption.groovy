@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.core.type.TypeReference
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.so.beans.nsmf.EsrInfo
@@ -473,7 +474,10 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
      */
     void getNSSISelectionCap4AN(DelegateExecution execution) {
 
-        def vendor = execution.getVariable("vendor") as String
+       SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
+        def vendor = sliceParams.anSliceTaskInfo.vendor
 
         String strRequest = buildNSSISelectionReq(vendor, NetworkType.ACCESS)
 
@@ -495,7 +499,10 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
      */
     void getNSSISelectionCap4TN(DelegateExecution execution) {
 
-        def vendor = execution.getVariable("vendor") as String
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
+        def vendor = sliceParams.tnBHSliceTaskInfo.vendor
 
         String strRequest = buildNSSISelectionReq(vendor, NetworkType.TRANSPORT)
 
@@ -516,7 +523,10 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
      */
     void getNSSISelectionCap4CN(DelegateExecution execution) {
 
-        def vendor = execution.getVariable("vendor") as String
+        SliceTaskParamsAdapter sliceParams =
+                execution.getVariable("sliceTaskParams") as SliceTaskParamsAdapter
+
+        def vendor = sliceParams.cnSliceTaskInfo.vendor
 
         String strRequest = buildNSSISelectionReq(vendor, NetworkType.CORE)
 
@@ -624,8 +634,10 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
         Map nssiNeedHandlerInfo = nssiNeedHandlerInfos.get(currNssiIndex) as Map
 
         TemplateInfo nsstInfo = nssiNeedHandlerInfo.get("nsstInfo") as TemplateInfo
-        Map<String, Object> profileInfo = nssiNeedHandlerInfo.get("sliceProfile") as Map
-        //profileInfo.remove("profileId")
+        SliceProfileAdapter sliceProfileInfo = nssiNeedHandlerInfo.get("sliceProfile") as SliceProfileAdapter
+
+        Map profileInfo = objectMapper.convertValue(sliceProfileInfo, new TypeReference<Map<String, Object>>() {});
+        while (profileInfo.values().remove(null));
 
         String urlString = UrnPropertiesReader.getVariable("mso.oof.endpoint", execution)
         logger.debug( "get NSI option OOF Url: " + urlString)
@@ -639,8 +651,8 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
         String timeout = UrnPropertiesReader.getVariable("mso.adapters.oof.timeout", execution)
         execution.setVariable("nssiSelection_timeout", timeout)
 
-        String oofRequest = oofUtils.buildSelectNSSIRequest(requestId, nsstInfo, messageType,
-                profileInfo, 600)
+        String oofRequest = oofUtils.buildSelectNSSIRequest(requestId, messageType, nsstInfo.UUID,
+                nsstInfo.invariantUUID, nsstInfo.name, profileInfo)
 
         execution.setVariable("nssiSelection_oofRequest", oofRequest)
         logger.debug("Sending request to OOF: " + oofRequest)
@@ -670,13 +682,10 @@ class DoCreateSliceServiceOption extends AbstractServiceTaskProcessor{
 
         Map<String, Object> resMap = objectMapper.readValue(OOFResponse, Map.class)
         List<Map<String, Object>> nsiSolutions = (List<Map<String, Object>>) resMap.get("solutions")
-        Map<String, Object> solution = nsiSolutions.get(0)
 
-        String resourceSharingLevel = execution.getVariable("resourceSharingLevel")
-        Boolean isSharable = resourceSharingLevel == "shared"   //todo
-
-        if (isSharable && solution != null) {
-            processNssiResult(sliceTaskParams, subnetType, solution)
+        if(nsiSolutions.size()>=1) {
+        Map<String,Object> solution = nsiSolutions.get(0) as Map
+        processNssiResult(sliceTaskParams, subnetType, solution)
         }
 
         execution.setVariable("sliceTaskParams", sliceTaskParams)
