@@ -42,9 +42,12 @@ import org.onap.so.logging.cxf.interceptor.SOAPLoggingInInterceptor;
 import org.onap.so.logging.cxf.interceptor.SOAPLoggingOutInterceptor;
 import org.onap.so.logging.jaxrs.filter.SOAuditLogContainerFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.DispatcherServlet;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
@@ -66,7 +69,7 @@ public class CXFConfiguration {
 
     @Autowired
     private WorkflowOnboardingSupport workflowOnboardingSupport;
-    
+
     @Autowired
     private SOAuditLogContainerFilter soAuditLogContainerFilter;
 
@@ -80,8 +83,8 @@ public class CXFConfiguration {
     private VnfAdapterNotify vnfAdapterNotifyServiceImpl;
 
     @Bean
-    public ServletRegistrationBean cxfServlet() {
-        return new ServletRegistrationBean(new CXFServlet(), "/*");
+    public ServletRegistrationBean<CXFServlet> cxfServlet() {
+        return new ServletRegistrationBean<CXFServlet>(new CXFServlet(), "/*");
     }
 
     @Bean
@@ -108,7 +111,8 @@ public class CXFConfiguration {
     public Server rsServer() {
         JAXRSServerFactoryBean endpoint = new JAXRSServerFactoryBean();
         endpoint.setBus(bus);
-        endpoint.setServiceBeans(Arrays.<Object>asList(wmr, workflowResource, workflowAsyncResource, workflowOnboardingSupport));
+        endpoint.setServiceBeans(
+                Arrays.<Object>asList(wmr, workflowResource, workflowAsyncResource, workflowOnboardingSupport));
         endpoint.setAddress("/");
         endpoint.setFeatures(Arrays.asList(createSwaggerFeature(), new LoggingFeature()));
         endpoint.setProviders(Arrays.asList(new JacksonJsonProvider(mapper), soAuditLogContainerFilter));

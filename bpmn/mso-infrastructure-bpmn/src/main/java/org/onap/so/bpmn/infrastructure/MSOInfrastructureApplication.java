@@ -25,8 +25,6 @@ package org.onap.so.bpmn.infrastructure;
 import java.util.List;
 import java.util.concurrent.Executor;
 import javax.annotation.PostConstruct;
-import org.camunda.bpm.application.PreUndeploy;
-import org.camunda.bpm.application.ProcessApplicationInfo;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.repository.DeploymentBuilder;
 import org.onap.logging.filter.spring.MDCTaskDecorator;
@@ -34,6 +32,7 @@ import org.onap.so.bpmn.common.DefaultToShortClassNameBeanNameGenerator;
 import org.onap.so.db.catalog.beans.Workflow;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.logger.LoggingAnchor;
+import org.onap.so.security.SoBasicHttpSecurityConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,12 +51,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import javax.annotation.PostConstruct;
-import java.util.List;
-import java.util.concurrent.Executor;
-
-import static java.util.Collections.singletonMap;
-import static org.springframework.boot.context.config.ConfigFileApplicationListener.*;
 /**
  * @since Version 1.0
  *
@@ -66,17 +59,18 @@ import static org.springframework.boot.context.config.ConfigFileApplicationListe
 @SpringBootApplication
 @EnableAsync
 @ComponentScan(basePackages = {"org.onap"}, nameGenerator = DefaultToShortClassNameBeanNameGenerator.class,
-        excludeFilters = {@Filter(type = FilterType.ANNOTATION, classes = SpringBootApplication.class)})
-@EnableAutoConfiguration(exclude= FreeMarkerAutoConfiguration.class)
+        excludeFilters = {@Filter(type = FilterType.ANNOTATION, classes = SpringBootApplication.class),
+                @Filter(type = FilterType.ASSIGNABLE_TYPE, value = SoBasicHttpSecurityConfigurer.class)})
+@EnableAutoConfiguration(exclude = FreeMarkerAutoConfiguration.class)
 public class MSOInfrastructureApplication extends SpringBootServletInitializer {
 
     private static final Logger logger = LoggerFactory.getLogger(MSOInfrastructureApplication.class);
-    
+
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application
-                .sources(MSOInfrastructureApplication.class);
+        return application.sources(MSOInfrastructureApplication.class);
     }
+
     @Autowired
     private ProcessEngine processEngine;
 
@@ -118,17 +112,17 @@ public class MSOInfrastructureApplication extends SpringBootServletInitializer {
     @PostConstruct
     public void postConstruct() {
         DeploymentBuilder deploymentBuilder = processEngine.getRepositoryService().createDeployment();
-//        try {
-//            DeploymentBuilder deploymentBuilder = processEngine.getRepositoryService().createDeployment();
-//            deployCustomWorkflows(deploymentBuilder);
-//        } catch (Exception e) {
-//            logger.warn("Unable to invoke deploymentBuilder: " + e.getMessage());
-//        }
+        // try {
+        // DeploymentBuilder deploymentBuilder = processEngine.getRepositoryService().createDeployment();
+        // deployCustomWorkflows(deploymentBuilder);
+        // } catch (Exception e) {
+        // logger.warn("Unable to invoke deploymentBuilder: " + e.getMessage());
+        // }
     }
 
-//    @PreUndeploy
-//    public void cleanup(ProcessEngine processEngine, ProcessApplicationInfo processApplicationInfo,
-//            List<ProcessEngine> processEngines) {}
+    // @PreUndeploy
+    // public void cleanup(ProcessEngine processEngine, ProcessApplicationInfo processApplicationInfo,
+    // List<ProcessEngine> processEngines) {}
 
     @Bean
     @Primary
@@ -147,7 +141,7 @@ public class MSOInfrastructureApplication extends SpringBootServletInitializer {
         logger.info("Attempting to deploy custom workflows");
         try {
             List<Workflow> workflows = catalogDbClient.findWorkflowBySource(SDC_SOURCE);
-			logger.info("SDC workflows: {}", workflows );
+            logger.info("SDC workflows: {}", workflows);
             if (workflows != null && !workflows.isEmpty()) {
                 for (Workflow workflow : workflows) {
                     String workflowName = workflow.getName();

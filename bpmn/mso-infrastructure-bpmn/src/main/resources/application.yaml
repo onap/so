@@ -1,41 +1,44 @@
-server: 
-  port: 8080  
-  tomcat:
-    max-threads: 50
+server:
+   port: 8080
+   tomcat:
+      max-threads: 50
 mso:
-  infra:
-    auditInventory: false
-  camundaAuth: AE2E9BE6EF9249085AF98689C4EE087736A5500629A72F35068FFB88813A023581DD6E765071F1C04075B36EA4213A
-spring: 
-  http:
-    multipart:
-      enabled: false
-  main:
-    allow-bean-definition-overriding: true
+   infra:
+      auditInventory: false
+   camundaAuth: AE2E9BE6EF9249085AF98689C4EE087736A5500629A72F35068FFB88813A023581DD6E765071F1C04075B36EA4213A
+spring:
+   http:
+      multipart:
+         enabled: false
+   main:
+      allow-bean-definition-overriding: true
+   mvc:
+      servlet:
+         path: /app-api
 camunda:
-  bpm:
-    application:
-      delete-upon-undeploy: false
-      scan-for-process-definitions: true
-      deploy-changed-only: true
-    job-execution:
-      deployment-aware: true
+   bpm:
+      application:
+         delete-upon-undeploy: false
+         scan-for-process-definitions: true
+         deploy-changed-only: true
+      job-execution:
+         deployment-aware: true
 #Actuator
 management:
-  endpoints:
-    web:
-      base-path: /manage
-      exposure:
-        include: "*"
-  metrics:
-    se-global-registry: false
-    export:
-      prometheus:
-        enabled: true # Whether exporting of metrics to Prometheus is enabled.
-        step: 1m # Step size (i.e. reporting frequency) to use.
+   endpoints:
+      web:
+         base-path: /manage
+         exposure:
+            include: '*'
+   metrics:
+      se-global-registry: false
+      export:
+         prometheus:
+            enabled: true # Whether exporting of metrics to Prometheus is enabled.
+            step: 1m # Step size (i.e. reporting frequency) to use.
 org:
-  onap:
-    so:
-      adapters:
-        network:
-          encryptionKey: 07a7159d3bf51a0e53be7a8f89699be7
+   onap:
+      so:
+         adapters:
+            network:
+               encryptionKey: 07a7159d3bf51a0e53be7a8f89699be7

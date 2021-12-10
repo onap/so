@@ -184,6 +184,7 @@
     <logger name="com.att.commons" level="DEBUG" />
     <logger name="org.reflections" level="ERROR" />
     <logger name="org.springframework.boot.actuate" level="DEBUG" />
+    <logger name="org.springframework.boot.web.servlet" level="DEBUG" />
 
     <logger name="AUDIT" level="INFO" additivity="false">
         <appender-ref ref="asyncAudit" />
