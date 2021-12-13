@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "62728b33_f200045e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-12-13T14:46:52Z",
+      "side": 1,
+      "message": "pls remove issue id from headline",
+      "revId": "12ff7b123d71f4b9582efb32db00e55b430ceaab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7a098d90_df015ef1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-12-13T14:46:52Z",
+      "side": 1,
+      "message": "todo?",
+      "revId": "12ff7b123d71f4b9582efb32db00e55b430ceaab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5259e01d_7ee982df",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/R__MacroData.sql",
+        "patchSetId": 3
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-12-13T14:46:52Z",
+      "side": 1,
+      "message": "ControllerExecutionBB is not used in Service-Macro-Delete upstream, pls remove",
+      "revId": "12ff7b123d71f4b9582efb32db00e55b430ceaab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d7a02f13_35482c72",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/R__MacroData.sql",
+        "patchSetId": 3
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-12-13T14:46:52Z",
+      "side": 1,
+      "message": "please remove introduction of config-unassign and undeploy",
+      "revId": "12ff7b123d71f4b9582efb32db00e55b430ceaab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ae367c44_e4e87cd2",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/R__MacroData.sql",
+        "patchSetId": 3
+      },
+      "lineNbr": 884,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-12-13T14:46:52Z",
+      "side": 1,
+      "message": "please remove rollback actions for ControllerExecutionBB. This patch should only refactor rollback logic, not introduce new behavior.",
+      "revId": "12ff7b123d71f4b9582efb32db00e55b430ceaab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ea5b2505_a14c4dc0",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-12-13T14:46:52Z",
+      "side": 1,
+      "message": "We are already logging this 5 lines above?",
+      "revId": "12ff7b123d71f4b9582efb32db00e55b430ceaab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "71db3cad_78eb3fb8",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowActionBBTasks.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-12-13T14:46:52Z",
+      "side": 1,
+      "message": "Should this be upstreamed? If so it should go in a separate patch.",
+      "revId": "12ff7b123d71f4b9582efb32db00e55b430ceaab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "841c1670_bc706592",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/utils/WorkflowActionUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2021-12-13T14:46:52Z",
+      "side": 1,
+      "message": "I don\u0027t see the purpose of this util class, pls remove",
+      "revId": "12ff7b123d71f4b9582efb32db00e55b430ceaab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
