@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0b80dc66_7e8673c8",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 1051,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-12-17T14:13:21Z",
+      "side": 1,
+      "message": "Why these ip\u0027s are fixed?",
+      "range": {
+        "startLine": 1051,
+        "startChar": 30,
+        "endLine": 1051,
+        "endChar": 43
+      },
+      "revId": "9c60f6e57829cc866c3b941d86aca06ed980c94a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
