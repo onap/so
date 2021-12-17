@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "116ea18b_777f32e6",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1589,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2021-12-17T13:41:52Z",
+      "side": 1,
+      "message": "Please separate this code to the private method.",
+      "range": {
+        "startLine": 1569,
+        "startChar": 11,
+        "endLine": 1589,
+        "endChar": 9
+      },
+      "revId": "983193459dda89714e4500b16642ef82c3193c5e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
