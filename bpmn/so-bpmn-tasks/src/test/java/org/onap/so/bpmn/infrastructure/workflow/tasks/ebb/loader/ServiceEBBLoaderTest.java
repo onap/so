@@ -239,6 +239,9 @@ public class ServiceEBBLoaderTest extends BaseTaskTest {
         aaiConfiguration2.setConfigurationId("testConfigurationId2");
         aaiConfiguration2.setRelationshipList(relationshipList1);
 
+        org.onap.aai.domain.yang.VfModule aaiVfModule = new org.onap.aai.domain.yang.VfModule();
+        aaiVfModule.setIsBaseVfModule(true);
+
         try {
             doReturn(genericVnfAai).when(mockBbInputSetupUtils).getAAIGenericVnf(genericVnf.getVnfId());
             doReturn(serviceInstanceAAI).when(mockBbInputSetupUtils).getAAIServiceInstanceById(resourceId);
@@ -247,6 +250,7 @@ public class ServiceEBBLoaderTest extends BaseTaskTest {
                     .getConfiguration("testConfigurationId");
             doReturn(Optional.of(aaiConfiguration2)).when(mockAaiConfigurationResources)
                     .getConfiguration("testConfigurationId2");
+            doReturn(aaiVfModule).when(mockBbInputSetupUtils).getAAIVfModule(any(), any());
             serviceEBBLoader.traverseAAIService(execution, resourceCounter, resourceId, aaiResourceIds);
             assertEquals(8, resourceCounter.size());
             assertTrue(resourceCounter.get(2).isBaseVfModule());

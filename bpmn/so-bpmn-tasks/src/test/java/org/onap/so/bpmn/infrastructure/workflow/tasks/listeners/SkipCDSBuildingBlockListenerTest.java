@@ -24,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,6 +35,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.common.BBConstants;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
+import org.onap.so.bpmn.infrastructure.workflow.tasks.Resource;
+import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowType;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.db.catalog.beans.PnfResourceCustomization;
@@ -41,7 +44,6 @@ import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
-import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.RequestDetails;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
@@ -51,25 +53,24 @@ public class SkipCDSBuildingBlockListenerTest {
     private static final String VNF_SCOPE = "VNF";
     private static final String VF_SCOPE = "VFModule";
     private static final String PNF_SCOPE = "pnf";
-    private static final String TEST_MODELUUID = "123456789";
     private static final String VNF_TEST_ACTION = "VnfConfigAssign";
     private static final String VFModule_TEST_ACTION = "VfModuleConfigAssign";
     private static final String PNFModule_TEST_ACTION = "config-assign";
-    private static final String MODELCUSTOMIZATIONUUID = "123456789";
+    private static final String SERVICE_MODEL_VERSION_ID = UUID.randomUUID().toString();
+    private static final String VNF_MODEL_CUSTOMIZATION_ID = UUID.randomUUID().toString();
+    private static final String VF_MODULE_CUSTOMIZATION_ID = UUID.randomUUID().toString();
+    private static final String PNF_CUSTOMIZATION_ID = UUID.randomUUID().toString();
     private static final String BBNAME = "ControllerExecutionBB";
     private static final boolean ISFIRST = true;
 
-    private int actual;
     private List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
-    private List<VnfResourceCustomization> vnfResourceCustomization;
-    private List<VfModuleCustomization> vfModuleCustomization;
-    private ExecuteBuildingBlock executeBuildingBlock = new ExecuteBuildingBlock();
+    private ExecuteBuildingBlock executeBuildingBlock;
     private RequestDetails reqDetail = new RequestDetails();
     private BuildingBlockExecution buildingBlockExecution = new DelegateExecutionImpl(new DelegateExecutionFake());
-    private VnfResourceCustomization vnfCust = new VnfResourceCustomization();
-    private VfModuleCustomization vfCust = new VfModuleCustomization();
-    private PnfResourceCustomization pnfResourceCustomization = new PnfResourceCustomization();
-    private BuildingBlock buildingBlock = new BuildingBlock();
+    private VnfResourceCustomization vnfCust;
+    private VfModuleCustomization vfCust;
+    private PnfResourceCustomization pnfResourceCustomization;
+    private BuildingBlock buildingBlock;
 
     @InjectMocks
     private SkipCDSBuildingBlockListener skipCDSBuildingBlockListener;
@@ -78,10 +79,27 @@ public class SkipCDSBuildingBlockListenerTest {
 
     @Before
     public void before() {
-        ModelInfo model = new ModelInfo();
-        model.setModelUuid(TEST_MODELUUID);
-        reqDetail.setModelInfo(model);
-        executeBuildingBlock.setRequestDetails(reqDetail);
+        executeBuildingBlock = new ExecuteBuildingBlock();
+        buildingBlock = new BuildingBlock();
+
+        ArrayList<Resource> resources = new ArrayList<>();
+        Resource service = new Resource(WorkflowType.SERVICE, SERVICE_MODEL_VERSION_ID, false, null);
+        service.setModelVersionId(SERVICE_MODEL_VERSION_ID);
+        resources.add(service);
+        Resource vnf = new Resource(WorkflowType.VNF, VNF_MODEL_CUSTOMIZATION_ID, false, null);
+        vnf.setModelCustomizationId(VNF_MODEL_CUSTOMIZATION_ID);
+        resources.add(vnf);
+        Resource vfModule = new Resource(WorkflowType.VFMODULE, VF_MODULE_CUSTOMIZATION_ID, false, null);
+        vfModule.setModelCustomizationId(VF_MODULE_CUSTOMIZATION_ID);
+        resources.add(vfModule);
+        Resource pnf = new Resource(WorkflowType.PNF, PNF_CUSTOMIZATION_ID, false, null);
+        pnf.setModelCustomizationId(PNF_CUSTOMIZATION_ID);
+        resources.add(pnf);
+        buildingBlockExecution.setVariable("resources", resources);
+
+        vnfCust = new VnfResourceCustomization();
+        vfCust = new VfModuleCustomization();
+        pnfResourceCustomization = new PnfResourceCustomization();
     }
 
     @Test
@@ -93,133 +111,83 @@ public class SkipCDSBuildingBlockListenerTest {
 
     @Test
     public void testSkipCDSforService() {
-        setBuildingBlockAndCurrentSequence(SERVICE_SCOPE, "service-config-assign", 0);
-        Service service = new Service();
-        when(catalogDbClient.getServiceByID(TEST_MODELUUID)).thenReturn(service);
+        setBuildingBlockAndCurrentSequence(SERVICE_SCOPE, "service-config-assign", SERVICE_MODEL_VERSION_ID, 0);
+        when(catalogDbClient.getServiceByID(SERVICE_MODEL_VERSION_ID)).thenReturn(new Service());
 
         skipCDSBuildingBlockListener.run(flowsToExecute, executeBuildingBlock, buildingBlockExecution);
 
-        actual = buildingBlockExecution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
-        assertEquals(1, actual);
+        assertEquals(1, (int) buildingBlockExecution.getVariable(BBConstants.G_CURRENT_SEQUENCE));
     }
 
     @Test
     public void testProcessForVNFToSkipCDSBB() {
-        // given
-        setBuildingBlockAndCurrentSequence(VNF_SCOPE, VNF_TEST_ACTION, 0);
-        vnfResourceCustomization = getVnfResourceCustomizationList(true);
+        setBuildingBlockAndCurrentSequence(VNF_SCOPE, VNF_TEST_ACTION, VNF_MODEL_CUSTOMIZATION_ID, 0);
+        when(catalogDbClient.getVnfResourceCustomizationByModelCustomizationUUID(VNF_MODEL_CUSTOMIZATION_ID))
+                .thenReturn(vnfCust);
 
-        when(catalogDbClient.getVnfResourceCustomizationByModelUuid(
-                executeBuildingBlock.getRequestDetails().getModelInfo().getModelUuid()))
-                        .thenReturn(vnfResourceCustomization);
-        when(catalogDbClient.findVnfResourceCustomizationInList(executeBuildingBlock.getBuildingBlock().getKey(),
-                vnfResourceCustomization)).thenReturn(vnfCust);
-
-        // when
         skipCDSBuildingBlockListener.run(flowsToExecute, executeBuildingBlock, buildingBlockExecution);
 
-        // then
-        actual = buildingBlockExecution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
-        assertEquals(1, actual);
-
+        assertEquals(1, (int) buildingBlockExecution.getVariable(BBConstants.G_CURRENT_SEQUENCE));
     }
 
     @Test
     public void testProcessForVNFNotToSkipCDSBB() {
-        // given
-        setBuildingBlockAndCurrentSequence(VNF_SCOPE, VNF_TEST_ACTION, 0);
-        vnfResourceCustomization = getVnfResourceCustomizationList(false);
+        setBuildingBlockAndCurrentSequence(VNF_SCOPE, VNF_TEST_ACTION, VNF_MODEL_CUSTOMIZATION_ID, 0);
+        vnfCust.setSkipPostInstConf(false);
+        when(catalogDbClient.getVnfResourceCustomizationByModelCustomizationUUID(VNF_MODEL_CUSTOMIZATION_ID))
+                .thenReturn(vnfCust);
 
-        when(catalogDbClient.getVnfResourceCustomizationByModelUuid(
-                executeBuildingBlock.getRequestDetails().getModelInfo().getModelUuid()))
-                        .thenReturn(vnfResourceCustomization);
-        when(catalogDbClient.findVnfResourceCustomizationInList(executeBuildingBlock.getBuildingBlock().getKey(),
-                vnfResourceCustomization)).thenReturn(vnfCust);
-
-        // when
         skipCDSBuildingBlockListener.run(flowsToExecute, executeBuildingBlock, buildingBlockExecution);
 
-        // then
-        actual = buildingBlockExecution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
-        assertEquals(0, actual);
-
+        assertEquals(0, (int) buildingBlockExecution.getVariable(BBConstants.G_CURRENT_SEQUENCE));
     }
 
 
     @Test
     public void testProcessForVFToSkipCDSBB() {
-        // given
-        setBuildingBlockAndCurrentSequence(VF_SCOPE, VFModule_TEST_ACTION, 0);
-        vfModuleCustomization = getVfModuleCustomizationList(true);
+        setBuildingBlockAndCurrentSequence(VF_SCOPE, VFModule_TEST_ACTION, VF_MODULE_CUSTOMIZATION_ID, 0);
+        when(catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID(VF_MODULE_CUSTOMIZATION_ID))
+                .thenReturn(vfCust);
 
-        when(catalogDbClient
-                .getVfModuleCustomizationByModelCuztomizationUUID(executeBuildingBlock.getBuildingBlock().getKey()))
-                        .thenReturn(vfCust);
-
-        // when
         skipCDSBuildingBlockListener.run(flowsToExecute, executeBuildingBlock, buildingBlockExecution);
 
-        // then
-        actual = buildingBlockExecution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
-        assertEquals(1, actual);
-
+        assertEquals(1, (int) buildingBlockExecution.getVariable(BBConstants.G_CURRENT_SEQUENCE));
     }
 
     @Test
     public void testProcessForVFNotToSkipCDSBB() {
-        // given
-        setBuildingBlockAndCurrentSequence(VF_SCOPE, VFModule_TEST_ACTION, 0);
-        vfModuleCustomization = getVfModuleCustomizationList(false);
-
+        setBuildingBlockAndCurrentSequence(VF_SCOPE, VFModule_TEST_ACTION, VF_MODULE_CUSTOMIZATION_ID, 0);
+        vfCust.setSkipPostInstConf(false);
         when(catalogDbClient
                 .getVfModuleCustomizationByModelCuztomizationUUID(executeBuildingBlock.getBuildingBlock().getKey()))
                         .thenReturn(vfCust);
 
-        // when
         skipCDSBuildingBlockListener.run(flowsToExecute, executeBuildingBlock, buildingBlockExecution);
 
-        // then
-        actual = buildingBlockExecution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
-        assertEquals(0, actual);
-
+        assertEquals(0, (int) buildingBlockExecution.getVariable(BBConstants.G_CURRENT_SEQUENCE));
     }
 
     @Test
     public void testProcessForPNFToSkipCDSBB() {
-        // given
-        setBuildingBlockAndCurrentSequence(PNF_SCOPE, PNFModule_TEST_ACTION, 0);
-        pnfResourceCustomization = getPnfResourceCustomization(true);
+        setBuildingBlockAndCurrentSequence(PNF_SCOPE, PNFModule_TEST_ACTION, PNF_CUSTOMIZATION_ID, 0);
+        when(catalogDbClient.getPnfResourceCustomizationByModelCustomizationUUID(PNF_CUSTOMIZATION_ID))
+                .thenReturn(pnfResourceCustomization);
 
-        when(catalogDbClient
-                .getPnfResourceCustomizationByModelCustomizationUUID(executeBuildingBlock.getBuildingBlock().getKey()))
-                        .thenReturn(pnfResourceCustomization);
-
-        // when
         skipCDSBuildingBlockListener.run(flowsToExecute, executeBuildingBlock, buildingBlockExecution);
 
-        // then
-        actual = buildingBlockExecution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
-        assertEquals(1, actual);
-
+        assertEquals(1, (int) buildingBlockExecution.getVariable(BBConstants.G_CURRENT_SEQUENCE));
     }
 
     @Test
     public void testProcessForPNFNotToSkipCDSBB() {
-        // given
-        setBuildingBlockAndCurrentSequence(PNF_SCOPE, PNFModule_TEST_ACTION, 0);
-        pnfResourceCustomization = getPnfResourceCustomization(false);
+        setBuildingBlockAndCurrentSequence(PNF_SCOPE, PNFModule_TEST_ACTION, PNF_CUSTOMIZATION_ID, 0);
+        pnfResourceCustomization.setSkipPostInstConf(false);
+        when(catalogDbClient.getPnfResourceCustomizationByModelCustomizationUUID(PNF_CUSTOMIZATION_ID))
+                .thenReturn(pnfResourceCustomization);
 
-        when(catalogDbClient
-                .getPnfResourceCustomizationByModelCustomizationUUID(executeBuildingBlock.getBuildingBlock().getKey()))
-                        .thenReturn(pnfResourceCustomization);
-
-        // when
         skipCDSBuildingBlockListener.run(flowsToExecute, executeBuildingBlock, buildingBlockExecution);
 
-        // then
-        actual = buildingBlockExecution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
-        assertEquals(0, actual);
-
+        assertEquals(0, (int) buildingBlockExecution.getVariable(BBConstants.G_CURRENT_SEQUENCE));
     }
 
     /**
@@ -229,37 +197,13 @@ public class SkipCDSBuildingBlockListenerTest {
      * @param action
      * @param squence
      */
-    private void setBuildingBlockAndCurrentSequence(String scope, String action, int sequence) {
+    private void setBuildingBlockAndCurrentSequence(String scope, String action, String key, int sequence) {
         buildingBlock.setBpmnScope(scope);
         buildingBlock.setBpmnAction(action);
         buildingBlock.setBpmnFlowName("ControllerExecutionBB");
-        buildingBlock.setKey(MODELCUSTOMIZATIONUUID);
+        buildingBlock.setKey(key);
         executeBuildingBlock.setBuildingBlock(buildingBlock);
         buildingBlockExecution.setVariable(BBConstants.G_CURRENT_SEQUENCE, sequence);
-
-    }
-
-    private List<VnfResourceCustomization> getVnfResourceCustomizationList(boolean setSkippost) {
-        List<VnfResourceCustomization> vnfResourceCustomizations = new ArrayList<>();
-        vnfCust.setModelCustomizationUUID(MODELCUSTOMIZATIONUUID);
-        vnfCust.setSkipPostInstConf(setSkippost);
-        vnfResourceCustomizations.add(vnfCust);
-        return vnfResourceCustomizations;
-    }
-
-    private List<VfModuleCustomization> getVfModuleCustomizationList(boolean setSkippost) {
-        List<VfModuleCustomization> vfModuleCustomizations = new ArrayList<>();
-        vfCust.setModelCustomizationUUID(MODELCUSTOMIZATIONUUID);
-        vfCust.setSkipPostInstConf(setSkippost);
-        vfModuleCustomizations.add(vfCust);
-        return vfModuleCustomizations;
-    }
-
-    private PnfResourceCustomization getPnfResourceCustomization(boolean setSkippost) {
-        PnfResourceCustomization pnfResourceCustomization = new PnfResourceCustomization();
-        pnfResourceCustomization.setModelCustomizationUUID(MODELCUSTOMIZATIONUUID);
-        pnfResourceCustomization.setSkipPostInstConf(setSkippost);
-        return pnfResourceCustomization;
     }
 
 }

@@ -40,7 +40,6 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
-import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetup;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.client.exception.ExceptionBuilder;
@@ -117,6 +116,9 @@ public class VnfEBBLoader {
             if (vnf.getVnfId().equals(vnfId)) {
                 aaiResourceIds.add(new Pair<>(WorkflowType.VNF, vnf.getVnfId()));
                 Resource vnfResource = new Resource(WorkflowType.VNF, vnf.getVnfId(), false, serviceResource);
+                org.onap.aai.domain.yang.GenericVnf aaiGenericVnf = bbInputSetupUtils.getAAIGenericVnf(vnfId);
+                vnfResource.setModelCustomizationId(aaiGenericVnf.getModelCustomizationId());
+                vnfResource.setModelVersionId(aaiGenericVnf.getModelVersionId());
                 resourceList.add(vnfResource);
                 processVfModules(vnf, aaiResourceIds, resourceList, vnfResource, execution);
                 processVolumeGroups(vnf, aaiResourceIds, resourceList, vnfResource);
@@ -131,8 +133,11 @@ public class VnfEBBLoader {
         for (GenericVnf vnf : serviceInstanceMSO.getVnfs()) {
             if (vnf.getVnfId().equals(vnfId)) {
                 aaiResourceIds.add(new Pair<>(WorkflowType.VNF, vnf.getVnfId()));
-                Resource vnfResource = new Resource(WorkflowType.VNF,
-                        bbInputSetupUtils.getAAIGenericVnf(vnfId).getModelCustomizationId(), false, serviceResource);
+                org.onap.aai.domain.yang.GenericVnf aaiGenericVnf = bbInputSetupUtils.getAAIGenericVnf(vnfId);
+                Resource vnfResource =
+                        new Resource(WorkflowType.VNF, aaiGenericVnf.getModelCustomizationId(), false, serviceResource);
+                vnfResource.setModelCustomizationId(aaiGenericVnf.getModelCustomizationId());
+                vnfResource.setModelVersionId(aaiGenericVnf.getModelVersionId());
                 resourceList.add(vnfResource);
                 processVfModules(vnf, aaiResourceIds, resourceList, vnfResource, execution);
                 processVolumeGroups(vnf, aaiResourceIds, resourceList, vnfResource);
@@ -141,10 +146,10 @@ public class VnfEBBLoader {
         }
     }
 
-    private void findConfigurationsInsideVfModule(DelegateExecution execution, String vnfId, String vfModuleId,
-            List<Resource> resourceList, Resource vfModuleResource, List<Pair<WorkflowType, String>> aaiResourceIds) {
+    private void findConfigurationsInsideVfModule(DelegateExecution execution,
+            org.onap.aai.domain.yang.VfModule aaiVfModule, List<Resource> resourceList, Resource vfModuleResource,
+            List<Pair<WorkflowType, String>> aaiResourceIds) {
         try {
-            org.onap.aai.domain.yang.VfModule aaiVfModule = bbInputSetupUtils.getAAIVfModule(vnfId, vfModuleId);
             AAIResultWrapper vfModuleWrapper = new AAIResultWrapper(
                     new AAICommonObjectMapperProvider().getMapper().writeValueAsString(aaiVfModule));
             Optional<Relationships> relationshipsOp;
@@ -166,11 +171,14 @@ public class VnfEBBLoader {
                 aaiResourceIds.add(new Pair<>(WorkflowType.VFMODULE, vfModule.getVfModuleId()));
                 Resource vfModuleResource =
                         new Resource(WorkflowType.VFMODULE, vfModule.getVfModuleId(), false, vnfResource);
-                Optional.ofNullable(vfModule.getModelInfoVfModule()).map(ModelInfoVfModule::getIsBaseBoolean)
-                        .ifPresent(vfModuleResource::setBaseVfModule);
+                org.onap.aai.domain.yang.VfModule aaiVfModule =
+                        bbInputSetupUtils.getAAIVfModule(vnf.getVnfId(), vfModule.getVfModuleId());
+                vfModuleResource.setModelInvariantId(aaiVfModule.getModelInvariantId());
+                vfModuleResource.setModelCustomizationId(aaiVfModule.getModelCustomizationId());
+                vfModuleResource.setBaseVfModule(aaiVfModule.isIsBaseVfModule());
                 resourceList.add(vfModuleResource);
-                findConfigurationsInsideVfModule(execution, vnf.getVnfId(), vfModule.getVfModuleId(), resourceList,
-                        vfModuleResource, aaiResourceIds);
+                findConfigurationsInsideVfModule(execution, aaiVfModule, resourceList, vfModuleResource,
+                        aaiResourceIds);
             }
         }
     }

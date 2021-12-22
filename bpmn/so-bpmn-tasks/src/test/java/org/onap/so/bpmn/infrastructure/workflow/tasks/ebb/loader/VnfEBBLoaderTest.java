@@ -47,12 +47,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.only;
 
 
 public class VnfEBBLoaderTest {
 
     private String serviceId;
     private String vnfId;
+    private String vfModuleId;
     private BBInputSetupUtils bbInputSetupUtils;
     private BBInputSetup bbInputSetup;
     private WorkflowActionExtractResourcesAAI workflowActionUtils;
@@ -67,6 +69,7 @@ public class VnfEBBLoaderTest {
     public void setup() {
         serviceId = "service123";
         vnfId = "vnf123";
+        vfModuleId = "vfModule123";
         serviceInstanceAAI = mock(org.onap.aai.domain.yang.ServiceInstance.class);
         serviceInstanceMSO = mock(ServiceInstance.class);
         bbInputSetupUtils = mock(BBInputSetupUtils.class);
@@ -95,10 +98,18 @@ public class VnfEBBLoaderTest {
         GenericVnf genericVnf = mock(GenericVnf.class);
         doReturn(vnfId).when(genericVnf).getVnfId();
 
+        org.onap.aai.domain.yang.GenericVnf aaiVnf = mock(org.onap.aai.domain.yang.GenericVnf.class);
+        doReturn(aaiVnf).when(bbInputSetupUtils).getAAIGenericVnf(vnfId);
+
         VfModule vfModule = mock(VfModule.class);
+        doReturn(vfModuleId).when(vfModule).getVfModuleId();
         ModelInfoVfModule modelInfoVfModule = new ModelInfoVfModule();
         modelInfoVfModule.setIsBaseBoolean(true);
         doReturn(modelInfoVfModule).when(vfModule).getModelInfoVfModule();
+
+        org.onap.aai.domain.yang.VfModule aaiVfModule = new org.onap.aai.domain.yang.VfModule();
+        aaiVfModule.setIsBaseVfModule(true);
+        doReturn(aaiVfModule).when(bbInputSetupUtils).getAAIVfModule(vnfId, vfModuleId);
 
         doReturn(serviceInstanceAAI).when(bbInputSetupUtils).getAAIServiceInstanceById(serviceId);
         doReturn(serviceInstanceMSO).when(bbInputSetup).getExistingServiceInstance(serviceInstanceAAI);
