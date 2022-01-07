@@ -1564,6 +1564,9 @@ public class BBInputSetup implements JavaDelegate {
                     break;
                 }
             }
+        } else if (bbName.equals("HealthCheckBB")
+                && (VNF).equalsIgnoreCase(executeBB.getBuildingBlock().getBpmnScope())) {
+            this.setisHelmforHealthCheckBB(service, serviceInstance, gBB);
         }
         if (executeBB.getWorkflowResourceIds() != null) {
             parameter.setResourceId(executeBB.getWorkflowResourceIds().getNetworkCollectionId());
@@ -2110,6 +2113,28 @@ public class BBInputSetup implements JavaDelegate {
         collection.setModelInfoCollection(mapperLayer.mapCatalogCollectionToCollection(collectionResourceCust,
                 collectionResourceCust.getCollectionResource()));
         return collection;
+    }
+	
+	private void setisHelmforHealthCheckBB(Service service, ServiceInstance serviceInstance, GeneralBuildingBlock gBB) {
+        for (GenericVnf vnf : serviceInstance.getVnfs()) {
+            for (VfModule vfModule : vnf.getVfModules()) {
+                String vnfModelCustomizationUUID =
+                        this.bbInputSetupUtils.getAAIGenericVnf(vnf.getVnfId()).getModelCustomizationId();
+                ModelInfo vnfModelInfo = new ModelInfo();
+                vnfModelInfo.setModelCustomizationUuid(vnfModelCustomizationUUID);
+                this.mapCatalogVnf(vnf, vnfModelInfo, service);
+                String vfModuleCustomizationUUID = this.bbInputSetupUtils
+                        .getAAIVfModule(vnf.getVnfId(), vfModule.getVfModuleId()).getModelCustomizationId();
+                ModelInfo vfModuleModelInfo = new ModelInfo();
+                vfModuleModelInfo.setModelCustomizationId(vfModuleCustomizationUUID);
+                this.mapCatalogVfModule(vfModule, vfModuleModelInfo, service, vnfModelCustomizationUUID);
+                if (vfModule.getModelInfoVfModule() != null && vfModule.getModelInfoVfModule().getModelName() != null
+                        && vfModule.getModelInfoVfModule().getModelName().contains("helm")) {
+                    gBB.getRequestContext().setIsHelm(true);
+                    break;
+                }
+            }
+        }
     }
 
     protected void mapL3Networks(List<AAIResourceUri> list, List<L3Network> l3Networks) {
