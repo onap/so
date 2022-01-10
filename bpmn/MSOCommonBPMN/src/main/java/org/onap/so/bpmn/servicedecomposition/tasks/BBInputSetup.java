@@ -1584,9 +1584,14 @@ public class BBInputSetup implements JavaDelegate {
         Vnfs vnfs = null;
         VfModules vfModules = null;
         Networks networks = null;
+
         CloudConfiguration cloudConfiguration = requestDetails.getCloudConfiguration();
-        CloudRegion cloudRegion = getCloudRegionFromMacroRequest(cloudConfiguration, resources);
+        org.onap.aai.domain.yang.CloudRegion aaiCloudRegion = bbInputSetupUtils.getCloudRegion(cloudConfiguration);
+        Tenant tenant = getTenant(cloudConfiguration, aaiCloudRegion);
+        gBB.setTenant(tenant);
+        CloudRegion cloudRegion = mapperLayer.mapCloudRegion(cloudConfiguration, aaiCloudRegion);
         gBB.setCloudRegion(cloudRegion);
+
         BBInputSetupParameter parameter =
                 new BBInputSetupParameter.Builder().setRequestId(executeBB.getRequestId()).setService(service)
                         .setBbName(bbName).setServiceInstance(serviceInstance).setLookupKeyMap(lookupKeyMap).build();
@@ -1597,6 +1602,16 @@ public class BBInputSetup implements JavaDelegate {
                 vnfs = findVnfsByInstanceName(vnfInstanceName, resources);
             } else {
                 vnfs = findVnfsByKey(key, resources);
+            }
+
+            // Vnf level cloud configuration takes precedence over service level cloud configuration.
+            if (vnfs.getCloudConfiguration() != null) {
+                cloudConfiguration = vnfs.getCloudConfiguration();
+                aaiCloudRegion = bbInputSetupUtils.getCloudRegion(cloudConfiguration);
+                tenant = getTenant(cloudConfiguration, aaiCloudRegion);
+                gBB.setTenant(tenant);
+                cloudRegion = mapperLayer.mapCloudRegion(cloudConfiguration, aaiCloudRegion);
+                gBB.setCloudRegion(cloudRegion);
             }
 
             String vnfId = lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID);
@@ -1635,6 +1650,24 @@ public class BBInputSetup implements JavaDelegate {
                 vfModules = getVfModulesByKey(key, resources);
             }
 
+            String vfModulesName = vfModules.getInstanceName();
+            // Get the Vnf associated with vfModule
+            Optional<org.onap.so.serviceinstancebeans.Vnfs> parentVnf =
+                    resources.getVnfs().stream().filter(aVnf -> aVnf.getCloudConfiguration() != null)
+                            .filter(aVnf -> aVnf.getVfModules().stream()
+                                    .anyMatch(aVfModules -> aVfModules.getInstanceName().equals(vfModulesName)))
+                            .findAny();
+
+            // Get the cloud configuration from this Vnf
+            if (parentVnf.isPresent()) {
+                cloudConfiguration = parentVnf.get().getCloudConfiguration();
+                aaiCloudRegion = bbInputSetupUtils.getCloudRegion(cloudConfiguration);
+                tenant = getTenant(cloudConfiguration, aaiCloudRegion);
+                gBB.setTenant(tenant);
+                cloudRegion = mapperLayer.mapCloudRegion(cloudConfiguration, aaiCloudRegion);
+                gBB.setCloudRegion(cloudRegion);
+            }
+
             lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, getVnfId(executeBB, lookupKeyMap));
 
             parameter.setModelInfo(vfModules.getModelInfo());
@@ -1665,6 +1698,21 @@ public class BBInputSetup implements JavaDelegate {
             networks = findNetworksByKey(key, resources);
             String networkId = lookupKeyMap.get(ResourceKey.NETWORK_ID);
             if (networks != null) {
+                //If service level cloud configuration is not provided then get it from networks.
+                if (cloudConfiguration == null) {
+                    Optional<org.onap.so.serviceinstancebeans.Networks> netWithCloudConfig =
+                            resources.getNetworks().stream()
+                                    .filter(aNetwork -> aNetwork.getCloudConfiguration() != null)
+                                    .findAny();
+                    if (netWithCloudConfig.isPresent()) {
+                        cloudConfiguration = netWithCloudConfig.get().getCloudConfiguration();
+                        aaiCloudRegion = bbInputSetupUtils.getCloudRegion(cloudConfiguration);
+                        tenant = getTenant(cloudConfiguration, aaiCloudRegion);
+                        gBB.setTenant(tenant);
+                        cloudRegion = mapperLayer.mapCloudRegion(cloudConfiguration, aaiCloudRegion);
+                        gBB.setCloudRegion(cloudRegion);
+                    }
+                }
                 parameter.setInstanceName(networks.getInstanceName());
                 parameter.setModelInfo(networks.getModelInfo());
                 parameter.setInstanceParams(networks.getInstanceParams());
@@ -1738,39 +1786,6 @@ public class BBInputSetup implements JavaDelegate {
             }
         }
         throw new ResourceNotFoundException("Could not find vnf with key: " + key + " in userparams");
-    }
-
-    protected CloudRegion getCloudRegionFromMacroRequest(CloudConfiguration cloudConfiguration, Resources resources) {
-        if (cloudConfiguration == null) {
-            for (Vnfs vnfs : resources.getVnfs()) {
-                if (cloudConfiguration == null) {
-                    cloudConfiguration = vnfs.getCloudConfiguration();
-                } else {
-                    break;
-                }
-                for (VfModules vfModules : vnfs.getVfModules()) {
-                    if (cloudConfiguration == null) {
-                        cloudConfiguration = vfModules.getCloudConfiguration();
-                    } else {
-                        break;
-                    }
-                }
-            }
-            for (Networks networks : resources.getNetworks()) {
-                if (cloudConfiguration == null) {
-                    cloudConfiguration = networks.getCloudConfiguration();
-                } else {
-                    break;
-                }
-            }
-        }
-        if (cloudConfiguration != null) {
-            org.onap.aai.domain.yang.CloudRegion aaiCloudRegion = bbInputSetupUtils.getCloudRegion(cloudConfiguration);
-            return mapperLayer.mapCloudRegion(cloudConfiguration, aaiCloudRegion);
-        } else {
-            logger.debug("Could not find any cloud configuration for this request.");
-            return null;
-        }
     }
 
     protected String getVnfId(ExecuteBuildingBlock executeBB, Map<ResourceKey, String> lookupKeyMap) {
