@@ -253,9 +253,16 @@ INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, SC
 ('VNF-Config-Update', '7', 'VNFHealthCheckActivity', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Config-Update' and CLOUD_OWNER = 'DEFAULT')),
 ('VNF-Config-Update', '8', 'VNFUnsetInMaintFlagActivity', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Config-Update' and CLOUD_OWNER = 'DEFAULT')),
 ('VNF-Config-Update', '9', 'VNFUnsetClosedLoopDisabledFlagActivity', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Config-Update' and CLOUD_OWNER = 'DEFAULT')),
+<<<<<<< HEAD   (c0af27 Merge "Hard-coded cloud owner in mariadb-galera for VNF-Macr)
 ('VNF-Macro-Modify', '1', 'ControllerExecutionBB', 'vnf', 'config-assign', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Modify' and CLOUD_OWNER = 'DEFAULT')),
 ('VNF-Macro-Modify', '2', 'ControllerExecutionBB', 'vnf', 'config-deploy', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Modify' and CLOUD_OWNER = 'DEFAULT')),
 ('VNF-Macro-HealthCheck', '1', 'HealthCheckBB', 'vnf', 'status-check', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-HealthCheck' and CLOUD_OWNER = 'DEFAULT'));
+=======
+('VNF-Macro-Modify', '1', 'ControllerExecutionBB', 'vnf', 'config-assign', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Modify' and CLOUD_OWNER = 'k8scloudowner4')),
+('VNF-Macro-Modify', '2', 'ControllerExecutionBB', 'vnf', 'config-deploy', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Modify' and CLOUD_OWNER = 'k8scloudowner4')),
+('VNF-Macro-HealthCheck', '1', 'HealthCheckBB', 'vnf', 'status-check', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-HealthCheck' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-Macro-HealthCheck', '2', 'HealthCheckBB', 'vnf', 'health-check', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-HealthCheck' and CLOUD_OWNER = 'DEFAULT'));
+>>>>>>> CHANGE (b552f9 CNF Healthcheck Workflow broken after macro sql file refacto)
 
 INSERT INTO rainy_day_handler_macro (FLOW_NAME, SERVICE_TYPE, VNF_TYPE, ERROR_CODE, WORK_STEP, POLICY, SECONDARY_POLICY, REG_EX_ERROR_MESSAGE, SERVICE_ROLE)
 VALUES
@@ -410,7 +417,10 @@ VALUES
 ('VNFConfigModifyActivity', 'NO_VALIDATE', 'CUSTOM'),
 ('ConfigAssignVnfBB', 'NO_VALIDATE', 'CUSTOM'),
 ('ConfigDeployVnfBB', 'NO_VALIDATE', 'CUSTOM'),
-('ControllerExecutionBB', 'NO_VALIDATE', 'CUSTOM');
+('ControllerExecutionBB', 'NO_VALIDATE', 'CUSTOM'),
+('StatusCheckBB', 'NO_VALIDATE', 'CUSTOM'),
+('HealthCheckBB', 'NO_VALIDATE', 'CUSTOM');
+
 
 INSERT INTO orchestration_status_state_transition_directive (resource_type, orchestration_status, target_action, flow_directive)
 VALUES
