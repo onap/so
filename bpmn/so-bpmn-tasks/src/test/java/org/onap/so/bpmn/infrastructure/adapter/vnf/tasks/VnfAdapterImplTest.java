@@ -30,22 +30,30 @@ import static org.mockito.Mockito.when;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.FileUtil;
-import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.BBObjectNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.onap.so.client.exception.ExceptionBuilder;
 
-public class VnfAdapterImplTest extends BaseTaskTest {
-
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class VnfAdapterImplTest extends TestDataSetup {
+    @Mock
+    protected ExceptionBuilder exceptionUtil;
+    @Mock
+    protected ExtractPojosForBB extractPojosForBB;
     @InjectMocks
     private VnfAdapterImpl vnfAdapterImpl = new VnfAdapterImpl();
 
@@ -159,12 +167,12 @@ public class VnfAdapterImplTest extends BaseTaskTest {
         execution.setVariable("WorkflowResponse", VNF_ADAPTER_REST_DELETE_RESPONSE);
         vnfAdapterImpl.postProcessVnfAdapter(execution);
         assertNull(vfModule.getHeatStackId());
-        assertEquals(vfModule.getContrailServiceInstanceFqdn(), "");
-        assertEquals(execution.getVariable("contrailServiceInstanceFqdn"), "");
-        assertEquals(genericVnf.getIpv4OamAddress(), "");
-        assertEquals(execution.getVariable("oamManagementV4Address"), "");
-        assertEquals(genericVnf.getManagementV6Address(), "");
-        assertEquals(execution.getVariable("oamManagementV6Address"), "");
+        assertEquals("", vfModule.getContrailServiceInstanceFqdn());
+        assertEquals("", execution.getVariable("contrailServiceInstanceFqdn"));
+        assertEquals("", genericVnf.getIpv4OamAddress());
+        assertEquals("", execution.getVariable("oamManagementV4Address"));
+        assertEquals("", genericVnf.getManagementV6Address());
+        assertEquals("", execution.getVariable("oamManagementV6Address"));
         assertEquals(TEST_CONTRAIL_NETWORK_POLICY_FQDNS, execution.getVariable("contrailNetworkPolicyFqdnList"));
     }
 

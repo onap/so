@@ -31,11 +31,14 @@ import java.util.Map;
 import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
-import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
@@ -43,9 +46,20 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
+import org.onap.so.client.adapter.network.mapper.NetworkAdapterObjectMapper;
 import org.onap.so.client.exception.BBObjectNotFoundException;
+import org.onap.so.client.orchestration.NetworkAdapterResources;
 
-public class NetworkAdapterCreateTasksTest extends BaseTaskTest {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class NetworkAdapterCreateTasksTest extends TestDataSetup {
+
+    @Mock
+    protected ExtractPojosForBB extractPojosForBB;
+    @Mock
+    protected NetworkAdapterObjectMapper networkAdapterObjectMapper;
+    @Mock
+    protected NetworkAdapterResources networkAdapterResources;
     @InjectMocks
     private NetworkAdapterCreateTasks networkAdapterCreateTasks = new NetworkAdapterCreateTasks();
 
@@ -77,7 +91,7 @@ public class NetworkAdapterCreateTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void createNetworkTest() throws Exception {
+    public void createNetworkTest() {
         String cloudRegionPo = "cloudRegionPo";
         CreateNetworkRequest createNetworkRequest = new CreateNetworkRequest();
         execution.setVariable("cloudRegionPo", cloudRegionPo);

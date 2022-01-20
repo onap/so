@@ -27,27 +27,36 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import java.io.UnsupportedEncodingException;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.adapters.nwrest.DeleteNetworkRequest;
-import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
-import org.onap.so.client.adapter.network.NetworkAdapterClientException;
+import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
+import org.onap.so.client.adapter.network.mapper.NetworkAdapterObjectMapper;
 import org.onap.so.client.exception.BBObjectNotFoundException;
+import org.onap.so.client.exception.ExceptionBuilder;
 
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class NetworkAdapterDeleteTasksTest extends TestDataSetup {
 
-public class NetworkAdapterDeleteTasksTest extends BaseTaskTest {
-
+    @Mock
+    protected ExtractPojosForBB extractPojosForBB;
+    @Mock
+    protected ExceptionBuilder exceptionUtil;
+    @Mock
+    protected NetworkAdapterObjectMapper networkAdapterObjectMapper;
     @InjectMocks
     private NetworkAdapterDeleteTasks networkAdapterDeleteTasks = new NetworkAdapterDeleteTasks();
 
@@ -72,7 +81,7 @@ public class NetworkAdapterDeleteTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void test_deleteNetwork() throws UnsupportedEncodingException, NetworkAdapterClientException {
+    public void test_deleteNetwork() {
         DeleteNetworkRequest deleteNetworkRequest = new DeleteNetworkRequest();
         doReturn(deleteNetworkRequest).when(networkAdapterObjectMapper).deleteNetworkRequestMapper(requestContext,
                 cloudRegion, serviceInstance, l3Network);
@@ -83,7 +92,7 @@ public class NetworkAdapterDeleteTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void test_deleteNetwork_exception() throws UnsupportedEncodingException, NetworkAdapterClientException {
+    public void test_deleteNetwork_exception() {
         expectedException.expect(BpmnError.class);
 
         doThrow(RuntimeException.class).when(networkAdapterObjectMapper).deleteNetworkRequestMapper(
