@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d6362a4b_0d1ae27c",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1614,
+      "author": {
+        "id": 2701
+      },
+      "writtenOn": "2022-01-26T16:41:46Z",
+      "side": 1,
+      "message": "we need to refactor this code and to move it to separate function that will be called each time. Now we have repetition in the code in four places.",
+      "revId": "83d1b45dd376c1027ba941cd70a16776dca0e003",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
