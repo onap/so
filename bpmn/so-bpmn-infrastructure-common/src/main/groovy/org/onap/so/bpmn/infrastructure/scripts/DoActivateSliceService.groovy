@@ -20,6 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import static org.apache.commons.lang3.StringUtils.isBlank
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -27,6 +28,15 @@ import org.apache.commons.lang3.StringUtils
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.logging.filter.base.ErrorCode
+import javax.ws.rs.NotFoundException
+import org.onap.aai.domain.yang.Relationship
+import org.onap.aai.domain.yang.ServiceInstance
+import org.onap.aaiclient.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.beans.nsmf.*
 import org.onap.so.beans.nsmf.oof.SubnetType
 import org.onap.so.bpmn.common.scripts.*
@@ -160,8 +170,10 @@ class DoActivateSliceService extends AbstractServiceTaskProcessor {
             actDeActNssi.setNssiId(nssInstance.nssiId)
             actDeActNssi.setSnssaiList(Arrays.asList(customerInfo.snssai))
 
+            String sliceProfileId = getRelatedSliceProfileId(execution, customerInfo.globalSubscriberId, customerInfo.subscriptionServiceType, nssInstance.nssiId, customerInfo.snssai, "slice-profile")
+            actDeActNssi.setSliceProfileId(sliceProfileId)
 
-			nbiRequest.setEsrInfo(esrInfo)
+            nbiRequest.setEsrInfo(esrInfo)
             nbiRequest.setServiceInfo(serviceInfo)
             nbiRequest.setActDeActNssi(actDeActNssi)
             execution.setVariable("nbiRequest", nbiRequest)
@@ -175,6 +187,48 @@ class DoActivateSliceService extends AbstractServiceTaskProcessor {
 		}
 		logger.debug("***** Exit processDecomposition *****")
 	}
+
+        private String getRelatedSliceProfileId(DelegateExecution execution, String globalSubscriberId, String subscriptionServiceType, String instanceId, String snssai, String role) {
+                logger.debug("${Prefix} - Get Related Slice Profile")
+		if( isBlank(role) || isBlank(instanceId)) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Role and instanceId are mandatory")
+		}
+
+                String nssiId;
+		AAIResourcesClient client = getAAIClient()
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(instanceId))
+		if (!client.exists(uri)) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai : ${instanceId}")
+		}
+		AAIResultWrapper wrapper = client.get(uri, NotFoundException.class)
+		Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
+		if(si.isPresent()) {
+		List<Relationship> relationshipList = si.get().getRelationshipList().getRelationship()
+		for (Relationship relationship : relationshipList) {
+			String relatedTo = relationship.getRelatedTo()
+			if (relatedTo.toLowerCase() == "service-instance") {
+				String relatioshipurl = relationship.getRelatedLink()
+				String serviceInstanceId =
+						relatioshipurl.substring(relatioshipurl.lastIndexOf("/") + 1, relatioshipurl.length())
+				uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(serviceInstanceId))
+				if (!client.exists(uri)) {
+					exceptionUtil.buildAndThrowWorkflowException(execution, 2500,
+							"Service Instance was not found in aai: ${serviceInstanceId} related to ${instanceId}")
+				}
+				AAIResultWrapper wrapper01 = client.get(uri, NotFoundException.class)
+				Optional<ServiceInstance> serviceInstance = wrapper01.asBean(ServiceInstance.class)
+				if (serviceInstance.isPresent()) {
+					ServiceInstance instance = serviceInstance.get()
+					if (role.equalsIgnoreCase(instance.getServiceRole()) && snssai.equalsIgnoreCase(instance.getEnvironmentContext())) {
+                        nssiId = instance.getServiceInstanceId()
+					}
+				}
+			}
+		}
+		}
+		return nssiId
+		logger.debug("${Prefix} - Exit Get Related Slice Profile instances")
+    }
 
     /**
      * send Create Request NSSMF
