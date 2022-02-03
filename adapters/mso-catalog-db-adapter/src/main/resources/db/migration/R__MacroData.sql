@@ -26,7 +26,7 @@ INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, I
 ('VNF-Create', 'createInstance', 'Vnf', true,true, '7', '7', 'DEFAULT', '*'),
 ('VNF-Delete', 'deleteInstance', 'Vnf', true,true, '7', '7', 'DEFAULT', '*'),
 ('VNF-Macro-Delete', 'deleteInstance', 'Vnf', false,true, '7', '7', 'DEFAULT', '*'),
-('VNF-Macro-Modify', 'updateInstance', 'Vnf', false,true, '7', '7','k8scloudowner4', '*'),
+('VNF-Macro-Modify', 'updateInstance', 'Vnf', false,true, '7', '7','DEFAULT', '*'),
 ('VNF-Macro-HealthCheck', 'healthCheck', 'Vnf', false,true, '7', '7','DEFAULT', '*'),
 ('VolumeGroup-Create', 'createInstance', 'VolumeGroup', true,true, '7','7', 'DEFAULT', '*'),
 ('VolumeGroup-Delete', 'deleteInstance', 'VolumeGroup', true,true, '7','7', 'DEFAULT', '*'),
@@ -253,8 +253,8 @@ INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, SC
 ('VNF-Config-Update', '7', 'VNFHealthCheckActivity', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Config-Update' and CLOUD_OWNER = 'DEFAULT')),
 ('VNF-Config-Update', '8', 'VNFUnsetInMaintFlagActivity', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Config-Update' and CLOUD_OWNER = 'DEFAULT')),
 ('VNF-Config-Update', '9', 'VNFUnsetClosedLoopDisabledFlagActivity', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Config-Update' and CLOUD_OWNER = 'DEFAULT')),
-('VNF-Macro-Modify', '1', 'ControllerExecutionBB', 'vnf', 'config-assign', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Modify' and CLOUD_OWNER = 'k8scloudowner4')),
-('VNF-Macro-Modify', '2', 'ControllerExecutionBB', 'vnf', 'config-deploy', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Modify' and CLOUD_OWNER = 'k8scloudowner4')),
+('VNF-Macro-Modify', '1', 'ControllerExecutionBB', 'vnf', 'config-assign', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Modify' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-Macro-Modify', '2', 'ControllerExecutionBB', 'vnf', 'config-deploy', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Modify' and CLOUD_OWNER = 'DEFAULT')),
 ('VNF-Macro-HealthCheck', '1', 'HealthCheckBB', 'vnf', 'status-check', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-HealthCheck' and CLOUD_OWNER = 'DEFAULT')),
 ('VNF-Macro-HealthCheck', '2', 'HealthCheckBB', 'vnf', 'health-check', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-HealthCheck' and CLOUD_OWNER = 'DEFAULT'));
 
