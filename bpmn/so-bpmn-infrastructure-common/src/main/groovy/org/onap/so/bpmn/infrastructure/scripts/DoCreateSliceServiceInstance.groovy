@@ -117,7 +117,7 @@ class DoCreateSliceServiceInstance extends AbstractServiceTaskProcessor{
             String modelUuid = modelInfo.getModelUuid()
             ss.setModelInvariantId(modelInvariantUuid)
             ss.setModelVersionId(modelUuid)
-            String serviceInstanceLocationid = serviceProfile.get("plmnIdList")
+            String serviceInstanceLocationid = serviceProfile.get("pLMNIdList")
             ss.setServiceInstanceLocationId(serviceInstanceLocationid)
             String snssai = serviceProfile.get("sNSSAI")
             ss.setEnvironmentContext(snssai)
