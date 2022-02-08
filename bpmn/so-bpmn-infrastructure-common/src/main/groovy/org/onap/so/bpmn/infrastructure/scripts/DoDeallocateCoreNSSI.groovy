@@ -21,13 +21,13 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.gson.JsonObject
+import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.aai.domain.yang.v19.AllottedResource
-import org.onap.aai.domain.yang.v19.GenericVnf
+import org.json.JSONArray
+import org.json.JSONObject
+import org.onap.aai.domain.yang.v19.ModelVer
 import org.onap.aai.domain.yang.v19.ServiceInstance
 import org.onap.aai.domain.yang.v19.SliceProfile
-import org.onap.aai.domain.yang.v19.SliceProfiles
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.Relationships
@@ -37,22 +37,19 @@ import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.logging.filter.base.ONAPComponents
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
+import org.onap.so.bpmn.common.scripts.ExternalAPIUtil
+import org.onap.so.bpmn.common.scripts.ExternalAPIUtilFactory
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.OofUtils
 import org.onap.so.bpmn.common.scripts.RequestDBUtil
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
-import org.onap.so.client.HttpClientFactory
-import org.onap.so.client.oof.adapter.beans.payload.OofRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 import javax.ws.rs.core.Response
 
-import static org.apache.commons.lang3.StringUtils.isBlank
-import static org.apache.commons.lang3.StringUtils.isBlank
-import static org.onap.so.bpmn.common.scripts.GenericUtils.isBlank
 import static org.onap.so.bpmn.common.scripts.GenericUtils.isBlank
 
 class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
@@ -88,7 +85,6 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
         LOGGER.debug("${PREFIX} Start executeTerminateNSSIQuery")
 
         String urlString = UrnPropertiesReader.getVariable("mso.oof.endpoint", execution)
-       // String urlString = UrnPropertiesReader.getVariable("mso.adapters.oof.endpoint", execution)
 
         //API Path
         String apiPath =  "/api/oof/terminate/nxi/v1"
@@ -102,20 +98,6 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
         String msokey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
 
         String basicAuthValue = utils.encrypt(basicAuth, msokey)
-     /*   if (basicAuthValue != null) {
-            LOGGER.debug( "Obtained BasicAuth username and password for OOF Adapter: " + basicAuthValue)
-            try {
-                authHeader = utils.getBasicAuth(basicAuthValue, msokey)
-                execution.setVariable("BasicAuthHeaderValue", authHeader)
-            } catch (Exception ex) {
-                LOGGER.error( "Unable to encode username and password string: " + ex)
-                exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Internal Error - Unable to encode username and password string")
-            }
-        } else {
-            LOGGER.error( "Unable to obtain BasicAuth - BasicAuth value null")
-            exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Internal Error - BasicAuth value null")
-        } */
-
 
         try {
             authHeader = utils.getBasicAuth(basicAuthValue, msokey)
@@ -177,7 +159,6 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
                         " \"errorCode\": \"${errorCode}\",\n" +
                         " \"errorMessage\": \"${errorMessage}\"\n" +
                         "}"
-                //exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from OOF.")
             }
 
             if (httpResponse.hasEntity()) {
@@ -282,6 +263,84 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
     }
 
 
+    /**
+     * Prepares ServiceOrderRequest
+     * @param execution
+     */
+    private void prepareServiceOrderRequest(DelegateExecution execution) {
+        LOGGER.debug("${PREFIX} Start prepareServiceOrderRequest")
+
+        def currentNSSI = execution.getVariable("currentNSSI")
+
+        //extAPI path hardcoded for testing purposes, will be updated in next patch
+        String extAPIPath = "https://nbi.onap:8443/nbi/api/v4" + "/serviceOrder"
+        execution.setVariable("ExternalAPIURL", extAPIPath)
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Object> serviceOrder = new LinkedHashMap()
+        //ExternalId
+        serviceOrder.put("externalId", "ONAP001")
+
+        //Requested Start Date
+        String requestedStartDate = utils.generateCurrentTimeInUtc()
+        String requestedCompletionDate = utils.generateCurrentTimeInUtc()
+        serviceOrder.put("requestedStartDate", requestedStartDate)
+        serviceOrder.put("requestedCompletionDate", requestedCompletionDate)
+
+        //RelatedParty Fields
+        String relatedPartyId = execution.getVariable("globalSubscriberId")
+        String relatedPartyRole = "ONAPcustomer"
+        Map<String, String> relatedParty = new LinkedHashMap()
+        relatedParty.put("id", relatedPartyId)
+        relatedParty.put("role", relatedPartyRole)
+        List<Map<String, String>> relatedPartyList = new ArrayList()
+        relatedPartyList.add(relatedParty)
+        serviceOrder.put("relatedParty", relatedPartyList)
+
+        Map<String, Object> orderItem = new LinkedHashMap()
+        //orderItem id
+        String orderItemId = "1"
+        orderItem.put("id", orderItemId)
+
+        //order item action will always be delete as we are triggering request for deletion
+        String orderItemAction = "delete"
+        orderItem.put("action", orderItemAction)
+
+        // service Details
+        AAIResourcesClient client = getAAIClient()
+        ServiceInstance networkServiceInstance = currentNSSI['networkServiceInstance'] //(ServiceInstance) currentNSSI['nssi']
+        AAIResourceUri modelVerUrl = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.serviceDesignAndCreation().model(networkServiceInstance.getModelInvariantId()).modelVer(networkServiceInstance.getModelVersionId()))
+        Optional<ModelVer> modelVerOpt = client.get(ModelVer.class, modelVerUrl)
+
+        Map<String, Object> service = new LinkedHashMap()
+        // Service id
+        service.put("id",  networkServiceInstance.getServiceInstanceId())
+
+        //ServiceName
+        String serviceName = networkServiceInstance.getServiceInstanceName()
+        service.put("name",  serviceName)
+
+        // Service Type
+        service.put("serviceType", networkServiceInstance.getServiceType())
+        //Service State
+        service.put("serviceState", "active")
+
+        Map<String, String> serviceSpecification = new LinkedHashMap()
+        String modelUuid = networkServiceInstance.getModelVersionId()
+        serviceSpecification.put("id", modelUuid)
+        service.put("serviceSpecification", serviceSpecification)
+
+        orderItem.put("service", service)
+        List<Map<String, String>> orderItemList = new ArrayList()
+        orderItemList.add(orderItem)
+        serviceOrder.put("orderItem", orderItemList)
+        String jsonServiceOrder = objectMapper.writeValueAsString(serviceOrder)
+        LOGGER.debug("******* ServiceOrder :: "+jsonServiceOrder)
+        execution.setVariable("serviceOrderRequest", jsonServiceOrder)
+
+        LOGGER.debug("${PREFIX} End prepareServiceOrderRequest")
+    }
+
+
 
     /**
      * Invokes deleteServiceOrder external API
@@ -292,61 +351,37 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
+        prepareServiceOrderRequest(execution)
+
         try {
-            //url:/nbi/api/v4/serviceOrder/"
-            def nsmfЕndPoint = UrnPropertiesReader.getVariable("mso.infra.endpoint.url", execution)
+            String extAPIPath = execution.getVariable("ExternalAPIURL")
+            String payload = execution.getVariable("serviceOrderRequest")
+            LOGGER.debug("externalAPIURL is: " + extAPIPath)
+            LOGGER.debug("ServiceOrder payload is: " + payload)
 
-            ServiceInstance networkServiceInstance = (ServiceInstance)currentNSSI['networkServiceInstance']
+            execution.setVariable("ServiceOrderId", "")
 
-            //String url = String.format("${nbiEndpointUrl}/api/v4/serviceOrder/%s", networkServiceInstance.getServiceInstanceId())
-
-            GenericVnf constituteVnf = (GenericVnf)currentNSSI['constituteVnf']
-
-            // http://so.onap:8080/onap/so/infra/serviceInstantiation/v7/serviceInstances/de6a0aa2-19f2-41fe-b313-a5a9f159acd7/vnfs/3abbb373-8d33-4977-aa4b-2bfee496b6d5
-            String url = String.format("${nsmfЕndPoint}/serviceInstantiation/v7/serviceInstances/%s/vnfs/%s", networkServiceInstance.getServiceInstanceId(), constituteVnf.getVnfId())
-
-            LOGGER.debug("url = " + url)
-
-            currentNSSI['deleteServiceOrderURL'] = url
-
-            String msoKey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
-            String basicAuth =  UrnPropertiesReader.getVariable("mso.adapters.po.auth", execution)
-
-            def authHeader = utils.getBasicAuth(basicAuth, msoKey)
-
-            def requestDetails = ""
-
-            String prepareRequestDetailsResponse = prepareRequestDetails(execution)
-            LOGGER.debug("deleteServiceOrder: prepareRequestDetailsResponse=" + prepareRequestDetailsResponse)
-
-            String errorCode = jsonUtil.getJsonValue(prepareRequestDetailsResponse, "errorCode")
-            LOGGER.debug("deleteServiceOrder: errorCode=" + errorCode)
-            if(errorCode == null || errorCode.isEmpty()) { // No error
-                requestDetails = prepareRequestDetailsResponse
-            }
-            else {
-                exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(errorCode), jsonUtil.getJsonValue(prepareRequestDetailsResponse, "errorMessage"))
-            }
-
-            String callDeleteServiceOrderResponse = callDeleteServiceOrder(url, authHeader, requestDetails)
-            errorCode = jsonUtil.getJsonValue(callDeleteServiceOrderResponse, "errorCode")
+            String callDeleteServiceOrderResponse = callDeleteServiceOrder(execution, extAPIPath, payload)
+            String errorCode = jsonUtil.getJsonValue(callDeleteServiceOrderResponse, "errorCode")
 
             if(errorCode == null || errorCode.isEmpty()) { // No error
-                String macroOperationId = jsonUtil.getJsonValue(callDeleteServiceOrderResponse, "requestReferences.requestId")
-                String requestSelfLink = jsonUtil.getJsonValue(callDeleteServiceOrderResponse, "requestReferences.requestSelfLink")
+                JSONObject responseObj = new JSONObject(callDeleteServiceOrderResponse)
 
-                execution.setVariable("macroOperationId",  macroOperationId)
-                execution.setVariable("requestSelfLink", requestSelfLink)
+                String serviceOrderId = responseObj.get("id")
 
-                currentNSSI['requestSelfLink'] = requestSelfLink
+                execution.setVariable("ServiceOrderId", serviceOrderId)
+                LOGGER.info("Delete ServiceOrderid is: " + serviceOrderId)
             }
             else {
                 LOGGER.error(jsonUtil.getJsonValue(callDeleteServiceOrderResponse, "errorMessage"))
                 exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(errorCode), jsonUtil.getJsonValue(callDeleteServiceOrderResponse, "errorMessage"))
             }
-        } catch (any) {
-            String msg = "Exception in DoDeallocateCoreNSSI.deleteServiceOrder. " + any.getCause()
-            LOGGER.error(msg)
+
+        }catch (BpmnError e) {
+            throw e;
+        } catch (Exception ex) {
+            String msg = "Exception in ServiceOrder ExtAPI" + ex.getMessage()
+            LOGGER.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
 
@@ -354,33 +389,38 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
     }
 
 
-    String callDeleteServiceOrder(String url, String authHeader, String requestDetailsStr) {
+    String callDeleteServiceOrder(DelegateExecution execution, String extAPIPath, String payload) {
         LOGGER.debug("${PREFIX} Start callDeleteServiceOrder")
 
         String errorCode = ""
         String errorMessage = ""
         String response = ""
 
-        LOGGER.debug("callDeleteServiceOrder: url = " + url)
-        LOGGER.debug("callDeleteServiceOrder: authHeader = " + authHeader)
+        LOGGER.debug("callDeleteServiceOrder: url = " + extAPIPath)
 
         try {
-            HttpClient httpClient = getHttpClientFactory().newJsonClient(new URL(url), ONAPComponents.SO)
-            httpClient.addAdditionalHeader("Authorization", authHeader)
-            httpClient.addAdditionalHeader("Accept", "application/json")
-            Response httpResponse = httpClient.delete(requestDetailsStr)
+            ExternalAPIUtil externalAPIUtil = getExternalAPIUtil()
+            Response httpResponse = externalAPIUtil.executeExternalAPIPostCall(execution, extAPIPath, payload)
 
-            int soResponseCode = httpResponse.getStatus()
-            LOGGER.debug("callDeleteServiceOrder: soResponseCode = " + soResponseCode)
+            int responseCode = httpResponse.getStatus()
+            execution.setVariable("ServiceOrderResponseCode", responseCode)
+            LOGGER.debug("Delete ServiceOrder response code is: " + responseCode)
 
-            if (soResponseCode >= 200 && soResponseCode < 204 && httpResponse.hasEntity()) {
+            //Process Response
+            if(responseCode == 200 || responseCode == 201 || responseCode == 202 ) {
+            //200 OK 201 CREATED 202 ACCEPTED
+                LOGGER.debug("Delete ServiceOrder Received a Good Response")
+
                 response = httpResponse.readEntity(String.class)
 
                 LOGGER.debug("callDeleteServiceInstance: response = " + response)
+
+                execution.setVariable("DeleteServiceOrderResponse", response)
+
             }
             else {
                 errorCode = 500
-                errorMessage = "Response code is " + soResponseCode
+                errorMessage = "Response code is " + responseCode
 
                 response =  "{\n" +
                         " \"errorCode\": \"${errorCode}\",\n" +
@@ -503,18 +543,63 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
     void getDeleteServiceOrderProgress(DelegateExecution execution) {
         LOGGER.debug("${getPrefix()} Start getDeleteServiceOrderProgress")
 
-        def currentNSSI = execution.getVariable("currentNSSI")
+        String msg=""
+        try {
+            String extAPIPath = execution.getVariable("ExternalAPIURL")
+            extAPIPath += "/" + execution.getVariable("ServiceOrderId")
+            LOGGER.debug("externalAPIURL is: " + extAPIPath)
 
-        String url = currentNSSI['requestSelfLink']
+            ExternalAPIUtil externalAPIUtil = getExternalAPIUtil()
+            Response response = externalAPIUtil.executeExternalAPIGetCall(execution, extAPIPath)
+            int responseCode = response.getStatus()
+            execution.setVariable("GetServiceOrderResponseCode", responseCode)
+            LOGGER.debug("Get ServiceOrder response code is: " + responseCode)
+            String extApiResponse = response.readEntity(String.class)
+            JSONObject responseObj = new JSONObject(extApiResponse)
+            execution.setVariable("GetServiceOrderResponse", extApiResponse)
+            LOGGER.debug("Get response body is: " + extApiResponse)
+            //Process Response //200 OK 201 CREATED 202 ACCEPTED
+            if(responseCode == 200 || responseCode == 201 || responseCode == 202 )
+            {
+                LOGGER.debug("Get Delete ServiceOrder Received a Good Response")
+                String orderState = responseObj.get("state")
+                if("REJECTED".equalsIgnoreCase(orderState)) {
+                    prepareFailedOperationStatusUpdate(execution)
+                    return
+                }
+                JSONArray items = responseObj.getJSONArray("orderItem")
+                JSONObject item = items.get(0) as JSONObject
+                JSONObject service = item.get("service") as JSONObject
+                String networkServiceId = service.get("id")
 
-        String msoKey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
+                execution.setVariable("networkServiceId", networkServiceId)
+                String serviceOrderState = item.get("state")
+                execution.setVariable("ServiceOrderState", serviceOrderState)
+                // Get serviceOrder State and process progress
+                if("ACKNOWLEDGED".equalsIgnoreCase(serviceOrderState) || "INPROGRESS".equalsIgnoreCase(serviceOrderState) || "IN_PROGRESS".equalsIgnoreCase(serviceOrderState)) {
+                    execution.setVariable("deleteStatus", "processing")
+                }
+                else if("COMPLETED".equalsIgnoreCase(serviceOrderState)) {
+                    execution.setVariable("deleteStatus", "completed")
+                }
+                else if("FAILED".equalsIgnoreCase(serviceOrderState)) {
+                    msg = "ServiceOrder failed"
+                    exceptionUtil.buildAndThrowWorkflowException(execution, 7000,  msg)
+                }
+                else {
+                    msg = "ServiceOrder failed"
+                    exceptionUtil.buildAndThrowWorkflowException(execution, 7000,  msg)
+                }
+                LOGGER.debug("NBI serviceOrder state: "+serviceOrderState)
+            }
+            else{
+                msg = "Get ServiceOrder Received a Bad Response Code. Response Code is: " + responseCode
+                prepareFailedOperationStatusUpdate(execution)
+            }
 
-        String basicAuth =  UrnPropertiesReader.getVariable("mso.adapters.po.auth", execution)
-
-        def authHeader = ""
-        String basicAuthValue = utils.getBasicAuth(basicAuth, msoKey)
-
-        getProgress(execution, url, basicAuthValue, "deleteStatus")
+        }catch(Exception e){
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000,  e.getMessage())
+        }
 
         LOGGER.debug("${getPrefix()} Exit getDeleteServiceOrderProgress")
     }
@@ -573,5 +658,9 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
     @Override
     String getAction() {
         return ACTION
+    }
+
+    ExternalAPIUtil getExternalAPIUtil() {
+        return new ExternalAPIUtilFactory().create()
     }
 }

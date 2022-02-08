@@ -742,7 +742,13 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
         Map<String, Object> instanceParamsMap = new HashMap<>()
 
         // Supported S-NSSAI
-        List<String> snssais = (List<String>) currentNSSI['S-NSSAIs']
+        def snssaisList = currentNSSI['S-NSSAIs']
+        List<String> snssais = new ArrayList<>()
+        if(snssaisList != null) {
+            snssais = (List<String>) snssaisList
+        }
+
+        LOGGER.debug("prepareInstanceParams: snssais size = " + snssais.size())
 
         LOGGER.debug("prepareInstanceParams: snssais size = " + snssais.size())
 
