@@ -1,7 +1,9 @@
-swagger: '2.0'
+openapi: 3.0.1
 info:
-  version: 3.1.2
   title: SO Guilin APIs
+  version: 3.1.2
+servers:
+  - url: /
 tags:
   - name: e2eServiceInstances
   - name: Onap3gppServiceInstances
@@ -16,2269 +18,2776 @@ tags:
   - name: onapsoinframodelDistributions
   - name: onapsoinfraworkflowSpecifications
   - name: onapsoinfrainstanceManagement
-schemes:
-  - http
 paths:
-  '/onap/so/infra/e2eServiceInstances/{version}':
+  /onap/so/infra/e2eServiceInstances/{version}:
     post:
       tags:
         - e2eServiceInstances
       summary: Create an E2E Service Instance on a version provided
-      description: ''
       operationId: createE2EServiceInstance
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][3-5]'
+          schema:
+            pattern: '[vV][3-5]'
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/e2eServiceInstances/{version}/{serviceId}':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/e2eServiceInstances/{version}/{serviceId}:
     put:
       tags:
         - e2eServiceInstances
       summary: Update an E2E Service Instance on a version provided and serviceId
-      description: ''
       operationId: updateE2EServiceInstance
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][3-5]'
+          schema:
+            pattern: '[vV][3-5]'
+            type: string
         - name: serviceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
+          content: {}
+      x-codegen-request-body-name: body
     delete:
       tags:
         - e2eServiceInstances
       summary: Delete E2E Service Instance on a specified version and serviceId
-      description: ''
       operationId: deleteE2EServiceInstance
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][3-5]'
+          schema:
+            pattern: '[vV][3-5]'
+            type: string
         - name: serviceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/e2eServiceInstances/{version}/{serviceId}/{operationType}':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/e2eServiceInstances/{version}/{serviceId}/{operationType}:
     post:
       tags:
         - e2eServiceInstances
       summary: >-
         Activate/Deactivate 5G slice Service on a specified version and
         serviceId
-      description: ''
       operationId: activateE2EServiceInstances
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][3-5]'
+          schema:
+            pattern: '[vV][3-5]'
+            type: string
         - name: serviceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: operationType
           in: path
           required: true
-          type: string
-          pattern: activate/deactivate
+          schema:
+            pattern: activate/deactivate
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/e2eServiceInstances/{version}/{serviceId}/operations/{operationId}':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/e2eServiceInstances/{version}/{serviceId}/operations/{operationId}:
     get:
       tags:
         - e2eServiceInstances
       summary: Find e2eServiceInstances Requests for a given serviceId and operationId
-      description: ''
       operationId: getE2EServiceInstances
-      produces:
-        - application/json
       parameters:
         - name: serviceId
           in: path
           required: true
-          type: string
-        - name: version
-          in: path
-          required: true
-          type: string
-          pattern: '[vV][3-5]'
-        - name: operationId
-          in: path
-          required: true
-          type: string
-      responses:
-        default:
-          description: successful operation
-  '/onap/so/infra/e2eServiceInstances/{version}/{serviceId}/scale':
-    post:
-      tags:
-        - e2eServiceInstances
-      summary: Scale E2E Service Instance on a specified version
-      description: ''
-      operationId: scaleE2EServiceInstance
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - in: body
-          name: body
-          required: false
           schema:
             type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][3-5]'
-        - name: serviceId
+          schema:
+            pattern: '[vV][3-5]'
+            type: string
+        - name: operationId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/e2eServiceInstances/{version}/{serviceId}/modeldifferences':
+          content: {}
+  /onap/so/infra/e2eServiceInstances/{version}/{serviceId}/scale:
+    post:
+      tags:
+        - e2eServiceInstances
+      summary: Scale E2E Service Instance on a specified version
+      operationId: scaleE2EServiceInstance
+      parameters:
+        - name: version
+          in: path
+          required: true
+          schema:
+            pattern: '[vV][3-5]'
+            type: string
+        - name: serviceId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
+      responses:
+        default:
+          description: successful operation
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/e2eServiceInstances/{version}/{serviceId}/modeldifferences:
     post:
       tags:
         - e2eServiceInstances
       summary: >-
         Find added and deleted resources of target model for the
         e2eserviceInstance on a given serviceId
-      description: ''
       operationId: compareModelwithTargetVersion
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: serviceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][3-5]'
+          schema:
+            pattern: '[vV][3-5]'
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/3gppservices/{version}/allocate':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/3gppservices/{version}/allocate:
     post:
       tags:
         - Onap3gppServiceInstances
       summary: Create a 3GPP Service Instance on a version provided
-      description: ''
       operationId: allocate3gppService
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: true
-          schema:
-            $ref: '#/definitions/Allocate3gppService'
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][1]'
+          schema:
+            pattern: '[vV][1]'
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Allocate3gppService'
+        required: true
       responses:
         default:
           description: successful operation
-          schema:
-            $ref: '#/definitions/3gppServiceResponse'
-  '/onap/so/infra/3gppservices/{version}/deAllocate':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/3gppServiceResponse'
+      x-codegen-request-body-name: body
+  /onap/so/infra/3gppservices/{version}/deAllocate:
     delete:
       tags:
         - Onap3gppServiceInstances
       summary: Terminate/Deallocate a 3GPP Service Instance on a version provided
-      description: ''
       operationId: deallocate3gppService
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: true
-          schema:
-            $ref: '#/definitions/DeAllocate3gppService'
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][1]'
+          schema:
+            pattern: '[vV][1]'
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeAllocate3gppService'
+        required: true
       responses:
         default:
           description: successful operation
-          schema:
-            $ref: '#/definitions/3gppServiceResponse'
-  '/onap/so/infra/3gppservices/{version}/modify':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/3gppServiceResponse'
+      x-codegen-request-body-name: body
+  /onap/so/infra/3gppservices/{version}/modify:
     put:
       tags:
         - Onap3gppServiceInstances
       summary: Modify a 3GPP Service Instance on a version provided
-      description: ''
       operationId: modify3gppService
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: true
-          schema:
-            $ref: '#/definitions/Modify3gppService'
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][1]'
+          schema:
+            pattern: '[vV][1]'
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Modify3gppService'
+        required: true
       responses:
         default:
           description: successful operation
-          schema:
-            $ref: '#/definitions/3gppServiceResponse'
-  '/onap/so/infra/3gppservices/{version}/activate':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/3gppServiceResponse'
+      x-codegen-request-body-name: body
+  /onap/so/infra/3gppservices/{version}/activate:
     post:
       tags:
         - Onap3gppServiceInstances
       summary: Activate a 3GPP Service Instance on a version provided
-      description: ''
       operationId: activate3gppService
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: true
-          schema:
-            $ref: '#/definitions/3gppServiceActivation'
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][1]'
+          schema:
+            pattern: '[vV][1]'
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/3gppServiceActivation'
+        required: true
       responses:
         default:
           description: successful operation
-          schema:
-            $ref: '#/definitions/3gppServiceResponse'
-  '/onap/so/infra/3gppservices/{version}/deActivate':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/3gppServiceResponse'
+      x-codegen-request-body-name: body
+  /onap/so/infra/3gppservices/{version}/deActivate:
     post:
       tags:
         - Onap3gppServiceInstances
       summary: Deactivate a 3GPP Service Instance on a version provided
-      description: ''
       operationId: deactivate3gppService
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: true
-          schema:
-            $ref: '#/definitions/3gppServiceActivation'
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][1]'
+          schema:
+            pattern: '[vV][1]'
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/3gppServiceActivation'
+        required: true
       responses:
         default:
           description: successful operation
-          schema:
-            $ref: '#/definitions/3gppServiceResponse'
-  '/onap/so/infra/3gppservices/{version}/subnetCapabilityQuery':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/3gppServiceResponse'
+      x-codegen-request-body-name: body
+  /onap/so/infra/3gppservices/{version}/subnetCapabilityQuery:
     get:
       tags:
         - Onap3gppServiceInstances
       summary: Provides subnet capability based on subnet types
-      description: ''
       operationId: querySubnetCapability
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: true
-          schema:
-            $ref: '#/definitions/QuerySubnetCapability'
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][1]'
+          schema:
+            pattern: '[vV][1]'
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuerySubnetCapability'
+        required: true
       responses:
         default:
           description: successful operation with capabilities for the queried subnetTypes
-          schema:
-            type: object
+          content:
+            application/json:
+              schema:
+                type: object
+      x-codegen-request-body-name: body
   /globalhealthcheck:
     get:
       tags:
         - globalhealthcheck
       summary: Performing global health check
-      description: ''
       operationId: globalHealthcheck
-      produces:
-        - text/html
       parameters:
         - name: enableBpmn
           in: query
-          required: false
-          type: boolean
-          default: true
+          schema:
+            type: boolean
+            default: true
       responses:
         default:
           description: successful operation
+          content: {}
   /nodehealthcheck:
     get:
       tags:
         - nodehealthcheck
       summary: Performing node health check
-      description: ''
       operationId: nodeHealthcheck
-      produces:
-        - text/html
-      parameters: []
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/orchestrationRequests/{version}':
+          content: {}
+  /onap/so/infra/orchestrationRequests/{version}:
     get:
       tags:
         - onapsoinfraorchestrationRequests
       summary: Find Orchestrated Requests for a URI Information
-      description: ''
       operationId: getOrchestrationRequest
-      produces:
-        - application/json
       parameters:
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][4-7]'
+          schema:
+            pattern: '[vV][4-7]'
+            type: string
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/orchestrationRequests/{version}/{requestId}':
+          content: {}
+  /onap/so/infra/orchestrationRequests/{version}/{requestId}:
     get:
       tags:
         - onapsoinfraorchestrationRequests
       summary: Find Orchestrated Requests for a given requestId
-      description: ''
       operationId: getOrchestrationRequestForReqId
-      produces:
-        - application/json
       parameters:
         - name: requestId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][4-7]'
+          schema:
+            pattern: '[vV][4-7]'
+            type: string
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/orchestrationRequests/{version}/{requestId}/unlock':
+          content: {}
+  /onap/so/infra/orchestrationRequests/{version}/{requestId}/unlock:
     post:
       tags:
         - onapsoinfraorchestrationRequests
       summary: Unlock Orchestrated Requests for a given requestId
-      description: ''
       operationId: unlockOrchestrationRequest
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: requestId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][4-7]'
+          schema:
+            pattern: '[vV][4-7]'
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/orchestrationTasks/{version}':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/orchestrationTasks/{version}:
     get:
       tags:
         - onapsoinfraorchestrationTasks
       summary: Get all orchestrationTasks
-      description: ''
       operationId: getAllOrchestrationTasks
-      produces:
-        - application/json
       parameters:
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][4-7]'
+          schema:
+            pattern: '[vV][4-7]'
+            type: string
       responses:
         default:
           description: successful operation
+          content: {}
     post:
       tags:
         - onapsoinfraorchestrationTasks
       summary: Create an orchestrationTask
-      description: ''
       operationId: createOrchestrationTask
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][4-7]'
+          schema:
+            pattern: '[vV][4-7]'
+            type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/orchestrationTasks/{version}/{taskId}':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/orchestrationTasks/{version}/{taskId}:
     get:
       tags:
         - onapsoinfraorchestrationTasks
       summary: Get orchestrationTask for a given taskId
-      description: ''
       operationId: getOrchestrationTask
-      produces:
-        - application/json
       parameters:
         - name: taskId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][4-7]'
+          schema:
+            pattern: '[vV][4-7]'
+            type: string
       responses:
         default:
           description: successful operation
+          content: {}
     put:
       tags:
         - onapsoinfraorchestrationTasks
       summary: update orchestrationTask for a given taskId
-      description: ''
       operationId: updateOrchestrationTask
-      produces:
-        - application/json
       parameters:
         - name: taskId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][4-7]'
-        - in: body
-          name: body
-          required: false
           schema:
+            pattern: '[vV][4-7]'
             type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
+          content: {}
+      x-codegen-request-body-name: body
     delete:
       tags:
         - onapsoinfraorchestrationTasks
       summary: delete orchestrationTask for a given taskId
-      description: ''
       operationId: deleteOrchestrationTask
-      produces:
-        - application/json
       parameters:
         - name: taskId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][4-7]'
+          schema:
+            pattern: '[vV][4-7]'
+            type: string
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/orchestrationTasks/{version}/{taskId}/commit':
+          content: {}
+  /onap/so/infra/orchestrationTasks/{version}/{taskId}/commit:
     post:
       tags:
         - onapsoinfraorchestrationTasks
       summary: commit orchestrationTask for a given taskId
-      description: ''
       operationId: commitOrchestrationTask
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: taskId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][4-7]'
+          schema:
+            pattern: '[vV][4-7]'
+            type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/orchestrationTasks/{version}/{taskId}/abort':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/orchestrationTasks/{version}/{taskId}/abort:
     post:
       tags:
         - onapsoinfraorchestrationTasks
       summary: abort orchestrationTask for a given taskId
-      description: ''
       operationId: abortOrchestrationTask
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: taskId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][4-7]'
+          schema:
+            pattern: '[vV][4-7]'
+            type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules/{vfmoduleInstanceId}/deactivateAndCloudDelete':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules/{vfmoduleInstanceId}/deactivateAndCloudDelete:
     post:
       tags:
         - onapsoinfraserviceInstantiation
       summary: Deactivate and Cloud Delete VfModule instance
-      description: ''
       operationId: deactivateAndCloudDeleteVfModuleInstance
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][7]'
+          schema:
+            pattern: '[vV][7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: vnfInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: vfmoduleInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/configurations/{configurationInstanceId}/enablePort':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/configurations/{configurationInstanceId}/enablePort:
     post:
       tags:
         - onapsoinfraserviceInstantiation
       summary: Enable Port Mirroring
-      description: ''
       operationId: enablePort
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][5-7]'
+          schema:
+            pattern: '[vV][5-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: configurationInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/configurations/{configurationInstanceId}/disablePort':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/configurations/{configurationInstanceId}/disablePort:
     post:
       tags:
         - onapsoinfraserviceInstantiation
       summary: Disable Port Mirroring
-      description: ''
       operationId: disablePort
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][5-7]'
+          schema:
+            pattern: '[vV][5-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: configurationInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/configurations/{configurationInstanceId}/activate':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/configurations/{configurationInstanceId}/activate:
     post:
       tags:
         - onapsoinfraserviceInstantiation
       summary: Activate Port Mirroring
-      description: ''
       operationId: activatePort
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][5-7]'
+          schema:
+            pattern: '[vV][5-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: configurationInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/configurations/{configurationInstanceId}/deactivate':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/configurations/{configurationInstanceId}/deactivate:
     post:
       tags:
         - onapsoinfraserviceInstantiation
       summary: Deactivate Port Mirroring
-      description: ''
       operationId: deactivatePort
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][5-7]'
+          schema:
+            pattern: '[vV][5-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: configurationInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/addRelationships':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/addRelationships:
     post:
       tags:
         - onapsoinfraserviceInstantiation
       summary: Add Relationships to a Service Instance
-      description: ''
       operationId: addRelationships
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][6-7]'
+          schema:
+            pattern: '[vV][6-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules/scaleOut':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules/scaleOut:
     post:
       tags:
         - onapsoinfraserviceInstantiation
       summary: VF Auto Scale Out
-      description: ''
       operationId: scaleOutVfModule
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][7]'
+          schema:
+            pattern: '[vV][7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: vnfInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/inPlaceSoftwareUpdate':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/inPlaceSoftwareUpdate:
     post:
       tags:
         - onapsoinfraserviceInstantiation
       summary: Perform VNF software update
-      description: ''
       operationId: inPlaceSoftwareUpdate
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][6-7]'
+          schema:
+            pattern: '[vV][6-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: vnfInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/applyUpdatedConfig':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/applyUpdatedConfig:
     post:
       tags:
         - onapsoinfraserviceInstantiation
       summary: Apply updated configuration
-      description: ''
       operationId: applyUpdatedConfig
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][6-7]'
+          schema:
+            pattern: '[vV][6-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: vnfInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances:
     post:
       tags:
-        - onapsoinfraserviceInstantiation
+        - SO service Instantiation
       summary: Create a Service Instance on a version provided
-      description: ''
       operationId: createServiceInstance
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][5-7]'
+          schema:
+            pattern: '[vV][5-7]'
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CreateServiceInstanceParamaters'
+            examples:
+              cnf:
+                summary: CNF
+                value:
+                  requestDetails:
+                    modelInfo:
+                      modelInvariantId: 0b1f4362-fed9-45fc-a2e1-6fd3e52f4c1a
+                      modelType: service
+                      modelName: service_test_1
+                      modelVersion: "2.0"
+                      modelVersionId: beb1259e-dad8-4ee0-a40e-1af20f775d54
+                      modelUuid: beb1259e-dad8-4ee0-a40e-1af20f775d54
+                      modelInvariantUuid: 0b1f4362-fed9-45fc-a2e1-6fd3e52f4c1a
+                    subscriberInfo: 
+                      globalSubscriberId: basicnf-customer
+                    requestInfo:
+                      suppressRollback: false
+                      productFamilyId : bb0838ec-2ef7-4382-820f-0d34efdb1ccd
+                      requestorId: Portal
+                      instanceName: ORAN_CU_3
+                      source: VID
+                    project: 
+                      projectName: Project-5GCustomer
+                    owningEntity:
+                      owningEntityId: 67f2e84c-734d-4e90-a1e4-d2ffa2e75849
+                      owningEntityName: OE-5GCustomer
+                    requestParameters:
+                      subscriptionServiceType: 5G
+                      aLaCarte: false
+                      usePreload: false
+                      userParams:
+                        [
+                          {Homing_Solution: false},
+                          {
+                            service:
+                            {
+                              instanceParams: [{}],
+                              instanceName: service_test_1,
+                              resources:
+                                {
+                                  vnfs: 
+                                  [
+                                    {
+                                      modelInfo: 
+                                      {
+                                          modelName: cu_sim_1901,
+                                          modelVersionId: 40f11fb2-931d-408d-a949-99e9289d3c02,
+                                          modelInvariantUuid: f6c202d8-94bd-496e-878e-448da0ed0a6a,
+                                          modelVersion: "1.0",
+                                          modelCustomizationId: 5a2eec30-80c5-47cc-9117-3d8659c38202,
+                                          modelInstanceName: cu_sim_2022 0
+                                      },   
+                                      cloudConfiguration:
+                                       {
+                                          cloudOwner: k8scloudowner4,
+                                          lcpCloudRegionId: k8sregionfour,
+                                          tenantId: 6bbd2981b210461dbc8fe846df1a7808
+                                       }, 
+                                      platform:
+                                        {
+                                          platformName: test
+                                        },
+                                      lineOfBusiness:
+                                        {
+                                          lineOfBusinessName: LOB-5G
+                                        },
+                                      productFamilyId: productFamilyId123,
+                                      instanceName: CUCP_1,
+                                      instanceParams: [{}],
+                                      vfModules:
+                                        [
+                                          {
+                                            modelInfo:
+                                            {
+                                              modelName: CuSim1901..helm_cucp..module-1,
+                                              modelVersionId: 9b7723ff-25ac-44af-a7ac-9cfbf2d4285f,
+                                              modelInvariantUuid: 63af164d-9276-4e08-98fb-059d1c5b80e4,
+                                              modelVersion: 1,
+                                              modelCustomizationId: b7a0bd1d-4832-4ad3-9199-6e1eab543a45
+                                            },
+                                           instanceName: module-1,
+                                           instanceParams: [{}]
+                                          }
+                                        ]
+                                    }
+                                  ]
+                                },
+                              modelInfo: 
+                              {
+                                modelVersion: "2.0",
+                                modelVersionId: "77bea973-570b-4f73-9049-87c37d3de8ca",
+                                modelInvariantId: "b7a3f00b-8fb2-4791-b0ff-71d83f97ab0b",
+                                modelName: "service_model",
+                                modelType: "service"
+                              }
+                            }
+                          }
+                        ]
+   
+              pnf:
+                summary: PNF
+                value:
+                  requestDetails:
+                    modelInfo:
+                      modelInvariantId: 040a21d5-b208-490b-9c69-c12ae2b2b958
+                      modelName: ORAN_RU_SIM_Service
+                      modelType: service
+                      modelVersion: '2.0'
+                      modelVersionId: 2f40ddbd-0acc-4e59-8fb3-77a6f84ae28c
+                    owningEntity:
+                      owningEntityId: 3804b4ac-4d9c-482a-ad0b-5806f8849907
+                      owningEntityName: oran_owner
+                    project:
+                      projectName: oran_project
+                    requestInfo:
+                      instanceName: ORAN_RU_SIM
+                      productFamilyId: oran-service
+                      requestorId: PORTAL
+                      source: PORTAL
+                      suppressRollback: false
+                    requestParameters:
+                      aLaCarte: false
+                      subscriptionServiceType: oran_service
+                      userParams:
+                      - Homing_Solution: none
+                      - service:
+                          instanceName: ORAN_RU_SIM_Service_1
+                          instanceParams: []
+                          modelInfo:
+                            modelInvariantId: 040a21d5-b208-490b-9c69-c12ae2b2b958
+                            modelName: ORAN_RU_SIM_Service
+                            modelType: service
+                            modelVersion: '2.0'
+                            modelVersionId: 2f40ddbd-0acc-4e59-8fb3-77a6f84ae28c
+                          resources:
+                            pnfs:
+                            - instanceName: ORAN_RU_PNF_1
+                              instanceParams: []
+                              lineOfBusiness:
+                                lineOfBusinessName: oran_lob
+                              modelInfo:
+                                modelCustomizationId: 5e3a18ce-8bbd-40fc-a197-becca92ac05b
+                                modelCustomizationName: ORAN_RU_PNF_1
+                                modelInstanceName: ORAN_RU_PNF_ORAN_RU_SIM_Service
+                                modelInvariantId: 486f38e8-1710-4875-b732-a8b3301a7786
+                                modelName: ORAN_RU_PNF
+                                modelType: pnf
+                                modelVersion: '1.0'
+                                modelVersionId: e95310e1-e1d2-471f-aa26-d24849a7e61a
+                              platform:
+                                platformName: oran_platform
+                              productFamilyId: oran-service
+                            vnfs: []
+                    subscriberInfo:
+                      globalSubscriberId: ORANTownCustomer
+
+                  
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/activate':
+          content: {}
+      x-codegen-request-body-name: requestBody
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/activate:
     post:
       tags:
         - onapsoinfraserviceInstantiation
       summary: Activate provided Service Instance
-      description: ''
       operationId: activateServiceInstance
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][5-7]'
+          schema:
+            pattern: '[vV][5-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/deactivate':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/deactivate:
     post:
       tags:
         - onapsoinfraserviceInstantiation
       summary: Deactivate provided Service Instance
-      description: ''
       operationId: deactivateServiceInstance
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][5-7]'
+          schema:
+            pattern: '[vV][5-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}:
     delete:
       tags:
         - onapsoinfraserviceInstantiation
       summary: Delete provided Service Instance
-      description: ''
       operationId: deleteServiceInstance
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][5-7]'
+          schema:
+            pattern: '[vV][5-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/assign':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/assign:
     post:
       tags:
         - onapsoinfraserviceInstantiation
       summary: Assign Service Instance
-      description: ''
       operationId: assignServiceInstance
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][7]'
+          schema:
+            pattern: '[vV][7]'
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/unassign':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/unassign:
     post:
       tags:
         - onapsoinfraserviceInstantiation
       summary: Unassign Service Instance
-      description: ''
       operationId: unassignServiceInstance
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][7]'
+          schema:
+            pattern: '[vV][7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/configurations':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/configurations:
     post:
       tags:
         - onapsoinfraserviceInstantiation
       summary: Create Port Mirroring Configuration
-      description: ''
       operationId: createPortConfiguration
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][5-7]'
+          schema:
+            pattern: '[vV][5-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/configurations/{configurationInstanceId}':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/configurations/{configurationInstanceId}:
     delete:
       tags:
         - onapsoinfraserviceInstantiation
       summary: Delete provided Port
-      description: ''
       operationId: deletePortConfiguration
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][5-7]'
+          schema:
+            pattern: '[vV][5-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: configurationInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/removeRelationships':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/removeRelationships:
     post:
       tags:
         - onapsoinfraserviceInstantiation
       summary: Remove Relationships from Service Instance
-      description: ''
       operationId: removeRelationships
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][6-7]'
+          schema:
+            pattern: '[vV][6-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/vnfs':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/vnfs:
     post:
       tags:
         - onapsoinfraserviceInstantiation
       summary: Create VNF on a specified version and serviceInstance
-      description: ''
       operationId: createVnfInstance
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][5-7]'
+          schema:
+            pattern: '[vV][5-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/replace':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/replace:
     post:
       tags:
         - onapsoinfraserviceInstantiation
       summary: Replace provided VNF instance
-      description: ''
       operationId: replaceVnfInstance
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][5-7]'
+          schema:
+            pattern: '[vV][5-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: vnfInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}:
     put:
       tags:
         - onapsoinfraserviceInstantiation
-      summary: 'Update VNF on a specified version, serviceInstance and vnfInstance'
-      description: ''
+      summary: Update VNF on a specified version, serviceInstance and vnfInstance
       operationId: updateVnfInstance
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][5-7]'
+          schema:
+            pattern: '[vV][5-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: vnfInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
+          content: {}
+      x-codegen-request-body-name: body
     delete:
       tags:
         - onapsoinfraserviceInstantiation
       summary: Delete provided VNF instance
-      description: ''
       operationId: deleteVnfInstance
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][5-7]'
+          schema:
+            pattern: '[vV][5-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: vnfInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules:
     post:
       tags:
         - onapsoinfraserviceInstantiation
-      summary: 'Create VfModule on a specified version, serviceInstance and vnfInstance'
-      description: ''
+      summary: Create VfModule on a specified version, serviceInstance and vnfInstance
       operationId: createVfModuleInstance
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][5-7]'
+          schema:
+            pattern: '[vV][5-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: vnfInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules/{vfmoduleInstanceId}/replace':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules/{vfmoduleInstanceId}/replace:
     post:
       tags:
         - onapsoinfraserviceInstantiation
-      summary: 'Create VfModule on a specified version, serviceInstance and vnfInstance'
-      description: ''
+      summary: Create VfModule on a specified version, serviceInstance and vnfInstance
       operationId: replaceVfModuleInstance
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][5-7]'
+          schema:
+            pattern: '[vV][5-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: vnfInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: vfmoduleInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules/{vfmoduleInstanceId}':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules/{vfmoduleInstanceId}:
     put:
       tags:
         - onapsoinfraserviceInstantiation
       summary: >-
         Update VfModule on a specified version, serviceInstance, vnfInstance and
         vfModule
-      description: ''
       operationId: updateVfModuleInstance
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][5-7]'
+          schema:
+            pattern: '[vV][5-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: vnfInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: vfmoduleInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
+          content: {}
+      x-codegen-request-body-name: body
     delete:
       tags:
         - onapsoinfraserviceInstantiation
       summary: Delete provided VfModule instance
-      description: ''
       operationId: deleteVfModuleInstance
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][5-7]'
+          schema:
+            pattern: '[vV][5-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: vnfInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: vfmoduleInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/volumeGroups':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/volumeGroups:
     post:
       tags:
         - onapsoinfraserviceInstantiation
-      summary: 'Create VolumeGroup on a specified version, serviceInstance, vnfInstance'
-      description: ''
+      summary: Create VolumeGroup on a specified version, serviceInstance, vnfInstance
       operationId: createVolumeGroupInstance
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][5-7]'
+          schema:
+            pattern: '[vV][5-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: vnfInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/volumeGroups/{volumeGroupInstanceId}':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/volumeGroups/{volumeGroupInstanceId}:
     put:
       tags:
         - onapsoinfraserviceInstantiation
       summary: >-
         Update VolumeGroup on a specified version, serviceInstance, vnfInstance
         and volumeGroup
-      description: ''
       operationId: updateVolumeGroupInstance
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][5-7]'
+          schema:
+            pattern: '[vV][5-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: vnfInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: volumeGroupInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
+          content: {}
+      x-codegen-request-body-name: body
     delete:
       tags:
         - onapsoinfraserviceInstantiation
       summary: Delete provided VolumeGroup instance
-      description: ''
       operationId: deleteVolumeGroupInstance
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][5-7]'
+          schema:
+            pattern: '[vV][5-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: vnfInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: volumeGroupInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/networks':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/networks:
     post:
       tags:
         - onapsoinfraserviceInstantiation
       summary: 'Create NetworkInstance on a specified version and serviceInstance '
-      description: ''
       operationId: createNetworkInstance
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][5-7]'
+          schema:
+            pattern: '[vV][5-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/networks/{networkInstanceId}':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/serviceInstantiation/{version}/serviceInstances/{serviceInstanceId}/networks/{networkInstanceId}:
     put:
       tags:
         - onapsoinfraserviceInstantiation
       summary: >-
         Update VolumeGroup on a specified version, serviceInstance,
         networkInstance
-      description: ''
       operationId: updateNetworkInstance
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][5-7]'
+          schema:
+            pattern: '[vV][5-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: networkInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
+          content: {}
+      x-codegen-request-body-name: body
     delete:
       tags:
         - onapsoinfraserviceInstantiation
       summary: Delete provided Network instance
-      description: ''
       operationId: deleteNetworkInstance
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][5-7]'
+          schema:
+            pattern: '[vV][5-7]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: networkInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/tasks/{version}':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/tasks/{version}:
     get:
       tags:
         - onapsoinfratasks
       summary: Finds Manual Tasks
-      description: ''
       operationId: queryFilters
       parameters:
         - name: taskId
           in: query
-          required: false
-          type: string
+          schema:
+            type: string
         - name: originalRequestId
           in: query
-          required: false
-          type: string
+          schema:
+            type: string
         - name: subscriptionServiceType
           in: query
-          required: false
-          type: string
+          schema:
+            type: string
         - name: nfRole
           in: query
-          required: false
-          type: string
+          schema:
+            type: string
         - name: buildingBlockName
           in: query
-          required: false
-          type: string
+          schema:
+            type: string
         - name: originalRequestDate
           in: query
-          required: false
-          type: string
+          schema:
+            type: string
         - name: originalRequestorId
           in: query
-          required: false
-          type: string
+          schema:
+            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV]1'
+          schema:
+            pattern: '[vV]1'
+            type: string
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/cloudResources/{version}/operationalEnvironments':
+          content: {}
+  /onap/so/infra/cloudResources/{version}/operationalEnvironments:
     post:
       tags:
         - onapsoinfracloudResources
       summary: Create an Operational Environment
-      description: ''
       operationId: createOperationEnvironment
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][1]'
+          schema:
+            pattern: '[vV][1]'
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/cloudResources/{version}/operationalEnvironments/{operationalEnvironmentId}/activate':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/cloudResources/{version}/operationalEnvironments/{operationalEnvironmentId}/activate:
     post:
       tags:
         - onapsoinfracloudResources
       summary: Activate an Operational Environment
-      description: ''
       operationId: activateOperationEnvironment
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][1]'
+          schema:
+            pattern: '[vV][1]'
+            type: string
         - name: operationalEnvironmentId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/cloudResources/{version}/operationalEnvironments/{operationalEnvironmentId}/deactivate':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/cloudResources/{version}/operationalEnvironments/{operationalEnvironmentId}/deactivate:
     post:
       tags:
         - onapsoinfracloudResources
       summary: Deactivate an Operational Environment
-      description: ''
       operationId: deactivateOperationEnvironment
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][1]'
+          schema:
+            pattern: '[vV][1]'
+            type: string
         - name: operationalEnvironmentId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/cloudResourcesRequests/{version}/{requestId}/unlock':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/cloudResourcesRequests/{version}/{requestId}/unlock:
     post:
       tags:
         - onapsoinfracloudResourcesRequests
       summary: Unlock CloudOrchestration requests for a specified requestId
-      description: ''
       operationId: unlockOrchestrationRequestForReqId
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: requestId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][1]'
+          schema:
+            pattern: '[vV][1]'
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/cloudResourcesRequests/{version}':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/cloudResourcesRequests/{version}:
     get:
       tags:
         - onapsoinfracloudResourcesRequests
       summary: Get status of an Operational Environment based on filter criteria
-      description: ''
       operationId: getOperationEnvironmentStatusFilter
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][1]'
+          schema:
+            pattern: '[vV][1]'
+            type: string
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/modelDistributions/{version}/distributions/{distributionId}':
+          content: {}
+  /onap/so/infra/modelDistributions/{version}/distributions/{distributionId}:
     post:
       tags:
         - onapsoinframodelDistributions
       summary: Update model distribution status
-      description: ''
       operationId: updateModelDistributionStatus
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][1]'
+          schema:
+            pattern: '[vV][1]'
+            type: string
         - name: distributionId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/workflowSpecifications/{version}/workflows':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/workflowSpecifications/{version}/workflows:
     get:
       tags:
         - onapsoinfraworkflowSpecifications
       summary: Retrieve Workflow details based on the filter criteria
-      description: ''
       operationId: queryWorkflowSpecifications
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
         - name: resourceTarget
           in: query
-          required: false
-          type: string
+          schema:
+            type: string
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][1]'
+          schema:
+            pattern: '[vV][1]'
+            type: string
       responses:
         default:
           description: List of workflow specifications on successful operation
-          schema:
-            $ref: '#/definitions/RetrievingWorkflowResponse'
-  '/onap/so/infra/instanceManagement/{version}/serviceInstances/{serviceInstanceId}/workflows/{workflow_UUID}':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RetrievingWorkflowResponse'
+  /onap/so/infra/instanceManagement/{version}/serviceInstances/{serviceInstanceId}/workflows/{workflow_UUID}:
     post:
       tags:
         - onapsoinfrainstanceManagement
       summary: Executing service level custom workflow
-      description: ''
       operationId: executeServiceLevelCustomWorkflow
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            $ref: '#/definitions/ServiceLevelWorkflowExecution'
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][1]'
+          schema:
+            pattern: '[vV][1]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: workflow_UUID
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceLevelWorkflowExecution'
+        required: false
       responses:
         default:
           description: successful operation
-  '/onap/so/infra/instanceManagement/{version}/serviceInstances/{serviceInstanceId}/pnfs/${pnfName}/workflows/${workflow_UUID}':
+          content: {}
+      x-codegen-request-body-name: body
+  /onap/so/infra/instanceManagement/{version}/serviceInstances/{serviceInstanceId}/pnfs/${pnfName}/workflows/${workflow_UUID}:
     post:
       tags:
         - onapsoinfrainstanceManagement
       summary: Executing download/activate custom workflow
-      description: ''
       operationId: executePNFCustomWorkflow
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: body
-          name: body
-          required: false
-          schema:
-            $ref: '#/definitions/PNFCustomWorkflowExecution'
         - name: version
           in: path
           required: true
-          type: string
-          pattern: '[vV][1]'
+          schema:
+            pattern: '[vV][1]'
+            type: string
         - name: serviceInstanceId
           in: path
           required: true
-          type: string
+          schema:
+            type: string
         - name: pnfName
-            in: path
-            required: true
+          in: path
+          required: true
+          schema:
             type: string
         - name: workflow_UUID
           in: path
           required: true
-          type: string
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PNFCustomWorkflowExecution'
+        required: false
       responses:
         default:
           description: successful operation
-definitions:
-  Allocate3gppService:
-    description: This describes the request body for 3gpp service allocation
-    type: object
-    properties:
-      name:
-        description: Name of the service to allocate
-        type: string
-      modelInvariantUuid:
-        description: >-
-          Model Invariant UUID corresponding to the service. For E.g :  NSST
-          Model invariant uuid in case of NSSI creation
-        type: string
-      modelUuid:
-        description: >-
-          Model UUID corresponding to the service. For E.g :  NSST Model uuid in
-          case of NSSI creation
-        type: string
-      globalSubscriberId:
-        type: string
-      subscriptionServiceType:
-        description: 'Service type for the subscription. For E.G :5G'
-        type: string
-      networkType:
-        description: 'Network type. For E.G :AN/CN/TN'
-        type: string
-      additionalProperties:
-        description: Map of additional properties required for service allocation
-        type: object
-  DeAllocate3gppService:
-    description: This describes the request body for 3gpp service Termination/Deallocation
-    type: object
-    properties:
-      serviceInstanceID:
-        description: ID of the service to terminate
-        type: string
-      globalSubscriberId:
-        type: string
-      subscriptionServiceType:
-        description: 'Service type for the subscription. For E.G :5G'
-        type: string
-      networkType:
-        description: 'Network type. For E.G :AN/CN/TN'
-        type: string
-      additionalProperties:
-        description: Map of additional properties required for service deallocation
-        type: object
-  Modify3gppService:
-    description: This describes the request body for 3gpp service modification
-    type: object
-    properties:
-      name:
-        description: Name of the service to modify
-        type: string
-      serviceInstanceID:
-        description: ID of the service to modify
-        type: string
-      globalSubscriberId:
-        type: string
-      subscriptionServiceType:
-        description: 'Service type for the subscription. For E.G :5G'
-        type: string
-      networkType:
-        description: 'Network type. For E.G :AN/CN/TN'
-        type: string
-      additionalProperties:
-        description: Map of additional properties required for service modification
-        type: object
-  3gppServiceActivation:
-    description: This describes the request body for 3gpp service activation/deactivation
-    type: object
-    properties:
-      serviceInstanceID:
-        description: ID of the service to be activated/deactivated
-        type: string
-      globalSubscriberId:
-        type: string
-      subscriptionServiceType:
-        description: 'Service type for the subscription. For E.G :5G'
-        type: string
-      networkType:
-        description: 'Network type. For E.G :AN/CN/TN'
-        type: string
-      additionalProperties:
-        description: >-
-          Map of additional properties required for service
-          activation/deactivation
-        type: object
-  QuerySubnetCapability:
-    description: This describes the subnet capabilities that can be queried
-    type: object
-    properties:
-      subnetTypes:
-        type: array
-        items:
-          $ref: '#/definitions/SubnetTypes'
-  SubnetTypes:
-    description: This describes allowed subnet types
-    type: string
-    enum:
-      - AN
-      - AN_NF
-      - CN
-      - TN_FH
-      - TN_MH
-      - TN_BH
-  3gppServiceResponse:
-    description: This describes the response for 3gpp services
-    type: object
-    properties:
-      jobId:
-        description: Job ID to be used to identify the status of the job
-        type: string
-      status:
-        description: status of the job
-        type: string
-      statusDescription:
-        description: Description on status in case of erroneous response
-        type: object
-  RetrievingWorkflowResponse:
-    description: Response body of fetching workflows using resource target
-    type: object
-    properties:
-      workflowSpecificationList:
-        description: List of Workflow specification data
-        type: array
-        items:
-          $ref: '#/definitions/WorkflowSpecification'
-  WorkflowSpecification:
-    description: This describes workflow specification object
-    type: object
-    properties:
-      artifactInfo:
-        description: 'Attributes related to artifact information '
-        type: object
-        properties:
-          artifactType:
-            description: Type of the artifact to be queried
-            type: string
-          artifactUuid:
-            description: UUID of the artifact
-            type: string
-          artifactName:
-            description: Name of the artifact
-            type: string
-          artifactVersion:
-            description: Artifact's Version
-            type: string
-          artifactDescription:
-            description: ''
-            type: string
-          workflowName:
-            description: Name of the workflow fetched for the resource type
-            type: string
-          operationName:
-            description: Mapped operation name of the corresponding workflow
-            type: string
-          workflowSource:
-            description: ''
-            type: string
-          workflowResourceTarget:
-            description: Type of Resource mapped against the workflow
-            type: string
-  ServiceLevelWorkflowExecution:
-    description: This describes the request body of service level custom workflow execution
-    type: object
-    properties:
-      requestInfo:
-        description: Request object contains source information
-        type: object
-        properties:
-          source:
-            description: Name of the sender
-            type: string
-          suppressRollback:
-            description: Enable/disable rollback suppression
-            type: boolean
-          requestorId:
-            description: Id of the sender
-            type: string
-      modelInfo:
-        description: Parameters related to the service model
-        type: object
-        properties:
-          modelType:
-            description: Type of the model to be executed
-            type: string
-          modelInvariantUuid:
-            description: Model invariant id corresponding to the service
-            type: string
-          modelUuid:
-            description: Model uuid corresponding to the service
-            type: string
-          modelVersionId:
-            description: Model version of the service instance
-            type: string
-          modelName:
-            description: Name of the service
-            type: string
-          modelVersion:
-            description: Version of the service instance
-            type: string
-      requestParameters:
-        description: User parameter object
-        type: object
-        properties:
-          subscriptionServiceType:
-            description: Type of service subscription
-            type: string
-      subscriberInfo:
-        description: Subscriber id information
-        type: object
-        properties:
-          globalSubscriberId:
-            description: Id of the subscriber sending the request
-            type: string
-      project:
-        description: Information about the target project name
-        type: object
-        properties:
-          projectName:
-            description: Name of the target project
-            type: string
-      owningEntity:
-        description: Object describes the entity details
-        type: object
-        properties:
-          owningEntityId:
-            description: Id of the owning Entity
-            type: string
-          owningEntityName:
-            description: Name of the owning Entity
-            type: string
-  PNFCustomWorkflowExecution:
-    description: This describes the request body of PNF custom workflow execution
-    type: object
-    properties:
-      requestInfo:
-        description: Request object contains source information
-        type: object
-        properties:
-          source:
-            description: Name of the sender
-            type: string
-          suppressRollback:
-            description: Enable/disable rollback suppression
-            type: boolean
-          requestorId:
-            description: Id of the sender
-            type: string
-      modelInfo:
-        description: Parameters related to the service model
-        type: object
-        properties:
-          modelType:
-            description: Type of the model to be executed
-            type: string
-          modelInvariantUuid:
-            description: Model invariant id corresponding to the service
-            type: string
-          modelUuid:
-            description: Model uuid corresponding to the service
-            type: string
-          modelVersionId:
-            description: Model version of the service instance
-            type: string
-          modelName:
-            description: Name of the service
-            type: string
-          modelVersion:
-            description: Version of the service instance
-            type: string
-      requestParameters:
-        description: User parameter object
-        type: object
-        properties:
-          subscriptionServiceType:
-            description: Type of service subscription
-            type: string
-      subscriberInfo:
-        description: Subscriber id information
-        type: object
-        properties:
-          globalSubscriberId:
-            description: Id of the subscriber sending the request
-            type: string
-      project:
-        description: Information about the target project name
-        type: object
-        properties:
-          projectName:
-            description: Name of the target project
-            type: string
-      owningEntity:
-        description: Object describes the entity details
-        type: object
-        properties:
-          owningEntityId:
-            description: Id of the owning Entity
-            type: string
-          owningEntityName:
-            description: Name of the owning Entity
-            type: string
+          content: {}
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    Allocate3gppService:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the service to allocate
+        modelInvariantUuid:
+          type: string
+          description: >-
+            Model Invariant UUID corresponding to the service. For E.g :  NSST
+            Model invariant uuid in case of NSSI creation
+        modelUuid:
+          type: string
+          description: >-
+            Model UUID corresponding to the service. For E.g :  NSST Model uuid
+            in case of NSSI creation
+        globalSubscriberId:
+          type: string
+        subscriptionServiceType:
+          type: string
+          description: Service type for the subscription. For E.G :5G
+        networkType:
+          type: string
+          description: Network type. For E.G :AN/CN/TN
+        additionalProperties:
+          type: object
+          properties: {}
+          description: Map of additional properties required for service allocation
+      description: This describes the request body for 3gpp service allocation
+    DeAllocate3gppService:
+      type: object
+      properties:
+        serviceInstanceID:
+          type: string
+          description: ID of the service to terminate
+        globalSubscriberId:
+          type: string
+        subscriptionServiceType:
+          type: string
+          description: Service type for the subscription. For E.G :5G
+        networkType:
+          type: string
+          description: Network type. For E.G :AN/CN/TN
+        additionalProperties:
+          type: object
+          properties: {}
+          description: Map of additional properties required for service deallocation
+      description: >-
+        This describes the request body for 3gpp service
+        Termination/Deallocation
+    Modify3gppService:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the service to modify
+        serviceInstanceID:
+          type: string
+          description: ID of the service to modify
+        globalSubscriberId:
+          type: string
+        subscriptionServiceType:
+          type: string
+          description: Service type for the subscription. For E.G :5G
+        networkType:
+          type: string
+          description: Network type. For E.G :AN/CN/TN
+        additionalProperties:
+          type: object
+          properties: {}
+          description: Map of additional properties required for service modification
+      description: This describes the request body for 3gpp service modification
+    3gppServiceActivation:
+      type: object
+      properties:
+        serviceInstanceID:
+          type: string
+          description: ID of the service to be activated/deactivated
+        globalSubscriberId:
+          type: string
+        subscriptionServiceType:
+          type: string
+          description: Service type for the subscription. For E.G :5G
+        networkType:
+          type: string
+          description: Network type. For E.G :AN/CN/TN
+        additionalProperties:
+          type: object
+          properties: {}
+          description: >-
+            Map of additional properties required for service
+            activation/deactivation
+      description: This describes the request body for 3gpp service activation/deactivation
+    QuerySubnetCapability:
+      type: object
+      properties:
+        subnetTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubnetTypes'
+      description: This describes the subnet capabilities that can be queried
+    SubnetTypes:
+      type: string
+      description: This describes allowed subnet types
+      enum:
+        - AN
+        - AN_NF
+        - CN
+        - TN_FH
+        - TN_MH
+        - TN_BH
+    3gppServiceResponse:
+      type: object
+      properties:
+        jobId:
+          type: string
+          description: Job ID to be used to identify the status of the job
+        status:
+          type: string
+          description: status of the job
+        statusDescription:
+          type: object
+          properties: {}
+          description: Description on status in case of erroneous response
+      description: This describes the response for 3gpp services
+    RetrievingWorkflowResponse:
+      type: object
+      properties:
+        workflowSpecificationList:
+          type: array
+          description: List of Workflow specification data
+          items:
+            $ref: '#/components/schemas/WorkflowSpecification'
+      description: Response body of fetching workflows using resource target
+    WorkflowSpecification:
+      type: object
+      properties:
+        artifactInfo:
+          type: object
+          properties:
+            artifactType:
+              type: string
+              description: Type of the artifact to be queried
+            artifactUuid:
+              type: string
+              description: UUID of the artifact
+            artifactName:
+              type: string
+              description: Name of the artifact
+            artifactVersion:
+              type: string
+              description: Artifact's Version
+            artifactDescription:
+              type: string
+              description: ''
+            workflowName:
+              type: string
+              description: Name of the workflow fetched for the resource type
+            operationName:
+              type: string
+              description: Mapped operation name of the corresponding workflow
+            workflowSource:
+              type: string
+              description: ''
+            workflowResourceTarget:
+              type: string
+              description: Type of Resource mapped against the workflow
+          description: 'Attributes related to artifact information '
+      description: This describes workflow specification object
+    ServiceLevelWorkflowExecution:
+      type: object
+      properties:
+        requestInfo:
+          type: object
+          properties:
+            source:
+              type: string
+              description: Name of the sender
+            suppressRollback:
+              type: boolean
+              description: Enable/disable rollback suppression
+            requestorId:
+              type: string
+              description: Id of the sender
+          description: Request object contains source information
+        modelInfo:
+          type: object
+          properties:
+            modelType:
+              type: string
+              description: Type of the model to be executed
+            modelInvariantUuid:
+              type: string
+              description: Model invariant id corresponding to the service
+            modelUuid:
+              type: string
+              description: Model uuid corresponding to the service
+            modelVersionId:
+              type: string
+              description: Model version of the service instance
+            modelName:
+              type: string
+              description: Name of the service
+            modelVersion:
+              type: string
+              description: Version of the service instance
+          description: Parameters related to the service model
+        requestParameters:
+          type: object
+          properties:
+            subscriptionServiceType:
+              type: string
+              description: Type of service subscription
+          description: User parameter object
+        subscriberInfo:
+          type: object
+          properties:
+            globalSubscriberId:
+              type: string
+              description: Id of the subscriber sending the request
+          description: Subscriber id information
+        project:
+          type: object
+          properties:
+            projectName:
+              type: string
+              description: Name of the target project
+          description: Information about the target project name
+        owningEntity:
+          type: object
+          properties:
+            owningEntityId:
+              type: string
+              description: Id of the owning Entity
+            owningEntityName:
+              type: string
+              description: Name of the owning Entity
+          description: Object describes the entity details
+      description: >-
+        This describes the request body of service level custom workflow
+        execution
+    PNFCustomWorkflowExecution:
+      type: object
+      properties:
+        requestInfo:
+          type: object
+          properties:
+            source:
+              type: string
+              description: Name of the sender
+            suppressRollback:
+              type: boolean
+              description: Enable/disable rollback suppression
+            requestorId:
+              type: string
+              description: Id of the sender
+          description: Request object contains source information
+        modelInfo:
+          type: object
+          properties:
+            modelType:
+              type: string
+              description: Type of the model to be executed
+            modelInvariantUuid:
+              type: string
+              description: Model invariant id corresponding to the service
+            modelUuid:
+              type: string
+              description: Model uuid corresponding to the service
+            modelVersionId:
+              type: string
+              description: Model version of the service instance
+            modelName:
+              type: string
+              description: Name of the service
+            modelVersion:
+              type: string
+              description: Version of the service instance
+          description: Parameters related to the service model
+        requestParameters:
+          type: object
+          properties:
+            subscriptionServiceType:
+              type: string
+              description: Type of service subscription
+          description: User parameter object
+        subscriberInfo:
+          type: object
+          properties:
+            globalSubscriberId:
+              type: string
+              description: Id of the subscriber sending the request
+          description: Subscriber id information
+        project:
+          type: object
+          properties:
+            projectName:
+              type: string
+              description: Name of the target project
+          description: Information about the target project name
+        owningEntity:
+          type: object
+          properties:
+            owningEntityId:
+              type: string
+              description: Id of the owning Entity
+            owningEntityName:
+              type: string
+              description: Name of the owning Entity
+          description: Object describes the entity details
+      description: This describes the request body of PNF custom workflow execution
+    CreateServiceInstanceParamaters:
+      type: object
+      properties:
+        requestDetails:
+          type: object
+          description:  Contains data associated with a request
+          properties:
+            requestParameters:
+              type: object
+              description: Contains all the parameters, associated with this request
+              properties:
+                subscriptionServiceType:
+                  type: string
+                  description: Type of service subscriptions of customer resource
+                userParams:
+                  type: array
+                  description: Array of data that contains information about Service
+                  items:
+                    oneOf:
+                      - $ref: >-
+                          #/components/schemas/CreateServiceInstParamsUserParamsHoming
+                      - $ref: >-
+                          #/components/schemas/CreateServiceInstParamsUserParamsService
+                aLaCarte:
+                  type: boolean
+                  description: >-
+                    Enable “A La Carte” mode. In this mode, the user creates and
+                    submits operations for each object to be created.
+                usePreload:
+                  type: boolean
+                  description: Special value required to use additional Policy settings
+            modelInfo:
+              type: object
+              description: Contains information about the currently used Service Model model
+              properties:
+                modelInvariantId:
+                  type: string
+                  description: >-
+                    Unique identifier corresponding to the main definition of a
+                    model in SDC
+                modelType:
+                  type: string
+                  description: Type of service model, created in SDC
+                modelName:
+                  type: string
+                  description: Name of the model, which can change from version to version.
+                modelVersion:
+                  type: string
+                  description: >-
+                    Unique identifier corresponding to one version of a model in
+                    SDC
+                modelVersionId:
+                  type: string
+                  description: The SDC model version for this resource or service model.
+                modelUuid:
+                  type: string
+                  description: >-
+                    Unique identifier corresponding to the main definition of a
+                    model in SDC
+                modelInvariantUuid:
+                  type: string
+                  description: >-
+                    Unique identifier corresponding to the main definition of a
+                    model in SDC
+            requestInfo:
+              type: object
+              description: Represents some information for the request
+              properties:
+                productFamilyId:
+                  type: string
+                  description: SDC catalog service type
+                source:
+                  type: string
+                  description: Determines only the source from whom the request came
+                instanceName:
+                  type: string
+                  description: Defines the name of the instance to be created
+                suppressRollback:
+                  type: boolean
+                  description: >-
+                    If false – the rollback process will not start if something
+                    goes wrong in execution BB. If true - QueryRainyDayTable
+                    task will start and make querying policy in table
+                    rainy_day_handler_macro
+                requestorId:
+                  type: string
+                  description: User Id or Application Id, initiating the Assessment
+            subscriberInfo:
+              type: object
+              description: >-
+                Represents the object that groups service instances used by a
+                customer
+              properties:
+                globalSubscriberId:
+                  type: string
+                  description: >-
+                    Global Subscriber Id used across ONAP to uniquely identify
+                    subscriber.
+            project:
+              type: object
+              description: Represents the project, which will own the service instance
+              properties:
+                projectName:
+                  type: string
+                  description: Name of the project deploying a service
+            owningEntity:
+              type: object
+              description: Represents the entity, which will own the service instance
+              properties:
+                owningEntityId:
+                  type: string
+                  description: UUID of an owning entity
+                owningEntityName:
+                  type: string
+                  description: Owning entity name
+    CreateServiceInstParamsUserParamsHoming:
+      allOf:
+        - type: object
+          properties:
+            Homing_Solution:
+              type: string
+              description: >-
+                Switches on an optimization service to deploy services
+                automatically across multiple sites and multiple clouds
+    CreateServiceInstParamsUserParamsService:
+      allOf:
+        - type: object
+          properties:
+            service:
+              type: object
+              description: Includes information about all created instances
+              properties:
+                instanceParams:
+                  type: array
+                  description: Includes a set of specific parameters
+                  items:
+                    type: object
+                    properties: {}
+                instanceName:
+                  type: string
+                  description: Defines the name of the instance to be created
+                resources:
+                  type: object
+                  properties:
+                    vnfs:
+                      type: array
+                      description: Contains information about  VNF parameters
+                      items:
+                        type: object
+                        properties:
+                          modelInfo:
+                            type: object
+                            description: Contains information about the currently used Service Model model
+                            properties:
+                              modelInvariantId:
+                                type: string
+                                description: >-
+                                  Unique identifier corresponding to the main
+                                  definition of a model in SDC
+                              modelType:
+                                type: string
+                                description: Type of Service Model, created in SDC
+                              modelName:
+                                type: string
+                                description: >-
+                                  Name of the model, which can change from
+                                  version to version.
+                              modelVersion:
+                                type: string
+                                description: >-
+                                  Unique identifier corresponding to one version
+                                  of a model in SDC
+                              modelVersionId:
+                                type: string
+                                description: >-
+                                  The SDC model version for this resource or
+                                  service model.
+                              modelUuid:
+                                type: string
+                                description: >-
+                                  Unique identifier corresponding to the main
+                                  definition of a model in SDC
+                              modelInvariantUuid:
+                                type: string
+                                description: >-
+                                  Unique identifier corresponding to the main
+                                  definition of a model in SDC
+                          cloudConfiguration:
+                            type: object
+                            properties:
+                              cloudOwner:
+                                type: string
+                                description: >-
+                                  Identifies the vendor and cloud name. First
+                                  part of composite key should be formatted as
+                                  vendor-cloudname
+                              lcpCloudRegionId:
+                                type: string
+                                description: >-
+                                  Cloud-owner defined type indicator (Openstack
+                                  region)
+                              tenantId:
+                                type: string
+                                description: Unique id relative to the cloud-region.
+                          platform:
+                            type: object
+                            description: >-
+                              Represents the platform, on which the VNFs/CNFs
+                              will run
+                            properties:
+                              platformName:
+                                type: string
+                                description: Name of the platform
+                          lineOfBusiness:
+                            type: object
+                            description: >-
+                              Represents the business line, owns the VNFs/CNFs
+                              instances
+                            properties:
+                              lineOfBusinessName:
+                                type: string
+                                description: Name of the line-of-business (product)
+                          productFamilyId:
+                            type: string
+                            description: Define SDC catalog service type
+                          instanceName:
+                            type: string
+                            description: Defines the name of the instance to be created
+                          instanceParams:
+                            type: array
+                            description: Includes a set of specific parameters of instance
+                            items:
+                              type: object
+                              properties: {}
+                          vfModules:
+                            type: array
+                            description: Сontains a set of parameters of VF Modules
+                            items:
+                              type: object
+                              properties:
+                                modelInfo:
+                                  type: object
+                                  description: Contains information about the currently used Service Model model
+                                  properties:
+                                    modelInvariantId:
+                                      type: string
+                                      description: >-
+                                        Unique identifier corresponding to the
+                                        main definition of a model in SDC
+                                    modelType:
+                                      type: string
+                                      description: Type of service model, created in SDC
+                                    modelName:
+                                      type: string
+                                      description: >-
+                                        Name of the model, which can change from
+                                        version to version.
+                                    modelVersion:
+                                      type: string
+                                      description: >-
+                                        Unique identifier corresponding to one
+                                        version of a model in SDC
+                                    modelVersionId:
+                                      type: string
+                                      description: >-
+                                        The SDC model version for this resource
+                                        or service model.
+                                    modelUuid:
+                                      type: string
+                                      description: >-
+                                        Unique identifier corresponding to the
+                                        main definition of a model in SDC
+                                    modelInvariantUuid:
+                                      type: string
+                                      description: >-
+                                        Unique identifier corresponding to the
+                                        main definition of a model in SDC
+                                instanceName:
+                                  type: string
+                                  description: >-
+                                    Defines the name of the instance to be
+                                    created
+                                instanceParams:
+                                  type: array
+                                  description: Includes a set of specific parameters
+                                  items:
+                                    type: object
+                                    properties: {}
+                modelInfo:
+                  type: object
+                  description: Contains information about the currently used Service Model model
+                  properties:
+                    modelName:
+                      type: string
+                      description: >-
+                        Name of the model, which can change from
+                        version to version.
+                    modelVersionId:
+                      type: string
+                      description: >-
+                        Unique identifier corresponding to one
+                        version of a model in SDC
+                    modelInvariantUuid:
+                      type: string
+                      description: >-
+                        Unique identifier corresponding to the
+                        main definition of a model in SDC
+                    modelVersion:
+                      type: string
+                      description: >-
+                        The SDC model version for this resource
+                        or service model.
+                    modelCustomizationId:
+                      type: string
+                      description: >-
+                        Unique generated identifier of a model in SDC
