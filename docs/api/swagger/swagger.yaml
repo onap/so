@@ -1073,7 +1073,6 @@ paths:
                             }
                           }
                         ]
-   
               pnf:
                 summary: PNF
                 value:
@@ -1130,8 +1129,130 @@ paths:
                             vnfs: []
                     subscriberInfo:
                       globalSubscriberId: ORANTownCustomer
+              Composed service in two clouds:
+                summary: Composed service in two clouds
+                value:
+                  requestDetails:
+                    modelInfo:
+                      modelInvariantId: 0592b699-3f7b-424f-857b-d956f15c9447
+                      modelInvariantUuid: 0592b699-3f7b-424f-857b-d956f15c9447
+                      modelName: parent_svc_2912
+                      modelType: service
+                      modelUuid: 1c889525-46c5-4b22-8f26-17913dd3172a
+                      modelVersion: '2.0'
+                      modelVersionId: 1c889525-46c5-4b22-8f26-17913dd3172a
+                    owningEntity:
+                      owningEntityId: 67f2e84c-734d-4e90-a1e4-d2ffa2e75849
+                      owningEntityName: OE-5GCustomer
+                    project:
+                      projectName: Project-5GCustomer
+                    requestInfo:
+                      instanceName: parent_two_k8s
+                      productFamilyId: productFamilyId123
+                      requestorId: a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb
+                      source: Postman
+                      suppressRollback: false
+                    requestParameters:
+                      aLaCarte: false
+                      subscriptionServiceType: 5G
+                      usePreload: false
+                      userParams:
+                      - Homing_Solution: none
+                      - service:
+                          instanceName: parent_two_k8s
+                          instanceParams:
+                          - {}
+                          modelInfo:
+                            modelInvariantId: 0592b699-3f7b-424f-857b-d956f15c9447
+                            modelName: parent_svc_2912
+                            modelType: service
+                            modelVersion: '2.0'
+                            modelVersionId: 1c889525-46c5-4b22-8f26-17913dd3172a
+                          resources:
+                            services:
+                            - instanceName: childsvc_1201_01
+                              instanceParams:
+                              - {}
+                              modelInfo:
+                                modelInvariantId: 19d8f134-8bdb-46ed-84a9-046c9314d9a9
+                                modelName: childsvc_2912
+                                modelType: service
+                                modelVersion: '2.0'
+                                modelVersionId: b2ae12eb-3854-4405-a125-c63c16e6fa23
+                              resources:
+                                vnfs:
+                                - cloudConfiguration:
+                                    cloudOwner: k8scloudowner4
+                                    lcpCloudRegionId: k8sregionfour
+                                    tenantId: 6bbd2981b210461dbc8fe846df1a7808
+                                  instanceName: CUCP_1
+                                  instanceParams:
+                                  - {}
+                                  lineOfBusiness:
+                                    lineOfBusinessName: LOB-5GCustomer
+                                  modelInfo:
+                                    modelCustomizationId: 26be9ecc-43b2-47e4-9666-915701b87cbc
+                                    modelInstanceName: CUCP_2912 0
+                                    modelInvariantUuid: a3c9fa51-ff3c-4b6e-a1bd-73eb1ffb06c0
+                                    modelName: CUCP_2912
+                                    modelVersion: '1.0'
+                                    modelVersionId: 4a7aa841-09a5-493b-a52f-26aaa1f62c20
+                                  platform:
+                                    platformName: test
+                                  productFamilyId: productFamilyId123
+                                  vfModules:
+                                  - instanceName: module-1
+                                    instanceParams:
+                                    - {}
+                                    modelInfo:
+                                      modelCustomizationId: fe39f295-253c-41ef-b07c-607aec86ea52
+                                      modelInvariantUuid: 051d1f8a-d5bd-4509-9457-0ef756dc5a33
+                                      modelName: Cucp2912..helm_cucp..module-1
+                                      modelVersion: '1'
+                                      modelVersionId: 3f70da13-e246-4abd-8fe5-90d3f8fbc212
+                            - instanceName: childsvc_1201_02
+                              instanceParams:
+                              - {}
+                              modelInfo:
+                                modelInvariantId: 19d8f134-8bdb-46ed-84a9-046c9314d9a9
+                                modelName: childsvc_2912
+                                modelType: service
+                                modelVersion: '2.0'
+                                modelVersionId: b2ae12eb-3854-4405-a125-c63c16e6fa23
+                              resources:
+                                vnfs:
+                                - cloudConfiguration:
+                                    cloudOwner: k8scloudowner4
+                                    lcpCloudRegionId: k8sregionone
+                                    tenantId: 3fd21203fd274e10a30f1fd4c355d80b
+                                  instanceName: CUCP_2
+                                  instanceParams:
+                                  - {}
+                                  lineOfBusiness:
+                                    lineOfBusinessName: LOB-5GCustomer
+                                  modelInfo:
+                                    modelCustomizationId: 26be9ecc-43b2-47e4-9666-915701b87cbc
+                                    modelInstanceName: CUCP_2912 0
+                                    modelInvariantUuid: a3c9fa51-ff3c-4b6e-a1bd-73eb1ffb06c0
+                                    modelName: CUCP_2912
+                                    modelVersion: '1.0'
+                                    modelVersionId: 4a7aa841-09a5-493b-a52f-26aaa1f62c20
+                                  platform:
+                                    platformName: test
+                                  productFamilyId: productFamilyId123
+                                  vfModules:
+                                  - instanceName: module-2
+                                    instanceParams:
+                                    - {}
+                                    modelInfo:
+                                      modelCustomizationId: fe39f295-253c-41ef-b07c-607aec86ea52
+                                      modelInvariantUuid: 051d1f8a-d5bd-4509-9457-0ef756dc5a33
+                                      modelName: Cucp2912..helm_cucp..module-1
+                                      modelVersion: '1'
+                                      modelVersionId: 3f70da13-e246-4abd-8fe5-90d3f8fbc212
+                    subscriberInfo:
+                      globalSubscriberId: 5GCustomer
 
-                  
         required: false
       responses:
         default:
