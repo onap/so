@@ -48,5 +48,6 @@ public enum Action implements Actions {
     healthCheck,
     addMembers,
     removeMembers,
-    forCustomWorkflow
+    forCustomWorkflow,
+    upgradeCnf
 }
