@@ -40,6 +40,7 @@ import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConst
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.UPDATE_INSTANCE;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.HEALTH_CHECK;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.WORKFLOW_ACTION_ERROR_MESSAGE;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.UPGRADE_CNF;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -301,6 +302,9 @@ public class WorkflowAction {
             vnfEBBLoader.customTraverseAAIVnf(execution, resourceList, workflowResourceIds.getServiceInstanceId(),
                     workflowResourceIds.getVnfId(), aaiResourceIds);
         } else if (resourceType == WorkflowType.VNF && HEALTH_CHECK.equalsIgnoreCase(requestAction)) {
+            vnfEBBLoader.customTraverseAAIVnf(execution, resourceList, workflowResourceIds.getServiceInstanceId(),
+                    workflowResourceIds.getVnfId(), aaiResourceIds);
+        } else if (resourceType == WorkflowType.VNF && UPGRADE_CNF.equalsIgnoreCase(requestAction)) {
             vnfEBBLoader.customTraverseAAIVnf(execution, resourceList, workflowResourceIds.getServiceInstanceId(),
                     workflowResourceIds.getVnfId(), aaiResourceIds);
         } else {

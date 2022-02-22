@@ -52,5 +52,6 @@ public final class WorkflowActionConstants {
     public static final String VOLUMEGROUP = "VolumeGroup";
     public static final String HEALTH_CHECK = "healthCheck";
     public static final String WORKFLOW_ACTION_ERROR_MESSAGE = "WorkflowActionErrorMessage";
+    public static final String UPGRADE_CNF = "upgradeCnf";
 
 }
