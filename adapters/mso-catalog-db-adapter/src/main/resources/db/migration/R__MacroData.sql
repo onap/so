@@ -39,7 +39,8 @@ INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, I
 ('NetworkCollection-Macro-Delete', 'deleteInstance', 'NetworkCollection', false,true, '7','7', 'DEFAULT', '*'),
 ('VFModule-ScaleOut', 'scaleOut', 'VfModule', true, true, '7','7', 'DEFAULT', '*'),
 ('VNF-InPlaceUpdate', 'inPlaceSoftwareUpdate', 'Vnf', true, true, '7','7', 'DEFAULT', '*'),
-('VNF-Config-Update', 'applyUpdatedConfig', 'Vnf', true, true, '7','7', 'DEFAULT', '*');
+('VNF-Config-Update', 'applyUpdatedConfig', 'Vnf', true, true, '7','7', 'DEFAULT', '*'),
+('CNF-Macro-Upgrade', 'upgradeCnf', 'Vnf', false,true, '7', '7','DEFAULT', '*');
 
 
 INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, SCOPE, ACTION, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID) VALUES
@@ -256,7 +257,19 @@ INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, SC
 ('VNF-Macro-Modify', '1', 'ControllerExecutionBB', 'vnf', 'config-assign', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Modify' and CLOUD_OWNER = 'DEFAULT')),
 ('VNF-Macro-Modify', '2', 'ControllerExecutionBB', 'vnf', 'config-deploy', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Modify' and CLOUD_OWNER = 'DEFAULT')),
 ('VNF-Macro-HealthCheck', '1', 'HealthCheckBB', 'vnf', 'status-check', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-HealthCheck' and CLOUD_OWNER = 'DEFAULT')),
-('VNF-Macro-HealthCheck', '2', 'HealthCheckBB', 'vnf', 'health-check', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-HealthCheck' and CLOUD_OWNER = 'DEFAULT'));
+('VNF-Macro-HealthCheck', '2', 'HealthCheckBB', 'vnf', 'health-check', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-HealthCheck' and CLOUD_OWNER = 'DEFAULT')),
+('CNF-Macro-Upgrade', '1', 'AAICheckVnfInMaintBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
+('CNF-Macro-Upgrade', '2', 'AAISetVnfInMaintBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
+('CNF-Macro-Upgrade', '3', 'DeactivateVfModuleBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
+('CNF-Macro-Upgrade', '4', 'DeactivateVnfBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
+('CNF-Macro-Upgrade', '5', 'ChangeModelVfModuleBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
+('CNF-Macro-Upgrade', '6', 'ControllerExecutionBB', 'vnf', 'config-upgrade-assign', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
+('CNF-Macro-Upgrade', '7', 'UpgradeVfModuleBB', NULL , NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
+('CNF-Macro-Upgrade', '8', 'ControllerExecutionBB', 'vnf', 'config-upgrade-deploy', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
+('CNF-Macro-Upgrade', '9', 'ActivateVfModuleBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
+('CNF-Macro-Upgrade', '10', 'ChangeModelVnfBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
+('CNF-Macro-Upgrade', '11', 'ActivateVnfBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
+('CNF-Macro-Upgrade', '12', 'AAIUnsetVnfInMaintBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT'));
 
 INSERT INTO rainy_day_handler_macro (FLOW_NAME, SERVICE_TYPE, VNF_TYPE, ERROR_CODE, WORK_STEP, POLICY, SECONDARY_POLICY, REG_EX_ERROR_MESSAGE, SERVICE_ROLE)
 VALUES
@@ -413,7 +426,8 @@ VALUES
 ('ConfigDeployVnfBB', 'NO_VALIDATE', 'CUSTOM'),
 ('ControllerExecutionBB', 'NO_VALIDATE', 'CUSTOM'),
 ('StatusCheckBB', 'NO_VALIDATE', 'CUSTOM'),
-('HealthCheckBB', 'NO_VALIDATE', 'CUSTOM');
+('HealthCheckBB', 'NO_VALIDATE', 'CUSTOM'),
+('UpgradeVfModuleBB', 'NO_VALIDATE', 'CUSTOM');
 
 
 INSERT INTO orchestration_status_state_transition_directive (resource_type, orchestration_status, target_action, flow_directive)
