@@ -27,6 +27,8 @@ import javax.ws.rs.core.UriBuilder;
 import org.apache.http.HttpStatus;
 import org.onap.so.client.adapter.cnf.entities.InstanceRequest;
 import org.onap.so.client.adapter.cnf.entities.InstanceResponse;
+import org.onap.so.client.adapter.cnf.entities.UpgradeInstanceResponse;
+import org.onap.so.client.adapter.cnf.entities.UpgradeInstanceRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,6 +117,25 @@ public class CnfAdapterClient {
         }
     }
 
+    @Retryable(value = {HttpServerErrorException.class}, maxAttempts = 3, backoff = @Backoff(delay = 3000))
+    public UpgradeInstanceResponse upgradeVfModule(UpgradeInstanceRequest request) throws CnfAdapterClientException {
+        try {
+            String uri = "http://so-cnf-adapter:8090";
+            String endpoint = UriBuilder.fromUri(uri).path("/api/cnf-adapter/v1/instance/{instanceID}/upgrade").build()
+                    .toString();
+            HttpEntity<?> entity = getHttpEntity(request);
+            ResponseEntity<UpgradeInstanceResponse> result =
+                    restTemplate.exchange(endpoint, HttpMethod.POST, entity, UpgradeInstanceResponse.class);
+            return result.getBody();
+        } catch (HttpClientErrorException e) {
+            logger.error("Error Calling CNF Adapter, e");
+            if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
+                throw new EntityNotFoundException(e.getResponseBodyAsString());
+            }
+            throw e;
+        }
+    }
+
     protected HttpHeaders getHttpHeaders() {
         HttpHeaders headers = new HttpHeaders();
         List<MediaType> acceptableMediaTypes = new ArrayList<>();
@@ -135,4 +156,8 @@ public class CnfAdapterClient {
         return new HttpEntity<>(request, headers);
     }
 
+    protected HttpEntity<?> getHttpEntity(UpgradeInstanceRequest request) {
+        HttpHeaders headers = getHttpHeaders();
+        return new HttpEntity<>(request, headers);
+    }
 }
