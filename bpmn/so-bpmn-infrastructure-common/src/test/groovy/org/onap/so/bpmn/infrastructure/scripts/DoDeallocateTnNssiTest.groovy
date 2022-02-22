@@ -32,8 +32,10 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
+import org.onap.so.bpmn.common.scripts.OofUtils
 
 import static org.junit.Assert.assertNotNull
+import static org.junit.Assert.assertTrue
 import static org.mockito.ArgumentMatchers.eq
 import static org.mockito.Mockito.*
 
@@ -134,5 +136,42 @@ class DoDeallocateTnNssiTest extends MsoGroovyTest {
 
         obj.deleteServiceInstance(mockExecution)
         Mockito.verify(client, times(1)).delete(serviceInstanceUri)
+    }
+
+    @Test
+    void testPrepareOOFNssiTerminationRequest() {
+        when(mockExecution.getVariable("msoRequestId")).thenReturn("4c614769-f58a-4556-8ad9-dcd903077c82")
+        when(mockExecution.getVariable("sliceServiceInstanceId")).thenReturn("5ad89cf9-0569-4a93-9306-d8324321e2be")
+        when(mockExecution.getVariable("nsiId")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
+        when(mockExecution.getVariable("mso.adapters.oof.timeout")).thenReturn("")
+        DoDeallocateTnNssi obj = spy(DoDeallocateTnNssi.class)
+        OofUtils oofUtils = spy(OofUtils.class)
+        when(oofUtils.buildTerminateNxiRequest()).thenReturn("""
+        {
+	"apiPath": "/api/oof/terminate/nxi/v1",
+	"requestDetails": "{\"type\":\"NSSI\",\"NxIId\":\"f78c1531-55a7-4dfa-8a12-1e2544c9b248\",\"requestInfo\":{\"transactionId\":\"863fb189-33d8-455f-9d3f-bf3f6a2e4509\",\"requestId\":\"863fb189-33d8-455f-9d3f-bf3f6a2e4509\",\"callbackUrl\":\"http://so-oof-adapter.onap:8090/so/adapters/oof/callback/v1/TN_NSSITermination/863fb189-33d8-455f-9d3f-bf3f6a2e4509\",\"sourceId\":\"SO\",\"timeout\":600,\"addtnlArgs\":{\"serviceInstanceId\":\"fe6f0901-292d-4493-bcad-485793605781\"}}}"
+       }""".replaceAll("\\\\s+", ""))
+        obj.prepareOOFNssiTerminationRequest(mockExecution)
+        Mockito.verify(mockExecution, times(1)).setVariable(eq("oofTnNssiPayload"), captor.capture())
+        String oofTnNssiPayload = captor.getValue()
+        assertNotNull(oofTnNssiPayload)
+    }
+
+    @Test
+    void testPerformOofNSSITerminationCall() {
+        when(mockExecution.getVariable("oofTnNssiPayload")).thenReturn("""
+        {
+	"reason": "",
+	"requestId": "e0a026a9-dd6d-4800-ab27-0fdd8f5f64f5",
+	"requestStatus": "success",
+	"terminateResponse": true,
+	"transactionId": "e0a026a9-dd6d-4800-ab27-0fdd8f5f64f5"
+        }""".replaceAll("\\\\s+", ""))
+        DoDeallocateTnNssi obj = spy(DoDeallocateTnNssi.class)
+        when(obj.callOofAdapter()).thenReturn(true)
+        obj.performOofNSSITerminationCall(mockExecution)
+        Mockito.verify(mockExecution, times(1)).setVariable(eq("terminateTnNSSI"), captor.capture())
+        String terminateTnNSSI = captor.getValue()
+        assertTrue(terminateTnNSSI)
     }
 }

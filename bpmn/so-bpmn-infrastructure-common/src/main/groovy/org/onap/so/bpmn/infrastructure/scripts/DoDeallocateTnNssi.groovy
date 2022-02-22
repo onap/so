@@ -34,6 +34,13 @@ import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.RequestDBUtil
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.bpmn.common.scripts.OofUtils
+import org.onap.so.client.HttpClient
+import org.onap.so.client.HttpClientFactory
+import org.onap.so.client.oof.adapter.beans.payload.OofRequest
+import javax.ws.rs.core.Response
+import org.onap.logging.filter.base.ONAPComponents
 import org.onap.so.db.request.beans.ResourceOperationStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -48,6 +55,7 @@ class DoDeallocateTnNssi extends AbstractServiceTaskProcessor {
     JsonUtils jsonUtil = new JsonUtils()
     RequestDBUtil requestDBUtil = new RequestDBUtil()
     TnNssmfUtils tnNssmfUtils = new TnNssmfUtils()
+    OofUtils oofUtils = new OofUtils()
     JsonSlurper jsonSlurper = new JsonSlurper()
     ObjectMapper objectMapper = new ObjectMapper()
     private static final Logger logger = LoggerFactory.getLogger(DoDeallocateTnNssi.class)
@@ -92,9 +100,68 @@ class DoDeallocateTnNssi extends AbstractServiceTaskProcessor {
                         "enableSdnc", "enableSdnc"))) {
             tnNssmfUtils.setEnableSdncConfig(execution)
         }
+        if (isBlank(additionalPropJsonStr) ||
+                isBlank(tnNssmfUtils.setExecVarFromJsonIfExists(execution,
+                        additionalPropJsonStr,
+                        "enableOof", "enableOof"))) {
+            tnNssmfUtils.setEnableOofConfig(execution)
+        }
 
+		String nsiId = jsonUtil.getJsonValue(additionalPropJsonStr, "nsiId")
+        execution.setVariable("nsiId", nsiId)
         logger.debug("Finish preProcessRequest")
     }
+
+    void prepareOOFNssiTerminationRequest(DelegateExecution execution) {
+        logger.debug("Start prepareOOFTnNssiTerminationRequest")
+		String requestId = execution.getVariable("msoRequestId")
+		String messageType = "TN_NSSITermination"
+		String timeout = UrnPropertiesReader.getVariable("mso.adapters.oof.timeout", execution);
+		String serviceInstanceId = execution.getVariable("sliceServiceInstanceId")
+
+        String relatedNsiId = execution.getVariable("nsiId")
+
+		String oofRequest = oofUtils.buildTerminateNxiRequest(requestId,serviceInstanceId, "NSSI",messageType,relatedNsiId)
+		execution.setVariable("oofTnNssiPayload", oofRequest)
+		logger.debug("Finish prepareOOFTnNssiTerminationRequest")
+    }
+
+    void performOofNSSITerminationCall(DelegateExecution execution) {
+        boolean terminateTnNSSI = callOofAdapter(execution,execution.getVariable("oofTnNssiPayload"))
+		execution.setVariable("terminateTnNSSI", terminateTnNSSI)
+    }
+
+    /**
+	 * @param execution
+	 * @param oofRequest - Request payload to be sent to adapter
+	 * @return
+	 */
+	boolean callOofAdapter(DelegateExecution execution, Object oofRequest) {
+		logger.debug("Start callOofAdapter")
+		String requestId = execution.getVariable("msoRequestId")
+		String oofAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.oof.endpoint", execution)
+		URL requestUrl = new URL(oofAdapterEndpoint)
+		OofRequest oofPayload = new OofRequest()
+		oofPayload.setApiPath("/api/oof/terminate/nxi/v1")
+		oofPayload.setRequestDetails(oofRequest)
+		String requestJson = objectMapper.writeValueAsString(oofPayload)
+		logger.debug("Calling OOF adapter  : ${requestUrl} with payload : ${requestJson}")
+		HttpClient httpClient = new HttpClientFactory().newJsonClient(requestUrl, ONAPComponents.EXTERNAL)
+		Response httpResponse = httpClient.post(requestJson)
+		int responseCode = httpResponse.getStatus()
+		logger.debug("OOF sync response code is: " + responseCode)
+		if(responseCode < 200 || responseCode >= 300){
+			logger.debug("OOF request failed with reason : " + httpResponse)
+			exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from OOF.")
+		}else {
+			Map<String,Object> response = objectMapper.readValue(httpResponse.getEntity(),Map.class)
+			boolean terminateResponse =  response.get("terminateResponse")
+			if(!terminateResponse) {
+				logger.debug("Terminate response is false because " + response.get("reason"))
+			}
+			return terminateResponse
+		}
+	}
 
     void preprocessSdncDeallocateTnNssiRequest(DelegateExecution execution) {
         def method = getClass().getSimpleName() + '.preprocessSdncDeallocateTnNssiRequest(' +
@@ -174,4 +241,3 @@ class DoDeallocateTnNssi extends AbstractServiceTaskProcessor {
         requestDBUtil.prepareUpdateResourceOperationStatus(execution, roStatus)
     }
 }
-
