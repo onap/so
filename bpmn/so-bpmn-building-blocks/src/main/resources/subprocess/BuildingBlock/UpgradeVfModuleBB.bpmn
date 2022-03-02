@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1jxlg2g" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+  <bpmn:process id="UpgradeVfModuleBB" name="UpgradeVfModuleBB" isExecutable="true">
+    <bpmn:startEvent id="UpgradeVfModuleBB_Start">
+      <bpmn:outgoing>SequenceFlow_1xr6chl</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="QueryVfModule" name="&#10;SDNC&#10;Get&#10;(vf module)&#10;" camunda:expression="${SDNCQueryTasks.queryVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_1s4rpyp</bpmn:incoming>
+      <bpmn:outgoing>Flow_0gbxjjk</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="UpgradeVfModuleBB_End">
+      <bpmn:incoming>SequenceFlow_1vbwdaw</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="QueryVnf" name="&#10;SDNC&#10;Get&#10;(vnf)&#10;" camunda:expression="${SDNCQueryTasks.queryVnf(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_1xr6chl</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1s4rpyp</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="UpdateVfModuleStatus" name="&#10;AAI&#10;Update&#10;(vf module)&#10;" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusCreatedVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_0rds4rj</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1vbwdaw</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="UpdateVfModuleHeatStackId" name="&#10;AAI&#10;Update&#10;(vf module)&#10;" camunda:expression="${AAIUpdateTasks.updateHeatStackIdVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_15do1tu</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0rds4rj</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="CreateNetworkPolicies" name="AAI Create (network policies)" camunda:expression="${AAICreateTasks.createNetworkPolicies(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>Flow_1c9ox62</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0xqhep5</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="UpdateVnfIpv4OamAddress" name="AAI Update (VNF) " camunda:expression="${AAIUpdateTasks.updateIpv4OamAddressVnf(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_0xqhep5</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1yo6mvv</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="UpdateVnfManagementV6Address" name="AAI Update (VNF)" camunda:expression="${AAIUpdateTasks.updateManagementV6AddressVnf(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_1yo6mvv</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1i03uy2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="UpdateVfModuleContrailServiceInstanceFqdn" name="AAI&#10;Update&#10;(vf module)&#10;" camunda:expression="${AAIUpdateTasks.updateContrailServiceInstanceFqdnVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_1i03uy2</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_15do1tu</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="CnfAdapter" name="Cnf Adapter" camunda:expression="${CnfAdapterUpgradeTasks.upgradeInstance(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>Flow_0gbxjjk</bpmn:incoming>
+      <bpmn:outgoing>Flow_1il4743</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:subProcess id="Activity_10eqhmz" name="Inventory Error Handling" triggeredByEvent="true">
+      <bpmn:endEvent id="Event_108oetk">
+        <bpmn:incoming>Flow_03q6ty9</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:serviceTask id="Activity_1p8hxyt" name="Process Error" camunda:expression="${ExceptionBuilder.processInventoryException(execution)}">
+        <bpmn:incoming>Flow_1sqy91r</bpmn:incoming>
+        <bpmn:outgoing>Flow_03q6ty9</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:sequenceFlow id="Flow_03q6ty9" sourceRef="Activity_1p8hxyt" targetRef="Event_108oetk" />
+      <bpmn:sequenceFlow id="Flow_1sqy91r" sourceRef="Event_1pengt4" targetRef="Activity_1p8hxyt" />
+      <bpmn:startEvent id="Event_1pengt4">
+        <bpmn:outgoing>Flow_1sqy91r</bpmn:outgoing>
+      </bpmn:startEvent>
+    </bpmn:subProcess>
+    <bpmn:callActivity id="UpdateCnfAai" name="Update Cnf Data in AAI" calledElement="UpdateCnfAai">
+      <bpmn:extensionElements>
+        <camunda:in source="gBuildingBlockExecution" target="gBuildingBlockExecution" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="heatStackId" target="heatStackId" />
+        <camunda:out source="heatStackId" target="heatStackId" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1il4743</bpmn:incoming>
+      <bpmn:outgoing>Flow_0piytnn</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_1xr6chl" sourceRef="UpgradeVfModuleBB_Start" targetRef="QueryVnf" />
+    <bpmn:sequenceFlow id="SequenceFlow_1s4rpyp" sourceRef="QueryVnf" targetRef="QueryVfModule" />
+    <bpmn:sequenceFlow id="SequenceFlow_1vbwdaw" sourceRef="UpdateVfModuleStatus" targetRef="UpgradeVfModuleBB_End" />
+    <bpmn:sequenceFlow id="SequenceFlow_0rds4rj" sourceRef="UpdateVfModuleHeatStackId" targetRef="UpdateVfModuleStatus" />
+    <bpmn:sequenceFlow id="SequenceFlow_15do1tu" sourceRef="UpdateVfModuleContrailServiceInstanceFqdn" targetRef="UpdateVfModuleHeatStackId" />
+    <bpmn:sequenceFlow id="SequenceFlow_0xqhep5" sourceRef="CreateNetworkPolicies" targetRef="UpdateVnfIpv4OamAddress" />
+    <bpmn:sequenceFlow id="SequenceFlow_1yo6mvv" sourceRef="UpdateVnfIpv4OamAddress" targetRef="UpdateVnfManagementV6Address" />
+    <bpmn:sequenceFlow id="SequenceFlow_1i03uy2" sourceRef="UpdateVnfManagementV6Address" targetRef="UpdateVfModuleContrailServiceInstanceFqdn" />
+    <bpmn:sequenceFlow id="Flow_1il4743" sourceRef="CnfAdapter" targetRef="UpdateCnfAai" />
+    <bpmn:intermediateThrowEvent id="aaiThrow" name="Update AAI">
+      <bpmn:incoming>Flow_0piytnn</bpmn:incoming>
+      <bpmn:linkEventDefinition id="LinkEventDefinition_1c2sbij" name="AAI" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_0gbxjjk" sourceRef="QueryVfModule" targetRef="CnfAdapter" />
+    <bpmn:sequenceFlow id="Flow_0piytnn" sourceRef="UpdateCnfAai" targetRef="aaiThrow" />
+    <bpmn:intermediateCatchEvent id="aaiCatch" name="Update AAI">
+      <bpmn:outgoing>Flow_1c9ox62</bpmn:outgoing>
+      <bpmn:linkEventDefinition id="LinkEventDefinition_0dycelb" name="AAI" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_1c9ox62" sourceRef="aaiCatch" targetRef="CreateNetworkPolicies" />
+  </bpmn:process>
+  <bpmn:error id="Error_0t7oivz" name="AAIInventoryFailure" errorCode="AAIInventoryFailure" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="UpgradeVfModuleBB">
+      <bpmndi:BPMNEdge id="Flow_1c9ox62_di" bpmnElement="Flow_1c9ox62">
+        <di:waypoint x="208" y="372" />
+        <di:waypoint x="300" y="372" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0piytnn_di" bpmnElement="Flow_0piytnn">
+        <di:waypoint x="970" y="120" />
+        <di:waypoint x="1062" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0gbxjjk_di" bpmnElement="Flow_0gbxjjk">
+        <di:waypoint x="570" y="120" />
+        <di:waypoint x="680" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1il4743_di" bpmnElement="Flow_1il4743">
+        <di:waypoint x="780" y="120" />
+        <di:waypoint x="870" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1i03uy2_di" bpmnElement="SequenceFlow_1i03uy2">
+        <di:waypoint x="722" y="372" />
+        <di:waypoint x="770" y="372" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1yo6mvv_di" bpmnElement="SequenceFlow_1yo6mvv">
+        <di:waypoint x="553" y="372" />
+        <di:waypoint x="622" y="372" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0xqhep5_di" bpmnElement="SequenceFlow_0xqhep5">
+        <di:waypoint x="400" y="372" />
+        <di:waypoint x="453" y="372" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_15do1tu_di" bpmnElement="SequenceFlow_15do1tu">
+        <di:waypoint x="870" y="372" />
+        <di:waypoint x="935" y="372" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0rds4rj_di" bpmnElement="SequenceFlow_0rds4rj">
+        <di:waypoint x="1035" y="372" />
+        <di:waypoint x="1100" y="372" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1vbwdaw_di" bpmnElement="SequenceFlow_1vbwdaw">
+        <di:waypoint x="1200" y="372" />
+        <di:waypoint x="1241" y="372" />
+        <di:waypoint x="1241" y="372" />
+        <di:waypoint x="1276" y="372" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1s4rpyp_di" bpmnElement="SequenceFlow_1s4rpyp">
+        <di:waypoint x="389" y="120" />
+        <di:waypoint x="470" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1xr6chl_di" bpmnElement="SequenceFlow_1xr6chl">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="289" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CreateVfModuleBB_Start_di" bpmnElement="UpgradeVfModuleBB_Start">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="QueryVfModule_di" bpmnElement="QueryVfModule">
+        <dc:Bounds x="470" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CreateVfModuleBB_End_di" bpmnElement="UpgradeVfModuleBB_End">
+        <dc:Bounds x="1276" y="354" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="QueryVnf_di" bpmnElement="QueryVnf">
+        <dc:Bounds x="289" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UpdateVfModuleStatus_di" bpmnElement="UpdateVfModuleStatus">
+        <dc:Bounds x="1100" y="332" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UpdateVfModuleHeatStackId_di" bpmnElement="UpdateVfModuleHeatStackId">
+        <dc:Bounds x="935" y="332" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CreateNetworkPolicies_di" bpmnElement="CreateNetworkPolicies">
+        <dc:Bounds x="300" y="332" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UpdateVnfIpv4OamAddress_di" bpmnElement="UpdateVnfIpv4OamAddress">
+        <dc:Bounds x="453" y="332" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UpdateVnfManagementV6Address_di" bpmnElement="UpdateVnfManagementV6Address">
+        <dc:Bounds x="622" y="332" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UpdateVfModuleContrailServiceInstanceFqdn_di" bpmnElement="UpdateVfModuleContrailServiceInstanceFqdn">
+        <dc:Bounds x="770" y="332" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CnfAdapter_di" bpmnElement="CnfAdapter">
+        <dc:Bounds x="680" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_10eqhmz_di" bpmnElement="Activity_10eqhmz" isExpanded="true">
+        <dc:Bounds x="216" y="494" width="340" height="180" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1sqy91r_di" bpmnElement="Flow_1sqy91r">
+        <di:waypoint x="292" y="584" />
+        <di:waypoint x="336" y="584" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03q6ty9_di" bpmnElement="Flow_03q6ty9">
+        <di:waypoint x="436" y="584" />
+        <di:waypoint x="488" y="584" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_108oetk_di" bpmnElement="Event_108oetk">
+        <dc:Bounds x="488" y="566" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1p8hxyt_di" bpmnElement="Activity_1p8hxyt">
+        <dc:Bounds x="336" y="544" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_003wn72_di" bpmnElement="Event_1pengt4">
+        <dc:Bounds x="256" y="566" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UpdateCnfAai_di" bpmnElement="UpdateCnfAai">
+        <dc:Bounds x="870" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="aaiThrow_di" bpmnElement="aaiThrow">
+        <dc:Bounds x="1062" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1051" y="148" width="57" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="aaiCatch_di" bpmnElement="aaiCatch">
+        <dc:Bounds x="172" y="354" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="162" y="394" width="57" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
