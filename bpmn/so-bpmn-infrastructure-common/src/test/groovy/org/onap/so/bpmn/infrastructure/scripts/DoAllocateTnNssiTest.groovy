@@ -32,8 +32,10 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
+import org.onap.so.bpmn.common.scripts.OofUtils
 
 import static org.junit.Assert.assertNotNull
+import static org.junit.Assert.assertEquals
 import static org.mockito.ArgumentMatchers.eq
 import static org.mockito.Mockito.*
 
@@ -165,5 +167,50 @@ class DoAllocateTnNssiTest extends MsoGroovyTest {
       "resourceSharingLevel": "non-shared"
      }"""
         return expect.replaceAll("\\\\s+", "")
+    }
+
+    @Test
+    void testPrepareOofSelection() {
+        when(mockExecution.getVariable("msoRequestId")).thenReturn("10dad82d-4bd9-467a-b113-5f8ea7eaae3c")
+        when(mockExecution.getVariable("modelUuid")).thenReturn("e2eb2fe3-92a7-447b-8582-077db5cd0862")
+        when(mockExecution.getVariable("modelInvariantUuid")).thenReturn("22e6ce80-a55f-4171-a457-a7ecb1865669")
+        when(mockExecution.getVariable("tnModelName")).thenReturn("Tn_ONAP_internal_BH")
+        when(mockExecution.getVariable("mso.adapters.oof.timeout")).thenReturn("")
+        TnAllocateNssi obj = spy(TnAllocateNssi.class)
+        OofUtils oofUtils = spy(OofUtils.class)
+        when(oofUtils.buildSelectNSSIRequest()).thenReturn("""
+        {
+    "apiPath": "/api/oof/selection/nssi/v1",
+    "requestDetails": "{\\"requestInfo\\":{\\"transactionId\\":\\"10dad82d-4bd9-467a-b113-5f8ea7eaae3c\\",\\"requestId\\":\\"10dad82d-4bd9-467a-b113-5f8ea7eaae3c\\",\\"callbackUrl\\":\\"http://so-oof-adapter.onap:8090/so/adapters/oof/callback/v1/NSSISelectionResponse/10dad82d-4bd9-467a-b113-5f8ea7eaae3c\\",\\"sourceId\\":\\"SO\\",\\"timeout\\":600,\\"numSolutions\\":1},\\"NSSTInfo\\":{\\"UUID\\":\\"e2eb2fe3-92a7-447b-8582-077db5cd0862\\",\\"invariantUUID\\":\\"22e6ce80-a55f-4171-a457-a7ecb1865669\\",\\"name\\":\\"Tn_ONAP_internal_BH\\"},\\"sliceProfile\\":{\\"maxBandwidth\\":3000,\\"sliceProfileId\\":\\"ab9af40f13f721b5f13539d87484098\\",\\"latency\\":10,\\"snssaiList\\":[\\"001-100001\\"],\\"pLMNIdList\\":[\\"460-00\\",\\"460-01\\"],\\"perfReq\\":{},\\"coverageAreaTAList\\":[],\\"resourceSharingLevel\\":\\"shared\\"}}"
+    }""".replaceAll("\\\\s+", ""))
+        obj.prepareOofSelection(mockExecution)
+        verify(mockExecution, times(1)).setVariable(eq("nssiSelection_oofRequest"), captor.capture())
+        String nssiSelection_oofRequest = captor.getValue()
+        assertNotNull(nssiSelection_oofRequest)
+    }
+
+    @Test
+    void testprocessOofSelection() {
+        when(mockExecution.getVariable("nssiSelection_oofRequest")).thenReturn("""
+        {
+    "requestId": "a727643a-bf89-4fd9-b33c-b7bdda18c2b7",
+    "transactionId": "a727643a-bf89-4fd9-b33c-b7bdda18c2b7",
+    "requestStatus": "completed",
+    "statusMessage": "",
+    "solutions": [
+        {
+            "UUID": "e2eb2fe3-92a7-447b-8582-077db5cd0862",
+            "invariantUUID": "22e6ce80-a55f-4171-a457-a7ecb1865669",
+            "NSSIName": "nssi_tnservice12",
+            "NSSIId": "fe26a924-3845-4001-b84e-a439a27a88c0"
+        }
+    ]
+    }""".replaceAll("\\\\s+", ""))
+        TnAllocateNssi obj = spy(TnAllocateNssi.class)
+        ArrayList<String> solution = new ArrayList<>()
+        assertEquals(1, solution.size())
+        verify(mockExecution, times(1)).setVariable(eq("isOofTnNssiSelected"), captor.capture())
+        String isOofTnNssiSelected = captor.getValue()
+        assertEquals("true", isOofTnNssiSelected)
     }
 }

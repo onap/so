@@ -20,10 +20,17 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.json.JSONArray
 import com.google.gson.JsonArray
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import groovy.json.JsonSlurper
+import org.onap.so.bpmn.common.scripts.OofUtils
+import com.google.gson.*;
+import com.google.gson.Gson
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.ServiceInstance
@@ -53,6 +60,7 @@ class TnAllocateNssi extends AbstractServiceTaskProcessor {
     RequestDBUtil requestDBUtil = new RequestDBUtil()
     JsonSlurper jsonSlurper = new JsonSlurper()
     ObjectMapper objectMapper = new ObjectMapper()
+    OofUtils oofUtils = new OofUtils()
     TnNssmfUtils tnNssmfUtils = new TnNssmfUtils()
     private static final Logger logger = LoggerFactory.getLogger(TnAllocateNssi.class)
 
@@ -123,6 +131,14 @@ class TnAllocateNssi extends AbstractServiceTaskProcessor {
                     "enableSdnc", "enableSdnc"))) {
                 tnNssmfUtils.setEnableSdncConfig(execution)
             }
+
+            if (isBlank(additionalPropJsonStr) ||
+                    isBlank(tnNssmfUtils.setExecVarFromJsonIfExists(execution,
+                            additionalPropJsonStr,
+                            "enableOof", "enableOof"))) {
+                tnNssmfUtils.setEnableOofConfig(execution)
+            }
+
         } catch (BpmnError e) {
             throw e
         } catch (Exception ex) {
@@ -196,6 +212,8 @@ class TnAllocateNssi extends AbstractServiceTaskProcessor {
             execution.setVariable("maxIndex", maxIndex)
         }
 
+        execution.setVariable("tnNfSliceProfile", execution.getVariable("sliceProfile"))
+        execution.setVariable("tnModelName", tnModelName)
         logger.debug("End processDecomposition")
     }
 
@@ -206,61 +224,21 @@ class TnAllocateNssi extends AbstractServiceTaskProcessor {
         logger.debug("get NSSI option OOF Url: " + urlString)
         //build oof request body
         String requestId = execution.getVariable("msoRequestId")
-        String messageType = "NSISelectionResponse"
-        Map<String, Object> profileInfo = objectMapper.readValue(execution.getVariable("sliceProfile"), Map.class)
+        String messageType = "NSSISelectionResponse"
+        Map<String, Object> profileInfo = (Map<String, Object>) objectMapper.readValue(execution.getVariable("tnNfSliceProfile"), Map.class)
         String modelUuid = execution.getVariable("modelUuid")
         String modelInvariantUuid = execution.getVariable("modelInvariantUuid")
         String modelName = execution.getVariable("tnModelName")
         String timeout = UrnPropertiesReader.getVariable("mso.adapters.oof.timeout", execution);
-        List<String> nsstInfoList = objectMapper.readValue(execution.getVariable("nsstInfoList"), List.class)
-        JsonArray capabilitiesList = new JsonArray()
 
-        execution.setVariable("nssiSelection_Url", "/api/oof/selection/nsi/v1")
+        execution.setVariable("nssiSelection_Url", "/api/oof/selection/nssi/v1")
         execution.setVariable("nssiSelection_messageType", messageType)
         execution.setVariable("nssiSelection_correlator", requestId)
         execution.setVariable("nssiSelection_timeout", timeout)
-        String oofRequest = buildSelectTnNssiRequest(requestId, messageType, modelUuid, modelInvariantUuid,
-                modelName, profileInfo, nsstInfoList, capabilitiesList, false)
+        String oofRequest = oofUtils.buildSelectNSSIRequest(requestId, messageType, modelUuid, modelInvariantUuid, modelName, profileInfo)
         execution.setVariable("nssiSelection_oofRequest", oofRequest)
 
         logger.debug("Finish prepareOofSelection")
-    }
-
-    String buildSelectTnNssiRequest(String requestId, String messageType, String UUID, String invariantUUID,
-                                    String name, Map<String, Object> profileInfo,
-                                    List<String> nsstInfoList, JsonArray capabilitiesList, Boolean preferReuse) {
-
-        def transactionId = requestId
-        logger.debug("transactionId is: " + transactionId)
-        String correlator = requestId
-        String callbackUrl = UrnPropertiesReader.getVariable("mso.adapters.oof.callback.endpoint") + "/" + messageType + "/" + correlator
-        ObjectMapper objectMapper = new ObjectMapper()
-        String profileJson = objectMapper.writeValueAsString(profileInfo)
-        String nsstInfoListString = objectMapper.writeValueAsString(nsstInfoList)
-        //Prepare requestInfo object
-        JsonObject requestInfo = new JsonObject()
-        requestInfo.addProperty("transactionId", transactionId)
-        requestInfo.addProperty("requestId", requestId)
-        requestInfo.addProperty("callbackUrl", callbackUrl)
-        requestInfo.addProperty("sourceId", "SO")
-        requestInfo.addProperty("timeout", 600)
-        requestInfo.addProperty("numSolutions", 1)
-
-        //Prepare serviceInfo object
-        JsonObject ranNsstInfo = new JsonObject()
-        ranNsstInfo.addProperty("UUID", UUID)
-        ranNsstInfo.addProperty("invariantUUID", invariantUUID)
-        ranNsstInfo.addProperty("name", name)
-
-        JsonObject json = new JsonObject()
-        json.add("requestInfo", requestInfo)
-        json.add("NSTInfo", ranNsstInfo)
-        json.addProperty("serviceProfile", profileJson)
-        json.addProperty("NSSTInfo", nsstInfoListString)
-        json.add("subnetCapabilities", capabilitiesList)
-        json.addProperty("preferReuse", preferReuse)
-
-        return json.toString()
     }
 
     void processOofSelection(DelegateExecution execution) {
@@ -268,25 +246,30 @@ class TnAllocateNssi extends AbstractServiceTaskProcessor {
         String oofResponse = execution.getVariable("nssiSelection_asyncCallbackResponse")
         String requestStatus = jsonUtil.getJsonValue(oofResponse, "requestStatus")
         if (requestStatus.equals("completed")) {
-            List<String> solution = jsonUtil.StringArrayToList(jsonUtil.getJsonValue(oofResponse, "solutions"))
-            boolean existingNSI = jsonUtil.getJsonValue(solution.get(0), "existingNSI")
-            if (existingNSI) {
-                def sharedNSISolution = jsonUtil.getJsonValue(solution.get(0), "sharedNSISolution")
-                execution.setVariable("sharedTnNssiSolution", sharedNSISolution)
-                logger.debug("sharedTnNssiSolution from OOF " + sharedNSISolution)
-                String tnServiceInstanceId = jsonUtil.getJsonValue(solution.get(0), "sharedNSISolution.NSIId")
-                execution.setVariable("tnServiceInstanceId", tnServiceInstanceId)
-                org.onap.so.bpmn.core.domain.ServiceInstance serviceInstance = new org.onap.so.bpmn.core.domain.ServiceInstance();
-                serviceInstance.setInstanceId(tnServiceInstanceId);
-                ServiceDecomposition serviceDecomposition = execution.getVariable("tnNsstServiceDecomposition")
-                serviceDecomposition.setServiceInstance(serviceInstance);
-                execution.setVariable("tnNsstServiceDecomposition", serviceDecomposition)
+            String solutions = jsonUtil.getJsonValue(oofResponse, "solutions")
+            JsonParser parser = new JsonParser()
+            JsonArray solution = parser.parse(solutions) as JsonArray
+            if(solution.size()>=1) {
+                JsonObject sol = solution.get(0) as JsonObject
+                String tnNfNssiId = sol.get("NSSIId").getAsString()
+
+                String invariantUuid = sol.get("invariantUUID").getAsString()
+
+                String uuid = sol.get("UUID").getAsString()
+
+                String nssiName = sol.get("NSSIName").getAsString()
+
+                execution.setVariable("TnServiceInstanceId", tnNfNssiId)
+                execution.setVariable("TNNFInvariantUUID", invariantUuid)
+                execution.setVariable("TNNFUUID", uuid)
+                execution.setVariable("servicename", nssiName)
+                logger.debug("TnServiceInstanceId from OOF "+tnNfNssiId)
+
+
                 execution.setVariable("isOofTnNssiSelected", true)
-            } else {
-                def sliceProfiles = jsonUtil.getJsonValue(solution.get(0), "newNSISolution.sliceProfiles")
-                execution.setVariable("tnConstituentSliceProfiles", sliceProfiles)
+        } else {
+                logger.debug("No solutions returned from OOF .. Create new TN NF NSSI")
                 execution.setVariable("isOofTnNssiSelected", false)
-                logger.debug("tnConstituentSliceProfiles list from OOF " + sliceProfiles)
             }
         } else {
             String statusMessage = jsonUtil.getJsonValue(oofResponse, "statusMessage")
@@ -295,6 +278,78 @@ class TnAllocateNssi extends AbstractServiceTaskProcessor {
         }
 
         logger.debug(Prefix + "processOofSelection method finished")
+    }
+
+    void prepareModifyTnNssiInputs (DelegateExecution execution) {
+        logger.debug(Prefix+"prepareModifyTnNssiInputs method start")
+        String jobId = UUID.randomUUID().toString()
+        execution.setVariable("modifyTnNssiJobId", jobId)
+        String additionalPropJsonStr = execution.getVariable("sliceParams")
+        String sliceProfile = execution.getVariable("sliceProfile")
+        String snssaiList = jsonUtil.getJsonValue(sliceProfile,"snssaiList")
+        String sliceProfileId = jsonUtil.getJsonValue(sliceProfile,"sliceProfileId")
+        String nsiInfo = jsonUtil.getJsonValue(additionalPropJsonStr, "nsiInfo")
+        String scriptName = jsonUtil.getJsonValue(additionalPropJsonStr,"scriptName")
+        String modelInvariantUuid = execution.getVariable("modelInvariantUuid")
+        String modelUuid = execution.getVariable("modelUuid")
+        String serviceInstanceID = execution.getVariable("TnServiceInstanceId")
+        String servicename= execution.getVariable("servicename")
+        String transportSliceNetworks = jsonUtil.getJsonValue(additionalPropJsonStr, "transportSliceNetworks")
+
+
+        JsonObject modifySliceParams = new JsonObject()
+        modifySliceParams.addProperty("nsiInfo", nsiInfo)
+        modifySliceParams.addProperty("serviceInstanceID", serviceInstanceID)
+        modifySliceParams.addProperty("servicename", servicename)
+        modifySliceParams.addProperty("sliceProfile",sliceProfile)
+        modifySliceParams.addProperty("sliceProfileId", sliceProfileId)
+        modifySliceParams.addProperty("modelInvariantUuid", modelInvariantUuid)
+        modifySliceParams.addProperty("modelUuid", modelUuid)
+        modifySliceParams.addProperty("scriptName", scriptName)
+        modifySliceParams.addProperty("snssaiList", snssaiList)
+        modifySliceParams.addProperty("transportSliceNetworks", transportSliceNetworks)
+
+        execution.setVariable("modifySliceParams", modifySliceParams.toString())
+
+        logger.debug(Prefix + "prepareModifyTnNssiInputs method finished")
+    }
+
+    def createModifyNssiQueryJobStatus = { DelegateExecution execution ->
+        logger.debug(Prefix+"createModifyNssiQueryJobStatus method start")
+        JsonObject esrInfo = new JsonObject()
+        esrInfo.addProperty("networkType", "tn")
+        esrInfo.addProperty("vendor", "ONAP_internal")
+
+        execution.setVariable("esrInfo", esrInfo.toString())
+
+        JsonObject serviceInfo = new JsonObject()
+        serviceInfo.addProperty("nssiId", execution.getVariable("TnServiceInstanceId") as String)
+        serviceInfo.addProperty("nsiId", execution.getVariable("nsiId") as String)
+        serviceInfo.addProperty("nssiName", execution.getVariable("servicename") as String)
+        serviceInfo.addProperty("sST", execution.getVariable("sst") as String)
+        serviceInfo.addProperty("PLMNIdList", objectMapper.writeValueAsString(execution.getVariable("pLMNIdList")))
+        serviceInfo.addProperty("globalSubscriberId", execution.getVariable("globalSubscriberId") as String)
+        serviceInfo.addProperty("subscriptionServiceType", execution.getVariable("subscriptionServiceType") as String)
+        serviceInfo.addProperty("serviceInvariantUuid", execution.getVariable("modelInvariantUuid") as String)
+        serviceInfo.addProperty("serviceUuid", execution.getVariable("modelUuid") as String)
+        execution.setVariable("serviceInfo", serviceInfo.toString())
+        execution.setVariable("responseId", "")
+    }
+
+    def processModifyJobStatusRsp = { DelegateExecution execution ->
+        logger.debug(Prefix+"processJobStatusRsp method start")
+        String jobResponse = execution.getVariable("jobResponse")
+        logger.debug("Job status response "+jobResponse)
+        String status = jsonUtil.getJsonValue(jobResponse, "status")
+        String nssi = jsonUtil.getJsonValue(jobResponse, "nssiId")
+        if(status.equalsIgnoreCase("finished")) {
+            logger.debug("Job successfully completed ... proceeding with flow for nssi : "+nssi)
+        }
+        else {
+            String statusDescription = jsonUtil.getJsonValue(jobResponse, "statusDescription")
+            logger.error("received failed status from job status query for nssi : "+nssi+" with status description : "+ statusDescription)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000,"received failed status from job status query for nssi : "+nssi+" with status description : "+ statusDescription)
+        }
     }
 
     void updateAAIOrchStatus(DelegateExecution execution) {
