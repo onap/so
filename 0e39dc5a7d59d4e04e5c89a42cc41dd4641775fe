@@ -1,0 +1,326 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "20e8f887_b1cb4acf",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/TnAllocateNssi.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2022-03-04T16:58:21Z",
+      "side": 1,
+      "message": "This method does not exists.",
+      "range": {
+        "startLine": 139,
+        "startChar": 29,
+        "endLine": 139,
+        "endChar": 47
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2c27f290_f185c1d4",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/TnAllocateNssi.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2022-03-04T16:58:21Z",
+      "side": 1,
+      "message": "Please initialize the variables near the place where they are used.",
+      "range": {
+        "startLine": 227,
+        "startChar": 8,
+        "endLine": 227,
+        "endChar": 52
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c20f1ffd_295440a3",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/TnAllocateNssi.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2022-03-04T16:58:21Z",
+      "side": 1,
+      "message": "Cast to Map\u003cString, Object\u003e",
+      "range": {
+        "startLine": 228,
+        "startChar": 28,
+        "endLine": 228,
+        "endChar": 39
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "82af324a_c8aee96b",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/TnAllocateNssi.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2022-03-04T16:58:21Z",
+      "side": 1,
+      "message": "You are assigning JsonElement to JsonArray. Make casting.",
+      "range": {
+        "startLine": 251,
+        "startChar": 22,
+        "endLine": 251,
+        "endChar": 30
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b0d9494c_27e0d22c",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/TnAllocateNssi.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2022-03-04T16:58:21Z",
+      "side": 1,
+      "message": "You are assigning JsonElement to JsonObject. Make casting.",
+      "range": {
+        "startLine": 253,
+        "startChar": 27,
+        "endLine": 253,
+        "endChar": 30
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3bd01038_7f7c94ff",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/TnAllocateNssi.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 328,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2022-03-04T16:58:21Z",
+      "side": 1,
+      "message": "Problem with casting. Correct it please.",
+      "range": {
+        "startLine": 325,
+        "startChar": 7,
+        "endLine": 328,
+        "endChar": 68
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e16d6246_743d1a46",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/TnAllocateNssi.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 333,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2022-03-04T16:58:21Z",
+      "side": 1,
+      "message": "Problem with casting. Correct it please.",
+      "range": {
+        "startLine": 330,
+        "startChar": 5,
+        "endLine": 333,
+        "endChar": 82
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2288985d_c03ddb3b",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateTnNssiTest.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2022-03-04T16:58:21Z",
+      "side": 1,
+      "message": "Naming convention -  testPrepare...",
+      "range": {
+        "startLine": 174,
+        "startChar": 9,
+        "endLine": 174,
+        "endChar": 32
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d32030c9_0facc040",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateTnNssiTest.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2022-03-04T16:58:21Z",
+      "side": 1,
+      "message": "This method should have parameters.",
+      "range": {
+        "startLine": 182,
+        "startChar": 22,
+        "endLine": 182,
+        "endChar": 46
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8400ae40_c1ab99c0",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateTnNssiTest.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2022-03-04T16:58:21Z",
+      "side": 1,
+      "message": "Mockito is imported, just leave verify.",
+      "range": {
+        "startLine": 188,
+        "startChar": 8,
+        "endLine": 188,
+        "endChar": 15
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3e9d5aef_ccdab3a8",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateTnNssiTest.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2022-03-04T16:58:21Z",
+      "side": 1,
+      "message": "Remove if it is not needed.",
+      "range": {
+        "startLine": 212,
+        "startChar": 0,
+        "endLine": 212,
+        "endChar": 63
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "763753a2_75042d08",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateTnNssiTest.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2022-03-04T16:58:21Z",
+      "side": 1,
+      "message": "Wrong assertion. You can not compare int with boolean.\nJust make:\nassertEquals(1, solution.size())",
+      "range": {
+        "startLine": 213,
+        "startChar": 8,
+        "endLine": 213,
+        "endChar": 43
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5ed64584_ccb90dea",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateTnNssiTest.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2022-03-04T16:58:21Z",
+      "side": 1,
+      "message": "Mockito is imported, just leave verify.",
+      "range": {
+        "startLine": 214,
+        "startChar": 8,
+        "endLine": 214,
+        "endChar": 15
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f31abed0_9a57ab02",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateTnNssiTest.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2022-03-04T16:58:21Z",
+      "side": 1,
+      "message": "Wrong assertion. You can not put string here. \nJust make:\nassertEquals(\"true\", isOofTnNssiSelected)",
+      "range": {
+        "startLine": 216,
+        "startChar": 8,
+        "endLine": 216,
+        "endChar": 39
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
