@@ -382,6 +382,18 @@ class TnNssmfUtils {
         execution.setVariable("enableSdnc", enableSdnc)
     }
 
+    void setEnableOofConfig(DelegateExecution execution) {
+        String enableOof = UrnPropertiesReader.getVariable(
+                "mso.workflow.TnNssmf.enableOOFNetworkConfig")
+        if (isBlank(enableOof)) {
+            logger.debug("mso.workflow.TnNssmf.enableOOFNetworkConfig is undefined, so use default value (true)")
+            enableOof = "true"
+        }
+        logger.debug("setEnableOofConfig: enableOof=" + enableOof)
+
+        execution.setVariable("enableOof", enableOof)
+    }
+
     String setExecVarFromJsonIfExists(DelegateExecution execution,
                                       String jsonStr, String jsonKey, String varName) {
         return setExecVarFromJsonStr(execution, jsonStr, jsonKey, varName, false)
