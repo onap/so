@@ -1,0 +1,22 @@
+
+---
+distribution_type: 'container'
+container_release_tag: '1.9.3'
+project: 'so'
+log_dir: 'so-maven-docker-stage-istanbul/111/'
+ref: '8a7f2ddfcc1315917e6a7d42672a4dcd0fca2a3c'
+containers:
+    - name: 'so/catalog-db-adapter'
+      version: '1.9.2-20220218T1538'
+    - name: 'so/request-db-adapter'
+      version: '1.9.2-20220218T1538'
+    - name: 'so/openstack-adapter'
+      version: '1.9.2-20220218T1538'
+    - name: 'so/sdnc-adapter'
+      version: '1.9.2-20220218T1538'
+    - name: 'so/sdc-controller'
+      version: '1.9.2-20220218T1538'
+    - name: 'so/bpmn-infra'
+      version: '1.9.2-20220218T1538'
+    - name: 'so/api-handler-infra'
+      version: '1.9.2-20220218T1538'
