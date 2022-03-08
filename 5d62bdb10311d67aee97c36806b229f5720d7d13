@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ca372efa_d04fc35e",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/TnAllocateNssi.groovy",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 2089
+      },
+      "writtenOn": "2022-03-08T01:55:10Z",
+      "side": 1,
+      "message": "Suggest to import specific classes instead of wildcard",
+      "revId": "5d62bdb10311d67aee97c36806b229f5720d7d13",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5d1cb1d3_a519b532",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/TnAllocateNssi.groovy",
+        "patchSetId": 3
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 2089
+      },
+      "writtenOn": "2022-03-08T01:55:10Z",
+      "side": 1,
+      "message": "suggest to separate \"if\" keyword from an open parenthesis (",
+      "revId": "5d62bdb10311d67aee97c36806b229f5720d7d13",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "601ad73d_01e5ac2c",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/TnAllocateNssi.groovy",
+        "patchSetId": 3
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 2089
+      },
+      "writtenOn": "2022-03-08T01:55:10Z",
+      "side": 1,
+      "message": "Seems indentation is missing here, please update :)",
+      "revId": "5d62bdb10311d67aee97c36806b229f5720d7d13",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
