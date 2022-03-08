@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8d0e98a1_4291e6d5",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoCommonCoreNSSI.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 748,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2022-03-08T10:21:50Z",
+      "side": 1,
+      "message": "Here you are assigning snssais reference to snsaaisList reference, so if you change one list, it will be reflected in both list. Are you aware of this?\nIf you want to crate a list copy, type:\nsnssais \u003d new ArrayList\u003cString\u003e((List\u003cString\u003e)snssaisList)",
+      "range": {
+        "startLine": 748,
+        "startChar": 11,
+        "endLine": 748,
+        "endChar": 48
+      },
+      "revId": "11a6c3c6fa3bc9d5d9919670d8faabe3ae44edd8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c044b746_2a90ef23",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoCommonCoreNSSI.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 751,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2022-03-08T10:21:50Z",
+      "side": 1,
+      "message": "duplicated logger",
+      "range": {
+        "startLine": 751,
+        "startChar": 7,
+        "endLine": 751,
+        "endChar": 79
+      },
+      "revId": "11a6c3c6fa3bc9d5d9919670d8faabe3ae44edd8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "26d1f3ff_0db55d6e",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeallocateCoreNSSI.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2022-03-08T10:21:50Z",
+      "side": 1,
+      "message": "Make casting to ServiceInstance.",
+      "range": {
+        "startLine": 310,
+        "startChar": 8,
+        "endLine": 310,
+        "endChar": 87
+      },
+      "revId": "11a6c3c6fa3bc9d5d9919670d8faabe3ae44edd8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8edec77d_8982f00c",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeallocateCoreNSSI.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 312,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2022-03-08T10:21:50Z",
+      "side": 1,
+      "message": "not used",
+      "range": {
+        "startLine": 312,
+        "startChar": 8,
+        "endLine": 312,
+        "endChar": 80
+      },
+      "revId": "11a6c3c6fa3bc9d5d9919670d8faabe3ae44edd8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3acce246_656bc6b3",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeallocateCoreNSSI.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 546,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2022-03-08T10:21:50Z",
+      "side": 1,
+      "message": "not used",
+      "range": {
+        "startLine": 546,
+        "startChar": 7,
+        "endLine": 546,
+        "endChar": 21
+      },
+      "revId": "11a6c3c6fa3bc9d5d9919670d8faabe3ae44edd8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "feb97753_9b0a6c9c",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeallocateCoreNSSI.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 596,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2022-03-08T10:21:50Z",
+      "side": 1,
+      "message": "not used",
+      "range": {
+        "startLine": 596,
+        "startChar": 15,
+        "endLine": 596,
+        "endChar": 20
+      },
+      "revId": "11a6c3c6fa3bc9d5d9919670d8faabe3ae44edd8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "978a51d8_56e9582a",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeallocateCoreNSSITest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2022-03-08T10:21:50Z",
+      "side": 1,
+      "message": "Mockito is already imported, just leave verify.",
+      "range": {
+        "startLine": 230,
+        "startChar": 8,
+        "endLine": 230,
+        "endChar": 15
+      },
+      "revId": "11a6c3c6fa3bc9d5d9919670d8faabe3ae44edd8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
