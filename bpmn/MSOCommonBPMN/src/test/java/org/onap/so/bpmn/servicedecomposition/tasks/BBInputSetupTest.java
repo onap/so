@@ -2282,45 +2282,6 @@ public class BBInputSetupTest {
     }
 
     @Test
-    public void testgetGBBMacroCloudConfiguration() throws Exception {
-        org.onap.so.serviceinstancebeans.Service serviceMacro = mapper.readValue(
-                new File(RESOURCE_PATH + "ServiceMacroVfModules.json"), org.onap.so.serviceinstancebeans.Service.class);
-        CloudConfiguration cloudConfig = null;
-        org.onap.aai.domain.yang.CloudRegion aaiCloudRegion = new org.onap.aai.domain.yang.CloudRegion();
-        aaiCloudRegion.setCloudOwner("test-owner-name");
-        Resources resources = serviceMacro.getResources();
-        doReturn(aaiCloudRegion).when(SPY_bbInputSetupUtils).getCloudRegion(any(CloudConfiguration.class));
-        CloudRegion expected = new CloudRegion();
-        expected.setLcpCloudRegionId("mdt1");
-        expected.setCloudOwner("test-owner-name");
-        expected.setTenantId("88a6ca3ee0394ade9403f075db23167e");
-
-        CloudRegion actual = SPY_bbInputSetup.getCloudRegionFromMacroRequest(cloudConfig, resources);
-        assertThat(actual, sameBeanAs(expected));
-
-        serviceMacro = mapper.readValue(new File(RESOURCE_PATH + "ServiceMacroVnfs.json"),
-                org.onap.so.serviceinstancebeans.Service.class);
-        resources = serviceMacro.getResources();
-
-        actual = SPY_bbInputSetup.getCloudRegionFromMacroRequest(cloudConfig, resources);
-        assertThat(actual, sameBeanAs(expected));
-
-        serviceMacro = mapper.readValue(new File(RESOURCE_PATH + "ServiceMacroNetworks.json"),
-                org.onap.so.serviceinstancebeans.Service.class);
-        resources = serviceMacro.getResources();
-
-        actual = SPY_bbInputSetup.getCloudRegionFromMacroRequest(cloudConfig, resources);
-        assertThat(actual, sameBeanAs(expected));
-
-        serviceMacro = mapper.readValue(new File(RESOURCE_PATH + "ServiceMacroNoCloudConfig.json"),
-                org.onap.so.serviceinstancebeans.Service.class);
-        resources = serviceMacro.getResources();
-
-        actual = SPY_bbInputSetup.getCloudRegionFromMacroRequest(cloudConfig, resources);
-        assertNull(actual);
-    }
-
-    @Test
     public void testgetGBBMacroWithEmptyUserParams() throws Exception {
         String resourceId = "123";
         String vnfType = "vnfType";
