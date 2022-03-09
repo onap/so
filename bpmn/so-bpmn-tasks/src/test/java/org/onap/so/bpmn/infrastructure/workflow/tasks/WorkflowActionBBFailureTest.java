@@ -34,7 +34,6 @@ import static org.onap.so.bpmn.infrastructure.service.composition.ServiceComposi
 import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.CHILD_SVC_REQ_STATUS;
 import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.IS_CHILD_PROCESS;
 import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.PARENT_CORRELATION_ID;
-
 import java.sql.Timestamp;
 import org.camunda.bpm.engine.ProcessEngineServices;
 import org.camunda.bpm.engine.RuntimeService;
@@ -315,8 +314,7 @@ public class WorkflowActionBBFailureTest extends BaseTaskTest {
         workflowActionBBFailure.updateRequestStatusToFailed(mockExecution);
 
         verify(messageCorrelationBuilder).setVariable(CHILD_SVC_REQ_STATUS, "FAILED");
-        verify(messageCorrelationBuilder).setVariable(CHILD_SVC_REQ_ERROR,
-                "Rollback has been completed successfully.");
+        verify(messageCorrelationBuilder).setVariable(CHILD_SVC_REQ_ERROR, "Rollback has been completed successfully.");
         verify(messageCorrelationBuilder).processInstanceVariableEquals(CHILD_SVC_REQ_CORRELATION_ID,
                 parentCorrelationId);
     }
