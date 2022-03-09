@@ -35,6 +35,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.onap.aai.domain.yang.ComposedResource;
+import org.onap.aai.domain.yang.Relationship;
+import org.onap.aaiclient.client.aai.AAIResourcesClient;
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
+
 
 @Component
 public class CreateChildServiceBB {
@@ -73,7 +81,6 @@ public class CreateChildServiceBB {
             log.info("Sending Create Service Request: \n{}", sir.toString());
             buildingBlockExecution.setVariable(CHILD_SVC_REQ_CORRELATION_ID,
                     sir.getRequestDetails().getRequestInfo().getCorrelator());
-
             ServiceInstancesResponse response = apiHandlerClient.createServiceInstance(sir);
             buildingBlockExecution.setVariable(CHILD_SVC_REQ_ID, response.getRequestReferences().getRequestId());
             buildingBlockExecution.setVariable(CHILD_SVC_INSTANCE_ID, response.getRequestReferences().getInstanceId());
@@ -81,6 +88,38 @@ public class CreateChildServiceBB {
             exceptionBuilder.buildAndThrowWorkflowException(buildingBlockExecution, 10003, e.getMessage(),
                     ONAPComponents.SO);
         }
+    }
+
+    /*
+     * This method is to create Relation between Parent & Child Services with Node as Composed Resource.
+     * 
+     */
+
+    public void updateRelations(BuildingBlockExecution buildingBlockExecution) throws Exception {
+
+        Map<ResourceKey, String> lookupMap = buildingBlockExecution.getLookupMap();
+
+        String childSvcInstanceId = buildingBlockExecution.getVariable(CHILD_SVC_INSTANCE_ID);
+        String parentSvcInstanceId = lookupMap.get(ResourceKey.SERVICE_INSTANCE_ID);
+
+        ComposedResource composedResource = new ComposedResource();
+        composedResource.setId(UUID.randomUUID().toString());
+
+        AAIResourcesClient client = new AAIResourcesClient();
+
+        AAIResourceUri composedResourceURI = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                .customer(buildingBlockExecution.getGeneralBuildingBlock().getCustomer().getGlobalCustomerId())
+                .serviceSubscription(buildingBlockExecution.getGeneralBuildingBlock().getRequestContext()
+                        .getSubscriptionServiceType())
+                .serviceInstance(parentSvcInstanceId).composedResource(composedResource.getId()));
+
+        client.create(composedResourceURI, composedResource);
+
+        AAIResourceUri childURI =
+                AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(childSvcInstanceId));
+
+        client.connect(composedResourceURI, childURI);
+
     }
 
     public void handleFailure(final BuildingBlockExecution buildingBlockExecution) {
