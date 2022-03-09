@@ -84,7 +84,9 @@ mso:
     workflow:
       message:
         endpoint: http://localhost:${wiremock.server.port}/workflows/messages/message
-
+    apihandler:
+      endpoint: http://localhost:8080
+      auth: Basic dGVzdDp0ZXN0Cg==
   async:
       core-pool-size: 50
       max-pool-size: 50
