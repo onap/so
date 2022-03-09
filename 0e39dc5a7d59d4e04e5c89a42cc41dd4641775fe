@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "6ec31de5_ace981a6",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/TnAllocateNssi.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 7988
+      },
+      "writtenOn": "2022-03-09T04:18:40Z",
+      "side": 1,
+      "message": "already updated in 127235: Implemented OOF call in TN NSSMF for deallocate flow | https://gerrit.onap.org/r/c/so/+/127235 commit. I have rebase the code",
+      "parentUuid": "20e8f887_b1cb4acf",
+      "range": {
+        "startLine": 139,
+        "startChar": 29,
+        "endLine": 139,
+        "endChar": 47
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2c27f290_f185c1d4",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/TnAllocateNssi.groovy",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "303a5d82_e846a912",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/TnAllocateNssi.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 7988
+      },
+      "writtenOn": "2022-03-09T04:18:40Z",
+      "side": 1,
+      "message": "messageType \u003d \"NSSISelectionResponse\" is used in buildSelectNSSIRequest method which is called from common method from oofutils.",
+      "parentUuid": "2c27f290_f185c1d4",
+      "range": {
+        "startLine": 227,
+        "startChar": 8,
+        "endLine": 227,
+        "endChar": 52
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "9885582b_ccec7617",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/TnAllocateNssi.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 7988
+      },
+      "writtenOn": "2022-03-09T04:18:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c20f1ffd_295440a3",
+      "range": {
+        "startLine": 228,
+        "startChar": 28,
+        "endLine": 228,
+        "endChar": 39
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "82af324a_c8aee96b",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/TnAllocateNssi.groovy",
         "patchSetId": 1
@@ -91,6 +163,30 @@
       "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bdd623e0_b33d57d9",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/TnAllocateNssi.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 7988
+      },
+      "writtenOn": "2022-03-09T04:18:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "82af324a_c8aee96b",
+      "range": {
+        "startLine": 251,
+        "startChar": 22,
+        "endLine": 251,
+        "endChar": 30
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "6bbf4f01_ead7b982",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/TnAllocateNssi.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 7988
+      },
+      "writtenOn": "2022-03-09T04:18:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b0d9494c_27e0d22c",
+      "range": {
+        "startLine": 253,
+        "startChar": 27,
+        "endLine": 253,
+        "endChar": 30
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3bd01038_7f7c94ff",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/TnAllocateNssi.groovy",
         "patchSetId": 1
@@ -137,6 +257,30 @@
       "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "582af6e2_09c5299d",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/TnAllocateNssi.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 328,
+      "author": {
+        "id": 7988
+      },
+      "writtenOn": "2022-03-09T04:18:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3bd01038_7f7c94ff",
+      "range": {
+        "startLine": 325,
+        "startChar": 7,
+        "endLine": 328,
+        "endChar": 68
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "aae6b4a1_1646a005",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/TnAllocateNssi.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 333,
+      "author": {
+        "id": 7988
+      },
+      "writtenOn": "2022-03-09T04:18:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e16d6246_743d1a46",
+      "range": {
+        "startLine": 330,
+        "startChar": 5,
+        "endLine": 333,
+        "endChar": 82
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2288985d_c03ddb3b",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateTnNssiTest.groovy",
         "patchSetId": 1
@@ -183,6 +351,30 @@
       "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f332123b_28fabd1c",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateTnNssiTest.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 7988
+      },
+      "writtenOn": "2022-03-09T04:18:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2288985d_c03ddb3b",
+      "range": {
+        "startLine": 174,
+        "startChar": 9,
+        "endLine": 174,
+        "endChar": 32
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -209,6 +401,30 @@
     },
     {
       "key": {
+        "uuid": "3d4a9532_82f6cc62",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateTnNssiTest.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 7988
+      },
+      "writtenOn": "2022-03-09T04:18:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d32030c9_0facc040",
+      "range": {
+        "startLine": 182,
+        "startChar": 22,
+        "endLine": 182,
+        "endChar": 46
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8400ae40_c1ab99c0",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateTnNssiTest.groovy",
         "patchSetId": 1
@@ -229,6 +445,30 @@
       "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "34061bde_e48f814c",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateTnNssiTest.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 7988
+      },
+      "writtenOn": "2022-03-09T04:18:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8400ae40_c1ab99c0",
+      "range": {
+        "startLine": 188,
+        "startChar": 8,
+        "endLine": 188,
+        "endChar": 15
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -255,6 +495,30 @@
     },
     {
       "key": {
+        "uuid": "665ac010_6349afc2",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateTnNssiTest.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 7988
+      },
+      "writtenOn": "2022-03-09T04:18:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3e9d5aef_ccdab3a8",
+      "range": {
+        "startLine": 212,
+        "startChar": 0,
+        "endLine": 212,
+        "endChar": 63
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "763753a2_75042d08",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateTnNssiTest.groovy",
         "patchSetId": 1
@@ -275,6 +539,30 @@
       "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "31e2f3a6_c9066c0e",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateTnNssiTest.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 7988
+      },
+      "writtenOn": "2022-03-09T04:18:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "763753a2_75042d08",
+      "range": {
+        "startLine": 213,
+        "startChar": 8,
+        "endLine": 213,
+        "endChar": 43
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -301,6 +589,30 @@
     },
     {
       "key": {
+        "uuid": "8a370612_be4844a4",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateTnNssiTest.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 7988
+      },
+      "writtenOn": "2022-03-09T04:18:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5ed64584_ccb90dea",
+      "range": {
+        "startLine": 214,
+        "startChar": 8,
+        "endLine": 214,
+        "endChar": 15
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f31abed0_9a57ab02",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateTnNssiTest.groovy",
         "patchSetId": 1
@@ -321,6 +633,30 @@
       "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "41fd2ad5_315b7946",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateTnNssiTest.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 7988
+      },
+      "writtenOn": "2022-03-09T04:18:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f31abed0_9a57ab02",
+      "range": {
+        "startLine": 216,
+        "startChar": 8,
+        "endLine": 216,
+        "endChar": 39
+      },
+      "revId": "0e39dc5a7d59d4e04e5c89a42cc41dd4641775fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
