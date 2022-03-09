@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ed18506d_90593339",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoCommonCoreNSSI.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 748,
+      "author": {
+        "id": 6860
+      },
+      "writtenOn": "2022-03-09T09:10:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8d0e98a1_4291e6d5",
+      "range": {
+        "startLine": 748,
+        "startChar": 11,
+        "endLine": 748,
+        "endChar": 48
+      },
+      "revId": "11a6c3c6fa3bc9d5d9919670d8faabe3ae44edd8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c044b746_2a90ef23",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoCommonCoreNSSI.groovy",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "11a6c3c6fa3bc9d5d9919670d8faabe3ae44edd8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8edb9d8d_6ecd4f14",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoCommonCoreNSSI.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 751,
+      "author": {
+        "id": 6860
+      },
+      "writtenOn": "2022-03-09T09:10:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c044b746_2a90ef23",
+      "range": {
+        "startLine": 751,
+        "startChar": 7,
+        "endLine": 751,
+        "endChar": 79
+      },
+      "revId": "11a6c3c6fa3bc9d5d9919670d8faabe3ae44edd8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "475fd447_05b87af1",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeallocateCoreNSSI.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 6860
+      },
+      "writtenOn": "2022-03-09T09:10:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "26d1f3ff_0db55d6e",
+      "range": {
+        "startLine": 310,
+        "startChar": 8,
+        "endLine": 310,
+        "endChar": 87
+      },
+      "revId": "11a6c3c6fa3bc9d5d9919670d8faabe3ae44edd8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8edec77d_8982f00c",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeallocateCoreNSSI.groovy",
         "patchSetId": 2
@@ -91,6 +163,30 @@
       "revId": "11a6c3c6fa3bc9d5d9919670d8faabe3ae44edd8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "69aa358b_2337c5f3",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeallocateCoreNSSI.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 312,
+      "author": {
+        "id": 6860
+      },
+      "writtenOn": "2022-03-09T09:10:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8edec77d_8982f00c",
+      "range": {
+        "startLine": 312,
+        "startChar": 8,
+        "endLine": 312,
+        "endChar": 80
+      },
+      "revId": "11a6c3c6fa3bc9d5d9919670d8faabe3ae44edd8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "4c464d9f_2557472d",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeallocateCoreNSSI.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 546,
+      "author": {
+        "id": 6860
+      },
+      "writtenOn": "2022-03-09T09:10:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3acce246_656bc6b3",
+      "range": {
+        "startLine": 546,
+        "startChar": 7,
+        "endLine": 546,
+        "endChar": 21
+      },
+      "revId": "11a6c3c6fa3bc9d5d9919670d8faabe3ae44edd8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "feb97753_9b0a6c9c",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeallocateCoreNSSI.groovy",
         "patchSetId": 2
@@ -140,6 +260,30 @@
     },
     {
       "key": {
+        "uuid": "487d3489_3ed3554a",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeallocateCoreNSSI.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 596,
+      "author": {
+        "id": 6860
+      },
+      "writtenOn": "2022-03-09T09:10:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "feb97753_9b0a6c9c",
+      "range": {
+        "startLine": 596,
+        "startChar": 15,
+        "endLine": 596,
+        "endChar": 20
+      },
+      "revId": "11a6c3c6fa3bc9d5d9919670d8faabe3ae44edd8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "978a51d8_56e9582a",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeallocateCoreNSSITest.groovy",
         "patchSetId": 2
@@ -160,6 +304,30 @@
       "revId": "11a6c3c6fa3bc9d5d9919670d8faabe3ae44edd8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d6ad7dfc_5e19c0f0",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeallocateCoreNSSITest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 6860
+      },
+      "writtenOn": "2022-03-09T09:10:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "978a51d8_56e9582a",
+      "range": {
+        "startLine": 230,
+        "startChar": 8,
+        "endLine": 230,
+        "endChar": 15
+      },
+      "revId": "11a6c3c6fa3bc9d5d9919670d8faabe3ae44edd8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
