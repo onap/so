@@ -369,7 +369,6 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		modifySliceParams.addProperty("snssaiList", snssaiList)
 		modifySliceParams.addProperty("sliceProfileId", sliceProfileId)
 		modifySliceParams.addProperty("nsiInfo", nsiInfo)
-		modifySliceParams.addProperty("scriptName", scriptName)
 		
 		execution.setVariable("modifySliceParams", modifySliceParams.toString())
 		//create operation status in request db
@@ -639,7 +638,7 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		ANServiceInstance.setServiceType(execution.getVariable("sst") as String)
 		ANServiceInstance.setOrchestrationStatus(serviceStatus)
 		String serviceInstanceLocationid = jsonUtil.getJsonValue(execution.getVariable("sliceProfile"), "pLMNIdList") as String
-		ANServiceInstance.setServiceInstanceLocationId(serviceInstanceLocationid)
+                ANServiceInstance.setServiceInstanceLocationId(jsonUtil.StringArrayToList(serviceInstanceLocationid).get(0))		
 		ANServiceInstance.setServiceRole(serviceRole)
 		List<String> snssaiList = jsonUtil.StringArrayToList(execution.getVariable("snssaiList") as String)
 		String snssai = snssaiList.get(0)
