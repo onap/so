@@ -2,6 +2,40 @@
   "comments": [
     {
       "key": {
+        "uuid": "3b88fecd_f1fa6a60",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 1038,
+      "author": {
+        "id": 2089
+      },
+      "writtenOn": "2022-03-09T08:30:18Z",
+      "side": 1,
+      "message": "Suggest not to hardcode IP address in code",
+      "revId": "9c60f6e57829cc866c3b941d86aca06ed980c94a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d67bc993_cd36ae0c",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 1042,
+      "author": {
+        "id": 2089
+      },
+      "writtenOn": "2022-03-09T08:30:18Z",
+      "side": 1,
+      "message": "why next hop is always Host3 ?",
+      "revId": "9c60f6e57829cc866c3b941d86aca06ed980c94a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0b80dc66_7e8673c8",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateNSIandNSSI.groovy",
         "patchSetId": 2
