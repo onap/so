@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1qv87sb" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.6.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1qv87sb" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
   <bpmn:process id="CreateChildServiceBB" name="CreateChildServiceBB" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>SequenceFlow_14q7e7i</bpmn:outgoing>
@@ -47,10 +47,10 @@
     <bpmn:serviceTask id="Task_0jc8k6m" name="Handle Failure" camunda:expression="${CreateChildServiceBB.handleFailure(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_052tga4</bpmn:incoming>
     </bpmn:serviceTask>
-    <bpmn:task id="Task_1oyb4b5" name="Update AAI">
+    <bpmn:serviceTask id="Task_1oyb4b5" name="Update AAI" camunda:expression="${CreateChildServiceBB.updateRelations(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_0zfixj7</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_143mdyp</bpmn:outgoing>
-    </bpmn:task>
+    </bpmn:serviceTask>
   </bpmn:process>
   <bpmn:error id="Error_1d6c5q3" name="MSO Workflow Exception" errorCode="MSOWorkflowException" camunda:errorMessage="Child service creation timeout reached" />
   <bpmn:message id="Message_0kfkpsv" name="ChildServiceRequest" />
@@ -121,14 +121,14 @@
       <bpmndi:BPMNShape id="ServiceTask_1j024ya_di" bpmnElement="Task_0jc8k6m">
         <dc:Bounds x="850" y="230" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_10o8qyu_di" bpmnElement="Task_1oyb4b5">
+        <dc:Bounds x="1040" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BoundaryEvent_0g07oag_di" bpmnElement="IntermediateThrowEvent_1gh5vds">
         <dc:Bounds x="712" y="142" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="750" y="173" width="40" height="14" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_1hukudm_di" bpmnElement="Task_1oyb4b5">
-        <dc:Bounds x="1040" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
