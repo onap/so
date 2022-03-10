@@ -103,6 +103,7 @@ The full list of fixed bugs is available on `JIRA Istanbul BUGS
 
 Security Notes
 --------------
+*  SO has a transitive dependency for log4j vulnerabilities.
 
 *Fixed Security Issues*
 
