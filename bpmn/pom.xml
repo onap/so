@@ -20,6 +20,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <sdnc.northbound.version>1.5.2</sdnc.northbound.version>
+    <logback-core.version>1.2.10</logback-core.version>
   </properties>
   <modules>
     <module>MSOCoreBPMN</module>
