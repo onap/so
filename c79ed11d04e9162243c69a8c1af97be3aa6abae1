@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5fdda378_27db30ea",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateTnNssiTest.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2022-03-11T14:50:14Z",
+      "side": 1,
+      "message": "This one not corrected, this method should have parameters.",
+      "range": {
+        "startLine": 181,
+        "startChar": 22,
+        "endLine": 181,
+        "endChar": 46
+      },
+      "revId": "c79ed11d04e9162243c69a8c1af97be3aa6abae1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
