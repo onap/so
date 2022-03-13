@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0135bd25_e956d0eb",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/heat/ToscaResourceInstaller.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 2089
+      },
+      "writtenOn": "2022-03-13T21:07:03Z",
+      "side": 1,
+      "message": "Please fix",
+      "range": {
+        "startLine": 97,
+        "startChar": 0,
+        "endLine": 101,
+        "endChar": 9
+      },
+      "revId": "3d95d6b961a1051d5aa22c48d6e78736d730457c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa7d3362_69da6f40",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/heat/ToscaResourceInstaller.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2518,
+      "author": {
+        "id": 2089
+      },
+      "writtenOn": "2022-03-13T21:07:03Z",
+      "side": 1,
+      "message": "suggest to maintain indentation",
+      "revId": "3d95d6b961a1051d5aa22c48d6e78736d730457c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "24d04582_dfa1841f",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/heat/ToscaResourceInstaller.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2557,
+      "author": {
+        "id": 2089
+      },
+      "writtenOn": "2022-03-13T21:07:03Z",
+      "side": 1,
+      "message": "suggest to include default case too...",
+      "revId": "3d95d6b961a1051d5aa22c48d6e78736d730457c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d10dddf0_03343ca3",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/beans/OrchTemplateArtifactType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 2089
+      },
+      "writtenOn": "2022-03-13T21:07:03Z",
+      "side": 1,
+      "message": "should be 2022 ?",
+      "range": {
+        "startLine": 5,
+        "startChar": 17,
+        "endLine": 5,
+        "endChar": 21
+      },
+      "revId": "3d95d6b961a1051d5aa22c48d6e78736d730457c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
