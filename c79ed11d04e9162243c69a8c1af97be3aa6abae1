@@ -22,6 +22,30 @@
       "revId": "c79ed11d04e9162243c69a8c1af97be3aa6abae1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "48da3afb_73f14e7d",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/groovy/org/onap/so/bpmn/infrastructure/scripts/DoAllocateTnNssiTest.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 7988
+      },
+      "writtenOn": "2022-03-14T08:59:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5fdda378_27db30ea",
+      "range": {
+        "startLine": 181,
+        "startChar": 22,
+        "endLine": 181,
+        "endChar": 46
+      },
+      "revId": "c79ed11d04e9162243c69a8c1af97be3aa6abae1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
