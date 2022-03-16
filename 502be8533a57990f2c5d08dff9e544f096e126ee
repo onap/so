@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f93abe18_0311d6f2",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/composition/CreateChildServiceBB.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 2701
+      },
+      "writtenOn": "2022-03-16T20:58:48Z",
+      "side": 1,
+      "message": "Why don\u0027t you use connect method to connect composedResourceURI and childURI? It would handle creation of relationship on its own.",
+      "range": {
+        "startLine": 123,
+        "startChar": 0,
+        "endLine": 129,
+        "endChar": 45
+      },
+      "revId": "502be8533a57990f2c5d08dff9e544f096e126ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
