@@ -1,0 +1,7 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+2: Lukasz Rajewski <lukasz.rajewski@orange.com>
+Submitted-by: Lukasz Rajewski <lukasz.rajewski@orange.com>
+Submitted-at: Thu, 17 Mar 2022 11:05:40 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/so/+/127603
+Project: so
+Branch: refs/heads/recursive-orch
