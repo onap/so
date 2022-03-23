@@ -82,6 +82,7 @@ public class ChildServiceRequestBuilderTest {
         gbb.setServiceInstance(serviceInstance);
         mockExecution = mock(BuildingBlockExecution.class);
         doReturn(gbb).when(mockExecution).getGeneralBuildingBlock();
+        doReturn("CreateChildServiceBB").when(mockExecution).getFlowToBeCalled();
     }
 
     @Test
@@ -198,6 +199,7 @@ public class ChildServiceRequestBuilderTest {
         gbb.setServiceInstance(serviceInstance);
         mockExecution = mock(BuildingBlockExecution.class);
         doReturn(gbb).when(mockExecution).getGeneralBuildingBlock();
+        doReturn("CreateChildServiceBB").when(mockExecution).getFlowToBeCalled();
 
         ServiceInstancesRequest sir = ChildServiceRequestBuilder
                 .getInstance(mockExecution, "service1-instanceName-child")
@@ -231,6 +233,4 @@ public class ChildServiceRequestBuilderTest {
         }
         return null;
     }
-
-
 }

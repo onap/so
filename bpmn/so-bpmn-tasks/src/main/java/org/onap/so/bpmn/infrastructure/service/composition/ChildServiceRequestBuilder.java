@@ -1,12 +1,25 @@
 package org.onap.so.bpmn.infrastructure.service.composition;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import org.onap.aai.domain.yang.Relationship;
+import org.onap.aai.domain.yang.ServiceInstance;
+import org.onap.aaiclient.client.aai.AAIResourcesClient;
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
+import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.InstanceDirection;
+import org.onap.so.serviceinstancebeans.ModelInfo;
+import org.onap.so.serviceinstancebeans.ModelType;
 import org.onap.so.serviceinstancebeans.OwningEntity;
 import org.onap.so.serviceinstancebeans.Project;
 import org.onap.so.serviceinstancebeans.RelatedInstance;
@@ -19,13 +32,19 @@ import org.onap.so.serviceinstancebeans.RequestParameters;
 import org.onap.so.serviceinstancebeans.SubscriberInfo;
 import java.io.IOException;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ChildServiceRequestBuilder {
 
+    private static AAIResourcesClient aaiClient = new AAIResourcesClient();
     private final BuildingBlockExecution buildingBlockExecution;
     private Service parent;
     private Service child;
     private ServiceInstancesRequest sir;
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(ChildServiceRequestBuilder.class);
 
     private ChildServiceRequestBuilder(final BuildingBlockExecution buildingBlockExecution, Service parent,
             Service child) {
@@ -44,26 +63,64 @@ public class ChildServiceRequestBuilder {
         Service child = null;
         Service parent = null;
         try {
-            String USERPARAMSERVICE = "service";
-            for (Map<String, Object> params : buildingBlockExecution.getGeneralBuildingBlock().getRequestContext()
-                    .getRequestParameters().getUserParams()) {
-                if (params.containsKey(USERPARAMSERVICE)) {
-                    ObjectMapper obj = new ObjectMapper();
-                    String input = obj.writeValueAsString(params.get(USERPARAMSERVICE));
-                    parent = obj.readValue(input, Service.class);
-                    if (parent.getResources().getServices() != null) {
-                        for (Service service : parent.getResources().getServices()) {
-                            if (service.getInstanceName().equals(childSvcInstanceName)) {
-                                child = service;
+            if ("CreateChildServiceBB".equalsIgnoreCase(buildingBlockExecution.getFlowToBeCalled())) {
+                String USERPARAMSERVICE = "service";
+                for (Map<String, Object> params : buildingBlockExecution.getGeneralBuildingBlock().getRequestContext()
+                        .getRequestParameters().getUserParams()) {
+                    if (params.containsKey(USERPARAMSERVICE)) {
+                        ObjectMapper obj = new ObjectMapper();
+                        String input = obj.writeValueAsString(params.get(USERPARAMSERVICE));
+                        parent = obj.readValue(input, Service.class);
+                        if (parent.getResources().getServices() != null) {
+                            for (Service service : parent.getResources().getServices()) {
+                                if (service.getInstanceName().equals(childSvcInstanceName)) {
+                                    child = service;
+                                }
                             }
                         }
                     }
+                }
+            } else if ("DeleteChildServiceBB".equalsIgnoreCase(buildingBlockExecution.getFlowToBeCalled())) {
+                String childServiceInstanceId =
+                        buildingBlockExecution.getLookupMap().get(ResourceKey.CHILD_SERVICE_INSTANCE_ID);
+                String parentServiceInstanceId =
+                        buildingBlockExecution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID);
+
+                ServiceInstance serviceInstance =
+                        aaiClient.get(ServiceInstance.class,
+                                AAIUriFactory.createResourceUri(
+                                        AAIFluentTypeBuilder.Types.SERVICE_INSTANCE.getFragment(childServiceInstanceId))
+                                        .depth(Depth.TWO))
+                                .orElse(null);
+
+                ServiceInstance parentAAIInstance = aaiClient.get(ServiceInstance.class,
+                        AAIUriFactory.createResourceUri(
+                                AAIFluentTypeBuilder.Types.SERVICE_INSTANCE.getFragment(parentServiceInstanceId))
+                                .depth(Depth.TWO))
+                        .orElse(null);
+
+                if (serviceInstance != null) {
+                    parent = serviceInstanceToServiceBeanMapper(parentAAIInstance);
+                    child = serviceInstanceToServiceBeanMapper(serviceInstance);
                 }
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed parsing context user parameters for parent or child service", e);
         }
         return new ChildServiceRequestBuilder(buildingBlockExecution, parent, child);
+    }
+
+    private static Service serviceInstanceToServiceBeanMapper(ServiceInstance serviceInstance) {
+        Service service = new Service();
+        service.setInstanceName(service.getInstanceName());
+        ModelInfo modelInfo = new ModelInfo();
+        modelInfo.setModelId(serviceInstance.getModelVersionId());
+        modelInfo.setModelType(ModelType.service);
+        modelInfo.setModelVersionId(serviceInstance.getModelVersionId());
+        modelInfo.setModelInstanceName(serviceInstance.getServiceInstanceName());
+        modelInfo.setModelInvariantId(serviceInstance.getModelInvariantId());
+        service.setModelInfo(modelInfo);
+        return service;
     }
 
     public ChildServiceRequestBuilder setParentRequestId(String parentRequestId) {
@@ -104,8 +161,11 @@ public class ChildServiceRequestBuilder {
 
     private RequestParameters createRequestParameters(RequestContext context, Service childService) {
         RequestParameters requestParameters = new RequestParameters();
-        requestParameters.getUserParams().add(context.getRequestParameters().getUserParams().get(0));
-        requestParameters.getUserParams().add(Map.of("service", childService));
+
+        if (!context.getRequestParameters().getUserParams().isEmpty()) {
+            requestParameters.getUserParams().add(context.getRequestParameters().getUserParams().get(0));
+            requestParameters.getUserParams().add(Map.of("service", childService));
+        }
         requestParameters.setSubscriptionServiceType(context.getRequestParameters().getSubscriptionServiceType());
         requestParameters.setaLaCarte(context.getRequestParameters().getALaCarte());
         requestParameters.setPayload(context.getRequestParameters().getPayload());

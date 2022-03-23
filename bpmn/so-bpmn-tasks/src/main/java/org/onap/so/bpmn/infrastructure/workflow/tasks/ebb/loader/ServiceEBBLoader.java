@@ -25,8 +25,11 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.javatuples.Pair;
+import org.onap.aai.domain.yang.ComposedResource;
+import org.onap.aai.domain.yang.ComposedResources;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.Relationship;
+import org.onap.aai.domain.yang.RelationshipData;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.VpnBinding;
 import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
@@ -204,6 +207,7 @@ public class ServiceEBBLoader {
                     new Resource(WorkflowType.SERVICE, serviceInstanceMSO.getServiceInstanceId(), false, null);
             serviceResource.setModelInvariantId(serviceInstanceAAI.getModelInvariantId());
             resourceList.add(serviceResource);
+            traverseServiceInstanceChildService(resourceList, serviceResource, aaiResourceIds, serviceInstanceAAI);
             traverseServiceInstanceMSOVnfs(resourceList, serviceResource, aaiResourceIds, serviceInstanceMSO);
             traverseServiceInstanceMSOPnfs(resourceList, serviceResource, aaiResourceIds, serviceInstanceMSO);
             if (serviceInstanceMSO.getNetworks() != null) {
@@ -278,6 +282,52 @@ public class ServiceEBBLoader {
             aaiResourceIds.add(new Pair<>(WorkflowType.PNF, pnf.getPnfId()));
             resourceList.add(new Resource(WorkflowType.PNF, pnf.getPnfId(), false, serviceResource));
         }
+    }
+
+    private void traverseServiceInstanceChildService(List<Resource> resourceList, Resource serviceResource,
+            List<Pair<WorkflowType, String>> aaiResourceIds, ServiceInstance serviceInstanceAAI) {
+
+        ComposedResources composedResources = serviceInstanceAAI.getComposedResources();
+        if (composedResources == null) {
+            return;
+        }
+
+        List<ComposedResource> listOfComposedResource = composedResources.getComposedResource();
+
+        listOfComposedResource.stream().forEach(composedResource -> {
+            // Get ServiceInstance from composedResource relationship List
+
+            List<Relationship> composedResourceRelationshipList =
+                    composedResource.getRelationshipList().getRelationship();
+            ServiceInstance childService = new ServiceInstance();
+            composedResourceRelationshipList.forEach(composedRelation -> {
+                if ("service-instance".equalsIgnoreCase(composedRelation.getRelatedTo())) {
+                    List<RelationshipData> rData = composedRelation.getRelationshipData();
+                    rData.stream().forEach(data -> {
+                        if ("service-instance.service-instance-id".equalsIgnoreCase(data.getRelationshipKey())) {
+                            childService.setServiceInstanceId(data.getRelationshipValue());
+                        }
+                    });
+                    composedRelation.getRelatedToProperty().stream().forEach(relatedToProperty -> {
+                        if ("service-instance.service-instance-name"
+                                .equalsIgnoreCase(relatedToProperty.getPropertyKey())) {
+                            childService.setServiceInstanceName(relatedToProperty.getPropertyValue());
+                        }
+                    });
+                }
+            });
+
+            if (childService.getServiceInstanceId() == null) {
+                return;
+            }
+
+            Resource childServiceResource =
+                    new Resource(WorkflowType.SERVICE, childService.getServiceInstanceId(), false, serviceResource);
+
+            childServiceResource.setInstanceName(childService.getServiceInstanceName());
+            resourceList.add(childServiceResource);
+        });
+
     }
 
     protected void traverseVrfConfiguration(List<Pair<WorkflowType, String>> aaiResourceIds,
