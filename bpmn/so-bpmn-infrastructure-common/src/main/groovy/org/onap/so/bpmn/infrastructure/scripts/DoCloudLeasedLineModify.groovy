@@ -109,6 +109,14 @@ public class DoCloudLeasedLineModify extends AbstractServiceTaskProcessor {
                     "transportNetworks", "transportNetworks", true)
             logger.debug("transportNetworks: " + execution.getVariable("transportNetworks"))
 
+            serviceIntentUtils.setExecVarFromJsonIfExists(execution, additionalPropJsonStr,
+                    "modifyAction", "modifyAction");
+            if (isNotBlank(execution.getVariable("modifyAction"))) {
+                logger.debug("modifyAction: " + execution.getVariable("modifyAction"))
+            } else {
+                logger.debug("modifyAction is not set")
+            }
+
             if (isBlank(serviceIntentUtils.setExecVarFromJsonIfExists(execution, additionalPropJsonStr,
                     "enableSdnc", "enableSdnc"))) {
                 serviceIntentUtils.setEnableSdncConfig(execution)
@@ -266,18 +274,36 @@ public class DoCloudLeasedLineModify extends AbstractServiceTaskProcessor {
 
     void updateTsciNetworks(DelegateExecution execution) {
         try {
+            if (modifyBandwidthGlobal(execution)) {
+                String netStr = jsonUtil.StringArrayToList(execution.getVariable("transportNetworks")).get(0)
+                int maxBw = getMaxBwFromNetworkJsonStr(execution, netStr)
+                updateNetworkPolicyGlobal(execution, maxBw)
+                return
+            }
             List<String> networkStrList = jsonUtil.StringArrayToList(execution.getVariable("transportNetworks"))
             for (String networkStr : networkStrList) {
-                updateLogicalLinksInNetwork(execution, networkStr)
-                updateNetworkPolicy(execution, networkStr)
+                updateTsciNetwork(execution, networkStr)
             }
-
         } catch (BpmnError e) {
             throw e
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000,
                     "Exception in updateTsciNetworks" + ex.getMessage())
         }
+    }
+
+    boolean modifyBandwidthGlobal(DelegateExecution execution) {
+        String modifyAction = execution.getVariable("modifyAction")
+        if (isNotBlank(modifyAction) && modifyAction.equals("bandwidth")) {
+            return true
+        }
+
+        return false
+    }
+
+    void updateTsciNetwork(DelegateExecution execution, String networkStr) {
+        updateLogicalLinksInNetwork(execution, networkStr)
+        updateNetworkPolicy(execution, networkStr)
     }
 
     int getMaxBwFromNetworkJsonStr(DelegateExecution execution, String networkJsonStr) {
@@ -324,6 +350,28 @@ public class DoCloudLeasedLineModify extends AbstractServiceTaskProcessor {
             String msg = "Exception in DoModifyCllInstance.updatePolicyMaxBandwidthInAAI. " + ex.getMessage()
             logger.info(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+    }
+
+    void updateNetworkPolicyGlobal(DelegateExecution execution, int maxBw) {
+        try {
+            List<String> arIdList = execution.getVariable("arIdList")
+            for (String arId : arIdList) {
+                Map<String, String> policyMap = execution.getVariable("arPolicyMap")
+                String policyId = policyMap.get(arId)
+                if (isBlank(policyId)) {
+                    String msg = String.format("ERROR: updateNetworkPolicy: policyId not found. arId=%s", arId)
+                    logger.error(msg)
+                    exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+                }
+                updatePolicyMaxBandwidthInAAI(execution, policyId, maxBw)
+            }
+        } catch (BpmnError e) {
+            throw e
+        } catch (Exception ex) {
+            String msg = String.format("ERROR: updateNetworkPolicy: exception: %s", ex.getMessage())
+            logger.error(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
         }
     }
 
