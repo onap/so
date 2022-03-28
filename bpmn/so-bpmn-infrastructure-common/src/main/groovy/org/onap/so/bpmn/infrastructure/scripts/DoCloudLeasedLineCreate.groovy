@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.web.util.UriUtils
 
 import static org.apache.commons.lang3.StringUtils.isBlank
+import static org.apache.commons.lang3.StringUtils.isNotBlank
 
 class DoCloudLeasedLineCreate extends AbstractServiceTaskProcessor {
 
@@ -333,6 +334,7 @@ class DoCloudLeasedLineCreate extends AbstractServiceTaskProcessor {
 
                 String epA = jsonUtil.getJsonValue(linkStr, "transportEndpointA")
                 String epB = jsonUtil.getJsonValue(linkStr, "transportEndpointB")
+                String epBProtect = jsonUtil.getJsonValue(linkStr, "transportEndpointBProtection")
                 String modelInvariantId = execution.getVariable("modelInvariantUuid")
                 String modelVersionId = execution.getVariable("modelUuid")
 
@@ -340,6 +342,9 @@ class DoCloudLeasedLineCreate extends AbstractServiceTaskProcessor {
                 resource.setLinkId(linkId)
                 resource.setLinkName(epA)
                 resource.setLinkName2(epB)
+                if (isNotBlank(epBProtect)) {
+                    resource.setSegmentId(epBProtect)
+                }
                 resource.setLinkType("TsciConnectionLink")
                 resource.setInMaint(false)
 
