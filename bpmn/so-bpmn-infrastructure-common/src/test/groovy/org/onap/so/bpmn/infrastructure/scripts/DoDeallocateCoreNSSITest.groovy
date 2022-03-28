@@ -20,31 +20,30 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
-import org.onap.aai.domain.yang.v19.*
+import org.onap.aai.domain.yang.v19.AllottedResource
+import org.onap.aai.domain.yang.v19.AllottedResources
+import org.onap.aai.domain.yang.v19.ServiceInstance
+import org.onap.aai.domain.yang.v19.SliceProfile
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.Relationships
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
-import org.onap.logging.filter.base.ONAPComponents
 import org.onap.so.bpmn.common.scripts.ExternalAPIUtil
-import org.onap.so.bpmn.common.scripts.ExternalAPIUtilFactory
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
-import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.OofUtils
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
-import org.onap.so.serviceinstancebeans.RequestDetails
 
 import javax.ws.rs.core.Response
 
 import static org.junit.Assert.assertNotNull
 import static org.junit.Assert.assertTrue
+import static org.mockito.ArgumentMatchers.any
 import static org.mockito.Mockito.*
 
 class DoDeallocateCoreNSSITest extends MsoGroovyTest {
@@ -114,11 +113,6 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
         when(spy.encryptBasicAuth("mso.oof.auth", "mso.msoKey")).thenReturn("auth-value")
 
         String authHeaderResponse =  "auth-header"
-
-      /*  String authHeaderResponse =  "{\n" +
-                " \"errorCode\": \"401\",\n" +
-                " \"errorMessage\": \"Bad request\"\n" +
-                "}" */
 
         when(spy.getAuthHeader(mockExecution, "auth-value", "mso.msoKey")).thenReturn(authHeaderResponse)
 
@@ -209,60 +203,32 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
 
         currentNSSI.put("networkServiceInstance", networkServiceInstance)
 
-        when(mockExecution.getVariable("mso.infra.endpoint.url")).thenReturn("http://mso.onap:8088")
-        when(mockExecution.getVariable("mso.msoKey")).thenReturn("mso.msoKey")
-        when(mockExecution.getVariable("mso.infra.endpoint.auth")).thenReturn("mso.infra.endpoint.auth")
+        String externalAPIURL = "https://nbi.onap:8443/nbi/api/v4/serviceOrder"
+        when(mockExecution.getVariable("ExternalAPIURL")).thenReturn(externalAPIURL)
 
         DoDeallocateCoreNSSI spy = spy(DoDeallocateCoreNSSI.class)
         when(spy.getAAIClient()).thenReturn(client)
 
-        GenericVnf genericVnf = new GenericVnf()
-        genericVnf.setServiceId("service-id")
-        genericVnf.setVnfName("vnf-name")
-        genericVnf.setModelInvariantId("model-invariant-id")
-        genericVnf.setModelCustomizationId("model-customization-id")
-        genericVnf.setVnfName("vnf-name")
-        genericVnf.setVnfId("vnf-id")
+        String serviceOrderRequest = ""
 
+        when(mockExecution.getVariable("serviceOrderRequest")).thenReturn(serviceOrderRequest)
 
-        currentNSSI.put("constituteVnf", genericVnf)
-
-        String urlString = String.format("http://mso.onap:8088/serviceInstantiation/v7/serviceInstances/%s/vnfs/%s", networkServiceInstance.getServiceInstanceId(), genericVnf.getVnfId())
-
-        RequestDetails requestDetails = new RequestDetails()
-        ObjectMapper mapper = new ObjectMapper()
-        String requestDetailsStr = mapper.writeValueAsString(requestDetails)
-
-        when(spy.prepareRequestDetails(mockExecution)).thenReturn(requestDetailsStr)
-
-        MsoUtils msoUtilsMock = mock(MsoUtils.class)
-        String basicAuth = "basicAuth"
-        when(msoUtilsMock.getBasicAuth(anyString(), anyString())).thenReturn(basicAuth)
-
-        HttpClientFactory httpClientFactoryMock = mock(HttpClientFactory.class)
-        when(spy.getHttpClientFactory()).thenReturn(httpClientFactoryMock)
         Response responseMock = mock(Response.class)
 
-        HttpClient httpClientMock = mock(HttpClient.class)
-
-        when(httpClientFactoryMock.newJsonClient(any(), any())).thenReturn(httpClientMock)
-
-        when(httpClientMock.delete(requestDetailsStr)).thenReturn(responseMock)
+        ExternalAPIUtil externalAPIUtil = mock(ExternalAPIUtil.class)
+        when(spy.getExternalAPIUtil()).thenReturn(externalAPIUtil)
+        when(externalAPIUtil.executeExternalAPIPostCall(mockExecution, externalAPIURL, serviceOrderRequest)).thenReturn(responseMock)
 
         when(responseMock.getStatus()).thenReturn(200)
-        when(responseMock.hasEntity()).thenReturn(true)
 
-        String macroOperationId = "request-id"
-        String requestSelfLink = "request-self-link"
-        String entity = "{\"requestReferences\":{\"requestId\": \"${macroOperationId}\",\"requestSelfLink\":\"${requestSelfLink}\"}}"
+        String id = UUID.randomUUID().toString()
+        String entity = "{\"id\":\"${id}\"}"
         when(responseMock.readEntity(String.class)).thenReturn(entity)
 
         spy.deleteServiceOrder(mockExecution)
 
-        Mockito.verify(mockExecution,times(1)).setVariable("macroOperationId", macroOperationId)
-        Mockito.verify(mockExecution,times(1)).setVariable("requestSelfLink", requestSelfLink)
+        verify(mockExecution,times(1)).setVariable("ServiceOrderId", id)
 
-        assertTrue(currentNSSI['requestSelfLink'].equals(requestSelfLink))
     }
 
 
@@ -436,49 +402,44 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
     @Test
     void testDeleteServiceOrderProgressCompleted() {
 
-        executeDeleteServiceOrderProgress("COMPLETE")
+        executeDeleteServiceOrderProgress("COMPLETED")
         Mockito.verify(mockExecution,times(1)).setVariable("deleteStatus", "completed")
     }
 
 
     void executeDeleteServiceOrderProgress(String state) {
         def currentNSSI = [:]
+        currentNSSI.put("nssiId","5G-999")
+
+        ServiceInstance networkServiceInstance = new ServiceInstance()
+        networkServiceInstance.setServiceInstanceId("NS-777")
+        networkServiceInstance.setServiceRole("Network Service")
 
         when(mockExecution.getVariable("currentNSSI")).thenReturn(currentNSSI)
 
-        String url = "http://nbi.onap:8088/api/v4/serviceOrder/NS-777"
+        currentNSSI.put("networkServiceInstance", networkServiceInstance)
 
-        currentNSSI['requestSelfLink'] =  url
+        String serviceOrder = UUID.randomUUID().toString()
+
+        when(mockExecution.getVariable("ServiceOrderId")).thenReturn(serviceOrder)
+
+        String externalAPIURL = "https://nbi.onap:8443/nbi/api/v4/serviceOrder"
+        when(mockExecution.getVariable("ExternalAPIURL")).thenReturn(externalAPIURL)
 
         DoDeallocateCoreNSSI spy = spy(DoDeallocateCoreNSSI.class)
 
-        /*ExternalAPIUtilFactory externalAPIUtilFactoryMock = mock(ExternalAPIUtilFactory.class)
-        when(spy.getExternalAPIUtilFactory()).thenReturn(externalAPIUtilFactoryMock)
-
-        ExternalAPIUtil externalAPIUtilMock = mock(ExternalAPIUtil.class)
-
-        when(externalAPIUtilFactoryMock.create()).thenReturn(externalAPIUtilMock) */
-
-        MsoUtils msoUtilsMock = mock(MsoUtils.class)
-        String basicAuth = "basicAuth"
-        when(msoUtilsMock.getBasicAuth(anyString(), anyString())).thenReturn(basicAuth)
-
-        HttpClientFactory httpClientFactoryMock = mock(HttpClientFactory.class)
-        when(spy.getHttpClientFactory()).thenReturn(httpClientFactoryMock)
         Response responseMock = mock(Response.class)
 
-        HttpClient httpClientMock = mock(HttpClient.class)
+        ExternalAPIUtil externalAPIUtil = mock(ExternalAPIUtil.class)
+        when(spy.getExternalAPIUtil()).thenReturn(externalAPIUtil)
 
-
-        when(httpClientFactoryMock.newJsonClient(any(), any())).thenReturn(httpClientMock)
-
-        when(httpClientMock.get()).thenReturn(responseMock)
-//        when(externalAPIUtilMock.executeExternalAPIGetCall(mockExecution, url)).thenReturn(responseMock)
+        externalAPIURL += "/" + serviceOrder
+        when(externalAPIUtil.executeExternalAPIGetCall(mockExecution, externalAPIURL)).thenReturn(responseMock)
 
         when(responseMock.getStatus()).thenReturn(200)
-        when(responseMock.hasEntity()).thenReturn(true)
 
-        String entity = "{\"request\":{\"requestStatus\":{\"requestState\":\"${state}\"}},\"state\":\"ACCEPTED\"}"
+        String id = UUID.randomUUID().toString()
+        String entity = "{\"state\":\"ACCEPTED\",\"orderItem\":[{\"state\":\"${state}\",\"service\":{\"id\":\"${id}\"}}]}"
         when(responseMock.readEntity(String.class)).thenReturn(entity)
 
         spy.getDeleteServiceOrderProgress(mockExecution)
