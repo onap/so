@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c8a0099c_aa2ba0cc",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/composition/ChildServiceRequestBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2022-03-29T11:27:16Z",
+      "side": 1,
+      "message": "This is a builder, it should not do make rest calls. Do the restcall and then pass input to a new getInstance method",
+      "revId": "096293cd5d575270037044be3ca2ba3e2057ec40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0e375b5b_97905da9",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/composition/DeleteChildServiceBB.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2022-03-29T11:27:16Z",
+      "side": 1,
+      "message": "Return value is not used",
+      "revId": "096293cd5d575270037044be3ca2ba3e2057ec40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b9dfd51_b5fd8664",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/composition/DeleteChildServiceBB.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2022-03-29T11:27:16Z",
+      "side": 1,
+      "message": "Sending Delete Service Request",
+      "revId": "096293cd5d575270037044be3ca2ba3e2057ec40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bbe59e0e_fa798541",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ebb/loader/ServiceEBBLoader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2022-03-29T11:27:16Z",
+      "side": 1,
+      "message": "This needs a unit test",
+      "revId": "096293cd5d575270037044be3ca2ba3e2057ec40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c55b6e85_4695845c",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ebb/loader/ServiceEBBLoader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2022-03-29T11:27:16Z",
+      "side": 1,
+      "message": "I don\u0027t think you need stream().forEach, you could call forEach directly on the list. Same for the other ones below",
+      "revId": "096293cd5d575270037044be3ca2ba3e2057ec40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f6ed7b54_17f9b53b",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/service/composition/ChildServiceRequestBuilderTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2022-03-29T11:27:16Z",
+      "side": 1,
+      "message": "Please add unit test for new logic",
+      "revId": "096293cd5d575270037044be3ca2ba3e2057ec40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
