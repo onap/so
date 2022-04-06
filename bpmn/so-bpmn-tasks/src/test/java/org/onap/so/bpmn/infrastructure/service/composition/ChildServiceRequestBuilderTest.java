@@ -6,28 +6,19 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.OwningEntity;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Project;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.*;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestParameters;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Project;
-import org.onap.so.serviceinstancebeans.CloudConfiguration;
-import org.onap.so.serviceinstancebeans.InstanceDirection;
-import org.onap.so.serviceinstancebeans.ModelInfo;
-import org.onap.so.serviceinstancebeans.ModelType;
-import org.onap.so.serviceinstancebeans.RelatedInstance;
-import org.onap.so.serviceinstancebeans.RelatedInstanceList;
-import org.onap.so.serviceinstancebeans.RequestInfo;
-import org.onap.so.serviceinstancebeans.Service;
-import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
-import org.onap.so.serviceinstancebeans.SubscriberInfo;
+import org.onap.so.serviceinstancebeans.*;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -82,10 +73,25 @@ public class ChildServiceRequestBuilderTest {
         gbb.setServiceInstance(serviceInstance);
         mockExecution = mock(BuildingBlockExecution.class);
         doReturn(gbb).when(mockExecution).getGeneralBuildingBlock();
+        doReturn("CreateChildServiceBB").when(mockExecution).getFlowToBeCalled();
     }
 
     @Test
-    public void childServiceRequestBuilderTest() {
+    public void deleteChildServiceRequestBuilderTest() {
+        Service parent = new Service();
+        Service child = new Service();
+
+        ChildServiceRequestBuilder builder = ChildServiceRequestBuilder.getInstance(mockExecution, parent, child);
+        ServiceInstancesRequest sir = builder
+                .setParentRequestId(mockExecution.getGeneralBuildingBlock().getRequestContext().getMsoRequestId())
+                .setCorrelationId(UUID.randomUUID().toString()).setChildSvcInstanceId("childInstanceId").build();
+
+        Assert.assertEquals("childInstanceId", sir.getServiceInstanceId());
+        Assert.assertEquals("serviceInstanceId", sir.getRequestDetails().getRelatedInstanceList()[0].getRelatedInstance().getInstanceId());
+    }
+
+    @Test
+    public void createChildServiceRequestBuilderTest() {
 
         ServiceInstancesRequest sir = ChildServiceRequestBuilder.getInstance(mockExecution, "service1-instanceName")
                 .setParentRequestId(mockExecution.getGeneralBuildingBlock().getRequestContext().getMsoRequestId())
@@ -198,6 +204,7 @@ public class ChildServiceRequestBuilderTest {
         gbb.setServiceInstance(serviceInstance);
         mockExecution = mock(BuildingBlockExecution.class);
         doReturn(gbb).when(mockExecution).getGeneralBuildingBlock();
+        doReturn("CreateChildServiceBB").when(mockExecution).getFlowToBeCalled();
 
         ServiceInstancesRequest sir = ChildServiceRequestBuilder
                 .getInstance(mockExecution, "service1-instanceName-child")
@@ -231,6 +238,4 @@ public class ChildServiceRequestBuilderTest {
         }
         return null;
     }
-
-
 }

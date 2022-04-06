@@ -28,34 +28,7 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
-import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.IS_CHILD_PROCESS;
-import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.PARENT_CORRELATION_ID;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.ASSIGN_INSTANCE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.CONTROLLER;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.CREATE_INSTANCE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.DELETE_INSTANCE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.FABRIC_CONFIGURATION;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.RECREATE_INSTANCE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.REPLACEINSTANCE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.REPLACEINSTANCERETAINASSIGNMENTS;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.SERVICE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.UPDATE_INSTANCE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.HEALTH_CHECK;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.WORKFLOW_ACTION_ERROR_MESSAGE;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -84,21 +57,23 @@ import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 import org.onap.so.db.catalog.client.CatalogDbClient;
-import org.onap.so.serviceinstancebeans.CloudConfiguration;
-import org.onap.so.serviceinstancebeans.ModelInfo;
-import org.onap.so.serviceinstancebeans.ModelType;
-import org.onap.so.serviceinstancebeans.RelatedInstance;
-import org.onap.so.serviceinstancebeans.RelatedInstanceList;
-import org.onap.so.serviceinstancebeans.RequestDetails;
-import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
+import org.onap.so.serviceinstancebeans.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.onap.so.serviceinstancebeans.InstanceDirection;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.IS_CHILD_PROCESS;
+import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.PARENT_CORRELATION_ID;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.*;
 
 @Component
 public class WorkflowAction {
@@ -692,11 +667,11 @@ public class WorkflowAction {
             logger.debug("{}, {}", pair.getValue0(), pair.getValue1());
         }
         Map<Resource, String> resourceInstanceIds = new HashMap<>();
-        Arrays.stream(WorkflowType.values()).filter(type -> !type.equals(WorkflowType.SERVICE))
-                .forEach(type -> resourceList.stream().filter(resource -> type.equals(resource.getResourceType()))
-                        .forEach(resource -> updateWorkflowResourceIds(flowsToExecute, type, resource,
-                                retrieveAAIResourceId(aaiResourceIds, type), null, serviceInstanceId,
-                                resourceInstanceIds)));
+        Arrays.stream(WorkflowType.values()).forEach(type -> resourceList.stream()
+                .filter(resource -> type.equals(resource.getResourceType())
+                        && !(WorkflowType.SERVICE.equals(type) && !resource.hasParent()))
+                .forEach(resource -> updateWorkflowResourceIds(flowsToExecute, type, resource,
+                        retrieveAAIResourceId(aaiResourceIds, type), null, serviceInstanceId, resourceInstanceIds)));
     }
 
     private String retrieveAAIResourceId(List<Pair<WorkflowType, String>> aaiResourceIds, WorkflowType resource) {
@@ -750,7 +725,8 @@ public class WorkflowAction {
                 }
                 if (resource.hasParent() && WorkflowType.SERVICE.equals(resourceType)
                         && WorkflowType.SERVICE.equals(parent.getResourceType())) {
-                    workflowResourceIds.setChildServiceInstanceId(resourceId);
+                    String childServiceInstanceId = resource.isGenerated() ? resourceId : resource.getResourceId();
+                    workflowResourceIds.setChildServiceInstanceId(childServiceInstanceId);
                     workflowResourceIds.setChildServiceInstanceName(resource.getInstanceName());
                 } else {
                     WorkflowResourceIdsUtils.setInstanceNameByWorkflowType(workflowResourceIds, resourceType,
