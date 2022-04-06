@@ -1,31 +1,26 @@
 package org.onap.so.bpmn.infrastructure.service.composition;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
-import org.onap.so.serviceinstancebeans.CloudConfiguration;
-import org.onap.so.serviceinstancebeans.InstanceDirection;
-import org.onap.so.serviceinstancebeans.OwningEntity;
-import org.onap.so.serviceinstancebeans.Project;
-import org.onap.so.serviceinstancebeans.RelatedInstance;
-import org.onap.so.serviceinstancebeans.RelatedInstanceList;
-import org.onap.so.serviceinstancebeans.RequestDetails;
-import org.onap.so.serviceinstancebeans.RequestInfo;
-import org.onap.so.serviceinstancebeans.Service;
-import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
-import org.onap.so.serviceinstancebeans.RequestParameters;
-import org.onap.so.serviceinstancebeans.SubscriberInfo;
+import org.onap.so.serviceinstancebeans.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Map;
 
 public class ChildServiceRequestBuilder {
 
+    private static AAIResourcesClient aaiClient = new AAIResourcesClient();
     private final BuildingBlockExecution buildingBlockExecution;
     private Service parent;
     private Service child;
     private ServiceInstancesRequest sir;
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(ChildServiceRequestBuilder.class);
 
     private ChildServiceRequestBuilder(final BuildingBlockExecution buildingBlockExecution, Service parent,
             Service child) {
@@ -62,6 +57,17 @@ public class ChildServiceRequestBuilder {
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed parsing context user parameters for parent or child service", e);
+        }
+        return new ChildServiceRequestBuilder(buildingBlockExecution, parent, child);
+    }
+
+    public static ChildServiceRequestBuilder getInstance(final BuildingBlockExecution buildingBlockExecution,
+            Service parentInstance, Service childInstance) {
+        Service child = null;
+        Service parent = null;
+        if (childInstance != null) {
+            parent = parentInstance;
+            child = childInstance;
         }
         return new ChildServiceRequestBuilder(buildingBlockExecution, parent, child);
     }
@@ -104,8 +110,11 @@ public class ChildServiceRequestBuilder {
 
     private RequestParameters createRequestParameters(RequestContext context, Service childService) {
         RequestParameters requestParameters = new RequestParameters();
-        requestParameters.getUserParams().add(context.getRequestParameters().getUserParams().get(0));
-        requestParameters.getUserParams().add(Map.of("service", childService));
+
+        if (!context.getRequestParameters().getUserParams().isEmpty()) {
+            requestParameters.getUserParams().add(context.getRequestParameters().getUserParams().get(0));
+            requestParameters.getUserParams().add(Map.of("service", childService));
+        }
         requestParameters.setSubscriptionServiceType(context.getRequestParameters().getSubscriptionServiceType());
         requestParameters.setaLaCarte(context.getRequestParameters().getALaCarte());
         requestParameters.setPayload(context.getRequestParameters().getPayload());

@@ -25,10 +25,7 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.javatuples.Pair;
-import org.onap.aai.domain.yang.GenericVnf;
-import org.onap.aai.domain.yang.Relationship;
-import org.onap.aai.domain.yang.ServiceInstance;
-import org.onap.aai.domain.yang.VpnBinding;
+import org.onap.aai.domain.yang.*;
 import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.Relationships;
@@ -58,17 +55,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.ACTIVATE_INSTANCE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.DEACTIVATE_INSTANCE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.DELETE_INSTANCE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.UNASSIGN_INSTANCE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.UPGRADE_INSTANCE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.WORKFLOW_ACTION_ERROR_MESSAGE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.CREATE_INSTANCE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.FABRIC_CONFIGURATION;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.NETWORKCOLLECTION;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.USER_PARAM_SERVICE;
-import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.ASSIGN_INSTANCE;
+import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.*;
 
 
 @Component
@@ -204,6 +191,7 @@ public class ServiceEBBLoader {
                     new Resource(WorkflowType.SERVICE, serviceInstanceMSO.getServiceInstanceId(), false, null);
             serviceResource.setModelInvariantId(serviceInstanceAAI.getModelInvariantId());
             resourceList.add(serviceResource);
+            traverseServiceInstanceChildService(resourceList, serviceResource, serviceInstanceAAI);
             traverseServiceInstanceMSOVnfs(resourceList, serviceResource, aaiResourceIds, serviceInstanceMSO);
             traverseServiceInstanceMSOPnfs(resourceList, serviceResource, aaiResourceIds, serviceInstanceMSO);
             if (serviceInstanceMSO.getNetworks() != null) {
@@ -278,6 +266,52 @@ public class ServiceEBBLoader {
             aaiResourceIds.add(new Pair<>(WorkflowType.PNF, pnf.getPnfId()));
             resourceList.add(new Resource(WorkflowType.PNF, pnf.getPnfId(), false, serviceResource));
         }
+    }
+
+    public void traverseServiceInstanceChildService(List<Resource> resourceList, Resource serviceResource,
+            ServiceInstance serviceInstanceAAI) {
+
+        ComposedResources composedResources = serviceInstanceAAI.getComposedResources();
+        if (composedResources == null) {
+            return;
+        }
+
+        List<ComposedResource> listOfComposedResource = composedResources.getComposedResource();
+
+        listOfComposedResource.forEach(composedResource -> {
+            // Get ServiceInstance from composedResource relationship List
+
+            List<Relationship> composedResourceRelationshipList =
+                    composedResource.getRelationshipList().getRelationship();
+            ServiceInstance childService = new ServiceInstance();
+            composedResourceRelationshipList.forEach(composedRelation -> {
+                if ("service-instance".equalsIgnoreCase(composedRelation.getRelatedTo())) {
+                    List<RelationshipData> rData = composedRelation.getRelationshipData();
+                    rData.forEach(data -> {
+                        if ("service-instance.service-instance-id".equalsIgnoreCase(data.getRelationshipKey())) {
+                            childService.setServiceInstanceId(data.getRelationshipValue());
+                        }
+                    });
+                    composedRelation.getRelatedToProperty().forEach(relatedToProperty -> {
+                        if ("service-instance.service-instance-name"
+                                .equalsIgnoreCase(relatedToProperty.getPropertyKey())) {
+                            childService.setServiceInstanceName(relatedToProperty.getPropertyValue());
+                        }
+                    });
+                }
+            });
+
+            if (childService.getServiceInstanceId() == null) {
+                return;
+            }
+
+            Resource childServiceResource =
+                    new Resource(WorkflowType.SERVICE, childService.getServiceInstanceId(), false, serviceResource);
+
+            childServiceResource.setInstanceName(childService.getServiceInstanceName());
+            resourceList.add(childServiceResource);
+        });
+
     }
 
     protected void traverseVrfConfiguration(List<Pair<WorkflowType, String>> aaiResourceIds,
