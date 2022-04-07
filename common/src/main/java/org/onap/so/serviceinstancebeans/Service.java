@@ -42,7 +42,7 @@ public class Service implements Serializable {
     @JsonProperty("instanceName")
     protected String instanceName;
     @JsonProperty("instanceParams")
-    private List<Map<String, String>> instanceParams = new ArrayList<>();
+    private List<Map<String, Object>> instanceParams = new ArrayList<>();
     @JsonProperty("resources")
     protected Resources resources;
 
@@ -70,11 +70,11 @@ public class Service implements Serializable {
         this.instanceName = instanceName;
     }
 
-    public List<Map<String, String>> getInstanceParams() {
+    public List<Map<String, Object>> getInstanceParams() {
         return instanceParams;
     }
 
-    public void setInstanceParams(List<Map<String, String>> instanceParams) {
+    public void setInstanceParams(List<Map<String, Object>> instanceParams) {
         this.instanceParams = instanceParams;
     }
 

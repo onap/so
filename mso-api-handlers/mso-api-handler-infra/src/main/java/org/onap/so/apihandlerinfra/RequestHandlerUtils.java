@@ -33,7 +33,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -841,7 +844,11 @@ public class RequestHandlerUtils extends AbstractRestHandler {
             if (params.containsKey("service")) {
                 Service service = serviceMapper(params);
 
-                addUserParams(userParams, service.getInstanceParams());
+                // Filter out non-string params for backward compatibility
+                Map<String, String> svcStrParams = service.getInstanceParams().stream().map(Map::entrySet)
+                        .flatMap(Set::stream).filter(e -> e.getValue() instanceof String)
+                        .collect(Collectors.toMap(Entry::getKey, e -> (String) e.getValue()));
+                userParams.putAll(svcStrParams);
 
                 for (Networks network : service.getResources().getNetworks()) {
                     addUserParams(userParams, network.getInstanceParams());

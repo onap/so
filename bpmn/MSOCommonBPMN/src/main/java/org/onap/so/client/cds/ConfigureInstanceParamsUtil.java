@@ -20,15 +20,23 @@
 
 package org.onap.so.client.cds;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import java.util.List;
 import java.util.Map;
 
 public final class ConfigureInstanceParamsUtil {
 
+    private static final Gson gson = new Gson();
+
     public static void applyParamsToObject(List<Map<String, String>> instanceParamsList, JsonObject jsonObject) {
         instanceParamsList.stream().flatMap(instanceParamsMap -> instanceParamsMap.entrySet().stream())
                 .forEachOrdered(entry -> jsonObject.addProperty(entry.getKey(), entry.getValue()));
+    }
+
+    public static void applyJsonParamsToObject(List<Map<String, Object>> instanceParamsList, JsonObject jsonObject) {
+        instanceParamsList.stream().flatMap(instanceParamsMap -> instanceParamsMap.entrySet().stream())
+                .forEachOrdered(entry -> jsonObject.add(entry.getKey(), gson.toJsonTree(entry.getValue())));
     }
 
 }
