@@ -20,7 +20,7 @@
 
 package org.onap.so.client.cds;
 
-import static org.onap.so.client.cds.ConfigureInstanceParamsUtil.applyParamsToObject;
+import static org.onap.so.client.cds.ConfigureInstanceParamsUtil.applyJsonParamsToObject;
 import com.google.gson.JsonObject;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +49,7 @@ public class ConfigureInstanceParamsForService {
             Optional<Service> service =
                     extractServiceFromUserParameters.getServiceFromRequestUserParams(userParamsFromRequest);
 
-            service.map(Service::getInstanceParams).ifPresent(p -> applyParamsToObject(p, jsonObject));
+            service.map(Service::getInstanceParams).ifPresent(p -> applyJsonParamsToObject(p, jsonObject));
         } catch (Exception e) {
             throw new PayloadGenerationException("Failed to resolve instance parameters", e);
         }
