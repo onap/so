@@ -35,6 +35,7 @@ package org.onap.so.heatbridge.utils;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -71,6 +72,9 @@ public final class HeatBridgeUtils {
     }
 
     public static List<String> extractPciIdsFromVServer(Vserver vserver) {
+        if (vserver.getLInterfaces() == null) {
+            return Collections.emptyList();
+        }
         return vserver.getLInterfaces().getLInterface().stream()
                 .filter(lInterface -> lInterface.getSriovVfs() != null
                         && CollectionUtils.isNotEmpty(lInterface.getSriovVfs().getSriovVf()))
