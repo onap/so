@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "69450fca_3c228393",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/composition/ChildServiceRequestBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 7947
+      },
+      "writtenOn": "2022-04-13T04:49:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c8a0099c_aa2ba0cc",
+      "revId": "096293cd5d575270037044be3ca2ba3e2057ec40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0e375b5b_97905da9",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/composition/DeleteChildServiceBB.java",
         "patchSetId": 1
@@ -33,6 +51,24 @@
       "revId": "096293cd5d575270037044be3ca2ba3e2057ec40",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9eec150f_831182b3",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/composition/DeleteChildServiceBB.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 7947
+      },
+      "writtenOn": "2022-04-13T04:49:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0e375b5b_97905da9",
+      "revId": "096293cd5d575270037044be3ca2ba3e2057ec40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "ebee6838_e324963a",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/composition/DeleteChildServiceBB.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 7947
+      },
+      "writtenOn": "2022-04-13T04:49:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2b9dfd51_b5fd8664",
+      "revId": "096293cd5d575270037044be3ca2ba3e2057ec40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bbe59e0e_fa798541",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ebb/loader/ServiceEBBLoader.java",
         "patchSetId": 1
@@ -67,6 +121,24 @@
       "revId": "096293cd5d575270037044be3ca2ba3e2057ec40",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e3172752_12a66cc4",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ebb/loader/ServiceEBBLoader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 7947
+      },
+      "writtenOn": "2022-04-13T04:49:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bbe59e0e_fa798541",
+      "revId": "096293cd5d575270037044be3ca2ba3e2057ec40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -87,6 +159,42 @@
     },
     {
       "key": {
+        "uuid": "24202726_0b6afe96",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ebb/loader/ServiceEBBLoader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 7947
+      },
+      "writtenOn": "2022-04-13T04:49:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c55b6e85_4695845c",
+      "revId": "096293cd5d575270037044be3ca2ba3e2057ec40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e30ce55b_f502b231",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ebb/loader/ServiceEBBLoader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 7947
+      },
+      "writtenOn": "2022-04-13T04:49:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c55b6e85_4695845c",
+      "revId": "096293cd5d575270037044be3ca2ba3e2057ec40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f6ed7b54_17f9b53b",
         "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/service/composition/ChildServiceRequestBuilderTest.java",
         "patchSetId": 1
@@ -101,6 +209,24 @@
       "revId": "096293cd5d575270037044be3ca2ba3e2057ec40",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "278f4acd_4ceb6f25",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/service/composition/ChildServiceRequestBuilderTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 7947
+      },
+      "writtenOn": "2022-04-13T04:49:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f6ed7b54_17f9b53b",
+      "revId": "096293cd5d575270037044be3ca2ba3e2057ec40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
