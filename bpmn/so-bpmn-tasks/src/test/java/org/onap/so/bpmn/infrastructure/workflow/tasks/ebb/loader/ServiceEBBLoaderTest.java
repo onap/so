@@ -32,9 +32,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
-import org.onap.aai.domain.yang.Relationship;
-import org.onap.aai.domain.yang.RelationshipList;
-import org.onap.aai.domain.yang.ServiceInstance;
+import org.onap.aai.domain.yang.*;
 import org.onap.aaiclient.client.aai.entities.Relationships;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.Resource;
@@ -46,14 +44,9 @@ import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetup;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.AAIConfigurationResources;
-import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
-import org.onap.so.db.catalog.beans.Service;
-import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
-import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
-import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
-import org.onap.so.db.catalog.beans.CollectionResource;
-import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
 import org.onap.so.db.catalog.beans.InstanceGroup;
+import org.onap.so.db.catalog.beans.Service;
+import org.onap.so.db.catalog.beans.*;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.serviceinstancebeans.RelatedInstance;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
@@ -64,18 +57,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyList;
-import static org.mockito.Mockito.anyString;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class ServiceEBBLoaderTest extends BaseTaskTest {
 
@@ -363,5 +346,57 @@ public class ServiceEBBLoaderTest extends BaseTaskTest {
         resourceList.add(new Resource(WorkflowType.VFMODULE, "3c40d244-808e-42ca-b09a-256d83d19d0a", false, r2));
         resourceList.add(new Resource(WorkflowType.VFMODULE, "72d9d1cd-f46d-447a-abdb-451d6fb05fa8", false, r2));
         return resourceList;
+    }
+
+    @Test
+    public void traverseServiceInstanceChildServiceTest() {
+        List<Resource> resourceList = new ArrayList<>();
+        Resource parentResource = new Resource(WorkflowType.SERVICE, "parentId", false, null);
+        String resourceId = "siP";
+        ServiceInstance serviceInstanceAAI = new ServiceInstance();
+        serviceInstanceAAI.setServiceInstanceId(resourceId);
+
+        RelationshipData relationshipData = new RelationshipData();
+        relationshipData.setRelationshipKey("service-instance.service-instance-id");
+        relationshipData.setRelationshipValue("80ced9d5-666e-406b-88f0-a05d31328b70");
+        RelatedToProperty relatedToProperty = new RelatedToProperty();
+        relatedToProperty.setPropertyKey("service-instance.service-instance-name");
+        relatedToProperty.setPropertyValue("child_euler_002");
+
+        RelationshipData relationshipData1 = new RelationshipData();
+        relationshipData1.setRelationshipKey("service-instance.service-instance-id");
+        relationshipData1.setRelationshipValue("fa5640af-c827-4372-baae-7f1c50fdb5ed");
+        RelatedToProperty relatedToProperty1 = new RelatedToProperty();
+        relatedToProperty1.setPropertyKey("service-instance.service-instance-name");
+        relatedToProperty.setPropertyValue("child_euler_001");
+
+
+        Relationship relationship = new Relationship();
+        Relationship relationship1 = new Relationship();
+        relationship.setRelatedTo("service-instance");
+        relationship1.setRelatedTo("service-instance");
+        relationship.getRelationshipData().add(relationshipData);
+        relationship.getRelatedToProperty().add(relatedToProperty);
+        relationship1.getRelationshipData().add(relationshipData1);
+        relationship1.getRelatedToProperty().add(relatedToProperty1);
+
+        RelationshipList relationshipList = new RelationshipList();
+        RelationshipList relationshipList1 = new RelationshipList();
+        relationshipList.getRelationship().add(relationship);
+        relationshipList1.getRelationship().add(relationship1);
+
+        ComposedResource composedResource = new ComposedResource();
+        composedResource.setRelationshipList(relationshipList);
+        ComposedResource composedResource1 = new ComposedResource();
+        composedResource1.setRelationshipList(relationshipList);
+
+        ComposedResources composedResources = new ComposedResources();
+        composedResources.getComposedResource().add(composedResource);
+        composedResources.getComposedResource().add(composedResource1);
+
+        serviceInstanceAAI.setComposedResources(composedResources);
+
+        serviceEBBLoader.traverseServiceInstanceChildService(resourceList, parentResource, serviceInstanceAAI);
+        assertEquals(2, resourceList.size());
     }
 }
