@@ -111,8 +111,19 @@ SO Sub-Components
    * Tracking capability which VNFM instance has handled with which VNF instance
    * BPMN Building Block workflows and Java-based recipes for VNF LCM
    * VNFM Simulator for validating SO VNFM Adapter NBI and SBI for integration testing
+   * SO ETSI VNF LCM Setup and Functionality, https://docs.onap.org/projects/onap-so/en/istanbul/developer_info/ETSI_VNF_LCM_Setup_Guide.html?highlight=nfvo
    * The SO ETSI CSIT Tests and running them, https://wiki.onap.org/display/DW/SO+ETSI+CSIT
    * Testing the SO ETSI Alignment manually (Instantiate VNF using SVNFM), https://wiki.onap.org/pages/viewpage.action?pageId=68524128
+
+**SO ETSI NFVO**
+
+  Support ETSI NFVO functions which manages Network Service LCM
+   * Create, Instantiate, Terminate and Delete NS
+   * Decomposing an NS request into associated VNF request(s) and managing VNF LCM through SO VNFMN Adapter
+   * Leveraging SOL005 for its NBI and SOl003 for its SBI
+   * BPMN Building Block workflows and Java-based recipes for NS LCM
+   * ETSI NFVO Network Service LCM Setup and Functionality, https://docs.onap.org/projects/onap-so/en/istanbul/developer_info/ETSI_NFVO_Network_Service_LCM_Setup_Guide.html?highlight=nfvo
+   * The SO ETSI CSIT Tests and running them, https://wiki.onap.org/pages/viewpage.action?pageId=128720079
 
 Third Party and Open Source
 ---------------------------
