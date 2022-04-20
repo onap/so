@@ -9,6 +9,123 @@ Service Orchestrator Release Notes
 
 The SO provides the highest level of service orchestration in the ONAP architecture. 
 
+=============
+Release Notes
+=============
+
+Version: 1.10.0
+==============
+
+    :Release Date: 2021-10-14
+
+SO Release Image Versions
+--------------------------
+ - so-bpmn-infra
+
+    :Version: 1.10.0
+
+ - so-catalog-db-adapter
+
+    :Version: 1.10.0
+
+ - so-admin-cockpit
+
+    :Version: 1.8.3
+
+ - so-nssmf-adapter
+
+    :Version: 1.9.1
+
+ - so-openstack-adapter
+
+    :Version: 1.10.0
+
+ - so-request-db-adapter
+
+    :Version: 1.10.0
+
+ - so-sdc-controller
+
+    :Version: 1.10.0
+
+ - so-sdnc-adapter
+
+    :Version: 1.10.0
+
+ - so-sol003-adapter
+
+    :Version: 1.8.2
+
+ - so-api-handler-infra
+
+    :Version: 1.10.0
+
+ - so-etsi-nfvo-ns-lcm
+
+    :Version: 1.8.2
+
+ - so-oof-adapter
+
+    :Version: 1.8.3
+
+ - so-cnf-adapter
+
+    :Version: 1.10.0
+
+Release Purpose
+----------------
+SO Jakarta Release.
+
+TBD
+
+**Epics**
+
+*  `REQ-890 <https://jira.onap.org/browse/REQ-890>`_ - ONAP CNF orchestration - Jakarta Enhancements
+*  `REQ-1041 <https://jira.onap.org/browse/REQ-1041>`_ - VNF LCM Support in SO
+
+
+**Stories**
+
+The full list of implemented tasks is available on `JIRA Jakarta STORY <https://jira.onap.org/issues/?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20story%20AND%20fixVersion%20%3D%20%22jakarta%20Release%22>`_
+
+
+**Tasks**
+
+The full list of implemented tasks is available on `JIRA Jakarta TASKS <https://jira.onap.org/issues/?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20Task%20AND%20fixVersion%20%3D%20%22jakarta%20Release%22>`_
+
+**Bug Fixes**
+
+The full list of fixed bugs is available on `JIRA Jakarta BUGS 
+<https://jira.onap.org/issues/?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20Bug%20AND%20fixVersion%20%3D%20%22jakarta%20Release%22>`_
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+TBD
+
+Quick Links:
+
+- `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1702>`__
+
+**Known Issues**
+
+TBD
+
+**Upgrade Notes**
+
+	N/A
+
+**Deprecation Notes**
+
+	SO modules Ve-Vnfm-adapter and appc-orchestrator are deprectaed for the Istanbul release.
+
+**Other**
+
+	N/A
+***************************************************************************************
 
 =============
 Release Notes
