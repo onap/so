@@ -115,6 +115,7 @@ public class UserParamsServiceTraversal {
         for (Service childService : validate.getResources().getServices()) {
             Resource childServiceResource = new Resource(WorkflowType.SERVICE,
                     childService.getModelInfo().getModelVersionId(), false, serviceResource);
+            childServiceResource.setProcessingPriority(childService.getProcessingPriority());
             childServiceResource.setInstanceName(childService.getInstanceName());
             resourceList.add(childServiceResource);
         }
