@@ -82,10 +82,26 @@ public class ChildServiceRequestBuilderTest {
         gbb.setServiceInstance(serviceInstance);
         mockExecution = mock(BuildingBlockExecution.class);
         doReturn(gbb).when(mockExecution).getGeneralBuildingBlock();
+        doReturn("CreateChildServiceBB").when(mockExecution).getFlowToBeCalled();
     }
 
     @Test
-    public void childServiceRequestBuilderTest() {
+    public void deleteChildServiceRequestBuilderTest() {
+        Service parent = new Service();
+        Service child = new Service();
+
+        ChildServiceRequestBuilder builder = ChildServiceRequestBuilder.getInstance(mockExecution, parent, child);
+        ServiceInstancesRequest sir = builder
+                .setParentRequestId(mockExecution.getGeneralBuildingBlock().getRequestContext().getMsoRequestId())
+                .setCorrelationId(UUID.randomUUID().toString()).setChildSvcInstanceId("childInstanceId").build();
+
+        Assert.assertEquals("childInstanceId", sir.getServiceInstanceId());
+        Assert.assertEquals("serviceInstanceId",
+                sir.getRequestDetails().getRelatedInstanceList()[0].getRelatedInstance().getInstanceId());
+    }
+
+    @Test
+    public void createChildServiceRequestBuilderTest() {
 
         ServiceInstancesRequest sir = ChildServiceRequestBuilder.getInstance(mockExecution, "service1-instanceName")
                 .setParentRequestId(mockExecution.getGeneralBuildingBlock().getRequestContext().getMsoRequestId())
@@ -198,6 +214,7 @@ public class ChildServiceRequestBuilderTest {
         gbb.setServiceInstance(serviceInstance);
         mockExecution = mock(BuildingBlockExecution.class);
         doReturn(gbb).when(mockExecution).getGeneralBuildingBlock();
+        doReturn("CreateChildServiceBB").when(mockExecution).getFlowToBeCalled();
 
         ServiceInstancesRequest sir = ChildServiceRequestBuilder
                 .getInstance(mockExecution, "service1-instanceName-child")
@@ -231,6 +248,4 @@ public class ChildServiceRequestBuilderTest {
         }
         return null;
     }
-
-
 }
