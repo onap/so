@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2f4555cd_c659c76b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/composition/ChildServiceRequestBuilder.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2022-04-22T22:10:33Z",
+      "side": 1,
+      "message": "No wildcard imports.\nhttps://wiki.onap.org/display/DW/Java+code+style",
+      "revId": "4d4b1a9e5b58e9715b9d07bdd785a73f784df723",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b541691e_ac717e16",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/composition/ChildServiceRequestBuilder.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2022-04-22T22:10:33Z",
+      "side": 1,
+      "message": "If it\u0027s used anymore, please remove",
+      "revId": "4d4b1a9e5b58e9715b9d07bdd785a73f784df723",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "49755f48_c8349990",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/composition/ChildServiceRequestBuilder.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2022-04-22T22:10:33Z",
+      "side": 1,
+      "message": "What is the use-case for childInstance \u003d\u003d null ?",
+      "revId": "4d4b1a9e5b58e9715b9d07bdd785a73f784df723",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ce7b2f95_237a4900",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/composition/DeleteChildServiceBB.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2022-04-22T22:10:33Z",
+      "side": 1,
+      "message": "Duplicate variable declaration",
+      "revId": "4d4b1a9e5b58e9715b9d07bdd785a73f784df723",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "03ecaa01_862996a4",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/service/composition/DeleteChildServiceBB.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2022-04-22T22:10:33Z",
+      "side": 1,
+      "message": "orElse(null) - this will cause NullPointerException in serviceInstanceToServiceBeanMapper.\n \nIf the AAI call fails, we should call exceptionBuilder.buildAndThrowWorkflowException to trigger error handling, otherwise the process will just get stuck at this point.",
+      "revId": "4d4b1a9e5b58e9715b9d07bdd785a73f784df723",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
