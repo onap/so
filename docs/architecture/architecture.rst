@@ -9,7 +9,7 @@ SO - Architecture
 SO Functional View
 ------------------
 
-.. image:: ../images/SO_Architecture_1.png
+.. image:: ../images/SO_Architecture_2.png
 
 SO Deployment View
 --------------------
@@ -110,9 +110,22 @@ SO Sub-Components
    * Create, Instantiate, Terminate and Delete VNF, including Granting, Subscription and Lifecycle Notifications
    * Tracking capability which VNFM instance has handled with which VNF instance
    * BPMN Building Block workflows and Java-based recipes for VNF LCM
+   * Conformance of SOL001 VNFD and SOL004 VNF package specifications
+   * Interfacing with the ETSI Catalog Manager (a.k.a. etsicatalog) for retrieving ETSI VNF descriptors and artifacts
    * VNFM Simulator for validating SO VNFM Adapter NBI and SBI for integration testing
-   * The SO ETSI CSIT Tests and running them, https://wiki.onap.org/display/DW/SO+ETSI+CSIT
-   * Testing the SO ETSI Alignment manually (Instantiate VNF using SVNFM), https://wiki.onap.org/pages/viewpage.action?pageId=68524128
+
+.. image:: ../images/SO-SOL003-Adapter-Architecture-1.png
+
+**SO ETSI NFVO**
+
+  Support ETSI NFVO functions which manages Network Service LCM
+   * Create, Instantiate, Terminate and Delete NS
+   * Decomposing an NS request into associated VNF request(s) and managing VNF LCM (Create, Instantiate, Terminate, Delete VNF) through SO VNFMN Adapter
+   * Leveraging SOL005 for its NBI and SOl003 for its SBI
+   * Conformance of SOL001 NSD and SOL007 NS package specifications
+   * Interfacing with the ETSI Catalog Manager (a.k.a. etsicatalog) for retrieving ETSI NS descriptors and artifacts
+
+.. image:: ../images/SO-NFVO-Architecture-1.png
 
 Third Party and Open Source
 ---------------------------
