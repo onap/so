@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e42030f5_198400c9",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/ebb/loader/ServiceEBBLoader.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2022-04-22T22:38:01Z",
+      "side": 1,
+      "message": "This should be filtered to only apply for composed resources that have relationships. \n\nIf you delete the child service manually, and then try to delete the parent service this will fail a few lines below \n\njava.lang.NullPointerException: null\n\tat org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader.ServiceEBBLoader.lambda$traverseServiceInstanceChildService$5(ServiceEBBLoader.java:295)\n\nThis happens because the parent still has a composed resource, but the child service is gone and also its relationship to the composed resource. In other words, the presence of a composed resource does not guarantee the presence of a child service",
+      "revId": "698a904ea9589c34f02a61ea6bee888fc2176061",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
