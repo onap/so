@@ -327,7 +327,7 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 			result.setExpDataRateDL(profile.get("expDataRateDL"))
 			result.setExpDataRateUL(profile.get("expDataRateUL"))
 			result.setSurvivalTime(profile.get("survivalTime"))
-			result.setMaxNumberOfPDUSession(profile.get("maxNumberOfPDUSession")) 
+			result.setMaxNumberOfPDUSession(profile.get("maxNumberofPDUSession"))
 			result.setAreaTrafficCapDL(profile.get("areaTrafficCapDL"))
 			result.setAreaTrafficCapUL(profile.get("areaTrafficCapUL"))
 			result.setOverallUserDensity(profile.get("overallUserDensity")) 

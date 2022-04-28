@@ -40,6 +40,7 @@ import org.onap.so.beans.nsmf.DeAllocateNssi
 import org.onap.so.beans.nsmf.EsrInfo
 import org.onap.so.beans.nsmf.NetworkType
 import org.onap.so.beans.nsmf.ServiceInfo
+import org.onap.so.beans.nsmf.oof.SubnetType
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.NssmfAdapterUtils
@@ -333,9 +334,9 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		logger.debug("Generated new job for Service Instance serviceId:" + serviceId + " operationId:" + modificationJobId)
 
 		ResourceOperationStatus initStatus = new ResourceOperationStatus()
-		initStatus.setServiceId(serviceId)
+		initStatus.setServiceId(nsiId)
 		initStatus.setOperationId(modificationJobId)
-		initStatus.setResourceTemplateUUID(nsiId)
+		initStatus.setResourceTemplateUUID(serviceId)
 		initStatus.setOperType("Modify-Deallocate")
 		requestDBUtil.prepareInitResourceOperationStatus(execution, initStatus)
 
@@ -347,13 +348,18 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		String responseId = "1"
 		String globalSubscriberId = execution.getVariable("globalSubscriberId")
 		String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+		String anNssiId = execution.getVariable("anNssiId")
 
                 JsonObject esrInfo = new JsonObject()
                 esrInfo.addProperty("networkType", networkType)
                 esrInfo.addProperty("vendor", "ONAP_internal")
 
                 JsonObject serviceInfo = new JsonObject()
-                serviceInfo.addProperty("nsiId", execution.getVariable("nsiId"))
+                if (networkType.equals(SubnetType.AN.getSubnetType())) {
+                    serviceInfo.addProperty("nsiId", execution.getVariable("nsiId"))
+                } else {
+                    serviceInfo.addProperty("nsiId", anNssiId)
+                }
 		serviceInfo.addProperty("nssiId", instanceId)
                 serviceInfo.addProperty("globalSubscriberId", globalSubscriberId)
 		serviceInfo.addProperty("subscriptionServiceType", subscriptionServiceType)
@@ -526,7 +532,7 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		Map<String, ServiceInstance> relatedSPs = execution.getVariable("relatedSPs")
 
 		DeAllocateNssi deallocateNssi = new DeAllocateNssi()
-		deallocateNssi.setNsiId(execution.getVariable("nsiId"))
+		deallocateNssi.setNsiId(anNssiId)
 		ServiceInstance tnNssi = relatedNssis.get(serviceFunction)
 		String nssiId = tnNssi.getServiceInstanceId()
 

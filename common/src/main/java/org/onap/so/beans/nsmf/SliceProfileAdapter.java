@@ -176,6 +176,7 @@ public class SliceProfileAdapter implements Serializable {
         BeanUtils.copyProperties(this, tnSliceProfile);
         tnSliceProfile.setSNSSAIList(Arrays.asList(this.sNSSAIList.split("\\|")));
         tnSliceProfile.setPLMNIdList(Arrays.asList(this.pLMNIdList.split("\\|")));
+        tnSliceProfile.setResourceSharingLevel(ResourceSharingLevel.fromString(this.resourceSharingLevel));
         return tnSliceProfile;
     }
 }
