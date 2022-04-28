@@ -283,8 +283,6 @@ class TnAllocateNssi extends AbstractServiceTaskProcessor {
 
     void prepareModifyTnNssiInputs(DelegateExecution execution) {
         logger.debug(Prefix + "prepareModifyTnNssiInputs method start")
-        String jobId = UUID.randomUUID().toString()
-        execution.setVariable("modifyTnNssiJobId", jobId)
         String additionalPropJsonStr = execution.getVariable("sliceParams")
         String sliceProfile = execution.getVariable("sliceProfile")
         String snssaiList = jsonUtil.getJsonValue(sliceProfile, "snssaiList")
