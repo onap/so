@@ -575,7 +575,11 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		ANServiceInstance.setServiceRole(serviceRole)
                 List<String> snssaiList = execution.getVariable("snssaiList")
 		String snssai = snssaiList.get(0)
-		//ANServiceInstance.setEnvironmentContext(snssai)
+                //ANServiceInstance.setEnvironmentContext(snssai)
+		String modelInvariantUuid = execution.getVariable("modelInvariantUuid")
+		String modelUuid = execution.getVariable("modelUuid") as String
+		ANServiceInstance.setModelInvariantId(modelInvariantUuid)
+		ANServiceInstance.setModelVersionId(modelUuid)
                 ANServiceInstance.setEnvironmentContext(execution.getVariable("networkType")) //Network Type
 		ANServiceInstance.setWorkloadContext("AN") //domain Type
 		

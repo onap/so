@@ -261,7 +261,7 @@ css.prepareModifyTnNssiInputs(execution)</bpmn:script>
         <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
         <camunda:in source="subscriptionServiceType" target="subscriptionServiceType" />
         <camunda:in source="transportSliceNetworks" target="transportSliceNetworks" />
-        <camunda:in source="modifyTnNssiJobId" target="jobId" />
+        <camunda:in source="jobId" target="jobId" />
         <camunda:in source="modifySliceParams" target="sliceParams" />
         <camunda:in source="servicename" target="servicename" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
