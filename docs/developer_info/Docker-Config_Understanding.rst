@@ -58,132 +58,132 @@ Path:- /docker-config/volumes/so/config/api-handler-infra/onapheat/override.yaml
 
 .. code-block:: bash
 
- server:
-    port: 8080
-    tomcat:
-        max-threads: 50
- ssl-enable: false
-
- mso:
-  msoKey: 07a7159d3bf51a0e53be7a8f89699be7
-  logPath: logs
-  site-name: onapheat
-  adapters:
-    requestDb:
-      endpoint: http://request-db-adapter:8083
-      auth: Basic YnBlbDpwYXNzd29yZDEk
-  catalog:
-    db:
-      spring:
-        endpoint: http://catalog-db-adapter:8082
-  db:
-    auth: Basic YnBlbDpwYXNzd29yZDEk
-  config:
-    path: /src/main/resources/
-  infra:
-    default:
-      alacarte:
-        orchestrationUri: /mso/async/services/ALaCarteOrchestrator
-        recipeTimeout: 180
-        testApi: VNF_API
-      service:
-        macro:
-          default:
-            testApi: GR_API
-  camundaURL: http://bpmn-infra:8081
-  camundaAuth: AE2E9BE6EF9249085AF98689C4EE087736A5500629A72F35068FFB88813A023581DD6E765071F1C04075B36EA4213A
-  async:
-    core-pool-size: 50
-    max-pool-size: 50
-    queue-capacity: 500
-  sdc:
-    client:
-      auth: F3473596C526938329DF877495B494DC374D1C4198ED3AD305EA3ADCBBDA1862
-    activate:
-      instanceid: test
-      userid: cs0008
-    endpoint: http://c1.vm1.mso.simpledemo.onap.org:28090
-  tenant:
-    isolation:
-      retry:
-        count: 3
-  aai:
-    endpoint: https://aai.api.simpledemo.onap.org:8443
-    auth: 2630606608347B7124C244AB0FE34F6F
-  extApi:
-    endpoint: http://nbi.onap:8080/nbi/api/v3
-  so:
-    operational-environment:
-      dmaap:
-        username: testuser
-        password: VjR5NDcxSzA=
-        host: http://c1.vm1.mso.simpledemo.onap.org:28090
-        auth: 51EA5414022D7BE536E7516C4D1A6361416921849B72C0D6FC1C7F262FD9F2BBC2AD124190A332D9845A188AD80955567A4F975C84C221EEA8243BFD92FFE6896CDD1EA16ADD34E1E3D47D4A
-      publisher:
-        topic: com.att.ecomp.mso.operationalEnvironmentEvent
-
- spring:
-  datasource:
-    hikari:
-      jdbcUrl: jdbc:mariadb://mariadb:3306/catalogdb
-      username: cataloguser
-      password: catalog123
-      driver-class-name: org.mariadb.jdbc.Driver
-      pool-name: catdb-pool
-      registerMbeans: true
-  jpa:
-      show-sql: true
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL5Dialect
-        ddl-auto: validate
-        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
-        enable-lazy-load-no-trans: true
-  jersey:
-    type: filter
-
-  security:
-    usercredentials:
-    -
-      username: sitecontrol
-      password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
-      role: SiteControl-Client
-    -
-      username: gui
-      password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
-      role: GUI-Client
-    -
-      username: infraportal
-      password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
-      role: InfraPortal-Client
-    -
-      username: InfraPortalClient
-      password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
-      role: InfraPortal-Client
-    -
-      username: bpel
-      password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
-      role: BPEL-Client
-    -
-      username: mso_admin
-      password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
-      role: ACTUATOR
-
- request:
-  datasource:
-    hikari:
-      jdbcUrl: jdbc:mariadb://mariadb:3306/requestdb
-      username: requestuser
-      password: request123
-      driver-class-name: org.mariadb.jdbc.Driver
-      pool-name: reqdb-pool
-      registerMbeans: true
- org:
-  onap:
-    so:
-      cloud-owner: CloudOwner
+     server:
+        port: 8080
+        tomcat:
+            max-threads: 50
+     ssl-enable: false
+    
+     mso:
+      msoKey: 07a7159d3bf51a0e53be7a8f89699be7
+      logPath: logs
+      site-name: onapheat
       adapters:
-        network:
-          encryptionKey: 07a7159d3bf51a0e53be7a8f89699be7
+        requestDb:
+          endpoint: http://request-db-adapter:8083
+          auth: Basic YnBlbDpwYXNzd29yZDEk
+      catalog:
+        db:
+          spring:
+            endpoint: http://catalog-db-adapter:8082
+      db:
+        auth: Basic YnBlbDpwYXNzd29yZDEk
+      config:
+        path: /src/main/resources/
+      infra:
+        default:
+          alacarte:
+            orchestrationUri: /mso/async/services/ALaCarteOrchestrator
+            recipeTimeout: 180
+            testApi: VNF_API
+          service:
+            macro:
+              default:
+                testApi: GR_API
+      camundaURL: http://bpmn-infra:8081
+      camundaAuth: AE2E9BE6EF9249085AF98689C4EE087736A5500629A72F35068FFB88813A023581DD6E765071F1C04075B36EA4213A
+      async:
+        core-pool-size: 50
+        max-pool-size: 50
+        queue-capacity: 500
+      sdc:
+        client:
+          auth: F3473596C526938329DF877495B494DC374D1C4198ED3AD305EA3ADCBBDA1862
+        activate:
+          instanceid: test
+          userid: cs0008
+        endpoint: http://c1.vm1.mso.simpledemo.onap.org:28090
+      tenant:
+        isolation:
+          retry:
+        count: 3
+      aai:
+        endpoint: https://aai.api.simpledemo.onap.org:8443
+        auth: 2630606608347B7124C244AB0FE34F6F
+      extApi:
+        endpoint: http://nbi.onap:8080/nbi/api/v3
+      so:
+        operational-environment:
+          dmaap:
+            username: testuser
+            password: VjR5NDcxSzA=
+            host: http://c1.vm1.mso.simpledemo.onap.org:28090
+            auth: 51EA5414022D7BE536E7516C4D1A6361416921849B72C0D6FC1C7F262FD9F2BBC2AD124190A332D9845A188AD80955567A4F975C84C221EEA8243BFD92FFE6896CDD1EA16ADD34E1E3D47D4A
+          publisher:
+            topic: com.att.ecomp.mso.operationalEnvironmentEvent
+    
+     spring:
+      datasource:
+        hikari:
+          jdbcUrl: jdbc:mariadb://mariadb:3306/catalogdb
+          username: cataloguser
+          password: catalog123
+          driver-class-name: org.mariadb.jdbc.Driver
+          pool-name: catdb-pool
+          registerMbeans: true
+      jpa:
+          show-sql: true
+          hibernate:
+            dialect: org.hibernate.dialect.MySQL5Dialect
+            ddl-auto: validate
+            naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+            enable-lazy-load-no-trans: true
+      jersey:
+        type: filter
+    
+      security:
+        usercredentials:
+        -
+          username: sitecontrol
+          password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+          role: SiteControl-Client
+        -
+          username: gui
+          password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+          role: GUI-Client
+        -
+          username: infraportal
+          password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+          role: InfraPortal-Client
+        -
+          username: InfraPortalClient
+          password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+          role: InfraPortal-Client
+        -
+          username: bpel
+          password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+          role: BPEL-Client
+        -
+          username: mso_admin
+          password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+          role: ACTUATOR
+    
+     request:
+      datasource:
+        hikari:
+          jdbcUrl: jdbc:mariadb://mariadb:3306/requestdb
+          username: requestuser
+          password: request123
+          driver-class-name: org.mariadb.jdbc.Driver
+          pool-name: reqdb-pool
+          registerMbeans: true
+     org:
+      onap:
+        so:
+          cloud-owner: CloudOwner
+          adapters:
+            network:
+              encryptionKey: 07a7159d3bf51a0e53be7a8f89699be7
 
 
 
@@ -245,8 +245,8 @@ Example Output:
 .. code-block:: bash
 
 
- [
-  {
+    [
+    {
       "Id": "sha256:2573165483e9ac87826da9c08984a9d0e1d93a90c681b22d9b4f90ed579350dc",
       "RepoTags": [
           "onap/so/api-handler-infra:1.3.0-SNAPSHOT",
@@ -360,5 +360,5 @@ Example Output:
               "sha256:2163a1f989859fdb3af6e253b74094e92a0fc1ee59f5eb959971f94eb1f98094"
           ]
       }
-  }
- ]
+     }
+    ]
