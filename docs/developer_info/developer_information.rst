@@ -15,6 +15,7 @@ SO Developer Information
    Camunda_Cockpit_Community_Edition.rst
    Camunda_Cockpit_Enterprise_Edition.rst
    Camunda_Modeler.rst
+   CSIT_Macroflow_developer_info.rst
    BPMN_Project_Structure.rst
    BPMN_Main_Process_Flows.rst
    BPMN_Subprocess_Process_Flows.rst
