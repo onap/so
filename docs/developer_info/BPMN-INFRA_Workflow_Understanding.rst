@@ -16,8 +16,8 @@ curl -v -H "Content-Type: application/json" -X POST --data @request_body_file_na
 
  Request Body:
 
- {
-   "service":{
+     {
+    "service":{
        "name":"SliceService",
        "description":"SliceService",
        "serviceInvariantUuid":"dfcd7471-16c7-444e-8268-d4c50d90593a",
@@ -62,18 +62,18 @@ curl -v -H "Content-Type: application/json" -X POST --data @request_body_file_na
               "nstar0_allottedresource0_providing_service_invariant_uuid": "1899e5c1-df4e-43a8-a889-48c157dad7bc"
            }
        }
-   }
+    }
 
 .. code-block:: bash
 
  Response body:
  
-  {
+    {
     "service": { 
         "serviceId": "ebe2d37f-f65b-43d8-8906-f81811ed8f22",
         "operationId": "ed9b4c84-17db-4874-8896-25324a0401fe"
+      }
     }
- }
 
 
 Code flows:
@@ -120,8 +120,8 @@ Payload will be reaching to bpmn in the form of:
 
 .. code-block:: bash
 
- {
-   "variables": {
+    {
+    "variables": {
       "bpmnRequest": {
          "value": {
             "requestDetails": {
@@ -305,8 +305,8 @@ Payload will be reaching to bpmn in the form of:
          "value": false,
          "type": "Boolean"
       }
-   }
- }
+     }
+    }
 
 Based on the serviceUuid which is mentioned in the request body it will call the the CreateCommunicationService.bpmn file and This CreateCommunicationService.bpmn is taken as a example to this workflow Understanding which then call the subprocess of this flow and so on.
 
@@ -349,8 +349,8 @@ Based on the serviceUuid which is mentioned in the request body it will call the
 
 .. code-block:: bash
 
- {
-   "serviceResources": {
+    {
+    "serviceResources": {
       "modelInfo": {
          "modelName": "CST",
          "modelUuid": "bfc2775b-64ad-41e5-95fe-d3bc57df6c73",
@@ -547,8 +547,8 @@ Based on the serviceUuid which is mentioned in the request body it will call the
          }
       ],
       "serviceAllottedResources": []
-   }
- }
+     }
+    }
 
 5. CreateCommunicationService--> prepareDoComposeE2E()
 
@@ -572,17 +572,17 @@ Based on the serviceUuid which is mentioned in the request body it will call the
  
  d. Request body for PUT request to the AAI from bpmn:
 
-{
-   "service-instance-name": "SliceService",
-   "service-role": "communication-service",
-   "environment-context": "01-70CAA6B",
-   "created-at": "2020-06-23 05:02:56",
-   "model-invariant-id": "d4df55ca-c985-46c9-8088-f952181f553e",
-   "model-version-id": "bfc2775b-64ad-41e5-95fe-d3bc57df6c73",
-   "orchestration-status": "processing",
-   "input-parameters": "{   \"service\":{       \"name\":\"SliceService\",       \"description\":\"SliceService\",       \"serviceInvariantUuid\":\"d4df55ca-c985-46c9-8088-f952181f553e\",       \"serviceUuid\":\"bfc2775b-64ad-41e5-95fe-d3bc57df6c73\",       \"globalSubscriberId\":\"5GCustomer\",       \"serviceType\":\"5G\",       \"parameters\":{           \"locationConstraints\":[           ],           \"resources\":[               {                   \"resourceIndex\":\"1\",                   \"resourceName\":\"allottedResource\",                   \"resourceInvariantUuid\":\"eeefcd86-7b5b-41ae-9516-08acc5d59d92\",                   \"resourceUuid\":\"265da937-76c7-4152-98e3-5f0d0a844b7f\",                   \"resourceCustomizationUuid\":\"a4eda1d9-1af4-424b-997f-12c57b74c67a\",                   \"parameters\":{                       \"locationConstraints\":[                       ],                       \"resources\":[                       ],                       \"requestInputs\":{                       }                   }               }           ],           \"requestInputs\":{\t\t\t   \"sST\": \"embb\",               \"sNSSAI\": \"1-10101\",               \"uEMobilityLevel\": \"stationary\",               \"areaTrafficCapDL\": 123,               \"maxNumberofUEs\": 1000,               \"expDataRateUL\": 2000,               \"plmnIdList\": \"39-00|39-01\",               \"areaTrafficCapUL\": 456,               \"latency\": 300,               \"expDataRateDL\": 400,               \"coverageAreaTAList\": 101001,               \"activityFactor\": 99,               \"resourceSharingLevel\": \"shared\",              \"nstar0_allottedresource0_providing_service_uuid\": \"4e8d930b-7483-4b9b-8c82-4708638ade4a\",              \"nstar0_allottedresource0_providing_service_invariant_uuid\": \"1899e5c1-df4e-43a8-a889-48c157dad7bc\"           }       }   }}"
-
-}
+    {
+       "service-instance-name": "SliceService",
+       "service-role": "communication-service",
+       "environment-context": "01-70CAA6B",
+       "created-at": "2020-06-23 05:02:56",
+       "model-invariant-id": "d4df55ca-c985-46c9-8088-f952181f553e",
+       "model-version-id": "bfc2775b-64ad-41e5-95fe-d3bc57df6c73",
+       "orchestration-status": "processing",
+       "input-parameters": "{   \"service\":{       \"name\":\"SliceService\",       \"description\":\"SliceService\",       \"serviceInvariantUuid\":\"d4df55ca-c985-46c9-8088-f952181f553e\",       \"serviceUuid\":\"bfc2775b-64ad-41e5-95fe-d3bc57df6c73\",       \"globalSubscriberId\":\"5GCustomer\",       \"serviceType\":\"5G\",       \"parameters\":{           \"locationConstraints\":[           ],           \"resources\":[               {                   \"resourceIndex\":\"1\",                   \"resourceName\":\"allottedResource\",                   \"resourceInvariantUuid\":\"eeefcd86-7b5b-41ae-9516-08acc5d59d92\",                   \"resourceUuid\":\"265da937-76c7-4152-98e3-5f0d0a844b7f\",                   \"resourceCustomizationUuid\":\"a4eda1d9-1af4-424b-997f-12c57b74c67a\",                   \"parameters\":{                       \"locationConstraints\":[                       ],                       \"resources\":[                       ],                       \"requestInputs\":{                       }                   }               }           ],           \"requestInputs\":{\t\t\t   \"sST\": \"embb\",               \"sNSSAI\": \"1-10101\",               \"uEMobilityLevel\": \"stationary\",               \"areaTrafficCapDL\": 123,               \"maxNumberofUEs\": 1000,               \"expDataRateUL\": 2000,               \"plmnIdList\": \"39-00|39-01\",               \"areaTrafficCapUL\": 456,               \"latency\": 300,               \"expDataRateDL\": 400,               \"coverageAreaTAList\": 101001,               \"activityFactor\": 99,               \"resourceSharingLevel\": \"shared\",              \"nstar0_allottedresource0_providing_service_uuid\": \"4e8d930b-7483-4b9b-8c82-4708638ade4a\",              \"nstar0_allottedresource0_providing_service_invariant_uuid\": \"1899e5c1-df4e-43a8-a889-48c157dad7bc\"           }       }   }}"
+    
+    }
 
 Response: Response is returned with an empty entity
 
@@ -593,7 +593,7 @@ https://aai.onap:8443/aai/v19/business/customers/customer/5GCustomer/service-sub
 
 payload:
 
-{"profile-id":"202a5e9a-d1d7-4afd-922f-3e7a709c780c","max-number-of-UEs":1000,"latency":300,"exp-data-rate-UL":2000,"exp-data-rate-DL":400,"ue-mobility-level":"stationary","resource-sharing-level":"shared"}
+    {"profile-id":"202a5e9a-d1d7-4afd-922f-3e7a709c780c","max-number-of-UEs":1000,"latency":300,"exp-data-rate-UL":2000,"exp-data-rate-DL":400,"ue-mobility-level":"stationary","resource-sharing-level":"shared"}
 
 Response: Response is returned with an empty entity
 
@@ -603,13 +603,13 @@ Response: Response is returned with an empty entity
 
  b. Response Body:
 
-   {
+    {
     "service":
      {
      "serviceId":"8a95e3ac-32cd-4ffb-b9e3-5366b393a7a2",
      "operationId":"a970a804-7ac5-4de9-b6db-17352afbc6fa"
 
-   }
+    }
 
 9. CreateCommunicationService--> generateE2EServiceProfile()
 
@@ -641,11 +641,10 @@ Response: Response is returned with an empty entity
 
 b. Request body:
     
-   {
+    {
     "related-link":"aai/v16/business/customers/customer/5GCustomer/service-subscriptions/service- 
     subscription/5G/service-instances/service-instance/2e6c2d7f-85c0-4b1f-b7fd-5f2364c27ea7"
-   
-   }
+    }
 
 15. CreateCommunicationService--> prepareUpdateOperationStatus()
 
