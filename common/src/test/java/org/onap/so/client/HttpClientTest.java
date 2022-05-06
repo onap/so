@@ -97,4 +97,113 @@ public class HttpClientTest {
                 postRequestedFor(urlEqualTo("/services/sdnc/post")).withHeader("Accept", equalTo("application/json")));
     }
 
+    @Test
+    public void testPostUsingXmlClient_success() throws MalformedURLException {
+
+        wireMockRule.stubFor(post(urlEqualTo("/services/sdnc/post"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/xml").withBody("")));
+
+        URL url = new URL("http://localhost:" + wireMockRule.port() + "/services/sdnc/post");
+        HttpClient client = httpClientFactory.newXmlClient(url, ONAPComponents.BPMN);
+
+        client.addBasicAuthHeader(
+                "97FF88AB352DA16E00DDD81E3876431DEF8744465DACA489EB3B3BE1F10F63EDA1715E626D0A4827A3E19CD88421BF",
+                "123");
+        client.addAdditionalHeader("Accept", "application/xml");
+
+        client.post("{}");
+
+        verify(exactly(1), postRequestedFor(urlEqualTo("/services/sdnc/post")));
+    }
+
+    @Test
+    public void testPostUsingXmlClient_nullHeader() throws MalformedURLException {
+
+        wireMockRule.stubFor(post(urlEqualTo("/services/sdnc/post"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/xml").withBody("")));
+
+        URL url = new URL("http://localhost:" + wireMockRule.port() + "/services/sdnc/post");
+        HttpClient client = httpClientFactory.newXmlClient(url, ONAPComponents.BPMN);
+
+        client.accept = "application/xml";
+        client.addAdditionalHeader("id", null);
+
+        client.post("{}");
+
+        verify(exactly(1),
+                postRequestedFor(urlEqualTo("/services/sdnc/post")).withHeader("Accept", equalTo("application/xml")));
+    }
+
+    @Test
+    public void testPostUsingXmlClient_nullBasicAuth() throws MalformedURLException {
+
+        wireMockRule.stubFor(post(urlEqualTo("/services/sdnc/post"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/xml").withBody("")));
+
+        URL url = new URL("http://localhost:" + wireMockRule.port() + "/services/sdnc/post");
+        HttpClient client = httpClientFactory.newXmlClient(url, ONAPComponents.BPMN);
+
+        client.accept = "application/xml";
+        client.addBasicAuthHeader("", "12345");
+
+        client.post("{}");
+
+        verify(exactly(1),
+                postRequestedFor(urlEqualTo("/services/sdnc/post")).withHeader("Accept", equalTo("application/xml")));
+    }
+
+    @Test
+    public void testPostUsingTextXmlClient_success() throws MalformedURLException {
+
+        wireMockRule.stubFor(post(urlEqualTo("/services/sdnc/post"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml").withBody("")));
+
+        URL url = new URL("http://localhost:" + wireMockRule.port() + "/services/sdnc/post");
+        HttpClient client = httpClientFactory.newTextXmlClient(url, ONAPComponents.BPMN);
+
+        client.addBasicAuthHeader(
+                "97FF88AB352DA16E00DDD81E3876431DEF8744465DACA489EB3B3BE1F10F63EDA1715E626D0A4827A3E19CD88421BF",
+                "123");
+        client.addAdditionalHeader("Accept", "text/xml");
+
+        client.post("{}");
+
+        verify(exactly(1), postRequestedFor(urlEqualTo("/services/sdnc/post")));
+    }
+
+    @Test
+    public void testPostUsingTextXmlClient_nullHeader() throws MalformedURLException {
+
+        wireMockRule.stubFor(post(urlEqualTo("/services/sdnc/post"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml").withBody("")));
+
+        URL url = new URL("http://localhost:" + wireMockRule.port() + "/services/sdnc/post");
+        HttpClient client = httpClientFactory.newTextXmlClient(url, ONAPComponents.BPMN);
+
+        client.addAdditionalHeader("Accept", "text/xml");
+        client.addAdditionalHeader("id", null);
+
+        client.post("{}");
+
+        verify(exactly(1),
+                postRequestedFor(urlEqualTo("/services/sdnc/post")).withHeader("Accept", equalTo("text/xml")));
+    }
+
+    @Test
+    public void testPostUsingTextXmlClient_nullBasicAuth() throws MalformedURLException {
+
+        wireMockRule.stubFor(post(urlEqualTo("/services/sdnc/post"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml").withBody("")));
+
+        URL url = new URL("http://localhost:" + wireMockRule.port() + "/services/sdnc/post");
+        HttpClient client = httpClientFactory.newTextXmlClient(url, ONAPComponents.BPMN);
+
+        client.addBasicAuthHeader("", "12345");
+        client.addAdditionalHeader("Accept", "text/xml");
+
+        client.post("{}");
+
+        verify(exactly(1),
+                postRequestedFor(urlEqualTo("/services/sdnc/post")).withHeader("Accept", equalTo("text/xml")));
+    }
 }
