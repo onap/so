@@ -369,16 +369,7 @@ public class OrchestrationRequests {
                 }
 
             } catch (IOException e) {
-                logger.error("Exception occurred", e);
-                ErrorLoggerInfo errorLoggerInfo =
-                        new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError)
-                                .build();
-                ValidateException validateException =
-                        new ValidateException.Builder("Mapping of request to JSON object failed : ",
-                                HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
-                                        .errorInfo(errorLoggerInfo).build();
-
-                throw validateException;
+                logger.error(String.format("Failed to parse request (id: %s) : ", request.getRequestId()), e);
             }
         }
         request.setRequestDetails(requestDetails);
