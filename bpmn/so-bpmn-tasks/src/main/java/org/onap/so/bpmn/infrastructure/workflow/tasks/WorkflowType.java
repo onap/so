@@ -3,7 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+ * ================================================================================ 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,7 +31,8 @@ public enum WorkflowType {
     VIRTUAL_LINK("VirtualLink"),
     NETWORKCOLLECTION("NetworkCollection"),
     CONFIGURATION("Configuration"),
-    INSTANCE_GROUP("InstanceGroup");
+    INSTANCE_GROUP("InstanceGroup"),
+    CNF("Cnf");
 
     private final String type;
 

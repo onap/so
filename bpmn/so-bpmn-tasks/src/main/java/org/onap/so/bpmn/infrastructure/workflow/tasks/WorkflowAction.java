@@ -12,6 +12,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2021 Orange
  * ================================================================================
+ * Modifications Copyright (c) 2022 Ericsson. All rights reserved.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -108,7 +110,7 @@ public class WorkflowAction {
     private static final String VNF_TYPE = "vnfType";
     private static final String CONFIGURATION = "Configuration";
     private static final String SUPPORTEDTYPES =
-            "vnfs|vfModules|networks|networkCollections|volumeGroups|serviceInstances|instanceGroups";
+            "vnfs|vfModules|networks|networkCollections|volumeGroups|serviceInstances|instanceGroups|cnfs";
     private static final String HOMINGSOLUTION = "Homing_Solution";
     private static final String SERVICE_TYPE_TRANSPORT = "TRANSPORT";
     private static final String SERVICE_TYPE_BONDING = "BONDING";

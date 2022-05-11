@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0x13ohc" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="CnfInstantiateBB" name="&#10;CnfInstantiateBB" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_0ru3x55">
+      <bpmn:outgoing>SequenceFlow_016sgof</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_016sgof" sourceRef="StartEvent_0ru3x55" targetRef="ServiceTask_11" />
+    <bpmn:endEvent id="EndEvent_001k15i">
+      <bpmn:incoming>SequenceFlow_18fsqzd</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="ServiceTask_11" name="Print Input parameters" camunda:asyncAfter="true" camunda:expression="${CnfInstantiateTask.handleCnfInstatiate(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_016sgof</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_18fsqzd</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_18fsqzd" sourceRef="ServiceTask_11" targetRef="EndEvent_001k15i" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CnfInstantiateBB">
+      <bpmndi:BPMNEdge id="SequenceFlow_18fsqzd_di" bpmnElement="SequenceFlow_18fsqzd">
+        <di:waypoint x="400" y="117" />
+        <di:waypoint x="522" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_016sgof_di" bpmnElement="SequenceFlow_016sgof">
+        <di:waypoint x="188" y="117" />
+        <di:waypoint x="300" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_0ru3x55_di" bpmnElement="StartEvent_0ru3x55">
+        <dc:Bounds x="152" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_001k15i_di" bpmnElement="EndEvent_001k15i">
+        <dc:Bounds x="522" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1jf7hlc_di" bpmnElement="ServiceTask_11">
+        <dc:Bounds x="300" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
