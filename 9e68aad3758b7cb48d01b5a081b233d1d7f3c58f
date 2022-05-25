@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e86a14e1_4a7fe961",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeAllocateAccessNSSI.groovy",
+        "patchSetId": 3
+      },
+      "lineNbr": 360,
+      "author": {
+        "id": 2089
+      },
+      "writtenOn": "2022-05-25T12:22:15Z",
+      "side": 1,
+      "message": "missing indentation",
+      "revId": "9e68aad3758b7cb48d01b5a081b233d1d7f3c58f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
