@@ -57,9 +57,9 @@ SO Release Image Versions
 
     :Version: 1.8.2
 
- - so-api-handler-infra
+ - so-api-handler
 
-    :Version: 1.9.2
+    :Version: 1.10.0
 
  - so-etsi-nfvo-ns-lcm
 
@@ -75,17 +75,16 @@ SO Release Image Versions
 
 Release Purpose
 ----------------
-SO Istanbul Release.
+SO Jakarta Release.
 The key deliverable for this release is refactoring SO for better internal architecture.
 
 
 **Epics**
 
-*  `REQ-627 <https://jira.onap.org/browse/REQ-627>`_ - ONAP CNF orchestration - Istanbul Enhancements
-*  `SO-3649 <https://jira.onap.org/browse/SO-3649>`_ - SO impacts for E2E Network Slicing in Istanbul Release
-*  `SO-3637 <https://jira.onap.org/browse/SO-3637>`_ - Global Requirements Approval
-*  `SO-3473 <https://jira.onap.org/browse/SO-3473>`_ - Refactor SO to enhance the usability
-
+*  `REQ-890 <https://jira.onap.org/browse/REQ-890>`_ - ONAP CNF orchestration - Jakarta Enhancements
+*  `REQ-1041 <https://jira.onap.org/browse/REQ-1041>`_ - VNF LCM Support in SO
+*  `SO-3802 <https://jira.onap.org/browse/SO-3802>`_ - Global Requirements Approval
+*  `SO-3826 <https://jira.onap.org/browse/SO-3826>`_ - SO impacts for E2E Network Slicing in Jakarta Release
 
 **Stories**
 
@@ -106,8 +105,9 @@ Security Notes
 
 *Fixed Security Issues*
 
-*  `SO-3731 <https://jira.onap.org/browse/SO-3731>`_
-*  `SO-3732 <https://jira.onap.org/browse/SO-3732>`_
+*  `SO-3735 <https://jira.onap.org/browse/SO-3735>`_ 
+*  `SO-3825 <https://jira.onap.org/browse/SO-3825>`_
+*  `SO-3846 <https://jira.onap.org/browse/SO-3846>`_
 
 
 Quick Links:
@@ -118,7 +118,7 @@ Quick Links:
 **Known Issues**
 
 *  `SO-3237 <https://jira.onap.org/browse/SO-3237>`_ - Exposed HTTP port. 
-
+*  `SO-3745 <https://jira.onap.org/browse/SO-3745>`_ - SO images contain 1 GPLv3 lib
 
 **Upgrade Notes**
 
@@ -126,7 +126,7 @@ Quick Links:
 
 **Deprecation Notes**
 
-	SO modules Ve-Vnfm-adapter and appc-orchestrator are deprectaed for the Istanbul release.
+	SO modules Ve-Vnfm-adapter and appc-orchestrator are deprectaed since istanbul release.
 
 **Other**
 
