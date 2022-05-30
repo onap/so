@@ -13,15 +13,14 @@ import org.onap.so.serviceinstancebeans.RelatedInstance;
 import org.onap.so.serviceinstancebeans.RelatedInstanceList;
 import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.onap.so.serviceinstancebeans.RequestInfo;
+import org.onap.so.serviceinstancebeans.RequestParameters;
 import org.onap.so.serviceinstancebeans.Service;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
-import org.onap.so.serviceinstancebeans.RequestParameters;
 import org.onap.so.serviceinstancebeans.SubscriberInfo;
 import java.io.IOException;
 import java.util.Map;
 
 public class ChildServiceRequestBuilder {
-
     private final BuildingBlockExecution buildingBlockExecution;
     private Service parent;
     private Service child;
@@ -66,6 +65,17 @@ public class ChildServiceRequestBuilder {
         return new ChildServiceRequestBuilder(buildingBlockExecution, parent, child);
     }
 
+    public static ChildServiceRequestBuilder getInstance(final BuildingBlockExecution buildingBlockExecution,
+            Service parentInstance, Service childInstance) {
+        Service child = null;
+        Service parent = null;
+        if (childInstance != null) {
+            parent = parentInstance;
+            child = childInstance;
+        }
+        return new ChildServiceRequestBuilder(buildingBlockExecution, parent, child);
+    }
+
     public ChildServiceRequestBuilder setParentRequestId(String parentRequestId) {
         sir.getRequestDetails().getRequestInfo().setRequestorId(parentRequestId);
         return this;
@@ -83,8 +93,26 @@ public class ChildServiceRequestBuilder {
 
     public ServiceInstancesRequest build() {
         RequestContext context = buildingBlockExecution.getGeneralBuildingBlock().getRequestContext();
-        sir.setRequestDetails(createRequestDetails(context));
+
+        if (context.getAction().equals("deleteInstance")) {
+            sir.setRequestDetails(createRequestDetailsDeleteChild(context));
+        } else {
+            sir.setRequestDetails(createRequestDetails(context));
+        }
         return sir;
+    }
+
+    private RequestDetails createRequestDetailsDeleteChild(RequestContext context) {
+        RequestDetails details = sir.getRequestDetails();
+
+        details.setRequestParameters(createRequestParameters(context, child));
+        details.setRequestInfo(createRequestInfo(context));
+        details.setCloudConfiguration(createCloudConfiguration());
+        details.setModelInfo(child.getModelInfo());
+        details.setSubscriberInfo(createSubscriberInfo());
+        details.setRelatedInstanceList(createRelatedInstanceList());
+
+        return details;
     }
 
     private RequestDetails createRequestDetails(RequestContext context) {
@@ -104,8 +132,13 @@ public class ChildServiceRequestBuilder {
 
     private RequestParameters createRequestParameters(RequestContext context, Service childService) {
         RequestParameters requestParameters = new RequestParameters();
-        requestParameters.getUserParams().add(context.getRequestParameters().getUserParams().get(0));
-        requestParameters.getUserParams().add(Map.of("service", childService));
+
+        if (!context.getRequestParameters().getUserParams().isEmpty()) {
+            requestParameters.getUserParams().add(context.getRequestParameters().getUserParams().get(0));
+            if (context.getAction().equals("createInstance")) {
+                requestParameters.getUserParams().add(Map.of("service", childService));
+            }
+        }
         requestParameters.setSubscriptionServiceType(context.getRequestParameters().getSubscriptionServiceType());
         requestParameters.setaLaCarte(context.getRequestParameters().getALaCarte());
         requestParameters.setPayload(context.getRequestParameters().getPayload());
