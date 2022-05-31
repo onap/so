@@ -381,7 +381,7 @@ public class ServiceInstances extends AbstractRestHandler {
     }
 
     @POST
-    @Path("/{version:[vV][1]}/serviceInstances/{serviceInstanceId}/cnfs")
+    @Path("/{version:[vV][7]}/serviceInstances/{serviceInstanceId}/cnfs")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Create CNF on a specified version and serviceInstance", responses = @ApiResponse(

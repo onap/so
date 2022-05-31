@@ -40,7 +40,8 @@ INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, I
 ('VFModule-ScaleOut', 'scaleOut', 'VfModule', true, true, '7','7', 'DEFAULT', '*'),
 ('VNF-InPlaceUpdate', 'inPlaceSoftwareUpdate', 'Vnf', true, true, '7','7', 'DEFAULT', '*'),
 ('VNF-Config-Update', 'applyUpdatedConfig', 'Vnf', true, true, '7','7', 'DEFAULT', '*'),
-('CNF-Macro-Upgrade', 'upgradeCnf', 'Vnf', false,true, '7', '7','DEFAULT', '*');
+('CNF-Macro-Upgrade', 'upgradeCnf', 'Vnf', false,true, '7', '7','DEFAULT', '*'),
+('Cnf-Create', 'createInstance', 'Cnf', true, true, '7','7','DEFAULT', '*');
 
 
 INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, SCOPE, ACTION, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID) VALUES
@@ -269,7 +270,8 @@ INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, SC
 ('CNF-Macro-Upgrade', '9', 'ActivateVfModuleBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
 ('CNF-Macro-Upgrade', '10', 'ChangeModelVnfBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
 ('CNF-Macro-Upgrade', '11', 'ActivateVnfBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
-('CNF-Macro-Upgrade', '12', 'AAIUnsetVnfInMaintBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT'));
+('CNF-Macro-Upgrade', '12', 'AAIUnsetVnfInMaintBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
+('CNF-Create', '1', 'CnfInstantiateBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Cnf-Create' and CLOUD_OWNER = 'DEFAULT'));
 
 INSERT INTO rainy_day_handler_macro (FLOW_NAME, SERVICE_TYPE, VNF_TYPE, ERROR_CODE, WORK_STEP, POLICY, SECONDARY_POLICY, REG_EX_ERROR_MESSAGE, SERVICE_ROLE)
 VALUES
@@ -427,7 +429,8 @@ VALUES
 ('ControllerExecutionBB', 'NO_VALIDATE', 'CUSTOM'),
 ('StatusCheckBB', 'NO_VALIDATE', 'CUSTOM'),
 ('HealthCheckBB', 'NO_VALIDATE', 'CUSTOM'),
-('UpgradeVfModuleBB', 'NO_VALIDATE', 'CUSTOM');
+('UpgradeVfModuleBB', 'NO_VALIDATE', 'CUSTOM'),
+('CnfInstantiateBB', 'CNF', 'ACTIVATE');
 
 
 INSERT INTO orchestration_status_state_transition_directive (resource_type, orchestration_status, target_action, flow_directive)
