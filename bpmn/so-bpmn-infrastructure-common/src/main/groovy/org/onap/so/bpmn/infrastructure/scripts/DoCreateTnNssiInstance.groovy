@@ -146,6 +146,11 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
                 ss.setWorkloadContext(domainTypeStr)
             }
 
+            String resourceSharingLevel = jsonUtil.getJsonValue(sliceProfileStr, "resourceSharingLevel")
+            if (isNotBlank(resourceSharingLevel)) {
+                ss.setServiceFunction(resourceSharingLevel)
+            }
+
             AAIResourcesClient client = getAAIClient()
             AAIResourceUri uri =
                     AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
