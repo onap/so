@@ -408,7 +408,8 @@ public class RequestHandlerUtils extends AbstractRestHandler {
         if (StringUtils.isNotBlank(instanceId)) {
             if (ModelType.service.name().equalsIgnoreCase(requestScope)) {
                 currentActiveReq.setServiceInstanceId(instanceId);
-            } else if (ModelType.vnf.name().equalsIgnoreCase(requestScope)) {
+            } else if (ModelType.vnf.name().equalsIgnoreCase(requestScope)
+                    || ModelType.cnf.name().equalsIgnoreCase(requestScope)) {
                 currentActiveReq.setVnfId(instanceId);
             } else if (ModelType.vfModule.name().equalsIgnoreCase(requestScope)) {
                 currentActiveReq.setVfModuleId(instanceId);

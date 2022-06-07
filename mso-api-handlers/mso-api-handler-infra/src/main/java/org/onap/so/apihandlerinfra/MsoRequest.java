@@ -716,7 +716,8 @@ public class MsoRequest {
         } else if (requestScope.equalsIgnoreCase(ModelType.vfModule.name())) {
             vnfType = serviceModelName + "/" + vnfModelName;
             sir.setVolumeGroupInstanceId(volumeGroupId);
-        } else if (requestScope.equalsIgnoreCase(ModelType.vnf.name()))
+        } else if (requestScope.equalsIgnoreCase(ModelType.vnf.name())
+                || requestScope.equalsIgnoreCase(ModelType.cnf.name()))
             vnfType = serviceModelName + "/" + sir.getRequestDetails().getModelInfo().getModelCustomizationName();
 
         return vnfType;

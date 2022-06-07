@@ -154,9 +154,11 @@ public class OrchestrationStatusValidator {
                 orchestrationStatus = serviceInstance.getOrchestrationStatus();
                 break;
             case VNF:
+            case CNF:
                 GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
                 orchestrationStatus = genericVnf.getOrchestrationStatus();
                 break;
+
             case VF_MODULE:
                 VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
                 orchestrationStatus = vfModule.getOrchestrationStatus();
