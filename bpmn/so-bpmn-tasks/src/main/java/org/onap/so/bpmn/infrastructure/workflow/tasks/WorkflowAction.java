@@ -692,11 +692,11 @@ public class WorkflowAction {
             logger.debug("{}, {}", pair.getValue0(), pair.getValue1());
         }
         Map<Resource, String> resourceInstanceIds = new HashMap<>();
-        Arrays.stream(WorkflowType.values()).filter(type -> !type.equals(WorkflowType.SERVICE))
-                .forEach(type -> resourceList.stream().filter(resource -> type.equals(resource.getResourceType()))
-                        .forEach(resource -> updateWorkflowResourceIds(flowsToExecute, type, resource,
-                                retrieveAAIResourceId(aaiResourceIds, type), null, serviceInstanceId,
-                                resourceInstanceIds)));
+        Arrays.stream(WorkflowType.values()).forEach(type -> resourceList.stream()
+                .filter(resource -> type.equals(resource.getResourceType())
+                        && !(WorkflowType.SERVICE.equals(type) && !resource.hasParent()))
+                .forEach(resource -> updateWorkflowResourceIds(flowsToExecute, type, resource,
+                        retrieveAAIResourceId(aaiResourceIds, type), null, serviceInstanceId, resourceInstanceIds)));
     }
 
     private String retrieveAAIResourceId(List<Pair<WorkflowType, String>> aaiResourceIds, WorkflowType resource) {
@@ -750,7 +750,8 @@ public class WorkflowAction {
                 }
                 if (resource.hasParent() && WorkflowType.SERVICE.equals(resourceType)
                         && WorkflowType.SERVICE.equals(parent.getResourceType())) {
-                    workflowResourceIds.setChildServiceInstanceId(resourceId);
+                    String childServiceInstanceId = resource.isGenerated() ? resourceId : resource.getResourceId();
+                    workflowResourceIds.setChildServiceInstanceId(childServiceInstanceId);
                     workflowResourceIds.setChildServiceInstanceName(resource.getInstanceName());
                 } else {
                     WorkflowResourceIdsUtils.setInstanceNameByWorkflowType(workflowResourceIds, resourceType,
