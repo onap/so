@@ -1,0 +1,7 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+2: Jozsef Csongvai <jozsef.csongvai@bell.ca>
+Submitted-by: Jozsef Csongvai <jozsef.csongvai@bell.ca>
+Submitted-at: Tue, 07 Jun 2022 13:03:30 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/so/+/128010
+Project: so
+Branch: refs/heads/recursive-orch
