@@ -28,6 +28,7 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.TrustManagerFactory;
 import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceInput;
@@ -107,6 +108,7 @@ public class CDSProcessingClient implements AutoCloseable {
             log.info("Configure Basic authentication");
             builder.intercept(new BasicAuthClientInterceptor(props)).usePlaintext();
         }
+        builder.keepAliveTime(props.getKeepAlivePingMinutes(), TimeUnit.MINUTES);
         this.channel = builder.build();
         this.handler = new CDSProcessingHandler(listener);
         log.info("CDSProcessingClient started");

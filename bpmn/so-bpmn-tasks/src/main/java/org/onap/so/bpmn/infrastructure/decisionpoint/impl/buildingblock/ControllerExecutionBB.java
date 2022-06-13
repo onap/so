@@ -26,11 +26,13 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerContext;
 import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerRunnable;
 import org.onap.so.bpmn.infrastructure.decisionpoint.impl.AbstractControllerExecution;
+import org.onap.so.client.cds.PayloadConstants;
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
 import org.onap.so.db.catalog.beans.PnfResourceCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -52,8 +54,11 @@ public class ControllerExecutionBB extends AbstractControllerExecution<BuildingB
 
     @Autowired
     protected CatalogDbClient catalogDbClient;
+    @Value("${controller-execution.timeout-for-controller-message:P1D}")
+    private String timeoutForControllerMessage;
 
     public void execute(final BuildingBlockExecution execution) {
+        execution.setVariable(PayloadConstants.TIMEOUT_CONTROLLER_MESSAGE, timeoutForControllerMessage);
         ControllerContext<BuildingBlockExecution> controllerContext = buildControllerContext(execution);
         controllerExecute(controllerContext);
     }
@@ -150,5 +155,19 @@ public class ControllerExecutionBB extends AbstractControllerExecution<BuildingB
             exceptionBuilder.buildAndThrowWorkflowException(controllerContext.getExecution(), 9000,
                     "Unable to find the controller implementation", ONAPComponents.SO);
         }
+    }
+
+    public void handleFailure(final BuildingBlockExecution execution) {
+        String errorMessage = execution.getVariable(PayloadConstants.CONTROLLER_ERROR_MESSAGE);
+
+        if (Boolean.TRUE.equals(execution.getVariable(PayloadConstants.CONTROLLER_MSG_TIMEOUT_REACHED))) {
+            logger.error(
+                    "timeout-for-controller-message was reached. If the controller is still processing, this property should be reconfigured");
+            errorMessage = "Controller response was not received within configured timeout";
+        } else if (errorMessage == null) {
+            errorMessage = "Controller call failed. No errormessage was captured.";
+        }
+
+        exceptionBuilder.buildAndThrowWorkflowException(execution, 9003, errorMessage, ONAPComponents.SO);
     }
 }
