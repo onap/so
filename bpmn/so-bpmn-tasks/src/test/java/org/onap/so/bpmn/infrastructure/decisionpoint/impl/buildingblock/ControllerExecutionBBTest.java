@@ -20,6 +20,10 @@
 package org.onap.so.bpmn.infrastructure.decisionpoint.impl.buildingblock;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.onap.so.bpmn.infrastructure.decisionpoint.impl.buildingblock.MockControllerBB.TEST_ACTION;
@@ -27,7 +31,10 @@ import static org.onap.so.bpmn.infrastructure.decisionpoint.impl.buildingblock.M
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.client.cds.PayloadConstants;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
 import org.onap.so.db.catalog.beans.PnfResourceCustomization;
@@ -69,6 +76,9 @@ public class ControllerExecutionBBTest {
 
     @MockBean
     private ControllerSelectionReference controllerSelectionReference;
+
+    @MockBean
+    ExceptionBuilder exceptionBuilder;
 
     @Before
     public void setUp() {
@@ -156,5 +166,27 @@ public class ControllerExecutionBBTest {
             assertEquals("The controller actor should be the same as in the catalogdb for scope: " + controllerScope,
                     expectedVnfControllerActor, controllerActor);
         }
+    }
+
+    @Test
+    public void testHandleFailure() {
+        when(execution.getVariable(PayloadConstants.CONTROLLER_ERROR_MESSAGE)).thenReturn("ERROR MESSAGE");
+
+        controllerExecutionBB.handleFailure(execution);
+
+        verify(exceptionBuilder).buildAndThrowWorkflowException(execution, 9003, "ERROR MESSAGE", ONAPComponents.SO);
+    }
+
+    @Test
+    public void testHandleTimeoutFailure() {
+        when(execution.getVariable(PayloadConstants.CONTROLLER_MSG_TIMEOUT_REACHED)).thenReturn(true);
+
+        controllerExecutionBB.handleFailure(execution);
+
+        ArgumentCaptor<String> errMsgCaptor = ArgumentCaptor.forClass(String.class);
+        verify(exceptionBuilder, times(1)).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), anyInt(),
+                errMsgCaptor.capture(), any());
+
+        assertTrue(errMsgCaptor.getValue().contains("timeout"));
     }
 }

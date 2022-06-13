@@ -82,4 +82,9 @@ public class TestCDSPropertiesImpl implements CDSProperties {
     public boolean getUseBasicAuth() {
         return true;
     }
+
+    @Override
+    public long getKeepAlivePingMinutes() {
+        return 6L;
+    }
 }

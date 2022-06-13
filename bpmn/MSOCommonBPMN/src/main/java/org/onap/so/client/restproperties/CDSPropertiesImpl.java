@@ -22,6 +22,7 @@ package org.onap.so.client.restproperties;
 
 import java.net.URL;
 import java.util.Objects;
+import org.apache.commons.lang3.StringUtils;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.client.cds.CDSProperties;
 
@@ -31,6 +32,8 @@ public class CDSPropertiesImpl implements CDSProperties {
     private static final String PORT = "cds.port";
     private static final String AUTH = "cds.auth";
     private static final String TIMEOUT = "cds.timeout";
+    private static final String KEEP_ALIVE_PING_MINUTES = "keep-alive-ping-minutes";
+    private static final long GRPC_SERVER_DEFAULT_MIN_ALLOWED_PING_INTERVAL = 5;
 
     public CDSPropertiesImpl() {
         // Needed for service loader
@@ -89,5 +92,14 @@ public class CDSPropertiesImpl implements CDSProperties {
     @Override
     public boolean getUseBasicAuth() {
         return true;
+    }
+
+    @Override
+    public long getKeepAlivePingMinutes() {
+        String value = UrnPropertiesReader.getVariable(KEEP_ALIVE_PING_MINUTES);
+        if (StringUtils.isBlank(value)) {
+            return GRPC_SERVER_DEFAULT_MIN_ALLOWED_PING_INTERVAL + 1L;
+        }
+        return Long.parseLong(Objects.requireNonNull(value));
     }
 }

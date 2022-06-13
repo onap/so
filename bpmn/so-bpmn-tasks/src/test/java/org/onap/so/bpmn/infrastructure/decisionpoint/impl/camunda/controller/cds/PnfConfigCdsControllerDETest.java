@@ -50,7 +50,7 @@ public class PnfConfigCdsControllerDETest {
     @MockBean
     private ControllerPreparable<DelegateExecution> preparable;
 
-    @Mock
+    @MockBean
     private AbstractCDSProcessingBBUtils abstractCDSProcessingBBUtils;
 
     @Test

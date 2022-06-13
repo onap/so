@@ -52,4 +52,8 @@ public final class PayloadConstants {
     public final static String PNF_UUID = "pnfUuid";
     public final static String SERVICE_INSTANCE_ID = "serviceInstanceId";
     public final static String MODEL_UUID = "modelUuid";
+
+    public final static String TIMEOUT_CONTROLLER_MESSAGE = "timeoutControllerMessage";
+    public final static String CONTROLLER_ERROR_MESSAGE = "controllerErrorMessage";
+    public final static String CONTROLLER_MSG_TIMEOUT_REACHED = "controllerMessageTimeoutReached";
 }
