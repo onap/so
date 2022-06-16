@@ -96,8 +96,9 @@ public class InstanceManagement {
     @Path("/{version:[vV][1]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/workflows/{workflowUuid}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Execute custom VNF workflow", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Execute custom VNF workflow",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response executeVNFCustomWorkflow(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
@@ -116,8 +117,9 @@ public class InstanceManagement {
     @Path("/{version:[vV][1]}/serviceInstances/{serviceInstanceId}/pnfs/{pnfName}/workflows/{workflowUuid}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Execute custom PNF workflow", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Execute custom PNF workflow",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response executePNFCustomWorkflow(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("pnfName") String pnfName,
@@ -136,8 +138,9 @@ public class InstanceManagement {
     @Path("/{version:[vV][1]}/serviceInstances/{serviceInstanceId}/workflows/{workflowUuid}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Execute custom Service Level workflow", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Execute custom Service Level workflow",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response executeServiceLevelCustomWorkflow(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("workflowUuid") String workflowUuid,

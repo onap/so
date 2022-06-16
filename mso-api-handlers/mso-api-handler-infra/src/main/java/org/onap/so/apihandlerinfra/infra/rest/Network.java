@@ -71,8 +71,9 @@ public class Network {
     @Path("/{version:[vV][8]}/serviceInstances/{serviceInstanceId}/networks/{networkInstanceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Delete provided Network instance", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Delete provided Network instance",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response deleteNetworkInstance(@PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId,

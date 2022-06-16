@@ -76,8 +76,9 @@ public class Volumes {
     @Path("/{version:[vV][8]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/volumeGroups/{volumeGroupInstanceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Delete a VfModule instance", responses = @ApiResponse(content = @Content(
-            array = @ArraySchema(schema = @Schema(implementation = ServiceInstancesResponse.class)))))
+    @Operation(description = "Delete a VfModule instance",
+            responses = @ApiResponse(content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = ServiceInstancesResponse.class)))))
     @Transactional
     public Response deleteVfModuleInstance(@PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,

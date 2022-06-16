@@ -71,8 +71,9 @@ public class ServiceInstance {
     @Path("/{version:[vV][8]}/serviceInstances/{serviceInstanceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Delete a Service instance", responses = @ApiResponse(content = @Content(
-            array = @ArraySchema(schema = @Schema(implementation = ServiceInstancesResponse.class)))))
+    @Operation(description = "Delete a Service instance",
+            responses = @ApiResponse(content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = ServiceInstancesResponse.class)))))
     @Transactional
     public Response deleteServiceInstance(@PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)

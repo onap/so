@@ -64,8 +64,9 @@ public class VnfRestImpl {
     private VnfCustomizationRepository vnfCustRepo;
 
     @GET
-    @Operation(description = "Find a VNF model contained within a service", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Vnf.class)))))
+    @Operation(description = "Find a VNF model contained within a service",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Vnf.class)))))
     @Path("/{modelCustomizationUUID}")
     @Produces({MediaType.APPLICATION_JSON})
     @Transactional(readOnly = true)
@@ -88,8 +89,9 @@ public class VnfRestImpl {
     }
 
     @PUT
-    @Operation(description = "Update a VNF model contained within a service", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Vnf.class)))))
+    @Operation(description = "Update a VNF model contained within a service",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Vnf.class)))))
     @Path("/{modelCustomizationUUID}")
     @Produces({MediaType.APPLICATION_JSON})
     @Transactional

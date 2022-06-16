@@ -76,8 +76,9 @@ public class OrchestrationTasks {
 
     @GET
     @Path("/{version:[vV][4-7]}/")
-    @Operation(description = "Find All Orchestrated Task", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Find All Orchestrated Task",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response getAllOrchestrationTasks(@QueryParam("status") String status,
@@ -96,8 +97,9 @@ public class OrchestrationTasks {
 
     @GET
     @Path("/{version:[vV][4-7]}/{taskId}")
-    @Operation(description = "Find Orchestrated Task for a given TaskId", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Find Orchestrated Task for a given TaskId",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response getOrchestrationTask(@PathParam("taskId") String taskId, @PathParam("version") String version)
@@ -118,8 +120,9 @@ public class OrchestrationTasks {
 
     @POST
     @Path("/{version:[vV][4-7]}/")
-    @Operation(description = "Create an Orchestrated Task", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Create an Orchestrated Task",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response CreateOrchestrationTask(String requestJson, @PathParam("version") String version) {
@@ -140,8 +143,9 @@ public class OrchestrationTasks {
 
     @PUT
     @Path("/{version:[vV][4-7]}/{taskId}")
-    @Operation(description = "Update an Orchestrated Task", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Update an Orchestrated Task",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response UpdateOrchestrationTask(@PathParam("taskId") String taskId, String requestJson,
@@ -175,8 +179,9 @@ public class OrchestrationTasks {
 
     @DELETE
     @Path("/{version:[vV][4-7]}/{taskId}")
-    @Operation(description = "Delete an Orchestrated Task", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Delete an Orchestrated Task",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response DeleteOrchestrationTask(@PathParam("taskId") String taskId, @PathParam("version") String version) {
@@ -208,8 +213,9 @@ public class OrchestrationTasks {
 
     @POST
     @Path("/{version:[vV][4-7]}/{taskId}/commit")
-    @Operation(description = "Commit an Orchestrated Task", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Commit an Orchestrated Task",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response CommitOrchestrationTask(@PathParam("taskId") String taskId, @PathParam("version") String version) {
@@ -245,8 +251,9 @@ public class OrchestrationTasks {
 
     @POST
     @Path("/{version:[vV][4-7]}/{taskId}/abort")
-    @Operation(description = "Commit an Orchestrated Task", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Commit an Orchestrated Task",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response AbortOrchestrationTask(@PathParam("taskId") String taskId, @PathParam("version") String version) {

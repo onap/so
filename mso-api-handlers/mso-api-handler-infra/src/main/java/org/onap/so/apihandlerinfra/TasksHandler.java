@@ -87,8 +87,9 @@ public class TasksHandler {
 
     @Path("/{version:[vV]1}")
     @GET
-    @Operation(description = "Finds Manual Tasks", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Finds Manual Tasks",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response queryFilters(@QueryParam("taskId") String taskId,
             @QueryParam("originalRequestId") String originalRequestId,

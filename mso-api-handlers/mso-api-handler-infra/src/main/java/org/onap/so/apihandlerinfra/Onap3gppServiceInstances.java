@@ -245,8 +245,9 @@ public class Onap3gppServiceInstances {
      */
     @GET
     @Path("/{version:[vV][1]}/subnetCapabilityQuery")
-    @Operation(description = "Provides subnet capability based on subnet types", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Provides subnet capability based on subnet types",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response getSliceSubnetCapabilities(QuerySubnetCapability request, @PathParam("version") String version)

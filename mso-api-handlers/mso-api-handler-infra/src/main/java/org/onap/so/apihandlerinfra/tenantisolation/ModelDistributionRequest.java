@@ -77,8 +77,9 @@ public class ModelDistributionRequest {
     @Path("/{version:[vV][1]}/distributions/{distributionId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Update model distribution status", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Update model distribution status",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response updateModelDistributionStatus(String requestJSON, @PathParam("version") String version,
             @PathParam("distributionId") String distributionId) throws ApiException {

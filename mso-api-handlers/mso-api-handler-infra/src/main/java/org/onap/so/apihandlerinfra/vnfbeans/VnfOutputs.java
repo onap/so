@@ -65,8 +65,9 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {"vnfId", "vfModuleId", "vnfName", "vfModuleName", "aicNodeClli", "tenantId",
-        "volumeGroupName", "volumeGroupId"})
+@XmlType(name = "",
+        propOrder = {"vnfId", "vfModuleId", "vnfName", "vfModuleName", "aicNodeClli", "tenantId", "volumeGroupName",
+                "volumeGroupId"})
 @XmlRootElement(name = "vnf-outputs")
 public class VnfOutputs {
 

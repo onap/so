@@ -91,8 +91,9 @@ public class CloudOrchestration {
     @Path("/{version:[vV][1]}/operationalEnvironments")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Create an Operational Environment", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Create an Operational Environment",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response createOperationEnvironment(String request, @PathParam("version") String version,
             @Context ContainerRequestContext requestContext) throws ApiException {
@@ -104,8 +105,9 @@ public class CloudOrchestration {
     @Path("/{version:[vV][1]}/operationalEnvironments/{operationalEnvironmentId}/activate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Activate an Operational Environment", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Activate an Operational Environment",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response activateOperationEnvironment(String request, @PathParam("version") String version,
             @PathParam("operationalEnvironmentId") String operationalEnvironmentId,
@@ -120,8 +122,9 @@ public class CloudOrchestration {
     @Path("/{version:[vV][1]}/operationalEnvironments/{operationalEnvironmentId}/deactivate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Deactivate an Operational Environment", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Deactivate an Operational Environment",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response deactivateOperationEnvironment(String request, @PathParam("version") String version,
             @PathParam("operationalEnvironmentId") String operationalEnvironmentId,

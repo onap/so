@@ -69,8 +69,9 @@ public class Vnf {
     @Path("/{version:[vV][8]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Delete a Vnf instance", responses = @ApiResponse(content = @Content(
-            array = @ArraySchema(schema = @Schema(implementation = ServiceInstancesResponse.class)))))
+    @Operation(description = "Delete a Vnf instance",
+            responses = @ApiResponse(content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = ServiceInstancesResponse.class)))))
     @Transactional
     public Response deleteVnfInstance(@PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,

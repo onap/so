@@ -103,8 +103,9 @@ public class GlobalHealthcheckHandler {
 
     @GET
     @Produces("application/json")
-    @Operation(description = "Performing global health check", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Performing global health check",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response globalHealthcheck(@DefaultValue("true") @QueryParam("enableBpmn") boolean enableBpmn,
             @Context ContainerRequestContext requestContext) {

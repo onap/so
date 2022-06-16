@@ -76,8 +76,9 @@ public class WorkflowSpecificationsHandler {
 
     @Path("/{version:[vV]1}/workflows")
     @GET
-    @Operation(description = "Finds Workflow Specifications", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Finds Workflow Specifications",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
 
     public Response queryWorkflowSpecifications(@QueryParam("vnfModelVersionId") String vnfModelVersionId,
@@ -136,8 +137,9 @@ public class WorkflowSpecificationsHandler {
      */
     @Path("/{version:[vV]1}/pnfWorkflows")
     @GET
-    @Operation(description = "Finds pnf workflow specifications", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Finds pnf workflow specifications",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     @Deprecated
     public Response getWorkflowsSpecForPnf(@PathParam("version") String version) throws Exception {

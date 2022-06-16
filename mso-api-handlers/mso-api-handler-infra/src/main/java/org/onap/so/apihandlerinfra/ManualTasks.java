@@ -86,8 +86,9 @@ public class ManualTasks {
     @Path("/{version:[vV]1}/{taskId}/complete")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Complete specified task", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Complete specified task",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response completeTask(String request, @PathParam("version") String version,
             @PathParam("taskId") String taskId, @Context ContainerRequestContext requestContext) throws ApiException {

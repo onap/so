@@ -69,8 +69,9 @@ public class ServiceRestImpl {
     }
 
     @GET
-    @Operation(description = "Find Service Models", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))))
+    @Operation(description = "Find Service Models",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))))
     @Produces({MediaType.APPLICATION_JSON})
     @Transactional(readOnly = true)
     public List<Service> queryServices(

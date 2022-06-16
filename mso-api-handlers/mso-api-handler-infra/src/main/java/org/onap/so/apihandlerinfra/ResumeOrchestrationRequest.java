@@ -90,8 +90,9 @@ public class ResumeOrchestrationRequest {
     @Path("/{version:[vV][7]}/{requestId}/resume")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Resume request for a given requestId", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Resume request for a given requestId",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response resumeOrchestrationRequest(@PathParam("requestId") String requestId,
             @PathParam("version") String version, @Context ContainerRequestContext requestContext) throws ApiException {

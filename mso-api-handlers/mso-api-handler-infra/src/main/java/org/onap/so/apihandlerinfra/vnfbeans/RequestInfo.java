@@ -65,8 +65,9 @@ import javax.xml.bind.annotation.XmlType;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {"requestId", "action", "requestStatus", "statusMessage", "progress", "startTime",
-        "endTime", "source"})
+@XmlType(name = "",
+        propOrder = {"requestId", "action", "requestStatus", "statusMessage", "progress", "startTime", "endTime",
+                "source"})
 @XmlRootElement(name = "request-info")
 public class RequestInfo {
 

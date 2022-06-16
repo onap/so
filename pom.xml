@@ -490,6 +490,17 @@
             <artifactId>jackson-annotations</artifactId>
             <version>2.12.1</version>
           </dependency>
+          <dependency>
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>org.eclipse.jdt.core</artifactId>
+            <version>3.24.0</version>
+            <exclusions>
+              <exclusion>
+                <groupId>org.osgi.service</groupId>
+                <artifactId>org.osgi.service.prefs</artifactId>
+              </exclusion>
+            </exclusions>
+          </dependency>
         </dependencies>
       </plugin>
       <plugin>

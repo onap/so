@@ -65,8 +65,9 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {"modelName", "modelVersion", "modelInvariantUuid", "isBase", "id", "description",
-        "asdcServiceModelVersion"})
+@XmlType(name = "",
+        propOrder = {"modelName", "modelVersion", "modelInvariantUuid", "isBase", "id", "description",
+                "asdcServiceModelVersion"})
 @XmlRootElement(name = "vf-module-model-name")
 public class VfModuleModelName {
 

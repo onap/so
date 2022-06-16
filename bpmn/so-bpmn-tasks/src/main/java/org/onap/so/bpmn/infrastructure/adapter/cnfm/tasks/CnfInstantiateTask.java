@@ -153,7 +153,7 @@ public class CnfInstantiateTask {
         try {
             final InstantiateAsRequest instantiateAsRequest = execution.getVariable(INSTANTIATE_AS_REQUEST_OBJECT);
             final String asInstanceId = execution.getVariable(AS_INSTANCE_ID);
-            cnfmHttpServiceProvider.invokeInstantiateAsRequest(createAsRequest, asInstanceId);
+            cnfmHttpServiceProvider.invokeInstantiateAsRequest(instantiateAsRequest, asInstanceId);
             LOGGER.debug("Successfully invoked CNFM instantiate AS request: {}", asInstanceId);
 
         } catch (final Exception exception) {

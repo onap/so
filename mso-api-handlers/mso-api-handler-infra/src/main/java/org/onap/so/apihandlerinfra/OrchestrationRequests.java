@@ -111,8 +111,9 @@ public class OrchestrationRequests {
 
     @GET
     @Path("/{version:[vV][4-8]}/{requestId}")
-    @Operation(description = "Find Orchestrated Requests for a given requestId", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Find Orchestrated Requests for a given requestId",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response getOrchestrationRequest(@PathParam("requestId") String requestId,
@@ -169,8 +170,9 @@ public class OrchestrationRequests {
 
     @GET
     @Path("/{version:[vV][4-8]}")
-    @Operation(description = "Find Orchestrated Requests for a URI Information", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Find Orchestrated Requests for a URI Information",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response getOrchestrationRequest(@Context UriInfo ui, @PathParam("version") String version,
@@ -232,8 +234,9 @@ public class OrchestrationRequests {
     @Path("/{version: [vV][4-7]}/{requestId}/unlock")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Unlock Orchestrated Requests for a given requestId", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Unlock Orchestrated Requests for a given requestId",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response unlockOrchestrationRequest(String requestJSON, @PathParam("requestId") String requestId,
             @PathParam("version") String version) throws ApiException {

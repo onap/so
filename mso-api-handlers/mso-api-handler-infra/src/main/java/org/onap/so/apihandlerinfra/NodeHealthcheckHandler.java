@@ -58,8 +58,9 @@ public class NodeHealthcheckHandler {
 
     @GET
     @Produces("text/html")
-    @Operation(description = "Performing node health check", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Operation(description = "Performing node health check",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response nodeHealthcheck(@Context ContainerRequestContext requestContext) throws UnknownHostException {
         // Generated RequestId
