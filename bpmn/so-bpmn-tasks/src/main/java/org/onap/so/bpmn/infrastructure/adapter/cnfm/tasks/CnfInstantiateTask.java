@@ -5,15 +5,15 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
@@ -35,6 +35,7 @@ import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.cnfm.lcm.model.AsInstance;
 import org.onap.so.cnfm.lcm.model.CreateAsRequest;
+import org.onap.so.cnfm.lcm.model.InstantiateAsRequest;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.RequestDetails;
@@ -46,13 +47,15 @@ import org.springframework.stereotype.Component;
 
 /**
  * This class performs CNF Instantiation
- * 
+ *
  * @author sagar.shetty@est.tech
  * @author Waqas Ikram (waqas.ikram@est.tech)
  */
 @Component
 public class CnfInstantiateTask {
     private static final String CREATE_AS_REQUEST_OBJECT = "CreateAsRequestObject";
+    private static final String INSTANTIATE_AS_REQUEST_OBJECT = "InstantiateAsRequest";
+    private static final String AS_INSTANCE_ID = "asInstanceid";
     private static final Logger LOGGER = LoggerFactory.getLogger(CnfInstantiateTask.class);
     private final ExceptionBuilder exceptionUtil;
     private final CnfmHttpServiceProvider cnfmHttpServiceProvider;
@@ -120,10 +123,41 @@ public class CnfInstantiateTask {
             }
 
             final AsInstance asInstance = optional.get();
+            execution.setVariable(AS_INSTANCE_ID, asInstance.getAsInstanceid());
             LOGGER.debug("Successfully invoked CNFM response: {}", asInstance);
 
         } catch (final Exception exception) {
             LOGGER.error("Unable to invoke CNFM AsCreateRequest", exception);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 2004, exception);
+        }
+    }
+
+    public void createAsInstanceRequest(final BuildingBlockExecution execution) {
+        try {
+            LOGGER.debug("Executing createAsInstanceRequest task  ...");
+
+            final InstantiateAsRequest instantiateAsRequest = new InstantiateAsRequest();
+
+            LOGGER.debug("Adding InstantiateAsRequest to execution {}", instantiateAsRequest);
+
+            execution.setVariable(INSTANTIATE_AS_REQUEST_OBJECT, instantiateAsRequest);
+            LOGGER.debug("Finished executing createAsInstanceRequest task ...");
+
+        } catch (final Exception exception) {
+            LOGGER.error("Unable to create CreateAsInstanceRequest", exception);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 2001, exception);
+        }
+    }
+
+    public void invokeCnfmWithInstantiateAsRequest(final BuildingBlockExecution execution) {
+        try {
+            final InstantiateAsRequest instantiateAsRequest = execution.getVariable(INSTANTIATE_AS_REQUEST_OBJECT);
+            final String asInstanceId = execution.getVariable(AS_INSTANCE_ID);
+            cnfmHttpServiceProvider.invokeInstantiateAsRequest(createAsRequest, asInstanceId);
+            LOGGER.debug("Successfully invoked CNFM instantiate AS request: {}", asInstanceId);
+
+        } catch (final Exception exception) {
+            LOGGER.error("Unable to invoke CNFM InstantiateAsRequest", exception);
             exceptionUtil.buildAndThrowWorkflowException(execution, 2004, exception);
         }
     }

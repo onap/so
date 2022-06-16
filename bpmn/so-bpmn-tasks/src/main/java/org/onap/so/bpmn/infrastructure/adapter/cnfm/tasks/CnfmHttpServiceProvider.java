@@ -22,7 +22,7 @@ package org.onap.so.bpmn.infrastructure.adapter.cnfm.tasks;
 import java.util.Optional;
 import org.onap.so.cnfm.lcm.model.AsInstance;
 import org.onap.so.cnfm.lcm.model.CreateAsRequest;
-
+import org.onap.so.cnfm.lcm.model.InstantiateAsRequest;
 
 /**
  * @author Sagar Shetty (sagar.shetty@est.tech)
@@ -32,5 +32,7 @@ import org.onap.so.cnfm.lcm.model.CreateAsRequest;
 public interface CnfmHttpServiceProvider {
 
     Optional<AsInstance> invokeCreateAsRequest(final CreateAsRequest createAsRequest);
+
+    void invokeInstantiateAsRequest(InstantiateAsRequest instantiateAsRequest, String asInstanceId);
 
 }
