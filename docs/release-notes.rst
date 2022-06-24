@@ -14,6 +14,130 @@ The SO provides the highest level of service orchestration in the ONAP architect
 Release Notes
 =============
 
+<<<<<<< HEAD   (407e50 SO CSIT Macroflow Documentation)
+=======
+Version: 1.10.0
+==============
+
+    :Release Date: 2022-04-08
+
+SO Release Image Versions
+--------------------------
+ - so-bpmn-infra
+
+    :Version: 1.10.0
+
+ - so-catalog-db-adapter
+
+    :Version: 1.10.0
+
+ - so-admin-cockpit
+
+    :Version: 1.8.3
+
+ - so-nssmf-adapter
+
+    :Version: 1.9.1
+
+ - so-openstack-adapter
+
+    :Version: 1.10.0
+
+ - so-request-db-adapter
+
+    :Version: 1.10.0
+
+ - so-sdc-controller
+
+    :Version: 1.10.0
+
+ - so-sdnc-adapter
+
+    :Version: 1.10.0
+
+ - so-sol003-adapter
+
+    :Version: 1.8.2
+
+ - so-api-handler
+
+    :Version: 1.10.0
+
+ - so-etsi-nfvo-ns-lcm
+
+    :Version: 1.8.2
+
+ - so-oof-adapter
+
+    :Version: 1.8.3
+
+ - so-cnf-adapter
+
+    :Version: 1.10.0
+
+Release Purpose
+----------------
+SO Jakarta Release.
+The key deliverable for this release is refactoring SO for better internal architecture.
+
+
+**Epics**
+
+*  `REQ-890 <https://jira.onap.org/browse/REQ-890>`_ - ONAP CNF orchestration - Jakarta Enhancements
+*  `REQ-1041 <https://jira.onap.org/browse/REQ-1041>`_ - VNF LCM Support in SO
+*  `SO-3802 <https://jira.onap.org/browse/SO-3802>`_ - Global Requirements Approval
+*  `SO-3826 <https://jira.onap.org/browse/SO-3826>`_ - SO impacts for E2E Network Slicing in Jakarta Release
+
+**Stories**
+
+The full list of implemented tasks is available on `JIRA Jakarta STORY <https://jira.onap.org/browse/SO-3748?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20story%20AND%20fixVersion%20%3D%20%22Jakarta%20Release%22>`_
+
+
+**Tasks**
+
+The full list of implemented tasks is available on `JIRA Jakarta TASKS <https://jira.onap.org/browse/SO-3930?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20Task%20AND%20fixVersion%20%3D%20%22Jakarta%20Release%22>`_
+
+**Bug Fixes**
+
+The full list of fixed bugs is available on `JIRA Jakarta BUGS 
+<https://jira.onap.org/browse/SO-3908?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20Bug%20AND%20fixVersion%20%3D%20%22jakarta%20Release%22>`_
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+*  `SO-3735 <https://jira.onap.org/browse/SO-3735>`_ 
+*  `SO-3825 <https://jira.onap.org/browse/SO-3825>`_
+*  `SO-3846 <https://jira.onap.org/browse/SO-3846>`_
+
+
+Quick Links:
+
+- `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1702>`__
+
+**Known Issues**
+
+*  `SO-3237 <https://jira.onap.org/browse/SO-3237>`_ - Exposed HTTP port. 
+*  `SO-3745 <https://jira.onap.org/browse/SO-3745>`_ - SO images contain 1 GPLv3 lib
+
+**Upgrade Notes**
+
+	N/A
+
+**Deprecation Notes**
+
+	SO modules Ve-Vnfm-adapter and appc-orchestrator are deprectaed since istanbul release.
+
+**Other**
+
+	N/A
+***************************************************************************************
+
+
+
+>>>>>>> CHANGE (8d41d7 update the release notes for J release)
 Version: 1.9.2
 ==============
 
