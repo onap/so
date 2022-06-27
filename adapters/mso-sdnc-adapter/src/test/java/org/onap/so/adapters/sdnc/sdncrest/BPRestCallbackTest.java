@@ -48,7 +48,6 @@ public class BPRestCallbackTest extends BaseTest {
                         .withBody(response).withStatus(HttpStatus.SC_MULTIPLE_CHOICES)));
 
         boolean responseCommon = bpRestCallback.send("http://localhost:" + wireMockPort + "/sdnc", "Test");
-        assertNotNull(responseCommon);
         assertEquals(true, responseCommon);
     }
 }
