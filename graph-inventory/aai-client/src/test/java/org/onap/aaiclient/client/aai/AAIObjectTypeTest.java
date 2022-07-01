@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2022 Samsung Electronics
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,9 +49,6 @@ public class AAIObjectTypeTest {
         AAIObjectType genericVnf2 = AAIFluentTypeBuilder.network().genericVnf("test2").build();
 
         assertEquals(genericVnf2, genericVnf);
-
-        assertEquals(genericVnf, Types.GENERIC_VNF);
-
     }
 
     @Test
