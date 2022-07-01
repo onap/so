@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2022 - Samsung Electronics. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +24,8 @@ package org.onap.so.adapters.sdnc.sdncrest;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
+
 import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.onap.so.adapters.sdnc.BaseTest;
@@ -48,6 +49,6 @@ public class BPRestCallbackTest extends BaseTest {
                         .withBody(response).withStatus(HttpStatus.SC_MULTIPLE_CHOICES)));
 
         boolean responseCommon = bpRestCallback.send("http://localhost:" + wireMockPort + "/sdnc", "Test");
-        assertEquals(true, responseCommon);
+        assertTrue(responseCommon);
     }
 }
