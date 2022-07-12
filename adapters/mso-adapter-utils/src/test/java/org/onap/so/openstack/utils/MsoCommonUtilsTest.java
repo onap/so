@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2022 - Samsung Electronics. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,13 +101,13 @@ public class MsoCommonUtilsTest extends BaseTest {
         MsoException me = commonUtils.keystoneErrorToMsoException(openStackConnectException, "ContextError");
 
         assertTrue(me instanceof MsoIOException);
-        assertTrue("connect".equals(me.getMessage()));
+        assertEquals("connect", me.getMessage());
 
 
         MsoException me2 = commonUtils.keystoneErrorToMsoException(openStackResponseException, "ContextError");
         assertTrue(me2 instanceof MsoOpenstackException);
-        assertTrue("ContextError".equals(me2.getContext()));
-        assertTrue(MsoExceptionCategory.OPENSTACK.equals(me2.getCategory()));
+        assertEquals("ContextError", me2.getContext());
+        assertEquals(MsoExceptionCategory.OPENSTACK, me2.getCategory());
 
 
         OpenStackResponse openStackResponse = Mockito.mock(OpenStackResponse.class);
@@ -131,13 +132,13 @@ public class MsoCommonUtilsTest extends BaseTest {
         MsoException me = commonUtils.heatExceptionToMsoException(openStackConnectException, "ContextError");
 
         assertTrue(me instanceof MsoIOException);
-        assertTrue("connect".equals(me.getMessage()));
+        assertEquals("connect", me.getMessage());
 
 
         MsoException me2 = commonUtils.heatExceptionToMsoException(openStackResponseException, "ContextError");
         assertTrue(me2 instanceof MsoOpenstackException);
-        assertTrue("ContextError".equals(me2.getContext()));
-        assertTrue(MsoExceptionCategory.OPENSTACK.equals(me2.getCategory()));
+        assertEquals("ContextError", me2.getContext());
+        assertEquals(MsoExceptionCategory.OPENSTACK, me2.getCategory());
 
 
         OpenStackResponse openStackResponse = Mockito.mock(OpenStackResponse.class);
@@ -163,12 +164,12 @@ public class MsoCommonUtilsTest extends BaseTest {
         MsoException me = commonUtils.neutronExceptionToMsoException(openStackConnectException, "ContextError");
 
         assertTrue(me instanceof MsoIOException);
-        assertTrue("connect".equals(me.getMessage()));
+        assertEquals("connect", me.getMessage());
 
         MsoException me2 = commonUtils.neutronExceptionToMsoException(openStackResponseException, "ContextError");
         assertTrue(me2 instanceof MsoOpenstackException);
-        assertTrue("ContextError".equals(me2.getContext()));
-        assertTrue(MsoExceptionCategory.OPENSTACK.equals(me2.getCategory()));
+        assertEquals("ContextError", me2.getContext());
+        assertEquals(MsoExceptionCategory.OPENSTACK, me2.getCategory());
 
 
         OpenStackResponse openStackResponse = Mockito.mock(OpenStackResponse.class);
@@ -190,8 +191,8 @@ public class MsoCommonUtilsTest extends BaseTest {
         MsoException me = commonUtils.runtimeExceptionToMsoException(re, "ContextError");
 
         assertTrue(me instanceof MsoAdapterException);
-        assertTrue("ContextError".equals(me.getContext()));
-        assertTrue(MsoExceptionCategory.INTERNAL.equals(me.getCategory()));
+        assertEquals("ContextError", me.getContext());
+        assertEquals(MsoExceptionCategory.INTERNAL, me.getCategory());
     }
 
     @Test
@@ -202,6 +203,7 @@ public class MsoCommonUtilsTest extends BaseTest {
 
         assertTrue(msoException instanceof MsoAdapterException);
         assertEquals("ContextError", msoException.getContext());
-        assertTrue(MsoExceptionCategory.INTERNAL.equals(msoException.getCategory()));
+        assertEquals(MsoExceptionCategory.INTERNAL, msoException.getCategory());
     }
 }
+
