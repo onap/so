@@ -19,8 +19,11 @@
  */
 package org.onap.so.bpmn.infrastructure.adapter.cnfm.tasks;
 
+import java.net.URI;
 import java.util.Optional;
+
 import org.onap.so.cnfm.lcm.model.AsInstance;
+import org.onap.so.cnfm.lcm.model.AsLcmOpOcc;
 import org.onap.so.cnfm.lcm.model.CreateAsRequest;
 import org.onap.so.cnfm.lcm.model.InstantiateAsRequest;
 
@@ -33,6 +36,7 @@ public interface CnfmHttpServiceProvider {
 
     Optional<AsInstance> invokeCreateAsRequest(final CreateAsRequest createAsRequest);
 
-    void invokeInstantiateAsRequest(InstantiateAsRequest instantiateAsRequest, String asInstanceId);
+    Optional<URI> invokeInstantiateAsRequest(InstantiateAsRequest instantiateAsRequest, String asInstanceId);
 
+    Optional<AsLcmOpOcc> getInstantiateOperationJobStatus(final String url);
 }

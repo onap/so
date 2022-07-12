@@ -25,6 +25,8 @@ import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.CLOUD_R
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.SERVICE_INSTANCE_ID_PARAM_KEY;
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.SERVICE_INSTANCE_NAME_PARAM_KEY;
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.TENANT_ID_PARAM_KEY;
+
+import java.net.URI;
 import java.util.Optional;
 import org.apache.groovy.util.Maps;
 import org.onap.logging.filter.base.ONAPComponents;
@@ -55,6 +57,7 @@ import org.springframework.stereotype.Component;
 public class CnfInstantiateTask {
     private static final String CREATE_AS_REQUEST_OBJECT = "CreateAsRequestObject";
     private static final String INSTANTIATE_AS_REQUEST_OBJECT = "InstantiateAsRequest";
+    private static final String CNFM_REQUEST_STATUS_CHECK_URL = "CnfmStatusCheckUrl";
     private static final String AS_INSTANCE_ID = "asInstanceid";
     private static final Logger LOGGER = LoggerFactory.getLogger(CnfInstantiateTask.class);
     private final ExceptionBuilder exceptionUtil;
@@ -153,9 +156,10 @@ public class CnfInstantiateTask {
         try {
             final InstantiateAsRequest instantiateAsRequest = execution.getVariable(INSTANTIATE_AS_REQUEST_OBJECT);
             final String asInstanceId = execution.getVariable(AS_INSTANCE_ID);
-            cnfmHttpServiceProvider.invokeInstantiateAsRequest(instantiateAsRequest, asInstanceId);
+            Optional<URI> cnf_status_check_url =
+                    cnfmHttpServiceProvider.invokeInstantiateAsRequest(instantiateAsRequest, asInstanceId);
+            execution.setVariable(CNFM_REQUEST_STATUS_CHECK_URL, cnf_status_check_url.get());
             LOGGER.debug("Successfully invoked CNFM instantiate AS request: {}", asInstanceId);
-
         } catch (final Exception exception) {
             LOGGER.error("Unable to invoke CNFM InstantiateAsRequest", exception);
             exceptionUtil.buildAndThrowWorkflowException(execution, 2004, exception);
