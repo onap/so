@@ -16,8 +16,7 @@
 package org.onap.so.openstack.utils;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotEquals;
 import org.junit.Test;
 
 public class MsoHeatEnvironmentResourceTest {
@@ -36,8 +35,8 @@ public class MsoHeatEnvironmentResourceTest {
         assertEquals("maeValue", mae.getValue());
         assertEquals("\"msoHERName\": msoHERValue", msoHER.toString());
         assertEquals("\"name\": maeValue", mae.toString());
-        assertFalse(mae.equals(op));
-        assertTrue(mae.equals(mre));
+        assertNotEquals(mae, op);
+        assertEquals(mae, mre);
         assertEquals("name".hashCode(), mae.hashCode());
     }
 }
