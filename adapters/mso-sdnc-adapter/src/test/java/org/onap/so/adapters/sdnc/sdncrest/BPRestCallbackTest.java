@@ -24,6 +24,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 import org.apache.http.HttpStatus;
 import org.junit.Test;
@@ -48,6 +49,6 @@ public class BPRestCallbackTest extends BaseTest {
                         .withBody(response).withStatus(HttpStatus.SC_MULTIPLE_CHOICES)));
 
         boolean responseCommon = bpRestCallback.send("http://localhost:" + wireMockPort + "/sdnc", "Test");
-        assertEquals(true, responseCommon);
+        assertTrue(responseCommon);
     }
 }
