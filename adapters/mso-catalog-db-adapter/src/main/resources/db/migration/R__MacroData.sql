@@ -41,7 +41,8 @@ INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, I
 ('VNF-InPlaceUpdate', 'inPlaceSoftwareUpdate', 'Vnf', true, true, '7','7', 'DEFAULT', '*'),
 ('VNF-Config-Update', 'applyUpdatedConfig', 'Vnf', true, true, '7','7', 'DEFAULT', '*'),
 ('CNF-Macro-Upgrade', 'upgradeCnf', 'Vnf', false,true, '7', '7','DEFAULT', '*'),
-('Cnf-Create', 'createInstance', 'Cnf', true, true, '7','7','DEFAULT', '*');
+('Cnf-Create', 'createInstance', 'Cnf', true, true, '7','7','DEFAULT', '*'),
+('Cnf-Delete', 'deleteInstance', 'Cnf', true, true, '7','7','DEFAULT', '*');
 
 
 INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, SCOPE, ACTION, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID) VALUES
@@ -271,7 +272,8 @@ INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, SC
 ('CNF-Macro-Upgrade', '10', 'ChangeModelVnfBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
 ('CNF-Macro-Upgrade', '11', 'ActivateVnfBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
 ('CNF-Macro-Upgrade', '12', 'AAIUnsetVnfInMaintBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
-('CNF-Create', '1', 'CnfInstantiateBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Cnf-Create' and CLOUD_OWNER = 'DEFAULT'));
+('CNF-Create', '1', 'CnfInstantiateBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Cnf-Create' and CLOUD_OWNER = 'DEFAULT')),
+('CNF-Delete', '1', 'CnfDeleteBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Cnf-Delete' and CLOUD_OWNER = 'DEFAULT'));
 
 INSERT INTO rainy_day_handler_macro (FLOW_NAME, SERVICE_TYPE, VNF_TYPE, ERROR_CODE, WORK_STEP, POLICY, SECONDARY_POLICY, REG_EX_ERROR_MESSAGE, SERVICE_ROLE)
 VALUES
@@ -336,7 +338,8 @@ VALUES
 ('VNFHealthCheckActivity','*','*','*','*','Manual','Abort','*', '*'),
 ('VNFConfigModifyActivity','*','*','*','*','Manual','Abort','*', '*'),
 ('VNFUnsetInMaintFlagActivity','*','*','*','*','Manual','Abort','*', '*'),
-('VNFUnsetClosedLoopDisabledActivity','*','*','*','*','Manual','Abort','*', '*');
+('VNFUnsetClosedLoopDisabledActivity','*','*','*','*','Manual','Abort','*', '*'),
+('CnfDeleteBB', '*', '*', '*', '*' , 'Abort', 'Abort', '*', '*');
 
 INSERT INTO building_block_detail (building_block_name, resource_type, target_action)
 VALUES
@@ -430,7 +433,8 @@ VALUES
 ('StatusCheckBB', 'NO_VALIDATE', 'CUSTOM'),
 ('HealthCheckBB', 'NO_VALIDATE', 'CUSTOM'),
 ('UpgradeVfModuleBB', 'NO_VALIDATE', 'CUSTOM'),
-('CnfInstantiateBB', 'CNF', 'ACTIVATE');
+('CnfInstantiateBB', 'CNF', 'ACTIVATE'),
+('CnfDeleteBB', 'CNF', 'DEACTIVATE');
 
 
 INSERT INTO orchestration_status_state_transition_directive (resource_type, orchestration_status, target_action, flow_directive)
@@ -863,7 +867,8 @@ VALUES
 ('CONFIGURATION', 'PENDING ACTIVATION', 'DEACTIVATE', 'FAIL'),
 ('CONFIGURATION', 'PENDING', 'DEACTIVATE', 'FAIL'),
 ('VNF','CONFIGDEPLOYED','ACTIVATE','CONTINUE'),
-('CNF','PRECREATED','ACTIVATE','CONTINUE');
+('CNF','PRECREATED','ACTIVATE','CONTINUE'),
+('CNF','PRECREATED','DEACTIVATE','CONTINUE');
 
 
 INSERT INTO vnf_components_recipe (VNF_TYPE, VNF_COMPONENT_TYPE, ACTION, VERSION, ORCHESTRATION_URI, RECIPE_TIMEOUT)

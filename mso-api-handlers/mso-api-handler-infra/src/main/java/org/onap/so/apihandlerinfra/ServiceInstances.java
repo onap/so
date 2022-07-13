@@ -6,15 +6,15 @@
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
- * ================================================================================ 
+ * ================================================================================
  * Modifications Copyright (c) 2022 Ericsson. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -416,6 +416,26 @@ public class ServiceInstances extends AbstractRestHandler {
             logger.error("Error in cnf", e);
             throw e;
         }
+    }
+
+    @DELETE
+    @Path("/{version:[vV][7]}/serviceInstances/{serviceInstanceId}/cnfs/{asInstanceId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Delete provided for CNF instance",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Transactional
+    public Response deleteCnfInstance(String request, @PathParam("version") String version,
+            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("asInstanceId") String asInstanceId,
+            @Context ContainerRequestContext requestContext) throws ApiException {
+        logger.debug("Inside API Handler to perform delete CNF Instance");
+        String requestId = requestHandlerUtils.getRequestId(requestContext);
+        HashMap<String, String> instanceIdMap = new HashMap<>();
+        instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+        instanceIdMap.put("asInstanceId", asInstanceId);
+        return serviceInstances(request, Action.deleteInstance, instanceIdMap, version, requestId,
+                requestHandlerUtils.getRequestUri(requestContext, uriPrefix));
     }
 
     @POST
