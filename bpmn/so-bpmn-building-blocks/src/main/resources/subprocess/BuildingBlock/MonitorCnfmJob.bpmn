@@ -30,14 +30,14 @@
       </bpmn:endEvent>
       <bpmn:sequenceFlow id="SequenceFlow_0s1plu9" sourceRef="StartEvent_01r97z2" targetRef="ServiceTask_17jlnng" />
       <bpmn:sequenceFlow id="SequenceFlow_0etw572" sourceRef="IntermediateCatchEvent_1besn3n" targetRef="ServiceTask_17jlnng" />
-      <bpmn:serviceTask id="ServiceTask_17jlnng" name="&#10;Get Current Operation Status&#10;" camunda:asyncAfter="true" camunda:expression="${MonitorCnfmCreateJobTask.getCurrentOperationStatus(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:serviceTask id="ServiceTask_17jlnng" name="&#10;Get Current Operation Status&#10;" camunda:asyncAfter="true" camunda:expression="${MonitorCnfmJobTask.getCurrentOperationStatus(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
         <bpmn:incoming>SequenceFlow_0etw572</bpmn:incoming>
         <bpmn:incoming>SequenceFlow_0s1plu9</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_153a3kp</bpmn:outgoing>
       </bpmn:serviceTask>
       <bpmn:sequenceFlow id="SequenceFlow_1vmxw9g" sourceRef="ExclusiveGateway_1hkl6yy" targetRef="IntermediateCatchEvent_1besn3n" />
       <bpmn:sequenceFlow id="SequenceFlow_0is7myf" sourceRef="ExclusiveGateway_1hkl6yy" targetRef="EndEvent_1ohsce9">
-        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${MonitorCnfmCreateJobTask.hasOperationFinished(InjectExecution.execute(execution, execution.getVariable("gBuildingBlockExecution")))}</bpmn:conditionExpression>
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${MonitorCnfmJobTask.hasOperationFinished(InjectExecution.execute(execution, execution.getVariable("gBuildingBlockExecution")))}</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:sequenceFlow id="SequenceFlow_153a3kp" sourceRef="ServiceTask_17jlnng" targetRef="ExclusiveGateway_1hkl6yy" />
     </bpmn:subProcess>
@@ -54,12 +54,12 @@
     <bpmn:sequenceFlow id="SequenceFlow_1v4yr3f" sourceRef="SubProcess_19j0v63" targetRef="ServiceTask_1gms128" />
     <bpmn:sequenceFlow id="SequenceFlow_1i1o9sh" sourceRef="BoundaryEvent_0xiabzp" targetRef="ServiceTask_1s87b92" />
     <bpmn:sequenceFlow id="SequenceFlow_1x3tbl0" sourceRef="StartEvent_1" targetRef="SubProcess_19j0v63" />
-    <bpmn:serviceTask id="ServiceTask_1s87b92" name="&#10;Time Out Log Failure&#10;" camunda:asyncAfter="true" camunda:expression="${MonitorCnfmCreateJobTask.timeOutLogFailue(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="ServiceTask_1s87b92" name="&#10;Time Out Log Failure&#10;" camunda:asyncAfter="true" camunda:expression="${MonitorCnfmJobTask.timeOutLogFailure(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_1i1o9sh</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0bcgtzj</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_0bcgtzj" sourceRef="ServiceTask_1s87b92" targetRef="EndEvent_1w3t3t0" />
-    <bpmn:serviceTask id="ServiceTask_1gms128" name="&#10;Check if operation was successful&#10;" camunda:asyncAfter="true" camunda:expression="${MonitorCnfmCreateJobTask.checkIfOperationWasSuccessful(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="ServiceTask_1gms128" name="&#10;Check if operation was successful&#10;" camunda:asyncAfter="true" camunda:expression="${MonitorCnfmJobTask.checkIfOperationWasSuccessful(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_1v4yr3f</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1543qy7</bpmn:outgoing>
     </bpmn:serviceTask>

@@ -25,6 +25,7 @@ import org.onap.so.cnfm.lcm.model.AsInstance;
 import org.onap.so.cnfm.lcm.model.AsLcmOpOcc;
 import org.onap.so.cnfm.lcm.model.CreateAsRequest;
 import org.onap.so.cnfm.lcm.model.InstantiateAsRequest;
+import org.onap.so.cnfm.lcm.model.TerminateAsRequest;
 
 /**
  * @author Sagar Shetty (sagar.shetty@est.tech)
@@ -38,5 +39,9 @@ public interface CnfmHttpServiceProvider {
 
     Optional<URI> invokeInstantiateAsRequest(InstantiateAsRequest instantiateAsRequest, String asInstanceId);
 
-    Optional<AsLcmOpOcc> getInstantiateOperationJobStatus(final String url);
+    Optional<AsLcmOpOcc> getOperationJobStatus(final String url);
+
+    Optional<Boolean> invokeDeleteAsRequest(final String asInstanceId);
+
+    Optional<URI> invokeTerminateAsRequest(String asInstanceId, TerminateAsRequest terminateAsRequest);
 }

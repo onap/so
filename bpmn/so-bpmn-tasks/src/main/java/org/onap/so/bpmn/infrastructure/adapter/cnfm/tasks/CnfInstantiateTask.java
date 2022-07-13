@@ -23,6 +23,7 @@ package org.onap.so.bpmn.infrastructure.adapter.cnfm.tasks;
 import static java.util.Objects.isNull;
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.CLOUD_OWNER_PARAM_KEY;
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.CLOUD_REGION_PARAM_KEY;
+import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.RESOURCE_ID_KEY;
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.SERVICE_INSTANCE_ID_PARAM_KEY;
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.SERVICE_INSTANCE_NAME_PARAM_KEY;
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.TENANT_ID_PARAM_KEY;
@@ -30,6 +31,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.apache.groovy.util.Maps;
 import org.onap.logging.filter.base.ONAPComponents;
@@ -63,6 +65,7 @@ public class CnfInstantiateTask {
     private static final String CREATE_AS_REQUEST_OBJECT = "CreateAsRequestObject";
     private static final String INSTANTIATE_AS_REQUEST_OBJECT = "InstantiateAsRequest";
     private static final String CNFM_REQUEST_STATUS_CHECK_URL = "CnfmStatusCheckUrl";
+    private static final String MONITOR_JOB_NAME = "MonitorJobName";
     private static final String AS_INSTANCE_ID = "asInstanceid";
     private static final Logger LOGGER = LoggerFactory.getLogger(CnfInstantiateTask.class);
     private final ExceptionBuilder exceptionUtil;
@@ -98,6 +101,7 @@ public class CnfInstantiateTask {
             final ModelInfo modelInfo = requestDetails.getModelInfo();
             final CloudConfiguration cloudConfiguration = requestDetails.getCloudConfiguration();
             final ServiceInstance serviceInstance = generalBuildingBlock.getServiceInstance();
+            final String resourceId = executeBuildingBlock.getResourceId();
 
             final CreateAsRequest createAsRequest = new CreateAsRequest().asdId(modelInfo.getModelVersionId())
                     .asInstanceName(requestDetails.getRequestInfo().getInstanceName())
@@ -105,7 +109,7 @@ public class CnfInstantiateTask {
                             CLOUD_REGION_PARAM_KEY, cloudConfiguration.getLcpCloudRegionId(), TENANT_ID_PARAM_KEY,
                             cloudConfiguration.getTenantId(), SERVICE_INSTANCE_ID_PARAM_KEY,
                             serviceInstance.getServiceInstanceId(), SERVICE_INSTANCE_NAME_PARAM_KEY,
-                            serviceInstance.getServiceInstanceName()));
+                            serviceInstance.getServiceInstanceName(), RESOURCE_ID_KEY, resourceId));
 
             LOGGER.debug("Adding CreateAsRequest to execution {}", createAsRequest);
 
@@ -130,7 +134,8 @@ public class CnfInstantiateTask {
                         "Unable to invoke CNFM for CreateAsRequest", ONAPComponents.SO);
             }
 
-            final AsInstance asInstance = optional.orElseThrow();
+            final AsInstance asInstance =
+                    optional.orElseThrow(() -> new NoSuchElementException("AsInstance object is empty"));
             execution.setVariable(AS_INSTANCE_ID, asInstance.getAsInstanceid());
             LOGGER.debug("Successfully invoked CNFM response: {}", asInstance);
 
@@ -150,8 +155,8 @@ public class CnfInstantiateTask {
             if (requestDetails != null && requestDetails.getRequestParameters() != null) {
                 List<Map<String, Object>> userParams = requestDetails.getRequestParameters().getUserParams();
                 if (userParams != null && !userParams.isEmpty()) {
-                    List deploymentItems = new ArrayList<Object>();
-                    List deploymentItemsReq = new ArrayList<AsInfoModificationRequestDeploymentItems>();
+                    List<Object> deploymentItems = new ArrayList<>();
+                    List<AsInfoModificationRequestDeploymentItems> deploymentItemsReq = new ArrayList<>();
                     for (Map<String, Object> userParam : userParams) {
                         if (userParam.containsKey("deploymentItems")) {
                             deploymentItems = (ArrayList<Object>) userParam.get("deploymentItems");
@@ -183,9 +188,10 @@ public class CnfInstantiateTask {
         try {
             final InstantiateAsRequest instantiateAsRequest = execution.getVariable(INSTANTIATE_AS_REQUEST_OBJECT);
             final String asInstanceId = execution.getVariable(AS_INSTANCE_ID);
-            Optional<URI> cnf_status_check_url =
+            Optional<URI> cnfStatusCheckURL =
                     cnfmHttpServiceProvider.invokeInstantiateAsRequest(instantiateAsRequest, asInstanceId);
-            execution.setVariable(CNFM_REQUEST_STATUS_CHECK_URL, cnf_status_check_url.get());
+            execution.setVariable(CNFM_REQUEST_STATUS_CHECK_URL, cnfStatusCheckURL.orElseThrow());
+            execution.setVariable(MONITOR_JOB_NAME, "Instantiate");
             LOGGER.debug("Successfully invoked CNFM instantiate AS request: {}", asInstanceId);
         } catch (final Exception exception) {
             LOGGER.error("Unable to invoke CNFM InstantiateAsRequest", exception);

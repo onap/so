@@ -33,19 +33,20 @@ import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.INPUT
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.CLOUD_OWNER_PARAM_KEY;
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.CLOUD_REGION_PARAM_KEY;
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.TENANT_ID_PARAM_KEY;
-import java.net.URI;
-import java.util.Optional;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.UUID;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.onap.so.bpmn.BaseTaskTest;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.utils.InputParameter;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
+import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.cnfm.lcm.model.AsInstance;
 import org.onap.so.cnfm.lcm.model.CreateAsRequest;
 import org.onap.so.cnfm.lcm.model.InstantiateAsRequest;
@@ -54,12 +55,13 @@ import org.onap.so.cnfm.lcm.model.InstantiateAsRequest;
 /**
  * @author raviteja.kaumuri@est.tech
  */
-public class CnfInstantiateTaskTest extends BaseTaskTest {
+@RunWith(MockitoJUnitRunner.class)
+public class CnfInstantiateTaskTest {
 
+    @Mock
+    protected ExceptionBuilder exceptionUtil;
     private static final String CREATE_AS_REQUEST_OBJECT = "CreateAsRequestObject";
     private static final String INSTANTIATE_AS_REQUEST_OBJECT = "InstantiateAsRequest";
-    private static final String CNFM_REQUEST_STATUS_CHECK_URL = "CnfmStatusCheckUrl";
-    private static final String MONITOR_JOB_NAME = "MonitorJobName";
     private static final String MODEL_INSTANCE_NAME = "instanceTest";
     private static final String AS_INSTANCE_ID = "asInstanceid";
     private static final String CLOUD_OWNER = "CloudOwner";

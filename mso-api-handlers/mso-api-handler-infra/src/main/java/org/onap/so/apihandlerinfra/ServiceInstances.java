@@ -402,6 +402,25 @@ public class ServiceInstances extends AbstractRestHandler {
         }
     }
 
+    @DELETE
+    @Path("/{version:[vV][7]}/serviceInstances/{serviceInstanceId}/cnfs/{cnfInstanceId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Delete provided for CNF instance", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Transactional
+    public Response deleteCnfInstance(String request, @PathParam("version") String version,
+            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("cnfInstanceId") String cnfInstanceId,
+            @Context ContainerRequestContext requestContext) throws ApiException {
+        logger.debug("Inside API Handler to perform delete CNF Instance");
+        String requestId = requestHandlerUtils.getRequestId(requestContext);
+        HashMap<String, String> instanceIdMap = new HashMap<>();
+        instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+        instanceIdMap.put("vnfInstanceId", cnfInstanceId);
+        return serviceInstances(request, Action.deleteInstance, instanceIdMap, version, requestId,
+                requestHandlerUtils.getRequestUri(requestContext, uriPrefix));
+    }
+
     @POST
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/upgrade")
     @Consumes(MediaType.APPLICATION_JSON)

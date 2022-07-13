@@ -24,7 +24,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -45,13 +44,13 @@ import org.onap.so.cnfm.lcm.model.AsLcmOpOcc;
  * @author Raviteja Karumuri (raviteja.karumuri@est.tech)
  */
 @RunWith(MockitoJUnitRunner.class)
-public class MonitorCnfmCreateJobTaskTest {
+public class MonitorCnfmJobTaskTest {
 
     private final BuildingBlockExecution stubbedExecution = new StubbedBuildingBlockExecution();
     public static final String CREATE_CNF_STATUS_RESPONSE_PARAM_NAME = "createCnfStatusResponse";
     private final String CNFM_REQUEST_STATUS_CHECK_URL = "CnfmStatusCheckUrl";
     public static final String OPERATION_STATUS_PARAM_NAME = "operationStatus";
-    private MonitorCnfmCreateJobTask monitorCnfmCreateJobTask;
+    private MonitorCnfmJobTask monitorCnfmCreateJobTask;
     @Mock
     private CnfmHttpServiceProvider mockedCnfmHttpServiceProvider;
     @Mock
@@ -59,14 +58,13 @@ public class MonitorCnfmCreateJobTaskTest {
 
     @Before
     public void setup() {
-        monitorCnfmCreateJobTask = new MonitorCnfmCreateJobTask(mockedCnfmHttpServiceProvider, exceptionUtil);
+        monitorCnfmCreateJobTask = new MonitorCnfmJobTask(mockedCnfmHttpServiceProvider, exceptionUtil);
     }
 
     @Test
-    public void getCurrentOperationStatus_completed() {
+    public void test_getCurrentOperationStatus_completed() {
         stubbedExecution.setVariable(CNFM_REQUEST_STATUS_CHECK_URL, URI.create("sampleURL"));
-        when(mockedCnfmHttpServiceProvider.getInstantiateOperationJobStatus(Mockito.anyString()))
-                .thenReturn(getAsLcmOpOcc());
+        when(mockedCnfmHttpServiceProvider.getOperationJobStatus(Mockito.anyString())).thenReturn(getAsLcmOpOcc());
         monitorCnfmCreateJobTask.getCurrentOperationStatus(stubbedExecution);
         assertEquals(AsLcmOpOcc.OperationStateEnum.COMPLETED,
                 stubbedExecution.getVariable(OPERATION_STATUS_PARAM_NAME));
@@ -75,16 +73,17 @@ public class MonitorCnfmCreateJobTaskTest {
     @Test
     public void test_getCurrentOperationStatus_Exception() {
         stubbedExecution.setVariable(CNFM_REQUEST_STATUS_CHECK_URL, URI.create("sampleURL"));
-        when(mockedCnfmHttpServiceProvider.getInstantiateOperationJobStatus(Mockito.anyString()))
+        when(mockedCnfmHttpServiceProvider.getOperationJobStatus(Mockito.anyString()))
                 .thenThrow(new RuntimeException());
         monitorCnfmCreateJobTask.getCurrentOperationStatus(stubbedExecution);
-        verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1209), anyString(),
-                any());
+        verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1209),
+                any(Exception.class));
     }
 
     @Test
     public void test_checkIfOperationWasSuccessful_status_completed() {
-        final MonitorCnfmCreateJobTask mockedMonitorCnfmCreateJobTask = Mockito.spy(monitorCnfmCreateJobTask);
+        stubbedExecution.setVariable(OPERATION_STATUS_PARAM_NAME, AsLcmOpOcc.OperationStateEnum.COMPLETED);
+        final MonitorCnfmJobTask mockedMonitorCnfmCreateJobTask = Mockito.spy(monitorCnfmCreateJobTask);
         mockedMonitorCnfmCreateJobTask.checkIfOperationWasSuccessful(stubbedExecution);
         verify(mockedMonitorCnfmCreateJobTask, times(1)).checkIfOperationWasSuccessful(stubbedExecution);
     }
@@ -96,16 +95,8 @@ public class MonitorCnfmCreateJobTaskTest {
         stubbedExecution.setVariable(OPERATION_STATUS_PARAM_NAME, AsLcmOpOcc.OperationStateEnum.FAILED);
         stubbedExecution.setVariable(CREATE_CNF_STATUS_RESPONSE_PARAM_NAME, mockedAsLcmOpOcc.orElseThrow());
         monitorCnfmCreateJobTask.checkIfOperationWasSuccessful(stubbedExecution);
-        verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1207), anyString(),
-                any());
-    }
-
-    @Test
-    public void test_checkIfOperationWasSuccessful_status_Null() {
-        stubbedExecution.setVariable(OPERATION_STATUS_PARAM_NAME, null);
-        monitorCnfmCreateJobTask.checkIfOperationWasSuccessful(stubbedExecution);
-        verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1206), anyString(),
-                any());
+        verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1206),
+                any(Exception.class));
     }
 
     @Test
@@ -138,9 +129,9 @@ public class MonitorCnfmCreateJobTaskTest {
 
     @Test
     public void test_timeOutLogFailure() {
-        monitorCnfmCreateJobTask.timeOutLogFailue(stubbedExecution);
-        verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1205), anyString(),
-                any());
+        monitorCnfmCreateJobTask.timeOutLogFailure(stubbedExecution);
+        verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1205),
+                any(Exception.class));
     }
 
     private Optional<AsLcmOpOcc> getAsLcmOpOcc() {

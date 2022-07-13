@@ -26,6 +26,7 @@ import org.onap.so.cnfm.lcm.model.AsInstance;
 import org.onap.so.cnfm.lcm.model.AsLcmOpOcc;
 import org.onap.so.cnfm.lcm.model.CreateAsRequest;
 import org.onap.so.cnfm.lcm.model.InstantiateAsRequest;
+import org.onap.so.cnfm.lcm.model.TerminateAsRequest;
 import org.onap.so.rest.exceptions.HttpResouceNotFoundException;
 import org.onap.so.rest.exceptions.InvalidRestRequestException;
 import org.onap.so.rest.exceptions.RestProcessingException;
@@ -111,14 +112,14 @@ public class CnfmHttpServiceProviderImpl implements CnfmHttpServiceProvider {
     }
 
     @Override
-    public Optional<AsLcmOpOcc> getInstantiateOperationJobStatus(final String url) {
+    public Optional<AsLcmOpOcc> getOperationJobStatus(final String url) {
         try {
             final ResponseEntity<AsLcmOpOcc> response = httpServiceProvider.getHttpResponse(url, AsLcmOpOcc.class);
 
             final HttpStatus httpStatus = response.getStatusCode();
 
             if (!(httpStatus.equals(HttpStatus.ACCEPTED)) && !(httpStatus.equals(HttpStatus.OK))) {
-                LOGGER.error("Unable to invoke HTTP GET using URL: {}, Response Code: ", url, httpStatus.value());
+                LOGGER.error("Unable to invoke HTTP GET using URL: {}, Response Code: {}", url, httpStatus.value());
                 return Optional.empty();
             }
 
@@ -131,6 +132,56 @@ public class CnfmHttpServiceProviderImpl implements CnfmHttpServiceProvider {
                 | HttpResouceNotFoundException httpInvocationException) {
             LOGGER.error("Unexpected error while processing job request", httpInvocationException);
             throw httpInvocationException;
+        }
+    }
+
+    @Override
+    public Optional<Boolean> invokeDeleteAsRequest(String asInstanceId) {
+        try {
+
+            final String url = cnfmUrlProvider.getDeleteAsRequestUrl(asInstanceId);
+            LOGGER.debug("Will send request to CNFM by uisng the url: {}", url);
+
+            ResponseEntity<Void> response = httpServiceProvider.deleteHttpRequest(url, Void.class);
+            final HttpStatus httpStatus = response.getStatusCode();
+            if (!(httpStatus.is2xxSuccessful())) {
+                LOGGER.error("Unable to invoke HTTP DELETE using URL: {}, Response Code: {}", url, httpStatus.value());
+                return Optional.empty();
+            }
+            return Optional.of(Boolean.TRUE);
+        } catch (final RestProcessingException | InvalidRestRequestException
+                | HttpResouceNotFoundException httpInvocationException) {
+            LOGGER.error("Unexpected error while processing delete request", httpInvocationException);
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<URI> invokeTerminateAsRequest(String asInstanceId, TerminateAsRequest terminateAsRequest) {
+        try {
+
+            final String url = cnfmUrlProvider.getTerminateAsRequestUrl(asInstanceId);
+            LOGGER.debug("Will send request to CNFM to terminate by uisng the url: {}", url);
+
+            ResponseEntity<Void> response = httpServiceProvider.postHttpRequest(terminateAsRequest, url, Void.class);
+            final HttpStatus httpStatus = response.getStatusCode();
+            if (httpStatus.is2xxSuccessful()) {
+                URI statusUri = response.getHeaders().getLocation();
+                if (statusUri == null) {
+                    LOGGER.error("Received response without status URL while terminating of instance with ID: {}",
+                            asInstanceId);
+                    return Optional.empty();
+                }
+                return Optional.of(statusUri);
+            }
+            LOGGER.error("Unable to invoke HTTP DELETE while terminating by using URL: {}, Response Code: {}", url,
+                    httpStatus.value());
+            return Optional.empty();
+
+        } catch (final RestProcessingException | InvalidRestRequestException
+                | HttpResouceNotFoundException httpInvocationException) {
+            LOGGER.error("Unexpected error while processing terminate request", httpInvocationException);
+            return Optional.empty();
         }
     }
 

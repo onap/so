@@ -22,6 +22,7 @@ package org.onap.so.bpmn.infrastructure.adapter.cnfm.tasks;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import java.net.URI;
@@ -33,9 +34,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.cnfm.lcm.model.AsInstance;
+import org.onap.so.cnfm.lcm.model.AsLcmOpOcc;
 import org.onap.so.cnfm.lcm.model.CreateAsRequest;
 import org.onap.so.cnfm.lcm.model.InstantiateAsRequest;
+import org.onap.so.cnfm.lcm.model.TerminateAsRequest;
 import org.onap.so.rest.service.HttpRestServiceProvider;
+import org.onap.so.rest.service.HttpRestServiceProviderImpl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,10 +53,13 @@ public class CnfmHttpServiceProviderImplTest {
     @Mock
     private CnfmUrlProvider cnfmUrlProvider;
     @Mock
-    private HttpRestServiceProvider httpRestServiceProvider;
+    private HttpRestServiceProviderImpl httpRestServiceProvider;
     @Mock
     private ResponseEntity<AsInstance> responseEntity;
+    @Mock
+    private ResponseEntity<Void> responseEntityVoid;
 
+    private ResponseEntity<AsLcmOpOcc> responseEntityAsLCM;
     private final String createURL = "http://so-cnfm-lcm.onap:9888/so/so-cnfm/v1/api/aslcm/v1/as_instances";
     private final String instantiateURL = "http://so-cnfm-lcm.onap:9888/so/so-cnfm/v1/api/aslcm/v1/as_instances"
             + getAsInstance().getAsInstanceid() + "/instantiate";
@@ -60,6 +67,7 @@ public class CnfmHttpServiceProviderImplTest {
     private final URI uri = URI.create("sample");
     private final CreateAsRequest createAsRequest = new CreateAsRequest();
     private final InstantiateAsRequest instantiateAsRequest = new InstantiateAsRequest();
+    private final TerminateAsRequest terminateAsRequest = new TerminateAsRequest();
 
     @Before
     public void setup() {
@@ -69,7 +77,7 @@ public class CnfmHttpServiceProviderImplTest {
     }
 
     @Test
-    public void invokeCreateAsRequest_withStatuscodeSuccess_hasBody() {
+    public void invokeCreateAsRequest_withStatuscode_Success_hasBody() {
 
         when(cnfmUrlProvider.getCreateAsRequestUrl()).thenReturn(createURL);
         when(responseEntity.getStatusCode()).thenReturn(HttpStatus.ACCEPTED);
@@ -90,7 +98,7 @@ public class CnfmHttpServiceProviderImplTest {
 
 
     @Test
-    public void invokeCreateAsRequest_withStatuscodeSuccess_hasBody_emptyInstanceID() {
+    public void invokeCreateAsRequest_withStatuscode_Success_hasBody_emptyInstanceID() {
 
         AsInstance emptyInstanceID = getAsInstance();
         emptyInstanceID.setAsInstanceid(null);
@@ -103,7 +111,7 @@ public class CnfmHttpServiceProviderImplTest {
     }
 
     @Test
-    public void invokeCreateAsRequest_withStatuscodeNotSuccess_hasBody_emptyInstanceID() {
+    public void invokeCreateAsRequest_withStatuscode_NotSuccess_hasBody_emptyInstanceID() {
 
         AsInstance emptyInstanceID = getAsInstance();
         emptyInstanceID.setAsInstanceid(null);
@@ -115,7 +123,8 @@ public class CnfmHttpServiceProviderImplTest {
 
 
     @Test
-    public void InstantiateAsRequest_withStatuscodeSuccess() {
+    public void invokeInstantiateAsRequest_withStatuscode_Success() {
+
         final String asinstanceId = getAsInstance().getAsInstanceid();
         when(cnfmUrlProvider.getInstantiateAsRequestUrl(asinstanceId)).thenReturn(instantiateURL);
         when(responseEntity.getStatusCode()).thenReturn(HttpStatus.ACCEPTED);
@@ -123,6 +132,115 @@ public class CnfmHttpServiceProviderImplTest {
         final Optional<URI> returnedContent =
                 cnfmHttpServiceProviderImpl.invokeInstantiateAsRequest(instantiateAsRequest, asinstanceId);
         assertEquals(uri.toString(), returnedContent.orElseThrow().toString());
+    }
+
+    @Test
+    public void invokeInstantiateAsRequest_withStatuscode_Success_NoStatusURI() {
+
+        final String asinstanceId = getAsInstance().getAsInstanceid();
+        final HttpHeaders httpHeaders = getHttpHeaders();
+        httpHeaders.setLocation(null);
+        when(cnfmUrlProvider.getInstantiateAsRequestUrl(asinstanceId)).thenReturn(instantiateURL);
+        when(responseEntity.getStatusCode()).thenReturn(HttpStatus.ACCEPTED);
+        when(responseEntity.getHeaders()).thenReturn(httpHeaders);
+        final Optional<URI> returnedContent =
+                cnfmHttpServiceProviderImpl.invokeInstantiateAsRequest(instantiateAsRequest, asinstanceId);
+        assertFalse(returnedContent.isPresent());
+    }
+
+    @Test
+    public void invokeInstantiateAsRequest_withStatuscode_NotSuccess_NoStatusURI() {
+
+        final String asinstanceId = getAsInstance().getAsInstanceid();
+        when(cnfmUrlProvider.getInstantiateAsRequestUrl(asinstanceId)).thenReturn(instantiateURL);
+        when(responseEntity.getStatusCode()).thenReturn(HttpStatus.BAD_REQUEST);
+        final Optional<URI> returnedContent =
+                cnfmHttpServiceProviderImpl.invokeInstantiateAsRequest(instantiateAsRequest, asinstanceId);
+        assertFalse(returnedContent.isPresent());
+    }
+
+    @Test
+    public void test_getOperationJobStatus_statuscode_Accepted() {
+
+        responseEntityAsLCM = getResponseEntityAsLCM(HttpStatus.ACCEPTED);
+        when(httpRestServiceProvider.getHttpResponse(Mockito.anyString(), eq(AsLcmOpOcc.class)))
+                .thenReturn(responseEntityAsLCM);
+        final Optional<AsLcmOpOcc> returnedContent = cnfmHttpServiceProviderImpl.getOperationJobStatus("sample URL");
+        assertEquals(returnedContent.orElseThrow().getAsInstanceId(), getAsLcmOpOcc().getAsInstanceId());
+    }
+
+    @Test
+    public void test_getOperationJobStatus_statuscode_NotFound() {
+
+        responseEntityAsLCM = getResponseEntityAsLCM(HttpStatus.NOT_FOUND);
+        when(httpRestServiceProvider.getHttpResponse(Mockito.anyString(), eq(AsLcmOpOcc.class)))
+                .thenReturn(responseEntityAsLCM);
+        final Optional<AsLcmOpOcc> returnedContent = cnfmHttpServiceProviderImpl.getOperationJobStatus("sample URL");
+        assertFalse(returnedContent.isPresent());
+    }
+
+    @Test
+    public void invokeDeleteAsRequest_withStatuscode_Success() {
+
+        when(cnfmUrlProvider.getDeleteAsRequestUrl(Mockito.anyString())).thenReturn("deleteURL");
+        when(httpRestServiceProvider.deleteHttpRequest(Mockito.anyString(), eq(Void.class)))
+                .thenReturn(responseEntityVoid);
+        when(responseEntityVoid.getStatusCode()).thenReturn(HttpStatus.ACCEPTED);
+        final Optional<Boolean> returnedContent = cnfmHttpServiceProviderImpl.invokeDeleteAsRequest("2345");
+        assertTrue(returnedContent.orElseThrow());
+    }
+
+    @Test
+    public void invokeDeleteAsRequest_withStatuscode_BadRequest() {
+
+        when(cnfmUrlProvider.getDeleteAsRequestUrl(Mockito.anyString())).thenReturn("deleteURL");
+        when(httpRestServiceProvider.deleteHttpRequest(Mockito.anyString(), eq(Void.class)))
+                .thenReturn(responseEntityVoid);
+        when(responseEntityVoid.getStatusCode()).thenReturn(HttpStatus.BAD_REQUEST);
+        final Optional<Boolean> returnedContent = cnfmHttpServiceProviderImpl.invokeDeleteAsRequest("2345");
+        assertTrue(returnedContent.isEmpty());
+    }
+
+    @Test
+    public void invokeTerminateAsRequest_withStatuscode_Success() {
+
+        when(cnfmUrlProvider.getTerminateAsRequestUrl(Mockito.anyString())).thenReturn("terminateURL");
+        when(httpRestServiceProvider.postHttpRequest(Mockito.any(TerminateAsRequest.class), Mockito.anyString(),
+                eq(Void.class))).thenReturn(responseEntityVoid);
+        when(responseEntityVoid.getStatusCode()).thenReturn(HttpStatus.ACCEPTED);
+        when(responseEntityVoid.getHeaders()).thenReturn(getHttpHeaders());
+        final Optional<URI> returnedContent =
+                cnfmHttpServiceProviderImpl.invokeTerminateAsRequest("12356", terminateAsRequest);
+        assertTrue(returnedContent.isPresent());
+        assertEquals(uri.getPath(), returnedContent.orElseThrow().getPath());
+    }
+
+    @Test
+    public void invokeTerminateAsRequest_withStatuscode_Success_NullStatusURI() {
+
+        final HttpHeaders httpHeaders = getHttpHeaders();
+        httpHeaders.setLocation(null);
+        when(cnfmUrlProvider.getTerminateAsRequestUrl(Mockito.anyString())).thenReturn("terminateURL");
+        when(httpRestServiceProvider.postHttpRequest(Mockito.any(TerminateAsRequest.class), Mockito.anyString(),
+                eq(Void.class))).thenReturn(responseEntityVoid);
+        when(responseEntityVoid.getStatusCode()).thenReturn(HttpStatus.ACCEPTED);
+        when(responseEntityVoid.getHeaders()).thenReturn(httpHeaders);
+        final Optional<URI> returnedContent =
+                cnfmHttpServiceProviderImpl.invokeTerminateAsRequest("12356", terminateAsRequest);
+        assertTrue(returnedContent.isEmpty());
+    }
+
+    @Test
+    public void invokeTerminateAsRequest_withStatuscode_BadRequest() {
+
+        when(cnfmUrlProvider.getTerminateAsRequestUrl(Mockito.anyString())).thenReturn("terminateURL");
+        when(httpRestServiceProvider.postHttpRequest(Mockito.any(TerminateAsRequest.class), Mockito.anyString(),
+                eq(Void.class))).thenReturn(responseEntityVoid);
+        when(responseEntityVoid.getStatusCode()).thenReturn(HttpStatus.BAD_REQUEST);
+        // when(responseEntityVoid.getHeaders()).thenReturn(getHttpHeaders());
+        final Optional<URI> returnedContent =
+                cnfmHttpServiceProviderImpl.invokeTerminateAsRequest("12356", terminateAsRequest);
+        assertTrue(returnedContent.isEmpty());
     }
 
     private AsInstance getAsInstance() {
@@ -135,5 +253,17 @@ public class CnfmHttpServiceProviderImplTest {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(uri);
         return httpHeaders;
+    }
+
+    private ResponseEntity<AsLcmOpOcc> getResponseEntityAsLCM(HttpStatus httpStatus) {
+        ResponseEntity<AsLcmOpOcc> asLcmOpOccResponseEntity =
+                new ResponseEntity<AsLcmOpOcc>(getAsLcmOpOcc(), httpStatus);
+        return asLcmOpOccResponseEntity;
+    }
+
+    private AsLcmOpOcc getAsLcmOpOcc() {
+        AsLcmOpOcc asLcmOpOcc = new AsLcmOpOcc();
+        asLcmOpOcc.setAsInstanceId("12345");
+        return asLcmOpOcc;
     }
 }
