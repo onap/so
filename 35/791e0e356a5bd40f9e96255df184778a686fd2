@@ -1,0 +1,8 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Byung-Woo Jun <byung-woo.jun@est.tech>
+Code-Review+2: Waqas Ikram <waqas.ikram@est.tech>
+Submitted-by: Waqas Ikram <waqas.ikram@est.tech>
+Submitted-at: Wed, 13 Jul 2022 11:35:09 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/so/+/129891
+Project: so
+Branch: refs/heads/as_orchestration
