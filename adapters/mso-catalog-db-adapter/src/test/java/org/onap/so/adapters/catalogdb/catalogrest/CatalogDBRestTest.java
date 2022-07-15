@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2022 Samsung Electronics Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -813,7 +814,7 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-        JSONAssert.assertEquals(badQueryParamResponse, response.getBody().toString(), false);
+        JSONAssert.assertEquals(badQueryParamResponse, response.getBody(), false);
     }
 
     @Test
@@ -850,10 +851,10 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         ObjectMapper mapper = new ObjectMapper();
         ProcessingFlags processingFlagsResponse = mapper.readValue(response.getBody(), ProcessingFlags.class);
 
-        assertEquals(processingFlagsResponse.getFlag(), "TESTFLAG");
-        assertEquals(processingFlagsResponse.getValue(), "NO");
-        assertEquals(processingFlagsResponse.getEndpoint(), "TESTENDPOINT");
-        assertEquals(processingFlagsResponse.getDescription(), "TEST FLAG");
+        assertEquals("TESTFLAG", processingFlagsResponse.getFlag());
+        assertEquals("NO", processingFlagsResponse.getValue());
+        assertEquals("TESTENDPOINT", processingFlagsResponse.getEndpoint());
+        assertEquals("TEST FLAG", processingFlagsResponse.getDescription());
     }
 
     @Test
@@ -876,8 +877,8 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         boolean testFlagFound = false;
         for (int i = 0; i < processingFlagsResponse.size(); i++) {
             if (processingFlagsResponse.get(i).getFlag().equals("TESTFLAG")) {
-                assertEquals(processingFlagsResponse.get(i).getEndpoint(), "TESTENDPOINT");
-                assertEquals(processingFlagsResponse.get(i).getDescription(), "TEST FLAG");
+                assertEquals("TESTENDPOINT", processingFlagsResponse.get(i).getEndpoint());
+                assertEquals("TEST FLAG", processingFlagsResponse.get(i).getDescription());
                 testFlagFound = true;
             }
         }
