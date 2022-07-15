@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (c) 2019, CMCC Technologies Co., Ltd.
+ * Copyright (c) 2022, Samsung Electronics. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +36,7 @@ public class QueryServiceInfoTest {
         QueryServiceInfo queryServiceInfo = new QueryServiceInfo(createList());
         String jsonResult = queryServiceInfo.JSON2(true, false);
         String serviceInfo = jsonResult.substring(jsonResult.indexOf("{"), jsonResult.length());
-        Assertions.assertThat(JsonPathUtil.getInstance().locateResult(serviceInfo, "$.id").get()).isEqualTo("1");
+        Assertions.assertThat(JsonPathUtil.getInstance().locateResult(serviceInfo, "$.id").get()).contains("1");
     }
 
     private List<ServiceInfo> createList() {

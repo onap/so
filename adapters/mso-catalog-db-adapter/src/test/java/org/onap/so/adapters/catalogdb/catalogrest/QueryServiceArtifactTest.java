@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (c) 2019, CMCC Technologies Co., Ltd.
+ * Copyright (c) 2022, Samsung Electronics. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +36,7 @@ public class QueryServiceArtifactTest {
         QueryServiceArtifact queryServiceArtifact = new QueryServiceArtifact(createList());
         String jsonResult = queryServiceArtifact.JSON2(true, false);
         Assertions.assertThat(JsonPathUtil.getInstance().locateResult(jsonResult, "$.serviceArtifact[0].name").get())
-                .isEqualTo("eMBB.zip");
+                .contains("eMBB.zip");
     }
 
     private List<ServiceArtifact> createList() {
