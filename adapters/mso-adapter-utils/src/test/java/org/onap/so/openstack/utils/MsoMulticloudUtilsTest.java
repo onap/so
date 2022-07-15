@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2019 Samsung Intellectual Property. All rights reserved.
+ * Copyright (C) 2022 Samsung Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 import static org.onap.so.openstack.utils.MsoMulticloudUtils.MULTICLOUD_QUERY_BODY_NULL;
@@ -113,13 +113,13 @@ public class MsoMulticloudUtilsTest extends BaseTest {
         StackInfo result =
                 multicloudUtils.deleteStack("MTN14", "CloudOwner", "TEST-tenant", "TEST-stack/TEST-workload");
         assertNotNull(result);
-        assertTrue(HeatStatus.NOTFOUND == result.getStatus());
+        assertSame(HeatStatus.NOTFOUND, result.getStatus());
     }
 
     @Test
     public void queryStack() throws MsoException {
         StackInfo result = multicloudUtils.queryStack("MTN13", "CloudOwner", "TEST-tenant", "instanceId");
-        assertTrue(HeatStatus.NOTFOUND == result.getStatus());
+        assertSame(HeatStatus.NOTFOUND, result.getStatus());
     }
 
     @Test
@@ -129,7 +129,7 @@ public class MsoMulticloudUtilsTest extends BaseTest {
                         .withStatus(HttpStatus.SC_OK)));
 
         StackInfo result = multicloudUtils.queryStack("MTN13", "CloudOwner", "TEST-tenant", "instanceName/instanceId");
-        assertTrue(HeatStatus.FAILED == result.getStatus());
+        assertSame(HeatStatus.FAILED, result.getStatus());
         assertEquals(MULTICLOUD_QUERY_BODY_NULL, result.getStatusMessage());
     }
 
@@ -143,7 +143,7 @@ public class MsoMulticloudUtilsTest extends BaseTest {
         CloudInfo cloudInfo = new CloudInfo("cloudSiteId", "cloudOwner", "tenantId", "tenantName");
         VduInstance vduInstance = multicloudUtils.deleteVdu(cloudInfo, "instanceId", 3);
         assertNotNull(vduInstance);
-        assertTrue(VduStateType.DELETED == vduInstance.getStatus().getState());
+        assertSame(VduStateType.DELETED, vduInstance.getStatus().getState());
     }
 
     @Ignore

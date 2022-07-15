@@ -909,3 +909,4 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         return new String(Files.readAllBytes(Paths.get("src/test/resources/" + filename)));
     }
 }
+
