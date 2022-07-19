@@ -27,6 +27,9 @@ import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.SERVICE
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.TENANT_ID_PARAM_KEY;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.apache.groovy.util.Maps;
 import org.onap.logging.filter.base.ONAPComponents;
@@ -38,6 +41,7 @@ import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.cnfm.lcm.model.AsInstance;
 import org.onap.so.cnfm.lcm.model.CreateAsRequest;
 import org.onap.so.cnfm.lcm.model.InstantiateAsRequest;
+import org.onap.so.cnfm.lcm.model.AsInfoModificationRequestDeploymentItems;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.RequestDetails;
@@ -45,6 +49,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import camundajar.impl.scala.collection.immutable.HashMap;
 
 
 /**
@@ -138,9 +144,31 @@ public class CnfInstantiateTask {
     public void createAsInstanceRequest(final BuildingBlockExecution execution) {
         try {
             LOGGER.debug("Executing createAsInstanceRequest task  ...");
-
+            final ExecuteBuildingBlock executeBuildingBlock =
+                    (ExecuteBuildingBlock) execution.getVariable("buildingBlock");
+            final RequestDetails requestDetails = executeBuildingBlock.getRequestDetails();
             final InstantiateAsRequest instantiateAsRequest = new InstantiateAsRequest();
-
+            if (requestDetails != null && requestDetails.getRequestParameters() != null) {
+                List<Map<String, Object>> userParams = requestDetails.getRequestParameters().getUserParams();
+                if (userParams != null && !userParams.isEmpty()) {
+                    List deploymentItems = new ArrayList<Object>();
+                    List deploymentItemsReq = new ArrayList<AsInfoModificationRequestDeploymentItems>();
+                    for (Map<String, Object> userParam : userParams) {
+                        if (userParam.containsKey("deploymentItems")) {
+                            deploymentItems = (ArrayList<Object>) userParam.get("deploymentItems");
+                            break;
+                        }
+                    }
+                    for (Object deploymentItem : deploymentItems) {
+                        Map<String, Object> deploymentItemMap = (Map<String, Object>) deploymentItem;
+                        AsInfoModificationRequestDeploymentItems item = new AsInfoModificationRequestDeploymentItems();
+                        item.setDeploymentItemsId(deploymentItemMap.get("deploymentItemsId").toString());
+                        item.setLifecycleParameterKeyValues(deploymentItemMap.get("lifecycleParameterKeyValues"));
+                        deploymentItemsReq.add(item);
+                    }
+                    instantiateAsRequest.setDeploymentItems(deploymentItemsReq);;
+                }
+            }
             LOGGER.debug("Adding InstantiateAsRequest to execution {}", instantiateAsRequest);
 
             execution.setVariable(INSTANTIATE_AS_REQUEST_OBJECT, instantiateAsRequest);
