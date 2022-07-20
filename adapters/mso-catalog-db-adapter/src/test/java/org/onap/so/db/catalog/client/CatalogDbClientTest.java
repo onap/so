@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2022 - Samsung Electronics. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -215,7 +216,7 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         assertNotNull(instanceGroup);
         assertEquals("network_collection_resource_1806..NetworkCollection..0", instanceGroup.getModelName());
         assertEquals("org.openecomp.resource.cr.NetworkCollectionResource1806",
-                instanceGroup.getToscaNodeType().toString());
+                instanceGroup.getToscaNodeType());
     }
 
     @Test
@@ -675,7 +676,7 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     @Test
     public void testGetServices() throws Exception {
         List<org.onap.so.rest.catalog.beans.Service> services = client.getServices();
-        assertEquals(false, services.isEmpty());
+        assertFalse(services.isEmpty());
     }
 
     @Test
@@ -724,8 +725,8 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     @Test
     public void getWorkflowByVnfModelUUID_validUuid_expectedOutput() {
         List<Workflow> workflows = client.findWorkflowByVnfModelUUID("ff2ae348-214a-11e7-93ae-92361f002671");
-        assertTrue(workflows != null);
-        assertTrue(workflows.size() != 0);
+        assertNotNull(workflows);
+        assertNotEquals(0, workflows.size());
 
         assertEquals("testingWorkflow.bpmn", workflows.get(0).getArtifactName());
     }
@@ -739,8 +740,8 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     @Test
     public void getWorkflowBySource_validSource_expectedOutput() {
         List<Workflow> workflows = client.findWorkflowBySource("sdc");
-        assertTrue(workflows != null);
-        assertTrue(workflows.size() != 0);
+        assertNotNull(workflows);
+        assertNotEquals(0, workflows.size());
 
         assertEquals("testingWorkflow.bpmn", workflows.get(0).getArtifactName());
     }
@@ -778,7 +779,7 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     public void testGetProcessingFlagsFromFlag() {
         ProcessingFlags processingFlags = client.findProcessingFlagsByFlag("TESTFLAG");
         assertNotNull(processingFlags);
-        assertEquals(processingFlags.getEndpoint(), "TESTENDPOINT");
+        assertEquals("TESTENDPOINT", processingFlags.getEndpoint());
     }
 
     @Test
