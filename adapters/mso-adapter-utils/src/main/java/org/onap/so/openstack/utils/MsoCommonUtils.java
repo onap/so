@@ -491,7 +491,8 @@ public class MsoCommonUtils {
             }
         } catch (OpenStackResponseException e) {
             if (e.getStatus() == 401) {
-                String error = "Authentication Failure: tenant=" + tenantId + ",cloud=" + cloudIdentity.getId();
+                String error = "Authentication Failure: tenant=" + tenantId + ",cloud=" +
+                        (cloudIdentity != null ? cloudIdentity.getIdentityUrl() : null);
                 throw new MsoAdapterException(error);
             } else {
                 throw keystoneErrorToMsoException(e, TOKEN_AUTH);
