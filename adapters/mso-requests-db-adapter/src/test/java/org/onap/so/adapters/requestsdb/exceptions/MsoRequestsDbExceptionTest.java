@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2018 TechMahindra
+ * Copyright (c) 2022, Samsung Electronics. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +28,7 @@ public class MsoRequestsDbExceptionTest {
     public void testConstructorWithMessaqge() throws Exception {
         String message = "testing message";
         MsoRequestsDbException msoRequestsDbException = new MsoRequestsDbException(message);
-        Assert.assertTrue(msoRequestsDbException.getCause() == null);
+        Assert.assertNull(msoRequestsDbException.getCause());
         Assert.assertEquals(message, msoRequestsDbException.getLocalizedMessage());
         Assert.assertEquals(message, msoRequestsDbException.getMessage());
     }
@@ -64,3 +65,4 @@ public class MsoRequestsDbExceptionTest {
     }
 
 }
+
