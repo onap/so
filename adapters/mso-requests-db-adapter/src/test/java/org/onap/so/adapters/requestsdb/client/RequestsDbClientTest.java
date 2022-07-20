@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2022, Samsung Electronics. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +27,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -339,7 +339,8 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
                 requestsDbClient.getRequestProcessingDataBySoRequestIdAndNameAndTagOrderByCreateTimeDesc(
                         "00032ab7-na18-42e5-965d-8ea592502018", "requestAction", "pincFabricConfigRequest");
         assertNotNull(requestProcessingData);
-        assertTrue(requestProcessingData.size() == 1);
+        assertEquals(1, requestProcessingData.size());
         assertEquals("assign", requestProcessingData.get(0).getValue());
     }
 }
+
