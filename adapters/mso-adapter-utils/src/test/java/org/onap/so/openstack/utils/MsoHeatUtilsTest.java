@@ -447,7 +447,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
 
         heatUtils.createStack(createStackParam, cloudSiteId, tenantId);
         Mockito.verify(stackResource, times(1)).create(createStackParam);
-        Mockito.verify(heatUtils, times(1)).saveStackRequest(eq(createStackParam), eq(requestId), eq("stackName"));
+        Mockito.verify(heatUtils, times(1)).saveStackRequest(createStackParam, requestId, "stackName");
         Mockito.verify(heatClient, times(1)).getStacks();
         Mockito.verify(stackResource, times(1)).create(createStackParam);
     }

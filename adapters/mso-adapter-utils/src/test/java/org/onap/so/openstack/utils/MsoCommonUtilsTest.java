@@ -113,7 +113,7 @@ public class MsoCommonUtilsTest extends BaseTest {
         OpenStackResponse openStackResponse = Mockito.mock(OpenStackResponse.class);
         Error error = mapper.readValue(new File(RESOURCE_PATH + "Error.json"), Error.class);
 
-        doReturn(error).when(openStackResponse).getErrorEntity(eq(Error.class));
+        doReturn(error).when(openStackResponse).getErrorEntity(Error.class);
 
         openStackResponseException = new OpenStackResponseException("response", 501, openStackResponse);
 
@@ -144,7 +144,7 @@ public class MsoCommonUtilsTest extends BaseTest {
         OpenStackResponse openStackResponse = Mockito.mock(OpenStackResponse.class);
         Explanation explanation = mapper.readValue(new File(RESOURCE_PATH + "Explanation.json"), Explanation.class);
 
-        doReturn(explanation).when(openStackResponse).getErrorEntity(eq(Explanation.class));
+        doReturn(explanation).when(openStackResponse).getErrorEntity(Explanation.class);
 
         openStackResponseException = new OpenStackResponseException("response", 501, openStackResponse);
 
@@ -175,7 +175,7 @@ public class MsoCommonUtilsTest extends BaseTest {
         OpenStackResponse openStackResponse = Mockito.mock(OpenStackResponse.class);
         NeutronError explanation = mapper.readValue(new File(RESOURCE_PATH + "NeutronError.json"), NeutronError.class);
 
-        doReturn(explanation).when(openStackResponse).getErrorEntity(eq(NeutronError.class));
+        doReturn(explanation).when(openStackResponse).getErrorEntity(NeutronError.class);
 
         openStackResponseException = new OpenStackResponseException("response", 501, openStackResponse);
 
