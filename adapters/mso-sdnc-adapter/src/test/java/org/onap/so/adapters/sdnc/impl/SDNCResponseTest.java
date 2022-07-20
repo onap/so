@@ -1,6 +1,7 @@
 /*
  * ============LICENSE_START======================================================= ONAP : SO
  * ================================================================================ Copyright (C) 2018 TechMahindra
+ * Copyright (c) 2022, Samsung Electronics. All rights reserved.
  * ================================================================================ Licensed under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at
@@ -27,10 +28,10 @@ public class SDNCResponseTest {
         sdncresponse.setRespCode(0);
         sdncresponse.setRespMsg("respMsg");
         sdncresponse.setSdncRespXml("sdncRespXml");
-        assertEquals(sdncresponse.getReqId(), "reqId");
-        assertEquals(sdncresponse.getRespCode(), 0);
-        assertEquals(sdncresponse.getRespMsg(), "respMsg");
-        assertEquals(sdncresponse.getSdncRespXml(), "sdncRespXml");
+        assertEquals("reqId", sdncresponse.getReqId());
+        assertEquals(0, sdncresponse.getRespCode());
+        assertEquals("respMsg", sdncresponse.getRespMsg());
+        assertEquals("sdncRespXml", sdncresponse.getSdncRespXml());
     }
 
     @Test
@@ -38,4 +39,3 @@ public class SDNCResponseTest {
         assertNotNull(sdncresponse.toString());
     }
 }
-
