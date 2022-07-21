@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2018 TechMahindra
+ * Copyright (c) 2022, Samsung Electronics. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +38,8 @@ public class MsoRequestsDbExceptionBeanTest {
     public void testGetMessage() {
         soRequestsDbExceptionBean.setMessage("message");
         Assert.assertNotNull(soRequestsDbExceptionBean.getMessage());
-        Assert.assertEquals(soRequestsDbExceptionBean.getMessage(), "message");
+        Assert.assertEquals("message", soRequestsDbExceptionBean.getMessage());
     }
 
 }
+
