@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2022, Samsung Electronics. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +21,10 @@
 
 package org.onap.so.adapters.requestsdb;
 
-
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import java.sql.Timestamp;
@@ -135,11 +137,10 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
         HttpEntity<String> entity = new HttpEntity(request, headers);
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort("/infraActiveRequests"));
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity,
+                String.class);
         assertEquals(201, response.getStatusCodeValue());
     }
-
 
     @Test
     public void getCloudOrchestrationFiltersFromInfraActiveTest() {
@@ -155,12 +156,14 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
                 createURLWithPort("/infraActiveRequests") + "/getCloudOrchestrationFiltersFromInfraActive");
 
         ResponseEntity<List<InfraActiveRequests>> response = restTemplate.exchange(builder.toUriString(),
-                HttpMethod.POST, entity, new ParameterizedTypeReference<List<InfraActiveRequests>>() {});
+                HttpMethod.POST, entity, new ParameterizedTypeReference<List<InfraActiveRequests>>() {
+                });
 
         List<InfraActiveRequests> iarr = response.getBody();
         assertEquals(200, response.getStatusCodeValue());
 
-        assertTrue(iarr.size() == 1);
+        assertNotNull(iarr);
+        assertEquals(1, iarr.size());
         infraActiveRequestsResponse = iarr.get(0);
 
         verifyInfraActiveRequests();
@@ -186,13 +189,14 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
                 .fromHttpUrl(createURLWithPort("/infraActiveRequests") + "/getOrchestrationFiltersFromInfraActive");
 
         ResponseEntity<List<InfraActiveRequests>> response = restTemplate.exchange(builder.toUriString(),
-                HttpMethod.POST, entityList, new ParameterizedTypeReference<List<InfraActiveRequests>>() {});
+                HttpMethod.POST, entityList, new ParameterizedTypeReference<List<InfraActiveRequests>>() {
+                });
 
         List<InfraActiveRequests> iarr = response.getBody();
 
         assertEquals(200, response.getStatusCodeValue());
-
-        assertTrue(iarr.size() == 1);
+        assertNotNull(iarr);
+        assertEquals(1, iarr.size());
         infraActiveRequestsResponse = iarr.get(0);
 
         verifyInfraActiveRequests();
@@ -201,13 +205,12 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
     @Test
     public void checkVnfIdStatusTest() {
 
-
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(
                 "/infraActiveRequests" + "/checkVnfIdStatus/" + infraActiveRequests.getOperationalEnvId()));
         HttpEntity<String> entity = new HttpEntity(HttpEntity.EMPTY, headers);
 
-        ResponseEntity<InfraActiveRequests> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, InfraActiveRequests.class);
+        ResponseEntity<InfraActiveRequests> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET,
+                entity, InfraActiveRequests.class);
 
         infraActiveRequestsResponse = response.getBody();
 
@@ -219,17 +222,18 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
     @Test
     public void checkInstanceNameDuplicateTest() {
 
-        InstanceNameDuplicateCheckRequest instanceNameDuplicateCheckRequest =
-                new InstanceNameDuplicateCheckRequest((HashMap<String, String>) null,
-                        infraActiveRequests.getOperationalEnvName(), infraActiveRequests.getRequestScope());
+        InstanceNameDuplicateCheckRequest instanceNameDuplicateCheckRequest = new InstanceNameDuplicateCheckRequest(
+                (HashMap<String, String>) null, infraActiveRequests.getOperationalEnvName(),
+                infraActiveRequests.getRequestScope());
 
-        HttpEntity<InstanceNameDuplicateCheckRequest> entityList =
-                new HttpEntity(instanceNameDuplicateCheckRequest, headers);
+        HttpEntity<InstanceNameDuplicateCheckRequest> entityList = new HttpEntity(instanceNameDuplicateCheckRequest,
+                headers);
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(createURLWithPort("/infraActiveRequests") + "/checkInstanceNameDuplicate");
 
         ResponseEntity<InfraActiveRequests> response = restTemplate.exchange(builder.toUriString(), HttpMethod.POST,
-                entityList, new ParameterizedTypeReference<InfraActiveRequests>() {});
+                entityList, new ParameterizedTypeReference<InfraActiveRequests>() {
+                });
 
         infraActiveRequestsResponse = response.getBody();
 
@@ -247,13 +251,14 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
         InstanceNameDuplicateCheckRequest instanceNameDuplicateCheckRequest = new InstanceNameDuplicateCheckRequest(
                 (HashMap<String, String>) requestMap, null, infraActiveRequests.getRequestScope());
 
-        HttpEntity<InstanceNameDuplicateCheckRequest> entityList =
-                new HttpEntity(instanceNameDuplicateCheckRequest, headers);
+        HttpEntity<InstanceNameDuplicateCheckRequest> entityList = new HttpEntity(instanceNameDuplicateCheckRequest,
+                headers);
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(createURLWithPort("/infraActiveRequests") + "/checkInstanceNameDuplicate");
 
         ResponseEntity<InfraActiveRequests> response = restTemplate.exchange(builder.toUriString(), HttpMethod.POST,
-                entityList, new ParameterizedTypeReference<InfraActiveRequests>() {});
+                entityList, new ParameterizedTypeReference<InfraActiveRequests>() {
+                });
 
         infraActiveRequestsResponse = response.getBody();
 
@@ -265,19 +270,19 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
     @Test
     public void checkInstanceNameDuplicateTestNotFound() {
 
-        String instanceNameDuplicateCheckRequest =
-                "{\r\n\t \"instanceName\":\"TestNotFoundInstanceName\",\r\n\t \"requestScope\":\"testasdfasdfasdf\"\r\n}";
+        String instanceNameDuplicateCheckRequest = "{\r\n\t \"instanceName\":\"TestNotFoundInstanceName\",\r\n\t \"requestScope\":\"testasdfasdfasdf\"\r\n}";
 
-        HttpEntity<InstanceNameDuplicateCheckRequest> entityList =
-                new HttpEntity(instanceNameDuplicateCheckRequest, headers);
+        HttpEntity<InstanceNameDuplicateCheckRequest> entityList = new HttpEntity(instanceNameDuplicateCheckRequest,
+                headers);
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(createURLWithPort("/infraActiveRequests") + "/checkInstanceNameDuplicate");
 
         ResponseEntity<InfraActiveRequests> response = restTemplate.exchange(builder.toUriString(), HttpMethod.POST,
-                entityList, new ParameterizedTypeReference<InfraActiveRequests>() {});
+                entityList, new ParameterizedTypeReference<InfraActiveRequests>() {
+                });
 
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals(null, response.getBody());
+        assertNull(response.getBody());
     }
 
     @Test
@@ -289,18 +294,19 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
         InstanceNameDuplicateCheckRequest instanceNameDuplicateCheckRequest = new InstanceNameDuplicateCheckRequest(
                 (HashMap<String, String>) requestMap, null, infraActiveRequests.getRequestScope());
 
-        HttpEntity<InstanceNameDuplicateCheckRequest> entityList =
-                new HttpEntity(instanceNameDuplicateCheckRequest, headers);
+        HttpEntity<InstanceNameDuplicateCheckRequest> entityList = new HttpEntity(instanceNameDuplicateCheckRequest,
+                headers);
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(createURLWithPort("/infraActiveRequests") + "/checkInstanceNameDuplicate");
 
         ResponseEntity<InfraActiveRequests> response = restTemplate.exchange(builder.toUriString(), HttpMethod.POST,
-                entityList, new ParameterizedTypeReference<InfraActiveRequests>() {});
+                entityList, new ParameterizedTypeReference<InfraActiveRequests>() {
+                });
 
         infraActiveRequestsResponse = response.getBody();
 
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals(null, response.getBody());
+        assertNull(response.getBody());
     }
 
     @Test
@@ -322,7 +328,8 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
         HttpEntity<String> entity = new HttpEntity<String>(headers);
 
         ResponseEntity<List<InfraActiveRequests>> response = restTemplate.exchange(builder.toUriString(),
-                HttpMethod.GET, entity, new ParameterizedTypeReference<List<InfraActiveRequests>>() {});
+                HttpMethod.GET, entity, new ParameterizedTypeReference<List<InfraActiveRequests>>() {
+                });
 
         List<InfraActiveRequests> responseList = response.getBody();
 
