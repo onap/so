@@ -1,0 +1,8 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Verified+1: Waqas Ikram <waqas.ikram@est.tech>
+Code-Review+2: Waqas Ikram <waqas.ikram@est.tech>
+Submitted-by: Waqas Ikram <waqas.ikram@est.tech>
+Submitted-at: Fri, 22 Jul 2022 11:27:37 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/so/+/130009
+Project: so
+Branch: refs/heads/as_orchestration
