@@ -22,6 +22,7 @@ package org.onap.so.bpmn.infrastructure.adapter.cnfm.tasks;
 import static java.util.Objects.isNull;
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.CLOUD_OWNER_PARAM_KEY;
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.CLOUD_REGION_PARAM_KEY;
+import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.RESOURCE_ID_KEY;
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.SERVICE_INSTANCE_ID_PARAM_KEY;
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.SERVICE_INSTANCE_NAME_PARAM_KEY;
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.TENANT_ID_PARAM_KEY;
@@ -99,6 +100,7 @@ public class CnfInstantiateTask {
             final ModelInfo modelInfo = requestDetails.getModelInfo();
             final CloudConfiguration cloudConfiguration = requestDetails.getCloudConfiguration();
             final ServiceInstance serviceInstance = generalBuildingBlock.getServiceInstance();
+            final String resourceId = executeBuildingBlock.getResourceId();
 
             final CreateAsRequest createAsRequest = new CreateAsRequest().asdId(modelInfo.getModelVersionId())
                     .asInstanceName(requestDetails.getRequestInfo().getInstanceName())
@@ -106,7 +108,7 @@ public class CnfInstantiateTask {
                             CLOUD_REGION_PARAM_KEY, cloudConfiguration.getLcpCloudRegionId(), TENANT_ID_PARAM_KEY,
                             cloudConfiguration.getTenantId(), SERVICE_INSTANCE_ID_PARAM_KEY,
                             serviceInstance.getServiceInstanceId(), SERVICE_INSTANCE_NAME_PARAM_KEY,
-                            serviceInstance.getServiceInstanceName()));
+                            serviceInstance.getServiceInstanceName(), RESOURCE_ID_KEY, resourceId));
 
             LOGGER.debug("Adding CreateAsRequest to execution {}", createAsRequest);
 
