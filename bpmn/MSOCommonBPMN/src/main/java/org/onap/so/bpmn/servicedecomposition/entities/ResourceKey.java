@@ -35,6 +35,7 @@ public enum ResourceKey {
     VPN_BONDING_LINK_ID,
     INSTANCE_GROUP_ID,
     PNF,
+    PNF_INSTANCE_NAME,
     VNF_INSTANCE_NAME,
     VF_MODULE_INSTANCE_NAME
 }

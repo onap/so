@@ -66,6 +66,7 @@ public class UserParamsServiceTraversalTest extends BaseTaskTest {
     private static final String MACRO_CREATE_WITHOUT_RESOURCES_JSON = "Macro/ServiceMacroCreateWithoutResources.json";
     private static final String MACRO_CREATE_SVC_SAME_MODEL_VNF_VFMODULE =
             "Macro/ServiceMacroCreateMultipleSameModelVnfsAndVfModules.json";
+    private static final String MACRO_CREATE_SVC_SAME_MODEL_PNF = "Macro/ServiceMacroCreateMultipleSameModelPnfs.json";
     private static final String serviceInstanceId = "123";
     private DelegateExecution execution;
     private CatalogDbClient mockCatalogDbClient;
@@ -146,6 +147,30 @@ public class UserParamsServiceTraversalTest extends BaseTaskTest {
         assertEquals(vnf2, vfmodule4.getParent());
         assertEquals("demo-3", vfmodule4.getInstanceName());
         assertEquals("83677d89-428a-407b-b4ec-738e68275d84", vfmodule4.getResourceId());
+    }
+
+    @Test
+    public void getResourceListFromUserParamsMultiplePnfs() throws Exception {
+        initExecution("createInstance", readBpmnRequestFromFile(MACRO_CREATE_SVC_SAME_MODEL_PNF), false);
+
+        List<Resource> resourceListFromUserParams = userParamsServiceTraversal.getResourceListFromUserParams(execution,
+                getUserParams(), serviceInstanceId, requestAction);
+
+        assertEquals(3, resourceListFromUserParams.size());
+
+        Resource service = resourceListFromUserParams.get(0);
+        assertTrue(service.getResourceType() == WorkflowType.SERVICE);
+        assertEquals(2, service.getChildren().size());
+
+        Resource pnf1 = service.getChildren().get(0);
+        assertEquals(service, pnf1.getParent());
+        assertEquals("ORAN_SIM1_2106_pnf_01", pnf1.getInstanceName());
+        assertEquals("88a3096a-af87-4853-99f6-7256a9ab6c3e", pnf1.getResourceId());
+
+        Resource pnf2 = service.getChildren().get(1);
+        assertEquals(service, pnf2.getParent());
+        assertEquals("ORAN_SIM1_2106_pnf_02", pnf2.getInstanceName());
+        assertEquals("88a3096a-af87-4853-99f6-7256a9ab6c3e", pnf2.getResourceId());
     }
 
     @Test

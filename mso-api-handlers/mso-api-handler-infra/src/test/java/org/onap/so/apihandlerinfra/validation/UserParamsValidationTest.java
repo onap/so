@@ -243,6 +243,75 @@ public class UserParamsValidationTest {
     }
 
     @Test
+    public void validateDuplicateInstanceNameDifferentCustomizationIdPnfTest() throws IOException, ValidationException {
+        thrown.expect(ValidationException.class);
+        thrown.expectMessage(
+                "No valid instanceName: same instanceName but different modelCustomizationId (instanceName should be unique)  in userParams pnf resources is specified");
+        ValidationInformation info = setupValidationInformation(
+                "src/test/resources/Validation/UserParamsValidation/DuplicateInstanceNamesPnf.json");
+        info.getUserParams().getResources().getPnfs().get(0).setInstanceName("ORAN_SIM1_2106_pnf_01");
+        validation.validate(info);
+    }
+
+    @Test
+    public void validateDuplicateInstanceNameSameCustomizationIdPnfTest() throws IOException, ValidationException {
+        thrown.expect(ValidationException.class);
+        thrown.expectMessage(
+                "No valid instanceName: same instanceName with same modelCustomizationId in userParams pnf resources is specified");
+        ValidationInformation info = setupValidationInformation(
+                "src/test/resources/Validation/UserParamsValidation/DuplicateInstanceNamesPnf.json");
+        info.getUserParams().getResources().getPnfs().get(1).getModelInfo()
+                .setModelCustomizationId("88a3096a-af87-4853-99f6-7256a9ab6c3e");
+        info.getUserParams().getResources().getPnfs().get(1).setInstanceName("ORAN_SIM1_2106_pnf_01");
+        validation.validate(info);
+    }
+
+    @Test
+    public void validateNullInstanceNameSameCustomizationIdPnfTest() throws IOException, ValidationException {
+        thrown.expect(ValidationException.class);
+        thrown.expectMessage(
+                "No valid instanceName: instanceName is missing or empty with same modelCustomizationId in userParams pnf resources is specified");
+        ValidationInformation info = setupValidationInformation(
+                "src/test/resources/Validation/UserParamsValidation/DuplicateInstanceNamesPnf.json");
+        info.getUserParams().getResources().getPnfs().get(1).getModelInfo()
+                .setModelCustomizationId("88a3096a-af87-4853-99f6-7256a9ab6c3e");
+        info.getUserParams().getResources().getPnfs().get(1).setInstanceName(null);
+        validation.validate(info);
+    }
+
+    @Test
+    public void validateDuplicateNullInstanceNameSameCustomizationIdPnfTest() throws IOException, ValidationException {
+        thrown.expect(ValidationException.class);
+        thrown.expectMessage(
+                "No valid instanceName: same instanceName with same modelCustomizationId in userParams pnf resources is specified");
+        ValidationInformation info = setupValidationInformation(
+                "src/test/resources/Validation/UserParamsValidation/DuplicateInstanceNamesPnf.json");
+        info.getUserParams().getResources().getPnfs().get(0).setInstanceName(null);
+        info.getUserParams().getResources().getPnfs().get(1).getModelInfo()
+                .setModelCustomizationId("88a3096a-af87-4853-99f6-7256a9ab6c3e");
+        info.getUserParams().getResources().getPnfs().get(1).setInstanceName(null);
+        validation.validate(info);
+    }
+
+    @Test
+    public void validateDifferentInstanceNameSameCustomizationIdPnfTest() throws IOException, ValidationException {
+        ValidationInformation info = setupValidationInformation(
+                "src/test/resources/Validation/UserParamsValidation/DuplicateInstanceNamesPnf.json");
+        info.getUserParams().getResources().getPnfs().get(1).getModelInfo()
+                .setModelCustomizationId("88a3096a-af87-4853-99f6-7256a9ab6c3e");
+        info.getUserParams().getResources().getPnfs().get(1).setInstanceName("new-pnf-instance-name");
+        validation.validate(info);
+    }
+
+    @Test
+    public void validateNullInstanceNameDifferentCustomizationIdPnfTest() throws IOException, ValidationException {
+        ValidationInformation info = setupValidationInformation(
+                "src/test/resources/Validation/UserParamsValidation/DuplicateInstanceNamesPnf.json");
+        info.getUserParams().getResources().getPnfs().get(0).setInstanceName(null);
+        validation.validate(info);
+    }
+
+    @Test
     public void validateInstanceNameExceptionTest() throws IOException, ValidationException {
         thrown.expect(ValidationException.class);
         thrown.expectMessage("instanceName in requestInfo does not match instanceName in userParams service");
