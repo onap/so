@@ -34,6 +34,7 @@ import org.onap.so.apihandlerinfra.Actions;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.Networks;
+import org.onap.so.serviceinstancebeans.Pnfs;
 import org.onap.so.serviceinstancebeans.Service;
 import org.onap.so.serviceinstancebeans.VfModules;
 import org.onap.so.serviceinstancebeans.Vnfs;
@@ -115,6 +116,29 @@ public class UserParamsValidation implements ValidationRule {
         }
         validateDuplicateInstanceNames(vnfCustomIdToInstanceNames, "vnf");
         validateDuplicateInstanceNames(vfModuleCustomIdToInstanceNames, "vfModule");
+
+        Map<String, Set<String>> pnfCustomIdToInstanceNames = new HashMap<>();
+
+        for (Pnfs pnf : validate.getResources().getPnfs()) {
+            if (pnf.getModelInfo() == null) {
+                throw new ValidationException("modelInfo in userParams pnf resources", true);
+            } else if (pnf.getModelInfo().getModelCustomizationId() == null) {
+                throw new ValidationException("modelCustomizationId in userParams pnf resources", true);
+            } else if (pnf.getModelInfo().getModelVersionId() == null) {
+                throw new ValidationException("modelVersionId in userParams pnf resources", true);
+            }
+            String pnfCustomizationId = pnf.getModelInfo().getModelCustomizationId();
+            pnfCustomIdToInstanceNames.putIfAbsent(pnfCustomizationId, new HashSet<>());
+            String pnfInstanceName = StringUtils.defaultString(pnf.getInstanceName());
+            Set<String> pnfVisitedInstanceNames = pnfCustomIdToInstanceNames.get(pnfCustomizationId);
+            if (!pnfVisitedInstanceNames.add(pnfInstanceName)) {
+                throw new ValidationException(
+                        "instanceName: same instanceName with same modelCustomizationId in userParams pnf resources",
+                        true);
+            }
+        }
+
+        validateDuplicateInstanceNames(pnfCustomIdToInstanceNames, "pnf");
 
         List<Networks> validateNetworks = new ArrayList<>();
         validateNetworks = validate.getResources().getNetworks();

@@ -1,0 +1,91 @@
+{
+  "requestDetails": {
+    "modelInfo": {
+      "modelInvariantId": "d6f8f4e8-7de9-47c1-aa5c-4b6868738f5c",
+      "modelType": "service",
+      "modelName": "service_pnf_2305",
+      "modelVersion": "2.0",
+      "modelVersionId": "e199ca4e-08f9-4f10-a15d-b94d50e52a6a",
+      "modelUuid": "e199ca4e-08f9-4f10-a15d-b94d50e52a6a",
+      "modelInvariantUuid": "d6f8f4e8-7de9-47c1-aa5c-4b6868738f5c"
+    },
+    "requestInfo": {
+      "productFamilyId": "5G",
+      "source": "VID",
+      "instanceName": "ORAN_SIM1_2106_1",
+      "suppressRollback": false,
+      "requestorId": "NBI"
+    },
+    "subscriberInfo": {
+      "globalSubscriberId": "5GCustomer"
+    },
+    "requestParameters": {
+      "subscriptionServiceType": "5G",
+      "userParams": [{
+        "service": {
+          "modelInfo": {
+            "modelVersionId": "e199ca4e-08f9-4f10-a15d-b94d50e52a6a",
+            "modelName": "service_pnf_2305",
+            "modelType": "service"
+          },
+          "instanceName": "ORAN_SIM1_2106_1",
+          "instanceParams": [],
+          "resources": {
+            "pnfs": [{
+              "modelInfo": {
+                "modelCustomizationName": "pnf_only_2305 0",
+                "modelCustomizationId": "88a3096a-af87-4853-99f6-7256a9ab6c3e",
+                "modelInvariantId": "d6f8f4e8-7de9-47c1-aa5c-4b6868738f5c",
+                "modelVersionId": "a6a9dc3d-204c-4dbb-862b-46214788b0e5",
+                "modelName": "service_pnf_2305",
+                "modelType": "pnf",
+                "modelVersion": "2.0"
+              },
+              "platform": {
+                "platformName": "test"
+              },
+              "lineOfBusiness": {
+                "lineOfBusinessName": "LOB-5GCustomer"
+              },
+              "productFamilyId": "5G",
+              "instanceParams": [],
+              "instanceName": "ORAN_SIM1_2106_pnf_01",
+              "processingPriority": 1
+            }, {
+              "modelInfo": {
+                "modelCustomizationName": "pnf_only_2305 0",
+                "modelCustomizationId": "different-model-info",
+                "modelInvariantId": "d6f8f4e8-7de9-47c1-aa5c-4b6868738f5c",
+                "modelVersionId": "a6a9dc3d-204c-4dbb-862b-46214788b0e5",
+                "modelName": "service_pnf_2305",
+                "modelType": "pnf",
+                "modelVersion": "2.0"
+              },
+              "platform": {
+                "platformName": "test"
+              },
+              "lineOfBusiness": {
+                "lineOfBusinessName": "LOB-5GCustomer"
+              },
+              "productFamilyId": "5G",
+              "instanceParams": [],
+              "instanceName": "ORAN_SIM1_2106_pnf_01",
+              "processingPriority": 2
+            }]
+          }
+        }
+      }, {
+        "Homing_Solution": "none"
+      }],
+      "aLaCarte": false,
+      "usePreload": false
+    },
+    "project": {
+      "projectName": "basicnw-project"
+    },
+    "owningEntity": {
+      "owningEntityId": "67f2e84c-734d-4e90-a1e4-d2ffa2e75849",
+      "owningEntityName": "OE-5GCustomer"
+    }
+  }
+}

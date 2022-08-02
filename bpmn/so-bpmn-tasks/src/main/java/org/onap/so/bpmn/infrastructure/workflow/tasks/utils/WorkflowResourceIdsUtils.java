@@ -70,6 +70,8 @@ public final class WorkflowResourceIdsUtils {
             workflowResourceIds.setVnfInstanceName(instanceName);
         } else if (resourceType == WorkflowType.VFMODULE) {
             workflowResourceIds.setVfModuleInstanceName(instanceName);
+        } else if (resourceType == WorkflowType.PNF) {
+            workflowResourceIds.setPnfInstanceName(instanceName);
         }
     }
 
@@ -110,6 +112,7 @@ public final class WorkflowResourceIdsUtils {
         workflowResourceIds.setInstanceGroupId((String) execution.getVariable("instanceGroupId"));
         workflowResourceIds.setVnfInstanceName((String) execution.getVariable("vnfInstanceName"));
         workflowResourceIds.setVfModuleInstanceName((String) execution.getVariable("vfModuleInstanceName"));
+        workflowResourceIds.setPnfInstanceName((String) execution.getVariable("pnfInstanceName"));
         return workflowResourceIds;
     }
 
