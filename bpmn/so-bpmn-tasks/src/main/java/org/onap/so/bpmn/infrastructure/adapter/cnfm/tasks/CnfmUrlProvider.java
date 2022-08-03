@@ -49,4 +49,13 @@ public class CnfmUrlProvider {
                 .pathSegment("instantiate").build().toString();
     }
 
+    public String getDeleteAsRequestUrl(String asInstanceId) {
+        return UriComponentsBuilder.fromUri(baseUri).pathSegment("as_instances").pathSegment(asInstanceId).build()
+                .toString();
+    }
+
+    public String getTerminateAsRequestUrl(String asInstanceId) {
+        return UriComponentsBuilder.fromUri(baseUri).pathSegment("as_instances").pathSegment(asInstanceId)
+                .pathSegment("terminate").build().toString();
+    }
 }

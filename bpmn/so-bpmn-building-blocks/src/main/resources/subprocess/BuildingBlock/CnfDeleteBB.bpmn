@@ -7,31 +7,55 @@
     <bpmn:endEvent id="EndEvent_001k15i">
       <bpmn:incoming>Flow_1s7gtbc</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:serviceTask id="invokeCnfmToDeleteAsInstnace" name="invoke CNFM to DeleteASInstance" camunda:asyncAfter="true" camunda:expression="${CnfDeleteTask.invokeCnfmToDeleteAsInstnace(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
-      <bpmn:incoming>SequenceFlow_016sgof</bpmn:incoming>
+    <bpmn:serviceTask id="invokeCnfmToDeleteAsInstnace" name="Invoke CNFM to DeleteASInstance" camunda:expression="${CnfDeleteTask.invokeCnfmToDeleteAsInstance(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>Flow_0td4p22</bpmn:incoming>
       <bpmn:outgoing>Flow_1s7gtbc</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="SequenceFlow_016sgof" sourceRef="StartEvent_0ru3x55" targetRef="invokeCnfmToDeleteAsInstnace" />
+    <bpmn:sequenceFlow id="SequenceFlow_016sgof" sourceRef="StartEvent_0ru3x55" targetRef="Activity_1uqgwny" />
     <bpmn:sequenceFlow id="Flow_1s7gtbc" sourceRef="invokeCnfmToDeleteAsInstnace" targetRef="EndEvent_001k15i" />
+    <bpmn:serviceTask id="invokeCnfmToTerminateAsInstnace" name="Invoke CNFM to TerminateAsInstnace" camunda:expression="${CnfDeleteTask.invokeCnfmToTerminateAsInstance(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>Flow_19rm5pn</bpmn:incoming>
+      <bpmn:outgoing>Flow_0td4p22</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_19rm5pn" sourceRef="Activity_1uqgwny" targetRef="invokeCnfmToTerminateAsInstnace" />
+    <bpmn:serviceTask id="Activity_1uqgwny" name="Invoke Create TerminateAsRequest" camunda:expression="${CnfDeleteTask.createTerminateAsRequest(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_016sgof</bpmn:incoming>
+      <bpmn:outgoing>Flow_19rm5pn</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0td4p22" sourceRef="invokeCnfmToTerminateAsInstnace" targetRef="invokeCnfmToDeleteAsInstnace" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CnfDeleteBB">
+      <bpmndi:BPMNEdge id="Flow_19rm5pn_di" bpmnElement="Flow_19rm5pn">
+        <di:waypoint x="320" y="140" />
+        <di:waypoint x="380" y="140" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1s7gtbc_di" bpmnElement="Flow_1s7gtbc">
-        <di:waypoint x="390" y="120" />
-        <di:waypoint x="492" y="120" />
+        <di:waypoint x="810" y="140" />
+        <di:waypoint x="1022" y="140" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_016sgof_di" bpmnElement="SequenceFlow_016sgof">
-        <di:waypoint x="208" y="120" />
-        <di:waypoint x="290" y="120" />
+        <di:waypoint x="178" y="140" />
+        <di:waypoint x="220" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0td4p22_di" bpmnElement="Flow_0td4p22">
+        <di:waypoint x="480" y="140" />
+        <di:waypoint x="710" y="140" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="StartEvent_0ru3x55_di" bpmnElement="StartEvent_0ru3x55">
-        <dc:Bounds x="172" y="102" width="36" height="36" />
+        <dc:Bounds x="142" y="122" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_001k15i_di" bpmnElement="EndEvent_001k15i">
-        <dc:Bounds x="492" y="102" width="36" height="36" />
+      <bpmndi:BPMNShape id="Activity_0ziu33x_di" bpmnElement="Activity_1uqgwny">
+        <dc:Bounds x="220" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_06oby7l_di" bpmnElement="invokeCnfmToTerminateAsInstnace">
+        <dc:Bounds x="380" y="100" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_11_di" bpmnElement="invokeCnfmToDeleteAsInstnace">
-        <dc:Bounds x="290" y="80" width="100" height="80" />
+        <dc:Bounds x="710" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_001k15i_di" bpmnElement="EndEvent_001k15i">
+        <dc:Bounds x="1022" y="122" width="36" height="36" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

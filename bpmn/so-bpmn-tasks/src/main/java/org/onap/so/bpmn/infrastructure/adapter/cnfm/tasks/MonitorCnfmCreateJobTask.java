@@ -23,21 +23,17 @@ import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.CREAT
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.OPERATION_STATUS_PARAM_NAME;
 
 import java.net.URI;
+import java.util.NoSuchElementException;
 import java.util.Optional;
-
-import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.CreateVnfResponse;
-import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.QueryJobResponse;
+import java.util.Set;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.cnfm.lcm.model.AsLcmOpOcc;
+import org.onap.so.cnfm.lcm.model.AsLcmOpOcc.OperationStateEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import com.google.common.collect.ImmutableSet;
-
-import org.onap.so.cnfm.lcm.model.AsLcmOpOcc;
-import org.onap.so.cnfm.lcm.model.AsLcmOpOcc.OperationStateEnum;
 
 
 /**
@@ -48,8 +44,9 @@ import org.onap.so.cnfm.lcm.model.AsLcmOpOcc.OperationStateEnum;
 public class MonitorCnfmCreateJobTask {
 
     private static final String CNFM_REQUEST_STATUS_CHECK_URL = "CnfmStatusCheckUrl";
-    public static final ImmutableSet<OperationStateEnum> OPERATION_FINISHED_STATES =
-            ImmutableSet.of(OperationStateEnum.COMPLETED, OperationStateEnum.FAILED, OperationStateEnum.ROLLED_BACK);
+    private static final String MONITOR_JOB_NAME = "MonitorJobName";
+    public static final Set<OperationStateEnum> OPERATION_FINISHED_STATES =
+            Set.of(OperationStateEnum.COMPLETED, OperationStateEnum.FAILED, OperationStateEnum.ROLLED_BACK);
     private static final Logger LOGGER = LoggerFactory.getLogger(MonitorCnfmCreateJobTask.class);
     protected final ExceptionBuilder exceptionUtil;
     private final CnfmHttpServiceProvider cnfmHttpServiceProvider;
@@ -69,10 +66,11 @@ public class MonitorCnfmCreateJobTask {
     public void getCurrentOperationStatus(final BuildingBlockExecution execution) {
         try {
             LOGGER.debug("Executing getCurrentOperationStatus  ...");
-            final URI operation_status_url = execution.getVariable(CNFM_REQUEST_STATUS_CHECK_URL);
-            LOGGER.debug("Executing getCurrentOperationStatus for CNF... :{}", operation_status_url.toString());
+            final Optional<URI> operationStatusURL = Optional.of(execution.getVariable(CNFM_REQUEST_STATUS_CHECK_URL));
+            LOGGER.debug("Executing getCurrentOperationStatus for CNF... :{}", operationStatusURL);
             final Optional<AsLcmOpOcc> instantiateOperationJobStatus =
-                    cnfmHttpServiceProvider.getInstantiateOperationJobStatus(operation_status_url.toString());
+                    cnfmHttpServiceProvider.getInstantiateOperationJobStatus(String.valueOf(operationStatusURL
+                            .orElseThrow(() -> new NoSuchElementException("Operational Status check url Not found"))));
             if (instantiateOperationJobStatus.isPresent()) {
                 final AsLcmOpOcc asLcmOpOccResponse = instantiateOperationJobStatus.get();
                 if (asLcmOpOccResponse.getOperationState() != null) {
@@ -81,17 +79,15 @@ public class MonitorCnfmCreateJobTask {
                             operationStatus, asLcmOpOccResponse.getOperationState());
                     execution.setVariable(OPERATION_STATUS_PARAM_NAME, asLcmOpOccResponse.getOperationState());
                 }
-
                 LOGGER.debug("Operation {} without operationStatus and operation retrieval status :{}",
                         asLcmOpOccResponse.getId(), asLcmOpOccResponse.getOperationState());
             }
-            execution.setVariable(CREATE_CNF_STATUS_RESPONSE_PARAM_NAME, instantiateOperationJobStatus.get());
+            execution.setVariable(CREATE_CNF_STATUS_RESPONSE_PARAM_NAME,
+                    instantiateOperationJobStatus.isPresent() ? instantiateOperationJobStatus.get() : " ");
             LOGGER.debug("Finished executing getCurrentOperationStatus for CNF...");
         } catch (final Exception exception) {
-            final String message = "Unable to invoke get current Operation status";
-            LOGGER.error(message);
-            exceptionUtil.buildAndThrowWorkflowException(execution, 1209, message);
-
+            LOGGER.error("Unable to invoke get current Operation status");
+            exceptionUtil.buildAndThrowWorkflowException(execution, 1209, exception);
         }
     }
 
@@ -100,10 +96,10 @@ public class MonitorCnfmCreateJobTask {
      * 
      * @param execution {@link org.onap.so.bpmn.common.DelegateExecutionImpl}
      */
-    public void timeOutLogFailue(final BuildingBlockExecution execution) {
-        final String message = "CNF Instantiation operation time out";
+    public void timeOutLogFailure(final BuildingBlockExecution execution) {
+        String message = "CNF" + execution.getVariable(MONITOR_JOB_NAME) + "operation time out";
         LOGGER.error(message);
-        exceptionUtil.buildAndThrowWorkflowException(execution, 1205, message);
+        exceptionUtil.buildAndThrowWorkflowException(execution, 1205, new Exception(message));
     }
 
     /**
@@ -115,22 +111,15 @@ public class MonitorCnfmCreateJobTask {
         LOGGER.debug("Executing CNF checkIfOperationWasSuccessful  ...");
         final OperationStateEnum operationStatusOption = execution.getVariable(OPERATION_STATUS_PARAM_NAME);
         final AsLcmOpOcc cnfInstantiateStautusResponse = execution.getVariable(CREATE_CNF_STATUS_RESPONSE_PARAM_NAME);
-        if (operationStatusOption == null) {
-            final String message = "Unable to instantiate CNF jobId: "
-                    + (cnfInstantiateStautusResponse != null ? cnfInstantiateStautusResponse.getId() : "null")
-                    + "Unable to retrieve OperationStatus";
+        if ((operationStatusOption == OperationStateEnum.FAILED)
+                || (operationStatusOption == OperationStateEnum.FAILED_TEMP)) {
+            final String message = "Unable to" + execution.getVariable(MONITOR_JOB_NAME) + "CNF jobId: "
+                    + (cnfInstantiateStautusResponse != null ? cnfInstantiateStautusResponse.getId() : "null");
             LOGGER.error(message);
-            exceptionUtil.buildAndThrowWorkflowException(execution, 1206, message);
-        } else {
-            final OperationStateEnum operationStatus = operationStatusOption;
-            if (operationStatus != OperationStateEnum.COMPLETED) {
-                final String message = "Unable to instantiate jobId: "
-                        + (cnfInstantiateStautusResponse != null ? cnfInstantiateStautusResponse.getId() : "null")
-                        + " OperationStatus: " + operationStatus;
-                LOGGER.error(message);
-                exceptionUtil.buildAndThrowWorkflowException(execution, 1207, message);
-            }
-            LOGGER.debug("Successfully completed CNF instatiation of job status {}", cnfInstantiateStautusResponse);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 1206, new Exception());
+        } else if ((operationStatusOption == OperationStateEnum.COMPLETED)) {
+            String monitorJobName = execution.getVariable(MONITOR_JOB_NAME);
+            LOGGER.debug("Successfully completed CNF {} job", monitorJobName);
         }
     }
 

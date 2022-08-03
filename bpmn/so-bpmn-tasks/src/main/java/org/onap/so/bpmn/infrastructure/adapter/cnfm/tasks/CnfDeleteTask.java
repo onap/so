@@ -19,18 +19,22 @@
  */
 package org.onap.so.bpmn.infrastructure.adapter.cnfm.tasks;
 
-import org.onap.logging.filter.base.ONAPComponents;
+import static org.onap.so.bpmn.servicedecomposition.entities.ResourceKey.GENERIC_VNF_ID;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import org.camunda.bpm.engine.delegate.BpmnError;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
-import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
-import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
+import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.ExceptionBuilder;
-import org.onap.so.serviceinstancebeans.RequestDetails;
+import org.onap.so.cnfm.lcm.model.TerminateAsRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import static java.util.Objects.isNull;
 
 
 /**
@@ -40,43 +44,79 @@ import static java.util.Objects.isNull;
  */
 @Component
 public class CnfDeleteTask {
-
-    private static final String AS_INSTANCE_ID = "asInstanceid";
-    private static final Logger LOGGER = LoggerFactory.getLogger(CnfInstantiateTask.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CnfDeleteTask.class);
     private final ExceptionBuilder exceptionUtil;
     private final CnfmHttpServiceProvider cnfmHttpServiceProvider;
+    private final ExtractPojosForBB extractPojosForBB;
+    private static final String CNFM_REQUEST_STATUS_CHECK_URL = "CnfmStatusCheckUrl";
+    private static final String TERMINATE_AS_REQUEST_OBJECT = "TerminateAsRequest";
+    private static final String MONITOR_JOB_NAME = "MonitorJobName";
 
     @Autowired
-    public CnfDeleteTask(final CnfmHttpServiceProvider cnfmHttpServiceProvider, final ExceptionBuilder exceptionUtil) {
+    public CnfDeleteTask(final CnfmHttpServiceProvider cnfmHttpServiceProvider, final ExceptionBuilder exceptionUtil,
+            ExtractPojosForBB extractPojosForBB) {
         this.cnfmHttpServiceProvider = cnfmHttpServiceProvider;
         this.exceptionUtil = exceptionUtil;
+        this.extractPojosForBB = extractPojosForBB;
     }
 
-    public void invokeCnfmToDeleteAsInstnace(final BuildingBlockExecution execution) {
+    public void createTerminateAsRequest(final BuildingBlockExecution execution) {
         try {
-            LOGGER.debug("Executing DelteAsInstance task  ...");
-            final ExecuteBuildingBlock executeBuildingBlock =
-                    (ExecuteBuildingBlock) execution.getVariable("buildingBlock");
+            LOGGER.debug("Executing createTerminateAsRequest task  ...");
 
-            final GeneralBuildingBlock generalBuildingBlock = execution.getGeneralBuildingBlock();
+            final TerminateAsRequest terminateAsRequest = new TerminateAsRequest();
+            terminateAsRequest.setTerminationType(TerminateAsRequest.TerminationTypeEnum.GRACEFUL);
+            terminateAsRequest.setGracefulTerminationTimeout(0);
+            terminateAsRequest.setAdditionalParams(new HashMap<>());
 
-            final RequestDetails requestDetails = executeBuildingBlock.getRequestDetails();
-            LOGGER.debug("RequestDetails of DeleteAsInstance: {}", requestDetails);
+            LOGGER.debug("Adding TerminateAsRequest to execution {}", terminateAsRequest);
 
-            if (isNull(requestDetails) && isNull(requestDetails.getModelInfo())
-                    && isNull(requestDetails.getRequestInfo()) && isNull(requestDetails.getCloudConfiguration())
-                    && isNull(generalBuildingBlock)) {
-                LOGGER.error("Missing Mandatory attribute from RequestDetails: {} or GeneralBuildingBlock: {}",
-                        requestDetails, generalBuildingBlock);
-                exceptionUtil.buildAndThrowWorkflowException(execution, 2000,
-                        "Missing Mandatory attribute from RequestDetails or GeneralBuildingBlock", ONAPComponents.SO);
-            }
-
-            LOGGER.debug("Finished executing DeleteAsInstance task ...");
+            execution.setVariable(TERMINATE_AS_REQUEST_OBJECT, terminateAsRequest);
+            LOGGER.debug("Finished executing terminateAsRequest task ...");
 
         } catch (final Exception exception) {
-            LOGGER.error("Unable to invoke DeleteAsInstance", exception);
+            LOGGER.error("Unable to create TerminateAsRequest", exception);
             exceptionUtil.buildAndThrowWorkflowException(execution, 2001, exception);
+        }
+    }
+
+    public void invokeCnfmToTerminateAsInstance(final BuildingBlockExecution execution) {
+        try {
+            LOGGER.debug("Executing TerminateAsInstance task  ...");
+
+            final TerminateAsRequest terminateAsRequest = execution.getVariable(TERMINATE_AS_REQUEST_OBJECT);
+            final GenericVnf vnf = extractPojosForBB.extractByKey(execution, GENERIC_VNF_ID);
+            final String asInstanceId = vnf.getVnfId();
+
+            Optional<URI> terminateStatusCheck =
+                    cnfmHttpServiceProvider.invokeTerminateAsRequest(asInstanceId, terminateAsRequest);
+            execution.setVariable(CNFM_REQUEST_STATUS_CHECK_URL,
+                    terminateStatusCheck.orElseThrow(() -> new NoSuchElementException("Status check url Not found")));
+            execution.setVariable(MONITOR_JOB_NAME, "Terminate");
+            LOGGER.debug("Successfully invoked CNFM terminate AS request: {}", asInstanceId);
+
+        } catch (final Exception exception) {
+            LOGGER.error("Unable to invoke CNFM TerminateAsRequest", exception);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 2004, exception);
+        }
+    }
+
+    public void invokeCnfmToDeleteAsInstance(final BuildingBlockExecution execution) {
+        try {
+            LOGGER.debug("Executing DelteAsInstance task  ...");
+
+            final GenericVnf vnf = extractPojosForBB.extractByKey(execution, GENERIC_VNF_ID);
+            final String asInstanceId = vnf.getVnfId();
+
+            Optional<Boolean> response = cnfmHttpServiceProvider.invokeDeleteAsRequest(asInstanceId);
+            if (Boolean.TRUE.equals(response
+                    .orElseThrow(() -> new BpmnError("Unable to complete DeleteAsRequest of ID: " + asInstanceId)))) {
+                LOGGER.debug("Successfully invoked CNFM delete AS request with ID: {}", asInstanceId);
+            }
+
+        } catch (final Exception exception) {
+            LOGGER.error("Unable to invoke CNFM DeleteAsRequest", exception);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 2004, exception);
         }
     }
 }
