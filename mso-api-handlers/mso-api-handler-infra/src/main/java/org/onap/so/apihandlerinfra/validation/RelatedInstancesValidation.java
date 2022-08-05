@@ -185,7 +185,10 @@ public class RelatedInstancesValidation implements ValidationRule {
                         && !(requestScope.equalsIgnoreCase(ModelType.instanceGroup.toString())
                                 && action == Action.createInstance)) {
                     isRelatedServiceInstancePresent = true;
-                    if (!relatedInstance.getInstanceId().equals(sir.getServiceInstanceId())) {
+                    // InstanceDirection.source indicates child service and this validation is for all
+                    // except child services.
+                    if (!InstanceDirection.source.equals(relatedInstance.getInstanceDirection())
+                            && !relatedInstance.getInstanceId().equals(sir.getServiceInstanceId())) {
                         throw new ValidationException(
                                 "serviceInstanceId matching the serviceInstanceId in request URI");
                     }

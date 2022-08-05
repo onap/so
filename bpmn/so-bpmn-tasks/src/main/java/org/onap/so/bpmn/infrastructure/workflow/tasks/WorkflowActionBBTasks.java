@@ -67,6 +67,12 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.CHILD_SVC_REQ_ERROR;
+import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.CHILD_SVC_REQ_MESSAGE_NAME;
+import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.CHILD_SVC_REQ_STATUS;
+import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.IS_CHILD_PROCESS;
+import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.CHILD_SVC_REQ_CORRELATION_ID;
+import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.PARENT_CORRELATION_ID;
 
 @Component
 public class WorkflowActionBBTasks {
@@ -236,6 +242,17 @@ public class WorkflowActionBBTasks {
             final boolean aLaCarte = (boolean) execution.getVariable(BBConstants.G_ALACARTE);
             final String resourceName = (String) execution.getVariable("resourceName");
             String statusMessage = (String) execution.getVariable("StatusMessage");
+
+            if (Boolean.TRUE.equals(execution.getVariable(IS_CHILD_PROCESS))) {
+                String parentCorrelationId = (String) execution.getVariable(PARENT_CORRELATION_ID);
+                logger.info("Child service request completed. Sending message to parent process with correlationId: "
+                        + parentCorrelationId);
+                execution.getProcessEngineServices().getRuntimeService()
+                        .createMessageCorrelation(CHILD_SVC_REQ_MESSAGE_NAME)
+                        .setVariable(CHILD_SVC_REQ_STATUS, "COMPLETED").setVariable(CHILD_SVC_REQ_ERROR, "")
+                        .processInstanceVariableEquals(CHILD_SVC_REQ_CORRELATION_ID, parentCorrelationId).correlate();
+            }
+
             String macroAction;
             if (statusMessage == null) {
                 if (aLaCarte) {

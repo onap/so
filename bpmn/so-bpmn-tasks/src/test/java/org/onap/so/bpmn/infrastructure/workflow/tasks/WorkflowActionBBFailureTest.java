@@ -26,9 +26,19 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.CHILD_SVC_REQ_CORRELATION_ID;
+import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.CHILD_SVC_REQ_ERROR;
+import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.CHILD_SVC_REQ_STATUS;
+import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.IS_CHILD_PROCESS;
+import static org.onap.so.bpmn.infrastructure.service.composition.ServiceCompositionConstants.PARENT_CORRELATION_ID;
 import java.sql.Timestamp;
+import org.camunda.bpm.engine.ProcessEngineServices;
+import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.camunda.bpm.engine.runtime.MessageCorrelationBuilder;
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
 import org.junit.Before;
 import org.junit.Rule;
@@ -271,4 +281,125 @@ public class WorkflowActionBBFailureTest extends BaseTaskTest {
         Mockito.verify(reqMock, Mockito.times(1)).setLastModifiedBy("CamundaBPMN");
         Mockito.verify(reqMock, Mockito.times(1)).setEndTime(any(Timestamp.class));
     }
+
+    @Test
+    public void invokeSendMessageForChildServiceRollBackCompletedSuccessfully() {
+        String parentCorrelationId = "parentCorrelationId";
+        DelegateExecution mockExecution = Mockito.mock(DelegateExecution.class);
+        ProcessEngineServices processEngineServices = mock(ProcessEngineServices.class);
+        RuntimeService runtimeService = mock(RuntimeService.class);
+        MessageCorrelationBuilder messageCorrelationBuilder = mock(MessageCorrelationBuilder.class);
+        when(processEngineServices.getRuntimeService()).thenReturn(runtimeService);
+        when(runtimeService.createMessageCorrelation(anyString())).thenReturn(messageCorrelationBuilder);
+        when(messageCorrelationBuilder.setVariable(CHILD_SVC_REQ_STATUS, "FAILED"))
+                .thenReturn(messageCorrelationBuilder);
+        when(messageCorrelationBuilder.setVariable(CHILD_SVC_REQ_ERROR, "Rollback has been completed successfully."))
+                .thenReturn(messageCorrelationBuilder);
+        when(messageCorrelationBuilder.processInstanceVariableEquals(CHILD_SVC_REQ_CORRELATION_ID, parentCorrelationId))
+                .thenReturn(messageCorrelationBuilder);
+
+        when(mockExecution.getVariable(PARENT_CORRELATION_ID)).thenReturn(parentCorrelationId);
+        when(mockExecution.getVariable("mso-request-id")).thenReturn("123");
+        when(mockExecution.getVariable("isRollbackComplete")).thenReturn(true);
+        when(mockExecution.getVariable("isRollback")).thenReturn(true);
+        when(mockExecution.getVariable(IS_CHILD_PROCESS)).thenReturn(true);
+
+        when(mockExecution.getProcessEngineServices()).thenReturn(processEngineServices);
+
+        InfraActiveRequests req = new InfraActiveRequests();
+        WorkflowException wfe = new WorkflowException("processKey123", 1, "error in rollback");
+        when(mockExecution.getVariable("WorkflowException")).thenReturn(wfe);
+        doReturn(req).when(requestsDbClient).getInfraActiveRequestbyRequestId("123");
+        doNothing().when(requestsDbClient).updateInfraActiveRequests(isA(InfraActiveRequests.class));
+        workflowActionBBFailure.updateRequestStatusToFailed(mockExecution);
+
+        verify(messageCorrelationBuilder).setVariable(CHILD_SVC_REQ_STATUS, "FAILED");
+        verify(messageCorrelationBuilder).setVariable(CHILD_SVC_REQ_ERROR, "Rollback has been completed successfully.");
+        verify(messageCorrelationBuilder).processInstanceVariableEquals(CHILD_SVC_REQ_CORRELATION_ID,
+                parentCorrelationId);
+    }
+
+    @Test
+    public void invokeSendMessageForChildServiceRollBackFailure() {
+        String parentCorrelationId = "parentCorrelationId";
+        DelegateExecution mockExecution = Mockito.mock(DelegateExecution.class);
+        ProcessEngineServices processEngineServices = mock(ProcessEngineServices.class);
+        RuntimeService runtimeService = mock(RuntimeService.class);
+        MessageCorrelationBuilder messageCorrelationBuilder = mock(MessageCorrelationBuilder.class);
+        when(processEngineServices.getRuntimeService()).thenReturn(runtimeService);
+        when(runtimeService.createMessageCorrelation(anyString())).thenReturn(messageCorrelationBuilder);
+        when(messageCorrelationBuilder.setVariable(CHILD_SVC_REQ_STATUS, "FAILED"))
+                .thenReturn(messageCorrelationBuilder);
+        when(messageCorrelationBuilder.setVariable(CHILD_SVC_REQ_ERROR, "error in rollback"))
+                .thenReturn(messageCorrelationBuilder);
+        when(messageCorrelationBuilder.processInstanceVariableEquals(PARENT_CORRELATION_ID, parentCorrelationId))
+                .thenReturn(messageCorrelationBuilder);
+
+        when(mockExecution.getVariable(PARENT_CORRELATION_ID)).thenReturn(parentCorrelationId);
+        when(mockExecution.getVariable("mso-request-id")).thenReturn("123");
+        when(mockExecution.getVariable("isRollbackComplete")).thenReturn(false);
+        when(mockExecution.getVariable("isRollback")).thenReturn(true);
+        when(mockExecution.getVariable(IS_CHILD_PROCESS)).thenReturn(true);
+
+        when(mockExecution.getProcessEngineServices()).thenReturn(processEngineServices);
+
+        InfraActiveRequests req = new InfraActiveRequests();
+        doReturn(req).when(requestsDbClient).getInfraActiveRequestbyRequestId("123");
+        doNothing().when(requestsDbClient).updateInfraActiveRequests(isA(InfraActiveRequests.class));
+        workflowActionBBFailure.updateRequestStatusToFailed(mockExecution);
+
+        verify(messageCorrelationBuilder).setVariable(CHILD_SVC_REQ_STATUS, "FAILED");
+        verify(messageCorrelationBuilder).setVariable(CHILD_SVC_REQ_ERROR,
+                "Failed to determine rollback error message.");
+
+        WorkflowException wfe = new WorkflowException("processKey123", 1, "error in rollback");
+        when(mockExecution.getVariable("WorkflowException")).thenReturn(wfe);
+        workflowActionBBFailure.updateRequestStatusToFailed(mockExecution);
+        verify(messageCorrelationBuilder).setVariable(CHILD_SVC_REQ_ERROR, "error in rollback");
+        verify(messageCorrelationBuilder).processInstanceVariableEquals(CHILD_SVC_REQ_CORRELATION_ID,
+                parentCorrelationId);
+    }
+
+    @Test
+    public void invokeSendMessageForChildServiceNoRollBack() {
+        String parentCorrelationId = "parentCorrelationId";
+        DelegateExecution mockExecution = Mockito.mock(DelegateExecution.class);
+        ProcessEngineServices processEngineServices = mock(ProcessEngineServices.class);
+        RuntimeService runtimeService = mock(RuntimeService.class);
+        MessageCorrelationBuilder messageCorrelationBuilder = mock(MessageCorrelationBuilder.class);
+        when(processEngineServices.getRuntimeService()).thenReturn(runtimeService);
+        when(runtimeService.createMessageCorrelation(anyString())).thenReturn(messageCorrelationBuilder);
+        when(messageCorrelationBuilder.setVariable(CHILD_SVC_REQ_STATUS, "FAILED"))
+                .thenReturn(messageCorrelationBuilder);
+        when(messageCorrelationBuilder.setVariable(CHILD_SVC_REQ_ERROR, "error in rollback"))
+                .thenReturn(messageCorrelationBuilder);
+        when(messageCorrelationBuilder.processInstanceVariableEquals(PARENT_CORRELATION_ID, parentCorrelationId))
+                .thenReturn(messageCorrelationBuilder);
+
+        when(mockExecution.getVariable(PARENT_CORRELATION_ID)).thenReturn(parentCorrelationId);
+        when(mockExecution.getVariable("mso-request-id")).thenReturn("123");
+        when(mockExecution.getVariable("isRollbackComplete")).thenReturn(false);
+        when(mockExecution.getVariable("isRollback")).thenReturn(false);
+        when(mockExecution.getVariable(IS_CHILD_PROCESS)).thenReturn(true);
+
+        when(mockExecution.getProcessEngineServices()).thenReturn(processEngineServices);
+
+        InfraActiveRequests req = new InfraActiveRequests();
+        doReturn(req).when(requestsDbClient).getInfraActiveRequestbyRequestId("123");
+        doNothing().when(requestsDbClient).updateInfraActiveRequests(isA(InfraActiveRequests.class));
+        workflowActionBBFailure.updateRequestStatusToFailed(mockExecution);
+
+        verify(messageCorrelationBuilder).setVariable(CHILD_SVC_REQ_STATUS, "FAILED");
+        verify(messageCorrelationBuilder).setVariable(CHILD_SVC_REQ_ERROR, "Failed to determine error message");
+
+        WorkflowException wfe = new WorkflowException("processKey123", 1, "error in rollback");
+        when(mockExecution.getVariable("WorkflowException")).thenReturn(wfe);
+        workflowActionBBFailure.updateRequestStatusToFailed(mockExecution);
+        verify(messageCorrelationBuilder).setVariable(CHILD_SVC_REQ_ERROR, "error in rollback");
+        verify(messageCorrelationBuilder).processInstanceVariableEquals(CHILD_SVC_REQ_CORRELATION_ID,
+                parentCorrelationId);
+    }
+
+
+
 }

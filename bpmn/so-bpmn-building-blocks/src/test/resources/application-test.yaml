@@ -75,7 +75,9 @@ mso:
     requestDb:
       auth: Basic YnBlbDptc28tZGItMTUwNyE=
       endpoint: http://localhost:8081
-
+    apihandler:
+      endpoint: http://localhost:8080
+      auth: Basic dGVzdDp0ZXN0Cg==
   async:
       core-pool-size: 50
       max-pool-size: 50

@@ -34,6 +34,7 @@ public final class WorkflowActionConstants {
 
     public static final String ACTIVATE_INSTANCE = "activateInstance";
     public static final String ASSIGN_INSTANCE = "assignInstance";
+    public static final String CHILD_SERVICE = "ChildService";
     public static final String CONFIGURATION = "Configuration";
     public static final String CONTROLLER = "Controller";
     public static final String CREATE_INSTANCE = "createInstance";

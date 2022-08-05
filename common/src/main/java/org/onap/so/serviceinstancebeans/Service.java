@@ -45,6 +45,9 @@ public class Service implements Serializable {
     private List<Map<String, Object>> instanceParams = new ArrayList<>();
     @JsonProperty("resources")
     protected Resources resources;
+    @JsonProperty("processingPriority")
+    protected Integer processingPriority = 0;
+
 
     public ModelInfo getModelInfo() {
         return modelInfo;
@@ -86,9 +89,19 @@ public class Service implements Serializable {
         this.resources = resources;
     }
 
+    public Integer getProcessingPriority() {
+        return processingPriority;
+    }
+
+    public void setProcessingPriority(Integer processingPriority) {
+        this.processingPriority = processingPriority;
+    }
+
+
     @Override
     public String toString() {
         return "Service [modelInfo=" + modelInfo + ", cloudConfiguration=" + cloudConfiguration + ", instanceName="
-                + instanceName + ", instanceParams=" + instanceParams + ", resources=" + resources + "]";
+                + instanceName + ", instanceParams=" + instanceParams + ", resources=" + resources
+                + ", processingPriority=" + processingPriority + "]";
     }
 }

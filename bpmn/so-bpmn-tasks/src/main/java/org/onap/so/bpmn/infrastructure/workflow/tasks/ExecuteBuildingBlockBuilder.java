@@ -110,13 +110,22 @@ public class ExecuteBuildingBlockBuilder {
             String requestId, String apiVersion, String resourceId, String requestAction, String vnfType,
             WorkflowResourceIds workflowResourceIds, RequestDetails requestDetails, boolean replaceVnf) {
         List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
-        if (orchFlow.getFlowName().contains(SERVICE) || (orchFlow.getFlowName().contains(CONTROLLER)
+        if (orchFlow.getFlowName().contains(CHILD_SERVICE)) {
+            if (WorkflowType.SERVICE.equals(resource.getResourceType()) && resource.hasParent()) {
+                addBuildingBlockToExecuteBBList(flowsToExecute, resource, WorkflowType.SERVICE, orchFlow, requestId,
+                        apiVersion, resourceId, requestAction, vnfType, workflowResourceIds, requestDetails, false,
+                        false);
+            }
+        } else if (orchFlow.getFlowName().contains(SERVICE) || (orchFlow.getFlowName().contains(CONTROLLER)
                 && (SERVICE).equalsIgnoreCase(orchFlow.getBpmnScope()))) {
             if (!replaceVnf) {
                 workflowResourceIds.setServiceInstanceId(resourceId);
             }
-            addBuildingBlockToExecuteBBList(flowsToExecute, resource, WorkflowType.SERVICE, orchFlow, requestId,
-                    apiVersion, resourceId, requestAction, vnfType, workflowResourceIds, requestDetails, false, false);
+            if (!resource.hasParent()) {
+                addBuildingBlockToExecuteBBList(flowsToExecute, resource, WorkflowType.SERVICE, orchFlow, requestId,
+                        apiVersion, resourceId, requestAction, vnfType, workflowResourceIds, requestDetails, false,
+                        false);
+            }
         } else if (orchFlow.getFlowName().contains(VNF)
                 || (orchFlow.getFlowName().contains(CONTROLLER) && (VNF).equalsIgnoreCase(orchFlow.getBpmnScope()))) {
             addBuildingBlockToExecuteBBList(flowsToExecute, resource, WorkflowType.VNF, orchFlow, requestId, apiVersion,

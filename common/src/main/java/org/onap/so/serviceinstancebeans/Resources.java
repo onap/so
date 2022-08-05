@@ -42,6 +42,8 @@ public class Resources implements Serializable {
     private List<Pnfs> pnfs = new ArrayList<>();
     @JsonProperty("networks")
     private List<Networks> networks = new ArrayList<>();
+    @JsonProperty("services")
+    private List<Service> services = new ArrayList<>();
 
     public List<Vnfs> getVnfs() {
         return vnfs;
@@ -67,8 +69,16 @@ public class Resources implements Serializable {
         this.networks = networks;
     }
 
+    public List<Service> getServices() {
+        return services;
+    }
+
+    public void setServices(List<Service> services) {
+        this.services = services;
+    }
+
     @Override
     public String toString() {
-        return "Resources [vnfs=" + vnfs + ", networks=" + networks + "]";
+        return "Resources [vnfs=" + vnfs + ", networks=" + networks + ", services=" + services + "]";
     }
 }

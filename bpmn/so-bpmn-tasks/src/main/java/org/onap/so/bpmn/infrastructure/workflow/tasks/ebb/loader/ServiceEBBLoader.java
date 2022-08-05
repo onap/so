@@ -25,8 +25,12 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.javatuples.Pair;
+import org.onap.aai.domain.yang.ComposedResource;
+import org.onap.aai.domain.yang.ComposedResources;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.Relationship;
+import org.onap.aai.domain.yang.RelationshipData;
+import org.onap.aai.domain.yang.RelationshipList;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.VpnBinding;
 import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
@@ -135,7 +139,7 @@ public class ServiceEBBLoader {
                 resourceList = userParamsServiceTraversal.getResourceListFromUserParams(execution, userParams,
                         serviceInstanceId, requestAction);
             }
-            if (!foundRelated(resourceList)) {
+            if (!isComposedService(resourceList) && !foundRelated(resourceList)) {
                 traverseCatalogDbService(execution, sIRequest, resourceList, aaiResourceIds);
             }
         } else if ((ACTIVATE_INSTANCE.equalsIgnoreCase(requestAction)
@@ -192,6 +196,10 @@ public class ServiceEBBLoader {
                 || containsWorkflowType(resourceList, WorkflowType.NETWORKCOLLECTION));
     }
 
+    public boolean isComposedService(List<Resource> resourceList) {
+        return resourceList.stream().anyMatch(s -> s.getResourceType() == WorkflowType.SERVICE && s.hasParent());
+    }
+
     public void traverseAAIService(DelegateExecution execution, List<Resource> resourceList, String resourceId,
             List<Pair<WorkflowType, String>> aaiResourceIds) {
         try {
@@ -203,6 +211,7 @@ public class ServiceEBBLoader {
             serviceResource.setModelInvariantId(serviceInstanceAAI.getModelInvariantId());
             serviceResource.setModelVersionId(serviceInstanceAAI.getModelVersionId());
             resourceList.add(serviceResource);
+            traverseServiceInstanceChildService(resourceList, serviceResource, serviceInstanceAAI);
             traverseServiceInstanceMSOVnfs(resourceList, serviceResource, aaiResourceIds, serviceInstanceMSO);
             traverseServiceInstanceMSOPnfs(resourceList, serviceResource, aaiResourceIds, serviceInstanceMSO);
             if (serviceInstanceMSO.getNetworks() != null) {
@@ -292,6 +301,54 @@ public class ServiceEBBLoader {
             }
             resourceList.add(resource);
         }
+    }
+
+    public void traverseServiceInstanceChildService(List<Resource> resourceList, Resource serviceResource,
+            ServiceInstance serviceInstanceAAI) {
+
+        ComposedResources composedResources = serviceInstanceAAI.getComposedResources();
+        if (composedResources == null) {
+            return;
+        }
+
+        List<ComposedResource> listOfComposedResource = composedResources.getComposedResource();
+
+        listOfComposedResource.forEach(composedResource -> {
+            // Get ServiceInstance from composedResource relationship List
+            RelationshipList relationshipList = composedResource.getRelationshipList();
+            if (relationshipList == null) {
+                return;
+            }
+            List<Relationship> composedResourceRelationshipList = relationshipList.getRelationship();
+            ServiceInstance childService = new ServiceInstance();
+            composedResourceRelationshipList.forEach(composedRelation -> {
+                if ("service-instance".equalsIgnoreCase(composedRelation.getRelatedTo())) {
+                    List<RelationshipData> rData = composedRelation.getRelationshipData();
+                    rData.forEach(data -> {
+                        if ("service-instance.service-instance-id".equalsIgnoreCase(data.getRelationshipKey())) {
+                            childService.setServiceInstanceId(data.getRelationshipValue());
+                        }
+                    });
+                    composedRelation.getRelatedToProperty().forEach(relatedToProperty -> {
+                        if ("service-instance.service-instance-name"
+                                .equalsIgnoreCase(relatedToProperty.getPropertyKey())) {
+                            childService.setServiceInstanceName(relatedToProperty.getPropertyValue());
+                        }
+                    });
+                }
+            });
+
+            if (childService.getServiceInstanceId() == null) {
+                return;
+            }
+
+            Resource childServiceResource =
+                    new Resource(WorkflowType.SERVICE, childService.getServiceInstanceId(), false, serviceResource);
+
+            childServiceResource.setInstanceName(childService.getServiceInstanceName());
+            resourceList.add(childServiceResource);
+        });
+
     }
 
     protected void traverseVrfConfiguration(List<Pair<WorkflowType, String>> aaiResourceIds,

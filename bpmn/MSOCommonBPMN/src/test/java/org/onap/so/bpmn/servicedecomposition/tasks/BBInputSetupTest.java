@@ -2121,6 +2121,8 @@ public class BBInputSetupTest {
         String instanceGroupId = "instancegroupId";
         String vnfInstanceName = "vnfInstanceName";
         String vfModuleInstanceName = "vfModuleInstanceName";
+        String childServiceInstanceId = "childServiceInstanceId";
+        String childServiceInstanceName = "childServiceInstanceName";
 
         expected.put(ResourceKey.SERVICE_INSTANCE_ID, serviceInstanceId);
         expected.put(ResourceKey.NETWORK_ID, networkId);
@@ -2132,6 +2134,8 @@ public class BBInputSetupTest {
         expected.put(ResourceKey.INSTANCE_GROUP_ID, instanceGroupId);
         expected.put(ResourceKey.VNF_INSTANCE_NAME, vnfInstanceName);
         expected.put(ResourceKey.VF_MODULE_INSTANCE_NAME, vfModuleInstanceName);
+        expected.put(ResourceKey.CHILD_SERVICE_INSTANCE_ID, childServiceInstanceId);
+        expected.put(ResourceKey.CHILD_SERVICE_INSTANCE_NAME, childServiceInstanceName);
 
         WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
         workflowResourceIds.setServiceInstanceId(serviceInstanceId);
@@ -2144,6 +2148,8 @@ public class BBInputSetupTest {
         workflowResourceIds.setInstanceGroupId(instanceGroupId);
         workflowResourceIds.setVnfInstanceName(vnfInstanceName);
         workflowResourceIds.setVfModuleInstanceName(vfModuleInstanceName);
+        workflowResourceIds.setChildServiceInstanceId(childServiceInstanceId);
+        workflowResourceIds.setChildServiceInstanceName(childServiceInstanceName);
 
         SPY_bbInputSetup.populateLookupKeyMapWithIds(workflowResourceIds, actual);
 

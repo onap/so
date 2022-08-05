@@ -173,4 +173,8 @@ public class Resource implements Serializable {
     public List<Resource> getChildren() {
         return this.children;
     }
+
+    public Boolean hasParent() {
+        return parent != null;
+    }
 }

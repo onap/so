@@ -262,6 +262,8 @@ public class BBInputSetup implements JavaDelegate {
         lookupKeyMap.put(ResourceKey.INSTANCE_GROUP_ID, workflowResourceIds.getInstanceGroupId());
         lookupKeyMap.put(ResourceKey.VNF_INSTANCE_NAME, workflowResourceIds.getVnfInstanceName());
         lookupKeyMap.put(ResourceKey.VF_MODULE_INSTANCE_NAME, workflowResourceIds.getVfModuleInstanceName());
+        lookupKeyMap.put(ResourceKey.CHILD_SERVICE_INSTANCE_ID, workflowResourceIds.getChildServiceInstanceId());
+        lookupKeyMap.put(ResourceKey.CHILD_SERVICE_INSTANCE_NAME, workflowResourceIds.getChildServiceInstanceName());
     }
 
     protected GeneralBuildingBlock getGBBALaCarteNonService(ExecuteBuildingBlock executeBB,
