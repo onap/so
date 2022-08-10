@@ -246,6 +246,7 @@ public class UserParamsServiceTraversal {
                 pnfResource.setModelCustomizationId(modelInfo.getModelCustomizationUuid());
                 pnfResource.setModelVersionId(modelInfo.getModelVersionId());
             }
+            pnfResource.setInstanceName(pnf.getInstanceName());
             pnfResource.setProcessingPriority(pnf.getProcessingPriority());
             resourceList.add(pnfResource);
         }

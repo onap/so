@@ -264,6 +264,7 @@ public class BBInputSetup implements JavaDelegate {
         lookupKeyMap.put(ResourceKey.VF_MODULE_INSTANCE_NAME, workflowResourceIds.getVfModuleInstanceName());
         lookupKeyMap.put(ResourceKey.CHILD_SERVICE_INSTANCE_ID, workflowResourceIds.getChildServiceInstanceId());
         lookupKeyMap.put(ResourceKey.CHILD_SERVICE_INSTANCE_NAME, workflowResourceIds.getChildServiceInstanceName());
+        lookupKeyMap.put(ResourceKey.PNF_INSTANCE_NAME, workflowResourceIds.getPnfInstanceName());
     }
 
     protected GeneralBuildingBlock getGBBALaCarteNonService(ExecuteBuildingBlock executeBB,
@@ -1634,9 +1635,16 @@ public class BBInputSetup implements JavaDelegate {
         } else if (bbName.contains(PNF) || (bbName.contains(CONTROLLER)
                 && (PNF).equalsIgnoreCase(executeBB.getBuildingBlock().getBpmnScope()))) {
             String pnfId = lookupKeyMap.get(ResourceKey.PNF);
-            resources.getPnfs().stream()
-                    .filter(pnfs -> Objects.equals(key, pnfs.getModelInfo().getModelCustomizationId())).findFirst()
-                    .ifPresent(pnfs -> BBInputSetupPnf.populatePnfToServiceInstance(pnfs, pnfId, serviceInstance));
+            String pnfInstanceName = lookupKeyMap.get(ResourceKey.PNF_INSTANCE_NAME);
+            if (StringUtils.isNotBlank(pnfInstanceName)) {
+                resources.getPnfs().stream().filter(pnfs -> Objects.equals(pnfInstanceName, pnfs.getInstanceName()))
+                        .findFirst()
+                        .ifPresent(pnfs -> BBInputSetupPnf.populatePnfToServiceInstance(pnfs, pnfId, serviceInstance));
+            } else {
+                resources.getPnfs().stream()
+                        .filter(pnfs -> Objects.equals(key, pnfs.getModelInfo().getModelCustomizationId())).findFirst()
+                        .ifPresent(pnfs -> BBInputSetupPnf.populatePnfToServiceInstance(pnfs, pnfId, serviceInstance));
+            }
         } else if (bbName.contains(VF_MODULE) || bbName.contains(VOLUME_GROUP) || (bbName.contains(CONTROLLER)
                 && (VF_MODULE).equalsIgnoreCase(executeBB.getBuildingBlock().getBpmnScope()))) {
             String vfModuleInstanceName = lookupKeyMap.get(ResourceKey.VF_MODULE_INSTANCE_NAME);

@@ -42,6 +42,7 @@ public class WorkflowResourceIdsUtilsTest {
     private static final String CONFIGURATION_ID = "configurationId";
     private static final String VNF_INSTANCE_NAME = "vnfInstanceNameId";
     private static final String VF_MODULE_INSTANCE_NAME = "vfModuleInstanceNameId";
+    private static final String PNF_INSTANCE_NAME = "pnfInstanceNameId";
     private WorkflowResourceIds workflowResourceIds;
 
     @Before
@@ -60,6 +61,7 @@ public class WorkflowResourceIdsUtilsTest {
         execution.setVariable("instanceGroupId", INSTANCE_GROUP_ID);
         execution.setVariable("vnfInstanceName", VNF_INSTANCE_NAME);
         execution.setVariable("vfModuleInstanceName", VF_MODULE_INSTANCE_NAME);
+        execution.setVariable("pnfInstanceName", PNF_INSTANCE_NAME);
 
         workflowResourceIds = WorkflowResourceIdsUtils.getWorkflowResourceIdsFromExecution(execution);
 
@@ -71,6 +73,7 @@ public class WorkflowResourceIdsUtilsTest {
         assertEquals(INSTANCE_GROUP_ID, workflowResourceIds.getInstanceGroupId());
         assertEquals(VNF_INSTANCE_NAME, workflowResourceIds.getVnfInstanceName());
         assertEquals(VF_MODULE_INSTANCE_NAME, workflowResourceIds.getVfModuleInstanceName());
+        assertEquals(PNF_INSTANCE_NAME, workflowResourceIds.getPnfInstanceName());
     }
 
     @Test
@@ -147,6 +150,12 @@ public class WorkflowResourceIdsUtilsTest {
     public void shouldPropertySetVfModuleInstanceName() {
         assertFieldSetProperlyInstanceName(WorkflowType.VFMODULE, VF_MODULE_INSTANCE_NAME,
                 workflowResourceIds::getVfModuleInstanceName);
+    }
+
+    @Test
+    public void shouldPropertySetPnfInstanceName() {
+        assertFieldSetProperlyInstanceName(WorkflowType.PNF, PNF_INSTANCE_NAME,
+                workflowResourceIds::getPnfInstanceName);
     }
 
     private void assertFieldSetProperly(WorkflowType workflowType, String expectedId,
