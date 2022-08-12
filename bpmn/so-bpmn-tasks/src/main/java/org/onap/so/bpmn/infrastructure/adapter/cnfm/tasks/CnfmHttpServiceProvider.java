@@ -39,7 +39,7 @@ public interface CnfmHttpServiceProvider {
 
     Optional<URI> invokeInstantiateAsRequest(InstantiateAsRequest instantiateAsRequest, String asInstanceId);
 
-    Optional<AsLcmOpOcc> getInstantiateOperationJobStatus(final String url);
+    Optional<AsLcmOpOcc> getOperationJobStatus(final String url);
 
     Optional<Boolean> invokeDeleteAsRequest(final String asInstanceId);
 

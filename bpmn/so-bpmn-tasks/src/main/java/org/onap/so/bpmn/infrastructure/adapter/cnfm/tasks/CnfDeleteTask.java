@@ -92,7 +92,7 @@ public class CnfDeleteTask {
                     cnfmHttpServiceProvider.invokeTerminateAsRequest(asInstanceId, terminateAsRequest);
             execution.setVariable(CNFM_REQUEST_STATUS_CHECK_URL,
                     terminateStatusCheck.orElseThrow(() -> new NoSuchElementException("Status check url Not found")));
-            execution.setVariable(MONITOR_JOB_NAME, "Terminate");
+            execution.setVariable(MONITOR_JOB_NAME, "Instantiate");
             LOGGER.debug("Successfully invoked CNFM terminate AS request: {}", asInstanceId);
 
         } catch (final Exception exception) {

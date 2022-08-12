@@ -113,7 +113,7 @@ public class CnfmHttpServiceProviderImpl implements CnfmHttpServiceProvider {
     }
 
     @Override
-    public Optional<AsLcmOpOcc> getInstantiateOperationJobStatus(final String url) {
+    public Optional<AsLcmOpOcc> getOperationJobStatus(final String url) {
         try {
             final ResponseEntity<AsLcmOpOcc> response = httpServiceProvider.getHttpResponse(url, AsLcmOpOcc.class);
 

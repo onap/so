@@ -36,6 +36,7 @@
         <camunda:out source="gBuildingBlockExecution" target="gBuildingBlockExecution" />
         <camunda:in source="CnfmStatusCheckUrl" target="CnfmStatusCheckUrl" />
         <camunda:out source="WorkflowExceptionErrorMessage" target="WorkflowExceptionErrorMessage" />
+        <camunda:in source="MonitorJobName" target="MonitorJobName" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1xcu3yl</bpmn:incoming>
       <bpmn:outgoing>Flow_149m8py</bpmn:outgoing>
@@ -44,6 +45,10 @@
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CnfInstantiateBB">
+      <bpmndi:BPMNEdge id="Flow_149m8py_di" bpmnElement="Flow_149m8py">
+        <di:waypoint x="1000" y="117" />
+        <di:waypoint x="1062" y="117" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1xcu3yl_di" bpmnElement="Flow_1xcu3yl">
         <di:waypoint x="840" y="117" />
         <di:waypoint x="900" y="117" />
@@ -64,12 +69,11 @@
         <di:waypoint x="178" y="117" />
         <di:waypoint x="240" y="117" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_149m8py_di" bpmnElement="Flow_149m8py">
-        <di:waypoint x="1000" y="117" />
-        <di:waypoint x="1062" y="117" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="StartEvent_0ru3x55_di" bpmnElement="StartEvent_0ru3x55">
         <dc:Bounds x="142" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_001k15i_di" bpmnElement="EndEvent_001k15i">
+        <dc:Bounds x="1062" y="99" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_1jf7hlc_di" bpmnElement="ServiceTask_11">
         <dc:Bounds x="240" y="77" width="100" height="80" />
@@ -77,17 +81,14 @@
       <bpmndi:BPMNShape id="Activity_1y5x7jl_di" bpmnElement="Activity_1y5x7jl">
         <dc:Bounds x="410" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0oa5fst_di" bpmnElement="Activity_0oa5fst">
-        <dc:Bounds x="570" y="77" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_00w0lnj_di" bpmnElement="Activity_00w0lnj">
         <dc:Bounds x="740" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0oa5fst_di" bpmnElement="Activity_0oa5fst">
+        <dc:Bounds x="570" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="CallActivity_0fuqfru_di" bpmnElement="CallActivity_0fuqfru">
         <dc:Bounds x="900" y="77" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_001k15i_di" bpmnElement="EndEvent_001k15i">
-        <dc:Bounds x="1062" y="99" width="36" height="36" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
