@@ -70,7 +70,7 @@ INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, SC
 ('Service-Macro-Unassign', '4', 'UnassignNetworkBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Unassign' and CLOUD_OWNER = 'DEFAULT')),
 ('Service-Macro-Unassign', '5', 'UnassignServiceInstanceBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Unassign' and CLOUD_OWNER = 'DEFAULT')),
 ('Service-Macro-Create', '1', 'AssignServiceInstanceBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
-('Service-Macro-Create', '2', 'CreateChildServiceBB', NULL, NULL,1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
+('Service-Macro-Create', '2', 'CreateChildServiceBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
 ('Service-Macro-Create', '3', 'CreateNetworkCollectionBB', NULL, NULL,1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
 ('Service-Macro-Create', '4', 'AssignNetworkBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
 ('Service-Macro-Create', '5', 'AssignVnfBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
@@ -908,4 +908,5 @@ VALUES
 ('VNFStopActivity',NULL,'VNFStartActivity',NULL),
 ('VNFQuiesceTrafficActivity',NULL,'VNFResumeTrafficActivity',NULL),
 ('EtsiVnfInstantiateBB',NULL,'EtsiVnfDeleteBB',NULL),
-('AddFabricConfigurationBB',NULL,'DeleteFabricConfigurationBB',NULL);
+('AddFabricConfigurationBB',NULL,'DeleteFabricConfigurationBB',NULL),
+('CreateChildServiceBB',NULL,'DeleteChildServiceBB',NULL);
