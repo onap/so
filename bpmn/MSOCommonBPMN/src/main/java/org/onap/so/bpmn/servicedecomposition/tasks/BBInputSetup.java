@@ -1253,7 +1253,8 @@ public class BBInputSetup implements JavaDelegate {
                 || requestAction.equalsIgnoreCase("activateFabricConfiguration")
                 || requestAction.equalsIgnoreCase("recreateInstance")
                 || requestAction.equalsIgnoreCase("replaceInstance")
-                || requestAction.equalsIgnoreCase("upgradeInstance") || requestAction.equalsIgnoreCase("healthCheck")) {
+                || requestAction.equalsIgnoreCase("upgradeInstance") || requestAction.equalsIgnoreCase("healthCheck")
+                || requestAction.equalsIgnoreCase("upgradeCnf")) {
             return getGBBMacroExistingService(executeBB, lookupKeyMap, bbName, requestAction,
                     requestDetails.getCloudConfiguration());
         }
@@ -1470,6 +1471,27 @@ public class BBInputSetup implements JavaDelegate {
             cloudRegion = mapperLayer.mapCloudRegion(cloudConfiguration, aaiCloudRegion);
         }
         gBB.setCloudRegion(cloudRegion);
+        String upgradeCnfModelCustomizationUUID = "";
+        String upgradeCnfVfModuleModelCustomizationUUID = "";
+        String upgradeCnfModelVersionId = "";
+        String upgradeCnfVfModuleModelVersionId = "";
+        if (requestDetails.getRelatedInstanceList() != null) {
+            for (RelatedInstanceList relatedInstList : requestDetails.getRelatedInstanceList()) {
+                RelatedInstance relatedInstance = relatedInstList.getRelatedInstance();
+                // condition -1
+                if (relatedInstance.getModelInfo().getModelType().equals(ModelType.vnf)
+                        && requestAction.equalsIgnoreCase("upgradeCnf")) {
+                    upgradeCnfModelCustomizationUUID = relatedInstance.getModelInfo().getModelCustomizationId();
+                    upgradeCnfModelVersionId = relatedInstance.getModelInfo().getModelVersionId();
+                }
+                // condition -2
+                if (relatedInstance.getModelInfo().getModelType().equals(ModelType.vfModule)
+                        && parameter.getRequestAction().equals("upgradeCnf")) {
+                    upgradeCnfVfModuleModelCustomizationUUID = relatedInstance.getModelInfo().getModelCustomizationId();
+                    upgradeCnfVfModuleModelVersionId = relatedInstance.getModelInfo().getModelVersionId();
+                }
+            }
+        }
         if (bbName.contains(VNF) || (bbName.contains(CONTROLLER)
                 && (VNF).equalsIgnoreCase(executeBB.getBuildingBlock().getBpmnScope()))) {
             for (GenericVnf genericVnf : serviceInstance.getVnfs()) {
@@ -1477,12 +1499,18 @@ public class BBInputSetup implements JavaDelegate {
                         && genericVnf.getVnfId().equalsIgnoreCase(lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID))) {
                     org.onap.aai.domain.yang.GenericVnf vnf = bbInputSetupUtils.getAAIGenericVnf(genericVnf.getVnfId());
                     ModelInfo modelInfo = new ModelInfo();
-                    if (vnf != null) {
+                    if ("upgradeCnf".equalsIgnoreCase(requestAction) && upgradeCnfModelCustomizationUUID != null) {
+                        modelInfo.setModelCustomizationUuid(upgradeCnfModelCustomizationUUID);
+                        modelInfo.setModelVersionId(upgradeCnfModelVersionId);
+                        this.mapCatalogVnf(genericVnf, modelInfo, service);
+                    } else if (vnf != null) {
                         modelInfo.setModelCustomizationUuid(vnf.getModelCustomizationId());
+                        this.mapCatalogVnf(genericVnf, modelInfo, service);
                     }
-                    this.mapCatalogVnf(genericVnf, modelInfo, service);
+
                 }
             }
+
         } else if (bbName.contains(VF_MODULE) || (bbName.contains(CONTROLLER)
                 && (VF_MODULE).equalsIgnoreCase(executeBB.getBuildingBlock().getBpmnScope()))) {
             for (GenericVnf vnf : serviceInstance.getVnfs()) {
@@ -1492,27 +1520,28 @@ public class BBInputSetup implements JavaDelegate {
                         String vnfModelCustomizationUUID =
                                 this.bbInputSetupUtils.getAAIGenericVnf(vnf.getVnfId()).getModelCustomizationId();
                         ModelInfo vnfModelInfo = new ModelInfo();
-                        vnfModelInfo.setModelCustomizationUuid(vnfModelCustomizationUUID);
-                        this.mapCatalogVnf(vnf, vnfModelInfo, service);
+                        if ("upgradeCnf".equalsIgnoreCase(requestAction) && upgradeCnfModelCustomizationUUID != null) {
+                            vnfModelInfo.setModelCustomizationUuid(upgradeCnfModelCustomizationUUID);
+                            vnfModelInfo.setModelVersionId(upgradeCnfModelVersionId);
+                            this.mapCatalogVnf(vnf, vnfModelInfo, service);
+                        } else {
+                            vnfModelInfo.setModelCustomizationUuid(vnfModelCustomizationUUID);
+                            this.mapCatalogVnf(vnf, vnfModelInfo, service);
+                        }
                         lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, vnf.getVnfId());
                         String vfModuleCustomizationUUID = this.bbInputSetupUtils
                                 .getAAIVfModule(vnf.getVnfId(), vfModule.getVfModuleId()).getModelCustomizationId();
                         ModelInfo vfModuleModelInfo = new ModelInfo();
-                        vfModuleModelInfo.setModelCustomizationId(vfModuleCustomizationUUID);
-                        this.mapCatalogVfModule(vfModule, vfModuleModelInfo, service, vnfModelCustomizationUUID);
-                        if (cloudRegion != null) {
-                            Optional<String> volumeGroupIdOp = getVolumeGroupIdRelatedToVfModule(vnf, vfModuleModelInfo,
-                                    cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId(), lookupKeyMap);
-                            if (volumeGroupIdOp.isPresent()) {
-                                lookupKeyMap.put(ResourceKey.VOLUME_GROUP_ID, volumeGroupIdOp.get());
-                            }
+                        if ("upgradeCnf".equalsIgnoreCase(requestAction)
+                                && upgradeCnfVfModuleModelCustomizationUUID != null) {
+                            vfModuleModelInfo.setModelCustomizationUuid(upgradeCnfVfModuleModelCustomizationUUID);
+                            vfModuleModelInfo.setModelVersionId(upgradeCnfVfModuleModelVersionId);
+                            this.mapCatalogVfModule(vfModule, vfModuleModelInfo, service,
+                                    upgradeCnfVfModuleModelCustomizationUUID);
+                        } else {
+                            vfModuleModelInfo.setModelCustomizationId(vfModuleCustomizationUUID);
+                            this.mapCatalogVfModule(vfModule, vfModuleModelInfo, service, vnfModelCustomizationUUID);
                         }
-                        if (vfModule.getModelInfoVfModule() != null
-                                && vfModule.getModelInfoVfModule().getModelName() != null
-                                && vfModule.getModelInfoVfModule().getModelName().contains("helm")) {
-                            gBB.getRequestContext().setIsHelm(true);
-                        }
-                        break;
                     }
                 }
             }
