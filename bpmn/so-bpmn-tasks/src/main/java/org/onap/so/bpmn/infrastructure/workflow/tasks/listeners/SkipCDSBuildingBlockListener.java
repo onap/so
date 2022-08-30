@@ -47,8 +47,8 @@ public class SkipCDSBuildingBlockListener implements PreFlowManipulator {
     @Autowired
     private CatalogDbClient catalogDbClient;
 
-    private Set<String> vnfActions =
-            new HashSet<String>(Arrays.asList("config-assign", "config-deploy", "VnfConfigAssign", "VnfConfigDeploy"));
+    private Set<String> vnfActions = new HashSet<String>(Arrays.asList("config-assign", "config-deploy",
+            "VnfConfigAssign", "VnfConfigDeploy", "config-upgrade-assign", "config-upgrade-deploy"));
 
     private Set<String> vFModuleAction =
             new HashSet<String>(Arrays.asList("VfModuleConfigAssign", "VfModuleConfigDeploy"));
