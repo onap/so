@@ -90,7 +90,8 @@ public class CnfAdapterUpgradeTasks {
             Map<String, String> sdncDirectives = getSdncDirectives(paramsMap);
             UpgradeInstanceRequest upgradeInstanceRequest =
                     upgradeInstanceRequest(vfModule, cloudRegion, sdncDirectives);
-            UpgradeInstanceResponse response = cnfAdapterClient.upgradeVfModule(upgradeInstanceRequest);
+            String heatStackId = vfModule.getHeatStackId();
+            UpgradeInstanceResponse response = cnfAdapterClient.upgradeVfModule(upgradeInstanceRequest, heatStackId);
             execution.setVariable("heatStackId", response.getId());
         } catch (Exception ex) {
             logger.error("Exception occurred", ex);

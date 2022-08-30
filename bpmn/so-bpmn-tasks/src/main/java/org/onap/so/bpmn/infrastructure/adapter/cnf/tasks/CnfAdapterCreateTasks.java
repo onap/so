@@ -170,7 +170,7 @@ public class CnfAdapterCreateTasks {
         logger.debug("currentFlow: {}", currentFlow);
 
         String apiPath = "http://so-cnf-adapter:8090";
-        if ("CreateVfModuleBB".equals(currentFlow)) {
+        if ("CreateVfModuleBB".equals(currentFlow) || ("UpgradeVfModuleBB".equals(currentFlow))) {
             apiPath = apiPath + "/api/cnf-adapter/v1/aai-update/";
         } else if ("DeleteVfModuleBB".equals(currentFlow)) {
             apiPath = apiPath + "/api/cnf-adapter/v1/aai-delete/";
