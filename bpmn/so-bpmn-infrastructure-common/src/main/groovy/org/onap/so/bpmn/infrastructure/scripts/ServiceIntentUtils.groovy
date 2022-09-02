@@ -150,19 +150,19 @@ class ServiceIntentUtils {
         String reqAction
         switch (svcAction) {
             case "create":
-                reqAction = "CreateCloudLeasedLineInstance"
+                reqAction = "CreateCloudLeasedLineInstanceByEline"
                 break
             case "delete":
-                reqAction = "DeleteCloudLeasedLineInstance"
+                reqAction = "DeleteCloudLeasedLineInstanceByEline"
                 break
             case "activate":
-                reqAction = "ActivateCloudLeasedLineInstance"
+                reqAction = "ActivateCloudLeasedLineInstanceByEline"
                 break
             case "deactivate":
-                reqAction = "DeactivateCloudLeasedLineInstance"
+                reqAction = "DeactivateCloudLeasedLineInstanceByEline"
                 break
             case "update":
-                reqAction = "ModifyCloudLeasedLineInstance"
+                reqAction = "ModifyCloudLeasedLineInstanceByEline"
                 break
             default:
                 reqAction = svcAction
