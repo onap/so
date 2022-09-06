@@ -99,8 +99,7 @@ public class MonitorCnfmJobTask {
      * @param execution {@link org.onap.so.bpmn.common.DelegateExecutionImpl}
      */
     public void timeOutLogFailure(final BuildingBlockExecution execution) {
-        String message = "CNF" + execution.getVariable(MONITOR_JOB_NAME)
-                + "operation time out";
+        String message = "CNF" + execution.getVariable(MONITOR_JOB_NAME) + "operation time out";
         LOGGER.error(message);
         exceptionUtil.buildAndThrowWorkflowException(execution, 1205, new Exception(message));
     }
@@ -116,9 +115,8 @@ public class MonitorCnfmJobTask {
         final AsLcmOpOcc cnfStautusResponse = execution.getVariable(CNF_STATUS_RESPONSE_PARAM_NAME);
         if ((operationStatusOption == OperationStateEnum.FAILED)
                 || (operationStatusOption == OperationStateEnum.FAILED_TEMP)) {
-            final String message =
-                    "Unable to" + execution.getVariable(MONITOR_JOB_NAME)
-                            + "CNF jobId: " + (cnfStautusResponse != null ? cnfStautusResponse.getId() : "null");
+            final String message = "Unable to" + execution.getVariable(MONITOR_JOB_NAME) + "CNF jobId: "
+                    + (cnfStautusResponse != null ? cnfStautusResponse.getId() : "null");
             LOGGER.error(message);
             exceptionUtil.buildAndThrowWorkflowException(execution, 1206, new Exception());
         } else if ((operationStatusOption == OperationStateEnum.COMPLETED)) {
