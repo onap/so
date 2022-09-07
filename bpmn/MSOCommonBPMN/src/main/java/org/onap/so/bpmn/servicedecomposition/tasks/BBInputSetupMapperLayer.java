@@ -65,6 +65,7 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoConfiguration;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoInstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoNetwork;
+import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoPnf;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceProxy;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
@@ -79,6 +80,7 @@ import org.onap.so.db.catalog.beans.InstanceGroupType;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.db.catalog.beans.Service;
+import org.onap.so.db.catalog.beans.PnfResourceCustomization;
 import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
@@ -478,6 +480,12 @@ public class BBInputSetupMapperLayer {
         ModelInfoGenericVnf modelInfoVnf = modelMapper.map(vnfResourceCustomization, ModelInfoGenericVnf.class);
         modelMapper.map(vnfResourceCustomization.getVnfResources(), modelInfoVnf);
         return modelInfoVnf;
+    }
+
+    protected ModelInfoPnf mapCatalogPnfToPnf(PnfResourceCustomization pnfResourceCustomization) {
+        ModelInfoPnf modelInfoPnf = modelMapper.map(pnfResourceCustomization, ModelInfoPnf.class);
+        modelMapper.map(pnfResourceCustomization.getPnfResources(), modelInfoPnf);
+        return modelInfoPnf;
     }
 
     protected ModelInfoVfModule mapCatalogVfModuleToVfModule(VfModuleCustomization vfResourceCustomization) {

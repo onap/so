@@ -97,6 +97,7 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoInstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoNetwork;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoPnf;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceProxy;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
 import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.NoServiceInstanceFoundException;
@@ -113,6 +114,7 @@ import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.db.catalog.beans.Service;
+import org.onap.so.db.catalog.beans.PnfResourceCustomization;
 import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
@@ -1732,6 +1734,28 @@ public class BBInputSetupTest {
         SPY_bbInputSetup.mapCatalogVnf(genericVnf, modelInfo, service);
 
         assertEquals(modelInfoGenericVnf, genericVnf.getModelInfoGenericVnf());
+    }
+
+    @Test
+    public void testMapCatalogPnf() {
+        ModelInfoPnf modelInfoPnf = new ModelInfoPnf();
+        Pnf pnf = new Pnf();
+        RequestDetails requestDetails = new RequestDetails();
+        ModelInfo modelInfo = new ModelInfo();
+        modelInfo.setModelCustomizationUuid("modelCustomizationUUID");
+        requestDetails.setModelInfo(modelInfo);
+        Service service = new Service();
+
+        PnfResourceCustomization resourceCust = new PnfResourceCustomization();
+        resourceCust.setModelCustomizationUUID("pnfModelCustomizationUUID");
+        service.getPnfCustomizations().add(resourceCust);
+        resourceCust.setModelCustomizationUUID("modelCustomizationUUID");
+
+        doReturn(modelInfoPnf).when(bbInputSetupMapperLayer).mapCatalogPnfToPnf(resourceCust);
+
+        SPY_bbInputSetup.mapCatalogPnf(pnf, modelInfo, service);
+
+        assertEquals(modelInfoPnf, pnf.getModelInfoPnf());
     }
 
     @Test

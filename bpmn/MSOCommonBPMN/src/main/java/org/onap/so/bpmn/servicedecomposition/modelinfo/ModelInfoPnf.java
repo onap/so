@@ -20,8 +20,31 @@
 
 package org.onap.so.bpmn.servicedecomposition.modelinfo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 
 public class ModelInfoPnf extends ModelInfoMetadata implements Serializable {
     private static final long serialVersionUID = 50687109134317615L;
+
+    @JsonProperty("nf-role")
+    private String role;
+
+    @JsonProperty("nf-type")
+    private String NfType;
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getNfType() {
+        return NfType;
+    }
+
+    public void setNfType(String nfType) {
+        NfType = nfType;
+    }
 }

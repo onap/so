@@ -61,6 +61,7 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoInstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoNetwork;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoPnf;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
 import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResource;
@@ -74,6 +75,8 @@ import org.onap.so.db.catalog.beans.InstanceGroup;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.db.catalog.beans.Service;
+import org.onap.so.db.catalog.beans.PnfResource;
+import org.onap.so.db.catalog.beans.PnfResourceCustomization;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.beans.VnfcCustomization;
@@ -505,6 +508,26 @@ public class BBInputSetupMapperLayerTest {
                 bbInputSetupMapperLayer.mapCatalogVnfToVnf(vnfResourceCustomization);
 
         assertThat(actualModelInfoGenericVnf, sameBeanAs(expectedModelInfoGenericVnf));
+    }
+
+    @Test
+    public void testMapCatalogPnfToPnf() throws IOException {
+        PnfResourceCustomization pnfResourceCustomization = mapper.readValue(
+                new File(RESOURCE_PATH + "PnfResourceCustomizationInput.json"), PnfResourceCustomization.class);
+
+        PnfResource pnfResource = new PnfResource();
+        pnfResource.setModelUUID("modelUuid");
+        pnfResource.setModelInvariantUUID("modelInvariantUuid");
+        pnfResource.setModelVersion("modelVersion");
+
+        pnfResourceCustomization.setPnfResources(pnfResource);
+
+        ModelInfoPnf expectedModelInfoPnf =
+                mapper.readValue(new File(RESOURCE_PATH + "ModelInfoPnfExpected.json"), ModelInfoPnf.class);
+
+        ModelInfoPnf actualModelInfoPnf = bbInputSetupMapperLayer.mapCatalogPnfToPnf(pnfResourceCustomization);
+
+        assertThat(actualModelInfoPnf, sameBeanAs(expectedModelInfoPnf));
     }
 
     @Test

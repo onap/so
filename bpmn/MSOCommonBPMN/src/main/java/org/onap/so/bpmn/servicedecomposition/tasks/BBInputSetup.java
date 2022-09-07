@@ -86,6 +86,7 @@ import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
+import org.onap.so.db.catalog.beans.PnfResourceCustomization;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
@@ -982,6 +983,13 @@ public class BBInputSetup implements JavaDelegate {
         }
     }
 
+    protected void mapCatalogPnf(Pnf pnf, ModelInfo modelInfo, Service service) {
+        PnfResourceCustomization pnfResourceCustomization = getPnfResourceCustomizationFromService(modelInfo, service);
+        if (pnfResourceCustomization != null) {
+            pnf.setModelInfoPnf(this.mapperLayer.mapCatalogPnfToPnf(pnfResourceCustomization));
+        }
+    }
+
     protected VnfResourceCustomization getVnfResourceCustomizationFromService(ModelInfo modelInfo, Service service) {
         VnfResourceCustomization vnfResourceCustomization = null;
         for (VnfResourceCustomization resourceCust : service.getVnfCustomizations()) {
@@ -991,6 +999,17 @@ public class BBInputSetup implements JavaDelegate {
             }
         }
         return vnfResourceCustomization;
+    }
+
+    protected PnfResourceCustomization getPnfResourceCustomizationFromService(ModelInfo modelInfo, Service service) {
+        PnfResourceCustomization pnfResourceCustomization = null;
+        for (PnfResourceCustomization resourceCust : service.getPnfCustomizations()) {
+            if (resourceCust.getModelCustomizationUUID().equalsIgnoreCase(modelInfo.getModelCustomizationUuid())) {
+                pnfResourceCustomization = resourceCust;
+                break;
+            }
+        }
+        return pnfResourceCustomization;
     }
 
     protected void populateL3Network(BBInputSetupParameter parameter) {
@@ -1645,6 +1664,15 @@ public class BBInputSetup implements JavaDelegate {
                         .filter(pnfs -> Objects.equals(key, pnfs.getModelInfo().getModelCustomizationId())).findFirst()
                         .ifPresent(pnfs -> BBInputSetupPnf.populatePnfToServiceInstance(pnfs, pnfId, serviceInstance));
             }
+
+            serviceInstance.getPnfs().stream().filter(pnf -> pnfInstanceName.equalsIgnoreCase(pnf.getPnfName()))
+                    .findFirst().ifPresent(pnf -> {
+                        ModelInfo pnfModelInfo = new ModelInfo();
+                        pnfModelInfo.setModelCustomizationUuid(pnf.getModelInfoPnf().getModelCustomizationUuid());
+                        pnfModelInfo.setModelCustomizationId(pnf.getModelInfoPnf().getModelCustomizationUuid());
+                        mapCatalogPnf(pnf, pnfModelInfo, service);
+                    });
+
         } else if (bbName.contains(VF_MODULE) || bbName.contains(VOLUME_GROUP) || (bbName.contains(CONTROLLER)
                 && (VF_MODULE).equalsIgnoreCase(executeBB.getBuildingBlock().getBpmnScope()))) {
             String vfModuleInstanceName = lookupKeyMap.get(ResourceKey.VF_MODULE_INSTANCE_NAME);

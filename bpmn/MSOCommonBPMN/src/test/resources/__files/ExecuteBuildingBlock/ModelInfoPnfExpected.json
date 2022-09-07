@@ -1,0 +1,11 @@
+{
+  "nfType": "nfType",
+  "model-customization-uuid": "modelCustomizationUUID",
+  "model-invariant-uuid": "modelInvariantUuid",
+  "model-uuid": "modelUuid",
+  "model-version": "modelVersion",
+  "model-instance-name": "modelInstanceName",
+  "model-name": null,
+  "nf-role": "nfRole",
+  "nf-type": "nfType"
+}
