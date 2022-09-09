@@ -908,4 +908,5 @@ VALUES
 ('VNFStopActivity',NULL,'VNFStartActivity',NULL),
 ('VNFQuiesceTrafficActivity',NULL,'VNFResumeTrafficActivity',NULL),
 ('EtsiVnfInstantiateBB',NULL,'EtsiVnfDeleteBB',NULL),
-('AddFabricConfigurationBB',NULL,'DeleteFabricConfigurationBB',NULL);
+('AddFabricConfigurationBB',NULL,'DeleteFabricConfigurationBB',NULL),
+('CreateChildServiceBB',NULL,'DeleteChildServiceBB',NULL);
