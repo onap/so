@@ -62,6 +62,7 @@
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
+      <version>2.1.212</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -76,7 +77,7 @@
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
-      <version>20160212</version>
+      <version>20220320</version>
     </dependency>
     <dependency>
       <groupId>org.xmlunit</groupId>
