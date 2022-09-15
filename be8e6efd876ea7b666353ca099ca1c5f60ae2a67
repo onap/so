@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c2215569_fa3c9e69",
+        "filename": "adapters/etsi-sol002-adapter/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2022-09-15T13:37:22Z",
+      "side": 1,
+      "message": "define a custom property under \u003cproperties\u003e in parent pom so that you don\u0027t have to hard code the version in sub projects and refer to it in dependency here",
+      "range": {
+        "startLine": 47,
+        "startChar": 15,
+        "endLine": 47,
+        "endChar": 20
+      },
+      "revId": "be8e6efd876ea7b666353ca099ca1c5f60ae2a67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
