@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1jxlg2g" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.7.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1jxlg2g" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
   <bpmn:process id="UpgradeVfModuleBB" name="UpgradeVfModuleBB" isExecutable="true">
     <bpmn:startEvent id="UpgradeVfModuleBB_Start">
       <bpmn:outgoing>SequenceFlow_1xr6chl</bpmn:outgoing>
@@ -15,7 +15,7 @@
       <bpmn:incoming>SequenceFlow_1xr6chl</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1s4rpyp</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="UpdateVfModuleStatus" name="&#10;AAI&#10;Update&#10;(vf module)&#10;" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusCreatedVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="UpdateVfModuleStatus" name="&#10;AAI&#10;Update&#10;(vf module) - Pending Activation&#10;" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusPendingActivationVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_0rds4rj</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1vbwdaw</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -192,6 +192,9 @@
       <bpmndi:BPMNShape id="Activity_1p8hxyt_di" bpmnElement="Activity_1p8hxyt">
         <dc:Bounds x="336" y="544" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_13ssqoq_di" bpmnElement="Event_1pengt4">
+        <dc:Bounds x="256" y="566" width="36" height="36" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="UpdateCnfAai_di" bpmnElement="UpdateCnfAai">
         <dc:Bounds x="870" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -206,9 +209,6 @@
         <bpmndi:BPMNLabel>
           <dc:Bounds x="162" y="394" width="57" height="14" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_13ssqoq_di" bpmnElement="Event_1pengt4">
-        <dc:Bounds x="256" y="566" width="36" height="36" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
