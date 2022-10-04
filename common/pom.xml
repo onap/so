@@ -51,7 +51,6 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
-      <version>5.3.20</version>
     </dependency>
     <dependency>
       <groupId>org.modelmapper</groupId>
@@ -118,7 +117,6 @@
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
-      <version>20220320</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>

@@ -137,7 +137,6 @@
     <dependency>
       <groupId>org.glassfish.jersey.core</groupId>
       <artifactId>jersey-common</artifactId>
-      <version>3.0.4</version>
     </dependency>
   </dependencies>
 </project>
