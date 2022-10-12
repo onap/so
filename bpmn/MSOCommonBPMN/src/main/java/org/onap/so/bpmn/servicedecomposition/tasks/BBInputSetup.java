@@ -1490,22 +1490,21 @@ public class BBInputSetup implements JavaDelegate {
             cloudRegion = mapperLayer.mapCloudRegion(cloudConfiguration, aaiCloudRegion);
         }
         gBB.setCloudRegion(cloudRegion);
+        // For Upgrade-Cnf, Only DeactivateBBs take older version details as Inputs
         String upgradeCnfModelCustomizationUUID = "";
         String upgradeCnfVfModuleModelCustomizationUUID = "";
         String upgradeCnfModelVersionId = "";
         String upgradeCnfVfModuleModelVersionId = "";
-        if (requestDetails.getRelatedInstanceList() != null) {
+        if (requestDetails.getRelatedInstanceList() != null && requestAction.equalsIgnoreCase("upgradeCnf")) {
             for (RelatedInstanceList relatedInstList : requestDetails.getRelatedInstanceList()) {
                 RelatedInstance relatedInstance = relatedInstList.getRelatedInstance();
-                // condition -1
-                if (relatedInstance.getModelInfo().getModelType().equals(ModelType.vnf)
-                        && requestAction.equalsIgnoreCase("upgradeCnf")) {
+                // condition -1 : To retrieve new Vnf model details from payload & map
+                if (relatedInstance.getModelInfo().getModelType().equals(ModelType.vnf)) {
                     upgradeCnfModelCustomizationUUID = relatedInstance.getModelInfo().getModelCustomizationId();
                     upgradeCnfModelVersionId = relatedInstance.getModelInfo().getModelVersionId();
                 }
-                // condition -2
-                if (relatedInstance.getModelInfo().getModelType().equals(ModelType.vfModule)
-                        && parameter.getRequestAction().equals("upgradeCnf")) {
+                // condition -2 : To retrieve new VfModule model details from payload & map
+                if (relatedInstance.getModelInfo().getModelType().equals(ModelType.vfModule)) {
                     upgradeCnfVfModuleModelCustomizationUUID = relatedInstance.getModelInfo().getModelCustomizationId();
                     upgradeCnfVfModuleModelVersionId = relatedInstance.getModelInfo().getModelVersionId();
                 }
@@ -1518,7 +1517,8 @@ public class BBInputSetup implements JavaDelegate {
                         && genericVnf.getVnfId().equalsIgnoreCase(lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID))) {
                     org.onap.aai.domain.yang.GenericVnf vnf = bbInputSetupUtils.getAAIGenericVnf(genericVnf.getVnfId());
                     ModelInfo modelInfo = new ModelInfo();
-                    if ("upgradeCnf".equalsIgnoreCase(requestAction) && upgradeCnfModelCustomizationUUID != null) {
+                    if ("upgradeCnf".equalsIgnoreCase(requestAction) && upgradeCnfModelCustomizationUUID != null
+                            && !(bbName.contains("Deactivate"))) {
                         modelInfo.setModelCustomizationUuid(upgradeCnfModelCustomizationUUID);
                         modelInfo.setModelVersionId(upgradeCnfModelVersionId);
                         this.mapCatalogVnf(genericVnf, modelInfo, service);
@@ -1539,7 +1539,8 @@ public class BBInputSetup implements JavaDelegate {
                         String vnfModelCustomizationUUID =
                                 this.bbInputSetupUtils.getAAIGenericVnf(vnf.getVnfId()).getModelCustomizationId();
                         ModelInfo vnfModelInfo = new ModelInfo();
-                        if ("upgradeCnf".equalsIgnoreCase(requestAction) && upgradeCnfModelCustomizationUUID != null) {
+                        if ("upgradeCnf".equalsIgnoreCase(requestAction) && upgradeCnfModelCustomizationUUID != null
+                                && !(bbName.contains("Deactivate"))) {
                             vnfModelInfo.setModelCustomizationUuid(upgradeCnfModelCustomizationUUID);
                             vnfModelInfo.setModelVersionId(upgradeCnfModelVersionId);
                             this.mapCatalogVnf(vnf, vnfModelInfo, service);
@@ -1551,12 +1552,12 @@ public class BBInputSetup implements JavaDelegate {
                         String vfModuleCustomizationUUID = this.bbInputSetupUtils
                                 .getAAIVfModule(vnf.getVnfId(), vfModule.getVfModuleId()).getModelCustomizationId();
                         ModelInfo vfModuleModelInfo = new ModelInfo();
-                        if ("upgradeCnf".equalsIgnoreCase(requestAction)
-                                && upgradeCnfVfModuleModelCustomizationUUID != null) {
+                        if ("upgradeCnf".equalsIgnoreCase(requestAction) && upgradeCnfModelCustomizationUUID != null
+                                && !(bbName.contains("Deactivate"))) {
                             vfModuleModelInfo.setModelCustomizationUuid(upgradeCnfVfModuleModelCustomizationUUID);
                             vfModuleModelInfo.setModelVersionId(upgradeCnfVfModuleModelVersionId);
                             this.mapCatalogVfModule(vfModule, vfModuleModelInfo, service,
-                                    upgradeCnfVfModuleModelCustomizationUUID);
+                                    upgradeCnfModelCustomizationUUID);
                         } else {
                             vfModuleModelInfo.setModelCustomizationId(vfModuleCustomizationUUID);
                             this.mapCatalogVfModule(vfModule, vfModuleModelInfo, service, vnfModelCustomizationUUID);

@@ -435,7 +435,8 @@ VALUES
 ('ControllerExecutionBB', 'NO_VALIDATE', 'CUSTOM'),
 ('StatusCheckBB', 'NO_VALIDATE', 'CUSTOM'),
 ('HealthCheckBB', 'NO_VALIDATE', 'CUSTOM'),
-('UpgradeVfModuleBB', 'NO_VALIDATE', 'CUSTOM');
+('UpgradeVfModuleBB', 'NO_VALIDATE', 'CUSTOM'),
+('VfModuleUpgradeStatusBB', 'NO_VALIDATE', 'CUSTOM');
 
 
 INSERT INTO orchestration_status_state_transition_directive (resource_type, orchestration_status, target_action, flow_directive)

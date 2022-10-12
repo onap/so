@@ -15,7 +15,7 @@
       <bpmn:incoming>SequenceFlow_1xr6chl</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1s4rpyp</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="UpdateVfModuleStatus" name="&#10;AAI&#10;Update&#10;(vf module) - Pending Activation&#10;" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusPendingActivationVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="UpdateVfModuleStatus" name="AAI&#10;Update&#10;(vf module)" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusCreatedVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_0rds4rj</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1vbwdaw</bpmn:outgoing>
     </bpmn:serviceTask>
