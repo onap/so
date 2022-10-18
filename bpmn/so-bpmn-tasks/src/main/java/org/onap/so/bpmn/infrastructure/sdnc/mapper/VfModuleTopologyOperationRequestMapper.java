@@ -87,7 +87,7 @@ public class VfModuleTopologyOperationRequestMapper {
         } else if (svcAction.equals(SDNCSvcAction.DEACTIVATE)) {
             genericResourceApiSvcAction = GenericResourceApiSvcActionEnumeration.DEACTIVATE;
             requestAction = GenericResourceApiRequestActionEnumeration.DELETEVFMODULEINSTANCE;
-            includeModelInformation = false;
+            includeModelInformation = true;
         } else if (svcAction.equals(SDNCSvcAction.DELETE)) {
             genericResourceApiSvcAction = GenericResourceApiSvcActionEnumeration.DELETE;
             requestAction = GenericResourceApiRequestActionEnumeration.DELETEVFMODULEINSTANCE;
