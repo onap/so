@@ -2,6 +2,63 @@
   "comments": [
     {
       "key": {
+        "uuid": "38deb20a_eaabb6e1",
+        "filename": "asdc-controller/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2022-10-19T12:28:49Z",
+      "side": 1,
+      "message": "why you need to have the kafka-client dependency  in dependencyManagement? Would sdc-distribution-client dependency will have kafka-clients",
+      "revId": "bedc52afaca1dbdfec1dae46d5dc6f32528ff201",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "89ceac9c_19676b84",
+        "filename": "asdc-controller/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2022-10-19T12:28:49Z",
+      "side": 1,
+      "message": "if this \"httpmime\" dependency needed for sdc-distribution-client then it should be part of that no???",
+      "revId": "bedc52afaca1dbdfec1dae46d5dc6f32528ff201",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "65795f21_0f118f29",
+        "filename": "asdc-controller/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2022-10-19T12:28:49Z",
+      "side": 1,
+      "message": "extract version this to properties as well",
+      "range": {
+        "startLine": 250,
+        "startChar": 15,
+        "endLine": 250,
+        "endChar": 21
+      },
+      "revId": "bedc52afaca1dbdfec1dae46d5dc6f32528ff201",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d02e07eb_6eb89b5f",
         "filename": "asdc-controller/src/main/java/org/onap/so/asdc/client/ASDCConfiguration.java",
         "patchSetId": 1
