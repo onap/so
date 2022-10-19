@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "dcf35850_edccbe4b",
+        "filename": "asdc-controller/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2022-10-19T13:00:15Z",
+      "side": 1,
+      "message": "it would good know what dependency pull kafka-clients:2.5.1.. i can help you with if you want",
+      "parentUuid": "99015c57_8676b198",
+      "revId": "bedc52afaca1dbdfec1dae46d5dc6f32528ff201",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "89ceac9c_19676b84",
         "filename": "asdc-controller/pom.xml",
         "patchSetId": 1
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "[INFO] BUILD FAILURE\n[INFO] ------------------------------------------------------------------------\n[INFO] Total time:  17.580 s\n[INFO] Finished at: 2022-10-19T13:44:04+01:00\n[INFO] ------------------------------------------------------------------------\n[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.8.0:compile (default-compile) on project asdc-controller: Compilation failure: Compilation failure: \n[ERROR] /home/fiachra/git/nordix_gerrit/so/asdc-controller/src/main/java/org/onap/so/asdc/installer/bpmn/BpmnInstaller.java:[47,34] error: package org.apache.http.entity.mime does not exist\n[ERROR] /home/fiachra/git/nordix_gerrit/so/asdc-controller/src/main/java/org/onap/so/asdc/installer/bpmn/BpmnInstaller.java:[48,34] error: package org.apache.http.entity.mime does not exist\n[ERROR] /home/fiachra/git/nordix_gerrit/so/asdc-controller/src/main/java/org/onap/so/asdc/installer/bpmn/BpmnInstaller.java:[49,42] error: package org.apache.http.entity.mime.content does not exist\n[ERROR] /home/fiachra/git/nordix_gerrit/so/asdc-controller/src/main/java/org/onap/so/asdc/installer/bpmn/BpmnInstaller.java:[50,42] error: package org.apache.http.entity.mime.content does not exist",
       "parentUuid": "89ceac9c_19676b84",
+      "revId": "bedc52afaca1dbdfec1dae46d5dc6f32528ff201",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "045712b4_f9bd60cd",
+        "filename": "asdc-controller/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2022-10-19T13:00:15Z",
+      "side": 1,
+      "message": "Okay little confuse here now, how the code was compiling before the change, it must be coming as part sdc-distribution-client",
+      "parentUuid": "77606509_a3d71b16",
       "revId": "bedc52afaca1dbdfec1dae46d5dc6f32528ff201",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
