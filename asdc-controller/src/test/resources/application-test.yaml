@@ -76,12 +76,11 @@ mso:
       consumerGroup: msoasdc-id-local
       consumerId: msoasdc-id-local
       environmentName: Pre-IST
-      asdcAddress: localhost:8443
+      sdcAddress: localhost:8443
       password: CB655C3C236F1F0370A347E3A0E0E133BE10ADCF4D16377E7378D3FE46A4BF60C27DF1FFB4
       pollingInterval: 30
       pollingTimeout: 30
       relevantArtifactTypes: HEAT,HEAT_ENV,HEAT_VOL
-      useHttpsWithDmaap: true
       activateServerTLSAuth: false
       keyStorePassword:  
       keyStorePath:

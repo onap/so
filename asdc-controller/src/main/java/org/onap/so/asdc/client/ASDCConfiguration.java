@@ -42,7 +42,7 @@ public class ASDCConfiguration implements IConfiguration {
     // echo -n "This is a test string" | openssl aes-128-ecb -e -K 546573746F736973546573746F736973
     // -nosalt | xxd
 
-    private static Logger logger = LoggerFactory.getLogger(ASDCConfiguration.class);
+    private static final Logger logger = LoggerFactory.getLogger(ASDCConfiguration.class);
 
     private String asdcControllerName;
 
@@ -64,8 +64,7 @@ public class ASDCConfiguration implements IConfiguration {
             HEAT_VOL, OTHER, TOSCA_CSAR, VF_MODULES_METADATA, WORKFLOW, CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT, HELM};
 
 
-    public static final List<String> SUPPORTED_ARTIFACT_TYPES_LIST =
-            Collections.unmodifiableList(Arrays.asList(SUPPORTED_ARTIFACT_TYPES));
+    public static final List<String> SUPPORTED_ARTIFACT_TYPES_LIST = List.of(SUPPORTED_ARTIFACT_TYPES);
 
     @Autowired
     private Environment env;
@@ -81,12 +80,7 @@ public class ASDCConfiguration implements IConfiguration {
     }
 
     @Override
-    public java.lang.Boolean isUseHttpsWithDmaap() {
-        return getBooleanPropertyWithDefault("mso.asdc-connections.asdc-controller1.useHttpsWithDmaap", true);
-    }
-
-    @Override
-    public java.lang.Boolean isUseHttpsWithSDC() {
+    public Boolean isUseHttpsWithSDC() {
         return getBooleanPropertyWithDefault("mso.asdc-connections.asdc-controller1.useHttpsWithSdc", true);
     }
 
@@ -173,7 +167,7 @@ public class ASDCConfiguration implements IConfiguration {
             return defaultValue;
         } else {
             try {
-                return Boolean.valueOf(config);
+                return Boolean.parseBoolean(config);
             } catch (Exception e) {
                 logger.warn("Exception while getting boolean property with default property", e);
                 return defaultValue;
@@ -209,8 +203,8 @@ public class ASDCConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getAsdcAddress() {
-        return getPropertyOrNull("mso.asdc-connections.asdc-controller1.asdcAddress");
+    public String getSdcAddress() {
+        return getPropertyOrNull("mso.asdc-connections.asdc-controller1.sdcAddress");
     }
 
     @Override
@@ -240,6 +234,26 @@ public class ASDCConfiguration implements IConfiguration {
     @Override
     public boolean isFilterInEmptyResources() {
         return getBooleanPropertyWithDefault("mso.asdc-connections.asdc-controller1.isFilterInEmptyResources", true);
+    }
+
+    @Override
+    public String getHttpProxyHost() {
+        return getPropertyOrNull("mso.asdc-connections.asdc-controller1.httpProxyHost");
+    }
+
+    @Override
+    public int getHttpProxyPort() {
+        return getIntegerPropertyOrZero("mso.asdc-connections.asdc-controller1.httpProxyPort");
+    }
+
+    @Override
+    public String getHttpsProxyHost() {
+        return getPropertyOrNull("mso.asdc-connections.asdc-controller1.httpsProxyPort");
+    }
+
+    @Override
+    public int getHttpsProxyPort() {
+        return getIntegerPropertyOrZero("mso.asdc-connections.asdc-controller1.httpsProxyHost");
     }
 
 }
