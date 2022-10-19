@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d02e07eb_6eb89b5f",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/client/ASDCConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2022-10-19T12:24:57Z",
+      "side": 1,
+      "message": "lets make these parameters configurable as well by extracting them into application/override yaml and the default values for these params can be the one you have it now",
+      "range": {
+        "startLine": 241,
+        "startChar": 8,
+        "endLine": 241,
+        "endChar": 20
+      },
+      "revId": "bedc52afaca1dbdfec1dae46d5dc6f32528ff201",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
