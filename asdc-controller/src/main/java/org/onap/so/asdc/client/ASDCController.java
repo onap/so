@@ -957,7 +957,7 @@ public class ASDCController {
      */
     public String getAddress() {
         if (asdcConfig != null) {
-            return asdcConfig.getAsdcAddress();
+            return asdcConfig.getSdcAddress();
         }
         return UNKNOWN;
     }

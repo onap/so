@@ -20,8 +20,7 @@
 
 package org.onap.so.asdc.client;
 
-
-
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import javax.transaction.Transactional;
 import org.junit.Test;
@@ -40,19 +39,18 @@ public class ASDCConfigurationTest extends BaseTest {
 
     @Test
     @Transactional
-    public void testInitASDCConfiguration() throws Exception {
-        assertTrue("msopreist".equals(config.getUser()));
-        assertTrue("msoasdc-id-local".equals(config.getConsumerGroup()));
-        assertTrue("msoasdc-id-local".equals(config.getConsumerID()));
-        assertTrue("Pre-IST".equals(config.getEnvironmentName()));
-        assertTrue("localhost:8443".equals(config.getAsdcAddress()));
-        assertTrue("msopreist".equals(config.getPassword()));
-        assertTrue(config.getPollingInterval() == 30);
-        assertTrue(config.getPollingTimeout() == 30);
-        assertTrue(config.getRelevantArtifactTypes().size() == config.SUPPORTED_ARTIFACT_TYPES_LIST.size());
-        assertTrue(config.getWatchDogTimeout() == 1);
-        assertTrue(config.isUseHttpsWithDmaap() == true);
-        assertTrue(config.isUseHttpsWithSDC() == true);
+    public void testInitASDCConfiguration() {
+        assertEquals("msopreist", config.getUser());
+        assertEquals("msoasdc-id-local", config.getConsumerGroup());
+        assertEquals("msoasdc-id-local", config.getConsumerID());
+        assertEquals("Pre-IST", config.getEnvironmentName());
+        assertEquals("localhost:8443", config.getSdcAddress());
+        assertEquals("msopreist", config.getPassword());
+        assertEquals(30, config.getPollingInterval());
+        assertEquals(30, config.getPollingTimeout());
+        assertEquals(config.getRelevantArtifactTypes().size(), ASDCConfiguration.SUPPORTED_ARTIFACT_TYPES_LIST.size());
+        assertEquals(1, config.getWatchDogTimeout());
+        assertTrue(config.isUseHttpsWithSDC());
     }
 
 }
