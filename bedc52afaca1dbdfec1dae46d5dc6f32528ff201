@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "99015c57_8676b198",
+        "filename": "asdc-controller/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-10-19T12:45:49Z",
+      "side": 1,
+      "message": "This would definitely be my preference but no matter how many exclusions I added to the spring-boot dependencies, it still pulled in the 2.5.1 version from \n  \u003cgroupId\u003eorg.springframework.boot\u003c/groupId\u003e\n  \u003cartifactId\u003espring-boot-dependencies\u003c/artifactId\u003e\n  \u003cversion\u003e2.3.7.RELEASE\u003c/version\u003e",
+      "parentUuid": "38deb20a_eaabb6e1",
+      "revId": "bedc52afaca1dbdfec1dae46d5dc6f32528ff201",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "89ceac9c_19676b84",
         "filename": "asdc-controller/pom.xml",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "77606509_a3d71b16",
+        "filename": "asdc-controller/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-10-19T12:45:49Z",
+      "side": 1,
+      "message": "[INFO] BUILD FAILURE\n[INFO] ------------------------------------------------------------------------\n[INFO] Total time:  17.580 s\n[INFO] Finished at: 2022-10-19T13:44:04+01:00\n[INFO] ------------------------------------------------------------------------\n[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.8.0:compile (default-compile) on project asdc-controller: Compilation failure: Compilation failure: \n[ERROR] /home/fiachra/git/nordix_gerrit/so/asdc-controller/src/main/java/org/onap/so/asdc/installer/bpmn/BpmnInstaller.java:[47,34] error: package org.apache.http.entity.mime does not exist\n[ERROR] /home/fiachra/git/nordix_gerrit/so/asdc-controller/src/main/java/org/onap/so/asdc/installer/bpmn/BpmnInstaller.java:[48,34] error: package org.apache.http.entity.mime does not exist\n[ERROR] /home/fiachra/git/nordix_gerrit/so/asdc-controller/src/main/java/org/onap/so/asdc/installer/bpmn/BpmnInstaller.java:[49,42] error: package org.apache.http.entity.mime.content does not exist\n[ERROR] /home/fiachra/git/nordix_gerrit/so/asdc-controller/src/main/java/org/onap/so/asdc/installer/bpmn/BpmnInstaller.java:[50,42] error: package org.apache.http.entity.mime.content does not exist",
+      "parentUuid": "89ceac9c_19676b84",
+      "revId": "bedc52afaca1dbdfec1dae46d5dc6f32528ff201",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "65795f21_0f118f29",
         "filename": "asdc-controller/pom.xml",
         "patchSetId": 1
@@ -47,6 +83,30 @@
       "writtenOn": "2022-10-19T12:28:49Z",
       "side": 1,
       "message": "extract version this to properties as well",
+      "range": {
+        "startLine": 250,
+        "startChar": 15,
+        "endLine": 250,
+        "endChar": 21
+      },
+      "revId": "bedc52afaca1dbdfec1dae46d5dc6f32528ff201",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a92b9b95_5644c832",
+        "filename": "asdc-controller/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-10-19T12:45:49Z",
+      "side": 1,
+      "message": "see above",
+      "parentUuid": "65795f21_0f118f29",
       "range": {
         "startLine": 250,
         "startChar": 15,
