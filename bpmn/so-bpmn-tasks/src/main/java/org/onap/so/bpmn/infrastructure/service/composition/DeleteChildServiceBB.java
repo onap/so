@@ -21,12 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import org.onap.aai.domain.yang.ComposedResource;
-import org.onap.aai.domain.yang.RelatedToProperty;
-import org.onap.aai.domain.yang.Relationship;
-import org.onap.aai.domain.yang.RelationshipData;
-import org.onap.aai.domain.yang.ServiceInstance;
+import org.onap.aai.domain.yang.*;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
@@ -213,6 +210,64 @@ public class DeleteChildServiceBB {
         } catch (Exception e) {
             exceptionBuilder.buildAndThrowWorkflowException(buildingBlockExecution, 10003, e.getMessage(),
                     ONAPComponents.SO);
+        }
+    }
+
+
+    /**
+     * Method to delete service's composed node if it is a recursive service
+     */
+    public void updateComposedResourceIfPresent(BuildingBlockExecution execution, List<Relationship> relation) {
+        String PId = null;
+        String csId = null;
+        List<RelationshipData> relationshipData = null;
+        for (Relationship relationship : relation) {
+            relationshipData = relationship.getRelationshipData();
+            for (RelationshipData rd : relationshipData) {
+                if (rd.getRelationshipKey().equalsIgnoreCase("service-instance.service-instance-id")) {
+                    PId = rd.getRelationshipValue();
+                }
+                if (rd.getRelationshipKey().equalsIgnoreCase("composed-resource.id")) {
+                    csId = rd.getRelationshipValue();
+                }
+            }
+        }
+        AAIResourceUri composedResourceURI = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                .customer(execution.getGeneralBuildingBlock().getCustomer().getGlobalCustomerId())
+                .serviceSubscription(
+                        execution.getGeneralBuildingBlock().getRequestContext().getSubscriptionServiceType())
+                .serviceInstance(PId).composedResource(csId));
+        aaiResourcesClient.delete(composedResourceURI);
+
+
+        // parent is no more needed
+        ServiceInstance pServiceInstanceAAI = aaiResourcesClient.get(ServiceInstance.class, AAIUriFactory
+                .createResourceUri(AAIFluentTypeBuilder.Types.SERVICE_INSTANCE.getFragment(PId)).depth(Depth.TWO))
+                .orElse(null);
+
+
+        ComposedResources composedResources = pServiceInstanceAAI.getComposedResources();
+
+        List<String> ResourceList = new ArrayList();
+        List<Relationship> relationship = pServiceInstanceAAI.getRelationshipList().getRelationship();
+        for (Relationship r : relationship) {
+            ResourceList.add(r.getRelatedTo());
+        }
+        boolean isResourceNotExist = true;
+        for (String Resource : ResourceList) {
+            if (composedResources == null
+                    && Resource.matches("generic-vnf|allotted-resource|pnf|(.*)networks(.*)|(.*)configurations(.*)")) {
+                isResourceNotExist = false;
+                break;
+            }
+        }
+        if (isResourceNotExist) {
+            AAIResourceUri pUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+                    .customer(execution.getGeneralBuildingBlock().getCustomer().getGlobalCustomerId())
+                    .serviceSubscription(
+                            execution.getGeneralBuildingBlock().getRequestContext().getSubscriptionServiceType())
+                    .serviceInstance(PId));
+            aaiResourcesClient.delete(pUri);
         }
     }
 
