@@ -27,10 +27,14 @@ import java.util.List;
 import java.util.Optional;
 import org.onap.aai.domain.yang.NetworkPolicies;
 import org.onap.aai.domain.yang.NetworkPolicy;
+import org.onap.aai.domain.yang.Relationship;
+import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.infrastructure.service.composition.DeleteChildServiceBB;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -79,6 +83,11 @@ public class AAIDeleteTasks {
     private AAIConfigurationResources aaiConfigurationResources;
     @Autowired
     private AAIInstanceGroupResources aaiInstanceGroupResources;
+    @Autowired
+    DeleteChildServiceBB deleteChildServiceBB;
+
+    private AAIResourcesClient aaiResourcesClient = new AAIResourcesClient();
+
 
     /**
      * BPMN access method to delete the VfModule from A&AI.
@@ -139,7 +148,26 @@ public class AAIDeleteTasks {
         try {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+
+            // Update or delete if this service is a composed node of its parent service
+            if (execution.getGeneralBuildingBlock().getRequestContext().getAction()
+                    .equalsIgnoreCase("deleteInstance")) {
+                org.onap.aai.domain.yang.ServiceInstance serviceInstanceAAI = aaiResourcesClient
+                        .get(org.onap.aai.domain.yang.ServiceInstance.class,
+                                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.Types.SERVICE_INSTANCE
+                                        .getFragment(serviceInstance.getServiceInstanceId())).depth(Depth.TWO))
+                        .orElse(null);
+                List<Relationship> relationship = serviceInstanceAAI.getRelationshipList().getRelationship();
+                Boolean isNodeExist = null;
+                for (Relationship relation : relationship) {
+                    isNodeExist = relation.getRelatedTo().equalsIgnoreCase("composed-resource");
+                    if (isNodeExist == true) {
+                        deleteChildServiceBB.updateComposedResourceIfPresent(execution, relationship);
+                    }
+                }
+            }
             aaiSIResources.deleteServiceInstance(serviceInstance);
+
         } catch (Exception ex) {
             logger.error("Exception occurred in AAIDeleteTasks deleteServiceInstance process", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
