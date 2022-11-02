@@ -23,9 +23,6 @@
 # Required
 version: 2
 
-formats:
-  - htmlzip
-
 build:
   image: latest
 
@@ -33,6 +30,9 @@ python:
   version: 3.7
   install:
     - requirements: docs/requirements-docs.txt
+    
+submodules:
+   include: all    
 
 sphinx:
   configuration: docs/conf.py
