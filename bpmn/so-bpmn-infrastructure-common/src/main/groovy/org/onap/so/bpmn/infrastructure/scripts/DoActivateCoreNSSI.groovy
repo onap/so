@@ -127,7 +127,7 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
                                     logger.debug("networkServiceInstanceId: {} networkServiceInstanceName: {} ",networkServiceInstanceId, networkServiceInstanceName)
                                     execution.setVariable("networkServiceInstanceId", networkServiceInstanceId)
                                     execution.setVariable("networkServiceInstanceName", networkServiceInstanceName)
-                                } else if("slice-profile-instance".equals(role)) {
+                                } else if("slice-profile".equals(role)) {
                                     String orchestrationStatus= relatedServiceInstanceObj.getOrchestrationStatus()
                                     String sNssai = relatedServiceInstanceObj.getEnvironmentContext()
                                     if(sNssai.equals(execution.getVariable("sNssai"))) {
