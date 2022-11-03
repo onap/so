@@ -8,7 +8,7 @@ ENV http_proxy=$HTTP_PROXY
 ENV https_proxy=$HTTPS_PROXY
 
 # Install commonly needed tools
-RUN apk --no-cache add curl netcat-openbsd nss apache2-utils java-cacerts
+RUN apk --no-cache add curl netcat-openbsd openssl apache2-utils java-cacerts
 
 # Create symlink for default Java truststore
 RUN set -eux; \
