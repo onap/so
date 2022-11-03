@@ -50,6 +50,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.CREATE_INSTANCE;
@@ -118,9 +119,25 @@ public class UserParamsServiceTraversal {
 
     private void setResourceListForChildServices(DelegateExecution execution, List<Resource> resourceList,
             Resource serviceResource, Service validate) {
+        Map<String, Integer> m = new HashMap<>();
         for (Service childService : validate.getResources().getServices()) {
-            Resource childServiceResource = new Resource(WorkflowType.SERVICE,
-                    childService.getModelInfo().getModelVersionId(), false, serviceResource);
+            if (m.containsKey(childService.getModelInfo().getModelVersionId())) {
+                m.replace(childService.getModelInfo().getModelVersionId(),
+                        m.get(childService.getModelInfo().getModelVersionId()) + 1);
+            } else {
+                m.put(childService.getModelInfo().getModelVersionId(), 1);
+            }
+        }
+        for (Service childService : validate.getResources().getServices()) {
+            Resource childServiceResource;
+            if (m.get(childService.getModelInfo().getModelVersionId()) > 1) {
+                childServiceResource =
+                        new Resource(WorkflowType.SERVICE, childService.getInstanceName(), false, serviceResource);
+            } else {
+                childServiceResource = new Resource(WorkflowType.SERVICE,
+                        childService.getModelInfo().getModelVersionId(), false, serviceResource);
+            }
+
             childServiceResource.setProcessingPriority(childService.getProcessingPriority());
             childServiceResource.setInstanceName(childService.getInstanceName());
             resourceList.add(childServiceResource);
