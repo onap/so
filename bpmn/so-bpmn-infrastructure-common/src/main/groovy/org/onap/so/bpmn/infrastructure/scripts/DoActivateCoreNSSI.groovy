@@ -128,13 +128,16 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
                                     execution.setVariable("networkServiceInstanceId", networkServiceInstanceId)
                                     execution.setVariable("networkServiceInstanceName", networkServiceInstanceName)
                                 } else if("slice-profile".equals(role)) {
-                                    String orchestrationStatus= relatedServiceInstanceObj.getOrchestrationStatus()
-                                    String sNssai = relatedServiceInstanceObj.getEnvironmentContext()
-                                    if(sNssai.equals(execution.getVariable("sNssai"))) {
-                                        orchestrationStatus = execution.getVariable("oStatus")
-                                        //Slice Profile Service Instance to be updated in AAI
-                                        execution.setVariable("sliceProfileServiceInstance", relatedServiceInstanceObj)
-                                    }
+                                   String orchestrationStatus= relatedServiceInstanceObj.getOrchestrationStatus()
+    				   String sNssai = relatedServiceInstanceObj.getEnvironmentContext()
+    					if (execution.getVariable("sNssai"))
+        				String val = execution.getVariable(s: "SNssai")
+        				logger.debug( "sNssai Vaule = {}", val) 
+        				if(sNssai== val) {
+        				orchestrationStatus = execution.getVariable("oStatus")
+        				//Slice Profile Service Instance to be updated in AAI
+        				execution.setVariable("sliceProfileServiceInstance", relatedServiceInstanceObj)
+				    }
                                     Map<String, Object> spiWithsNssaiAndOrchStatus = new LinkedHashMap<>()
                                     spiWithsNssaiAndOrchStatus.put("snssai", sNssai)
                                     spiWithsNssaiAndOrchStatus.put("status", orchestrationStatus)
