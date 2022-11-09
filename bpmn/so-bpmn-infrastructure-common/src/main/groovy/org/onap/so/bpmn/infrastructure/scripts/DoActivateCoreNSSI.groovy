@@ -128,13 +128,17 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
                                     execution.setVariable("networkServiceInstanceId", networkServiceInstanceId)
                                     execution.setVariable("networkServiceInstanceName", networkServiceInstanceName)
                                 } else if("slice-profile".equals(role)) {
-                                    String orchestrationStatus= relatedServiceInstanceObj.getOrchestrationStatus()
-                                    String sNssai = relatedServiceInstanceObj.getEnvironmentContext()
-                                    if(sNssai.equals(execution.getVariable("sNssai"))) {
-                                        orchestrationStatus = execution.getVariable("oStatus")
-                                        //Slice Profile Service Instance to be updated in AAI
-                                        execution.setVariable("sliceProfileServiceInstance", relatedServiceInstanceObj)
-                                    }
+                                   String orchestrationStatus= relatedServiceInstanceObj.getOrchestrationStatus()
+    				   String sNssai = relatedServiceInstanceObj.getEnvironmentContext()
+    					if (execution.getVariable("sNssai")) {
+        				String val = execution.getVariable("sNssai")
+        				logger.debug("sNssai Value:"+val) 
+        				if(sNssai == val) {
+        				orchestrationStatus = execution.getVariable("oStatus")
+        				//Slice Profile Service Instance to be updated in AAI
+        				execution.setVariable("sliceProfileServiceInstance", relatedServiceInstanceObj)
+                                        }
+				    }
                                     Map<String, Object> spiWithsNssaiAndOrchStatus = new LinkedHashMap<>()
                                     spiWithsNssaiAndOrchStatus.put("snssai", sNssai)
                                     spiWithsNssaiAndOrchStatus.put("status", orchestrationStatus)
@@ -609,6 +613,7 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
         String oStatus = execution.getVariable("oStatus")
 
         ServiceInstance si = execution.getVariable("sliceProfileServiceInstance")
+        logger.debug("*****SI******"+si)
         String sliceProfileInstanceId = si.getServiceInstanceId()
 
         if(sliceProfileInstanceId==null) {
@@ -617,8 +622,12 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
         si.setOrchestrationStatus(oStatus)
 
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalCustId).serviceSubscription(serviceType).serviceInstance(sliceProfileInstanceId))
+        logger.debug("******URI*******"+uri)
         try {
             getAAIClient().update(uri, si)
+            AAIResourceUri updated_uri = getAAIClient().get(uri)
+            logger.debug("*****Successfully Updated in AAI******"+updated_uri)
+            logger.debug("*****SliceProfileServiceInstance*****"+si)
             setResourceOperationStatus(execution)
         } catch (Exception e) {
             logger.info("Update OrchestrationStatus in AAI failed")
@@ -653,6 +662,7 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
         resourceOperationStatus.setStatus("finished")
         resourceOperationStatus.setProgress("100")
         resourceOperationStatus.setStatusDescription("Core Activation Successful")
+        logger.debug("*****resourceOperationStatus after setting props********:"+resourceOperationStatus)
         requestDBUtil.prepareUpdateResourceOperationStatus(execution, resourceOperationStatus)
 
         logger.debug(Prefix +" **** Exit DoActivateCoreNSSI ::: setResourceOperationStatus ****")
