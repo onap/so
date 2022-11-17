@@ -80,7 +80,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         logger.trace("Enter preProcessRequest()")
         Map<String, Object> nssiMap = new HashMap<>()
         int nsstCount=execution.getVariable("nsstCount") as int
-        if(nsstCount==5){
+        if(nsstCount==6){
             execution.setVariable("processFHandMH", true)
         }
         else{
@@ -313,7 +313,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         SliceProfile sliceProfile = new SliceProfile()
         sliceProfile.setProfileId(profileId)
-        sliceProfile.setCoverageAreaTAList(anSliceProfile.coverageAreaTAList)
+        sliceProfile.setCoverageAreaTAList(anSliceProfile.coverageAreaTAList as String)
         sliceProfile.setMaxNumberOfUEs(anSliceProfile.maxNumberOfUEs)
         sliceProfile.setLatency(anSliceProfile.latency)
         sliceProfile.setMaxNumberOfPDUSession(anSliceProfile.maxNumberOfPDUSession)
@@ -1197,8 +1197,8 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         TransportSliceNetwork transportSliceNetwork = new TransportSliceNetwork()
         List<ConnectionLink> connectionLinks = new ArrayList<>()
         ConnectionLink connectionLink = new ConnectionLink()
-        connectionLink.setTransportEndpointA(execution.getVariable("tranportEp_ID_RU") as String)
-        connectionLink.setTransportEndpointB(execution.getVariable("tranportEp_ID_DUIN") as String)
+        connectionLink.setTransportEndpointA(UUID.randomUUID().toString())
+        connectionLink.setTransportEndpointB(UUID.randomUUID().toString())
         connectionLinks.add(connectionLink)
         transportSliceNetwork.setConnectionLinks(connectionLinks)
         transportSliceNetworks.add(transportSliceNetwork)
@@ -1222,7 +1222,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
                 .subscriptionServiceType(subscriptionServiceType)
                 .nsiId(sliceParams.getSuggestNsiId())
                 .serviceInvariantUuid(sliceTaskInfo.getNSSTInfo().getInvariantUUID())
-                .setServiceUuid(sliceTaskInfo.getNSSTInfo().getUUID())
+                .serviceUuid(sliceTaskInfo.getNSSTInfo().getUUID())
                 .nssiId(sliceTaskInfo.getSuggestNssiId())
                 .sST(sliceTaskInfo.getSliceProfile().getSST() ?: sliceParams.getServiceProfile().get("sST"))
                 .nssiName("nssi_tn_fh_" + execution.getVariable("sliceServiceInstanceName") as String)
@@ -1234,7 +1234,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         execution.setVariable("TnFHAllocateNssiNbiRequest", nbiRequest)
         execution.setVariable("tnFHSliceTaskInfo", sliceTaskInfo)
-        execution.setVariable("tnFHSubnetType", SubnetType.TN_BH)
+        execution.setVariable("tnFHSubnetType", SubnetType.TN_FH)
     }
 
     /**
@@ -1350,8 +1350,8 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
         TransportSliceNetwork transportSliceNetwork = new TransportSliceNetwork()
         List<ConnectionLink> connectionLinks = new ArrayList<>()
         ConnectionLink connectionLink = new ConnectionLink()
-        connectionLink.setTransportEndpointA(execution.getVariable("tranportEp_ID_DUEG") as String)
-        connectionLink.setTransportEndpointB(execution.getVariable("tranportEp_ID_CUIN") as String)
+        connectionLink.setTransportEndpointA(UUID.randomUUID().toString())
+        connectionLink.setTransportEndpointB(UUID.randomUUID().toString())
         connectionLinks.add(connectionLink)
         transportSliceNetwork.setConnectionLinks(connectionLinks)
         transportSliceNetworks.add(transportSliceNetwork)
@@ -1378,7 +1378,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
                 .serviceUuid(sliceTaskInfo.getNSSTInfo().getUUID())
                 .nssiId(sliceTaskInfo.getSuggestNssiId())
                 .sST(sliceTaskInfo.getSliceProfile().getSST() ?: sliceParams.getServiceProfile().get("sST"))
-                .nssiName("nssi_tn_bh_" + execution.getVariable("sliceServiceInstanceName") as String)
+                .nssiName("nssi_tn_mh_" + execution.getVariable("sliceServiceInstanceName") as String)
                 .build()
 
         nbiRequest.setServiceInfo(serviceInfo)
@@ -1387,7 +1387,7 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
 
         execution.setVariable("TnMHAllocateNssiNbiRequest", nbiRequest)
         execution.setVariable("tnMHSliceTaskInfo", sliceTaskInfo)
-        execution.setVariable("tnMHSubnetType", SubnetType.TN_BH)
+        execution.setVariable("tnMHSubnetType", SubnetType.TN_MH)
     }
 
     /**

@@ -413,7 +413,9 @@ dcnsio.updateTnMHRelationship(execution)</bpmn:script>
       <bpmn:incoming>Flow_13i03hb</bpmn:incoming>
       <bpmn:linkEventDefinition id="LinkEventDefinition_1rscmuw" name="CreateTnFHSliceProfile" />
     </bpmn:intermediateThrowEvent>
-    <bpmn:sequenceFlow id="Flow_0ehx22x" sourceRef="Gateway_0tpcoai" targetRef="EndEvent_02c8wsp" />
+    <bpmn:sequenceFlow id="Flow_0ehx22x" name="no" sourceRef="Gateway_0tpcoai" targetRef="EndEvent_02c8wsp">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{(execution.getVariable("processFHandMH" )  == false)}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_13i03hb" name="yes" sourceRef="Gateway_0tpcoai" targetRef="Event_1hemevb">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{(execution.getVariable("processFHandMH" )  == true)}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
