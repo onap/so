@@ -142,10 +142,10 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 
 		Map<String,ServiceInstance> relatedNssis = new HashMap<>()
                 relatedNssis = getRelatedInstancesByRole(execution, ROLE_NSSI,KEY_NSSI, anNssiId)
+		execution.setVariable("relatedNssis", relatedNssis)
                 if(relatedNssis.size() == 1) {
                         execution.setVariable("IsRANNfAlonePresent", true)
                 }
-		execution.setVariable("relatedNssis", relatedNssis)
 		logger.trace("${Prefix} - Exit Get Related instances")
 	}
 	
