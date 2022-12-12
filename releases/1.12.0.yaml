@@ -1,0 +1,22 @@
+
+---
+distribution_type: 'container'
+container_release_tag: '1.12.0'
+project: 'so'
+log_dir: 'so-maven-docker-stage-master/1304/'
+ref: '8601cc6c7dac244ba6f9bab810bc4046cf6cc6c5'
+containers:
+  - name: 'so/catalog-db-adapter'
+    version: '1.12.0-20221212T0419'
+  - name: 'so/request-db-adapter'
+    version: '1.12.0-20221212T0419'
+  - name: 'so/openstack-adapter'
+    version: '1.12.0-20221212T0419'
+  - name: 'so/sdnc-adapter'
+    version: '1.12.0-20221212T0419'
+  - name: 'so/sdc-controller'
+    version: '1.12.0-20221212T0419'
+  - name: 'so/bpmn-infra'
+    version: '1.12.0-20221212T0419'
+  - name: 'so/api-handler-infra'
+    version: '1.12.0-20221212T0419'
