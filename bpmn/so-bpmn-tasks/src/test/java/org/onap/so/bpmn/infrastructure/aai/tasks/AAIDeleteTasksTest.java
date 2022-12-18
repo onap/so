@@ -45,6 +45,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.NetworkPolicies;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.data.TestDataSetup;
+import org.onap.so.bpmn.infrastructure.service.composition.DeleteChildServiceBB;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -89,6 +90,8 @@ public class AAIDeleteTasksTest extends TestDataSetup {
     protected AAIInstanceGroupResources aaiInstanceGroupResources;
     @Mock
     protected ExtractPojosForBB extractPojosForBBMock;
+    @Mock
+    protected DeleteChildServiceBB deleteChildServiceBB;
     @InjectMocks
     private AAIDeleteTasks aaiDeleteTasks;
 
@@ -154,9 +157,11 @@ public class AAIDeleteTasksTest extends TestDataSetup {
     @Test
     public void deleteServiceInstanceTest() throws Exception {
         doNothing().when(aaiServiceInstanceResources).deleteServiceInstance(serviceInstance);
+        doNothing().when(deleteChildServiceBB).updateComposedResourceIfPresent(execution, serviceInstance);
 
         aaiDeleteTasks.deleteServiceInstance(execution);
 
+        verify(deleteChildServiceBB, times(1)).updateComposedResourceIfPresent(execution, serviceInstance);
         verify(aaiServiceInstanceResources, times(1)).deleteServiceInstance(serviceInstance);
     }
 

@@ -31,6 +31,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.infrastructure.service.composition.DeleteChildServiceBB;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -79,6 +80,8 @@ public class AAIDeleteTasks {
     private AAIConfigurationResources aaiConfigurationResources;
     @Autowired
     private AAIInstanceGroupResources aaiInstanceGroupResources;
+    @Autowired
+    DeleteChildServiceBB deleteChildServiceBB;
 
     /**
      * BPMN access method to delete the VfModule from A&AI.
@@ -139,6 +142,7 @@ public class AAIDeleteTasks {
         try {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+            deleteChildServiceBB.updateComposedResourceIfPresent(execution, serviceInstance);
             aaiSIResources.deleteServiceInstance(serviceInstance);
         } catch (Exception ex) {
             logger.error("Exception occurred in AAIDeleteTasks deleteServiceInstance process", ex);
