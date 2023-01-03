@@ -19,7 +19,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.onap.so.bpmn.infrastructure.pnf.dmaap;
 
 import java.io.IOException;
@@ -43,15 +42,16 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PnfEventReadyDmaapClient implements DmaapClient {
-
     private static final Logger logger = LoggerFactory.getLogger(PnfEventReadyDmaapClient.class);
-
     private HttpClient httpClient;
     private Map<String, Runnable> pnfCorrelationIdToThreadMap;
-    private HttpGet getRequest;
+    private HttpGet getRequestForpnfReady;
+    private HttpGet getRequestForPnfUpdate;
     private int topicListenerDelayInSeconds;
     private volatile ScheduledThreadPoolExecutor executor;
     private volatile boolean dmaapThreadListenerIsRunning;
+    private String topicName;
+    List<HttpGet> httpGets;
 
     @Autowired
     public PnfEventReadyDmaapClient(Environment env) {
@@ -59,9 +59,27 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
         pnfCorrelationIdToThreadMap = new ConcurrentHashMap<>();
         topicListenerDelayInSeconds = env.getProperty("pnf.dmaap.topicListenerDelayInSeconds", Integer.class);
         executor = null;
-        getRequest = new HttpGet(UriBuilder.fromUri(env.getProperty("pnf.dmaap.uriPathPrefix"))
+        topicName = env.getProperty("pnf.dmaap.topicName");
+        String[] topic = topicName.split("\\s");
+        String pnf_ready = null;
+        String pnf_update = null;
+        for (String t : topic) {
+            if (t.matches("(.*)PNF_READY(.*)")) {
+                pnf_ready = t;
+            } else if (t.matches("(.*)PNF_UPDATE(.*)")) {
+                pnf_update = t;
+            } else {
+                return;
+            }
+        }
+        getRequestForpnfReady = new HttpGet(UriBuilder.fromUri(env.getProperty("pnf.dmaap.uriPathPrefix"))
                 .scheme(env.getProperty("pnf.dmaap.protocol")).host(env.getProperty("pnf.dmaap.host"))
-                .port(env.getProperty("pnf.dmaap.port", Integer.class)).path(env.getProperty("pnf.dmaap.topicName"))
+                .port(env.getProperty("pnf.dmaap.port", Integer.class)).path(pnf_ready)
+                .path(env.getProperty("pnf.dmaap.consumerGroup")).path(env.getProperty("pnf.dmaap.consumerId"))
+                .build());
+        getRequestForPnfUpdate = new HttpGet(UriBuilder.fromUri(env.getProperty("pnf.dmaap.uriPathPrefix"))
+                .scheme(env.getProperty("pnf.dmaap.protocol")).host(env.getProperty("pnf.dmaap.host"))
+                .port(env.getProperty("pnf.dmaap.port", Integer.class)).path(pnf_update)
                 .path(env.getProperty("pnf.dmaap.consumerGroup")).path(env.getProperty("pnf.dmaap.consumerId"))
                 .build());
     }
@@ -105,17 +123,24 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
     }
 
     class DmaapTopicListenerThread implements Runnable {
-
         @Override
         public void run() {
             try {
-                logger.debug("dmaap listener starts listening pnf ready dmaap topic");
-                HttpResponse response = httpClient.execute(getRequest);
-                getPnfCorrelationIdListFromResponse(response).forEach(this::informAboutPnfReadyIfPnfCorrelationIdFound);
+                HttpResponse response;
+                response = httpClient.execute(getRequestForPnfUpdate);
+                List<String> pnfUpdateResponse = getPnfCorrelationIdListFromResponse(response);
+                if (pnfUpdateResponse.isEmpty()) {
+                    response = httpClient.execute(getRequestForpnfReady);
+                    getPnfCorrelationIdListFromResponse(response)
+                            .forEach(this::informAboutPnfReadyIfPnfCorrelationIdFound);
+                } else {
+                    pnfUpdateResponse.forEach(this::informAboutPnfReadyIfPnfCorrelationIdFound);
+                }
             } catch (IOException e) {
                 logger.error("Exception caught during sending rest request to dmaap for listening event topic", e);
             } finally {
-                getRequest.reset();
+                getRequestForpnfReady.reset();
+                getRequestForPnfUpdate.reset();
             }
         }
 
@@ -137,5 +162,4 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
             }
         }
     }
-
 }

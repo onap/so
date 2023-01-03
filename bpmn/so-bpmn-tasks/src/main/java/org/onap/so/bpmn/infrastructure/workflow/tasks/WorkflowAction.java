@@ -71,6 +71,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.so.bpmn.common.BBConstants;
+import org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader.PnfEBBLoader;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader.ServiceEBBLoader;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader.VnfEBBLoader;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.excpetion.VnfcMultipleRelationshipException;
@@ -111,7 +112,7 @@ public class WorkflowAction {
     private static final String VNF_TYPE = "vnfType";
     private static final String CONFIGURATION = "Configuration";
     private static final String SUPPORTEDTYPES =
-            "vnfs|vfModules|networks|networkCollections|volumeGroups|serviceInstances|instanceGroups";
+            "vnfs|pnfs|vfModules|networks|networkCollections|volumeGroups|serviceInstances|instanceGroups";
     private static final String HOMINGSOLUTION = "Homing_Solution";
     private static final String SERVICE_TYPE_TRANSPORT = "TRANSPORT";
     private static final String SERVICE_TYPE_BONDING = "BONDING";
@@ -139,6 +140,8 @@ public class WorkflowAction {
     private ExecuteBuildingBlockBuilder executeBuildingBlockBuilder;
     @Autowired
     private VnfEBBLoader vnfEBBLoader;
+    @Autowired
+    private PnfEBBLoader pnfEBBLoader;
     @Autowired
     private ServiceEBBLoader serviceEBBLoader;
 
@@ -293,9 +296,14 @@ public class WorkflowAction {
         List<Resource> resourceList = new ArrayList<>();
         List<Pair<WorkflowType, String>> aaiResourceIds = new ArrayList<>();
 
-        if (resourceType == WorkflowType.SERVICE || isVNFCreate(resourceType, requestAction)) {
+        if (resourceType == WorkflowType.SERVICE || isVNFCreate(resourceType, requestAction)
+                || isPNFCreate(resourceType, requestAction)) {
             resourceList = serviceEBBLoader.getResourceListForService(sIRequest, requestAction, execution,
                     serviceInstanceId, resourceId, aaiResourceIds);
+        }
+        else if (isPNFDelete(resourceType, requestAction)) {
+            pnfEBBLoader.traverseAAIPnf(execution, resourceList, workflowResourceIds.getServiceInstanceId(), resourceId,
+                    aaiResourceIds);
         } else if (resourceType == WorkflowType.VNF
                 && (DELETE_INSTANCE.equalsIgnoreCase(requestAction) || REPLACEINSTANCE.equalsIgnoreCase(requestAction)
                         || (RECREATE_INSTANCE.equalsIgnoreCase(requestAction)))) {
@@ -386,6 +394,16 @@ public class WorkflowAction {
 
     private boolean isVNFCreate(WorkflowType resourceType, String requestAction) {
         return resourceType == WorkflowType.VNF && CREATE_INSTANCE.equalsIgnoreCase(requestAction);
+    }
+
+
+    private boolean isPNFCreate(WorkflowType resourceType, String requestAction) {
+        return resourceType == WorkflowType.PNF && CREATE_INSTANCE.equalsIgnoreCase(requestAction);
+    }
+
+
+    private boolean isPNFDelete(WorkflowType resourceType, String requestAction) {
+        return resourceType == WorkflowType.PNF && DELETE_INSTANCE.equalsIgnoreCase(requestAction);
     }
 
     private void setExecutionVariables(DelegateExecution execution, List<ExecuteBuildingBlock> flowsToExecute,
