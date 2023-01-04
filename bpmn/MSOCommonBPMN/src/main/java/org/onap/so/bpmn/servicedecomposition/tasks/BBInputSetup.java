@@ -1091,6 +1091,14 @@ public class BBInputSetup implements JavaDelegate {
                     }
                 }
             }
+            if (ModelType.pnf == requestDetails.getModelInfo().getModelType()) {
+                for (RelatedInstanceList relatedInstanceList : requestDetails.getRelatedInstanceList()) {
+                    if (ModelType.service == relatedInstanceList.getRelatedInstance().getModelInfo().getModelType()) {
+                        modelVersionId = relatedInstanceList.getRelatedInstance().getModelInfo().getModelVersionId();
+                        break;
+                    }
+                }
+            }
 
             Service service = bbInputSetupUtils.getCatalogServiceByModelUUID(modelVersionId);
             if (service == null) {
@@ -1820,7 +1828,7 @@ public class BBInputSetup implements JavaDelegate {
 
     /**
      * setCloudConfiguration - set cloud info on a building block.
-     * 
+     *
      * @param gBB
      * @param cloudConfiguration
      * @return CloudRegion

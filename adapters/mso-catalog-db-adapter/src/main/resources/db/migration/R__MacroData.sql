@@ -272,7 +272,15 @@ INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, SC
 ('CNF-Macro-Upgrade', '10', 'ActivateVfModuleBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
 ('CNF-Macro-Upgrade', '11', 'ChangeModelVnfBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
 ('CNF-Macro-Upgrade', '12', 'ActivateVnfBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
-('CNF-Macro-Upgrade', '13', 'AAIUnsetVnfInMaintBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT'));
+('CNF-Macro-Upgrade', '13', 'AAIUnsetVnfInMaintBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT'))
+('PNF-Macro-Create', '1', 'AssignPnfBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'PNF-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
+('PNF-Macro-Create', '2', 'WaitForPnfReadyBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'PNF-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
+('PNF-Macro-Create', '3', 'ControllerExecutionBB',  'pnf' , 'config-assign', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'PNF-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
+('PNF-Macro-Create', '4', 'ControllerExecutionBB',  'pnf' , 'config-deploy', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'PNF-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
+('PNF-Macro-Create', '5', 'ActivatePnfBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'PNF-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
+('PNF-Macro-Delete', '1', 'DeactivatePnfBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'PNF-Macro-Delete' and CLOUD_OWNER = 'DEFAULT')),
+('PNF-Macro-Delete', '2', 'UnassignPnfBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'PNF-Macro-Delete' and CLOUD_OWNER = 'DEFAULT'));
+
 
 INSERT INTO rainy_day_handler_macro (FLOW_NAME, SERVICE_TYPE, VNF_TYPE, ERROR_CODE, WORK_STEP, POLICY, SECONDARY_POLICY, REG_EX_ERROR_MESSAGE, SERVICE_ROLE)
 VALUES
@@ -355,6 +363,7 @@ VALUES
 ('UnassignVnfBB', 'VNF', 'UNASSIGN'),
 ('UnassignVolumeGroupBB', 'VOLUME_GROUP', 'UNASSIGN'),
 ('UnassignNetworkBB', 'NETWORK', 'UNASSIGN'),
+('UnassignPnfBB', 'NO_VALIDATE', 'UNASSIGN'),
 
 ('ActivateServiceInstanceBB', 'SERVICE', 'ACTIVATE'),
 ('ActivateVnfBB', 'VNF', 'ACTIVATE'),
