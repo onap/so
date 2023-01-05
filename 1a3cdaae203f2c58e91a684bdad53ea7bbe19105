@@ -16,6 +16,29 @@
       "revId": "1a3cdaae203f2c58e91a684bdad53ea7bbe19105",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3a520f88_262579e6",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/R__MacroData.sql",
+        "patchSetId": 2
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 7813
+      },
+      "writtenOn": "2023-01-05T07:13:33Z",
+      "side": 1,
+      "message": "Sreeja, these entries are missing in \u0027northbound table\u0027, pl make entries for PNF-Macro-Add/Delete.",
+      "range": {
+        "startLine": 276,
+        "startChar": 58,
+        "endLine": 276,
+        "endChar": 170
+      },
+      "revId": "1a3cdaae203f2c58e91a684bdad53ea7bbe19105",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
