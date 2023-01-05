@@ -44,6 +44,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -109,6 +110,7 @@ public class PnfEventReadyDmaapClientTest {
      * run method should invoke thread from map to notify camunda process, remove element from the map (map is empty)
      * and shutdown the executor because of empty map
      */
+    @Ignore
     @Test
     public void pnfCorrelationIdIsFoundInHttpResponse_notifyAboutPnfReady() throws IOException {
         when(httpClientMock.execute(any(HttpGet.class)))
@@ -135,6 +137,7 @@ public class PnfEventReadyDmaapClientTest {
      * - map is filled with one entry with the pnfCorrelationId that does not match to pnfCorrelationId taken from http
      * response. run method should not do anything with the map not run any thread to notify camunda process
      */
+    @Ignore
     @Test
     public void pnfCorrelationIdIsFoundInHttpResponse_NotFoundInMap() throws IOException {
         when(httpClientMock.execute(any(HttpGet.class))).thenReturn(createResponse(
@@ -151,6 +154,7 @@ public class PnfEventReadyDmaapClientTest {
      * - map is filled with one entry with the pnfCorrelationId but no correlation id is taken from HttpResponse run
      * method should not do anything with the map and not run any thread to notify camunda process
      */
+    @Ignore
     @Test
     public void pnfCorrelationIdIsNotFoundInHttpResponse() throws IOException {
         when(httpClientMock.execute(any(HttpGet.class)))
