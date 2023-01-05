@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,6 +36,7 @@ import org.onap.aai.domain.yang.GenericVnfs;
 import org.onap.aai.domain.yang.InstanceGroup;
 import org.onap.aai.domain.yang.L3Network;
 import org.onap.aai.domain.yang.L3Networks;
+import org.onap.aai.domain.yang.Pnf;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.ServiceInstances;
 import org.onap.aai.domain.yang.ServiceSubscription;
@@ -210,7 +211,7 @@ public class BBInputSetupUtils {
     }
 
     public Service getCatalogServiceByModelVersionAndModelInvariantUUID(String modelVersion,
-            String modelInvariantUUID) {
+                                                                        String modelInvariantUUID) {
         return catalogDbClient.getServiceByModelVersionAndModelInvariantUUID(modelVersion, modelInvariantUUID);
     }
 
@@ -228,7 +229,7 @@ public class BBInputSetupUtils {
     }
 
     public CvnfcConfigurationCustomization getCvnfcConfigurationCustomization(String serviceModelUUID,
-            String vnfCustomizationUuid, String vfModuleCustomizationUuid, String cvnfcCustomizationUuid) {
+                                                                              String vnfCustomizationUuid, String vfModuleCustomizationUuid, String cvnfcCustomizationUuid) {
         return catalogDbClient.getCvnfcCustomization(serviceModelUUID, vnfCustomizationUuid, vfModuleCustomizationUuid,
                 cvnfcCustomizationUuid);
     }
@@ -270,9 +271,9 @@ public class BBInputSetupUtils {
             String cloudOwner = cloudConfiguration.getCloudOwner();
             if (cloudRegionId != null && cloudOwner != null && !cloudRegionId.isEmpty() && !cloudOwner.isEmpty()) {
                 return injectionHelper.getAaiClient().get(CloudRegion.class,
-                        AAIUriFactory.createResourceUri(
-                                AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(cloudOwner, cloudRegionId))
-                                .depth(Depth.ONE).nodesOnly(true))
+                                AAIUriFactory.createResourceUri(
+                                                AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(cloudOwner, cloudRegionId))
+                                        .depth(Depth.ONE).nodesOnly(true))
                         .orElse(null);
 
             } else {
@@ -319,26 +320,26 @@ public class BBInputSetupUtils {
     }
 
     protected ServiceInstance getAAIServiceInstanceByIdAndCustomer(String globalCustomerId, String serviceType,
-            String serviceInstanceId) {
+                                                                   String serviceInstanceId) {
         return injectionHelper.getAaiClient().get(ServiceInstance.class,
-                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalCustomerId)
-                        .serviceSubscription(serviceType).serviceInstance(serviceInstanceId)).depth(Depth.TWO))
+                        AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalCustomerId)
+                                .serviceSubscription(serviceType).serviceInstance(serviceInstanceId)).depth(Depth.TWO))
                 .orElse(null);
     }
 
     public org.onap.aai.domain.yang.ServiceInstance getAAIServiceInstanceByName(String serviceInstanceName,
-            Customer customer) throws Exception {
+                                                                                Customer customer) throws Exception {
         Optional<org.onap.aai.domain.yang.ServiceInstance> aaiServiceInstance = injectionHelper.getAaiClient().getOne(
                 ServiceInstances.class, org.onap.aai.domain.yang.ServiceInstance.class,
                 AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(customer.getGlobalCustomerId())
-                        .serviceSubscription(customer.getServiceSubscription().getServiceType()).serviceInstances())
+                                .serviceSubscription(customer.getServiceSubscription().getServiceType()).serviceInstances())
                         .queryParam("service-instance-name", serviceInstanceName).depth(Depth.TWO));
 
         return aaiServiceInstance.orElse(null);
     }
 
     public Optional<ServiceInstance> getAAIServiceInstanceByName(String globalCustomerId, String serviceType,
-            String serviceInstanceName) {
+                                                                 String serviceInstanceName) {
 
         return injectionHelper.getAaiClient().getOne(ServiceInstances.class, ServiceInstance.class,
                 AAIUriFactory
@@ -374,6 +375,11 @@ public class BBInputSetupUtils {
 
     public GenericVnf getAAIGenericVnf(String vnfId) {
         return getConcreteAAIResource(GenericVnf.class, AAIFluentTypeBuilder.network().genericVnf(vnfId));
+    }
+
+
+    public Pnf getAAIPnf(String pnfId) {
+        return getConcreteAAIResource(Pnf.class, AAIFluentTypeBuilder.network().pnf(pnfId));
     }
 
     public VpnBinding getAAIVpnBinding(String vpnBindingId) {
@@ -471,7 +477,7 @@ public class BBInputSetupUtils {
     }
 
     public Optional<VolumeGroup> getRelatedVolumeGroupByNameFromVfModule(String vnfId, String vfModuleId,
-            String volumeGroupName) throws Exception {
+                                                                         String volumeGroupName) throws Exception {
         AAIPluralResourceUri uri =
                 AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId).vfModule(vfModuleId))
                         .relatedTo(Types.VOLUME_GROUPS.getFragment()).queryParam("volume-group-name", volumeGroupName);
@@ -492,7 +498,7 @@ public class BBInputSetupUtils {
                 && !networkWrapper.getRelationships().get().getRelatedUris(Types.VPN_BINDING).isEmpty()) {
             return getAAIResourceDepthOne(
                     networkWrapper.getRelationships().get().getRelatedUris(Types.VPN_BINDING).get(0))
-                            .asBean(org.onap.aai.domain.yang.VpnBinding.class);
+                    .asBean(org.onap.aai.domain.yang.VpnBinding.class);
         }
         return Optional.empty();
     }
@@ -547,7 +553,7 @@ public class BBInputSetupUtils {
     }
 
     public Optional<Configuration> getRelatedConfigurationByNameFromServiceInstance(String serviceInstanceId,
-            String configurationName) {
+                                                                                    String configurationName) {
         AAIPluralResourceUri uri = AAIUriFactory
                 .createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
                 .relatedTo(Types.CONFIGURATIONS.getFragment()).queryParam("configuration-name", configurationName);

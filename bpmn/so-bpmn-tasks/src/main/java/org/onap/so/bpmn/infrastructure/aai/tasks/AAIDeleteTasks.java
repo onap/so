@@ -36,6 +36,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
@@ -48,6 +49,7 @@ import org.onap.so.client.orchestration.AAINetworkResources;
 import org.onap.so.client.orchestration.AAIServiceInstanceResources;
 import org.onap.so.client.orchestration.AAIVfModuleResources;
 import org.onap.so.client.orchestration.AAIVnfResources;
+import org.onap.so.client.orchestration.AAIPnfResources;
 import org.onap.so.client.orchestration.AAIVolumeGroupResources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +71,8 @@ public class AAIDeleteTasks {
     private AAIServiceInstanceResources aaiSIResources;
     @Autowired
     private AAIVnfResources aaiVnfResources;
+    @Autowired
+    private AAIPnfResources aaiPnfResources;
     @Autowired
     private AAIVfModuleResources aaiVfModuleResources;
     @Autowired
@@ -123,6 +127,20 @@ public class AAIDeleteTasks {
             execution.setVariable("aaiVnfRollback", true);
         } catch (Exception ex) {
             logger.error("Exception occurred in AAIDeleteTasks deleteVnf process", ex);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+
+
+    public void deletePnf(BuildingBlockExecution execution) throws Exception {
+        Pnf pnf = extractPojosForBB.extractByKey(execution, ResourceKey.PNF);
+        execution.setVariable("aaiPnfRollback", false);
+        try {
+            aaiPnfResources.deletePnf(pnf);
+            execution.setVariable("aaiPnfRollback", true);
+        } catch (Exception ex) {
+            logger.error("Exception occurred in AAIDeleteTasks deletePnf process", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }

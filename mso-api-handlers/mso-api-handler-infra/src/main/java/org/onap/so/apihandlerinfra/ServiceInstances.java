@@ -10,9 +10,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -122,7 +122,7 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response createServiceInstance(String request, @PathParam("version") String version,
-            @Context ContainerRequestContext requestContext) throws ApiException {
+                                          @Context ContainerRequestContext requestContext) throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         return serviceInstances(request, Action.createInstance, null, version, requestId,
                 requestHandlerUtils.getRequestUri(requestContext, uriPrefix));
@@ -136,7 +136,7 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response activateServiceInstance(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
+                                            @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
             throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
@@ -153,7 +153,7 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response deactivateServiceInstance(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
+                                              @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
             throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
@@ -170,7 +170,7 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response deleteServiceInstance(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
+                                          @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
             throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
@@ -187,7 +187,7 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response assignServiceInstance(String request, @PathParam("version") String version,
-            @Context ContainerRequestContext requestContext) throws ApiException {
+                                          @Context ContainerRequestContext requestContext) throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         return serviceInstances(request, Action.assignInstance, null, version, requestId,
                 requestHandlerUtils.getRequestUri(requestContext, uriPrefix));
@@ -201,7 +201,7 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response unassignServiceInstance(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
+                                            @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
             throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
@@ -218,7 +218,7 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response createPortConfiguration(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
+                                            @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
             throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
@@ -235,9 +235,9 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response deletePortConfiguration(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId,
-            @PathParam("configurationInstanceId") String configurationInstanceId,
-            @Context ContainerRequestContext requestContext) throws ApiException {
+                                            @PathParam("serviceInstanceId") String serviceInstanceId,
+                                            @PathParam("configurationInstanceId") String configurationInstanceId,
+                                            @Context ContainerRequestContext requestContext) throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
         instanceIdMap.put("serviceInstanceId", serviceInstanceId);
@@ -254,9 +254,9 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response enablePort(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId,
-            @PathParam("configurationInstanceId") String configurationInstanceId,
-            @Context ContainerRequestContext requestContext) throws ApiException {
+                               @PathParam("serviceInstanceId") String serviceInstanceId,
+                               @PathParam("configurationInstanceId") String configurationInstanceId,
+                               @Context ContainerRequestContext requestContext) throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
         instanceIdMap.put("serviceInstanceId", serviceInstanceId);
@@ -273,9 +273,9 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response disablePort(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId,
-            @PathParam("configurationInstanceId") String configurationInstanceId,
-            @Context ContainerRequestContext requestContext) throws ApiException {
+                                @PathParam("serviceInstanceId") String serviceInstanceId,
+                                @PathParam("configurationInstanceId") String configurationInstanceId,
+                                @Context ContainerRequestContext requestContext) throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
         instanceIdMap.put("serviceInstanceId", serviceInstanceId);
@@ -292,9 +292,9 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response activatePort(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId,
-            @PathParam("configurationInstanceId") String configurationInstanceId,
-            @Context ContainerRequestContext requestContext) throws ApiException {
+                                 @PathParam("serviceInstanceId") String serviceInstanceId,
+                                 @PathParam("configurationInstanceId") String configurationInstanceId,
+                                 @Context ContainerRequestContext requestContext) throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
         instanceIdMap.put("serviceInstanceId", serviceInstanceId);
@@ -311,9 +311,9 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response deactivatePort(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId,
-            @PathParam("configurationInstanceId") String configurationInstanceId,
-            @Context ContainerRequestContext requestContext) throws ApiException {
+                                   @PathParam("serviceInstanceId") String serviceInstanceId,
+                                   @PathParam("configurationInstanceId") String configurationInstanceId,
+                                   @Context ContainerRequestContext requestContext) throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
         instanceIdMap.put("serviceInstanceId", serviceInstanceId);
@@ -330,7 +330,7 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response addRelationships(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
+                                     @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
             throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
@@ -347,7 +347,7 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response removeRelationships(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
+                                        @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
             throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
@@ -364,7 +364,7 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response createVnfInstance(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
+                                      @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
             throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
@@ -386,7 +386,7 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response upgradeServiceInstance(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
+                                           @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
             throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
@@ -404,8 +404,8 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response replaceVnfInstance(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
-            @Context ContainerRequestContext requestContext) throws ApiException {
+                                       @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
+                                       @Context ContainerRequestContext requestContext) throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
         instanceIdMap.put("serviceInstanceId", serviceInstanceId);
@@ -422,8 +422,8 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response cnfHealthCheck(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
-            @Context ContainerRequestContext requestContext) throws ApiException {
+                                   @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
+                                   @Context ContainerRequestContext requestContext) throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
         instanceIdMap.put("serviceInstanceId", serviceInstanceId);
@@ -440,8 +440,8 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response cnfUpgrade(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
-            @Context ContainerRequestContext requestContext) throws ApiException {
+                               @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
+                               @Context ContainerRequestContext requestContext) throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
         instanceIdMap.put("serviceInstanceId", serviceInstanceId);
@@ -459,8 +459,8 @@ public class ServiceInstances extends AbstractRestHandler {
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response updateVnfInstance(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
-            @Context ContainerRequestContext requestContext) throws ApiException {
+                                      @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
+                                      @Context ContainerRequestContext requestContext) throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
         instanceIdMap.put("serviceInstanceId", serviceInstanceId);
@@ -476,8 +476,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Operation(description = "Apply updated configuration", responses = @ApiResponse(
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     public Response applyUpdatedConfig(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
-            @Context ContainerRequestContext requestContext) throws ApiException {
+                                       @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
+                                       @Context ContainerRequestContext requestContext) throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
         instanceIdMap.put("serviceInstanceId", serviceInstanceId);
@@ -493,8 +493,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Operation(description = "Recreate VNF Instance", responses = @ApiResponse(
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     public Response recreateVnfInstance(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
-            @Context ContainerRequestContext requestContext) throws ApiException {
+                                        @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
+                                        @Context ContainerRequestContext requestContext) throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
         instanceIdMap.put("serviceInstanceId", serviceInstanceId);
@@ -511,8 +511,8 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response deleteVnfInstance(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
-            @Context ContainerRequestContext requestContext) throws ApiException {
+                                      @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
+                                      @Context ContainerRequestContext requestContext) throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
         instanceIdMap.put("serviceInstanceId", serviceInstanceId);
@@ -530,8 +530,8 @@ public class ServiceInstances extends AbstractRestHandler {
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response createVfModuleInstance(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
-            @Context ContainerRequestContext requestContext) throws ApiException {
+                                           @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
+                                           @Context ContainerRequestContext requestContext) throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
         instanceIdMap.put("serviceInstanceId", serviceInstanceId);
@@ -549,8 +549,8 @@ public class ServiceInstances extends AbstractRestHandler {
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response replaceVfModuleInstance(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
-            @PathParam("vfmoduleInstanceId") String vfmoduleInstanceId, @Context ContainerRequestContext requestContext)
+                                            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
+                                            @PathParam("vfmoduleInstanceId") String vfmoduleInstanceId, @Context ContainerRequestContext requestContext)
             throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
@@ -570,8 +570,8 @@ public class ServiceInstances extends AbstractRestHandler {
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response updateVfModuleInstance(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
-            @PathParam("vfmoduleInstanceId") String vfmoduleInstanceId, @Context ContainerRequestContext requestContext)
+                                           @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
+                                           @PathParam("vfmoduleInstanceId") String vfmoduleInstanceId, @Context ContainerRequestContext requestContext)
             throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
@@ -590,8 +590,8 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response inPlaceSoftwareUpdate(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
-            @Context ContainerRequestContext requestContext) throws ApiException {
+                                          @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
+                                          @Context ContainerRequestContext requestContext) throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
         instanceIdMap.put("serviceInstanceId", serviceInstanceId);
@@ -608,8 +608,8 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response deleteVfModuleInstance(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
-            @PathParam("vfmoduleInstanceId") String vfmoduleInstanceId, @Context ContainerRequestContext requestContext)
+                                           @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
+                                           @PathParam("vfmoduleInstanceId") String vfmoduleInstanceId, @Context ContainerRequestContext requestContext)
             throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
@@ -628,8 +628,8 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response deactivateAndCloudDeleteVfModuleInstance(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
-            @PathParam("vfmoduleInstanceId") String vfmoduleInstanceId, @Context ContainerRequestContext requestContext)
+                                                             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
+                                                             @PathParam("vfmoduleInstanceId") String vfmoduleInstanceId, @Context ContainerRequestContext requestContext)
             throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
@@ -649,8 +649,8 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response scaleOutVfModule(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
-            @Context ContainerRequestContext requestContext) throws ApiException {
+                                     @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
+                                     @Context ContainerRequestContext requestContext) throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
         instanceIdMap.put("serviceInstanceId", serviceInstanceId);
@@ -668,8 +668,8 @@ public class ServiceInstances extends AbstractRestHandler {
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response createVolumeGroupInstance(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
-            @Context ContainerRequestContext requestContext) throws ApiException {
+                                              @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
+                                              @Context ContainerRequestContext requestContext) throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
         instanceIdMap.put("serviceInstanceId", serviceInstanceId);
@@ -687,9 +687,9 @@ public class ServiceInstances extends AbstractRestHandler {
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response updateVolumeGroupInstance(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
-            @PathParam("volumeGroupInstanceId") String volumeGroupInstanceId,
-            @Context ContainerRequestContext requestContext) throws ApiException {
+                                              @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
+                                              @PathParam("volumeGroupInstanceId") String volumeGroupInstanceId,
+                                              @Context ContainerRequestContext requestContext) throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
         instanceIdMap.put("serviceInstanceId", serviceInstanceId);
@@ -707,9 +707,9 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response deleteVolumeGroupInstance(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
-            @PathParam("volumeGroupInstanceId") String volumeGroupInstanceId,
-            @Context ContainerRequestContext requestContext) throws ApiException {
+                                              @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
+                                              @PathParam("volumeGroupInstanceId") String volumeGroupInstanceId,
+                                              @Context ContainerRequestContext requestContext) throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
         instanceIdMap.put("serviceInstanceId", serviceInstanceId);
@@ -717,6 +717,53 @@ public class ServiceInstances extends AbstractRestHandler {
         instanceIdMap.put("volumeGroupInstanceId", volumeGroupInstanceId);
         return serviceInstances(request, Action.deleteInstance, instanceIdMap, version, requestId,
                 requestHandlerUtils.getRequestUri(requestContext, uriPrefix));
+    }
+
+
+    @POST
+    @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/pnfs")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Create VNF on a specified version and serviceInstance", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Transactional
+    public Response createPnfInstance(String request, @PathParam("version") String version,
+                                      @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
+            throws ApiException {
+        String requestId = requestHandlerUtils.getRequestId(requestContext);
+        HashMap<String, String> instanceIdMap = new HashMap<>();
+        instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+        try {
+            return serviceInstances(request, Action.createInstance, instanceIdMap, version, requestId,
+                    requestHandlerUtils.getRequestUri(requestContext, uriPrefix));
+        } catch (Exception e) {
+            logger.error("Error in pnf", e);
+            throw e;
+        }
+    }
+
+
+    @DELETE
+    @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/pnfs/{pnfInstanceId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Create PNF on a specified version and serviceInstance", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Transactional
+    public Response deletePnfInstance(String request, @PathParam("version") String version,
+                                      @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("pnfInstanceId") String pnfInstanceId,
+                                      @Context ContainerRequestContext requestContext) throws ApiException {
+        String requestId = requestHandlerUtils.getRequestId(requestContext);
+        HashMap<String, String> instanceIdMap = new HashMap<>();
+        instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+        instanceIdMap.put("pnfInstanceId", pnfInstanceId);
+        try {
+            return serviceInstances(request, Action.deleteInstance, instanceIdMap, version, requestId,
+                    requestHandlerUtils.getRequestUri(requestContext, uriPrefix));
+        } catch (Exception e) {
+            logger.error("Error in pnf", e);
+            throw e;
+        }
     }
 
     @POST
@@ -728,7 +775,7 @@ public class ServiceInstances extends AbstractRestHandler {
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response createNetworkInstance(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
+                                          @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
             throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
@@ -746,8 +793,8 @@ public class ServiceInstances extends AbstractRestHandler {
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response updateNetworkInstance(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId,
-            @PathParam("networkInstanceId") String networkInstanceId, @Context ContainerRequestContext requestContext)
+                                          @PathParam("serviceInstanceId") String serviceInstanceId,
+                                          @PathParam("networkInstanceId") String networkInstanceId, @Context ContainerRequestContext requestContext)
             throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
@@ -765,8 +812,8 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response deleteNetworkInstance(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId,
-            @PathParam("networkInstanceId") String networkInstanceId, @Context ContainerRequestContext requestContext)
+                                          @PathParam("serviceInstanceId") String serviceInstanceId,
+                                          @PathParam("networkInstanceId") String networkInstanceId, @Context ContainerRequestContext requestContext)
             throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
@@ -784,7 +831,7 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response createInstanceGroups(String request, @PathParam("version") String version,
-            @Context ContainerRequestContext requestContext) throws ApiException {
+                                         @Context ContainerRequestContext requestContext) throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         return serviceInstances(request, Action.createInstance, null, version, requestId,
                 requestHandlerUtils.getRequestUri(requestContext, uriPrefix));
@@ -798,7 +845,7 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response deleteInstanceGroups(@PathParam("version") String version,
-            @PathParam("instanceGroupId") String instanceGroupId, @Context ContainerRequestContext requestContext)
+                                         @PathParam("instanceGroupId") String instanceGroupId, @Context ContainerRequestContext requestContext)
             throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
@@ -815,7 +862,7 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response addInstanceGroupMembers(String request, @PathParam("version") String version,
-            @PathParam("instanceGroupId") String instanceGroupId, @Context ContainerRequestContext requestContext)
+                                            @PathParam("instanceGroupId") String instanceGroupId, @Context ContainerRequestContext requestContext)
             throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
@@ -832,7 +879,7 @@ public class ServiceInstances extends AbstractRestHandler {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response removeInstanceGroupMembers(String request, @PathParam("version") String version,
-            @PathParam("instanceGroupId") String instanceGroupId, @Context ContainerRequestContext requestContext)
+                                               @PathParam("instanceGroupId") String instanceGroupId, @Context ContainerRequestContext requestContext)
             throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
@@ -863,13 +910,13 @@ public class ServiceInstances extends AbstractRestHandler {
      * @throws ApiException
      */
     public Response serviceInstances(String requestJSON, Actions action, HashMap<String, String> instanceIdMap,
-            String version, String requestId, String requestUri) throws ApiException {
+                                     String version, String requestId, String requestUri) throws ApiException {
         return serviceInstances(requestJSON, action, instanceIdMap, version, requestId, requestUri, null);
 
     }
 
     public Response serviceInstances(String requestJSON, Actions action, HashMap<String, String> instanceIdMap,
-            String version, String requestId, String requestUri, HashMap<String, String> queryParams)
+                                     String version, String requestId, String requestUri, HashMap<String, String> queryParams)
             throws ApiException {
         String serviceInstanceId;
         Boolean aLaCarte = null;
@@ -989,7 +1036,8 @@ public class ServiceInstances extends AbstractRestHandler {
         }
 
         if (!requestScope.equalsIgnoreCase(ModelType.service.name()) && action != Action.recreateInstance
-                && !requestScope.equalsIgnoreCase(ModelType.vnf.name())) {
+                && !requestScope.equalsIgnoreCase(ModelType.vnf.name())
+                && !requestScope.equalsIgnoreCase(ModelType.pnf.name())) {
             aLaCarte = true;
         } else if (aLaCarte == null) {
             aLaCarte = false;
@@ -1014,7 +1062,7 @@ public class ServiceInstances extends AbstractRestHandler {
                             .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
             throw new ValidateException.Builder("Unable to generate RequestClientParamter object" + e.getMessage(),
                     HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo)
-                            .build();
+                    .build();
         }
         return requestHandlerUtils.postBPELRequest(currentActiveReq, requestClientParameter,
                 recipeLookupResult.getOrchestrationURI(), requestScope);
@@ -1050,7 +1098,7 @@ public class ServiceInstances extends AbstractRestHandler {
      * @throws ApiException
      */
     public Response deleteInstanceGroups(Actions action, HashMap<String, String> instanceIdMap, String version,
-            String requestId, String requestUri, ContainerRequestContext requestContext) throws ApiException {
+                                         String requestId, String requestUri, ContainerRequestContext requestContext) throws ApiException {
         String instanceGroupId = instanceIdMap.get(CommonConstants.INSTANCE_GROUP_INSTANCE_ID);
         Boolean aLaCarte = true;
         String apiVersion = version.substring(1);
@@ -1116,7 +1164,7 @@ public class ServiceInstances extends AbstractRestHandler {
     }
 
     private Response configurationRecipeLookup(String requestJSON, Action action, HashMap<String, String> instanceIdMap,
-            String version, String requestId, String requestUri) throws ApiException {
+                                               String version, String requestId, String requestUri) throws ApiException {
         String serviceInstanceId;
         Boolean aLaCarte = null;
         String apiVersion = version.substring(1);
@@ -1206,7 +1254,7 @@ public class ServiceInstances extends AbstractRestHandler {
                             .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
             throw new ValidateException.Builder("Unable to generate RequestClientParamter object" + e.getMessage(),
                     HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo)
-                            .build();
+                    .build();
         }
 
         return requestHandlerUtils.postBPELRequest(currentActiveReq, requestClientParameter, orchestrationUri,
@@ -1214,7 +1262,7 @@ public class ServiceInstances extends AbstractRestHandler {
     }
 
     protected CloudConfiguration getCloudConfigurationOnReplace(String requestScope,
-            HashMap<String, String> instanceIdMap, InfraActiveRequests currentActiveReq) throws ApiException {
+                                                                HashMap<String, String> instanceIdMap, InfraActiveRequests currentActiveReq) throws ApiException {
         logger.debug("Replace request is missing cloudConfiguration, autofilling from create.");
         CloudConfiguration cloudConfiguration = null;
         if (requestScope.equals(ModelType.vfModule.toString())) {
@@ -1235,7 +1283,7 @@ public class ServiceInstances extends AbstractRestHandler {
     }
 
     protected void setCloudConfigurationCurrentActiveRequest(CloudConfiguration cloudConfiguration,
-            InfraActiveRequests currentActiveRequest) {
+                                                             InfraActiveRequests currentActiveRequest) {
         if (cloudConfiguration.getLcpCloudRegionId() != null) {
             currentActiveRequest.setCloudRegion(cloudConfiguration.getLcpCloudRegionId());
         }

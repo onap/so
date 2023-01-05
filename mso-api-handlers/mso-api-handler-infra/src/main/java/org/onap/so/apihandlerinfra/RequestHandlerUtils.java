@@ -11,9 +11,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -133,7 +133,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
     private ResponseHandler responseHandler;
 
     protected ResponseEntity<String> postRequest(InfraActiveRequests currentActiveReq,
-            RequestClientParameter requestClientParameter, String orchestrationUri) throws ApiException {
+                                                 RequestClientParameter requestClientParameter, String orchestrationUri) throws ApiException {
         try {
             return camundaClient.post(requestClientParameter, orchestrationUri);
         } catch (ApiException e) {
@@ -143,7 +143,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
     }
 
     public Response postBPELRequest(InfraActiveRequests currentActiveReq, RequestClientParameter requestClientParameter,
-            String orchestrationUri, String requestScope) throws ApiException {
+                                    String orchestrationUri, String requestScope) throws ApiException {
         ObjectMapper mapper = new ObjectMapper();
         ResponseEntity<String> response = postRequest(currentActiveReq, requestClientParameter, orchestrationUri);
         ServiceInstancesResponse jsonResponse = null;
@@ -199,7 +199,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
                                 .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
                 throw new RequestDbFailureException.Builder(SAVE_TO_DB, e.toString(),
                         HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
-                                .errorInfo(errorLoggerInfo).build();
+                        .errorInfo(errorLoggerInfo).build();
             }
         }
     }
@@ -249,7 +249,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
     }
 
     public void checkForDuplicateRequests(Actions action, HashMap<String, String> instanceIdMap, String requestScope,
-            InfraActiveRequests currentActiveReq, String instanceName) throws ApiException {
+                                          InfraActiveRequests currentActiveReq, String instanceName) throws ApiException {
         InfraActiveRequests dup = null;
         boolean inProgress = false;
 
@@ -265,7 +265,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
     }
 
     public InfraActiveRequests duplicateCheck(Actions action, Map<String, String> instanceIdMap, String instanceName,
-            String requestScope, InfraActiveRequests currentActiveReq) throws ApiException {
+                                              String requestScope, InfraActiveRequests currentActiveReq) throws ApiException {
         InfraActiveRequests dup = null;
         try {
             if (!(instanceName == null && "service".equals(requestScope) && (action == Action.createInstance
@@ -279,7 +279,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
             RequestDbFailureException requestDbFailureException =
                     new RequestDbFailureException.Builder("check for duplicate instance", e.toString(),
                             HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
-                                    .errorInfo(errorLoggerInfo).build();
+                            .errorInfo(errorLoggerInfo).build();
             updateStatus(currentActiveReq, Status.FAILED, requestDbFailureException.getMessage());
             throw requestDbFailureException;
         }
@@ -298,7 +298,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
             ContactCamundaException contactCamundaException =
                     new ContactCamundaException.Builder("process-instance", requestId, e.toString(),
                             HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
-                                    .build();
+                            .build();
             updateStatus(currentActiveReq, Status.FAILED, contactCamundaException.getMessage());
             throw contactCamundaException;
         }
@@ -312,7 +312,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
     }
 
     public ServiceInstancesRequest convertJsonToServiceInstanceRequest(String requestJSON, Actions action,
-            String requestId, String requestUri) throws ApiException {
+                                                                       String requestId, String requestUri) throws ApiException {
         try {
             ObjectMapper mapper = new ObjectMapper();
             return mapper.readValue(requestJSON, ServiceInstancesRequest.class);
@@ -336,8 +336,8 @@ public class RequestHandlerUtils extends AbstractRestHandler {
     }
 
     public void parseRequest(ServiceInstancesRequest sir, Map<String, String> instanceIdMap, Actions action,
-            String version, String requestJSON, Boolean aLaCarte, String requestId,
-            InfraActiveRequests currentActiveReq) throws ValidateException, RequestDbFailureException {
+                             String version, String requestJSON, Boolean aLaCarte, String requestId,
+                             InfraActiveRequests currentActiveReq) throws ValidateException, RequestDbFailureException {
         int reqVersion = Integer.parseInt(version.substring(1));
         try {
             msoRequest.parse(sir, instanceIdMap, action, version, requestJSON, reqVersion, aLaCarte);
@@ -357,7 +357,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
     }
 
     public void buildErrorOnDuplicateRecord(InfraActiveRequests currentActiveReq, Actions action,
-            Map<String, String> instanceIdMap, String instanceName, String requestScope, InfraActiveRequests dup)
+                                            Map<String, String> instanceIdMap, String instanceName, String requestScope, InfraActiveRequests dup)
             throws ApiException {
 
         String instance = null;
@@ -373,7 +373,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
         DuplicateRequestException dupException =
                 new DuplicateRequestException.Builder(requestScope, instance, dup.getRequestStatus(),
                         dup.getRequestId(), HttpStatus.SC_CONFLICT, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR)
-                                .errorInfo(errorLoggerInfo).build();
+                        .errorInfo(errorLoggerInfo).build();
 
         updateStatus(currentActiveReq, Status.FAILED, dupException.getMessage());
 
@@ -395,14 +395,14 @@ public class RequestHandlerUtils extends AbstractRestHandler {
             ValidateException validateException =
                     new ValidateException.Builder("Request Id " + requestId + " is not a valid UUID",
                             HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER)
-                                    .errorInfo(errorLoggerInfo).build();
+                            .errorInfo(errorLoggerInfo).build();
 
             throw validateException;
         }
     }
 
     public void setInstanceId(InfraActiveRequests currentActiveReq, String requestScope, String instanceId,
-            Map<String, String> instanceIdMap) {
+                              Map<String, String> instanceIdMap) {
         if (StringUtils.isNotBlank(instanceId)) {
             if (ModelType.service.name().equalsIgnoreCase(requestScope)) {
                 currentActiveReq.setServiceInstanceId(instanceId);
@@ -448,7 +448,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
     }
 
     public String mapJSONtoMSOStyle(String msoRawRequest, ServiceInstancesRequest serviceInstRequest,
-            boolean isAlaCarte, Actions action) throws IOException {
+                                    boolean isAlaCarte, Actions action) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(Include.NON_NULL);
         if (serviceInstRequest != null) {
@@ -554,8 +554,8 @@ public class RequestHandlerUtils extends AbstractRestHandler {
     }
 
     protected InfraActiveRequests createNewRecordCopyFromInfraActiveRequest(InfraActiveRequests infraActiveRequest,
-            String requestId, Timestamp startTimeStamp, String source, String requestUri, String requestorId,
-            String originalRequestId) throws ApiException {
+                                                                            String requestId, Timestamp startTimeStamp, String source, String requestUri, String requestorId,
+                                                                            String originalRequestId) throws ApiException {
         InfraActiveRequests request = new InfraActiveRequests();
         request.setRequestId(requestId);
         request.setStartTime(startTimeStamp);
@@ -578,7 +578,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
     }
 
     protected void setInstanceIdAndName(InfraActiveRequests infraActiveRequest,
-            InfraActiveRequests currentActiveRequest) throws ApiException {
+                                        InfraActiveRequests currentActiveRequest) throws ApiException {
         String requestScope = infraActiveRequest.getRequestScope();
         try {
             ModelType type = ModelType.valueOf(requestScope);
@@ -605,7 +605,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
     }
 
     protected Boolean getIsBaseVfModule(ModelInfo modelInfo, Actions action, String vnfType,
-            String sdcServiceModelVersion, InfraActiveRequests currentActiveReq) throws ApiException {
+                                        String sdcServiceModelVersion, InfraActiveRequests currentActiveReq) throws ApiException {
         // Get VF Module-specific base module indicator
         VfModule vfm = null;
         String modelVersionId = modelInfo.getModelVersionId();
@@ -658,7 +658,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
     }
 
     public RecipeLookupResult getServiceInstanceOrchestrationURI(ServiceInstancesRequest sir, Actions action,
-            boolean alaCarteFlag, InfraActiveRequests currentActiveReq) throws ApiException {
+                                                                 boolean alaCarteFlag, InfraActiveRequests currentActiveReq) throws ApiException {
         RecipeLookupResult recipeLookupResult = null;
         // if the aLaCarte flag is set to TRUE, the API-H should choose the VID_DEFAULT recipe for the requested action
         ModelInfo modelInfo = sir.getRequestDetails().getModelInfo();
@@ -721,6 +721,10 @@ public class RequestHandlerUtils extends AbstractRestHandler {
 
                 throw validateException;
             }
+        }
+
+        else if (modelInfo.getModelType().equals(ModelType.pnf)) {
+            recipeLookupResult = new RecipeLookupResult("/mso/async/services/WorkflowActionBB", 180);
         } else if (modelInfo.getModelType().equals(ModelType.instanceGroup)) {
             recipeLookupResult = new RecipeLookupResult("/mso/async/services/WorkflowActionBB", 180);
         }
@@ -734,7 +738,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
             RecipeNotFoundException recipeNotFoundExceptionException =
                     new RecipeNotFoundException.Builder("Recipe could not be retrieved from catalog DB.",
                             HttpStatus.SC_NOT_FOUND, ErrorNumbers.SVC_GENERAL_SERVICE_ERROR).errorInfo(errorLoggerInfo)
-                                    .build();
+                            .build();
 
             updateStatus(currentActiveReq, Status.FAILED, recipeNotFoundExceptionException.getMessage());
             throw recipeNotFoundExceptionException;
@@ -743,7 +747,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
     }
 
     protected RecipeLookupResult getServiceURI(ServiceInstancesRequest servInstReq, Actions action,
-            boolean alaCarteFlag) throws IOException {
+                                               boolean alaCarteFlag) throws IOException {
         // SERVICE REQUEST
         // Construct the default service name
         // TODO need to make this a configurable property
@@ -920,7 +924,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
     }
 
     protected Optional<String> getServiceInstanceIdForValidationError(ServiceInstancesRequest sir,
-            HashMap<String, String> instanceIdMap, String requestScope) {
+                                                                      HashMap<String, String> instanceIdMap, String requestScope) {
         if (instanceIdMap != null && !instanceIdMap.isEmpty() && instanceIdMap.get("serviceInstanceId") != null) {
             return Optional.of(instanceIdMap.get("serviceInstanceId"));
         } else {
@@ -1191,7 +1195,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
                     throw new ValidationException("vfModuleCustomization");
                 } else if (vfModule == null && vfmc != null) {
                     vfModule = vfmc.getVfModule(); // can't be null as vfModuleModelUUID is not-null property in
-                                                   // VfModuleCustomization table
+                    // VfModuleCustomization table
                 }
 
                 if (modelInfo.getModelVersionId() == null) {

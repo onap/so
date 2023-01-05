@@ -71,6 +71,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.so.bpmn.common.BBConstants;
+import org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader.PnfEBBLoader;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader.ServiceEBBLoader;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader.VnfEBBLoader;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.excpetion.VnfcMultipleRelationshipException;
@@ -111,7 +112,7 @@ public class WorkflowAction {
     private static final String VNF_TYPE = "vnfType";
     private static final String CONFIGURATION = "Configuration";
     private static final String SUPPORTEDTYPES =
-            "vnfs|vfModules|networks|networkCollections|volumeGroups|serviceInstances|instanceGroups";
+            "vnfs|pnfs|vfModules|networks|networkCollections|volumeGroups|serviceInstances|instanceGroups";
     private static final String HOMINGSOLUTION = "Homing_Solution";
     private static final String SERVICE_TYPE_TRANSPORT = "TRANSPORT";
     private static final String SERVICE_TYPE_BONDING = "BONDING";
@@ -139,6 +140,8 @@ public class WorkflowAction {
     private ExecuteBuildingBlockBuilder executeBuildingBlockBuilder;
     @Autowired
     private VnfEBBLoader vnfEBBLoader;
+    @Autowired
+    private PnfEBBLoader pnfEBBLoader;
     @Autowired
     private ServiceEBBLoader serviceEBBLoader;
 
@@ -241,10 +244,10 @@ public class WorkflowAction {
     }
 
     private List<ExecuteBuildingBlock> loadExecuteBuildingBlocksForAlaCarte(List<OrchestrationFlow> orchFlows,
-            DelegateExecution execution, String requestAction, WorkflowType resourceType, String cloudOwner,
-            String serviceType, ServiceInstancesRequest sIRequest, String requestId,
-            WorkflowResourceIds workflowResourceIds, RequestDetails requestDetails, String resourceId, String vnfType,
-            String apiVersion) throws Exception {
+                                                                            DelegateExecution execution, String requestAction, WorkflowType resourceType, String cloudOwner,
+                                                                            String serviceType, ServiceInstancesRequest sIRequest, String requestId,
+                                                                            WorkflowResourceIds workflowResourceIds, RequestDetails requestDetails, String resourceId, String vnfType,
+                                                                            String apiVersion) throws Exception {
         List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
         if (orchFlows == null || orchFlows.isEmpty()) {
             orchFlows = queryNorthBoundRequestCatalogDb(execution, requestAction, resourceType, true, cloudOwner,
@@ -285,20 +288,24 @@ public class WorkflowAction {
     }
 
     private List<ExecuteBuildingBlock> loadExecuteBuildingBlocksForMacro(ServiceInstancesRequest sIRequest,
-            WorkflowType resourceType, String requestAction, DelegateExecution execution, String serviceInstanceId,
-            String resourceId, WorkflowResourceIds workflowResourceIds, List<OrchestrationFlow> orchFlows,
-            String cloudOwner, String serviceType, String requestId, String apiVersion, String vnfType,
-            RequestDetails requestDetails) throws IOException, VrfBondingServiceException {
+                                                                         WorkflowType resourceType, String requestAction, DelegateExecution execution, String serviceInstanceId,
+                                                                         String resourceId, WorkflowResourceIds workflowResourceIds, List<OrchestrationFlow> orchFlows,
+                                                                         String cloudOwner, String serviceType, String requestId, String apiVersion, String vnfType,
+                                                                         RequestDetails requestDetails) throws IOException, VrfBondingServiceException {
         List<ExecuteBuildingBlock> flowsToExecute;
         List<Resource> resourceList = new ArrayList<>();
         List<Pair<WorkflowType, String>> aaiResourceIds = new ArrayList<>();
 
-        if (resourceType == WorkflowType.SERVICE || isVNFCreate(resourceType, requestAction)) {
+        if (resourceType == WorkflowType.SERVICE || isVNFCreate(resourceType, requestAction)
+                || isPNFCreate(resourceType, requestAction)) {
             resourceList = serviceEBBLoader.getResourceListForService(sIRequest, requestAction, execution,
                     serviceInstanceId, resourceId, aaiResourceIds);
+        } else if (isPNFDelete(resourceType, requestAction)) {
+            pnfEBBLoader.traverseAAIPnf(execution, resourceList, workflowResourceIds.getServiceInstanceId(), resourceId,
+                    aaiResourceIds);
         } else if (resourceType == WorkflowType.VNF
                 && (DELETE_INSTANCE.equalsIgnoreCase(requestAction) || REPLACEINSTANCE.equalsIgnoreCase(requestAction)
-                        || (RECREATE_INSTANCE.equalsIgnoreCase(requestAction)))) {
+                || (RECREATE_INSTANCE.equalsIgnoreCase(requestAction)))) {
             vnfEBBLoader.traverseAAIVnf(execution, resourceList, workflowResourceIds.getServiceInstanceId(),
                     workflowResourceIds.getVnfId(), aaiResourceIds);
         } else if (resourceType == WorkflowType.VNF && UPDATE_INSTANCE.equalsIgnoreCase(requestAction)) {
@@ -388,8 +395,18 @@ public class WorkflowAction {
         return resourceType == WorkflowType.VNF && CREATE_INSTANCE.equalsIgnoreCase(requestAction);
     }
 
+
+    private boolean isPNFCreate(WorkflowType resourceType, String requestAction) {
+        return resourceType == WorkflowType.PNF && CREATE_INSTANCE.equalsIgnoreCase(requestAction);
+    }
+
+
+    private boolean isPNFDelete(WorkflowType resourceType, String requestAction) {
+        return resourceType == WorkflowType.PNF && DELETE_INSTANCE.equalsIgnoreCase(requestAction);
+    }
+
     private void setExecutionVariables(DelegateExecution execution, List<ExecuteBuildingBlock> flowsToExecute,
-            List<String> flowNames) {
+                                       List<String> flowNames) {
         execution.setVariable("flowNames", flowNames);
         execution.setVariable(BBConstants.G_CURRENT_SEQUENCE, 0);
         execution.setVariable("retryCount", 0);
@@ -399,7 +416,7 @@ public class WorkflowAction {
     }
 
     private List<ExecuteBuildingBlock> loadExecuteBuildingBlocks(DelegateExecution execution, String requestId,
-            String errorMessage) {
+                                                                 String errorMessage) {
         List<ExecuteBuildingBlock> flowsToExecute;
         flowsToExecute = bbInputSetupUtils.loadOriginalFlowExecutionPath(requestId);
         if (flowsToExecute == null) {
@@ -409,10 +426,10 @@ public class WorkflowAction {
     }
 
     private ConfigBuildingBlocksDataObject createConfigBuildingBlocksDataObject(DelegateExecution execution,
-            ServiceInstancesRequest sIRequest, String requestId, WorkflowResourceIds workflowResourceIds,
-            RequestDetails requestDetails, String requestAction, String resourceId, String vnfType,
-            List<OrchestrationFlow> orchFlows, String apiVersion, Resource resourceKey,
-            ReplaceInstanceRelatedInformation replaceInfo) {
+                                                                                ServiceInstancesRequest sIRequest, String requestId, WorkflowResourceIds workflowResourceIds,
+                                                                                RequestDetails requestDetails, String requestAction, String resourceId, String vnfType,
+                                                                                List<OrchestrationFlow> orchFlows, String apiVersion, Resource resourceKey,
+                                                                                ReplaceInstanceRelatedInformation replaceInfo) {
 
         return new ConfigBuildingBlocksDataObject().setsIRequest(sIRequest).setOrchFlows(orchFlows)
                 .setRequestId(requestId).setResourceKey(resourceKey).setApiVersion(apiVersion).setResourceId(resourceId)
@@ -422,10 +439,10 @@ public class WorkflowAction {
     }
 
     private void createBuildingBlocksForOrchFlows(DelegateExecution execution, ServiceInstancesRequest sIRequest,
-            String requestId, WorkflowResourceIds workflowResourceIds, RequestDetails requestDetails,
-            String requestAction, String resourceId, List<ExecuteBuildingBlock> flowsToExecute, String vnfType,
-            List<OrchestrationFlow> orchFlows, String apiVersion, Resource resourceKey,
-            ReplaceInstanceRelatedInformation replaceInfo) throws Exception {
+                                                  String requestId, WorkflowResourceIds workflowResourceIds, RequestDetails requestDetails,
+                                                  String requestAction, String resourceId, List<ExecuteBuildingBlock> flowsToExecute, String vnfType,
+                                                  List<OrchestrationFlow> orchFlows, String apiVersion, Resource resourceKey,
+                                                  ReplaceInstanceRelatedInformation replaceInfo) throws Exception {
 
         for (OrchestrationFlow orchFlow : orchFlows) {
             if (orchFlow.getFlowName().contains(CONFIGURATION)) {
@@ -444,10 +461,10 @@ public class WorkflowAction {
     }
 
     private void addConfigBuildingBlocksToFlowsToExecuteList(DelegateExecution execution,
-            ServiceInstancesRequest sIRequest, String requestId, WorkflowResourceIds workflowResourceIds,
-            RequestDetails requestDetails, String requestAction, String resourceId,
-            List<ExecuteBuildingBlock> flowsToExecute, String vnfType, String apiVersion, Resource resourceKey,
-            ReplaceInstanceRelatedInformation replaceInfo, List<OrchestrationFlow> configOrchFlows) throws Exception {
+                                                             ServiceInstancesRequest sIRequest, String requestId, WorkflowResourceIds workflowResourceIds,
+                                                             RequestDetails requestDetails, String requestAction, String resourceId,
+                                                             List<ExecuteBuildingBlock> flowsToExecute, String vnfType, String apiVersion, Resource resourceKey,
+                                                             ReplaceInstanceRelatedInformation replaceInfo, List<OrchestrationFlow> configOrchFlows) throws Exception {
 
         ConfigBuildingBlocksDataObject cbbdo = createConfigBuildingBlocksDataObject(execution, sIRequest, requestId,
                 workflowResourceIds, requestDetails, requestAction, resourceId, vnfType, configOrchFlows, apiVersion,
@@ -478,7 +495,7 @@ public class WorkflowAction {
     }
 
     protected <T> List<T> getRelatedResourcesInVfModule(String vnfId, String vfModuleId, Class<T> resultClass,
-            AAIObjectName name) {
+                                                        AAIObjectName name) {
         List<T> vnfcs = new ArrayList<>();
         AAIResourceUri uri =
                 AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId).vfModule(vfModuleId));
@@ -523,7 +540,7 @@ public class WorkflowAction {
     }
 
     protected List<AAIResultWrapper> getResultWrappersFromRelationships(Relationships relationships,
-            AAIObjectName name) {
+                                                                        AAIObjectName name) {
         return relationships.getByType(name);
     }
 
@@ -601,7 +618,7 @@ public class WorkflowAction {
                     String vnfcName = vnfc.getVnfcName();
                     if (vnfcName == null || vnfcName.isEmpty()) {
                         buildAndThrowException(dataObj.getExecution(), "Exception in create execution list "
-                                + ": VnfcName does not exist or is null while there is a configuration for the vfModule",
+                                        + ": VnfcName does not exist or is null while there is a configuration for the vfModule",
                                 new Exception("Vnfc and Configuration do not match"));
                     }
                     ExecuteBuildingBlock ebb =
@@ -691,7 +708,7 @@ public class WorkflowAction {
     }
 
     private void updateResourceIdsFromAAITraversal(List<ExecuteBuildingBlock> flowsToExecute,
-            List<Resource> resourceList, List<Pair<WorkflowType, String>> aaiResourceIds, String serviceInstanceId) {
+                                                   List<Resource> resourceList, List<Pair<WorkflowType, String>> aaiResourceIds, String serviceInstanceId) {
         for (Pair<WorkflowType, String> pair : aaiResourceIds) {
             logger.debug("{}, {}", pair.getValue0(), pair.getValue1());
         }
@@ -716,7 +733,7 @@ public class WorkflowAction {
     }
 
     private void generateResourceIds(List<ExecuteBuildingBlock> flowsToExecute, List<Resource> resourceList,
-            String serviceInstanceId) {
+                                     String serviceInstanceId) {
         Map<Resource, String> resourceInstanceIds = new HashMap<>();
         Arrays.stream(WorkflowType.values())
                 .forEach(type -> resourceList.stream()
@@ -726,8 +743,8 @@ public class WorkflowAction {
     }
 
     protected void updateWorkflowResourceIds(List<ExecuteBuildingBlock> flowsToExecute, WorkflowType resourceType,
-            Resource resource, String id, String virtualLinkKey, String serviceInstanceId,
-            Map<Resource, String> resourceInstanceIds) {
+                                             Resource resource, String id, String virtualLinkKey, String serviceInstanceId,
+                                             Map<Resource, String> resourceInstanceIds) {
         String key = resource.getResourceId();
         String resourceId = id;
         if (resourceId == null) {
@@ -744,7 +761,7 @@ public class WorkflowAction {
             if (key != null && key.equalsIgnoreCase(ebb.getBuildingBlock().getKey())
                     && isFlowAssignable(assignedFlows, ebb, resourceType, flowName + action)
                     && (flowName.contains(resourceTypeStr)
-                            || (flowName.contains(CONTROLLER) && resourceTypeStr.equalsIgnoreCase(scope)))) {
+                    || (flowName.contains(CONTROLLER) && resourceTypeStr.equalsIgnoreCase(scope)))) {
                 WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
                 workflowResourceIds.setServiceInstanceId(serviceInstanceId);
                 Resource parent = resource.getParent();
@@ -776,7 +793,7 @@ public class WorkflowAction {
     }
 
     private boolean isFlowAssignable(Set<String> assignedFlows, ExecuteBuildingBlock ebb, WorkflowType resourceType,
-            String assignedFlowName) {
+                                     String assignedFlowName) {
         String id = WorkflowType.SERVICE.equals(resourceType)
                 ? StringUtils.defaultString(ebb.getWorkflowResourceIds().getChildServiceInstanceId())
                 : WorkflowResourceIdsUtils.getResourceIdByWorkflowType(ebb.getWorkflowResourceIds(), resourceType);
@@ -835,7 +852,7 @@ public class WorkflowAction {
     }
 
     protected List<ExecuteBuildingBlock> sortExecutionPathByObjectForVlanTagging(List<ExecuteBuildingBlock> orchFlows,
-            String requestAction) {
+                                                                                 String requestAction) {
         List<ExecuteBuildingBlock> sortedOrchFlows = new ArrayList<>();
         if (requestAction.equals(CREATE_INSTANCE)) {
             for (ExecuteBuildingBlock ebb : orchFlows) {
@@ -906,12 +923,12 @@ public class WorkflowAction {
     }
 
     protected List<OrchestrationFlow> queryNorthBoundRequestCatalogDb(DelegateExecution execution, String requestAction,
-            WorkflowType resourceName, boolean aLaCarte, String cloudOwner) {
+                                                                      WorkflowType resourceName, boolean aLaCarte, String cloudOwner) {
         return this.queryNorthBoundRequestCatalogDb(execution, requestAction, resourceName, aLaCarte, cloudOwner, "");
     }
 
     protected List<OrchestrationFlow> queryNorthBoundRequestCatalogDb(DelegateExecution execution, String requestAction,
-            WorkflowType resourceName, boolean aLaCarte, String cloudOwner, String serviceType) {
+                                                                      WorkflowType resourceName, boolean aLaCarte, String cloudOwner, String serviceType) {
         List<OrchestrationFlow> listToExecute = new ArrayList<>();
         NorthBoundRequest northBoundRequest;
         if (serviceType.equalsIgnoreCase(SERVICE_TYPE_TRANSPORT)
@@ -977,7 +994,7 @@ public class WorkflowAction {
     }
 
     protected boolean isRequestMacroServiceResume(boolean aLaCarte, WorkflowType resourceType, String requestAction,
-            String serviceInstanceId) {
+                                                  String serviceInstanceId) {
         return (!aLaCarte && resourceType == WorkflowType.SERVICE
                 && (requestAction.equalsIgnoreCase(ASSIGN_INSTANCE) || requestAction.equalsIgnoreCase(CREATE_INSTANCE))
                 && (serviceInstanceId != null && serviceInstanceId.trim().length() > 1)
@@ -992,7 +1009,7 @@ public class WorkflowAction {
     }
 
     private void fillExecution(DelegateExecution execution, boolean suppressRollback, String resourceId,
-            WorkflowType resourceType) {
+                               WorkflowType resourceType) {
         execution.setVariable("suppressRollback", suppressRollback);
         execution.setVariable("resourceId", resourceId);
         execution.setVariable("resourceType", resourceType);
@@ -1000,7 +1017,7 @@ public class WorkflowAction {
     }
 
     private Resource getResource(BBInputSetupUtils bbInputSetupUtils, boolean isResume, boolean alaCarte, String uri,
-            String requestId) {
+                                 String requestId) {
         if (!alaCarte && isResume) {
             logger.debug("replacing URI {}", uri);
             uri = bbInputSetupUtils.loadOriginalInfraActiveRequestById(requestId).getRequestUrl();
@@ -1010,7 +1027,7 @@ public class WorkflowAction {
     }
 
     private String getResourceId(Resource resource, String requestAction, RequestDetails requestDetails,
-            WorkflowResourceIds workflowResourceIds) throws Exception {
+                                 WorkflowResourceIds workflowResourceIds) throws Exception {
         if (resource.isGenerated() && requestAction.equalsIgnoreCase("createInstance")
                 && requestDetails.getRequestInfo().getInstanceName() != null) {
             return aaiResourceIdValidator.validateResourceIdInAAI(resource.getResourceId(), resource.getResourceType(),
