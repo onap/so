@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "74b60069_a4117d0b",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/R__MacroData.sql",
+        "patchSetId": 2
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 2089
+      },
+      "writtenOn": "2023-01-05T06:51:34Z",
+      "side": 1,
+      "message": "missing \",\" causing failure",
+      "revId": "1a3cdaae203f2c58e91a684bdad53ea7bbe19105",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
