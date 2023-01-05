@@ -11,9 +11,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -721,6 +721,10 @@ public class RequestHandlerUtils extends AbstractRestHandler {
 
                 throw validateException;
             }
+        }
+
+        else if (modelInfo.getModelType().equals(ModelType.pnf)) {
+            recipeLookupResult = new RecipeLookupResult("/mso/async/services/WorkflowActionBB", 180);
         } else if (modelInfo.getModelType().equals(ModelType.instanceGroup)) {
             recipeLookupResult = new RecipeLookupResult("/mso/async/services/WorkflowActionBB", 180);
         }
@@ -1191,7 +1195,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
                     throw new ValidationException("vfModuleCustomization");
                 } else if (vfModule == null && vfmc != null) {
                     vfModule = vfmc.getVfModule(); // can't be null as vfModuleModelUUID is not-null property in
-                                                   // VfModuleCustomization table
+                    // VfModuleCustomization table
                 }
 
                 if (modelInfo.getModelVersionId() == null) {
