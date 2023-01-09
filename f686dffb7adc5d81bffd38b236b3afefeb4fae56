@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "41fd61d2_531c0be5",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/aai/tasks/AAIDeleteTasks.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2023-01-09T23:08:43Z",
+      "side": 1,
+      "message": "AAIDeleteTasks should not depend on logic for a specific building block.\n\nThe logic of cleaning up references to the child in the parent when deleting the child, is generic and should belong in this class as a private method.\n\nI do not agree with the logic of deleting the parent when deleting the last remaining child. It is not consistent with other delete operations in SO. For example, you can delete the only VNF of a Service without the actual Service object being deleted in AAI. Happy to discuss this to understand your use-case.",
+      "revId": "f686dffb7adc5d81bffd38b236b3afefeb4fae56",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
