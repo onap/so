@@ -19,7 +19,7 @@
     <bpmn:boundaryEvent id="IntermediateThrowEvent_1gh5vds" name="Timeout" attachedToRef="Task_1olljx2">
       <bpmn:outgoing>SequenceFlow_0hmy1qr</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_13keqs7">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT5H</bpmn:timeDuration>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT14H</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
     <bpmn:endEvent id="EndEvent_11rdhm9">
