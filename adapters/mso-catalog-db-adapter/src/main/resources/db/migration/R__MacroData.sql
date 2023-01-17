@@ -40,8 +40,10 @@ INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, I
 ('VFModule-ScaleOut', 'scaleOut', 'VfModule', true, true, '7','7', 'DEFAULT', '*'),
 ('VNF-InPlaceUpdate', 'inPlaceSoftwareUpdate', 'Vnf', true, true, '7','7', 'DEFAULT', '*'),
 ('VNF-Config-Update', 'applyUpdatedConfig', 'Vnf', true, true, '7','7', 'DEFAULT', '*'),
-('CNF-Macro-Upgrade', 'upgradeCnf', 'Vnf', false,true, '7', '7','DEFAULT', '*');
-
+('CNF-Macro-Upgrade', 'upgradeCnf', 'Vnf', false,true, '7', '7','DEFAULT', '*'),
+('Slice-Macro-create','deleteRanSlice','NetworkSliceSubnet',0,1,7,1,'DEFAULT','*'),
+('Slice-Macro-modify','deleteRanSlice','NetworkSliceSubnet',0,1,7,1,'DEFAULT','*'),
+('Slice-Macro-delete','deleteRanSlice','NetworkSliceSubnet',0,1,7,1,'DEFAULT','*');
 
 INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, SCOPE, ACTION, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID) VALUES
 ('Service-Create', '1', 'AssignServiceInstanceBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Create' and CLOUD_OWNER = 'DEFAULT')),
@@ -272,7 +274,14 @@ INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, SC
 ('CNF-Macro-Upgrade', '10', 'ActivateVfModuleBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
 ('CNF-Macro-Upgrade', '11', 'ChangeModelVnfBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
 ('CNF-Macro-Upgrade', '12', 'ActivateVnfBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
-('CNF-Macro-Upgrade', '13', 'AAIUnsetVnfInMaintBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT'));
+('CNF-Macro-Upgrade', '13', 'AAIUnsetVnfInMaintBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'CNF-Macro-Upgrade' and CLOUD_OWNER = 'DEFAULT')),
+('Slice-Macro-Create',1,'AssignRANNssiBB','nssi',null,1,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Slice-Macro-create' and CLOUD_OWNER = 'DEFAULT'))
+('Slice-Macro-Create',2,'ControllerExecutionBB','nssi','create-sliceprofile',1,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Slice-Macro-create' and CLOUD_OWNER = 'DEFAULT'))
+('Slice-Macro-Create',3,'ActivateRANNssiBB',null,null,1,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Slice-Macro-create' and CLOUD_OWNER = 'DEFAULT'))
+('Slice-Macro-modify',1,'ModifyRANNssiBB',null,null,1,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Slice-Macro-modify' and CLOUD_OWNER = 'DEFAULT'))
+('Slice-Macro-modify',1,'ControllerExecutionBB','nssi','modify-sliceprofile',1,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Slice-Macro-modify' and CLOUD_OWNER = 'DEFAULT'))
+('Slice-Macro-delete',1,'DeleteRANNssiBB',null,null,1,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Slice-Macro-delete' and CLOUD_OWNER = 'DEFAULT'))
+('Slice-Macro-delete',1,'ControllerExecutionBB','nssi','delete-sliceprofile',1,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Slice-Macro-delete' and CLOUD_OWNER = 'DEFAULT'));
 
 INSERT INTO rainy_day_handler_macro (FLOW_NAME, SERVICE_TYPE, VNF_TYPE, ERROR_CODE, WORK_STEP, POLICY, SECONDARY_POLICY, REG_EX_ERROR_MESSAGE, SERVICE_ROLE)
 VALUES
@@ -436,7 +445,12 @@ VALUES
 ('StatusCheckBB', 'NO_VALIDATE', 'CUSTOM'),
 ('HealthCheckBB', 'NO_VALIDATE', 'CUSTOM'),
 ('UpgradeVfModuleBB', 'NO_VALIDATE', 'CUSTOM'),
-('VfModuleUpgradeStatusBB', 'NO_VALIDATE', 'CUSTOM');
+('VfModuleUpgradeStatusBB', 'NO_VALIDATE', 'CUSTOM'),
+('AssignRANNssiBB','NO_VALIDATE','CUSTOM'),
+('ActivateRANNssiBB','NO_VALIDATE','CUSTOM'),
+('ModifyRANNssiBB','NO_VALIDATE','CUSTOM'),
+('DeleteRANNssiBB','NO_VALIDATE','CUSTOM');
+
 
 
 INSERT INTO orchestration_status_state_transition_directive (resource_type, orchestration_status, target_action, flow_directive)
