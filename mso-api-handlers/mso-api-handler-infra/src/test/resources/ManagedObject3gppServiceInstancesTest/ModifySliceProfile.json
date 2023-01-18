@@ -1,0 +1,13 @@
+{
+  "attributes": {
+    "sliceProfileList": [{
+      "sliceProfileId": "a1e5d51f-4bcb-42f0-83e2-cde6ac0a2e66",
+      "RANSliceSubnetProfile": {
+        "coverageAreaTAList": 777,
+        "dLLatency": 200,
+        "uLLatency": 200,
+        "resourceSharingLevel":"SHARED"
+      }
+    }]
+  }
+}
