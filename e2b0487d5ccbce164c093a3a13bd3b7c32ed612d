@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a4d25b23_7969c0e6",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/R__MacroData.sql",
+        "patchSetId": 1
+      },
+      "lineNbr": 667,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2023-01-19T22:32:27Z",
+      "side": 1,
+      "message": "Did you try to run this script in the db ? That q will break",
+      "revId": "e2b0487d5ccbce164c093a3a13bd3b7c32ed612d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c137aac1_a6d8cb70",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/V1.1__Initial_Recipe_Setup.sql",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2023-01-19T22:32:27Z",
+      "side": 1,
+      "message": "do not add to versioned scripts, they will not run when you deploy this to an existing environment. Please read about the difference between versioned and repeatable scripts\n\nhttps://documentation.red-gate.com/fd/migration-scripts-138347099.html",
+      "revId": "e2b0487d5ccbce164c093a3a13bd3b7c32ed612d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
