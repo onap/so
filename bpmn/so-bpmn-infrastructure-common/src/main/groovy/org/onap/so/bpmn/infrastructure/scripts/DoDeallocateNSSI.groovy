@@ -104,7 +104,7 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
 
         try {
             ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition") as ServiceDecomposition
-            String vendor = serviceDecomposition ?.getServiceRole()
+            String vendor = serviceDecomposition.getServiceRole()
             NetworkType domainType = convertServiceCategory(serviceDecomposition.getServiceCategory())
 
             def currentNSSI = execution.getVariable("currentNSSI")
@@ -138,6 +138,9 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
         if(serviceCategory ==~ /TN.*MH.*/){
             return SubnetType.TN_MH.getNetworkType()
         }
+	if(serviceCategory ==~ /TN.*FH.*/){
+	    return SubnetType.TN_FH.getNetworkType()
+	}
         return null
     }
     

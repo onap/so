@@ -131,7 +131,9 @@ dnssi.prepareJobStatusRequest(execution)</bpmn:script>
       <bpmn:incoming>SequenceFlow_1wpbkt9</bpmn:incoming>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_11pdh1q" errorRef="Error_1o5kb95" />
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_1wpbkt9" name="no" sourceRef="ExclusiveGateway_0nhfsui" targetRef="Event_11u9vp2" />
+    <bpmn:sequenceFlow id="SequenceFlow_1wpbkt9" name="no" sourceRef="ExclusiveGateway_0nhfsui" targetRef="Event_11u9vp2">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{(execution.getVariable("isNSSIDeAllocated" )  == false)}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_0hyn6ca" sourceRef="Task_0ocemjg" targetRef="EndEvent_1f579t4" />
     <bpmn:scriptTask id="Task_0ocemjg" name="Delete Slice Profile Service From AAI" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_1ii5002</bpmn:incoming>
