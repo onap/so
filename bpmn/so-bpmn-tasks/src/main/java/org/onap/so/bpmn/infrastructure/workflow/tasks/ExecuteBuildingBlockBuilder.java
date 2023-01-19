@@ -166,6 +166,13 @@ public class ExecuteBuildingBlockBuilder {
         } else if (orchFlow.getFlowName().contains(CONFIGURATION)) {
             addBuildingBlockToExecuteBBList(flowsToExecute, resource, WorkflowType.CONFIGURATION, orchFlow, requestId,
                     apiVersion, resourceId, requestAction, vnfType, workflowResourceIds, requestDetails, false, true);
+        } else if (orchFlow.getFlowName().contains(NSSI) || (orchFlow.getFlowName().contains(CONTROLLER)
+                && ("nssi").equalsIgnoreCase(orchFlow.getBpmnScope()))) {
+            logger.info(">>>>> NSSI");
+            logger.debug(">>>> resource: {}", resource.getResourceId());
+            addBuildingBlockToExecuteBBList(flowsToExecute, resource, WorkflowType.NETWORK_SLICE_SUBNET, orchFlow,
+                    requestId, apiVersion, resourceId, requestAction, vnfType, workflowResourceIds, requestDetails,
+                    false, true);
         } else {
             flowsToExecute
                     .add(buildExecuteBuildingBlock(orchFlow, requestId, null, apiVersion, resourceId, requestAction,
