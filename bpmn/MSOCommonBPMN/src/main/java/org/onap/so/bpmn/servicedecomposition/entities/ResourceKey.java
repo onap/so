@@ -39,5 +39,9 @@ public enum ResourceKey {
     VNF_INSTANCE_NAME,
     VF_MODULE_INSTANCE_NAME,
     CHILD_SERVICE_INSTANCE_ID,
-    CHILD_SERVICE_INSTANCE_NAME
+    CHILD_SERVICE_INSTANCE_NAME,
+    ServiceInstance,
+    ModelInfoServiceInstance,
+    operationalState,
+    administrativeState
 }
