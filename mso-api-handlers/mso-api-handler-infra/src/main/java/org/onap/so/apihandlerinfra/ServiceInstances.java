@@ -10,9 +10,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -719,6 +719,53 @@ public class ServiceInstances extends AbstractRestHandler {
                 requestHandlerUtils.getRequestUri(requestContext, uriPrefix));
     }
 
+
+    @POST
+    @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/pnfs")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Create VNF on a specified version and serviceInstance", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Transactional
+    public Response createPnfInstance(String request, @PathParam("version") String version,
+            @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
+            throws ApiException {
+        String requestId = requestHandlerUtils.getRequestId(requestContext);
+        HashMap<String, String> instanceIdMap = new HashMap<>();
+        instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+        try {
+            return serviceInstances(request, Action.createInstance, instanceIdMap, version, requestId,
+                    requestHandlerUtils.getRequestUri(requestContext, uriPrefix));
+        } catch (Exception e) {
+            logger.error("Error in pnf", e);
+            throw e;
+        }
+    }
+
+
+    @DELETE
+    @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/pnfs/{pnfInstanceId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Create PNF on a specified version and serviceInstance", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Transactional
+    public Response deletePnfInstance(String request, @PathParam("version") String version,
+            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("pnfInstanceId") String pnfInstanceId,
+            @Context ContainerRequestContext requestContext) throws ApiException {
+        String requestId = requestHandlerUtils.getRequestId(requestContext);
+        HashMap<String, String> instanceIdMap = new HashMap<>();
+        instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+        instanceIdMap.put("pnfInstanceId", pnfInstanceId);
+        try {
+            return serviceInstances(request, Action.deleteInstance, instanceIdMap, version, requestId,
+                    requestHandlerUtils.getRequestUri(requestContext, uriPrefix));
+        } catch (Exception e) {
+            logger.error("Error in pnf", e);
+            throw e;
+        }
+    }
+
     @POST
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/networks")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -989,7 +1036,8 @@ public class ServiceInstances extends AbstractRestHandler {
         }
 
         if (!requestScope.equalsIgnoreCase(ModelType.service.name()) && action != Action.recreateInstance
-                && !requestScope.equalsIgnoreCase(ModelType.vnf.name())) {
+                && !requestScope.equalsIgnoreCase(ModelType.vnf.name())
+                && !requestScope.equalsIgnoreCase(ModelType.pnf.name())) {
             aLaCarte = true;
         } else if (aLaCarte == null) {
             aLaCarte = false;

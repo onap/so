@@ -87,6 +87,12 @@ public class AAIPnfResources {
         logger.debug("updatePnfInAAI: {}", pnfFromAai);
     }
 
+
+    public void deletePnf(Pnf pnf) {
+        AAIResourceUri pnfURI = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(pnf.getPnfName()));
+        injectionHelper.getAaiClient().delete(pnfURI);
+    }
+
     private void updatePnfFields(Pnf pnf, org.onap.aai.domain.yang.Pnf pnfFromAai) {
         if (pnf.getModelInfoPnf() != null
                 && StringUtils.isNotBlank(pnf.getModelInfoPnf().getModelCustomizationUuid())) {
