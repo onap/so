@@ -11,6 +11,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <so-cnfm.version>1.9.0-SNAPSHOT</so-cnfm.version>
+    <jqno.equalsverifier.version>2.5.1</jqno.equalsverifier.version>
   </properties>
   <build>
     <plugins>
@@ -227,7 +229,7 @@
     <dependency>
       <groupId>nl.jqno.equalsverifier</groupId>
       <artifactId>equalsverifier</artifactId>
-      <version>2.5.1</version>
+      <version>${jqno.equalsverifier.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -244,6 +246,11 @@
       <groupId>org.onap.so</groupId>
       <artifactId>so-sdn-clients</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.so.adapters.so-cnf-adapter</groupId>
+      <artifactId>so-cnfm</artifactId>
+      <version>${so-cnfm.version}</version>
     </dependency>
   </dependencies>
 </project>

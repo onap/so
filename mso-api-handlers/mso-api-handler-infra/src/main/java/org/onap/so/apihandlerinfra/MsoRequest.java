@@ -9,6 +9,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2020 Nokia
  * ================================================================================
+ * Modifications Copyright (c) 2023 Ericsson. All rights reserved.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -376,7 +378,9 @@ public class MsoRequest {
                     aq.setInstanceGroupId(servInsReq.getInstanceGroupId());
                     aq.setInstanceGroupName(requestInfo.getInstanceName());
                 }
-                if (ModelType.vnf.name().equalsIgnoreCase(requestScope)) {
+
+                if (ModelType.vnf.name().equalsIgnoreCase(requestScope)
+                        || ModelType.cnf.name().equalsIgnoreCase(requestScope)) {
                     if (requestInfo != null) {
                         aq.setVnfName(requestInfo.getInstanceName());
                     }
@@ -712,7 +716,8 @@ public class MsoRequest {
         } else if (requestScope.equalsIgnoreCase(ModelType.vfModule.name())) {
             vnfType = serviceModelName + "/" + vnfModelName;
             sir.setVolumeGroupInstanceId(volumeGroupId);
-        } else if (requestScope.equalsIgnoreCase(ModelType.vnf.name()))
+        } else if (requestScope.equalsIgnoreCase(ModelType.vnf.name())
+                || requestScope.equalsIgnoreCase(ModelType.cnf.name()))
             vnfType = serviceModelName + "/" + sir.getRequestDetails().getModelInfo().getModelCustomizationName();
 
         return vnfType;
