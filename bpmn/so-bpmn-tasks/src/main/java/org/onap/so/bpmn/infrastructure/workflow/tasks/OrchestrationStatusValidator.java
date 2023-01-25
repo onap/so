@@ -8,6 +8,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2020 Nokia
  * ================================================================================
+ * Modifications Copyright (c) 2023 Ericsson. All rights reserved.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -154,6 +156,7 @@ public class OrchestrationStatusValidator {
                 orchestrationStatus = serviceInstance.getOrchestrationStatus();
                 break;
             case VNF:
+            case CNF:
                 GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
                 orchestrationStatus = genericVnf.getOrchestrationStatus();
                 break;
