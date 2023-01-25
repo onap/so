@@ -58,6 +58,8 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class VnfmAdapterCreateVnfTaskConfiguration {
 
+    public static final String VNFM_HTTP_REST_SERVICE_PROVIDER_BEAN = "vnfmHttpRestServiceProvider";
+
     private static final Logger logger = LoggerFactory.getLogger(VnfmAdapterCreateVnfTaskConfiguration.class);
 
     @Value("${rest.http.client.configuration.ssl.trustStore:#{null}}")
@@ -73,7 +75,8 @@ public class VnfmAdapterCreateVnfTaskConfiguration {
     private String keyStorePassword;
 
     @Bean
-    public HttpRestServiceProvider databaseHttpRestServiceProvider(
+    @Qualifier(VNFM_HTTP_REST_SERVICE_PROVIDER_BEAN)
+    public HttpRestServiceProvider vnfmHttpRestServiceProvider(
             @Qualifier(CONFIGURABLE_REST_TEMPLATE) @Autowired final RestTemplate restTemplate,
             @Autowired final VnfmBasicHttpConfigProvider etsiVnfmAdapter) {
         if (trustStore != null) {

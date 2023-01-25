@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2023 Ericsson. All rights reserved.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,6 +25,7 @@ package org.onap.so.db.catalog.beans;
 public enum ResourceType {
     SERVICE("Service", "SERVICE_INSTANCE_ID"),
     VNF("Vnf", "GENERIC_VNF_ID"),
+    CNF("Cnf", "GENERIC_VNF_ID"),
     VOLUME_GROUP("VolumeGroup", "VOLUME_GROUP_ID"),
     VF_MODULE("VfModule", "VF_MODULE_ID"),
     NETWORK("Network", "NETWORK_ID"),
