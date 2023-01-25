@@ -44,7 +44,7 @@ public class VnfmAdapterCreateVnfTaskConfigurationTest {
         final VnfmAdapterCreateVnfTaskConfiguration objUnderTest = new VnfmAdapterCreateVnfTaskConfiguration();
 
         final HttpRestServiceProvider actual =
-                objUnderTest.databaseHttpRestServiceProvider(restTemplate, getVnfmBasicHttpConfigProvider());
+                objUnderTest.vnfmHttpRestServiceProvider(restTemplate, getVnfmBasicHttpConfigProvider());
         assertNotNull(actual);
 
 

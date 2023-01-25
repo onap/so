@@ -8,6 +8,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2020 Nokia
  * ================================================================================
+ * Modifications Copyright (c) 2023 Ericsson. All rights reserved.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -234,6 +236,7 @@ public class BBInputSetup implements JavaDelegate {
         String requestId = executeBB.getRequestId();
         this.populateLookupKeyMapWithIds(executeBB.getWorkflowResourceIds(), lookupKeyMap);
         RequestDetails requestDetails = executeBB.getRequestDetails();
+        logger.debug("Resource ID, vnfType, requestAction: {},{},{}", resourceId, vnfType, requestAction);
         if (requestDetails == null) {
             requestDetails = bbInputSetupUtils.getRequestDetails(requestId);
         }
@@ -278,6 +281,7 @@ public class BBInputSetup implements JavaDelegate {
         ServiceModel serviceModel = new ServiceModel();
         Service service = null;
         Service newService = null;
+        logger.debug("getGBBALaCarteNonService: {}", bbName);
         boolean isReplace = false;
         if (serviceInstanceId != null) {
             aaiServiceInstance = bbInputSetupUtils.getAAIServiceInstanceById(serviceInstanceId);
@@ -402,6 +406,7 @@ public class BBInputSetup implements JavaDelegate {
         parameter.setPlatform(parameter.getRequestDetails().getPlatform());
         parameter.setLineOfBusiness(parameter.getRequestDetails().getLineOfBusiness());
         String applicationId = "";
+        logger.debug("populateObjectsOnAssignAndCreateFlows: {}", modelType);
         if (parameter.getRequestDetails().getRequestInfo().getApplicationId() != null) {
             applicationId = parameter.getRequestDetails().getRequestInfo().getApplicationId();
             parameter.setApplicationId(applicationId);
@@ -410,7 +415,7 @@ public class BBInputSetup implements JavaDelegate {
         if (modelType.equals(ModelType.network)) {
             parameter.getLookupKeyMap().put(ResourceKey.NETWORK_ID, parameter.getResourceId());
             this.populateL3Network(parameter);
-        } else if (modelType.equals(ModelType.vnf)) {
+        } else if (modelType.equals(ModelType.vnf) || modelType.equals(ModelType.cnf)) {
             parameter.getLookupKeyMap().put(ResourceKey.GENERIC_VNF_ID, parameter.getResourceId());
             this.populateGenericVnf(parameter);
         } else if (modelType.equals(ModelType.volumeGroup) || (modelType.equals(ModelType.vfModule)
@@ -897,7 +902,8 @@ public class BBInputSetup implements JavaDelegate {
                 break;
             }
         }
-        if (vnf == null && parameter.getBbName().equalsIgnoreCase(AssignFlows.VNF.toString())) {
+        if ((vnf == null && parameter.getBbName().equalsIgnoreCase(AssignFlows.VNF.toString()))
+                || (parameter.getRequestDetails() != null && this.isCnf(parameter.getRequestDetails()))) {
             vnf = createGenericVnf(parameter.getLookupKeyMap(), parameter.getInstanceName(), parameter.getPlatform(),
                     parameter.getLineOfBusiness(), parameter.getResourceId(), generatedVnfType,
                     parameter.getInstanceParams(), parameter.getProductFamilyId(), parameter.getApplicationId());
@@ -912,6 +918,17 @@ public class BBInputSetup implements JavaDelegate {
                 mapNetworkCollectionInstanceGroup(vnf, instanceGroupId);
             }
         }
+    }
+
+    private boolean isCnf(final RequestDetails requestDetails) {
+        logger.debug("Inside isCNF");
+        if (requestDetails.getModelInfo() != null) {
+            logger.debug("Inside isCNF {}", requestDetails);
+            return ModelType.cnf.equals(requestDetails.getModelInfo().getModelType());
+        }
+
+        logger.debug("Inside isCNF returning false:{}", requestDetails);
+        return false;
     }
 
     protected boolean instanceGroupInList(GenericVnf vnf, String instanceGroupId) {
