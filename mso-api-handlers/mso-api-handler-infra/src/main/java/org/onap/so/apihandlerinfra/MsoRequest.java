@@ -376,7 +376,9 @@ public class MsoRequest {
                     aq.setInstanceGroupId(servInsReq.getInstanceGroupId());
                     aq.setInstanceGroupName(requestInfo.getInstanceName());
                 }
-                if (ModelType.vnf.name().equalsIgnoreCase(requestScope)) {
+
+                if (ModelType.vnf.name().equalsIgnoreCase(requestScope)
+                        || ModelType.cnf.name().equalsIgnoreCase(requestScope)) {
                     if (requestInfo != null) {
                         aq.setVnfName(requestInfo.getInstanceName());
                     }
@@ -712,7 +714,8 @@ public class MsoRequest {
         } else if (requestScope.equalsIgnoreCase(ModelType.vfModule.name())) {
             vnfType = serviceModelName + "/" + vnfModelName;
             sir.setVolumeGroupInstanceId(volumeGroupId);
-        } else if (requestScope.equalsIgnoreCase(ModelType.vnf.name()))
+        } else if (requestScope.equalsIgnoreCase(ModelType.vnf.name())
+                || requestScope.equalsIgnoreCase(ModelType.cnf.name()))
             vnfType = serviceModelName + "/" + sir.getRequestDetails().getModelInfo().getModelCustomizationName();
 
         return vnfType;

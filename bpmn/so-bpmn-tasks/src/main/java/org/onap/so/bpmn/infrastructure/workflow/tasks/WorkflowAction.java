@@ -112,7 +112,7 @@ public class WorkflowAction {
     private static final String VNF_TYPE = "vnfType";
     private static final String CONFIGURATION = "Configuration";
     private static final String SUPPORTEDTYPES =
-            "vnfs|pnfs|vfModules|networks|networkCollections|volumeGroups|serviceInstances|instanceGroups";
+            "vnfs|pnfs|cnfs|vfModules|networks|networkCollections|volumeGroups|serviceInstances|instanceGroups";
     private static final String HOMINGSOLUTION = "Homing_Solution";
     private static final String SERVICE_TYPE_TRANSPORT = "TRANSPORT";
     private static final String SERVICE_TYPE_BONDING = "BONDING";

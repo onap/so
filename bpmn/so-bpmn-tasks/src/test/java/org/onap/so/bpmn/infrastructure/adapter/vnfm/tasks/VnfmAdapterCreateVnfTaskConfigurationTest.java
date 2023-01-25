@@ -1,6 +1,6 @@
 /*-
  * ============LICENSE_START=======================================================
- *  Copyright (C) 2019 Nordix Foundation.
+ *  Copyright (C) 2023 Nordix Foundation.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public class VnfmAdapterCreateVnfTaskConfigurationTest {
         final VnfmAdapterCreateVnfTaskConfiguration objUnderTest = new VnfmAdapterCreateVnfTaskConfiguration();
 
         final HttpRestServiceProvider actual =
-                objUnderTest.databaseHttpRestServiceProvider(restTemplate, getVnfmBasicHttpConfigProvider());
+                objUnderTest.vnfmHttpRestServiceProvider(restTemplate, getVnfmBasicHttpConfigProvider());
         assertNotNull(actual);
 
 

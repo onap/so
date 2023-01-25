@@ -7,6 +7,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Modifications Copyright (c) 2023 Nordix Foundation.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -374,6 +376,28 @@ public class ServiceInstances extends AbstractRestHandler {
                     requestHandlerUtils.getRequestUri(requestContext, uriPrefix));
         } catch (Exception e) {
             logger.error("Error in vnf", e);
+            throw e;
+        }
+    }
+
+    @POST
+    @Path("/{version:[vV][7]}/serviceInstances/{serviceInstanceId}/cnfs")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Create CNF on a specified version and serviceInstance", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Transactional
+    public Response createCnfInstance(String request, @PathParam("version") String version,
+            @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
+            throws ApiException {
+        String requestId = requestHandlerUtils.getRequestId(requestContext);
+        HashMap<String, String> instanceIdMap = new HashMap<>();
+        instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+        try {
+            return serviceInstances(request, Action.createInstance, instanceIdMap, version, requestId,
+                    requestHandlerUtils.getRequestUri(requestContext, uriPrefix));
+        } catch (Exception e) {
+            logger.error("Error in cnf", e);
             throw e;
         }
     }
@@ -946,7 +970,8 @@ public class ServiceInstances extends AbstractRestHandler {
         requestHandlerUtils.parseRequest(sir, instanceIdMap, action, version, requestJSON, aLaCarte, requestId,
                 currentActiveReq);
         if ((action == Action.replaceInstance || action == Action.replaceInstanceRetainAssignments)
-                && (requestScope.equals(ModelType.vnf.toString()) || requestScope.equals(ModelType.vfModule.toString()))
+                && (requestScope.equals(ModelType.vnf.toString()) || requestScope.equals(ModelType.vfModule.toString())
+                        || requestScope.equals(ModelType.cnf.toString()))
                 && sir.getRequestDetails().getCloudConfiguration() == null) {
             CloudConfiguration cloudConfiguration =
                     getCloudConfigurationOnReplace(requestScope, instanceIdMap, currentActiveReq);

@@ -20,6 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks;
 
+import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.VnfmAdapterCreateVnfTaskConfiguration.VNFM_HTTP_REST_SERVICE_PROVIDER_BEAN;
 import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.CreateVnfRequest;
 import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.CreateVnfResponse;
 import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.DeleteVnfResponse;
@@ -31,6 +32,7 @@ import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -50,7 +52,7 @@ public class VnfmAdapterServiceProviderImpl implements VnfmAdapterServiceProvide
 
     @Autowired
     public VnfmAdapterServiceProviderImpl(final VnfmAdapterUrlProvider urlProvider,
-            final HttpRestServiceProvider httpServiceProvider) {
+            @Qualifier(VNFM_HTTP_REST_SERVICE_PROVIDER_BEAN) final HttpRestServiceProvider httpServiceProvider) {
         this.urlProvider = urlProvider;
         this.httpServiceProvider = httpServiceProvider;
     }

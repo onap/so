@@ -23,6 +23,7 @@ package org.onap.so.db.catalog.beans;
 public enum ResourceType {
     SERVICE("Service", "SERVICE_INSTANCE_ID"),
     VNF("Vnf", "GENERIC_VNF_ID"),
+    CNF("Cnf", "GENERIC_VNF_ID"),
     VOLUME_GROUP("VolumeGroup", "VOLUME_GROUP_ID"),
     VF_MODULE("VfModule", "VF_MODULE_ID"),
     NETWORK("Network", "NETWORK_ID"),

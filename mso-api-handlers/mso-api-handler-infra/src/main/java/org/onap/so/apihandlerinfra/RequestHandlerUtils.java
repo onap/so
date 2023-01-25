@@ -406,7 +406,8 @@ public class RequestHandlerUtils extends AbstractRestHandler {
         if (StringUtils.isNotBlank(instanceId)) {
             if (ModelType.service.name().equalsIgnoreCase(requestScope)) {
                 currentActiveReq.setServiceInstanceId(instanceId);
-            } else if (ModelType.vnf.name().equalsIgnoreCase(requestScope)) {
+            } else if (ModelType.vnf.name().equalsIgnoreCase(requestScope)
+                    || ModelType.cnf.name().equalsIgnoreCase(requestScope)) {
                 currentActiveReq.setVnfId(instanceId);
             } else if (ModelType.vfModule.name().equalsIgnoreCase(requestScope)) {
                 currentActiveReq.setVfModuleId(instanceId);
@@ -547,6 +548,9 @@ public class RequestHandlerUtils extends AbstractRestHandler {
             requestScope = ModelType.vnf.name();
         } else if (requestUri.contains(ModelType.pnf.name())) {
             requestScope = ModelType.pnf.name();
+
+        } else if (requestUri.contains(ModelType.cnf.name())) {
+            requestScope = ModelType.cnf.name();
         } else {
             requestScope = ModelType.service.name();
         }
@@ -726,6 +730,8 @@ public class RequestHandlerUtils extends AbstractRestHandler {
         else if (modelInfo.getModelType().equals(ModelType.pnf)) {
             recipeLookupResult = new RecipeLookupResult("/mso/async/services/WorkflowActionBB", 180);
         } else if (modelInfo.getModelType().equals(ModelType.instanceGroup)) {
+            recipeLookupResult = new RecipeLookupResult("/mso/async/services/WorkflowActionBB", 180);
+        } else if (modelInfo.getModelType().equals(ModelType.cnf)) {
             recipeLookupResult = new RecipeLookupResult("/mso/async/services/WorkflowActionBB", 180);
         }
 
