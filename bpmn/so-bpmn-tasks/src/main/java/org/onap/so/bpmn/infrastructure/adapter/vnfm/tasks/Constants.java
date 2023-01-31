@@ -1,6 +1,6 @@
 /*-
  * ============LICENSE_START=======================================================
- *  Copyright (C) 2019 Nordix Foundation.
+ *  Copyright (C) 2023 Nordix Foundation.
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
@@ -33,6 +33,7 @@ public class Constants {
 
     public static final String CREATE_VNF_REQUEST_PARAM_NAME = "createVnfRequest";
     public static final String CREATE_VNF_RESPONSE_PARAM_NAME = "createVnfResponse";
+    public static final String CREATE_CNF_STATUS_RESPONSE_PARAM_NAME = "createCnfStatusResponse";
     public static final String INPUT_PARAMETER = "inputParameter";
     public static final String DELETE_VNF_RESPONSE_PARAM_NAME = "deleteVnfResponse";
     public static final String DELETE_VNF_NODE_STATUS = "deleteVnfNodeStatus";

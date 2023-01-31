@@ -1,0 +1,25 @@
+{
+  "modelName": "Infra_v10_Service",
+  "description": "MSO aLaCarte CNF",
+  "modelUUID": "5df8b6de-2083-11e7-93ae-92361f002672",
+  "modelInvariantUUID": "9647dfc4-2083-11e7-93ae-92361f002671",
+  "created": "2023-02-08 12:45:39.000",
+  "modelVersion": "2.0",
+  "serviceType": "NA",
+  "serviceRole": "NA",
+  "environmentContext": "Luna",
+  "workloadContext": "Oxygen",
+  "category": null,
+  "_links": {
+    "self": {
+      "href": "http://localhost:8090/service/5df8b6de-2083-11e7-93ae-92361f002672"
+    },
+    "service": {
+      "href": "http://localhost:8090/service/5df8b6de-2083-11e7-93ae-92361f002672{?projection}",
+      "templated": true
+    },
+    "vnfCustomizations": {
+      "href": "http://localhost:8090/service/5df8b6de-2083-11e7-93ae-92361f002672/vnfCustomizations"
+    }
+  }
+}

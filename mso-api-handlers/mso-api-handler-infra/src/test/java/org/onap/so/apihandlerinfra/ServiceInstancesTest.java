@@ -1132,6 +1132,34 @@ public class ServiceInstancesTest extends BaseTest {
     }
 
     @Test
+    public void createCnfInstanceNoALaCarte() throws IOException {
+
+        wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        wireMockServer.stubFor(get(urlMatching(".*/service/5df8b6de-2083-11e7-93ae-92361f002672"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("serviceCnf_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        // expected response
+        ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
+        RequestReferences requestReferences = new RequestReferences();
+        requestReferences.setInstanceId("1882939");
+        requestReferences.setRequestSelfLink(createExpectedSelfLink("v7", "32807a28-1a14-4b88-b7b3-2950918aa76d"));
+        expectedResponse.setRequestReferences(requestReferences);
+        uri = servInstanceuri + "v7" + "/serviceInstances/ff305d54-75b4-431b-adb2-eb6b9e5ff000/cnfs";
+        ResponseEntity<String> response =
+                sendRequest(inputStream("/CnfWithServiceRelatedInstance.json"), uri, HttpMethod.POST, headers);
+
+        assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
+        ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertTrue(response.getBody().contains("1882939"));
+    }
+
+    @Test
     public void createVfModuleInstance() throws IOException {
         wireMockServer.stubFor(get(urlMatching(
                 "/vfModuleCustomization/search/findFirstByModelCustomizationUUIDOrderByCreatedDesc\\?MODEL_CUSTOMIZATION_UUID=cb82ffd8-252a-11e7-93ae-92361f002671"))
