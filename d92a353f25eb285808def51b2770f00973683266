@@ -22,6 +22,29 @@
       "revId": "d92a353f25eb285808def51b2770f00973683266",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bdd61c67_0e03e2ae",
+        "filename": "common/src/main/java/org/onap/so/moi/GETMoiResponse.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2023-02-08T12:51:31Z",
+      "side": 1,
+      "message": "avoid using * imports",
+      "range": {
+        "startLine": 3,
+        "startChar": 37,
+        "endLine": 3,
+        "endChar": 42
+      },
+      "revId": "d92a353f25eb285808def51b2770f00973683266",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
