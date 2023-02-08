@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "823de37b_0d3b769c",
+        "filename": "common/src/main/java/org/onap/so/moi/Attributes.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2023-02-08T12:50:46Z",
+      "side": 1,
+      "message": "please license header to all class",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 24
+      },
+      "revId": "d92a353f25eb285808def51b2770f00973683266",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
