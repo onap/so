@@ -22,6 +22,7 @@ import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.CREAT
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.OPERATION_STATUS_PARAM_NAME;
 import java.net.URI;
 import java.util.Optional;
+import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.slf4j.Logger;
@@ -61,10 +62,10 @@ public class MonitorCnfmCreateJobTask {
     public void getCurrentOperationStatus(final BuildingBlockExecution execution) {
         try {
             LOGGER.debug("Executing getCurrentOperationStatus  ...");
-            final URI operation_status_url = execution.getVariable(CNFM_REQUEST_STATUS_CHECK_URL);
-            LOGGER.debug("Executing getCurrentOperationStatus for CNF... :{}", operation_status_url.toString());
+            final URI operationStatusURL = execution.getVariable(CNFM_REQUEST_STATUS_CHECK_URL);
+            LOGGER.debug("Executing getCurrentOperationStatus for CNF... :{}", operationStatusURL);
             final Optional<AsLcmOpOcc> instantiateOperationJobStatus =
-                    cnfmHttpServiceProvider.getInstantiateOperationJobStatus(operation_status_url.toString());
+                    cnfmHttpServiceProvider.getInstantiateOperationJobStatus(operationStatusURL.toString());
             if (instantiateOperationJobStatus.isPresent()) {
                 final AsLcmOpOcc asLcmOpOccResponse = instantiateOperationJobStatus.get();
                 if (asLcmOpOccResponse.getOperationState() != null) {
@@ -77,12 +78,12 @@ public class MonitorCnfmCreateJobTask {
                 LOGGER.debug("Operation {} without operationStatus and operation retrieval status :{}",
                         asLcmOpOccResponse.getId(), asLcmOpOccResponse.getOperationState());
             }
-            execution.setVariable(CREATE_CNF_STATUS_RESPONSE_PARAM_NAME, instantiateOperationJobStatus.get());
+            execution.setVariable(CREATE_CNF_STATUS_RESPONSE_PARAM_NAME, instantiateOperationJobStatus.orElseThrow());
             LOGGER.debug("Finished executing getCurrentOperationStatus for CNF...");
         } catch (final Exception exception) {
             final String message = "Unable to invoke get current Operation status";
             LOGGER.error(message);
-            exceptionUtil.buildAndThrowWorkflowException(execution, 1209, message);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 1209, message, ONAPComponents.SO);
 
         }
     }
@@ -95,7 +96,7 @@ public class MonitorCnfmCreateJobTask {
     public void timeOutLogFailue(final BuildingBlockExecution execution) {
         final String message = "CNF Instantiation operation time out";
         LOGGER.error(message);
-        exceptionUtil.buildAndThrowWorkflowException(execution, 1205, message);
+        exceptionUtil.buildAndThrowWorkflowException(execution, 1205, message, ONAPComponents.SO);
     }
 
     /**
@@ -112,15 +113,14 @@ public class MonitorCnfmCreateJobTask {
                     + (cnfInstantiateStautusResponse != null ? cnfInstantiateStautusResponse.getId() : "null")
                     + "Unable to retrieve OperationStatus";
             LOGGER.error(message);
-            exceptionUtil.buildAndThrowWorkflowException(execution, 1206, message);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 1206, message, ONAPComponents.SO);
         } else {
-            final OperationStateEnum operationStatus = operationStatusOption;
-            if (operationStatus != OperationStateEnum.COMPLETED) {
+            if (operationStatusOption != OperationStateEnum.COMPLETED) {
                 final String message = "Unable to instantiate jobId: "
                         + (cnfInstantiateStautusResponse != null ? cnfInstantiateStautusResponse.getId() : "null")
-                        + " OperationStatus: " + operationStatus;
+                        + " OperationStatus: " + operationStatusOption;
                 LOGGER.error(message);
-                exceptionUtil.buildAndThrowWorkflowException(execution, 1207, message);
+                exceptionUtil.buildAndThrowWorkflowException(execution, 1207, message, ONAPComponents.SO);
             }
             LOGGER.debug("Successfully completed CNF instatiation of job status {}", cnfInstantiateStautusResponse);
         }
