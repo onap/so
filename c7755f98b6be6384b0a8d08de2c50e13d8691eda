@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5355d4a0_d93a851e",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/Action.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 6218
+      },
+      "writtenOn": "2023-02-23T21:17:50Z",
+      "side": 1,
+      "message": "Why do we need RAN slice specific actions. Can we not just use createInstance,deleteInstance and updateInstance ?",
+      "revId": "c7755f98b6be6384b0a8d08de2c50e13d8691eda",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
