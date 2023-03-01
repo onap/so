@@ -37,6 +37,7 @@ insert into `service_recipe` (`id`, `ACTION`, `VERSION_STR`, `DESCRIPTION`, `ORC
 insert into `service_recipe` (`id`, `ACTION`, `VERSION_STR`, `DESCRIPTION`, `ORCHESTRATION_URI`, `SERVICE_PARAM_XSD`, `RECIPE_TIMEOUT`, `SERVICE_TIMEOUT_INTERIM`, `CREATION_TIMESTAMP`, `SERVICE_MODEL_UUID`) values (501,'healthCheck','1.0','Gr api recipe to do CNF health check', '/mso/async/services/WorkflowActionBB', NULL, 180, NULL, '2021-08-20 18:52:03', 'd88da85c-d9e8-4f73-b837-3a72a431622b');
 insert into `service_recipe` (`id`, `ACTION`, `VERSION_STR`, `DESCRIPTION`, `ORCHESTRATION_URI`, `SERVICE_PARAM_XSD`, `RECIPE_TIMEOUT`, `SERVICE_TIMEOUT_INTERIM`, `CREATION_TIMESTAMP`, `SERVICE_MODEL_UUID`) values (525,'upgradeCnf','1.0','Gr api recipe to do CNF upgrade', '/mso/async/services/WorkflowActionBB', NULL, 180, NULL, '2022-01-20 18:52:03', 'd88da85c-d9e8-4f73-b837-3a72a431622b');
 
+
 --
 -- Custom Reciepe for the VoLTE service added temporarily
 --
@@ -55,7 +56,6 @@ INSERT INTO `service_recipe` (`id`, `ACTION`, `VERSION_STR`, `DESCRIPTION`, `ORC
 INSERT INTO `service_recipe` (`id`, `ACTION`, `VERSION_STR`, `DESCRIPTION`, `ORCHESTRATION_URI`, `SERVICE_PARAM_XSD`, `RECIPE_TIMEOUT`, `SERVICE_TIMEOUT_INTERIM`, `CREATION_TIMESTAMP`, `SERVICE_MODEL_UUID`) VALUES (19,'updateInstance','1','Custom recipe to modify 3gpp service-instance if no custom BPMN flow is found','/mso/async/services/ModifySliceSubnet',NULL,180,NULL,'2020-08-18 18:40:03','3d30a774-e149-11ea-87d0-0242ac130003');
 INSERT INTO `service_recipe` (`id`, `ACTION`, `VERSION_STR`, `DESCRIPTION`, `ORCHESTRATION_URI`, `SERVICE_PARAM_XSD`, `RECIPE_TIMEOUT`, `SERVICE_TIMEOUT_INTERIM`, `CREATION_TIMESTAMP`, `SERVICE_MODEL_UUID`) VALUES (20,'activateInstance','1','Custom recipe to activate/deactivate 3gpp service-instance if no custom BPMN flow is found','/mso/async/services/ActivateSliceSubnet',NULL,180,NULL,'2020-08-18 18:40:03','3d30a774-e149-11ea-87d0-0242ac130003');
 INSERT INTO `service_recipe` (`id`, `ACTION`, `VERSION_STR`, `DESCRIPTION`, `ORCHESTRATION_URI`, `SERVICE_PARAM_XSD`, `RECIPE_TIMEOUT`, `SERVICE_TIMEOUT_INTERIM`, `CREATION_TIMESTAMP`, `SERVICE_MODEL_UUID`) VALUES (21,'deactivateInstance','1','Custom recipe to activate/deactivate 3gpp service-instance if no custom BPMN flow is found','/mso/async/services/ActivateSliceSubnet',NULL,180,NULL,'2020-08-18 18:40:03','3d30a774-e149-11ea-87d0-0242ac130003');
-
 -- Recipe for Service Intent
 
 INSERT INTO `service` (`MODEL_UUID`, `MODEL_NAME`, `MODEL_INVARIANT_UUID`, `MODEL_VERSION`, `DESCRIPTION`, `CREATION_TIMESTAMP`, `TOSCA_CSAR_ARTIFACT_UUID`) VALUES ('6790ab0e-034f-11eb-adc1-0242ac120002','COMMON_SI_DEFAULT','6790ab0e-034f-11eb-adc1-0242ac120002','1.0','Default service for Service Intent','2021-08-18 17:40:03',NULL);
