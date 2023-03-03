@@ -28,6 +28,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import java.io.ByteArrayInputStream;
@@ -44,7 +45,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -67,7 +67,7 @@ public class PnfEventReadyDmaapClientTest {
     private static final int PORT = 1234;
     private static final String PROTOCOL = "http";
     private static final String URI_PATH_PREFIX = "eventsForTesting";
-    private static final String EVENT_TOPIC_TEST = "eventTopicTest";
+    private static final String TOPIC_NAME = "PNF_READY_Test PNF_UPDATE_Test";
     private static final String CONSUMER_ID = "consumerTestId";
     private static final String CONSUMER_GROUP = "consumerGroupTest";
     private static final int TOPIC_LISTENER_DELAY_IN_SECONDS = 5;
@@ -87,7 +87,7 @@ public class PnfEventReadyDmaapClientTest {
         when(env.getProperty(eq("pnf.dmaap.host"))).thenReturn(HOST);
         when(env.getProperty(eq("pnf.dmaap.protocol"))).thenReturn(PROTOCOL);
         when(env.getProperty(eq("pnf.dmaap.uriPathPrefix"))).thenReturn(URI_PATH_PREFIX);
-        when(env.getProperty(eq("pnf.dmaap.topicName"))).thenReturn(EVENT_TOPIC_TEST);
+        when(env.getProperty(eq("pnf.dmaap.topicName"))).thenReturn(TOPIC_NAME);
         when(env.getProperty(eq("pnf.dmaap.consumerId"))).thenReturn(CONSUMER_ID);
         when(env.getProperty(eq("pnf.dmaap.consumerGroup"))).thenReturn(CONSUMER_GROUP);
         when(env.getProperty(eq("pnf.dmaap.topicListenerDelayInSeconds"), eq(Integer.class)))
@@ -110,24 +110,55 @@ public class PnfEventReadyDmaapClientTest {
      * run method should invoke thread from map to notify camunda process, remove element from the map (map is empty)
      * and shutdown the executor because of empty map
      */
-    @Ignore
     @Test
-    public void pnfCorrelationIdIsFoundInHttpResponse_notifyAboutPnfReady() throws IOException {
+    public void pnfCorrelationIdIsFoundInHttpResponse_notifyAboutPnfUpdate() throws IOException {
         when(httpClientMock.execute(any(HttpGet.class)))
                 .thenReturn(createResponse(String.format(JSON_EXAMPLE_WITH_PNF_CORRELATION_ID, PNF_CORRELATION_ID)));
         testedObjectInnerClassThread.run();
         ArgumentCaptor<HttpGet> captor1 = ArgumentCaptor.forClass(HttpGet.class);
         verify(httpClientMock).execute(captor1.capture());
-
         assertEquals(captor1.getValue().getURI().getHost(), HOST);
         assertEquals(captor1.getValue().getURI().getPort(), PORT);
         assertEquals(captor1.getValue().getURI().getScheme(), PROTOCOL);
-        assertEquals(captor1.getValue().getURI().getPath(),
-                "/" + URI_PATH_PREFIX + "/" + EVENT_TOPIC_TEST + "/" + CONSUMER_GROUP + "/" + CONSUMER_ID + "");
-
+        String[] topic = TOPIC_NAME.split("\\s");
+        String pnf_update = null;
+        for (String t : topic) {
+            if (t.matches("(.*)PNF_UPDATE(.*)")) {
+                pnf_update = t;
+                assertEquals(captor1.getValue().getURI().getPath(),
+                        "/" + URI_PATH_PREFIX + "/" + pnf_update + "/" + CONSUMER_GROUP + "/" + CONSUMER_ID + "");
+            }
+        }
         verify(threadMockToNotifyCamundaFlow).run();
         verify(executorMock).shutdown();
     }
+
+
+    @Test
+    public void pnfCorrelationIdIsFoundInHttpResponse_notifyAboutPnfReady() throws IOException {
+        ArgumentCaptor<HttpGet> captor1 = ArgumentCaptor.forClass(HttpGet.class);
+        when(httpClientMock.execute(any(HttpGet.class)))
+                .thenReturn(createResponse_forReady(
+                        String.format(JSON_EXAMPLE_WITH_PNF_CORRELATION_ID, PNF_CORRELATION_ID)))
+                .thenReturn(createResponse(String.format(JSON_EXAMPLE_WITH_PNF_CORRELATION_ID, PNF_CORRELATION_ID)));
+        testedObjectInnerClassThread.run();
+        verify(httpClientMock, times(2)).execute(captor1.capture());
+        assertEquals(captor1.getValue().getURI().getHost(), HOST);
+        assertEquals(captor1.getValue().getURI().getPort(), PORT);
+        assertEquals(captor1.getValue().getURI().getScheme(), PROTOCOL);
+        String[] topic = TOPIC_NAME.split("\\s");
+        String pnf_ready = null;
+        for (String t : topic) {
+            if (t.matches("(.*)PNF_READY(.*)")) {
+                pnf_ready = t;
+                assertEquals(captor1.getValue().getURI().getPath(),
+                        "/" + URI_PATH_PREFIX + "/" + pnf_ready + "/" + CONSUMER_GROUP + "/" + CONSUMER_ID + "");
+            }
+        }
+        verify(threadMockToNotifyCamundaFlow).run();
+        verify(executorMock).shutdown();
+    }
+
 
     /**
      * Test run method, where the are following conditions:
@@ -137,7 +168,6 @@ public class PnfEventReadyDmaapClientTest {
      * - map is filled with one entry with the pnfCorrelationId that does not match to pnfCorrelationId taken from http
      * response. run method should not do anything with the map not run any thread to notify camunda process
      */
-    @Ignore
     @Test
     public void pnfCorrelationIdIsFoundInHttpResponse_NotFoundInMap() throws IOException {
         when(httpClientMock.execute(any(HttpGet.class))).thenReturn(createResponse(
@@ -154,7 +184,6 @@ public class PnfEventReadyDmaapClientTest {
      * - map is filled with one entry with the pnfCorrelationId but no correlation id is taken from HttpResponse run
      * method should not do anything with the map and not run any thread to notify camunda process
      */
-    @Ignore
     @Test
     public void pnfCorrelationIdIsNotFoundInHttpResponse() throws IOException {
         when(httpClientMock.execute(any(HttpGet.class)))
@@ -195,4 +224,14 @@ public class PnfEventReadyDmaapClientTest {
         return response;
     }
 
+    private HttpResponse createResponse_forReady(String json) {
+        HttpEntity entity = new InputStreamEntity(new ByteArrayInputStream(json.getBytes()));
+        ProtocolVersion protocolVersion = new ProtocolVersion("", 1, 1);
+        HttpResponse response = new BasicHttpResponse(protocolVersion, 1, "");
+        response.setEntity(entity);
+        response.setStatusCode(500);
+        return response;
+    }
+
 }
+
