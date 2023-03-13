@@ -71,6 +71,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.so.bpmn.common.BBConstants;
+import org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader.NetworkSliceSubnetEBBLoader;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader.ServiceEBBLoader;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader.VnfEBBLoader;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.excpetion.VnfcMultipleRelationshipException;
@@ -111,7 +112,7 @@ public class WorkflowAction {
     private static final String VNF_TYPE = "vnfType";
     private static final String CONFIGURATION = "Configuration";
     private static final String SUPPORTEDTYPES =
-            "vnfs|vfModules|networks|networkCollections|volumeGroups|serviceInstances|instanceGroups";
+            "vnfs|vfModules|networks|networkCollections|volumeGroups|serviceInstances|instanceGroups|NetworkSliceSubnet";
     private static final String HOMINGSOLUTION = "Homing_Solution";
     private static final String SERVICE_TYPE_TRANSPORT = "TRANSPORT";
     private static final String SERVICE_TYPE_BONDING = "BONDING";
@@ -141,6 +142,9 @@ public class WorkflowAction {
     private VnfEBBLoader vnfEBBLoader;
     @Autowired
     private ServiceEBBLoader serviceEBBLoader;
+    @Autowired
+    private NetworkSliceSubnetEBBLoader networkSliceSubnetEBBLoader;
+
 
     public void setBbInputSetupUtils(BBInputSetupUtils bbInputSetupUtils) {
         this.bbInputSetupUtils = bbInputSetupUtils;
@@ -206,8 +210,11 @@ public class WorkflowAction {
                     && sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
                 List<Map<String, Object>> userParams =
                         sIRequest.getRequestDetails().getRequestParameters().getUserParams();
+                logger.debug(">>> userParams :{}", userParams);
                 for (Map<String, Object> params : userParams) {
+
                     if (params.containsKey(HOMINGSOLUTION)) {
+                        logger.debug(">>>> params: {}", params.get(HOMINGSOLUTION));
                         execution.setVariable(HOMING, !"none".equals(params.get(HOMINGSOLUTION)));
                     }
                 }
@@ -296,6 +303,8 @@ public class WorkflowAction {
         if (resourceType == WorkflowType.SERVICE || isVNFCreate(resourceType, requestAction)) {
             resourceList = serviceEBBLoader.getResourceListForService(sIRequest, requestAction, execution,
                     serviceInstanceId, resourceId, aaiResourceIds);
+        } else if (resourceType == WorkflowType.NETWORK_SLICE_SUBNET) {
+            resourceList = networkSliceSubnetEBBLoader.setNetworkSliceSubnetResource(resourceId);
         } else if (resourceType == WorkflowType.VNF
                 && (DELETE_INSTANCE.equalsIgnoreCase(requestAction) || REPLACEINSTANCE.equalsIgnoreCase(requestAction)
                         || (RECREATE_INSTANCE.equalsIgnoreCase(requestAction)))) {
@@ -823,7 +832,7 @@ public class WorkflowAction {
     }
 
     protected String convertTypeFromPlural(String type) {
-        if (!type.matches(SUPPORTEDTYPES)) {
+        if (!type.matches(SUPPORTEDTYPES) || type.equals("NetworkSliceSubnet")) {
             return type;
         } else {
             if (type.equals(SERVICE_INSTANCES)) {
