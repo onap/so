@@ -35,6 +35,7 @@ public final class PayloadConstants {
     public static final String SCOPE = "scope";
     public static final String ACTION = "action";
     public static final String MODE = "mode";
+    public static final String NSSI_SCOPE = "nssi";
     public static final String SEPARATOR = "-";
     public static final String PNF_SCOPE = "pnf";
     public static final String VNF_SCOPE = "vnf";

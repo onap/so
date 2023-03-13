@@ -30,6 +30,7 @@
     <module>so-bpmn-building-blocks</module>
     <module>so-bpmn-infrastructure-flows</module>
     <module>mso-infrastructure-bpmn</module>
+    <module>so-bpmn-moi</module>
   </modules>
   <!-- Define artifact versions for child modules -->
   <dependencyManagement>

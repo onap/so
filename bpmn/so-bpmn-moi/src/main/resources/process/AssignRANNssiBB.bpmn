@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_18uqst7" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.1.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.17.0">
+  <bpmn:process id="AssignRANNssiBB" name="AssignRANNssiBB" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_07dyds8</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_1u6nifv">
+      <bpmn:incoming>Flow_1jwhdm2</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_07dyds8" sourceRef="StartEvent_1" targetRef="Tast_PrepareOOFrequest" />
+    <bpmn:serviceTask id="Tast_PrepareOOFrequest" name="Prepare OOF request" camunda:expression="${AssignRANNssiBBTasks.helloWorld(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>Flow_07dyds8</bpmn:incoming>
+      <bpmn:outgoing>Flow_1erbnfk</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1erbnfk" sourceRef="Tast_PrepareOOFrequest" targetRef="Activity_0crrz1x" />
+    <bpmn:sequenceFlow id="Flow_1trcgyv" sourceRef="Task_createNSSIinAAI" targetRef="Task_CreateSliceProfileInstance" />
+    <bpmn:serviceTask id="Task_createNSSIinAAI" name="Create NSSI in AAI" camunda:expression="${AssignRANNssiBBTasks.createNssi(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>Flow_1svksq9</bpmn:incoming>
+      <bpmn:outgoing>Flow_1trcgyv</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_08asmxy" sourceRef="Task_Createallotted-resourcesinAAI" targetRef="Task_AddSlice-profilerelationshipwithNSSI" />
+    <bpmn:sequenceFlow id="Flow_1ut0avh" sourceRef="Task_CreateSliceProfileInstance" targetRef="Task_Createallotted-resourcesinAAI" />
+    <bpmn:sequenceFlow id="Flow_1jwhdm2" sourceRef="Task_AddSlice-profilerelationshipwithNSSI" targetRef="Event_1u6nifv" />
+    <bpmn:serviceTask id="Task_Createallotted-resourcesinAAI" name="Create allotted-resources in AAI" camunda:expression="${AssignRANNssiBBTasks.allotResources(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>Flow_1ut0avh</bpmn:incoming>
+      <bpmn:outgoing>Flow_08asmxy</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_CreateSliceProfileInstance" name="Create Slice Profile Instance" camunda:expression="${AssignRANNssiBBTasks.createSliceProfileInstance(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>Flow_1trcgyv</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ut0avh</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_AddSlice-profilerelationshipwithNSSI" name="Add Slice-profile relationship with NSSI" camunda:expression="${AssignRANNssiBBTasks.addSliceProfileToNssi(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>Flow_08asmxy</bpmn:incoming>
+      <bpmn:outgoing>Flow_1jwhdm2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1svksq9" sourceRef="Activity_0crrz1x" targetRef="Task_createNSSIinAAI" />
+    <bpmn:serviceTask id="Activity_0crrz1x" name="Process OOF response" camunda:expression="${AssignRANNssiBBTasks.processOof(execution, InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>Flow_1erbnfk</bpmn:incoming>
+      <bpmn:outgoing>Flow_1svksq9</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="AssignRANNssiBB">
+      <bpmndi:BPMNEdge id="Flow_1svksq9_di" bpmnElement="Flow_1svksq9">
+        <di:waypoint x="530" y="100" />
+        <di:waypoint x="590" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jwhdm2_di" bpmnElement="Flow_1jwhdm2">
+        <di:waypoint x="1150" y="100" />
+        <di:waypoint x="1202" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ut0avh_di" bpmnElement="Flow_1ut0avh">
+        <di:waypoint x="840" y="100" />
+        <di:waypoint x="890" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08asmxy_di" bpmnElement="Flow_08asmxy">
+        <di:waypoint x="990" y="100" />
+        <di:waypoint x="1050" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1trcgyv_di" bpmnElement="Flow_1trcgyv">
+        <di:waypoint x="690" y="100" />
+        <di:waypoint x="740" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1erbnfk_di" bpmnElement="Flow_1erbnfk">
+        <di:waypoint x="360" y="100" />
+        <di:waypoint x="430" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07dyds8_di" bpmnElement="Flow_07dyds8">
+        <di:waypoint x="188" y="100" />
+        <di:waypoint x="260" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="82" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1u6nifv_di" bpmnElement="Event_1u6nifv">
+        <dc:Bounds x="1202" y="82" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0m2rb7h_di" bpmnElement="Task_createNSSIinAAI">
+        <dc:Bounds x="590" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_15uwt50_di" bpmnElement="Task_AddSlice-profilerelationshipwithNSSI">
+        <dc:Bounds x="1050" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_182lm7y_di" bpmnElement="Task_Createallotted-resourcesinAAI">
+        <dc:Bounds x="890" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0a88ka0_di" bpmnElement="Tast_PrepareOOFrequest">
+        <dc:Bounds x="260" y="60" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ornhso_di" bpmnElement="Activity_0crrz1x">
+        <dc:Bounds x="430" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1p2gzmo_di" bpmnElement="Task_CreateSliceProfileInstance">
+        <dc:Bounds x="740" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

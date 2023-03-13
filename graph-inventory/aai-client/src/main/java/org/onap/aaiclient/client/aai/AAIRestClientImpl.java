@@ -36,6 +36,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.graphinventory.Format;
+import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -103,6 +104,17 @@ public class AAIRestClientImpl implements AAIRestClientI {
     public void updatePnf(String pnfId, Pnf pnf) {
         new AAIResourcesClient().update(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(pnfId)),
                 pnf);
+    }
+
+    public Optional<ServiceInstance> getServiceInstanceByIdWithDepth(String serviceInstanceId, String serviceType,
+            String globalSubscriberId) {
+        Response response =
+                new AAIResourcesClient()
+                        .getFullResponse(AAIUriFactory
+                                .createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId)
+                                        .serviceSubscription(serviceType).serviceInstance(serviceInstanceId))
+                                .depth(Depth.ALL));
+        return Optional.ofNullable(response.readEntity(ServiceInstance.class));
     }
 
     @Override
