@@ -22,12 +22,8 @@ for an Operator to provide "SDNC preload").
 
 Additional info in:
 
-.. toctree::
-   :maxdepth: 1
-   :titlesonly:
-
-   CDS Documentation <../../../../../submodules/ccsdk/cds.git/docs/index.rst>
-   CDS vDNS E2E Automation <https://wiki.onap.org/display/DW/vDNS+CDS+Dublin>
+- CDS Documentation
+- CDS vDNS E2E Automation <https://wiki.onap.org/display/DW/vDNS+CDS+Dublin>
 
 
 Request Example :

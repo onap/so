@@ -669,7 +669,7 @@ will directly return abort without querying policy in table
 **rainy_day_handler_macro**
 
 
-.. code-block:: bash
+.. code-block::
 
     curl --location --request POST 'http://master2:30277/onap/so/infra/serviceInstantiation/v7/serviceInstances' \
     --header 'Accept: application/json' \

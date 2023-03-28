@@ -44,4 +44,5 @@ Detailed documentation can be found here:
 
    apis/serviceInstances-api.rst
    apis/e2eServiceInstances-api.rst
+   apis/onap3gppServiceInstances-api.rst
    apis/consumed-apis.rst

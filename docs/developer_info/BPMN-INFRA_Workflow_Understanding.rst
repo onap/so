@@ -603,12 +603,13 @@ Response: Response is returned with an empty entity
 
  b. Response Body:
 
-    {
-    "service":
-     {
-     "serviceId":"8a95e3ac-32cd-4ffb-b9e3-5366b393a7a2",
-     "operationId":"a970a804-7ac5-4de9-b6db-17352afbc6fa"
+.. code-block:: json
 
+    {
+      "service": {
+          "serviceId":"8a95e3ac-32cd-4ffb-b9e3-5366b393a7a2",
+          "operationId":"a970a804-7ac5-4de9-b6db-17352afbc6fa"
+      }
     }
 
 9. CreateCommunicationService--> generateE2EServiceProfile()
