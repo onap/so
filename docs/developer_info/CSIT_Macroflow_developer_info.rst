@@ -15,7 +15,7 @@ Ensure you have a healthy ONAP Deployment running. The following components will
 - MultiCloud
 
 What is Macroflow?
------------------
+------------------
 
 The SO building blocks are a set of database-driven, configurable and generic process steps to be leveraged through several actions defined as 'Macro' flows. For each of the macro flows, there are a set of actions to be performed which are implemented as building blocks - which then implement generic logic to handle the orchestration of services and various type of resources orchestrated by ONAP, as well as their corresponding actions.
 
@@ -37,6 +37,7 @@ First pull the CSIT repo from Gerrit, either with or without the hooks
 … code-block::
 
     git clone "https://gerrit.onap.org/r/integration/csit"
+
 or
 
 .. code-block::
@@ -79,7 +80,7 @@ If you look at the contents of the plans/so/macroflow you will see the following
 **docker-compose.yml:** This lists all the requrired docker.
 
 How to run tests against specific SO versions
---------------------------------------------
+---------------------------------------------
 It is possible to run the CSIT Macroflow suite against local docker images although it is not the default. Through this method specific versions of SO can be tested.
 
 There are two changes required to make this work.
@@ -91,7 +92,7 @@ There are two changes required to make this work.
 This should be enough to run the CSIT Macroflow test suite locally.
 
 CSIT Macroflow Tests High Level Scenarios
----------------------------------------------------
+-----------------------------------------
 
 **Step 1:**
 

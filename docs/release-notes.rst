@@ -9,72 +9,42 @@ Service Orchestrator Release Notes
 
 The SO provides the highest level of service orchestration in the ONAP architecture. 
 
-
-=============
-Release Notes
-=============
-
 Version: 1.11.0
-==============
+---------------
 
-    :Release Date: 2022-09-08
+:Release Date: 2022-09-08
 
 SO Release Image Versions
---------------------------
- - so-bpmn-infra
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    :Version: 1.11.0
+ - so-bpmn-infra **1.11.0**
 
- - so-catalog-db-adapter
+ - so-catalog-db-adapter **1.11.0**
 
-    :Version: 1.11.0
+ - so-admin-cockpit **1.8.3**
 
- - so-admin-cockpit
+ - so-nssmf-adapter **1.9.1**
 
-    :Version: 1.8.3
+ - so-openstack-adapter **1.11.0**
 
- - so-nssmf-adapter
+ - so-request-db-adapter **1.11.0**
 
-    :Version: 1.9.1
+ - so-sdc-controller **1.11.0**
 
- - so-openstack-adapter
+ - so-sdnc-adapter **1.11.0**
 
-    :Version: 1.11.0
+ - so-sol003-adapter **1.8.2**
 
- - so-request-db-adapter
+ - so-api-handler **1.11.0**
 
-    :Version: 1.11.0
+ - so-etsi-nfvo-ns-lcm **1.8.2**
 
- - so-sdc-controller
+ - so-oof-adapter **1.8.3**
 
-    :Version: 1.11.0
-
- - so-sdnc-adapter
-
-    :Version: 1.11.0
-
- - so-sol003-adapter
-
-    :Version: 1.8.2
-
- - so-api-handler
-
-    :Version: 1.11.0
-
- - so-etsi-nfvo-ns-lcm
-
-    :Version: 1.8.2
-
- - so-oof-adapter
-
-    :Version: 1.8.3
-
- - so-cnf-adapter
-
-    :Version: 1.11.0
+ - so-cnf-adapter **1.11.0**
 
 Release Purpose
-----------------
+~~~~~~~~~~~~~~~
 SO Kohn Release.
 The key deliverable for this release is refactoring SO for better internal architecture.
 
@@ -101,7 +71,7 @@ The full list of fixed bugs is available on `JIRA Kohn BUGS
 <https://jira.onap.org/browse/SO-3908?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20Bug%20AND%20fixVersion%20%3D%20%22Kohn%20Release%22>`_
 
 Security Notes
---------------
+~~~~~~~~~~~~~~
 
 *Fixed Security Issues*
 
@@ -112,12 +82,12 @@ Security Notes
 
 Quick Links:
 
-- `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`__
-- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1702>`__
+- `SO project page`_
+- `Passing Badge information for SO`_
 
 **Known Issues**
 
-*  `SO-3237 <https://jira.onap.org/browse/SO-3237>`_ - Exposed HTTP port. 
+*  `SO-3237`_ - Exposed HTTP port. 
 *  `SO-3745 <https://jira.onap.org/browse/SO-3745>`_ - SO images contain 1 GPLv3 lib
 
 **Upgrade Notes**
@@ -131,70 +101,46 @@ Quick Links:
 **Other**
 
 	N/A
+
 ***************************************************************************************
 
 
 Version: 1.10.0
-==============
+---------------
 
-    :Release Date: 2022-04-08
+:Release Date: 2022-04-08
 
 SO Release Image Versions
---------------------------
- - so-bpmn-infra
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    :Version: 1.10.0
+ - so-bpmn-infra **1.10.0**
 
- - so-catalog-db-adapter
+ - so-catalog-db-adapter **1.10.0**
 
-    :Version: 1.10.0
+ - so-admin-cockpit **1.8.3**
 
- - so-admin-cockpit
+ - so-nssmf-adapter **1.9.1**
 
-    :Version: 1.8.3
+ - so-openstack-adapter **1.10.0**
 
- - so-nssmf-adapter
+ - so-request-db-adapter **1.10.0**
 
-    :Version: 1.9.1
+ - so-sdc-controller **1.10.0**
 
- - so-openstack-adapter
+ - so-sdnc-adapter **1.10.0**
 
-    :Version: 1.10.0
+ - so-sol003-adapter **1.8.2**
 
- - so-request-db-adapter
+ - so-api-handler **1.10.0**
 
-    :Version: 1.10.0
+ - so-etsi-nfvo-ns-lcm **1.8.2**
 
- - so-sdc-controller
+ - so-oof-adapter **1.8.3**
 
-    :Version: 1.10.0
-
- - so-sdnc-adapter
-
-    :Version: 1.10.0
-
- - so-sol003-adapter
-
-    :Version: 1.8.2
-
- - so-api-handler
-
-    :Version: 1.10.0
-
- - so-etsi-nfvo-ns-lcm
-
-    :Version: 1.8.2
-
- - so-oof-adapter
-
-    :Version: 1.8.3
-
- - so-cnf-adapter
-
-    :Version: 1.10.0
+ - so-cnf-adapter **1.10.0**
 
 Release Purpose
-----------------
+~~~~~~~~~~~~~~~
 SO Jakarta Release.
 The key deliverable for this release is refactoring SO for better internal architecture.
 
@@ -221,7 +167,7 @@ The full list of fixed bugs is available on `JIRA Jakarta BUGS
 <https://jira.onap.org/browse/SO-3908?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20Bug%20AND%20fixVersion%20%3D%20%22jakarta%20Release%22>`_
 
 Security Notes
---------------
+~~~~~~~~~~~~~~
 
 *Fixed Security Issues*
 
@@ -232,12 +178,12 @@ Security Notes
 
 Quick Links:
 
-- `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`__
-- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1702>`__
+- `SO project page`_
+- `Passing Badge information for SO`_
 
 **Known Issues**
 
-*  `SO-3237 <https://jira.onap.org/browse/SO-3237>`_ - Exposed HTTP port. 
+*  `SO-3237`_ - Exposed HTTP port. 
 *  `SO-3745 <https://jira.onap.org/browse/SO-3745>`_ - SO images contain 1 GPLv3 lib
 
 **Upgrade Notes**
@@ -251,71 +197,47 @@ Quick Links:
 **Other**
 
 	N/A
+
 ***************************************************************************************
 
 
 
 Version: 1.9.2
-==============
+--------------
 
-    :Release Date: 2021-10-14
+:Release Date: 2021-10-14
 
 SO Release Image Versions
---------------------------
- - so-bpmn-infra
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    :Version: 1.9.2
+ - so-bpmn-infra **1.9.2**
 
- - so-catalog-db-adapter
+ - so-catalog-db-adapter **1.9.2**
 
-    :Version: 1.9.2
+ - so-admin-cockpit **1.8.3**
 
- - so-admin-cockpit
+ - so-nssmf-adapter **1.9.1**
 
-    :Version: 1.8.3
+ - so-openstack-adapter **1.9.2**
 
- - so-nssmf-adapter
+ - so-request-db-adapter **1.9.2**
 
-    :Version: 1.9.1
+ - so-sdc-controller **1.9.2**
 
- - so-openstack-adapter
+ - so-sdnc-adapter **1.9.2**
 
-    :Version: 1.9.2
+ - so-sol003-adapter **1.8.2**
 
- - so-request-db-adapter
+ - so-api-handler-infra **1.9.2**
 
-    :Version: 1.9.2
+ - so-etsi-nfvo-ns-lcm **1.8.2**
 
- - so-sdc-controller
+ - so-oof-adapter **1.8.3**
 
-    :Version: 1.9.2
-
- - so-sdnc-adapter
-
-    :Version: 1.9.2
-
- - so-sol003-adapter
-
-    :Version: 1.8.2
-
- - so-api-handler-infra
-
-    :Version: 1.9.2
-
- - so-etsi-nfvo-ns-lcm
-
-    :Version: 1.8.2
-
- - so-oof-adapter
-
-    :Version: 1.8.3
-
- - so-cnf-adapter
-
-    :Version: 1.9.1
+ - so-cnf-adapter **1.9.1**
 
 Release Purpose
-----------------
+~~~~~~~~~~~~~~~
 SO Istanbul Release.
 The key deliverable for this release is refactoring SO for better internal architecture.
 
@@ -343,7 +265,7 @@ The full list of fixed bugs is available on `JIRA Istanbul BUGS
 <https://jira.onap.org/issues/?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20Bug%20AND%20fixVersion%20%3D%20%22istanbul%20Release%22>`_
 
 Security Notes
---------------
+~~~~~~~~~~~~~~
 
 *Fixed Security Issues*
 
@@ -353,12 +275,12 @@ Security Notes
 
 Quick Links:
 
-- `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`__
-- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1702>`__
+- `SO project page`_
+- `Passing Badge information for SO`_
 
 **Known Issues**
 
-*  `SO-3237 <https://jira.onap.org/browse/SO-3237>`_ - Exposed HTTP port. 
+*  `SO-3237`_ - Exposed HTTP port. 
 
 
 **Upgrade Notes**
@@ -372,53 +294,35 @@ Quick Links:
 **Other**
 
 	N/A
+
 ***************************************************************************************
 
-=============
-Release Notes
-=============
-
 Version: 1.8.3
-==============
+--------------
 
 :Release Date: 2021-09-15
 
 SO Release Image Versions
---------------------------
- - so-bpmn-infra
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    :Version: 1.8.3
+ - so-bpmn-infra **1.8.3**
 
- - so-catalog-db-adapter
+ - so-catalog-db-adapter **1.8.3**
 
-    :Version: 1.8.3
+ - so-nssmf-adapter **1.8.3**
 
- - so-nssmf-adapter
+ - so-openstack-adapter **1.8.3**
 
-    :Version: 1.8.3
+ - so-request-db-adapter **1.8.3**
 
- - so-openstack-adapter
+ - so-sdc-controller **1.8.3**
 
-    :Version: 1.8.3
+ - so-sdnc-adapter **1.8.3**
 
- - so-request-db-adapter
-
-    :Version: 1.8.3
-
- - so-sdc-controller
-
-    :Version: 1.8.3
-
- - so-sdnc-adapter
-
-    :Version: 1.8.3
-
- - so-api-handler-infra
-
-    :Version: 1.8.3
+ - so-api-handler-infra **1.8.3**
 
 Release Purpose
-----------------
+~~~~~~~~~~~~~~~
 SO Honolulu Maintence Release.
 The key delivereable for this release is fixing the known issues of H release of SO and sync up with the latest CDS client version.
 
@@ -445,7 +349,7 @@ The key delivereable for this release is fixing the known issues of H release of
 
 
 Security Notes
---------------
+~~~~~~~~~~~~~~
 
 *Fixed Security Issues*
 
@@ -455,12 +359,12 @@ Security Notes
 
 Quick Links:
 
-- `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`__
-- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1702>`__
+- `SO project page`_
+- `Passing Badge information for SO`_
 
 **Known Issues**
 
-*  `SO-3237 <https://jira.onap.org/browse/SO-3237>`_ - Exposed HTTP port. 
+*  `SO-3237`_ - Exposed HTTP port. 
 
 
 **Upgrade Notes**
@@ -474,70 +378,46 @@ Quick Links:
 **Other**
 
 	N/A
+
 ***************************************************************************************
 
 
-Version: 8.0
-==============
+Version: 8.0.0
+--------------
 
 :Release Date: 2021-04-19
 
 SO Release Image Versions
---------------------------
- - so-bpmn-infra
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    :Version: 1.8.2
+ - so-bpmn-infra **1.8.2**
 
- - so-catalog-db-adapter
+ - so-catalog-db-adapter **1.8.2**
 
-    :Version: 1.8.2
+ - so-admin-cockpit **1.8.2**
 
- - so-admin-cockpit
+ - so-nssmf-adapter **1.8.3**
 
-    :Version: 1.8.2
+ - so-openstack-adapter **1.8.2**
 
- - so-nssmf-adapter
+ - so-request-db-adapter **1.8.2**
 
-    :Version: 1.8.3
+ - so-sdc-controller **1.8.2**
 
- - so-openstack-adapter
+ - so-sdnc-adapter **1.8.2**
 
-    :Version: 1.8.2
+ - so-sol003-adapter **1.8.2**
 
- - so-request-db-adapter
+ - so-api-handler-infra **1.8.2**
 
-    :Version: 1.8.2
+ - so-etsi-nfvo-ns-lcm **1.8.2**
 
- - so-sdc-controller
+ - so-oof-adapter **1.8.3**
 
-    :Version: 1.8.2
-
- - so-sdnc-adapter
-
-    :Version: 1.8.2
-
- - so-sol003-adapter
-
-    :Version: 1.8.2
-
- - so-api-handler-infra
-
-    :Version: 1.8.2
-
- - so-etsi-nfvo-ns-lcm
-
-    :Version: 1.8.2
-
- - so-oof-adapter
-
-    :Version: 1.8.3
-
- - so-cnf-adapter
-
-    :Version: 1.9.1
+ - so-cnf-adapter **1.9.1**
 
 Release Purpose
-----------------
+~~~~~~~~~~~~~~~
 SO Honolulu Release.
 The key delivereable for this release is refactoring SO for better internal architecture.
 
@@ -567,7 +447,7 @@ The full list of fixed bugs is available on `JIRA Honolulu BUGS
 
 
 Security Notes
---------------
+~~~~~~~~~~~~~~
 
 *Fixed Security Issues*
 
@@ -577,13 +457,13 @@ Security Notes
 
 Quick Links:
 
-- `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`__
-- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1702>`__
+- `SO project page`_
+- `Passing Badge information for SO`_
 
 **Known Issues**
 *  `SO-3628 <https://jira.onap.org/browse/SO-3628>`_ - SO cannot send CDS request due to grpc schema problem.
 *  `SO-3626 <https://jira.onap.org/browse/SO-3626>`_ - SO does not requests CDS for skipPostInstantiation flag set to False.
-*  `SO-3237 <https://jira.onap.org/browse/SO-3237>`_ - Exposed HTTP port. 
+*  `SO-3237`_ - Exposed HTTP port. 
 
 
 **Upgrade Notes**
@@ -597,76 +477,49 @@ Quick Links:
 **Other**
 
 	N/A
+
 ***************************************************************************************
 
 
 
-
 Version: 1.7.10
-==============
+---------------
 
 :Release Date: 2020-11-19
 
 SO Release Image Versions
---------------------------
- - so-bpmn-infra
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    :Version: 1.7.10
+ - so-bpmn-infra **1.7.10**
 
- - so-catalog-db-adapter
+ - so-catalog-db-adapter **1.7.10**
 
-    :Version: 1.7.10
+ - so-monitoring **1.7.10**
 
- - so-monitoring
+ - so-nssmf-adapter **1.7.10**
 
-    :Version: 1.7.10
+ - so-openstack-adapter **1.7.10**
 
- - so/nssmf-adapter
+ - so-request-db-adapter **1.7.10**
 
-    :Version: 1.7.10
+ - so-sdc-controller **1.7.10**
 
- - so/openstack-adapter
+ - so-sdnc-adapter **1.7.10**
 
-    :Version: 1.7.10
+ - so-vnfm-adapter **1.7.10**
 
- - so/request-db-adapter
+ - so-api-handler-infra **1.7.10**
 
-    :Version: 1.7.10
+ - so-api-handler-infra **1.7.10**
 
- - so/sdc-controller
+ - so-so-etsi-nfvo-ns-lcm **1.7.7**
 
-    :Version: 1.7.10
+ - so-so-oof-adapter **1.7.6**
 
- - so/sdnc-adapter
-
-    :Version: 1.7.10
-
- - so/vnfm-adapter
-
-    :Version: 1.7.10
-
- - so/api-handler-infra
-
-    :Version: 1.7.10
-
- - so/api-handler-infra
-
-    :Version: 1.7.10
-
- - so/so-etsi-nfvo-ns-lcm
-
-    :Version: 1.7.7
-
- - so/so-oof-adapter
-
-    :Version: 1.7.6
-
- - so/cnf-adapter
-
-    :Version: 1.7.10
+ - so-cnf-adapter **1.7.10**
 
 Release Purpose
-----------------
+~~~~~~~~~~~~~~~
 SO Guilin Release
 
 **Epics**
@@ -679,7 +532,7 @@ SO Guilin Release
 *  `SO-2842 <https://jira.onap.org/browse/SO-2842>`_ - Support for SOL005 NBI API Handler
 *  `SO-2841 <https://jira.onap.org/browse/SO-2841>`_ - Support SO NFVO Microservice Plugin Capabilities
 *  `SO-2840 <https://jira.onap.org/browse/SO-2840>`_ - Support for ETSI NFV NFVO  Orchestrator in ONAP SO (ONAP SO ETSI-Aligned Hierarchical Orchestration)
-*  `SO-2841 <https://jira.onap.org/browse/SO-2681>`_ - SO direct Catalog Management Support - Guilin
+*  `SO-2681 <https://jira.onap.org/browse/SO-2681>`_ - SO direct Catalog Management Support - Guilin
 *  `SO-2046 <https://jira.onap.org/browse/SO-2046>`_ - support Java 11 upgrade
 
 
@@ -763,7 +616,7 @@ Listed below are highest and high piority jira tasks handled in the Guilin relea
 
 
 Security Notes
---------------
+~~~~~~~~~~~~~~
 
 *Fixed Security Issues*
 
@@ -773,8 +626,8 @@ Security Notes
 
 Quick Links:
 
-- `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`__
-- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1702>`__
+- `SO project page`_
+- `Passing Badge information for SO <https://bestpractices.coreinfrastructure.org/en/projects/1702>`_
 
 **Known Issues**
 *  `SO-3403 <https://jira.onap.org/browse/SO-3403>`_ - The functionality of the SO cnf-adapter will be tested further and will be delivered by the Guilin Maintenance Release as a 1.7.11 patch.
@@ -793,6 +646,7 @@ Quick Links:
 **Other**
 
 	N/A
+
 ***************************************************************************************
 
 
@@ -801,23 +655,22 @@ Version: 1.6.4
 
 :Release Date: 13th July 2020
 
-**Docker Images**
+SO Release Image Versions
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**Dockers released for SO:**
-
- - onap/so/api-handler-infra
- - onap/so/bpmn-infra
- - onap/so/catalog-db-adapter
- - onap/so/openstack-adapter
- - onap/so/request-db-adapter
- - onap/so/sdc-controller
- - onap/so/sdnc-adapter
- - onap/so/so-monitoring
- - onap/so/vfc-adapter
- - onap/so/vnfm-adapter
- - onap/so/ve-vnfm-adapter
- - onap/so/nssmf-adapter
- - onap/so/appc-orchestrator
+ - onap-so-api-handler-infra
+ - onap-so-bpmn-infra
+ - onap-so-catalog-db-adapter
+ - onap-so-openstack-adapter
+ - onap-so-request-db-adapter
+ - onap-so-sdc-controller
+ - onap-so-sdnc-adapter
+ - onap-so-so-monitoring
+ - onap-so-vfc-adapter
+ - onap-so-vnfm-adapter
+ - onap-so-ve-vnfm-adapter
+ - onap-so-nssmf-adapter
+ - onap-so-appc-orchestrator
 
 **Release Purpose**
 
@@ -845,8 +698,8 @@ The main goal of the Frankfurt maintenance release was to:
  
  Quick Links:
 
- - `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`_
- - `Passing Badge information for SO <https://bestpractices.coreinfrastructure.org/en/projects/1702>`_
+- `SO project page`_
+- `Passing Badge information for SO`_
 
 
 **Known Issues**
@@ -867,29 +720,29 @@ OJSI Issues
 **Other**
 
 	N/A
+
 ***************************************************************************************
 
 Version: 1.6.3
------------------------
+--------------
 
 :Release Date: 
 
-**Docker Images**
+SO Release Image Versions
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**Dockers released for SO:**
-
- - onap/so/api-handler-infra
- - onap/so/bpmn-infra
- - onap/so/catalog-db-adapter
- - onap/so/openstack-adapter
- - onap/so/request-db-adapter
- - onap/so/sdc-controller
- - onap/so/sdnc-adapter
- - onap/so/so-monitoring
- - onap/so/vfc-adapter
- - onap/so/vnfm-adapter
- - onap/so/ve-vnfm-adapter
- - onap/so/nssmf-adapter
+ - onap-so-api-handler-infra
+ - onap-so-bpmn-infra
+ - onap-so-catalog-db-adapter
+ - onap-so-openstack-adapter
+ - onap-so-request-db-adapter
+ - onap-so-sdc-controller
+ - onap-so-sdnc-adapter
+ - onap-so-so-monitoring
+ - onap-so-vfc-adapter
+ - onap-so-vnfm-adapter
+ - onap-so-ve-vnfm-adapter
+ - onap-so-nssmf-adapter
 
 **Release Purpose**
 
@@ -915,9 +768,9 @@ The main goal of the Frankfurt release was to:
 Features Being considered for F release (As per the resource availability):
 
 +---------------------------------------------------------------------+
-|SOL005 Adapter supports communication security       	              |                                    
+|SOL005 Adapter supports communication security                       |                                    
 +---------------------------------------------------------------------+
-|SOL005 Adapter supports NS LCM         |                                    
+|SOL005 Adapter supports NS LCM                                       |                                    
 +---------------------------------------------------------------------+
 |Multi-domain Optical Network Service Orchestration Support in SO     |                                    
 +---------------------------------------------------------------------+
@@ -1079,14 +932,13 @@ Features Being considered for F release (As per the resource availability):
  
  Quick Links:
 
- - `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`_
- - `Passing Badge information for SO <https://bestpractices.coreinfrastructure.org/en/projects/1702>`_
+- `SO project page`_
+- `Passing Badge information for SO`_
 
 
 **Known Issues**
 
 -  [`SO-2903 <https://jira.onap.org/browse/SO-2903>`__\ ] - Include so-appc-orchestrator with SO OOM
-Appc Orchestrator Pod  release : Appc - Ochestrator code changes will be delivered as part of the patch on Frankfurt as the OOM changes were delayed. These would be release as part of the post release flows.
 
 
 OJSI Issues
@@ -1106,25 +958,24 @@ OJSI Issues
 	N/A
 
 Version: 5.0.1
------------------------
+--------------
 
 :Release Date: 2019-10-11
 
-**Docker Images**
+SO Release Image Versions
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**Dockers released for SO:**
-
- - onap/so/api-handler-infra,1.5.3
- - onap/so/bpmn-infra,1.5.3
- - onap/so/catalog-db-adapter,1.5.3
- - onap/so/openstack-adapter,1.5.3
- - onap/so/request-db-adapter,1.5.3
- - onap/so/sdc-controller,1.5.3
- - onap/so/sdnc-adapter,1.5.3
- - onap/so/so-monitoring,1.5.3
- - onap/so/vfc-adapter,1.5.3
- - onap/so/vnfm-adapter,1.5.3
- - onap/so/vnfm-simulator,1.5.3
+ - onap-so-api-handler-infra,1.5.3
+ - onap-so-bpmn-infra,1.5.3
+ - onap-so-catalog-db-adapter,1.5.3
+ - onap-so-openstack-adapter,1.5.3
+ - onap-so-request-db-adapter,1.5.3
+ - onap-so-sdc-controller,1.5.3
+ - onap-so-sdnc-adapter,1.5.3
+ - onap-so-so-monitoring,1.5.3
+ - onap-so-vfc-adapter,1.5.3
+ - onap-so-vnfm-adapter,1.5.3
+ - onap-so-vnfm-simulator,1.5.3
 
 **Release Purpose**
 
@@ -1243,8 +1094,8 @@ The main goal of the El-Alto release was to improve documentation, UT improvemen
  
  Quick Links:
 
- - `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`_
- - `Passing Badge information for SO <https://bestpractices.coreinfrastructure.org/en/projects/1702>`_
+- `SO project page`_
+- `Passing Badge information for SO`_
 
 
 **Known Issues**
@@ -1283,20 +1134,19 @@ Version: 1.4.4
 
 :Release Date: 2019-06-13
 
-**Docker Images**
+SO Release Image Versions
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**Dockers released for SO:**
-
- - onap/so/api-handler-infra,1.4.4
- - onap/so/bpmn-infra,1.4.4
- - onap/so/catalog-db-adapter,1.4.4
- - onap/so/openstack-adapter,1.4.4
- - onap/so/request-db-adapter,1.4.4
- - onap/so/sdc-controller,1.4.4
- - onap/so/sdnc-adapter,1.4.4
- - onap/so/so-monitoring,1.4.4
- - onap/so/vfc-adapter,1.4.4
- - onap/so/vnfm-adapter,1.4.4
+ - onap-so-api-handler-infra,1.4.4
+ - onap-so-bpmn-infra,1.4.4
+ - onap-so-catalog-db-adapter,1.4.4
+ - onap-so-openstack-adapter,1.4.4
+ - onap-so-request-db-adapter,1.4.4
+ - onap-so-sdc-controller,1.4.4
+ - onap-so-sdnc-adapter,1.4.4
+ - onap-so-so-monitoring,1.4.4
+ - onap-so-vfc-adapter,1.4.4
+ - onap-so-vnfm-adapter,1.4.4
 
 **Release Purpose**
 
@@ -1477,13 +1327,13 @@ The main goal of the Dublin release was to:
 
 
 **Security Notes**
- SO code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The SO open Critical security vulnerabilities and their risk assessment have been documented as part of the `project <https://wiki.onap.org/pages/viewpage.action?pageId=43385708>`_.
+ SO code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The SO open Critical security vulnerabilities and their risk assessment have been documented as part of the `project`_.
 
  Quick Links:
 
- - `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`_
- - `Passing Badge information for SO <https://bestpractices.coreinfrastructure.org/en/projects/1702>`_
- - `Project Vulnerability Review Table for SO <https://wiki.onap.org/pages/viewpage.action?pageId=43385708>`_
+- `SO project page`_
+- `Passing Badge information for SO`_
+- `Project Vulnerability Review Table for SO`_
 
 
 **Known Issues**
@@ -1529,19 +1379,18 @@ This release is supporting the features of Casablanca and their defect fixes.
 - `SO-1416 <https://jira.onap.org/browse/SO-1416>`_
 - `SO-1417 <https://jira.onap.org/browse/SO-1417>`_
 
-**Docker Images**
+SO Release Image Versions
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Dockers released for SO:
-
- - onap/so/api-handler-infra,1.3.7
- - onap/so/bpmn-infra,1.3.7
- - onap/so/catalog-db-adapter,1.3.7
- - onap/so/openstack-adapter,1.3.7
- - onap/so/request-db-adapter,1.3.7
- - onap/so/sdc-controller,1.3.7
- - onap/so/sdnc-adapter,1.3.7
- - onap/so/so-monitoring,1.3.7
- - onap/so/vfc-adapter,1.3.7
+ - onap-so-api-handler-infra,1.3.7
+ - onap-so-bpmn-infra,1.3.7
+ - onap-so-catalog-db-adapter,1.3.7
+ - onap-so-openstack-adapter,1.3.7
+ - onap-so-request-db-adapter,1.3.7
+ - onap-so-sdc-controller,1.3.7
+ - onap-so-sdnc-adapter,1.3.7
+ - onap-so-so-monitoring,1.3.7
+ - onap-so-vfc-adapter,1.3.7
 
 **Known Issues**
 
@@ -1551,13 +1400,13 @@ Dockers released for SO:
 
 **Security Notes**
 
-	SO code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The SO open Critical security vulnerabilities and their risk assessment have been documented as part of the `project <https://wiki.onap.org/pages/viewpage.action?pageId=43385708>`_.
+	SO code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The SO open Critical security vulnerabilities and their risk assessment have been documented as part of the `project`_.
 
 	Quick Links:
 
- - `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`_
- - `Passing Badge information for SO <https://bestpractices.coreinfrastructure.org/en/projects/1702>`_
- - `Project Vulnerability Review Table for SO <https://wiki.onap.org/pages/viewpage.action?pageId=43385708>`_
+- `SO project page`_
+- `Passing Badge information for SO`_
+- `Project Vulnerability Review Table for SO`_
 
 
 Version: 1.3.6
@@ -1577,36 +1426,35 @@ This release is supporting the features of Casablanca and their defect fixes.
 - `SO-1257 <https://jira.onap.org/browse/SO-1257>`_
 - `SO-1258 <https://jira.onap.org/browse/SO-1258>`_
 - `SO-1256 <https://jira.onap.org/browse/SO-1256>`_
-- `SO-1194 <https://jira.onap.org/browse/SO-1256>`_
+- `SO-1194`_
 - `SO-1248 <https://jira.onap.org/browse/SO-1248>`_
 - `SO-1184 <https://jira.onap.org/browse/SO-1184>`_
 
-**Docker Images**
+SO Release Image Versions
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Dockers released for SO:
-
- - onap/so/api-handler-infra,1.3.6
- - onap/so/bpmn-infra,1.3.6
- - onap/so/catalog-db-adapter,1.3.6
- - onap/so/openstack-adapter,1.3.6
- - onap/so/request-db-adapter,1.3.6
- - onap/so/sdc-controller,1.3.6
- - onap/so/sdnc-adapter,1.3.6
- - onap/so/so-monitoring,1.3.6
- - onap/so/vfc-adapter,1.3.6
+ - onap-so-api-handler-infra,1.3.6
+ - onap-so-bpmn-infra,1.3.6
+ - onap-so-catalog-db-adapter,1.3.6
+ - onap-so-openstack-adapter,1.3.6
+ - onap-so-request-db-adapter,1.3.6
+ - onap-so-sdc-controller,1.3.6
+ - onap-so-sdnc-adapter,1.3.6
+ - onap-so-so-monitoring,1.3.6
+ - onap-so-vfc-adapter,1.3.6
 
 **Known Issues**
 
 
 **Security Notes**
 
-	SO code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The SO open Critical security vulnerabilities and their risk assessment have been documented as part of the `project <https://wiki.onap.org/pages/viewpage.action?pageId=43385708>`_.
+	SO code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The SO open Critical security vulnerabilities and their risk assessment have been documented as part of the `project`_.
 
 	Quick Links:
 
- - `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`_
- - `Passing Badge information for SO <https://bestpractices.coreinfrastructure.org/en/projects/1702>`_
- - `Project Vulnerability Review Table for SO <https://wiki.onap.org/pages/viewpage.action?pageId=43385708>`_
+- `SO project page`_
+- `Passing Badge information for SO`_
+- `Project Vulnerability Review Table for SO`_
 
 New  release over  master branch for Dublin development
 
@@ -1631,19 +1479,18 @@ Features delivered in this release:
  - Support to the CCVPN Usecase.
  - Workflow Designer Integration.
 
-**Docker Images**
+SO Release Image Versions
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Dockers released for SO:
-
- - onap/so/api-handler-infra,1.3.3
- - onap/so/bpmn-infra,1.3.3
- - onap/so/catalog-db-adapter,1.3.3
- - onap/so/openstack-adapter,1.3.3
- - onap/so/request-db-adapter,1.3.3
- - onap/so/sdc-controller,1.3.3
- - onap/so/sdnc-adapter,1.3.3
- - onap/so/so-monitoring,1.3.3
- - onap/so/vfc-adapter,1.3.3
+ - onap-so-api-handler-infra,1.3.3
+ - onap-so-bpmn-infra,1.3.3
+ - onap-so-catalog-db-adapter,1.3.3
+ - onap-so-openstack-adapter,1.3.3
+ - onap-so-request-db-adapter,1.3.3
+ - onap-so-sdc-controller,1.3.3
+ - onap-so-sdnc-adapter,1.3.3
+ - onap-so-so-monitoring,1.3.3
+ - onap-so-vfc-adapter,1.3.3
 
 **Known Issues**
 
@@ -1676,13 +1523,13 @@ Below issues will be resolved in the next release:
 
 **Security Notes**
 
-	SO code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The SO open Critical security vulnerabilities and their risk assessment have been documented as part of the `project <https://wiki.onap.org/pages/viewpage.action?pageId=43385708>`_.
+	SO code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The SO open Critical security vulnerabilities and their risk assessment have been documented as part of the `project`_.
 
 	Quick Links:
 
- - `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`_
- - `Passing Badge information for SO <https://bestpractices.coreinfrastructure.org/en/projects/1702>`_
- - `Project Vulnerability Review Table for SO <https://wiki.onap.org/pages/viewpage.action?pageId=43385708>`_
+ - `SO project page`_
+ - `Passing Badge information for SO`_
+ - `Project Vulnerability Review Table for SO`_
 
 Version: 1.3.1
 --------------
@@ -1743,7 +1590,7 @@ Quick Links:
 
 - `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`_
 - `Passing Badge information for SO <https://bestpractices.coreinfrastructure.org/en/projects/1702>`_
-- `Project Vulnerability Review Table for SO <https://wiki.onap.org/pages/viewpage.action?pageId=28377799>`_
+- `Project Vulnerability Review Table for SO <https://wiki.onap.org/pages/viewpage.action?pageId=43385708>`_
 
 **Upgrade Notes**
 	NA

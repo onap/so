@@ -45,7 +45,8 @@ container through configmap.
  to be restarted.
 
 .. code-block:: bash
- kubectl -n onap edit configmap dev-so-monitoring-app-configmap
+
+  kubectl -n onap edit configmap dev-so-monitoring-app-configmap
 
 .. image:: ../images/configmap.png
 
@@ -53,8 +54,8 @@ Special care needs to be given to the indentation. Spring needs to be inline wit
 added accordingly.
 
 .. warning::
-Attention! The default setup of the OOM makes SO Monitoring password is being automatically generated during ONAP
-deployment and injected through k8s secret
+  Attention! The default setup of the OOM makes SO Monitoring password is being automatically generated during ONAP
+  deployment and injected through k8s secret
 
 2. Setup, retrieve and edit default SO Monitoring password
 ----------------------------------------------------------
@@ -132,7 +133,7 @@ Then access the UI of SO Monitoring, by default https://<k8s-worker-ip>:30224/
 .. image:: ../images/ui.png
 
 4. Hiding the SO Monitoring service (ClusterIP)
----------------------------------------
+-----------------------------------------------
 
 The SO Monitoring service is set to the NodePort type. It is used to expose the service at a static port.
 Hence there is possibility to contact the NodePort Service, from outside cluster, by requesting <NodeIP>:<NodePort>.

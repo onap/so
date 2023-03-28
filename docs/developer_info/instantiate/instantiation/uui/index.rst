@@ -6,9 +6,4 @@
 e2eServiceInstance mode via ONAP UUI Portal
 ===========================================
 
-
-.. toctree::
-   :maxdepth: 1
-   :titlesonly:
-
-   ../../../../../submodules/usecase-ui.git/docs/platform/installation/user-guide/index.rst
+UUI documentation, see :ref:`UUI <onap-usecase-ui:uui_index>` for details.
