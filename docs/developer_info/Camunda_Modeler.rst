@@ -9,7 +9,7 @@ The Camunda_Modeler_ is the editor for BPMN 2.0 process flows.  It is a standalo
 
 .. _Camunda_Modeler: https://docs.camunda.org/manual/latest/modeler/camunda-modeler/
 
-.. image:: images/camunda_modeler_1.png
+.. image:: ../images/camunda_modeler_1.png
 
 Modeler Templates
 ------------------

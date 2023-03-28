@@ -99,7 +99,7 @@ The log files for SO-Admin-Cockpit can be found within the SO-Admin-Cockpit pod.
 Replacing <namespace> with your environments namespace and <soAdminCockpitPodName> with the full name of your SO-Admin-Cockpit pod. This command will give you some detailed information from the execution of the pod.
 
 CORS (Cross-Origin Resource Sharing) Error
-----------
+------------------------------------------
 
 Pre-Dublin SO-Monitoring Components may experience CORS issues.
 
