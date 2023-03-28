@@ -6,8 +6,4 @@
 A La Carte mode Service Instantiation via ONAP VID Portal
 =========================================================
 
-.. toctree::
-   :maxdepth: 1
-   :titlesonly:
-
-   ../../../../../submodules/vid.git/docs/humaninterfaces.rst
+VID documentation, see :ref:`VID <onap-vid:instantiate>` for details.

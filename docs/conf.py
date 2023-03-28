@@ -2,6 +2,8 @@ project = "onap"
 release = "kohn"
 version = "kohn"
 
+doc_url = 'https://docs.onap.org/projects'
+
 author = "Open Network Automation Platform"
 # yamllint disable-line rule:line-length
 copyright = "ONAP. Licensed under Creative Commons Attribution 4.0 International License"
@@ -30,9 +32,16 @@ extensions = [
 # Change to {releasename} after you have created the new 'doc' branch.
 #
 
+# temp fix START
+branch = 'latest'
+intersphinx_mapping = {}
+intersphinx_mapping['onap-vid'] = ('{}/onap-vid/en/%s'.format(doc_url) % branch, None)
+# temp fix END
+
 branch = 'kohn'
 
 intersphinx_mapping = {}
+intersphinx_mapping['onap-usecase-ui'] = ('{}/onap-usecase-ui/en/%s'.format(doc_url) % branch, None)
 doc_url = 'https://docs.onap.org/projects'
 master_doc = 'index'
 

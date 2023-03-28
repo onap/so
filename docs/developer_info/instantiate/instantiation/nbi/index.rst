@@ -10,13 +10,7 @@ Service Instantiation via ONAP NBI API (TM Forum)
 
 ONAP NBI allow you to use a TM Forum standardized API (serviceOrder API)
 
-Additional info in:
-
-.. toctree::
-   :maxdepth: 1
-   :titlesonly:
-
-   NBI Guide <../../../../../submodules/externalapi/nbi.git/docs/offeredapis/offeredapis.rst>
+Additional info NBI Guide
 
 
 ONAP NBI will convert that request to ONAP SO request.
