@@ -29,4 +29,4 @@ Characteristics
 Example: VnfAdapterRestV1.bpmn
 -------------------------------
 
-.. image:: images/BPMN_Subprocess_process_flows_1.png
+.. image:: ../images/BPMN_Subprocess_process_flows_1.png
