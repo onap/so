@@ -487,8 +487,8 @@
         <dependencies>
           <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
--           <artifactId>jackson-annotations</artifactId>
--           <version>2.12.1</version>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.12.1</version>
           </dependency>
         </dependencies>
       </plugin>
