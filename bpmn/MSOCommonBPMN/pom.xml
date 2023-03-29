@@ -161,10 +161,6 @@
       <artifactId>camunda-connect-connectors-all</artifactId>
     </dependency>
     <dependency>
-      <groupId>commons-beanutils</groupId>
-      <artifactId>commons-beanutils</artifactId>
-    </dependency>
-    <dependency>
       <!-- Needed for InMemoryH2Test -->
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
