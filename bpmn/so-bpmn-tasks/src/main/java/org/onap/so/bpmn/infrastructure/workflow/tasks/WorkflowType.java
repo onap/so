@@ -32,6 +32,7 @@ public enum WorkflowType {
     NETWORKCOLLECTION("NetworkCollection"),
     CONFIGURATION("Configuration"),
     INSTANCE_GROUP("InstanceGroup"),
+    NETWORK_SLICE_SUBNET("NetworkSliceSubnet"),
     CNF("Cnf");
 
     private final String type;
