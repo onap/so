@@ -93,6 +93,7 @@ public class JerseyConfiguration extends ResourceConfig {
         register(RequestConflictMapper.class);
         register(WorkflowEngineConnectionMapper.class);
         register(OrchestrationTasks.class);
+        register(ManagedObject3gppServiceInstances.class);
         // this registration seems to be needed to get predictable
         // execution behavior for the above JSON Exception Mappers
         register(com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider.class);
