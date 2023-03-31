@@ -1,0 +1,26 @@
+{
+  "sliceProfileList": [
+    {
+      "plmnInfoList": [
+        {
+          "plmnId": {
+            "mcc": 260,
+            "mnc": 70
+          },
+          "snssai": {
+            "sst": "test",
+            "sd": "test"
+          }
+        }
+      ],
+      "rANSliceSubnetProfile": {
+        "coverageAreaTAList": "test",
+        "dLLatency": 20,
+        "uLLatency": 20,
+        "resourceSharingLevel": "SHARED",
+        "serviceType": "eMBB",
+        "maxNumberofUEs": 2000
+      }
+    }
+  ]
+}
