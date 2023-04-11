@@ -13,14 +13,13 @@
   <packaging>pom</packaging>
   <properties>
     <camunda.bpm.assert.version>1.2</camunda.bpm.assert.version>
-    <h2.version>1.4.196</h2.version>
     <groovy.version>2.5.3</groovy.version>
     <saxon.version>10.5</saxon.version>
     <xmlunit.version>2.4.0</xmlunit.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <sdnc.northbound.version>1.5.2</sdnc.northbound.version>
-    <logback-core.version>1.2.10</logback-core.version>
+    <logback-core.version>1.4.6</logback-core.version>
   </properties>
   <modules>
     <module>MSOCoreBPMN</module>
