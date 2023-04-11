@@ -23,27 +23,28 @@ package org.onap.so.bpmn.infrastructure.adapter.cnfm.tasks;
 import static java.util.Objects.isNull;
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.CLOUD_OWNER_PARAM_KEY;
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.CLOUD_REGION_PARAM_KEY;
+import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.NAMESPACE_KEY;
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.RESOURCE_ID_KEY;
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.SERVICE_INSTANCE_ID_PARAM_KEY;
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.SERVICE_INSTANCE_NAME_PARAM_KEY;
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.TENANT_ID_PARAM_KEY;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import org.apache.groovy.util.Maps;
 import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.cnfm.lcm.model.AsInfoModificationRequestDeploymentItems;
 import org.onap.so.cnfm.lcm.model.AsInstance;
 import org.onap.so.cnfm.lcm.model.CreateAsRequest;
 import org.onap.so.cnfm.lcm.model.InstantiateAsRequest;
-import org.onap.so.cnfm.lcm.model.AsInfoModificationRequestDeploymentItems;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.RequestDetails;
@@ -62,6 +63,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class CnfInstantiateTask {
+    private static final String DEPLOYMENT_ITEMS_KEY = "deploymentItems";
     private static final String CREATE_AS_REQUEST_OBJECT = "CreateAsRequestObject";
     private static final String INSTANTIATE_AS_REQUEST_OBJECT = "InstantiateAsRequest";
     private static final String CNFM_REQUEST_STATUS_CHECK_URL = "CnfmStatusCheckUrl";
@@ -105,11 +107,19 @@ public class CnfInstantiateTask {
 
             final CreateAsRequest createAsRequest = new CreateAsRequest().asdId(modelInfo.getModelVersionId())
                     .asInstanceName(requestDetails.getRequestInfo().getInstanceName())
-                    .additionalParams(Maps.of(CLOUD_OWNER_PARAM_KEY, cloudConfiguration.getCloudOwner(),
-                            CLOUD_REGION_PARAM_KEY, cloudConfiguration.getLcpCloudRegionId(), TENANT_ID_PARAM_KEY,
-                            cloudConfiguration.getTenantId(), SERVICE_INSTANCE_ID_PARAM_KEY,
-                            serviceInstance.getServiceInstanceId(), SERVICE_INSTANCE_NAME_PARAM_KEY,
-                            serviceInstance.getServiceInstanceName(), RESOURCE_ID_KEY, resourceId));
+                    .putAdditionalParamsItem(CLOUD_OWNER_PARAM_KEY, cloudConfiguration.getCloudOwner())
+                    .putAdditionalParamsItem(CLOUD_REGION_PARAM_KEY, cloudConfiguration.getLcpCloudRegionId())
+                    .putAdditionalParamsItem(TENANT_ID_PARAM_KEY, cloudConfiguration.getTenantId())
+                    .putAdditionalParamsItem(SERVICE_INSTANCE_ID_PARAM_KEY, serviceInstance.getServiceInstanceId())
+                    .putAdditionalParamsItem(SERVICE_INSTANCE_NAME_PARAM_KEY, serviceInstance.getServiceInstanceName())
+                    .putAdditionalParamsItem(RESOURCE_ID_KEY, resourceId);
+
+            final List<Map<String, Object>> userParams = requestDetails.getRequestParameters().getUserParams();
+            if (userParams != null) {
+                userParams.stream().filter(entry -> entry.containsKey(NAMESPACE_KEY)).findAny()
+                        .ifPresent(userParam -> createAsRequest.putAdditionalParamsItem(NAMESPACE_KEY,
+                                userParam.get(NAMESPACE_KEY)));
+            }
 
             LOGGER.debug("Adding CreateAsRequest to execution {}", createAsRequest);
 
@@ -152,20 +162,16 @@ public class CnfInstantiateTask {
                     (ExecuteBuildingBlock) execution.getVariable("buildingBlock");
             final RequestDetails requestDetails = executeBuildingBlock.getRequestDetails();
             final InstantiateAsRequest instantiateAsRequest = new InstantiateAsRequest();
+
             if (requestDetails != null && requestDetails.getRequestParameters() != null) {
-                List<Map<String, Object>> userParams = requestDetails.getRequestParameters().getUserParams();
+                final List<Map<String, Object>> userParams = requestDetails.getRequestParameters().getUserParams();
                 if (userParams != null && !userParams.isEmpty()) {
-                    List<Object> deploymentItems = new ArrayList<>();
-                    List<AsInfoModificationRequestDeploymentItems> deploymentItemsReq = new ArrayList<>();
-                    for (Map<String, Object> userParam : userParams) {
-                        if (userParam.containsKey("deploymentItems")) {
-                            deploymentItems = (ArrayList<Object>) userParam.get("deploymentItems");
-                            break;
-                        }
-                    }
-                    for (Object deploymentItem : deploymentItems) {
-                        Map<String, Object> deploymentItemMap = (Map<String, Object>) deploymentItem;
-                        AsInfoModificationRequestDeploymentItems item = new AsInfoModificationRequestDeploymentItems();
+                    final List<Object> deploymentItems = getDeploymentItems(userParams);
+                    final List<AsInfoModificationRequestDeploymentItems> deploymentItemsReq = new ArrayList<>();
+                    for (final Object deploymentItem : deploymentItems) {
+                        final Map<String, Object> deploymentItemMap = (Map<String, Object>) deploymentItem;
+                        final AsInfoModificationRequestDeploymentItems item =
+                                new AsInfoModificationRequestDeploymentItems();
                         item.setDeploymentItemsId(deploymentItemMap.get("deploymentItemsId").toString());
                         item.setLifecycleParameterKeyValues(deploymentItemMap.get("lifecycleParameterKeyValues"));
                         deploymentItemsReq.add(item);
@@ -188,7 +194,7 @@ public class CnfInstantiateTask {
         try {
             final InstantiateAsRequest instantiateAsRequest = execution.getVariable(INSTANTIATE_AS_REQUEST_OBJECT);
             final String asInstanceId = execution.getVariable(AS_INSTANCE_ID);
-            Optional<URI> cnfStatusCheckURL =
+            final Optional<URI> cnfStatusCheckURL =
                     cnfmHttpServiceProvider.invokeInstantiateAsRequest(instantiateAsRequest, asInstanceId);
             execution.setVariable(CNFM_REQUEST_STATUS_CHECK_URL, cnfStatusCheckURL.orElseThrow());
             execution.setVariable(MONITOR_JOB_NAME, "Instantiate");
@@ -199,4 +205,12 @@ public class CnfInstantiateTask {
         }
     }
 
+    private List<Object> getDeploymentItems(final List<Map<String, Object>> userParams) {
+        for (final Map<String, Object> userParam : userParams) {
+            if (userParam.containsKey(DEPLOYMENT_ITEMS_KEY)) {
+                return (ArrayList<Object>) userParam.get(DEPLOYMENT_ITEMS_KEY);
+            }
+        }
+        return Collections.emptyList();
+    }
 }

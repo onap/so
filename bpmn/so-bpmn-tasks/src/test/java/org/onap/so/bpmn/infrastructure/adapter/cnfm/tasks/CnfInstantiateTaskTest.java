@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.infrastructure.adapter.cnfm.tasks;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -32,6 +33,7 @@ import static org.mockito.Mockito.when;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.INPUT_PARAMETER;
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.CLOUD_OWNER_PARAM_KEY;
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.CLOUD_REGION_PARAM_KEY;
+import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.NAMESPACE_KEY;
 import static org.onap.so.cnfm.lcm.model.utils.AdditionalParamsConstants.TENANT_ID_PARAM_KEY;
 import java.util.Collections;
 import java.util.Optional;
@@ -43,9 +45,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.utils.InputParameter;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
-import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.cnfm.lcm.model.AsInstance;
 import org.onap.so.cnfm.lcm.model.CreateAsRequest;
@@ -66,8 +66,7 @@ public class CnfInstantiateTaskTest {
     private static final String AS_INSTANCE_ID = "asInstanceid";
     private static final String CLOUD_OWNER = "CloudOwner";
     private static final String LCP_CLOUD_REGION_ID = "RegionOne";
-    private static final String CNF_ID = UUID.randomUUID().toString();
-    private static final String CNF_NAME = "CNF_NAME";
+    private static final String NAME_SPACE = "default";
     private static final String JOB_ID = UUID.randomUUID().toString();
 
     @Mock
@@ -92,6 +91,8 @@ public class CnfInstantiateTaskTest {
         assertEquals(LCP_CLOUD_REGION_ID, actual.getAdditionalParams().get(CLOUD_REGION_PARAM_KEY).toString());
         assertEquals(StubbedBuildingBlockExecution.getTenantId(),
                 actual.getAdditionalParams().get(TENANT_ID_PARAM_KEY).toString());
+        assertEquals(NAME_SPACE, actual.getAdditionalParams().get(NAMESPACE_KEY).toString());
+
     }
 
     @Test
@@ -157,26 +158,14 @@ public class CnfInstantiateTaskTest {
         final InstantiateAsRequest actual = stubbedExecution.getVariable(INSTANTIATE_AS_REQUEST_OBJECT);
         assertNotNull(actual);
         assertNotNull(actual.getDeploymentItems());
+        assertEquals(1, actual.getDeploymentItems().size());
+        assertFalse(actual.getDeploymentItems().get(0).getDeploymentItemsId().isBlank());
     }
 
     private Optional<AsInstance> getAsInstance() {
         final AsInstance response = new AsInstance();
         response.setAsInstanceid(JOB_ID);
         return Optional.of(response);
-    }
-
-    private GenericVnf getGenericVnf() {
-        final GenericVnf genericVnf = new GenericVnf();
-        genericVnf.setVnfId(CNF_ID);
-        genericVnf.setModelInfoGenericVnf(getModelInfoGenericVnf());
-        genericVnf.setVnfName(CNF_NAME);
-        return genericVnf;
-    }
-
-    private ModelInfoGenericVnf getModelInfoGenericVnf() {
-        final ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
-        modelInfoGenericVnf.setModelInstanceName(MODEL_INSTANCE_NAME);
-        return modelInfoGenericVnf;
     }
 
     private CnfInstantiateTask getCnfInstantiateTask() {
