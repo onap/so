@@ -46,3 +46,4 @@ Detailed documentation can be found here:
    apis/e2eServiceInstances-api.rst
    apis/onap3gppServiceInstances-api.rst
    apis/consumed-apis.rst
+   apis/ManagedObject3gppServiceInstances.rst

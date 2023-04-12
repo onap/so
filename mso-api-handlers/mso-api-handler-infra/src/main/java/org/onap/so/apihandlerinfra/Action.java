@@ -49,5 +49,8 @@ public enum Action implements Actions {
     addMembers,
     removeMembers,
     forCustomWorkflow,
+    createRanSlice,
+    modifyRanSlice,
+    deleteRanSlice,
     upgradeCnf
 }

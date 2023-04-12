@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "SO Guilin APIs",
+    "title": "SO London APIs",
     "version": "3.1.2"
   },
   "servers": [
@@ -48,6 +48,9 @@
     },
     {
       "name": "onapsoinfrainstanceManagement"
+    },
+    {
+      "name": "ManagedObject3gppServiceInstances"
     }
   ],
   "paths": {
@@ -3492,6 +3495,170 @@
         },
         "x-codegen-request-body-name": "body"
       }
+    },
+    "/onap/so/infra/moi/api/rest/{version}/NetworkSliceSubnet/{NSSID}": {
+      "put": {
+        "tags": [
+          "ManagedObject3gppServiceInstances"
+        ],
+        "summary": "Create a 3GPP MOI NSSI on a version provided",
+        "operationId": "createMOI",
+        "parameters": [
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "[vV][1]",
+              "type": "string"
+            }
+          },
+          {
+            "name": "NSSID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/createMOI"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "default": {
+            "description": "successful operation",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
+      "patch": {
+        "tags": [
+          "ManagedObject3gppServiceInstances"
+        ],
+        "summary": "Modify a 3GPP MOI NSSI on a version provided",
+        "operationId": "modifyMOI",
+        "parameters": [
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "[vV][1]",
+              "type": "string"
+            }
+          },
+          {
+            "name": "NSSID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/modifyMOI"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "default": {
+            "description": "successful operation",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
+      "delete": {
+        "tags": [
+          "ManagedObject3gppServiceInstances"
+        ],
+        "summary": "delete a 3GPP MOI NSSI on a version provided",
+        "operationId": "deleteMOI",
+        "parameters": [
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "[vV][1]",
+              "type": "string"
+            }
+          },
+          {
+            "name": "NSSID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/deleteMOI"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "default": {
+            "description": "successful operation",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
+      "get": {
+        "tags": [
+          "ManagedObject3gppServiceInstances"
+        ],
+        "summary": "get the slice profile list of given nssiID",
+        "operationId": "getMOI",
+        "parameters": [
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "[vV][1]",
+              "type": "string"
+            }
+          },
+          {
+            "name": "NSSID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "successful operation",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
     }
   },
   "components": {
@@ -3659,7 +3826,7 @@
         "type": "object",
         "properties": {
           "workflowSpecificationList": {
-            "type": "array",
+            "type": "C",
             "description": "List of Workflow specification data",
             "items": {
               "$ref": "#/components/schemas/WorkflowSpecification"
@@ -4270,6 +4437,150 @@
             }
           }
         ]
+      },
+      "createMOI": {
+        "type": "object",
+        "properties": {
+          "attributes": {
+            "type": "object",
+            "properties": {
+              "sliceProfileList": {
+                "type": "array",
+                "description": "List of slice profile attributes",
+                "items": {
+                  "type": "array",
+                  "description": "List of PlmnData attributes",
+                  "items": {
+                    "plmnid": {
+                      "type": "object",
+                      "properties": {
+                        "mcc": {
+                          "type": "integer",
+                          "description": "mcc"
+                        },
+                        "mnc": {
+                          "type": "integer",
+                          "description": "mnc"
+                        }
+                      }
+                    },
+                    "snssai": {
+                      "type": "object",
+                      "properties": {
+                        "mcc": {
+                          "type": "integer",
+                          "description": "mcc"
+                        },
+                        "mnc": {
+                          "type": "integer",
+                          "description": "mnc"
+                        }
+                      }
+                    }
+                  },
+                  "RANSliceSubnetProfile": {
+                    "type": "object",
+                    "properties": {
+                      "coverageAreaTAList": {
+                        "type": "integer",
+                        "description": "coverageAreaTAList"
+                      },
+                      "latency": {
+                        "type": "integer",
+                        "description": "latency"
+                      },
+                      "areaTrafficCapDL": {
+                        "type": "integer",
+                        "description": "areaTrafficCapDL"
+                      },
+                      "resourceSharingLevel": {
+                        "type": "string",
+                        "description": "resourceSharingLevel"
+                      },
+                      "serviceType": {
+                        "type": "string",
+                        "description": "serviceType"
+                      },
+                      "maxNumberofUEs": {
+                        "type": "integer",
+                        "description": "maxNumberofUEs"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "modifyMOI": {
+        "type": "object",
+        "properties": {
+          "attributes": {
+            "type": "object",
+            "properties": {
+              "sliceProfileList": {
+                "type": "array",
+                "description": "List of slice profile attributes",
+                "items": {
+                  "sliceProfileId": {
+                    "type": "string",
+                    "description": "sliceProfileId to be modify"
+                  },
+                  "RANSliceSubnetProfile": {
+                    "type": "object",
+                    "properties": {
+                      "coverageAreaTAList": {
+                        "type": "integer",
+                        "description": "coverageAreaTAList"
+                      },
+                      "latency": {
+                        "type": "integer",
+                        "description": "latency"
+                      },
+                      "areaTrafficCapDL": {
+                        "type": "integer",
+                        "description": "areaTrafficCapDL"
+                      },
+                      "resourceSharingLevel": {
+                        "type": "string",
+                        "description": "resourceSharingLevel"
+                      },
+                      "serviceType": {
+                        "type": "string",
+                        "description": "serviceType"
+                      },
+                      "maxNumberofUEs": {
+                        "type": "integer",
+                        "description": "maxNumberofUEs"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "deleteMOI": {
+        "type": "object",
+        "properties": {
+          "attributes": {
+            "type": "object",
+            "properties": {
+              "sliceProfileList": {
+                "type": "object",
+                "description": "List of slice profile attributes",
+                "properties": {
+                  "sliceProfileId": {
+                    "type": "string",
+                    "description": "sliceProfileId to be modify"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
