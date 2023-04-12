@@ -56,6 +56,10 @@ public class GeneratePayloadForCds {
     @Autowired
     private PnfCDSRequestProvider pnfCDSRequestProvider;
 
+    @Autowired
+    private NssiCDSRequestProvider nssiCDSRequestProvider;
+
+
     /**
      * Build properties like (blueprint name, version, action etc..) along with the request payload for vnf, vf-module
      * and service.
@@ -144,6 +148,10 @@ public class GeneratePayloadForCds {
                 break;
             case PayloadConstants.PNF_SCOPE:
                 requestProvider = pnfCDSRequestProvider;
+                break;
+
+            case PayloadConstants.NSSI_SCOPE:
+                requestProvider = nssiCDSRequestProvider;
                 break;
             default:
                 throw new PayloadGenerationException("No scope defined with " + scope);

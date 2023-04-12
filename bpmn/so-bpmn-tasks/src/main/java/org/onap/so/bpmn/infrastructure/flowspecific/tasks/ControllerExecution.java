@@ -94,6 +94,14 @@ public class ControllerExecution {
                 ModelInfoServiceInstance modelInfoServiceInstance =
                         gbb.getServiceInstance().getModelInfoServiceInstance();
                 controllerActor = Optional.ofNullable(modelInfoServiceInstance.getControllerActor()).orElse("CDS");
+            } else if ("nssi".equalsIgnoreCase(scope)) {
+                GeneralBuildingBlock gbb = execution.getGeneralBuildingBlock();
+                ModelInfoServiceInstance modelInfoServiceInstance =
+                        gbb.getServiceInstance().getModelInfoServiceInstance();
+                logger.info(">>>> modelInfoServiceInstance: {}", modelInfoServiceInstance);
+                ModelInfoServiceInstance modelInfoServiceInstance1 = execution.getVariable("nssiModelInfo");
+                logger.info(">>>> ex1: {}", modelInfoServiceInstance1);
+                controllerActor = Optional.ofNullable(modelInfoServiceInstance.getControllerActor()).orElse("CDS");
             } else {
                 GenericVnf genericVnf = getGenericVnf(execution);
                 String modelUuid = genericVnf.getModelInfoGenericVnf().getModelCustomizationUuid();

@@ -547,6 +547,30 @@ class OofUtils {
         return response.toString()
     }
 
+    public String buildSelectNSSTRequest(String requestId,String messageType, Map<String, Object> profileInfo) {
+        def transactionId = requestId
+        logger.debug( "transactionId is: " + transactionId)
+        String correlator = requestId
+        String callbackUrl = UrnPropertiesReader.getVariable("mso.adapters.oof.callback.endpoint") + "/" + messageType + "/" + correlator
+        ObjectMapper objectMapper = new ObjectMapper()
+        String json = objectMapper.writeValueAsString(profileInfo)
+        StringBuilder response = new StringBuilder()
+        response.append(
+                "{\n" +
+                        "  \"requestInfo\": {\n" +
+                        "    \"transactionId\": \"${transactionId}\",\n" +
+                        "    \"requestId\": \"${requestId}\",\n" +
+                        "    \"sourceId\": \"so\",\n" +
+                        "    \"timeout\": 600,\n" +
+                        "    \"callbackUrl\": \"${callbackUrl}\"\n" +
+                        "    },\n")
+        response.append(" \"SliceProfile\":")
+        response.append(json)
+        response.append("\n}\n")
+        return response.toString()
+    }
+
+
     public String buildSelectNSIRequest(String requestId, String nstInfo,String messageType, Map<String, Object> profileInfo){
 
         def transactionId = requestId
