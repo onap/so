@@ -70,6 +70,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
+import org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader.NetworkSliceSubnetEBBLoader;
 import org.onap.so.bpmn.common.BBConstants;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader.PnfEBBLoader;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader.ServiceEBBLoader;
@@ -112,7 +113,7 @@ public class WorkflowAction {
     private static final String VNF_TYPE = "vnfType";
     private static final String CONFIGURATION = "Configuration";
     private static final String SUPPORTEDTYPES =
-            "vnfs|pnfs|cnfs|vfModules|networks|networkCollections|volumeGroups|serviceInstances|instanceGroups";
+            "vnfs|pnfs|cnfs|vfModules|networks|networkCollections|volumeGroups|serviceInstances|instanceGroups|NetworkSliceSubnet";
     private static final String HOMINGSOLUTION = "Homing_Solution";
     private static final String SERVICE_TYPE_TRANSPORT = "TRANSPORT";
     private static final String SERVICE_TYPE_BONDING = "BONDING";
@@ -144,6 +145,8 @@ public class WorkflowAction {
     private PnfEBBLoader pnfEBBLoader;
     @Autowired
     private ServiceEBBLoader serviceEBBLoader;
+    @Autowired
+    private NetworkSliceSubnetEBBLoader networkSliceSubnetEBBLoader;
 
     public void setBbInputSetupUtils(BBInputSetupUtils bbInputSetupUtils) {
         this.bbInputSetupUtils = bbInputSetupUtils;
@@ -300,6 +303,8 @@ public class WorkflowAction {
                 || isPNFCreate(resourceType, requestAction)) {
             resourceList = serviceEBBLoader.getResourceListForService(sIRequest, requestAction, execution,
                     serviceInstanceId, resourceId, aaiResourceIds);
+        } else if (resourceType == WorkflowType.NETWORK_SLICE_SUBNET) {
+            resourceList = networkSliceSubnetEBBLoader.setNetworkSliceSubnetResource(resourceId);
         } else if (isPNFDelete(resourceType, requestAction)) {
             pnfEBBLoader.traverseAAIPnf(execution, resourceList, workflowResourceIds.getServiceInstanceId(), resourceId,
                     aaiResourceIds);
@@ -840,7 +845,7 @@ public class WorkflowAction {
     }
 
     protected String convertTypeFromPlural(String type) {
-        if (!type.matches(SUPPORTEDTYPES)) {
+        if (!type.matches(SUPPORTEDTYPES) || type.equals("NetworkSliceSubnet")) {
             return type;
         } else {
             if (type.equals(SERVICE_INSTANCES)) {
