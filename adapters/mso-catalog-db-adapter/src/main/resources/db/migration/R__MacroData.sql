@@ -44,7 +44,11 @@ INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, I
 ('PNF-Macro-Delete', 'deleteInstance', 'Pnf', false,true, '7', '7','DEFAULT', '*'),
 ('PNF-Macro-Create', 'createInstance', 'Pnf', false,true, '7', '7','DEFAULT', '*'),
 ('Cnf-Create', 'createInstance', 'Cnf', true, true, '7','7','DEFAULT', '*'),
-('Cnf-Delete', 'deleteInstance', 'Cnf', true, true, '7','7','DEFAULT', '*');
+('Cnf-Delete', 'deleteInstance', 'Cnf', true, true, '7','7','DEFAULT', '*'),
+('Slice-Macro-create','createRanSlice','NetworkSliceSubnet',0,1,7,1,'DEFAULT','*'),
+('Slice-Macro-modify','modifyRanSlice','NetworkSliceSubnet',0,1,7,1,'DEFAULT','*'),
+('Slice-Macro-delete','deleteRanSlice','NetworkSliceSubnet',0,1,7,1,'DEFAULT','*');
+
 
 
 INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, SCOPE, ACTION, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID) VALUES
@@ -285,7 +289,14 @@ INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, SC
 ('PNF-Macro-Delete', '1', 'DeactivatePnfBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'PNF-Macro-Delete' and CLOUD_OWNER = 'DEFAULT')),
 ('PNF-Macro-Delete', '2', 'UnassignPnfBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'PNF-Macro-Delete' and CLOUD_OWNER = 'DEFAULT')),
 ('CNF-Create', '1', 'CnfInstantiateBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Cnf-Create' and CLOUD_OWNER = 'DEFAULT')),
-('CNF-Delete', '2', 'CnfDeleteBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Cnf-Delete' and CLOUD_OWNER = 'DEFAULT'));
+('CNF-Delete', '2', 'CnfDeleteBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Cnf-Delete' and CLOUD_OWNER = 'DEFAULT')),
+('Slice-Macro-Create','1','AssignRANNssiBB','nssi',null,1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Slice-Macro-create' and CLOUD_OWNER = 'DEFAULT')),
+('Slice-Macro-Create','2','ControllerExecutionBB','nssi','create-sliceprofile',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Slice-Macro-create' and CLOUD_OWNER = 'DEFAULT')),
+('Slice-Macro-Create','3','ActivateRANNssiBB',null,null,1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Slice-Macro-create' and CLOUD_OWNER = 'DEFAULT')),
+('Slice-Macro-modify','1','ModifyRANNssiBB',null,null,1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Slice-Macro-modify' and CLOUD_OWNER = 'DEFAULT')),
+('Slice-Macro-modify','2','ControllerExecutionBB','nssi','modify-sliceprofile',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Slice-Macro-modify' and CLOUD_OWNER = 'DEFAULT')),
+('Slice-Macro-delete','2','DeleteRANNssiBB',null,null,1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Slice-Macro-delete' and CLOUD_OWNER = 'DEFAULT')),
+('Slice-Macro-delete','1','ControllerExecutionBB','nssi','delete-sliceprofile',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Slice-Macro-delete' and CLOUD_OWNER = 'DEFAULT'));
 
 
 INSERT INTO rainy_day_handler_macro (FLOW_NAME, SERVICE_TYPE, VNF_TYPE, ERROR_CODE, WORK_STEP, POLICY, SECONDARY_POLICY, REG_EX_ERROR_MESSAGE, SERVICE_ROLE)
@@ -454,7 +465,12 @@ VALUES
 ('UpgradeVfModuleBB', 'NO_VALIDATE', 'CUSTOM'),
 ('VfModuleUpgradeStatusBB', 'NO_VALIDATE', 'CUSTOM'),
 ('CnfInstantiateBB', 'CNF', 'ACTIVATE'),
-('CnfDeleteBB', 'CNF', 'DEACTIVATE');
+('CnfDeleteBB', 'CNF', 'DEACTIVATE'),
+
+('AssignRANNssiBB','NO_VALIDATE','CUSTOM'),
+('ActivateRANNssiBB','NO_VALIDATE','CUSTOM'),
+('ModifyRANNssiBB','NO_VALIDATE','CUSTOM'),
+('DeleteRANNssiBB','NO_VALIDATE','CUSTOM');
 
 
 INSERT INTO orchestration_status_state_transition_directive (resource_type, orchestration_status, target_action, flow_directive)
@@ -935,3 +951,13 @@ VALUES
 ('EtsiVnfInstantiateBB',NULL,'EtsiVnfDeleteBB',NULL),
 ('AddFabricConfigurationBB',NULL,'DeleteFabricConfigurationBB',NULL),
 ('CreateChildServiceBB',NULL,'DeleteChildServiceBB',NULL);
+
+-- Recipe for ManagedObject3GPP
+DELETE FROM service_recipe where ACTION = 'createRanSlice';
+INSERT INTO `service_recipe` (`id`, `ACTION`, `VERSION_STR`, `DESCRIPTION`, `ORCHESTRATION_URI`, `SERVICE_PARAM_XSD`, `RECIPE_TIMEOUT`, `SERVICE_TIMEOUT_INTERIM`, `CREATION_TIMESTAMP`, `SERVICE_MODEL_UUID`) VALUES (547,'createRanSlice','1','Gr api recipe for RAN slicing','/mso/async/services/WorkflowActionBB',NULL,180,NULL,'2023-01-17 18:40:03','3d30a774-e149-11ea-87d0-0242ac130003');
+
+DELETE FROM service_recipe where ACTION = 'modifyRanSlice';
+INSERT INTO `service_recipe` (`id`, `ACTION`, `VERSION_STR`, `DESCRIPTION`, `ORCHESTRATION_URI`, `SERVICE_PARAM_XSD`, `RECIPE_TIMEOUT`, `SERVICE_TIMEOUT_INTERIM`, `CREATION_TIMESTAMP`, `SERVICE_MODEL_UUID`) VALUES (550,'modifyRanSlice','1','Gr api recipe for RAN slicing','/mso/async/services/WorkflowActionBB',NULL,180,NULL,'2023-01-17 18:40:03','3d30a774-e149-11ea-87d0-0242ac130003');
+
+DELETE FROM service_recipe where ACTION = 'deleteRanSlice';
+INSERT INTO `service_recipe` (`id`, `ACTION`, `VERSION_STR`, `DESCRIPTION`, `ORCHESTRATION_URI`, `SERVICE_PARAM_XSD`, `RECIPE_TIMEOUT`, `SERVICE_TIMEOUT_INTERIM`, `CREATION_TIMESTAMP`, `SERVICE_MODEL_UUID`) VALUES (553,'deleteRanSlice','1','Gr api recipe for RAN slicing','/mso/async/services/WorkflowActionBB',NULL,180,NULL,'2023-01-17 18:40:03','3d30a774-e149-11ea-87d0-0242ac130003');
