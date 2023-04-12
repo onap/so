@@ -2,16 +2,14 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
- * Modifications Copyright (c) 2019 Nokia
+ * Copyright (c) 2022 Deutsche telekom
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,28 +18,24 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.servicedecomposition.entities;
+package org.onap.so.bpmn.moi.tasks;
 
-public enum ResourceKey {
-    SERVICE_INSTANCE_ID,
-    GENERIC_VNF_ID,
-    NETWORK_ID,
-    VOLUME_GROUP_ID,
-    VF_MODULE_ID,
-    ALLOTTED_RESOURCE_ID,
-    CONFIGURATION_ID,
-    NETWORK_COLLECTION_ID,
-    VPN_ID,
-    VPN_BONDING_LINK_ID,
-    INSTANCE_GROUP_ID,
-    PNF,
-    PNF_INSTANCE_NAME,
-    VNF_INSTANCE_NAME,
-    VF_MODULE_INSTANCE_NAME,
-    CHILD_SERVICE_INSTANCE_ID,
-    CHILD_SERVICE_INSTANCE_NAME,
-    ServiceInstance,
-    ModelInfoServiceInstance,
-    operationalState,
-    administrativeState
+import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import static org.junit.Assert.*;
+
+public class EnrichGBBTaskTest {
+    @Mock
+    DelegateExecution execution;
+
+    @Before
+    public void setUp() throws Exception {}
+
+    @Test
+    public void prepareOofRequest() {}
+
+    @Test
+    public void processOOFAsyncResponse() {}
 }

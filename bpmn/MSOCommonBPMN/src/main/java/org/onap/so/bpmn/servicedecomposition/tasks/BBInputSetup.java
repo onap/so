@@ -75,6 +75,7 @@ import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.entities.ServiceModel;
 import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
+import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.NoServiceInstanceFoundException;
@@ -189,6 +190,13 @@ public class BBInputSetup implements JavaDelegate {
             boolean homing = Boolean.TRUE.equals(executeBB.isHoming());
             Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
             outputBB = this.getGBB(executeBB, lookupKeyMap, requestAction, aLaCarte, resourceId, vnfType);
+            logger.debug("setting Homing");
+            if (executeBB.getBuildingBlock().getBpmnFlowName().contains("AssignRANNssiBB")) {
+                execution.setVariable("homing", true);
+            } else {
+                execution.setVariable("homing", false);
+            }
+
             ObjectMapper mapper = new ObjectMapper();
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
             logger.debug("GeneralBB: " + mapper.writeValueAsString(outputBB));
@@ -240,6 +248,11 @@ public class BBInputSetup implements JavaDelegate {
             requestDetails = bbInputSetupUtils.getRequestDetails(requestId);
         }
         if (requestDetails.getModelInfo() == null) {
+            if (requestAction.contains("RanSlice")) {
+                logger.debug(">>> RequestAction: {}", executeBB.getRequestAction());
+
+                return this.getGBBRanSlicing(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId);
+            }
             return this.getGBBCM(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId);
         } else {
             ModelType modelType = requestDetails.getModelInfo().getModelType();
@@ -347,7 +360,7 @@ public class BBInputSetup implements JavaDelegate {
         List<GenericVnf> genericVnfs = serviceInstance.getVnfs();
 
         String vnfId = lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID);
-        if (vnfId != null) {
+        if (vnfId != null && !vnfId.isEmpty()) {
             org.onap.aai.domain.yang.GenericVnf aaiGenericVnf = bbInputSetupUtils.getAAIGenericVnf(vnfId);
             GenericVnf genericVnf = this.mapperLayer.mapAAIGenericVnfIntoGenericVnf(aaiGenericVnf);
             genericVnfs.add(genericVnf);
@@ -392,6 +405,67 @@ public class BBInputSetup implements JavaDelegate {
                 .setServiceInstance(serviceInstance).setExecuteBB(executeBB).setRequestAction(requestAction)
                 .setCustomer(customer).build();
         return this.populateGBBWithSIAndAdditionalInfo(parameter);
+    }
+
+    protected GeneralBuildingBlock getGBBRanSlicing(ExecuteBuildingBlock executeBB, RequestDetails requestDetails,
+            Map<ResourceKey, String> lookupKeyMap, String requestAction, String resourceId) throws Exception {
+        org.onap.aai.domain.yang.ServiceInstance serviceInstanceAAI = null;
+        String serviceInstanceId = lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID);
+
+        executeBB.setHoming(true);
+        Customer customer = new Customer();
+
+        String subscriberId = executeBB.getRequestDetails().getSubscriberInfo().getGlobalSubscriberId();
+        customer.setGlobalCustomerId(subscriberId);
+
+        String subscriberName = executeBB.getRequestDetails().getSubscriberInfo().getSubscriberName();
+        customer.setSubscriberName(subscriberName);
+
+        String subscriptionType = executeBB.getRequestDetails().getRequestParameters().getSubscriptionServiceType();
+
+        ServiceSubscription serviceSubscription = new ServiceSubscription();
+        serviceSubscription.setServiceType(subscriptionType);
+
+        customer.setServiceSubscription(serviceSubscription);
+
+        String bbName = executeBB.getBuildingBlock().getBpmnFlowName();
+
+        serviceInstanceAAI = getServiceInstanceAAI(requestDetails, customer, serviceInstanceId, false, bbName);
+
+        ServiceInstance serviceInstance = new ServiceInstance();
+        serviceInstance.setServiceInstanceId(serviceInstanceId);
+        logger.debug(">>>>> serviceInstanceAAI: {}", serviceInstanceAAI);
+        if (serviceInstanceAAI != null) {
+            String modelVersionId = serviceInstanceAAI.getModelVersionId();
+
+            Service service = bbInputSetupUtils.getCatalogServiceByModelUUID(modelVersionId);
+
+            // Check if there is any existing method for mapping
+            String modelInvariantId = serviceInstanceAAI.getModelInvariantId();
+            String modelVersion = service.getModelVersion();
+            String serviceType = service.getServiceType();
+            String serviceRole = service.getServiceRole();
+            String controllerActor = service.getControllerActor();
+            String blueprintName = service.getBlueprintName();
+            String blueprintVersion = service.getBlueprintVersion();
+
+            ModelInfoServiceInstance modelInfoServiceInstance = new ModelInfoServiceInstance();
+            modelInfoServiceInstance.setServiceType(serviceType);
+            modelInfoServiceInstance.setServiceRole(serviceRole);
+            modelInfoServiceInstance.setControllerActor(controllerActor);
+            modelInfoServiceInstance.setBlueprintName(blueprintName);
+            modelInfoServiceInstance.setBlueprintVersion(blueprintVersion);
+            modelInfoServiceInstance.setModelInvariantUuid(modelInvariantId);
+            modelInfoServiceInstance.setModelUuid(modelVersionId);
+            modelInfoServiceInstance.setModelVersion(modelVersion);
+
+            serviceInstance.setModelInfoServiceInstance(modelInfoServiceInstance);
+        }
+        BBInputSetupParameter parameter = new BBInputSetupParameter.Builder().setRequestDetails(requestDetails)
+                .setServiceInstance(serviceInstance).setExecuteBB(executeBB).setRequestAction(requestAction)
+                .setCustomer(customer).build();
+        return this.populateGBBWithSIAndAdditionalInfo(parameter);
+
     }
 
     protected void populateObjectsOnAssignAndCreateFlows(BBInputSetupParameter parameter) throws Exception {

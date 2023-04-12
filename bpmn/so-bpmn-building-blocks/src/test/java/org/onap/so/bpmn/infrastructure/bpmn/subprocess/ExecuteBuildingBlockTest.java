@@ -47,6 +47,7 @@ public class ExecuteBuildingBlockTest extends BaseBPMNTest {
 
         variables.put("orchestrationStatusValidationResult", OrchestrationStatusValidationDirective.CONTINUE);
         variables.put("flowToBeCalled", "MockFlow");
+        variables.put("homing", false);
 
         mockSubprocess("MockFlow", "My Mock Process Name", "GenericStub");
 
@@ -64,6 +65,7 @@ public class ExecuteBuildingBlockTest extends BaseBPMNTest {
     @Test
     public void test_sunnyDayExecuteBuildingBlock_silentSuccess() throws Exception {
         variables.put("orchestrationStatusValidationResult", OrchestrationStatusValidationDirective.SILENT_SUCCESS);
+        variables.put("homing", false);
 
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("ExecuteBuildingBlock", variables);
         assertThat(pi).isNotNull();
@@ -79,6 +81,7 @@ public class ExecuteBuildingBlockTest extends BaseBPMNTest {
     public void test_rainyDayExecuteBuildingBlock_rollbackOrAbort() throws Exception {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(bbInputSetup).execute(any(DelegateExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("ExecuteBuildingBlock", variables);
+        variables.put("homing", false);
         assertThat(pi).isNotNull();
         assertThat(pi).isStarted()
                 .hasPassedInOrder("Start_ExecuteBuildingBlock", "Task_BBInputSetup", "StartEvent_0tmcs9g",
@@ -96,6 +99,7 @@ public class ExecuteBuildingBlockTest extends BaseBPMNTest {
 
         variables.put("handlingCode", "Retry");
         variables.put("RetryCount", 5);
+        variables.put("homing", false);
 
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("ExecuteBuildingBlock", variables);
         assertThat(pi).isNotNull();
@@ -116,6 +120,7 @@ public class ExecuteBuildingBlockTest extends BaseBPMNTest {
         variables.put("handlingCode", "Retry");
         variables.put("RetryCount", 4);
         variables.put("RetryDuration", "PT1S");
+        variables.put("homing", false);
 
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("ExecuteBuildingBlock", variables);
         assertThat(pi).isNotNull();

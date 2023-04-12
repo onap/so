@@ -19,9 +19,9 @@ public class ApiHandlerClient {
 
     @Value("${mso.adapters.apihandler.serviceInstantiationEndpoint:/onap/so/infra/serviceInstantiation/v7/serviceInstances}")
     private String serviceInstantiationEndpoint;
-    @Value("${mso.adapters.apihandler.endpoint}")
+    @Value("${mso.adapters.apihandler.endpoint:http://localhost:8080}")
     private String baseUri;
-    @Value("${mso.adapters.apihandler.auth}")
+    @Value("${mso.adapters.apihandler.auth:Basic dGVzdDp0ZXN0Cg==}")
     private String auth;
 
     private RestTemplate restTemplate;
