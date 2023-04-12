@@ -261,6 +261,11 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.onap.so</groupId>
+      <artifactId>so-bpmn-moi</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
     </dependency>

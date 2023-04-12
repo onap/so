@@ -33,6 +33,7 @@ public final class PayloadConstants {
     public static final String REQUEST = "request";
     public static final String PROPERTIES = "properties";
     public static final String SCOPE = "scope";
+    public static final String NSSI_SCOPE = "nssi";
     public static final String ACTION = "action";
     public static final String MODE = "mode";
     public static final String SEPARATOR = "-";
