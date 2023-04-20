@@ -58,11 +58,9 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
         pnfCorrelationIdToThreadMap = new ConcurrentHashMap<>();
         topicListenerDelayInSeconds = env.getProperty("pnf.dmaap.topicListenerDelayInSeconds", Integer.class);
         executor = null;
-        topicName = env.getProperty("pnf.dmaap.topicName");
-        String[] topic = topicName.split("\\s");
         String pnf_ready = null;
         String pnf_update = null;
-        for (String t : topic) {
+        for (String t : env.getProperty("pnf.dmaap.topicName").split("\\s")) {
             if (t.matches("(.*)PNF_READY(.*)")) {
                 pnf_ready = t;
             } else if (t.matches("(.*)PNF_UPDATE(.*)")) {
@@ -71,16 +69,38 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
                 return;
             }
         }
+
+        String consumerGroup_pnf_ready = null;
+        String consumerGroup_pnf_update = null;
+        for (String c : env.getProperty("pnf.dmaap.consumerGroup").split("\\s")) {
+            if (c.matches("consumerGroup")) {
+                consumerGroup_pnf_ready = c;
+            } else if (c.matches("consumerGroupUpdate")) {
+                consumerGroup_pnf_update = c;
+            } else {
+                return;
+            }
+        }
+
+        String cid_pnf_ready = null;
+        String cid_pnf_update = null;
+        for (String cid : env.getProperty("pnf.dmaap.consumerId").split("\\s")) {
+            if (cid.matches("consumerId")) {
+                cid_pnf_ready = cid;
+            } else if (cid.matches("consumerIdUpdate")) {
+                cid_pnf_update = cid;
+            } else {
+                return;
+            }
+        }
         getRequestForpnfReady = new HttpGet(UriBuilder.fromUri(env.getProperty("pnf.dmaap.uriPathPrefix"))
                 .scheme(env.getProperty("pnf.dmaap.protocol")).host(env.getProperty("pnf.dmaap.host"))
-                .port(env.getProperty("pnf.dmaap.port", Integer.class)).path(pnf_ready)
-                .path(env.getProperty("pnf.dmaap.consumerGroup")).path(env.getProperty("pnf.dmaap.consumerId"))
-                .build());
+                .port(env.getProperty("pnf.dmaap.port", Integer.class)).path(pnf_ready).path(consumerGroup_pnf_ready)
+                .path(cid_pnf_ready).build());
         getRequestForPnfUpdate = new HttpGet(UriBuilder.fromUri(env.getProperty("pnf.dmaap.uriPathPrefix"))
                 .scheme(env.getProperty("pnf.dmaap.protocol")).host(env.getProperty("pnf.dmaap.host"))
-                .port(env.getProperty("pnf.dmaap.port", Integer.class)).path(pnf_update)
-                .path(env.getProperty("pnf.dmaap.consumerGroup")).path(env.getProperty("pnf.dmaap.consumerId"))
-                .build());
+                .port(env.getProperty("pnf.dmaap.port", Integer.class)).path(pnf_update).path(consumerGroup_pnf_update)
+                .path(cid_pnf_update).build());
     }
 
     @Override
@@ -162,3 +182,4 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
         }
     }
 }
+

@@ -68,8 +68,8 @@ public class PnfEventReadyDmaapClientTest {
     private static final String PROTOCOL = "http";
     private static final String URI_PATH_PREFIX = "eventsForTesting";
     private static final String TOPIC_NAME = "PNF_READY_Test PNF_UPDATE_Test";
-    private static final String CONSUMER_ID = "consumerTestId";
-    private static final String CONSUMER_GROUP = "consumerGroupTest";
+    private static final String CONSUMER_ID = "consumerId consumerIdUpdate";
+    private static final String CONSUMER_GROUP = "consumerGroup consumerGroupUpdate";
     private static final int TOPIC_LISTENER_DELAY_IN_SECONDS = 5;
 
     @Mock
@@ -120,15 +120,34 @@ public class PnfEventReadyDmaapClientTest {
         assertEquals(captor1.getValue().getURI().getHost(), HOST);
         assertEquals(captor1.getValue().getURI().getPort(), PORT);
         assertEquals(captor1.getValue().getURI().getScheme(), PROTOCOL);
+        String[] cid = CONSUMER_ID.split("\\s");
+        String consumerId_update = null;
+
+        for (String c : cid) {
+            if (c.matches("consumerIdUpdate")) {
+                consumerId_update = c;
+            }
+        }
+
+        String[] cg = CONSUMER_GROUP.split("\\s");
+        String consumerGroup_pnf_update = null;
+        for (String c : cg) {
+            if (c.matches("consumerGroupUpdate")) {
+                consumerGroup_pnf_update = c;
+            }
+        }
+
         String[] topic = TOPIC_NAME.split("\\s");
         String pnf_update = null;
         for (String t : topic) {
             if (t.matches("(.*)PNF_UPDATE(.*)")) {
                 pnf_update = t;
-                assertEquals(captor1.getValue().getURI().getPath(),
-                        "/" + URI_PATH_PREFIX + "/" + pnf_update + "/" + CONSUMER_GROUP + "/" + CONSUMER_ID + "");
             }
         }
+
+        assertEquals(captor1.getValue().getURI().getPath(), "/" + URI_PATH_PREFIX + "/" + pnf_update + "/"
+                + consumerGroup_pnf_update + "/" + consumerId_update + "");
+
         verify(threadMockToNotifyCamundaFlow).run();
         verify(executorMock).shutdown();
     }
@@ -146,13 +165,29 @@ public class PnfEventReadyDmaapClientTest {
         assertEquals(captor1.getValue().getURI().getHost(), HOST);
         assertEquals(captor1.getValue().getURI().getPort(), PORT);
         assertEquals(captor1.getValue().getURI().getScheme(), PROTOCOL);
+        String[] cid = CONSUMER_ID.split("\\s");
+        String consumerId_ready = null;
+
+        for (String c : cid) {
+            if (c.matches("consumerId")) {
+                consumerId_ready = c;
+            }
+        }
+
+        String[] cg = CONSUMER_GROUP.split("\\s");
+        String consumerGroup_pnf_ready = null;
+        for (String c : cg) {
+            if (c.matches("consumerGroup")) {
+                consumerGroup_pnf_ready = c;
+            }
+        }
         String[] topic = TOPIC_NAME.split("\\s");
         String pnf_ready = null;
         for (String t : topic) {
             if (t.matches("(.*)PNF_READY(.*)")) {
                 pnf_ready = t;
-                assertEquals(captor1.getValue().getURI().getPath(),
-                        "/" + URI_PATH_PREFIX + "/" + pnf_ready + "/" + CONSUMER_GROUP + "/" + CONSUMER_ID + "");
+                assertEquals(captor1.getValue().getURI().getPath(), "/" + URI_PATH_PREFIX + "/" + pnf_ready + "/"
+                        + consumerGroup_pnf_ready + "/" + consumerId_ready + "");
             }
         }
         verify(threadMockToNotifyCamundaFlow).run();
@@ -234,4 +269,5 @@ public class PnfEventReadyDmaapClientTest {
     }
 
 }
+
 
