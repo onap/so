@@ -50,7 +50,8 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
     private int topicListenerDelayInSeconds;
     private volatile ScheduledThreadPoolExecutor executor;
     private volatile boolean dmaapThreadListenerIsRunning;
-    private String topicName;
+
+
 
     @Autowired
     public PnfEventReadyDmaapClient(Environment env) {
@@ -58,30 +59,18 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
         pnfCorrelationIdToThreadMap = new ConcurrentHashMap<>();
         topicListenerDelayInSeconds = env.getProperty("pnf.dmaap.topicListenerDelayInSeconds", Integer.class);
         executor = null;
-        topicName = env.getProperty("pnf.dmaap.topicName");
-        String[] topic = topicName.split("\\s");
-        String pnf_ready = null;
-        String pnf_update = null;
-        for (String t : topic) {
-            if (t.matches("(.*)PNF_READY(.*)")) {
-                pnf_ready = t;
-            } else if (t.matches("(.*)PNF_UPDATE(.*)")) {
-                pnf_update = t;
-            } else {
-                return;
-            }
-        }
         getRequestForpnfReady = new HttpGet(UriBuilder.fromUri(env.getProperty("pnf.dmaap.uriPathPrefix"))
                 .scheme(env.getProperty("pnf.dmaap.protocol")).host(env.getProperty("pnf.dmaap.host"))
-                .port(env.getProperty("pnf.dmaap.port", Integer.class)).path(pnf_ready)
-                .path(env.getProperty("pnf.dmaap.consumerGroup")).path(env.getProperty("pnf.dmaap.consumerId"))
-                .build());
+                .port(env.getProperty("pnf.dmaap.port", Integer.class))
+                .path(env.getProperty("pnf.dmaap.pnfReadyTopicName")).path(env.getProperty("pnf.dmaap.consumerGroup"))
+                .path(env.getProperty("pnf.dmaap.consumerId")).build());
         getRequestForPnfUpdate = new HttpGet(UriBuilder.fromUri(env.getProperty("pnf.dmaap.uriPathPrefix"))
                 .scheme(env.getProperty("pnf.dmaap.protocol")).host(env.getProperty("pnf.dmaap.host"))
-                .port(env.getProperty("pnf.dmaap.port", Integer.class)).path(pnf_update)
-                .path(env.getProperty("pnf.dmaap.consumerGroup")).path(env.getProperty("pnf.dmaap.consumerId"))
-                .build());
+                .port(env.getProperty("pnf.dmaap.port", Integer.class))
+                .path(env.getProperty("pnf.dmaap.pnfUpdateTopicName")).path(env.getProperty("pnf.dmaap.consumerGroup"))
+                .path(env.getProperty("pnf.dmaap.consumerIdUpdate")).build());
     }
+
 
     @Override
     public synchronized void registerForUpdate(String pnfCorrelationId, Runnable informConsumer) {
@@ -162,3 +151,4 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
         }
     }
 }
+

@@ -67,9 +67,11 @@ public class PnfEventReadyDmaapClientTest {
     private static final int PORT = 1234;
     private static final String PROTOCOL = "http";
     private static final String URI_PATH_PREFIX = "eventsForTesting";
-    private static final String TOPIC_NAME = "PNF_READY_Test PNF_UPDATE_Test";
-    private static final String CONSUMER_ID = "consumerTestId";
-    private static final String CONSUMER_GROUP = "consumerGroupTest";
+    private static final String TOPIC_NAME = "unauthenticated.PNF_READY";
+    private static final String TOPIC_NAME_UPDATE = "unauthenticated.PNF_UPDATE";
+    private static final String CONSUMER_ID = "so-bpmn-infra-pnfready";
+    private static final String CONSUMER_ID_UPDATE = "so-bpmn-infra-pnfupdate";
+    private static final String CONSUMER_GROUP = "so-consumer";
     private static final int TOPIC_LISTENER_DELAY_IN_SECONDS = 5;
 
     @Mock
@@ -87,8 +89,10 @@ public class PnfEventReadyDmaapClientTest {
         when(env.getProperty(eq("pnf.dmaap.host"))).thenReturn(HOST);
         when(env.getProperty(eq("pnf.dmaap.protocol"))).thenReturn(PROTOCOL);
         when(env.getProperty(eq("pnf.dmaap.uriPathPrefix"))).thenReturn(URI_PATH_PREFIX);
-        when(env.getProperty(eq("pnf.dmaap.topicName"))).thenReturn(TOPIC_NAME);
+        when(env.getProperty(eq("pnf.dmaap.pnfReadyTopicName"))).thenReturn(TOPIC_NAME);
+        when(env.getProperty(eq("pnf.dmaap.pnfUpdateTopicName"))).thenReturn(TOPIC_NAME_UPDATE);
         when(env.getProperty(eq("pnf.dmaap.consumerId"))).thenReturn(CONSUMER_ID);
+        when(env.getProperty(eq("pnf.dmaap.consumerIdUpdate"))).thenReturn(CONSUMER_ID_UPDATE);
         when(env.getProperty(eq("pnf.dmaap.consumerGroup"))).thenReturn(CONSUMER_GROUP);
         when(env.getProperty(eq("pnf.dmaap.topicListenerDelayInSeconds"), eq(Integer.class)))
                 .thenReturn(TOPIC_LISTENER_DELAY_IN_SECONDS);
@@ -120,15 +124,9 @@ public class PnfEventReadyDmaapClientTest {
         assertEquals(captor1.getValue().getURI().getHost(), HOST);
         assertEquals(captor1.getValue().getURI().getPort(), PORT);
         assertEquals(captor1.getValue().getURI().getScheme(), PROTOCOL);
-        String[] topic = TOPIC_NAME.split("\\s");
-        String pnf_update = null;
-        for (String t : topic) {
-            if (t.matches("(.*)PNF_UPDATE(.*)")) {
-                pnf_update = t;
-                assertEquals(captor1.getValue().getURI().getPath(),
-                        "/" + URI_PATH_PREFIX + "/" + pnf_update + "/" + CONSUMER_GROUP + "/" + CONSUMER_ID + "");
-            }
-        }
+        assertEquals(captor1.getValue().getURI().getPath(),
+                "/" + URI_PATH_PREFIX + "/" + TOPIC_NAME_UPDATE + "/" + CONSUMER_GROUP + "/" + CONSUMER_ID_UPDATE + "");
+
         verify(threadMockToNotifyCamundaFlow).run();
         verify(executorMock).shutdown();
     }
@@ -146,15 +144,11 @@ public class PnfEventReadyDmaapClientTest {
         assertEquals(captor1.getValue().getURI().getHost(), HOST);
         assertEquals(captor1.getValue().getURI().getPort(), PORT);
         assertEquals(captor1.getValue().getURI().getScheme(), PROTOCOL);
-        String[] topic = TOPIC_NAME.split("\\s");
-        String pnf_ready = null;
-        for (String t : topic) {
-            if (t.matches("(.*)PNF_READY(.*)")) {
-                pnf_ready = t;
-                assertEquals(captor1.getValue().getURI().getPath(),
-                        "/" + URI_PATH_PREFIX + "/" + pnf_ready + "/" + CONSUMER_GROUP + "/" + CONSUMER_ID + "");
-            }
-        }
+
+        assertEquals(captor1.getValue().getURI().getPath(),
+                "/" + URI_PATH_PREFIX + "/" + TOPIC_NAME + "/" + CONSUMER_GROUP + "/" + CONSUMER_ID + "");
+
+
         verify(threadMockToNotifyCamundaFlow).run();
         verify(executorMock).shutdown();
     }
@@ -234,4 +228,3 @@ public class PnfEventReadyDmaapClientTest {
     }
 
 }
-
