@@ -9,6 +9,9 @@ Service Orchestrator Release Notes
 
 The SO provides the highest level of service orchestration in the ONAP architecture. 
 
+London Release TO-DO: REQ-1380 (Enhance PNF LCM in SO - (Modify Service adding a new PNF))
+
+
 Version: 1.11.0
 ---------------
 
