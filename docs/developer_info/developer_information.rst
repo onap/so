@@ -32,4 +32,5 @@ SO Developer Information
    ETSI_CSIT_NFVO_VNFM.rst
    ETSI_NFVO_Network_Service_LCM_Setup_Guide.rst
    ETSI_VNF_LCM_Setup_Guide.rst
+   ASD_Overview.rst
    FAQs.rst
