@@ -20,6 +20,7 @@ CreateVfModuleVolumeInfraV1 is a main process flow.
 
 .. image:: ../images/asd_architecture.png
 
+`ASD POC wiki page  <https://wiki.onap.org/display/DW/ASD+Onboarding+and+Orchestration+PoC>`_
 
 ASD Onboarding
 ---------------------
@@ -34,6 +35,8 @@ ASD Orchestration by ONAP SO
 The following diagram depicts the ASD Orchestration by ONAP SO:
 
 .. image:: ../images/asd_orchestration.png
+
+`AS LCM RESTful Protocols  <https://wiki.onap.org/display/DW/AS+LCM+RESTful+Protocols+for+SO+CNFM+Manager>`_
 
 SO CNFM
 -----------
