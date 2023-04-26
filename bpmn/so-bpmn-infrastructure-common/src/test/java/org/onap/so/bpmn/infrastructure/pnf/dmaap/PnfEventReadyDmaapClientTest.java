@@ -69,8 +69,7 @@ public class PnfEventReadyDmaapClientTest {
     private static final String URI_PATH_PREFIX = "eventsForTesting";
     private static final String TOPIC_NAME = "unauthenticated.PNF_READY";
     private static final String TOPIC_NAME_UPDATE = "unauthenticated.PNF_UPDATE";
-    private static final String CONSUMER_ID = "so-bpmn-infra-pnfready";
-    private static final String CONSUMER_ID_UPDATE = "so-bpmn-infra-pnfupdate";
+    private static final String CONSUMER_ID = "so-bpmn-infra";
     private static final String CONSUMER_GROUP = "so-consumer";
     private static final int TOPIC_LISTENER_DELAY_IN_SECONDS = 5;
 
@@ -92,7 +91,6 @@ public class PnfEventReadyDmaapClientTest {
         when(env.getProperty(eq("pnf.dmaap.pnfReadyTopicName"))).thenReturn(TOPIC_NAME);
         when(env.getProperty(eq("pnf.dmaap.pnfUpdateTopicName"))).thenReturn(TOPIC_NAME_UPDATE);
         when(env.getProperty(eq("pnf.dmaap.consumerId"))).thenReturn(CONSUMER_ID);
-        when(env.getProperty(eq("pnf.dmaap.consumerIdUpdate"))).thenReturn(CONSUMER_ID_UPDATE);
         when(env.getProperty(eq("pnf.dmaap.consumerGroup"))).thenReturn(CONSUMER_GROUP);
         when(env.getProperty(eq("pnf.dmaap.topicListenerDelayInSeconds"), eq(Integer.class)))
                 .thenReturn(TOPIC_LISTENER_DELAY_IN_SECONDS);
@@ -125,7 +123,7 @@ public class PnfEventReadyDmaapClientTest {
         assertEquals(captor1.getValue().getURI().getPort(), PORT);
         assertEquals(captor1.getValue().getURI().getScheme(), PROTOCOL);
         assertEquals(captor1.getValue().getURI().getPath(),
-                "/" + URI_PATH_PREFIX + "/" + TOPIC_NAME_UPDATE + "/" + CONSUMER_GROUP + "/" + CONSUMER_ID_UPDATE + "");
+                "/" + URI_PATH_PREFIX + "/" + TOPIC_NAME_UPDATE + "/" + CONSUMER_GROUP + "/" + CONSUMER_ID + "");
 
         verify(threadMockToNotifyCamundaFlow).run();
         verify(executorMock).shutdown();
@@ -228,3 +226,5 @@ public class PnfEventReadyDmaapClientTest {
     }
 
 }
+
+

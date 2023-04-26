@@ -68,7 +68,7 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
                 .scheme(env.getProperty("pnf.dmaap.protocol")).host(env.getProperty("pnf.dmaap.host"))
                 .port(env.getProperty("pnf.dmaap.port", Integer.class))
                 .path(env.getProperty("pnf.dmaap.pnfUpdateTopicName")).path(env.getProperty("pnf.dmaap.consumerGroup"))
-                .path(env.getProperty("pnf.dmaap.consumerIdUpdate")).build());
+                .path(env.getProperty("pnf.dmaap.consumerId")).build());
     }
 
 
