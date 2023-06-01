@@ -51,7 +51,7 @@ public class SDNCClient {
      */
     public String post(Object request, SDNCTopology topology) throws MapperException, BadResponseException {
         String jsonRequest = sdnCommonTasks.buildJsonRequest(request);
-        String targetUrl = properties.getHost() + properties.getPath() + ":" + topology.toString() + "/";
+        String targetUrl = properties.getHost() + properties.getPath() + ":" + topology.toString();
         BaseClient<String, LinkedHashMap<String, Object>> STOClient = new BaseClient<>();
 
         STOClient.setTargetUrl(targetUrl);
