@@ -79,11 +79,6 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
     private static final Logger logger = LoggerFactory.getLogger(MsoMulticloudUtils.class);
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
-    private static final Integer DEFAULT_MSB_PORT = 80;
-    private static final String DEFAULT_MSB_IP = "127.0.0.1";
-    private static final String DEFAULT_MSB_SCHEME = "http";
-    private static final String ONAP_IP = "ONAP_IP";
-    private static final String MSB_SCHEME = "MSB_SCHEME";
     private final HttpClientFactory httpClientFactory = new HttpClientFactory();
 
     @Autowired
@@ -792,19 +787,21 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
     }
 
     private String getMulticloudEndpoint(String cloudSiteId, String cloudOwner, String workloadId, boolean isName) {
-        String msbIp = System.getenv().get(ONAP_IP);
-        if (null == msbIp || msbIp.isEmpty()) {
-            msbIp = environment.getProperty("mso.msb-ip", DEFAULT_MSB_IP);
-        }
-        Integer msbPort = environment.getProperty("mso.msb-port", Integer.class, DEFAULT_MSB_PORT);
-        String msbScheme = System.getenv().get(MSB_SCHEME);
-        if (null == msbScheme || msbScheme.isEmpty()) {
-            msbScheme = environment.getProperty("mso.msb-scheme", DEFAULT_MSB_SCHEME);
-        }
 
-        String path = "/api/multicloud/v1/" + cloudOwner + "/" + cloudSiteId + "/infra_workload";
+        /*
+         * Below Changes are to make direct API calls to MultiCloud rather tha going via MSB Reads env values from OOM
+         * charts
+         */
 
-        String endpoint = UriBuilder.fromPath(path).host(msbIp).port(msbPort).scheme(msbScheme).build().toString();
+        String multicloudAPI = environment.getProperty("multicloud.endpoint");
+        logger.debug("********* MulticloudAPI is :***********" + multicloudAPI);
+
+        String path = "/" + cloudOwner + "/" + cloudSiteId + "/infra_workload";
+        logger.debug("***** Path is :****" + path);
+
+        String endpoint = multicloudAPI + path;
+        logger.debug("***** Endpoint is ****" + endpoint);
+
         if (workloadId != null) {
             String middlepart = null;
             if (isName) {
