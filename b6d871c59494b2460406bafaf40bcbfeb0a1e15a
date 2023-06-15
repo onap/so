@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d5f416a6_ccca555b",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/openstack/utils/MsoMulticloudUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 799,
+      "author": {
+        "id": 2701
+      },
+      "writtenOn": "2023-06-15T19:32:51Z",
+      "side": 1,
+      "message": "shouldn\u0027t we add it to some examplary settings file?",
+      "range": {
+        "startLine": 799,
+        "startChar": 56,
+        "endLine": 799,
+        "endChar": 75
+      },
+      "revId": "b6d871c59494b2460406bafaf40bcbfeb0a1e15a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
