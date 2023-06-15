@@ -197,7 +197,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
             logger.debug(String.format("Multicloud Request is: %s", multicloudRequest.toString()));
         }
 
-        String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, cloudOwner, null, false);
+        String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, cloudOwner, null, false, tenantId);
         RestClient multicloudClient = getMulticloudClient(multicloudEndpoint, tenantId);
 
         if (multicloudClient == null) {
@@ -283,7 +283,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
         StackInfo returnInfo = new StackInfo();
         returnInfo.setName(stackName);
 
-        String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, cloudOwner, stackId, byName);
+        String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, cloudOwner, stackId, byName, tenantId);
         RestClient multicloudClient = getMulticloudClient(multicloudEndpoint, tenantId);
 
         if (multicloudClient != null) {
@@ -379,7 +379,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
         returnInfo.setName(stackName);
         Response response = null;
 
-        String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, cloudOwner, stackId, false);
+        String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, cloudOwner, stackId, false, tenantId);
         RestClient multicloudClient = getMulticloudClient(multicloudEndpoint, tenantId);
 
         if (multicloudClient != null) {
@@ -446,7 +446,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
         multicloudRequest.setGenericVnfId(genericVnfId);
         multicloudRequest.setVfModuleId(vfModuleId);
 
-        String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, cloudOwner, stackId, false);
+        String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, cloudOwner, stackId, false, tenantId);
         RestClient multicloudClient = getMulticloudClient(multicloudEndpoint, tenantId);
 
         if (multicloudClient == null) {
@@ -791,37 +791,94 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
         return null;
     }
 
-    private String getMulticloudEndpoint(String cloudSiteId, String cloudOwner, String workloadId, boolean isName) {
-        String msbIp = System.getenv().get(ONAP_IP);
-        if (null == msbIp || msbIp.isEmpty()) {
-            msbIp = environment.getProperty("mso.msb-ip", DEFAULT_MSB_IP);
-        }
-        Integer msbPort = environment.getProperty("mso.msb-port", Integer.class, DEFAULT_MSB_PORT);
-        String msbScheme = System.getenv().get(MSB_SCHEME);
-        if (null == msbScheme || msbScheme.isEmpty()) {
-            msbScheme = environment.getProperty("mso.msb-scheme", DEFAULT_MSB_SCHEME);
-        }
 
-        String path = "/api/multicloud/v1/" + cloudOwner + "/" + cloudSiteId + "/infra_workload";
+    private boolean getConnectivityInfo(String cloudSiteId, String tenantId) {
+        /* Below logic is to check if connectivity-info exists */
+        String CONNECTIVITY_PATH = "/v1/connectivity-info/";
 
-        String endpoint = UriBuilder.fromPath(path).host(msbIp).port(msbPort).scheme(msbScheme).build().toString();
-        if (workloadId != null) {
-            String middlepart = null;
-            if (isName) {
-                middlepart = "?name=";
+        String multicloudAPI = environment.getProperty("multicloud.endpoint");
+
+        String conn_endpoint = multicloudAPI + CONNECTIVITY_PATH + cloudSiteId;
+        logger.debug("connectivity_endpoint is" + conn_endpoint);
+
+        RestClient multicloudClient = getMulticloudClient(conn_endpoint, tenantId);
+        Response response = multicloudClient.get();
+        if (multicloudClient != null && response != null) {
+            return response.getStatus() == Response.Status.OK.getStatusCode();
+
+        } else
+            return false;
+    }
+
+    private String getMulticloudEndpoint(String cloudSiteId, String cloudOwner, String workloadId, boolean isName,
+            String tenantId) {
+        /* Below logic decides to switch between mc-k8s-plugin or msb path based on isConnInfo Flag */
+        boolean isConnInfo = getConnectivityInfo(cloudSiteId, tenantId);
+        logger.debug("isConnInfo flag" + isConnInfo);
+
+        if (!isConnInfo) {
+            logger.debug("****** Standard MSB PATH ******");
+            String msbIp = System.getenv().get(ONAP_IP);
+            if (null == msbIp || msbIp.isEmpty()) {
+                msbIp = environment.getProperty("mso.msb-ip", DEFAULT_MSB_IP);
+            }
+            Integer msbPort = environment.getProperty("mso.msb-port", Integer.class, DEFAULT_MSB_PORT);
+            String msbScheme = System.getenv().get(MSB_SCHEME);
+            if (null == msbScheme || msbScheme.isEmpty()) {
+                msbScheme = environment.getProperty("mso.msb-scheme", DEFAULT_MSB_SCHEME);
+            }
+            String path = "/api/multicloud/v1/" + cloudOwner + "/" + cloudSiteId + "/infra_workload";
+            String endpoint = UriBuilder.fromPath(path).host(msbIp).port(msbPort).scheme(msbScheme).build().toString();
+            if (workloadId != null) {
+                String middlepart = null;
+                if (isName) {
+                    middlepart = "?name=";
+                } else {
+                    middlepart = "/";
+                }
+                if (logger.isDebugEnabled()) {
+                    logger.debug(String.format("Multicloud Endpoint is: %s%s%s", endpoint, middlepart, workloadId));
+                }
+                return String.format("%s%s%s", endpoint, middlepart, workloadId);
             } else {
-                middlepart = "/";
+                if (logger.isDebugEnabled()) {
+                    logger.debug(String.format("Multicloud Endpoint is: %s", endpoint));
+                }
+                return endpoint;
             }
-            if (logger.isDebugEnabled()) {
-                logger.debug(String.format("Multicloud Endpoint is: %s%s%s", endpoint, middlepart, workloadId));
-            }
-            return String.format("%s%s%s", endpoint, middlepart, workloadId);
+
         } else {
-            if (logger.isDebugEnabled()) {
-                logger.debug(String.format("Multicloud Endpoint is: %s", endpoint));
+            logger.debug("****** MutliCloud-k8s-Plugin PATH *****");
+
+            String multicloudAPI = environment.getProperty("multicloud.endpoint");
+            logger.debug("********* MulticloudAPI is :***********" + multicloudAPI);
+
+            String path = "/" + cloudOwner + "/" + cloudSiteId + "/infra_workload";
+            logger.debug("***** Path is :****" + path);
+
+            String endpoint = multicloudAPI + path;
+            logger.debug("***** Endpoint is ****" + endpoint);
+
+            if (workloadId != null) {
+                String middlepart = null;
+                if (isName) {
+                    middlepart = "?name=";
+                } else {
+                    middlepart = "/";
+                }
+                if (logger.isDebugEnabled()) {
+                    logger.debug(String.format("Multicloud Endpoint is: %s%s%s", endpoint, middlepart, workloadId));
+                }
+                return String.format("%s%s%s", endpoint, middlepart, workloadId);
+            } else {
+                if (logger.isDebugEnabled()) {
+                    logger.debug(String.format("Multicloud Endpoint is: %s", endpoint));
+                }
+                return endpoint;
             }
-            return endpoint;
+
         }
+
     }
 
     private RestClient getMulticloudClient(String endpoint, String tenantId) {
