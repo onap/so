@@ -22,6 +22,30 @@
       "revId": "b6d871c59494b2460406bafaf40bcbfeb0a1e15a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d9381011_9aa06afd",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/openstack/utils/MsoMulticloudUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 799,
+      "author": {
+        "id": 7813
+      },
+      "writtenOn": "2023-06-19T07:42:06Z",
+      "side": 1,
+      "message": "Hi Lukasz,\n\nAbove one reads value from configmap directly, hence reading properties from config makes it simpler to traverse as Environment is autowired",
+      "parentUuid": "d5f416a6_ccca555b",
+      "range": {
+        "startLine": 799,
+        "startChar": 56,
+        "endLine": 799,
+        "endChar": 75
+      },
+      "revId": "b6d871c59494b2460406bafaf40bcbfeb0a1e15a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
