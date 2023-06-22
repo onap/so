@@ -1,0 +1,22 @@
+
+---
+distribution_type: 'container'
+container_release_tag: '1.12.2'
+project: 'so'
+log_dir: 'so-maven-docker-stage-london/1/'
+ref: 'd621d2baca674f8e0491acf3f7d1088787f975fd'
+containers:
+  - name: 'so/catalog-db-adapter'
+    version: '1.12.2-20230615T2054'
+  - name: 'so/request-db-adapter'
+    version: '1.12.2-20230615T2054'
+  - name: 'so/openstack-adapter'
+    version: '1.12.2-20230615T2054'
+  - name: 'so/sdnc-adapter'
+    version: '1.12.2-20230615T2054'
+  - name: 'so/sdc-controller'
+    version: '1.12.2-20230615T2054'
+  - name: 'so/bpmn-infra'
+    version: '1.12.2-20230615T2054'
+  - name: 'so/api-handler-infra'
+    version: '1.12.2-20230615T2054'
