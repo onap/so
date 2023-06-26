@@ -1,6 +1,6 @@
 project = "onap"
-release = "master"
-version = "master"
+release = "london"
+version = "london"
 
 doc_url = 'https://docs.onap.org/projects'
 
@@ -32,7 +32,7 @@ extensions = [
 # Change to {releasename} after you have created the new 'doc' branch.
 #
 
-branch = 'latest'
+branch = 'london'
 
 intersphinx_mapping = {}
 intersphinx_mapping['onap-usecase-ui'] = ('{}/onap-usecase-ui/en/%s'.format(doc_url) % branch, None)
