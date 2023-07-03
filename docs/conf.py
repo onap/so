@@ -36,7 +36,6 @@ branch = 'latest'
 
 intersphinx_mapping = {}
 intersphinx_mapping['onap-usecase-ui'] = ('{}/onap-usecase-ui/en/%s'.format(doc_url) % branch, None)
-intersphinx_mapping['onap-vid'] = ('{}/onap-vid/en/%s'.format(doc_url) % branch, None)
 doc_url = 'https://docs.onap.org/projects'
 master_doc = 'index'
 
