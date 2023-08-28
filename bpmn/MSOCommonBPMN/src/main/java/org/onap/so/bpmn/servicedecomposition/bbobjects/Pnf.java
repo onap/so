@@ -51,6 +51,9 @@ public class Pnf implements Serializable, ShallowCopy<Pnf> {
     @JsonProperty("cloud-region")
     private CloudRegion cloudRegion;
 
+    @JsonProperty("in-maint")
+    private Boolean inMaint;
+
     @JsonProperty("model-info-pnf")
     private ModelInfoPnf modelInfoPnf;
 
@@ -90,6 +93,14 @@ public class Pnf implements Serializable, ShallowCopy<Pnf> {
 
     public void setOrchestrationStatus(OrchestrationStatus orchestrationStatus) {
         this.orchestrationStatus = orchestrationStatus;
+    }
+
+    public Boolean isInMaint() {
+        return inMaint;
+    }
+
+    public void setInMaint(Boolean inMaint) {
+        this.inMaint = inMaint;
     }
 
     public CloudRegion getCloudRegion() {

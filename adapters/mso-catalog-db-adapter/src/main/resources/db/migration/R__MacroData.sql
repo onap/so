@@ -43,6 +43,7 @@ INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, I
 ('CNF-Macro-Upgrade', 'upgradeCnf', 'Vnf', false,true, '7', '7','DEFAULT', '*'),
 ('PNF-Macro-Delete', 'deleteInstance', 'Pnf', false,true, '7', '7','DEFAULT', '*'),
 ('PNF-Macro-Create', 'createInstance', 'Pnf', false,true, '7', '7','DEFAULT', '*'),
+('PNF-Macro-Modify', 'updateInstance', 'Pnf', false,true, '7', '7','DEFAULT', '*'),
 ('Cnf-Create', 'createInstance', 'Cnf', true, true, '7','7','DEFAULT', '*'),
 ('Cnf-Delete', 'deleteInstance', 'Cnf', true, true, '7','7','DEFAULT', '*'),
 ('Slice-Macro-create','createRanSlice','NetworkSliceSubnet',0,1,7,1,'DEFAULT','*'),
@@ -297,7 +298,11 @@ INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, SC
 ('Slice-Macro-modify','2','ControllerExecutionBB','nssi','modify-sliceprofile',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Slice-Macro-modify' and CLOUD_OWNER = 'DEFAULT')),
 ('Slice-Macro-delete','2','DeleteRANNssiBB',null,null,1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Slice-Macro-delete' and CLOUD_OWNER = 'DEFAULT')),
 ('Slice-Macro-delete','1','ControllerExecutionBB','nssi','delete-sliceprofile',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Slice-Macro-delete' and CLOUD_OWNER = 'DEFAULT'));
-
+('PNF-Macro-Modify' , '1', 'AAISetPnfInMaintBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'PNF-Macro-Modify' and CLOUD_OWNER = 'DEFAULT')),
+('PNF-Macro-Modify' , '2', 'ControllerExecutionBB',  'pnf' , 'modify-config-assign', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'PNF-Macro-Modify' and CLOUD_OWNER = 'DEFAULT')),
+('PNF-Macro-Modify' , '3', 'WaitForPnfReadyBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'PNF-Macro-Modify' and CLOUD_OWNER = 'DEFAULT')),
+('PNF-Macro-Modify' , '4', 'ControllerExecutionBB',  'pnf' , 'modify-config-deploy', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'PNF-Macro-Modify' and CLOUD_OWNER = 'DEFAULT')),
+('PNF-Macro-Modify' , '5', 'ActivatePnfBB', NULL, NULL, 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'PNF-Macro-Modify' and CLOUD_OWNER = 'DEFAULT')),
 
 INSERT INTO rainy_day_handler_macro (FLOW_NAME, SERVICE_TYPE, VNF_TYPE, ERROR_CODE, WORK_STEP, POLICY, SECONDARY_POLICY, REG_EX_ERROR_MESSAGE, SERVICE_ROLE)
 VALUES
@@ -427,6 +432,7 @@ VALUES
 ('DeactivateNetworkCollectionBB', 'NETWORK_COLLECTION', 'DEACTIVATE'),
 ('AAICheckVnfInMaintBB', 'NO_VALIDATE', 'CUSTOM'),
 ('AAISetVnfInMaintBB', 'NO_VALIDATE', 'CUSTOM'),
+('AAISetPnfInMaintBB', 'NO_VALIDATE', 'CUSTOM'),
 ('AAIUnsetVnfInMaintBB', 'NO_VALIDATE', 'CUSTOM'),
 ('SDNOVnfHealthCheckBB', 'NO_VALIDATE', 'CUSTOM'),
 ('VNF-Macro-Replace', 'NO_VALIDATE', 'CUSTOM'),

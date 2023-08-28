@@ -809,6 +809,29 @@ public class ServiceInstances extends AbstractRestHandler {
         }
     }
 
+    @PUT
+    @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/pnfs/{pnfInstanceId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Create PNF on a specified version and serviceInstance", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Transactional
+    public Response updatePnfInstance(String request, @PathParam("version") String version,
+            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("pnfInstanceId") String pnfInstanceId,
+            @Context ContainerRequestContext requestContext) throws ApiException {
+        String requestId = requestHandlerUtils.getRequestId(requestContext);
+        HashMap<String, String> instanceIdMap = new HashMap<>();
+        instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+        instanceIdMap.put("pnfInstanceId", pnfInstanceId);
+        try {
+            return serviceInstances(request, Action.updateInstance, instanceIdMap, version, requestId,
+                    requestHandlerUtils.getRequestUri(requestContext, uriPrefix));
+        } catch (Exception e) {
+            logger.error("Error in pnf", e);
+            throw e;
+        }
+    }
+
     @POST
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/networks")
     @Consumes(MediaType.APPLICATION_JSON)

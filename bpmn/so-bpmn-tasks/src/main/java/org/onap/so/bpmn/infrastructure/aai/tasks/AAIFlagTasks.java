@@ -24,9 +24,11 @@ package org.onap.so.bpmn.infrastructure.aai.tasks;
 
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.client.orchestration.AAIPnfResources;
 import org.onap.so.client.orchestration.AAIVnfResources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +42,9 @@ public class AAIFlagTasks {
 
     @Autowired
     private AAIVnfResources aaiVnfResources;
+
+    @Autowired
+    private AAIPnfResources aaiPnfResources;
     @Autowired
     private ExceptionBuilder exceptionUtil;
     @Autowired
@@ -73,6 +78,39 @@ public class AAIFlagTasks {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
+
+    public void checkPnfInMaintFlag(BuildingBlockExecution execution) {
+        boolean inMaint = false;
+        try {
+            Pnf pnf = extractPojosForBB.extractByKey(execution, ResourceKey.PNF);
+            String pnfName = pnf.getPnfName();
+            inMaint = aaiPnfResources.checkInMaintFlag(pnfName);
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+        if (inMaint) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "PNF is already in maintenance in A&AI");
+        }
+    }
+
+    public void modifyPnfInMaintFlag(BuildingBlockExecution execution, boolean inMaint) {
+        try {
+            Pnf pnf = extractPojosForBB.extractByKey(execution, ResourceKey.PNF);
+            logger.info("In modifyPnfInMaintFlag pnfname: {}", pnf.getPnfName());
+            Pnf copiedPnf = pnf.shallowCopyId();
+            copiedPnf.setPnfName(pnf.getPnfName());
+
+            copiedPnf.setInMaint(inMaint);
+            pnf.setInMaint(inMaint);
+            logger.info("In modifyPnfInMaintFlag if block pnfInMaint: {}, copiedPnfInMaint: {}", pnf.isInMaint(),
+                    copiedPnf.isInMaint());
+            aaiPnfResources.updateObjectPnf(copiedPnf);
+
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
 
     public void checkVnfClosedLoopDisabledFlag(BuildingBlockExecution execution) {
         boolean isClosedLoopDisabled = false;

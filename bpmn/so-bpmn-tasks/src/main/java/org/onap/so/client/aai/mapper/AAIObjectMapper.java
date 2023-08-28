@@ -114,6 +114,7 @@ public class AAIObjectMapper {
                     map().setModelInvariantId(source.getModelInfoPnf().getModelInvariantUuid());
                     map().setModelVersionId(source.getModelInfoPnf().getModelUuid());
                     map().setNfType(source.getModelInfoPnf().getNfType());
+                    map().setInMaint(source.isInMaint());
                 }
             });
         }
