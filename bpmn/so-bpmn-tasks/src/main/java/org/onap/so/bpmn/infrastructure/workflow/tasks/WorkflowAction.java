@@ -308,6 +308,9 @@ public class WorkflowAction {
         } else if (isPNFDelete(resourceType, requestAction)) {
             pnfEBBLoader.traverseAAIPnf(execution, resourceList, workflowResourceIds.getServiceInstanceId(), resourceId,
                     aaiResourceIds);
+        } else if (isPNFUpdate(resourceType, requestAction)) {
+            pnfEBBLoader.traverseAAIPnf(execution, resourceList, workflowResourceIds.getServiceInstanceId(), resourceId,
+                    aaiResourceIds);
         } else if (resourceType == WorkflowType.VNF
                 && (DELETE_INSTANCE.equalsIgnoreCase(requestAction) || REPLACEINSTANCE.equalsIgnoreCase(requestAction)
                         || (RECREATE_INSTANCE.equalsIgnoreCase(requestAction)))) {
@@ -408,6 +411,10 @@ public class WorkflowAction {
 
     private boolean isPNFDelete(WorkflowType resourceType, String requestAction) {
         return resourceType == WorkflowType.PNF && DELETE_INSTANCE.equalsIgnoreCase(requestAction);
+    }
+
+    private boolean isPNFUpdate(WorkflowType resourceType, String requestAction) {
+        return resourceType == WorkflowType.PNF && UPDATE_INSTANCE.equalsIgnoreCase(requestAction);
     }
 
     private void setExecutionVariables(DelegateExecution execution, List<ExecuteBuildingBlock> flowsToExecute,

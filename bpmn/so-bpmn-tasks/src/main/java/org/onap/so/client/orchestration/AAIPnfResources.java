@@ -62,8 +62,15 @@ public class AAIPnfResources {
 
     public void updateOrchestrationStatusPnf(Pnf pnf, OrchestrationStatus orchestrationStatus) {
         AAIResourceUri pnfURI = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(pnf.getPnfName()));
-
         Pnf pnfCopy = pnf.shallowCopyId();
+        if (orchestrationStatus.equals(OrchestrationStatus.REGISTER)
+                || orchestrationStatus.equals(OrchestrationStatus.REGISTERED)) {
+            pnf.setInMaint(true);
+            pnfCopy.setInMaint(true);
+        } else {
+            pnf.setInMaint(false);
+            pnfCopy.setInMaint(false);
+        }
 
         pnf.setOrchestrationStatus(orchestrationStatus);
         pnfCopy.setOrchestrationStatus(orchestrationStatus);
@@ -91,6 +98,30 @@ public class AAIPnfResources {
     public void deletePnf(Pnf pnf) {
         AAIResourceUri pnfURI = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(pnf.getPnfName()));
         injectionHelper.getAaiClient().delete(pnfURI);
+    }
+
+    public void updateObjectPnf(Pnf pnf) {
+        Optional<org.onap.aai.domain.yang.Pnf> pnfFromAai =
+                injectionHelper.getAaiClient().get(org.onap.aai.domain.yang.Pnf.class,
+                        AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(pnf.getPnfName())));
+        logger.info("***in updateObjectPnf getPnfName====> {} ", pnfFromAai.get().getPnfName());
+        injectionHelper.getAaiClient().update(
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(pnf.getPnfName())),
+                aaiObjectMapper.mapPnf((pnf)));
+    }
+
+    /**
+     * Check inMaint flag value of PNF from AAI using pnfName
+     *
+     * @param pnfName - pnf-id required pnf
+     * @return inMaint flag value
+     */
+    public boolean checkInMaintFlag(String pnfName) {
+        org.onap.aai.domain.yang.Pnf pnf = injectionHelper.getAaiClient()
+                .get(org.onap.aai.domain.yang.Pnf.class,
+                        AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(pnfName)))
+                .orElse(new org.onap.aai.domain.yang.Pnf());
+        return pnf.isInMaint();
     }
 
     private void updatePnfFields(Pnf pnf, org.onap.aai.domain.yang.Pnf pnfFromAai) {
