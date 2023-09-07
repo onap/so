@@ -1,0 +1,8 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+2: Seshu Kumar Mudiganti <seshukumar.mudiganti@windriver.com>
+Verified+1: ONAP Required GHA <releng+onap.required.gha@linuxfoundation.org>
+Submitted-by: Seshu Kumar Mudiganti <seshukumar.mudiganti@windriver.com>
+Submitted-at: Thu, 07 Sep 2023 10:44:32 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/so/+/135858
+Project: so
+Branch: refs/heads/master
