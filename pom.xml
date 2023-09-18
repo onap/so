@@ -1124,11 +1124,6 @@
         <version>2.1.214</version>
       </dependency>
       <dependency>
-        <groupId>org.springframework.security</groupId>
-        <artifactId>spring-security-web</artifactId>
-        <version>6.1.2</version>
-      </dependency>
-      <dependency>
         <groupId>org.camunda.bpm</groupId>
         <artifactId>camunda-external-task-client</artifactId>
         <version>1.4.0</version>
