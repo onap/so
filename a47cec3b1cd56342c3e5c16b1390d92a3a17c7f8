@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "06716799_3c928cb9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8322
+      },
+      "writtenOn": "2023-09-25T08:16:11Z",
+      "side": 1,
+      "message": "The patch looks good to me. If you think there\u0027s any need for changes, I\u0027d be happy to make them.",
+      "revId": "a47cec3b1cd56342c3e5c16b1390d92a3a17c7f8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
