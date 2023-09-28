@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,6 @@
  */
 
 package org.onap.so.adapters.catalogdb.rest;
-
 
 
 import java.util.ArrayList;
@@ -36,46 +35,16 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
-import org.onap.so.adapters.catalogdb.catalogrest.CatalogQuery;
-import org.onap.so.adapters.catalogdb.catalogrest.CatalogQueryException;
-import org.onap.so.adapters.catalogdb.catalogrest.CatalogQueryExceptionCategory;
-import org.onap.so.adapters.catalogdb.catalogrest.QueryAllottedResourceCustomization;
-import org.onap.so.adapters.catalogdb.catalogrest.QueryResourceRecipe;
-import org.onap.so.adapters.catalogdb.catalogrest.QueryServiceCsar;
-import org.onap.so.adapters.catalogdb.catalogrest.QueryServiceMacroHolder;
-import org.onap.so.adapters.catalogdb.catalogrest.QueryServiceNetworks;
-import org.onap.so.adapters.catalogdb.catalogrest.QueryServiceVnfs;
-import org.onap.so.adapters.catalogdb.catalogrest.QueryVfModule;
-import org.onap.so.db.catalog.beans.AllottedResource;
-import org.onap.so.db.catalog.beans.AllottedResourceCustomization;
-import org.onap.so.db.catalog.beans.InstanceGroup;
-import org.onap.so.db.catalog.beans.NetworkResource;
-import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
-import org.onap.so.db.catalog.beans.ProcessingFlags;
-import org.onap.so.db.catalog.beans.Recipe;
-import org.onap.so.db.catalog.beans.Service;
-import org.onap.so.db.catalog.beans.ToscaCsar;
-import org.onap.so.db.catalog.beans.VfModule;
-import org.onap.so.db.catalog.beans.VfModuleCustomization;
-import org.onap.so.db.catalog.beans.VnfRecipe;
-import org.onap.so.db.catalog.beans.VnfResource;
-import org.onap.so.db.catalog.beans.VnfResourceCustomization;
-import org.onap.so.db.catalog.data.repository.AllottedResourceCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.AllottedResourceRepository;
-import org.onap.so.db.catalog.data.repository.ArRecipeRepository;
-import org.onap.so.db.catalog.data.repository.InstanceGroupRepository;
-import org.onap.so.db.catalog.data.repository.NetworkRecipeRepository;
-import org.onap.so.db.catalog.data.repository.NetworkResourceCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.NetworkResourceRepository;
-import org.onap.so.db.catalog.data.repository.ProcessingFlagsRepository;
-import org.onap.so.db.catalog.data.repository.ServiceRepository;
-import org.onap.so.db.catalog.data.repository.ToscaCsarRepository;
-import org.onap.so.db.catalog.data.repository.VFModuleRepository;
-import org.onap.so.db.catalog.data.repository.VnfCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.VnfRecipeRepository;
-import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
+import org.onap.so.adapters.catalogdb.catalogrest.*;
+import org.onap.so.db.catalog.beans.*;
+import org.onap.so.db.catalog.data.repository.*;
 import org.onap.so.db.catalog.rest.beans.ServiceMacroHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,6 +102,10 @@ public class CatalogDbAdapterRest {
 
     @Autowired
     private ProcessingFlagsRepository processingFlagsRepo;
+
+    @Autowired
+    private PnfCustomizationRepository pnfCustomizationRepo;
+
 
     private static final String NO_MATCHING_PARAMETERS = "no matching parameters";
 
@@ -211,6 +184,113 @@ public class CatalogDbAdapterRest {
                     .entity(new GenericEntity<CatalogQueryException>(excResp) {}).build();
         }
     }
+
+    @GET
+    @Path("pnfResources/{pnfModelCustomizationUuid}")
+    @Transactional(readOnly = true)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Operation(operationId = "PnfResource", summary = "Get response by using pnfModelCustomizationUuid of pnfResources",
+            tags = {"CatalogDbAdapterRest"},
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Success",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = PnfResourceCustomization.class))),
+                    @ApiResponse(responseCode = "400", description = "Bad Request",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Error.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Error.class))),
+                    @ApiResponse(responseCode = "403", description = "Forbidden",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Error.class))),
+                    @ApiResponse(responseCode = "404", description = "Not Found",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Error.class))),
+                    @ApiResponse(responseCode = "405", description = "Method Not allowed",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Error.class))),
+                    @ApiResponse(responseCode = "409", description = "Conflict",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Error.class))),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Error.class)))})
+
+    public Response servicePnfs(
+            @Parameter(name = "version", description = "Version number",
+                    schema = @Schema(description = "")) @PathParam("version") String version,
+            @Parameter(name = "pnfUuid", description = "PnfModelCustomizationUuid for pnfResources",
+                    schema = @Schema(description = "")) @PathParam("pnfModelCustomizationUuid") String pnfUuid,
+            @Parameter(name = "filter", description = "Filter",
+                    schema = @Schema(description = "")) @QueryParam("filter") String filter) {
+        return servicePnfsImpl(version, !IS_ARRAY, pnfUuid, null, null, null, null, filter);
+    }
+
+    @GET
+    @Path("servicePnfs")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Transactional(readOnly = true)
+    public Response servicePnfs(@PathParam("version") String version,
+            @QueryParam("pnfModelCustomizationUuid") String pnfUuid, @QueryParam("serviceModelUuid") String smUuid,
+            @QueryParam("serviceModelInvariantUuid") String smiUuid, @QueryParam("serviceModelVersion") String smVer,
+            @QueryParam("serviceModelName") String smName, @QueryParam("filter") String filter) {
+        return servicePnfsImpl(version, IS_ARRAY, pnfUuid, smUuid, smiUuid, smVer, smName, filter);
+    }
+
+    public Response servicePnfsImpl(String version, boolean isArray, String pnfUuid, String serviceModelUUID,
+            String smiUuid, String smVer, String smName, String filter) {
+        QueryServicePnfs qryResp = null;
+        int respStatus = HttpStatus.SC_OK;
+        List<PnfResourceCustomization> ret = new ArrayList<>();
+        Service service = null;
+        try {
+            if (pnfUuid != null && !"".equals(pnfUuid))
+                ret = pnfCustomizationRepo.findByModelCustomizationUUID(pnfUuid);
+            else if ((serviceModelUUID != null && !"".equals(serviceModelUUID)))
+                ret = pnfCustomizationRepo.findPnfResourceCustomizationByModelUuid(serviceModelUUID);
+            else if (serviceModelUUID != null && !"".equals(serviceModelUUID))
+                service = serviceRepo.findFirstOneByModelUUIDOrderByModelVersionDesc(serviceModelUUID);
+            else if (smiUuid != null && !"".equals(smiUuid))
+                if (smVer != null && !"".equals(smVer))
+                    service = serviceRepo.findFirstByModelVersionAndModelInvariantUUID(smVer, smiUuid);
+                else
+                    service = serviceRepo.findFirstByModelInvariantUUIDOrderByModelVersionDesc(smiUuid);
+            else if (smName != null && !"".equals(smName)) {
+                if (smVer != null && !"".equals(smVer))
+                    service = serviceRepo.findByModelNameAndModelVersion(smName, smVer);
+                else
+                    service = serviceRepo.findFirstByModelNameOrderByModelVersionDesc(smName);
+            } else {
+                throw (new Exception(NO_MATCHING_PARAMETERS));
+            }
+
+            if (service == null && ret.isEmpty()) {
+                respStatus = HttpStatus.SC_NOT_FOUND;
+                qryResp = new QueryServicePnfs();
+            } else if (service == null && !ret.isEmpty()) {
+                if (StringUtils.isNotEmpty(filter) && RESOURCE_INPUT_FILTER.equalsIgnoreCase(filter)) {
+                    ret.forEach(pnfCustomization -> pnfCustomization.setResourceInput(null));
+                }
+                qryResp = new QueryServicePnfs(ret);
+            } else if (service != null) {
+                ret = service.getPnfCustomizations();
+                if (StringUtils.isNotEmpty(filter) && RESOURCE_INPUT_FILTER.equalsIgnoreCase(filter)) {
+                    ret.forEach(pnfCustomization -> pnfCustomization.setResourceInput(null));
+                }
+                qryResp = new QueryServicePnfs(ret);
+            }
+            logger.debug("servicePnfs qryResp= {}", qryResp);
+            return respond(version, respStatus, isArray, qryResp);
+        } catch (Exception e) {
+            logger.error("Exception - queryPNF", e);
+            CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
+                    CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
+            return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {}).build();
+        }
+    }
+
 
     @GET
     @Path("networkResources/{networkModelCustomizationUuid}")
@@ -315,9 +395,12 @@ public class CatalogDbAdapterRest {
                 if (serv != null) {
                     ret.setNetworkResourceCustomizations(new ArrayList(serv.getNetworkCustomizations()));
                     if (StringUtils.isNotEmpty(filter) && RESOURCE_INPUT_FILTER.equalsIgnoreCase(filter)) {
+                        serv.getPnfCustomizations()
+                                .forEach(pnfCustomization -> pnfCustomization.setResourceInput(null));
                         serv.getVnfCustomizations()
                                 .forEach(vnfCustomization -> vnfCustomization.setResourceInput(null));
                     }
+                    ret.setPnfResourceCustomizations(new ArrayList(serv.getPnfCustomizations()));
                     ret.setVnfResourceCustomizations(new ArrayList(serv.getVnfCustomizations()));
                     ret.setAllottedResourceCustomizations(new ArrayList(serv.getAllottedCustomizations()));
                 }
@@ -465,7 +548,7 @@ public class CatalogDbAdapterRest {
 
     /**
      * Get the tosca csar info from catalog <br>
-     * 
+     *
      * @param smUuid service model uuid
      * @return the tosca csar information of the serivce.
      * @since ONAP Beijing Release
@@ -510,7 +593,7 @@ public class CatalogDbAdapterRest {
 
     /**
      * Get the resource recipe info from catalog <br>
-     * 
+     *
      * @param rmUuid resource model uuid
      * @return the recipe information of the resource.
      * @since ONAP Beijing Release

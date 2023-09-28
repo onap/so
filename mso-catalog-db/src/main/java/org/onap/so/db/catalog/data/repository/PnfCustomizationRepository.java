@@ -37,4 +37,7 @@ public interface PnfCustomizationRepository extends JpaRepository<PnfResourceCus
             nativeQuery = true)
     List<PnfResourceCustomization> findPnfResourceCustomizationByModelUuid(
             @Param("SERVICE_MODEL_UUID") String serviceModelUuid);
+
+    List<PnfResourceCustomization> findByModelCustomizationUUID(
+            @Param("MODEL_CUSTOMIZATION_UUID") String modelCustomizationUUID);
 }

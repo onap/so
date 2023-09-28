@@ -910,6 +910,10 @@ public class ToscaResourceInstaller {
 
                 if (checkExistingPnfResourceCutomization(customizationUUID)) {
                     logger.info("Resource customization UUID: {} already deployed", customizationUUID);
+                    PnfResourceCustomization pnfCustomization =
+                            pnfCustomizationRepository.findById(customizationUUID).get();
+                    logger.info("Add relationship of pnfResourceCustomization with service: {}", pnfCustomization);
+                    service.getPnfCustomizations().add(pnfCustomization);
                 } else {
                     PnfResource pnfResource = findExistingPnfResource(service, modelUuid);
                     if (pnfResource == null) {
@@ -917,6 +921,16 @@ public class ToscaResourceInstaller {
                     }
                     PnfResourceCustomization pnfResourceCustomization =
                             createPnfResourceCustomization(entityDetails, pnfResource);
+
+                    boolean customizationForPnfPresent = true;
+                    if (pnfResource.getPnfResourceCustomizations() != null) {
+                        customizationForPnfPresent = pnfResource.getPnfResourceCustomizations().stream()
+                                .anyMatch(pnfc -> pnfc.getModelCustomizationUUID().equalsIgnoreCase(customizationUUID));
+                    }
+
+                    if (!customizationForPnfPresent) {
+                        pnfCustomizationRepository.save(pnfResourceCustomization);
+                    }
                     pnfResource.getPnfResourceCustomizations().add(pnfResourceCustomization);
                     toscaResourceStruct.setPnfResourceCustomization(pnfResourceCustomization);
                     service.getPnfCustomizations().add(pnfResourceCustomization);
