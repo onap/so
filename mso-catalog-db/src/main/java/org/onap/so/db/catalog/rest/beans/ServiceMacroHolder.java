@@ -40,6 +40,9 @@ public class ServiceMacroHolder implements Serializable {
     private ArrayList<VnfResourceCustomization> vnfResourceCustomizations;
     private ArrayList<ServiceProxyResourceCustomization> serviceProxyResourceCustomizations;
 
+    private ArrayList<PnfResourceCustomization> pnfResourceCustomizations;
+    private ArrayList<PnfResource> pnfResources;
+
 
     public ServiceMacroHolder() {
         super();
@@ -49,6 +52,8 @@ public class ServiceMacroHolder implements Serializable {
         this.allottedResourceCustomizations = new ArrayList<>();
         this.vnfResourceCustomizations = new ArrayList<>();
         this.serviceProxyResourceCustomizations = new ArrayList<>();
+        this.pnfResourceCustomizations = new ArrayList<>();
+        this.pnfResources = new ArrayList<PnfResource>();
     }
 
     public ServiceMacroHolder(Service service) {
@@ -83,6 +88,25 @@ public class ServiceMacroHolder implements Serializable {
         }
     }
 
+    public void setPnfResources(ArrayList<PnfResource> pnfResources) {
+        this.pnfResources = pnfResources;
+    }
+
+    public ArrayList<PnfResource> getPnfResources() {
+        return this.pnfResources;
+    }
+
+    public void addPnfResource(PnfResource pr) {
+        if (pr != null) {
+            if (this.pnfResources != null) {
+                this.pnfResources.add(pr);
+            } else {
+                this.pnfResources = new ArrayList<>();
+                this.pnfResources.add(pr);
+            }
+        }
+    }
+
     public void setVnfResourceCustomizations(ArrayList<VnfResourceCustomization> vnfResourceCustomizations) {
         this.vnfResourceCustomizations = vnfResourceCustomizations;
     }
@@ -98,6 +122,25 @@ public class ServiceMacroHolder implements Serializable {
             } else {
                 this.vnfResourceCustomizations = new ArrayList<>();
                 this.vnfResourceCustomizations.add(vrc);
+            }
+        }
+    }
+
+    public void setPnfResourceCustomizations(ArrayList<PnfResourceCustomization> pnfResourceCustomizations) {
+        this.pnfResourceCustomizations = pnfResourceCustomizations;
+    }
+
+    public ArrayList<PnfResourceCustomization> getPnfResourceCustomizations() {
+        return this.pnfResourceCustomizations;
+    }
+
+    public void addPnfResourceCustomizations(PnfResourceCustomization prc) {
+        if (prc != null) {
+            if (this.pnfResourceCustomizations != null) {
+                this.pnfResourceCustomizations.add(prc);
+            } else {
+                this.pnfResourceCustomizations = new ArrayList<>();
+                this.pnfResourceCustomizations.add(prc);
             }
         }
     }
@@ -164,6 +207,25 @@ public class ServiceMacroHolder implements Serializable {
         } else {
             sb.append("none");
         }
+        if (this.pnfResourceCustomizations != null && this.pnfResourceCustomizations.size() > 0) {
+            int i = 0;
+            sb.append("PnfResources: ");
+            for (PnfResourceCustomization prc : this.pnfResourceCustomizations) {
+                sb.append(", pnfResourceCustomization[" + i++ + "]:" + prc.toString());
+            }
+        } else {
+            sb.append("none");
+        }
+        if (this.pnfResources != null && this.pnfResources.size() > 0) {
+            int i = 0;
+            sb.append("PnfResources: ");
+            for (PnfResource pr : this.pnfResources) {
+                sb.append(", pnfResource[" + i++ + "]:" + pr.toString());
+            }
+        } else {
+            sb.append("none");
+        }
+
         if (this.vnfResources != null && this.vnfResources.size() > 0) {
             int i = 0;
             sb.append("VnfResources: ");

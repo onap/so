@@ -40,8 +40,8 @@ public class QueryServiceMacroHolder extends CatalogQuery {
             + "\t\"serviceCategory\"    : <SERVICE_CATEGORY>,\n" + "\t\"serviceType\"        : <SERVICE_TYPE>,\n"
             + "\t\"serviceRole\"        : <SERVICE_ROLE>,\n" + "\t\"environmentContext\" : <ENVIRONMENT_CONTEXT>,\n"
             + "\t\"resourceOrder\"      : <RESOURCE_ORDER>,\n" + "\t\"workloadContext\"    : <WORKLOAD_CONTEXT>,\n"
-            + "<_SERVICEVNFS_>,\n" + "<_SERVICENETWORKS_>,\n" + "<_SERVICEINFO_>,\n" + "<_SERVICEPROXY_>,\n"
-            + "<_SERVICEALLOTTEDRESOURCES_>\n" + "\t}}";
+            + "<_SERVICEPNFS_>,\n" + "<_SERVICEVNFS_>,\n" + "<_SERVICENETWORKS_>,\n" + "<_SERVICEINFO_>,\n"
+            + "<_SERVICEPROXY_>,\n" + "<_SERVICEALLOTTEDRESOURCES_>\n" + "\t}}";
 
     public QueryServiceMacroHolder() {
         super();
@@ -87,6 +87,9 @@ public class QueryServiceMacroHolder extends CatalogQuery {
         put(valueMap, "RESOURCE_ORDER", service.getResourceOrder());
 
         String subitem;
+        subitem = new QueryServicePnfs(service.getPnfCustomizations()).JSON2(true, true);
+        valueMap.put("_SERVICEPNFS_", subitem.replaceAll(LINE_BEGINNING, "\t"));
+
         subitem = new QueryServiceVnfs(service.getVnfCustomizations()).JSON2(true, true);
         valueMap.put("_SERVICEVNFS_", subitem.replaceAll(LINE_BEGINNING, "\t"));
 

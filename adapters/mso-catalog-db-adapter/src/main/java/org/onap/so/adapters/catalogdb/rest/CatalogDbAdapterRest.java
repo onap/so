@@ -38,44 +38,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
-import org.onap.so.adapters.catalogdb.catalogrest.CatalogQuery;
-import org.onap.so.adapters.catalogdb.catalogrest.CatalogQueryException;
-import org.onap.so.adapters.catalogdb.catalogrest.CatalogQueryExceptionCategory;
-import org.onap.so.adapters.catalogdb.catalogrest.QueryAllottedResourceCustomization;
-import org.onap.so.adapters.catalogdb.catalogrest.QueryResourceRecipe;
-import org.onap.so.adapters.catalogdb.catalogrest.QueryServiceCsar;
-import org.onap.so.adapters.catalogdb.catalogrest.QueryServiceMacroHolder;
-import org.onap.so.adapters.catalogdb.catalogrest.QueryServiceNetworks;
-import org.onap.so.adapters.catalogdb.catalogrest.QueryServiceVnfs;
-import org.onap.so.adapters.catalogdb.catalogrest.QueryVfModule;
-import org.onap.so.db.catalog.beans.AllottedResource;
-import org.onap.so.db.catalog.beans.AllottedResourceCustomization;
-import org.onap.so.db.catalog.beans.InstanceGroup;
-import org.onap.so.db.catalog.beans.NetworkResource;
-import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
-import org.onap.so.db.catalog.beans.ProcessingFlags;
-import org.onap.so.db.catalog.beans.Recipe;
-import org.onap.so.db.catalog.beans.Service;
-import org.onap.so.db.catalog.beans.ToscaCsar;
-import org.onap.so.db.catalog.beans.VfModule;
-import org.onap.so.db.catalog.beans.VfModuleCustomization;
-import org.onap.so.db.catalog.beans.VnfRecipe;
-import org.onap.so.db.catalog.beans.VnfResource;
-import org.onap.so.db.catalog.beans.VnfResourceCustomization;
-import org.onap.so.db.catalog.data.repository.AllottedResourceCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.AllottedResourceRepository;
-import org.onap.so.db.catalog.data.repository.ArRecipeRepository;
-import org.onap.so.db.catalog.data.repository.InstanceGroupRepository;
-import org.onap.so.db.catalog.data.repository.NetworkRecipeRepository;
-import org.onap.so.db.catalog.data.repository.NetworkResourceCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.NetworkResourceRepository;
-import org.onap.so.db.catalog.data.repository.ProcessingFlagsRepository;
-import org.onap.so.db.catalog.data.repository.ServiceRepository;
-import org.onap.so.db.catalog.data.repository.ToscaCsarRepository;
-import org.onap.so.db.catalog.data.repository.VFModuleRepository;
-import org.onap.so.db.catalog.data.repository.VnfCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.VnfRecipeRepository;
-import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
+import org.onap.so.adapters.catalogdb.catalogrest.*;
+import org.onap.so.db.catalog.beans.*;
+import org.onap.so.db.catalog.data.repository.*;
 import org.onap.so.db.catalog.rest.beans.ServiceMacroHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,6 +98,10 @@ public class CatalogDbAdapterRest {
 
     @Autowired
     private ProcessingFlagsRepository processingFlagsRepo;
+
+    @Autowired
+    private PnfCustomizationRepository pnfCustomizationRepo;
+
 
     private static final String NO_MATCHING_PARAMETERS = "no matching parameters";
 
@@ -211,6 +180,71 @@ public class CatalogDbAdapterRest {
                     .entity(new GenericEntity<CatalogQueryException>(excResp) {}).build();
         }
     }
+
+    @GET
+    @Path("servicePnfs")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Transactional(readOnly = true)
+    public Response servicePnfs(@PathParam("version") String version,
+            @QueryParam("pnfModelCustomizationUuid") String pnfUuid, @QueryParam("serviceModelUuid") String smUuid,
+            @QueryParam("serviceModelInvariantUuid") String smiUuid, @QueryParam("serviceModelVersion") String smVer,
+            @QueryParam("serviceModelName") String smName, @QueryParam("filter") String filter) {
+        return servicePnfsImpl(version, IS_ARRAY, pnfUuid, smUuid, smiUuid, smVer, smName, filter);
+    }
+
+    public Response servicePnfsImpl(String version, boolean isArray, String pnfUuid, String serviceModelUUID,
+            String smiUuid, String smVer, String smName, String filter) {
+        QueryServicePnfs qryResp = null;
+        int respStatus = HttpStatus.SC_OK;
+        List<PnfResourceCustomization> ret = new ArrayList<>();
+        Service service = null;
+        try {
+            if (pnfUuid != null && !"".equals(pnfUuid))
+                ret = pnfCustomizationRepo.findByModelCustomizationUUID(pnfUuid);
+            else if ((serviceModelUUID != null && !"".equals(serviceModelUUID)))
+                ret = pnfCustomizationRepo.findPnfResourceCustomizationByModelUuid(serviceModelUUID);
+            else if (serviceModelUUID != null && !"".equals(serviceModelUUID))
+                service = serviceRepo.findFirstOneByModelUUIDOrderByModelVersionDesc(serviceModelUUID);
+            else if (smiUuid != null && !"".equals(smiUuid))
+                if (smVer != null && !"".equals(smVer))
+                    service = serviceRepo.findFirstByModelVersionAndModelInvariantUUID(smVer, smiUuid);
+                else
+                    service = serviceRepo.findFirstByModelInvariantUUIDOrderByModelVersionDesc(smiUuid);
+            else if (smName != null && !"".equals(smName)) {
+                if (smVer != null && !"".equals(smVer))
+                    service = serviceRepo.findByModelNameAndModelVersion(smName, smVer);
+                else
+                    service = serviceRepo.findFirstByModelNameOrderByModelVersionDesc(smName);
+            } else {
+                throw (new Exception(NO_MATCHING_PARAMETERS));
+            }
+
+            if (service == null && ret.isEmpty()) {
+                respStatus = HttpStatus.SC_NOT_FOUND;
+                qryResp = new QueryServicePnfs();
+            } else if (service == null && !ret.isEmpty()) {
+                if (StringUtils.isNotEmpty(filter) && RESOURCE_INPUT_FILTER.equalsIgnoreCase(filter)) {
+                    ret.forEach(pnfCustomization -> pnfCustomization.setResourceInput(null));
+                }
+                qryResp = new QueryServicePnfs(ret);
+            } else if (service != null) {
+                ret = service.getPnfCustomizations();
+                if (StringUtils.isNotEmpty(filter) && RESOURCE_INPUT_FILTER.equalsIgnoreCase(filter)) {
+                    ret.forEach(pnfCustomization -> pnfCustomization.setResourceInput(null));
+                }
+                qryResp = new QueryServicePnfs(ret);
+            }
+            logger.debug("servicePnfs qryResp= {}", qryResp);
+            return respond(version, respStatus, isArray, qryResp);
+        } catch (Exception e) {
+            logger.error("Exception - queryPNF", e);
+            CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
+                    CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
+            return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {}).build();
+        }
+    }
+
 
     @GET
     @Path("networkResources/{networkModelCustomizationUuid}")
@@ -315,9 +349,12 @@ public class CatalogDbAdapterRest {
                 if (serv != null) {
                     ret.setNetworkResourceCustomizations(new ArrayList(serv.getNetworkCustomizations()));
                     if (StringUtils.isNotEmpty(filter) && RESOURCE_INPUT_FILTER.equalsIgnoreCase(filter)) {
+                        serv.getPnfCustomizations()
+                                .forEach(pnfCustomization -> pnfCustomization.setResourceInput(null));
                         serv.getVnfCustomizations()
                                 .forEach(vnfCustomization -> vnfCustomization.setResourceInput(null));
                     }
+                    ret.setPnfResourceCustomizations(new ArrayList(serv.getPnfCustomizations()));
                     ret.setVnfResourceCustomizations(new ArrayList(serv.getVnfCustomizations()));
                     ret.setAllottedResourceCustomizations(new ArrayList(serv.getAllottedCustomizations()));
                 }
