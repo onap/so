@@ -1,0 +1,9 @@
+Code-Review+2: Matthew Watkins <mwatkins@linuxfoundation.org>
+Code-Review+2: Thomas Kulik <thomas.kulik@telekom.de>
+Verified+1: ONAP Required GHA <releng+onap.required.gha@linuxfoundation.org>
+Verified+1: Thomas Kulik <thomas.kulik@telekom.de>
+Submitted-by: Thomas Kulik <thomas.kulik@telekom.de>
+Submitted-at: Mon, 27 Nov 2023 14:44:02 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/so/+/136636
+Project: so
+Branch: refs/heads/montreal
