@@ -23,43 +23,47 @@
 package org.onap.so.bpmn.infrastructure.pnf.dmaap;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
 
 public class JsonUtilForPnfCorrelationIdTest {
+    private static final List<String> LIST_EXAMPLE_WITH_PNF_CORRELATION_ID = new ArrayList<>();
+    private static final List<String> LIST_WITH_ONE_PNF_CORRELATION_ID = new ArrayList<>();
+    private static final List<String> LIST_WITH_TWO_PNF_CORRELATION_ID_AND_ESCAPED_CHARACTERS = new ArrayList<>();
+    private static final List<String> LIST_WITH_NO_PNF_CORRELATION_ID = new ArrayList<>();
 
-    private static final String JSON_EXAMPLE_WITH_PNF_CORRELATION_ID = "[{\"correlationId\": \"corrTest1\","
-            + "\"key1\":\"value1\"},{\"correlationId\": \"corrTest2\",\"key2\":\"value2\"}]";
-
-    private static final String JSON_WITH_ONE_PNF_CORRELATION_ID = "[{\"correlationId\":\"corrTest3\"}]";
-
-    private static final String JSON_WITH_TWO_PNF_CORRELATION_ID_AND_ESCAPED_CHARACTERS =
-            "[\"{\\\"correlationId\\\":\\\"corrTest4\\\"}\", \"{\\\"correlationId\\\":\\\"corrTest5\\\"}\"]";
-
-    private static final String JSON_WITH_NO_PNF_CORRELATION_ID = "[{\"key1\":\"value1\"}]";
+    static {
+        LIST_EXAMPLE_WITH_PNF_CORRELATION_ID.add("{\"correlationId\": \"corrTest1\",\"key1\":\"value1\"}");
+        LIST_EXAMPLE_WITH_PNF_CORRELATION_ID.add("{\"correlationId\": \"corrTest2\",\"key2\":\"value2\"}");
+        LIST_WITH_ONE_PNF_CORRELATION_ID.add("{\"correlationId\":\"corrTest3\"}");
+        LIST_WITH_TWO_PNF_CORRELATION_ID_AND_ESCAPED_CHARACTERS.add("\"{\\\"correlationId\\\":\\\"corrTest4\\\"}\"");
+        LIST_WITH_TWO_PNF_CORRELATION_ID_AND_ESCAPED_CHARACTERS.add("\"{\\\"correlationId\\\":\\\"corrTest5\\\"}\"");
+        LIST_WITH_NO_PNF_CORRELATION_ID.add("{\"key1\":\"value1\"}");
+    }
 
     @Test
     public void parseJsonSuccessful() {
         List<String> expectedResult =
-                JsonUtilForPnfCorrelationId.parseJsonToGelAllPnfCorrelationId(JSON_EXAMPLE_WITH_PNF_CORRELATION_ID);
+                JsonUtilForPnfCorrelationId.parseJsonToGelAllPnfCorrelationId(LIST_EXAMPLE_WITH_PNF_CORRELATION_ID);
         assertThat(expectedResult).containsExactly("corrTest1", "corrTest2");
 
         List<String> expectedResult2 =
-                JsonUtilForPnfCorrelationId.parseJsonToGelAllPnfCorrelationId(JSON_WITH_ONE_PNF_CORRELATION_ID);
+                JsonUtilForPnfCorrelationId.parseJsonToGelAllPnfCorrelationId(LIST_WITH_ONE_PNF_CORRELATION_ID);
         assertThat(expectedResult2).containsExactly("corrTest3");
     }
 
     @Test
     public void parseJsonWithEscapeCharacters_Successful() {
         List<String> expectedResult = JsonUtilForPnfCorrelationId
-                .parseJsonToGelAllPnfCorrelationId(JSON_WITH_TWO_PNF_CORRELATION_ID_AND_ESCAPED_CHARACTERS);
+                .parseJsonToGelAllPnfCorrelationId(LIST_WITH_TWO_PNF_CORRELATION_ID_AND_ESCAPED_CHARACTERS);
         assertThat(expectedResult).containsExactly("corrTest4", "corrTest5");
     }
 
     @Test
     public void parseJson_emptyListReturnedWhenNothingFound() {
         List<String> expectedResult =
-                JsonUtilForPnfCorrelationId.parseJsonToGelAllPnfCorrelationId(JSON_WITH_NO_PNF_CORRELATION_ID);
+                JsonUtilForPnfCorrelationId.parseJsonToGelAllPnfCorrelationId(LIST_WITH_NO_PNF_CORRELATION_ID);
         assertThat(expectedResult).isEmpty();
     }
 
@@ -70,6 +74,6 @@ public class JsonUtilForPnfCorrelationIdTest {
 
     @Test
     public void shouldReturnEmptyListWhenInputIsEmpty() {
-        assertThat(JsonUtilForPnfCorrelationId.parseJsonToGelAllPnfCorrelationId("")).isEmpty();
+        assertThat(JsonUtilForPnfCorrelationId.parseJsonToGelAllPnfCorrelationId(null)).isEmpty();
     }
 }

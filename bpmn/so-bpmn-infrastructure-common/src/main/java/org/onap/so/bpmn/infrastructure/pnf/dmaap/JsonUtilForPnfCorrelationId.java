@@ -41,18 +41,16 @@ public final class JsonUtilForPnfCorrelationId {
         throw new IllegalStateException("Utility class");
     }
 
-    static List<String> parseJsonToGelAllPnfCorrelationId(String json) {
-        if (json == null || json.isEmpty()) {
+    static List<String> parseJsonToGelAllPnfCorrelationId(List<String> list) {
+        if (list == null || list.isEmpty()) {
             return Collections.emptyList();
         }
-        JsonElement je = new JsonParser().parse(json);
-        JsonArray array = je.getAsJsonArray();
-        List<String> list = new ArrayList<>();
-        Spliterator<JsonElement> spliterator = array.spliterator();
-        spliterator.forEachRemaining(jsonElement -> handleEscapedCharacters(jsonElement)
+
+        List<String> newList = new ArrayList<>();
+        list.forEach(je -> handleEscapedCharacters(new JsonParser().parse(je))
                 .ifPresent(jsonObject -> getPnfCorrelationId(jsonObject)
-                        .ifPresent(pnfCorrelationId -> list.add(pnfCorrelationId))));
-        return list;
+                        .ifPresent(pnfCorrelationId -> newList.add(pnfCorrelationId))));
+        return newList;
     }
 
     private static Optional<JsonObject> handleEscapedCharacters(JsonElement jsonElement) {
