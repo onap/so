@@ -20,7 +20,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.infrastructure.pnf.dmaap;
+package org.onap.so.bpmn.infrastructure.pnf.kafka;
 
 
 import static org.junit.Assert.assertEquals;
@@ -42,13 +42,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.so.bpmn.infrastructure.pnf.dmaap.PnfEventReadyDmaapClient.DmaapTopicListenerThread;
+import org.onap.so.bpmn.infrastructure.pnf.kafka.PnfEventReadyKafkaClient.KafkaTopicListenerThread;
 import org.onap.so.client.kafka.KafkaConsumerImpl;
 import org.springframework.core.env.Environment;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class PnfEventReadyDmaapClientTest {
+public class PnfEventReadyKafkaClientTest {
     private static final String KAFKA_BOOTSTRAP_SERVERS = "localhost:9092";
     private static final String PNF_CORRELATION_ID = "corrTestId";
     private static final String PNF_CORRELATION_ID_NOT_FOUND_IN_MAP = "otherCorrId";
@@ -66,9 +66,9 @@ public class PnfEventReadyDmaapClientTest {
 
     @Mock
     private Environment env;
-    private PnfEventReadyDmaapClient testedObject;
+    private PnfEventReadyKafkaClient testedObject;
 
-    private DmaapTopicListenerThread testedObjectInnerClassThread;
+    private KafkaTopicListenerThread testedObjectInnerClassThread;
     private KafkaConsumerImpl kafkaConsumerMock;
     private Runnable threadMockToNotifyCamundaFlow;
     private ScheduledThreadPoolExecutor executorMock;
@@ -81,10 +81,10 @@ public class PnfEventReadyDmaapClientTest {
         when(env.getProperty(eq("pnf.kafka.consumerId"))).thenReturn(CONSUMER_ID);
         when(env.getProperty(eq("pnf.kafka.consumerIdUpdate"))).thenReturn(CONSUMER_ID_UPDATE);
         when(env.getProperty(eq("pnf.kafka.consumerGroup"))).thenReturn(CONSUMER_GROUP);
-        when(env.getProperty(eq("pnf.dmaap.topicListenerDelayInSeconds"), eq(Integer.class)))
+        when(env.getProperty(eq("pnf.kafka.topicListenerDelayInSeconds"), eq(Integer.class)))
                 .thenReturn(TOPIC_LISTENER_DELAY_IN_SECONDS);
-        testedObject = new PnfEventReadyDmaapClient(env);
-        testedObjectInnerClassThread = testedObject.new DmaapTopicListenerThread();
+        testedObject = new PnfEventReadyKafkaClient(env);
+        testedObjectInnerClassThread = testedObject.new KafkaTopicListenerThread();
         kafkaConsumerMock = mock(KafkaConsumerImpl.class);
         threadMockToNotifyCamundaFlow = mock(Runnable.class);
         executorMock = mock(ScheduledThreadPoolExecutor.class);
@@ -94,7 +94,7 @@ public class PnfEventReadyDmaapClientTest {
     /**
      * Test run method, where the are following conditions:
      * <p>
-     * - DmaapThreadListener is running, flag is set to true
+     * - KafkaThreadListener is running, flag is set to true
      * <p>
      * - map is filled with one entry with the key that we get from response
      * <p>
@@ -130,7 +130,7 @@ public class PnfEventReadyDmaapClientTest {
     /**
      * Test run method, where the are following conditions:
      * <p>
-     * - DmaapThreadListener is running, flag is set to true
+     * - KafkaThreadListener is running, flag is set to true
      * <p>
      * - map is filled with one entry with the pnfCorrelationId that does not match to pnfCorrelationId taken from http
      * response. run method should not do anything with the map not run any thread to notify camunda process
@@ -147,7 +147,7 @@ public class PnfEventReadyDmaapClientTest {
     /**
      * Test run method, where the are following conditions:
      * <p>
-     * - DmaapThreadListener is running, flag is set to true
+     * - KafkaThreadListener is running, flag is set to true
      * <p>
      * - map is filled with one entry with the pnfCorrelationId but no correlation id is taken from HttpResponse run
      * method should not do anything with the map and not run any thread to notify camunda process
@@ -182,7 +182,7 @@ public class PnfEventReadyDmaapClientTest {
         pnfCorrelationToThreadMap.put(PNF_CORRELATION_ID, threadMockToNotifyCamundaFlow);
         pnfCorrelationToThreadMapField.set(testedObject, pnfCorrelationToThreadMap);
 
-        Field threadRunFlag = testedObject.getClass().getDeclaredField("dmaapThreadListenerIsRunning");
+        Field threadRunFlag = testedObject.getClass().getDeclaredField("kafkaThreadListenerIsRunning");
         threadRunFlag.setAccessible(true);
         threadRunFlag.set(testedObject, true);
         threadRunFlag.setAccessible(false);

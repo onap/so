@@ -26,7 +26,7 @@ import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
-import org.onap.so.bpmn.infrastructure.pnf.dmaap.DmaapClient;
+import org.onap.so.bpmn.infrastructure.pnf.kafka.KafkaClient;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
@@ -45,19 +45,19 @@ import org.springframework.stereotype.Component;
 public class RegisterForPnfReadyEvent implements JavaDelegate {
 
     private static final String ERROR_MESSAGE_PNF_NOT_FOUND =
-            "pnf resource not found in buildingBlockExecution while registering to dmaap listener";
+            "pnf resource not found in buildingBlockExecution while registering to kafka listener";
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisterForPnfReadyEvent.class);
 
-    private DmaapClient dmaapClient;
+    private KafkaClient kafkaClient;
     private ExtractPojosForBB extractPojosForBB;
     private ExceptionBuilder exceptionBuilder;
     private String pnfEntryNotificationTimeout;
 
     @Autowired
-    public RegisterForPnfReadyEvent(DmaapClient dmaapClient, ExtractPojosForBB extractPojosForBB,
+    public RegisterForPnfReadyEvent(KafkaClient kafkaClient, ExtractPojosForBB extractPojosForBB,
             ExceptionBuilder exceptionBuilder,
             @Value("${aai.pnfEntryNotificationTimeout}") String pnfEntryNotificationTimeout) {
-        this.dmaapClient = dmaapClient;
+        this.kafkaClient = kafkaClient;
         this.extractPojosForBB = extractPojosForBB;
         this.exceptionBuilder = exceptionBuilder;
         this.pnfEntryNotificationTimeout = pnfEntryNotificationTimeout;
@@ -69,7 +69,7 @@ public class RegisterForPnfReadyEvent implements JavaDelegate {
             String pnfName = getPnfName(execution);
             fillExecution(execution, pnfName);
             RuntimeService runtimeService = execution.getProcessEngineServices().getRuntimeService();
-            dmaapClient.registerForUpdate(pnfName, () -> runtimeService.createMessageCorrelation("WorkflowMessage")
+            kafkaClient.registerForUpdate(pnfName, () -> runtimeService.createMessageCorrelation("WorkflowMessage")
                     .processInstanceId(execution.getProcessInstanceId()).correlateWithResult());
         } catch (BBObjectNotFoundException e) {
             LOGGER.error(ERROR_MESSAGE_PNF_NOT_FOUND);

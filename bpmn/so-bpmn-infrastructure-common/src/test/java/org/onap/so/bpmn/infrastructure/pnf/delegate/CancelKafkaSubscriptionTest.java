@@ -27,25 +27,25 @@ import static org.mockito.Mockito.when;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Test;
 
-public class CancelDmaapSubscriptionTest {
+public class CancelKafkaSubscriptionTest {
 
     private static final String TEST_PNF_CORRELATION_ID = "testPnfCorrelationId";
 
     @Test
     public void shouldCancelSubscription() {
         // given
-        CancelDmaapSubscription delegate = new CancelDmaapSubscription();
-        DmaapClientTestImpl dmaapClientTest = new DmaapClientTestImpl();
-        delegate.setDmaapClient(dmaapClientTest);
+        CancelKafkaSubscription delegate = new CancelKafkaSubscription();
+        KafkaClientTestImpl kafkaClientTest = new KafkaClientTestImpl();
+        delegate.setKafkaClient(kafkaClientTest);
         DelegateExecution delegateExecution = mock(DelegateExecution.class);
         when(delegateExecution.getVariable(eq(ExecutionVariableNames.PNF_CORRELATION_ID)))
                 .thenReturn(TEST_PNF_CORRELATION_ID);
         when(delegateExecution.getProcessBusinessKey()).thenReturn("testBusinessKey");
-        dmaapClientTest.registerForUpdate("testPnfCorrelationId", () -> {
+        kafkaClientTest.registerForUpdate("testPnfCorrelationId", () -> {
         });
         // when
         delegate.execute(delegateExecution);
         // then
-        assertThat(dmaapClientTest.haveRegisteredConsumer()).isFalse();
+        assertThat(kafkaClientTest.haveRegisteredConsumer()).isFalse();
     }
 }

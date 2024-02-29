@@ -21,7 +21,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.infrastructure.pnf.dmaap;
+package org.onap.so.bpmn.infrastructure.pnf.kafka;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

@@ -49,7 +49,7 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
     private PnfManagementTestImpl pnfManagementTest;
 
     @Autowired
-    private DmaapClientTestImpl dmaapClientTestImpl;
+    private KafkaClientTestImpl kafkaClientTestImpl;
 
     @Before
     public void setup() {
@@ -60,7 +60,7 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void shouldWaitForMessageFromDmaapAndUpdateAaiEntryWhenAaiEntryExists() {
+    public void shouldWaitForMessageFromKafkaAndUpdateAaiEntryWhenAaiEntryExists() {
         // given
         variables.put(PNF_CORRELATION_ID, PnfManagementTestImpl.ID_WITH_ENTRY);
         ResourceInput ri = getUpdateResInputObj("OLT");
@@ -72,19 +72,19 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
         // when
         ProcessInstance instance =
                 runtimeService.startProcessInstanceByKey("CreateAndActivatePnfResource", "businessKey", variables);
-        assertThat(instance).isWaitingAt("WaitForDmaapPnfReadyNotification").isWaitingFor("WorkflowMessage");
-        dmaapClientTestImpl.sendMessage();
+        assertThat(instance).isWaitingAt("WaitForKafkaPnfReadyNotification").isWaitingFor("WorkflowMessage");
+        kafkaClientTestImpl.sendMessage();
 
         // then
         assertThat(instance).isEnded().hasPassedInOrder("CreateAndActivatePnf_StartEvent", "CheckInputs",
-                "CheckAiiForPnfCorrelationId", "DoesAaiContainInfoAboutPnf", "AaiEntryExists", "InformDmaapClient",
-                "WaitForDmaapPnfReadyNotification", "CreateRelationId", "AaiEntryUpdated");
+                "CheckAiiForPnfCorrelationId", "DoesAaiContainInfoAboutPnf", "AaiEntryExists", "InformKafkaClient",
+                "WaitForKafkaPnfReadyNotification", "CreateRelationId", "AaiEntryUpdated");
         Assertions.assertThat(pnfManagementTest.getServiceAndPnfRelationMap())
                 .containsOnly(MapEntry.entry(SERVICE_INSTANCE_ID, PnfManagementTestImpl.ID_WITH_ENTRY));
     }
 
     @Test
-    public void shouldCreateAaiEntryWaitForMessageFromDmaapAndUpdateAaiEntryWhenNoAaiEntryExists() {
+    public void shouldCreateAaiEntryWaitForMessageFromKafkaAndUpdateAaiEntryWhenNoAaiEntryExists() {
         // given
         variables.put(PNF_CORRELATION_ID, PnfManagementTestImpl.ID_WITHOUT_ENTRY);
         ResourceInput ri = getUpdateResInputObj("OLT");
@@ -96,13 +96,13 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
         // when
         ProcessInstance instance =
                 runtimeService.startProcessInstanceByKey("CreateAndActivatePnfResource", "businessKey", variables);
-        assertThat(instance).isWaitingAt("WaitForDmaapPnfReadyNotification").isWaitingFor("WorkflowMessage");
-        dmaapClientTestImpl.sendMessage();
+        assertThat(instance).isWaitingAt("WaitForKafkaPnfReadyNotification").isWaitingFor("WorkflowMessage");
+        kafkaClientTestImpl.sendMessage();
 
         // then
         assertThat(instance).isEnded().hasPassedInOrder("CreateAndActivatePnf_StartEvent", "CheckInputs",
                 "CheckAiiForPnfCorrelationId", "DoesAaiContainInfoAboutPnf", "CreatePnfEntryInAai", "AaiEntryExists",
-                "InformDmaapClient", "WaitForDmaapPnfReadyNotification", "CreateRelationId", "AaiEntryUpdated");
+                "InformKafkaClient", "WaitForKafkaPnfReadyNotification", "CreateRelationId", "AaiEntryUpdated");
         Assertions.assertThat(pnfManagementTest.getCreated()).containsOnlyKeys(PnfManagementTestImpl.ID_WITHOUT_ENTRY);
         Assertions.assertThat(pnfManagementTest.getServiceAndPnfRelationMap())
                 .containsOnly(MapEntry.entry(SERVICE_INSTANCE_ID, PnfManagementTestImpl.ID_WITHOUT_ENTRY));
