@@ -20,28 +20,25 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
-import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
-import org.onap.so.bpmn.infrastructure.pnf.dmaap.DmaapClient;
+import org.onap.so.bpmn.infrastructure.pnf.kafka.KafkaClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class InformDmaapClient implements JavaDelegate {
+public class CancelKafkaSubscription implements JavaDelegate {
 
-    private DmaapClient dmaapClient;
+    private KafkaClient kafkaClient;
 
     @Override
     public void execute(DelegateExecution execution) {
         String pnfCorrelationId = (String) execution.getVariable(ExecutionVariableNames.PNF_CORRELATION_ID);
-        RuntimeService runtimeService = execution.getProcessEngineServices().getRuntimeService();
-        dmaapClient.registerForUpdate(pnfCorrelationId, () -> runtimeService.createMessageCorrelation("WorkflowMessage")
-                .processInstanceBusinessKey(execution.getProcessBusinessKey()).correlateWithResult());
+        kafkaClient.unregister(pnfCorrelationId);
     }
 
     @Autowired
-    public void setDmaapClient(DmaapClient dmaapClient) {
-        this.dmaapClient = dmaapClient;
+    public void setKafkaClient(KafkaClient kafkaClient) {
+        this.kafkaClient = kafkaClient;
     }
 }

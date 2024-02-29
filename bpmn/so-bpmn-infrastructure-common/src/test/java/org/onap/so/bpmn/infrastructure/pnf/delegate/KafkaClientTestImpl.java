@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2019 Nokia.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,15 +21,10 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
-import java.util.Map;
 import java.util.Objects;
-import org.onap.so.bpmn.infrastructure.pnf.dmaap.DmaapClient;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
+import org.onap.so.bpmn.infrastructure.pnf.kafka.KafkaClient;
 
-@Component
-@Primary
-public class DmaapClientTestImpl implements DmaapClient {
+public class KafkaClientTestImpl implements KafkaClient {
 
     private String pnfCorrelationId;
     private Runnable informConsumer;
@@ -50,19 +46,15 @@ public class DmaapClientTestImpl implements DmaapClient {
         return null;
     }
 
-    public String getPnfCorrelationId() {
+    String getPnfCorrelationId() {
         return pnfCorrelationId;
     }
 
-    public Runnable getInformConsumer() {
+    Runnable getInformConsumer() {
         return informConsumer;
     }
 
-    public void sendMessage() {
-        informConsumer.run();
-    }
-
-    public boolean haveRegisteredConsumer() {
+    boolean haveRegisteredConsumer() {
         return pnfCorrelationId != null;
     }
 }

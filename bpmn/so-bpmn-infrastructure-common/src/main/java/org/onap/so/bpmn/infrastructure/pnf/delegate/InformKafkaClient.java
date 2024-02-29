@@ -3,7 +3,6 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * Copyright (C) 2019 Nokia.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,40 +20,28 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
-import java.util.Objects;
-import org.onap.so.bpmn.infrastructure.pnf.dmaap.DmaapClient;
+import org.camunda.bpm.engine.RuntimeService;
+import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.camunda.bpm.engine.delegate.JavaDelegate;
+import org.onap.so.bpmn.infrastructure.pnf.kafka.KafkaClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-public class DmaapClientTestImpl implements DmaapClient {
+@Component
+public class InformKafkaClient implements JavaDelegate {
 
-    private String pnfCorrelationId;
-    private Runnable informConsumer;
-
-    @Override
-    public void registerForUpdate(String pnfCorrelationId, Runnable informConsumer) {
-        this.pnfCorrelationId = pnfCorrelationId;
-        this.informConsumer = informConsumer;
-    }
+    private KafkaClient kafkaClient;
 
     @Override
-    public Runnable unregister(String pnfCorrelationId) {
-        if (Objects.equals(this.pnfCorrelationId, pnfCorrelationId)) {
-            this.pnfCorrelationId = null;
-            Runnable informConsumer = this.informConsumer;
-            this.informConsumer = null;
-            return informConsumer;
-        }
-        return null;
+    public void execute(DelegateExecution execution) {
+        String pnfCorrelationId = (String) execution.getVariable(ExecutionVariableNames.PNF_CORRELATION_ID);
+        RuntimeService runtimeService = execution.getProcessEngineServices().getRuntimeService();
+        kafkaClient.registerForUpdate(pnfCorrelationId, () -> runtimeService.createMessageCorrelation("WorkflowMessage")
+                .processInstanceBusinessKey(execution.getProcessBusinessKey()).correlateWithResult());
     }
 
-    String getPnfCorrelationId() {
-        return pnfCorrelationId;
-    }
-
-    Runnable getInformConsumer() {
-        return informConsumer;
-    }
-
-    boolean haveRegisteredConsumer() {
-        return pnfCorrelationId != null;
+    @Autowired
+    public void setKafkaClient(KafkaClient kafkaClient) {
+        this.kafkaClient = kafkaClient;
     }
 }

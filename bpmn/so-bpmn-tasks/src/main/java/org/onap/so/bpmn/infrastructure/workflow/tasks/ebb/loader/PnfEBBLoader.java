@@ -82,6 +82,7 @@ public class PnfEBBLoader {
                 aaiResourceIds.add(new Pair<>(WorkflowType.PNF, pnf.getPnfId()));
                 Resource pnfResource = new Resource(WorkflowType.PNF, pnf.getPnfId(), false, serviceResource);
                 org.onap.aai.domain.yang.Pnf aaiPnf = bbInputSetupUtils.getAAIPnf(pnf.getPnfName());
+                pnfResource.setInstanceName(pnf.getPnfName());
                 pnfResource.setModelCustomizationId(aaiPnf.getModelCustomizationId());
                 pnfResource.setModelVersionId(aaiPnf.getModelVersionId());
                 resourceList.add(pnfResource);
