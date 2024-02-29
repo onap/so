@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2019 Nokia.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,27 +19,11 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.infrastructure.pnf.delegate;
+package org.onap.so.bpmn.infrastructure.pnf.kafka;
 
-import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.camunda.bpm.engine.delegate.JavaDelegate;
-import org.onap.so.bpmn.infrastructure.pnf.dmaap.DmaapClient;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+public interface KafkaClient {
 
-@Component
-public class CancelDmaapSubscription implements JavaDelegate {
+    void registerForUpdate(String pnfCorrelationId, Runnable informConsumer);
 
-    private DmaapClient dmaapClient;
-
-    @Override
-    public void execute(DelegateExecution execution) {
-        String pnfCorrelationId = (String) execution.getVariable(ExecutionVariableNames.PNF_CORRELATION_ID);
-        dmaapClient.unregister(pnfCorrelationId);
-    }
-
-    @Autowired
-    public void setDmaapClient(DmaapClient dmaapClient) {
-        this.dmaapClient = dmaapClient;
-    }
+    Runnable unregister(String pnfCorrelationId);
 }

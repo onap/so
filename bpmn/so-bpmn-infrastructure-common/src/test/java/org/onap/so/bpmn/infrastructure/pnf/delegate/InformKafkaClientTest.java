@@ -35,40 +35,40 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 
-public class InformDmaapClientTest {
+public class InformKafkaClientTest {
     @Before
     public void setUp() {
-        informDmaapClient = new InformDmaapClient();
-        dmaapClientTest = new DmaapClientTestImpl();
-        informDmaapClient.setDmaapClient(dmaapClientTest);
+        informKafkaClient = new InformKafkaClient();
+        kafkaClientTest = new KafkaClientTestImpl();
+        informKafkaClient.setKafkaClient(kafkaClientTest);
         delegateExecution = mockDelegateExecution();
     }
 
-    private InformDmaapClient informDmaapClient;
+    private InformKafkaClient informKafkaClient;
 
-    private DmaapClientTestImpl dmaapClientTest;
+    private KafkaClientTestImpl kafkaClientTest;
 
     private DelegateExecution delegateExecution;
 
     private MessageCorrelationBuilder messageCorrelationBuilder;
 
     @Test
-    public void shouldSendListenerToDmaapClient() {
+    public void shouldSendListenerToKafkaClient() {
         // when
-        informDmaapClient.execute(delegateExecution);
+        informKafkaClient.execute(delegateExecution);
         // then
-        assertThat(dmaapClientTest.getPnfCorrelationId()).isEqualTo("testPnfCorrelationId");
-        assertThat(dmaapClientTest.getInformConsumer()).isNotNull();
+        assertThat(kafkaClientTest.getPnfCorrelationId()).isEqualTo("testPnfCorrelationId");
+        assertThat(kafkaClientTest.getInformConsumer()).isNotNull();
         verifyZeroInteractions(messageCorrelationBuilder);
     }
 
     @Test
-    public void shouldSendListenerToDmaapClientAndSendMessageToCamunda() {
+    public void shouldSendListenerToKafkaClientAndSendMessageToCamunda() {
         // when
-        informDmaapClient.execute(delegateExecution);
-        dmaapClientTest.getInformConsumer().run();
+        informKafkaClient.execute(delegateExecution);
+        kafkaClientTest.getInformConsumer().run();
         // then
-        assertThat(dmaapClientTest.getPnfCorrelationId()).isEqualTo("testPnfCorrelationId");
+        assertThat(kafkaClientTest.getPnfCorrelationId()).isEqualTo("testPnfCorrelationId");
         InOrder inOrder = inOrder(messageCorrelationBuilder);
         inOrder.verify(messageCorrelationBuilder).processInstanceBusinessKey("testBusinessKey");
         inOrder.verify(messageCorrelationBuilder).correlateWithResult();
