@@ -71,7 +71,7 @@ public class SDNCQueryTasks {
         GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 
         String selfLink =
-                "restconf/config/GENERIC-RESOURCE-API:services/service/" + serviceInstance.getServiceInstanceId()
+                "rests/data/GENERIC-RESOURCE-API:services/service/" + serviceInstance.getServiceInstanceId()
                         + "/service-data/vnfs/vnf/" + genericVnf.getVnfId() + "/vnf-data/vnf-topology/";
         try {
             if (genericVnf.getSelflink() == null) {
@@ -105,7 +105,7 @@ public class SDNCQueryTasks {
         ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
         GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
         VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
-        String selfLink = "restconf/config/GENERIC-RESOURCE-API:services/service/"
+        String selfLink = "rests/data/GENERIC-RESOURCE-API:services/service/"
                 + serviceInstance.getServiceInstanceId() + "/service-data/vnfs/vnf/" + genericVnf.getVnfId()
                 + "/vnf-data/vf-modules/vf-module/" + vfModule.getVfModuleId() + "/vf-module-data/vf-module-topology/";
         try {
