@@ -84,7 +84,8 @@ public class SDNCRequestTasks {
         SDNCRequest request = (SDNCRequest) execution.getVariable(SDNC_REQUEST);
         try {
             String response = sdncClient.post(request.getSDNCPayload(), request.getTopology());
-            String finalMessageIndicator = JsonPath.read(response, "$.output.ack-final-indicator");
+            // SDNC Response with RFC-8040 prefixes GENERIC-RESOURCE-API
+            String finalMessageIndicator = JsonPath.read(response, "$.GENERIC-RESOURCE-API:output.ack-final-indicator");
             execution.setVariable("isSDNCCompleted", convertIndicatorToBoolean(finalMessageIndicator));
         } catch (PathNotFoundException e) {
             logger.error("Error Parsing SDNC Response. Could not find read final ack indicator from JSON.", e);

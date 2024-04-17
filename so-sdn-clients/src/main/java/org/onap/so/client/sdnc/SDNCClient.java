@@ -81,10 +81,11 @@ public class SDNCClient {
      * @throws MapperException
      * @throws BadResponseException
      */
+    // Build TargetUrl as per RFC-8040 standards
     public String get(String queryLink) throws MapperException, BadResponseException {
         String request = "";
         String jsonRequest = sdnCommonTasks.buildJsonRequest(request);
-        String targetUrl = UriBuilder.fromUri(properties.getHost()).path(queryLink).build().toString();
+        String targetUrl = properties.getHost() + "/" + queryLink;
         BaseClient<String, LinkedHashMap<String, Object>> STOClient = new BaseClient<>();
         STOClient.setTargetUrl(targetUrl);
         HttpHeaders httpHeader = sdnCommonTasks.getHttpHeaders(properties.getAuth(), false);
