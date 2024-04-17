@@ -70,9 +70,10 @@ public class SDNCQueryTasks {
         ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
         GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 
-        String selfLink =
-                "restconf/config/GENERIC-RESOURCE-API:services/service/" + serviceInstance.getServiceInstanceId()
-                        + "/service-data/vnfs/vnf/" + genericVnf.getVnfId() + "/vnf-data/vnf-topology/";
+        // RFC-8040 URI to query SDNC resource, ?content=config or nonconfig is Optional
+        String selfLink = "rests/data/GENERIC-RESOURCE-API:services/service=" + serviceInstance.getServiceInstanceId()
+                + "/service-data/vnfs/vnf=" + genericVnf.getVnfId() + "/vnf-data/vnf-topology";
+
         try {
             if (genericVnf.getSelflink() == null) {
                 genericVnf.setSelflink(selfLink);
@@ -105,9 +106,11 @@ public class SDNCQueryTasks {
         ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
         GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
         VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
-        String selfLink = "restconf/config/GENERIC-RESOURCE-API:services/service/"
-                + serviceInstance.getServiceInstanceId() + "/service-data/vnfs/vnf/" + genericVnf.getVnfId()
-                + "/vnf-data/vf-modules/vf-module/" + vfModule.getVfModuleId() + "/vf-module-data/vf-module-topology/";
+
+        // RFC-8040 URI to query SDNC resource, ?content=config or nonconfig is Optional
+        String selfLink = "rests/data/GENERIC-RESOURCE-API:services/service=" + serviceInstance.getServiceInstanceId()
+                + "/service-data/vnfs/vnf=" + genericVnf.getVnfId() + "/vnf-data/vf-modules/vf-module="
+                + vfModule.getVfModuleId() + "/vf-module-data/vf-module-topology";
         try {
             if (vfModule.getSelflink() == null
                     || (vfModule.getSelflink() != null && vfModule.getSelflink().isEmpty())) {
