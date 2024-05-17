@@ -30,3 +30,4 @@ public class HealthcheckInstance {
         return "InstanceRequest{" + "instanceId='" + instanceId + '\'' + '}';
     }
 }
+

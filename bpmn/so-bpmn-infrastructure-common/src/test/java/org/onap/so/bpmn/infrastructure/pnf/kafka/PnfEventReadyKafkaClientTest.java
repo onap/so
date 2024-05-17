@@ -28,7 +28,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -141,7 +141,7 @@ public class PnfEventReadyKafkaClientTest {
                 String.format(JSON_EXAMPLE_WITH_PNF_CORRELATION_ID[0], PNF_CORRELATION_ID_NOT_FOUND_IN_MAP),
                 JSON_EXAMPLE_WITH_PNF_CORRELATION_ID[1]));
         testedObjectInnerClassThread.run();
-        verifyZeroInteractions(threadMockToNotifyCamundaFlow, executorMock);
+        verifyNoMoreInteractions(threadMockToNotifyCamundaFlow, executorMock);
     }
 
     /**
@@ -157,7 +157,7 @@ public class PnfEventReadyKafkaClientTest {
         when(kafkaConsumerMock.get(any(String.class), any(String.class), any(String.class)))
                 .thenReturn(Arrays.asList(JSON_EXAMPLE_WITH_NO_PNF_CORRELATION_ID));
         testedObjectInnerClassThread.run();
-        verifyZeroInteractions(threadMockToNotifyCamundaFlow, executorMock);
+        verifyNoMoreInteractions(threadMockToNotifyCamundaFlow, executorMock);
     }
 
     private void setPrivateField() throws NoSuchFieldException, IllegalAccessException {

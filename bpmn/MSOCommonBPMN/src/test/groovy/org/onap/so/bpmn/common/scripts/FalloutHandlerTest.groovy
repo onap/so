@@ -20,7 +20,6 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import org.junit.runner.RunWith;
 import static org.mockito.Mockito.*
 import static org.junit.Assert.*;
 
@@ -32,11 +31,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import org.mockito.Spy
-import org.mockito.runners.MockitoJUnitRunner
-import org.onap.so.bpmn.common.scripts.MsoUtils;
+import org.mockito.junit.MockitoJUnitRunner
 import org.onap.so.db.request.beans.InfraActiveRequests
 import org.onap.so.db.request.client.RequestsDbClient
-import org.onap.so.bpmn.common.scripts.FalloutHandler;
 
 @RunWith(MockitoJUnitRunner.class)
 class FalloutHandlerTest {

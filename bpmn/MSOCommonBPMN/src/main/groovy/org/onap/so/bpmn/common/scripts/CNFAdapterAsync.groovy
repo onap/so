@@ -1,6 +1,6 @@
 package org.onap.so.bpmn.common.scripts
 
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
 
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.slf4j.Logger
@@ -77,4 +77,5 @@ public class CNFAdapterAsync extends AbstractServiceTaskProcessor {
 		}
 		logger.debug("End callCnfAdapter")
 	}
+
 }

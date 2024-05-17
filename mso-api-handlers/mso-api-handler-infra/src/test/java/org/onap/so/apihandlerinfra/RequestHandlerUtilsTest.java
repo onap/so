@@ -41,7 +41,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;

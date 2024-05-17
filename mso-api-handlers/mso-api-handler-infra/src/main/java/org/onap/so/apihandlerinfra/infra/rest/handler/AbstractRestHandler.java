@@ -24,7 +24,7 @@ import java.net.URL;
 import java.sql.Timestamp;
 import java.util.Map;
 import java.util.Optional;
-import javax.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestContext;
 import org.apache.http.HttpStatus;
 import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.apihandler.common.CamundaClient;

@@ -21,8 +21,8 @@
 package org.onap.so.apihandlerinfra.configuration;
 
 
-import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;

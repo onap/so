@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.so.adapters.tasks.orchestration.PollService;
 import org.onap.so.adapters.vnf.VnfAdapterUtils;
 import org.onap.so.logging.tasks.AuditMDCSetup;
 import org.onap.so.openstack.exceptions.MsoException;

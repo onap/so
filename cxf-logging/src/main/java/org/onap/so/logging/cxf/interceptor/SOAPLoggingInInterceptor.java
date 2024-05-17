@@ -24,14 +24,14 @@ package org.onap.so.logging.cxf.interceptor;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.binding.soap.interceptor.AbstractSoapInterceptor;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
-import org.onap.logging.filter.base.MDCSetup;
+// import org.onap.logging.filter.base.MDCSetup;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +49,7 @@ public class SOAPLoggingInInterceptor extends AbstractSoapInterceptor {
     @Override
     public void handleMessage(SoapMessage message) throws Fault {
         try {
-            MDCSetup mdcSetup = new MDCSetup();
+            // MDCSetup mdcSetup = new MDCSetup();
             Map<String, List<String>> headers = (Map<String, List<String>>) message.get(Message.PROTOCOL_HEADERS);
             HttpServletRequest request = (HttpServletRequest) message.get(AbstractHTTPDestination.HTTP_REQUEST);
             request.getRemoteAddr();
@@ -58,12 +58,12 @@ public class SOAPLoggingInInterceptor extends AbstractSoapInterceptor {
             setInvocationId(headers);
             setServiceName(message);
             setMDCPartnerName(headers);
-            mdcSetup.setServerFQDN();
-            mdcSetup.setClientIPAddress(request);
-            mdcSetup.setInstanceID();
-            mdcSetup.setEntryTimeStamp();
-            mdcSetup.setLogTimestamp();
-            mdcSetup.setElapsedTime();
+            // mdcSetup.setServerFQDN();
+            // mdcSetup.setClientIPAddress(request);
+            // mdcSetup.setInstanceID();
+            // mdcSetup.setEntryTimeStamp();
+            // mdcSetup.setLogTimestamp();
+            // mdcSetup.setElapsedTime();
             MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, "INPROGRESS");
             logger.info(ONAPLogConstants.Markers.ENTRY, "Entering");
         } catch (Exception e) {
@@ -108,3 +108,4 @@ public class SOAPLoggingInInterceptor extends AbstractSoapInterceptor {
     }
 
 }
+

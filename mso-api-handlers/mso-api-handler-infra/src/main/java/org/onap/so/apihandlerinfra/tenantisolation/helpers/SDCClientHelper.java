@@ -23,9 +23,8 @@
 package org.onap.so.apihandlerinfra.tenantisolation.helpers;
 
 import java.net.URL;
-import java.util.UUID;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 import org.apache.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -76,8 +75,8 @@ public class SDCClientHelper {
 
     /**
      * Send POST request to SDC for operational activation
-     * 
-     * @param serviceModelVersionI - String
+     *
+     * @param serviceModelVersionId - String
      * @param operationalEnvironmentId - String
      * @param workloadContext - String
      * @return sdcResponseJsonObj - JSONObject object
@@ -132,7 +131,7 @@ public class SDCClientHelper {
 
     /**
      * set HttpPostResponse
-     * 
+     *
      * @param config - RESTConfig object
      * @param jsonPayload - String
      * @return client - RestClient object
@@ -152,7 +151,7 @@ public class SDCClientHelper {
 
     /**
      * enhance Response
-     * 
+     *
      * @param sdcResponseJsonObj - JSONObject object
      * @param statusCode - int
      * @return enhancedAsdcResponseJsonObj - JSONObject object
@@ -199,7 +198,7 @@ public class SDCClientHelper {
 
     /**
      * Build Uri
-     * 
+     *
      * @param serviceModelVersionId - String
      * @param operationalEnvironmentId - String
      * @return uriBuilder - String
@@ -212,7 +211,7 @@ public class SDCClientHelper {
 
     /**
      * Build JSON context
-     * 
+     *
      * @param workloadContext - String
      * @return String json
      * @throws JSONException
@@ -224,7 +223,7 @@ public class SDCClientHelper {
 
     /**
      * decrypt value
-     * 
+     *
      * @param toDecrypt - String
      * @param msokey - String
      * @return result - String

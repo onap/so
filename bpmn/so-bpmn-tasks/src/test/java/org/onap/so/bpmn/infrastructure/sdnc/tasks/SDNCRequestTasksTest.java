@@ -41,7 +41,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiServiceOperationInformation;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.ExceptionBuilder;

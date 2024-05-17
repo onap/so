@@ -2,14 +2,14 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 - 2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,24 +18,27 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.security;
+package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.core.Ordered;
+import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.camunda.bpm.engine.delegate.JavaDelegate;
+import org.onap.so.bpmn.infrastructure.pnf.dmaap.DmaapClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-@Configuration
-@Profile("!test & aaf")
-public class SecurityFilters {
+@Component
+public class CancelDmaapSubscription implements JavaDelegate {
 
-    @Bean
-    public FilterRegistrationBean<SoCadiFilter> loginRegistrationBean() {
-        FilterRegistrationBean<SoCadiFilter> filterRegistrationBean = new FilterRegistrationBean<>();
-        filterRegistrationBean.setFilter(new SoCadiFilter());
-        filterRegistrationBean.setName("cadiFilter");
-        filterRegistrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        return filterRegistrationBean;
+    private DmaapClient dmaapClient;
+
+    @Override
+    public void execute(DelegateExecution execution) {
+        String pnfCorrelationId = (String) execution.getVariable(ExecutionVariableNames.PNF_CORRELATION_ID);
+        dmaapClient.unregister(pnfCorrelationId);
+    }
+
+    @Autowired
+    public void setDmaapClient(DmaapClient dmaapClient) {
+        this.dmaapClient = dmaapClient;
     }
 }

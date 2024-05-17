@@ -25,7 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import org.camunda.bpm.engine.ProcessEngineServices;
 import org.camunda.bpm.engine.RuntimeService;
@@ -59,7 +59,8 @@ public class InformKafkaClientTest {
         // then
         assertThat(kafkaClientTest.getPnfCorrelationId()).isEqualTo("testPnfCorrelationId");
         assertThat(kafkaClientTest.getInformConsumer()).isNotNull();
-        verifyZeroInteractions(messageCorrelationBuilder);
+        // verifyZeroInteractions(messageCorrelationBuilder);
+        verifyNoMoreInteractions(messageCorrelationBuilder);
     }
 
     @Test

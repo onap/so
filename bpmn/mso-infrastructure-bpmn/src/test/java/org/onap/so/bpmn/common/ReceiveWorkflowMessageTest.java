@@ -20,21 +20,15 @@
 
 package org.onap.so.bpmn.common;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import org.camunda.bpm.engine.test.Deployment;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.onap.so.bpmn.core.WorkflowException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.onap.so.bpmn.common.WorkflowTest;
-import org.onap.so.bpmn.common.WorkflowTest.CallbackSet;
-import org.onap.so.bpmn.core.WorkflowException;
+import static org.junit.Assert.*;
 
 /**
  * Unit tests for SDNCAdapterRestV1.

@@ -100,7 +100,8 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
         assertEquals(OrchestrationStatusValidationDirective.CONTINUE,
                 execution.getVariable("orchestrationStatusValidationResult"));
 
-        Mockito.verifyZeroInteractions(requestsDbClient);
+        // Mockito.verifyZeroInteractions(requestsDbClient);
+        Mockito.verifyNoInteractions(requestsDbClient);
     }
 
     private OrchestrationStatusStateTransitionDirective getOrchestrationStatusStateTransitionDirective(
@@ -158,7 +159,8 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
         assertEquals(OrchestrationStatusValidationDirective.SILENT_SUCCESS,
                 execution.getVariable("orchestrationStatusValidationResult"));
 
-        Mockito.verifyZeroInteractions(requestsDbClient);
+        // Mockito.verifyZeroInteractions(requestsDbClient);
+        Mockito.verifyNoInteractions(requestsDbClient);
     }
 
     @Test
@@ -192,7 +194,8 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
 
         orchestrationStatusValidator.validateOrchestrationStatus(execution);
 
-        Mockito.verifyZeroInteractions(requestsDbClient);
+        // Mockito.verifyZeroInteractions(requestsDbClient);
+        Mockito.verifyNoInteractions(requestsDbClient);
         verify(exceptionBuilder).buildAndThrowWorkflowException(eq(execution), eq(7000),
                 any(NullPointerException.class));
     }
@@ -217,7 +220,8 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
 
         orchestrationStatusValidator.validateOrchestrationStatus(execution);
 
-        Mockito.verifyZeroInteractions(requestsDbClient);
+        // Mockito.verifyZeroInteractions(requestsDbClient);
+        Mockito.verifyNoInteractions(requestsDbClient);
         verify(exceptionBuilder).buildAndThrowWorkflowException(eq(execution), eq(7000),
                 any(NullPointerException.class));
     }
@@ -290,7 +294,8 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
         assertEquals(OrchestrationStatusValidationDirective.CONTINUE,
                 execution.getVariable("orchestrationStatusValidationResult"));
 
-        Mockito.verifyZeroInteractions(requestsDbClient);
+        // Mockito.verifyZeroInteractions(requestsDbClient);
+        Mockito.verifyNoInteractions(requestsDbClient);
     }
 
 
@@ -575,7 +580,8 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
         assertEquals(OrchestrationStatusValidationDirective.CONTINUE,
                 execution.getVariable("orchestrationStatusValidationResult"));
 
-        Mockito.verifyZeroInteractions(requestsDbClient);
+        // Mockito.verifyZeroInteractions(requestsDbClient);
+        Mockito.verifyNoInteractions(requestsDbClient);
     }
 
     @Test

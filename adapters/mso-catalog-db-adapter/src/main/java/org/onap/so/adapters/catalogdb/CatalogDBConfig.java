@@ -20,7 +20,8 @@
 
 package org.onap.so.adapters.catalogdb;
 
-import javax.persistence.EntityManagerFactory;
+
+import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

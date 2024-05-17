@@ -22,26 +22,24 @@
 
 package org.onap.so.bpmn.vcpe.scripts
 
-import static org.junit.Assert.*
-import static org.mockito.Mockito.*
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetAllottedResource
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockPatchAllottedResource
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockPutAllottedResource
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockPutAllottedResource_500
-import javax.ws.rs.core.UriBuilder
+import com.github.tomakehurst.wiremock.junit.WireMockRule
+import jakarta.ws.rs.core.UriBuilder
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.junit.*
 import org.mockito.MockitoAnnotations
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.mock.FileUtil
-import com.github.tomakehurst.wiremock.junit.WireMockRule
+
+import static org.junit.Assert.*
+import static org.mockito.ArgumentMatchers.*
+import static org.mockito.Mockito.*
+import static org.onap.so.bpmn.mock.StubResponseAAI.*
 
 class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 

@@ -20,8 +20,7 @@
 
 package org.onap.so.apihandlerinfra.tenantisolation.dmaap;
 
-import java.io.IOException;
-import javax.inject.Provider;
+import java.util.ServiceLoader;
 import org.apache.http.HttpStatus;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
@@ -38,7 +37,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class DmaapOperationalEnvClient {
 
     @Autowired
-    private Provider<OperationalEnvironmentPublisher> dmaapPublisher;
+    private ServiceLoader.Provider<OperationalEnvironmentPublisher> dmaapPublisher;
 
     protected String buildRequest(String operationalEnvironmentId, String operationalEnvironmentName,
             String operationalEnvironmentType, String tenantContext, String workloadContext, String action)

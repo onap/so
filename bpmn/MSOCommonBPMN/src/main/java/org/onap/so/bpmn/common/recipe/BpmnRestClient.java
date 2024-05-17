@@ -24,7 +24,7 @@ package org.onap.so.bpmn.common.recipe;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import javax.xml.bind.DatatypeConverter;
+import jakarta.xml.bind.DatatypeConverter;
 import org.onap.so.logger.LoggingAnchor;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;

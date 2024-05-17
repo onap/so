@@ -43,15 +43,25 @@
       <artifactId>commons-lang</artifactId>
       <version>2.6</version>
     </dependency>
+    <!--    <dependency>-->
+    <!--      <groupId> </groupId>-->
+    <!--      <artifactId>activation</artifactId>-->
+    <!--      <version>1.1.1</version>-->
+    <!--    </dependency>-->
     <dependency>
-      <groupId>javax.activation</groupId>
-      <artifactId>activation</artifactId>
-      <version>1.1.1</version>
+      <groupId>jakarta.activation</groupId>
+      <artifactId>jakarta.activation-api</artifactId>
+      <version>2.1.2</version>
     </dependency>
+    <!--    <dependency>-->
+    <!--      <groupId>javax.transaction</groupId>-->
+    <!--      <artifactId>jta</artifactId>-->
+    <!--      <version>1.1</version>-->
+    <!--    </dependency>-->
     <dependency>
-      <groupId>javax.transaction</groupId>
-      <artifactId>jta</artifactId>
-      <version>1.1</version>
+      <groupId>jakarta.transaction</groupId>
+      <artifactId>jakarta.transaction-api</artifactId>
+      <version>2.0.1</version>
     </dependency>
     <dependency>
       <groupId>org.json4s</groupId>
@@ -63,9 +73,14 @@
       <artifactId>json4s-core_2.12</artifactId>
       <version>${json4s-core-version}</version>
     </dependency>
+    <!--    <dependency>-->
+    <!--      <groupId>javax.servlet</groupId>-->
+    <!--      <artifactId>javax.servlet-api</artifactId>-->
+    <!--    </dependency>-->
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>6.0.0</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>

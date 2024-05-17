@@ -21,20 +21,10 @@
 package org.onap.so.bpmn.common.scripts
 
 import org.junit.Assert
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
-
-
-import org.junit.Ignore;
-
-import static org.mockito.Mockito.*
-
-import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.junit.Before
 import org.junit.runner.RunWith
 import org.mockito.MockitoAnnotations
-import org.mockito.internal.debugging.MockitoDebuggerImpl
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner
 import org.onap.so.bpmn.common.scripts.ExceptionUtil;
 import org.onap.so.bpmn.core.WorkflowException
 @RunWith(MockitoJUnitRunner.class)

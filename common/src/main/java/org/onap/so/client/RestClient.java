@@ -33,18 +33,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Invocation.Builder;
-import javax.ws.rs.client.ResponseProcessingException;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriBuilder;
+import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Invocation.Builder;
+import jakarta.ws.rs.client.ResponseProcessingException;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.*;
 import org.javatuples.Pair;
 import org.onap.logging.filter.base.MDCSetup;
 import org.onap.logging.filter.base.ONAPComponentsList;
@@ -54,7 +49,6 @@ import org.onap.so.logging.jaxrs.filter.SOMetricLogClientFilter;
 import org.onap.so.utils.CryptoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import net.jodah.failsafe.Failsafe;
 import net.jodah.failsafe.RetryPolicy;
 
@@ -327,14 +321,14 @@ public abstract class RestClient {
     }
 
     private <T> Optional<T> format(Response response, Class<T> resultClass) {
-        if (this.props.mapNotFoundToEmpty() && response.getStatus() == Status.NOT_FOUND.getStatusCode()) {
+        if (this.props.mapNotFoundToEmpty() && response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
             return Optional.empty();
         }
         return Optional.of(response.readEntity(resultClass));
     }
 
     private <T> Optional<T> format(Response response, GenericType<T> resultClass) {
-        if (this.props.mapNotFoundToEmpty() && response.getStatus() == Status.NOT_FOUND.getStatusCode()) {
+        if (this.props.mapNotFoundToEmpty() && response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
             return Optional.empty();
         }
         return Optional.of(response.readEntity(resultClass));

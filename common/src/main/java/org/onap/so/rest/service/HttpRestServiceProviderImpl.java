@@ -31,6 +31,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -146,6 +147,7 @@ public class HttpRestServiceProviderImpl implements HttpRestServiceProvider {
             return restTemplate.exchange(url, httpMethod, request, clazz);
 
         } catch (final HttpStatusCodeException httpStatusCodeException) {
+
             final String message = "Unable to invoke HTTP " + httpMethod + " using url: " + url + ", Response: "
                     + httpStatusCodeException.getRawStatusCode();
             LOGGER.error(message, httpStatusCodeException);

@@ -21,21 +21,16 @@
 package org.onap.so.asdc.client.test.rest;
 
 import static org.junit.Assert.assertEquals;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 import org.json.JSONException;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.onap.so.asdc.Application;
 import org.onap.so.asdc.BaseTest;
-import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
 public class HealthCheckTest extends BaseTest {
 

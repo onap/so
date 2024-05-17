@@ -37,7 +37,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import javax.xml.ws.Holder;
+import jakarta.xml.ws.Holder;
 import org.apache.http.HttpStatus;
 import org.junit.Ignore;
 import org.junit.Rule;

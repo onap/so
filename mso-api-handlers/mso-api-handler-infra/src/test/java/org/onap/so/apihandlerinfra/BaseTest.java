@@ -24,7 +24,7 @@ package org.onap.so.apihandlerinfra;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -35,7 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;

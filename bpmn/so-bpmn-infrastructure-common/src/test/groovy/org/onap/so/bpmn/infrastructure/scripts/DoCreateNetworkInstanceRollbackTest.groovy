@@ -30,8 +30,8 @@ import org.camunda.bpm.engine.impl.pvm.process.ProcessDefinitionImpl
 import org.camunda.bpm.engine.repository.ProcessDefinition
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.mockito.MockitoAnnotations
-import org.mockito.runners.MockitoJUnitRunner
-import org.mockito.internal.debugging.MockitoDebuggerImpl
+import org.mockito.junit.MockitoJUnitRunner
+//import org.mockito.internal.debugging.MockitoDebuggerImpl
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.WorkflowException
 import org.junit.Before

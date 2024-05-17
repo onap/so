@@ -26,7 +26,7 @@ import static org.mockito.Mockito.spy
 import static org.mockito.Mockito.times
 import static org.mockito.Mockito.verify
 import static org.mockito.Mockito.when
-import javax.ws.rs.NotFoundException
+import jakarta.ws.rs.NotFoundException
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.junit.Before
 import org.junit.Test

@@ -21,26 +21,11 @@
 package org.onap.so.apihandlerinfra.exceptions;
 
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyObject;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import java.io.IOException;
-import java.io.Writer;
-import java.util.Arrays;
-import java.util.List;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.Response;
+import jakarta.xml.bind.Marshaller;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,15 +36,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.apihandler.common.ErrorNumbers;
-import org.onap.so.apihandlerinfra.exceptions.ApiException;
-import org.onap.so.apihandlerinfra.exceptions.ApiExceptionMapper;
-import org.onap.so.apihandlerinfra.exceptions.BPMNFailureException;
-import org.onap.so.apihandlerinfra.exceptions.ClientConnectionException;
-import org.onap.so.apihandlerinfra.exceptions.DuplicateRequestException;
-import org.onap.so.apihandlerinfra.exceptions.ValidateException;
-import org.onap.so.apihandlerinfra.exceptions.VfModuleNotFoundException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 
 @RunWith(MockitoJUnitRunner.class)

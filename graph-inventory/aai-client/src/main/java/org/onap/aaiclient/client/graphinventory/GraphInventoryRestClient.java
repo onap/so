@@ -22,9 +22,9 @@ package org.onap.aaiclient.client.graphinventory;
 
 import java.net.URI;
 import java.util.Optional;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.Response;
 import org.javatuples.Pair;
 import org.onap.aaiclient.client.CacheControlFeature;
 import org.onap.aaiclient.client.FlushCache;

@@ -22,8 +22,8 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.MediaType
+import jakarta.ws.rs.core.Response
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import org.camunda.bpm.engine.delegate.BpmnError

@@ -29,7 +29,7 @@ public class RegisterForPnfReadyEventTest {
 
     private DelegateExecution delegateExecution;
     private ExtractPojosForBB extractPojosForBBMock;
-    private KafkaClientTestImpl kafkaClientTest;
+    private DmaapClientTestImpl dmaapClientTest;
     private MessageCorrelationBuilder messageCorrelationBuilder;
     private ExceptionBuilder exceptionBuilderMock;
     private BuildingBlockExecution buildingBlockExecution;
@@ -39,7 +39,7 @@ public class RegisterForPnfReadyEventTest {
     @Before
     public void init() {
         delegateExecution = prepareExecution();
-        kafkaClientTest = new KafkaClientTestImpl();
+        dmaapClientTest = new DmaapClientTestImpl();
         exceptionBuilderMock = mock(ExceptionBuilder.class);
         extractPojosForBBMock = mock(ExtractPojosForBB.class);
         buildingBlockExecution = new DelegateExecutionImpl(new HashMap<>());
@@ -47,9 +47,9 @@ public class RegisterForPnfReadyEventTest {
     }
 
     @Test
-    public void shouldRegisterForKafkaClient() throws BBObjectNotFoundException {
+    public void shouldRegisterForDmaapClient() throws BBObjectNotFoundException {
         // given
-        testedObject = new RegisterForPnfReadyEvent(kafkaClientTest, extractPojosForBBMock, exceptionBuilderMock,
+        testedObject = new RegisterForPnfReadyEvent(dmaapClientTest, extractPojosForBBMock, exceptionBuilderMock,
                 PNF_ENTRY_NOTIFICATION_TIMEOUT);
         Pnf pnf = new Pnf();
         pnf.setPnfName(PNF_NAME);
@@ -60,13 +60,13 @@ public class RegisterForPnfReadyEventTest {
         verify(delegateExecution).setVariable(ExecutionVariableNames.PNF_CORRELATION_ID, PNF_NAME);
         verify(delegateExecution).setVariable(ExecutionVariableNames.TIMEOUT_FOR_NOTIFICATION,
                 PNF_ENTRY_NOTIFICATION_TIMEOUT);
-        checkIfInformConsumerThreadIsRunProperly(kafkaClientTest);
+        checkIfInformConsumerThreadIsRunProperly(dmaapClientTest);
     }
 
     @Test
     public void pnfNotFoundInBBexecution_WorkflowExIsThrown() throws BBObjectNotFoundException {
         // given
-        testedObject = new RegisterForPnfReadyEvent(kafkaClientTest, extractPojosForBBMock, exceptionBuilderMock,
+        testedObject = new RegisterForPnfReadyEvent(dmaapClientTest, extractPojosForBBMock, exceptionBuilderMock,
                 PNF_ENTRY_NOTIFICATION_TIMEOUT);
         when(extractPojosForBBMock.extractByKey(buildingBlockExecution, ResourceKey.PNF))
                 .thenThrow(BBObjectNotFoundException.class);
@@ -74,13 +74,13 @@ public class RegisterForPnfReadyEventTest {
         testedObject.execute(delegateExecution);
         // then
         verify(exceptionBuilderMock).buildAndThrowWorkflowException(delegateExecution, 7000,
-                "pnf resource not found in buildingBlockExecution while registering to kafka listener");
+                "pnf resource not found in buildingBlockExecution while registering to dmaap listener");
     }
 
     @Test
     public void pnfNameIsNull_WorkflowExIsThrown() throws BBObjectNotFoundException {
         // given
-        testedObject = new RegisterForPnfReadyEvent(kafkaClientTest, extractPojosForBBMock, exceptionBuilderMock,
+        testedObject = new RegisterForPnfReadyEvent(dmaapClientTest, extractPojosForBBMock, exceptionBuilderMock,
                 PNF_ENTRY_NOTIFICATION_TIMEOUT);
         when(extractPojosForBBMock.extractByKey(buildingBlockExecution, ResourceKey.PNF)).thenReturn(new Pnf());
         // when
@@ -92,7 +92,7 @@ public class RegisterForPnfReadyEventTest {
     @Test
     public void pnfEventNotificationTimeoutNotSet_WorkflowExIsThrown() throws BBObjectNotFoundException {
         // given
-        testedObject = new RegisterForPnfReadyEvent(kafkaClientTest, extractPojosForBBMock, exceptionBuilderMock, null);
+        testedObject = new RegisterForPnfReadyEvent(dmaapClientTest, extractPojosForBBMock, exceptionBuilderMock, null);
         when(extractPojosForBBMock.extractByKey(buildingBlockExecution, ResourceKey.PNF)).thenReturn(new Pnf());
         // when
         testedObject.execute(delegateExecution);
@@ -101,8 +101,8 @@ public class RegisterForPnfReadyEventTest {
                 "pnfEntryNotificationTimeout value not defined");
     }
 
-    private void checkIfInformConsumerThreadIsRunProperly(KafkaClientTestImpl kafkaClientTest) {
-        kafkaClientTest.getInformConsumer().run();
+    private void checkIfInformConsumerThreadIsRunProperly(DmaapClientTestImpl dmaapClientTest) {
+        dmaapClientTest.getInformConsumer().run();
         InOrder inOrder = inOrder(messageCorrelationBuilder);
         inOrder.verify(messageCorrelationBuilder).processInstanceId(PROCESS_INSTANCE_ID);
         inOrder.verify(messageCorrelationBuilder).correlateWithResult();

@@ -20,7 +20,6 @@
 package org.onap.so.beans.nsmf.oof;
 
 import lombok.Data;
-import org.onap.so.beans.nsmf.ServiceProfile;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;

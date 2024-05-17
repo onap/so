@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,21 +21,16 @@
 package org.onap.so.adapters.requestsdb.adapters;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import java.util.Map;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 import org.json.JSONException;
 import org.junit.Test;
-import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.adapters.requestsdb.RequestsAdapterBase;
-import org.onap.so.adapters.requestsdb.application.TestAppender;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import ch.qos.logback.classic.spi.ILoggingEvent;
 
 
 public class HealthCheckHandlerTest extends RequestsAdapterBase {
