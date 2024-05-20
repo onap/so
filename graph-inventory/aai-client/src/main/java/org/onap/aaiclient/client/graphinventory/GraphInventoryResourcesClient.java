@@ -28,10 +28,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.Response;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.aaiclient.client.graphinventory.entities.GraphInventoryEdgeLabel;
 import org.onap.aaiclient.client.graphinventory.entities.GraphInventoryResultWrapper;
@@ -91,7 +90,7 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
         try {
             RestClient giRC = client.createClient(forceMinimal);
 
-            return giRC.get().getStatus() == Status.OK.getStatusCode();
+            return giRC.get().getStatus() == Response.Status.OK.getStatusCode();
         } catch (NotFoundException e) {
             return false;
         }

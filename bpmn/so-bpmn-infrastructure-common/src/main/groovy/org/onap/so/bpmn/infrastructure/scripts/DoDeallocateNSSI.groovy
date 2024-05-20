@@ -40,7 +40,7 @@ import org.onap.so.db.request.beans.OperationStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import javax.ws.rs.NotFoundException
+import jakarta.ws.rs.NotFoundException
 
 class DoDeallocateNSSI extends AbstractServiceTaskProcessor
 {

@@ -26,7 +26,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import org.junit.Test;
 import org.onap.so.asdc.BaseTest;
 import org.onap.so.asdc.client.ASDCConfiguration;

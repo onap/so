@@ -126,7 +126,9 @@ public class RequestHandlerUtilsUnitTest {
         currentActiveRequest.setRequestAction(Action.createInstance.toString());
         currentActiveRequest.setRequestUrl(requestUri);
         currentActiveRequest.setRequestorId("yyyyyy");
-        currentActiveRequest.setProgress(new Long(5));
+        Long value = Long.valueOf(5);
+        currentActiveRequest.setProgress(value);
+        // currentActiveRequest.setProgress(new Long(5));
         currentActiveRequest.setOriginalRequestId(RESUMED_REQUEST_ID);
     }
 
@@ -138,7 +140,9 @@ public class RequestHandlerUtilsUnitTest {
         currentActiveRequestIARNull.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
         currentActiveRequestIARNull.setRequestUrl(requestUri);
         currentActiveRequestIARNull.setRequestorId("xxxxxx");
-        currentActiveRequestIARNull.setProgress(new Long(5));
+        Long value = Long.valueOf(5);
+        currentActiveRequestIARNull.setProgress(value);
+        // currentActiveRequestIARNull.setProgress(new Long(5));
         currentActiveRequestIARNull.setOriginalRequestId(RESUMED_REQUEST_ID);
     }
 

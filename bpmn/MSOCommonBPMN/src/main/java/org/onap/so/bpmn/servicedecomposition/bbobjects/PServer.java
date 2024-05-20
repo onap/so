@@ -27,7 +27,7 @@ import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Id;
+import jakarta.persistence.Id;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
 

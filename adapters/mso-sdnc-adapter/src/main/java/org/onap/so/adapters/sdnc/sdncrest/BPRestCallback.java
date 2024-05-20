@@ -142,10 +142,10 @@ public class BPRestCallback {
             URI uri = builder.build(true).toUri();
             response = restTemplate.postForEntity(uri, requestEntity, String.class);
         } catch (HttpStatusCodeException e) {
-            logResponseError(e.getStatusCode());
+            logResponseError((HttpStatus) e.getStatusCode());
         }
         if (response != null && response.getStatusCode().is3xxRedirection()) {
-            logResponseError(response.getStatusCode());
+            logResponseError((HttpStatus) response.getStatusCode());
         }
     }
 
@@ -159,7 +159,7 @@ public class BPRestCallback {
         RestTemplate restTemplate = new RestTemplate();
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
         factory.setConnectionRequestTimeout(timeout);
-        factory.setReadTimeout(timeout);
+        // factory.setReadTimeout(timeout);
         factory.setConnectTimeout(timeout);
         restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(factory));
         restTemplate.getInterceptors().add(new SOSpringClientFilter());

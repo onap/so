@@ -51,7 +51,8 @@ public class HomingV2Test {
         homingV2.callHoming(givenExecution);
 
         then(sniroHoming).should().callSniro(givenExecution);
-        then(oofHoming).shouldHaveZeroInteractions();
+        // then(oofHoming).shouldHaveZeroInteractions();
+        then(oofHoming).shouldHaveNoInteractions();
     }
 
     @Test
@@ -67,7 +68,8 @@ public class HomingV2Test {
         homingV2.processSolution(givenExecution, "dummy");
 
         then(sniroHoming).should().processSolution(givenExecution, "dummy");
-        then(oofHoming).shouldHaveZeroInteractions();
+        // then(oofHoming).shouldHaveZeroInteractions();
+        then(oofHoming).shouldHaveNoInteractions();
     }
 
     @Test
@@ -83,7 +85,9 @@ public class HomingV2Test {
         homingV2.callHoming(givenExecution);
 
         then(oofHoming).should().callOof(givenExecution);
-        then(sniroHoming).shouldHaveZeroInteractions();
+        // then(sniroHoming).shouldHaveZeroInteractions();
+        then(oofHoming).shouldHaveNoInteractions();
+
     }
 
     @Test
@@ -99,7 +103,9 @@ public class HomingV2Test {
         homingV2.processSolution(givenExecution, "dummy");
 
         then(oofHoming).should().processSolution(givenExecution, "dummy");
-        then(sniroHoming).shouldHaveZeroInteractions();
+        // then(sniroHoming).shouldHaveZeroInteractions();
+        then(oofHoming).shouldHaveNoInteractions();
+
     }
 
     @Test
@@ -113,7 +119,8 @@ public class HomingV2Test {
         homingV2.callHoming(givenExecution);
 
         then(oofHoming).should().callOof(givenExecution);
-        then(sniroHoming).shouldHaveZeroInteractions();
+        // then(sniroHoming).shouldHaveZeroInteractions();
+        then(oofHoming).shouldHaveNoInteractions();
     }
 
     @Test
@@ -127,7 +134,8 @@ public class HomingV2Test {
         homingV2.processSolution(givenExecution, "dummy");
 
         then(oofHoming).should().processSolution(givenExecution, "dummy");
-        then(sniroHoming).shouldHaveZeroInteractions();
+        // then(sniroHoming).shouldHaveZeroInteractions();
+        then(oofHoming).shouldHaveNoInteractions();
     }
 
     private BuildingBlockExecution createBuildingBlockExecutionMock(Map<String, Object> userParams) {

@@ -20,13 +20,11 @@
 
 package org.onap.so.bpmn.common.listener.validation;
 
+import jakarta.annotation.Priority;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.Optional;
-import java.util.Set;
-import javax.annotation.Priority;
-import org.onap.so.bpmn.common.BuildingBlockExecution;
-import org.onap.so.bpmn.common.listener.validation.PreWorkflowValidator;
-import org.springframework.stereotype.Component;
 
 @Priority(1)
 @Component

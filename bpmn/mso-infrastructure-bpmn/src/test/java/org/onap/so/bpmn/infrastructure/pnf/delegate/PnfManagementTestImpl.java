@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Primary
-public class PnfManagementTestImpl implements PnfManagement {
+public abstract class PnfManagementTestImpl implements PnfManagement {
 
     public static final String ID_WITHOUT_ENTRY = "IdWithoutEntry";
     public static final String ID_WITH_ENTRY = "idWithEntryNoIp";

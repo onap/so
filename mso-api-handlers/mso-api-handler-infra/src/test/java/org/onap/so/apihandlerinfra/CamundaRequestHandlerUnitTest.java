@@ -112,13 +112,13 @@ public class CamundaRequestHandlerUnitTest {
         doReturn("http://localhost:8089").when(env).getProperty("mso.camundaURL");
 
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-        factory.setReadTimeout(30000);
+        // factory.setReadTimeout(30000);
         factory.setConnectTimeout(30000);
         restTemplate.setRequestFactory(factory);
         doReturn(restTemplate).when(camundaRequestHandler).getRestTemplate(false);
 
         HttpComponentsClientHttpRequestFactory factoryRetry = new HttpComponentsClientHttpRequestFactory();
-        factoryRetry.setReadTimeout(15000);
+        // factoryRetry.setReadTimeout(15000);
         factoryRetry.setConnectTimeout(15000);
         restTemplate.setRequestFactory(factoryRetry);
         doReturn(restTemplateRetry).when(camundaRequestHandler).getRestTemplate(true);

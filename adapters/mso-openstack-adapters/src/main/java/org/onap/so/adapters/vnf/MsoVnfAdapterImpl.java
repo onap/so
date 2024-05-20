@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javax.xml.ws.Holder;
+import jakarta.xml.ws.Holder;
 import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.adapters.vnf.exceptions.VnfNotFound;
