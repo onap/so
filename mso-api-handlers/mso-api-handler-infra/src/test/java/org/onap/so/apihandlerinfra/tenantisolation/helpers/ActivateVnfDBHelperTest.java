@@ -115,7 +115,9 @@ public class ActivateVnfDBHelperTest extends BaseTest {
         // prepare updated expected object
         OperationalEnvServiceModelStatus expectedUpdatedServiceModelStatus = serviceModelStatus1;
         expectedUpdatedServiceModelStatus.setServiceModelVersionDistrStatus(statusError);
-        expectedUpdatedServiceModelStatus.setRetryCount(new Integer(retryCountZero));
+        Integer integer = Integer.valueOf(retryCountZero);
+        expectedUpdatedServiceModelStatus.setRetryCount(integer);
+        // expectedUpdatedServiceModelStatus.setRetryCount(new Integer(retryCountZero));
 
         // test update method - update statusOk to statusError & retryCountThree to retryCountZero
         OperationalEnvServiceModelStatus serviceModelStatus2 =

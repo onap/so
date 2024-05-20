@@ -30,7 +30,6 @@ import org.onap.sdc.tosca.parser.elements.queries.EntityQuery;
 import org.onap.sdc.tosca.parser.elements.queries.TopologyTemplateQuery;
 import org.onap.sdc.tosca.parser.enums.EntityTemplateType;
 import org.onap.sdc.tosca.parser.enums.SdcTypes;
-import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.Property;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
@@ -39,11 +38,8 @@ import org.onap.sdc.toscaparser.api.parameters.Input;
 import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
 import org.onap.so.asdc.installer.ToscaResourceStructure;
 import org.onap.so.db.catalog.beans.Service;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 public class ToscaResourceInputTest {
@@ -199,7 +195,10 @@ public class ToscaResourceInputTest {
         when(property.getValue()).thenReturn(getInput);
         when(getInput.getInputName()).thenReturn("res_key");
         when(input.getName()).thenReturn("res_key");
-        when(input.getDefault()).thenReturn(new Integer(10));
+        // when(input.getDefault()).thenReturn(new Integer(10));
+        Integer integer = Integer.valueOf(10);
+        when(input.getDefault()).thenReturn(integer);
+
 
         String resourceInput = toscaResourceInstaller.getResourceInput(toscaResourceStructure, "id1");
         assertEquals("{}", resourceInput);

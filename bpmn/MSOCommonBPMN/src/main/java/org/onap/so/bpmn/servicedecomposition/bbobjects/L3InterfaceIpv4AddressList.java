@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
-import javax.persistence.Id;
+import jakarta.persistence.Id;
 
 @JsonRootName("l3-interface-ipv4-address-list")
 public class L3InterfaceIpv4AddressList implements Serializable, ShallowCopy<L3InterfaceIpv4AddressList> {

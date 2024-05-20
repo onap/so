@@ -20,16 +20,29 @@
 
 package org.onap.so.configuration.rest;
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.TimeUnit;
-import org.apache.http.client.config.RequestConfig;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.socket.ConnectionSocketFactory;
+import org.apache.hc.client5.http.socket.PlainConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.core5.http.ConnectionReuseStrategy;
+import org.apache.hc.core5.http.config.Registry;
+import org.apache.hc.core5.http.config.RegistryBuilder;
+import org.apache.hc.core5.http.impl.DefaultConnectionReuseStrategy;
+import org.apache.hc.core5.ssl.SSLContextBuilder;
 import org.apache.http.impl.NoConnectionReuseStrategy;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.apache.hc.client5.http.config.RequestConfig;
+import javax.net.ssl.SSLContext;
 
 /**
  * Allow user to configure {@link org.apache.http.client.HttpClient}
@@ -53,24 +66,61 @@ public class HttpComponentsClientConfiguration {
 
     @Bean
     public CloseableHttpClient httpClient() {
-        return HttpClientBuilder.create().setConnectionManager(poolingHttpClientConnectionManager())
-                .setMaxConnPerRoute(clientConnectionConfiguration.getMaxConnectionsPerRoute())
-                .setMaxConnTotal(clientConnectionConfiguration.getMaxConnections())
-                .setDefaultRequestConfig(requestConfig()).setConnectionReuseStrategy(NoConnectionReuseStrategy.INSTANCE)
-                .evictExpiredConnections().evictIdleConnections(
-                        clientConnectionConfiguration.getEvictIdleConnectionsTimeInSec(), TimeUnit.SECONDS)
-                .build();
+        /*
+         * 1. setConnectionManager = Assigns HttpClientConnectionManager instance. 2. setMaxConnPerRoute = Assigns
+         * maximum connection per route value. Please note this value can be overridden by the setConnectionManager(
+         * org.apache.http.conn.HttpClientConnectionManager) method. 3. setDefaultRequestConfig = Assigns default
+         * ConnectionConfig. Please note this value can be overridden by the setConnectionManager(
+         * org.apache.http.conn.HttpClientConnectionManager) method. 4. evictExpiredConnections = Makes this instance of
+         * HttpClient proactively evict expired connections from the connection pool using a background thread. One MUST
+         * explicitly close HttpClient with Closeable.close() in order to stop and release the background thread. Please
+         * note this method has no effect if the instance of HttpClient is configuted to use a shared connection
+         * manager. Please note this method may not be used when the instance of HttpClient is created inside an EJB
+         * container.
+         */
+        // return HttpClientBuilder.create().setConnectionManager(poolingHttpClientConnectionManager())
+        // .setMaxConnPerRoute(clientConnectionConfiguration.getMaxConnectionsPerRoute())
+        // .setMaxConnTotal(clientConnectionConfiguration.getMaxConnections())
+        // .setDefaultRequestConfig(requestConfig()).setConnectionReuseStrategy((ConnectionReuseStrategy)
+        // NoConnectionReuseStrategy.INSTANCE)
+        // .evictExpiredConnections().evictIdleConnections(
+        // clientConnectionConfiguration.getEvictIdleConnectionsTimeInSec())
+        // .build();
+        return HttpClients.custom().setConnectionManager(poolingHttpClientConnectionManager())
+                .setDefaultRequestConfig(requestConfig())
+                .setConnectionReuseStrategy(DefaultConnectionReuseStrategy.INSTANCE).evictExpiredConnections()
+                .evictIdleConnections(clientConnectionConfiguration.getEvictIdleConnectionsTimeInSec()).build();
+
     }
+
 
     @Bean
     public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager() {
-        return new PoolingHttpClientConnectionManager(clientConnectionConfiguration.getTimeToLiveInMins(),
-                TimeUnit.MINUTES);
+
+        // return new org.apache.http.impl.conn.PoolingHttpClientConnectionManager(
+        // clientConnectionConfiguration.getTimeToLiveInMins(), TimeUnit.MINUTES);
+
+        // Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
+        // .register("http", PlainConnectionSocketFactory.getSocketFactory())
+        // .register("https", SSLConnectionSocketFactory.getSocketFactory())
+        // .build();
+        // HttpConnectionFactory< ManagedHttpClientConnection > connFactory = new ManagedHttpClientConnection();
+        // TimeValue timeToLive = TimeValue.ofDays(clientConnectionConfiguration.getTimeToLiveInMins());
+        // return new PoolingHttpClientConnectionManager(socketFactoryRegistry, PoolConcurrencyPolicy
+        // poolConcurrencyPolicy,timeToLive, connFactory);
+
+        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+        connectionManager.setMaxTotal(clientConnectionConfiguration.getMaxConnections());
+        connectionManager.setDefaultMaxPerRoute(clientConnectionConfiguration.getMaxConnectionsPerRoute());
+        return connectionManager;
+
     }
 
     @Bean
     public RequestConfig requestConfig() {
-        return RequestConfig.custom().setSocketTimeout(clientConnectionConfiguration.getSocketTimeOutInMiliSeconds())
-                .setConnectTimeout(clientConnectionConfiguration.getConnectionTimeOutInMilliSeconds()).build();
+        return RequestConfig.custom().setResponseTimeout(clientConnectionConfiguration.getSocketTimeOutInMiliSeconds())
+                .setConnectionRequestTimeout(clientConnectionConfiguration.getConnectionTimeOutInMilliSeconds())
+                .build();
+
     }
 }

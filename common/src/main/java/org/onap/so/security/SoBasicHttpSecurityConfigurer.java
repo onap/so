@@ -21,6 +21,7 @@ package org.onap.so.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -35,11 +36,16 @@ public class SoBasicHttpSecurityConfigurer implements HttpSecurityConfigurer {
     private SoUserCredentialConfiguration soUserCredentialConfiguration;
 
     @Override
-    public void configure(final HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests().antMatchers("/manage/health", "/manage/info").permitAll()
-                .antMatchers("/**")
+    public SecurityFilterChain configure(final HttpSecurity http) throws Exception {
+        // http.csrf().disable().authorizeRequests().antMatchers("/manage/health", "/manage/info").permitAll()
+        // .antMatchers("/**")
+        // .hasAnyRole(StringUtils.collectionToDelimitedString(soUserCredentialConfiguration.getRoles(), ","))
+        // .and().httpBasic();
+        http.csrf(csrf -> csrf.disable()).authorizeRequests().requestMatchers("/manage/health", "/manage/info")
+                .permitAll().requestMatchers("/**")
                 .hasAnyRole(StringUtils.collectionToDelimitedString(soUserCredentialConfiguration.getRoles(), ","))
-                .and().httpBasic();
+                .and().httpBasic(httpBasic -> httpBasic.disable());
+        return null;
     }
 
 }

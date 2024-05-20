@@ -26,18 +26,14 @@ package org.onap.so.apihandlerinfra.tenantisolation;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.ServiceLoader;
 import java.util.UUID;
-import javax.inject.Provider;
-import javax.transaction.Transactional;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.onap.so.logger.LoggingAnchor;
 import org.apache.http.HttpStatus;
 import org.onap.so.apihandler.common.ErrorNumbers;
@@ -85,7 +81,7 @@ public class CloudOrchestration {
     private RequestsDbClient requestsDbClient;
 
     @Autowired
-    private Provider<TenantIsolationRunnable> tenantIsolationRunnable;
+    private ServiceLoader.Provider<TenantIsolationRunnable> tenantIsolationRunnable;
 
     @POST
     @Path("/{version:[vV][1]}/operationalEnvironments")

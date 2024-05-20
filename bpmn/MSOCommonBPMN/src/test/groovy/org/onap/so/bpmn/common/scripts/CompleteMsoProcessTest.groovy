@@ -20,24 +20,16 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import org.mockito.Spy
-import org.mockito.runners.MockitoJUnitRunner
-import org.onap.so.bpmn.core.WorkflowException
+import org.mockito.junit.MockitoJUnitRunner
 import org.onap.so.db.request.beans.InfraActiveRequests
 import org.onap.so.db.request.client.RequestsDbClient
-import static org.assertj.core.api.Assertions.assertThat
-import static org.assertj.core.api.Assertions.assertThatThrownBy
-import static org.mockito.ArgumentMatchers.eq
 import static org.mockito.Mockito.*
 
 @RunWith(MockitoJUnitRunner.class)

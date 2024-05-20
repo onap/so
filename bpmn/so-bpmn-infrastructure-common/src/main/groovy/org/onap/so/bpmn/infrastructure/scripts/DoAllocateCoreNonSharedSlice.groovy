@@ -27,7 +27,7 @@ import groovy.json.JsonOutput
 import static org.hamcrest.CoreMatchers.instanceOf
 
 import javax.json.JsonArray
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
 import org.apache.commons.collections.map.HashedMap
 import org.apache.commons.lang.StringEscapeUtils
 import org.camunda.bpm.engine.delegate.BpmnError
@@ -67,7 +67,7 @@ import org.springframework.http.HttpEntity
 import org.onap.aai.domain.yang.NetworkPolicy
 import org.onap.aaiclient.client.aai.AAINamespaceConstants
 
-import javax.ws.rs.NotFoundException
+import jakarta.ws.rs.NotFoundException
 
 class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
     String Prefix="DACNSNSSI_"
