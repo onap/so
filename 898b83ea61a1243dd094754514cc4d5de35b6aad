@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "51005298_c1ac100e",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/tasks/orchestration/StackService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 296,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2024-06-05T08:33:01Z",
+      "side": 1,
+      "message": "typo `rivate`",
+      "revId": "898b83ea61a1243dd094754514cc4d5de35b6aad",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
