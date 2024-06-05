@@ -3,6 +3,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "2ba420e0_324fcecc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7813
+      },
+      "writtenOn": "2024-06-05T08:48:53Z",
+      "side": 1,
+      "message": "Hi Fiete,\n\nYes, changes of this \u0026 clean-up activity of code have been taken care in patch-4. We will push it soon with cleaned version in next patch.\n\n\nRegards,\nSANKET",
+      "revId": "898b83ea61a1243dd094754514cc4d5de35b6aad",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "51005298_c1ac100e",
         "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/tasks/orchestration/StackService.java",
         "patchSetId": 3
