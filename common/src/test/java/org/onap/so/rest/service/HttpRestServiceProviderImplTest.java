@@ -35,11 +35,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.rest.exceptions.InvalidRestRequestException;
 import org.onap.so.rest.exceptions.HttpResouceNotFoundException;
 import org.onap.so.rest.exceptions.RestProcessingException;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -58,6 +56,9 @@ public class HttpRestServiceProviderImplTest {
 
     @Mock
     private ResponseEntity<String> mockEntity;
+
+    @Mock
+    private HttpStatusCodeException httpStatusCodeException;
 
     @Test
     public void test_get_returnOptionalPresentIfResponseIsOKAndHasBody() {
@@ -124,10 +125,12 @@ public class HttpRestServiceProviderImplTest {
 
     @Test(expected = RestProcessingException.class)
     public void test_get_ThrowsInvalidRestRequestExceptionifHttpClientErrorExceptionOccured() {
+
         final HttpRestServiceProvider objUnderTest = new HttpRestServiceProviderImpl(mockRestTemplate);
 
+        HttpClientErrorException httpClientErrorException = new HttpClientErrorException(HttpStatus.CONFLICT);
         when(mockRestTemplate.exchange(eq(DUMMY_URL), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
-                .thenThrow(HttpClientErrorException.class);
+                .thenThrow(httpClientErrorException);
 
         objUnderTest.get(DUMMY_URL, String.class);
     }
@@ -249,8 +252,9 @@ public class HttpRestServiceProviderImplTest {
     public void test_post_ThrowsInvalidRestRequestExceptionifHttpClientErrorExceptionOccured() {
         final HttpRestServiceProvider objUnderTest = new HttpRestServiceProviderImpl(mockRestTemplate);
 
+        HttpClientErrorException httpClientErrorException = new HttpClientErrorException(HttpStatus.CONFLICT);
         when(mockRestTemplate.exchange(eq(DUMMY_URL), eq(HttpMethod.POST), any(HttpEntity.class), eq(String.class)))
-                .thenThrow(HttpClientErrorException.class);
+                .thenThrow(httpClientErrorException);
 
         objUnderTest.post(BODY, DUMMY_URL, String.class);
     }

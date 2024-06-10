@@ -25,9 +25,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import java.net.URI;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 import org.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,7 +35,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.onap.so.apihandlerinfra.HealthCheckConfig.Endpoint;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.HttpEntity;
@@ -53,7 +53,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {GenericStringConverter.class, HealthCheckConverter.class},
-        initializers = {ConfigFileApplicationContextInitializer.class})
+        initializers = {ConfigDataApplicationContextInitializer.class})
 @ActiveProfiles("test")
 @EnableConfigurationProperties({HealthCheckConfig.class})
 public class GlobalHealthcheckHandlerTest {

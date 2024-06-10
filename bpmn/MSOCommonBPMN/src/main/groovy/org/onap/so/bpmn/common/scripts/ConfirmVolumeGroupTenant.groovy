@@ -25,7 +25,6 @@ package org.onap.so.bpmn.common.scripts
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.VolumeGroup
-import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.Relationships
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri

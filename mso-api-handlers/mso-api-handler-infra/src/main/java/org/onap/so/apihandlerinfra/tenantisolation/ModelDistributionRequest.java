@@ -24,15 +24,11 @@ package org.onap.so.apihandlerinfra.tenantisolation;
 
 import java.io.IOException;
 import java.util.List;
-import javax.inject.Provider;
-import javax.transaction.Transactional;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.PATCH;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import java.util.ServiceLoader;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.onap.so.apihandler.common.ErrorNumbers;
@@ -71,7 +67,7 @@ public class ModelDistributionRequest {
 
     private static Logger logger = LoggerFactory.getLogger(ModelDistributionRequest.class);
     @Autowired
-    private Provider<TenantIsolationRunnable> tenantIsolationRunnable;
+    private ServiceLoader.Provider<TenantIsolationRunnable> tenantIsolationRunnable;
 
     @PATCH
     @Path("/{version:[vV][1]}/distributions/{distributionId}")

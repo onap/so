@@ -13,8 +13,8 @@
   <packaging>jar</packaging>
 
   <properties>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
   </properties>
 
   <dependencies>
@@ -55,18 +55,22 @@
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-xml</artifactId>
+      <version>${codehaus.groovy.version}</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-json</artifactId>
+      <version>${codehaus.groovy.version}</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-jsr223</artifactId>
+      <version>${codehaus.groovy.version}</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-test</artifactId>
+      <version>${codehaus.groovy.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -82,6 +86,11 @@
     <dependency>
       <groupId>org.onap.so</groupId>
       <artifactId>mso-requests-db</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.so</groupId>
+      <artifactId>MSOCommonBPMN</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -155,12 +164,6 @@
     <dependency>
       <groupId>ch.vorburger.mariaDB4j</groupId>
       <artifactId>mariaDB4j</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-      <version>3.11.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>

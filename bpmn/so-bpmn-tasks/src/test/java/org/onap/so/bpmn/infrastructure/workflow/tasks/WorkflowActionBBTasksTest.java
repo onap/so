@@ -27,7 +27,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
@@ -62,6 +61,7 @@ import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.listener.flowmanipulator.FlowManipulatorListenerRunner;
 import org.onap.so.bpmn.core.WorkflowException;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.*;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ConfigurationResourceKeys;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
@@ -121,7 +121,7 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         execution = new DelegateExecutionFake();
         ServiceInstance servInstance = new ServiceInstance();
         servInstance.setServiceInstanceId("TEST");
-        when(bbSetupUtils.getAAIServiceInstanceByName(anyString(), anyObject())).thenReturn(servInstance);
+        when(bbSetupUtils.getAAIServiceInstanceByName(anyString(), any())).thenReturn(servInstance);
         workflowAction.setBbInputSetupUtils(bbSetupUtils);
         workflowAction.setBbInputSetup(bbInputSetup);
     }

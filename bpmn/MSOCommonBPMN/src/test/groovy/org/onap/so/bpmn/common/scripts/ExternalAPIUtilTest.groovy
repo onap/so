@@ -29,8 +29,8 @@ import org.onap.so.client.HttpClientFactory
 import org.onap.logging.filter.base.ONAPComponents;
 import org.springframework.http.HttpStatus
 
-import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.MediaType
+import jakarta.ws.rs.core.Response
 
 import static org.assertj.core.api.Assertions.assertThat
 import static org.assertj.core.api.Assertions.catchThrowableOfType

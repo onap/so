@@ -8,6 +8,9 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>mso-infrastructure-bpmn</artifactId>
   <packaging>jar</packaging>
+  <properties>
+    <codehaus.groovy.version>3.0.19</codehaus.groovy.version>
+  </properties>
   <build>
     <pluginManagement>
       <plugins>
@@ -218,6 +221,26 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>org.onap.aai.schema-service</groupId>
+      <artifactId>aai-schema</artifactId>
+      <version>1.9.6</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-xml</artifactId>
+      <version>${codehaus.groovy.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-json</artifactId>
+      <version>${codehaus.groovy.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-jsr223</artifactId>
+      <version>${codehaus.groovy.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.camunda.bpm.springboot</groupId>
       <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
       <exclusions>
@@ -304,28 +327,10 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.onap.aaf.authz</groupId>
-      <artifactId>aaf-cadi-aaf</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.servlet</groupId>
-          <artifactId>servlet-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.camunda.bpm.springboot</groupId>
       <artifactId>camunda-bpm-spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.onap.aaf.authz</groupId>
-      <artifactId>aaf-misc-rosetta</artifactId>
-      <scope>runtime</scope>
-    </dependency>
   </dependencies>
 </project>
+

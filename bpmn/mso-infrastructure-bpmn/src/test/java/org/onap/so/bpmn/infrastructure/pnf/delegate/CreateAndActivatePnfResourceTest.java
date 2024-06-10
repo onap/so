@@ -18,10 +18,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
- */
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
-
 import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.assertThat;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_CORRELATION_ID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
@@ -37,20 +35,14 @@ import org.onap.so.BaseIntegrationTest;
 import org.onap.so.bpmn.common.recipe.ResourceInput;
 import org.onap.so.bpmn.common.resource.ResourceRequestBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-
 public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
-
     private static final String VALID_UUID = UUID.nameUUIDFromBytes("testUuid".getBytes()).toString();
     private static final String SERVICE_INSTANCE_ID = "serviceForInstance";
-
     private Map<String, Object> variables;
-
     @Autowired
     private PnfManagementTestImpl pnfManagementTest;
-
     @Autowired
     private KafkaClientTestImpl kafkaClientTestImpl;
-
     @Before
     public void setup() {
         pnfManagementTest.reset();
@@ -58,7 +50,6 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
         variables.put("serviceInstanceId", SERVICE_INSTANCE_ID);
         variables.put(PNF_UUID, VALID_UUID);
     }
-
     @Test
     public void shouldWaitForMessageFromKafkaAndUpdateAaiEntryWhenAaiEntryExists() {
         // given
@@ -74,7 +65,6 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
                 runtimeService.startProcessInstanceByKey("CreateAndActivatePnfResource", "businessKey", variables);
         assertThat(instance).isWaitingAt("WaitForKafkaPnfReadyNotification").isWaitingFor("WorkflowMessage");
         kafkaClientTestImpl.sendMessage();
-
         // then
         assertThat(instance).isEnded().hasPassedInOrder("CreateAndActivatePnf_StartEvent", "CheckInputs",
                 "CheckAiiForPnfCorrelationId", "DoesAaiContainInfoAboutPnf", "AaiEntryExists", "InformKafkaClient",
@@ -82,7 +72,6 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
         Assertions.assertThat(pnfManagementTest.getServiceAndPnfRelationMap())
                 .containsOnly(MapEntry.entry(SERVICE_INSTANCE_ID, PnfManagementTestImpl.ID_WITH_ENTRY));
     }
-
     @Test
     public void shouldCreateAaiEntryWaitForMessageFromKafkaAndUpdateAaiEntryWhenNoAaiEntryExists() {
         // given
@@ -98,7 +87,6 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
                 runtimeService.startProcessInstanceByKey("CreateAndActivatePnfResource", "businessKey", variables);
         assertThat(instance).isWaitingAt("WaitForKafkaPnfReadyNotification").isWaitingFor("WorkflowMessage");
         kafkaClientTestImpl.sendMessage();
-
         // then
         assertThat(instance).isEnded().hasPassedInOrder("CreateAndActivatePnf_StartEvent", "CheckInputs",
                 "CheckAiiForPnfCorrelationId", "DoesAaiContainInfoAboutPnf", "CreatePnfEntryInAai", "AaiEntryExists",
@@ -107,9 +95,7 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
         Assertions.assertThat(pnfManagementTest.getServiceAndPnfRelationMap())
                 .containsOnly(MapEntry.entry(SERVICE_INSTANCE_ID, PnfManagementTestImpl.ID_WITHOUT_ENTRY));
     }
-
     private ResourceInput getUpdateResInputObj(String modelName) {
-
         String resourceInput = "{\n" + "\t\"resourceInstanceName\": \"SotnFc-wan-connection_wanconnection-37\",\n"
                 + "\t\"resourceInstanceDes\": null,\n" + "\t\"globalSubscriberId\": \"sdwandemo\",\n"
                 + "\t\"serviceType\": \"CCVPN\",\n" + "\t\"operationId\": \"df3387b5-4fbf-41bd-82a0-13a955ac178a\",\n"
@@ -130,8 +116,8 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
                 + "\t\"serviceInstanceId\": \"ffa07ae4-f820-45af-9439-1416b3bc1d39\",\n"
                 + "\t\"requestsInputs\": \"{\\r\\n\\t\\\"service\\\": {\\r\\n\\t\\t\\\"name\\\": \\\"wanconnection-37\\\",\\r\\n\\t\\t\\\"description\\\": \\\"deafe\\\",\\r\\n\\t\\t\\\"serviceInvariantUuid\\\": \\\"43fb5165-7d03-4009-8951-a8f45d3f0148\\\",\\r\\n\\t\\t\\\"serviceUuid\\\": \\\"198b066c-0771-4157-9594-1824adfdda7e\\\",\\r\\n\\t\\t\\\"globalSubscriberId\\\": \\\"sdwandemo\\\",\\r\\n\\t\\t\\\"serviceType\\\": \\\"CCVPN\\\",\\r\\n\\t\\t\\\"parameters\\\": {\\r\\n\\t\\t\\t\\\"resources\\\": [\\r\\n\\t\\t\\t],\\r\\n\\t\\t\\t\\\"requestInputs\\\": {\\r\\n\\t\\t\\t\\t\\\"sotnfcwanconnection0_3rdctlspecwanconnection0_restapiUrl\\\": \\\"http://10.80.80.21:8443/restconf/operations/ZTE-API-ConnectivityService:create-connectivity-service\\\",\\r\\n\\t\\t\\t\\t\\\"sotnfcwanconnection0_3rdctlspecwanconnection0_templateFileName\\\": \\\"sotn_create_zte_template.json\\\",\\r\\n\\t\\t\\t\\t\\\"sdwanfcwanconnection0_3rdctlspecwanconnection0_restapiUrl\\\": \\\"http://10.80.80.21:8443/restconf/operations/ZTE-API-ConnectivityService:create-connectivity-service\\\",\\r\\n\\t\\t\\t\\t\\\"sdwanfcwanconnection0_3rdctlspecwanconnection0_templateFileName\\\": \\\"sdwan_create_zte_template.json\\\",\\\"ont_ont_manufacturer\\\":\\\"huawei\\\",\\\"ont_ont_serial_num\\\":\\\"123\\\"\\r\\n\\t\\t\\t}\\r\\n\\t\\t}\\r\\n\\t}\\r\\n}\"\n"
                 + "}";
-
         ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, ResourceInput.class);
         return resourceInputObj;
     }
 }
+*/

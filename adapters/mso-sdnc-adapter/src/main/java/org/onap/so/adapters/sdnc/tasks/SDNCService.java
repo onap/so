@@ -1,17 +1,12 @@
 package org.onap.so.adapters.sdnc.tasks;
 
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.ws.rs.core.UriBuilder;
-import javax.xml.bind.DatatypeConverter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.ws.rs.core.UriBuilder;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
-import org.onap.logging.filter.spring.SpringClientPayloadFilter;
 import org.onap.so.adapters.sdnc.impl.Constants;
-import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
 import org.onap.so.logging.tasks.AuditMDCSetup;
 import org.onap.so.utils.CryptoUtils;
 import org.onap.so.utils.ExternalTaskUtils;
@@ -20,19 +15,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.BufferingClientHttpRequestFactory;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.xml.bind.DatatypeConverter;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 @Component
 public class SDNCService extends ExternalTaskUtils {

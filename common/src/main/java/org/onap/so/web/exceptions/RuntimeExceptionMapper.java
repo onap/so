@@ -22,10 +22,9 @@
 
 package org.onap.so.web.exceptions;
 
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,10 +36,10 @@ public class RuntimeExceptionMapper implements ExceptionMapper<RuntimeException>
     public Response toResponse(RuntimeException exception) {
 
         if (exception instanceof NotFoundException) {
-            return Response.status(Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND).build();
         } else {
             logger.error("Error occured", exception);
-            return Response.status(Status.INTERNAL_SERVER_ERROR)
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(new ExceptionResponse("Unexpected Internal Exception")).build();
         }
     }
