@@ -21,7 +21,12 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <sdnc.northbound.version>3.0.2</sdnc.northbound.version>
     <!-- SDNC northbound API latest version -->
-    <logback-core.version>1.2.10</logback-core.version>
+    <logback-core.version>1.4.14</logback-core.version>
+    <!-- added codehaus version !-->
+    <codehaus.groovy.version>3.0.19</codehaus.groovy.version>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
+    <maven.compiler.release>${java.version}</maven.compiler.release>
   </properties>
   <modules>
     <module>MSOCoreBPMN</module>
@@ -47,9 +52,9 @@
         <version>${xmlunit.version}</version>
       </dependency>
       <dependency>
-        <groupId>javax.activation</groupId>
-        <artifactId>activation</artifactId>
-        <version>1.1.1</version>
+        <groupId>jakarta.activation</groupId>
+        <artifactId>jakarta.activation-api</artifactId>
+        <version>2.1.2</version>
         <scope>compile</scope>
       </dependency>
       <dependency>
@@ -61,7 +66,7 @@
       <dependency>
         <groupId>org.camunda.bpm.extension.mockito</groupId>
         <artifactId>camunda-bpm-mockito</artifactId>
-        <version>4.0.0</version>
+        <version>5.16.0</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
@@ -71,9 +76,17 @@
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpcore</artifactId>
     </dependency>
+    <!-- add mockito core dependency !-->
     <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>5.8.0</version>
+    </dependency>
+    <!-- update httpclient version !-->
+    <dependency>
+      <groupId>org.apache.httpcomponents.client5</groupId>
+      <artifactId>httpclient5</artifactId>
+      <version>5.3</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>

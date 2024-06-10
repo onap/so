@@ -23,6 +23,8 @@ package org.onap.so.adapters.sdnc;
 import java.util.Arrays;
 import java.util.HashSet;
 import javax.xml.ws.Endpoint;
+import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
+import jakarta.servlet.Servlet;
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.feature.LoggingFeature;
@@ -40,7 +42,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+
 
 
 @Configuration("CXFConfiguration")
@@ -77,7 +79,7 @@ public class CXFConfiguration {
 
     @Bean
     public ServletRegistrationBean cxfServlet() {
-        return new ServletRegistrationBean(new CXFServlet(), "/adapters/*");
+        return new ServletRegistrationBean((Servlet) new CXFServlet(), "/adapters/*");
     }
 
     @Bean

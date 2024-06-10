@@ -23,14 +23,13 @@
 package org.onap.so.asdc.client.test.rest;
 
 
-import javax.transaction.Transactional;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.HeaderParam;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.onap.so.asdc.client.ASDCController;
 import org.onap.so.asdc.client.test.emulators.DistributionClientEmulator;
 import org.onap.so.asdc.client.test.emulators.JsonStatusData;
@@ -104,10 +103,10 @@ public class ASDCRestInterface {
                 asdcController.closeASDC();
             }
 
-            return Response.status(Status.OK).build();
+            return Response.status(Response.Status.OK).build();
         } catch (final Exception exception) {
             logger.error("Unable to process notification request", exception);
-            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
 
     }

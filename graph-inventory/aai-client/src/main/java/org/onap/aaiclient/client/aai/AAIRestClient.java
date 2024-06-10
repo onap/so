@@ -22,7 +22,7 @@ package org.onap.aaiclient.client.aai;
 
 import java.net.URI;
 import java.util.Optional;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 import org.javatuples.Pair;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryPatchConverter;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryRestClient;

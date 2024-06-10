@@ -28,17 +28,15 @@ import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.spy
 import static org.mockito.Mockito.verify
 import static org.mockito.Mockito.when
-import javax.ws.rs.core.UriBuilder
+import jakarta.ws.rs.core.UriBuilder
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import org.mockito.internal.stubbing.answers.DoesNothing
 import org.onap.aai.domain.yang.AllottedResource
-import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
-import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 
 

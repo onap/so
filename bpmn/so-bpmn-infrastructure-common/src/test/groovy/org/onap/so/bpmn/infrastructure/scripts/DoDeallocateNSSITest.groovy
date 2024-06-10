@@ -41,7 +41,8 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
+
 
 import static org.junit.Assert.assertNotNull
 import static org.junit.Assert.assertTrue

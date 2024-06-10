@@ -21,7 +21,7 @@
  */
 package org.onap.so.bpmn.vcpe.scripts
 
-import javax.ws.rs.NotFoundException
+import jakarta.ws.rs.NotFoundException
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aaiclient.client.aai.AAIObjectType

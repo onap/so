@@ -37,7 +37,7 @@ import org.onap.so.bpmn.common.scripts.VidUtils
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.logging.filter.base.ONAPComponents;
 
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 

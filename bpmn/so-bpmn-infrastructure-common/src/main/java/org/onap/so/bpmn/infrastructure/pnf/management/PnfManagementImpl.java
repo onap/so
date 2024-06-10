@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
 public class PnfManagementImpl implements PnfManagement {
 
     @Override
-    public Optional<Pnf> getEntryFor(String pnfCorrelationId) {
+    public Optional<org.onap.aai.domain.yang.Pnf> getEntryFor(String pnfCorrelationId) {
         AAIRestClientImpl restClient = new AAIRestClientImpl();
         return restClient.getPnfByName(pnfCorrelationId);
     }

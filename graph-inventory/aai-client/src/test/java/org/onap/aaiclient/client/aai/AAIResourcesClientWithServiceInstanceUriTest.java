@@ -30,9 +30,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import java.util.List;
 import java.util.Optional;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.Response;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -87,7 +86,7 @@ public class AAIResourcesClientWithServiceInstanceUriTest {
     public void getFullResponse() {
         AAIResourcesClient client = aaiClient;
         Response result = client.getFullResponse(uri);
-        assertThat(result.getStatus(), equalTo(Status.NOT_FOUND.getStatusCode()));
+        assertThat(result.getStatus(), equalTo(Response.Status.NOT_FOUND.getStatusCode()));
     }
 
     @Test

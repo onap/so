@@ -23,8 +23,8 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import static org.apache.commons.lang3.StringUtils.*;
-import javax.ws.rs.NotFoundException
-import javax.ws.rs.core.UriBuilder
+import jakarta.ws.rs.NotFoundException
+import jakarta.ws.rs.core.UriBuilder
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution

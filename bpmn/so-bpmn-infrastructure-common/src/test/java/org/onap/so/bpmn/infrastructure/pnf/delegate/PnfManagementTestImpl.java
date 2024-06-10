@@ -36,7 +36,7 @@ public class PnfManagementTestImpl implements PnfManagement {
     private Map<String, Pnf> created = new HashMap<>();
 
     @Override
-    public Optional<Pnf> getEntryFor(String pnfCorrelationId) {
+    public Optional<org.onap.aai.domain.yang.Pnf> getEntryFor(String pnfCorrelationId) {
         if (Objects.equals(pnfCorrelationId, ID_WITH_ENTRY)) {
             return Optional.of(new Pnf());
         } else {

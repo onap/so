@@ -20,8 +20,9 @@
   </properties>
   <dependencies>
     <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
+      <groupId>org.apache.httpcomponents.client5</groupId>
+      <artifactId>httpclient5</artifactId>
+      <version>5.2.1</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -46,7 +47,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
-      <version>5.2.14.RELEASE</version>
+      <version>6.1.2</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -63,9 +64,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.shazam</groupId>
-      <artifactId>shazamcrest</artifactId>
-      <version>0.11</version>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>2.2</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -112,7 +113,7 @@
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-web</artifactId>
-      <version>5.4.6</version>
+      <version>6.2.1</version>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
@@ -132,39 +133,6 @@
       <groupId>org.junit.vintage</groupId>
       <artifactId>junit-vintage-engine</artifactId>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onap.aaf.authz</groupId>
-      <artifactId>aaf-cadi-client</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onap.aaf.authz</groupId>
-      <artifactId>aaf-cadi-aaf</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.servlet</groupId>
-          <artifactId>servlet-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.onap.aaf.authz</groupId>
-      <artifactId>aaf-auth-client</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onap.aaf.authz</groupId>
-      <artifactId>aaf-misc-env</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onap.aaf.authz</groupId>
-      <artifactId>aaf-misc-rosetta</artifactId>
-      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.reflections</groupId>
@@ -262,9 +230,34 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>javax.validation</groupId>
-      <artifactId>validation-api</artifactId>
+      <groupId>jakarta.validation</groupId>
+      <artifactId>jakarta.validation-api</artifactId>
+      <version>3.1.0-M1</version>
     </dependency>
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>6.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.core</groupId>
+      <artifactId>jersey-client</artifactId>
+      <version>3.0.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.inject</groupId>
+      <artifactId>jersey-hk2</artifactId>
+      <version>3.0.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.media</groupId>
+      <artifactId>jersey-media-json-binding</artifactId>
+      <version>3.0.2</version>
+      <scope>test</scope>
+    </dependency>
+    <!--        added dependencies-->
     <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-core</artifactId>
@@ -303,6 +296,12 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
+      <version>5.5.2</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
+      <artifactId>jackson-jakarta-rs-json-provider</artifactId>
+      <version>2.15.2</version>
     </dependency>
   </dependencies>
   <dependencyManagement>
@@ -386,7 +385,6 @@
       <plugins>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.20</version>
           <configuration>
             <systemPropertyVariables>
               <so.log.level>DEBUG</so.log.level>
@@ -402,3 +400,4 @@
     </pluginManagement>
   </build>
 </project>
+

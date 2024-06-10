@@ -21,10 +21,10 @@ package org.onap.so.apihandler.filters;
 
 import java.io.IOException;
 import javax.annotation.Priority;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.core.UriInfo;
+import jakarta.ws.rs.ext.Provider;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandlerinfra.exceptions.DuplicateRequestIdException;
