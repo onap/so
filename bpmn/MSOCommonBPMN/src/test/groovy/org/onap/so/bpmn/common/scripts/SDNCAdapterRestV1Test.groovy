@@ -26,8 +26,7 @@ import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.MockitoAnnotations
-import org.mockito.internal.debugging.MockitoDebuggerImpl
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner
 import org.onap.so.bpmn.mock.FileUtil
 import org.onap.so.bpmn.core.json.JsonUtils
 
@@ -65,8 +64,7 @@ public class SDNCAdapterRestV1Test {
 		SDNCAdapterRestV1 sdncAdapterRestV1 = new SDNCAdapterRestV1()
 		sdncAdapterRestV1.preProcessRequest(mockExecution)
 		
-		MockitoDebuggerImpl debugger = new MockitoDebuggerImpl()
-		//debugger.printInvocations(mockExecution)
+
 
 
 		verify(mockExecution).setVariable("prefix","SDNCREST_")
@@ -100,8 +98,6 @@ public class SDNCAdapterRestV1Test {
 		SDNCAdapterRestV1 sdncAdapterRestV1 = new SDNCAdapterRestV1()
 		sdncAdapterRestV1.preProcessRequest(mockExecution)
 		
-		MockitoDebuggerImpl debugger = new MockitoDebuggerImpl()
-		//debugger.printInvocations(mockExecution)
 
 
 		verify(mockExecution).setVariable("prefix","SDNCREST_")
@@ -136,8 +132,6 @@ public class SDNCAdapterRestV1Test {
 		SDNCAdapterRestV1 sdncAdapterRestV1 = new SDNCAdapterRestV1()
 		sdncAdapterRestV1.preProcessRequest(mockExecution)
 		
-		MockitoDebuggerImpl debugger = new MockitoDebuggerImpl()
-		//debugger.printInvocations(mockExecution)
 
 
 		verify(mockExecution).setVariable("prefix","SDNCREST_")

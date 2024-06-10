@@ -24,7 +24,7 @@ import org.junit.rules.ExpectedException
 
 import static org.mockito.Mockito.*
 
-import javax.ws.rs.NotFoundException
+import jakarta.ws.rs.NotFoundException
 import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
@@ -42,7 +42,6 @@ import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.aai.domain.yang.VfModule
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule
 
 class UpdateAAIVfModuleTest  extends MsoGroovyTest {
     def prefix = "UAAIVfMod_"

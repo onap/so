@@ -40,8 +40,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import javax.jws.WebService;
-import javax.xml.ws.Holder;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.Holder;
 import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.adapters.vdu.CloudInfo;
 import org.onap.so.adapters.vdu.VduException;
@@ -531,8 +531,8 @@ public class MsoVnfPluginAdapterImpl {
     public void createVfModule(String cloudSiteId, String cloudOwner, String tenantId, String vfModuleType,
             String vnfVersion, String genericVnfId, String vfModuleName, String vfModuleId, String requestType,
             String volumeGroupId, String baseVfModuleId, String modelCustomizationUuid, Map<String, Object> inputs,
-            Boolean failIfExists, Boolean backout, Boolean enableBridge, MsoRequest msoRequest, Holder<String> vnfId)
-            throws VnfException {
+            Boolean failIfExists, Boolean backout, Boolean enableBridge, MsoRequest msoRequest,
+            jakarta.xml.ws.Holder<String> vnfId) throws VnfException {
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis();
 

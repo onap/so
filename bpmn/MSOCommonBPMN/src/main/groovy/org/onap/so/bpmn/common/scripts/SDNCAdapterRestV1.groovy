@@ -25,22 +25,10 @@ package org.onap.so.bpmn.common.scripts
 import org.onap.so.logger.LoggingAnchor
 import org.onap.so.client.HttpClientFactory
 import org.onap.logging.filter.base.ErrorCode
-
-import java.text.SimpleDateFormat
-import javax.ws.rs.core.Response
-import java.net.URLEncoder
-
-import org.apache.commons.codec.binary.Base64
-import org.apache.commons.lang3.*
+import jakarta.ws.rs.core.Response
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-
-import groovy.json.*
-
-import org.json.JSONObject
-
 import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.domain.RollbackData
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient

@@ -1,4 +1,4 @@
-/*-
+ /*-
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
@@ -26,26 +26,13 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
 import org.onap.so.bpmn.core.WorkflowException;
-
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*
-
-import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.internal.debugging.MockitoDebuggerImpl
-import org.junit.Before
-import org.onap.so.bpmn.common.scripts.AaiUtil;
-import org.junit.Rule;
-import org.junit.Test
-import org.junit.Ignore
 import org.junit.runner.RunWith
-import org.junit.Before;
 import org.junit.Test;
-import org.camunda.bpm.engine.ProcessEngineServices
-import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
-import org.camunda.bpm.engine.impl.pvm.process.ProcessDefinitionImpl
-import org.camunda.bpm.engine.repository.ProcessDefinition
+
 
 
 

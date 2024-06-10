@@ -23,7 +23,7 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 
-import javax.ws.rs.NotFoundException
+import jakarta.ws.rs.NotFoundException
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.VolumeGroups
 import org.onap.aaiclient.client.aai.AAIObjectType

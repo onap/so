@@ -23,26 +23,16 @@
 package org.onap.so.bpmn.common.scripts
 
 import org.onap.so.logger.LoggingAnchor
-import org.onap.so.bpmn.core.UrnPropertiesReader
+
 import org.onap.so.client.HttpClientFactory
 import org.onap.logging.filter.base.ErrorCode
-
-import java.io.Serializable;
-
-import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.springframework.web.util.UriUtils
-
-import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.client.HttpClient
-import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
-import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
 import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.so.logger.MessageEnum

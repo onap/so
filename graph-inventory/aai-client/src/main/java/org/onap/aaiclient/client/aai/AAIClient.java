@@ -21,10 +21,10 @@
 package org.onap.aaiclient.client.aai;
 
 import java.net.URI;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.UriBuilder;
 import org.javatuples.Pair;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryClient;
 import org.onap.aaiclient.client.graphinventory.exceptions.GraphInventoryUriComputationException;
