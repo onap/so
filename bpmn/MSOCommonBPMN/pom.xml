@@ -10,24 +10,47 @@
   <artifactId>MSOCommonBPMN</artifactId>
   <name>MSOCommonBPMN</name>
   <packaging>jar</packaging>
+  <properties>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
+  </properties>
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/java</directory>
+        <filtering>true</filtering>
+        <excludes>
+          <exclude>src/main/java/org/onap/so/client/sdnc/common/SendRequestToSdnr</exclude>
+        </excludes>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <compilerId>groovy-eclipse-compiler</compilerId>
-        </configuration>
+        <groupId>org.codehaus.gmavenplus</groupId>
+        <artifactId>gmavenplus-plugin</artifactId>
+        <version>2.1.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>execute</goal>
+              <goal>addSources</goal>
+              <goal>addTestSources</goal>
+              <goal>generateStubs</goal>
+              <goal>compile</goal>
+              <goal>generateTestStubs</goal>
+              <goal>compileTests</goal>
+              <goal>removeStubs</goal>
+              <goal>removeTestStubs</goal>
+            </goals>
+          </execution>
+        </executions>
         <dependencies>
           <dependency>
             <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-eclipse-compiler</artifactId>
-            <version>3.6.0-03</version>
-          </dependency>
-          <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-eclipse-batch</artifactId>
-            <version>2.5.8-03</version>
+            <artifactId>groovy-all</artifactId>
+            <version>3.0.15</version>
+            <scope>runtime</scope>
+            <type>pom</type>
           </dependency>
         </dependencies>
       </plugin>
@@ -142,6 +165,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.onap.aai.schema-service</groupId>
+      <artifactId>aai-schema</artifactId>
+      <version>1.9.6</version>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-contract-wiremock</artifactId>
       <scope>test</scope>
@@ -173,20 +201,24 @@
     </dependency>
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-test</artifactId>
+      <version>${codehaus.groovy.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-xml</artifactId>
+      <version>${codehaus.groovy.version}</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-json</artifactId>
+      <version>${codehaus.groovy.version}</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-jsr223</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.groovy</groupId>
-      <artifactId>groovy-test</artifactId>
-      <scope>test</scope>
+      <version>${codehaus.groovy.version}</version>
     </dependency>
     <dependency>
       <groupId>org.onap.so</groupId>
@@ -269,12 +301,6 @@
     <dependency>
       <groupId>ch.vorburger.mariaDB4j</groupId>
       <artifactId>mariaDB4j</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-      <version>3.11.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

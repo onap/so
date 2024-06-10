@@ -20,7 +20,7 @@
 
 package org.onap.aaiclient.client.aai;
 
-import javax.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedHashMap;
 import org.javatuples.Pair;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.uri.AAIFluentTypeReverseLookup;
@@ -35,8 +35,7 @@ public class AAIDSLQueryClient
         extends GraphInventoryQueryClient<AAIDSLQueryClient, DSLQuery, AAIResultWrapper, AAIObjectType> {
 
     public AAIDSLQueryClient() {
-        super(new AAIClient(new MultivaluedHashMap<String, Pair<String, String>>(
-                ImmutableMap.of("ALL", Pair.with("X-DslApiVersion", "V2")))));
+        super(new AAIClient(new MultivaluedHashMap<>(ImmutableMap.of("ALL", Pair.with("X-DslApiVersion", "V2")))));
 
     }
 

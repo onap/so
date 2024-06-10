@@ -24,7 +24,7 @@ package org.onap.so.bpmn.infrastructure;
 
 import java.util.List;
 import java.util.concurrent.Executor;
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import org.camunda.bpm.application.PreUndeploy;
 import org.camunda.bpm.application.ProcessApplicationInfo;
 import org.camunda.bpm.engine.ProcessEngine;

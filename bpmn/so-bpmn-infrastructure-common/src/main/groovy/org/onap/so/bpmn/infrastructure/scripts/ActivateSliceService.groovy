@@ -48,7 +48,7 @@ import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import javax.ws.rs.NotFoundException
+import jakarta.ws.rs.NotFoundException
 import java.util.function.Consumer
 
 import static org.apache.commons.lang3.StringUtils.isBlank
