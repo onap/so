@@ -51,7 +51,7 @@ import org.springframework.web.util.UriUtils
 
 import static org.onap.so.bpmn.common.scripts.GenericUtils.*
 
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
 
 /**
  * This class contains the scripts used

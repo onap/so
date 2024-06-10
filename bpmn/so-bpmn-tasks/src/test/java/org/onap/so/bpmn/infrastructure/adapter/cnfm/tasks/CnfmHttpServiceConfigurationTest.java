@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.infrastructure.adapter.cnfm.tasks;
 
 import static org.junit.Assert.assertNotNull;
+import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,7 +47,8 @@ public class CnfmHttpServiceConfigurationTest {
     public void cnfmHttpRestServiceProvider_NotNull() {
 
         final CnfmHttpServiceConfiguration objForTest = new CnfmHttpServiceConfiguration();
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpclient);
+        HttpComponentsClientHttpRequestFactory requestFactory =
+                new HttpComponentsClientHttpRequestFactory((HttpClient) httpclient);
         Mockito.when(httpComponentsClientConfiguration.httpComponentsClientHttpRequestFactory())
                 .thenReturn(requestFactory);
         final HttpRestServiceProvider returnedValue = objForTest

@@ -22,24 +22,18 @@
 
 package org.onap.so.bpmn.common;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.onap.so.bpmn.mock.StubResponseVNFAdapter.mockVNFDelete;
-import static org.onap.so.bpmn.mock.StubResponseVNFAdapter.mockVNFPost;
-import static org.onap.so.bpmn.mock.StubResponseVNFAdapter.mockVNFPut;
-import static org.onap.so.bpmn.mock.StubResponseVNFAdapter.mockVNFRollbackDelete;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import static org.junit.Assert.*;
+import static org.onap.so.bpmn.mock.StubResponseVNFAdapter.*;
+
 
 /**
  * Unit tests for VnfAdapterRestV1.

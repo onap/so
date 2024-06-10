@@ -1,6 +1,6 @@
 package org.onap.aaiclient.client.aai.entities.uri;
 
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriBuilder;
 import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryObjectBase;
 

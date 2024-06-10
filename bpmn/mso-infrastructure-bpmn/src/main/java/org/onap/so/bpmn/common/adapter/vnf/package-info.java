@@ -18,5 +18,5 @@
  * ============LICENSE_END=========================================================
  */
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://org.onap.so/vnfNotify")
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://org.onap.so/vnfNotify")
 package org.onap.so.bpmn.common.adapter.vnf;

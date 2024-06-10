@@ -27,9 +27,7 @@ import org.junit.Test;
 import org.onap.sdc.api.notification.IArtifactInfo;
 import org.onap.sdc.api.notification.INotificationData;
 import org.onap.sdc.api.notification.IResourceInstance;
-import org.onap.so.asdc.installer.IVfModuleData;
 import org.onap.so.asdc.installer.VfModuleMetaData;
-import org.onap.so.asdc.util.ASDCNotificationLogging;
 
 public class ASDCNotificationLoggingTest {
     @Test

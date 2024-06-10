@@ -24,10 +24,6 @@ package org.onap.so.bpmn.common.scripts
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-
-import org.onap.so.bpmn.common.scripts.AaiUtil
-import org.onap.so.bpmn.common.scripts.ExceptionUtil
-import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.domain.InventoryType
 import org.onap.so.bpmn.core.domain.Resource
@@ -38,16 +34,10 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
 import org.onap.logging.filter.base.ONAPComponents;
-import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
-
 import org.json.JSONArray
 import org.json.JSONObject
-
 import static org.onap.so.bpmn.common.scripts.GenericUtils.*;
-
-import java.net.URL
-
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

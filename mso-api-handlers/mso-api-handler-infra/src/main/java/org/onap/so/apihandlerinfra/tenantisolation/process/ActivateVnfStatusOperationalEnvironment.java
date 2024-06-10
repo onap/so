@@ -25,7 +25,7 @@ package org.onap.so.apihandlerinfra.tenantisolation.process;
 
 import java.util.List;
 import java.util.Optional;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.json.JSONObject;
 import org.onap.aai.domain.yang.OperationalEnvironment;

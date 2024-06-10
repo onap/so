@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javax.xml.ws.Holder;
+import jakarta.xml.ws.Holder;
 import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.adapters.vnf.exceptions.VnfNotFound;
@@ -161,8 +161,9 @@ public class MsoVnfAdapterImpl {
     @Deprecated
     public void createVnf(String cloudSiteId, String cloudOwner, String tenantId, String vnfType, String vnfVersion,
             String vnfName, String requestType, String volumeGroupHeatStackId, Map<String, Object> inputs,
-            Boolean failIfExists, Boolean backout, Boolean enableBridge, MsoRequest msoRequest, Holder<String> vnfId,
-            Holder<Map<String, String>> outputs, Holder<VnfRollback> rollback) throws VnfException {
+            Boolean failIfExists, Boolean backout, Boolean enableBridge, MsoRequest msoRequest,
+            jakarta.xml.ws.Holder<String> vnfId, Holder<Map<String, String>> outputs, Holder<VnfRollback> rollback)
+            throws VnfException {
         // parameters used for multicloud adapter
         String genericVnfId = "";
         String vfModuleId = "";
@@ -336,7 +337,7 @@ public class MsoVnfAdapterImpl {
             String vnfVersion, String genericVnfName, String vnfName, String vfModuleId, String requestType,
             String volumeGroupHeatStackId, String baseVfHeatStackId, String modelCustomizationUuid,
             Map<String, Object> inputs, Boolean failIfExists, Boolean backout, Boolean enableBridge,
-            MsoRequest msoRequest, Holder<String> stackId) throws VnfException {
+            MsoRequest msoRequest, jakarta.xml.ws.Holder<String> stackId) throws VnfException {
         String vfModuleName = vnfName;
         String vfModuleType = vnfType;
         String vfVersion = vnfVersion;
