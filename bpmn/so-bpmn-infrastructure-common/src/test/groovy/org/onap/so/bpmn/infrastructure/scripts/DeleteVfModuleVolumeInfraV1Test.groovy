@@ -30,7 +30,7 @@ import org.mockito.Captor
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.mockito.Spy
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner
 import org.onap.aai.domain.yang.VolumeGroup
 import org.onap.so.bpmn.common.scripts.DeleteAAIVfModule
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
@@ -43,7 +43,7 @@ import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.aaiclient.client.graphinventory.exceptions.GraphInventoryUriComputationException
 
-import javax.ws.rs.NotFoundException
+import jakarta.ws.rs.NotFoundException
 
 import static org.mockito.ArgumentMatchers.eq
 import static org.mockito.Mockito.doNothing

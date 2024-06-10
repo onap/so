@@ -19,12 +19,13 @@
  */
 package org.onap.so.security;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
 
 /**
@@ -35,11 +36,12 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
 @Configuration
 @Order(2)
 @Profile({"aaf", "test", "serviceMesh"})
-public class SoNoAuthWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
-    @Override
-    public void configure(final WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/**");
+public class SoNoAuthWebSecurityConfigurerAdapter /* implements WebSecurityConfigurer */ {
+    @Bean(name = "webSecurityBeanOfSoNoAuthWebSecurityConfigurerAdapter")
+    public SecurityFilterChain filterChain(WebSecurity web) throws Exception {
+        web.ignoring().requestMatchers("/**");
         final StrictHttpFirewall firewall = new MSOSpringFirewall();
         web.httpFirewall(firewall);
+        return (SecurityFilterChain) web.build();
     }
 }

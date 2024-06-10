@@ -23,13 +23,8 @@
 package org.onap.so.bpmn.common.scripts
 
 import org.onap.so.logger.LoggingAnchor;
-import groovy.json.*
-
-import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
-import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.logging.filter.base.ErrorCode
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger

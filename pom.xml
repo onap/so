@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.onap.oparent</groupId>
@@ -14,9 +14,9 @@
   <version>1.15.0-SNAPSHOT</version>
   <name>so</name>
   <description>This Maven project is responsible to build and package all child projects - contributions in the MSO project.
-	This build can be configured to run Functional tests and to start/stop a jboss server + Mysql DB.
-	"mvn clean install -P with-integration-tests -Dintegration-tests-user=root -Dintegration-tests-group=root -Dintegration-tests-db-type=MYSQL"
-	</description>
+    This build can be configured to run Functional tests and to start/stop a jboss server + Mysql DB.
+    "mvn clean install -P with-integration-tests -Dintegration-tests-user=root -Dintegration-tests-group=root -Dintegration-tests-db-type=MYSQL"
+  </description>
   <organization>
     <name>ONAP - SO</name>
     <url>https://www.onap.org/</url>
@@ -41,7 +41,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <sonar.language>java</sonar.language>
-    <java.version>11</java.version>
+    <java.version>17</java.version>
     <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
     <sonar.surefire.reportsPath>${project.build.directory}/surefire-reports</sonar.surefire.reportsPath>
     <sonar.coverage.jacoco.xmlReportPaths>${project.reporting.outputDirectory}/jacoco-ut/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
@@ -66,17 +66,20 @@
     <siteNexusPath>content/sites/site/org/onap/so/${project.version}/</siteNexusPath>
     <cxf.version>3.4.1</cxf.version>
     <jax.ws.rs>2.1</jax.ws.rs>
-    <springboot.version>2.3.7.RELEASE</springboot.version>
-    <aaf.version>2.1.21</aaf.version>
+    <springboot.version>3.2.0</springboot.version>
+    <!--<aaf.version>2.1.21</aaf.version>-->
     <format.skipValidate>false</format.skipValidate>
     <format.skipExecute>true</format.skipExecute>
     <io.fabric8.version>0.33.0</io.fabric8.version>
     <appc.client.version>1.7.2</appc.client.version>
     <bowman.client.version>0.9.0</bowman.client.version>
-    <aaf.cadi.version>2.1.15</aaf.cadi.version>
+    <!--<aaf.cadi.version>2.1.15</aaf.cadi.version>-->
     <so-etsi-sol003-adapter-version>1.9.0-SNAPSHOT</so-etsi-sol003-adapter-version>
     <onap-logging-version>1.6.9</onap-logging-version>
-    <jackson.version>2.14.2</jackson.version>
+    <jackson.version>2.15.2</jackson.version>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
+    <maven.compiler.release>${java.version}</maven.compiler.release>
   </properties>
   <distributionManagement>
     <repository>
@@ -97,7 +100,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.10.4</version>
+        <version>3.6.2</version>
         <configuration>
           <failOnError>false</failOnError>
           <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
@@ -217,6 +220,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-deploy-plugin</artifactId>
+        <version>3.1.2</version>
         <!-- This version supports the "deployAtEnd" parameter -->
         <configuration>
           <skip />
@@ -225,7 +229,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.0</version>
+        <version>3.8.1</version>
         <configuration>
           <debug>true</debug>
           <compilerArgument>-Xlint</compilerArgument>
@@ -236,15 +240,15 @@
             <arg>-parameters</arg>
           </compilerArgs>
           <forceJavacCompilerUse>true</forceJavacCompilerUse>
-          <source>11</source>
-          <target>11</target>
-          <release>11</release>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <release>${java.version}</release>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-ejb-plugin</artifactId>
-        <version>2.2.1</version>
+        <version>3.2.1</version>
         <configuration>
           <ejbVersion>3.0</ejbVersion>
           <archive>
@@ -276,11 +280,11 @@
           <xmlOutput>true</xmlOutput>
         </configuration>
       </plugin>
-      <plugin>
+      <!--<plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>sonar-maven-plugin</artifactId>
-        <version>4.0.0.4121</version>
-      </plugin>
+        <version>5.1</version>
+      </plugin>-->
       <plugin>
         <artifactId>maven-scm-plugin</artifactId>
         <version>1.8.1</version>
@@ -312,6 +316,7 @@
           <formats>
             <format>xml</format>
           </formats>
+          <check />
         </configuration>
       </plugin>
       <plugin>
@@ -332,6 +337,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.11</version>
         <executions>
           <execution>
             <id>prepare-agent</id>
@@ -389,7 +395,7 @@
       <plugin>
         <groupId>org.codehaus.gmaven</groupId>
         <artifactId>groovy-maven-plugin</artifactId>
-        <version>2.0</version>
+        <version>2.1.1</version>
         <executions>
           <!-- set absolute base path from super pom -->
           <execution>
@@ -401,29 +407,29 @@
             <configuration>
               <source>
                 <![CDATA[
-                    import java.io.File;
-                    log.info('## define projects super pom absolute path through basepath_marker')
-                    String p = "basepath_marker";
-                    File f = null;
-                    if( p != null ) {
-                        def _max_child_poms = 0
-                        while( _max_child_poms++ < 5 ) {
-                            f = new File( p );
-                            if( f.exists() ) {
-                                break;
-                            }
-                            p = "../" + p;
-                        }
+                import java.io.File;
+                log.info('## define projects super pom absolute path through basepath_marker')
+                String p = "basepath_marker";
+                File f = null;
+                if( p != null ) {
+                  def _max_child_poms = 0
+                  while( _max_child_poms++ < 5 ) {
+                    f = new File( p );
+                    if( f.exists() ) {
+                      break;
                     }
-                    if( f != null ) {
-                        String basePath = f.getCanonicalPath();
-                        basePath = basePath.substring( 0, basePath.lastIndexOf( File.separator ) );
-                        project.properties['base-path'] = basePath.replace( '\\' , '/');
-                        log.info(' - used base path = ' + project.properties['base-path'] );
-                    } else {
-                        log.error( 'Could not find basepath_marker marker file!' );
-                        System.stop( 0 );
-                    }
+                    p = "../" + p;
+                  }
+                }
+                if( f != null ) {
+                  String basePath = f.getCanonicalPath();
+                  basePath = basePath.substring( 0, basePath.lastIndexOf( File.separator ) );
+                  project.properties['base-path'] = basePath.replace( '\\' , '/');
+                  log.info(' - used base path = ' + project.properties['base-path'] );
+                } else {
+                  log.error( 'Could not find basepath_marker marker file!' );
+                  System.stop( 0 );
+                }
                 ]]>
               </source>
             </configuration>
@@ -616,11 +622,17 @@
           <dependencies>
             <dependency>
               <groupId>org.junit.jupiter</groupId>
+              <artifactId>junit-jupiter-api</artifactId>
+              <version>5.10.2</version>
+            </dependency>
+            <dependency>
+              <groupId>org.junit.jupiter</groupId>
               <artifactId>junit-jupiter-engine</artifactId>
               <version>5.5.2</version>
             </dependency>
           </dependencies>
           <configuration>
+            <junitArtifactName>junit:junit:{5.5.2}</junitArtifactName>
             <systemPropertyVariables>
               <so.log.level>DEBUG</so.log.level>
             </systemPropertyVariables>
@@ -707,14 +719,31 @@
   <!-- Dependencies -->
   <dependencies>
     <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.5.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>5.5.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.onap.logging-analytics</groupId>
       <artifactId>logging-slf4j</artifactId>
       <version>${onap-logging-version}</version>
     </dependency>
-    <dependency>
+    <!--<dependency>
       <groupId>org.onap.logging-analytics</groupId>
       <artifactId>logging-filter-base</artifactId>
-      <version>${onap-logging-version}</version>
+      <version>1.6.10-SNAPSHOT</version>
+    </dependency>-->
+    <dependency>
+      <groupId>org.sonarsource.scanner.maven</groupId>
+      <artifactId>sonar-maven-plugin</artifactId>
+      <version>3.0.2</version>
     </dependency>
     <dependency>
       <groupId>org.onap.logging-analytics</groupId>
@@ -752,22 +781,24 @@
       <version>${jackson.version}</version>
     </dependency>
     <dependency>
-      <groupId>javax.ws.rs</groupId>
-      <artifactId>javax.ws.rs-api</artifactId>
-      <version>${jax.ws.rs}</version>
+      <groupId>jakarta.ws.rs</groupId>
+      <artifactId>jakarta.ws.rs-api</artifactId>
+      <version>3.1.0</version>
     </dependency>
     <dependency>
-      <groupId>javax.annotation</groupId>
-      <artifactId>javax.annotation-api</artifactId>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
+      <version>2.1.1</version>
     </dependency>
     <dependency>
-      <groupId>javax.inject</groupId>
-      <artifactId>javax.inject</artifactId>
-      <version>1</version>
+      <groupId>jakarta.inject</groupId>
+      <artifactId>jakarta.inject-api</artifactId>
+      <version>2.0.1</version>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
+      <version>5.7.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -888,11 +919,11 @@
         <artifactId>logging-slf4j</artifactId>
         <version>${onap-logging-version}</version>
       </dependency>
-      <dependency>
+      <!--<dependency>
         <groupId>org.onap.logging-analytics</groupId>
         <artifactId>logging-filter-base</artifactId>
         <version>${onap-logging-version}</version>
-      </dependency>
+      </dependency>-->
       <dependency>
         <groupId>org.onap.logging-analytics</groupId>
         <artifactId>logging-filter-spring</artifactId>
@@ -935,9 +966,9 @@
         <version>1.31</version>
       </dependency>
       <dependency>
-        <groupId>javax.interceptor</groupId>
-        <artifactId>javax.interceptor-api</artifactId>
-        <version>1.2.2</version>
+        <groupId>jakarta.interceptor</groupId>
+        <artifactId>jakarta.interceptor-api</artifactId>
+        <version>2.2.0-RC1</version>
       </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
@@ -986,7 +1017,7 @@
       <dependency>
         <groupId>org.onap.aai.schema-service</groupId>
         <artifactId>aai-schema</artifactId>
-        <version>1.9.2</version>
+        <version>1.12.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
@@ -1054,7 +1085,7 @@
           </exclusion>
         </exclusions>
       </dependency>
-      <dependency>
+      <!--<dependency>
         <groupId>org.onap.aaf.authz</groupId>
         <artifactId>aaf-cadi-client</artifactId>
         <version>${aaf.version}</version>
@@ -1065,8 +1096,8 @@
         <version>${aaf.version}</version>
         <exclusions>
           <exclusion>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
           </exclusion>
           <exclusion>
             <groupId>log4j</groupId>
@@ -1091,7 +1122,7 @@
         <artifactId>aaf-misc-rosetta</artifactId>
         <version>${aaf.version}</version>
         <scope>runtime</scope>
-      </dependency>
+      </dependency> -->
       <dependency>
         <groupId>ch.vorburger.mariaDB4j</groupId>
         <artifactId>mariaDB4j</artifactId>
@@ -1101,13 +1132,13 @@
       <dependency>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-contract-wiremock</artifactId>
-        <version>1.2.4.RELEASE</version>
+        <version>4.1.0</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.camunda.bpm.assert</groupId>
         <artifactId>camunda-bpm-assert</artifactId>
-        <version>3.0.0</version>
+        <version>10.0.0</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -1123,7 +1154,7 @@
       <dependency>
         <groupId>org.glassfish.jersey.core</groupId>
         <artifactId>jersey-common</artifactId>
-        <version>2.30.1</version>
+        <version>3.1.4</version>
       </dependency>
       <dependency>
         <groupId>com.h2database</groupId>
@@ -1133,7 +1164,7 @@
       <dependency>
         <groupId>org.camunda.bpm</groupId>
         <artifactId>camunda-external-task-client</artifactId>
-        <version>1.4.0</version>
+        <version>7.21.0-alpha2</version>
       </dependency>
       <dependency>
         <groupId>pl.pragmatists</groupId>
@@ -1143,13 +1174,13 @@
       </dependency>
       <dependency>
         <groupId>io.swagger.core.v3</groupId>
-        <artifactId>swagger-jaxrs2</artifactId>
-        <version>2.1.7</version>
+        <artifactId>swagger-jaxrs2-jakarta</artifactId>
+        <version>2.2.19</version>
       </dependency>
       <dependency>
         <groupId>org.camunda.bpm</groupId>
         <artifactId>camunda-bom</artifactId>
-        <version>7.14.0</version>
+        <version>7.21.0-alpha2</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>

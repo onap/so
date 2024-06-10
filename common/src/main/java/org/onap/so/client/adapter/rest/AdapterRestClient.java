@@ -23,7 +23,7 @@ package org.onap.so.client.adapter.rest;
 import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.util.Optional;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 import org.apache.commons.codec.binary.Base64;
 import org.javatuples.Pair;
 import org.onap.logging.filter.base.ONAPComponents;

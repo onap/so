@@ -297,9 +297,9 @@ public class CamundaClient {
         if (responseText != null && !responseText.isEmpty()) {
             message = message + " " + responseText;
         }
-        BPMNFailureException bpmnException =
-                new BPMNFailureException.Builder(message, responseHandler.setStatus(e.getStatusCode().value()),
-                        ErrorNumbers.SVC_DETAILED_SERVICE_ERROR, e.getStatusCode()).build();
+        BPMNFailureException bpmnException = new BPMNFailureException.Builder(message,
+                responseHandler.setStatus(e.getStatusCode().value()), ErrorNumbers.SVC_DETAILED_SERVICE_ERROR,
+                (org.springframework.http.HttpStatus) e.getStatusCode()).build();
         return bpmnException;
     }
 

@@ -24,7 +24,7 @@ package org.onap.so.adapters.catalogdb.catalogrest;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.rest.beans.ServiceMacroHolder;
 

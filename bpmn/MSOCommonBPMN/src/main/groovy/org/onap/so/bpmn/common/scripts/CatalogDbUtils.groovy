@@ -40,8 +40,8 @@ import org.slf4j.LoggerFactory
 import org.onap.logging.filter.base.ONAPComponents;
 import org.springframework.web.util.UriUtils
 
-import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.MediaType
+import jakarta.ws.rs.core.Response
 
 /***
  * Utilities for accessing Catalog DB Adapter to retrieve Networks, VNF/VFModules, AllottedResources and complete ServiceResources information

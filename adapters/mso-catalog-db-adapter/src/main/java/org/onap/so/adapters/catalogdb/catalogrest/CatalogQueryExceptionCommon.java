@@ -24,8 +24,8 @@
 package org.onap.so.adapters.catalogdb.catalogrest;
 
 import java.io.ByteArrayOutputStream;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Marshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
