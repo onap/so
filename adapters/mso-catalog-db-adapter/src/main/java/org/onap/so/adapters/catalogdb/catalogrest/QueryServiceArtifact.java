@@ -23,7 +23,7 @@ package org.onap.so.adapters.catalogdb.catalogrest;
 import org.onap.so.db.catalog.beans.ServiceArtifact;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

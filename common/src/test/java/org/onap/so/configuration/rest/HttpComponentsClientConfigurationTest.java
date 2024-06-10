@@ -21,8 +21,12 @@
 package org.onap.so.configuration.rest;
 
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import javax.annotation.meta.When;
 
 /**
  * @author waqas.ikram@est.tech
@@ -31,10 +35,12 @@ public class HttpComponentsClientConfigurationTest {
 
     @Test
     public void test_httpComponentsClientHttpRequestFactory_HttpComponentsClientHttpRequestFactoryNotNull() {
-        final HttpClientConnectionConfiguration clientConnectionConfiguration = new HttpClientConnectionConfiguration();
+        final HttpClientConnectionConfiguration clientConnectionConfiguration =
+                mock(HttpClientConnectionConfiguration.class);
         final HttpComponentsClientConfiguration objUnderTest =
                 new HttpComponentsClientConfiguration(clientConnectionConfiguration);
-
+        when(clientConnectionConfiguration.getMaxConnections()).thenReturn(100);
+        when(clientConnectionConfiguration.getMaxConnectionsPerRoute()).thenReturn(20);
         final HttpComponentsClientHttpRequestFactory factory = objUnderTest.httpComponentsClientHttpRequestFactory();
         assertNotNull(factory);
         assertNotNull(factory.getHttpClient());

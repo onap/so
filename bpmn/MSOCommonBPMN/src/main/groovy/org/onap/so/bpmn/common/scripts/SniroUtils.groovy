@@ -25,9 +25,6 @@ package org.onap.so.bpmn.common.scripts
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONArray
-import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
-import org.onap.so.bpmn.common.scripts.ExceptionUtil
-import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.domain.*
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.apache.commons.lang3.StringUtils

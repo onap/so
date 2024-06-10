@@ -24,7 +24,7 @@ package org.onap.so.adapters.catalogdb.catalogrest;
 
 import org.onap.so.db.catalog.beans.InstanceGroup;
 import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

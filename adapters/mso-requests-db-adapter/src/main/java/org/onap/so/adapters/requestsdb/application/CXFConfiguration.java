@@ -22,7 +22,7 @@ package org.onap.so.adapters.requestsdb.application;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import javax.xml.ws.Endpoint;
+import jakarta.servlet.Servlet;
 import org.apache.cxf.Bus;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.openapi.OpenApiFeature;
@@ -49,11 +49,11 @@ public class CXFConfiguration {
     @Bean
     public ServletRegistrationBean cxfServlet() {
 
-        return new ServletRegistrationBean(new CXFServlet(), "/services/*");
+        return new ServletRegistrationBean((Servlet) new CXFServlet(), "/services/*");
     }
 
     @Bean
-    public Endpoint requestEndpointk() {
+    public EndpointImpl requestEndpointk() {
         EndpointImpl endpoint = new EndpointImpl(bus, requestDbAdapterImpl);
         endpoint.publish("/RequestsDbAdapter");
         LoggingFeature logFeature = new LoggingFeature();

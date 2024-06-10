@@ -25,10 +25,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -36,7 +36,7 @@ import com.google.common.collect.ImmutableSet;
  *
  */
 
-public class HttpHeaderForwarderHandlerInterceptor extends HandlerInterceptorAdapter {
+public class HttpHeaderForwarderHandlerInterceptor implements HandlerInterceptor {
 
     private static final ThreadLocal<Map<String, List<String>>> HEADERS_THREAD_LOCAL = new ThreadLocal<>();
 
@@ -52,7 +52,8 @@ public class HttpHeaderForwarderHandlerInterceptor extends HandlerInterceptorAda
                 .collect(Collectors.toMap(Function.identity(), h -> Collections.list(request.getHeaders(h))));
 
         HEADERS_THREAD_LOCAL.set(headerMap);
-        return super.preHandle(request, response, handler);
+        return HandlerInterceptor.super.preHandle(request, (jakarta.servlet.http.HttpServletResponse) response,
+                handler);
     }
 
     @Override

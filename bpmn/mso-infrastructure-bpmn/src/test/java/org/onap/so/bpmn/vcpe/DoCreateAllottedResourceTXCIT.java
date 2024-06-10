@@ -15,27 +15,19 @@
 
 package org.onap.so.bpmn.vcpe;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.onap.so.bpmn.common.BPMNUtil.waitForWorkflowToFinish;
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetAllottedResource;
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetServiceInstance;
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockNodeQueryServiceInstanceById;
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockPatchAllottedResource;
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockPutAllottedResource;
-import static org.onap.so.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
-import static org.onap.so.bpmn.mock.StubResponseSDNCAdapter.mockSDNCAdapter;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import org.camunda.bpm.engine.test.Deployment;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.so.bpmn.common.BPMNUtil;
 import org.onap.so.bpmn.mock.FileUtil;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import static org.junit.Assert.*;
+import static org.onap.so.bpmn.common.BPMNUtil.waitForWorkflowToFinish;
+import static org.onap.so.bpmn.mock.StubResponseAAI.*;
+import static org.onap.so.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
+import static org.onap.so.bpmn.mock.StubResponseSDNCAdapter.mockSDNCAdapter;
+
 
 public class DoCreateAllottedResourceTXCIT extends AbstractTestBase {
 

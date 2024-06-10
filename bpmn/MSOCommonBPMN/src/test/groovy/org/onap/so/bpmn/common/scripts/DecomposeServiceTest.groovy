@@ -20,18 +20,13 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import org.junit.Before
-import org.mockito.MockitoAnnotations
+
 import org.onap.so.bpmn.core.domain.ModelInfo
 import org.onap.so.bpmn.core.domain.NetworkResource
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.json.DecomposeJsonUtil
 import org.onap.so.bpmn.core.domain.ServiceInstance
-
 import org.onap.so.bpmn.mock.FileUtil
-import static org.mockito.Mockito.*
-import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
-import static org.junit.Assert.*;
 import org.junit.Test;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;

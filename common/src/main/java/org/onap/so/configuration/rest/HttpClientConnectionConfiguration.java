@@ -21,6 +21,8 @@
 package org.onap.so.configuration.rest;
 
 import java.util.concurrent.TimeUnit;
+import org.apache.hc.core5.util.TimeValue;
+import org.apache.hc.core5.util.Timeout;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -53,8 +55,8 @@ public class HttpClientConnectionConfiguration {
     /**
      * @return the socket connection time out in milliseconds
      */
-    public int getSocketTimeOutInMiliSeconds() {
-        return (int) TimeUnit.SECONDS.toMillis(socketTimeOutInSeconds);
+    public Timeout getSocketTimeOutInMiliSeconds() {
+        return Timeout.ofDays((int) TimeUnit.SECONDS.toMillis(socketTimeOutInSeconds));
     }
 
     /**
@@ -74,8 +76,8 @@ public class HttpClientConnectionConfiguration {
     /**
      * @return the connect time out value in milliseconds.
      */
-    public int getConnectionTimeOutInMilliSeconds() {
-        return (int) TimeUnit.SECONDS.toMillis(connectionTimeOutInSeconds);
+    public Timeout getConnectionTimeOutInMilliSeconds() {
+        return Timeout.ofDays((int) TimeUnit.SECONDS.toMillis(connectionTimeOutInSeconds));
     }
 
     /**
@@ -85,8 +87,8 @@ public class HttpClientConnectionConfiguration {
         return (int) TimeUnit.SECONDS.toMinutes(timeToLiveInSeconds);
     }
 
-    public long getEvictIdleConnectionsTimeInSec() {
-        return evictIdleConnectionsTimeInSec;
+    public TimeValue getEvictIdleConnectionsTimeInSec() {
+        return TimeValue.ofDays(evictIdleConnectionsTimeInSec);
     }
 
 }
