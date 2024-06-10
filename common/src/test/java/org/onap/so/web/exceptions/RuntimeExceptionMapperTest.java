@@ -26,9 +26,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.core.Response;
 import org.junit.AfterClass;
 import org.junit.Test;
 
@@ -44,7 +43,7 @@ public class RuntimeExceptionMapperTest {
 
         Response r = mapper.toResponse(new RuntimeException("This is the run time exception message"));
 
-        assertEquals(Status.INTERNAL_SERVER_ERROR.getStatusCode(), r.getStatus());
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), r.getStatus());
         assertThat(r.getEntity(), instanceOf(ExceptionResponse.class));
         assertThat(((ExceptionResponse) r.getEntity()).getMessage(), equalTo("Unexpected Internal Exception"));
 
@@ -57,7 +56,7 @@ public class RuntimeExceptionMapperTest {
 
         Response r = mapper.toResponse(new NotFoundException("not found"));
 
-        assertEquals(Status.NOT_FOUND.getStatusCode(), r.getStatus());
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), r.getStatus());
         assertThat(r.getEntity(), is(nullValue()));
     }
 

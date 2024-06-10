@@ -22,7 +22,6 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
-import static org.mockito.ArgumentMatchers.anyObject
 import static org.mockito.Mockito.spy
 import static org.mockito.Mockito.times
 import static org.mockito.Mockito.verify

@@ -20,15 +20,15 @@
 
 package org.onap.so.bpmn.common;
 
-import static org.junit.Assert.assertNotNull;
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetGenericVnfById;
-import java.util.HashMap;
-import java.util.Map;
+
 import org.camunda.bpm.engine.RuntimeService;
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
+import java.util.HashMap;
+import java.util.Map;
+import static org.junit.Assert.assertNotNull;
+import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetGenericVnfById;
+
 
 /**
  * Unit test for GenerateVfModuleName.bpmn.

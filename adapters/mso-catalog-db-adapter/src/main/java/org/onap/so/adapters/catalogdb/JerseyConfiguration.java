@@ -23,7 +23,7 @@ package org.onap.so.adapters.catalogdb;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.PostConstruct;
-import javax.ws.rs.ApplicationPath;
+import jakarta.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.onap.logging.filter.base.Constants;
 import org.onap.logging.filter.base.ONAPComponents;

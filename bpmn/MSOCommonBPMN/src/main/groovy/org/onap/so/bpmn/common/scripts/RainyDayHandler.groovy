@@ -22,9 +22,7 @@
 
 package org.onap.so.bpmn.common.scripts;
 
-import static org.apache.commons.lang3.StringUtils.*;
 
-import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.core.UrnPropertiesReader;

@@ -66,7 +66,7 @@ public class VnfmAdapterServiceProviderImpl implements VnfmAdapterServiceProvide
             final ResponseEntity<CreateVnfResponse> response =
                     httpServiceProvider.postHttpRequest(request, url, CreateVnfResponse.class);
 
-            final HttpStatus httpStatus = response.getStatusCode();
+            final HttpStatus httpStatus = (HttpStatus) response.getStatusCode();
             if (!(httpStatus.equals(HttpStatus.ACCEPTED)) && !(httpStatus.equals(HttpStatus.OK))) {
                 LOGGER.error("Unable to invoke HTTP POST using URL: {}, Response Code: {}", url, httpStatus.value());
                 return Optional.absent();
@@ -104,7 +104,7 @@ public class VnfmAdapterServiceProviderImpl implements VnfmAdapterServiceProvide
 
             LOGGER.debug("Response received: ", response);
 
-            final HttpStatus httpStatus = response.getStatusCode();
+            final HttpStatus httpStatus = (HttpStatus) response.getStatusCode();
 
             if (!(httpStatus.equals(HttpStatus.ACCEPTED)) && !(httpStatus.equals(HttpStatus.OK))) {
                 LOGGER.error("Unable to invoke HTTP DELETE using URL: {}, Response Code: {}", url, httpStatus.value());
@@ -136,7 +136,7 @@ public class VnfmAdapterServiceProviderImpl implements VnfmAdapterServiceProvide
             final ResponseEntity<QueryJobResponse> response =
                     httpServiceProvider.getHttpResponse(url, QueryJobResponse.class);
 
-            final HttpStatus httpStatus = response.getStatusCode();
+            final HttpStatus httpStatus = (HttpStatus) response.getStatusCode();
 
             if (!(httpStatus.equals(HttpStatus.ACCEPTED)) && !(httpStatus.equals(HttpStatus.OK))) {
                 LOGGER.error("Unable to invoke HTTP GET using URL: {}, Response Code: ", url, httpStatus.value());

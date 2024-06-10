@@ -28,7 +28,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching
 import static org.junit.Assert.*
 import static org.mockito.Mockito.*
 import static org.onap.so.bpmn.mock.StubResponseAAI.*
-import javax.ws.rs.core.UriBuilder
+import jakarta.ws.rs.core.UriBuilder
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.junit.*

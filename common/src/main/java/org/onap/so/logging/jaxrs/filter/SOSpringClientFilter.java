@@ -45,8 +45,8 @@ public class SOSpringClientFilter extends SpringClientFilter implements ClientHt
         setLogTimestamp();
         setElapsedTimeInvokeTimestamp();
         try {
-            setResponseStatusCode(response.getRawStatusCode());
-            int statusCode = response.getRawStatusCode();
+            setResponseStatusCode(response.getStatusCode().value());
+            int statusCode = response.getStatusCode().value();
             MDC.put(ONAPLogConstants.MDCs.RESPONSE_CODE, String.valueOf(statusCode));
             setResponseDescription(statusCode);
         } catch (IOException e) {

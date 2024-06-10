@@ -22,7 +22,7 @@ package org.onap.so.asdc.client;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import org.junit.Test;
 import org.onap.so.asdc.BaseTest;
 import org.springframework.beans.factory.annotation.Autowired;

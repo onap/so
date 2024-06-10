@@ -23,7 +23,6 @@ package org.onap.so.bpmn.servicedecomposition.homingobjects;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import org.onap.so.bpmn.servicedecomposition.homingobjects.Candidate;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SolutionCandidates implements Serializable {

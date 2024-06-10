@@ -23,9 +23,8 @@
 package org.onap.so.apihandlerinfra.tenantisolation.helpers;
 
 import java.net.URL;
-import java.util.UUID;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 import org.apache.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
