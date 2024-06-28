@@ -18,6 +18,23 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "97947ed6_a5e9ae4f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2024-06-28T07:14:58Z",
+      "side": 1,
+      "message": "Any news? Were you able to finalize patch 4?",
+      "revId": "898b83ea61a1243dd094754514cc4d5de35b6aad",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "51005298_c1ac100e",
@@ -31,6 +48,23 @@
       "writtenOn": "2024-06-05T08:33:01Z",
       "side": 1,
       "message": "typo `rivate`",
+      "revId": "898b83ea61a1243dd094754514cc4d5de35b6aad",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "820d27ca_fe007d45",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2024-06-28T07:14:58Z",
+      "side": 1,
+      "message": "I think you\u0027ll have to update this to `3.1.0` in order to use newer plugin versions",
       "revId": "898b83ea61a1243dd094754514cc4d5de35b6aad",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
