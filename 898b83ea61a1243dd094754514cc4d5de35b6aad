@@ -67,6 +67,24 @@
       "message": "I think you\u0027ll have to update this to `3.1.0` in order to use newer plugin versions",
       "revId": "898b83ea61a1243dd094754514cc4d5de35b6aad",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6dcf834b_f70d8810",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 7813
+      },
+      "writtenOn": "2024-06-28T07:47:12Z",
+      "side": 1,
+      "message": "Hi Fiete,\nCheck this patch: https://gerrit.onap.org/r/c/so/+/138123 .\n\nwe have committed on a new Java17 branch, CI changes have been done for that branch.\nWe\u0027d merge into master after seeing build stability on that branch [java17].\n\n\n\nRegards,\nSANKET",
+      "parentUuid": "820d27ca_fe007d45",
+      "revId": "898b83ea61a1243dd094754514cc4d5de35b6aad",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
