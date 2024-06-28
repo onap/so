@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f2de6198_2727d517",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7813
+      },
+      "writtenOn": "2024-06-28T05:27:51Z",
+      "side": 1,
+      "message": "Hi Seshu,\n\nCould you please check if anything is missing to be added in build CI / CSIT for this branch , so that it executes all jobs/tests perfectly as in master. \nHowever it uses jdk17 here, but still I\u0027m bit doubtful on all jobs as build ends successfully within 7mins.\n\nWill add changes wherever needed, kindly assist.\n\nCI Changes : https://gerrit.onap.org/r/c/ci-management/+/138252\n\n\n\nRegards,\nSANKET",
+      "revId": "e1b8cbd6987878fe598192e38bbb25e7bfc42162",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
