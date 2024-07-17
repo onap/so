@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "443b5873_3c220ff4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7813
+      },
+      "writtenOn": "2024-07-17T05:28:17Z",
+      "side": 1,
+      "message": "Hi SO Team,\n\nThe build seems to be working fine as per LFN Team.\nHence, Requesting to mark your reviews / merge this patch into java17 branch. \n\n\n\n\nRegards,\nSANKET",
+      "revId": "989d7f3d6ae740e30480bfc7d49acfbaf014d393",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
