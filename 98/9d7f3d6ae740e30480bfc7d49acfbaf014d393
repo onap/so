@@ -1,0 +1,9 @@
+Verified+1: ONAP Required GHA <releng+onap.required.gha@linuxfoundation.org>
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Nandkishor Patke <nandkishor-laxman.patke@t-systems.com>
+Code-Review+2: Lukasz Rajewski <lukasz.rajewski@t-mobile.pl>
+Submitted-by: Lukasz Rajewski <lukasz.rajewski@t-mobile.pl>
+Submitted-at: Wed, 17 Jul 2024 10:15:04 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/so/+/138123
+Project: so
+Branch: refs/heads/java17
