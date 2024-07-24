@@ -16,6 +16,23 @@
       "message": "Hi SO Team,\n\nThis patch is see if merge job passes now. As of now, it fails due to 2.8 version which is the default plugin being used which works well with jdk11.\n\nRequest to merge it.\n\nRegards,\nSANKET",
       "revId": "4bbc9df3766b397dc8ffad5bee2901aa1987c8f0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4aac51de_2c234ca5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4711
+      },
+      "writtenOn": "2024-07-24T19:40:39Z",
+      "side": 1,
+      "message": "remerge",
+      "revId": "4bbc9df3766b397dc8ffad5bee2901aa1987c8f0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ],
   "submitRequirementResults": [
