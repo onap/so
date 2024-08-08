@@ -280,11 +280,6 @@
           <xmlOutput>true</xmlOutput>
         </configuration>
       </plugin>
-      <!--<plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>sonar-maven-plugin</artifactId>
-        <version>5.1</version>
-      </plugin>-->
       <plugin>
         <artifactId>maven-scm-plugin</artifactId>
         <version>1.8.1</version>
@@ -735,11 +730,6 @@
       <artifactId>logging-slf4j</artifactId>
       <version>${onap-logging-version}</version>
     </dependency>
-    <!--<dependency>
-      <groupId>org.onap.logging-analytics</groupId>
-      <artifactId>logging-filter-base</artifactId>
-      <version>1.6.10-SNAPSHOT</version>
-    </dependency>-->
     <dependency>
       <groupId>org.sonarsource.scanner.maven</groupId>
       <artifactId>sonar-maven-plugin</artifactId>
@@ -914,11 +904,6 @@
         <artifactId>logging-slf4j</artifactId>
         <version>${onap-logging-version}</version>
       </dependency>
-      <!--<dependency>
-        <groupId>org.onap.logging-analytics</groupId>
-        <artifactId>logging-filter-base</artifactId>
-        <version>${onap-logging-version}</version>
-      </dependency>-->
       <dependency>
         <groupId>org.onap.logging-analytics</groupId>
         <artifactId>logging-filter-spring</artifactId>
@@ -1079,44 +1064,6 @@
           </exclusion>
         </exclusions>
       </dependency>
-      <!--<dependency>
-        <groupId>org.onap.aaf.authz</groupId>
-        <artifactId>aaf-cadi-client</artifactId>
-        <version>${aaf.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onap.aaf.authz</groupId>
-        <artifactId>aaf-cadi-aaf</artifactId>
-        <version>${aaf.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.onap.aaf.authz</groupId>
-        <artifactId>aaf-auth-client</artifactId>
-        <version>${aaf.version}</version>
-        <scope>runtime</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.onap.aaf.authz</groupId>
-        <artifactId>aaf-misc-env</artifactId>
-        <version>${aaf.version}</version>
-        <scope>runtime</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.onap.aaf.authz</groupId>
-        <artifactId>aaf-misc-rosetta</artifactId>
-        <version>${aaf.version}</version>
-        <scope>runtime</scope>
-      </dependency> -->
       <dependency>
         <groupId>ch.vorburger.mariaDB4j</groupId>
         <artifactId>mariaDB4j</artifactId>

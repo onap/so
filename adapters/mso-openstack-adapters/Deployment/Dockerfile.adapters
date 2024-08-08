@@ -1,4 +1,4 @@
-FROM onap/integration-java11:7.0.0
+FROM onap/eclipse-temurin:17.0.12_7-jre-alpine
 MAINTAINER mc4615@att.com
 EXPOSE 8080
 ENV APP_HOME /home/$USER_NAME/app
