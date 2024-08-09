@@ -61,6 +61,11 @@ committers:
       company: 'Huawei Technologies India  Pvt Ltd'
       id: 'irshad97'
       timezone: 'India/Bangalore'
+    - name: 'SANKET'
+      email: 'sx00562924@techmahindra.com'
+      company: 'Tech Mahindra'
+      id: 'sanket12345'
+      timezone: 'India/Pune'
 tsc:
     approval: 'https://lists.onap.org/pipermail/onap-tsc'
     changes:
