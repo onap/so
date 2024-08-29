@@ -31,7 +31,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
  *
  */
 @EnableWebSecurity
-@Configuration
+@Configuration(enforceUniqueMethods = false)
 @Order(1)
 @Profile({"basic", "test"})
 public class SoWebSecurityConfigurerAdapter extends BaseWebSecurityConfigurerAdapter {
