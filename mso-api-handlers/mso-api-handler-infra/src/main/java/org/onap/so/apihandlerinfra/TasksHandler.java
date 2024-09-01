@@ -25,7 +25,7 @@ package org.onap.so.apihandlerinfra;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;

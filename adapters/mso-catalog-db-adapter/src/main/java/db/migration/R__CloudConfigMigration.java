@@ -56,10 +56,9 @@ public class R__CloudConfigMigration extends BaseJavaMigration {
     @JsonProperty("cloud_config")
     private CloudConfig cloudConfig;
 
-    @Override
-    public boolean isUndo() {
-        return false;
-    }
+    /*
+     * @Override public boolean isUndo() { return false; }
+     */
 
     public void migrate(Connection connection) throws Exception {
         logger.debug("Starting migration for CloudConfig");
