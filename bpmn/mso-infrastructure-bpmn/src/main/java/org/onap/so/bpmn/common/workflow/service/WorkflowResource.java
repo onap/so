@@ -49,7 +49,7 @@ import org.camunda.bpm.engine.variable.Variables.SerializationDataFormats;
 import org.camunda.bpm.engine.variable.impl.VariableMapImpl;
 import org.onap.so.bpmn.common.workflow.context.WorkflowResponse;
 import org.onap.so.bpmn.core.WorkflowException;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

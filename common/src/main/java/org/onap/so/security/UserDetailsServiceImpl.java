@@ -25,14 +25,31 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.context.annotation.Profile;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.GrantedAuthority;
 
+@Service
+@Profile("basic")
 @ConfigurationProperties(prefix = "spring.security")
 public class UserDetailsServiceImpl implements UserDetailsService {
+    private final Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
     private List<UserCredentials> usercredentials;
+    
+    //Granted Authorities
+    private List<GrantedAuthority> getAuthorities(String roles) {
+        return Arrays.stream(roles.split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+    }
 
     public List<UserCredentials> getUsercredentials() {
+        logger.debug("UserDetailsServiceImpl.getUsercredentials: usercredentials: {}", usercredentials);
         return usercredentials;
     }
 
@@ -43,14 +60,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        for (int i = 0; usercredentials != null && i < usercredentials.size(); i++) {
-            if (usercredentials.get(i).getUsername().equals(username)) {
-                return User.withUsername(username).password(usercredentials.get(i).getPassword())
-                        .roles(usercredentials.get(i).getRole()).build();
+        logger.debug("UserDetailsServiceImpl-----> username: {}", username);
+        if (usercredentials != null) {
+            for (UserCredentials user : usercredentials) {
+                if (user.getUsername().equals(username)) {
+                    logger.debug("UserDetailsServiceImpl.loadUserByUsername: user found: {}", username);
+                    logger.debug("UserDetailsServiceImpl.loadUserByUsername: password found: {}", user.getPassword());
+                    return User.withUsername(username).password(user.getPassword()).roles(user.getRole())
+                            .authorities(getAuthorities(user.getRole())).build();
+                }
             }
         }
-
         throw new UsernameNotFoundException("User not found, username: " + username);
     }
-
 }

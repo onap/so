@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Qualifier;
 import com.google.common.base.Optional;
 
 
@@ -42,7 +43,8 @@ public class MonitorVnfmCreateJobTask extends MonitorVnfmJobTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(MonitorVnfmCreateJobTask.class);
 
     @Autowired
-    public MonitorVnfmCreateJobTask(final VnfmAdapterServiceProvider vnfmAdapterServiceProvider,
+    public MonitorVnfmCreateJobTask(
+            @Qualifier("VnfmAdapterServiceProvider") final VnfmAdapterServiceProvider vnfmAdapterServiceProvider,
             final ExceptionBuilder exceptionUtil) {
         super(vnfmAdapterServiceProvider, exceptionUtil);
     }
