@@ -31,7 +31,7 @@ import org.onap.namingservice.model.NameGenResponse;
 import org.onap.namingservice.model.NameGenResponseError;
 import org.onap.namingservice.model.Respelement;
 import org.onap.so.client.exception.BadResponseException;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
