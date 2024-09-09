@@ -42,7 +42,7 @@ import java.util.Optional;
 import java.util.Set;
 import jakarta.jws.WebService;
 import jakarta.xml.ws.Holder;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.adapters.vdu.CloudInfo;
 import org.onap.so.adapters.vdu.VduException;
 import org.onap.so.adapters.vdu.VduInstance;

@@ -47,7 +47,7 @@ import org.onap.so.db.request.beans.OperationStatus
 import org.onap.so.db.request.beans.ResourceOperationStatus
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
-import org.onap.logging.filter.base.ONAPComponents
+import org.onap.so.logging.filter.base.ONAPComponents
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.aai.domain.yang.NetworkRoute
 import org.onap.aai.domain.yang.v19.ServiceInstance

@@ -23,7 +23,7 @@ package org.onap.so.logging.jaxrs.filter;
 
 import jakarta.ws.rs.client.ClientRequestContext;
 import jakarta.ws.rs.client.ClientResponseContext;
-import org.onap.logging.filter.base.MetricLogClientFilter;
+import org.onap.so.logging.filter.base.MetricLogClientFilter;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.logger.MdcConstants;
 import org.slf4j.Logger;

@@ -21,7 +21,7 @@
 package org.onap.so.logging.jaxrs.filter;
 
 import java.io.IOException;
-import org.onap.logging.filter.spring.SpringClientFilter;
+import org.onap.so.logging.filter.spring.SpringClientFilter;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.logger.MdcConstants;
 import org.slf4j.Logger;

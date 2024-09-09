@@ -54,7 +54,7 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
 import jakarta.ws.rs.core.MediaType
 import org.apache.commons.codec.binary.Base64
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 
 
 /**
