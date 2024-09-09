@@ -20,8 +20,8 @@
 
 package org.onap.so.db.catalog.beans;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity

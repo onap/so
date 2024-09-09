@@ -22,7 +22,7 @@ package org.onap.so.apihandlerinfra;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.HashMap;
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Context;
