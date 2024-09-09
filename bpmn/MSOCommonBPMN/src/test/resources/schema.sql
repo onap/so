@@ -1185,4 +1185,7 @@ alter table ACT_ID_TENANT_MEMBER
     foreign key (GROUP_ID_)
     references ACT_ID_GROUP (ID_);
 
+-- Added the LAST_FAILURE_LOG_ID_ column to the ACT_RU_JOB table
+ALTER TABLE ACT_RU_JOB ADD COLUMN LAST_FAILURE_LOG_ID_ VARCHAR(64);
+
 

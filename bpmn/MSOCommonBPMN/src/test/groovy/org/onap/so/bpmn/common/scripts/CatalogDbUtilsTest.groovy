@@ -31,7 +31,7 @@ import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.skyscreamer.jsonassert.JSONAssert
 import org.skyscreamer.jsonassert.JSONCompareMode
 import org.springframework.core.env.Environment

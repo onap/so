@@ -5,8 +5,8 @@ import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.container.PreMatching;
 import jakarta.ws.rs.core.MultivaluedMap;
-import org.onap.logging.filter.base.AuditLogContainerFilter;
-import org.onap.logging.filter.base.Constants;
+import org.onap.so.logging.filter.base.AuditLogContainerFilter;
+import org.onap.so.logging.filter.base.Constants;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.logger.HttpHeadersConstants;
 import org.onap.so.logger.LogConstants;
@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 
 @Priority(1)
 @PreMatching
-@Component
-public abstract class SOAuditLogContainerFilter {
+@Component // changed from abstract class
+public class SOAuditLogContainerFilter {
 
     private static final String ORIGINAL_PARTNER_NAME = "OriginalPartnerName";
 

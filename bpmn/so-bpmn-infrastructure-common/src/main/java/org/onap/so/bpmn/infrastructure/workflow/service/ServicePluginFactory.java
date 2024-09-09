@@ -62,7 +62,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.bpmn.core.domain.Resource;
 import org.onap.so.bpmn.core.domain.ServiceDecomposition;

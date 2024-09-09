@@ -20,7 +20,7 @@
 package org.onap.so.apihandler.filters;
 
 import java.io.IOException;
-import javax.annotation.Priority;
+import jakarta.annotation.Priority;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.core.UriInfo;

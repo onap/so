@@ -23,8 +23,8 @@
 package org.onap.so.adapters.requestsdb.application;
 
 import javax.sql.DataSource;
-import org.onap.logging.filter.base.Constants;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.Constants;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -39,7 +39,7 @@ import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock;
  * @since Version 1.0
  *
  */
-@SpringBootApplication(scanBasePackages = {"org.onap.so", "org.onap.logging.filter"})
+@SpringBootApplication(scanBasePackages = {"org.onap.so", "org.onap.so.logging.filter"})
 @EnableScheduling
 @EnableSchedulerLock(defaultLockAtMostFor = "120s")
 @EnableMBeanExport(registration = RegistrationPolicy.IGNORE_EXISTING)

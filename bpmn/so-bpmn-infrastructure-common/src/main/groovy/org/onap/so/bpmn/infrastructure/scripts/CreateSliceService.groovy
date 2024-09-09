@@ -31,7 +31,7 @@ import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logging.filter.base.ErrorCode
 import org.onap.so.beans.nsmf.SliceTaskParams
 import org.onap.so.beans.nsmf.SliceTaskParamsAdapter
 import org.onap.so.beans.nsmf.oof.TemplateInfo
