@@ -22,7 +22,7 @@ package org.onap.so.db.request;
 
 
 import java.util.TimeZone;
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Qualifier;

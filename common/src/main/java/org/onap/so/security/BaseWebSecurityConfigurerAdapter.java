@@ -4,7 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,8 +15,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
 
-
-public abstract class BaseWebSecurityConfigurerAdapter /* implements WebSecurityConfigurer */ {
+@Configuration
+public abstract class BaseWebSecurityConfigurerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseWebSecurityConfigurerAdapter.class);
 
     @Autowired
@@ -24,32 +27,25 @@ public abstract class BaseWebSecurityConfigurerAdapter /* implements WebSecurity
 
     abstract HttpSecurityConfigurer getHttpSecurityConfigurer();
 
+    // Configure the HTTP security
+    @Bean(name = "httpSecurityBeanOfBaseWebSecurityConfigurerAdapter")
+    public SecurityFilterChain httpSecurityFilterChain(HttpSecurity http) throws Exception {
+        HttpSecurityConfigurer httpSecurityConfigurer = getHttpSecurityConfigurer();
+        LOGGER.debug("Injecting {} configuration ...", httpSecurityConfigurer.getClass());
+        return httpSecurityConfigurer.configure(http);
+    }
 
-    public void configure(final WebSecurity web) throws Exception {
-        this.configure(web);
+    // Configure web security settings including the HTTP firewall
+    public void configureWebSecurity(WebSecurity web) throws Exception {
         final StrictHttpFirewall firewall = new MSOSpringFirewall();
         web.httpFirewall(firewall);
     }
 
-    @Bean(name = "httpSecurityBeanOfBaseWebSecurityConfigurerAdapter")
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        HttpSecurityConfigurer httpSecurityConfigurer = getHttpSecurityConfigurer();
-        LOGGER.debug("Injecting {} configuration ...", httpSecurityConfigurer.getClass());
-
-        return httpSecurityConfigurer.configure(http);
-    }
-
-    @Bean(name = "webSecurityBeanOfBaseWebSecurityConfigurerAdapter")
-    public WebSecurity filterChain(WebSecurity web) throws Exception {
-        this.configure(web);
-        final StrictHttpFirewall firewall = new MSOSpringFirewall();
-        return web.httpFirewall(firewall);
-
-    }
-
-    @Bean(name = "authenticationManagerBuilderBeanOfBaseWebSecurityConfigurerAdapter")
-    public SecurityFilterChain filterChain(final AuthenticationManagerBuilder auth) throws Exception {
-        return (SecurityFilterChain) auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
+    // Use AuthenticationConfiguration to create the AuthenticationManager
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
 

@@ -43,7 +43,7 @@ import jakarta.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.camunda.bpm.engine.impl.persistence.entity.HistoricProcessInstanceEntity;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.apihandler.camundabeans.CamundaResponse;
 import org.onap.so.apihandler.common.CamundaClient;

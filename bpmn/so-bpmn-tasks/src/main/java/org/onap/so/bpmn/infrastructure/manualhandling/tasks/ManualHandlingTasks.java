@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @Component
 public class ManualHandlingTasks {
@@ -90,6 +91,7 @@ public class ManualHandlingTasks {
     private Environment environment;
 
     @Autowired
+    @Qualifier("ExternalTicketCreation")
     private ExternalTicketCreation externalTicketCreation;
 
     protected String manualTaskTimeoutPath = "mso.rainyDay.manualTask.taskTimeout";
