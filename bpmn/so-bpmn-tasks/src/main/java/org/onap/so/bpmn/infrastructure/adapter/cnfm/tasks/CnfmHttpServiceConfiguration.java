@@ -21,7 +21,7 @@
 package org.onap.so.bpmn.infrastructure.adapter.cnfm.tasks;
 
 import javax.ws.rs.core.MediaType;
-import org.onap.logging.filter.spring.SpringClientPayloadFilter;
+import org.onap.so.logging.filter.spring.SpringClientPayloadFilter;
 import org.onap.so.configuration.rest.HttpComponentsClientConfiguration;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
 import org.onap.so.rest.service.HttpRestServiceProvider;

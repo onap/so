@@ -21,8 +21,8 @@
 package org.onap.so.db.request.beans;
 
 import java.util.Objects;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity

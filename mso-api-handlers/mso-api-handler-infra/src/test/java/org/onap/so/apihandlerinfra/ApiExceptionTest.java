@@ -27,7 +27,7 @@ import org.junit.rules.ExpectedException;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandlerinfra.exceptions.*;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import java.io.IOException;
 import java.util.LinkedList;

@@ -51,7 +51,7 @@ public class VnfmAdapterServiceProviderImpl implements VnfmAdapterServiceProvide
     private final HttpRestServiceProvider httpServiceProvider;
 
     @Autowired
-    public VnfmAdapterServiceProviderImpl(final VnfmAdapterUrlProvider urlProvider,
+    public VnfmAdapterServiceProviderImpl(@Qualifier("VnfmAdapterUrlProvider") final VnfmAdapterUrlProvider urlProvider,
             @Qualifier(VNFM_HTTP_REST_SERVICE_PROVIDER_BEAN) final HttpRestServiceProvider httpServiceProvider) {
         this.urlProvider = urlProvider;
         this.httpServiceProvider = httpServiceProvider;

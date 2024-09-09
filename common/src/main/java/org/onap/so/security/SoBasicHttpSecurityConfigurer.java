@@ -23,7 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.stereotype.Component;
+import org.springframework.security.config.Customizer;
 import org.springframework.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Waqas Ikram (waqas.ikram@est.tech)
@@ -32,16 +35,20 @@ import org.springframework.util.StringUtils;
 @Component("basic")
 public class SoBasicHttpSecurityConfigurer implements HttpSecurityConfigurer {
 
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(SoBasicHttpSecurityConfigurer.class);
     @Autowired
     private SoUserCredentialConfiguration soUserCredentialConfiguration;
 
     @Override
-    public SecurityFilterChain configure(final HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable()).authorizeRequests().requestMatchers("/manage/health", "/manage/info")
-                .permitAll().requestMatchers("/**")
-                .hasAnyRole(StringUtils.collectionToDelimitedString(soUserCredentialConfiguration.getRoles(), ","))
-                .and().httpBasic(httpBasic -> httpBasic.disable());
-        return null;
+    public SecurityFilterChain configure(HttpSecurity http) throws Exception {
+        LOGGER.debug("Inside SoBasicHttpSecurityConfigurer");
+        String role = soUserCredentialConfiguration.getRoles().toString();
+        LOGGER.debug("*****soUserCredentialConfiguration.getRoles*********>>>" + role);
+        // authorise requests with basic authentication for authenticated users
+        http.csrf(csrf -> csrf.disable()).authorizeHttpRequests(authorize -> authorize
+                .requestMatchers("/manage/health", "/manage/info").permitAll().requestMatchers("/**").authenticated())
+                .httpBasic(Customizer.withDefaults()); 
+        return http.build();
     }
 
 }
