@@ -45,7 +45,7 @@ public class MonitorVnfmDeleteJobTask extends MonitorVnfmJobTask {
 
     @Autowired
     public MonitorVnfmDeleteJobTask(
-            @Qualifier("VnfmAdapterServiceProviderImpl") final VnfmAdapterServiceProvider vnfmAdapterServiceProvider,
+            @Qualifier("VnfmAdapterServiceProvider") final VnfmAdapterServiceProvider vnfmAdapterServiceProvider,
             final ExceptionBuilder exceptionUtil) {
         super(vnfmAdapterServiceProvider, exceptionUtil);
     }

@@ -88,7 +88,8 @@ public class CXFConfiguration {
         endpoint.getInInterceptors().add(new SOAPLoggingInInterceptor());
         endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
         endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
-        return Endpoint.create(endpoint);
+        // return Endpoint.create(vnfAdapterNotifyServiceImpl);
+        return endpoint;
     }
 
     @Bean
@@ -98,7 +99,8 @@ public class CXFConfiguration {
         endpoint.getInInterceptors().add(new SOAPLoggingInInterceptor());
         endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
         endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
-        return Endpoint.create(endpoint);
+        // return Endpoint.create(endpoint);
+        return endpoint;
     }
 
     @Bean

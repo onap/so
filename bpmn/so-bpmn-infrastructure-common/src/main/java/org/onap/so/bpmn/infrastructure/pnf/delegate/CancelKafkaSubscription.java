@@ -24,6 +24,7 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.so.bpmn.infrastructure.pnf.kafka.KafkaClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -38,7 +39,7 @@ public class CancelKafkaSubscription implements JavaDelegate {
     }
 
     @Autowired
-    public void setKafkaClient(KafkaClient kafkaClient) {
+    public void setKafkaClient(@Qualifier("PnfEventReadyKafkaClient") KafkaClient kafkaClient) {
         this.kafkaClient = kafkaClient;
     }
 }

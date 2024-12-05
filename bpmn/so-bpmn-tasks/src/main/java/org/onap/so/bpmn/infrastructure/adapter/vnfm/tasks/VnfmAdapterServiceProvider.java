@@ -27,6 +27,7 @@ import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.QueryJobResponse;
 import com.google.common.base.Optional;
 
 
+
 /**
  * Provide a service which interacts with VNFM adapter for instantiating, monitoring VNF
  *

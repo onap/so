@@ -24,6 +24,7 @@ import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.VNFM_
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.VNFM_ADAPTER_DEFAULT_URL;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 /**
  * Provides VNFM adapter {@link java.net.URI} and basic authorization values
@@ -31,6 +32,7 @@ import org.springframework.context.annotation.Configuration;
  * @author waqas.ikram@est.tech
  */
 @Configuration
+// @Primary
 @ConfigurationProperties(prefix = "so.vnfm.adapter")
 public class VnfmBasicHttpConfigProvider {
 

@@ -56,6 +56,7 @@ public class CXFConfiguration {
         // Configure Logging Feature
         LoggingFeature logFeature = new LoggingFeature();
         logFeature.setPrettyLogging(true);
+        logFeature.initialize(bus);
         endpoint.getFeatures().add(logFeature);
 
         // Add Interceptors

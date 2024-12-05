@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * This class retrieve input parameters
@@ -53,11 +54,21 @@ public class InputParameterRetrieverTask {
 
     private final InputParametersProvider<Map<String, Object>> userParamInputParametersProvider;
 
+    /*
+     * @Autowired public InputParameterRetrieverTask(final InputParametersProvider<GenericVnf> inputParametersProvider,
+     * final InputParametersProvider<Map<String, Object>> userParamInputParametersProvider, final ExtractPojosForBB
+     * extractPojosForBB) { this.sdncInputParametersProvider = inputParametersProvider;
+     * this.userParamInputParametersProvider = userParamInputParametersProvider; this.extractPojosForBB =
+     * extractPojosForBB; }
+     */
+
     @Autowired
-    public InputParameterRetrieverTask(final InputParametersProvider<GenericVnf> inputParametersProvider,
-            final InputParametersProvider<Map<String, Object>> userParamInputParametersProvider,
+    public InputParameterRetrieverTask(
+            @Qualifier("sdncInputParametersProvider") final InputParametersProvider<GenericVnf> sdncInputParametersProvider,
+            @Qualifier("userParamInputParametersProvider") final InputParametersProvider<Map<String, Object>> userParamInputParametersProvider,
             final ExtractPojosForBB extractPojosForBB) {
-        this.sdncInputParametersProvider = inputParametersProvider;
+
+        this.sdncInputParametersProvider = sdncInputParametersProvider;
         this.userParamInputParametersProvider = userParamInputParametersProvider;
         this.extractPojosForBB = extractPojosForBB;
     }

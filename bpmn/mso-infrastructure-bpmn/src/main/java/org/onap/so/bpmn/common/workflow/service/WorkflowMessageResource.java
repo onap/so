@@ -40,6 +40,7 @@ import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,7 +50,7 @@ import io.swagger.v3.oas.annotations.info.Info;
  * Generalized REST interface that injects a message event into a waiting BPMN process. Examples:
  * 
  * <pre>
- *     /WorkflowMessage/SDNCAResponse/6d10d075-100c-42d0-9d84-a52432681cae-1478486185286
+ i*     /WorkflowMessage/SDNCAResponse/6d10d075-100c-42d0-9d84-a52432681cae-1478486185286
  *     /WorkflowMessage/SDNCAEvent/USOSTCDALTX0101UJZZ01
  * </pre>
  */
@@ -63,6 +64,12 @@ public class WorkflowMessageResource {
 
     @Autowired
     CallbackHandlerService callback;
+
+    // added
+    // @Bean
+    // public WorkflowMessageResource workflowMessageResource() {
+    // return new WorkflowMessageResource();
+    // }
 
     @POST
     @Path("/WorkflowMessage/{messageType}/{correlator}")

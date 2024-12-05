@@ -31,6 +31,7 @@ import org.onap.so.cnfm.lcm.model.AsLcmOpOcc.OperationStateEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 /**
@@ -49,7 +50,8 @@ public class MonitorCnfmJobTask {
     private final CnfmHttpServiceProvider cnfmHttpServiceProvider;
 
     @Autowired
-    public MonitorCnfmJobTask(final CnfmHttpServiceProvider cnfmHttpServiceProvider,
+    public MonitorCnfmJobTask(
+            @Qualifier("cnfmHttpServiceProviderImpl") final CnfmHttpServiceProvider cnfmHttpServiceProvider,
             final ExceptionBuilder exceptionUtil) {
         this.cnfmHttpServiceProvider = cnfmHttpServiceProvider;
         this.exceptionUtil = exceptionUtil;

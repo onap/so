@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 /**
@@ -54,8 +55,8 @@ public class RegisterForPnfReadyEvent implements JavaDelegate {
     private String pnfEntryNotificationTimeout;
 
     @Autowired
-    public RegisterForPnfReadyEvent(KafkaClient kafkaClient, ExtractPojosForBB extractPojosForBB,
-            ExceptionBuilder exceptionBuilder,
+    public RegisterForPnfReadyEvent(@Qualifier("pnfEventReadyKafkaClient") KafkaClient kafkaClient,
+            ExtractPojosForBB extractPojosForBB, ExceptionBuilder exceptionBuilder,
             @Value("${aai.pnfEntryNotificationTimeout}") String pnfEntryNotificationTimeout) {
         this.kafkaClient = kafkaClient;
         this.extractPojosForBB = extractPojosForBB;

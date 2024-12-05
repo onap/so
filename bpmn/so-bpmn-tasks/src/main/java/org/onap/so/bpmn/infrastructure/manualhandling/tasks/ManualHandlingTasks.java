@@ -91,7 +91,7 @@ public class ManualHandlingTasks {
     private Environment environment;
 
     @Autowired
-    @Qualifier("ExternalTicketCreation")
+    @Qualifier("ExternalTicketTasks")
     private ExternalTicketCreation externalTicketCreation;
 
     protected String manualTaskTimeoutPath = "mso.rainyDay.manualTask.taskTimeout";

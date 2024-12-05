@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,8 @@ import com.google.common.base.Optional;
 /**
  * @author waqas.ikram@est.tech
  */
-@Service
+@Service("VnfmAdapterServiceProvider")
+// @Primary
 public class VnfmAdapterServiceProviderImpl implements VnfmAdapterServiceProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VnfmAdapterServiceProviderImpl.class);

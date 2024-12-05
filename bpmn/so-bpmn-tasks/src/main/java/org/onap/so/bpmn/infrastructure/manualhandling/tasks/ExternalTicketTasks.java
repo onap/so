@@ -29,8 +29,10 @@ import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @Component
+@Qualifier("ExternalTicketCreation")
 public class ExternalTicketTasks implements ExternalTicketCreation {
     private static final Logger logger = LoggerFactory.getLogger(ExternalTicketTasks.class);
 

@@ -74,11 +74,13 @@ public class VnfmAdapterCreateVnfTaskConfiguration {
     @Value("${rest.http.client.configuration.ssl.keyStorePassword:#{null}}")
     private String keyStorePassword;
 
+
+    // added @Qualifier("vnfmBasicHttpConfigProvider")
     @Bean
     @Qualifier(VNFM_HTTP_REST_SERVICE_PROVIDER_BEAN)
     public HttpRestServiceProvider vnfmHttpRestServiceProvider(
             @Qualifier(CONFIGURABLE_REST_TEMPLATE) @Autowired final RestTemplate restTemplate,
-            @Autowired final VnfmBasicHttpConfigProvider etsiVnfmAdapter) {
+            @Qualifier("vnfmBasicHttpConfigProvider") @Autowired final VnfmBasicHttpConfigProvider etsiVnfmAdapter) {
         if (trustStore != null) {
             setTrustStore(restTemplate);
         }
