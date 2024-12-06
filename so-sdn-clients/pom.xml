@@ -8,7 +8,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>so-sdn-clients</artifactId>
   <properties>
-    <sdnc.northbound.version>1.5.2</sdnc.northbound.version>
+    <sdnc.northbound.version>3.0.0</sdnc.northbound.version> <!-- RFC Supporting Prop!-->
   </properties>
   <build>
     <plugins>
@@ -130,6 +130,14 @@
       <artifactId>aai-client</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <!-- RFC Supporting Dependencies -->
+    <dependency>
+      <groupId>org.onap.sdnc.northbound</groupId>
+      <artifactId>generic-resource-api-model-swagger</artifactId>
+      <version>3.0.0</version>
+      <type>yaml</type>
+    </dependency>
+    <!-- RFC Supporting Dependencies -->
     <dependency>
       <groupId>org.mariadb.jdbc</groupId>
       <artifactId>mariadb-java-client</artifactId>
