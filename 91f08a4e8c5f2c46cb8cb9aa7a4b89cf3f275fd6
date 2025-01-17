@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fa063825_74210a81",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2679
+      },
+      "writtenOn": "2025-01-17T12:12:10Z",
+      "side": 1,
+      "message": "I just got access to logs of the failing task:\n\nWarning, treated as error:\n/home/runner/work/.github/.github/docs/release-notes.rst:18:Title underline too short.",
+      "revId": "91f08a4e8c5f2c46cb8cb9aa7a4b89cf3f275fd6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8b64b259_32f1b46d",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 2679
+      },
+      "writtenOn": "2025-01-17T12:12:10Z",
+      "side": 1,
+      "message": "Title underline ist too short",
+      "revId": "91f08a4e8c5f2c46cb8cb9aa7a4b89cf3f275fd6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ae2d1a3c_5bf91e2e",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 2679
+      },
+      "writtenOn": "2025-01-17T12:12:10Z",
+      "side": 1,
+      "message": "Title underline ist too short",
+      "revId": "91f08a4e8c5f2c46cb8cb9aa7a4b89cf3f275fd6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
