@@ -7,7 +7,43 @@
 Service Orchestrator Release Notes
 ==================================
 
-The SO provides the highest level of service orchestration in the ONAP architecture. 
+The SO provides the highest level of service orchestration in the ONAP architecture.
+
+Version: 1.15.0
+---------------
+
+:Release Date: 2025-01-17
+
+SO Release Image Versions
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ - so-bpmn-infra **1.15.0**
+
+ - so-catalog-db-adapter **1.15.0**
+
+ - so-openstack-adapter **1.15.0**
+
+ - so-request-db-adapter **1.15.0**
+
+ - so-sdc-controller **1.15.0**
+
+ - so-sdnc-adapter **1.15.0**
+
+ - so-api-handler **1.15.0**
+
+
+Release Purpose
+~~~~~~~~~~~~~~~
+SO OSLO Release.
+The key deliverable for this release is refactoring SO for better internal architecture.
+
+**Epics**
+
+*  `SO-4127 <https://lf-onap.atlassian.net/browse/SO-4127>`_ - ONAP RFC 8040 Migration - Oslo Enhancements
+
+**********************************************************************************************************
+
+
 
 Version: 1.11.0
 ---------------
