@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d4b6bef6_3f1c29ce",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2679
+      },
+      "writtenOn": "2025-01-17T10:48:47Z",
+      "side": 1,
+      "message": "Trailing space",
+      "revId": "7eb92ffb8c817561ba2cab66343393d0faa97504",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c7176fbe_ca69688c",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 2679
+      },
+      "writtenOn": "2025-01-17T10:48:47Z",
+      "side": 1,
+      "message": "Trailing space needs to be removed",
+      "revId": "7eb92ffb8c817561ba2cab66343393d0faa97504",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
