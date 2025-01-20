@@ -1,0 +1,10 @@
+Verified+1: ONAP Bypass GHA <releng+onap.bypass.gha@linuxfoundation.org>
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+2: Byung-Woo Jun <byung-woo.jun@est.tech>
+Verified+1: ONAP Required GHA <releng+onap.required.gha@linuxfoundation.org>
+Code-Review+2: Andreas Geissler <andreas-geissler@telekom.de>
+Submitted-by: Byung-Woo Jun <byung-woo.jun@est.tech>
+Submitted-at: Mon, 20 Jan 2025 14:38:08 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/so/+/139920
+Project: so
+Branch: refs/heads/master
