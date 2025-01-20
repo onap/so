@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ea74e55e_3b4c9b98",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3091
+      },
+      "writtenOn": "2025-01-20T16:01:53Z",
+      "side": 1,
+      "message": "usecase-ui (oslo) is missing",
+      "revId": "ae3808b4c8e02f54908eedfcaf98898f6a0de6cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
