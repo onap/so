@@ -33,6 +33,24 @@
       "message": "Trailing space needs to be removed",
       "revId": "7eb92ffb8c817561ba2cab66343393d0faa97504",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6150cab4_c3ded651",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 2679
+      },
+      "writtenOn": "2025-01-20T14:19:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7176fbe_ca69688c",
+      "revId": "7eb92ffb8c817561ba2cab66343393d0faa97504",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
