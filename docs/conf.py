@@ -1,6 +1,6 @@
 project = "onap"
-release = "master"
-version = "master"
+release = "oslo"
+version = "oslo"
 
 doc_url = 'https://docs.onap.org/projects'
 
