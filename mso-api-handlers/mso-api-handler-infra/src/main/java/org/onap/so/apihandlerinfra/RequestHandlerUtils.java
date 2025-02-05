@@ -37,13 +37,13 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.camunda.bpm.engine.impl.persistence.entity.HistoricProcessInstanceEntity;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.apihandler.camundabeans.CamundaResponse;
 import org.onap.so.apihandler.common.CamundaClient;
@@ -777,10 +777,13 @@ public class RequestHandlerUtils extends AbstractRestHandler {
             if (recipe == null) {
                 serviceRecordList = catalogDbClient
                         .getServiceByModelInvariantUUIDOrderByModelVersionDesc(modelInfo.getModelInvariantId());
+                logger.debug("serviceRecordList = {}", serviceRecordList);
                 if (!serviceRecordList.isEmpty()) {
                     for (org.onap.so.db.catalog.beans.Service record : serviceRecordList) {
+                        logger.debug("record = {}", record);
                         recipe = catalogDbClient.getFirstByServiceModelUUIDAndAction(record.getModelUUID(),
                                 action.toString());
+                        logger.debug("recipe = {}", recipe);
                         if (recipe != null) {
                             break;
                         }

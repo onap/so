@@ -30,7 +30,7 @@ import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.MockitoAnnotations
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner
 import org.onap.aai.domain.yang.ResultData
 import org.onap.aai.domain.yang.SearchResults
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest

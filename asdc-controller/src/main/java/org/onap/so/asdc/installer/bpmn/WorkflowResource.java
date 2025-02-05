@@ -40,7 +40,7 @@ import org.onap.so.db.catalog.beans.WorkflowActivitySpecSequence;
 import org.onap.so.db.catalog.data.repository.ActivitySpecRepository;
 import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
 import org.onap.so.db.catalog.data.repository.WorkflowRepository;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

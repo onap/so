@@ -32,7 +32,7 @@ public class RequestDbFailureException extends ApiException {
 
 
         public Builder(String action, String error, int httpResponseCode, String messageID) {
-            super(REQUEST_DB_FAIL_MESSAGE.format(REQUEST_DB_FAIL_MESSAGE, action, error), httpResponseCode, messageID);
+            super(String.format(REQUEST_DB_FAIL_MESSAGE, action, error), httpResponseCode, messageID);
         }
 
         public RequestDbFailureException build() {

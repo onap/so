@@ -26,7 +26,7 @@ import static org.mockito.Mockito.doReturn;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
-import javax.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;

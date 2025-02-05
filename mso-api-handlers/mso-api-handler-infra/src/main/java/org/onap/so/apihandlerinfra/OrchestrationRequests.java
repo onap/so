@@ -29,24 +29,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import javax.transaction.Transactional;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.http.HttpStatus;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandler.common.ResponseBuilder;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
@@ -75,7 +65,6 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -579,55 +568,31 @@ public class OrchestrationRequests {
         InfraActiveRequests infraActiveRequest = null;
         try {
             infraActiveRequest = requestsDbClient.getInfraActiveRequestbyRequestId(requestId);
-        } catch (HttpClientErrorException e) {
-            ValidateException validateException = getValidateExceptionFromHttpClientErrorException(e);
-            throw validateException;
         } catch (Exception e) {
-            ValidateException validateException = getValidateExceptionForInternalServerError(e);
+            logger.error("Exception occurred while communicating with RequestDb during InfraActiveRequest lookup ", e);
+            ErrorLoggerInfo errorLoggerInfo =
+                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.AvailabilityError).build();
+
+            ValidateException validateException = new ValidateException.Builder(
+                    "Exception occurred while communicating with RequestDb during InfraActiveRequest lookup",
+                    HttpStatus.SC_NOT_FOUND, ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB).cause(e)
+                            .errorInfo(errorLoggerInfo).build();
+
             throw validateException;
         }
 
         if (infraActiveRequest == null) {
-            ValidateException validateException = getValidateExceptionForNotFound(requestId);
+            ErrorLoggerInfo errorLoggerInfo =
+                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.BusinessProcessError)
+                            .build();
+
+            ValidateException validateException = new ValidateException.Builder(
+                    "Null response from RequestDB when searching by RequestId " + requestId, HttpStatus.SC_NOT_FOUND,
+                    ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
+
             throw validateException;
         }
         return infraActiveRequest;
-    }
-
-    private ValidateException getValidateExceptionForNotFound(String requestId) {
-        ErrorLoggerInfo errorLoggerInfo =
-                new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.BusinessProcessError)
-                        .build();
-
-        ValidateException validateException =
-                new ValidateException.Builder("Null response from RequestDB when searching by RequestId " + requestId,
-                        HttpStatus.SC_NOT_FOUND, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo)
-                                .build();
-        return validateException;
-    }
-
-    private ValidateException getValidateExceptionForInternalServerError(Exception e) {
-        logger.error("Exception occurred while communicating with RequestDb during InfraActiveRequest lookup ", e);
-        ErrorLoggerInfo errorLoggerInfo =
-                new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.AvailabilityError).build();
-
-        ValidateException validateException = new ValidateException.Builder(
-                "Exception occurred while communicating with RequestDb during InfraActiveRequest lookup",
-                HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_GENERAL_SERVICE_ERROR).cause(e)
-                        .errorInfo(errorLoggerInfo).build();
-        return validateException;
-    }
-
-    private ValidateException getValidateExceptionFromHttpClientErrorException(HttpClientErrorException e) {
-        logger.error("Exception occurred while communicating with RequestDb during InfraActiveRequest lookup ", e);
-        ErrorLoggerInfo errorLoggerInfo =
-                new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.AvailabilityError).build();
-
-        ValidateException validateException = new ValidateException.Builder(
-                "Exception occurred while communicating with RequestDb during InfraActiveRequest lookup",
-                e.getRawStatusCode(), ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB).cause(e).errorInfo(errorLoggerInfo)
-                        .build();
-        return validateException;
     }
 
     protected long daysSinceRequest(InfraActiveRequests request) {

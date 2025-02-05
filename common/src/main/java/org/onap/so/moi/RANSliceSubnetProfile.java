@@ -21,7 +21,7 @@
 package org.onap.so.moi;
 
 import com.fasterxml.jackson.annotation.*;
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.GenericType;
 import org.onap.aaiclient.client.aai.entities.Results;
 import org.onap.aaiclient.client.graphinventory.entities.GraphInventoryResultWrapper;
 import org.onap.aaiclient.client.graphinventory.entities.Pathed;

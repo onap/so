@@ -20,7 +20,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class MDCSetupTest {
 
     @Mock
-    private org.onap.logging.filter.base.MDCSetup mdcSet;
+    private org.onap.so.logging.filter.base.MDCSetup mdcSet;
 
     @Mock
     private ExternalTask externalTask;

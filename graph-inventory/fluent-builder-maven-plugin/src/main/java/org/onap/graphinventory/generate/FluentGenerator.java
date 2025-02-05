@@ -59,6 +59,7 @@ public class FluentGenerator {
         this.nameClass = nameClass;
         this.singleFragmentClass = singleFragmentClass;
         this.pluralFragmentClass = pluralFragmentClass;
+        System.setProperty("maxYamlCodePoints", "999999999");
         doc = new SwaggerConverter(log).getDoc(swaggerLocation);
     }
 

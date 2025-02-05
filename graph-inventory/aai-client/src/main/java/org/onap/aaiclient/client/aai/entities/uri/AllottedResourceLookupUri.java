@@ -22,7 +22,7 @@ package org.onap.aaiclient.client.aai.entities.uri;
 
 import java.net.URI;
 import java.util.Optional;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriBuilder;
 import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;

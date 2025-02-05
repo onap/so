@@ -79,6 +79,7 @@ public class VnfmAdapterCreateVnfTaskConfiguration {
     public HttpRestServiceProvider vnfmHttpRestServiceProvider(
             @Qualifier(CONFIGURABLE_REST_TEMPLATE) @Autowired final RestTemplate restTemplate,
             @Autowired final VnfmBasicHttpConfigProvider etsiVnfmAdapter) {
+        logger.debug("Setting up vnfm RestTemplate......");
         if (trustStore != null) {
             setTrustStore(restTemplate);
         }
@@ -101,8 +102,8 @@ public class VnfmAdapterCreateVnfTaskConfiguration {
             logger.info("Setting truststore: {}", trustStore.getURL());
             final SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(sslContext);
             final HttpClient httpClient = HttpClients.custom().setSSLSocketFactory(socketFactory).build();
-            final HttpComponentsClientHttpRequestFactory factory =
-                    new HttpComponentsClientHttpRequestFactory(httpClient);
+            final HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(
+                    (org.apache.hc.client5.http.classic.HttpClient) httpClient);
             restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(factory));
         } catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException | CertificateException
                 | IOException | UnrecoverableKeyException exception) {

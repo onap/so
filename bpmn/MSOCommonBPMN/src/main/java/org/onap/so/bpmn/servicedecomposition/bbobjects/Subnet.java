@@ -29,7 +29,7 @@ import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
-import javax.persistence.Id;
+import jakarta.persistence.Id;
 
 @JsonRootName("subnet")
 public class Subnet implements Serializable, ShallowCopy<Subnet> {

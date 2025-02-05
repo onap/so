@@ -38,7 +38,7 @@ import org.onap.so.adapters.sdncrest.RequestInformation;
 import org.onap.so.adapters.sdncrest.SDNCResponseCommon;
 import org.onap.so.adapters.sdncrest.SDNCServiceError;
 import org.onap.so.adapters.sdncrest.SDNCServiceRequest;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

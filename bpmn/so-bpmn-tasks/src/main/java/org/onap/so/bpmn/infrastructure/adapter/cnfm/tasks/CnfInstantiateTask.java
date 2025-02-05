@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
@@ -52,6 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 
 /**
@@ -74,7 +75,8 @@ public class CnfInstantiateTask {
     private final CnfmHttpServiceProvider cnfmHttpServiceProvider;
 
     @Autowired
-    public CnfInstantiateTask(final CnfmHttpServiceProvider cnfmHttpServiceProvider,
+    public CnfInstantiateTask(
+            @Qualifier("CnfmHttpServiceProviderImpl") final CnfmHttpServiceProvider cnfmHttpServiceProvider,
             final ExceptionBuilder exceptionUtil) {
         this.cnfmHttpServiceProvider = cnfmHttpServiceProvider;
         this.exceptionUtil = exceptionUtil;

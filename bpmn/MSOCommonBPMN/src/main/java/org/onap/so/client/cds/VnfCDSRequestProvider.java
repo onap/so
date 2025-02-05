@@ -23,7 +23,6 @@
 package org.onap.so.client.cds;
 
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.StringUtils;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;

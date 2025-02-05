@@ -21,7 +21,7 @@
 package org.onap.aaiclient.client.aai;
 
 import static org.junit.Assert.assertEquals;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriBuilder;
 import org.junit.Test;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;

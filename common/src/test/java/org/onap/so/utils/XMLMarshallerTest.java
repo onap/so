@@ -22,7 +22,7 @@ package org.onap.so.utils;
 
 import org.junit.Assert;
 import org.junit.Test;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
  * Tests the XMLMarshaller to ensure that it's able to marshal and unmarshall a POJO

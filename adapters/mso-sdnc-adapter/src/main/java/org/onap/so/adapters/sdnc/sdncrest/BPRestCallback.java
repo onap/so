@@ -25,10 +25,10 @@
 package org.onap.so.adapters.sdnc.sdncrest;
 
 import java.net.URI;
-import javax.xml.bind.DatatypeConverter;
-import org.onap.logging.filter.spring.SpringClientPayloadFilter;
+import jakarta.xml.bind.DatatypeConverter;
+import org.onap.so.logging.filter.spring.SpringClientPayloadFilter;
 import org.onap.so.adapters.sdnc.impl.Constants;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
@@ -142,10 +142,10 @@ public class BPRestCallback {
             URI uri = builder.build(true).toUri();
             response = restTemplate.postForEntity(uri, requestEntity, String.class);
         } catch (HttpStatusCodeException e) {
-            logResponseError(e.getStatusCode());
+            logResponseError((HttpStatus) e.getStatusCode());
         }
         if (response != null && response.getStatusCode().is3xxRedirection()) {
-            logResponseError(response.getStatusCode());
+            logResponseError((HttpStatus) response.getStatusCode());
         }
     }
 
@@ -159,7 +159,6 @@ public class BPRestCallback {
         RestTemplate restTemplate = new RestTemplate();
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
         factory.setConnectionRequestTimeout(timeout);
-        factory.setReadTimeout(timeout);
         factory.setConnectTimeout(timeout);
         restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(factory));
         restTemplate.getInterceptors().add(new SOSpringClientFilter());

@@ -22,16 +22,6 @@
 
 package org.onap.so.bpmn.common;
 
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockAAIVfModuleBadPatch;
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdWithDepth;
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetGenericVnfById_404;
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockPatchVfModuleId;
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockPutGenericVnf;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import org.camunda.bpm.engine.test.Deployment;
 import org.junit.Assert;
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
@@ -39,6 +29,12 @@ import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.bpmn.mock.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import static org.onap.so.bpmn.mock.StubResponseAAI.*;
+
 
 /**
  * Unit tests for PrepareUpdateAAIVfModule.bpmn.

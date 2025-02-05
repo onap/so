@@ -25,7 +25,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.so.bpmn.BaseBPMNTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;

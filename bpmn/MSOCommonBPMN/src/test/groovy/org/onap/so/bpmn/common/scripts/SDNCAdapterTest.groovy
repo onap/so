@@ -31,7 +31,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.internal.debugging.MockitoDebuggerImpl
 import org.onap.so.bpmn.common.scripts.SDNCAdapter;
 
 import org.onap.so.bpmn.mock.FileUtil
@@ -834,7 +833,6 @@ def sdncAdapterResponseError =
 		SDNCAdapter sdncAdapter = new SDNCAdapter()
 		sdncAdapter.preProcessRequest(mockExecution)
 
-		MockitoDebuggerImpl debugger = new MockitoDebuggerImpl()
 		debugger.printInvocations(mockExecution)
 
 
@@ -860,11 +858,8 @@ def sdncAdapterResponseError =
 		SDNCAdapter sdncAdapter = new SDNCAdapter()
 		sdncAdapter.postProcessResponse(mockExecution)
 
-//		MockitoDebuggerImpl debugger = new MockitoDebuggerImpl()
-//		debugger.printInvocations(mockExecution)
 
 		verify(mockExecution,times(2)).getVariable("sdncAdapterCallbackRequest")
-	//	verify(mockExecution).setVariable("enhancedCallbackRequestData",enhancedCallbackRequestData)
 		verify(mockExecution).setVariable("sdncAdapterResponse",workflowResponse)
 		verify(mockExecution).setVariable("continueListening",false)
 

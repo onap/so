@@ -20,18 +20,8 @@
 
 package org.onap.so.bpmn.core;
 
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.onap.so.openpojo.rules.HasAnnotationMatcher.hasAnnotation;
-import static org.onap.so.openpojo.rules.HasAnnotationPropertyWithValueMatcher.hasAnnotationPropertyWithValue;
-import javax.persistence.Column;
-import javax.persistence.Temporal;
+
 import org.junit.Test;
-import org.onap.so.openpojo.rules.CustomSetterMustExistRule;
-import org.onap.so.openpojo.rules.EqualsAndHashCodeTester;
-import org.onap.so.openpojo.rules.HasEqualsAndHashCodeRule;
-import org.onap.so.openpojo.rules.HasToStringRule;
-import org.onap.so.openpojo.rules.ToStringTester;
 import com.openpojo.reflection.PojoClass;
 import com.openpojo.reflection.PojoClassFilter;
 import com.openpojo.reflection.filters.FilterEnum;
@@ -39,12 +29,9 @@ import com.openpojo.reflection.filters.FilterNonConcrete;
 import com.openpojo.reflection.filters.FilterPackageInfo;
 import com.openpojo.validation.Validator;
 import com.openpojo.validation.ValidatorBuilder;
-import com.openpojo.validation.rule.impl.BusinessKeyMustExistRule;
 import com.openpojo.validation.rule.impl.GetterMustExistRule;
 import com.openpojo.validation.rule.impl.NoNestedClassRule;
-import com.openpojo.validation.rule.impl.NoPrimitivesRule;
 import com.openpojo.validation.rule.impl.NoPublicFieldsExceptStaticFinalRule;
-import com.openpojo.validation.rule.impl.NoStaticExceptFinalRule;
 import com.openpojo.validation.rule.impl.SerializableMustHaveSerialVersionUIDRule;
 import com.openpojo.validation.test.impl.GetterTester;
 import com.openpojo.validation.test.impl.SetterTester;

@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import org.camunda.bpm.client.ExternalTaskClient;
 import org.camunda.bpm.client.interceptor.ClientRequestInterceptor;
 import org.camunda.bpm.client.interceptor.auth.BasicAuthProvider;
-import org.onap.logging.filter.base.ScheduledLogging;
+import org.onap.so.logging.filter.base.ScheduledLogging;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,13 +48,12 @@ public class ExternalTaskServiceUtils {
     }
 
     protected ClientRequestInterceptor createClientInterceptor(String auth) {
-        return new BasicAuthProvider(env.getRequiredProperty("mso.auth.user"), auth);
+        return new BasicAuthProvider(env.getRequiredProperty("mso.config.cadi.aafId"), auth);
     }
 
     protected String getAuth() throws Exception {
         try {
-            return CryptoUtils.decrypt(env.getRequiredProperty("mso.auth.password"),
-                    env.getRequiredProperty("mso.msoKey"));
+            return CryptoUtils.decrypt(env.getRequiredProperty("mso.auth"), env.getRequiredProperty("mso.msoKey"));
         } catch (IllegalStateException | GeneralSecurityException e) {
             logger.error("Error Decrypting Password", e);
             throw new Exception("Cannot load password");
@@ -65,6 +64,7 @@ public class ExternalTaskServiceUtils {
         return Integer.parseInt(env.getProperty("workflow.topics.maxClients", "10"));
     }
 
+    @ScheduledLogging
     @Scheduled(fixedDelay = 30000)
     public void checkAllClientsActive() {
         try {

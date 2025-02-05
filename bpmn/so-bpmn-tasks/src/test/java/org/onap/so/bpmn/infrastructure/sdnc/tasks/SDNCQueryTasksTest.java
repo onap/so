@@ -44,8 +44,8 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.BadResponseException;
-import org.onap.logging.filter.base.ONAPComponentsList;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponentsList;
+import org.onap.so.logging.filter.base.ONAPComponents;
 
 public class SDNCQueryTasksTest extends BaseTaskTest {
     @InjectMocks

@@ -17,6 +17,24 @@
     <finalName>${project.artifactId}-${project.version}</finalName>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-test</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>**/AllTestsTestSuite.java</include>
+              </includes>
+              <parallel>suites</parallel>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <classesDirectory>target/classes</classesDirectory>
@@ -24,7 +42,8 @@
       </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
+	<artifactId>jacoco-maven-plugin</artifactId>
+	<version>0.8.8</version>
       </plugin>
     </plugins>
   </build>

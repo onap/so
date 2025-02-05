@@ -18,6 +18,6 @@
  * ============LICENSE_END=========================================================
  */
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://org.onap/workflow/sdnc/adapter/schema/v1",
-        elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://org.onap/workflow/sdnc/adapter/schema/v1",
+        elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.onap.so.bpmn.common.adapter.sdnc;

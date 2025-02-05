@@ -14,6 +14,9 @@ camunda:
     metrics:
       enabled: false
       db-reporter-activate: false
+    generic-properties:
+      properties:
+        historyTimeToLive: P30D
 canopi:
   auth: 5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C
 csi:
@@ -261,7 +264,7 @@ spring:
       role: BPMN-Client    
 # Hibernate
 hibernate:
-  dialect: org.hibernate.dialect.MySQL5Dialect
+  dialect: org.hibernate.dialect.MySQLDialect
   show_sql: false
 
 management:

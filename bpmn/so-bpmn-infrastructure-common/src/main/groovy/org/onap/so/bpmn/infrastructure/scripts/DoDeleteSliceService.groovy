@@ -32,7 +32,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.client.oof.adapter.beans.payload.OofRequest
-import org.onap.logging.filter.base.ONAPComponents
+import org.onap.so.logging.filter.base.ONAPComponents
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.OofUtils
@@ -43,8 +43,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import com.fasterxml.jackson.databind.ObjectMapper
 
-import javax.ws.rs.NotFoundException
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.NotFoundException
+import jakarta.ws.rs.core.Response
 
 import static org.apache.commons.lang3.StringUtils.isBlank
 
@@ -59,11 +59,10 @@ import static org.apache.commons.lang3.StringUtils.isBlank
  *
  */
 class DoDeleteSliceService extends AbstractServiceTaskProcessor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DoDeleteSliceService.class)
-    private static final ObjectMapper mapper = new ObjectMapper()
     private final String PREFIX ="DoDeleteSliceService"
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     OofUtils oofUtils = new OofUtils()
+    private static final Logger LOGGER = LoggerFactory.getLogger( DoDeleteSliceService.class)
 
     @Override
     void preProcessRequest(DelegateExecution execution) {
@@ -416,7 +415,7 @@ class DoDeleteSliceService extends AbstractServiceTaskProcessor {
         String nxlType = "NSI"
         String messageType = "nsiTerminationResponse"
         String serviceInstanceId = execution.getVariable("serviceInstanceId")
-
+        
         def authHeader = ""
         String basicAuth = UrnPropertiesReader.getVariable("mso.oof.auth", execution)
         String msokey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
@@ -441,9 +440,10 @@ class DoDeleteSliceService extends AbstractServiceTaskProcessor {
         URL requestUrl = new URL(oofUrl)
         String oofRequest = oofUtils.buildTerminateNxiRequest(requestId, nxlId, nxlType, messageType, serviceInstanceId)
         OofRequest oofPayload = new OofRequest()
-        oofPayload.setApiPath("/api/oof/terminate/nxi/v1")
-        oofPayload.setRequestDetails(oofRequest)
-        String requestJson = mapper.writeValueAsString(oofPayload)
+	oofPayload.setApiPath("/api/oof/terminate/nxi/v1")
+	oofPayload.setRequestDetails(oofRequest)
+	ObjectMapper objectMapper = new ObjectMapper()
+	String requestJson = objectMapper.writeValueAsString(oofPayload)
         HttpClient httpClient = new HttpClientFactory().newJsonClient(requestUrl, ONAPComponents.OOF)
         httpClient.addAdditionalHeader("Authorization", authHeader)
         Response httpResponse = httpClient.post(requestJson)
@@ -453,7 +453,7 @@ class DoDeleteSliceService extends AbstractServiceTaskProcessor {
 
         if(responseCode != 200){
             exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from OOF.")
-        }
+        }       
         try {
             Map<String, String> resMap = httpResponse.readEntity(Map.class)
             boolean terminateResponse = resMap.get("terminateResponse")

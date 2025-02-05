@@ -8,9 +8,9 @@ import javax.management.JMX;
 import javax.management.MBeanServer;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-import org.onap.logging.filter.base.ErrorCode;
-import org.onap.logging.filter.base.ScheduledLogging;
-import org.onap.logging.filter.base.ScheduledTaskException;
+import org.onap.so.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ScheduledLogging;
+import org.onap.so.logging.filter.base.ScheduledTaskException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +32,7 @@ public class ScheduledDnsLookup {
 
     private static Logger logger = LoggerFactory.getLogger(ScheduledDnsLookup.class);
 
+    @ScheduledLogging
     @Scheduled(fixedRate = 15000)
     public void performDnsLookup() throws ScheduledTaskException {
         String dnsUrl = System.getenv(DB_HOST);

@@ -11,24 +11,24 @@
   <name>common</name>
   <description>MSO Common classes:- Logger</description>
   <properties>
+    <grpc.version>1.25.0</grpc.version>
     <protobuf.version>3.22.2</protobuf.version>
     <grpc.netty.version>4.1.30.Final</grpc.netty.version>
     <ccsdk.version>1.1.5</ccsdk.version>
-    <tomcat-catalina-version>9.0.105</tomcat-catalina-version>
-    <logback.version>1.2.13</logback.version>
+	    <!--spring-cloud-sleuth.version>2.0.2.RELEASE</spring-cloud-sleuth.version-->
+	    <!-- removedfortest
+		    spring-cloud-sleuth.version>3.1.11</spring-cloud-sleuth.version-->
+    <tomcat-catalina-version>9.0.45</tomcat-catalina-version>
   </properties>
   <dependencies>
     <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
+      <groupId>org.apache.httpcomponents.client5</groupId>
+      <artifactId>httpclient5</artifactId>
+      <version>5.2.1</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-aspects</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-security</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -39,8 +39,9 @@
       <artifactId>json-path</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.hibernate</groupId>
+      <groupId>org.hibernate.orm</groupId>
       <artifactId>hibernate-core</artifactId>
+      <version>6.4.9.Final</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -51,9 +52,20 @@
       <artifactId>spring-webmvc</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+    </dependency>
+    <!-- Spring Boot Starter WebFlux -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webflux</artifactId>
+      <version>${springboot.version}</version>
+    </dependency>
+    <!-- Spring Boot Starter WebFlux -->
+    <dependency>
       <groupId>org.modelmapper</groupId>
       <artifactId>modelmapper</artifactId>
-      <version>2.3.2</version>
+      <version>3.2.1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
@@ -61,9 +73,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.shazam</groupId>
-      <artifactId>shazamcrest</artifactId>
-      <version>0.11</version>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>2.2</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -88,10 +100,12 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-ext</artifactId>
+      <version>2.0.17</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
+      <version>2.0.17</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -107,6 +121,23 @@
       <artifactId>failsafe</artifactId>
       <version>2.0.1</version>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-web</artifactId>
+      <version>6.4.0</version>
+    </dependency>
+    <!--Added below-->
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-config</artifactId>
+      <version>6.4.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+      <version>${springboot.version}</version>
+    </dependency>
+    <!--Added below-->
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
@@ -222,18 +253,49 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>javax.validation</groupId>
-      <artifactId>validation-api</artifactId>
+      <groupId>jakarta.validation</groupId>
+      <artifactId>jakarta.validation-api</artifactId>
+      <version>3.1.0-M1</version>
     </dependency>
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>6.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.xml.ws</groupId>
+      <artifactId>jakarta.xml.ws-api</artifactId>
+      <version>3.0.1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.core</groupId>
+      <artifactId>jersey-client</artifactId>
+      <version>3.1.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.inject</groupId>
+      <artifactId>jersey-hk2</artifactId>
+      <version>3.1.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.media</groupId>
+      <artifactId>jersey-media-json-binding</artifactId>
+      <version>3.1.3</version>
+      <scope>test</scope>
+    </dependency>
+    <!--        added dependencies-->
     <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-core</artifactId>
       <version>2.3.0</version>
     </dependency>
     <dependency>
-      <groupId>com.sun.xml.bind</groupId>
-      <artifactId>jaxb-impl</artifactId>
-      <version>2.3.0</version>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <version>3.0.2</version>
     </dependency>
     <dependency>
       <groupId>javax.cache</groupId>
@@ -243,11 +305,34 @@
     <dependency>
       <groupId>org.ehcache</groupId>
       <artifactId>ehcache</artifactId>
+      <version>3.11.1</version>
+      <classifier>jakarta</classifier>
+
+      <exclusions>
+        <exclusion>
+          <groupId>org.glassfish.jaxb</groupId>
+          <artifactId>jaxb-runtime</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <version>[3,3.1)</version>
+    </dependency>
+
+    <!--dependency>
+      <groupId>org.ehcache</groupId>
+      <artifactId>ehcache</artifactId>
+      <classifier>jakarta</classifier-->
+    <!--version>3.10.8</version-->
+    <!--version>3.11.1</version>
+    </dependency-->
+    <!--dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-sleuth</artifactId>
-    </dependency>
+      <version>3.1.11</version>
+    </dependency-->
     <!-- kafka dependency -->
     <dependency>
       <groupId>org.apache.kafka</groupId>
@@ -263,6 +348,12 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
+      <version>5.5.2</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
+      <artifactId>jackson-jakarta-rs-json-provider</artifactId>
+      <version>2.15.2</version>
     </dependency>
   </dependencies>
   <dependencyManagement>
@@ -274,16 +365,13 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-core</artifactId>
-        <version>${logback.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-classic</artifactId>
-        <version>${logback.version}</version>
-      </dependency>
+      <!--dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-sleuth</artifactId>
+        <version>${spring-cloud-sleuth.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency-->
     </dependencies>
   </dependencyManagement>
   <build>
@@ -311,19 +399,9 @@
             </goals>
             <configuration>
               <includes>
-                <include>**/NonSpringSuite.java</include>
+                <include>**/AllTestsTestSuite.java</include>
               </includes>
-            </configuration>
-          </execution>
-          <execution>
-            <id>spring-tests</id>
-            <goals>
-              <goal>test</goal>
-            </goals>
-            <configuration>
-              <includes>
-                <include>**/SpringSuite.java</include>
-              </includes>
+              <parallel>suites</parallel>
             </configuration>
           </execution>
         </executions>
@@ -349,7 +427,6 @@
       <plugins>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.1.2</version>
           <configuration>
             <systemPropertyVariables>
               <so.log.level>DEBUG</so.log.level>
@@ -365,3 +442,4 @@
     </pluginManagement>
   </build>
 </project>
+

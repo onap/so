@@ -23,7 +23,7 @@ package org.onap.so.client.orchestration;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Optional;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.adapters.nwrest.DeleteNetworkRequest;

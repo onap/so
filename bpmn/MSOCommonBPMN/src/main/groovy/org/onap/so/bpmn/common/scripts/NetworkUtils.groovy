@@ -20,7 +20,6 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import groovy.xml.XmlUtil
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.HostRoute
 import org.onap.aai.domain.yang.L3Network

@@ -24,8 +24,6 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import org.javatuples.Pair;
 import org.junit.Test;
 import org.onap.so.openstack.beans.NetworkInfo;
 import org.onap.so.openstack.beans.NetworkStatus;

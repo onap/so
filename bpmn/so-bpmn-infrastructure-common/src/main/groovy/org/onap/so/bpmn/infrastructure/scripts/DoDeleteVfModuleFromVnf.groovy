@@ -27,7 +27,7 @@ import org.onap.aai.domain.yang.GenericVnf
 import org.onap.aai.domain.yang.NetworkPolicies
 import org.onap.aai.domain.yang.NetworkPolicy
 import org.onap.aai.domain.yang.VfModule
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logging.filter.base.ErrorCode
 
 import static org.apache.commons.lang3.StringUtils.*
 import org.camunda.bpm.engine.delegate.BpmnError

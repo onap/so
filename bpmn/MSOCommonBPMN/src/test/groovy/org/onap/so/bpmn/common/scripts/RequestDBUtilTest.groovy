@@ -26,7 +26,6 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
 import org.onap.so.db.request.beans.OperationStatus
-
 import static org.junit.Assert.assertNotNull
 import static org.mockito.ArgumentMatchers.eq
 import static org.mockito.Mockito.times

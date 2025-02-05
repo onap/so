@@ -21,11 +21,14 @@
 package org.onap.so.apihandlerinfra;
 
 import java.util.concurrent.Executor;
-import org.onap.logging.filter.spring.MDCTaskDecorator;
+import org.onap.so.logging.filter.spring.MDCTaskDecorator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScan.Filter;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -33,6 +36,12 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @SpringBootApplication(scanBasePackages = {"org.onap"})
 @EnableAsync
 @EnableScheduling
+/*
+ * @ComponentScan(basePackages = "org.onap.so.apihandlerinfra", excludeFilters = {@ComponentScan.Filter(type =
+ * FilterType.ASSIGNABLE_TYPE, value = {org.onap.logging.filter.spring.SpringScheduledTasksMDCSetupAspect.class,
+ * org.onap.logging.filter.spring.LoggingInterceptor.class,
+ * org.onap.logging.filter.spring.StatusLoggingInterceptor.class})})
+ */
 public class ApiHandlerApplication {
 
     @Value("${mso.async.core-pool-size}")

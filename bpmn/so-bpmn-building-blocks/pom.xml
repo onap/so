@@ -12,13 +12,15 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <codehaus.groovy.version>3.0.19</codehaus.groovy.version>
   </properties>
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-codegen-plugin</artifactId>
-        <version>2.5.2</version>
+        <version>4.0.0</version>
+        <!--2.5.2-->
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -135,6 +137,21 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-xml</artifactId>
+      <version>${codehaus.groovy.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-json</artifactId>
+      <version>${codehaus.groovy.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-jsr223</artifactId>
+      <version>${codehaus.groovy.version}</version>
+    </dependency>
+    <dependency>
       <groupId>commons-net</groupId>
       <artifactId>commons-net</artifactId>
       <version>3.6</version>
@@ -147,6 +164,7 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-contract-wiremock</artifactId>
+      <version>4.3.3</version>
       <scope>test</scope>
     </dependency>
     <dependency>

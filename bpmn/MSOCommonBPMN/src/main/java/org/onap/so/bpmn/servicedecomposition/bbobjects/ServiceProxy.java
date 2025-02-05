@@ -26,7 +26,7 @@ import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
 import org.onap.so.bpmn.servicedecomposition.homingobjects.SolutionCandidates;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceProxy;
 import java.io.Serializable;
-import javax.persistence.Id;
+import jakarta.persistence.Id;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 

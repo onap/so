@@ -5,7 +5,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.ArgumentMatchers.anyMap;
 import java.util.HashMap;
 import java.util.Map;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 import org.camunda.bpm.engine.variable.impl.VariableMapImpl;
 import org.junit.Before;
 import org.junit.Test;

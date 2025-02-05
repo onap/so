@@ -31,7 +31,6 @@ import java.util.regex.Pattern;
 
 public abstract class CatalogQuery {
     protected static Logger logger = LoggerFactory.getLogger(CatalogQuery.class);
-    private static final ObjectMapper mapper = new ObjectMapper();
     private static final boolean IS_EMBED = true;
 
     public abstract String JSON2(boolean isArray, boolean isEmbed);
@@ -72,6 +71,7 @@ public abstract class CatalogQuery {
     protected String smartToJSON() {
         String jsonString = null;
         try {
+            ObjectMapper mapper = new ObjectMapper();
             jsonString = mapper.writeValueAsString(this);
         } catch (Exception e) {
             logger.error("Error converting to JSON", e);
@@ -102,6 +102,7 @@ public abstract class CatalogQuery {
             if (jsonInString == null) {
                 return false;
             }
+            ObjectMapper mapper = new ObjectMapper();
             mapper.readTree(jsonInString);
             return true;
         } catch (IOException e) {

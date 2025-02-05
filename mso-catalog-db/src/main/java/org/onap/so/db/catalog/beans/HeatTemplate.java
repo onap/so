@@ -26,27 +26,24 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.Lob;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.openpojo.business.annotation.BusinessKey;
-import uk.co.blackpepper.bowman.annotation.LinkedResource;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
-@RemoteResource("/heatTemplate")
 @Table(name = "heat_template")
 public class HeatTemplate implements Serializable {
 
@@ -122,7 +119,6 @@ public class HeatTemplate implements Serializable {
         return new HashCodeBuilder().append(artifactUuid).append(version).toHashCode();
     }
 
-    @LinkedResource
     public List<HeatTemplate> getChildTemplates() {
         if (childTemplates == null)
             childTemplates = new ArrayList<>();
@@ -173,7 +169,6 @@ public class HeatTemplate implements Serializable {
         this.timeoutMinutes = timeout;
     }
 
-    @LinkedResource
     public Set<HeatTemplateParam> getParameters() {
         if (parameters == null)
             parameters = new HashSet<>();

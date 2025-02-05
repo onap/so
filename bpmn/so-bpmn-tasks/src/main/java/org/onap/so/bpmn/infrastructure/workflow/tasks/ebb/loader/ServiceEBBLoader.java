@@ -25,6 +25,7 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.javatuples.Pair;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.onap.aai.domain.yang.ComposedResource;
 import org.onap.aai.domain.yang.ComposedResources;
 import org.onap.aai.domain.yang.GenericVnf;
@@ -93,8 +94,8 @@ public class ServiceEBBLoader {
 
     public ServiceEBBLoader(UserParamsServiceTraversal userParamsServiceTraversal, CatalogDbClient catalogDbClient,
             VrfValidation vrfValidation, AAIConfigurationResources aaiConfigurationResources,
-            WorkflowActionExtractResourcesAAI workflowActionUtils, BBInputSetupUtils bbInputSetupUtils,
-            BBInputSetup bbInputSetup, ExceptionBuilder exceptionBuilder) {
+            @Qualifier("WorkflowActionExtractResourcesAAI") WorkflowActionExtractResourcesAAI workflowActionUtils,
+            BBInputSetupUtils bbInputSetupUtils, BBInputSetup bbInputSetup, ExceptionBuilder exceptionBuilder) {
         this.userParamsServiceTraversal = userParamsServiceTraversal;
         this.catalogDbClient = catalogDbClient;
         this.vrfValidation = vrfValidation;

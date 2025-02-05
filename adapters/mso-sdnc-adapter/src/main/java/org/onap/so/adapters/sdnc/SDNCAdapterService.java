@@ -26,12 +26,12 @@ package org.onap.so.adapters.sdnc;
 
 import java.net.URL;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebEndpoint;
-import javax.xml.ws.WebServiceClient;
-import javax.xml.ws.WebServiceFeature;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.WebEndpoint;
+import jakarta.xml.ws.WebServiceClient;
+import jakarta.xml.ws.WebServiceFeature;
 import org.onap.so.logger.LoggingAnchor;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,7 +122,7 @@ public class SDNCAdapterService extends Service {
 
     /**
      *
-     * @param features A list of {@link javax.xml.ws.WebServiceFeature} to configure on the proxy. Supported features
+     * @param features A list of {@link jakarta.xml.ws.WebServiceFeature} to configure on the proxy. Supported features
      *        not in the <code>features</code> parameter will have their default values.
      * @return returns SDNCAdapterPortType
      */

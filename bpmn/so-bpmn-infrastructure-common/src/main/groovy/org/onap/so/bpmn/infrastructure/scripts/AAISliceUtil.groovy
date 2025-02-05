@@ -32,7 +32,7 @@ import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import javax.ws.rs.NotFoundException
+import jakarta.ws.rs.NotFoundException
 
 class AAISliceUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(AAISliceUtil.class);

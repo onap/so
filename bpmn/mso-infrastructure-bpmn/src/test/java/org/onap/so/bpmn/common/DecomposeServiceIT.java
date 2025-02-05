@@ -20,16 +20,14 @@
 
 package org.onap.so.bpmn.common;
 
-import static org.onap.so.bpmn.mock.StubResponseDatabase.MockGetServiceResourcesCatalogData;
+import org.junit.Assert;
+import org.junit.Test;
+import org.onap.so.BaseIntegrationTest;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.onap.so.BaseIntegrationTest;
+import static org.onap.so.bpmn.mock.StubResponseDatabase.MockGetServiceResourcesCatalogData;
 
 /**
  * Unit Test for the DecomposeService Flow

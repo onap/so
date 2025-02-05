@@ -38,12 +38,14 @@ import org.onap.so.client.sdnc.SDNCClient;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SDNCVfModuleResources {
 
     @Autowired
+    @Qualifier("VfModuleTopologyOperationRequestMapper")
     private VfModuleTopologyOperationRequestMapper sdncRM;
 
     @Autowired

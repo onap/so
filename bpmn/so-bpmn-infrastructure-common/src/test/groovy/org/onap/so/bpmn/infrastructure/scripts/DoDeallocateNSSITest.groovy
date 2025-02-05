@@ -25,7 +25,7 @@ import org.junit.Test
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
-import org.onap.logging.filter.base.ONAPComponents
+import org.onap.so.logging.filter.base.ONAPComponents
 import org.onap.so.beans.nsmf.JobStatusResponse
 import org.onap.so.beans.nsmf.NssiResponse
 import org.onap.so.beans.nsmf.ResponseDescriptor
@@ -41,7 +41,8 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
+
 
 import static org.junit.Assert.assertNotNull
 import static org.junit.Assert.assertTrue

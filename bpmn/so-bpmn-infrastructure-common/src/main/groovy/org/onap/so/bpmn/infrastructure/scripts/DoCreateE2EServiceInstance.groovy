@@ -23,7 +23,7 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import static org.apache.commons.lang3.StringUtils.*
-import javax.ws.rs.NotFoundException
+import jakarta.ws.rs.NotFoundException
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.Relationship
@@ -34,7 +34,7 @@ import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logging.filter.base.ErrorCode
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
@@ -79,13 +79,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
  *
  */
 public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
-  private static final Logger logger = LoggerFactory.getLogger( DoCreateE2EServiceInstance.class)
-	private static final ObjectMapper mapper
-
-	static {
-		mapper = new ObjectMapper()
-		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true)
-	}
+    private static final Logger logger = LoggerFactory.getLogger( DoCreateE2EServiceInstance.class)
 
 
 	String Prefix="DCRESI_"
@@ -382,6 +376,8 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 	}
 
 	private static <T> T getJsonObject(String jsonstr, Class<T> type) {
+		ObjectMapper mapper = new ObjectMapper()
+		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true)
 		try {
 			return mapper.readValue(jsonstr, type)
 		} catch (IOException e) {

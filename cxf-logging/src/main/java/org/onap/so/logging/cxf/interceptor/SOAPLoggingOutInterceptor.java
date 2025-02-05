@@ -20,19 +20,17 @@
 
 package org.onap.so.logging.cxf.interceptor;
 
-
 import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.binding.soap.interceptor.AbstractSoapInterceptor;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.Phase;
-import org.onap.logging.filter.base.MDCSetup;
+// import org.onap.logging.filter.base.MDCSetup;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-
-
+import org.onap.so.logging.cxf.interceptor.MDCSetup;
 
 public class SOAPLoggingOutInterceptor extends AbstractSoapInterceptor {
 
@@ -64,9 +62,11 @@ public class SOAPLoggingOutInterceptor extends AbstractSoapInterceptor {
 
                 MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, ONAPLogConstants.ResponseStatus.ERROR.toString());
             }
+            // mdcSetup.setLogTimestamp();
+            // mdcSetup.setElapsedTime();
+            logger.info(ONAPLogConstants.Markers.EXIT, "Exiting");
             mdcSetup.setLogTimestamp();
             mdcSetup.setElapsedTime();
-            logger.info(ONAPLogConstants.Markers.EXIT, "Exiting");
         } catch (Exception e) {
             logger.warn("Error in incoming SOAP Message Inteceptor", e);
         }

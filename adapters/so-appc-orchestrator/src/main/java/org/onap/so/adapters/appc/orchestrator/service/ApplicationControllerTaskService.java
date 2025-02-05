@@ -1,6 +1,6 @@
 package org.onap.so.adapters.appc.orchestrator.service;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import org.camunda.bpm.client.ExternalTaskClient;
 import org.onap.so.utils.ExternalTaskServiceUtils;
 import org.springframework.beans.factory.annotation.Autowired;

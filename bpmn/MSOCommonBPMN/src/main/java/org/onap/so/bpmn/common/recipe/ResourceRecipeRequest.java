@@ -40,12 +40,6 @@ import org.slf4j.LoggerFactory;
 public class ResourceRecipeRequest {
 
     private static Logger logger = LoggerFactory.getLogger(ResourceRecipeRequest.class);
-    private static final ObjectMapper mapper;
-
-    static {
-        mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
-    }
 
     @JsonProperty("resourceInput")
     private BpmnParam resourceInput;
@@ -153,6 +147,8 @@ public class ResourceRecipeRequest {
 
     @Override
     public String toString() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
         String jsonStr = "ResourceRecipeRequest";
         try {
             jsonStr = mapper.writeValueAsString(this);

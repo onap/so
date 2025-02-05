@@ -14,6 +14,8 @@ camunda:
     job-execution:
       max-pool-size: 30
       core-pool-size: 3
+    jdbc-batch-processing: false  ##Added this
+    database-schema-update: true  # Ensure schema updates are applied automatically
 pnf:
   dmaap:
     host: message-router

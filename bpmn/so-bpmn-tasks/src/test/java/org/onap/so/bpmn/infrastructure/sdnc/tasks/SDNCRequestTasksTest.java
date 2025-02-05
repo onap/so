@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,6 +49,7 @@ import org.onap.so.client.exception.MapperException;
 import org.onap.so.client.sdnc.SDNCClient;
 import org.onap.so.client.sdnc.beans.SDNCRequest;
 import org.onap.so.client.sdnc.endpoint.SDNCTopology;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -56,13 +57,13 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SDNCRequestTasksTest {
+public class SDNCRequestTasksTest extends SDNCRequestTasks {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
     @InjectMocks
-    SDNCRequestTasks sndcRequestTasks;
+    SDNCRequestTasks sndcRequestTasks = new SDNCRequestTasks();
 
     @Mock
     SDNCClient sdncClient;
@@ -137,7 +138,7 @@ public class SDNCRequestTasksTest {
                 new String(Files.readAllBytes(Paths.get("src/test/resources/__files/SDNC_Async_Request2.xml")));
         delegateExecution.setVariable("correlationName_MESSAGE", sdncResponse);
         sndcRequestTasks.processCallback(delegateExecution);
-        assertEquals(true, delegateExecution.getVariable("isCallbackCompleted"));
+        assertEquals(true, delegateExecution.getVariable(IS_CALLBACK_COMPLETED));
     }
 
     @Test
@@ -149,9 +150,9 @@ public class SDNCRequestTasksTest {
         db = dbf.newDocumentBuilder();
         Document doc = db.parse(new InputSource(new StringReader(sdncResponse)));
 
-        String finalMessageIndicator = SDNCRequestTasks.getXmlElement(doc, "//*:ack-final-indicator");
-        String responseCode = SDNCRequestTasks.getXmlElement(doc, "/input/response-code");
-        String responseMessage = SDNCRequestTasks.getXmlElement(doc, "/input/response-message");
+        String finalMessageIndicator = getXmlElement(doc, "//*:ack-final-indicator");
+        String responseCode = getXmlElement(doc, "/input/response-code");
+        String responseMessage = getXmlElement(doc, "/input/response-message");
 
         assertEquals("Y", finalMessageIndicator);
         assertEquals("200", responseCode);

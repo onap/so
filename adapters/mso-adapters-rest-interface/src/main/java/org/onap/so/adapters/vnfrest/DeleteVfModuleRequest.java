@@ -22,7 +22,7 @@ package org.onap.so.adapters.vnfrest;
 
 
 import java.io.Serializable;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.onap.so.entity.MsoRequest;
 import com.fasterxml.jackson.annotation.JsonRootName;
 

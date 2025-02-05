@@ -30,11 +30,11 @@ import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("PnfManagement")
 public class PnfManagementImpl implements PnfManagement {
 
     @Override
-    public Optional<Pnf> getEntryFor(String pnfCorrelationId) {
+    public Optional<org.onap.aai.domain.yang.Pnf> getEntryFor(String pnfCorrelationId) {
         AAIRestClientImpl restClient = new AAIRestClientImpl();
         return restClient.getPnfByName(pnfCorrelationId);
     }

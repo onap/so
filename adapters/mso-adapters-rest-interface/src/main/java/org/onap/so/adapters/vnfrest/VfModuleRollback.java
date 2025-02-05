@@ -21,7 +21,7 @@
 package org.onap.so.adapters.vnfrest;
 
 
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.openstack.beans.VnfRollback;
 import com.fasterxml.jackson.annotation.JsonRootName;

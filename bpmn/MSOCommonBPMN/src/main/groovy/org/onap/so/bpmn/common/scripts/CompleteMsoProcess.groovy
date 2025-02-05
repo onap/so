@@ -22,13 +22,11 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import org.onap.so.logger.LoggingAnchor
+
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.db.request.beans.InfraActiveRequests
 import org.onap.so.db.request.client.RequestsDbClient
-import org.onap.logging.filter.base.ErrorCode
-import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.onap.so.bpmn.core.UrnPropertiesReader;

@@ -20,22 +20,16 @@
 
 package org.onap.so.bpmn.common.scripts;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*
 
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
-import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
-
-import org.onap.so.bpmn.mock.FileUtil
-
 import org.mockito.junit.MockitoJUnitRunner;
+
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class SDNCAdapterUtilsTest {

@@ -23,7 +23,7 @@ package org.onap.so.client.dmaap.rest;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriBuilder;
 import org.onap.so.client.RestClient;
 import org.onap.so.client.dmaap.Publisher;
 

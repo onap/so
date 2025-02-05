@@ -107,36 +107,43 @@ public abstract class ApiException extends Exception {
             this.originalHttpResponseCode(originalHttpResponseCode);
         }
 
+        // @SuppressWarnings("unchecked")
         public T message(String message) {
             this.message = message;
             return (T) this;
         }
 
+        // @SuppressWarnings("unchecked")
         public T cause(Throwable cause) {
             this.cause = cause;
             return (T) this;
         }
 
+        // @SuppressWarnings("unchecked")
         public T httpResponseCode(int httpResponseCode) {
             this.httpResponseCode = httpResponseCode;
             return (T) this;
         }
 
+        // @SuppressWarnings("unchecked")
         public T messageID(String messageID) {
             this.messageID = messageID;
             return (T) this;
         }
 
+        // @SuppressWarnings("unchecked")
         public T errorInfo(ErrorLoggerInfo errorLoggerInfo) {
             this.errorLoggerInfo = errorLoggerInfo;
             return (T) this;
         }
 
+        // @SuppressWarnings("unchecked")
         public T variables(List<String> variables) {
             this.variables = variables;
             return (T) this;
         }
 
+        // @SuppressWarnings("unchecked")
         public T originalHttpResponseCode(HttpStatus originalHttpResponseCode) {
             this.originalHttpResponseCode = originalHttpResponseCode;
             return (T) this;

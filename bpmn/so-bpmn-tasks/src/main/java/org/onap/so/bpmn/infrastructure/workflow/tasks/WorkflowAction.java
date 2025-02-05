@@ -963,7 +963,8 @@ public class WorkflowAction {
             if (northBoundRequest.getIsToplevelflow() != null) {
                 execution.setVariable(BBConstants.G_ISTOPLEVELFLOW, northBoundRequest.getIsToplevelflow());
             }
-            List<OrchestrationFlow> flows = northBoundRequest.getOrchestrationFlowList();
+            List<OrchestrationFlow> flows =
+                    catalogDbClient.getOrchestrationFlowListForNorthboundRequest(northBoundRequest.getId());
             if (flows == null) {
                 flows = new ArrayList<>();
             } else {

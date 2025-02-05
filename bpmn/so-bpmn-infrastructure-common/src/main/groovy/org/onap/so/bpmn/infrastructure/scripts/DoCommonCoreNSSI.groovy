@@ -33,7 +33,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
-import org.onap.logging.filter.base.ONAPComponents
+import org.onap.so.logging.filter.base.ONAPComponents
 import org.onap.so.bpmn.common.scripts.*
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.json.JsonUtils
@@ -43,8 +43,8 @@ import org.onap.so.serviceinstancebeans.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import javax.ws.rs.NotFoundException
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.NotFoundException
+import jakarta.ws.rs.core.Response
 
 import static org.apache.commons.lang3.StringUtils.isBlank
 
@@ -55,7 +55,6 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
     private static final String SLICE_PROFILE_TEMPLATE = "{\"sliceProfileId\": \"%s\"}"
 
     private static final Logger LOGGER = LoggerFactory.getLogger( DoCommonCoreNSSI.class)
-    private static final ObjectMapper mapper = new ObjectMapper()
 
     private JsonUtils jsonUtil = new JsonUtils()
     private ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -95,7 +94,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
         // Slice Profile
         String sliceProfile = execution.getVariable("sliceParams")
-
+        
       /*  if(jsonUtil.jsonValueExists(execution.getVariable("sliceParams"), "sliceProfile")) {
             sliceProfile = jsonUtil.getJsonValue(execution.getVariable("sliceParams"), "sliceProfile")
         }
@@ -625,6 +624,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
             serviceVnfs = jsonUtil.getJsonValue(json, "serviceResources.serviceVnfs") ?: ""
 
+            ObjectMapper mapper = new ObjectMapper()
+
             List<Object> vnfList = mapper.readValue(serviceVnfs, List.class)
             LOGGER.debug("vnfList:  "+vnfList)
 
@@ -764,7 +765,12 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
             snssaiList.add(snssaisMap)
         }
 
-        Map<String, Object> nSsai = new LinkedHashMap<>()
+        //    Map<String, List<Map<String, String>>> supportedNssaiDetails = new HashMap<>()
+        //    supportedNssaiDetails.put("sNssai", supportedNssaiDetails)
+
+        ObjectMapper mapper = new ObjectMapper()
+
+        Map<String, Object> nSsai= new LinkedHashMap<>()
         nSsai.put("sNssai", snssaiList)
 
        // String supportedsNssaiJson = mapper.writeValueAsString(snssaiList)
@@ -1010,6 +1016,8 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
             Map<String, Object> requestDetailsMap = new LinkedHashMap<>()
             requestDetailsMap.put("requestDetails", requestDetails)
+
+            ObjectMapper mapper = new ObjectMapper()
 
             response = mapper.writeValueAsString(requestDetailsMap)
         }

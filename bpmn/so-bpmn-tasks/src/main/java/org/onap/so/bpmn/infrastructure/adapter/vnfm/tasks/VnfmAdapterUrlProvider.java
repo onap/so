@@ -22,6 +22,7 @@ package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks;
 
 import java.net.URI;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -38,7 +39,8 @@ public class VnfmAdapterUrlProvider {
     private final URI baseUri;
 
     @Autowired
-    public VnfmAdapterUrlProvider(final VnfmBasicHttpConfigProvider etsiVnfmAdapter) {
+    public VnfmAdapterUrlProvider(
+            @Qualifier("VnfmBasicHttpConfigProvider") final VnfmBasicHttpConfigProvider etsiVnfmAdapter) {
         this.baseUri = UriComponentsBuilder.fromHttpUrl(etsiVnfmAdapter.getUrl()).build().toUri();
     }
 

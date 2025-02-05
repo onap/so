@@ -35,7 +35,6 @@ import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
-import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 
 import static org.mockito.Mockito.spy
 import static org.mockito.Mockito.times
@@ -43,7 +42,7 @@ import static org.mockito.Mockito.verify
 import static org.mockito.Mockito.when
 import static org.mockito.ArgumentMatchers.eq
 
-import javax.ws.rs.NotFoundException
+import jakarta.ws.rs.NotFoundException
 
 class DoActivateCoreNSSITest extends MsoGroovyTest {
 

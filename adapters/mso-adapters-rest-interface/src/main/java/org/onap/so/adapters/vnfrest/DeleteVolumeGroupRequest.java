@@ -21,7 +21,7 @@
 package org.onap.so.adapters.vnfrest;
 
 
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.onap.so.entity.MsoRequest;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.apache.commons.lang3.builder.ToStringBuilder;

@@ -20,8 +20,6 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import org.junit.Before
-import org.mockito.MockitoAnnotations
 
 import static org.mockito.Mockito.*
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity

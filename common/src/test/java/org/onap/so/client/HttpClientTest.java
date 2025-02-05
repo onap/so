@@ -32,7 +32,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import org.junit.Rule;
 import org.junit.Test;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 public class HttpClientTest {
@@ -70,7 +70,6 @@ public class HttpClientTest {
         URL url = new URL("http://localhost:" + wireMockRule.port() + "/services/sdnc/post");
         HttpClient client = httpClientFactory.newJsonClient(url, ONAPComponents.BPMN);
 
-        client.addAdditionalHeader("Accept", "application/json");
         client.addAdditionalHeader("id", null);
 
         client.post("{}");
@@ -89,7 +88,6 @@ public class HttpClientTest {
         HttpClient client = httpClientFactory.newJsonClient(url, ONAPComponents.BPMN);
 
         client.addBasicAuthHeader("", "12345");
-        client.addAdditionalHeader("Accept", "application/json");
 
         client.post("{}");
 
@@ -180,7 +178,6 @@ public class HttpClientTest {
         URL url = new URL("http://localhost:" + wireMockRule.port() + "/services/sdnc/post");
         HttpClient client = httpClientFactory.newTextXmlClient(url, ONAPComponents.BPMN);
 
-        client.addAdditionalHeader("Accept", "text/xml");
         client.addAdditionalHeader("id", null);
 
         client.post("{}");
@@ -199,7 +196,6 @@ public class HttpClientTest {
         HttpClient client = httpClientFactory.newTextXmlClient(url, ONAPComponents.BPMN);
 
         client.addBasicAuthHeader("", "12345");
-        client.addAdditionalHeader("Accept", "text/xml");
 
         client.post("{}");
 

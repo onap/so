@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Optional;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.onap.appc.client.lcm.model.Action;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;

@@ -20,7 +20,7 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule
+
 import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
@@ -28,14 +28,13 @@ import org.camunda.bpm.engine.repository.ProcessDefinition
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Ignore
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.domain.AllottedResource
 import org.onap.so.bpmn.core.domain.ModelInfo

@@ -30,7 +30,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logging.filter.base.ErrorCode
 import org.onap.so.beans.nsmf.CustomerInfo
 import org.onap.so.beans.nsmf.NetworkType
 import org.onap.so.beans.nsmf.NssInstance
@@ -48,7 +48,7 @@ import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import javax.ws.rs.NotFoundException
+import jakarta.ws.rs.NotFoundException
 import java.util.function.Consumer
 
 import static org.apache.commons.lang3.StringUtils.isBlank

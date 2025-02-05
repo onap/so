@@ -32,8 +32,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 import org.apache.commons.lang.StringUtils;
 import org.camunda.bpm.engine.runtime.Execution;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
@@ -44,7 +44,7 @@ import org.onap.so.bpmn.core.domain.VnfResource;
 import org.onap.so.bpmn.core.json.JsonUtils;
 import org.onap.so.client.HttpClient;
 import org.onap.so.client.HttpClientFactory;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -58,16 +58,6 @@ public class ResourceRequestBuilder {
     private static String SERVICE_URL_SERVICE_INSTANCE = "/v2/serviceResources";
 
     private static Logger logger = LoggerFactory.getLogger(ResourceRequestBuilder.class);
-    private static final ObjectMapper mapper = new ObjectMapper();
-    private static final ObjectMapper mapperWithWrap;
-    private static final ObjectMapper mapperWithOutWrap;
-
-    static {
-        mapperWithWrap = new ObjectMapper();
-        mapperWithWrap.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
-        mapperWithOutWrap = new ObjectMapper();
-        mapperWithOutWrap.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-    }
 
     static JsonUtils jsonUtil = new JsonUtils();
 
@@ -402,13 +392,16 @@ public class ResourceRequestBuilder {
 
         String value = apiResponse.readEntity(String.class);
 
-        HashMap<String, Object> map = mapper.readValue(value, HashMap.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        HashMap<String, Object> map = objectMapper.readValue(value, HashMap.class);
         return map;
     }
 
     public static <T> T getJsonObject(String jsonstr, Class<T> type) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
         try {
-            return mapperWithWrap.readValue(jsonstr, type);
+            return mapper.readValue(jsonstr, type);
         } catch (IOException e) {
             logger.error("fail to unMarshal json {}", e.getMessage());
         }
@@ -416,9 +409,11 @@ public class ResourceRequestBuilder {
     }
 
     public static String getJsonString(Object srcObj) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         String jsonStr = null;
         try {
-            jsonStr = mapperWithOutWrap.writeValueAsString(srcObj);
+            jsonStr = mapper.writeValueAsString(srcObj);
         } catch (JsonProcessingException e) {
             logger.error("SdcToscaParserException", e);
         }

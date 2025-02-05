@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory
 
 public class DeleteVFCNSResource extends AbstractServiceTaskProcessor {
 
-    private static final ObjectMapper mapper = new ObjectMapper()
     String Prefix = "DCUSE_"
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     JsonUtils jsonUtil = new JsonUtils()
@@ -46,7 +45,7 @@ public class DeleteVFCNSResource extends AbstractServiceTaskProcessor {
         logger.info(" ***** start preProcessRequest *****")
 
         String resourceInputStr = execution.getVariable("resourceInput")
-        ResourceInput resourceInput = mapper.readValue(resourceInputStr, ResourceInput.class)
+        ResourceInput resourceInput = new ObjectMapper().readValue(resourceInputStr, ResourceInput.class)
 
         String globalSubscriberId = resourceInput.getGlobalSubscriberId()
         String serviceType = execution.getVariable("serviceType")

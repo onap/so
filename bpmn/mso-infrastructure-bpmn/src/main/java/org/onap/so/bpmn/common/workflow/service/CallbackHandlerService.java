@@ -29,15 +29,17 @@ import java.util.Map;
 import org.onap.so.logger.LoggingAnchor;
 import org.camunda.bpm.engine.MismatchingMessageCorrelationException;
 import org.camunda.bpm.engine.OptimisticLockingException;
+import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.runtime.Execution;
 import org.camunda.bpm.engine.runtime.MessageCorrelationResult;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -52,6 +54,14 @@ public class CallbackHandlerService {
     public static final long SLOW_POLL_INT_MS = 1000;
 
     private static final Logger logger = LoggerFactory.getLogger(CallbackHandlerService.class);
+
+    @Autowired
+    protected ProcessEngine processEngine;
+
+    @Bean
+    public RuntimeService runtimeService() {
+        return processEngine.getRuntimeService();
+    }
 
     private RuntimeService runtimeService;
 

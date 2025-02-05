@@ -40,8 +40,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.util.UriComponentsBuilder;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -64,7 +64,7 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
     @Value("${wiremock.server.port}")
     private String wiremockPort;
 
-    private final String basePath = "/onap/so/infra/workflowSpecifications";
+    private final String basePath = "onap/so/infra/workflowSpecifications";
 
     @Test
     public void queryWorkflowSpecificationsByVnfModelUUID_Test_Success()

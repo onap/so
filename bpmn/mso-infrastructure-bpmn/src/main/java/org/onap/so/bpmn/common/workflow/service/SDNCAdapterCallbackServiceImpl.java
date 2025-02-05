@@ -22,12 +22,12 @@
 
 package org.onap.so.bpmn.common.workflow.service;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-import javax.ws.rs.core.Context;
-import javax.xml.ws.WebServiceContext;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
+import jakarta.ws.rs.core.Context;
+import jakarta.xml.ws.WebServiceContext;
 import org.onap.so.bpmn.common.adapter.sdnc.SDNCAdapterCallbackRequest;
 import org.onap.so.bpmn.common.adapter.sdnc.SDNCAdapterResponse;
 import org.onap.so.bpmn.common.adapter.sdnc.SDNCCallbackAdapterPortType;

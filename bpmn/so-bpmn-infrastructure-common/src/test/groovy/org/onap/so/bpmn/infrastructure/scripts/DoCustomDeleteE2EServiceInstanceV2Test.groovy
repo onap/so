@@ -22,7 +22,7 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 import static org.mockito.Mockito.times
 import static org.mockito.Mockito.when
-import javax.ws.rs.core.UriBuilder
+import jakarta.ws.rs.core.UriBuilder
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
