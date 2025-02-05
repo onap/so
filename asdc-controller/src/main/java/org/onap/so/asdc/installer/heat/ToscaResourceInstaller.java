@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.LockAcquisitionException;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.sdc.api.notification.IArtifactInfo;
 import org.onap.sdc.api.notification.IResourceInstance;
 import org.onap.sdc.api.notification.IStatusData;

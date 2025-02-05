@@ -22,7 +22,7 @@ package org.onap.so.apihandlerinfra.logging;
 
 import java.io.Serializable;
 import org.onap.so.logger.MessageEnum;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 
 
 

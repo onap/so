@@ -27,6 +27,7 @@ import org.onap.sdc.api.notification.INotificationData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 /**
@@ -38,6 +39,7 @@ import org.springframework.stereotype.Component;
 public final class ASDCNotificationCallBack implements INotificationCallback {
 
     @Autowired
+    @Lazy
     private ASDCController asdcController;
 
     protected static final Logger logger = LoggerFactory.getLogger(ASDCNotificationCallBack.class);
