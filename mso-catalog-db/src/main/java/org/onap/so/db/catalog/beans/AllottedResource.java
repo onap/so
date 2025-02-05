@@ -28,7 +28,8 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
+// import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -40,11 +41,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.openpojo.business.annotation.BusinessKey;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
-import uk.co.blackpepper.bowman.annotation.LinkedResource;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
-@RemoteResource("/allottedResource")
 @Table(name = "allotted_resource")
 public class AllottedResource implements Serializable {
 
@@ -77,7 +75,7 @@ public class AllottedResource implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "allottedResource")
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "allottedResource")
     @NotFound(action = NotFoundAction.IGNORE)
     private Set<AllottedResourceCustomization> allotedResourceCustomization;
 
@@ -109,7 +107,6 @@ public class AllottedResource implements Serializable {
         this.created = new Date();
     }
 
-    @LinkedResource
     public Set<AllottedResourceCustomization> getAllotedResourceCustomization() {
         if (allotedResourceCustomization == null)
             allotedResourceCustomization = new HashSet<>();

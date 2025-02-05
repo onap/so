@@ -30,10 +30,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
-@RemoteResource("/buildingBlockRollback")
 @Table(name = "building_block_rollback")
 public class BuildingBlockRollback implements Serializable {
 
