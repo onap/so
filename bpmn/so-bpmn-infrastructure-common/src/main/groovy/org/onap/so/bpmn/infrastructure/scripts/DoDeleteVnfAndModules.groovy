@@ -47,7 +47,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.aaiclient.client.aai.AAIObjectType
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logging.filter.base.ErrorCode
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

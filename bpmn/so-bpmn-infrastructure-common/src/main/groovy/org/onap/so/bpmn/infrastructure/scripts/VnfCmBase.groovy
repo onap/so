@@ -37,7 +37,7 @@ import org.onap.appc.client.lcm.model.Action
 import org.onap.appc.client.lcm.model.ActionIdentifiers
 import org.onap.appc.client.lcm.model.Flags
 import org.onap.appc.client.lcm.model.Status
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logging.filter.base.ErrorCode
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils

@@ -36,7 +36,7 @@ import org.onap.aai.domain.yang.RelationshipData;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.SliceProfile;
 import org.onap.aaiclient.client.aai.AAIRestClientImpl;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.apihandler.camundabeans.CamundaResponse;
 import org.onap.so.apihandler.common.*;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
