@@ -35,7 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.adapters.vdu.CloudInfo;
 import org.onap.so.adapters.vdu.PluginAction;

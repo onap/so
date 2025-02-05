@@ -34,7 +34,7 @@ import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.SDNCVnfResources;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.onap.so.client.orchestration.SDNCVfModuleResources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

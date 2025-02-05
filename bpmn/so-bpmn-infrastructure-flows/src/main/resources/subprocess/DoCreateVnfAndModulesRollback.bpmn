@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_Wblj8GyfEeWUWLTvug7ZOg" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
-  <bpmn2:process id="DoCreateVnfAndModulesRollback" name="DoCreateVnfAndModulesRollback" isExecutable="true">
+  <bpmn2:process id="DoCreateVnfAndModulesRollback" name="DoCreateVnfAndModulesRollback" isExecutable="true" camunda:historyTimeToLive="P30D">
     <bpmn2:subProcess id="SubProcess_1" name="Rollback Error Handling" triggeredByEvent="true">
       <bpmn2:startEvent id="CatchExceptions" name="Catch Exceptions">
         <bpmn2:outgoing>SequenceFlow_12</bpmn2:outgoing>
