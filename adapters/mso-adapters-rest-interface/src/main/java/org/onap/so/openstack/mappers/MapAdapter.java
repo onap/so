@@ -24,7 +24,7 @@ package org.onap.so.openstack.mappers;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import org.w3c.dom.Element;
 
 public class MapAdapter extends XmlAdapter<MapEntry, Map<String, Object>> {

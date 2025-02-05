@@ -26,13 +26,13 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.onap.so.spring.SpringContextHelper;
 import org.onap.so.test.categories.SpringAware;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = SpringContextHelper.class, initializers = ConfigFileApplicationContextInitializer.class)
+@ContextConfiguration(classes = SpringContextHelper.class, initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles("test")
 @Category(SpringAware.class)
 public class DefaultsTest {

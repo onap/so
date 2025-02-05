@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,8 +26,8 @@ package org.onap.so.adapters.nwrest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Marshaller;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,19 +41,11 @@ import org.slf4j.LoggerFactory;
 public abstract class NetworkRequestCommon implements Serializable {
     private static final long serialVersionUID = -6732431343649282079L;
     private static final Logger logger = LoggerFactory.getLogger(NetworkRequestCommon.class);
-    private static final ObjectMapper mapper;
-
     private Boolean skipAAI = false;
     private String messageId;
     private String notificationUrl;
-
     @JsonProperty
     private boolean synchronous = true;
-
-    static {
-        mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
-    }
 
     public Boolean getSkipAAI() {
         return skipAAI;
@@ -92,7 +84,8 @@ public abstract class NetworkRequestCommon implements Serializable {
     public String toJsonString() {
         String jsonString = null;
         try {
-
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
             jsonString = mapper.writeValueAsString(this);
         } catch (Exception e) {
             logger.debug("Exception:", e);

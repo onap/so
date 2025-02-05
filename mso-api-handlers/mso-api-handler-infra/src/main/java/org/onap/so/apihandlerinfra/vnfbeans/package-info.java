@@ -25,7 +25,7 @@
 // Generated on: 2015.09.03 at 02:02:13 PM EDT
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://org.onap/so/infra/vnf-request/v1",
-        elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://org.onap/so/infra/vnf-request/v1",
+        elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.onap.so.apihandlerinfra.vnfbeans;
 

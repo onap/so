@@ -28,7 +28,7 @@ import static org.junit.Assert.assertFalse
 import static org.junit.Assert.assertTrue
 import static org.mockito.Mockito.spy
 import static org.mockito.Mockito.when
-import javax.ws.rs.core.UriBuilder
+import jakarta.ws.rs.core.UriBuilder
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake

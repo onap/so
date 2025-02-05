@@ -1,10 +1,9 @@
 # will be used as entry in DB to say SITE OFF/ON for healthcheck
 
 server:
-  port: 8080
-  tomcat:
-    threads:
-      max: 50
+    port: 8080
+    tomcat:
+        max-threads: 50
 ssl-enable: false
 mso:
   adapters:
@@ -13,13 +12,11 @@ mso:
       endpoint: http://localhost:8081
   site-name: localDevEnv
   logPath: logs
-
+        
 # H2
 spring:
-  sleuth:
-    enabled: false
   datasource:
-    jdbc-url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;MODE=MySQL
+    jdbc-url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;
     username: sa
     password: sa
     driver-class-name: org.h2.Driver
@@ -27,14 +24,15 @@ spring:
     console:
       enabled: true
       path: /h2
+
   jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: none
-    properties:
+      show-sql: true
       hibernate:
-        dialect: org.hibernate.dialect.MySQL5Dialect
-        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+        dialect: org.hibernate.dialect.MySQLDialect
+        ddl-auto: none
+        ## naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+        naming:
+          implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyHbmImplt
         enable-lazy-load-no-trans: true
 
 
@@ -44,3 +42,6 @@ management:
     enabled: false
     basic:
       enabled: false
+
+
+

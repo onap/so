@@ -3,26 +3,23 @@ package org.onap.so.db.catalog.beans;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.openpojo.business.annotation.BusinessKey;
-import uk.co.blackpepper.bowman.annotation.LinkedResource;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
-@RemoteResource("/activitySpec")
 @Table(name = "activity_spec")
 public class ActivitySpec implements Serializable {
 
@@ -102,7 +99,6 @@ public class ActivitySpec implements Serializable {
         this.created = created;
     }
 
-    @LinkedResource
     public List<WorkflowActivitySpecSequence> getWorkflowActivitySpecSequence() {
         return workflowActivitySpecSequence;
     }
@@ -111,7 +107,6 @@ public class ActivitySpec implements Serializable {
         this.workflowActivitySpecSequence = workflowActivitySpecSequence;
     }
 
-    @LinkedResource
     public List<ActivitySpecUserParameters> getActivitySpecUserParameters() {
         return activitySpecUserParameters;
     }
@@ -120,7 +115,6 @@ public class ActivitySpec implements Serializable {
         this.activitySpecUserParameters = activitySpecUserParameters;
     }
 
-    @LinkedResource
     public List<ActivitySpecActivitySpecCategories> getActivitySpecActivitySpecCategories() {
         return activitySpecActivitySpecCategories;
     }
@@ -130,7 +124,6 @@ public class ActivitySpec implements Serializable {
         this.activitySpecActivitySpecCategories = activitySpecActivitySpecCategories;
     }
 
-    @LinkedResource
     public List<ActivitySpecActivitySpecParameters> getActivitySpecActivitySpecParameters() {
         return activitySpecActivitySpecParameters;
     }
@@ -139,8 +132,6 @@ public class ActivitySpec implements Serializable {
             List<ActivitySpecActivitySpecParameters> activitySpecActivitySpecParameters) {
         this.activitySpecActivitySpecParameters = activitySpecActivitySpecParameters;
     }
-
-
 
     @Override
     public String toString() {

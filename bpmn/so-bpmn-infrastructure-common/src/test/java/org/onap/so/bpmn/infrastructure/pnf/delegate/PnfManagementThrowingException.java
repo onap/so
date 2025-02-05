@@ -28,7 +28,7 @@ import org.onap.so.bpmn.infrastructure.pnf.management.PnfManagement;
 public class PnfManagementThrowingException implements PnfManagement {
 
     @Override
-    public Optional<Pnf> getEntryFor(String pnfCorrelationId) throws IOException {
+    public Optional<org.onap.aai.domain.yang.Pnf> getEntryFor(String pnfCorrelationId) throws IOException {
         throw new IOException();
     }
 

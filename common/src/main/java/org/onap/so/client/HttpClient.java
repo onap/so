@@ -23,9 +23,9 @@ package org.onap.so.client;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.net.URL;
 import java.util.Optional;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 import org.javatuples.Pair;
-import org.onap.logging.filter.base.ONAPComponentsList;
+import org.onap.so.logging.filter.base.ONAPComponentsList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

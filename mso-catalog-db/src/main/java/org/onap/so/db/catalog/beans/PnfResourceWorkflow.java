@@ -1,25 +1,22 @@
 package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.openpojo.business.annotation.BusinessKey;
-import uk.co.blackpepper.bowman.annotation.LinkedResource;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
-@RemoteResource("/pnfResourceWorkflow")
 @Table(name = "pnf_resource_to_workflow")
 public class PnfResourceWorkflow implements Serializable {
 
@@ -73,7 +70,6 @@ public class PnfResourceWorkflow implements Serializable {
         this.pnfResourceModelUUID = pnfResourceModelUUID;
     }
 
-    @LinkedResource
     public PnfResource getPnfResource() {
         return pnfResource;
     }
@@ -82,7 +78,6 @@ public class PnfResourceWorkflow implements Serializable {
         this.pnfResource = pnfResource;
     }
 
-    @LinkedResource
     public Workflow getWorkflow() {
         return workflow;
     }

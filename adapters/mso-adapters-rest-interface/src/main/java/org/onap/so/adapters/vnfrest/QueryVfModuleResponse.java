@@ -23,7 +23,7 @@
 package org.onap.so.adapters.vnfrest;
 
 import java.util.Map;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.onap.so.openstack.beans.VnfStatus;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.slf4j.Logger;

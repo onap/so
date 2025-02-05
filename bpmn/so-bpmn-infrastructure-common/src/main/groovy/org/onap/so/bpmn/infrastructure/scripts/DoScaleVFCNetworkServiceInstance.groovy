@@ -34,9 +34,9 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.camunda.bpm.engine.delegate.BpmnError
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.onap.so.client.HttpClientFactory
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logging.filter.base.ErrorCode
 
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
 
 import org.onap.so.bpmn.infrastructure.vfcmodel.ScaleResource
 import org.onap.so.client.HttpClient
@@ -51,7 +51,7 @@ import org.onap.so.bpmn.infrastructure.vfcmodel.LocationConstraint
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 
 
 
@@ -61,8 +61,7 @@ import org.onap.logging.filter.base.ONAPComponents;
  * flow for VFC Network Service Scale
  */
 public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcessor {
-    private static final Logger logger = LoggerFactory.getLogger( DoScaleVFCNetworkServiceInstance.class)
-    private static final ObjectMapper mapper = new ObjectMapper()
+    private static final Logger logger = LoggerFactory.getLogger( DoScaleVFCNetworkServiceInstance.class);
 
 
     String host = "http://mso.mso.testlab.openecomp.org:8080"
@@ -268,6 +267,7 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
      * @return
      */
     private String objectToJsonStr(Object obj) {
+        ObjectMapper mapper = new ObjectMapper()
         String jsonStr = null
         try {
             jsonStr = mapper.writeValueAsString(obj)
@@ -340,3 +340,4 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
         return nsResourceInputParameterList
     }
 }
+

@@ -30,7 +30,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logging.filter.base.ErrorCode
 import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.db.catalog.beans.OrchestrationStatus
 import org.onap.so.logger.LoggingAnchor

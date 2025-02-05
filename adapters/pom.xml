@@ -14,13 +14,17 @@
   <packaging>pom</packaging>
 
   <modules>
+    <!--comment from here to compile requestdbadapter alone-->
     <module>mso-adapter-utils</module>
     <module>mso-adapters-rest-interface</module>
     <module>mso-sdnc-adapter</module>
+    <!--comment till here to compile requestdbadapter alone-->
     <module>mso-requests-db-adapter</module>
+    <!--comment from here to compile requestdbadapter alone-->
     <module>mso-catalog-db-adapter</module>
     <module>mso-openstack-adapters</module>
     <module>so-appc-orchestrator</module>
+    <!--comment till here to compile requestdbadapter alone-->
   </modules>
 
   <dependencies>
@@ -35,7 +39,7 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-contract-wiremock</artifactId>
-      <scope>test</scope>
+      <version>4.1.0</version>
     </dependency>
     <dependency>
       <groupId>org.onap.so</groupId>

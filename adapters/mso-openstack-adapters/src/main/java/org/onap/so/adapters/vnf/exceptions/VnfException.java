@@ -22,7 +22,7 @@ package org.onap.so.adapters.vnf.exceptions;
 
 
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 

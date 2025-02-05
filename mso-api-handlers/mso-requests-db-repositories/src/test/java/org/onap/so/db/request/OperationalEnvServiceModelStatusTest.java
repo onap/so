@@ -82,6 +82,7 @@ public class OperationalEnvServiceModelStatusTest {
         if (foundStatus == null)
             throw new Exception("No status found");
 
-        assertEquals(new Integer(1), foundStatus.getRetryCount());
+        Integer integer = Integer.valueOf(1);
+        assertEquals(integer, foundStatus.getRetryCount());
     }
 }

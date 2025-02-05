@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriBuilder;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryObjectPlurals;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryObjectType;
 

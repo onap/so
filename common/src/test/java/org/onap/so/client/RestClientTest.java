@@ -35,13 +35,13 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Optional;
 import javax.net.ssl.SSLException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.client.ResponseProcessingException;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriBuilderException;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.client.ResponseProcessingException;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriBuilderException;
 import org.javatuples.Pair;
 import org.junit.Rule;
 import org.junit.Test;
@@ -49,8 +49,8 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.logging.filter.base.ONAPComponents;
-import org.onap.logging.filter.base.ONAPComponentsList;
+import org.onap.so.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponentsList;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
@@ -65,8 +65,7 @@ public class RestClientTest {
     public ExpectedException thrown = ExpectedException.none();
 
     @Rule
-    public WireMockRule wireMockRule = new WireMockRule(
-            WireMockConfiguration.options().dynamicPort().extensions(new ResponseTemplateTransformer(false)));
+    public WireMockRule wireMockRule = new WireMockRule(WireMockConfiguration.options().dynamicPort());
 
     @Test
     public void retries() throws Exception {

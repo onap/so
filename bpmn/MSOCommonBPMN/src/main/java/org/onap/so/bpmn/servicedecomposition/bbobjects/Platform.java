@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
-import javax.persistence.Id;
+import jakarta.persistence.Id;
 
 @JsonRootName("platform")
 public class Platform implements Serializable, ShallowCopy<Platform> {

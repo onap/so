@@ -27,7 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import org.junit.Test;
 import org.onap.so.asdc.BaseTest;
 import org.onap.so.db.catalog.beans.VnfResourceWorkflow;

@@ -28,7 +28,6 @@ import org.junit.Before;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.onap.so.adapters.tasks.inventory.CreateAAIInventory;
 import org.onap.so.audit.beans.AuditInventory;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.so.objects.audit.AAIObjectAuditList;

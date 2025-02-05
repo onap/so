@@ -23,7 +23,7 @@ package org.onap.so.adapters.tenantrest;
 
 
 import java.io.Serializable;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "createTenantResponse")
 public class CreateTenantResponse implements Serializable {

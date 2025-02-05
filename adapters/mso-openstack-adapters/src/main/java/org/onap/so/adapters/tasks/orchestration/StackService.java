@@ -30,10 +30,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.xml.XMLConstants;
-import javax.xml.bind.JAXB;
+import jakarta.xml.bind.JAXB;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.ws.Holder;
+import jakarta.xml.ws.Holder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.camunda.bpm.client.task.ExternalTask;
@@ -95,7 +95,7 @@ public class StackService extends ExternalTaskUtils {
         MutableBoolean success = new MutableBoolean();
         MutableBoolean backout = new MutableBoolean();
         MutableBoolean os3Nw = new MutableBoolean();
-        Holder<String> canonicalStackId = new Holder<>();
+        jakarta.xml.ws.Holder<String> canonicalStackId = new Holder<>();
         String errorMessage = "";
         try {
             if (xmlRequest != null) {
@@ -145,8 +145,8 @@ public class StackService extends ExternalTaskUtils {
         }
     }
 
-    private void createVolumeGroup(String xmlRequest, Holder<String> canonicalStackId, MutableBoolean backout,
-            MutableBoolean success) throws VnfException {
+    private void createVolumeGroup(String xmlRequest, jakarta.xml.ws.Holder<String> canonicalStackId,
+            MutableBoolean backout, MutableBoolean success) throws VnfException {
         CreateVolumeGroupRequest req = JAXB.unmarshal(new StringReader(xmlRequest), CreateVolumeGroupRequest.class);
         String completeVnfVfModuleType = req.getVnfType() + "::" + req.getVfModuleType();
         boolean isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
@@ -165,8 +165,8 @@ public class StackService extends ExternalTaskUtils {
         backout.setValue(!req.getSuppressBackout());
     }
 
-    private void createVfModule(String xmlRequest, Holder<String> canonicalStackId, MutableBoolean backout,
-            MutableBoolean success) throws VnfException {
+    private void createVfModule(String xmlRequest, jakarta.xml.ws.Holder<String> canonicalStackId,
+            MutableBoolean backout, MutableBoolean success) throws VnfException {
         CreateVfModuleRequest req = JAXB.unmarshal(new StringReader(xmlRequest), CreateVfModuleRequest.class);
         String completeVnfVfModuleType = req.getVnfType() + "::" + req.getVfModuleType();
         boolean isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
@@ -187,10 +187,10 @@ public class StackService extends ExternalTaskUtils {
         backout.setValue(req.getBackout());
     }
 
-    private void deleteVfModule(String xmlRequest, Holder<String> canonicalStackId, MutableBoolean backout,
-            MutableBoolean success) throws VnfException {
+    private void deleteVfModule(String xmlRequest, jakarta.xml.ws.Holder<String> canonicalStackId,
+            MutableBoolean backout, MutableBoolean success) throws VnfException {
         backout.setFalse();
-        Holder<Map<String, String>> outputs = new Holder<>();
+        jakarta.xml.ws.Holder<Map<String, String>> outputs = new jakarta.xml.ws.Holder<>();
         DeleteVfModuleRequest req = JAXB.unmarshal(new StringReader(xmlRequest), DeleteVfModuleRequest.class);
         boolean isMulticloud = vnfAdapterUtils.isMulticloudMode(null, req.getCloudSiteId());
         if (isMulticloud) {
@@ -208,18 +208,18 @@ public class StackService extends ExternalTaskUtils {
         }
     }
 
-    private void deleteVolumeGroup(String xmlRequest, Holder<String> canonicalStackId, MutableBoolean backout,
-            MutableBoolean success) throws VnfException {
+    private void deleteVolumeGroup(String xmlRequest, jakarta.xml.ws.Holder<String> canonicalStackId,
+            MutableBoolean backout, MutableBoolean success) throws VnfException {
         backout.setFalse();
         DeleteVolumeGroupRequest req = JAXB.unmarshal(new StringReader(xmlRequest), DeleteVolumeGroupRequest.class);
         vnfAdapterImpl.deleteVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
-                req.getVolumeGroupStackId(), null, req.getMsoRequest(), new Holder<>());
+                req.getVolumeGroupStackId(), null, req.getMsoRequest(), new jakarta.xml.ws.Holder<>());
         success.setTrue();
         canonicalStackId.value = req.getVolumeGroupStackId();
     }
 
-    private void createNetwork(String xmlRequest, Holder<String> canonicalStackId, MutableBoolean backout,
-            MutableBoolean success, MutableBoolean os3) throws NetworkException {
+    private void createNetwork(String xmlRequest, jakarta.xml.ws.Holder<String> canonicalStackId,
+            MutableBoolean backout, MutableBoolean success, MutableBoolean os3) throws NetworkException {
 
         CreateNetworkRequest req = JAXB.unmarshal(new StringReader(xmlRequest), CreateNetworkRequest.class);
         HashMap<String, String> params = (HashMap<String, String>) req.getNetworkParams();
@@ -269,8 +269,8 @@ public class StackService extends ExternalTaskUtils {
         backout.setValue(req.getBackout());
     }
 
-    private void deleteNetwork(String xmlRequest, Holder<String> canonicalStackId, MutableBoolean backout,
-            MutableBoolean success) throws NetworkException {
+    private void deleteNetwork(String xmlRequest, jakarta.xml.ws.Holder<String> canonicalStackId,
+            MutableBoolean backout, MutableBoolean success) throws NetworkException {
         backout.setFalse();
         DeleteNetworkRequest req = JAXB.unmarshal(new StringReader(xmlRequest), DeleteNetworkRequest.class);
 
@@ -281,8 +281,8 @@ public class StackService extends ExternalTaskUtils {
         success.setTrue();
     }
 
-    private void rollbackNetwork(String xmlRequest, Holder<String> canonicalStackId, MutableBoolean backout,
-            MutableBoolean success) throws NetworkException {
+    private void rollbackNetwork(String xmlRequest, jakarta.xml.ws.Holder<String> canonicalStackId,
+            MutableBoolean backout, MutableBoolean success) throws NetworkException {
         backout.setFalse();
         RollbackNetworkRequest req = JAXB.unmarshal(new StringReader(xmlRequest), RollbackNetworkRequest.class);
 
@@ -293,8 +293,8 @@ public class StackService extends ExternalTaskUtils {
         success.setTrue();
     }
 
-    private void updateNetwork(String xmlRequest, Holder<String> canonicalStackId, MutableBoolean backout,
-            MutableBoolean success) throws NetworkException {
+    private void updateNetwork(String xmlRequest, jakarta.xml.ws.Holder<String> canonicalStackId,
+            MutableBoolean backout, MutableBoolean success) throws NetworkException {
         backout.setFalse();
         UpdateNetworkRequest req = JAXB.unmarshal(new StringReader(xmlRequest), UpdateNetworkRequest.class);
         HashMap<String, String> params = (HashMap<String, String>) req.getNetworkParams();
