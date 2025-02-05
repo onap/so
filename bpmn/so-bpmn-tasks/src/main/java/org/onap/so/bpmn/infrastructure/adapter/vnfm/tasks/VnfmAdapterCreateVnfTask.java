@@ -42,6 +42,7 @@ import org.onap.so.client.exception.ExceptionBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import com.google.common.base.Optional;
 
@@ -61,7 +62,8 @@ public class VnfmAdapterCreateVnfTask {
 
     @Autowired
     public VnfmAdapterCreateVnfTask(final ExceptionBuilder exceptionUtil, final ExtractPojosForBB extractPojosForBB,
-            final VnfmAdapterServiceProvider vnfmAdapterServiceProvider) {
+            @Qualifier("VnfmAdapterServiceProviderImpl") final VnfmAdapterServiceProvider vnfmAdapterServiceProvider) {
+        LOGGER.debug("VnfmAdapterCreateVnfTask bean created.....");
         this.exceptionUtil = exceptionUtil;
         this.extractPojosForBB = extractPojosForBB;
         this.vnfmAdapterServiceProvider = vnfmAdapterServiceProvider;

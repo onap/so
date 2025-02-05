@@ -5,51 +5,68 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
 
-
-public abstract class BaseWebSecurityConfigurerAdapter /* implements WebSecurityConfigurer */ {
+@Configuration
+public abstract class BaseWebSecurityConfigurerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseWebSecurityConfigurerAdapter.class);
 
     @Autowired
-    protected UserDetailsService userDetailsService;
+    protected UserDetailsServiceImpl userDetailsServiceImpl;
 
     @Autowired
     protected BCryptPasswordEncoder passwordEncoder;
 
     abstract HttpSecurityConfigurer getHttpSecurityConfigurer();
 
-
-    public void configure(final WebSecurity web) throws Exception {
-        this.configure(web);
+    public void configureWebSecurity(final WebSecurity web) throws Exception {
         final StrictHttpFirewall firewall = new MSOSpringFirewall();
         web.httpFirewall(firewall);
     }
 
     @Bean(name = "httpSecurityBeanOfBaseWebSecurityConfigurerAdapter")
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain httpSecurityFilterChain(HttpSecurity http) throws Exception {
+        LOGGER.debug("HttpSecurity configuration ...");
         HttpSecurityConfigurer httpSecurityConfigurer = getHttpSecurityConfigurer();
         LOGGER.debug("Injecting {} configuration ...", httpSecurityConfigurer.getClass());
-
         return httpSecurityConfigurer.configure(http);
     }
 
-    @Bean(name = "webSecurityBeanOfBaseWebSecurityConfigurerAdapter")
-    public WebSecurity filterChain(WebSecurity web) throws Exception {
-        this.configure(web);
-        final StrictHttpFirewall firewall = new MSOSpringFirewall();
-        return web.httpFirewall(firewall);
 
+    @Bean(name = "webSecurityBeanOfBaseWebSecurityConfigurerAdapter")
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> {
+            try {
+                configureWebSecurity(web);
+            } catch (Exception e) {
+                LOGGER.error("Error configuring web security", e);
+                throw new RuntimeException(e);
+            }
+        };
     }
 
-    @Bean(name = "authenticationManagerBuilderBeanOfBaseWebSecurityConfigurerAdapter")
-    public SecurityFilterChain filterChain(final AuthenticationManagerBuilder auth) throws Exception {
-        return (SecurityFilterChain) auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
+    // Configure the configureAuthenticationManager
+    @Autowired
+    public void configureAuthenticationManager(AuthenticationManagerBuilder auth) throws Exception {
+        LOGGER.debug("Injecting UserDetailsService and PasswordEncoder ...");
+        auth.userDetailsService(userDetailsServiceImpl).passwordEncoder(passwordEncoder);
+        LOGGER.debug("Out of UserDetailsService and PasswordEncoder ...");
+    }
+
+    // Configure the AuthenticationManagerBuilder
+    @Bean(name = "authenticationManagerBeanOfBaseWebSecurityConfigurerAdapter")
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
+        LOGGER.debug("Injecting AuthenticationManager ...");
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
 
