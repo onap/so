@@ -41,7 +41,7 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.core.WorkflowException;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExceptionBuilderUnitTest {

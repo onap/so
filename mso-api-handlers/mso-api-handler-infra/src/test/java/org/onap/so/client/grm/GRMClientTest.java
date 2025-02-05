@@ -31,7 +31,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;

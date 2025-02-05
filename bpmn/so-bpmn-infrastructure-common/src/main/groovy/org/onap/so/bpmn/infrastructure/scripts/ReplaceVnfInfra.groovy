@@ -35,7 +35,7 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.aaiclient.client.aai.*
 import org.onap.so.client.appc.ApplicationControllerOrchestrator
 import org.onap.so.client.appc.ApplicationControllerSupport
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logging.filter.base.ErrorCode
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

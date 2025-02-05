@@ -20,7 +20,7 @@
 
 package org.onap.so.bpmn.common;
 
-import javax.xml.ws.Endpoint;
+import jakarta.xml.ws.Endpoint;
 import org.camunda.bpm.engine.ProcessEngineServices;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;

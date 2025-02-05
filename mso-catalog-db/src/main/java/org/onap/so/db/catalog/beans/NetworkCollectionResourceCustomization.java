@@ -21,15 +21,12 @@
 package org.onap.so.db.catalog.beans;
 
 import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import uk.co.blackpepper.bowman.annotation.LinkedResource;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 
 @Entity
-@RemoteResource("/networkCollectionResourceCustomization")
 @DiscriminatorValue(value = "NetworkCollection")
 public class NetworkCollectionResourceCustomization extends CollectionResourceCustomization {
 
@@ -41,7 +38,6 @@ public class NetworkCollectionResourceCustomization extends CollectionResourceCu
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "networkResourceCustomization")
     private Set<CollectionNetworkResourceCustomization> networkResourceCustomization;
 
-    @LinkedResource
     public Set<CollectionNetworkResourceCustomization> getNetworkResourceCustomization() {
         return networkResourceCustomization;
     }

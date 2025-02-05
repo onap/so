@@ -27,7 +27,7 @@ package org.onap.so.adapters.nwrest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.openstack.beans.Subnet;
 import com.fasterxml.jackson.annotation.JsonRootName;

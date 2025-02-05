@@ -31,7 +31,7 @@ import org.onap.so.beans.nsmf.oof.TemplateInfo
 
 import static org.onap.so.bpmn.common.scripts.GenericUtils.*
 
-import javax.ws.rs.core.UriBuilder
+import jakarta.ws.rs.core.UriBuilder
 
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.util.OofInfraUtils
@@ -55,7 +55,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 
 class OofUtils {
     private static final Logger logger = LoggerFactory.getLogger( OofUtils.class);
-    private static final ObjectMapper mapper = new ObjectMapper()
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     JsonUtils jsonUtil = new JsonUtils()
@@ -530,7 +529,8 @@ class OofUtils {
         logger.debug( "transactionId is: " + transactionId)
 		String correlator = requestId
         String callbackUrl = UrnPropertiesReader.getVariable("mso.adapters.oof.callback.endpoint") + "/" + messageType + "/" + correlator
-        String json = mapper.writeValueAsString(profileInfo)
+        ObjectMapper objectMapper = new ObjectMapper()
+        String json = objectMapper.writeValueAsString(profileInfo)
         StringBuilder response = new StringBuilder()
         response.append(
                 "{\n" +
@@ -552,7 +552,8 @@ class OofUtils {
         logger.debug( "transactionId is: " + transactionId)
         String correlator = requestId
         String callbackUrl = UrnPropertiesReader.getVariable("mso.adapters.oof.callback.endpoint") + "/" + messageType + "/" + correlator
-        String json = mapper.writeValueAsString(profileInfo)
+        ObjectMapper objectMapper = new ObjectMapper()
+        String json = objectMapper.writeValueAsString(profileInfo)
         StringBuilder response = new StringBuilder()
         response.append(
                 "{\n" +
@@ -576,7 +577,8 @@ class OofUtils {
         logger.debug( "transactionId is: " + transactionId)
 		String correlator = requestId
         String callbackUrl = UrnPropertiesReader.getVariable("mso.adapters.oof.callback.endpoint") + "/" + messageType + "/" + correlator
-        String json = mapper.writeValueAsString(profileInfo);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(profileInfo);
         StringBuilder response = new StringBuilder();
         response.append(
                 "{\n" +
@@ -616,7 +618,8 @@ def transactionId = requestId
 logger.debug( "transactionId is: " + transactionId)
 String correlator = requestId
 String callbackUrl = UrnPropertiesReader.getVariable("mso.adapters.oof.callback.endpoint") + "/" + messageType + "/" + correlator
-String profileJson = mapper.writeValueAsString(profileInfo);
+ObjectMapper objectMapper = new ObjectMapper();
+String profileJson = objectMapper.writeValueAsString(profileInfo);
 JsonParser parser = new JsonParser()
 
 //Prepare requestInfo object
@@ -660,7 +663,7 @@ String callbackUrl = UrnPropertiesReader.getVariable("mso.adapters.oof.callback.
 JsonObject json = new JsonObject()
 json.addProperty("type", nxlType)
 json.addProperty("NxIId", nxlId)
-
+ 
 //Prepare requestInfo object
 JsonObject requestInfo = new JsonObject()
 requestInfo.addProperty("transactionId", transactionId)
@@ -668,16 +671,16 @@ requestInfo.addProperty("requestId", requestId)
 requestInfo.addProperty("callbackUrl", callbackUrl)
 requestInfo.addProperty("sourceId","SO" )
 requestInfo.addProperty("timeout", 600)
-
+ 
 //Prepare addtnlArgs object
 JsonObject addtnlArgs = new JsonObject()
 addtnlArgs.addProperty("serviceInstanceId", serviceInstanceId)
-
+ 
 requestInfo.add("addtnlArgs", addtnlArgs)
 json.add("requestInfo", requestInfo)
-
+ 
 return json.toString()
-
+ 
 }
 
     public String buildSelectNSIRequest(String requestId, TemplateInfo nstInfo, List<TemplateInfo> nsstInfo,

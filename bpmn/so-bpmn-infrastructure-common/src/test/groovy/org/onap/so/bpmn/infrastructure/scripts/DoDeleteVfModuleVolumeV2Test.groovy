@@ -59,7 +59,7 @@ import org.onap.aaiclient.client.graphinventory.exceptions.GraphInventoryUriComp
 import org.springframework.core.env.Environment
 import org.springframework.mock.env.MockEnvironment
 
-import javax.ws.rs.NotFoundException
+import jakarta.ws.rs.NotFoundException
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static org.mockito.Mockito.*

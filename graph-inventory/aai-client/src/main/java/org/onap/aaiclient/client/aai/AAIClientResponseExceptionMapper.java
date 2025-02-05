@@ -22,8 +22,8 @@ package org.onap.aaiclient.client.aai;
 
 import java.io.IOException;
 import java.util.Optional;
-import javax.annotation.Priority;
-import javax.ws.rs.ext.Provider;
+import jakarta.annotation.Priority;
+import jakarta.ws.rs.ext.Provider;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.client.ResponseExceptionMapper;
 import org.onap.aaiclient.client.aai.entities.AAIError;

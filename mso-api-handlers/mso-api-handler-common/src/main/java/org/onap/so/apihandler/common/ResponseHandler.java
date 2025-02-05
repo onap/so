@@ -50,14 +50,14 @@ public class ResponseHandler {
         } catch (IOException | NullPointerException e) {
             logger.error("Cannot parse Camunda Response: ", e);
             throw new ValidateException.Builder(
-                    "Cannot parse Camunda ResponseBody. BPMN HTTP status: " + camundaResponse.getStatusCodeValue(),
+                    "Cannot parse Camunda ResponseBody. BPMN HTTP status: " + camundaResponse.getStatusCode().value(),
                     HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER).cause(e).build();
         }
         return response;
     }
 
     public void acceptedResponse(ResponseEntity<String> response) throws BPMNFailureException {
-        int status = setStatus(response.getStatusCodeValue());
+        int status = setStatus(response.getStatusCode().value());
         if (status != HttpStatus.SC_ACCEPTED) {
             logger.info("Camunda did not return a valid response");
             throw new BPMNFailureException.Builder(String.valueOf(status), HttpStatus.SC_INTERNAL_SERVER_ERROR,
@@ -66,7 +66,7 @@ public class ResponseHandler {
     }
 
     public void acceptedOrNoContentResponse(ResponseEntity<String> response) throws BPMNFailureException {
-        int status = setStatus(response.getStatusCodeValue());
+        int status = setStatus(response.getStatusCode().value());
         if (status != HttpStatus.SC_NO_CONTENT && status != HttpStatus.SC_ACCEPTED) {
             logger.info("Camunda did not return a valid response");
             throw new BPMNFailureException.Builder(String.valueOf(status), HttpStatus.SC_INTERNAL_SERVER_ERROR,

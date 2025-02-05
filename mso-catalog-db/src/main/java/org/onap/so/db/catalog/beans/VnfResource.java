@@ -24,28 +24,25 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 import com.openpojo.business.annotation.BusinessKey;
-import uk.co.blackpepper.bowman.annotation.LinkedResource;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
-@RemoteResource("/vnfResource")
 @Table(name = "vnf_resource")
 public class VnfResource implements Serializable {
 
@@ -227,7 +224,6 @@ public class VnfResource implements Serializable {
         this.toscaNodeType = toscaNodeType;
     }
 
-    @LinkedResource
     public HeatTemplate getHeatTemplates() {
         return heatTemplates;
     }
@@ -244,7 +240,6 @@ public class VnfResource implements Serializable {
         this.modelVersion = modelVersion;
     }
 
-    @LinkedResource
     public List<VnfResourceWorkflow> getVnfResourceWorkflow() {
         if (vnfResourceWorkflow == null)
             vnfResourceWorkflow = new ArrayList<>();

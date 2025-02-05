@@ -29,6 +29,7 @@ import org.onap.so.client.exception.ExceptionBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import com.google.common.base.Optional;
 
@@ -46,7 +47,7 @@ public class EtsiVnfDeleteTask {
 
     @Autowired
     public EtsiVnfDeleteTask(final ExceptionBuilder exceptionUtil, final ExtractPojosForBB extractPojosForBB,
-            final VnfmAdapterServiceProvider vnfmAdapterServiceProvider) {
+            @Qualifier("VnfmAdapterServiceProviderImpl") final VnfmAdapterServiceProvider vnfmAdapterServiceProvider) {
         this.exceptionUtil = exceptionUtil;
         this.extractPojosForBB = extractPojosForBB;
         this.vnfmAdapterServiceProvider = vnfmAdapterServiceProvider;

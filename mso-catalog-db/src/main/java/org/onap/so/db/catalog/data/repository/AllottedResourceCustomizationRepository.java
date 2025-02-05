@@ -29,7 +29,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource(collectionResourceRel = "allottedResourceCustomization", path = "allottedResourceCustomization")
 public interface AllottedResourceCustomizationRepository extends JpaRepository<AllottedResourceCustomization, String> {
 
-    @Query(value = "SELECT * FROM ALLOTTED_RESOURCE_CUSTOMIZATION WHERE PROVIDING_SERVICE_MODEL_UUID =?0",
+    @Query(value = "SELECT * FROM ALLOTTED_RESOURCE_CUSTOMIZATION WHERE PROVIDING_SERVICE_MODEL_UUID =?1",
             nativeQuery = true)
     List<AllottedResourceCustomization> queryByProvidingServiceModelUUID(String providingServiceModelUUID);
 

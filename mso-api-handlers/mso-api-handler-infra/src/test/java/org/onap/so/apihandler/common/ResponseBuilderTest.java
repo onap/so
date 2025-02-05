@@ -21,8 +21,8 @@
 package org.onap.so.apihandler.common;
 
 import static org.junit.Assert.assertEquals;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.onap.so.apihandlerinfra.BaseTest;

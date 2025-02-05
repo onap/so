@@ -22,7 +22,7 @@ package org.onap.so.bpmn.common.scripts
 
 import static org.mockito.Mockito.*
 
-import javax.ws.rs.NotFoundException
+import jakarta.ws.rs.NotFoundException
 
 import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.RepositoryService

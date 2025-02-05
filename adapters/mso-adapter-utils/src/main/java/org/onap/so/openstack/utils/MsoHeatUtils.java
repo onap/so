@@ -35,7 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.adapters.vdu.CloudInfo;
 import org.onap.so.adapters.vdu.PluginAction;
@@ -391,11 +391,12 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
 
     protected void saveStackRequest(CreateStackParam request, String requestId, String stackName) {
         try {
+            ObjectMapper mapper = new ObjectMapper();
             InfraActiveRequests foundRequest = requestDBClient.getInfraActiveRequestbyRequestId(requestId);
             CreateStackRequest createStackRequest = new CreateStackRequest();
             createStackRequest.setEnvironment(request.getEnvironment());
             createStackRequest.setParameters(request.getParameters());
-            String stackRequest = JSON_MAPPER.writeValueAsString(createStackRequest);
+            String stackRequest = mapper.writeValueAsString(createStackRequest);
             CloudApiRequests cloudReq = new CloudApiRequests();
             cloudReq.setCloudIdentifier(stackName);
             cloudReq.setRequestBody(stackRequest);

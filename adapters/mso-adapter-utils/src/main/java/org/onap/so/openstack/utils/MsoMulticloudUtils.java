@@ -27,11 +27,11 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriBuilderException;
-import org.onap.logging.filter.base.ErrorCode;
-import org.onap.logging.filter.base.ONAPComponents;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriBuilderException;
+import org.onap.so.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.onap.so.adapters.vdu.CloudInfo;
 import org.onap.so.adapters.vdu.PluginAction;
 import org.onap.so.adapters.vdu.VduArtifact;
@@ -767,7 +767,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
         scanner.close();
 
         try {
-            return JSON_MAPPER.readerFor(MulticloudCreateResponse.class).readValue(body);
+            return new ObjectMapper().readerFor(MulticloudCreateResponse.class).readValue(body);
         } catch (Exception e) {
             logger.debug("Exception retrieving multicloud vfModule POST response body ", e);
         }
@@ -784,7 +784,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
         scanner.close();
 
         try {
-            return JSON_MAPPER.readerFor(MulticloudQueryResponse.class).readValue(body);
+            return new ObjectMapper().readerFor(MulticloudQueryResponse.class).readValue(body);
         } catch (Exception e) {
             logger.debug("Exception retrieving multicloud workload query response body ", e);
         }

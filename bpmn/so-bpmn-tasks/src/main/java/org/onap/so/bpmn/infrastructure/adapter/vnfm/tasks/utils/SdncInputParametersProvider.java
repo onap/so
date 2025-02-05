@@ -36,6 +36,7 @@ import org.onap.so.client.sdnc.SDNCClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,6 +48,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author waqas.ikram@est.tech
  */
 @Service
+// @Primary // added
 public class SdncInputParametersProvider extends AbstractInputParametersProvider<GenericVnf> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SdncInputParametersProvider.class);

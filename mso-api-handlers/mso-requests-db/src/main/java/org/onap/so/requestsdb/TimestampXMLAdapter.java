@@ -22,7 +22,7 @@ package org.onap.so.requestsdb;
 
 
 import java.sql.Timestamp;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 public class TimestampXMLAdapter extends XmlAdapter<Long, Timestamp> {
 

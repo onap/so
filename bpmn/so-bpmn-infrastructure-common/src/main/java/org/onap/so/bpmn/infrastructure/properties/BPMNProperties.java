@@ -22,7 +22,6 @@ package org.onap.so.bpmn.infrastructure.properties;
 import java.util.Arrays;
 import java.util.List;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
-import org.onap.so.bpmn.core.UrnPropertiesReader;
 
 public class BPMNProperties {
 

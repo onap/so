@@ -24,7 +24,7 @@ package org.onap.so.adapters.tenantrest;
 
 
 
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.onap.so.entity.MsoRequest;
 
 @XmlRootElement(name = "deleteTenantRequest")

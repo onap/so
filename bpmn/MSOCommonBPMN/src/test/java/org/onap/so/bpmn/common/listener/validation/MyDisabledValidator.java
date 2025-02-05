@@ -23,7 +23,6 @@ package org.onap.so.bpmn.common.listener.validation;
 import java.util.Collections;
 import java.util.Optional;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
-import org.onap.so.bpmn.common.listener.validation.PreBuildingBlockValidator;
 import org.onap.so.listener.Skip;
 import org.springframework.stereotype.Component;
 

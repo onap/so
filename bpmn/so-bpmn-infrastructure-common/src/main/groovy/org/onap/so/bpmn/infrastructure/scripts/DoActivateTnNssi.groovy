@@ -48,7 +48,7 @@ public class DoActivateTnNssi extends AbstractServiceTaskProcessor {
     RequestDBUtil requestDBUtil = new RequestDBUtil()
     TnNssmfUtils tnNssmfUtils = new TnNssmfUtils()
     JsonSlurper jsonSlurper = new JsonSlurper()
-    private static final ObjectMapper objectMapper = new ObjectMapper()
+    ObjectMapper objectMapper = new ObjectMapper()
     private static final Logger logger = LoggerFactory.getLogger(DoActivateTnNssi.class)
 
 
@@ -182,3 +182,4 @@ public class DoActivateTnNssi extends AbstractServiceTaskProcessor {
     }
 
 }
+

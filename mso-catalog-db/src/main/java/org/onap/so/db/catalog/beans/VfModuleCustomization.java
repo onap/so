@@ -24,29 +24,26 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.openpojo.business.annotation.BusinessKey;
-import uk.co.blackpepper.bowman.annotation.LinkedResource;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
-@RemoteResource("/vfModuleCustomization")
 @Table(name = "vf_module_customization")
 public class VfModuleCustomization implements Serializable {
 
@@ -161,7 +158,6 @@ public class VfModuleCustomization implements Serializable {
         this.modelCustomizationUUID = modelCustomizationUUID;
     }
 
-    @LinkedResource
     public HeatEnvironment getVolumeHeatEnv() {
         return volumeHeatEnv;
     }
@@ -170,7 +166,6 @@ public class VfModuleCustomization implements Serializable {
         this.volumeHeatEnv = volumeHeatEnv;
     }
 
-    @LinkedResource
     public HeatEnvironment getHeatEnvironment() {
         return heatEnvironment;
     }
@@ -223,7 +218,6 @@ public class VfModuleCustomization implements Serializable {
         this.label = label;
     }
 
-    @LinkedResource
     public VfModule getVfModule() {
         return this.vfModule;
     }
@@ -232,7 +226,6 @@ public class VfModuleCustomization implements Serializable {
         this.vfModule = vfModule;
     }
 
-    @LinkedResource
     public List<CvnfcCustomization> getCvnfcCustomization() {
         if (cvnfcCustomization == null)
             cvnfcCustomization = new ArrayList<>();

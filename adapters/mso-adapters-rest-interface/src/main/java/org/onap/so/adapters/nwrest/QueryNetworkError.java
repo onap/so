@@ -22,7 +22,7 @@ package org.onap.so.adapters.nwrest;
 
 
 import java.io.Serializable;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "queryNetworkError")
 public class QueryNetworkError extends NetworkExceptionResponse implements Serializable {

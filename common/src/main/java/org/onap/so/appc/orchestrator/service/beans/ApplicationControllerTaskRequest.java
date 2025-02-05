@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import org.onap.appc.client.lcm.model.Action;
-import org.onap.so.appc.orchestrator.service.beans.ApplicationControllerVnf;
 
 public class ApplicationControllerTaskRequest implements Serializable {
 

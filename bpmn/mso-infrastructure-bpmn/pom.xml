@@ -8,6 +8,9 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>mso-infrastructure-bpmn</artifactId>
   <packaging>jar</packaging>
+  <properties>
+    <codehaus.groovy.version>3.0.19</codehaus.groovy.version>
+  </properties>
   <build>
     <pluginManagement>
       <plugins>
@@ -212,6 +215,26 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>org.onap.aai.schema-service</groupId>
+      <artifactId>aai-schema</artifactId>
+      <version>1.9.6</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-xml</artifactId>
+      <version>${codehaus.groovy.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-json</artifactId>
+      <version>${codehaus.groovy.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-jsr223</artifactId>
+      <version>${codehaus.groovy.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.camunda.bpm.springboot</groupId>
       <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
       <exclusions>
@@ -262,7 +285,6 @@
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
@@ -310,3 +332,4 @@
     </dependency>
   </dependencies>
 </project>
+
