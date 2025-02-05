@@ -28,7 +28,7 @@ import static org.junit.Assert.fail;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.onap.so.BaseTest;
 import org.onap.so.client.restproperties.SDNCLcmPropertiesImpl;
 import org.onap.so.client.sdnc.common.SDNCConstants;

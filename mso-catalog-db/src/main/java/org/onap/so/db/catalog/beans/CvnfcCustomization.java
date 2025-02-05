@@ -42,11 +42,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.openpojo.business.annotation.BusinessKey;
-import uk.co.blackpepper.bowman.annotation.LinkedResource;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
-@RemoteResource("/cvnfcCustomization")
 @Table(name = "cvnfc_customization")
 public class CvnfcCustomization implements Serializable {
 
@@ -129,7 +126,6 @@ public class CvnfcCustomization implements Serializable {
                 .append("vnfVfmoduleCvnfcConfigurationCustomization", cvnfcConfigurationCustomization).toString();
     }
 
-    @LinkedResource
     public VnfcCustomization getVnfcCustomization() {
         return vnfcCustomization;
     }
@@ -143,7 +139,6 @@ public class CvnfcCustomization implements Serializable {
         this.created = new Date();
     }
 
-    @LinkedResource
     public List<CvnfcConfigurationCustomization> getCvnfcConfigurationCustomization() {
         return cvnfcConfigurationCustomization;
     }
@@ -249,7 +244,6 @@ public class CvnfcCustomization implements Serializable {
         this.created = created;
     }
 
-    @LinkedResource
     public VfModuleCustomization getVfModuleCustomization() {
         return vfModuleCustomization;
     }

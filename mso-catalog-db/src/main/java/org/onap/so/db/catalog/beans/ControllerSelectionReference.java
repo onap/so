@@ -29,11 +29,9 @@ import com.openpojo.business.annotation.BusinessKey;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @IdClass(ControllerSelectionReferenceId.class)
 @Entity
-@RemoteResource("/controllerSelectionReference")
 @Table(name = "controller_selection_reference")
 public class ControllerSelectionReference implements Serializable {
 
