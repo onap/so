@@ -10,7 +10,7 @@ import javax.xml.bind.DatatypeConverter;
 import org.camunda.bpm.engine.impl.persistence.entity.HistoricActivityInstanceEntity;
 import org.camunda.bpm.engine.impl.persistence.entity.HistoricProcessInstanceEntity;
 import org.json.JSONObject;
-import org.onap.logging.filter.spring.SpringClientPayloadFilter;
+import org.onap.so.logging.filter.spring.SpringClientPayloadFilter;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
 import org.onap.so.utils.CryptoUtils;
 import org.slf4j.Logger;

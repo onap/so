@@ -33,10 +33,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.openpojo.business.annotation.BusinessKey;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
-@RemoteResource("/buildingBlockDetail")
 @Table(name = "building_block_detail")
 public class BuildingBlockDetail implements Serializable {
     private static final long serialVersionUID = -2375223199178059155L;

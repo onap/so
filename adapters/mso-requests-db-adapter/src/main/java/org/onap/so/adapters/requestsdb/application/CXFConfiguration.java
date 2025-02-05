@@ -6,7 +6,6 @@
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
  * 
  *      http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -17,7 +16,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.onap.so.adapters.requestsdb.application;
 
 import java.util.Arrays;
@@ -36,7 +34,6 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
 @Configuration
 public class CXFConfiguration {
 
@@ -47,22 +44,42 @@ public class CXFConfiguration {
     private MsoRequestsDbAdapter requestDbAdapterImpl;
 
     @Bean
+<<<<<<< HEAD
     public ServletRegistrationBean cxfServlet() {
 
         return new ServletRegistrationBean(new CXFServlet(), "/services/*");
+||||||| parent of 30f7ad6a1 (Runtime issues of jdk17)
+    public ServletRegistrationBean cxfServlet() {
+
+        return new ServletRegistrationBean((Servlet) new CXFServlet(), "/services/*");
+=======
+    public ServletRegistrationBean<Servlet> cxfServlet() {
+        return new ServletRegistrationBean<>(new CXFServlet(), "/services/*");
+>>>>>>> 30f7ad6a1 (Runtime issues of jdk17)
     }
 
     @Bean
+<<<<<<< HEAD
     public Endpoint requestEndpointk() {
+||||||| parent of 30f7ad6a1 (Runtime issues of jdk17)
+    public EndpointImpl requestEndpointk() {
+=======
+    public EndpointImpl requestEndpoint() {
+>>>>>>> 30f7ad6a1 (Runtime issues of jdk17)
         EndpointImpl endpoint = new EndpointImpl(bus, requestDbAdapterImpl);
         endpoint.publish("/RequestsDbAdapter");
+
+        // Configure Logging Feature
         LoggingFeature logFeature = new LoggingFeature();
         logFeature.setPrettyLogging(true);
         logFeature.initialize(bus);
         endpoint.getFeatures().add(logFeature);
+
+        // Add Interceptors
         endpoint.getInInterceptors().add(new SOAPLoggingInInterceptor());
         endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
         endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
+
         return endpoint;
     }
 
@@ -74,9 +91,10 @@ public class CXFConfiguration {
         openApiFeature.setContactName("The ONAP SO team");
         openApiFeature.setDescription("This project is the SO Orchestration Engine");
         openApiFeature.setVersion("1.0.0");
-        openApiFeature.setResourcePackages(new HashSet<String>(Arrays.asList("org.onap.so.adapters.requestdb")));
+        openApiFeature.setResourcePackages(new HashSet<>(Arrays.asList("org.onap.so.adapters.requestsdb"))); // Fixed
+                                                                                                             // package
+                                                                                                             // name
         openApiFeature.setScan(true);
         return openApiFeature;
     }
-
 }

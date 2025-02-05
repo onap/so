@@ -38,11 +38,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.openpojo.business.annotation.BusinessKey;
-import uk.co.blackpepper.bowman.annotation.LinkedResource;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
-@RemoteResource("/allottedResourceCustomization")
 @Table(name = "allotted_resource_customization")
 public class AllottedResourceCustomization implements Serializable {
 
@@ -170,7 +167,6 @@ public class AllottedResourceCustomization implements Serializable {
         this.modelInstanceName = modelInstanceName;
     }
 
-    @LinkedResource
     public AllottedResource getAllottedResource() {
         return this.allottedResource;
     }

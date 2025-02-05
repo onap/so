@@ -24,14 +24,14 @@ package org.onap.so.bpmn.common.scripts
 
 import org.onap.so.logger.LoggingAnchor
 import org.onap.so.client.HttpClientFactory
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logging.filter.base.ErrorCode
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
-import javax.ws.rs.core.UriBuilder
+import jakarta.ws.rs.core.MediaType
+import jakarta.ws.rs.core.Response
+import jakarta.ws.rs.core.UriBuilder
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
@@ -44,7 +44,7 @@ import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.onap.so.openpojo.rules.HasToStringRule
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 
 @Deprecated
 class AaiUtil {

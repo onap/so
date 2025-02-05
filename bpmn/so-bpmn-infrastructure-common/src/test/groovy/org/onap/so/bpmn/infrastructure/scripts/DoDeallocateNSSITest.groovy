@@ -25,7 +25,7 @@ import org.junit.Test
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
-import org.onap.logging.filter.base.ONAPComponents
+import org.onap.so.logging.filter.base.ONAPComponents
 import org.onap.so.beans.nsmf.JobStatusResponse
 import org.onap.so.beans.nsmf.NssiResponse
 import org.onap.so.beans.nsmf.ResponseDescriptor

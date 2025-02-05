@@ -17,13 +17,24 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.onap.so.adapters.sdnc;
 
 import java.util.Arrays;
 import java.util.HashSet;
+<<<<<<< HEAD
 import javax.xml.ws.Endpoint;
+||||||| parent of 30f7ad6a1 (Runtime issues of jdk17)
+import javax.xml.ws.Endpoint;
+import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
+import jakarta.servlet.Servlet;
+=======
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
+import jakarta.xml.ws.Endpoint;
+>>>>>>> 30f7ad6a1 (Runtime issues of jdk17)
 import org.apache.cxf.Bus;
+import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
@@ -38,9 +49,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+<<<<<<< HEAD
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+||||||| parent of 30f7ad6a1 (Runtime issues of jdk17)
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+=======
+import org.springframework.context.annotation.Lazy;
+>>>>>>> 30f7ad6a1 (Runtime issues of jdk17)
 
 
 @Configuration("CXFConfiguration")
@@ -49,9 +68,11 @@ public class CXFConfiguration {
     JAXRSServerFactoryBean endpoint;
 
     @Autowired
+    @Lazy
     private Bus bus;
 
     @Autowired
+    @Lazy
     private SOAuditLogContainerFilter soAuditLogContainerFilter;
 
     @Autowired
@@ -62,6 +83,15 @@ public class CXFConfiguration {
 
     @Autowired
     private ObjectMapper mapper;
+
+    public SOAuditLogContainerFilter soAuditLogContainerFilter() {
+        return new SOAuditLogContainerFilter();
+    }
+
+    @Bean
+    public Bus cxfBus() {
+        return new SpringBus();
+    }
 
     @Bean
     public Server rsServer() {
@@ -76,8 +106,18 @@ public class CXFConfiguration {
     }
 
     @Bean
+<<<<<<< HEAD
     public ServletRegistrationBean cxfServlet() {
         return new ServletRegistrationBean(new CXFServlet(), "/adapters/*");
+||||||| parent of 30f7ad6a1 (Runtime issues of jdk17)
+    public ServletRegistrationBean cxfServlet() {
+        return new ServletRegistrationBean((Servlet) new CXFServlet(), "/adapters/*");
+=======
+    public ServletRegistrationBean<CXFServlet> cxfServlet() {
+        ServletRegistrationBean<CXFServlet> registrationBean =
+                new ServletRegistrationBean<>(new CXFServlet(), "/adapters/*");
+        return registrationBean;
+>>>>>>> 30f7ad6a1 (Runtime issues of jdk17)
     }
 
     @Bean

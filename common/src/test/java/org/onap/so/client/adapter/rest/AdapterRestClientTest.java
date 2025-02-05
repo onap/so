@@ -32,7 +32,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.javatuples.Pair;
 import org.junit.Before;
 import org.junit.Test;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.onap.so.client.policy.JettisonStyleMapperProvider;
 import org.onap.so.utils.CryptoUtils;
 

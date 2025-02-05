@@ -108,12 +108,32 @@ import org.openstack4j.model.storage.block.VolumeAttachment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
+<<<<<<< HEAD
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import inet.ipaddr.IPAddressString;
+||||||| parent of 30f7ad6a1 (Runtime issues of jdk17)
+import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+=======
+import jakarta.annotation.Nonnull;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+>>>>>>> 30f7ad6a1 (Runtime issues of jdk17)
 
 /**
  * This class provides an implementation of {@link HeatBridgeApi}

@@ -40,8 +40,8 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
-import org.onap.logging.filter.base.ErrorCode
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ErrorCode
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.CatalogDbUtils
 import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory

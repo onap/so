@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onap.logging.filter.base.ONAPComponentsList;
+import org.onap.so.logging.filter.base.ONAPComponentsList;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.infrastructure.decisionpoint.impl.buildingblock.MockControllerBB;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;

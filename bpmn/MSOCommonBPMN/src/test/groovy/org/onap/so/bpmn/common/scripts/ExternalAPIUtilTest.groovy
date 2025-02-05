@@ -26,7 +26,7 @@ import org.junit.Test
 import org.onap.logging.ref.slf4j.ONAPLogConstants
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.springframework.http.HttpStatus
 
 import javax.ws.rs.core.MediaType

@@ -27,8 +27,10 @@ import com.google.gson.reflect.TypeToken
 import org.apache.commons.lang3.StringUtils
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logging.filter.base.ErrorCode
 import javax.ws.rs.NotFoundException
+import org.onap.so.logging.filter.base.ErrorCode
+import jakarta.ws.rs.NotFoundException
 import org.onap.aai.domain.yang.Relationship
 import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.aaiclient.client.aai.AAIResourcesClient

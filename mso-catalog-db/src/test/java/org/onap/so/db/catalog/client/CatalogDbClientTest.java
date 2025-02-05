@@ -4,8 +4,6 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
- * Modifications Copyright (c) 2020 Nordix
- * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,198 +19,206 @@
  */
 package org.onap.so.db.catalog.client;
 
-
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import java.util.ArrayList;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+import java.net.URI;
 import java.util.List;
-import javax.persistence.EntityNotFoundException;
-import javax.ws.rs.core.UriBuilder;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.so.db.catalog.beans.CvnfcCustomization;
-import org.onap.so.db.catalog.beans.VfModuleCustomization;
-import org.onap.so.db.catalog.beans.VnfResourceCustomization;
-import org.onap.so.db.catalog.beans.Workflow;
-import uk.co.blackpepper.bowman.Client;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.onap.so.db.catalog.beans.*;
+import org.onap.so.rest.catalog.beans.Vnf;
+// import org.onap.so.db.catalog.beans.OrchestrationFlow;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
+import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
 
-@RunWith(MockitoJUnitRunner.class)
 public class CatalogDbClientTest {
 
-    @Spy
+    @Mock
+    private WebClient.Builder webClientBuilder;
+
+    @Mock
+    private WebClient webClient;
+
+    @Mock
+    private RestTemplate restTemplate;
+
+    @InjectMocks
     private CatalogDbClient catalogDbClient;
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
-    @Test
-    public final void testFindVnfResourceCustomizationInListNullInList() {
-        thrown.expect(EntityNotFoundException.class);
-        String vnfCustomizationUUID = "a123";
-        VnfResourceCustomization vrc = new VnfResourceCustomization();
-        vrc.setModelCustomizationUUID("z789J");
-        VnfResourceCustomization vrc2 = new VnfResourceCustomization();
-        vrc2.setModelCustomizationUUID(null);
-        ArrayList<VnfResourceCustomization> vrcs = new ArrayList<VnfResourceCustomization>();
-        vrcs.add(vrc);
-        vrcs.add(vrc2);
-        catalogDbClient.findVnfResourceCustomizationInList(vnfCustomizationUUID, vrcs);
+    @Value("${mso.catalog.db.spring.endpoint:#{null}}")
+    private String endpoint;
+
+    @Value("${mso.db.auth:#{null}}")
+    private String msoAdaptersAuth;
+
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+        when(webClientBuilder.baseUrl(anyString())).thenReturn(webClientBuilder);
+        when(webClientBuilder.defaultHeader(anyString(), anyString())).thenReturn(webClientBuilder);
+        when(webClientBuilder.build()).thenReturn(webClient);
+        catalogDbClient.init();
     }
 
     @Test
-    public final void testFindVnfResourceCustomizationInListNullString() {
-        thrown.expect(EntityNotFoundException.class);
-        thrown.expectMessage("a NULL UUID was provided in query to search for VnfResourceCustomization");
-        String vnfCustomizationUUID = null;
-        VnfResourceCustomization vrc = new VnfResourceCustomization();
-        vrc.setModelCustomizationUUID("z789J");
-        VnfResourceCustomization vrc2 = new VnfResourceCustomization();
-        vrc2.setModelCustomizationUUID("a123");
-        ArrayList<VnfResourceCustomization> vrcs = new ArrayList<VnfResourceCustomization>();
-        vrcs.add(vrc);
-        vrcs.add(vrc2);
-        catalogDbClient.findVnfResourceCustomizationInList(vnfCustomizationUUID, vrcs);
+    public void testGetServiceByID() {
+        String modelUUID = "test-model-uuid";
+        Service expectedService = new Service();
+        expectedService.setModelUUID(modelUUID);
+
+        WebClient.RequestHeadersUriSpec<?> requestHeadersUriSpecMock = mock(WebClient.RequestHeadersUriSpec.class);
+        WebClient.RequestHeadersSpec<?> requestHeadersSpecMock = mock(WebClient.RequestHeadersSpec.class);
+        WebClient.ResponseSpec responseSpecMock = mock(WebClient.ResponseSpec.class);
+        // when(webClient.get()).thenReturn((RequestHeadersUriSpec<?>) requestHeadersUriSpecMock);
+        // when(requestHeadersUriSpecMock.uri(any(URI.class))).thenReturn(requestHeadersSpecMock);
+        when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
+        when(responseSpecMock.bodyToMono(Service.class)).thenReturn(Mono.just(expectedService));
+
+        Service actualService = catalogDbClient.getServiceByID(modelUUID);
+        assertEquals(expectedService, actualService);
     }
 
     @Test
-    public final void testFindVnfResourceCustomizationInListNoNulls() {
-        String vnfCustomizationUUID = "a123";
-        VnfResourceCustomization vrc = new VnfResourceCustomization();
-        vrc.setModelCustomizationUUID("z789J");
-        VnfResourceCustomization vrc2 = new VnfResourceCustomization();
-        vrc2.setModelCustomizationUUID("a123");
-        ArrayList<VnfResourceCustomization> vrcs = new ArrayList<VnfResourceCustomization>();
-        vrcs.add(vrc);
-        vrcs.add(vrc2);
-        VnfResourceCustomization aVrc = catalogDbClient.findVnfResourceCustomizationInList(vnfCustomizationUUID, vrcs);
-        assertTrue(aVrc.getModelCustomizationUUID().equals("a123"));
+    public void testGetVnfResourceByModelUUID() {
+        String modelUUID = "test-model-uuid";
+        VnfResource expectedVnfResource = new VnfResource();
+        expectedVnfResource.setModelUUID(modelUUID);
+
+        WebClient.RequestHeadersUriSpec<?> requestHeadersUriSpecMock = mock(WebClient.RequestHeadersUriSpec.class);
+        WebClient.RequestHeadersSpec<?> requestHeadersSpecMock = mock(WebClient.RequestHeadersSpec.class);
+        WebClient.ResponseSpec responseSpecMock = mock(WebClient.ResponseSpec.class);
+        // when(webClient.get()).thenReturn(requestHeadersUriSpecMock);
+        // when(requestHeadersUriSpecMock.uri(any(URI.class))).thenReturn(requestHeadersSpecMock);
+        when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
+        when(responseSpecMock.bodyToMono(VnfResource.class)).thenReturn(Mono.just(expectedVnfResource));
+
+        VnfResource actualVnfResource = catalogDbClient.getVnfResourceByModelUUID(modelUUID);
+        assertEquals(expectedVnfResource, actualVnfResource);
     }
 
     @Test
-    public final void testFindVfModuleCustomizationInListNullInList() {
-        thrown.expect(EntityNotFoundException.class);
-        String vfModuleCustomizationUUID = "a123";
-        VfModuleCustomization vmc = new VfModuleCustomization();
-        vmc.setModelCustomizationUUID("z789J");
-        VfModuleCustomization vmc2 = new VfModuleCustomization();
-        vmc2.setModelCustomizationUUID(null);
-        ArrayList<VfModuleCustomization> vmcs = new ArrayList<VfModuleCustomization>();
-        vmcs.add(vmc);
-        vmcs.add(vmc2);
-        catalogDbClient.findVfModuleCustomizationInList(vfModuleCustomizationUUID, vmcs);
+    public void testGetNetworkResourceByModelName() {
+        String networkType = "test-network-type";
+        NetworkResource expectedNetworkResource = new NetworkResource();
+
+        when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
+                eq(NetworkResource.class))).thenReturn(new ResponseEntity<>(expectedNetworkResource, HttpStatus.OK));
+
+        NetworkResource actualNetworkResource = catalogDbClient.getNetworkResourceByModelName(networkType);
+        assertEquals(expectedNetworkResource, actualNetworkResource);
     }
 
     @Test
-    public final void testFindVfModuleCustomizationInListNullString() {
-        thrown.expect(EntityNotFoundException.class);
-        thrown.expectMessage("a NULL UUID was provided in query to search for VfModuleCustomization");
-        String vfModuleCustomizationUUID = null;
-        VfModuleCustomization vmc = new VfModuleCustomization();
-        vmc.setModelCustomizationUUID("z789J");
-        VfModuleCustomization vmc2 = new VfModuleCustomization();
-        vmc2.setModelCustomizationUUID("a123");
-        ArrayList<VfModuleCustomization> vmcs = new ArrayList<VfModuleCustomization>();
-        vmcs.add(vmc);
-        vmcs.add(vmc2);
-        catalogDbClient.findVfModuleCustomizationInList(vfModuleCustomizationUUID, vmcs);
+    public void testGetBuildingBlockDetail() {
+        String buildingBlockName = "test-building-block-name";
+        BuildingBlockDetail expectedBuildingBlockDetail = new BuildingBlockDetail();
+        expectedBuildingBlockDetail.setBuildingBlockName(buildingBlockName);
+
+        WebClient.RequestHeadersUriSpec<?> requestHeadersUriSpecMock = mock(WebClient.RequestHeadersUriSpec.class);
+        WebClient.RequestHeadersSpec<?> requestHeadersSpecMock = mock(WebClient.RequestHeadersSpec.class);
+        WebClient.ResponseSpec responseSpecMock = mock(WebClient.ResponseSpec.class);
+        // when(webClient.get()).thenReturn(requestHeadersUriSpecMock);
+        // when(requestHeadersUriSpecMock.uri(any(URI.class))).thenReturn(requestHeadersSpecMock);
+        when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
+        when(responseSpecMock.bodyToMono(BuildingBlockDetail.class)).thenReturn(Mono.just(expectedBuildingBlockDetail));
+
+        BuildingBlockDetail actualBuildingBlockDetail = catalogDbClient.getBuildingBlockDetail(buildingBlockName);
+        assertEquals(expectedBuildingBlockDetail, actualBuildingBlockDetail);
     }
 
     @Test
-    public final void testFindVfModuleCustomizationInListNoNulls() {
-        String vfModuleCustomizationUUID = "a123";
-        VfModuleCustomization vmc = new VfModuleCustomization();
-        vmc.setModelCustomizationUUID("z789J");
-        VfModuleCustomization vmc2 = new VfModuleCustomization();
-        vmc2.setModelCustomizationUUID("a123");
-        ArrayList<VfModuleCustomization> vmcs = new ArrayList<VfModuleCustomization>();
-        vmcs.add(vmc);
-        vmcs.add(vmc2);
-        VfModuleCustomization aVmc = catalogDbClient.findVfModuleCustomizationInList(vfModuleCustomizationUUID, vmcs);
-        assertTrue(aVmc.getModelCustomizationUUID().equals("a123"));
+    public void testGetOrchestrationFlowByAction() {
+        String action = "test-action";
+        // List<OrchestrationFlow> expectedOrchestrationFlows = List.of(new OrchestrationFlow());
+
+        WebClient.RequestHeadersUriSpec<?> requestHeadersUriSpecMock = mock(WebClient.RequestHeadersUriSpec.class);
+        WebClient.RequestHeadersSpec<?> requestHeadersSpecMock = mock(WebClient.RequestHeadersSpec.class);
+        WebClient.ResponseSpec responseSpecMock = mock(WebClient.ResponseSpec.class);
+        // when(webClient.get()).thenReturn(requestHeadersUriSpecMock);
+        // when(requestHeadersUriSpecMock.uri(any(URI.class))).thenReturn(requestHeadersSpecMock);
+        when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
+        // when(responseSpecMock.bodyToFlux(OrchestrationFlow.class)).thenReturn(Flux.fromIterable(expectedOrchestrationFlows));
+
+        // List<OrchestrationFlow> actualOrchestrationFlows = catalogDbClient.getOrchestrationFlowByAction(action);
+        // assertEquals(expectedOrchestrationFlows, actualOrchestrationFlows);
     }
 
     @Test
-    public final void testFindCvnfcCustomizationInListNullInList() {
-        thrown.expect(EntityNotFoundException.class);
-        String cvnfcCustomizationUuid = "a123";
-        CvnfcCustomization cvnfc = new CvnfcCustomization();
-        cvnfc.setModelCustomizationUUID("z789J");
-        CvnfcCustomization cvnfc2 = new CvnfcCustomization();
-        cvnfc2.setModelCustomizationUUID(null);
-        ArrayList<CvnfcCustomization> cvnfcs = new ArrayList<CvnfcCustomization>();
-        cvnfcs.add(cvnfc);
-        cvnfcs.add(cvnfc2);
-        catalogDbClient.findCvnfcCustomizationInAList(cvnfcCustomizationUuid, cvnfcs);
+    public void testGetCloudSite() {
+        String id = "test-id";
+        CloudSite expectedCloudSite = new CloudSite();
+
+        WebClient.RequestHeadersUriSpec<?> requestHeadersUriSpecMock = mock(WebClient.RequestHeadersUriSpec.class);
+        WebClient.RequestHeadersSpec<?> requestHeadersSpecMock = mock(WebClient.RequestHeadersSpec.class);
+        WebClient.ResponseSpec responseSpecMock = mock(WebClient.ResponseSpec.class);
+        // when(webClient.get()).thenReturn(requestHeadersUriSpecMock);
+        // when(requestHeadersUriSpecMock.uri(any(URI.class))).thenReturn(requestHeadersSpecMock);
+        when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
+        when(responseSpecMock.bodyToMono(CloudSite.class)).thenReturn(Mono.just(expectedCloudSite));
+
+        CloudSite actualCloudSite = catalogDbClient.getCloudSite(id);
+        assertEquals(expectedCloudSite, actualCloudSite);
     }
 
     @Test
-    public final void testFindCvnfcCustomizationInListNullString() {
-        thrown.expect(EntityNotFoundException.class);
-        thrown.expectMessage("a NULL UUID was provided in query to search for CvnfcCustomization");
-        String cvnfcCustomizationUuid = null;
-        CvnfcCustomization cvnfc = new CvnfcCustomization();
-        cvnfc.setModelCustomizationUUID("z789J");
-        CvnfcCustomization cvnfc2 = new CvnfcCustomization();
-        cvnfc2.setModelCustomizationUUID("a123");
-        ArrayList<CvnfcCustomization> cvnfcs = new ArrayList<CvnfcCustomization>();
-        cvnfcs.add(cvnfc);
-        cvnfcs.add(cvnfc2);
-        catalogDbClient.findCvnfcCustomizationInAList(cvnfcCustomizationUuid, cvnfcs);
+    public void testPostCloudSite() {
+        CloudSite cloudSite = new CloudSite();
+        CloudSite expectedCloudSite = new CloudSite();
+
+        when(restTemplate.exchange(any(URI.class), eq(HttpMethod.POST), any(HttpEntity.class), eq(CloudSite.class)))
+                .thenReturn(new ResponseEntity<>(expectedCloudSite, HttpStatus.OK));
+
+        CloudSite actualCloudSite = catalogDbClient.postCloudSite(cloudSite);
+        assertEquals(expectedCloudSite, actualCloudSite);
     }
 
     @Test
-    public final void testFindCvnfcCustomizationInListNoNulls() {
-        String cvnfcCustomizationUuid = "a123";
-        CvnfcCustomization cvnfc = new CvnfcCustomization();
-        cvnfc.setModelCustomizationUUID("z789J");
-        CvnfcCustomization cvnfc2 = new CvnfcCustomization();
-        cvnfc2.setModelCustomizationUUID("a123");
-        ArrayList<CvnfcCustomization> cvnfcs = new ArrayList<CvnfcCustomization>();
-        cvnfcs.add(cvnfc);
-        cvnfcs.add(cvnfc2);
-        CvnfcCustomization aCvnfc = catalogDbClient.findCvnfcCustomizationInAList(cvnfcCustomizationUuid, cvnfcs);
-        assertTrue(aCvnfc.getModelCustomizationUUID().equals("a123"));
+    public void testUpdateCloudSite() {
+        CloudSite cloudSite = new CloudSite();
+        CloudSite expectedCloudSite = new CloudSite();
+
+        when(restTemplate.exchange(any(URI.class), eq(HttpMethod.PUT), any(HttpEntity.class), eq(CloudSite.class)))
+                .thenReturn(new ResponseEntity<>(expectedCloudSite, HttpStatus.OK));
+
+        CloudSite actualCloudSite = catalogDbClient.updateCloudSite(cloudSite);
+        assertEquals(expectedCloudSite, actualCloudSite);
     }
 
     @Test
-    public final void testFindWorkflowByPnfModelUUID() {
-        String pnfResourceModelUUID = "f2d1f2b2-88bb-49da-b716-36ae420ccbff";
+    public void testDeleteCloudSite() {
+        String cloudSiteId = "test-cloud-site-id";
 
-        doReturn(new ArrayList()).when(catalogDbClient).getMultipleResources(any(), any());
-        List<Workflow> results = catalogDbClient.findWorkflowByPnfModelUUID(pnfResourceModelUUID);
-        verify(catalogDbClient).getMultipleResources(any(Client.class),
-                eq(UriBuilder.fromUri("/findWorkflowByPnfModelUUID")
-                        .queryParam(CatalogDbClient.PNF_RESOURCE_MODEL_UUID, pnfResourceModelUUID).build()));
+        doNothing().when(restTemplate).exchange(any(URI.class), eq(HttpMethod.DELETE), any(HttpEntity.class),
+                eq(Void.class));
 
+        assertDoesNotThrow(() -> catalogDbClient.deleteCloudSite(cloudSiteId));
     }
 
     @Test
-    public final void testFindWorkflowByResourceTarget() {
-        // when
-        final String pnf_resource = "pnf";
-        doReturn(new ArrayList()).when(catalogDbClient).getMultipleResources(any(), any());
-        catalogDbClient.findWorkflowByResourceTarget(pnf_resource);
+    public void testGetCloudSites() {
+        List<CloudSite> expectedCloudSites = List.of(new CloudSite());
 
-        // verify
-        verify(catalogDbClient).getMultipleResources(any(Client.class), eq(UriBuilder.fromUri("/findByResourceTarget")
-                .queryParam(CatalogDbClient.RESOURCE_TARGET, pnf_resource).build()));
+        WebClient.RequestHeadersUriSpec<?> requestHeadersUriSpecMock = mock(WebClient.RequestHeadersUriSpec.class);
+        WebClient.RequestHeadersSpec<?> requestHeadersSpecMock = mock(WebClient.RequestHeadersSpec.class);
+        WebClient.ResponseSpec responseSpecMock = mock(WebClient.ResponseSpec.class);
+        // when(webClient.get()).thenReturn(requestHeadersUriSpecMock);
+        // when(requestHeadersUriSpecMock.uri(any(URI.class))).thenReturn(requestHeadersSpecMock);
+        when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
+        when(responseSpecMock.bodyToFlux(CloudSite.class)).thenReturn(Flux.fromIterable(expectedCloudSites));
+
+        List<CloudSite> actualCloudSites = catalogDbClient.getCloudSites();
+        assertEquals(expectedCloudSites, actualCloudSites);
     }
-
-    @Test
-    public final void testFindWorkFlowByOperationName() {
-        final String operationName = "PNFSoftwareUpgrade";
-        doReturn(new ArrayList()).when(catalogDbClient).getMultipleResources(any(), any());
-        catalogDbClient.findWorkflowByOperationName(operationName);
-
-        // verify
-        verify(catalogDbClient).getMultipleResources(any(Client.class), eq(UriBuilder.fromUri("/findByOperationName")
-                .queryParam(CatalogDbClient.OPERATION_NAME, operationName).build()));
-    }
-
 }

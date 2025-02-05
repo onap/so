@@ -30,8 +30,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+<<<<<<< HEAD
 import javax.xml.ws.Holder;
 import org.onap.logging.filter.base.ErrorCode;
+||||||| parent of 30f7ad6a1 (Runtime issues of jdk17)
+import jakarta.xml.ws.Holder;
+import org.onap.logging.filter.base.ErrorCode;
+=======
+import jakarta.xml.ws.Holder;
+import org.onap.so.logging.filter.base.ErrorCode;
+>>>>>>> 30f7ad6a1 (Runtime issues of jdk17)
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.adapters.vnf.exceptions.VnfNotFound;
 import org.onap.so.cloud.CloudConfig;

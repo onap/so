@@ -26,18 +26,15 @@ package org.onap.so.apihandlerinfra.tenantisolation;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+// import java.util.ServiceLoader;
 import java.util.UUID;
-import javax.inject.Provider;
-import javax.transaction.Transactional;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.*;
+import jakarta.inject.Provider;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.onap.so.logger.LoggingAnchor;
 import org.apache.http.HttpStatus;
 import org.onap.so.apihandler.common.ErrorNumbers;
@@ -54,7 +51,7 @@ import org.onap.so.constants.Status;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.exceptions.ValidationException;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +83,7 @@ public class CloudOrchestration {
 
     @Autowired
     private Provider<TenantIsolationRunnable> tenantIsolationRunnable;
+    // private TenantIsolationRunnable tenantIsolationRunnable;
 
     @POST
     @Path("/{version:[vV][1]}/operationalEnvironments")
@@ -199,6 +197,7 @@ public class CloudOrchestration {
 
         TenantIsolationRunnable runnable = tenantIsolationRunnable.get();
         runnable.run(action, operationalEnvType, cor, requestId);
+        // tenantIsolationRunnable.run(action, operationalEnvType, cor, requestId);
 
         String encodedValue;
         try {

@@ -21,7 +21,7 @@
 package org.onap.so.logging.jaxrs.filter;
 
 import java.io.IOException;
-import org.onap.logging.filter.spring.SpringClientFilter;
+import org.onap.so.logging.filter.spring.SpringClientFilter;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.logger.MdcConstants;
 import org.slf4j.Logger;
@@ -35,19 +35,21 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SOSpringClientFilter extends SpringClientFilter implements ClientHttpRequestInterceptor {
+public class SOSpringClientFilter extends SpringClientFilter {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private static final Marker INVOKE_RETURN = MarkerFactory.getMarker("INVOKE-RETURN");
 
     @Override
     protected void post(HttpRequest request, ClientHttpResponse response) {
+        logger.debug("====POST in SOSpringClientFilter====");
         setLogTimestamp();
         setElapsedTimeInvokeTimestamp();
         try {
             setResponseStatusCode(response.getRawStatusCode());
             int statusCode = response.getRawStatusCode();
             MDC.put(ONAPLogConstants.MDCs.RESPONSE_CODE, String.valueOf(statusCode));
+            logger.debug("*********MDC Setup 2: SOSpringClientFilter*******");
             setResponseDescription(statusCode);
         } catch (IOException e) {
             logger.error("Unable to get statusCode from response", e);

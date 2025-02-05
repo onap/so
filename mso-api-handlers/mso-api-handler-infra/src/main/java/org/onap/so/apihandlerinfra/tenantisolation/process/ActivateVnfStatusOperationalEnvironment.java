@@ -43,7 +43,7 @@ import org.onap.so.apihandlerinfra.tenantisolationbeans.DistributionStatus;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.so.db.request.beans.OperationalEnvDistributionStatus;
 import org.onap.so.db.request.beans.OperationalEnvServiceModelStatus;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.requestsdb.RequestsDBHelper;
 import org.slf4j.Logger;

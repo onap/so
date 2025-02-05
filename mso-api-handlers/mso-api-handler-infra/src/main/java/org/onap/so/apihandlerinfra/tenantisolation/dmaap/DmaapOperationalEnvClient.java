@@ -21,13 +21,14 @@
 package org.onap.so.apihandlerinfra.tenantisolation.dmaap;
 
 import java.io.IOException;
-import javax.inject.Provider;
+// import java.util.ServiceLoader;
+import jakarta.inject.Provider;
 import org.apache.http.HttpStatus;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,6 +40,7 @@ public class DmaapOperationalEnvClient {
 
     @Autowired
     private Provider<OperationalEnvironmentPublisher> dmaapPublisher;
+    // private OperationalEnvironmentPublisher dmaapPublisher;
 
     protected String buildRequest(String operationalEnvironmentId, String operationalEnvironmentName,
             String operationalEnvironmentType, String tenantContext, String workloadContext, String action)

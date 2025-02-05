@@ -29,6 +29,8 @@ import org.onap.so.client.cds.beans.AbstractCDSPropertiesBean;
 import org.onap.so.client.cds.beans.ConfigDeployPropertiesForPnf;
 import org.onap.so.client.cds.beans.ConfigDeployRequestPnf;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+// import org.springframework.beans.factory.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 /**
@@ -40,7 +42,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class PrepareConfigDeployDelegate extends PrepareCdsCallDelegate {
 
+    // @Primary
     @Autowired
+    @Qualifier("PnfManagement")
     private PnfManagement pnfManagement;
 
     public PrepareConfigDeployDelegate() {

@@ -22,11 +22,19 @@ package org.onap.so.adapters.catalogdb;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+<<<<<<< HEAD
 import javax.annotation.PostConstruct;
 import javax.ws.rs.ApplicationPath;
+||||||| parent of 30f7ad6a1 (Runtime issues of jdk17)
+import javax.annotation.PostConstruct;
+import jakarta.ws.rs.ApplicationPath;
+=======
+import jakarta.annotation.PostConstruct;
+import jakarta.ws.rs.ApplicationPath;
+>>>>>>> 30f7ad6a1 (Runtime issues of jdk17)
 import org.glassfish.jersey.server.ResourceConfig;
-import org.onap.logging.filter.base.Constants;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.Constants;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.onap.so.adapters.catalogdb.rest.BuildingBlockRollbackRestImpl;
 import org.onap.so.adapters.catalogdb.rest.CatalogDbAdapterRest;
 import org.onap.so.adapters.catalogdb.rest.ServiceRestImpl;

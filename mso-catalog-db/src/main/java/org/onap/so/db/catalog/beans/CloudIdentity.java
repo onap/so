@@ -37,7 +37,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.openpojo.business.annotation.BusinessKey;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 /**
  * EntityBean class for a CloudIdentity. This bean represents a cloud identity service instance (i.e. a DCP node) in the
@@ -45,7 +44,6 @@ import uk.co.blackpepper.bowman.annotation.RemoteResource;
  *
  */
 @Entity
-@RemoteResource("/cloudIdentity")
 @Table(name = "identity_services")
 public class CloudIdentity {
 

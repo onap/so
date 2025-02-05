@@ -35,11 +35,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.openpojo.business.annotation.BusinessKey;
-import uk.co.blackpepper.bowman.annotation.LinkedResource;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
-@RemoteResource("/activitySpecUserParameters")
 @Table(name = "activity_spec_to_user_parameters")
 public class ActivitySpecUserParameters implements Serializable {
 
@@ -107,7 +104,6 @@ public class ActivitySpecUserParameters implements Serializable {
         this.userParametersId = userParametersId;
     }
 
-    @LinkedResource
     public ActivitySpec getActivitySpec() {
         return activitySpec;
     }
@@ -116,7 +112,6 @@ public class ActivitySpecUserParameters implements Serializable {
         this.activitySpec = activitySpec;
     }
 
-    @LinkedResource
     public UserParameters getUserParameters() {
         return userParameters;
     }

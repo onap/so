@@ -2,7 +2,7 @@ package org.onap.so.client;
 
 import java.io.IOException;
 import java.util.Collections;
-import javax.annotation.Priority;
+import jakarta.annotation.Priority;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientResponseContext;
 import javax.ws.rs.client.ClientResponseFilter;

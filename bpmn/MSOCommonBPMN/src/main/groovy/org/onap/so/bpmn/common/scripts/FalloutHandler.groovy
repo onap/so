@@ -26,7 +26,7 @@ import org.onap.so.logger.LoggingAnchor
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.db.request.beans.InfraActiveRequests
 import org.onap.so.db.request.client.RequestsDbClient
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logging.filter.base.ErrorCode
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import java.text.SimpleDateFormat
 

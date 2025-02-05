@@ -31,12 +31,11 @@ import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
-import org.onap.logging.filter.base.MDCSetup;
+// import org.onap.so.logging.cxf.interceptor.MDCSetup;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-
 
 public class SOAPLoggingInInterceptor extends AbstractSoapInterceptor {
 
@@ -53,7 +52,6 @@ public class SOAPLoggingInInterceptor extends AbstractSoapInterceptor {
             Map<String, List<String>> headers = (Map<String, List<String>>) message.get(Message.PROTOCOL_HEADERS);
             HttpServletRequest request = (HttpServletRequest) message.get(AbstractHTTPDestination.HTTP_REQUEST);
             request.getRemoteAddr();
-
             setRequestId(headers);
             setInvocationId(headers);
             setServiceName(message);

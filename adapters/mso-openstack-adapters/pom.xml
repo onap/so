@@ -219,8 +219,22 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+<<<<<<< HEAD
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
+||||||| parent of 30f7ad6a1 (Runtime issues of jdk17)
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>6.0.0</version>
+=======
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>6.0.0</version>
+>>>>>>> 30f7ad6a1 (Runtime issues of jdk17)
       <scope>test</scope>
     </dependency>
     <dependency>

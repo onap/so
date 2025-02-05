@@ -30,7 +30,7 @@ import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("PnfManagement")
 public class PnfManagementImpl implements PnfManagement {
 
     @Override

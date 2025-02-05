@@ -43,7 +43,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.camunda.bpm.engine.impl.persistence.entity.HistoricProcessInstanceEntity;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.apihandler.camundabeans.CamundaResponse;
 import org.onap.so.apihandler.common.CamundaClient;
@@ -777,10 +777,13 @@ public class RequestHandlerUtils extends AbstractRestHandler {
             if (recipe == null) {
                 serviceRecordList = catalogDbClient
                         .getServiceByModelInvariantUUIDOrderByModelVersionDesc(modelInfo.getModelInvariantId());
+                logger.debug("serviceRecordList = {}", serviceRecordList);
                 if (!serviceRecordList.isEmpty()) {
                     for (org.onap.so.db.catalog.beans.Service record : serviceRecordList) {
+                        logger.debug("record = {}", record);
                         recipe = catalogDbClient.getFirstByServiceModelUUIDAndAction(record.getModelUUID(),
                                 action.toString());
+                        logger.debug("recipe = {}", recipe);
                         if (recipe != null) {
                             break;
                         }

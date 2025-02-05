@@ -27,11 +27,25 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+<<<<<<< HEAD
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 import org.onap.logging.filter.base.ErrorCode;
 import org.onap.logging.filter.base.ONAPComponents;
+||||||| parent of 30f7ad6a1 (Runtime issues of jdk17)
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriBuilderException;
+import org.onap.logging.filter.base.ErrorCode;
+import org.onap.logging.filter.base.ONAPComponents;
+=======
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriBuilderException;
+import org.onap.so.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ONAPComponents;
+>>>>>>> 30f7ad6a1 (Runtime issues of jdk17)
 import org.onap.so.adapters.vdu.CloudInfo;
 import org.onap.so.adapters.vdu.PluginAction;
 import org.onap.so.adapters.vdu.VduArtifact;

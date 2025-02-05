@@ -4,14 +4,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
-public abstract class BaseWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+@Configuration
+public abstract class BaseWebSecurityConfigurerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseWebSecurityConfigurerAdapter.class);
 
     @Autowired
@@ -22,23 +27,48 @@ public abstract class BaseWebSecurityConfigurerAdapter extends WebSecurityConfig
 
     abstract HttpSecurityConfigurer getHttpSecurityConfigurer();
 
-    @Override
-    protected void configure(final HttpSecurity http) throws Exception {
-        HttpSecurityConfigurer httpSecurityConfigurer = getHttpSecurityConfigurer();
-        LOGGER.debug("Injecting {} configuration ...", httpSecurityConfigurer.getClass());
-
-        httpSecurityConfigurer.configure(http);
-    }
-
-    @Override
-    public void configure(final WebSecurity web) throws Exception {
-        super.configure(web);
+    public void configureWebSecurity(final WebSecurity web) throws Exception {
         final StrictHttpFirewall firewall = new MSOSpringFirewall();
         web.httpFirewall(firewall);
     }
 
-    @Override
-    protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
+    @Bean(name = "httpSecurityBeanOfBaseWebSecurityConfigurerAdapter")
+    public SecurityFilterChain httpSecurityFilterChain(HttpSecurity http) throws Exception {
+        LOGGER.debug("HttpSecurity configuration ...");
+        HttpSecurityConfigurer httpSecurityConfigurer = getHttpSecurityConfigurer();
+        LOGGER.debug("Injecting {} configuration ...", httpSecurityConfigurer.getClass());
+        return httpSecurityConfigurer.configure(http);
     }
+
+
+    @Bean(name = "webSecurityBeanOfBaseWebSecurityConfigurerAdapter")
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> {
+            try {
+                configureWebSecurity(web);
+            } catch (Exception e) {
+                LOGGER.error("Error configuring web security", e);
+                throw new RuntimeException(e);
+            }
+        };
+    }
+
+    // Configure the configureAuthenticationManager
+    @Autowired
+    public void configureAuthenticationManager(AuthenticationManagerBuilder auth) throws Exception {
+        LOGGER.debug("Injecting UserDetailsService and PasswordEncoder ...");
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
+        LOGGER.debug("Out of UserDetailsService and PasswordEncoder ...");
+    }
+
+    // Configure the AuthenticationManagerBuilder
+    @Bean(name = "authenticationManagerBeanOfBaseWebSecurityConfigurerAdapter")
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
+        LOGGER.debug("Injecting AuthenticationManager ...");
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+
 }
+

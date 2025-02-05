@@ -76,9 +76,13 @@ public class CXFConfiguration {
     private VnfAdapterNotify vnfAdapterNotifyServiceImpl;
 
     @Bean
-    public ServletRegistrationBean cxfServlet() {
-        return new ServletRegistrationBean(new CXFServlet(), "/mso/*");
+    public ServletRegistrationBean<Servlet> cxfServlet() {
+        return new ServletRegistrationBean<>(new CXFServlet(), "/mso/*");
     }
+    /*
+     * public ServletRegistrationBean cxfServlet() { return new ServletRegistrationBean((Servlet) new CXFServlet(),
+     * "/mso/*"); }
+     */
 
     @Bean
     public Endpoint vnfAdapterCallback() {
@@ -88,6 +92,7 @@ public class CXFConfiguration {
         endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
         endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
         return endpoint;
+        // return Endpoint.create(endpoint);
     }
 
     @Bean
@@ -98,13 +103,15 @@ public class CXFConfiguration {
         endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
         endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
         return endpoint;
+        // return Endpoint.create(endpoint);
     }
 
     @Bean
     public Server rsServer() {
         JAXRSServerFactoryBean endpoint = new JAXRSServerFactoryBean();
         endpoint.setBus(bus);
-        endpoint.setServiceBeans(Arrays.<Object>asList(wmr, workflowResource, workflowAsyncResource));
+        endpoint.setServiceBeans(Arrays.asList(wmr, workflowResource, workflowAsyncResource));
+        // endpoint.setServiceBeans(Arrays.<Object>asList(wmr, workflowResource, workflowAsyncResource));
         endpoint.setAddress("/");
         endpoint.setFeatures(Arrays.asList(createSwaggerFeature(), new LoggingFeature()));
         endpoint.setProviders(Arrays.asList(new JacksonJsonProvider(mapper), soAuditLogContainerFilter));
@@ -120,8 +127,11 @@ public class CXFConfiguration {
         swagger2Feature.setContactName("The ONAP SO team");
         swagger2Feature.setDescription("This project is the SO Orchestration Engine");
         swagger2Feature.setVersion("1.0.0");
-        swagger2Feature
-                .setResourcePackages(new HashSet<String>(Arrays.asList("org.onap.so.bpmn.common.workflow.service")));
+        swagger2Feature.setResourcePackages(new HashSet<>(Arrays.asList("org.onap.so.bpmn.common.workflow.service")));
+        /*
+         * swagger2Feature .setResourcePackages(new
+         * HashSet<String>(Arrays.asList("org.onap.so.bpmn.common.workflow.service")));
+         */
         swagger2Feature.setScan(true);
         return swagger2Feature;
     }

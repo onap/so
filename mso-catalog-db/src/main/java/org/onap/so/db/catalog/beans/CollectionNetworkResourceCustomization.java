@@ -37,11 +37,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.openpojo.business.annotation.BusinessKey;
-import uk.co.blackpepper.bowman.annotation.LinkedResource;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
-@RemoteResource("/collectionNetworkResourceCustomization")
 @Table(name = "collection_network_resource_customization")
 public class CollectionNetworkResourceCustomization implements Serializable {
 
@@ -132,7 +129,6 @@ public class CollectionNetworkResourceCustomization implements Serializable {
         this.modelCustomizationUUID = modelCustomizationUUID;
     }
 
-    @LinkedResource
     public NetworkCollectionResourceCustomization getNetworkResourceCustomization() {
         return networkResourceCustomization;
     }
@@ -149,7 +145,6 @@ public class CollectionNetworkResourceCustomization implements Serializable {
         this.modelInstanceName = modelInstanceName;
     }
 
-    @LinkedResource
     public NetworkResource getNetworkResource() {
         return this.networkResource;
     }
@@ -194,7 +189,6 @@ public class CollectionNetworkResourceCustomization implements Serializable {
         return this.networkRole;
     }
 
-    @LinkedResource
     public InstanceGroup getInstanceGroup() {
         return instanceGroup;
     }

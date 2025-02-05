@@ -24,7 +24,7 @@ package org.onap.so.bpmn.common.scripts
 
 import org.onap.so.logger.LoggingAnchor
 import org.onap.so.client.HttpClientFactory
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logging.filter.base.ErrorCode
 
 import java.text.SimpleDateFormat
 import javax.ws.rs.core.Response
@@ -47,10 +47,7 @@ import org.onap.so.client.HttpClient
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.onap.logging.filter.base.ONAPComponents;
-
-
-
+import org.onap.so.logging.filter.base.ONAPComponents;
 
 class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
     private static final Logger logger = LoggerFactory.getLogger( SDNCAdapterRestV1.class)

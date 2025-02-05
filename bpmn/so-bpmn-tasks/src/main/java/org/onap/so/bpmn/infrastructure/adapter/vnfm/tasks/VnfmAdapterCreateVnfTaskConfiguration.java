@@ -79,6 +79,7 @@ public class VnfmAdapterCreateVnfTaskConfiguration {
     public HttpRestServiceProvider vnfmHttpRestServiceProvider(
             @Qualifier(CONFIGURABLE_REST_TEMPLATE) @Autowired final RestTemplate restTemplate,
             @Autowired final VnfmBasicHttpConfigProvider etsiVnfmAdapter) {
+        logger.debug("Setting up vnfm RestTemplate......");
         if (trustStore != null) {
             setTrustStore(restTemplate);
         }

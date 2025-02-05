@@ -23,7 +23,7 @@
 package org.onap.so.bpmn.common.scripts
 
 import org.onap.so.logger.LoggingAnchor
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logging.filter.base.ErrorCode
 
 import static org.apache.commons.lang3.StringUtils.*
 
@@ -34,7 +34,7 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.logger.MessageEnum
-import org.onap.logging.filter.base.ONAPComponentsList
+import org.onap.so.logging.filter.base.ONAPComponentsList
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

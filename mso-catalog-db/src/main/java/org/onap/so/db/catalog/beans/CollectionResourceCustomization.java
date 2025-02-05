@@ -42,11 +42,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.openpojo.business.annotation.BusinessKey;
-import uk.co.blackpepper.bowman.annotation.LinkedResource;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
-@RemoteResource("/collectionResourceCustomization")
 @DiscriminatorColumn(name = "OBJECT_TYPE")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "collection_resource_customization")
@@ -157,7 +154,6 @@ public class CollectionResourceCustomization implements Serializable {
         this.function = function;
     }
 
-    @LinkedResource
     public CollectionResource getCollectionResource() {
         return collectionResource;
     }
@@ -166,7 +162,6 @@ public class CollectionResourceCustomization implements Serializable {
         this.collectionResource = collectionResource;
     }
 
-    @LinkedResource
     public List<CollectionResourceInstanceGroupCustomization> getCollectionInstanceGroupCustomizations() {
         return collectionInstanceGroupCustomizations;
     }

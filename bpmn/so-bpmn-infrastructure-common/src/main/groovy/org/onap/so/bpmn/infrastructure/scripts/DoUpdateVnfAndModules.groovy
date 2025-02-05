@@ -24,7 +24,7 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 import org.onap.so.logger.LoggingAnchor
 import org.onap.so.client.HttpClientFactory
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logging.filter.base.ErrorCode
 
 import javax.ws.rs.core.Response
 import org.camunda.bpm.engine.delegate.BpmnError
@@ -47,7 +47,7 @@ import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.T
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 
 /**
  * This class supports the VID Flow

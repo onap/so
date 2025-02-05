@@ -85,24 +85,22 @@ if [ -n "${ACTIVE_PROFILE}" ]; then
 fi
 
 
-read_properties(){
-    while IFS="=" read -r key value; do
-        case "${key}" in
-          '#'*) ;;
-             *)
-               eKey=$(echo $key | tr '[:lower:]' '[:upper:]')
-               export "$eKey"="$value"
-        esac
-    done <<-EOF
-	$1
-	EOF
-}
+#read_properties(){
+#    while IFS="=" read -r key value; do
+#        case "${key}" in
+#          '#'*) ;;
+#             *)
+#               eKey=$(echo $key | tr '[:lower:]' '[:upper:]')
+#               export "$eKey"="$value"
+#        esac
+#    done <<-EOF
+#	$1
+#	EOF
+#}
 
-
-
-if [ -n "${AAF_SSL_CERTS_ENABLED}" ]; then
-read_properties "$(head -n 4 /app/certs/.passphrases)"
-fi
+#if [ -n "${AAF_SSL_CERTS_ENABLED}" ]; then
+#read_properties "$(head -n 4 /app/certs/.passphrases)"
+#fi
 
 echo "JVM Arguments: ${jvmargs}"
 

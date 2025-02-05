@@ -38,11 +38,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.openpojo.business.annotation.BusinessKey;
-import uk.co.blackpepper.bowman.annotation.LinkedResource;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
-@RemoteResource("/collectionResourceInstanceGroupCustomization")
 @IdClass(CollectionResourceInstanceGroupCustomizationId.class)
 @Table(name = "collection_resource_instance_group_customization")
 public class CollectionResourceInstanceGroupCustomization implements Serializable {
@@ -160,7 +157,6 @@ public class CollectionResourceInstanceGroupCustomization implements Serializabl
         this.subInterfaceNetworkQuantity = subInterfaceNetworkQuantity;
     }
 
-    @LinkedResource
     public CollectionResourceCustomization getCollectionResourceCust() {
         return collectionResourceCust;
     }
@@ -169,7 +165,6 @@ public class CollectionResourceInstanceGroupCustomization implements Serializabl
         this.collectionResourceCust = collectionResourceCust;
     }
 
-    @LinkedResource
     public InstanceGroup getInstanceGroup() {
         return instanceGroup;
     }

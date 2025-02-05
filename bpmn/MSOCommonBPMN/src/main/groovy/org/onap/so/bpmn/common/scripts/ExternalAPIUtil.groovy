@@ -29,7 +29,7 @@ import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response

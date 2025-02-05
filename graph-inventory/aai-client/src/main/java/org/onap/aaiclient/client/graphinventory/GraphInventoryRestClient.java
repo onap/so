@@ -28,7 +28,7 @@ import javax.ws.rs.core.Response;
 import org.javatuples.Pair;
 import org.onap.aaiclient.client.CacheControlFeature;
 import org.onap.aaiclient.client.FlushCache;
-import org.onap.logging.filter.base.ONAPComponentsList;
+import org.onap.so.logging.filter.base.ONAPComponentsList;
 import org.onap.so.client.AddCacheHeaders;
 import org.onap.so.client.CacheFactory;
 import org.onap.so.client.ResponseExceptionMapper;

@@ -65,7 +65,7 @@ import org.onap.so.client.sniro.beans.ServiceInfo;
 import org.onap.so.client.sniro.beans.SniroManagerRequest;
 import org.onap.so.client.sniro.beans.SubscriberInfo;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

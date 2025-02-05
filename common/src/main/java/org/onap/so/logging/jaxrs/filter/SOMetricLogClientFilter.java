@@ -22,7 +22,7 @@ package org.onap.so.logging.jaxrs.filter;
 
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientResponseContext;
-import org.onap.logging.filter.base.MetricLogClientFilter;
+import org.onap.so.logging.filter.base.MetricLogClientFilter;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.logger.MdcConstants;
 import org.slf4j.Logger;
@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
-
 
 public class SOMetricLogClientFilter extends MetricLogClientFilter {
 

@@ -26,7 +26,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.javatuples.Pair;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryPatchConverter;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryRestClient;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.onap.so.client.ResponseExceptionMapper;
 
 public class AAIRestClient extends GraphInventoryRestClient {
