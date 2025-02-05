@@ -22,8 +22,8 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.MediaType
+import jakarta.ws.rs.core.Response
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import org.camunda.bpm.engine.delegate.BpmnError
@@ -40,8 +40,8 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
-import org.onap.logging.filter.base.ErrorCode
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ErrorCode
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.CatalogDbUtils
 import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory
@@ -76,9 +76,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 
 
 public class DoCreateVfModule extends VfModuleBase {
-	private static final Logger logger = LoggerFactory.getLogger(DoCreateVfModule.class)
-	private static final ObjectMapper mapper = new ObjectMapper()
-	private final HttpClientFactory httpClientFactory = new HttpClientFactory()
+    private static final Logger logger = LoggerFactory.getLogger( DoCreateVfModule.class);
 
 	String Prefix="DCVFM_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -87,6 +85,7 @@ public class DoCreateVfModule extends VfModuleBase {
 	OofInfraUtils oofInfraUtils = new OofInfraUtils()
 	CatalogDbUtils catalogDbUtils = new CatalogDbUtilsFactory().create()
 	DecomposeJsonUtil decomposeJsonUtils = new DecomposeJsonUtil()
+	private final HttpClientFactory httpClientFactory = new HttpClientFactory()
 
 	/**
 	 * Validates the request message and sets up the workflow.
@@ -2096,7 +2095,8 @@ public class DoCreateVfModule extends VfModuleBase {
 			   if (vnfObject != null) {
 				   String vnfJson = vnfObject.toString()
 				   //
-				   VnfResource vnf = mapper.readValue(vnfJson, VnfResource.class);
+				   ObjectMapper om = new ObjectMapper();
+				   VnfResource vnf = om.readValue(vnfJson, VnfResource.class);
 
 				   // Get multiStageDesign flag
 

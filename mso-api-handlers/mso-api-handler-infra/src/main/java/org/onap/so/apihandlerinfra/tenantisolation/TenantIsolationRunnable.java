@@ -34,7 +34,7 @@ import org.onap.so.apihandlerinfra.tenantisolation.process.CreateVnfOperationalE
 import org.onap.so.apihandlerinfra.tenantisolation.process.DeactivateVnfOperationalEnvironment;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.Action;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.OperationalEnvironment;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.requestsdb.RequestsDBHelper;
 import org.slf4j.Logger;

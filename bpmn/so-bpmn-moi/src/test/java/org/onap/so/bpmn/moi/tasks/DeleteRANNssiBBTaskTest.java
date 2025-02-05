@@ -30,7 +30,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.ServiceInstance;
-import org.onap.aai.domain.yang.ServiceSubscription;
 import org.onap.aaiclient.client.aai.AAIRestClientImpl;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;

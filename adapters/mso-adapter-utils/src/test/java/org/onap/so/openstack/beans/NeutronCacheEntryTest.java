@@ -25,7 +25,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import org.junit.Test;
-import org.onap.so.BaseTest;
 
 public class NeutronCacheEntryTest {
 

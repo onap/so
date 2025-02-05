@@ -39,7 +39,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.sdc.api.IDistributionClient;
 import org.onap.sdc.api.consumer.IDistributionStatusMessage;
@@ -87,24 +87,16 @@ import org.springframework.stereotype.Component;
 public class ASDCController {
 
     protected static final Logger logger = LoggerFactory.getLogger(ASDCController.class);
-    protected static final String MSO = "SO";
-    protected boolean isAsdcClientAutoManaged = false;
-    protected String controllerName;
-    protected int nbOfNotificationsOngoing = 0;
 
     private static final String UNKNOWN = "Unknown";
-    private static final String UUID_PARAM = "(UUID:";
-    private static final ObjectMapper mapper;
+
+    protected boolean isAsdcClientAutoManaged = false;
+
+    protected String controllerName;
+
     private ASDCControllerStatus controllerStatus = ASDCControllerStatus.STOPPED;
 
-    static {
-        mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(Include.NON_NULL);
-        mapper.setSerializationInclusion(Include.NON_EMPTY);
-        mapper.setSerializationInclusion(Include.NON_ABSENT);
-        mapper.enable(MapperFeature.USE_ANNOTATIONS);
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    }
+    protected int nbOfNotificationsOngoing = 0;
 
     @Autowired
     private ToscaResourceInstaller toscaInstaller;
@@ -126,6 +118,9 @@ public class ASDCController {
 
     private IDistributionClient distributionClient;
 
+    private static final String UUID_PARAM = "(UUID:";
+
+    protected static final String MSO = "SO";
 
     @Autowired
     private WatchdogDistribution wd;
@@ -593,6 +588,12 @@ public class ASDCController {
     }
 
     private Optional<String> getNotificationJson(INotificationData iNotif) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(Include.NON_NULL);
+        mapper.setSerializationInclusion(Include.NON_EMPTY);
+        mapper.setSerializationInclusion(Include.NON_ABSENT);
+        mapper.enable(MapperFeature.USE_ANNOTATIONS);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         Optional<String> returnValue = Optional.empty();
         try {
             returnValue = Optional.of(mapper.writeValueAsString(iNotif));

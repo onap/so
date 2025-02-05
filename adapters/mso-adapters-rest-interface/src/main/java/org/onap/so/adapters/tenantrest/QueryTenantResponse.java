@@ -23,7 +23,7 @@ package org.onap.so.adapters.tenantrest;
 
 
 import java.util.Map;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "queryTenantResponse")
 public class QueryTenantResponse extends TenantRequestCommon {
