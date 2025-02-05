@@ -28,7 +28,7 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.L3Network
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.springframework.web.util.UriUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.logger.MessageEnum

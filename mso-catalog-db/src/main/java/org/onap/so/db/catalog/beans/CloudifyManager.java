@@ -34,7 +34,6 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 /**
  * EntityBean class for a Cloudify Manager. This bean represents a Cloudify node through which TOSCA-based VNFs may be
@@ -46,7 +45,6 @@ import uk.co.blackpepper.bowman.annotation.RemoteResource;
  * @author JC1348
  */
 @Entity
-@RemoteResource("/cloudifyManager")
 @Table(name = "cloudify_managers")
 public class CloudifyManager {
 

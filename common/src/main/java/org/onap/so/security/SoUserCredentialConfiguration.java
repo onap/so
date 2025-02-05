@@ -21,12 +21,14 @@ package org.onap.so.security;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Waqas Ikram (waqas.ikram@est.tech)
@@ -35,6 +37,8 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "spring.security")
 public class SoUserCredentialConfiguration {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SoUserCredentialConfiguration.class);
 
     private List<UserCredentials> credentials = new ArrayList<>();
     private final List<String> roles = new ArrayList<>();
@@ -45,12 +49,15 @@ public class SoUserCredentialConfiguration {
 
     @PostConstruct
     private void addRoles() {
+        LOGGER.debug("Inside Add ROLES Of SOUSERCREDS");
         for (int i = 0; i < credentials.size(); i++) {
             roles.add(credentials.get(i).getRole());
+            LOGGER.debug("ROLES:" + roles.get(i));
         }
     }
 
     public List<UserCredentials> getUsercredentials() {
+        LOGGER.debug("GetCredentials: {}", credentials);
         return credentials;
     }
 
