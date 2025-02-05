@@ -33,7 +33,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.onap.so.bpmn.infrastructure.sdnc.exceptions.SDNCErrorResponseException;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.ExceptionBuilder;
@@ -49,12 +49,10 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
-import lombok.RequiredArgsConstructor;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.xpath.XPathFactoryImpl;
 
 @Component
-@RequiredArgsConstructor
 public class SDNCRequestTasks {
 
     private static final Logger logger = LoggerFactory.getLogger(SDNCRequestTasks.class);
@@ -68,8 +66,11 @@ public class SDNCRequestTasks {
     protected static final String IS_CALLBACK_COMPLETED = "isCallbackCompleted";
     protected static final String SDNC_SUCCESS = "200";
 
-    private final ExceptionBuilder exceptionBuilder;
-    private final SDNCClient sdncClient;
+    @Autowired
+    private ExceptionBuilder exceptionBuilder;
+
+    @Autowired
+    private SDNCClient sdncClient;
 
     public void createCorrelationVariables(DelegateExecution execution) {
         SDNCRequest request = (SDNCRequest) execution.getVariable(SDNC_REQUEST);
@@ -150,7 +151,7 @@ public class SDNCRequestTasks {
         return "Y".equals(finalMessageIndicator);
     }
 
-    protected static String getXmlElement(final Document doc, final String exp) throws Exception {
+    protected String getXmlElement(final Document doc, final String exp) throws Exception {
         final TransformerFactory factory = TransformerFactory.newInstance();
         factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, StringUtils.EMPTY);
         factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, StringUtils.EMPTY);

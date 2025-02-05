@@ -20,7 +20,7 @@
 
 package org.onap.so.adapters.tasks;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import org.camunda.bpm.client.ExternalTaskClient;
 import org.onap.so.adapters.tasks.inventory.CreateInventoryTask;
 import org.onap.so.adapters.tasks.inventory.DeleteInventoryTask;

@@ -36,10 +36,10 @@ import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.onap.so.bpmn.core.UrnPropertiesReader
 
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
 /**
  * This groovy class supports the <class>DoDeleteVFCNetworkServiceInstance.bpmn</class> process.
  * flow for E2E ServiceInstance Delete

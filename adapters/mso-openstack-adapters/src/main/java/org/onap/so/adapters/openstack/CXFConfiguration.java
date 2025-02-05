@@ -24,6 +24,7 @@ package org.onap.so.adapters.openstack;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import jakarta.servlet.Servlet;
 import org.apache.cxf.Bus;
 import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.endpoint.Server;
@@ -39,7 +40,7 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 
 
 @Configuration
@@ -61,7 +62,8 @@ public class CXFConfiguration {
 
     @Bean
     public ServletRegistrationBean soapDispatcherServlet() {
-        ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(new CXFServlet(), "/services/*");
+        ServletRegistrationBean servletRegistrationBean =
+                new ServletRegistrationBean((Servlet) new CXFServlet(), "/services/*");
         servletRegistrationBean.setName("services");
         return servletRegistrationBean;
     }

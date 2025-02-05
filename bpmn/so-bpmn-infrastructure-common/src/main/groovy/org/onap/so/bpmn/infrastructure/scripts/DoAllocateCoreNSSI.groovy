@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory
 import static org.apache.commons.lang3.StringUtils.*;
 import com.fasterxml.jackson.databind.ObjectMapper
 import groovy.json.JsonSlurper
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
 import org.onap.so.bpmn.common.scripts.OofUtils
 import org.onap.so.bpmn.common.scripts.RequestDBUtil
 
@@ -50,7 +50,7 @@ class DoAllocateCoreNSSI extends AbstractServiceTaskProcessor {
     CatalogDbUtils catalogDbUtils = new CatalogDbUtilsFactory().create()
     JsonUtils jsonUtil = new JsonUtils()
     RequestDBUtil requestDBUtil = new RequestDBUtil()
-    private static final ObjectMapper mapper = new ObjectMapper()
+    ObjectMapper mapper = new ObjectMapper()
     OofUtils oofUtils = new OofUtils()
     void preProcessRequest(DelegateExecution execution) {
         logger.debug(Prefix+" **** Enter DoAllocateCoreNSSI ::: preProcessRequest ****")

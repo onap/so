@@ -25,7 +25,7 @@
 // Generated on: 2015.01.08 at 03:50:12 PM EST
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://org.onap/so/request/types/v1",
-        elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://org.onap/so/request/types/v1",
+        elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.onap.so.apihandlerinfra;
 

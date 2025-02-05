@@ -24,7 +24,7 @@ package org.onap.so.openstack.beans;
 
 import java.io.Serializable;
 import java.util.List;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 public class Subnet implements Serializable {
 

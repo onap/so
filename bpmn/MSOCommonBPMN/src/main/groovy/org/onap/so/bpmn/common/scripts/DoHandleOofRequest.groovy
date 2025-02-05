@@ -19,11 +19,11 @@
  */
 package org.onap.so.bpmn.common.scripts
 
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
 
 import org.apache.commons.lang3.StringUtils
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.logging.filter.base.ONAPComponents
+import org.onap.so.logging.filter.base.ONAPComponents
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
@@ -42,7 +42,6 @@ class DoHandleOofRequest extends AbstractServiceTaskProcessor {
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 	private static final Logger logger = LoggerFactory.getLogger(DoHandleOofRequest.class)
-	private static final ObjectMapper mapper = new ObjectMapper()
 
 	@Override
 	public void preProcessRequest(DelegateExecution execution) {
@@ -79,7 +78,8 @@ class DoHandleOofRequest extends AbstractServiceTaskProcessor {
 		OofRequest oofRequestPayload = new OofRequest()
 		oofRequestPayload.setApiPath(apiPath)
 		oofRequestPayload.setRequestDetails(requestDetails)
-		String requestJson = mapper.writeValueAsString(oofRequestPayload)
+                ObjectMapper objectMapper = new ObjectMapper()
+                String requestJson = objectMapper.writeValueAsString(oofRequestPayload)
 		execution.setVariable("oofRequestPayload", requestJson)
 	}
 

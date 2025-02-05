@@ -22,7 +22,7 @@ package org.onap.so.bpmn.common.scripts
 
 import org.apache.commons.lang3.StringUtils
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.logging.filter.base.ONAPComponents
+import org.onap.so.logging.filter.base.ONAPComponents
 import org.onap.so.beans.nsmf.NssmfAdapterNBIRequest
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.json.JsonUtils
@@ -31,7 +31,7 @@ import org.onap.so.client.HttpClientFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
 
 /***
  * Utilities for accessing Catalog DB Adapter to retrieve Networks, VNF/VFModules, AllottedResources and complete ServiceResources information

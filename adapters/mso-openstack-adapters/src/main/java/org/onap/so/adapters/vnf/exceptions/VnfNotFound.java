@@ -21,7 +21,7 @@
 package org.onap.so.adapters.vnf.exceptions;
 
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 
 /**
  * This class reports an exception when trying to update a Network that does not exist in the target cloud/tenant. Note

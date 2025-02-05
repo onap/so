@@ -31,7 +31,7 @@ import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logging.filter.base.ErrorCode
 import org.onap.so.beans.nsmf.SliceTaskParams
 import org.onap.so.beans.nsmf.SliceTaskParamsAdapter
 import org.onap.so.beans.nsmf.oof.TemplateInfo
@@ -52,16 +52,21 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import groovy.json.JsonSlurper
 
 public class CreateSliceService extends AbstractServiceTaskProcessor {
-    private static final Logger logger = LoggerFactory.getLogger(CreateSliceService.class)
-    private static final ObjectMapper objectMapper = new ObjectMapper()
-
     String Prefix = "CRESS_"
+
     ExceptionUtil exceptionUtil = new ExceptionUtil()
+
     JsonUtils jsonUtil = new JsonUtils()
+
     JsonSlurper jsonSlurper = new JsonSlurper()
+
+    ObjectMapper objectMapper = new ObjectMapper()
+
     OofUtils oofUtils = new OofUtils()
+
     AAIResourcesClient client = getAAIClient()
 
+    private static final Logger logger = LoggerFactory.getLogger(CreateSliceService.class)
 
     public void preProcessRequest(DelegateExecution execution) {
         logger.debug("Start preProcessRequest")
@@ -505,3 +510,4 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
     }
 
 }
+

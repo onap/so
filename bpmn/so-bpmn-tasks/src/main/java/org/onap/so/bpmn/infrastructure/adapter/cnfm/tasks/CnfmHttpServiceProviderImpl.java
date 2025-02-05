@@ -60,7 +60,7 @@ public class CnfmHttpServiceProviderImpl implements CnfmHttpServiceProvider {
             final ResponseEntity<AsInstance> response =
                     httpServiceProvider.postHttpRequest(createAsRequest, url, AsInstance.class);
 
-            final HttpStatus httpStatus = response.getStatusCode();
+            final HttpStatus httpStatus = (HttpStatus) response.getStatusCode();
             if (httpStatus.is2xxSuccessful()) {
                 if (!response.hasBody()) {
                     LOGGER.error("Received response without body: {}", response);
@@ -91,7 +91,7 @@ public class CnfmHttpServiceProviderImpl implements CnfmHttpServiceProvider {
             final String url = cnfmUrlProvider.getInstantiateAsRequestUrl(asInstanceId);
             final ResponseEntity<AsInstance> response =
                     httpServiceProvider.postHttpRequest(instantiateAsRequest, url, AsInstance.class);
-            final HttpStatus httpStatus = response.getStatusCode();
+            final HttpStatus httpStatus = (HttpStatus) response.getStatusCode();
             if (httpStatus.is2xxSuccessful()) {
                 URI statusUri = response.getHeaders().getLocation();
                 if (statusUri == null) {
@@ -116,7 +116,7 @@ public class CnfmHttpServiceProviderImpl implements CnfmHttpServiceProvider {
         try {
             final ResponseEntity<AsLcmOpOcc> response = httpServiceProvider.getHttpResponse(url, AsLcmOpOcc.class);
 
-            final HttpStatus httpStatus = response.getStatusCode();
+            final HttpStatus httpStatus = (HttpStatus) response.getStatusCode();
 
             if (!(httpStatus.equals(HttpStatus.ACCEPTED)) && !(httpStatus.equals(HttpStatus.OK))) {
                 LOGGER.error("Unable to invoke HTTP GET using URL: {}, Response Code: {}", url, httpStatus.value());
@@ -143,7 +143,7 @@ public class CnfmHttpServiceProviderImpl implements CnfmHttpServiceProvider {
             LOGGER.debug("Will send request to CNFM by uisng the url: {}", url);
 
             ResponseEntity<Void> response = httpServiceProvider.deleteHttpRequest(url, Void.class);
-            final HttpStatus httpStatus = response.getStatusCode();
+            final HttpStatus httpStatus = (HttpStatus) response.getStatusCode();
             if (!(httpStatus.is2xxSuccessful())) {
                 LOGGER.error("Unable to invoke HTTP DELETE using URL: {}, Response Code: {}", url, httpStatus.value());
                 return Optional.empty();
@@ -164,7 +164,7 @@ public class CnfmHttpServiceProviderImpl implements CnfmHttpServiceProvider {
             LOGGER.debug("Will send request to CNFM to terminate by uisng the url: {}", url);
 
             ResponseEntity<Void> response = httpServiceProvider.postHttpRequest(terminateAsRequest, url, Void.class);
-            final HttpStatus httpStatus = response.getStatusCode();
+            final HttpStatus httpStatus = (HttpStatus) response.getStatusCode();
             if (httpStatus.is2xxSuccessful()) {
                 URI statusUri = response.getHeaders().getLocation();
                 if (statusUri == null) {

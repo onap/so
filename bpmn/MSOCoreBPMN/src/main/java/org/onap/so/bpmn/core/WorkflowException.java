@@ -21,7 +21,7 @@
 package org.onap.so.bpmn.core;
 
 import java.io.Serializable;
-import org.onap.logging.filter.base.ONAPComponentsList;
+import org.onap.so.logging.filter.base.ONAPComponentsList;
 
 /**
  * An object that represents a workflow exception.

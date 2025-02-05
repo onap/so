@@ -22,12 +22,12 @@ package org.onap.so.client.dmaap.rest;
 
 import java.net.URL;
 import java.util.UUID;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 import org.javatuples.Pair;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.client.RestClient;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.slf4j.MDC;
 
 public class DMaaPRestClient extends RestClient {

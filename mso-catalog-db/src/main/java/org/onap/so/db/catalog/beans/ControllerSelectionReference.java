@@ -20,20 +20,18 @@ package org.onap.so.db.catalog.beans;
  */
 
 import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.Table;
 import com.openpojo.business.annotation.BusinessKey;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @IdClass(ControllerSelectionReferenceId.class)
 @Entity
-@RemoteResource("/controllerSelectionReference")
 @Table(name = "controller_selection_reference")
 public class ControllerSelectionReference implements Serializable {
 

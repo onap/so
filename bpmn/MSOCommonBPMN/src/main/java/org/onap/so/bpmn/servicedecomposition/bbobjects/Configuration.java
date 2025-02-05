@@ -27,7 +27,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.onap.so.bpmn.servicedecomposition.Metadata;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoConfiguration;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
-import javax.persistence.Id;
+import jakarta.persistence.Id;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

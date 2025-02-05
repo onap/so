@@ -27,8 +27,8 @@ import com.google.gson.reflect.TypeToken
 import org.apache.commons.lang3.StringUtils
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.logging.filter.base.ErrorCode
-import javax.ws.rs.NotFoundException
+import org.onap.so.logging.filter.base.ErrorCode
+import jakarta.ws.rs.NotFoundException
 import org.onap.aai.domain.yang.Relationship
 import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.aaiclient.client.aai.AAIResourcesClient
@@ -68,13 +68,13 @@ class DoActivateSliceService extends AbstractServiceTaskProcessor {
     private static final NSSMF_DEACTIVATION_URL = "/api/rest/provMns/v1/NSS/%s/deactivation"
 
     private static final NSSMF_QUERY_JOB_STATUS_URL = "/api/rest/provMns/v1/NSS/jobs/%s"
-    private static final ObjectMapper objectMapper = new ObjectMapper()
 
     String Prefix="DoCNSSMF_"
     ExceptionUtil exceptionUtil = new ExceptionUtil()
 
     JsonUtils jsonUtil = new JsonUtils()
 
+    ObjectMapper objectMapper = new ObjectMapper()
 
     SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 

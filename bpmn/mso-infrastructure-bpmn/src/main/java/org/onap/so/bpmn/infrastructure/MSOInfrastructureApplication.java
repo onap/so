@@ -24,7 +24,7 @@ package org.onap.so.bpmn.infrastructure;
 
 import java.util.List;
 import java.util.concurrent.Executor;
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import org.camunda.bpm.application.PreUndeploy;
 import org.camunda.bpm.application.ProcessApplicationInfo;
 import org.camunda.bpm.engine.ProcessEngine;
@@ -32,8 +32,11 @@ import org.camunda.bpm.engine.RepositoryService;
 import org.camunda.bpm.engine.repository.Deployment;
 import org.camunda.bpm.engine.repository.DeploymentBuilder;
 import org.camunda.bpm.engine.repository.ProcessDefinition;
-import org.onap.logging.filter.spring.MDCTaskDecorator;
+import org.onap.so.logging.filter.spring.MDCTaskDecorator;
 import org.onap.so.bpmn.common.DefaultToShortClassNameBeanNameGenerator;
+import org.onap.so.bpmn.infrastructure.pnf.management.PnfManagement;
+import org.onap.so.bpmn.infrastructure.pnf.management.PnfManagementImpl;
+import org.onap.so.client.orchestration.SDNCNetworkResources;
 import org.onap.so.db.catalog.beans.Workflow;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.logger.LoggingAnchor;
@@ -58,7 +61,11 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @SpringBootApplication
 @EnableAsync
-@ComponentScan(basePackages = {"org.onap"}, nameGenerator = DefaultToShortClassNameBeanNameGenerator.class,
+@ComponentScan(
+        basePackages = {"org.onap", "org.onap.so", "org.onap.so.bpmn.infrastructure",
+                "org.onap.so.bpmn.infrastructure.pnf.management", "org.onap.so.client.orchestration",
+                "org.onap.so.bpmn.infrastructure.adapter.vnfm", "org.onap.so.bpmn.infrastructure.manualhandling.tasks"},
+        nameGenerator = DefaultToShortClassNameBeanNameGenerator.class,
         excludeFilters = {@Filter(type = FilterType.ANNOTATION, classes = SpringBootApplication.class)})
 
 public class MSOInfrastructureApplication {

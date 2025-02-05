@@ -1,6 +1,6 @@
 package org.onap.so.client.orchestration;
 
-import org.onap.logging.filter.spring.SpringClientPayloadFilter;
+import org.onap.so.logging.filter.spring.SpringClientPayloadFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;

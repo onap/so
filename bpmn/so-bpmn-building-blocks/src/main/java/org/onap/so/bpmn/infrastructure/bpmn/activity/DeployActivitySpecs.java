@@ -23,7 +23,7 @@ package org.onap.so.bpmn.infrastructure.bpmn.activity;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriBuilder;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;

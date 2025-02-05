@@ -19,6 +19,8 @@
  */
 package org.onap.so.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
@@ -27,20 +29,25 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 /**
- * @author Waqas Ikram (waqas.ikram@est.tech)
- *
+ * Security configuration for the ONAP application. Applies basic security configurations based on the active profile.
  */
 @EnableWebSecurity
 @Configuration
 @Order(1)
 @Profile({"basic", "test"})
 public class SoWebSecurityConfigurerAdapter extends BaseWebSecurityConfigurerAdapter {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SoWebSecurityConfigurerAdapter.class);
+
     @Autowired
     @Qualifier("basic")
     protected HttpSecurityConfigurer httpSecurityConfigurer;
 
     @Override
     HttpSecurityConfigurer getHttpSecurityConfigurer() {
+        LOGGER.debug("Inside SoWebSecurityConfigurerAdapter");
+        LOGGER.debug("Inside SoWebSecurityConfigurerAdapter");
+        LOGGER.debug("Using HttpSecurityConfigurer: {}", httpSecurityConfigurer.getClass().getSimpleName());
         return httpSecurityConfigurer;
     }
 }

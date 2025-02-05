@@ -11,13 +11,16 @@
   <packaging>jar</packaging>
   <properties>
     <assertj.core.version>1.7.0</assertj.core.version>
+    <grpc.version>1.25.0</grpc.version>
+    <codehaus.groovy.version> 3.0.19</codehaus.groovy.version>
   </properties>
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-codegen-plugin</artifactId>
-        <version>2.5.2</version>
+        <version>4.0.0</version>
+        <!--2.5.2-->
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -167,6 +170,21 @@
       <artifactId>cxf-rt-rs-service-description-openapi-v3</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-xml</artifactId>
+      <version>${codehaus.groovy.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-json</artifactId>
+      <version>${codehaus.groovy.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-jsr223</artifactId>
+      <version>${codehaus.groovy.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
       <scope>test</scope>
@@ -222,6 +240,7 @@
     <dependency>
       <groupId>org.camunda.bpm</groupId>
       <artifactId>camunda-engine-plugin-connect</artifactId>
+      <version>7.24.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>

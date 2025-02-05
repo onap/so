@@ -46,7 +46,7 @@ import org.onap.so.db.request.beans.OperationalEnvServiceModelStatus;
 import org.onap.so.db.request.beans.RequestProcessingData;
 import org.onap.so.serviceinstancebeans.ModelType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 
 public class RequestsDbClientTest extends RequestsAdapterBase {
 

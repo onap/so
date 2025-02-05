@@ -31,7 +31,7 @@ import org.onap.so.beans.nsmf.oof.TemplateInfo
 
 import static org.onap.so.bpmn.common.scripts.GenericUtils.*
 
-import javax.ws.rs.core.UriBuilder
+import jakarta.ws.rs.core.UriBuilder
 
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.util.OofInfraUtils

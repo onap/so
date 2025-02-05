@@ -37,7 +37,7 @@ import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 
 import org.json.JSONArray
@@ -47,7 +47,7 @@ import static org.onap.so.bpmn.common.scripts.GenericUtils.*;
 
 import java.net.URL
 
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

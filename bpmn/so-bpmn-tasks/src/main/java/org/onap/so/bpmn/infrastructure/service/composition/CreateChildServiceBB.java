@@ -24,7 +24,7 @@ import static org.onap.so.bpmn.infrastructure.service.composition.ServiceComposi
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.client.exception.ExceptionBuilder;

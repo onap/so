@@ -29,10 +29,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javax.jws.WebService;
-import javax.xml.ws.Holder;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.Holder;
 import org.apache.commons.lang3.mutable.MutableBoolean;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.adapters.network.beans.ContrailPolicyRef;
 import org.onap.so.adapters.network.beans.ContrailPolicyRefSeq;
 import org.onap.so.adapters.network.beans.ContrailSubnet;
@@ -99,7 +99,6 @@ public class MsoNetworkAdapterImpl {
     private static final String NETWORK_DELETED_STATUS_MESSAGE = "The network was successfully deleted in the cloud";
 
     private static final Logger logger = LoggerFactory.getLogger(MsoNetworkAdapterImpl.class);
-    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
     private CloudConfig cloudConfig;
@@ -331,8 +330,8 @@ public class MsoNetworkAdapterImpl {
     public void updateNetwork(String cloudSiteId, String tenantId, String networkType, String modelCustomizationUuid,
             String networkId, String networkName, String physicalNetworkName, List<Integer> vlans,
             List<RouteTarget> routeTargets, String shared, String external, List<Subnet> subnets,
-            List<String> policyFqdns, List<String> routeTableFqdns, MsoRequest msoRequest, Holder<String> stackId)
-            throws NetworkException {
+            List<String> policyFqdns, List<String> routeTableFqdns, MsoRequest msoRequest,
+            jakarta.xml.ws.Holder<String> stackId) throws NetworkException {
 
         logger.debug("***UPDATE Network adapter with Network: {} of type {} in {}/{}", networkName, networkType,
                 cloudSiteId, tenantId);
@@ -836,6 +835,7 @@ public class MsoNetworkAdapterImpl {
 
         JsonNode node = null;
         try {
+            ObjectMapper mapper = new ObjectMapper();
             node = mapper.convertValue(prlist, JsonNode.class);
             String jsonString = mapper.writeValueAsString(prlist);
             logger.debug("Json PolicyRefs Data:{}", jsonString);
@@ -912,6 +912,7 @@ public class MsoNetworkAdapterImpl {
 
         JsonNode node = null;
         try {
+            ObjectMapper mapper = new ObjectMapper();
             node = mapper.convertValue(cslist, JsonNode.class);
             String jsonString = mapper.writeValueAsString(cslist);
             logger.debug("Json Subnet List:{}", jsonString);
@@ -1031,6 +1032,7 @@ public class MsoNetworkAdapterImpl {
 
         try {
             Object obj = outputs.get(key);
+            ObjectMapper mapper = new ObjectMapper();
             String jStr = mapper.writeValueAsString(obj);
             logger.debug("Subnet_Ipam Output JSON String:{} {}", obj.getClass(), jStr);
 

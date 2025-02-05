@@ -13,8 +13,8 @@
   <packaging>jar</packaging>
 
   <properties>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
   </properties>
 
   <dependencies>
@@ -55,18 +55,22 @@
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-xml</artifactId>
+      <version>2.5.8</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-json</artifactId>
+      <version>2.5.8</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-jsr223</artifactId>
+      <version>2.5.8</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-test</artifactId>
+      <version>2.5.8</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -137,11 +141,11 @@
       <groupId>org.glassfish.jersey.media</groupId>
       <artifactId>jersey-media-json-jackson</artifactId>
     </dependency>
-    <dependency>
+    <!--dependency>
       <groupId>uk.co.blackpepper.bowman</groupId>
       <artifactId>bowman-client</artifactId>
       <version>${bowman.client.version}</version>
-    </dependency>
+    </dependency-->
     <dependency>
       <groupId>pl.pragmatists</groupId>
       <artifactId>JUnitParams</artifactId>

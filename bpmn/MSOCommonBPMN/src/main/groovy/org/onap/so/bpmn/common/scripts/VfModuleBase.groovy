@@ -23,7 +23,7 @@
 package org.onap.so.bpmn.common.scripts
 
 import org.onap.so.logger.LoggingAnchor
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory

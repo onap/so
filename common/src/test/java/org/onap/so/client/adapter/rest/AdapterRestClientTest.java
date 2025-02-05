@@ -26,13 +26,13 @@ import static org.mockito.Mockito.when;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 import org.apache.commons.codec.binary.Base64;
 import org.javatuples.Pair;
 import org.junit.Before;
 import org.junit.Test;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.onap.so.client.policy.JettisonStyleMapperProvider;
 import org.onap.so.utils.CryptoUtils;
 

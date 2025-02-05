@@ -22,10 +22,10 @@ package org.onap.so.client.policy;
 
 
 import java.util.Optional;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.UriBuilder;
 import org.javatuples.Pair;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.onap.so.client.RestClient;
 import org.onap.so.client.policy.entities.PolicyServiceType;
 

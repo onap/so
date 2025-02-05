@@ -23,7 +23,7 @@ package org.onap.so.bpmn.servicedecomposition.bbobjects;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Id;
+import jakarta.persistence.Id;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.apache.commons.lang3.builder.EqualsBuilder;

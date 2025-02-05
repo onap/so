@@ -28,7 +28,7 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.appc.client.lcm.model.Action
 import org.onap.so.client.appc.ApplicationControllerAction
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

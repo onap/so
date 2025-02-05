@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory
 
 class HandleOrchestrationTask extends AbstractServiceTaskProcessor {
     private static final Logger logger = LoggerFactory.getLogger(HandleOrchestrationTask.class)
-    private static final ObjectMapper mapper = new ObjectMapper()
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     def supportedMethod = ["GET", "POST", "PUT"]
@@ -106,7 +105,8 @@ class HandleOrchestrationTask extends AbstractServiceTaskProcessor {
             task.setIsManual(isManual)
             task.setCreatedTime(new Date())
             task.setParams(paramJson)
-            payload = mapper.writeValueAsString(task)
+            ObjectMapper objectMapper = new ObjectMapper()
+            payload = objectMapper.writeValueAsString(task)
             logger.debug("Outgoing payload is \n" + payload)
         }
         execution.setVariable("payload", payload)
@@ -125,3 +125,4 @@ class HandleOrchestrationTask extends AbstractServiceTaskProcessor {
         }
     }
 }
+

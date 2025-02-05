@@ -6,10 +6,10 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.cache.CacheManager;
 import javax.cache.Caching;
-import javax.ws.rs.HttpMethod;
-import javax.ws.rs.client.ClientRequestContext;
-import javax.ws.rs.client.ClientResponseContext;
-import javax.ws.rs.client.ClientResponseFilter;
+import jakarta.ws.rs.HttpMethod;
+import jakarta.ws.rs.client.ClientRequestContext;
+import jakarta.ws.rs.client.ClientResponseContext;
+import jakarta.ws.rs.client.ClientResponseFilter;
 import org.apache.cxf.jaxrs.client.cache.Key;
 import org.onap.so.client.CacheProperties;
 

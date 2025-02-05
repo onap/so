@@ -22,7 +22,7 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import javax.ws.rs.NotFoundException
+import jakarta.ws.rs.NotFoundException
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution

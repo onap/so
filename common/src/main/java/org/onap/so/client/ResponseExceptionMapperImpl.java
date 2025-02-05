@@ -20,9 +20,9 @@
 
 package org.onap.so.client;
 
+import jakarta.annotation.Priority;
+import jakarta.ws.rs.ext.Provider;
 import java.util.Optional;
-import javax.annotation.Priority;
-import javax.ws.rs.ext.Provider;
 
 @Provider
 @Priority(Integer.MIN_VALUE)

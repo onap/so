@@ -26,7 +26,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 import org.camunda.bpm.engine.test.Deployment;
 import org.camunda.bpm.engine.variable.impl.VariableMapImpl;
 import org.junit.Test;

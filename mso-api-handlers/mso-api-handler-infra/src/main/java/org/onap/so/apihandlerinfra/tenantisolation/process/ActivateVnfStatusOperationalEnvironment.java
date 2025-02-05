@@ -25,7 +25,7 @@ package org.onap.so.apihandlerinfra.tenantisolation.process;
 
 import java.util.List;
 import java.util.Optional;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.json.JSONObject;
 import org.onap.aai.domain.yang.OperationalEnvironment;
@@ -43,7 +43,7 @@ import org.onap.so.apihandlerinfra.tenantisolationbeans.DistributionStatus;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.so.db.request.beans.OperationalEnvDistributionStatus;
 import org.onap.so.db.request.beans.OperationalEnvServiceModelStatus;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.requestsdb.RequestsDBHelper;
 import org.slf4j.Logger;

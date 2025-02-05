@@ -14,6 +14,7 @@ import org.onap.so.client.exception.ExceptionBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.List;
 import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConstants.WORKFLOW_ACTION_ERROR_MESSAGE;
 
@@ -28,7 +29,8 @@ public class PnfEBBLoader {
     private final ExceptionBuilder exceptionBuilder;
 
     PnfEBBLoader(BBInputSetupUtils bbInputSetupUtils, BBInputSetup bbInputSetup,
-            WorkflowActionExtractResourcesAAI workflowActionUtils, ExceptionBuilder exceptionBuilder) {
+            @Qualifier("WorkflowActionExtractResourcesAAI") WorkflowActionExtractResourcesAAI workflowActionUtils,
+            ExceptionBuilder exceptionBuilder) {
         this.bbInputSetupUtils = bbInputSetupUtils;
         this.bbInputSetup = bbInputSetup;
         this.workflowActionUtils = workflowActionUtils;

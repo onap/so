@@ -20,22 +20,21 @@
 
 package org.onap.so.db.catalog.beans;
 
-
 import java.net.URI;
 import java.util.Date;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -44,8 +43,6 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.openpojo.business.annotation.BusinessKey;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
-import uk.co.blackpepper.bowman.annotation.ResourceId;
 
 /**
  * EntityBean class for a CloudSite. This bean represents a cloud location (i.e. and LCP node) in the NVP/AIC cloud. It
@@ -53,7 +50,6 @@ import uk.co.blackpepper.bowman.annotation.ResourceId;
  *
  */
 @Entity
-@RemoteResource("/cloudSite")
 @Table(name = "cloud_sites")
 @JsonAutoDetect(fieldVisibility = Visibility.ANY)
 public class CloudSite {
@@ -170,7 +166,6 @@ public class CloudSite {
         this.id = id;
     }
 
-    @ResourceId
     public URI getUri() {
         return this.uri;
     }

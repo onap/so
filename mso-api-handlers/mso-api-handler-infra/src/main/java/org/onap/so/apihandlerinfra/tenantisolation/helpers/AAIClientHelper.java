@@ -25,7 +25,7 @@ package org.onap.so.apihandlerinfra.tenantisolation.helpers;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
-import javax.ws.rs.NotFoundException;
+import jakarta.ws.rs.NotFoundException;
 import org.onap.aai.domain.yang.OperationalEnvironment;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;

@@ -1,7 +1,7 @@
 package org.onap.so.apihandlerinfra;
 
 import java.net.URI;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriBuilder;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Component;
 

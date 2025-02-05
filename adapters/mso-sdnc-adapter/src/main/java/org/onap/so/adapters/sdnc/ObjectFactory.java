@@ -21,7 +21,7 @@
 package org.onap.so.adapters.sdnc;
 
 
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 
 /**

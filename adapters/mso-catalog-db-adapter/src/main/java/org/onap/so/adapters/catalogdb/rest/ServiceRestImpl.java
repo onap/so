@@ -22,12 +22,8 @@ package org.onap.so.adapters.catalogdb.rest;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
 import org.onap.so.rest.catalog.beans.Service;
 import org.springframework.beans.factory.annotation.Autowired;

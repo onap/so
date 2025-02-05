@@ -46,6 +46,13 @@
     </plugins>
   </build>
   <dependencies>
+    <!-- Source: https://mvnrepository.com/artifact/org.onap.logging-analytics/logging-filter-base -->
+    <dependency>
+      <groupId>org.onap.logging-analytics</groupId>
+      <artifactId>logging-filter-base</artifactId>
+      <version>1.6.9</version>
+      <scope>compile</scope>
+    </dependency>
     <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
@@ -58,6 +65,7 @@
     <dependency>
       <groupId>org.camunda.bpm</groupId>
       <artifactId>camunda-engine</artifactId>
+      <version>7.22.0</version>
     </dependency>
     <dependency>
       <groupId>com.h2database</groupId>

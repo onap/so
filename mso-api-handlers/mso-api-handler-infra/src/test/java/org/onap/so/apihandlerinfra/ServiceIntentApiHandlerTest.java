@@ -35,8 +35,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -46,9 +46,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.junit.Assert.assertEquals;
-import static org.onap.logging.filter.base.Constants.HttpHeaders.ONAP_PARTNER_NAME;
-import static org.onap.logging.filter.base.Constants.HttpHeaders.ONAP_REQUEST_ID;
-import static org.onap.logging.filter.base.Constants.HttpHeaders.TRANSACTION_ID;
+import static org.onap.so.logging.filter.base.Constants.HttpHeaders.ONAP_PARTNER_NAME;
+import static org.onap.so.logging.filter.base.Constants.HttpHeaders.ONAP_REQUEST_ID;
+import static org.onap.so.logging.filter.base.Constants.HttpHeaders.TRANSACTION_ID;
 import static org.onap.so.logger.HttpHeadersConstants.REQUESTOR_ID;
 
 public class ServiceIntentApiHandlerTest extends BaseTest {

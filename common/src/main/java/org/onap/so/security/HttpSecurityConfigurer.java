@@ -20,6 +20,7 @@
 package org.onap.so.security;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
 
 /**
  * @author Waqas Ikram (waqas.ikram@est.tech)
@@ -27,6 +28,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
  */
 public interface HttpSecurityConfigurer {
 
-    void configure(final HttpSecurity http) throws Exception;
+    SecurityFilterChain configure(final HttpSecurity http) throws Exception;
 
 }

@@ -39,8 +39,8 @@ import org.onap.so.bpmn.common.scripts.OofUtils
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
 import org.onap.so.client.oof.adapter.beans.payload.OofRequest
-import javax.ws.rs.core.Response
-import org.onap.logging.filter.base.ONAPComponents
+import jakarta.ws.rs.core.Response
+import org.onap.so.logging.filter.base.ONAPComponents
 import org.onap.so.db.request.beans.ResourceOperationStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -49,8 +49,6 @@ import static org.apache.commons.lang3.StringUtils.isBlank
 import static org.apache.commons.lang3.StringUtils.isEmpty
 
 class DoDeallocateTnNssi extends AbstractServiceTaskProcessor {
-    private static final Logger logger = LoggerFactory.getLogger(DoDeallocateTnNssi.class)
-    private static final ObjectMapper objectMapper = new ObjectMapper()
     String Prefix = "TNDEALLOC_"
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -59,6 +57,8 @@ class DoDeallocateTnNssi extends AbstractServiceTaskProcessor {
     TnNssmfUtils tnNssmfUtils = new TnNssmfUtils()
     OofUtils oofUtils = new OofUtils()
     JsonSlurper jsonSlurper = new JsonSlurper()
+    ObjectMapper objectMapper = new ObjectMapper()
+    private static final Logger logger = LoggerFactory.getLogger(DoDeallocateTnNssi.class)
 
 
     void preProcessRequest(DelegateExecution execution) {

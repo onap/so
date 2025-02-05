@@ -19,23 +19,20 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import uk.co.blackpepper.bowman.annotation.LinkedResource;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
-@RemoteResource("/pnfResource")
 @Table(name = "pnf_resource")
 public class PnfResource implements Serializable {
 
@@ -189,7 +186,6 @@ public class PnfResource implements Serializable {
         this.toscaNodeType = toscaNodeType;
     }
 
-    @LinkedResource
     public List<PnfResourceCustomization> getPnfResourceCustomizations() {
         if (pnfResourceCustomizations == null) {
             pnfResourceCustomizations = new ArrayList<>();

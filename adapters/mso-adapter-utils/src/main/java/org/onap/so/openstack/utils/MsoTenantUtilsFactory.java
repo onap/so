@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Lazy;
 
 @Component
 public class MsoTenantUtilsFactory {
@@ -38,8 +39,10 @@ public class MsoTenantUtilsFactory {
     @Autowired
     protected CloudConfig cloudConfig;
     @Autowired
+    @Lazy
     protected MsoKeystoneUtils keystoneUtils;
     @Autowired
+    @Lazy
     protected MsoKeystoneV3Utils keystoneV3Utils;
 
     // based on Cloud IdentityServerType returns ORM or KEYSTONE Utils

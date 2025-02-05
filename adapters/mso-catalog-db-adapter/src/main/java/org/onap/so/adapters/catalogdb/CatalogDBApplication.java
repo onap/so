@@ -28,7 +28,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(scanBasePackages = {"org.onap.so.adapters.catalogdb", "org.onap.so.db.catalog.client",
         "org.onap.so.logging.jaxrs.filter", "org.onap.so.logging.spring.interceptor", "org.onap.so.client",
-        "org.onap.so.configuration", "org.onap.so.db", "org.onap.logging.filter",
+        "org.onap.so.configuration", "org.onap.so.db", "org.onap.so.logging.filter",
         "org.onap.so.logger, org.onap.so.security"})
 @EnableJpaRepositories("org.onap.so.db.catalog.data.repository")
 @EntityScan("org.onap.so.db.catalog.beans")
