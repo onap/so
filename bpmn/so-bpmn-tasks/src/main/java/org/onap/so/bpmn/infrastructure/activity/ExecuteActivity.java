@@ -42,7 +42,7 @@ import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
 import org.onap.so.client.exception.ExceptionBuilder;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;

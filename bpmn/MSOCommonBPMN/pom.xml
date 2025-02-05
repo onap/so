@@ -74,7 +74,8 @@
       <plugin>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-codegen-plugin</artifactId>
-        <version>2.5.2</version>
+        <version>4.0.0</version>
+        <!--2.5.2-->
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -288,11 +289,11 @@
       <groupId>org.glassfish.jersey.media</groupId>
       <artifactId>jersey-media-json-jackson</artifactId>
     </dependency>
-    <dependency>
+    <!--dependency>
       <groupId>uk.co.blackpepper.bowman</groupId>
       <artifactId>bowman-client</artifactId>
       <version>${bowman.client.version}</version>
-    </dependency>
+    </dependency-->
     <dependency>
       <groupId>pl.pragmatists</groupId>
       <artifactId>JUnitParams</artifactId>

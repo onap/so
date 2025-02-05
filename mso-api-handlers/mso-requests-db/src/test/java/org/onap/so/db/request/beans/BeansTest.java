@@ -21,7 +21,7 @@
 package org.onap.so.db.request.beans;
 
 import static org.onap.so.openpojo.rules.HasAnnotationMatcher.hasAnnotation;
-import javax.persistence.Temporal;
+import jakarta.persistence.Temporal;
 import org.junit.Test;
 import org.onap.so.openpojo.rules.CustomSetterMustExistRule;
 import org.onap.so.openpojo.rules.EqualsAndHashCodeTester;

@@ -21,7 +21,7 @@ package org.onap.so.client;
 
 import java.net.URL;
 import jakarta.ws.rs.core.MediaType;
-import org.onap.logging.filter.base.ONAPComponentsList;
+import org.onap.so.logging.filter.base.ONAPComponentsList;
 
 public class HttpClientFactory {
 

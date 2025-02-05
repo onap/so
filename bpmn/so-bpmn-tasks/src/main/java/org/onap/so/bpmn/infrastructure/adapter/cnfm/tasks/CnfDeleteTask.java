@@ -34,6 +34,7 @@ import org.onap.so.cnfm.lcm.model.TerminateAsRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 /**
@@ -54,8 +55,9 @@ public class CnfDeleteTask {
     private static final String TERMINATE_AS_REQUEST_OBJECT = "TerminateAsRequest";
 
     @Autowired
-    public CnfDeleteTask(final CnfmHttpServiceProvider cnfmHttpServiceProvider, final ExceptionBuilder exceptionUtil,
-            ExtractPojosForBB extractPojosForBB) {
+    public CnfDeleteTask(
+            @Qualifier("CnfmHttpServiceProviderImpl") final CnfmHttpServiceProvider cnfmHttpServiceProvider,
+            final ExceptionBuilder exceptionUtil, ExtractPojosForBB extractPojosForBB) {
         this.cnfmHttpServiceProvider = cnfmHttpServiceProvider;
         this.exceptionUtil = exceptionUtil;
         this.extractPojosForBB = extractPojosForBB;

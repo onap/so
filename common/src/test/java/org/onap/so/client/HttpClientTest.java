@@ -32,7 +32,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import org.junit.Rule;
 import org.junit.Test;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 public class HttpClientTest {
