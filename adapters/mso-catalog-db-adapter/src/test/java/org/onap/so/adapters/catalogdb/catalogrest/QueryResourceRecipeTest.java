@@ -22,7 +22,6 @@ package org.onap.so.adapters.catalogdb.catalogrest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.so.db.catalog.beans.ArRecipe;

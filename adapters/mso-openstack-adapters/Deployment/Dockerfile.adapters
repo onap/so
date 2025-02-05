@@ -1,4 +1,4 @@
-FROM onap/integration-java11:7.0.0
+FROM openjdk:17-jdk-slim 
 MAINTAINER mc4615@att.com
 EXPOSE 8080
 ENV APP_HOME /home/$USER_NAME/app
@@ -12,7 +12,7 @@ ENTRYPOINT ["java","-jar","-Dspring.profiles.active=dev","mso-openstack-adapters
 
 
 
-
+##onap/integration-java11:7.0.0
 ######### README #########
 # NOTES ########
 # cd /Users/mercychan/git/mso-e/adapters/mso-openstack-adapters/Deployment/

@@ -41,7 +41,7 @@ import org.onap.so.db.catalog.beans.CloudIdentity
 import org.onap.so.db.catalog.beans.CloudSite
 import org.onap.so.db.catalog.beans.HomingInstance
 import org.onap.so.db.catalog.beans.ServerType
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -51,7 +51,7 @@ import org.springframework.web.util.UriUtils
 
 import static org.onap.so.bpmn.common.scripts.GenericUtils.*
 
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
 
 /**
  * This class contains the scripts used

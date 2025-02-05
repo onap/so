@@ -22,7 +22,6 @@ package org.onap.so.bpmn.servicedecomposition.tasks.exceptions;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.MultipleObjectsFoundException;
 
 public class MultipleObjectsFoundExceptionTest {
     private static final String MESSAGE = "message";

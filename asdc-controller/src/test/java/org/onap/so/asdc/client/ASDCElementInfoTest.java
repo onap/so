@@ -34,8 +34,6 @@ import org.mockito.Mockito;
 import org.onap.sdc.api.notification.IArtifactInfo;
 import org.onap.sdc.api.notification.INotificationData;
 import org.onap.sdc.api.notification.IResourceInstance;
-import org.onap.sdc.api.notification.IVfModuleMetadata;
-import org.onap.so.asdc.client.ASDCConfiguration;
 import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
 import org.onap.so.asdc.installer.ASDCElementInfo;
 import org.onap.so.asdc.installer.VfModuleStructure;

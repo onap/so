@@ -23,7 +23,7 @@ package org.onap.so.adapters.nwrest;
 
 
 import java.util.Map;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.onap.so.openstack.beans.NetworkRollback;
 import com.fasterxml.jackson.annotation.JsonRootName;
 

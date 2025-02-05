@@ -26,7 +26,7 @@ package org.onap.so.bpmn.common.workflow.context;
 import java.util.concurrent.DelayQueue;
 import java.util.concurrent.TimeUnit;
 import org.onap.so.logger.LoggingAnchor;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -31,12 +31,14 @@ import org.onap.so.client.exception.MapperException;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SDNCServiceInstanceResources {
 
     @Autowired
+    @Qualifier("serviceTopologyOperationMapper")
     private ServiceTopologyOperationMapper sdncRM;
 
     /**

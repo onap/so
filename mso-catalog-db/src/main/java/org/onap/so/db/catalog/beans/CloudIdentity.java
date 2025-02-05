@@ -21,23 +21,22 @@
 package org.onap.so.db.catalog.beans;
 
 import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.openpojo.business.annotation.BusinessKey;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 /**
  * EntityBean class for a CloudIdentity. This bean represents a cloud identity service instance (i.e. a DCP node) in the
@@ -45,7 +44,6 @@ import uk.co.blackpepper.bowman.annotation.RemoteResource;
  *
  */
 @Entity
-@RemoteResource("/cloudIdentity")
 @Table(name = "identity_services")
 public class CloudIdentity {
 

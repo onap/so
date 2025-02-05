@@ -1,5 +1,12 @@
 # will be used as entry in DB to say SITE OFF/ON for healthcheck
 
+#logging:
+#  level:
+#    org:
+#      flywaydb: DEBUG
+#
+#    db:
+#      migration: DEBUG
 server:
     port: 8080
     tomcat:
@@ -22,7 +29,7 @@ spring:
       jdbc-url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
       username: ${DB_USERNAME}
       password: ${DB_PASSWORD}
-      driver-class-name: org.mariadb.jdbc.Driver
+      driver-class-name: org.mariadb.jdbc.Driver 
       pool-name: reqdb-pool
       registerMbeans: true
   flyway:
@@ -33,9 +40,11 @@ spring:
   jpa:
       show-sql: false
       hibernate:
-        dialect: org.hibernate.dialect.MySQL5Dialect
+        dialect: org.hibernate.dialect.MySQLDialect
         ddl-auto: validate
-        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+        ## naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+        naming:
+          implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyHbmImpl
         enable-lazy-load-no-trans: true
   security:
     usercredentials:
@@ -43,7 +52,7 @@ spring:
       username: bpel
       password: '$2a$12$1xyutEZNfjGewIZRfKaE8eZE99f5sYFUmmM80BobI65KNjmcK0JuO'
       role: BPEL-Client
-    -
+    -  
       username: mso_admin
       password: '$2a$12$tidKuu.h88E2nuL95pTVY.ZOYMN/1dp29A9b1o.0GFDsVVSYlMkHa'
       role: ACTUATOR
@@ -63,7 +72,3 @@ management:
       prometheus:
         enabled: true # Whether exporting of metrics to Prometheus is enabled.
         step: 1m # Step size (i.e. reporting frequency) to use.
-
-logging:
-  request-status:
-    exclusions: []

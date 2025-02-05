@@ -52,7 +52,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import static org.onap.so.client.cds.PayloadConstants.PROPERTIES;
 import static org.onap.so.client.cds.PayloadConstants.SEPARATOR;
 
 @Component

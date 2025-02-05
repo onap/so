@@ -41,7 +41,7 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.bpmn.infrastructure.aai.groovyflows.AAICreateResources
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logging.filter.base.ErrorCode
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.onap.so.logger.MessageEnum

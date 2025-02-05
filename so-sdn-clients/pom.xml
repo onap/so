@@ -9,6 +9,7 @@
   <artifactId>so-sdn-clients</artifactId>
   <properties>
     <sdnc.northbound.version>3.0.2</sdnc.northbound.version>
+    <!-- RFC Supporting Prop!-->
   </properties>
   <build>
     <plugins>
@@ -89,6 +90,7 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-contract-wiremock</artifactId>
+      <version>4.3.3</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -142,7 +144,6 @@
       <version>${sdnc.northbound.version}</version>
       <type>yaml</type>
     </dependency>
-    <!-- RFC Supporting Dependencies -->
     <dependency>
       <groupId>org.mariadb.jdbc</groupId>
       <artifactId>mariadb-java-client</artifactId>

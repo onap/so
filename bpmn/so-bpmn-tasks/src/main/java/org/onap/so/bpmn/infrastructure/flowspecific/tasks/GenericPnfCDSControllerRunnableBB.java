@@ -15,7 +15,7 @@
 package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 
 import com.google.gson.JsonObject;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerContext;
 import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerRunnable;
