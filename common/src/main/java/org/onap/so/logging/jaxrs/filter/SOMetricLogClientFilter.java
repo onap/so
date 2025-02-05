@@ -23,7 +23,7 @@ package org.onap.so.logging.jaxrs.filter;
 
 import jakarta.ws.rs.client.ClientRequestContext;
 import jakarta.ws.rs.client.ClientResponseContext;
-import org.onap.logging.filter.base.MetricLogClientFilter;
+import org.onap.so.logging.filter.base.MetricLogClientFilter;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.logger.MdcConstants;
 import org.slf4j.Logger;
@@ -32,17 +32,22 @@ import org.slf4j.MDC;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-
-public class SOMetricLogClientFilter {
+// added extends metric
+public class SOMetricLogClientFilter extends MetricLogClientFilter {
 
     protected static Logger logger = LoggerFactory.getLogger(SOMetricLogClientFilter.class);
     private static final Marker INVOKE_RETURN = MarkerFactory.getMarker("INVOKE-RETURN");
 
-
+    @Override
     public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) {
         try {
+            setLogTimestamp();
+            setElapsedTimeInvokeTimestamp();
+            setResponseStatusCode(responseContext.getStatus());
+            setResponseDescription(responseContext.getStatus());
             MDC.put(ONAPLogConstants.MDCs.RESPONSE_CODE, String.valueOf(responseContext.getStatus()));
             logger.info(INVOKE_RETURN, "InvokeReturn");
+            clearClientMDCs();
             setOpenStackResponseCode();
         } catch (Exception e) {
             logger.warn("Error in JAX-RS request,response client filter", e);

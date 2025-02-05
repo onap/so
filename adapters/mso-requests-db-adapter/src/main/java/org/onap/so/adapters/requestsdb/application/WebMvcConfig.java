@@ -21,17 +21,23 @@
 package org.onap.so.adapters.requestsdb.application;
 
 
-import org.onap.logging.filter.spring.LoggingInterceptor;
-import org.onap.logging.filter.spring.StatusLoggingInterceptor;
+import org.onap.so.logging.filter.spring.LoggingInterceptor;
+import org.onap.so.logging.filter.spring.StatusLoggingInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.MappedInterceptor;
 
 @Configuration
-@ComponentScan(basePackages = {"org.onap.logging.filter"})
+@ComponentScan(basePackages = {"org.onap.so.logging.filter"})
+/*
+ * @ComponentScan(basePackages = "org.onap.so.logging.filter", excludeFilters = {@ComponentScan.Filter(type =
+ * FilterType.ASSIGNABLE_TYPE, value = org.onap.logging.filter.spring.SpringScheduledTasksMDCSetupAspect.class)})
+ */
 public class WebMvcConfig implements WebMvcConfigurer {
 
     @Autowired

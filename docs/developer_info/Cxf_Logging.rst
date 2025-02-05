@@ -79,8 +79,8 @@ pom.xml:
 
     <dependency>
 
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
 
     </dependency>
 
