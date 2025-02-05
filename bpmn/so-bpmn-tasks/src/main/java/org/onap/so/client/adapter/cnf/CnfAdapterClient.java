@@ -22,7 +22,7 @@ package org.onap.so.client.adapter.cnf;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.EntityNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.http.HttpStatus;
 import org.onap.so.client.adapter.cnf.entities.InstanceRequest;

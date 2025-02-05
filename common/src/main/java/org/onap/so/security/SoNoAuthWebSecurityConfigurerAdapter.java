@@ -19,11 +19,13 @@
  */
 package org.onap.so.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
@@ -36,12 +38,18 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
 @Configuration
 @Order(2)
 @Profile({"aaf", "test", "serviceMesh"})
-public class SoNoAuthWebSecurityConfigurerAdapter /* implements WebSecurityConfigurer */ {
+public class SoNoAuthWebSecurityConfigurerAdapter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SoNoAuthWebSecurityConfigurerAdapter.class);
+
     @Bean(name = "webSecurityBeanOfSoNoAuthWebSecurityConfigurerAdapter")
-    public SecurityFilterChain filterChain(WebSecurity web) throws Exception {
-        web.ignoring().requestMatchers("/**");
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        LOGGER.debug("Inside NoAuthWebSecurityConfigurerAdapter");
+        LOGGER.debug("Inside NoAuthWebSecurityConfigurerAdapter");
+        http.authorizeHttpRequests((requests) -> requests.anyRequest().permitAll()).csrf(csrf -> csrf.disable());
+
         final StrictHttpFirewall firewall = new MSOSpringFirewall();
-        web.httpFirewall(firewall);
-        return (SecurityFilterChain) web.build();
+        http.setSharedObject(StrictHttpFirewall.class, firewall);
+
+        return http.build();
     }
 }

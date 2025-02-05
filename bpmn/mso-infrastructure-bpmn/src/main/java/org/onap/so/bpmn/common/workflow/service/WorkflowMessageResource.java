@@ -35,7 +35,7 @@ import jakarta.ws.rs.core.Response;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.bpmn.common.workflow.service.CallbackHandlerService.CallbackError;
 import org.onap.so.bpmn.common.workflow.service.CallbackHandlerService.CallbackResult;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
