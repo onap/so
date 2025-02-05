@@ -49,6 +49,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
  * (application-{profile}.yaml) and persist data (when not already present) to the catalod database.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
+
 public class R__CloudConfigMigration extends BaseJavaMigration {
     public static final String FLYWAY = "FLYWAY";
 
@@ -56,10 +57,9 @@ public class R__CloudConfigMigration extends BaseJavaMigration {
     @JsonProperty("cloud_config")
     private CloudConfig cloudConfig;
 
-    @Override
-    public boolean isUndo() {
-        return false;
-    }
+    /*
+     * @Override public boolean isUndo() { return false; }
+     */
 
     public void migrate(Connection connection) throws Exception {
         logger.debug("Starting migration for CloudConfig");
@@ -239,7 +239,6 @@ public class R__CloudConfigMigration extends BaseJavaMigration {
     @Override
     public void migrate(org.flywaydb.core.api.migration.Context context) throws Exception {
         migrate(context.getConnection());
-
     }
 }
 

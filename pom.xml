@@ -64,22 +64,24 @@
     <snapshotNexusPath>content/repositories/snapshots/</snapshotNexusPath>
     <publicNexusPath>content/repositories/public/</publicNexusPath>
     <siteNexusPath>content/sites/site/org/onap/so/${project.version}/</siteNexusPath>
-    <cxf.version>3.4.1</cxf.version>
+    <cxf.version>4.0.0</cxf.version>
     <jax.ws.rs>2.1</jax.ws.rs>
+    <!--reverted-->
     <springboot.version>3.2.0</springboot.version>
     <!--<aaf.version>2.1.21</aaf.version>-->
     <format.skipValidate>false</format.skipValidate>
     <format.skipExecute>true</format.skipExecute>
     <io.fabric8.version>0.33.0</io.fabric8.version>
     <appc.client.version>1.7.2</appc.client.version>
-    <bowman.client.version>0.9.0</bowman.client.version>
+    <!--bowman.client.version>0.9.0</bowman.client.version-->
     <!--<aaf.cadi.version>2.1.15</aaf.cadi.version>-->
     <so-etsi-sol003-adapter-version>1.9.0-SNAPSHOT</so-etsi-sol003-adapter-version>
     <onap-logging-version>1.6.9</onap-logging-version>
-    <jackson.version>2.15.2</jackson.version>
+    <jackson.version>2.15.3</jackson.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <maven.compiler.release>${java.version}</maven.compiler.release>
+    <spring-cloud.version>2023.0.3</spring-cloud.version>
   </properties>
   <distributionManagement>
     <repository>
@@ -734,21 +736,21 @@
       <artifactId>logging-slf4j</artifactId>
       <version>${onap-logging-version}</version>
     </dependency>
-    <!--<dependency>
+    <!--dependency>
       <groupId>org.onap.logging-analytics</groupId>
       <artifactId>logging-filter-base</artifactId>
-      <version>1.6.10-SNAPSHOT</version>
-    </dependency>-->
+      <version>${onap-logging-version}</version>
+    </dependency-->
     <dependency>
       <groupId>org.sonarsource.scanner.maven</groupId>
       <artifactId>sonar-maven-plugin</artifactId>
       <version>3.0.2</version>
     </dependency>
-    <dependency>
+    <!--dependency>
       <groupId>org.onap.logging-analytics</groupId>
       <artifactId>logging-filter-spring</artifactId>
       <version>${onap-logging-version}</version>
-    </dependency>
+    </dependency-->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
@@ -778,6 +780,11 @@
       <groupId>com.fasterxml.jackson.jaxrs</groupId>
       <artifactId>jackson-jaxrs-json-provider</artifactId>
       <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.persistence</groupId>
+      <artifactId>jakarta.persistence-api</artifactId>
+      <version>3.1.0</version>
     </dependency>
     <dependency>
       <groupId>jakarta.ws.rs</groupId>
@@ -918,20 +925,20 @@
         <artifactId>logging-slf4j</artifactId>
         <version>${onap-logging-version}</version>
       </dependency>
-      <!--<dependency>
+      <!--dependency>
         <groupId>org.onap.logging-analytics</groupId>
         <artifactId>logging-filter-base</artifactId>
         <version>${onap-logging-version}</version>
-      </dependency>-->
-      <dependency>
+      </dependency-->
+      <!--dependency>
         <groupId>org.onap.logging-analytics</groupId>
         <artifactId>logging-filter-spring</artifactId>
         <version>${onap-logging-version}</version>
-      </dependency>
+      </dependency-->
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpcore</artifactId>
-        <version>4.4.4</version>
+        <version>4.4.16</version>
         <scope>compile</scope>
       </dependency>
       <dependency>
@@ -962,13 +969,33 @@
       <dependency>
         <groupId>org.yaml</groupId>
         <artifactId>snakeyaml</artifactId>
-        <version>1.31</version>
+        <version>2.2</version>
+        <!-- This has been changed from 1.31-->
+      </dependency>
+      <dependency>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-runtime</artifactId>
+        <version>4.10.1</version>
+        <!-- ANTLR-->
       </dependency>
       <dependency>
         <groupId>jakarta.interceptor</groupId>
         <artifactId>jakarta.interceptor-api</artifactId>
         <version>2.2.0-RC1</version>
       </dependency>
+      <!-- Spring Boot Starter Web -->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+        <version>${springboot.version}</version>
+      </dependency>
+      <!-- Spring Boot Starter WebFlux -->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-webflux</artifactId>
+        <version>${springboot.version}</version>
+      </dependency>
+      <!-- Spring Boot Starter WebFlux -->
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-test</artifactId>
@@ -1004,9 +1031,21 @@
         <version>4.0.0</version>
       </dependency>
       <dependency>
+        <groupId>org.mariadb.jdbc</groupId>
+        <artifactId>mariadb-java-client</artifactId>
+        <!--Added this-->
+        <version>3.3.3</version>
+      </dependency>
+      <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <!--Added this-->
+        <version>8.0.32</version>
+      </dependency>
+      <dependency>
         <groupId>org.flywaydb</groupId>
         <artifactId>flyway-core</artifactId>
-        <version>6.5.7</version>
+        <version>9.22.1</version>
       </dependency>
       <dependency>
         <groupId>org.json</groupId>
@@ -1018,6 +1057,13 @@
         <artifactId>aai-schema</artifactId>
         <version>1.12.3</version>
       </dependency>
+      <!--CXF dependencies addedly new-->
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-frontend-jaxws</artifactId>
+        <version>${cxf.version}</version>
+      </dependency>
+      <!--Done-->
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-client</artifactId>
@@ -1125,7 +1171,8 @@
       <dependency>
         <groupId>ch.vorburger.mariaDB4j</groupId>
         <artifactId>mariaDB4j</artifactId>
-        <version>2.3.0</version>
+        <version>3.1.0</version>
+        <!--Changed-->
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -1135,10 +1182,24 @@
         <scope>test</scope>
       </dependency>
       <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>${spring-cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
         <groupId>org.camunda.bpm.assert</groupId>
         <artifactId>camunda-bpm-assert</artifactId>
         <version>10.0.0</version>
         <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.camunda.bpm</groupId>
+        <artifactId>camunda-engine</artifactId>
+        <!--Added this -->
+        <version>7.21.0</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>janino</groupId>
@@ -1150,10 +1211,31 @@
         <artifactId>spring-data-rest-hal-browser</artifactId>
         <version>3.3.9.RELEASE</version>
       </dependency>
+      <!-- Jersey dependencies -->
+      <dependency>
+        <groupId>org.glassfish.jersey.core</groupId>
+        <artifactId>jersey-server</artifactId>
+        <version>3.1.3</version>
+      </dependency>
+      <dependency>
+        <groupId>org.glassfish.jersey.containers</groupId>
+        <artifactId>jersey-container-servlet-core</artifactId>
+        <version>3.1.3</version>
+      </dependency>
+      <dependency>
+        <groupId>org.glassfish.jersey.containers</groupId>
+        <artifactId>jersey-container-servlet</artifactId>
+        <version>3.1.3</version>
+      </dependency>
+      <dependency>
+        <groupId>org.glassfish.jersey.ext</groupId>
+        <artifactId>jersey-spring6</artifactId>
+        <version>3.1.3</version>
+      </dependency>
       <dependency>
         <groupId>org.glassfish.jersey.core</groupId>
         <artifactId>jersey-common</artifactId>
-        <version>3.1.4</version>
+        <version>3.1.3</version>
       </dependency>
       <dependency>
         <groupId>com.h2database</groupId>
@@ -1163,12 +1245,13 @@
       <dependency>
         <groupId>org.camunda.bpm</groupId>
         <artifactId>camunda-external-task-client</artifactId>
-        <version>7.21.0-alpha2</version>
+        <version>7.21.0</version>
+        <!--Changed from 7.21.0-alpha2 -->
       </dependency>
       <dependency>
         <groupId>pl.pragmatists</groupId>
         <artifactId>JUnitParams</artifactId>
-        <version>1.0.5</version>
+        <version>1.1.1</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -1179,7 +1262,8 @@
       <dependency>
         <groupId>org.camunda.bpm</groupId>
         <artifactId>camunda-bom</artifactId>
-        <version>7.21.0-alpha2</version>
+        <version>7.21.0</version>
+        <!--Changed from 7.21.0-alpha2 -->
         <scope>import</scope>
         <type>pom</type>
       </dependency>

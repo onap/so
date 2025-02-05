@@ -21,20 +21,18 @@
 package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.Table;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.openpojo.business.annotation.BusinessKey;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @IdClass(HeatTemplateParamId.class)
 @Entity
-@RemoteResource("/heatTemplateParam")
 @Table(name = "heat_template_params")
 public class HeatTemplateParam implements Serializable {
 

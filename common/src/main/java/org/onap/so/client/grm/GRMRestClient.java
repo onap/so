@@ -25,7 +25,7 @@ import java.net.URI;
 import java.util.Optional;
 import jakarta.ws.rs.core.MultivaluedMap;
 import org.javatuples.Pair;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.onap.so.client.RestClient;
 
 public class GRMRestClient extends RestClient {

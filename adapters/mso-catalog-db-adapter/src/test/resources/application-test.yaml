@@ -29,11 +29,13 @@ spring:
     generate-ddl: false
     show-sql: false
     hibernate:
-      dialect: org.hibernate.dialect.MySQL5Dialect
+      dialect: org.hibernate.dialect.MySQLDialect
       storage_engine: innodb
-      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+      ## naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyHbmImpl
       enable-lazy-load-no-trans: true
-      database-platform: org.hibernate.dialect.MySQL5Dialect
+      database-platform: org.hibernate.dialect.MySQLDialect
       ddl-auto: validate
   security:
     usercredentials:

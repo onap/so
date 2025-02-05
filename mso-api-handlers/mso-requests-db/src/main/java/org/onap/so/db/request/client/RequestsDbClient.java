@@ -25,11 +25,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.UriBuilder;
 import org.apache.http.HttpStatus;
-import org.onap.logging.filter.spring.SpringClientPayloadFilter;
+import org.onap.so.logging.filter.spring.SpringClientPayloadFilter;
 import org.onap.so.db.request.beans.ArchivedInfraRequests;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.beans.OperationStatus;
@@ -163,7 +163,7 @@ public class RequestsDbClient {
     public List<InfraActiveRequests> getCloudOrchestrationFiltersFromInfraActive(Map<String, String> orchestrationMap) {
         URI uri = getUri(cloudOrchestrationFiltersFromInfraActive);
         HttpHeaders headers = getHttpHeaders();
-        HttpEntity<Map> entity = new HttpEntity<>(orchestrationMap, headers);
+        HttpEntity<Map<String, String>> entity = new HttpEntity<>(orchestrationMap, headers);
         try {
             return restTemplate.exchange(uri, HttpMethod.POST, entity,
                     new ParameterizedTypeReference<List<InfraActiveRequests>>() {}).getBody();
@@ -287,7 +287,7 @@ public class RequestsDbClient {
         restTemplate.postForLocation(uri, entity);
     }
 
-    // TODO really this should be called save as its doing a put
+    // Method to update InfraActiveRequests
     public void updateInfraActiveRequests(InfraActiveRequests request) {
         HttpHeaders headers = getHttpHeaders();
         URI uri = getUri(infraActiveRequestURI + request.getRequestId());
@@ -447,7 +447,7 @@ public class RequestsDbClient {
         String url = UriBuilder.fromUri(getUri(getInfraActiveRequests)).queryParam("from", "0")
                 .queryParam("to", "10000000000000").build().toString();
         HttpHeaders headers = getHttpHeaders();
-        HttpEntity<Map> entity = new HttpEntity<>(filters, headers);
+        HttpEntity<Map<String, String[]>> entity = new HttpEntity<>(filters, headers);
         return restTemplate
                 .exchange(url, HttpMethod.POST, entity, new ParameterizedTypeReference<List<InfraActiveRequests>>() {})
                 .getBody();
@@ -486,7 +486,7 @@ public class RequestsDbClient {
 
     @Component
     static class ClassURLMapper {
-        private static final Map<Class, String> classURLMap = new HashMap<>();
+        private static final Map<Class<?>, String> classURLMap = new HashMap<>();
 
         ClassURLMapper() {
             classURLMap.put(ArchivedInfraRequests.class, "/archivedInfraRequests/");
@@ -502,8 +502,9 @@ public class RequestsDbClient {
         }
 
         <T> String getURI(Class<T> className) {
-            Class actualClass = classURLMap.keySet().stream()
-                    .filter(requestdbClass -> requestdbClass.isAssignableFrom(className)).findFirst().get();
+            Class<?> actualClass =
+                    classURLMap.keySet().stream().filter(requestdbClass -> requestdbClass.isAssignableFrom(className))
+                            .<Class<?>>map(Class.class::cast).findFirst().get();
             return classURLMap.get(actualClass);
         }
     }

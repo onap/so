@@ -44,9 +44,11 @@ spring:
   jpa:
       show-sql: true
       hibernate:
-        dialect: org.hibernate.dialect.MySQL5Dialect
+        dialect: org.hibernate.dialect.MySQLDialect
         ddl-auto: validate
-        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+        ## naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+        naming:
+          implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyHbmImplt
         enable-lazy-load-no-trans: true
   jersey:
     type: filter
