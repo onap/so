@@ -33,7 +33,7 @@ import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.apihandlerinfra.tenantisolation.CloudOrchestrationRequest;
 import org.onap.so.apihandlerinfra.tenantisolation.helpers.AAIClientHelper;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.requestsdb.RequestsDBHelper;
 import org.slf4j.Logger;

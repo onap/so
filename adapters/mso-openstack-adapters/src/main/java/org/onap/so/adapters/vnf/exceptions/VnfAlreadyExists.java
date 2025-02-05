@@ -22,7 +22,7 @@ package org.onap.so.adapters.vnf.exceptions;
 
 
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 
 /**
  * This class reports an exception when trying to create a VNF when another VNF of the same name already exists in the

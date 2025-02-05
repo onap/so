@@ -33,7 +33,7 @@
 package org.onap.so.heatbridge.factory;
 
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import org.onap.so.heatbridge.HeatBridgeException;
 import org.onap.so.heatbridge.constants.HeatBridgeConstants;
 import org.onap.so.heatbridge.openstack.api.OpenstackAccess;

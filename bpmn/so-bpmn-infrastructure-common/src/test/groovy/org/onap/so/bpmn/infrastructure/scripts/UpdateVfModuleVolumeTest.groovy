@@ -32,7 +32,7 @@ import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.MockitoAnnotations
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner
 import org.onap.aai.domain.yang.GenericVnf
 import org.onap.aai.domain.yang.VfModule
 import org.onap.aai.domain.yang.VolumeGroup
@@ -46,7 +46,7 @@ import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.constants.Defaults
 
-import javax.ws.rs.core.UriBuilder
+import jakarta.ws.rs.core.UriBuilder
 
 import static org.mockito.Mockito.*
 

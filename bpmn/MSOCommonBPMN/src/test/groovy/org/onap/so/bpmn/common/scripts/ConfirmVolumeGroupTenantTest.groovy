@@ -36,12 +36,10 @@ import org.onap.aai.domain.yang.Relationship
 import org.onap.aai.domain.yang.RelationshipData
 import org.onap.aai.domain.yang.RelationshipList
 import org.onap.aai.domain.yang.VolumeGroup
-import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
-import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.constants.Defaults
 
 class ConfirmVolumeGroupTenantTest extends MsoGroovyTest {

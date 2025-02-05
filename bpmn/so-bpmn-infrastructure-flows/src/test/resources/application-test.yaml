@@ -71,7 +71,7 @@ mso:
       core-pool-size: 50
       max-pool-size: 50
       queue-capacity: 500
-
+  
   bpmn:
     optimisticlockingexception:
       retrycount: '3'
@@ -81,7 +81,7 @@ mso:
       #CatalogDbUtils.groovy:getResponseFromCatalogDb
       endpoint: http://localhost:${wiremock.server.port}
       spring:
-        endpoint: http://localhost:${wiremock.server.port}
+        endpoint: http://localhost:${wiremock.server.port}  
   correlation:
         timeout: 60
   db:
@@ -107,10 +107,10 @@ mso:
     auth: Basic YnBlbDptc28tZGItMTUwNyE=
     endpoint: http://localhost:${wiremock.server.port}
   rollback: 'true'
-  sdnc:
-    password: 3141634BF7E070AA289CF2892C986C0B
+  sdnc:    
+    password: 3141634BF7E070AA289CF2892C986C0B      
   site-name: localDevEnv
-  workflow:
+  workflow:   
     default:
       aai:
         cloud-region:
@@ -144,7 +144,7 @@ mso:
       password: dmaapPassword
       host: http://localhost:28090
       publisher:
-        topic: com.att.mso.asyncStatusUpdate
+        topic: com.att.mso.asyncStatusUpdate 
   service-plugin:
     third-sp-endpoint:
     oof-calc-endpoint:
@@ -180,23 +180,23 @@ spring:
     password: password
     driver-class-name: org.mariadb.jdbc.Driver
     initialize: true
-  jpa:
+  jpa:   
     generate-ddl: false
     show-sql: false
-    hibernate:
+    hibernate:      
       ddl-auto: none
-      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+      ## naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyHbmImplt
       enable-lazy-load-no-trans: true
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    database-platform: org.hibernate.dialect.MySQLDialect
   security:
     usercredentials:
       username: test
       password: '$2a$12$Zi3AuYcZoZO/gBQyUtST2.F5N6HqcTtaNci2Et.ufsQhski56srIu'
       role: BPEL-Client
-  sleuth:
-    enabled: false
 mariaDB4j:
-  dataDir:
+  dataDir: 
   port: 3307
   databaseName: camundabpmn
 camunda:
@@ -212,13 +212,14 @@ camunda:
       deployment-aware: true
 # PnfEventReadyDmaapClient
 pnf:
-  kafka:
-    kafkaBootstrapServers: localhost:${wiremock.server.port}
-    pnfReadyTopicName: pnfReady
-    pnfUpdateTopicName: pnfUpdate
+  dmaap:
+    host: localhost
+    port: ${wiremock.server.port}
+    protocol: http
+    uriPathPrefix: events
+    topicName: pnfReady
     consumerGroup: consumerGroup
     consumerId: consumerId
-    consumerIdUpdate: consumerIdUpdate
     topicListenerDelayInSeconds: 5
 # CDSProcessingClient
 cds:
@@ -226,3 +227,4 @@ cds:
   port: 11011
   auth: Basic Y2NzZGthcHBzOmNjc2RrYXBwcw==
   timeout: 60
+

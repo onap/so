@@ -24,7 +24,6 @@ import groovy.util.slurpersupport.NodeChild
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
-import org.onap.so.bpmn.common.scripts.MsoUtils
 
 import static groovy.test.GroovyAssert.assertEquals
 

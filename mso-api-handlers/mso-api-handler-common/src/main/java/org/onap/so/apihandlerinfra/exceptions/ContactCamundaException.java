@@ -33,8 +33,7 @@ public class ContactCamundaException extends ApiException {
 
 
         public Builder(String query, String requestId, String error, int httpResponseCode, String messageID) {
-            super(contactCamundaErrorMessage.format(contactCamundaErrorMessage, query, requestId, error),
-                    httpResponseCode, messageID);
+            super(String.format(contactCamundaErrorMessage, query, requestId, error), httpResponseCode, messageID);
         }
 
         public ContactCamundaException build() {

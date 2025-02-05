@@ -20,9 +20,9 @@
 
 package org.onap.so.apihandler.common;
 
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -44,7 +44,7 @@ public class ResponseBuilder {
 
         String latestVersion = apiVersion + "." + apiMinorVersion + "." + apiPatchVersion;
 
-        javax.ws.rs.core.Response.ResponseBuilder builder =
+        jakarta.ws.rs.core.Response.ResponseBuilder builder =
                 Response.status(status).header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .header(CommonConstants.X_MINOR_VERSION, apiMinorVersion)
                         .header(CommonConstants.X_PATCH_VERSION, apiPatchVersion)

@@ -22,28 +22,14 @@ package org.onap.so.bpmn.common.scripts;
 
 import static org.mockito.Mockito.*
 
-import org.onap.so.bpmn.common.scripts.VidUtils;
-import org.onap.so.bpmn.core.WorkflowException
 
 import groovy.json.JsonSlurper
 
-import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.ProcessEngineServices
-import org.camunda.bpm.engine.RepositoryService
-import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
-import org.camunda.bpm.engine.impl.pvm.process.ProcessDefinitionImpl
-import org.camunda.bpm.engine.repository.ProcessDefinition
-import org.camunda.bpm.engine.delegate.DelegateExecution;
 
 import static org.junit.Assert.*;
 
 import org.mockito.MockitoAnnotations
-import org.mockito.runners.MockitoJUnitRunner
-import org.mockito.internal.debugging.MockitoDebuggerImpl
-import org.junit.Before
-import org.junit.Rule;
-import org.junit.Test
-import org.junit.Ignore
+import org.mockito.junit.MockitoJUnitRunner
 import org.junit.runner.RunWith
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity;
 import org.junit.Before;

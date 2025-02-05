@@ -42,6 +42,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetup;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +62,8 @@ public class VnfEBBLoader {
     private final ExceptionBuilder exceptionBuilder;
 
     VnfEBBLoader(BBInputSetupUtils bbInputSetupUtils, BBInputSetup bbInputSetup,
-            WorkflowActionExtractResourcesAAI workflowActionUtils, ExceptionBuilder exceptionBuilder) {
+            @Qualifier("WorkflowActionExtractResourcesAAI") WorkflowActionExtractResourcesAAI workflowActionUtils,
+            ExceptionBuilder exceptionBuilder) {
         this.bbInputSetupUtils = bbInputSetupUtils;
         this.bbInputSetup = bbInputSetup;
         this.workflowActionUtils = workflowActionUtils;

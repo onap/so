@@ -20,9 +20,9 @@
 
 package org.onap.so.client.adapter.vnf;
 
-import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.InternalServerErrorException;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.UriBuilder;
 import org.onap.so.adapters.vnfrest.CreateVolumeGroupRequest;
 import org.onap.so.adapters.vnfrest.CreateVolumeGroupResponse;
 import org.onap.so.adapters.vnfrest.DeleteVolumeGroupRequest;
@@ -94,7 +94,7 @@ public class VnfVolumeAdapterClientImpl implements VnfVolumeAdapterClient {
 
     protected String buildQueryPath(String aaiVolumeGroupId, String cloudSiteId, String tenantId,
             String volumeGroupStackId, Boolean skipAAI, String requestId, String serviceInstanceId) {
-        javax.ws.rs.core.UriBuilder builder = this.getUri("/" + aaiVolumeGroupId);
+        UriBuilder builder = this.getUri("/" + aaiVolumeGroupId);
         builder.queryParam("cloudSiteId", cloudSiteId).queryParam("tenantId", tenantId)
                 .queryParam("volumeGroupStackId", volumeGroupStackId).queryParam("skipAAI", skipAAI)
                 .queryParam("msoRequest.requestId", requestId)

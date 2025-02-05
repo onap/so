@@ -22,7 +22,7 @@
 package org.onap.so.bpmn.vcpe.scripts
 
 import org.onap.so.logger.LoggingAnchor
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 
 import static org.apache.commons.lang3.StringUtils.*
 

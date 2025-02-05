@@ -79,8 +79,8 @@ pom.xml:
 
     <dependency>
 
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
 
     </dependency>
 
@@ -88,14 +88,14 @@ pom.xml:
 
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-ext</artifactId>
-
+      <version>2.0.17</version>
     </dependency>
 
     <dependency>
 
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-
+      <version>2.0.17</version>
     </dependency>
 
   </dependencies>

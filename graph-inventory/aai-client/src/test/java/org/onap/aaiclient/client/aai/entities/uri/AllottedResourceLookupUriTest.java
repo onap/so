@@ -27,7 +27,7 @@ import static org.mockito.Mockito.spy;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriBuilder;
 import org.junit.Test;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.aaiclient.client.graphinventory.exceptions.GraphInventoryPayloadException;
