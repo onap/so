@@ -32,8 +32,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
-import org.flywaydb.core.api.MigrationVersion;
-import org.flywaydb.core.api.migration.BaseJavaMigration;
+// import org.flywaydb.core.api.MigrationVersion;
+// import org.flywaydb.core.api.migration.BaseJavaMigration;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
@@ -49,17 +49,18 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
  * (application-{profile}.yaml) and persist data (when not already present) to the catalod database.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class R__CloudConfigMigration extends BaseJavaMigration {
+
+// extends BaseJavaMigration -- Flyway Disable
+public class R__CloudConfigMigration {
     public static final String FLYWAY = "FLYWAY";
 
     private static final Logger logger = LoggerFactory.getLogger(R__CloudConfigMigration.class);
     @JsonProperty("cloud_config")
     private CloudConfig cloudConfig;
 
-    @Override
-    public boolean isUndo() {
-        return false;
-    }
+    /*
+     * @Override public boolean isUndo() { return false; }
+     */
 
     public void migrate(Connection connection) throws Exception {
         logger.debug("Starting migration for CloudConfig");
@@ -224,9 +225,9 @@ public class R__CloudConfigMigration extends BaseJavaMigration {
         }
     }
 
-    public MigrationVersion getVersion() {
-        return null;
-    }
+    /*
+     * public MigrationVersion getVersion() { return null; }
+     */ // Flyway disable
 
     public String getDescription() {
         return "R_CloudConfigMigration";
@@ -236,10 +237,11 @@ public class R__CloudConfigMigration extends BaseJavaMigration {
         return Math.toIntExact(System.currentTimeMillis() / 1000);
     }
 
-    @Override
-    public void migrate(org.flywaydb.core.api.migration.Context context) throws Exception {
-        migrate(context.getConnection());
-
-    }
+    /*
+     * @Override public void migrate(org.flywaydb.core.api.migration.Context context) throws Exception {
+     * migrate(context.getConnection());
+     * 
+     * }
+     */ // Flyway disable
 }
 

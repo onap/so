@@ -45,7 +45,7 @@ import org.onap.msb.sdk.httpclient.msb.MSBServiceClient;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.GenericResourceApi;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.requestsdb.RequestsDbConstant;
 import org.slf4j.Logger;

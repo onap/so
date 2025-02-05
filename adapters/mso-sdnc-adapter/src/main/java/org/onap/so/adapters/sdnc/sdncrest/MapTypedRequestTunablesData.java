@@ -26,7 +26,7 @@ package org.onap.so.adapters.sdnc.sdncrest;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.adapters.sdnc.exception.SDNCAdapterException;
 import org.onap.so.adapters.sdnc.impl.Constants;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

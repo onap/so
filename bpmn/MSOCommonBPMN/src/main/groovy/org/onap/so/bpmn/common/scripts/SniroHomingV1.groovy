@@ -33,7 +33,7 @@ import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.json.JSONArray
 import org.json.JSONObject
 import static org.onap.so.bpmn.common.scripts.GenericUtils.*;

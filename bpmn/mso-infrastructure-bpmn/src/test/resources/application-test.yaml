@@ -172,7 +172,7 @@ spring:
       ddl-auto: none
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
       enable-lazy-load-no-trans: true
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    database-platform: org.hibernate.dialect.MySQLDialect
   security:
     usercredentials:
     -  
@@ -194,6 +194,8 @@ camunda:
       deploy-changed-only: true
     job-execution:
       deployment-aware: true
+    jdbc-batch-processing: false  ##Added this
+    database-schema-update: true  # Ensure schema updates are applied automatically
 pnf:
   dmaap:
     host: hostTest
