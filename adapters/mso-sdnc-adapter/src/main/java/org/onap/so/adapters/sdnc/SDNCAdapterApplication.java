@@ -23,8 +23,8 @@
 package org.onap.so.adapters.sdnc;
 
 import java.util.concurrent.Executor;
-import org.onap.logging.filter.base.Constants;
-import org.onap.logging.filter.spring.MDCTaskDecorator;
+import org.onap.so.logging.filter.base.Constants;
+import org.onap.so.logging.filter.spring.MDCTaskDecorator;
 import org.onap.so.utils.Components;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;

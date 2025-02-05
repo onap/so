@@ -56,11 +56,12 @@
       <artifactId>spring-boot-configuration-processor</artifactId>
       <optional>true</optional>
     </dependency>
-    <dependency>
+    <!--dependency>
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-core</artifactId>
       <optional>true</optional>
-    </dependency>
+    </dependency-->
+    <!-- Flyway is not used in this project -->
     <dependency>
       <groupId>net.javacrumbs.shedlock</groupId>
       <artifactId>shedlock-spring</artifactId>
@@ -95,17 +96,17 @@
       <plugin>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-java2ws-plugin</artifactId>
-        <version>3.3.3</version>
+        <version>4.0.0</version>
         <dependencies>
           <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxws</artifactId>
-            <version>3.3.3</version>
+            <version>4.0.0</version>
           </dependency>
           <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-simple</artifactId>
-            <version>3.3.3</version>
+            <version>4.0.0</version>
           </dependency>
           <dependency>
             <groupId>com.sun.xml.ws</groupId>
@@ -231,7 +232,7 @@
                   <pluginExecutionFilter>
                     <groupId>org.apache.cxf</groupId>
                     <artifactId>cxf-java2ws-plugin</artifactId>
-                    <versionRange>[3.2.5,)</versionRange>
+                    <version>4.0.0</version>
                     <goals>
                       <goal>java2ws</goal>
                     </goals>

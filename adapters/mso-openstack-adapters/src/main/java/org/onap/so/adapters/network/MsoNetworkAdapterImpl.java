@@ -32,7 +32,7 @@ import java.util.Optional;
 import jakarta.jws.WebService;
 import jakarta.xml.ws.Holder;
 import org.apache.commons.lang3.mutable.MutableBoolean;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.adapters.network.beans.ContrailPolicyRef;
 import org.onap.so.adapters.network.beans.ContrailPolicyRefSeq;
 import org.onap.so.adapters.network.beans.ContrailSubnet;

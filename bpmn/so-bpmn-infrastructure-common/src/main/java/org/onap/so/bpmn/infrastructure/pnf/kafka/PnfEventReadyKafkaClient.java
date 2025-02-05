@@ -35,7 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("PnfEventReadyKafkaClient")
 public class PnfEventReadyKafkaClient implements KafkaClient {
     private static final Logger logger = LoggerFactory.getLogger(PnfEventReadyKafkaClient.class);
     private Map<String, Runnable> pnfCorrelationIdToThreadMap;
