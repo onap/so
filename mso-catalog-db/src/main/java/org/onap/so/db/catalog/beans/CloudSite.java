@@ -20,7 +20,6 @@
 
 package org.onap.so.db.catalog.beans;
 
-
 import java.net.URI;
 import java.util.Date;
 import jakarta.persistence.CascadeType;
@@ -44,8 +43,6 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.openpojo.business.annotation.BusinessKey;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
-import uk.co.blackpepper.bowman.annotation.ResourceId;
 
 /**
  * EntityBean class for a CloudSite. This bean represents a cloud location (i.e. and LCP node) in the NVP/AIC cloud. It
@@ -53,7 +50,6 @@ import uk.co.blackpepper.bowman.annotation.ResourceId;
  *
  */
 @Entity
-@RemoteResource("/cloudSite")
 @Table(name = "cloud_sites")
 @JsonAutoDetect(fieldVisibility = Visibility.ANY)
 public class CloudSite {
@@ -170,7 +166,6 @@ public class CloudSite {
         this.id = id;
     }
 
-    @ResourceId
     public URI getUri() {
         return this.uri;
     }

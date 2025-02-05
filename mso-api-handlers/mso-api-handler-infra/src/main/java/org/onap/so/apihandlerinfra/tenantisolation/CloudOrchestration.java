@@ -26,10 +26,11 @@ package org.onap.so.apihandlerinfra.tenantisolation;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
-import java.util.ServiceLoader;
+// import java.util.ServiceLoader;
 import java.util.UUID;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
+import jakarta.inject.Provider;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
@@ -50,7 +51,7 @@ import org.onap.so.constants.Status;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.exceptions.ValidationException;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +82,10 @@ public class CloudOrchestration {
     private RequestsDbClient requestsDbClient;
 
     @Autowired
-    private ServiceLoader.Provider<TenantIsolationRunnable> tenantIsolationRunnable;
+    private Provider<TenantIsolationRunnable> tenantIsolationRunnable;
+    // private TenantIsolationRunnable tenantIsolationRunnable;
+
+
 
     @POST
     @Path("/{version:[vV][1]}/operationalEnvironments")
@@ -195,6 +199,7 @@ public class CloudOrchestration {
 
         TenantIsolationRunnable runnable = tenantIsolationRunnable.get();
         runnable.run(action, operationalEnvType, cor, requestId);
+        // tenantIsolationRunnable.run(action, operationalEnvType, cor, requestId);
 
         String encodedValue;
         try {
