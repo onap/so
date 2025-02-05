@@ -56,12 +56,12 @@ import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.springframework.web.util.UriUtils
 
-import javax.ws.rs.NotFoundException
-import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.NotFoundException
+import jakarta.ws.rs.core.MediaType
+import jakarta.ws.rs.core.Response
 
 import static org.apache.commons.lang3.StringUtils.isBlank
 

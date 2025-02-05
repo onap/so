@@ -33,6 +33,8 @@ import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+// import org.springframework.beans.factory.annotation.Primary;
 import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.List;
@@ -55,7 +57,9 @@ public class GenericPnfDispatcher implements JavaDelegate {
     // ERROR CODE for variable not found in the delegation Context
     private static final int ERROR_CODE = 601;
 
+    // @Primary
     @Autowired
+    @Qualifier("PnfManagement")
     private PnfManagement pnfManagement;
 
     @Autowired

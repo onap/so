@@ -22,7 +22,7 @@ import com.google.common.base.Strings;
 import java.util.Optional;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerContext;
 import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerRunnable;
 import org.onap.so.bpmn.infrastructure.decisionpoint.impl.AbstractControllerExecution;

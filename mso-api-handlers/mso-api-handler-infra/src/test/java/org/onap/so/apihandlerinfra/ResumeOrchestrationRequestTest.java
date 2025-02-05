@@ -36,8 +36,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.util.HashMap;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.core.Response;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -182,7 +182,8 @@ public class ResumeOrchestrationRequestTest {
         currentActiveRequest.setRequestAction(Action.createInstance.toString());
         currentActiveRequest.setRequestUrl(requestUri);
         currentActiveRequest.setRequestorId("xxxxxx");
-        currentActiveRequest.setProgress(new Long(5));
+        Long value = Long.valueOf(5);
+        currentActiveRequest.setProgress(value);
     }
 
     private void setInfraActiveRequestVfModule() throws IOException {

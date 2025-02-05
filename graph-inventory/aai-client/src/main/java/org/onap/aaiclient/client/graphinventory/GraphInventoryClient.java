@@ -21,8 +21,8 @@
 package org.onap.aaiclient.client.graphinventory;
 
 import java.net.URI;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 import org.javatuples.Pair;
 import org.onap.aaiclient.client.graphinventory.entities.uri.GraphInventoryUri;
 import org.onap.aaiclient.client.graphinventory.entities.uri.HttpAwareUri;

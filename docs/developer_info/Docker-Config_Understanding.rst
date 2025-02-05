@@ -134,7 +134,7 @@ Path:- /docker-config/volumes/so/config/api-handler-infra/onapheat/override.yaml
       jpa:
           show-sql: true
           hibernate:
-            dialect: org.hibernate.dialect.MySQL5Dialect
+            dialect: org.hibernate.dialect.MySQLDialect
             ddl-auto: validate
             naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
             enable-lazy-load-no-trans: true

@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import org.javatuples.Pair;
 import org.onap.so.apihandlerinfra.Actions;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;

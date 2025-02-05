@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.servicedecomposition.entities;
 
 import java.io.Serializable;
-import org.onap.so.serviceinstancebeans.RequestDetails;
 
 public class ExecuteBuildingBlock extends BuildingBlockBase<ExecuteBuildingBlock> implements Serializable {
 

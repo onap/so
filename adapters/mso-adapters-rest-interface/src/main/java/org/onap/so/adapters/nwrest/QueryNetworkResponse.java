@@ -25,7 +25,7 @@ package org.onap.so.adapters.nwrest;
 
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.onap.so.openstack.beans.NetworkStatus;
 import org.onap.so.openstack.beans.RouteTarget;
 

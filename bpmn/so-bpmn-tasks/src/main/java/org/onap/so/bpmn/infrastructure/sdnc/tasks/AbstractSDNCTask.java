@@ -1,7 +1,7 @@
 package org.onap.so.bpmn.infrastructure.sdnc.tasks;
 
 import java.net.URI;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriBuilder;
 import org.onap.so.client.sdnc.beans.SDNCRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;

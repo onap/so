@@ -24,30 +24,27 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.openpojo.business.annotation.BusinessKey;
-import uk.co.blackpepper.bowman.annotation.LinkedResource;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
-@RemoteResource("/vfModule")
 @Table(name = "vf_module")
 public class VfModule implements Serializable {
 
@@ -135,7 +132,6 @@ public class VfModule implements Serializable {
         this.modelInvariantUUID = modelInvariantUUID;
     }
 
-    @LinkedResource
     public List<VfModuleCustomization> getVfModuleCustomization() {
         if (vfModuleCustomization == null)
             vfModuleCustomization = new ArrayList<>();
@@ -163,7 +159,6 @@ public class VfModule implements Serializable {
         this.isBase = isBase;
     }
 
-    @LinkedResource
     public List<HeatFiles> getHeatFiles() {
         if (heatFiles == null)
             heatFiles = new ArrayList<>();
@@ -174,7 +169,6 @@ public class VfModule implements Serializable {
         this.heatFiles = heatFiles;
     }
 
-    @LinkedResource
     public VnfResource getVnfResources() {
         return vnfResources;
     }
@@ -211,7 +205,6 @@ public class VfModule implements Serializable {
         this.modelVersion = modelVersion;
     }
 
-    @LinkedResource
     public HeatTemplate getVolumeHeatTemplate() {
         return volumeHeatTemplate;
     }
@@ -220,7 +213,6 @@ public class VfModule implements Serializable {
         this.volumeHeatTemplate = volumeHeatTemplate;
     }
 
-    @LinkedResource
     public HeatTemplate getModuleHeatTemplate() {
         return moduleHeatTemplate;
     }
