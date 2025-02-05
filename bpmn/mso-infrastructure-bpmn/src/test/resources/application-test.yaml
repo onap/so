@@ -194,6 +194,8 @@ camunda:
       deploy-changed-only: true
     job-execution:
       deployment-aware: true
+    jdbc-batch-processing: false  ##Added this
+    database-schema-update: true  # Ensure schema updates are applied automatically
 pnf:
   dmaap:
     host: hostTest
