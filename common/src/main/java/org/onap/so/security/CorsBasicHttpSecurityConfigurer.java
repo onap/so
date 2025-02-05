@@ -5,28 +5,30 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.stereotype.Component;
+import org.springframework.security.config.Customizer;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component("cors")
 @Profile({"cors"})
 public class CorsBasicHttpSecurityConfigurer implements HttpSecurityConfigurer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CorsBasicHttpSecurityConfigurer.class);
+
 
     @Override
-    public SecurityFilterChain configure(final HttpSecurity http) throws Exception {
-        http.cors(cors -> cors.disable()).csrf(csrf -> {
-            try {
-                csrf.disable().authorizeRequests().requestMatchers("/manage/health", "/manage/info").permitAll()
-                        .requestMatchers("/**").fullyAuthenticated().and().httpBasic(httpBasic -> httpBasic.disable());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
-        return null;
-
+    public SecurityFilterChain configure(HttpSecurity http) throws Exception {
+        LOGGER.debug("Configuring HTTP security for CORS ...");
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource())).csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/manage/health", "/manage/info").permitAll()
+                        .requestMatchers("/**").authenticated())
+                .httpBasic(Customizer.withDefaults());
+        return http.build();
     }
+
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {

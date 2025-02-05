@@ -32,7 +32,7 @@ import org.onap.so.asdc.activity.beans.ActivitySpec;
 import org.onap.so.asdc.activity.beans.ActivitySpecCreateResponse;
 import org.onap.so.client.HttpClient;
 import org.onap.so.client.HttpClientFactory;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

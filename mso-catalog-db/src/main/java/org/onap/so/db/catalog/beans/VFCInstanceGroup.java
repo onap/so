@@ -20,12 +20,10 @@
 
 package org.onap.so.db.catalog.beans;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 
 @Entity
-@RemoteResource("/vfcInstanceGroup")
 @DiscriminatorValue(value = "VNFC")
 public class VFCInstanceGroup extends InstanceGroup {
 
