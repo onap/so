@@ -23,7 +23,7 @@ package org.onap.so.db.catalog.data.repository;
 import org.onap.so.db.catalog.beans.ProcessingFlags;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 @RepositoryRestResource(collectionResourceRel = "processingFlags", path = "processingFlags")
 @Transactional

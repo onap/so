@@ -37,11 +37,11 @@
     </plugins>
   </build>
   <dependencies>
-    <dependency>
+    <!--dependency>
       <groupId>uk.co.blackpepper.bowman</groupId>
       <artifactId>bowman-client</artifactId>
       <version>${bowman.client.version}</version>
-    </dependency>
+    </dependency-->
     <dependency>
       <groupId>org.onap.so</groupId>
       <artifactId>common</artifactId>

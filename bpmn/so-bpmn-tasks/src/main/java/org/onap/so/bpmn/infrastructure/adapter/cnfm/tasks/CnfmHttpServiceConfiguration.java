@@ -21,7 +21,7 @@
 package org.onap.so.bpmn.infrastructure.adapter.cnfm.tasks;
 
 import javax.ws.rs.core.MediaType;
-import org.onap.logging.filter.spring.SpringClientPayloadFilter;
+import org.onap.so.logging.filter.spring.SpringClientPayloadFilter;
 import org.onap.so.configuration.rest.HttpComponentsClientConfiguration;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
 import org.onap.so.rest.service.HttpRestServiceProvider;
@@ -73,6 +73,7 @@ public class CnfmHttpServiceConfiguration {
         final HttpHeaders hearders = new HttpHeaders();
         hearders.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         hearders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+        logger.debug("Return cnfm HttpRestServiceProvider bean...");
 
         return new HttpRestServiceProviderImpl(restTemplate, hearders);
     }
