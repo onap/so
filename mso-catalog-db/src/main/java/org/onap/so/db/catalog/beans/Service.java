@@ -25,29 +25,26 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapKey;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.openpojo.business.annotation.BusinessKey;
-import uk.co.blackpepper.bowman.annotation.LinkedResource;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 @Entity
-@RemoteResource("/service")
 @Table(name = "service")
 public class Service implements Serializable {
 
@@ -200,7 +197,6 @@ public class Service implements Serializable {
         return new HashCodeBuilder().append(modelUUID).toHashCode();
     }
 
-    @LinkedResource
     public List<ServiceProxyResourceCustomization> getServiceProxyCustomizations() {
         return serviceProxyCustomizations;
     }
@@ -209,7 +205,6 @@ public class Service implements Serializable {
         this.serviceProxyCustomizations = serviceProxyCustomizations;
     }
 
-    @LinkedResource
     public List<NetworkResourceCustomization> getNetworkCustomizations() {
         if (networkCustomizations == null) {
             networkCustomizations = new ArrayList<>();
@@ -221,7 +216,6 @@ public class Service implements Serializable {
         this.networkCustomizations = networkCustomizations;
     }
 
-    @LinkedResource
     public List<VnfResourceCustomization> getVnfCustomizations() {
         if (vnfCustomizations == null) {
             vnfCustomizations = new ArrayList<>();
@@ -233,7 +227,6 @@ public class Service implements Serializable {
         this.vnfCustomizations = vnfCustomizations;
     }
 
-    @LinkedResource
     public List<AllottedResourceCustomization> getAllottedCustomizations() {
         if (allottedCustomizations == null) {
             allottedCustomizations = new ArrayList<>();
@@ -245,7 +238,6 @@ public class Service implements Serializable {
         this.allottedCustomizations = allotedCustomizations;
     }
 
-    @LinkedResource
     public List<CollectionResourceCustomization> getCollectionResourceCustomizations() {
         if (collectionResourceCustomizations == null) {
             collectionResourceCustomizations = new ArrayList<>();
@@ -258,7 +250,6 @@ public class Service implements Serializable {
         this.collectionResourceCustomizations = collectionResourceCustomizations;
     }
 
-    @LinkedResource
     public List<ConfigurationResourceCustomization> getConfigurationCustomizations() {
         if (configurationCustomizations == null) {
             configurationCustomizations = new ArrayList<>();
@@ -270,7 +261,6 @@ public class Service implements Serializable {
         this.configurationCustomizations = configurationCustomizations;
     }
 
-    @LinkedResource
     public List<PnfResourceCustomization> getPnfCustomizations() {
         if (pnfCustomizations == null) {
             pnfCustomizations = new ArrayList<>();
@@ -298,7 +288,6 @@ public class Service implements Serializable {
         this.description = description;
     }
 
-    @LinkedResource
     public Map<String, ServiceRecipe> getRecipes() {
         return recipes;
     }
@@ -373,7 +362,6 @@ public class Service implements Serializable {
         this.environmentContext = environmentContext;
     }
 
-    @LinkedResource
     public ToscaCsar getCsar() {
         return csar;
     }

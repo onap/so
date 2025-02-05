@@ -35,6 +35,7 @@ import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 /**
@@ -42,7 +43,7 @@ import org.springframework.stereotype.Component;
  * 
  * @author waqas.ikram@est.tech
  */
-@Component
+@Component("InputParameterRetrieverTask")
 public class InputParameterRetrieverTask {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InputParameterRetrieverTask.class);
@@ -54,7 +55,8 @@ public class InputParameterRetrieverTask {
     private final InputParametersProvider<Map<String, Object>> userParamInputParametersProvider;
 
     @Autowired
-    public InputParameterRetrieverTask(final InputParametersProvider<GenericVnf> inputParametersProvider,
+    public InputParameterRetrieverTask(
+            @Qualifier("sdncInputParametersProvider") final InputParametersProvider<GenericVnf> inputParametersProvider,
             final InputParametersProvider<Map<String, Object>> userParamInputParametersProvider,
             final ExtractPojosForBB extractPojosForBB) {
         this.sdncInputParametersProvider = inputParametersProvider;

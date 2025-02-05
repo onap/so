@@ -33,12 +33,14 @@ import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SDNCNetworkResources {
 
     @Autowired
+    @Qualifier("NetworkTopologyOperationRequestMapper")
     private NetworkTopologyOperationRequestMapper sdncRM;
 
     public GenericResourceApiNetworkOperationInformation assignNetwork(L3Network network,

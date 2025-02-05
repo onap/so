@@ -17,7 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
+/*@Grab(group='jakarta.json', module='jakarta.json-api', version='2.1.3')
+@Grab(group='jakarta.json', module='jakarta.json-api', version='3.0.25')
+@Grab(group='jakarta.json', module='jakarta.json-api', version='2.1.1')*/
 package org.onap.so.bpmn.infrastructure.scripts
 
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -26,8 +28,9 @@ import groovy.json.JsonOutput
 
 import static org.hamcrest.CoreMatchers.instanceOf
 
-import javax.json.JsonArray
-import javax.ws.rs.core.Response
+import jakarta.json.Json
+import jakarta.json.JsonArray
+import jakarta.ws.rs.core.Response
 import org.apache.commons.collections.map.HashedMap
 import org.apache.commons.lang.StringEscapeUtils
 import org.camunda.bpm.engine.delegate.BpmnError
@@ -47,7 +50,7 @@ import org.onap.so.db.request.beans.OperationStatus
 import org.onap.so.db.request.beans.ResourceOperationStatus
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
-import org.onap.logging.filter.base.ONAPComponents
+import org.onap.so.logging.filter.base.ONAPComponents
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.aai.domain.yang.NetworkRoute
 import org.onap.aai.domain.yang.v19.ServiceInstance
@@ -67,12 +70,11 @@ import org.springframework.http.HttpEntity
 import org.onap.aai.domain.yang.NetworkPolicy
 import org.onap.aaiclient.client.aai.AAINamespaceConstants
 
-import javax.ws.rs.NotFoundException
+import jakarta.ws.rs.NotFoundException
 
 class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
     String Prefix="DACNSNSSI_"
-    private static final Logger logger = LoggerFactory.getLogger( DoAllocateCoreNonSharedSlice.class)
-    private static final ObjectMapper objectMapper = new ObjectMapper()
+    private static final Logger logger = LoggerFactory.getLogger( DoAllocateCoreNonSharedSlice.class);
     private CatalogDbUtils catalogDbUtils = new CatalogDbUtilsFactory().create()
     private RequestDBUtil requestDBUtil = new RequestDBUtil()
     private ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -154,6 +156,7 @@ class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
         //extAPI path hardcoded for testing purposes, will be updated in next patch
         String extAPIPath = "https://nbi.onap:8443/nbi/api/v4" + "/serviceOrder"
         execution.setVariable("ExternalAPIURL", extAPIPath)
+        ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> serviceOrder = new LinkedHashMap()
         //ExternalId
         serviceOrder.put("externalId", "ONAP001")
@@ -223,6 +226,7 @@ class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
     private List retrieveServiceCharacteristicsAsKeyValue(DelegateExecution execution, Map serviceCharacteristics) {
         logger.debug(Prefix+ " **** Enter DoAllocateCoreNonSharedSlice ::: retrieveServiceCharacteristicsAsKeyValue ****")
         List serviceCharacteristicsList = new ArrayList()
+        ObjectMapper mapperObj = new ObjectMapper();
         String vnfInstanceName = execution.getVariable("vnfInstanceName")
         Map<String, Object> serviceCharacteristicsObject = new LinkedHashMap()
         for (Map.Entry<String, Integer> entry : serviceCharacteristics.entrySet()) {

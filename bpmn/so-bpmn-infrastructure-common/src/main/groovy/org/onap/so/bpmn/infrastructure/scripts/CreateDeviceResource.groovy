@@ -26,28 +26,20 @@ import org.json.JSONObject
 import org.json.XML;
 
 import static org.apache.commons.lang3.StringUtils.*;
-import groovy.xml.XmlUtil
-import groovy.json.*
+
+
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.recipe.ResourceInput;
 import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
-import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.domain.ModelInfo
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.builder.AbstractBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
-
-import java.util.UUID;
-
-import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64
 
 
 /**

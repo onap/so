@@ -24,13 +24,6 @@
 package org.onap.so.bpmn.common.scripts
 
 import org.camunda.bpm.engine.delegate.DelegateExecution
-
-import static org.assertj.core.api.Assertions.assertThat
-import static org.mockito.ArgumentMatchers.any
-import static org.mockito.ArgumentMatchers.anyObject
-import static org.mockito.Mockito.mock
-import static org.mockito.Mockito.when
-
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake
 import org.junit.Before
 import org.junit.Test
@@ -40,9 +33,14 @@ import org.mockito.Spy
 import org.onap.aai.domain.yang.GenericVnf
 import org.onap.aai.domain.yang.VfModule
 import org.onap.aai.domain.yang.VfModules
-import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.springframework.core.env.Environment
+
+import static org.assertj.core.api.Assertions.assertThat
+import static org.mockito.ArgumentMatchers.any
+import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.when
 
 class CreateAAIVfModuleTest extends MsoGroovyTest{
 

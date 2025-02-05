@@ -24,7 +24,7 @@ package org.onap.so.apihandlerinfra.tenantisolation.process;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.ws.rs.NotFoundException;
+import jakarta.ws.rs.NotFoundException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.onap.aai.domain.yang.OperationalEnvironment;
@@ -45,7 +45,7 @@ import org.onap.so.client.grm.beans.ServiceEndPoint;
 import org.onap.so.client.grm.beans.ServiceEndPointList;
 import org.onap.so.client.grm.beans.ServiceEndPointRequest;
 import org.onap.so.client.grm.beans.Version;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.requestsdb.RequestsDBHelper;
 import org.slf4j.Logger;

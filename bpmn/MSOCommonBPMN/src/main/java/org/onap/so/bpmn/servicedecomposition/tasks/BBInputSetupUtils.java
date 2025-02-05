@@ -92,17 +92,6 @@ public class BBInputSetupUtils {
     private static final String DATA_LOAD_ERROR = "Could not process loading data from database";
     private static final String DATA_PARSE_ERROR = "Could not parse data";
     private static final String PROCESSING_DATA_NAME_EXECUTION_FLOWS = "flowExecutionPath";
-    private static final ObjectMapper mapper;
-    private static final ObjectMapper mapperRootValue;
-
-    static {
-        mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapperRootValue = new ObjectMapper();
-        mapperRootValue.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapperRootValue.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
-        mapperRootValue.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-    }
 
     @Autowired
     protected CatalogDbClient catalogDbClient;
@@ -167,9 +156,10 @@ public class BBInputSetupUtils {
 
         if (requestId != null) {
             List<String> flows = new ArrayList<>();
+            ObjectMapper om = new ObjectMapper();
             try {
                 for (ExecuteBuildingBlock ebb : flowsToExecute) {
-                    flows.add(mapper.writeValueAsString(ebb));
+                    flows.add(om.writeValueAsString(ebb));
                 }
             } catch (JsonProcessingException e) {
                 logger.error(DATA_PARSE_ERROR, e);
@@ -199,8 +189,10 @@ public class BBInputSetupUtils {
                         this.requestsDbClient.getRequestProcessingDataBySoRequestIdAndName(
                                 request.getOriginalRequestId(), PROCESSING_DATA_NAME_EXECUTION_FLOWS);
                 try {
-                    TypeFactory typeFactory = mapper.getTypeFactory();
-                    return mapper.readValue(requestProcessingData.getValue(),
+                    ObjectMapper om = new ObjectMapper();
+                    TypeFactory typeFactory = om.getTypeFactory();
+                    om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                    return om.readValue(requestProcessingData.getValue(),
                             typeFactory.constructCollectionType(List.class, ExecuteBuildingBlock.class));
                 } catch (Exception e) {
                     logger.error(DATA_LOAD_ERROR, e);
@@ -255,7 +247,11 @@ public class BBInputSetupUtils {
         if (requestId != null && !requestId.isEmpty()) {
             InfraActiveRequests activeRequest = this.getInfraActiveRequest(requestId);
             String requestBody = activeRequest.getRequestBody().replaceAll("\\\\", "");
-            return mapperRootValue.readValue(requestBody, RequestDetails.class);
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            objectMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
+            objectMapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+            return objectMapper.readValue(requestBody, RequestDetails.class);
         } else {
             return null;
         }

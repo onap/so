@@ -22,7 +22,7 @@ package org.onap.so.bpmn.infrastructure.validations;
 
 import java.util.Optional;
 import java.util.regex.Pattern;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.listener.validation.PreBuildingBlockValidator;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;

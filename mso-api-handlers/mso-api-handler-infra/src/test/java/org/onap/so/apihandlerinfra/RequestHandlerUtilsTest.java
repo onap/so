@@ -21,6 +21,10 @@
 package org.onap.so.apihandlerinfra;
 
 
+// import static org.wiremock.client.WireMock.aResponse;
+// import static org.wiremock.client.WireMock.get;
+// import static org.wiremock.client.WireMock.post;
+// import static org.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
@@ -30,10 +34,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.onap.logging.filter.base.Constants.HttpHeaders.ONAP_REQUEST_ID;
+import static org.onap.so.logging.filter.base.Constants.HttpHeaders.ONAP_REQUEST_ID;
 import static org.onap.so.logger.HttpHeadersConstants.REQUESTOR_ID;
-import static org.onap.logging.filter.base.Constants.HttpHeaders.ONAP_PARTNER_NAME;
-import static org.onap.logging.filter.base.Constants.HttpHeaders.TRANSACTION_ID;
+import static org.onap.so.logging.filter.base.Constants.HttpHeaders.ONAP_PARTNER_NAME;
+import static org.onap.so.logging.filter.base.Constants.HttpHeaders.TRANSACTION_ID;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -41,7 +45,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;

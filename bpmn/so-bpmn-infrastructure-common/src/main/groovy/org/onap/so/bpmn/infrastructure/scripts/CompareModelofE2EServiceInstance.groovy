@@ -22,8 +22,6 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import static org.apache.commons.lang3.StringUtils.*
-
-import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
@@ -36,7 +34,7 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import groovy.json.*
+
 
 
 /**

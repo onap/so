@@ -24,7 +24,7 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 
 import static org.mockito.Mockito.*
-import javax.ws.rs.core.UriBuilder
+import jakarta.ws.rs.core.UriBuilder
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.junit.Assert

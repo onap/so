@@ -24,7 +24,7 @@ package org.onap.so.bpmn.common.recipe;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import javax.xml.bind.DatatypeConverter;
+import jakarta.xml.bind.DatatypeConverter;
 import org.onap.so.logger.LoggingAnchor;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -34,7 +34,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.utils.CryptoUtils;
 import org.slf4j.Logger;

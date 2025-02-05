@@ -22,7 +22,7 @@ package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
 
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import org.camunda.bpm.engine.ManagementService;
 import org.camunda.bpm.engine.TaskService;
