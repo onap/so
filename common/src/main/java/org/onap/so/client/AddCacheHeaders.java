@@ -6,7 +6,7 @@ import jakarta.ws.rs.client.ClientResponseFilter;
 import jakarta.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.util.Collections;
-import javax.annotation.Priority;
+import jakarta.annotation.Priority;
 
 @Provider
 @Priority(1)

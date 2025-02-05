@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory
 import org.onap.so.bpmn.core.UrnPropertiesReader
 
 import jakarta.ws.rs.core.Response
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.logging.filter.base.ONAPComponents;
 
 /**
  * This groovy class supports the <class>DoCreateVFCNetworkServiceInstance.bpmn</class> process.

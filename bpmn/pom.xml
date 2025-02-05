@@ -21,6 +21,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <sdnc.northbound.version>3.0.2</sdnc.northbound.version>
     <!-- SDNC northbound API latest version -->
+    <!-- RFC Support!-->
     <logback-core.version>1.4.14</logback-core.version>
     <!-- added codehaus version !-->
     <codehaus.groovy.version>3.0.19</codehaus.groovy.version>
