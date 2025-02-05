@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import org.apache.http.HttpStatus;
-import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logging.filter.base.ErrorCode;
 import org.onap.so.apihandler.common.CamundaClient;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandler.common.RequestClientParameter;

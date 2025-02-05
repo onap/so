@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory
 import com.fasterxml.jackson.databind.ObjectMapper
 
 import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.onap.logging.filter.base.ONAPComponents
+import org.onap.so.logging.filter.base.ONAPComponents
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
 

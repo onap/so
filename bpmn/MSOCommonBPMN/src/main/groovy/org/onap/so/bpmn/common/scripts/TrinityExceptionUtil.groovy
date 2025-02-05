@@ -24,7 +24,7 @@ package org.onap.so.bpmn.common.scripts
 
 import org.onap.so.logger.LoggingAnchor
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logging.filter.base.ErrorCode
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

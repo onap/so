@@ -9,6 +9,7 @@
   <artifactId>so-sdn-clients</artifactId>
   <properties>
     <sdnc.northbound.version>3.0.2</sdnc.northbound.version>
+    <!-- RFC Supporting Prop!-->
   </properties>
   <build>
     <plugins>
@@ -142,7 +143,6 @@
       <version>3.0.2</version>
       <type>yaml</type>
     </dependency>
-    <!-- RFC Supporting Dependencies -->
     <dependency>
       <groupId>org.mariadb.jdbc</groupId>
       <artifactId>mariadb-java-client</artifactId>

@@ -32,6 +32,7 @@ import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.context.annotation.Primary;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +43,7 @@ import com.google.common.base.Optional;
  * @author waqas.ikram@est.tech
  */
 @Service
+// @Primary // added
 public class VnfmAdapterServiceProviderImpl implements VnfmAdapterServiceProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VnfmAdapterServiceProviderImpl.class);
@@ -51,7 +53,7 @@ public class VnfmAdapterServiceProviderImpl implements VnfmAdapterServiceProvide
     private final HttpRestServiceProvider httpServiceProvider;
 
     @Autowired
-    public VnfmAdapterServiceProviderImpl(final VnfmAdapterUrlProvider urlProvider,
+    public VnfmAdapterServiceProviderImpl(@Qualifier("VnfmAdapterUrlProvider") final VnfmAdapterUrlProvider urlProvider,
             @Qualifier(VNFM_HTTP_REST_SERVICE_PROVIDER_BEAN) final HttpRestServiceProvider httpServiceProvider) {
         this.urlProvider = urlProvider;
         this.httpServiceProvider = httpServiceProvider;
