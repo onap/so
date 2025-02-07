@@ -19,7 +19,7 @@
 	</description>
   <organization>
     <name>ONAP - SO</name>
-    <url>http://www.onap.org/</url>
+    <url>https://www.onap.org/</url>
   </organization>
   <modules>
     <module>deployment-configs</module>
@@ -118,11 +118,11 @@
   <pluginRepositories>
     <pluginRepository>
       <id>central</id>
-      <url>http://repo1.maven.org/maven2</url>
+      <url>https://repo1.maven.org/maven2</url>
     </pluginRepository>
     <pluginRepository>
       <id>restlet</id>
-      <url>http://maven.restlet.com</url>
+      <url>https://maven.restlet.com</url>
     </pluginRepository>
     <pluginRepository>
       <id>onap-public</id>
@@ -411,13 +411,13 @@
                             f = new File( p );
                             if( f.exists() ) {
                                 break;
-                            }   
+                            }
                             p = "../" + p;
                         }
                     }
                     if( f != null ) {
                         String basePath = f.getCanonicalPath();
-                        basePath = basePath.substring( 0, basePath.lastIndexOf( File.separator ) ); 
+                        basePath = basePath.substring( 0, basePath.lastIndexOf( File.separator ) );
                         project.properties['base-path'] = basePath.replace( '\\' , '/');
                         log.info(' - used base path = ' + project.properties['base-path'] );
                     } else {
@@ -578,16 +578,16 @@
             <skipBuild>${docker.skip.build}</skipBuild>
             <skipPush>${docker.skip.push}</skipPush>
             <dockerHost>${docker.newHost}</dockerHost>
-            <!-- 1. Update address to your local docker VM. 2. Add IP to 
+            <!-- 1. Update address to your local docker VM. 2. Add IP to
               your NO_PROXY environment variable -->
             <certPath>${docker.host.cert.path}</certPath>
-            <!-- Add -Ddocker.host.cert.pat="path to your local certs directory" 
+            <!-- Add -Ddocker.host.cert.pat="path to your local certs directory"
               to maven build command -->
             <pushRegistry>${dockerPushRepo}</pushRegistry>
-            <!-- Update .m2/settings.xml Add server id settings.dockerRepository, 
+            <!-- Update .m2/settings.xml Add server id settings.dockerRepository,
               username, and password -->
             <pullRegistry>${dockerPullRepo}</pullRegistry>
-            <!-- If docker repo is not public. Update .m2/settings.xml Add 
+            <!-- If docker repo is not public. Update .m2/settings.xml Add
               server id settings.dockerRepository, username, and password -->
             <images>
               <image>
