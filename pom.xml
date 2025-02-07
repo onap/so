@@ -279,7 +279,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>sonar-maven-plugin</artifactId>
-        <version>5.1</version>
+        <version>4.0.0.4121</version>
       </plugin>
       <plugin>
         <artifactId>maven-scm-plugin</artifactId>
@@ -411,13 +411,13 @@
                             f = new File( p );
                             if( f.exists() ) {
                                 break;
-                            }   
+                            }
                             p = "../" + p;
                         }
                     }
                     if( f != null ) {
                         String basePath = f.getCanonicalPath();
-                        basePath = basePath.substring( 0, basePath.lastIndexOf( File.separator ) ); 
+                        basePath = basePath.substring( 0, basePath.lastIndexOf( File.separator ) );
                         project.properties['base-path'] = basePath.replace( '\\' , '/');
                         log.info(' - used base path = ' + project.properties['base-path'] );
                     } else {
@@ -578,16 +578,16 @@
             <skipBuild>${docker.skip.build}</skipBuild>
             <skipPush>${docker.skip.push}</skipPush>
             <dockerHost>${docker.newHost}</dockerHost>
-            <!-- 1. Update address to your local docker VM. 2. Add IP to 
+            <!-- 1. Update address to your local docker VM. 2. Add IP to
               your NO_PROXY environment variable -->
             <certPath>${docker.host.cert.path}</certPath>
-            <!-- Add -Ddocker.host.cert.pat="path to your local certs directory" 
+            <!-- Add -Ddocker.host.cert.pat="path to your local certs directory"
               to maven build command -->
             <pushRegistry>${dockerPushRepo}</pushRegistry>
-            <!-- Update .m2/settings.xml Add server id settings.dockerRepository, 
+            <!-- Update .m2/settings.xml Add server id settings.dockerRepository,
               username, and password -->
             <pullRegistry>${dockerPullRepo}</pullRegistry>
-            <!-- If docker repo is not public. Update .m2/settings.xml Add 
+            <!-- If docker repo is not public. Update .m2/settings.xml Add
               server id settings.dockerRepository, username, and password -->
             <images>
               <image>
@@ -768,6 +768,7 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hamcrest</groupId>
@@ -873,6 +874,7 @@
       <groupId>com.googlecode.junit-toolbox</groupId>
       <artifactId>junit-toolbox</artifactId>
       <version>2.4</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   <dependencyManagement>
@@ -937,6 +939,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-test</artifactId>
         <version>${springboot.version}</version>
+        <scope>test</scope>
         <exclusions>
           <exclusion>
             <groupId>com.vaadin.external.google</groupId>
