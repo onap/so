@@ -80,6 +80,12 @@
               </artifactItems>
             </configuration>
           </execution>
+          <execution>
+            <id>extract-docker-file</id>
+            <configuration>
+              <skip>false</skip>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
       <plugin>
@@ -146,18 +152,6 @@
             <goals>
               <goal>repackage</goal>
             </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>extract-docker-file</id>
-            <configuration>
-              <skip>false</skip>
-            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -277,6 +271,11 @@
     <dependency>
       <groupId>ch.vorburger.mariaDB4j</groupId>
       <artifactId>mariaDB4j</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

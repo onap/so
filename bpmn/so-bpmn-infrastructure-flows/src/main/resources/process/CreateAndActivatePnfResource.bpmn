@@ -7,18 +7,18 @@
     <bpmn:messageFlow id="MessageFlow_1h3xu88" sourceRef="CreatePnfEntryInAai" targetRef="Participant_0atuyq0" />
     <bpmn:messageFlow id="MessageFlow_09ibv5a" sourceRef="CheckAiiForPnfCorrelationId" targetRef="Participant_0atuyq0" />
     <bpmn:messageFlow id="MessageFlow_0vjul4t" sourceRef="Participant_0atuyq0" targetRef="CheckAiiForPnfCorrelationId" />
-    <bpmn:messageFlow id="MessageFlow_1vrcp2d" sourceRef="Participant_19w87ws" targetRef="WaitForDmaapPnfReadyNotification" />
-    <bpmn:messageFlow id="MessageFlow_0tg4hw9" sourceRef="InformDmaapClient" targetRef="Participant_19w87ws" />
+    <bpmn:messageFlow id="MessageFlow_1vrcp2d" sourceRef="Participant_19w87ws" targetRef="WaitForKafkaPnfReadyNotification" />
+    <bpmn:messageFlow id="MessageFlow_0tg4hw9" sourceRef="InformKafkaClient" targetRef="Participant_19w87ws" />
     <bpmn:messageFlow id="MessageFlow_1py54jr" sourceRef="CancelDmaapClientSubscription" targetRef="Participant_19w87ws" />
   </bpmn:collaboration>
   <bpmn:process id="CreateAndActivatePnfResource" name="CreateAndActivatePnfResource" isExecutable="true">
     <bpmn:sequenceFlow id="SequenceFlow_1kc34bc" sourceRef="WaitForDmaapTimeout" targetRef="CancelDmaapClientSubscription" />
-    <bpmn:sequenceFlow id="SequenceFlow_1o8od8e" sourceRef="InformDmaapClient" targetRef="WaitForDmaapPnfReadyNotification" />
+    <bpmn:sequenceFlow id="SequenceFlow_1o8od8e" sourceRef="InformKafkaClient" targetRef="WaitForKafkaPnfReadyNotification" />
     <bpmn:sequenceFlow id="SequenceFlow_0v5ffpe" name="No" sourceRef="DoesAaiContainInfoAboutPnf" targetRef="CreatePnfEntryInAai">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{!aaiContainsInfoAboutPnf}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_0p09qgm" sourceRef="WaitForDmaapPnfReadyNotification" targetRef="CreateRelationId" />
-    <bpmn:sequenceFlow id="SequenceFlow_17s9025" sourceRef="AaiEntryExists" targetRef="InformDmaapClient" />
+    <bpmn:sequenceFlow id="SequenceFlow_0p09qgm" sourceRef="WaitForKafkaPnfReadyNotification" targetRef="CreateRelationId" />
+    <bpmn:sequenceFlow id="SequenceFlow_17s9025" sourceRef="AaiEntryExists" targetRef="InformKafkaClient" />
     <bpmn:sequenceFlow id="SequenceFlow_1qr6cmf" sourceRef="CreatePnfEntryInAai" targetRef="AaiEntryExists" />
     <bpmn:sequenceFlow id="SequenceFlow_1j4r3zt" sourceRef="CheckAiiForPnfCorrelationId" targetRef="DoesAaiContainInfoAboutPnf" />
     <bpmn:sequenceFlow id="SequenceFlow_0j5ksz1" sourceRef="CreateAndActivatePnf_StartEvent" targetRef="CheckInputs" />
@@ -35,7 +35,7 @@
       <bpmn:incoming>SequenceFlow_1kc34bc</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1miyzfe</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="InformDmaapClient" name="Register in Dmaap" camunda:delegateExpression="${InformDmaapClient}">
+    <bpmn:serviceTask id="InformKafkaClient" name="Register in Dmaap" camunda:delegateExpression="${InformKafkaClient}">
       <bpmn:incoming>SequenceFlow_17s9025</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1o8od8e</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -59,11 +59,11 @@
       <bpmn:incoming>SequenceFlow_1miyzfe</bpmn:incoming>
       <bpmn:errorEventDefinition errorRef="Error_1" />
     </bpmn:endEvent>
-    <bpmn:receiveTask id="WaitForDmaapPnfReadyNotification" name="Wait for DMAAP pnf-ready notification" messageRef="Message_13h1tlo">
+    <bpmn:receiveTask id="WaitForKafkaPnfReadyNotification" name="Wait for DMAAP pnf-ready notification" messageRef="Message_13h1tlo">
       <bpmn:incoming>SequenceFlow_1o8od8e</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0p09qgm</bpmn:outgoing>
     </bpmn:receiveTask>
-    <bpmn:boundaryEvent id="WaitForDmaapTimeout" name="Timeout" attachedToRef="WaitForDmaapPnfReadyNotification">
+    <bpmn:boundaryEvent id="WaitForDmaapTimeout" name="Timeout" attachedToRef="WaitForKafkaPnfReadyNotification">
       <bpmn:outgoing>SequenceFlow_1kc34bc</bpmn:outgoing>
       <bpmn:timerEventDefinition>
         <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">#{timeoutForPnfEntryNotification}</bpmn:timeDuration>
@@ -226,7 +226,7 @@
           <dc:Bounds x="1028" y="309" width="90" height="10" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ReceiveTask_1sfysua_di" bpmnElement="WaitForDmaapPnfReadyNotification">
+      <bpmndi:BPMNShape id="ReceiveTask_1sfysua_di" bpmnElement="WaitForKafkaPnfReadyNotification">
         <dc:Bounds x="1008" y="167" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0p09qgm_di" bpmnElement="SequenceFlow_0p09qgm">
@@ -250,7 +250,7 @@
           <dc:Bounds x="823" y="380" width="90" height="10" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ServiceTask_1iax11n_di" bpmnElement="InformDmaapClient">
+      <bpmndi:BPMNShape id="ServiceTask_1iax11n_di" bpmnElement="InformKafkaClient">
         <dc:Bounds x="803" y="167" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1miyzfe_di" bpmnElement="SequenceFlow_1miyzfe">

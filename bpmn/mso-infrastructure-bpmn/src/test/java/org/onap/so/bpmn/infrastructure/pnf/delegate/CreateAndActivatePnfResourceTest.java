@@ -37,7 +37,13 @@ import org.onap.so.BaseIntegrationTest;
 import org.onap.so.bpmn.common.recipe.ResourceInput;
 import org.onap.so.bpmn.common.resource.ResourceRequestBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.TestPropertySource;
 
+
+@TestPropertySource(properties = {"pnf.kafka.topicListenerDelayInSeconds=3",
+        "pnf.kafka.kafkaBootstrapServers=localhost:9092", "pnf.kafka.pnfReadyTopicName=someTopic",
+        "pnf.kafka.pnfUpdateTopicName=someTopic2", "pnf.kafka.consumerGroup=someConsumerGroup",
+        "pnf.kafka.consumerId=someConsumerId", "pnf.kafka.consumerIdUpdate=someConsumerIdUpdate"})
 public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
 
     private static final String VALID_UUID = UUID.nameUUIDFromBytes("testUuid".getBytes()).toString();

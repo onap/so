@@ -3,15 +3,15 @@
   <bpmn:collaboration id="Collaboration_1d0w8lf">
     <bpmn:participant id="WaitForPnfReadyBB_ID" name="SO&#10;Wait For Pnf Ready" processRef="WaitForPnfReadyBB" />
     <bpmn:participant id="WorkflowMessageServiceForDmaap" name="Workflow Message Service&#10;(communication with DMAAP)&#10;" />
-    <bpmn:messageFlow id="MessageFlow_1vrcp2d" sourceRef="WorkflowMessageServiceForDmaap" targetRef="WaitForDmaapPnfReadyNotification" />
+    <bpmn:messageFlow id="MessageFlow_1vrcp2d" sourceRef="WorkflowMessageServiceForDmaap" targetRef="WaitForKafkaPnfReadyNotification" />
     <bpmn:messageFlow id="MessageFlow_0tg4hw9" sourceRef="RegisterForPnfReadyEvent" targetRef="WorkflowMessageServiceForDmaap" />
     <bpmn:messageFlow id="MessageFlow_1py54jr" sourceRef="UnregisterfromPnfReadyEvent" targetRef="WorkflowMessageServiceForDmaap" />
   </bpmn:collaboration>
   <bpmn:process id="WaitForPnfReadyBB" name="WaitForPnfReadyBB" isExecutable="true">
     <bpmn:sequenceFlow id="SequenceFlow_17q5zqe" sourceRef="UpdatePnfOrchestrationStatusToRegistered" targetRef="AaiEntryUpdated" />
-    <bpmn:sequenceFlow id="SequenceFlow_0m2r6ye" sourceRef="UpdatePnfOrchestrationStatusToRegister" targetRef="WaitForDmaapPnfReadyNotification" />
+    <bpmn:sequenceFlow id="SequenceFlow_0m2r6ye" sourceRef="UpdatePnfOrchestrationStatusToRegister" targetRef="WaitForKafkaPnfReadyNotification" />
     <bpmn:sequenceFlow id="SequenceFlow_1miyzfe" sourceRef="UnregisterfromPnfReadyEvent" targetRef="ThrowTimeoutException" />
-    <bpmn:sequenceFlow id="SequenceFlow_0p09qgm" sourceRef="WaitForDmaapPnfReadyNotification" targetRef="UpdatePnfOrchestrationStatusToRegistered" />
+    <bpmn:sequenceFlow id="SequenceFlow_0p09qgm" sourceRef="WaitForKafkaPnfReadyNotification" targetRef="UpdatePnfOrchestrationStatusToRegistered" />
     <bpmn:sequenceFlow id="SequenceFlow_1o8od8e" sourceRef="RegisterForPnfReadyEvent" targetRef="UpdatePnfOrchestrationStatusToRegister" />
     <bpmn:sequenceFlow id="SequenceFlow_1kc34bc" sourceRef="WaitForDmaapTimeout" targetRef="UnregisterfromPnfReadyEvent" />
     <bpmn:sequenceFlow id="SequenceFlow_1jzs6dp" sourceRef="WaitForPnfReady_StartEvent" targetRef="RegisterForPnfReadyEvent" />
@@ -26,11 +26,11 @@
       <bpmn:incoming>SequenceFlow_1o8od8e</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0m2r6ye</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:receiveTask id="WaitForDmaapPnfReadyNotification" name="Wait for DMAAP pnf-ready notification" messageRef="Message_13h1tlo">
+    <bpmn:receiveTask id="WaitForKafkaPnfReadyNotification" name="Wait for DMAAP pnf-ready notification" messageRef="Message_13h1tlo">
       <bpmn:incoming>SequenceFlow_0m2r6ye</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0p09qgm</bpmn:outgoing>
     </bpmn:receiveTask>
-    <bpmn:boundaryEvent id="WaitForDmaapTimeout" name="Timeout" attachedToRef="WaitForDmaapPnfReadyNotification">
+    <bpmn:boundaryEvent id="WaitForDmaapTimeout" name="Timeout" attachedToRef="WaitForKafkaPnfReadyNotification">
       <bpmn:outgoing>SequenceFlow_1kc34bc</bpmn:outgoing>
       <bpmn:timerEventDefinition>
         <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">#{timeoutForPnfEntryNotification}</bpmn:timeDuration>
@@ -113,7 +113,7 @@
           <dc:Bounds x="1028" y="309" width="90" height="10" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ReceiveTask_1sfysua_di" bpmnElement="WaitForDmaapPnfReadyNotification">
+      <bpmndi:BPMNShape id="ReceiveTask_1sfysua_di" bpmnElement="WaitForKafkaPnfReadyNotification">
         <dc:Bounds x="720" y="167" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0p09qgm_di" bpmnElement="SequenceFlow_0p09qgm">
