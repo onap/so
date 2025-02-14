@@ -77,6 +77,7 @@
     <so-etsi-sol003-adapter-version>1.9.0-SNAPSHOT</so-etsi-sol003-adapter-version>
     <onap-logging-version>1.6.9</onap-logging-version>
     <jackson.version>2.14.2</jackson.version>
+    <testcontainers.version>1.20.4</testcontainers.version>
   </properties>
   <distributionManagement>
     <repository>
