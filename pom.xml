@@ -279,7 +279,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>sonar-maven-plugin</artifactId>
-        <version>5.1</version>
+        <version>4.0.0.4121</version>
       </plugin>
       <plugin>
         <artifactId>maven-scm-plugin</artifactId>
@@ -768,6 +768,7 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hamcrest</groupId>
@@ -877,6 +878,7 @@
       <groupId>com.googlecode.junit-toolbox</groupId>
       <artifactId>junit-toolbox</artifactId>
       <version>2.4</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   <dependencyManagement>
@@ -941,6 +943,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-test</artifactId>
         <version>${springboot.version}</version>
+        <scope>test</scope>
         <exclusions>
           <exclusion>
             <groupId>com.vaadin.external.google</groupId>
