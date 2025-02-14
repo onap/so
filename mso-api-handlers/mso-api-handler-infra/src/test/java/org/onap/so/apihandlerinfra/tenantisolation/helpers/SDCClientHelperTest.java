@@ -79,7 +79,7 @@ public class SDCClientHelperTest extends BaseTest {
         assertEquals("500", jsonResponse.get("statusCode"));
         assertEquals("", jsonResponse.get("messageId"));
         assertEquals(
-                " Encountered Error while calling SDC POST Activate. JSONObject[\"requestError\"] is not a JSONObject.",
+                " Encountered Error while calling SDC POST Activate. JSONObject[\"requestError\"] is not a JSONObject (class java.lang.String : ).",
                 jsonResponse.get("message"));
 
     }
