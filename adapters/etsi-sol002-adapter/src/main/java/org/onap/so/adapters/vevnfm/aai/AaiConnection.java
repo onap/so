@@ -115,7 +115,8 @@ public class AaiConnection {
     }
 
     private List<EsrSystemInfo> receiveVnfmInternal() {
-        final AAIPluralResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.externalSystem().esrVnfmList());
+        final AAIPluralResourceUri resourceUri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.externalSystem().esrVnfmList());
         final Optional<EsrVnfmList> response = getResourcesClient().get(EsrVnfmList.class, resourceUri);
 
         if (response.isPresent()) {
@@ -137,8 +138,8 @@ public class AaiConnection {
     }
 
     private List<EsrSystemInfo> receiveVnfmServiceUrl(final String vnfmId) {
-        final Optional<EsrVnfm> response = getResourcesClient().get(EsrVnfm.class,
-                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.externalSystem().esrVnfm(vnfmId)).depth(Depth.ONE));
+        final Optional<EsrVnfm> response = getResourcesClient().get(EsrVnfm.class, AAIUriFactory
+                .createResourceUri(AAIFluentTypeBuilder.externalSystem().esrVnfm(vnfmId)).depth(Depth.ONE));
 
         if (response.isPresent()) {
             final EsrVnfm esrVnfm = response.get();
@@ -154,8 +155,8 @@ public class AaiConnection {
     }
 
     public String receiveGenericVnfId(final String href) {
-        final AAIPluralResourceUri resourceUri =
-                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnfs()).queryParam(SELFLINK, href);
+        final AAIPluralResourceUri resourceUri = AAIUriFactory
+                .createResourceUri(AAIFluentTypeBuilder.network().genericVnfs()).queryParam(SELFLINK, href);
         final Optional<GenericVnfs> response = getResourcesClient().get(GenericVnfs.class, resourceUri);
 
         if (response.isPresent()) {
@@ -176,7 +177,8 @@ public class AaiConnection {
     }
 
     public String receiveVserverName(final String genericId) {
-        final AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(genericId));
+        final AAIResourceUri resourceUri =
+                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(genericId));
         final Optional<GenericVnf> response = getResourcesClient().get(GenericVnf.class, resourceUri);
 
         if (response.isPresent()) {
@@ -209,8 +211,8 @@ public class AaiConnection {
 
     private String receiveVserverNameFromParams(final String cloudOwner, final String cloudId, final String tenantId,
             final String vserverId) {
-        final AAIResourceUri resourceUri =
-                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(cloudOwner, cloudId).tenant(tenantId).vserver(vserverId));
+        final AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+                .cloudRegion(cloudOwner, cloudId).tenant(tenantId).vserver(vserverId));
         final Optional<Vserver> response = getResourcesClient().get(Vserver.class, resourceUri);
 
         if (response.isPresent()) {

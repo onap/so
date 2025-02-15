@@ -439,7 +439,6 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
 
         String requestId = getRequestId();
         doReturn(heatClient).when(heatUtils).getHeatClient(cloudSiteId, tenantId);
-        doNothing().when(heatUtils).saveStackRequest(eq(createStackParam), isNull(), eq("stackName"));
         doReturn(stackResource).when(heatClient).getStacks();
         doReturn(mockCreateStack).when(stackResource).create(createStackParam);
 
