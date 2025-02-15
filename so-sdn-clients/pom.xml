@@ -97,6 +97,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.onap.sdnc.northbound</groupId>
       <artifactId>generic-resource-api-client</artifactId>
       <version>${sdnc.northbound.version}</version>

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,7 +55,7 @@ public class SDNCClientIT extends BaseIntegrationTest {
         String responseJson =
                 new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "SDNCClientPut404Response.json")));
 
-        String queryLink = "/restconf/operations/GENERIC-RESOURCE-API:network-topology-operation/";
+        String queryLink = "/restconf/operations/GENERIC-RESOURCE-API:network-topology-operation";
 
         wireMockServer.stubFor(post(urlMatching(queryLink)).willReturn(
                 aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(responseJson)));
