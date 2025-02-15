@@ -183,11 +183,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <artifactId>camunda-spin-dataformat-all</artifactId>
-      <groupId>org.camunda.spin</groupId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.camunda.bpm</groupId>
       <artifactId>camunda-engine-plugin-spin</artifactId>
     </dependency>
