@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,13 +55,11 @@ import net.sf.saxon.xpath.XPathFactoryImpl;
 @Component
 public class SDNCRequestTasks {
 
+    private static final Logger logger = LoggerFactory.getLogger(SDNCRequestTasks.class);
     private static final String NET_SF_SAXON_XPATH_IMPL = "net.sf.saxon.xpath.XPathFactoryImpl";
-
     private static final String XPATH_FACTORY_PROPERTY_NAME =
             "javax.xml.xpath.XPathFactory:" + NamespaceConstant.OBJECT_MODEL_SAXON;
-
-    private static final Logger logger = LoggerFactory.getLogger(SDNCRequestTasks.class);
-
+    private static final JsonPath path = JsonPath.compile("$.GENERIC-RESOURCE-API:output.ack-final-indicator");
     private static final String SDNC_REQUEST = "SDNCRequest";
     private static final String MESSAGE = "_MESSAGE";
     private static final String CORRELATOR = "_CORRELATOR";
@@ -85,7 +83,7 @@ public class SDNCRequestTasks {
         try {
             String response = sdncClient.post(request.getSDNCPayload(), request.getTopology());
             // SDNC Response with RFC-8040 prefixes GENERIC-RESOURCE-API
-            String finalMessageIndicator = JsonPath.read(response, "$.GENERIC-RESOURCE-API:output.ack-final-indicator");
+            String finalMessageIndicator = path.read(response);
             execution.setVariable("isSDNCCompleted", convertIndicatorToBoolean(finalMessageIndicator));
         } catch (PathNotFoundException e) {
             logger.error("Error Parsing SDNC Response. Could not find read final ack indicator from JSON.", e);
