@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6faea30f_5b2a0701",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/sdnc/tasks/SDNCRequestTasks.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 7813
+      },
+      "writtenOn": "2025-02-18T11:08:58Z",
+      "side": 1,
+      "message": "Seems fine to me. \nUltimately, it should read the output as \u0027Y\u0027or\u0027N\u0027 here, based on this finalmsgindicator flag it decides the workflow.",
+      "range": {
+        "startLine": 86,
+        "startChar": 12,
+        "endLine": 86,
+        "endChar": 63
+      },
+      "revId": "01e14ec1feaedc6b8c88bf58edcf7ad636f5a3d8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
