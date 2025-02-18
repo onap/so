@@ -109,7 +109,7 @@ mso:
   request:
     db:
       endpoint: http://localhost:28090/
-  rollback: 'true'  
+  rollback: 'true'
   service:
     agnostic:
       sniro:
@@ -123,7 +123,7 @@ mso:
         2vvig: SNIRO.DistanceToLocationPolicy_vhngw,SNIRO.VNFPolicy_vhngatewayprimary1_v1,SNIRO.ResourceInstancePolicy_hngateway,SNIRO.ResourceRegionPolicy_hngateway_v1,SNIRO.VNFPolicy_vhngatewaysecondary1_v1,SNIRO.ZonePolicy_vhngw,SNIRO.PlacementOptimizationPolicy_dhv_v3,SNIRO.VNFPolicy_vhnportal_primary1_v1,SNIRO.ResourceInstancePolicy_vhnportal_v3,SNIRO.ResourceRegionPolicy_vhnportal_v1,SNIRO.VNFPolicy_vhnportalsecondary1_v1,SNIRO.ZonePolicy_vhnportal,SNIRO.DistanceToLocationPolicy_vvig,SNIRO.InventoryGroupPolicy_vvig,SNIRO.VNFPolicy_vvigprimary1_v1,SNIRO.ResourceInstancePolicy_vvig,SNIRO.VNFPolicy_vvigsecondary1_v1
         4vvig: SNIRO.DistanceToLocationPolicy_vhngw,SNIRO.VNFPolicy_vhngatewayprimary1_v1,SNIRO.ResourceInstancePolicy_hngateway,SNIRO.ResourceRegionPolicy_hngateway_v1,SNIRO.VNFPolicy_vhngatewaysecondary1_v1,SNIRO.ZonePolicy_vhngw,SNIRO.PlacementOptimizationPolicy_dhv_v3,SNIRO.VNFPolicy_vhnportal_primary1_v1,SNIRO.ResourceInstancePolicy_vhnportal_v3,SNIRO.ResourceRegionPolicy_vhnportal_v1,SNIRO.VNFPolicy_vhnportalsecondary1_v1,SNIRO.ZonePolicy_vhnportal,SNIRO.VNFPolicy_vvigprimary2_v1,SNIRO.VNFPolicy_vvigsecondary2_v1,SNIRO.DistanceToLocationPolicy_vvig,SNIRO.InventoryGroupPolicy_vvig,SNIRO.VNFPolicy_vvigprimary1_v1,SNIRO.ResourceInstancePolicy_vvig,SNIRO.VNFPolicy_vvigsecondary1_v1
     timeout: PT30M
-  workflow:    
+  workflow:
     default:
       aai:
         cloud-region:
@@ -210,12 +210,11 @@ camunda:
     job-execution:
       deployment-aware: true
 pnf:
-  dmaap:
-    host: hostTest
-    port: 1234
-    protocol: http
-    uriPathPrefix: events
-    topicName: pnfReady
-    consumerGroup: consumerGroup
-    consumerId: consumerId
+  kafka:
+    pnfReadyTopicName: unauthenticated.PNF_READY
+    pnfUpdateTopicName: unauthenticated.PNF_UPDATE
+    consumerGroup: so-consumer
+    consumerId: so-bpmn-infra-pnfready
+    consumerIdUpdate: so-bpmn-infra-pnfupdate
+    kafkaBootstrapServers:  localhost:9092
     topicListenerDelayInSeconds: 5
