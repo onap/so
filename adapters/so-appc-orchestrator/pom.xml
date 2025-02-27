@@ -72,9 +72,9 @@
               <goal>test</goal>
             </goals>
             <configuration>
-              <includes>
+              <!-- <includes>
                 <include>**/AllTestsTestSuite.java</include>
-              </includes>
+              </includes> -->
               <parallel>suites</parallel>
             </configuration>
           </execution>
@@ -152,6 +152,11 @@
     <dependency>
       <groupId>org.camunda.bpm</groupId>
       <artifactId>camunda-external-task-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.camunda.bpm.springboot</groupId>
+      <artifactId>camunda-bpm-spring-boot-starter</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.onap.so</groupId>
