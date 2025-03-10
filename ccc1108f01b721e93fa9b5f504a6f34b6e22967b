@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8dc2902c_3786b0a8",
+        "filename": "common/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-03-10T14:42:23Z",
+      "side": 1,
+      "message": "I would suggest to either use the spring dependency management or declare a `\u003cspring.version\u003e6.1.1\u003cspring.version\u003e` in the `\u003cproperties\u003e` section at the top of the file and reference that with `${spring.version}` instead of declaring the same version three times",
+      "revId": "ccc1108f01b721e93fa9b5f504a6f34b6e22967b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
