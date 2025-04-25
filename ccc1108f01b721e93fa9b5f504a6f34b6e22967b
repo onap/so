@@ -34,6 +34,24 @@
       "parentUuid": "8dc2902c_3786b0a8",
       "revId": "ccc1108f01b721e93fa9b5f504a6f34b6e22967b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "41a17c53_c5c4b628",
+        "filename": "common/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 7809
+      },
+      "writtenOn": "2025-04-25T03:54:11Z",
+      "side": 1,
+      "message": "Addressed this now. version will be resolved based on spring boot BOM",
+      "parentUuid": "8dc2902c_3786b0a8",
+      "revId": "ccc1108f01b721e93fa9b5f504a6f34b6e22967b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
