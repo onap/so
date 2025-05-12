@@ -11,7 +11,7 @@
   <groupId>org.onap.so</groupId>
   <artifactId>so</artifactId>
   <packaging>pom</packaging>
-  <version>1.15.0-SNAPSHOT</version>
+  <version>1.15.1-SNAPSHOT</version>
   <name>so</name>
   <description>This Maven project is responsible to build and package all child projects - contributions in the MSO project.
 	This build can be configured to run Functional tests and to start/stop a jboss server + Mysql DB.
@@ -67,6 +67,7 @@
     <cxf.version>3.4.1</cxf.version>
     <jax.ws.rs>2.1</jax.ws.rs>
     <springboot.version>2.3.7.RELEASE</springboot.version>
+    <spring-cloud.version>Hoxton.SR8</spring-cloud.version>
     <aaf.version>2.1.21</aaf.version>
     <format.skipValidate>false</format.skipValidate>
     <format.skipExecute>true</format.skipExecute>
@@ -880,6 +881,14 @@
       <version>2.4</version>
       <scope>test</scope>
     </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-sleuth</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-sleuth-zipkin</artifactId>
+    </dependency>
   </dependencies>
   <dependencyManagement>
     <dependencies>
@@ -1152,6 +1161,13 @@
         <version>7.14.0</version>
         <scope>import</scope>
         <type>pom</type>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>${spring-cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
