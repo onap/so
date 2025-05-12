@@ -1,11 +1,11 @@
 # will be used as entry in DB to say SITE OFF/ON for healthcheck
 # MSO Properties go here
-     
+
 server:
-  port: 8080 
+  port: 8080
   tomcat:
       max-threads: 50
-     
+
 mso:
   logPath: ./logs/openstack
   site-name: localDevEnv
@@ -13,8 +13,10 @@ mso:
     core-pool-size: 50
     max-pool-size: 50
     queue-capacity: 500
-    
+
 spring:
+  application:
+    name: so-catalog-db-adapter
   datasource:
      hikari:
        jdbcUrl: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
@@ -23,7 +25,7 @@ spring:
        driver-class-name: org.mariadb.jdbc.Driver
        pool-name: catdb-pool
        registerMbeans: true
-       
+
   flyway:
     baseline-on-migrate: false
     url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
@@ -43,6 +45,20 @@ spring:
       fail-on-empty-beans: false
   main:
     allow-bean-definition-overriding: true
+  sleuth:
+    enabled: ${TRACING_ENABLED:false}
+    messaging:
+      jms:
+        enabled: false
+    trace-id128: true
+    sampler:
+      probability: ${TRACING_SAMPLING_PROBABILITY:1.0}
+    supports-join: false
+    web:
+      skip-pattern: /actuator/health/*
+  zipkin:
+    base-url: ${TRACING_COLLECTOR_URL:http://jaeger-collector.istio-system:9411}
+
 
 #Actuator
 management:
@@ -57,4 +73,3 @@ management:
       prometheus:
         enabled: true # Whether exporting of metrics to Prometheus is enabled.
         step: 1m # Step size (i.e. reporting frequency) to use.
- 
