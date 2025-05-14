@@ -447,6 +447,9 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             if (vserver.isPresent()) {
                 Volume volume = new Volume();
                 volume.setVolumeId(r.getPhysicalResourceId());
+                r.getLinks().stream()
+                        .filter(link -> link.getRel().equals(HeatBridgeConstants.OS_RESOURCES_SELF_LINK_KEY))
+                        .findFirst().ifPresent(link -> volume.setVolumeSelflink(link.getHref()));
                 AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
                         .cloudRegion(cloudOwner, cloudRegionId).tenant(tenantId).vserver(vserver.get().getServerId())
                         .volume(r.getPhysicalResourceId()));
