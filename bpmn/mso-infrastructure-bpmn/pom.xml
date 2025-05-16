@@ -303,28 +303,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.onap.aaf.authz</groupId>
-      <artifactId>aaf-cadi-aaf</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.servlet</groupId>
-          <artifactId>servlet-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.camunda.bpm.springboot</groupId>
       <artifactId>camunda-bpm-spring-boot-starter-test</artifactId>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onap.aaf.authz</groupId>
-      <artifactId>aaf-misc-rosetta</artifactId>
-      <scope>runtime</scope>
     </dependency>
   </dependencies>
 </project>

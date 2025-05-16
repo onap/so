@@ -68,13 +68,11 @@
     <jax.ws.rs>2.1</jax.ws.rs>
     <springboot.version>2.3.7.RELEASE</springboot.version>
     <spring-cloud.version>Hoxton.SR8</spring-cloud.version>
-    <aaf.version>2.1.21</aaf.version>
     <format.skipValidate>false</format.skipValidate>
     <format.skipExecute>true</format.skipExecute>
     <io.fabric8.version>0.33.0</io.fabric8.version>
     <appc.client.version>1.7.2</appc.client.version>
     <bowman.client.version>0.9.0</bowman.client.version>
-    <aaf.cadi.version>2.1.15</aaf.cadi.version>
     <so-etsi-sol003-adapter-version>1.9.0-SNAPSHOT</so-etsi-sol003-adapter-version>
     <onap-logging-version>1.6.9</onap-logging-version>
     <jackson.version>2.14.2</jackson.version>
@@ -881,13 +879,13 @@
       <version>2.4</version>
       <scope>test</scope>
     </dependency>
-      <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-sleuth</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-sleuth-zipkin</artifactId>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-sleuth</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-sleuth-zipkin</artifactId>
     </dependency>
   </dependencies>
   <dependencyManagement>
@@ -1062,44 +1060,6 @@
             <artifactId>jboss-rmi-api_1.0_spec</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.onap.aaf.authz</groupId>
-        <artifactId>aaf-cadi-client</artifactId>
-        <version>${aaf.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onap.aaf.authz</groupId>
-        <artifactId>aaf-cadi-aaf</artifactId>
-        <version>${aaf.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.onap.aaf.authz</groupId>
-        <artifactId>aaf-auth-client</artifactId>
-        <version>${aaf.version}</version>
-        <scope>runtime</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.onap.aaf.authz</groupId>
-        <artifactId>aaf-misc-env</artifactId>
-        <version>${aaf.version}</version>
-        <scope>runtime</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.onap.aaf.authz</groupId>
-        <artifactId>aaf-misc-rosetta</artifactId>
-        <version>${aaf.version}</version>
-        <scope>runtime</scope>
       </dependency>
       <dependency>
         <groupId>ch.vorburger.mariaDB4j</groupId>
