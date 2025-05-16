@@ -1,12 +1,12 @@
-<!-- ============LICENSE_START======================================================= 
-	ECOMP MSO ================================================================================ 
-	Copyright (C) 2017 AT&T Intellectual Property. All rights reserved. ================================================================================ 
-	Licensed under the Apache License, Version 2.0 (the "License"); you may not 
-	use this file except in compliance with the License. You may obtain a copy 
-	of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
-	by applicable law or agreed to in writing, software distributed under the 
-	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
-	OF ANY KIND, either express or implied. See the License for the specific 
+<!-- ============LICENSE_START=======================================================
+	ECOMP MSO ================================================================================
+	Copyright (C) 2017 AT&T Intellectual Property. All rights reserved. ================================================================================
+	Licensed under the Apache License, Version 2.0 (the "License"); you may not
+	use this file except in compliance with the License. You may obtain a copy
+	of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required
+	by applicable law or agreed to in writing, software distributed under the
+	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+	OF ANY KIND, either express or implied. See the License for the specific
 	language governing permissions and limitations under the License. ============LICENSE_END========================================================= -->
 
 <configuration scan="false" debug="false">
@@ -23,7 +23,7 @@
 	<property name="auditLogName" value="audit" />
 	<property name="debugLogName" value="debug" />
 	<property name="cadiLogName" value="cadi" />
-	
+
 	<property name="currentTimeStamp" value="%d{&quot;yyyy-MM-dd'T'HH:mm:ss.SSSXXX&quot;,UTC}"/>
 
 	<property name="errorPattern"
@@ -52,8 +52,8 @@
 	<appender name="Audit"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-			<evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">	
-				<marker>ENTRY</marker>			
+			<evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+				<marker>ENTRY</marker>
 				<marker>EXIT</marker>
 			</evaluator>
 			<onMismatch>DENY</onMismatch>
@@ -81,8 +81,8 @@
 	<appender name="Metric"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-			<evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">	
-				<marker>INVOKE</marker>			
+			<evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+				<marker>INVOKE</marker>
 				<marker>INVOKE-RETURN</marker>
 			</evaluator>
 			<onMismatch>DENY</onMismatch>
@@ -159,14 +159,14 @@
 			<pattern>${debugPattern}</pattern>
 		</encoder>
 	</appender>
-	
+
 
 	<appender name="asyncDebug" class="ch.qos.logback.classic.AsyncAppender">
 		<queueSize>256</queueSize>
 		<appender-ref ref="Debug" />
 		<includeCallerData>true</includeCallerData>
 	</appender>
-	
+
 	<appender name="Cadi"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<file>${logs_dir:-.}/${cadiLogName}.log</file>
@@ -206,15 +206,10 @@
 	<logger name="org.onap" level="${LOG_LEVEL:-DEBUG}" />
 	<logger name="org.apache.cxf.interceptor" level="${LOG_LEVEL:-DEBUG}" />
 	<logger name="com.woorea.openstack.connector" level="${LOG_LEVEL:-DEBUG}" />
-	
-	<!-- AAF Logs go here-->
-	<logger name="org.apache.catalina.core.ContainerBase" level="WARN" additivity="false">
-		<appender-ref ref="asyncCadi" />
-	</logger>
 
     <!-- Jersey Openstack Connector Logs Go Here for Openstack4J -->
     <logger name="os" level="${LOG_LEVEL:-DEBUG}" />
-    
+
 	<logger name="org.reflections" level="ERROR" additivity="false" />
 
 	<logger name="AUDIT" level="INFO" additivity="false">

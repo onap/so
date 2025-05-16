@@ -48,12 +48,12 @@ public class ExternalTaskServiceUtils {
     }
 
     protected ClientRequestInterceptor createClientInterceptor(String auth) {
-        return new BasicAuthProvider(env.getRequiredProperty("mso.config.cadi.aafId"), auth);
+        return new BasicAuthProvider(env.getRequiredProperty("mso.auth.user"), auth);
     }
 
     protected String getAuth() throws Exception {
         try {
-            return CryptoUtils.decrypt(env.getRequiredProperty("mso.auth"), env.getRequiredProperty("mso.msoKey"));
+            return CryptoUtils.decrypt(env.getRequiredProperty("mso.auth.password"), env.getRequiredProperty("mso.msoKey"));
         } catch (IllegalStateException | GeneralSecurityException e) {
             logger.error("Error Decrypting Password", e);
             throw new Exception("Cannot load password");
