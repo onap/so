@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.onap.so</groupId>
     <artifactId>adapters</artifactId>
-    <version>1.15.1-SNAPSHOT</version>
+    <version>1.15.2-SNAPSHOT</version>
   </parent>
   <groupId>org.onap.so.adapters</groupId>
   <artifactId>mso-requests-db-adapter</artifactId>
