@@ -64,6 +64,15 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.client.RestTemplate;
+
 
 @Path("onap/so/infra/orchestrationRequests")
 @OpenAPIDefinition(info = @Info(title = "onap/so/infra/orchestrationRequests"))
@@ -85,6 +94,9 @@ public class ResumeOrchestrationRequest {
 
     @Autowired
     private MsoRequest msoRequest;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @POST
     @Path("/{version:[vV][7]}/{requestId}/resume")
@@ -133,14 +145,16 @@ public class ResumeOrchestrationRequest {
 
         }
 
-        return resumeRequest(infraActiveRequest, currentActiveRequest, version, requestUri);
+        return resumeRequest(infraActiveRequest, currentActiveRequest, version, requestUri, requestId);
     }
 
     protected Response resumeRequest(InfraActiveRequests infraActiveRequest, InfraActiveRequests currentActiveRequest,
-            String version, String requestUri) throws ApiException {
+            String version, String requestUri, String requestId) throws ApiException {
+        logger.info("********* ResumeRequest Method ********");
         String requestBody = infraActiveRequest.getRequestBody();
         Action action = Action.valueOf(infraActiveRequest.getRequestAction());
-        String requestId = currentActiveRequest.getRequestId();
+        // String requestId = currentActiveRequest.getRequestId();
+        logger.info("*********requestId********" + requestId);
         String requestScope = infraActiveRequest.getRequestScope();
         String instanceName = getInstanceName(infraActiveRequest, requestScope, currentActiveRequest);
         HashMap<String, String> instanceIdMap = setInstanceIdMap(infraActiveRequest, requestScope);
@@ -161,11 +175,42 @@ public class ResumeOrchestrationRequest {
             aLaCarte = setALaCarteFlagIfNull(requestScope, action);
         }
 
+        String resumeFrom = resumeValue(requestId);
+
         RequestClientParameter requestClientParameter = setRequestClientParameter(recipeLookupResult, version,
-                infraActiveRequest, currentActiveRequest, pnfCorrelationId, aLaCarte, sir);
+                infraActiveRequest, currentActiveRequest, pnfCorrelationId, aLaCarte, sir, resumeFrom);
 
         return requestHandlerUtils.postBPELRequest(currentActiveRequest, requestClientParameter,
                 recipeLookupResult.getOrchestrationURI(), requestScope);
+    }
+
+    protected String resumeValue(String requestId) {
+
+        logger.info("******  In resumeValue   ******");
+
+        RestTemplate restTemplate = new RestTemplate();
+
+
+        String resumeFrom = null;
+        String camundaUrl = "http://camunda-service:8080/engine-rest/history/process-instance";
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(camundaUrl).queryParam("businessKey", requestId)
+                .queryParam("state", "internallyTerminated").queryParam("sortBy", "startTime")
+                .queryParam("sortOrder", "asc");
+
+        try {
+            ResponseEntity<String> response =
+                    restTemplate.exchange(builder.toUriString(), HttpMethod.GET, null, String.class);
+
+            JsonNode root = objectMapper.readTree(response.getBody());
+            if (root.isArray() && root.size() > 0) {
+                resumeFrom = root.get(0).get("processDefinitionKey").asText();
+                logger.info("****** resumeFrom via Camunda REST: {} ******", resumeFrom);
+
+            }
+        } catch (Exception e) {
+            logger.error("****** Error calling Camunda REST: {} ******", e.getMessage());
+        }
+        return resumeFrom;
     }
 
     protected Boolean setALaCarteFlagIfNull(String requestScope, Action action) {
@@ -239,7 +284,8 @@ public class ResumeOrchestrationRequest {
 
     protected RequestClientParameter setRequestClientParameter(RecipeLookupResult recipeLookupResult, String version,
             InfraActiveRequests infraActiveRequest, InfraActiveRequests currentActiveRequest, String pnfCorrelationId,
-            Boolean aLaCarte, ServiceInstancesRequest sir) throws ApiException {
+            Boolean aLaCarte, ServiceInstancesRequest sir, String resumeFrom) throws ApiException {
+
         RequestClientParameter requestClientParameter = null;
         Action action = Action.valueOf(infraActiveRequest.getRequestAction());
         ModelInfo modelInfo = sir.getRequestDetails().getModelInfo();
@@ -251,6 +297,31 @@ public class ResumeOrchestrationRequest {
         }
 
         try {
+            // 1. Get raw JSON string from util
+            String requestJson =
+                    requestHandlerUtils.mapJSONtoMSOStyle(infraActiveRequest.getRequestBody(), sir, aLaCarte, action);
+
+            // 2. Parse it into ObjectNode
+            ObjectMapper objectMapper = new ObjectMapper(); // Or use injected one if available
+            ObjectNode requestDetailsNode = (ObjectNode) objectMapper.readTree(requestJson);
+
+            // 3. Inject resumeFrom into userParams
+            JsonNode requestParamsNode = requestDetailsNode.path("requestDetails").path("requestParameters");
+            if (requestParamsNode.isObject()) {
+                ArrayNode userParamsNode = (ArrayNode) requestParamsNode.withArray("userParams");
+
+                if (resumeFrom != null && userParamsNode != null) {
+                    ObjectNode resumeParam = objectMapper.createObjectNode();
+                    resumeParam.put("resumeFrom", resumeFrom);
+                    userParamsNode.add(resumeParam);
+                    logger.info("****** Injected resumeFrom [{}] into userParams ******", resumeFrom);
+                }
+            }
+
+            // 4. Convert modified structure back to String
+            String finalRequestDetailsJson = objectMapper.writeValueAsString(requestDetailsNode);
+
+            // 5. Build request client parameter object
             requestClientParameter = new RequestClientParameter.Builder()
                     .setRequestId(currentActiveRequest.getRequestId()).setBaseVfModule(isBaseVfModule)
                     .setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
@@ -262,11 +333,13 @@ public class ResumeOrchestrationRequest {
                     .setNetworkId(infraActiveRequest.getNetworkId()).setServiceType(infraActiveRequest.getServiceType())
                     .setVnfType(infraActiveRequest.getVnfType())
                     .setVfModuleType(msoRequest.getVfModuleType(sir, infraActiveRequest.getRequestScope()))
-                    .setNetworkType(infraActiveRequest.getNetworkType())
-                    .setRequestDetails(requestHandlerUtils.mapJSONtoMSOStyle(infraActiveRequest.getRequestBody(), sir,
-                            aLaCarte, action))
+                    .setNetworkType(infraActiveRequest.getNetworkType()).setRequestDetails(finalRequestDetailsJson) // ✅
+                                                                                                                    // Pass
+                                                                                                                    // as
+                                                                                                                    // String
                     .setApiVersion(version).setALaCarte(aLaCarte).setRequestUri(currentActiveRequest.getRequestUrl())
                     .setInstanceGroupId(infraActiveRequest.getInstanceGroupId()).build();
+
         } catch (IOException e) {
             logger.error("IOException while generating requestClientParameter to send to BPMN", e);
             ErrorLoggerInfo errorLoggerInfo =
@@ -277,6 +350,7 @@ public class ResumeOrchestrationRequest {
                     HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo)
                             .build();
         }
+
         return requestClientParameter;
     }
 }
