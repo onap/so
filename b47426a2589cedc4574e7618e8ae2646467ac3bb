@@ -16,6 +16,23 @@
       "message": "Please add a test case to assert this functionality",
       "revId": "b47426a2589cedc4574e7618e8ae2646467ac3bb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c62e35a4_95071b7e",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/ResumeOrchestrationRequest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-06-12T11:39:29Z",
+      "side": 1,
+      "message": "Instead of recreating a new RestTemplate on each invocation, we should rather dependency inject it into the service. For that you could create a `CamundaClientConfig` class and then `@Autowire` that:\n\n```java\n@Configuration\npublic class CamundaClientConfig {\n\n  @Value(\"${foo.camundaUrl}\")\n  String camundaUrl;\n\n  @Bean(\"camundaClient\")\n  RestTemplate restTemplate(RestTemplateBuilder builder) {\n    return builder.rootUri(camundaUrl).build();\n  }\n}\n```\nAnd then in this class (`ResumeOrchestrationRequest`):\n\n```java\n    @Autowired\n    @Qualifier(\"camundaClient\")\n    private RestTemplate camundaClient;\n```\n\nBesides being more efficient (since the `RestTemplate` is not recreated on each invocation) this will also work with tracing, since the trace context is propagated via the `RestTemplateBuilder` bean.\nAnd another benefit is that you\u0027ll find that much easier to test, because you can mock away the template if you want to since it is injected.\n\nObviously you\u0027ll have to choose a more fitting value than `foo.camundaUrl` in the example above",
+      "revId": "b47426a2589cedc4574e7618e8ae2646467ac3bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
