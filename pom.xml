@@ -11,7 +11,7 @@
   <groupId>org.onap.so</groupId>
   <artifactId>so</artifactId>
   <packaging>pom</packaging>
-  <version>1.15.2-SNAPSHOT</version>
+  <version>1.16.0-SNAPSHOT</version>
   <name>so</name>
   <description>This Maven project is responsible to build and package all child projects - contributions in the MSO project.
 	This build can be configured to run Functional tests and to start/stop a jboss server + Mysql DB.
@@ -789,54 +789,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.github.tomakehurst</groupId>
-      <artifactId>wiremock-standalone</artifactId>
-      <version>2.13.0</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.mortbay.jetty</groupId>
-          <artifactId>jetty</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.google.guava</groupId>
-          <artifactId>guava</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-annotations</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-databind</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.httpcomponents</groupId>
-          <artifactId>httpclient</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.skyscreamer</groupId>
-          <artifactId>jsonassert</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xmlunit</groupId>
-          <artifactId>xmlunit</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.jayway.jsonpath</groupId>
-          <artifactId>json-path</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>net.sf.jopt-simple</groupId>
-          <artifactId>jopt-simple</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>com.openpojo</groupId>
       <artifactId>openpojo</artifactId>
       <version>0.8.13</version>
@@ -1070,7 +1022,7 @@
       <dependency>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-contract-wiremock</artifactId>
-        <version>1.2.4.RELEASE</version>
+        <version>2.2.8.RELEASE</version>
         <scope>test</scope>
       </dependency>
       <dependency>
