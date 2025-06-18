@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.onap.so</groupId>
     <artifactId>mso-api-handlers</artifactId>
-    <version>1.15.2-SNAPSHOT</version>
+    <version>1.15.3-SNAPSHOT</version>
   </parent>
   <artifactId>mso-requests-db</artifactId>
   <name>mso-requests-db</name>

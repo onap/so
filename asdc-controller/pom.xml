@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.onap.so</groupId>
     <artifactId>so</artifactId>
-    <version>1.15.2-SNAPSHOT</version>
+    <version>1.15.3-SNAPSHOT</version>
   </parent>
   <artifactId>asdc-controller</artifactId>
   <name>asdc-controller</name>
@@ -305,6 +305,7 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-contract-wiremock</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.micrometer</groupId>

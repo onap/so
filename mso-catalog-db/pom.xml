@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.onap.so</groupId>
     <artifactId>so</artifactId>
-    <version>1.15.2-SNAPSHOT</version>
+    <version>1.15.3-SNAPSHOT</version>
   </parent>
 
   <artifactId>mso-catalog-db</artifactId>
@@ -78,7 +78,6 @@
     <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-rest-hal-browser</artifactId>
-      <version>3.3.9.RELEASE</version>
     </dependency>
     <dependency>
       <groupId>org.ow2.asm</groupId>
