@@ -5,10 +5,10 @@ import javax.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
-import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurerAdapter;
+import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 
 @Configuration
-public class RequestDbRepositoryConfiguration extends RepositoryRestConfigurerAdapter {
+public class RequestDbRepositoryConfiguration implements RepositoryRestConfigurer {
 
     @Autowired
     private EntityManager entityManager;
