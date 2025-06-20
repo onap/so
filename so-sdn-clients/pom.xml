@@ -139,7 +139,7 @@
     <dependency>
       <groupId>org.onap.sdnc.northbound</groupId>
       <artifactId>generic-resource-api-model-swagger</artifactId>
-      <version>3.0.2</version>
+      <version>${sdnc.northbound.version}</version>
       <type>yaml</type>
     </dependency>
     <!-- RFC Supporting Dependencies -->
