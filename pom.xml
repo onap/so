@@ -887,6 +887,11 @@
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-sleuth-zipkin</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.38</version>
+    </dependency>
   </dependencies>
   <dependencyManagement>
     <dependencies>
@@ -959,10 +964,6 @@
           <exclusion>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.mockito</groupId>
