@@ -31,19 +31,18 @@ log:
     vnfAdapterCreateV1: 'true'
     vnfAdapterRestV1: 'true'
 pnf:
-  dmaap:
-    host: hostTest
-    port: 1234
-    protocol: http
-    uriPathPrefix: events
-    topicName: pnfReady
-    consumerGroup: consumerGroup
-    consumerId: consumerId
-    topicListenerDelayInSeconds: 5
+  kafka:
+    topicListenerDelayInSeconds: 3
+    kafkaBootstrapServers: localhost:9092
+    pnfReadyTopicName: someTopic
+    pnfUpdateTopicName: someTopic2
+    consumerGroup: someConsumerGroup
+    consumerId: someConsumerId
+    consumerIdUpdate: someConsumerIdUpdate
 mso:
   naming:
     endpoint: http://localhost:${wiremock.server.port}/web/service/v1/genNetworkElementName
-    auth: Basic YnBlbDptc28tZGItMTUwNyE= 
+    auth: Basic YnBlbDptc28tZGItMTUwNyE=
   adapters:
     requestDb:
       auth: Basic YnBlbDptc28tZGItMTUwNyE=
@@ -101,7 +100,7 @@ mso:
     db:
       endpoint: http://localhost:${wiremock.server.port}/
       spring:
-        endpoint: http://localhost:${wiremock.server.port}  
+        endpoint: http://localhost:${wiremock.server.port}
   correlation:
         timeout: 60
   db:
@@ -122,9 +121,9 @@ mso:
   request:
     db:
       endpoint: http://localhost:${wiremock.server.port}/
-  rollback: 'true' 
+  rollback: 'true'
   site-name: localDevEnv
-  workflow:    
+  workflow:
     default:
       aai:
         cloud-region:
@@ -207,6 +206,8 @@ spring:
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
       enable-lazy-load-no-trans: true
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+  sleuth:
+    enabled: false
 sdno:
   health-check:
     dmaap:
