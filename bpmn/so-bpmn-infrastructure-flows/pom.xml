@@ -11,7 +11,6 @@
   <packaging>jar</packaging>
   <properties>
     <assertj.core.version>1.7.0</assertj.core.version>
-    <grpc.version>1.25.0</grpc.version>
   </properties>
   <build>
     <plugins>
@@ -248,7 +247,6 @@
     <dependency>
       <groupId>io.grpc</groupId>
       <artifactId>grpc-testing</artifactId>
-      <version>${grpc.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
