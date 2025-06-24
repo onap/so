@@ -64,7 +64,7 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
     @Value("${wiremock.server.port}")
     private String wiremockPort;
 
-    private final String basePath = "onap/so/infra/workflowSpecifications";
+    private final String basePath = "/onap/so/infra/workflowSpecifications";
 
     @Test
     public void queryWorkflowSpecificationsByVnfModelUUID_Test_Success()

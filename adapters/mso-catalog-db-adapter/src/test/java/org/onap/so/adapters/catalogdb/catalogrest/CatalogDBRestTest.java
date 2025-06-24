@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,22 +49,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
 
-    private static final String ECOMP_MSO_CATALOG_V2_VF_MODULES = "ecomp/mso/catalog/v2/vfModules";
+    private static final String ECOMP_MSO_CATALOG_V2_VF_MODULES = "/ecomp/mso/catalog/v2/vfModules";
 
-    private static final String SERVICE_RECIPE = "serviceRecipe";
+    private static final String SERVICE_RECIPE = "/serviceRecipe";
 
     private static final String ECOMP_MSO_CATALOG_V2_SERVICE_ALLOTTED_RESOURCES =
-            "ecomp/mso/catalog/v2/serviceAllottedResources";
+            "/ecomp/mso/catalog/v2/serviceAllottedResources";
 
-    private static final String ECOMP_MSO_CATALOG_V2_RESOURCE_RECEIPE = "ecomp/mso/catalog/v2/resourceRecipe";
+    private static final String ECOMP_MSO_CATALOG_V2_RESOURCE_RECEIPE = "/ecomp/mso/catalog/v2/resourceRecipe";
 
-    private static final String ECOMP_MSO_CATALOG_V2_SERVICE_NETWORKS = "ecomp/mso/catalog/v2/serviceNetworks";
+    private static final String ECOMP_MSO_CATALOG_V2_SERVICE_NETWORKS = "/ecomp/mso/catalog/v2/serviceNetworks";
 
-    private static final String ECOMP_MSO_CATALOG_V2_SERVICE_VNFS = "ecomp/mso/catalog/v2/serviceVnfs";
+    private static final String ECOMP_MSO_CATALOG_V2_SERVICE_VNFS = "/ecomp/mso/catalog/v2/serviceVnfs";
 
-    private static final String ECOMP_MSO_CATALOG_V2_SERVICE_RESOURCES = "ecomp/mso/catalog/v2/serviceResources";
+    private static final String ECOMP_MSO_CATALOG_V2_SERVICE_RESOURCES = "/ecomp/mso/catalog/v2/serviceResources";
 
-    private static final String ECOMP_MSO_CATALOG_PROCESSING_FLAGS = "ecomp/mso/catalog/v2/processingFlags";
+    private static final String ECOMP_MSO_CATALOG_PROCESSING_FLAGS = "/ecomp/mso/catalog/v2/processingFlags";
 
     TestRestTemplate restTemplate = new TestRestTemplate("test", "test");
 
@@ -235,7 +235,7 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
                 "{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10a\",\r\n\"modelUuid\": \"ff2ae348-214a-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"2fff5b20-214b-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"68dc9a92-214c-11e7-93ae-92361f002671\",\r\n\"modelInstanceName\": \"vSAMP10a 1\"\r\n},\r\n\"toscaNodeType\": \"VF\",\r\n\"nfFunction\": \"vSAMP\",\r\n\"nfType\": \"vSAMP\",\r\n\"nfRole\": \"vSAMP\",\r\n\"nfNamingCode\": \"vSAMP\",\r\n\"multiStageDesign\": null,\r\n\"vfModules\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::base::module-0\",\r\n\"modelUuid\": \"20c4431c-246d-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"78ca26d0-246d-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"cb82ffd8-252a-11e7-93ae-92361f002671\"\r\n},\r\n\"isBase\": true,\r\n\"vfModuleLabel\": \"base\",\r\n\"initialCount\": 1,\r\n\"hasVolumeGroup\": false\r\n},\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::PCM::module-1\",\r\n\"modelUuid\": \"066de97e-253e-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"64efd51a-2544-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"b4ea86b4-253f-11e7-93ae-92361f002671\"\r\n},\r\n\"isBase\": false,\r\n\"vfModuleLabel\": \"PCM\",\r\n\"initialCount\": 0,\r\n\"hasVolumeGroup\": false\r\n}\r\n]\r\n}";
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(
-                        createURLWithPort("ecomp/mso/catalog/v2/vnfResources/68dc9a92-214c-11e7-93ae-92361f002671"))
+                        createURLWithPort("/ecomp/mso/catalog/v2/vnfResources/68dc9a92-214c-11e7-93ae-92361f002671"))
                 .queryParam("filter", "resourceInput");
 
         ResponseEntity<String> response =
@@ -253,7 +253,7 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
         UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl(createURLWithPort("ecomp/mso/catalog/v2/vnfResources/68dc-11e7-93ae-92361f002671"));
+                .fromHttpUrl(createURLWithPort("/ecomp/mso/catalog/v2/vnfResources/68dc-11e7-93ae-92361f002671"));
 
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
@@ -440,7 +440,7 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         String expectedResponse =
                 "{\r\n\"modelInfo\": {\r\n\"modelName\": \"CONTRAIL30_GNDIRECT\",\r\n\"modelUuid\": \"10b36f65-f4e6-4be6-ae49-9596dc1c47fc\",\r\n\"modelInvariantUuid\": \"ce4ff476-9641-4e60-b4d5-b4abbec1271d\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"3bdbb104-476c-483e-9f8b-c095b3d308ac\",\r\n\"modelInstanceName\": \"CONTRAIL30_GNDIRECT 9\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"networkType\": \"\",\r\n\"networkTechnology\": \"\",\r\n\"networkRole\": \"\",\r\n\"networkScope\": \"\"\r\n}";
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
-                createURLWithPort("ecomp/mso/catalog/v2/networkResources/3bdbb104-476c-483e-9f8b-c095b3d308ac"));
+                createURLWithPort("/ecomp/mso/catalog/v2/networkResources/3bdbb104-476c-483e-9f8b-c095b3d308ac"));
 
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
@@ -457,7 +457,7 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
         UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl(createURLWithPort("ecomp/mso/catalog/v2/networkResources/3bdbb104-4asdf"));
+                .fromHttpUrl(createURLWithPort("/ecomp/mso/catalog/v2/networkResources/3bdbb104-4asdf"));
 
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
@@ -622,7 +622,7 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
                 "{\r\n\"modelInfo\": {\r\n\"modelName\": \"Tunnel_Xconn\",\r\n\"modelUuid\": \"f6b7d4c6-e8a4-46e2-81bc-31cad5072842\",\r\n\"modelInvariantUuid\": \"b7a1b78e-6b6b-4b36-9698-8c9530da14af\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"367a8ba9-057a-4506-b106-fbae818597c6\",\r\n\"modelInstanceName\": \"Sec_Tunnel_Xconn 11\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"allottedResourceType\": \"\",\r\n\"allottedResourceRole\": null,\r\n\"providingServiceModelName\": null,\r\n\"providingServiceModelInvariantUuid\": null,\r\n\"providingServiceModelUuid\": null,\r\n\"nfFunction\": null,\r\n\"nfType\": null,\r\n\"nfRole\": null,\r\n\"nfNamingCode\": null\r\n}";
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
-                createURLWithPort("ecomp/mso/catalog/v2/allottedResources/367a8ba9-057a-4506-b106-fbae818597c6"));
+                createURLWithPort("/ecomp/mso/catalog/v2/allottedResources/367a8ba9-057a-4506-b106-fbae818597c6"));
 
 
         ResponseEntity<String> response =
