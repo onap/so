@@ -14,7 +14,6 @@
     <protobuf.version>3.22.2</protobuf.version>
     <grpc.netty.version>4.1.30.Final</grpc.netty.version>
     <ccsdk.version>1.1.5</ccsdk.version>
-    <tomcat-catalina-version>9.0.105</tomcat-catalina-version>
   </properties>
   <dependencies>
     <dependency>
@@ -78,11 +77,6 @@
           <artifactId>android-json</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-catalina</artifactId>
-      <version>${tomcat-catalina-version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -162,6 +156,7 @@
     <dependency>
       <groupId>io.grpc</groupId>
       <artifactId>grpc-protobuf</artifactId>
+      <version>${grpc.version}</version>
       <exclusions>
         <exclusion>
           <groupId>com.google.code.findbugs</groupId>
@@ -172,10 +167,12 @@
     <dependency>
       <groupId>io.grpc</groupId>
       <artifactId>grpc-netty</artifactId>
+      <version>${grpc.version}</version>
     </dependency>
     <dependency>
       <groupId>io.grpc</groupId>
       <artifactId>grpc-testing</artifactId>
+      <version>${grpc.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -340,7 +337,7 @@
       <plugins>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.20</version>
+          <version>3.1.2</version>
           <configuration>
             <systemPropertyVariables>
               <so.log.level>DEBUG</so.log.level>
