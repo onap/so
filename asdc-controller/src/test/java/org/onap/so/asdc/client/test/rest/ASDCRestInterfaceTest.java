@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,20 +43,15 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.mockito.ArgumentMatchers;
-import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.onap.so.asdc.BaseTest;
 import org.onap.so.asdc.client.test.emulators.DistributionClientEmulator;
 import org.onap.so.asdc.client.test.emulators.NotificationDataImpl;
 import org.onap.so.db.catalog.beans.AllottedResource;
 import org.onap.so.db.catalog.beans.AllottedResourceCustomization;
-import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
 import org.onap.so.db.catalog.beans.NetworkResource;
-import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ToscaCsar;
-import org.onap.so.db.catalog.beans.VnfResource;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.beans.Workflow;
 import org.onap.so.db.catalog.data.repository.AllottedResourceCustomizationRepository;
@@ -65,7 +60,6 @@ import org.onap.so.db.catalog.data.repository.NetworkResourceRepository;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
 import org.onap.so.db.catalog.data.repository.ToscaCsarRepository;
 import org.onap.so.db.catalog.data.repository.VnfCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
 import org.onap.so.db.catalog.data.repository.WorkflowRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -143,7 +137,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
         headers.add("resource-location", "src/test/resources/resource-examples/allottedresource/");
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("test/treatNotification/v1"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
@@ -195,7 +189,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
         headers.add("resource-location", "src/test/resources/resource-examples/vFW/");
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("test/treatNotification/v1"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
@@ -239,7 +233,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
         headers.add("resource-location", "src/test/resources/resource-examples/WorkflowBpmn/");
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("test/treatNotification/v1"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
@@ -289,7 +283,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
         headers.add("resource-location", resourceLocation);
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("test/treatNotification/v1"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
 
@@ -333,7 +327,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
                 NotificationDataImpl.class);
         headers.add("resource-location", resourceLocation);
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("test/treatNotification/v1"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
 
@@ -360,13 +354,13 @@ public class ASDCRestInterfaceTest extends BaseTest {
 
         request = mapper.readValue(new File(resourceLocation + "nsst-notification.json"), NotificationDataImpl.class);
         entity = new HttpEntity<NotificationDataImpl>(request, headers);
-        response = restTemplate.exchange(createURLWithPort("test/treatNotification/v1"), HttpMethod.POST, entity,
+        response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"), HttpMethod.POST, entity,
                 String.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
 
         request = mapper.readValue(new File(resourceLocation + "nst-notification.json"), NotificationDataImpl.class);
         entity = new HttpEntity<NotificationDataImpl>(request, headers);
-        response = restTemplate.exchange(createURLWithPort("test/treatNotification/v1"), HttpMethod.POST, entity,
+        response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"), HttpMethod.POST, entity,
                 String.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
 
@@ -394,7 +388,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
                 NotificationDataImpl.class);
         headers.add("resource-location", resourceLocation);
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("test/treatNotification/v1"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
 
@@ -418,7 +412,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
                 new File(resourceLocation + "demo-vcpe-rescust-notification.json"), NotificationDataImpl.class);
         headers.add("resource-location", resourceLocation);
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("test/treatNotification/v1"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
 
@@ -440,7 +434,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
                 new File(resourceLocation + "service-ubuntu16test-notification.json"), NotificationDataImpl.class);
         headers.add("resource-location", resourceLocation);
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("test/treatNotification/v1"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         Optional<Service> service = serviceRepo.findById("ed0391da-b963-4c45-bf3a-b49cc7a94fab");
@@ -462,7 +456,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
                 new File(resourceLocation + "service-BasicCnf-notification.json"), NotificationDataImpl.class);
         headers.add("resource-location", resourceLocation);
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("test/treatNotification/v1"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         Optional<Service> service = serviceRepo.findById("31e0cd50-0a84-42b4-a7a8-dd5d82e6907d");
@@ -483,7 +477,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
                 new File(resourceLocation + "service-BasicNetwork-notification.json"), NotificationDataImpl.class);
         headers.add("resource-location", resourceLocation);
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("test/treatNotification/v1"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         Optional<Service> service = serviceRepo.findById("9ff42123-ff24-41dc-9f41-a956c9328699");
