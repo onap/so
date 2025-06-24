@@ -66,8 +66,8 @@
     <siteNexusPath>content/sites/site/org/onap/so/${project.version}/</siteNexusPath>
     <cxf.version>3.4.1</cxf.version>
     <jax.ws.rs>2.1</jax.ws.rs>
-    <springboot.version>2.3.12.RELEASE</springboot.version>
-    <spring-cloud.version>Hoxton.SR8</spring-cloud.version>
+    <springboot.version>2.4.13</springboot.version>
+    <spring-cloud.version>2020.0.6</spring-cloud.version>
     <format.skipValidate>false</format.skipValidate>
     <format.skipExecute>true</format.skipExecute>
     <io.fabric8.version>0.33.0</io.fabric8.version>
