@@ -67,7 +67,7 @@
     <cxf.version>3.4.1</cxf.version>
     <jax.ws.rs>2.1</jax.ws.rs>
     <springboot.version>2.3.12.RELEASE</springboot.version>
-    <spring-cloud.version>Hoxton.SR8</spring-cloud.version>
+    <spring-cloud.version>Hoxton.SR12</spring-cloud.version>
     <format.skipValidate>false</format.skipValidate>
     <format.skipExecute>true</format.skipExecute>
     <io.fabric8.version>0.33.0</io.fabric8.version>
@@ -75,7 +75,7 @@
     <bowman.client.version>0.9.0</bowman.client.version>
     <so-etsi-sol003-adapter-version>1.9.0-SNAPSHOT</so-etsi-sol003-adapter-version>
     <onap-logging-version>1.6.9</onap-logging-version>
-    <jackson.version>2.14.2</jackson.version>
+    <jackson.version>2.14.3</jackson.version>
   </properties>
   <distributionManagement>
     <repository>
