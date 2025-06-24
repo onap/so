@@ -1,0 +1,4 @@
+distribution_type: maven
+log_dir: so-maven-stage-master/1430/
+project: so
+version: 1.15.3
