@@ -61,7 +61,8 @@ import org.onap.logging.filter.base.ONAPComponents;
  * flow for VFC Network Service Scale
  */
 public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcessor {
-    private static final Logger logger = LoggerFactory.getLogger( DoScaleVFCNetworkServiceInstance.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoScaleVFCNetworkServiceInstance.class)
+    private static final ObjectMapper mapper = new ObjectMapper()
 
 
     String host = "http://mso.mso.testlab.openecomp.org:8080"
@@ -267,7 +268,6 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
      * @return
      */
     private String objectToJsonStr(Object obj) {
-        ObjectMapper mapper = new ObjectMapper()
         String jsonStr = null
         try {
             jsonStr = mapper.writeValueAsString(obj)
@@ -340,4 +340,3 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
         return nsResourceInputParameterList
     }
 }
-

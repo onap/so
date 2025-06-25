@@ -57,15 +57,15 @@ import com.google.gson.Gson
  *
  */
 class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
-	
+
 	String Prefix="DoActivateAccessNSSI"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	RequestDBUtil requestDBUtil = new RequestDBUtil()
 	JsonUtils jsonUtil = new JsonUtils()
-	ObjectMapper objectMapper = new ObjectMapper()
 	AnNssmfUtils anNssmfUtils = new AnNssmfUtils()
 	private NssmfAdapterUtils nssmfAdapterUtils = new NssmfAdapterUtils(httpClientFactory, jsonUtil)
 
+	private static final ObjectMapper objectMapper = new ObjectMapper()
 	private static final Logger logger = LoggerFactory.getLogger(DoActivateAccessNSSI.class)
 	private static final String ROLE_SLICE_PROFILE = "slice-profile-instance"
 	private static final String  ROLE_NSSI = "nssi"
@@ -82,7 +82,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 
 	private static final String VENDOR_ONAP = "ONAP_internal"
 
-        enum orchStatusMap {
+  enum orchStatusMap {
 		activateInstance("activated"),
 		deactivateInstance("deactivated")
 
@@ -90,7 +90,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 
 		private orchStatusMap(String value) {
 			this.value = value;
-		}	
+		}
 	}
 
 
@@ -127,7 +127,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		logger.debug("${Prefix} - Preprocessing completed with sliceProfileId : ${anSliceProfileId} , nsiId : ${nsiId} , nssiId : ${anNssiId}")
 
 	}
-	
+
 	/**
 	 * Method to fetch AN NSSI Constituents and Slice Profile constituents
 	 * @param execution
@@ -148,7 +148,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
                 }
 		logger.trace("${Prefix} - Exit Get Related instances")
 	}
-	
+
 	/**
 	 * Method to check Slice profile orchestration status
 	 * @param execution
@@ -162,11 +162,11 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 			execution.setVariable("shouldChangeSPStatus", false)
 		}else {
 			execution.setVariable("shouldChangeSPStatus", true)
-		
+
                 }
 		logger.debug("${Prefix} -  SPOrchStatus  : ${orchStatus}")
 	}
-	
+
 	/**
 	 * Method to check AN NF's  Slice profile instance orchestration status
 	 * @param execution
@@ -253,7 +253,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		}
 		logger.debug("${Prefix} processed SdnrResponse")
 	}
-	
+
 	/**
 	 * Update AN NF - NSSI and SP Instance status
 	 * @param execution
@@ -267,7 +267,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		updateOrchStatus(execution, anNfNssiId)
 		logger.debug("${Prefix}Exit  updateAnNfStatus")
 	}
-	
+
 	/**
 	 * Method to check AN NF's  Slice profile instance orchestration status
 	 * @param execution
@@ -290,7 +290,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 
 		logger.debug("${Prefix} Exit getTnFhSPOrchStatus TN_FH SP ID:${tnFhSPId}  : ${orchStatus}")
 	}
-	
+
 	void doTnFhNssiActivation(DelegateExecution execution){
 		logger.debug("Start doTnFhNssiActivation in ${Prefix}")
 		String nssmfRequest = buildTNActivateNssiRequest(execution, TN_FH)
@@ -298,7 +298,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		String urlOpType = operationType.equalsIgnoreCase(ACTIVATE) ? "activation":"deactivation"
 
 		List<String> sNssaiList =  execution.getVariable("sNssaiList")
-		String snssai = sNssaiList.get(0) 
+		String snssai = sNssaiList.get(0)
 		String urlString = "/api/rest/provMns/v1/NSS/" + snssai + "/" + urlOpType
 				String nssmfResponse = nssmfAdapterUtils.sendPostRequestNSSMF(execution, urlString, nssmfRequest)
 				if (nssmfResponse != null) {
@@ -328,7 +328,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		}
 			logger.debug("${Prefix} Exit getTnMhSPOrchStatus TN_MH SP ID:${tnFhSPId}  : ${orchStatus}")
 	}
-	
+
 	void doTnMhNssiActivation(DelegateExecution execution){
 		logger.debug("Start doTnMhNssiActivation in ${Prefix}")
 		String nssmfRequest = buildTNActivateNssiRequest(execution, TN_MH)
@@ -336,7 +336,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		String urlOpType = operationType.equalsIgnoreCase(ACTIVATE) ? "activation":"deactivation"
 
 		List<String> sNssaiList =  execution.getVariable("sNssaiList")
-		String snssai = sNssaiList.get(0) 
+		String snssai = sNssaiList.get(0)
 
 		String urlString = "/api/rest/provMns/v1/NSS/" + snssai + "/"  + urlOpType
 				String nssmfResponse = nssmfAdapterUtils.sendPostRequestNSSMF(execution, urlString, nssmfRequest)
@@ -348,9 +348,9 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 					exceptionUtil.buildAndThrowWorkflowException(execution, 7000,"Received a Bad Sync Response from NSSMF.")
 				}
 				logger.debug("Exit doTnMhNssiActivation in ${Prefix}")
-		
+
 	}
-	
+
 	/**
 	 * Update TN FH - NSSI and SP Instance status
 	 * @param execution
@@ -364,9 +364,9 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		updateOrchStatus(execution, tnFhNssiId)
 
 		logger.debug("${Prefix} Exit updateTNFHStatus")
-		
+
 	}
-	
+
 	/**
 	 * Update TN MH - NSSI and SP Instance status
 	 * @param execution
@@ -381,7 +381,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 
 		logger.debug("${Prefix} Exit updateTNMHStatus")
 	}
-	
+
 	/**
 	 * Update AN - NSSI and SP Instance status
 	 * @param execution
@@ -394,7 +394,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		updateOrchStatus(execution, anSliceProfileId)
 		logger.debug("${Prefix} Exit updateANStatus")
 	}
-	
+
 	void prepareQueryJobStatus(DelegateExecution execution,String jobId,String networkType,String instanceId) {
 		logger.debug("${Prefix} Start prepareQueryJobStatus : ${jobId}")
 		String responseId = "1"
@@ -414,9 +414,9 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		execution.setVariable("${networkType}_esrInfo", esrInfo.toString())
 		execution.setVariable("${networkType}_responseId", responseId)
 		execution.setVariable("${networkType}_serviceInfo", serviceInfo.toString())
-		
+
 	}
-	
+
 	void validateJobStatus(DelegateExecution execution,String responseDescriptor) {
 		logger.debug("validateJobStatus ${responseDescriptor}")
 		String jobResponse = execution.getVariable("tn_responseDescriptor")
@@ -429,8 +429,8 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 			execution.setVariable("isSuccess", false)
 		}
 	}
-	
-	
+
+
 	private void updateOrchStatus(DelegateExecution execution,String serviceId) {
 		logger.debug("${Prefix} Start updateOrchStatus : ${serviceId}")
 		String globalSubscriberId = execution.getVariable("globalSubscriberId")
@@ -463,7 +463,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		}
 		logger.debug("${Prefix} Exit updateOrchStatus : ${serviceId}")
 	}
-	
+
 	void prepareUpdateJobStatus(DelegateExecution execution,String status,String progress,String statusDescription) {
 		logger.debug("${Prefix} Start prepareUpdateJobStatus : ${statusDescription}")
 		String nssiId = execution.getVariable("anNssiId")
@@ -485,9 +485,9 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		requestDBUtil.prepareUpdateResourceOperationStatus(execution, roStatus)
                 logger.debug("${Prefix} Exit prepareUpdateJobStatus : ${statusDescription}")
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Fetches a collection of service instances with the specific role and maps it based on workload context
 	 * (AN-NF,TN-FH,TN-MH)
@@ -501,13 +501,13 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		logger.debug("${Prefix} - Fetching related ${role} from AAI")
 		String globalSubscriberId = execution.getVariable("globalSubscriberId")
 		String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
-		
+
 		if( isBlank(role) || isBlank(instanceId)) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Role and instanceId are mandatory")
 		}
 
 		Map<String,ServiceInstance> relatedInstances = new HashMap<>()
-		
+
 		AAIResourcesClient client = getAAIClient()
 		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId).serviceSubscription(subscriptionServiceType).serviceInstance(instanceId))
 		if (!client.exists(uri)) {
@@ -543,7 +543,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		logger.debug("Found ${relatedInstances.size()} ${role} related to ${instanceId} ")
 		return relatedInstances
 	}
-	
+
 	private ServiceInstance getInstanceByWorkloadContext(Map<String,ServiceInstance> instances,String workloadContext ) {
 		ServiceInstance instance = instances.get(workloadContext)
 		if(instance == null) {
@@ -551,7 +551,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		}
 		return instance
 	}
-	
+
 	private String getInstanceIdByWorkloadContext(Map<String,ServiceInstance> instances,String workloadContext ) {
 		String instanceId = instances.get(workloadContext).getServiceInstanceId()
 		if(instanceId == null) {
@@ -559,8 +559,8 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		}
 		return instanceId
 	}
-	
-	
+
+
 	/**
 	 * Method to handle deallocation of RAN NSSI constituents(TN_FH/TN_MH)
 	 * @param execution
@@ -604,7 +604,7 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 		json.add("esrInfo", esrInfo)
 		json.add("serviceInfo", jsonConverter.toJsonTree(serviceInfo))
 		return json.toString()
-		
+
 	}
-	
+
 }

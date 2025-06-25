@@ -68,13 +68,13 @@ class DoActivateSliceService extends AbstractServiceTaskProcessor {
     private static final NSSMF_DEACTIVATION_URL = "/api/rest/provMns/v1/NSS/%s/deactivation"
 
     private static final NSSMF_QUERY_JOB_STATUS_URL = "/api/rest/provMns/v1/NSS/jobs/%s"
+    private static final ObjectMapper objectMapper = new ObjectMapper()
 
     String Prefix="DoCNSSMF_"
     ExceptionUtil exceptionUtil = new ExceptionUtil()
 
     JsonUtils jsonUtil = new JsonUtils()
 
-    ObjectMapper objectMapper = new ObjectMapper()
 
     SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 

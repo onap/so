@@ -145,7 +145,7 @@ public class BBInputSetup implements JavaDelegate {
     @Autowired
     private ExceptionBuilder exceptionUtil;
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     public BBInputSetupUtils getBbInputSetupUtils() {
         return bbInputSetupUtils;
@@ -197,9 +197,7 @@ public class BBInputSetup implements JavaDelegate {
                 execution.setVariable("homing", false);
             }
 
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.enable(SerializationFeature.INDENT_OUTPUT);
-            logger.debug("GeneralBB: " + mapper.writeValueAsString(outputBB));
+            logger.debug("GeneralBB: {}", mapper.writeValueAsString(outputBB));
 
             setHomingFlag(outputBB, homing, lookupKeyMap);
 
@@ -2320,9 +2318,8 @@ public class BBInputSetup implements JavaDelegate {
     }
 
     private org.onap.so.serviceinstancebeans.Service serviceMapper(Map<String, Object> params) throws IOException {
-        ObjectMapper obj = new ObjectMapper();
-        String input = obj.writeValueAsString(params.get("service"));
-        return obj.readValue(input, org.onap.so.serviceinstancebeans.Service.class);
+        String input = mapper.writeValueAsString(params.get("service"));
+        return mapper.readValue(input, org.onap.so.serviceinstancebeans.Service.class);
     }
 
     private void setisHelmforHealthCheckBB(Service service, ServiceInstance serviceInstance, GeneralBuildingBlock gBB) {

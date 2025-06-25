@@ -47,6 +47,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank
 
 class DoModifyCoreNSSI extends DoCommonCoreNSSI {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DoModifyCoreNSSI.class)
+    private static final ObjectMapper mapper = new ObjectMapper()
     private final String PREFIX ="DoModifyCoreNSSI"
     private final String ACTION = "Modify"
 
@@ -54,9 +56,6 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
     private RequestDBUtil requestDBUtil = new RequestDBUtil()
     private MsoUtils utils = new MsoUtils()
     private JsonUtils jsonUtil = new JsonUtils()
-
-    private static final Logger LOGGER = LoggerFactory.getLogger( DoModifyCoreNSSI.class)
-
 
     @Override
     void preProcessRequest(DelegateExecution execution) {
@@ -102,7 +101,7 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
         def currentNSSI = execution.getVariable("currentNSSI")
 
         String givenSliceProfileId = currentNSSI['sliceProfileId'] //UUID.randomUUID().toString()
-        Map<String,Object> sliceProfileMap = new ObjectMapper().readValue(currentNSSI['sliceProfile'], Map.class)
+        Map<String,Object> sliceProfileMap = mapper.readValue(currentNSSI['sliceProfile'], Map.class)
 
         SliceProfile sliceProfile = new SliceProfile()
         sliceProfile.setServiceAreaDimension("")

@@ -42,17 +42,16 @@ import org.slf4j.LoggerFactory
 
 import javax.ws.rs.NotFoundException
 
-class DoDeallocateNSSI extends AbstractServiceTaskProcessor
-{
+class DoDeallocateNSSI extends AbstractServiceTaskProcessor {
+    private static final Logger LOGGER = LoggerFactory.getLogger( DoDeallocateNSSI.class)
+    private static final ObjectMapper mapper = new ObjectMapper()
     private final String PREFIX ="DoDeallocateNSSI"
 
     private ExceptionUtil exceptionUtil = new ExceptionUtil()
     private JsonUtils jsonUtil = new JsonUtils()
-    ObjectMapper objectMapper = new ObjectMapper()
     private RequestDBUtil requestDBUtil = new RequestDBUtil()
     private NssmfAdapterUtils nssmfAdapterUtils = new NssmfAdapterUtils(httpClientFactory, jsonUtil)
 
-    private static final Logger LOGGER = LoggerFactory.getLogger( DoDeallocateNSSI.class)
 
     @Override
     void preProcessRequest(DelegateExecution execution) {
@@ -143,7 +142,7 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
 	}
         return null
     }
-    
+
     /**
      * send deallocate request to nssmf
      * @param execution
@@ -162,7 +161,7 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
         String serviceUuid = currentNSSI['modelVersionId']
         String globalSubscriberId = currentNSSI['globalSubscriberId']
         String subscriptionServiceType = currentNSSI['serviceType']
-        
+
         DeAllocateNssi deAllocateNssi = new DeAllocateNssi()
         deAllocateNssi.setNsiId(nsiId)
         deAllocateNssi.setNssiId(nssiId)
@@ -170,7 +169,7 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
         deAllocateNssi.setSnssaiList(Arrays.asList(snssai))
         deAllocateNssi.setScriptName(scriptName)
         deAllocateNssi.setSliceProfileId(profileId)
-        
+
         ServiceInfo serviceInfo = new ServiceInfo()
         serviceInfo.setServiceInvariantUuid(serviceInvariantUuid)
         serviceInfo.setServiceUuid(serviceUuid)
@@ -178,17 +177,17 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
         serviceInfo.setNssiId(nssiId)
         serviceInfo.setGlobalSubscriberId(globalSubscriberId)
         serviceInfo.setSubscriptionServiceType(subscriptionServiceType)
-        String serviceInfoString = objectMapper.writeValueAsString(serviceInfo)
-        
+        String serviceInfoString = mapper.writeValueAsString(serviceInfo)
+
         EsrInfo esrInfo = getEsrInfo(currentNSSI)
-        String esrInfoString = objectMapper.writeValueAsString(esrInfo)
-        
+        String esrInfoString = mapper.writeValueAsString(esrInfo)
+
         execution.setVariable("deAllocateNssi",deAllocateNssi)
         execution.setVariable("esrInfo", esrInfoString)
         execution.setVariable("serviceInfo", serviceInfoString)
         String nssmfRequest = """
                 {
-                  "deAllocateNssi": ${objectMapper.writeValueAsString(deAllocateNssi)},
+                  "deAllocateNssi": ${mapper.writeValueAsString(deAllocateNssi)},
                   "esrInfo":  ${esrInfoString},
                   "serviceInfo": ${serviceInfoString}
                 }
@@ -198,9 +197,9 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
 
         NssiResponse nssmfResponse = nssmfAdapterUtils.sendPostRequestNSSMF(execution, urlStr, nssmfRequest, NssiResponse.class)
         if (nssmfResponse != null) {
-            currentNSSI['jobId']= nssmfResponse.getJobId() ?: "" 
-            currentNSSI['jobProgress'] = 0            
-            execution.setVariable("currentNSSI", currentNSSI)    
+            currentNSSI['jobId']= nssmfResponse.getJobId() ?: ""
+            currentNSSI['jobProgress'] = 0
+            execution.setVariable("currentNSSI", currentNSSI)
         } else {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Received a Bad Response from NSSMF.")
         }
@@ -218,14 +217,14 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
         execution.setVariable("jobId", jobId)
     }
 
-    
+
     /**
      * send to nssmf query progress
      * @param execution
      */
     void handleJobStatus(DelegateExecution execution)
     {
-        try 
+        try
         {
         String jobStatusResponse = execution.getVariable("responseDescriptor")
         String status = jsonUtil.getJsonValue(jobStatusResponse,"status")
@@ -269,7 +268,7 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
     {
         NetworkType domainType = currentNSSI['domainType']
         String vendor = currentNSSI['vendor']
-        
+
         EsrInfo info = new EsrInfo()
         info.setNetworkType(domainType)
         info.setVendor(vendor)
@@ -300,7 +299,7 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
         requestDBUtil.prepareUpdateOperationStatus(execution, operationStatus)
         LOGGER.debug("update operation, currentProgress=${currentProgress}, proportion=${proportion}, progress = ${progress}" )
     }
-    
+
     /**
      * delete slice profile from aai
      * @param execution

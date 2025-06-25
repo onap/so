@@ -55,6 +55,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
     private static final String SLICE_PROFILE_TEMPLATE = "{\"sliceProfileId\": \"%s\"}"
 
     private static final Logger LOGGER = LoggerFactory.getLogger( DoCommonCoreNSSI.class)
+    private static final ObjectMapper mapper = new ObjectMapper()
 
     private JsonUtils jsonUtil = new JsonUtils()
     private ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -94,7 +95,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
         // Slice Profile
         String sliceProfile = execution.getVariable("sliceParams")
-        
+
       /*  if(jsonUtil.jsonValueExists(execution.getVariable("sliceParams"), "sliceProfile")) {
             sliceProfile = jsonUtil.getJsonValue(execution.getVariable("sliceParams"), "sliceProfile")
         }
@@ -624,8 +625,6 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
             serviceVnfs = jsonUtil.getJsonValue(json, "serviceResources.serviceVnfs") ?: ""
 
-            ObjectMapper mapper = new ObjectMapper()
-
             List<Object> vnfList = mapper.readValue(serviceVnfs, List.class)
             LOGGER.debug("vnfList:  "+vnfList)
 
@@ -765,12 +764,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
             snssaiList.add(snssaisMap)
         }
 
-        //    Map<String, List<Map<String, String>>> supportedNssaiDetails = new HashMap<>()
-        //    supportedNssaiDetails.put("sNssai", supportedNssaiDetails)
-
-        ObjectMapper mapper = new ObjectMapper()
-
-        Map<String, Object> nSsai= new LinkedHashMap<>()
+        Map<String, Object> nSsai = new LinkedHashMap<>()
         nSsai.put("sNssai", snssaiList)
 
        // String supportedsNssaiJson = mapper.writeValueAsString(snssaiList)
@@ -1016,8 +1010,6 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
             Map<String, Object> requestDetailsMap = new LinkedHashMap<>()
             requestDetailsMap.put("requestDetails", requestDetails)
-
-            ObjectMapper mapper = new ObjectMapper()
 
             response = mapper.writeValueAsString(requestDetailsMap)
         }

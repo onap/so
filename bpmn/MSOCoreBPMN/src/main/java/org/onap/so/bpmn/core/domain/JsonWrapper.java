@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,20 +48,22 @@ public abstract class JsonWrapper implements Serializable {
     private static final String EXCEPTION = "Exception :";
 
     private static final Logger logger = LoggerFactory.getLogger(JsonWrapper.class);
+    private static final ObjectMapper mapper;
+    private static final ObjectWriter writer;
+
+    static {
+        mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
+        mapper.setSerializationInclusion(Include.NON_NULL);
+        writer = mapper.writer().withDefaultPrettyPrinter();
+    }
 
     @JsonInclude(Include.NON_NULL)
     public String toJsonString() {
 
         String jsonString = "";
-        // convert with Jackson
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
-
-        mapper.setSerializationInclusion(Include.NON_NULL);
-
-        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         try {
-            jsonString = ow.writeValueAsString(this);
+            jsonString = writer.writeValueAsString(this);
         } catch (Exception e) {
 
             logger.debug(EXCEPTION, e);
@@ -71,9 +73,6 @@ public abstract class JsonWrapper implements Serializable {
 
     @JsonInclude(Include.NON_NULL)
     public JSONObject toJsonObject() {
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
         JSONObject json = new JSONObject();
         try {
             json = new JSONObject(mapper.writeValueAsString(this));
@@ -85,10 +84,7 @@ public abstract class JsonWrapper implements Serializable {
         return json;
     }
 
-    public String listToJson(List list) {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
-
+    public String listToJson(List<?> list) {
         String jsonString = "";
         try {
             jsonString = mapper.writeValueAsString(list);
@@ -104,13 +100,9 @@ public abstract class JsonWrapper implements Serializable {
     public String toJsonStringNoRootName() {
 
         String jsonString = "";
-        // convert with Jackson
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(Include.NON_NULL);
 
-        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         try {
-            jsonString = ow.writeValueAsString(this);
+            jsonString = writer.writeValueAsString(this);
         } catch (Exception e) {
 
             logger.debug(EXCEPTION, e);
