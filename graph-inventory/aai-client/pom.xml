@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.onap.so</groupId>
     <artifactId>graph-inventory</artifactId>
-    <version>1.15.4-SNAPSHOT</version>
+    <version>1.15.5-SNAPSHOT</version>
   </parent>
   <artifactId>aai-client</artifactId>
   <build>
