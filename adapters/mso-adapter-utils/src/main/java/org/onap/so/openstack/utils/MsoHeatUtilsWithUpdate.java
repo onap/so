@@ -24,6 +24,7 @@
 package org.onap.so.openstack.utils;
 
 
+import static org.onap.so.openstack.utils.MsoCommonUtils.mapper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -152,10 +153,9 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
 
         logger.debug("Ready to Update Stack ({}) with input params: {}", canonicalName, stackInputs);
         // force entire stackInput object to generic Map<String, Object> for openstack compatibility
-        ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> normalized = new HashMap<>();
         try {
-            normalized = mapper.readValue(mapper.writeValueAsString(stackInputs),
+            normalized = JSON_MAPPER.readValue(JSON_MAPPER.writeValueAsString(stackInputs),
                     new TypeReference<HashMap<String, Object>>() {});
         } catch (IOException e1) {
             logger.debug("could not map json", e1);
