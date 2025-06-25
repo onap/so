@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * the inputs for the resource recipe <br>
  * <p>
  * </p>
- * 
+ *
  * @author
  * @version ONAP Beijing Release 2018-03-08
  */
@@ -47,6 +47,12 @@ import org.slf4j.LoggerFactory;
 public class ResourceInput implements Serializable {
 
     private static Logger logger = LoggerFactory.getLogger(ResourceInput.class);
+    private static final ObjectMapper mapper;
+
+    static {
+        mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+    }
 
     @JsonProperty("resourceInstanceName")
     private String resourceInstanceName;
@@ -330,8 +336,6 @@ public class ResourceInput implements Serializable {
 
     @Override
     public String toString() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         String jsonStr = "";
         try {
             jsonStr = mapper.writeValueAsString(this);

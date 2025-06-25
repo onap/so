@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,6 +46,14 @@ public class ApplicationControllerSupport {
     private static final int PARTIAL_SERIES = 500;
     private static final int PARTIAL_SUCCESS_STATUS = PARTIAL_SERIES;
     private static final int PARTIAL_FAILURE_STATUS = PARTIAL_SERIES + 1;
+    private static final ObjectMapper mapper;
+    private static final ObjectWriter writer;
+
+    static {
+        mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(Include.NON_NULL);
+        writer = mapper.writerWithDefaultPrettyPrinter();
+    }
 
     private static Logger logger = LoggerFactory.getLogger(ApplicationControllerSupport.class);
     private String lcmModelPackage = "org.onap.appc.client.lcm.model";
@@ -196,9 +204,6 @@ public class ApplicationControllerSupport {
     }
 
     public void logLCMMessage(Object message) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(Include.NON_NULL);
-        ObjectWriter writer = objectMapper.writerWithDefaultPrettyPrinter();
         String inputAsJSON;
         try {
             inputAsJSON = writer.writeValueAsString(message);

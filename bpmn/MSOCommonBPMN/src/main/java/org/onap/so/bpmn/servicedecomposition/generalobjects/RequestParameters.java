@@ -40,6 +40,12 @@ import org.slf4j.LoggerFactory;
 public class RequestParameters implements Serializable {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestParameters.class);
+    private static final ObjectMapper mapper;
+
+    static {
+        mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(Include.NON_NULL);
+    }
 
     private static final long serialVersionUID = -5979049912538894930L;
     @JsonProperty("subscriptionServiceType")
@@ -120,8 +126,6 @@ public class RequestParameters implements Serializable {
     @JsonInclude(Include.NON_NULL)
     public String toJsonString() {
         String json = "";
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(Include.NON_NULL);
         ObjectWriter ow = mapper.writer();
         try {
             json = ow.writeValueAsString(this);

@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,33 +39,33 @@ import org.slf4j.LoggerFactory;
 public class DecomposeJsonUtil implements Serializable {
     private static final Logger logger = LoggerFactory.getLogger(DecomposeJsonUtil.class);
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
 
-    private static final ObjectMapper OBJECT_MAPPER = createObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER;
+    private static final ObjectMapper mapperUnknown;
+
+    static {
+        OBJECT_MAPPER = new ObjectMapper();
+        OBJECT_MAPPER.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+        mapperUnknown = new ObjectMapper();
+        mapperUnknown.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+        mapperUnknown.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
 
     private DecomposeJsonUtil() {}
 
-    private static ObjectMapper createObjectMapper() {
-        ObjectMapper om = new ObjectMapper();
-        om.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-        return om;
-    }
-
     /**
      * Method to construct Service Decomposition object converting JSON structure
-     * 
+     *
      * @param jsonString input in JSON format confirming ServiceDecomposition
      * @return decoded object
      * @throws JsonDecomposingException thrown when decoding json fails
      */
     public static ServiceDecomposition jsonToServiceDecomposition(String jsonString) throws JsonDecomposingException {
         try {
-            ObjectMapper om = new ObjectMapper();
-            om.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-            om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            return om.readValue(jsonString, ServiceDecomposition.class);
+            return mapperUnknown.readValue(jsonString, ServiceDecomposition.class);
         } catch (IOException e) {
             throw new JsonDecomposingException("Exception while converting json to service decomposition", e);
         }
@@ -90,7 +90,7 @@ public class DecomposeJsonUtil implements Serializable {
 
     /**
      * Method to construct Resource Decomposition object converting JSON structure
-     * 
+     *
      * @param jsonString input in JSON format confirming ResourceDecomposition
      * @return decoded object
      * @throws JsonDecomposingException thrown when decoding json fails
@@ -105,7 +105,7 @@ public class DecomposeJsonUtil implements Serializable {
 
     /**
      * Method to construct Resource Decomposition object converting JSON structure
-     * 
+     *
      * @param jsonString input in JSON format confirming ResourceDecomposition
      * @return decoded object
      * @throws JsonDecomposingException thrown when decoding json fails
@@ -120,7 +120,7 @@ public class DecomposeJsonUtil implements Serializable {
 
     /**
      * Method to construct Resource Decomposition object converting JSON structure
-     * 
+     *
      * @param jsonString - input in JSON format confirming ResourceDecomposition
      * @return decoded object
      * @throws JsonDecomposingException thrown when decoding json fails

@@ -66,7 +66,7 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
     CatalogDbUtils catalogDbUtils = new CatalogDbUtilsFactory().create()
     private RequestDBUtil requestDBUtil = new RequestDBUtil()
     ExceptionUtil exceptionUtil = new ExceptionUtil()
-    ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper()
 
     JsonUtils jsonUtil = new JsonUtils()
 

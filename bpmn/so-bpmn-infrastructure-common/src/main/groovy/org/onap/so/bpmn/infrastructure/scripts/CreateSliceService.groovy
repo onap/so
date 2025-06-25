@@ -52,21 +52,16 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import groovy.json.JsonSlurper
 
 public class CreateSliceService extends AbstractServiceTaskProcessor {
+    private static final Logger logger = LoggerFactory.getLogger(CreateSliceService.class)
+    private static final ObjectMapper objectMapper = new ObjectMapper()
+
     String Prefix = "CRESS_"
-
     ExceptionUtil exceptionUtil = new ExceptionUtil()
-
     JsonUtils jsonUtil = new JsonUtils()
-
     JsonSlurper jsonSlurper = new JsonSlurper()
-
-    ObjectMapper objectMapper = new ObjectMapper()
-
     OofUtils oofUtils = new OofUtils()
-
     AAIResourcesClient client = getAAIClient()
 
-    private static final Logger logger = LoggerFactory.getLogger(CreateSliceService.class)
 
     public void preProcessRequest(DelegateExecution execution) {
         logger.debug("Start preProcessRequest")
@@ -510,4 +505,3 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
     }
 
 }
-

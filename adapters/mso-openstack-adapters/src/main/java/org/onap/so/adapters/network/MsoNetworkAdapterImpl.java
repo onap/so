@@ -99,6 +99,7 @@ public class MsoNetworkAdapterImpl {
     private static final String NETWORK_DELETED_STATUS_MESSAGE = "The network was successfully deleted in the cloud";
 
     private static final Logger logger = LoggerFactory.getLogger(MsoNetworkAdapterImpl.class);
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
     private CloudConfig cloudConfig;
@@ -835,7 +836,6 @@ public class MsoNetworkAdapterImpl {
 
         JsonNode node = null;
         try {
-            ObjectMapper mapper = new ObjectMapper();
             node = mapper.convertValue(prlist, JsonNode.class);
             String jsonString = mapper.writeValueAsString(prlist);
             logger.debug("Json PolicyRefs Data:{}", jsonString);
@@ -912,7 +912,6 @@ public class MsoNetworkAdapterImpl {
 
         JsonNode node = null;
         try {
-            ObjectMapper mapper = new ObjectMapper();
             node = mapper.convertValue(cslist, JsonNode.class);
             String jsonString = mapper.writeValueAsString(cslist);
             logger.debug("Json Subnet List:{}", jsonString);
@@ -1032,7 +1031,6 @@ public class MsoNetworkAdapterImpl {
 
         try {
             Object obj = outputs.get(key);
-            ObjectMapper mapper = new ObjectMapper();
             String jStr = mapper.writeValueAsString(obj);
             logger.debug("Subnet_Ipam Output JSON String:{} {}", obj.getClass(), jStr);
 

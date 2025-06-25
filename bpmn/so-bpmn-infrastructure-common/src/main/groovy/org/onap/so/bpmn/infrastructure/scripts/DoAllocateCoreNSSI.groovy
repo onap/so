@@ -50,7 +50,7 @@ class DoAllocateCoreNSSI extends AbstractServiceTaskProcessor {
     CatalogDbUtils catalogDbUtils = new CatalogDbUtilsFactory().create()
     JsonUtils jsonUtil = new JsonUtils()
     RequestDBUtil requestDBUtil = new RequestDBUtil()
-    ObjectMapper mapper = new ObjectMapper()
+    private static final ObjectMapper mapper = new ObjectMapper()
     OofUtils oofUtils = new OofUtils()
     void preProcessRequest(DelegateExecution execution) {
         logger.debug(Prefix+" **** Enter DoAllocateCoreNSSI ::: preProcessRequest ****")
