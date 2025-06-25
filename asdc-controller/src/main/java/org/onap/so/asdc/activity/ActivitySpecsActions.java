@@ -38,6 +38,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 import java.net.URL;
 
 @Component
@@ -46,6 +48,12 @@ public class ActivitySpecsActions {
     private static final String ACTIVITY_SPEC_URI = "/v1.0/activity-spec";
     private static final String ACTIVITY_SPEC_URI_SUFFIX = "/versions/latest/actions";
     private static final String CERTIFY_ACTIVITY_PAYLOAD = "{\"action\": \"CERTIFY\"}";
+    private static final ObjectMapper mapper;
+
+    static {
+        mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(Include.NON_NULL);
+    }
 
     private final HttpClientFactory httpClientFactory = new HttpClientFactory();
     protected static final Logger logger = LoggerFactory.getLogger(ActivitySpecsActions.class);
@@ -56,8 +64,6 @@ public class ActivitySpecsActions {
         }
 
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.setSerializationInclusion(Include.NON_NULL);
             String payload = mapper.writer().writeValueAsString(activitySpec);
 
             String urlString = UriBuilder.fromUri(hostname).path(ACTIVITY_SPEC_URI).build().toString();

@@ -58,6 +58,16 @@ public class ResourceRequestBuilder {
     private static String SERVICE_URL_SERVICE_INSTANCE = "/v2/serviceResources";
 
     private static Logger logger = LoggerFactory.getLogger(ResourceRequestBuilder.class);
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapperWithWrap;
+    private static final ObjectMapper mapperWithOutWrap;
+
+    static {
+        mapperWithWrap = new ObjectWithWrap();
+        mapperWithWrap.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
+        mapperWithOutWrap = new ObjectWithWrap();
+        mapperWithOutWrap.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+    }
 
     static JsonUtils jsonUtil = new JsonUtils();
 
@@ -392,16 +402,13 @@ public class ResourceRequestBuilder {
 
         String value = apiResponse.readEntity(String.class);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        HashMap<String, Object> map = objectMapper.readValue(value, HashMap.class);
+        HashMap<String, Object> map = mapper.readValue(value, HashMap.class);
         return map;
     }
 
     public static <T> T getJsonObject(String jsonstr, Class<T> type) {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
         try {
-            return mapper.readValue(jsonstr, type);
+            return mapperWithWrap.readValue(jsonstr, type);
         } catch (IOException e) {
             logger.error("fail to unMarshal json {}", e.getMessage());
         }
@@ -409,11 +416,9 @@ public class ResourceRequestBuilder {
     }
 
     public static String getJsonString(Object srcObj) {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         String jsonStr = null;
         try {
-            jsonStr = mapper.writeValueAsString(srcObj);
+            jsonStr = mapperWithOutWrap.writeValueAsString(srcObj);
         } catch (JsonProcessingException e) {
             logger.error("SdcToscaParserException", e);
         }
