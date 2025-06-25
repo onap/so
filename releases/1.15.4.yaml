@@ -1,0 +1,21 @@
+
+---
+distribution_type: 'container'
+container_release_tag: '1.15.4'
+project: 'so'
+ref: 'c101a9bfd0f2b65ab5dae670f8df86face324ea9'
+containers:
+  - name: 'so/catalog-db-adapter'
+    version: '1.15.4-20250624T1925'
+  - name: 'so/request-db-adapter'
+    version: '1.15.4-20250624T1925'
+  - name: 'so/openstack-adapter'
+    version: '1.15.4-20250624T1925'
+  - name: 'so/sdnc-adapter'
+    version: '1.15.4-20250624T1925'
+  - name: 'so/sdc-controller'
+    version: '1.15.4-20250624T1925'
+  - name: 'so/bpmn-infra'
+    version: '1.15.4-20250624T1925'
+  - name: 'so/api-handler-infra'
+    version: '1.15.4-20250624T1925'
