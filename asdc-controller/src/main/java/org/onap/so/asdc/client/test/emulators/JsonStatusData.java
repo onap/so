@@ -36,7 +36,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class JsonStatusData implements IStatusData {
 
     @JsonIgnore
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @JsonIgnore
     private Map<String, Object> attributesMap = new HashMap<>();
