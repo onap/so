@@ -38,13 +38,13 @@ import org.onap.so.bpmn.core.UrnPropertiesReader
 
 class DoModifyRanNfNssi extends AbstractServiceTaskProcessor {
 
+	private static final Logger logger = LoggerFactory.getLogger(DoModifyRanNfNssi.class)
+	private static final ObjectMapper mapper = new ObjectMapper()
 	String Prefix="MANNFNSS_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
-	ObjectMapper objectMapper = new ObjectMapper();
 	AnNssmfUtils anNssmfUtils = new AnNssmfUtils()
 
-	private static final Logger logger = LoggerFactory.getLogger(DoModifyRanNfNssi.class)
 
 	@Override
 	void preProcessRequest(DelegateExecution execution) {
@@ -100,7 +100,7 @@ class DoModifyRanNfNssi extends AbstractServiceTaskProcessor {
 				execution.setVariable("snssaiList", snssaiList)
 				execution.setVariable("snssai", snssaiList.get(0))
 			}
-			
+
 		} catch(BpmnError e) {
 			throw e
 		} catch(Exception ex) {
@@ -110,7 +110,7 @@ class DoModifyRanNfNssi extends AbstractServiceTaskProcessor {
 		}
 		logger.debug(Prefix + "preProcessRequest Exit")
 	}
-	
+
 	def createSdnrRequest = { DelegateExecution execution ->
 		logger.debug(Prefix+"createSdnrRequest method start")
 		String callbackUrl = UrnPropertiesReader.getVariable("mso.workflow.message.endpoint") + "/AsyncSdnrResponse/"+execution.getVariable("msoRequestId")
@@ -121,7 +121,7 @@ class DoModifyRanNfNssi extends AbstractServiceTaskProcessor {
 		execution.setVariable("createNSSI_correlator", execution.getVariable("msoRequestId"))
 		execution.setVariable("createNSSI_messageType", "AsyncSdnrResponse");
 	}
-	
+
 	def processSdnrResponse = { DelegateExecution execution ->
 		logger.debug(Prefix+"processSdnrResponse method start")
 		String SDNRResponse = execution.getVariable("SDNR_asyncCallbackResponse")
@@ -137,9 +137,9 @@ class DoModifyRanNfNssi extends AbstractServiceTaskProcessor {
 		}
 		logger.debug("response from SDNR "+SDNRResponse)
 	}
-	
+
 	private String buildSdnrAllocateRequest(DelegateExecution execution, String action, String rpcName, String callbackUrl) {
-		
+
 		String requestId = execution.getVariable("msoRequestId")
                 Instant time = Instant.now()
                 Map<String,Object> sliceProfile = new HashMap<>()
@@ -151,7 +151,7 @@ class DoModifyRanNfNssi extends AbstractServiceTaskProcessor {
 		JsonObject payloadInput = new JsonObject()
                 JsonParser parser = new JsonParser()
 		if(action.equals("allocate")) {
-			sliceProfile = objectMapper.readValue(execution.getVariable("sliceProfile"), Map.class)
+			sliceProfile = mapper.readValue(execution.getVariable("sliceProfile"), Map.class)
 			sliceProfile.put("sliceProfileId", execution.getVariable("sliceProfileId"))
 			sliceProfile.put("maxNumberofConns", sliceProfile.get("maxNumberofPDUSession"))
 			sliceProfile.put("uLThptPerSlice", sliceProfile.get("expDataRateUL"))
@@ -193,5 +193,5 @@ class DoModifyRanNfNssi extends AbstractServiceTaskProcessor {
 		response.addProperty("type", "request")
 		return response.toString()
 	}
-	
+
 }

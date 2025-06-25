@@ -70,9 +70,9 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 	RequestDBUtil requestDBUtil = new RequestDBUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 	OofUtils oofUtils = new OofUtils()
-	ObjectMapper objectMapper = new ObjectMapper()
+	private static final ObjectMapper objectMapper = new ObjectMapper()
 	private NssmfAdapterUtils nssmfAdapterUtils = new NssmfAdapterUtils(httpClientFactory, jsonUtil)
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(DoDeAllocateAccessNSSI.class)
 	private static final String ROLE_SLICE_PROFILE = "slice-profile-instance"
 	private static final String ROLE_NSSI = "nssi"
@@ -133,7 +133,7 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
                         execution.setVariable("IsRANNfAlonePresent", true)
                 }
 	}
-	
+
 
 	/**
 	 * @param execution
@@ -150,12 +150,12 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
         logger.debug("Finish prepareOOFTerminationRequest")
 
 	}
-	
+
 	void performOofAnNSSITerminationCall(DelegateExecution execution) {
 		boolean terminateAnNSSI = callOofAdapter(execution,execution.getVariable("oofAnNssiPayload"))
 		execution.setVariable("terminateAnNSSI", terminateAnNSSI)
 	}
-	
+
 	/**
 	 * @param execution
 	 */
@@ -182,7 +182,7 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 			execution.setVariable("modifyAction","deallocate")
 		}
 	}
-	
+
 	void prepareSdnrRequest(DelegateExecution execution) {
 
 		String anNfNssiId = execution.getVariable("anNfNssiId")
@@ -234,7 +234,7 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		execution.setVariable("SDNR_timeout", "PT10M")
 
 	}
-	
+
 	void processSdnrResponse(DelegateExecution execution) {
 		logger.debug("${Prefix} processing SdnrResponse")
 		Map<String, Object> resMap = objectMapper.readValue(execution.getVariable("SDNR_Response"),Map.class)
@@ -248,7 +248,7 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		}
 		logger.debug("${Prefix} processed SdnrResponse")
 	}
-	
+
 	/**
 	 * @param execution
 	 * @param oofRequest - Request payload to be sent to adapter
@@ -280,7 +280,7 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 			return terminateResponse
 		}
 	}
-	
+
 	void deallocateAnNfNssi(DelegateExecution execution) {
 		logger.debug("${Prefix} - call deallocateAnNfNssi ")
 		String anNfNssiId = getInstanceIdByWorkloadContext(execution.getVariable("relatedNssis"), AN_NF)
@@ -295,7 +295,7 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 			client.delete(uri)
 		}
 	}
-	
+
 	/**
 	 * Removes relationship between AN NSSI and AN_NF NSSI
 	 * @param execution
@@ -314,7 +314,7 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 			client.delete(uri)
 		}
 	}
-	
+
 	/**
 	 * Method to prepare request for AN NSSI modification
 	 * Call Modify AN NSSI in case OOF sends Terminate NSSI=False
@@ -380,7 +380,7 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 			execution.setVariable("isSuccess", false)
 		}
 	}
-	
+
 	void prepareUpdateJobStatus(DelegateExecution execution,String status,String progress,String statusDescription) {
 		String nssiId = execution.getVariable("anNssiId")
 		String jobId = execution.getVariable("jobId")
@@ -397,7 +397,7 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		roStatus.setStatusDescription(statusDescription)
 		requestDBUtil.prepareUpdateResourceOperationStatus(execution, roStatus)
 	}
-	
+
 	void terminateTNFHNssi(DelegateExecution execution) {
 		logger.debug("Start terminateTNFHNssi in ${Prefix}")
 		String nssmfRequest = buildDeallocateNssiRequest(execution, TN_FH)
@@ -414,7 +414,7 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 				}
 				logger.debug("Exit terminateTNFHNssi in ${Prefix}")
 	}
-	
+
 	void terminateTNMHNssi(DelegateExecution execution) {
 		logger.debug("Start terminateTNMHNssi in ${Prefix}")
 		String nssmfRequest = buildDeallocateNssiRequest(execution, TN_MH)
@@ -431,13 +431,13 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 				}
 				logger.debug("Exit terminateTNMHNssi in ${Prefix}")
 	}
-	
+
 	void deleteRanNfSliceProfileInAAI(DelegateExecution execution) {
 		logger.debug("${Prefix} delete Ran NF SliceProfile In AAI")
 		String spId = execution.getVariable("anNfSliceProfileId")
 		deleteServiceInstanceInAAI(execution, spId)
 	}
-	
+
 	void deleteTNSliceProfileInAAI(DelegateExecution execution) {
 		logger.debug("${Prefix} delete TN FH SliceProfile In AAI")
 		String fhSP = getInstanceIdByWorkloadContext(execution.getVariable("relatedSPs"), TN_FH)
@@ -446,13 +446,13 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		String mhSP = getInstanceIdByWorkloadContext(execution.getVariable("relatedSPs"), TN_MH)
 		deleteServiceInstanceInAAI(execution, mhSP)
 	}
-	
+
 	void deleteANNSSI(DelegateExecution execution) {
 		logger.debug("${Prefix} delete AN NSSI")
 		String nssiId = execution.getVariable("anNssiId")
 		deleteServiceInstanceInAAI(execution, nssiId)
 	}
-	
+
 	/**
 	 * Fetches a collection of service instances with the specific role and maps it based on workload context
 	 * (AN-NF,TN-FH,TN-MH)
@@ -506,7 +506,7 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		logger.debug("Found ${relatedInstances.size()} ${role} related to ${instanceId} ")
 		return relatedInstances
 	}
-	
+
 	private String getInstanceIdByWorkloadContext(Map<String,ServiceInstance> instances,String workloadContext ) {
 		String instanceId = instances.get(workloadContext).getServiceInstanceId()
 		if(instanceId == null) {
@@ -514,7 +514,7 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		}
 		return instanceId
 	}
-	
+
 	/**
 	 * Method to handle deallocation of RAN NSSI constituents(TN_FH/TN_MH)
 	 * @param execution
@@ -541,7 +541,7 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		deallocateNssi.setSnssaiList(sNssaiList)
 		deallocateNssi.setSliceProfileId(relatedSPs.get(serviceFunction).getServiceInstanceId())
 
-		JsonObject esrInfo = new JsonObject() 
+		JsonObject esrInfo = new JsonObject()
                 esrInfo.addProperty("networkType", "tn")
                 esrInfo.addProperty("vendor", "ONAP_internal")
 
@@ -559,9 +559,9 @@ class DoDeAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 		json.add("esrInfo", esrInfo)
 		json.add("serviceInfo", jsonConverter.toJsonTree(serviceInfo))
 		return json.toString()
-		
+
 	}
-	
+
 	private void deleteServiceInstanceInAAI(DelegateExecution execution,String instanceId) {
 		try {
 			AAIResourcesClient client = getAAIClient()

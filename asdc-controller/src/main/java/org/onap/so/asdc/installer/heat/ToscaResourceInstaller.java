@@ -10,9 +10,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -157,40 +157,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ToscaResourceInstaller {
 
     protected static final String NODES_VRF_ENTRY = "org.openecomp.nodes.VRFEntry";
-
     protected static final String VLAN_NETWORK_RECEPTOR = "org.openecomp.nodes.VLANNetworkReceptor";
-
     protected static final String ALLOTTED_RESOURCE = "Allotted Resource";
-
     protected static final String MULTI_STAGE_DESIGN = "multi_stage_design";
-
     protected static final String SCALABLE = "scalable";
-
     protected static final String BASIC = "BASIC";
-
     protected static final String PROVIDER = "PROVIDER";
-
     protected static final String HEAT = "HEAT";
-
     protected static final String MANUAL_RECORD = "MANUAL_RECORD";
-
     protected static final String MSO = "SO";
-
     protected static final String SDNC_MODEL_NAME = "sdnc_model_name";
-
     protected static final String SDNC_MODEL_VERSION = "sdnc_model_version";
-
     private static String CUSTOMIZATION_UUID = "customizationUUID";
-
     protected static final String SKIP_POST_INST_CONF = "skip_post_instantiation_configuration";
-
     private static final String CONTROLLER_ACTOR = "controller_actor";
-
     private static final String CDS_MODEL_NAME = "cds_model_name";
-
     private static final String CDS_MODEL_VERSION = "cds_model_version";
-
     private static final String DEFAULT_SOFTWARE_VERSION = "default_software_version";
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
     protected ServiceRepository serviceRepo;
@@ -645,8 +629,7 @@ public class ToscaResourceInstaller {
         }
 
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            String jsonStr = objectMapper.writeValueAsString(resouceRequest);
+            String jsonStr = mapper.writeValueAsString(resouceRequest);
 
             jsonStr = jsonStr.replace("\"", "\\\"");
             logger.debug("resource request for resource customization id {}: {}", resourceCustomizationUuid, jsonStr);
@@ -2079,8 +2062,7 @@ public class ToscaResourceInstaller {
 
         String jsonStr = null;
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            jsonStr = objectMapper.writeValueAsString(resouceRequest);
+            jsonStr = mapper.writeValueAsString(resouceRequest);
             jsonStr = jsonStr.replace("\"", "\\\"");
             logger.debug("vfcResource request for resource customization id {}: {}", resourceCustomizationUuid,
                     jsonStr);
@@ -2956,9 +2938,8 @@ public class ToscaResourceInstaller {
                 serviceInputList.add(serviceInputMap);
 
             });
-            ObjectMapper objectMapper = new ObjectMapper();
             try {
-                serviceInput = objectMapper.writeValueAsString(serviceInputList);
+                serviceInput = mapper.writeValueAsString(serviceInputList);
                 serviceInput = serviceInput.replace("\"", "\\\"");
             } catch (JsonProcessingException e) {
                 logger.error("service input could not be deserialized for service uuid:  "
@@ -3026,7 +3007,6 @@ public class ToscaResourceInstaller {
 
     private String getServiceProperties(ToscaResourceStructure toscaResourceStruct) {
         String propertiesJson = null;
-        ObjectMapper objectMapper = new ObjectMapper();
         ISdcCsarHelper helper = toscaResourceStruct.getSdcCsarHelper();
         String typeName = helper.getServiceSubstitutionMappingsTypeName();
         Optional<NodeTemplate> nodeTemplate = helper.getServiceNodeTemplates().stream().findAny();
@@ -3037,7 +3017,7 @@ public class ToscaResourceInstaller {
             List<Object> serviceProperties = getPropertiesFromCustomDef(customDef, typeName);
 
             try {
-                propertiesJson = objectMapper.writeValueAsString(serviceProperties);
+                propertiesJson = mapper.writeValueAsString(serviceProperties);
                 propertiesJson = propertiesJson.replace("\"", "\\\"");
             } catch (JsonProcessingException e) {
                 logger.error("serviceProperties could not be deserialized for service uuid:  " + serviceUUID);
@@ -3093,4 +3073,3 @@ public class ToscaResourceInstaller {
         return serviceProperties;
     }
 }
-

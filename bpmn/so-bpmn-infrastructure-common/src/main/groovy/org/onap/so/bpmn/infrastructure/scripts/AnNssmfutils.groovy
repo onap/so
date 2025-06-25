@@ -60,7 +60,7 @@ import com.google.gson.Gson
 class AnNssmfUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(AnNssmfUtils.class)
-	ObjectMapper objectMapper = new ObjectMapper();
+	private static final ObjectMapper objectMapper = new ObjectMapper();
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 	public String buildSelectRANNSSIRequest(String requestId, String messageType, String UUID,String invariantUUID,
@@ -129,7 +129,7 @@ public String buildCreateANNFNSSMFSubnetCapabilityRequest() {
 	return response.toString()
 }
 public void createDomainWiseSliceProfiles(List<String> ranConstituentSliceProfiles, DelegateExecution execution) {
-	
+
 	for(String profile : ranConstituentSliceProfiles) {
 		String domainType = jsonUtil.getJsonValue(profile, "domainType")
 		switch(domainType) {
@@ -147,12 +147,12 @@ public void createDomainWiseSliceProfiles(List<String> ranConstituentSliceProfil
 				logger.error("No expected match found for current domainType "+ domainType)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 1000,"No expected match found for current domainType "+ domainType)
 		}
-		
+
 	}
 }
 
 public void createSliceProfilesInAai(DelegateExecution execution) {
-	
+
 	String serviceCategory = execution.getVariable("serviceCategory")
 	if (execution.getVariable("IsRANNfAlonePresent")) {
 		ServiceInstance ANNF_sliceProfileInstance = new ServiceInstance();
@@ -251,7 +251,7 @@ else{
 	String serviceFunctionAnnf = jsonUtil.getJsonValue(execution.getVariable("ranNfSliceProfile"), "resourceSharingLevel")
 	ANNF_sliceProfileInstance.setServiceFunction(serviceFunctionAnnf)
 	logger.debug("completed ANNF sliceprofileinstance build :  "+ ANNF_sliceProfileInstance.toString())
-	
+
 	//TNFH slice profile instance creation
 	TNFH_sliceProfileInstance.setServiceInstanceId(TNFH_sliceProfileInstanceId)
 	sliceInstanceName = "sliceprofile_"+TNFH_sliceProfileId
@@ -268,7 +268,7 @@ else{
 	String serviceFunctionTnFH = jsonUtil.getJsonValue(execution.getVariable("tnFhSliceProfile"), "resourceSharingLevel")
 	TNFH_sliceProfileInstance.setServiceFunction(serviceFunctionTnFH)
 	logger.debug("completed TNFH sliceprofileinstance build :   "+TNFH_sliceProfileInstance)
-	
+
 	//TNMH slice profile instance creation
 	TNMH_sliceProfileInstance.setServiceInstanceId(TNMH_sliceProfileInstanceId)
 	sliceInstanceName = "sliceprofile_"+TNMH_sliceProfileId
@@ -285,7 +285,7 @@ else{
 	String serviceFunctionTnMH = jsonUtil.getJsonValue(execution.getVariable("tnMhSliceProfile"), "resourceSharingLevel")
 	TNMH_sliceProfileInstance.setServiceFunction(serviceFunctionTnMH)
 	logger.debug("completed TNMH sliceprofileinstance build :   "+TNMH_sliceProfileInstance)
-	
+
 	String msg = ""
 	try {
 
@@ -330,13 +330,13 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 			result.setMaxNumberOfPDUSession(profile.get("maxNumberofPDUSession"))
 			result.setAreaTrafficCapDL(profile.get("areaTrafficCapDL"))
 			result.setAreaTrafficCapUL(profile.get("areaTrafficCapUL"))
-			result.setOverallUserDensity(profile.get("overallUserDensity")) 
+			result.setOverallUserDensity(profile.get("overallUserDensity"))
 			result.setTransferIntervalTarget(profile.get("transferIntervalTarget"))
 			result.setExpDataRate(profile.get("expDataRate"))
 			result.setProfileId(execution.getVariable("ANNF_sliceProfileId"))
 			break
 		case "TN_FH":
-			profile = objectMapper.readValue(execution.getVariable("tnFhSliceProfile"), Map.class) 
+			profile = objectMapper.readValue(execution.getVariable("tnFhSliceProfile"), Map.class)
 			result.setJitter(profile.get("jitter"))
 			result.setLatency(profile.get("latency"))
                         result.setMaxBandwidth(profile.get("maxbandwidth"))
@@ -380,7 +380,7 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
         logger.debug("createRelationShipInAAI Exit")
 
     }
-	
+
 	public void processRanNfModifyRsp(DelegateExecution execution) {
 		String status = execution.getVariable("ranNfStatus")
 		if(status.equals("success")) {
@@ -391,7 +391,7 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1000, "modify ran nf nssi not successfull")
 		}
 	}
-	
+
 	public String buildCreateNSSMFRequest(DelegateExecution execution, String domainType, String action) {
 		JsonObject esrInfo = new JsonObject()
 	        esrInfo.addProperty("networkType", "tn")
@@ -481,7 +481,7 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 		response.add("allocateTnNssi", allocateTnNssi)
 		return response.toString()
 	}
-	
+
 	public String buildDeallocateNssiRequest(DelegateExecution execution,String domainType) {
 		String globalSubscriberId = execution.getVariable("globalSubscriberId")
 		String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
@@ -493,11 +493,11 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 		deallocateNssi.setScriptName("TN1")
 		deallocateNssi.setSnssaiList(sNssaiList)
                 deallocateNssi.setTerminateNssiOption(0)
-	   
+
 		JsonObject esrInfo = new JsonObject()
 	        esrInfo.addProperty("networkType", "tn")
 	        esrInfo.addProperty("vendor", "ONAP_internal")
-	   
+
 		JsonObject serviceInfo = new JsonObject()
 		serviceInfo.addProperty("globalSubscriberId", globalSubscriberId)
 		serviceInfo.addProperty("subscriptionServiceType", subscriptionServiceType)
@@ -519,7 +519,7 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 		json.add("esrInfo", esrInfo)
 		json.add("serviceInfo", serviceInfo)
 		return json.toString()
-	   
+
 	}
 
         public String getModelUuid(DelegateExecution execution, String instanceId) {
@@ -533,7 +533,7 @@ private SliceProfile createSliceProfile(String domainType, DelegateExecution exe
 		}
 		AAIResultWrapper wrapper = client.get(uri, NotFoundException.class)
 		Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
-		
+
 		if(si.isPresent()) {
 			serviceInstance = si.get()
 		}

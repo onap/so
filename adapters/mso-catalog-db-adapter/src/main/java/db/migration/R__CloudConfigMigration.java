@@ -50,9 +50,10 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class R__CloudConfigMigration extends BaseJavaMigration {
+    private static final Logger logger = LoggerFactory.getLogger(R__CloudConfigMigration.class);
+    private static final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
     public static final String FLYWAY = "FLYWAY";
 
-    private static final Logger logger = LoggerFactory.getLogger(R__CloudConfigMigration.class);
     @JsonProperty("cloud_config")
     private CloudConfig cloudConfig;
 
@@ -105,7 +106,6 @@ public class R__CloudConfigMigration extends BaseJavaMigration {
     }
 
     private CloudConfig loadCloudConfig(InputStream stream) throws IOException {
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         R__CloudConfigMigration cloudConfigMigration = mapper.readValue(stream, R__CloudConfigMigration.class);
         CloudConfig cloudConfiguration = cloudConfigMigration.getCloudConfig();
 
@@ -242,4 +242,3 @@ public class R__CloudConfigMigration extends BaseJavaMigration {
 
     }
 }
-

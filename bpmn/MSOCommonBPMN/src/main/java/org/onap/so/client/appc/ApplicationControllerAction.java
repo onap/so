@@ -38,11 +38,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class ApplicationControllerAction {
+    private static final Logger logger = LoggerFactory.getLogger(ApplicationControllerAction.class);
+    private static final String PAYLOAD_NOT_PRESENT_ERROR_MSG = "Payload is not present for ";
+    private static final ObjectMapper mapper = new ObjectMapper();
     protected ApplicationControllerOrchestrator client = new ApplicationControllerOrchestrator();
     private String errorCode = "1002";
     private String errorMessage = "Unable to reach App C Servers";
-    private static final String PAYLOAD_NOT_PRESENT_ERROR_MSG = "Payload is not present for ";
-    private static Logger logger = LoggerFactory.getLogger(ApplicationControllerAction.class);
 
     public void runAppCCommand(Action action, String msoRequestId, String vnfId, Optional<String> payload,
             Map<String, String> payloadInfo, String controllerType) {
@@ -142,7 +143,6 @@ public class ApplicationControllerAction {
         Status appcStatus = null;
         String vmId = "";
         String vserverId = "";
-        ObjectMapper mapper = new ObjectMapper();
         List<String> vmIdJsonList = mapper.readValue(vmIds, new TypeReference<List<String>>() {});
         List<String> vserverIdJsonList = mapper.readValue(vserverIds, new TypeReference<List<String>>() {});
         int i = 0;

@@ -47,6 +47,8 @@ import static org.apache.commons.lang3.StringUtils.isEmpty
 import static org.apache.commons.lang3.StringUtils.isNotBlank
 
 public class DoModifyTnNssi extends AbstractServiceTaskProcessor {
+    private static final Logger logger = LoggerFactory.getLogger(DoModifyTnNssi.class)
+    private static final ObjectMapper mapper = new ObjectMapper()
     String Prefix = "TNMOD_"
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -54,8 +56,6 @@ public class DoModifyTnNssi extends AbstractServiceTaskProcessor {
     RequestDBUtil requestDBUtil = new RequestDBUtil()
     TnNssmfUtils tnNssmfUtils = new TnNssmfUtils()
     JsonSlurper jsonSlurper = new JsonSlurper()
-    ObjectMapper objectMapper = new ObjectMapper()
-    private static final Logger logger = LoggerFactory.getLogger(DoModifyTnNssi.class)
 
 
     void preProcessRequest(DelegateExecution execution) {
@@ -532,4 +532,3 @@ public class DoModifyTnNssi extends AbstractServiceTaskProcessor {
         return logicalLinkNameList.contains(linkName)
     }
 }
-

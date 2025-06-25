@@ -53,6 +53,8 @@ import javax.ws.rs.core.Response
 import static org.onap.so.bpmn.common.scripts.GenericUtils.isBlank
 
 class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
+    private static final Logger LOGGER = LoggerFactory.getLogger( DoDeallocateCoreNSSI.class)
+    private static final ObjectMapper mapper = new ObjectMapper()
     private final String PREFIX ="DoDeallocateCoreNSSI"
     private final  String ACTION = "Deallocate"
 
@@ -61,7 +63,6 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
     private MsoUtils utils = new MsoUtils()
     private JsonUtils jsonUtil = new JsonUtils()
 
-    private static final Logger LOGGER = LoggerFactory.getLogger( DoDeallocateCoreNSSI.class)
 
 
     @Override
@@ -275,7 +276,7 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
         //extAPI path hardcoded for testing purposes, will be updated in next patch
         String extAPIPath = "https://nbi.onap:8443/nbi/api/v4" + "/serviceOrder"
         execution.setVariable("ExternalAPIURL", extAPIPath)
-        ObjectMapper objectMapper = new ObjectMapper();
+
         Map<String, Object> serviceOrder = new LinkedHashMap()
         //ExternalId
         serviceOrder.put("externalId", "ONAP001")
@@ -332,7 +333,7 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
         List<Map<String, String>> orderItemList = new ArrayList()
         orderItemList.add(orderItem)
         serviceOrder.put("orderItem", orderItemList)
-        String jsonServiceOrder = objectMapper.writeValueAsString(serviceOrder)
+        String jsonServiceOrder = mapper.writeValueAsString(serviceOrder)
         LOGGER.debug("******* ServiceOrder :: "+jsonServiceOrder)
         execution.setVariable("serviceOrderRequest", jsonServiceOrder)
 
