@@ -76,7 +76,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 
 
 public class DoCreateVfModule extends VfModuleBase {
-    private static final Logger logger = LoggerFactory.getLogger( DoCreateVfModule.class);
+  private static final Logger logger = LoggerFactory.getLogger( DoCreateVfModule.class)
+	private static final ObjectMapper mapper = new ObjectMapper()
+	private final HttpClientFactory httpClientFactory = new HttpClientFactory()
 
 	String Prefix="DCVFM_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -85,7 +87,6 @@ public class DoCreateVfModule extends VfModuleBase {
 	OofInfraUtils oofInfraUtils = new OofInfraUtils()
 	CatalogDbUtils catalogDbUtils = new CatalogDbUtilsFactory().create()
 	DecomposeJsonUtil decomposeJsonUtils = new DecomposeJsonUtil()
-	private final HttpClientFactory httpClientFactory = new HttpClientFactory()
 
 	/**
 	 * Validates the request message and sets up the workflow.
@@ -2095,8 +2096,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			   if (vnfObject != null) {
 				   String vnfJson = vnfObject.toString()
 				   //
-				   ObjectMapper om = new ObjectMapper();
-				   VnfResource vnf = om.readValue(vnfJson, VnfResource.class);
+				   VnfResource vnf = mapper.readValue(vnfJson, VnfResource.class);
 
 				   // Get multiStageDesign flag
 

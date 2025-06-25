@@ -79,7 +79,13 @@ import com.fasterxml.jackson.databind.SerializationFeature
  *
  */
 public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
-    private static final Logger logger = LoggerFactory.getLogger( DoCreateE2EServiceInstance.class)
+  private static final Logger logger = LoggerFactory.getLogger( DoCreateE2EServiceInstance.class)
+	private static final ObjectMapper mapper
+
+	static {
+		mapper = new ObjectMapper()
+		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true)
+	}
 
 
 	String Prefix="DCRESI_"
@@ -376,8 +382,6 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 	}
 
 	private static <T> T getJsonObject(String jsonstr, Class<T> type) {
-		ObjectMapper mapper = new ObjectMapper()
-		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true)
 		try {
 			return mapper.readValue(jsonstr, type)
 		} catch (IOException e) {

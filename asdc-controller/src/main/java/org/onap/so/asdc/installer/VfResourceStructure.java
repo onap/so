@@ -59,6 +59,7 @@ import org.slf4j.LoggerFactory;
 public class VfResourceStructure extends ResourceStructure {
 
     protected static final Logger logger = LoggerFactory.getLogger(VfResourceStructure.class);
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     /**
      * The list of VfModules defined for this resource.
@@ -205,7 +206,7 @@ public class VfResourceStructure extends ResourceStructure {
 
     public List<VfModuleMetaData> decodeVfModuleArtifact(byte[] arg0) {
         try {
-            return new ObjectMapper().readValue(arg0, new TypeReference<List<VfModuleMetaData>>() {});
+            return mapper.readValue(arg0, new TypeReference<List<VfModuleMetaData>>() {});
 
         } catch (JsonParseException e) {
             logger.debug("JsonParseException : ", e);

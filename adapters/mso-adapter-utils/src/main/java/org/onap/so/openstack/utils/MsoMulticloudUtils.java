@@ -767,7 +767,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
         scanner.close();
 
         try {
-            return new ObjectMapper().readerFor(MulticloudCreateResponse.class).readValue(body);
+            return JSON_MAPPER.readerFor(MulticloudCreateResponse.class).readValue(body);
         } catch (Exception e) {
             logger.debug("Exception retrieving multicloud vfModule POST response body ", e);
         }
@@ -784,7 +784,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
         scanner.close();
 
         try {
-            return new ObjectMapper().readerFor(MulticloudQueryResponse.class).readValue(body);
+            return JSON_MAPPER.readerFor(MulticloudQueryResponse.class).readValue(body);
         } catch (Exception e) {
             logger.debug("Exception retrieving multicloud workload query response body ", e);
         }

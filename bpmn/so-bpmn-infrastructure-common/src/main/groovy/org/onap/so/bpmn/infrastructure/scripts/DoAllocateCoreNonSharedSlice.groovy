@@ -71,7 +71,8 @@ import javax.ws.rs.NotFoundException
 
 class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
     String Prefix="DACNSNSSI_"
-    private static final Logger logger = LoggerFactory.getLogger( DoAllocateCoreNonSharedSlice.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoAllocateCoreNonSharedSlice.class)
+    private static final ObjectMapper objectMapper = new ObjectMapper()
     private CatalogDbUtils catalogDbUtils = new CatalogDbUtilsFactory().create()
     private RequestDBUtil requestDBUtil = new RequestDBUtil()
     private ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -153,7 +154,6 @@ class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
         //extAPI path hardcoded for testing purposes, will be updated in next patch
         String extAPIPath = "https://nbi.onap:8443/nbi/api/v4" + "/serviceOrder"
         execution.setVariable("ExternalAPIURL", extAPIPath)
-        ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> serviceOrder = new LinkedHashMap()
         //ExternalId
         serviceOrder.put("externalId", "ONAP001")
@@ -223,7 +223,6 @@ class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
     private List retrieveServiceCharacteristicsAsKeyValue(DelegateExecution execution, Map serviceCharacteristics) {
         logger.debug(Prefix+ " **** Enter DoAllocateCoreNonSharedSlice ::: retrieveServiceCharacteristicsAsKeyValue ****")
         List serviceCharacteristicsList = new ArrayList()
-        ObjectMapper mapperObj = new ObjectMapper();
         String vnfInstanceName = execution.getVariable("vnfInstanceName")
         Map<String, Object> serviceCharacteristicsObject = new LinkedHashMap()
         for (Map.Entry<String, Integer> entry : serviceCharacteristics.entrySet()) {

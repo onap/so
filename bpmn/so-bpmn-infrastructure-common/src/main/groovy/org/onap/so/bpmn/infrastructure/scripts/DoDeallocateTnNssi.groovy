@@ -49,6 +49,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank
 import static org.apache.commons.lang3.StringUtils.isEmpty
 
 class DoDeallocateTnNssi extends AbstractServiceTaskProcessor {
+    private static final Logger logger = LoggerFactory.getLogger(DoDeallocateTnNssi.class)
+    private static final ObjectMapper objectMapper = new ObjectMapper()
     String Prefix = "TNDEALLOC_"
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -57,8 +59,6 @@ class DoDeallocateTnNssi extends AbstractServiceTaskProcessor {
     TnNssmfUtils tnNssmfUtils = new TnNssmfUtils()
     OofUtils oofUtils = new OofUtils()
     JsonSlurper jsonSlurper = new JsonSlurper()
-    ObjectMapper objectMapper = new ObjectMapper()
-    private static final Logger logger = LoggerFactory.getLogger(DoDeallocateTnNssi.class)
 
 
     void preProcessRequest(DelegateExecution execution) {

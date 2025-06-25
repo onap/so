@@ -23,18 +23,15 @@ import org.slf4j.LoggerFactory
 class DoAllocateNSSI extends AbstractServiceTaskProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(DoAllocateNSSI.class);
+    private static final ObjectMapper mapper = new ObjectMapper()
+    private static final NSSMF_ALLOCATE_URL = "/api/rest/provMns/v1/NSS/SliceProfiles"
+    private static final NSSMF_QUERY_JOB_STATUS_URL = "/api/rest/provMns/v1/NSS/jobs/%s"
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
 
     JsonUtils jsonUtil = new JsonUtils()
 
-    ObjectMapper objectMapper = new ObjectMapper()
-
     private NssmfAdapterUtils nssmfAdapterUtils = new NssmfAdapterUtils(httpClientFactory, jsonUtil)
-
-    private static final NSSMF_ALLOCATE_URL = "/api/rest/provMns/v1/NSS/SliceProfiles"
-
-    private static final NSSMF_QUERY_JOB_STATUS_URL = "/api/rest/provMns/v1/NSS/jobs/%s"
 
     @Override
     void preProcessRequest(DelegateExecution execution) {
@@ -62,13 +59,13 @@ class DoAllocateNSSI extends AbstractServiceTaskProcessor {
      */
     void sendCreateRequestNSSMF(DelegateExecution execution) {
         NssmfAdapterNBIRequest nbiRequest = execution.getVariable("nbiRequest") as NssmfAdapterNBIRequest
-        String nssmfRequest = objectMapper.writeValueAsString(nbiRequest)
-        logger.debug("sendCreateRequestNSSMF: " + nssmfRequest)
+        String nssmfRequest = mapper.writeValueAsString(nbiRequest)
+        logger.debug("sendCreateRequestNSSMF: {}", nssmfRequest)
 
         String response = nssmfAdapterUtils.sendPostRequestNSSMF(execution, NSSMF_ALLOCATE_URL, nssmfRequest)
 
         if (response != null) {
-            NssiResponse nssiResponse = objectMapper.readValue(response, NssiResponse.class)
+            NssiResponse nssiResponse = mapper.readValue(response, NssiResponse.class)
             execution.setVariable("nssiAllocateResult", nssiResponse)
         }
 
@@ -97,12 +94,12 @@ class DoAllocateNSSI extends AbstractServiceTaskProcessor {
         String endpoint = String.format(NSSMF_QUERY_JOB_STATUS_URL, jobId)
 
         String response =
-                nssmfAdapterUtils.sendPostRequestNSSMF(execution, endpoint, objectMapper.writeValueAsString(nbiRequest))
+                nssmfAdapterUtils.sendPostRequestNSSMF(execution, endpoint, mapper.writeValueAsString(nbiRequest))
 
-        logger.debug("nssmf response nssiAllocateStatus:" + response)
+        logger.debug("nssmf response nssiAllocateStatus: {}", response)
 
         if (response != null) {
-            JobStatusResponse jobStatusResponse = objectMapper.readValue(response, JobStatusResponse.class)
+            JobStatusResponse jobStatusResponse = mapper.readValue(response, JobStatusResponse.class)
             if (StringUtils.isBlank(nssiId)) {
                 nssiAllocateResult.setNssiId(jobStatusResponse.getResponseDescriptor().getNssiId())
                 execution.setVariable("nssiAllocateResult", nssiAllocateResult)
@@ -134,7 +131,7 @@ class DoAllocateNSSI extends AbstractServiceTaskProcessor {
         sliceTaskInfo.statusDescription = response.getStatusDescription()
         updateNssiResult(sliceParams, subnetType, sliceTaskInfo)
 
-        execution.setVariable("CSSOT_paramJson", objectMapper.writeValueAsString(sliceParams))
+        execution.setVariable("CSSOT_paramJson", mapper.writeValueAsString(sliceParams))
         execution.setVariable("CSSOT_requestMethod", requestMethod)
 
         execution.setVariable("sliceTaskParams", sliceParams)

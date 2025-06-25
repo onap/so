@@ -52,16 +52,16 @@ import org.springframework.web.util.UriUtils
 import static org.apache.commons.lang3.StringUtils.isBlank
 
 class TnAllocateNssi extends AbstractServiceTaskProcessor {
+    private static final Logger logger = LoggerFactory.getLogger(TnAllocateNssi.class)
+    private static final ObjectMapper mapper = new ObjectMapper()
     String Prefix = "TNALLOC_"
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     JsonUtils jsonUtil = new JsonUtils()
     RequestDBUtil requestDBUtil = new RequestDBUtil()
     JsonSlurper jsonSlurper = new JsonSlurper()
-    ObjectMapper objectMapper = new ObjectMapper()
     OofUtils oofUtils = new OofUtils()
     TnNssmfUtils tnNssmfUtils = new TnNssmfUtils()
-    private static final Logger logger = LoggerFactory.getLogger(TnAllocateNssi.class)
 
     void preProcessRequest(DelegateExecution execution) {
         logger.debug("Start preProcessRequest")
@@ -230,7 +230,7 @@ class TnAllocateNssi extends AbstractServiceTaskProcessor {
 
         String requestId = execution.getVariable("msoRequestId")
         String messageType = "NSSISelectionResponse"
-        Map<String, Object> profileInfo = (Map<String, Object>) objectMapper.readValue(execution.getVariable("tnNfSliceProfile"), Map.class)
+        Map<String, Object> profileInfo = (Map<String, Object>) mapper.readValue(execution.getVariable("tnNfSliceProfile"), Map.class)
         String modelUuid = execution.getVariable("modelUuid")
         String modelInvariantUuid = execution.getVariable("modelInvariantUuid")
         String modelName = execution.getVariable("tnModelName")
@@ -325,7 +325,7 @@ class TnAllocateNssi extends AbstractServiceTaskProcessor {
         serviceInfo.addProperty("nsiId", execution.getVariable("nsiId") as String)
         serviceInfo.addProperty("nssiName", execution.getVariable("servicename") as String)
         serviceInfo.addProperty("sST", execution.getVariable("sst") as String)
-        serviceInfo.addProperty("PLMNIdList", objectMapper.writeValueAsString(execution.getVariable("pLMNIdList")))
+        serviceInfo.addProperty("PLMNIdList", mapper.writeValueAsString(execution.getVariable("pLMNIdList")))
         serviceInfo.addProperty("globalSubscriberId", execution.getVariable("globalSubscriberId") as String)
         serviceInfo.addProperty("subscriptionServiceType", execution.getVariable("subscriptionServiceType") as String)
         serviceInfo.addProperty("serviceInvariantUuid", execution.getVariable("modelInvariantUuid") as String)
@@ -395,4 +395,3 @@ class TnAllocateNssi extends AbstractServiceTaskProcessor {
     }
 
 }
-

@@ -37,6 +37,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 
 @Component
@@ -52,7 +53,15 @@ public class ApplicationControllerSupport {
     private static final int PARTIAL_FAILURE_STATUS = PARTIAL_SERIES + 1;
 
     private static Logger logger = LoggerFactory.getLogger(ApplicationControllerSupport.class);
+    private static final ObjectMapper objectMapper;
+    private static final ObjectWriter writer;
     private String lcmModelPackage = "org.onap.appc.client.lcm.model";
+
+    static {
+        objectMapper = new ObjectMapper();
+        objectMapper.setSerializationInclusion(Include.NON_NULL);
+        writer = objectMapper.writerWithDefaultPrettyPrinter();
+    }
 
     /**
      * @param action
@@ -186,9 +195,6 @@ public class ApplicationControllerSupport {
 
 
     public void logLCMMessage(Object message) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(Include.NON_NULL);
-        ObjectWriter writer = objectMapper.writerWithDefaultPrettyPrinter();
         String inputAsJSON;
         try {
             inputAsJSON = writer.writeValueAsString(message);

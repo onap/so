@@ -70,7 +70,7 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
     private RequestDBUtil requestDBUtil = new RequestDBUtil()
     private ExceptionUtil exceptionUtil = new ExceptionUtil()
     private JsonUtils jsonUtil = new JsonUtils()
-    ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper()
 
     private final Long TIMEOUT = 60 * 60 * 1000
 
@@ -677,4 +677,3 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
         logger.debug(Prefix + " **** Exit DoAllocateCoreSharedSlice ::: prepareFailedOperationStatusUpdate ****")
     }
 }
-

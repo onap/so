@@ -391,12 +391,11 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
 
     protected void saveStackRequest(CreateStackParam request, String requestId, String stackName) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
             InfraActiveRequests foundRequest = requestDBClient.getInfraActiveRequestbyRequestId(requestId);
             CreateStackRequest createStackRequest = new CreateStackRequest();
             createStackRequest.setEnvironment(request.getEnvironment());
             createStackRequest.setParameters(request.getParameters());
-            String stackRequest = mapper.writeValueAsString(createStackRequest);
+            String stackRequest = JSON_MAPPER.writeValueAsString(createStackRequest);
             CloudApiRequests cloudReq = new CloudApiRequests();
             cloudReq.setCloudIdentifier(stackName);
             cloudReq.setRequestBody(stackRequest);

@@ -68,6 +68,7 @@ import com.woorea.openstack.quantum.model.NeutronError;
 public class MsoCommonUtils {
 
     private static Logger logger = LoggerFactory.getLogger(MsoCommonUtils.class);
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     /** The Constant TOKEN_AUTH. */
     protected static final String TOKEN_AUTH = "TokenAuth";
@@ -339,7 +340,7 @@ public class MsoCommonUtils {
             int timeoutMinutes, String environment, Map<String, Object> files, Map<String, Object> heatFiles) {
 
         // force entire stackInput object to generic Map<String, Object> for openstack compatibility
-        ObjectMapper mapper = new ObjectMapper();
+
         Map<String, Object> normalized = new HashMap<>();
         try {
             normalized = mapper.readValue(mapper.writeValueAsString(stackInputs),

@@ -46,6 +46,7 @@ import com.woorea.openstack.nova.model.VolumeAttachment;
 @Component
 public class NovaClientImpl extends MsoCommonUtils {
 
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     /** The logger. */
     private static final Logger logger = LoggerFactory.getLogger(NovaClientImpl.class);
@@ -56,7 +57,7 @@ public class NovaClientImpl extends MsoCommonUtils {
     /**
      * Query Networks
      *
-     * 
+     *
      * @param cloudSiteId the cloud site id
      * @param tenantId the tenant id
      * @param limit limits the number of records returned
@@ -84,7 +85,7 @@ public class NovaClientImpl extends MsoCommonUtils {
     /**
      * Query Networks
      *
-     * 
+     *
      * @param cloudSiteId the cloud site id
      * @param tenantId the tenant id
      * @param id of the network
@@ -107,7 +108,7 @@ public class NovaClientImpl extends MsoCommonUtils {
     /**
      * Query Host Aggregates
      *
-     * 
+     *
      * @param cloudSiteId the cloud site id
      * @param tenantId the tenant id
      * @param limit limits the number of records returned
@@ -132,7 +133,7 @@ public class NovaClientImpl extends MsoCommonUtils {
     /**
      * Query Host Aggregate
      *
-     * 
+     *
      * @param cloudSiteId the cloud site id
      * @param tenantId the tenant id
      * @param limit limits the number of records returned
@@ -156,7 +157,7 @@ public class NovaClientImpl extends MsoCommonUtils {
     /**
      * Query OS Quota Set
      *
-     * 
+     *
      * @param cloudSiteId the cloud site id
      * @param tenantId the tenant id
      * @param limit limits the number of records returned
@@ -180,7 +181,7 @@ public class NovaClientImpl extends MsoCommonUtils {
     /**
      * Deletes a keypair inside openstack
      *
-     * 
+     *
      * @param cloudSiteId the cloud site id
      * @param tenantId the tenant id
      * @param keyPairName name of the keypair to be deleted
@@ -212,7 +213,7 @@ public class NovaClientImpl extends MsoCommonUtils {
 
     public void postActionToServer(String cloudSiteId, String tenantId, String id, String request)
             throws IOException, MsoException {
-        ObjectMapper mapper = new ObjectMapper();
+
         JsonNode actualObj = mapper.readTree(request);
         Entity<JsonNode> openstackEntity = new Entity<>(actualObj, "application/json");
         CharSequence actionPath = "/servers/" + id + "/action";
