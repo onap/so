@@ -1,10 +1,10 @@
 # will be used as entry in DB to say SITE OFF/ON for healthcheck
 
-server:  
+server:
   port: 8080
   tomcat:
     max-threads: 50
-  
+
 
 mso:
   health:
@@ -40,7 +40,7 @@ mso:
         endpoint: http://localhost:${wiremock.server.port}
   db:
     auth: Basic YnBlbDptc28tZGItMTUwNyE=
-  config: 
+  config:
     path: /src/main/resources/
   infra:
     default:
@@ -88,7 +88,7 @@ mso:
         auth: B3705D6C2D521257CC2422ACCF03B001811ACC49F564DDB3A2CF2A1378B6D35A23CDCB696F2E1EDFBE6758DFE7C74B94F4A7DF84A0E2BB904935AC4D900D5597DF981ADE6CE1FF3AF993BED0
       publisher:
         topic: test.operationalEnvironmentEvent
-  
+
 
 spring:
   jersey:
@@ -97,9 +97,9 @@ spring:
     jdbcUrl: jdbc:mariadb://localhost:3307/catalogdb
     username: root
     password: password
-    driver-class-name: org.mariadb.jdbc.Driver    
+    driver-class-name: org.mariadb.jdbc.Driver
     initialization-mode: always
-  jpa:   
+  jpa:
     generate-ddl: false
     show-sql: false
     hibernate:
@@ -114,15 +114,17 @@ spring:
       username: test
       password: '$2a$12$Zi3AuYcZoZO/gBQyUtST2.F5N6HqcTtaNci2Et.ufsQhski56srIu'
       role: InfraPortal-Client
+  sleuth:
+    enabled: false
 request:
   datasource:
     jdbcUrl: jdbc:mariadb://localhost:3307/requestdb
     username: root
     password: password
     driver-class-name: org.mariadb.jdbc.Driver
-    
+
 mariaDB4j:
-  dataDir: 
+  dataDir:
   port: 3307
   databaseName: catalogdb
   databaseName2: requestdb
@@ -144,4 +146,3 @@ org:
 subnetCapability:
   config:
       file: src/test/resources/Onap3gppServiceInstancesTest/subnetCapability.json
-
