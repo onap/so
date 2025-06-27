@@ -98,7 +98,6 @@
         <executions>
           <execution>
             <id>antlr</id>
-            <phase>generate-test-resources</phase>
             <goals>
               <goal>antlr4</goal>
             </goals>
