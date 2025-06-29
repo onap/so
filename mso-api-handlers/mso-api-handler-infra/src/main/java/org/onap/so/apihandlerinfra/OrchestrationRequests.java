@@ -75,6 +75,7 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -578,31 +579,55 @@ public class OrchestrationRequests {
         InfraActiveRequests infraActiveRequest = null;
         try {
             infraActiveRequest = requestsDbClient.getInfraActiveRequestbyRequestId(requestId);
+        } catch (HttpClientErrorException e) {
+            ValidateException validateException = getValidateExceptionFromHttpClientErrorException(e);
+            throw validateException;
         } catch (Exception e) {
-            logger.error("Exception occurred while communicating with RequestDb during InfraActiveRequest lookup ", e);
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.AvailabilityError).build();
-
-            ValidateException validateException = new ValidateException.Builder(
-                    "Exception occurred while communicating with RequestDb during InfraActiveRequest lookup",
-                    HttpStatus.SC_NOT_FOUND, ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB).cause(e)
-                            .errorInfo(errorLoggerInfo).build();
-
+            ValidateException validateException = getValidateExceptionForInternalServerError(e);
             throw validateException;
         }
 
         if (infraActiveRequest == null) {
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.BusinessProcessError)
-                            .build();
-
-            ValidateException validateException = new ValidateException.Builder(
-                    "Null response from RequestDB when searching by RequestId " + requestId, HttpStatus.SC_NOT_FOUND,
-                    ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
-
+            ValidateException validateException = getValidateExceptionForNotFound(requestId);
             throw validateException;
         }
         return infraActiveRequest;
+    }
+
+    private ValidateException getValidateExceptionForNotFound(String requestId) {
+        ErrorLoggerInfo errorLoggerInfo =
+                new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.BusinessProcessError)
+                        .build();
+
+        ValidateException validateException =
+                new ValidateException.Builder("Null response from RequestDB when searching by RequestId " + requestId,
+                        HttpStatus.SC_NOT_FOUND, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo)
+                                .build();
+        return validateException;
+    }
+
+    private ValidateException getValidateExceptionForInternalServerError(Exception e) {
+        logger.error("Exception occurred while communicating with RequestDb during InfraActiveRequest lookup ", e);
+        ErrorLoggerInfo errorLoggerInfo =
+                new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.AvailabilityError).build();
+
+        ValidateException validateException = new ValidateException.Builder(
+                "Exception occurred while communicating with RequestDb during InfraActiveRequest lookup",
+                HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_GENERAL_SERVICE_ERROR).cause(e)
+                        .errorInfo(errorLoggerInfo).build();
+        return validateException;
+    }
+
+    private ValidateException getValidateExceptionFromHttpClientErrorException(HttpClientErrorException e) {
+        logger.error("Exception occurred while communicating with RequestDb during InfraActiveRequest lookup ", e);
+        ErrorLoggerInfo errorLoggerInfo =
+                new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.AvailabilityError).build();
+
+        ValidateException validateException = new ValidateException.Builder(
+                "Exception occurred while communicating with RequestDb during InfraActiveRequest lookup",
+                e.getRawStatusCode(), ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB).cause(e).errorInfo(errorLoggerInfo)
+                        .build();
+        return validateException;
     }
 
     protected long daysSinceRequest(InfraActiveRequests request) {

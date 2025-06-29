@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
@@ -150,7 +151,7 @@ public class OrchestrationRequestsTest extends BaseTest {
                 .fromHttpUrl(createURLWithPort("/onap/so/infra/orchestrationRequests/v7/" + testRequestId));
 
         ResponseEntity<GetOrchestrationResponse> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, GetOrchestrationResponse.class);
+                restTemplate.exchange(builder.build().toUri(), HttpMethod.GET, entity, GetOrchestrationResponse.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         assertThat(response.getBody(), sameBeanAs(testResponse).ignoring("request.startTime")
@@ -185,7 +186,7 @@ public class OrchestrationRequestsTest extends BaseTest {
                 .queryParam("format", "simple");
 
         ResponseEntity<GetOrchestrationResponse> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, GetOrchestrationResponse.class);
+                restTemplate.exchange(builder.build().toUri(), HttpMethod.GET, entity, GetOrchestrationResponse.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         assertThat(response.getBody(), sameBeanAs(testResponse).ignoring("request.startTime")
@@ -477,6 +478,27 @@ public class OrchestrationRequestsTest extends BaseTest {
                         new TypeReference<List<org.onap.so.db.request.beans.RequestProcessingData>>() {});
         actualProcessingData = orchReq.mapRequestProcessingData(processingData);
         assertThat(actualProcessingData, sameBeanAs(expectedDataList));
+    }
+
+    @Test
+    public void testThatActiveRequestsExceptionsAreMapped() throws Exception {
+        String testRequestId = UUID.randomUUID().toString();
+        wireMockServer.stubFor(any(urlPathEqualTo("/infraActiveRequests/" + testRequestId))
+                .willReturn(aResponse().withStatus(HttpStatus.SC_UNAUTHORIZED)));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", MediaType.APPLICATION_JSON);
+        headers.set("Content-Type", MediaType.APPLICATION_JSON);
+        headers.set(ONAPLogConstants.Headers.REQUEST_ID, "1e45215d-b7b3-4c5a-9316-65bdddaf649f");
+        HttpEntity<Request> entity = new HttpEntity<Request>(null, headers);
+
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort("/onap/so/infra/orchestrationRequests/v7/" + testRequestId));
+
+        ResponseEntity<GetOrchestrationResponse> response =
+                restTemplate.exchange(builder.build().toUri(), HttpMethod.GET, entity, GetOrchestrationResponse.class);
+
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatusCode().value());
     }
 
     public void setupTestGetOrchestrationRequest() throws Exception {
