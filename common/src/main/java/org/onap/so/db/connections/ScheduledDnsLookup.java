@@ -32,7 +32,6 @@ public class ScheduledDnsLookup {
 
     private static Logger logger = LoggerFactory.getLogger(ScheduledDnsLookup.class);
 
-    @ScheduledLogging
     @Scheduled(fixedRate = 15000)
     public void performDnsLookup() throws ScheduledTaskException {
         String dnsUrl = System.getenv(DB_HOST);
