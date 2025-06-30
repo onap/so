@@ -65,7 +65,6 @@ public class ExternalTaskServiceUtils {
         return Integer.parseInt(env.getProperty("workflow.topics.maxClients", "10"));
     }
 
-    @ScheduledLogging
     @Scheduled(fixedDelay = 30000)
     public void checkAllClientsActive() {
         try {
