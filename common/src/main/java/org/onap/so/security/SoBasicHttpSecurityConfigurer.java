@@ -23,23 +23,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Waqas Ikram (waqas.ikram@est.tech)
  *
  */
+@Slf4j
 @Component("basic")
 public class SoBasicHttpSecurityConfigurer implements HttpSecurityConfigurer {
 
     @Autowired
     private SoUserCredentialConfiguration soUserCredentialConfiguration;
 
+    private static final String[] unauthenticatedEndpoints = new String[] {"/manage/health", "/manage/info", "/error"};
+
     @Override
     public void configure(final HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests().antMatchers("/manage/health", "/manage/info", "/error").permitAll()
-                .antMatchers("/**")
-                .hasAnyRole(StringUtils.collectionToDelimitedString(soUserCredentialConfiguration.getRoles(), ","))
-                .and().httpBasic();
+        if (soUserCredentialConfiguration.getRbacEnabled()) {
+            String roles = StringUtils.collectionToDelimitedString(soUserCredentialConfiguration.getRoles(), ",");
+            http.csrf().disable().authorizeRequests().antMatchers(unauthenticatedEndpoints).permitAll()
+                    .antMatchers("/**").hasAnyRole(roles).and().httpBasic();
+        } else {
+            log.debug("Not configuring RBAC for the app.");
+            http.csrf().disable().authorizeRequests().antMatchers(unauthenticatedEndpoints).permitAll()
+                    .antMatchers("/**").authenticated().and().httpBasic();
+        }
     }
 
 }

@@ -77,11 +77,12 @@ if [ ! -z "${TRUSTSTORE}" ]; then
 	jksargs="$jksargs -Djavax.net.ssl.trustStorePassword=${TRUSTSTORE_PASSWORD}"
 fi
 
-if [ -z "${ACTIVE_PROFILE}" ]; then
-	export ACTIVE_PROFILE="basic"
-fi
+jvmargs="${JVM_ARGS} -Djava.security.egd=file:/dev/./urandom -Dlogs_dir=${LOG_PATH} -Dlogging.config=/app/logback-spring.xml $jksargs -Dspring.config.additional-location=$CONFIG_PATH ${SSL_DEBUG} ${DISABLE_SNI}"
 
-jvmargs="${JVM_ARGS} -Dspring.profiles.active=${ACTIVE_PROFILE} -Djava.security.egd=file:/dev/./urandom -Dlogs_dir=${LOG_PATH} -Dlogging.config=/app/logback-spring.xml $jksargs -Dspring.config.additional-location=$CONFIG_PATH ${SSL_DEBUG} ${DISABLE_SNI}"
+# optionally set the active spring profile
+if [ -n "${ACTIVE_PROFILE}" ]; then
+    jvmargs="${jvmargs} -Dspring.profiles.active=${ACTIVE_PROFILE}"
+fi
 
 
 read_properties(){
