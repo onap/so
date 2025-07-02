@@ -20,6 +20,7 @@
 package org.onap.so.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -37,9 +38,15 @@ public class SoBasicHttpSecurityConfigurer implements HttpSecurityConfigurer {
     @Override
     public void configure(final HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests().antMatchers("/manage/health", "/manage/info", "/error").permitAll()
-                .antMatchers("/**")
-                .hasAnyRole(StringUtils.collectionToDelimitedString(soUserCredentialConfiguration.getRoles(), ","))
-                .and().httpBasic();
+                .antMatchers("/**").access(getAccess()).and().httpBasic();
+    }
+
+    /**
+     * Return RBAC configuration when it is enabled, otherwise allow any authenticated user irrespective of roles
+     */
+    private String getAccess() {
+        String roles = StringUtils.collectionToDelimitedString(soUserCredentialConfiguration.getRoles(), ",");
+        return soUserCredentialConfiguration.getRbacEnabled() ? "hasAnyRole(" + roles + ")" : "authenticated()";
     }
 
 }
