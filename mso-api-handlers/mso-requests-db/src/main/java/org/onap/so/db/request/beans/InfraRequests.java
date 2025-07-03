@@ -37,9 +37,9 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.onap.so.requestsdb.TimestampXMLAdapter;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.deser.std.DateDeserializers.TimestampDeserializer;
 
 @MappedSuperclass
 public abstract class InfraRequests implements java.io.Serializable {
@@ -67,8 +67,10 @@ public abstract class InfraRequests implements java.io.Serializable {
     private Long progress;
 
     @Column(name = "START_TIME")
+    @JsonDeserialize(using = TimestampDeserializer.class)
     private Timestamp startTime;
     @Column(name = "END_TIME")
+    @JsonDeserialize(using = TimestampDeserializer.class)
     private Timestamp endTime;
     @Column(name = "SOURCE", length = 45)
     private String source;
