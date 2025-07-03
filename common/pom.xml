@@ -26,6 +26,18 @@
       <artifactId>spring-aspects</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-parameter-names</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jdk8</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-security</artifactId>
     </dependency>
@@ -343,7 +355,7 @@
             <systemPropertyVariables>
               <so.log.level>DEBUG</so.log.level>
             </systemPropertyVariables>
-            <rerunFailingTestsCount>2</rerunFailingTestsCount>
+            <!-- <rerunFailingTestsCount>2</rerunFailingTestsCount> -->
             <parallel>suites</parallel>
             <useUnlimitedThreads>false</useUnlimitedThreads>
             <threadCount>1</threadCount>
