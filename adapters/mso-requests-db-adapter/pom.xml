@@ -100,17 +100,17 @@
       <plugin>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-java2ws-plugin</artifactId>
-        <version>3.3.3</version>
+        <version>${cxf.version}</version>
         <dependencies>
           <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxws</artifactId>
-            <version>3.3.3</version>
+            <version>${cxf.version}</version>
           </dependency>
           <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-simple</artifactId>
-            <version>3.3.3</version>
+            <version>${cxf.version}</version>
           </dependency>
           <dependency>
             <groupId>com.sun.xml.ws</groupId>
@@ -235,7 +235,7 @@
                   <pluginExecutionFilter>
                     <groupId>org.apache.cxf</groupId>
                     <artifactId>cxf-java2ws-plugin</artifactId>
-                    <versionRange>[3.2.5,)</versionRange>
+                    <versionRange>[${cxf.version},)</versionRange>
                     <goals>
                       <goal>java2ws</goal>
                     </goals>
