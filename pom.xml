@@ -64,7 +64,7 @@
     <snapshotNexusPath>content/repositories/snapshots/</snapshotNexusPath>
     <publicNexusPath>content/repositories/public/</publicNexusPath>
     <siteNexusPath>content/sites/site/org/onap/so/${project.version}/</siteNexusPath>
-    <cxf.version>3.4.1</cxf.version>
+    <cxf.version>3.4.10</cxf.version>
     <jax.ws.rs>2.1</jax.ws.rs>
     <springboot.version>2.4.13</springboot.version>
     <spring-cloud.version>2020.0.6</spring-cloud.version>
