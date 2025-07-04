@@ -235,7 +235,7 @@
                   <pluginExecutionFilter>
                     <groupId>org.apache.cxf</groupId>
                     <artifactId>cxf-java2ws-plugin</artifactId>
-                    <versionRange>[3.2.5,)</versionRange>
+                    <versionRange>[${cxf.version},)</versionRange>
                     <goals>
                       <goal>java2ws</goal>
                     </goals>
