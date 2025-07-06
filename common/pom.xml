@@ -15,6 +15,7 @@
     <grpc.netty.version>4.1.30.Final</grpc.netty.version>
     <ccsdk.version>1.1.5</ccsdk.version>
     <tomcat-catalina-version>9.0.105</tomcat-catalina-version>
+    <logback.version>1.2.13</logback.version>
   </properties>
   <dependencies>
     <dependency>
@@ -272,6 +273,16 @@
         <version>${springboot.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-core</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
