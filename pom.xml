@@ -78,7 +78,7 @@
     <onap-logging-version>1.6.9</onap-logging-version>
     <jackson.version>2.14.3</jackson.version>
     <grpc.version>1.25.0</grpc.version>
-    <logback.version>1.2.7</logback.version>
+    <logback.version>1.2.11</logback.version>
   </properties>
   <distributionManagement>
     <repository>
