@@ -26,3 +26,4 @@ packages/root-pack-extras/config-resources/mariadb/db-sql-scripts/main-schemas/M
 **/.sts4-cache
 **/.java-version
 .vscode
+.antlr

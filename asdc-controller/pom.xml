@@ -46,6 +46,15 @@
             </lifecycleMappingMetadata>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <configuration>
+            <nonFilteredFileExtensions>
+              <nonFilteredFileExtension>csar</nonFilteredFileExtension>
+            </nonFilteredFileExtensions>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -98,6 +107,7 @@
         <executions>
           <execution>
             <id>antlr</id>
+            <phase>generate-sources</phase>
             <goals>
               <goal>antlr4</goal>
             </goals>
@@ -143,6 +153,7 @@
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
+            <?m2e ignore?>
             <id>extract-docker-file</id>
             <configuration>
               <skip>false</skip>
