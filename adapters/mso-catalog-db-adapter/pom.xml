@@ -35,6 +35,7 @@
         <executions>
           <execution>
             <id>extract-docker-file</id>
+            <?m2e ignore?>
             <configuration>
               <skip>false</skip>
             </configuration>
