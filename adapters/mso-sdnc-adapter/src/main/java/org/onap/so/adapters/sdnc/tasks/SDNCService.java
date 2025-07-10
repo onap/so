@@ -48,7 +48,7 @@ public class SDNCService extends ExternalTaskUtils {
     @Autowired
     private Environment env;
 
-    private ObjectMapper objMapper = new ObjectMapper();
+    private static final ObjectMapper objMapper = new ObjectMapper();
 
     public SDNCService() {
         super(RetrySequenceLevel.SHORT);

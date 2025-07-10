@@ -107,6 +107,7 @@ import org.onap.so.serviceinstancebeans.InstanceDirection;
 public class WorkflowAction {
 
     private static final Logger logger = LoggerFactory.getLogger(WorkflowAction.class);
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     private static final String SERVICE_INSTANCES = "serviceInstances";
     private static final String VF_MODULES = "vfModules";
@@ -160,8 +161,7 @@ public class WorkflowAction {
         try {
             fillExecutionDefault(execution);
             final String bpmnRequest = (String) execution.getVariable(BBConstants.G_BPMN_REQUEST);
-            ServiceInstancesRequest sIRequest =
-                    new ObjectMapper().readValue(bpmnRequest, ServiceInstancesRequest.class);
+            ServiceInstancesRequest sIRequest = mapper.readValue(bpmnRequest, ServiceInstancesRequest.class);
 
             final String requestId = (String) execution.getVariable(BBConstants.G_REQUEST_ID);
 

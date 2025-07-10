@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -72,6 +72,7 @@ public class TasksHandler {
 
 
     private static Logger logger = LoggerFactory.getLogger(TasksHandler.class);
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Value("${mso.camunda.rest.task.uri}")
     private String requestUrl;
@@ -153,7 +154,6 @@ public class TasksHandler {
         String camundaJsonReq = null;
 
         try {
-            ObjectMapper mapper = new ObjectMapper();
             camundaJsonReq = mapper.writeValueAsString(tv);
         } catch (JsonProcessingException e) {
             ErrorLoggerInfo errorLoggerInfo =
@@ -201,7 +201,6 @@ public class TasksHandler {
 
         String jsonResponse = null;
         try {
-            ObjectMapper mapper = new ObjectMapper();
             jsonResponse = mapper.writeValueAsString(trr);
         } catch (JsonProcessingException e) {
             ErrorLoggerInfo errorLoggerInfo =

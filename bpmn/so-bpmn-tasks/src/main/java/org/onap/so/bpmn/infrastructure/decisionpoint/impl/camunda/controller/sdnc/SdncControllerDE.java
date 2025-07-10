@@ -43,6 +43,7 @@ import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableName
 public class SdncControllerDE extends LcmControllerDE {
 
     private static final int SDNC_DELEGATE_EXECUTION_ERROR_CODE = 1103;
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public Boolean understand(ControllerContext<DelegateExecution> context) {
@@ -221,7 +222,6 @@ public class SdncControllerDE extends LcmControllerDE {
         LcmInput lcmInput =
                 SDNCLcmMessageBuilder.buildLcmInputForPnf(requestId, subRequestId, pnfName, lcmAction, lcmPayload);
 
-        ObjectMapper mapper = new ObjectMapper();
         try {
             String lcmInputMsg = mapper.writeValueAsString(lcmInput);
             logger.debug("SDNC input message for {}: {}", lcmAction, lcmInputMsg);

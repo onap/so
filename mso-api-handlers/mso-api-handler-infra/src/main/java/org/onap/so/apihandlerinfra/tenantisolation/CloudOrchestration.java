@@ -76,6 +76,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 public class CloudOrchestration {
 
     private static Logger logger = LoggerFactory.getLogger(CloudOrchestration.class);
+    private static final ObjectMapper mapper = new ObjectMapper();
     private static final String ENVIRONMENT_ID_KEY = "operationalEnvironmentId";
 
     @Autowired
@@ -241,7 +242,6 @@ public class CloudOrchestration {
             long startTime, CloudOrchestrationRequest cor) throws ApiException {
         try {
             logger.debug("Converting incoming JSON request to Object");
-            ObjectMapper mapper = new ObjectMapper();
             return mapper.readValue(requestJSON, CloudOrchestrationRequest.class);
         } catch (IOException e) {
 

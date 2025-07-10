@@ -38,6 +38,7 @@ import java.util.Map;
 public class SliceTaskParams implements Serializable {
 
     private static final long serialVersionUID = -4389946152970978423L;
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     private String serviceId;
 
@@ -138,7 +139,6 @@ public class SliceTaskParams implements Serializable {
     }
 
     public void convertFromJson(String jsonString) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
         Map<String, String> paramMap = (Map<String, String>) mapper.readValue(jsonString, Map.class);
         this.setServiceId(paramMap.get("ServiceId"));
         this.setServiceName(paramMap.get("ServiceName"));
@@ -194,4 +194,3 @@ public class SliceTaskParams implements Serializable {
         this.setAnStatusDescription(paramMap.get("AN.statusDescription"));
     }
 }
-

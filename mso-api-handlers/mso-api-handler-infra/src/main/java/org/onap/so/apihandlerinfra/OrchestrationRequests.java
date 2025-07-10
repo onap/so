@@ -94,6 +94,7 @@ public class OrchestrationRequests {
 
     private static Logger logger = LoggerFactory.getLogger(OrchestrationRequests.class);
     private static final String ERROR_MESSAGE_PREFIX = "Error Source: %s, Error Message: %s";
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
     private RequestsDbClient requestsDbClient;
@@ -243,7 +244,6 @@ public class OrchestrationRequests {
         ServiceInstancesRequest sir;
 
         try {
-            ObjectMapper mapper = new ObjectMapper();
             sir = mapper.readValue(requestJSON, ServiceInstancesRequest.class);
         } catch (IOException e) {
             logger.error("Exception occurred", e);
@@ -299,8 +299,6 @@ public class OrchestrationRequests {
             String format, String version) throws ApiException {
         String requestBody = iar.getRequestBody();
         Request request = new Request();
-
-        ObjectMapper mapper = new ObjectMapper();
 
         request.setRequestId(iar.getRequestId());
         request.setRequestScope(iar.getRequestScope());

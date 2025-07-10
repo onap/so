@@ -72,7 +72,7 @@ public class OrchestrationTasks {
     @Autowired
     private ResponseBuilder builder;
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @GET
     @Path("/{version:[vV][4-7]}/")

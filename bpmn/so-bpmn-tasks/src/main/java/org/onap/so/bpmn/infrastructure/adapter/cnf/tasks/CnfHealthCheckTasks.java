@@ -37,7 +37,7 @@ public class CnfHealthCheckTasks {
     @Autowired
     private ExceptionBuilder exceptionUtil;
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     public void prepareCnfAdaperRequest(BuildingBlockExecution execution) {
         GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
