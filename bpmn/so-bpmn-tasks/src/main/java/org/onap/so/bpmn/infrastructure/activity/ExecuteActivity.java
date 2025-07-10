@@ -76,7 +76,7 @@ public class ExecuteActivity implements JavaDelegate {
     private static final String ACTIVITY_PREFIX = "activity:";
     private static final String EXECUTE_ACTIVITY_ERROR_MESSAGE = "ExecuteActivityErrorMessage";
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
     private RuntimeService runtimeService;

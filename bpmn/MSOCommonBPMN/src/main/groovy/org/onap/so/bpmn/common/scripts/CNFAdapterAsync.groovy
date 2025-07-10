@@ -19,7 +19,7 @@ public class CNFAdapterAsync extends AbstractServiceTaskProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(CNFAdapterAsync.class)
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
-	ObjectMapper mapper = new ObjectMapper();
+	private static final ObjectMapper mapper = new ObjectMapper();
 
 	@Override
 	public void preProcessRequest(DelegateExecution execution) {

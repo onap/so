@@ -24,6 +24,7 @@ import io.swagger.parser.SwaggerParser;
 public class SwaggerConverter {
 
     private final Log log;
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     public SwaggerConverter(Log log) {
         this.log = log;
@@ -117,7 +118,6 @@ public class SwaggerConverter {
             }
 
         }
-        ObjectMapper mapper = new ObjectMapper();
 
         for (ObjectType item : output.values()) {
             for (String path : item.getPaths()) {

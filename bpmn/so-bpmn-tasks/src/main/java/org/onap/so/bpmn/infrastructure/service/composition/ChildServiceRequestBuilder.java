@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.Map;
 
 public class ChildServiceRequestBuilder {
+    private static final ObjectMapper mapper = new ObjectMapper();
     private final BuildingBlockExecution buildingBlockExecution;
     private Service parent;
     private Service child;
@@ -47,9 +48,8 @@ public class ChildServiceRequestBuilder {
             for (Map<String, Object> params : buildingBlockExecution.getGeneralBuildingBlock().getRequestContext()
                     .getRequestParameters().getUserParams()) {
                 if (params.containsKey(USERPARAMSERVICE)) {
-                    ObjectMapper obj = new ObjectMapper();
-                    String input = obj.writeValueAsString(params.get(USERPARAMSERVICE));
-                    parent = obj.readValue(input, Service.class);
+                    String input = mapper.writeValueAsString(params.get(USERPARAMSERVICE));
+                    parent = mapper.readValue(input, Service.class);
                     if (parent.getResources().getServices() != null) {
                         for (Service service : parent.getResources().getServices()) {
                             if (service.getInstanceName().equals(childSvcInstanceName)) {

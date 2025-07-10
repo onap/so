@@ -29,6 +29,7 @@ public class UpgradePreWorkflowValidator implements PreWorkflowValidator {
             "Existing vnfs in AAI are not supported by service model. Unsupported vnfCustomizationIds: %s";
 
     private final CatalogDbClient catalogDbClient;
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     private static final Function<WorkflowType, Predicate<Resource>> resourceType =
             workflowType -> resource -> resource.getResourceType() == workflowType;
@@ -76,7 +77,7 @@ public class UpgradePreWorkflowValidator implements PreWorkflowValidator {
 
     private Optional<ServiceInstancesRequest> parseBpmnRequest(String bpmnRequest) {
         try {
-            return Optional.of(new ObjectMapper().readValue(bpmnRequest, ServiceInstancesRequest.class));
+            return Optional.of(mapper.readValue(bpmnRequest, ServiceInstancesRequest.class));
         } catch (IOException e) {
             return Optional.empty();
         }

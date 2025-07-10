@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -101,6 +101,7 @@ public class E2EServiceInstances {
 
     private HashMap<String, String> instanceIdMap = new HashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(E2EServiceInstances.class);
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     private static final String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
 
@@ -128,7 +129,7 @@ public class E2EServiceInstances {
 
     /**
      * POST Requests for E2E Service create Instance on a version provided
-     * 
+     *
      * @throws ApiException
      */
 
@@ -145,7 +146,7 @@ public class E2EServiceInstances {
 
     /**
      * PUT Requests for E2E Service update Instance on a version provided
-     * 
+     *
      * @throws ApiException
      */
 
@@ -166,7 +167,7 @@ public class E2EServiceInstances {
 
     /**
      * DELETE Requests for E2E Service delete Instance on a specified version and serviceId
-     * 
+     *
      * @throws ApiException
      */
 
@@ -222,7 +223,7 @@ public class E2EServiceInstances {
 
     /**
      * Scale Requests for E2E Service scale Instance on a specified version
-     * 
+     *
      * @throws ApiException
      */
 
@@ -242,7 +243,7 @@ public class E2EServiceInstances {
 
     /**
      * GET Requests for Comparing model of service instance with target version
-     * 
+     *
      * @throws ApiException
      */
 
@@ -269,7 +270,6 @@ public class E2EServiceInstances {
 
         CompareModelsRequest e2eCompareModelReq;
 
-        ObjectMapper mapper = new ObjectMapper();
         try {
             e2eCompareModelReq = mapper.readValue(requestJSON, CompareModelsRequest.class);
 
@@ -363,7 +363,6 @@ public class E2EServiceInstances {
         // TODO should be a new one or the same service instance Id
         E2ESliceServiceActivateRequest e2eActReq;
 
-        ObjectMapper mapper = new ObjectMapper();
         try {
             e2eActReq = mapper.readValue(requestJSON, E2ESliceServiceActivateRequest.class);
 
@@ -453,7 +452,6 @@ public class E2EServiceInstances {
         // TODO should be a new one or the same service instance Id
         E2EServiceInstanceDeleteRequest e2eDelReq;
 
-        ObjectMapper mapper = new ObjectMapper();
         try {
             e2eDelReq = mapper.readValue(requestJSON, E2EServiceInstanceDeleteRequest.class);
 
@@ -542,7 +540,6 @@ public class E2EServiceInstances {
         E2EServiceInstanceRequest e2eSir;
         String serviceId = instanceIdMap.get(SERVICE_ID);
 
-        ObjectMapper mapper = new ObjectMapper();
         try {
             e2eSir = mapper.readValue(requestJSON, E2EServiceInstanceRequest.class);
 
@@ -620,7 +617,7 @@ public class E2EServiceInstances {
         E2EServiceInstanceRequest e2eSir;
 
         MsoRequest msoRequest = new MsoRequest();
-        ObjectMapper mapper = new ObjectMapper();
+
         try {
             e2eSir = mapper.readValue(requestJSON, E2EServiceInstanceRequest.class);
 
@@ -695,7 +692,6 @@ public class E2EServiceInstances {
         String requestId = UUID.randomUUID().toString();
         E2EServiceInstanceScaleRequest e2eScaleReq;
 
-        ObjectMapper mapper = new ObjectMapper();
         try {
             e2eScaleReq = mapper.readValue(requestJSON, E2EServiceInstanceScaleRequest.class);
 
@@ -806,7 +802,7 @@ public class E2EServiceInstances {
 
     /**
      * Getting recipes from catalogDb
-     * 
+     *
      * @param serviceModelUUID the service model version uuid
      * @param action the action for the service
      * @return the service recipe result
@@ -826,7 +822,7 @@ public class E2EServiceInstances {
 
     /**
      * Getting recipes from catalogDb If Service recipe is not set, use default recipe, if set , use special recipe.
-     * 
+     *
      * @param serviceModelUUID the service version uuid
      * @param action the action of the service.
      * @return the service recipe result.
@@ -859,7 +855,7 @@ public class E2EServiceInstances {
 
     /**
      * Converting E2EServiceInstanceRequest to ServiceInstanceRequest and passing it to camunda engine.
-     * 
+     *
      * @param e2eSir
      * @return
      */
@@ -967,7 +963,6 @@ public class E2EServiceInstances {
     private String convertToString(ServiceInstancesRequest sir) {
         String returnString = null;
         // converting to string
-        ObjectMapper mapper = new ObjectMapper();
         try {
             returnString = mapper.writeValueAsString(sir);
         } catch (IOException e) {

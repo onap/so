@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,6 +34,7 @@ import org.onap.so.bpmn.infrastructure.decisionpoint.impl.camunda.controller.com
 public class SDNCLcmPayloadBuilder {
 
     private static Logger logger = LoggerFactory.getLogger(SDNCLcmPayloadBuilder.class);
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     public static ActivateNESwPayload buildActivateNESwPayload(DelegateExecution execution) {
         String requestPayload = String.valueOf(execution.getVariable(REQUEST_PAYLOAD));
@@ -68,7 +69,6 @@ public class SDNCLcmPayloadBuilder {
         String swToBeDownloadedString = JsonUtils.getJsonValue(requestPayload, "swToBeDownloaded");
         SwToBeDownloadedElement[] swToBeDownloadedArray;
 
-        ObjectMapper mapper = new ObjectMapper();
         try {
             swToBeDownloadedArray = mapper.readValue(swToBeDownloadedString, SwToBeDownloadedElement[].class);
             downloadNESwPayload.setSwToBeDownloaded(Arrays.asList(swToBeDownloadedArray));
@@ -147,7 +147,6 @@ public class SDNCLcmPayloadBuilder {
     }
 
     public static String convertToSting(Object msgObject) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(msgObject);
     }
 }

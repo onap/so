@@ -60,7 +60,7 @@ import com.google.gson.Gson
 class AnNssmfUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(AnNssmfUtils.class)
-	private static final ObjectMapper objectMapper = new ObjectMapper();
+	private static final ObjectMapper objectMapper = new ObjectMapper()
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 	public String buildSelectRANNSSIRequest(String requestId, String messageType, String UUID,String invariantUUID,

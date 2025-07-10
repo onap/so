@@ -39,6 +39,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class AppcOrchestratorPreProcessor {
     private static final Logger logger = LoggerFactory.getLogger(AppcOrchestratorPreProcessor.class);
     public static final String CONTROLLER_TYPE_DEFAULT = "APPC";
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     private ExceptionBuilder exceptionUtil;
@@ -94,7 +95,6 @@ public class AppcOrchestratorPreProcessor {
                 appcTaskRequest.setOperationsTimeout(operationsTimeout);
 
                 Map<String, String> configMap = new HashMap<>();
-                ObjectMapper objectMapper = new ObjectMapper();
                 String configParamsStr = JsonUtils.getJsonValue(payload, "configuration_parameters");
                 if (configParamsStr != null) {
                     configMap =

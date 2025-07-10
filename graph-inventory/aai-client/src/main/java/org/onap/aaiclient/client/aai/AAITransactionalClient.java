@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,6 +50,7 @@ import com.google.common.base.Joiner;
 public class AAITransactionalClient extends
         GraphInventoryTransactionClient<AAITransactionalClient, AAIBaseResourceUri<?, ?>, AAIResourceUri, AAIEdgeLabel> {
 
+    private static final ObjectMapper mapper = new ObjectMapper();
     private final Transactions transactions;
     private Transaction currentTransaction;
 
@@ -72,7 +73,7 @@ public class AAITransactionalClient extends
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.onap.aaiclient.client.aai.GraphInventoryTransactionalClient#beginNewTransaction()
      */
     public AAITransactionalClient beginNewTransaction() {
@@ -82,7 +83,7 @@ public class AAITransactionalClient extends
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.onap.aaiclient.client.aai.GraphInventoryTransactionalClient#execute()
      */
     @Override
@@ -112,7 +113,6 @@ public class AAITransactionalClient extends
 
     @Override
     public void execute(boolean dryRun) throws BulkProcessFailed {
-        final ObjectMapper mapper = new ObjectMapper();
         if (dryRun) {
             try {
                 if (logger.isDebugEnabled()) {
@@ -129,7 +129,6 @@ public class AAITransactionalClient extends
     protected Optional<String> locateErrorMessages(String response) {
         final List<String> errorMessages = new ArrayList<>();
         final List<String> results = JsonPathUtil.getInstance().locateResultList(response, "$..body");
-        final ObjectMapper mapper = new ObjectMapper();
         if (!results.isEmpty()) {
             List<Map<String, Object>> parsed = new ArrayList<>();
             try {

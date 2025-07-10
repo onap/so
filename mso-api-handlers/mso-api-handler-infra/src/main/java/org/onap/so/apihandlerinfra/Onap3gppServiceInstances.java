@@ -98,7 +98,7 @@ import org.onap.so.db.request.client.RequestsDbClient;
 public class Onap3gppServiceInstances {
 
     private static final Logger logger = LoggerFactory.getLogger(Onap3gppServiceInstances.class);
-
+    private static final ObjectMapper mapper = new ObjectMapper();
     private static final String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
 
     private static final String END_OF_THE_TRANSACTION = "End of the transaction, the final response is: ";
@@ -591,7 +591,6 @@ public class Onap3gppServiceInstances {
     }
 
     private Response getSubnetCapabilities(List<SubnetTypes> subnetTypes, String version) throws ApiException {
-        ObjectMapper oMapper = new ObjectMapper();
         String inputFileString = "";
         Map<String, Object> subnetCapability = new HashMap<>();
         BufferedReader br = null;
@@ -606,7 +605,7 @@ public class Onap3gppServiceInstances {
                 line = br.readLine();
             }
             inputFileString = sb.toString();
-            subnetCapability = oMapper.readValue(inputFileString, Map.class);
+            subnetCapability = mapper.readValue(inputFileString, Map.class);
         } catch (Exception e) {
             logger.debug("Exception while reading subnet capability value from json", e);
         }
@@ -680,7 +679,6 @@ public class Onap3gppServiceInstances {
     }
 
     Function<Object, String> toString = serviceRequest -> {
-        ObjectMapper mapper = new ObjectMapper();
         String requestAsString = null;
         try {
             requestAsString = mapper.writeValueAsString(serviceRequest);
@@ -772,5 +770,3 @@ public class Onap3gppServiceInstances {
                 parameter.getApiVersion());
     }
 }
-
-
