@@ -101,6 +101,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class MsoRequest {
+    private static Logger logger = LoggerFactory.getLogger(MsoRequest.class);
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper nonNullMapper;
+
+    static {
+        nonNullMapper = new ObjectMapper();
+        nonNullMapper.setSerializationInclusion(Include.NON_NULL);
+
+    }
 
     @Autowired
     private RequestsDbClient requestsDbClient;
@@ -114,7 +123,6 @@ public class MsoRequest {
     @Value("${mso.enforceDLP:false}")
     private boolean enforceDLP;
 
-    private static Logger logger = LoggerFactory.getLogger(MsoRequest.class);
 
     public Response buildServiceErrorResponse(int httpResponseCode, MsoException exceptionType, String errorText,
             String messageId, List<String> variables, String version) {
@@ -196,9 +204,8 @@ public class MsoRequest {
         if (reqVersion >= 7 && requestParameters != null && requestParameters.getUserParams() != null) {
             for (Map<String, Object> params : requestParameters.getUserParams()) {
                 if (params.containsKey("service")) {
-                    ObjectMapper obj = new ObjectMapper();
-                    String input = obj.writeValueAsString(params.get("service"));
-                    Service validate = obj.readValue(input, Service.class);
+                    String input = mapper.writeValueAsString(params.get("service"));
+                    Service validate = mapper.readValue(input, Service.class);
                     info.setUserParams(validate);
                     rules.add(new UserParamsValidation());
                     break;
@@ -585,11 +592,9 @@ public class MsoRequest {
 
     public String getRequestJSON(ServiceInstancesRequest sir)
             throws JsonGenerationException, JsonMappingException, IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(Include.NON_NULL);
 
         logger.debug("building sir from object {}", sir);
-        String requestJSON = mapper.writeValueAsString(sir);
+        String requestJSON = nonNullMapper.writeValueAsString(sir);
 
         // Perform mapping from VID-style modelInfo fields to ASDC-style modelInfo fields
 

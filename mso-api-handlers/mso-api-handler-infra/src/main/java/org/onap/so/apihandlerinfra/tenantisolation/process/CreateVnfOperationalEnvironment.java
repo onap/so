@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -58,6 +58,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class CreateVnfOperationalEnvironment {
 
     private static Logger logger = LoggerFactory.getLogger(CreateVnfOperationalEnvironment.class);
+    private static final ObjectMapper mapper = new ObjectMapper();
     protected CloudOrchestrationRequest request;
 
     @Autowired
@@ -71,7 +72,6 @@ public class CreateVnfOperationalEnvironment {
     public void execute(String requestId, CloudOrchestrationRequest request) throws ApiException {
         try {
             setRequest(request);
-            ObjectMapper objectMapper = new ObjectMapper();
             AAIResultWrapper aaiResultWrapper = aaiHelper.getAaiOperationalEnvironment(getEcompManagingEnvironmentId());
             if (aaiResultWrapper.isEmpty()) {
                 throw new NotFoundException(getEcompManagingEnvironmentId() + " not found in A&AI");
@@ -83,7 +83,7 @@ public class CreateVnfOperationalEnvironment {
             String searchKey = getSearchKey(aaiEnv);
             String tenantContext = getTenantContext().toUpperCase();
             String jsonResponse = getGrmClient().findRunningServicesAsString(searchKey, 1, tenantContext);
-            ServiceEndPointList sel = objectMapper.readValue(jsonResponse, ServiceEndPointList.class);
+            ServiceEndPointList sel = mapper.readValue(jsonResponse, ServiceEndPointList.class);
             if (sel.getServiceEndPointList().size() == 0) {
                 throw new TenantIsolationException(
                         "GRM did not find any matches for " + searchKey + " in " + tenantContext);

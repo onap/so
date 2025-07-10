@@ -77,6 +77,8 @@ import static org.onap.so.bpmn.infrastructure.service.composition.ServiceComposi
 @Component
 public class WorkflowActionBBTasks {
 
+    private static final Logger logger = LoggerFactory.getLogger(WorkflowActionBBTasks.class);
+    private static final ObjectMapper mapper = new ObjectMapper();
     private static final String RETRY_COUNT = "retryCount";
     private static final String FABRIC_CONFIGURATION = "FabricConfiguration";
     private static final String ADD_FABRIC_CONFIGURATION_BB = "AddFabricConfigurationBB";
@@ -91,7 +93,6 @@ public class WorkflowActionBBTasks {
     private static final String ROLLBACK_TO_ASSIGNED = "RollbackToAssigned";
     private static final String UNASSIGN = "Unassign";
     private static final String DELETE = "Delete";
-    private static final Logger logger = LoggerFactory.getLogger(WorkflowActionBBTasks.class);
 
     @Autowired
     private RequestsDbClient requestDbclient;
@@ -189,7 +190,7 @@ public class WorkflowActionBBTasks {
         requestRef.setInstanceId(resourceId);
         requestRef.setRequestId(requestId);
         serviceInstancesResponse.setRequestReferences(requestRef);
-        ObjectMapper mapper = new ObjectMapper();
+
         String jsonRequest = "";
         try {
             jsonRequest = mapper.writeValueAsString(serviceInstancesResponse);

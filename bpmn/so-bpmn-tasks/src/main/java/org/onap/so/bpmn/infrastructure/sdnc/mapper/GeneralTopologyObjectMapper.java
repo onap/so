@@ -53,7 +53,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class GeneralTopologyObjectMapper {
 
     private static final Logger logger = LoggerFactory.getLogger(GeneralTopologyObjectMapper.class);
-    private ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     /*
      * Build GenericResourceApiRequestinformationRequestInformation
@@ -204,7 +204,7 @@ public class GeneralTopologyObjectMapper {
 
     /**
      * Build ConfigurationInformation
-     * 
+     *
      * @param configuration
      * @param includeModelInformation
      * @return
@@ -231,7 +231,7 @@ public class GeneralTopologyObjectMapper {
 
     /**
      * Build GcRequestInformation
-     * 
+     *
      * @param vnf
      * @param genericResourceApiParam
      * @return

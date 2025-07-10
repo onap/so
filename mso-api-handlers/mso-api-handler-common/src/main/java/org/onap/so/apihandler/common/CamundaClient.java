@@ -10,9 +10,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -60,6 +60,13 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 public class CamundaClient {
     private static Logger logger = LoggerFactory.getLogger(CamundaClient.class);
     private static final String BASIC = "Basic ";
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper wrapMapper;
+
+    static {
+        wrapMapper = new ObjectMapper();
+        wrapMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
+    }
 
     @Autowired
     private RestTemplate restTemplate;
@@ -151,11 +158,8 @@ public class CamundaClient {
             camundaRequest.setSvcid(svcid);
             camundaRequest.setSchema(schema);
             camundaRequest.setTimeout(timeout);
-            ObjectMapper mapper = new ObjectMapper();
 
-            mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
-
-            jsonReq = mapper.writeValueAsString(camundaRequest);
+            jsonReq = wrapMapper.writeValueAsString(camundaRequest);
             logger.trace("request body is {}", jsonReq);
         } catch (Exception e) {
             logger.error("Error in APIH Wrap request", e);
@@ -248,10 +252,7 @@ public class CamundaClient {
             camundaRequest.setInstanceGroupId(instanceGroupIdInput);
             camundaRequest.setGenerateIds(generateIds);
 
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
-
-            jsonReq = mapper.writeValueAsString(camundaRequest);
+            jsonReq = wrapMapper.writeValueAsString(camundaRequest);
             logger.trace("request body is {}", jsonReq);
         } catch (Exception e) {
             logger.error("Error in wrapVIDRequest", e);
@@ -284,7 +285,6 @@ public class CamundaClient {
     }
 
     protected BPMNFailureException createBPMNFailureException(HttpStatusCodeException e) {
-        ObjectMapper mapper = new ObjectMapper();
         String responseText = null;
         String message = null;
         try {

@@ -77,6 +77,9 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class ServicePluginFactory {
 
+    private static final Logger logger = LoggerFactory.getLogger(ServicePluginFactory.class);
+    private static final ObjectMapper wrapMapper;
+    private static final ObjectMapper nonWrapMapper;
     private static String OOF_DEFAULT_ENDPOINT;
     private static String THIRD_SP_DEFAULT_ENDPOINT;
     private static String INVENTORY_OSS_DEFAULT_ENDPOINT;
@@ -84,7 +87,13 @@ public class ServicePluginFactory {
 
     static JsonUtils jsonUtil = new JsonUtils();
 
-    private static Logger logger = LoggerFactory.getLogger(ServicePluginFactory.class);
+    static {
+        wrapMapper = new ObjectMapper();
+        wrapMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
+        nonWrapMapper = new ObjectMapper();
+        nonWrapMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+    }
+
 
     private static ServicePluginFactory instance;
 
@@ -845,10 +854,9 @@ public class ServicePluginFactory {
     }
 
     private static <T> T getJsonObject(String jsonstr, Class<T> type) {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
+
         try {
-            return mapper.readValue(jsonstr, type);
+            return wrapMapper.readValue(jsonstr, type);
         } catch (IOException e) {
             logger.error("{} {} fail to unMarshal json", MessageEnum.RA_NS_EXC.toString(),
                     ErrorCode.BusinessProcessError.getValue(), e);
@@ -857,11 +865,9 @@ public class ServicePluginFactory {
     }
 
     public static String getJsonString(Object srcObj) {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         String jsonStr = null;
         try {
-            jsonStr = mapper.writeValueAsString(srcObj);
+            jsonStr = nonWrapMapper.writeValueAsString(srcObj);
         } catch (JsonProcessingException e) {
             logger.debug("SdcToscaParserException", e);
         }

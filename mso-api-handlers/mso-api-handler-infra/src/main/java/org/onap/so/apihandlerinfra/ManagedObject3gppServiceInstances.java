@@ -88,6 +88,7 @@ public class ManagedObject3gppServiceInstances {
     private static final String SAVE_TO_DB = "save instance to db";
 
     private static final String URI_PREFIX = "/moi/api/rest/";
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
     private MsoRequest msoRequest;
@@ -233,7 +234,6 @@ public class ManagedObject3gppServiceInstances {
 
             attributes.setSliceProfileList(sliceProfileList);
             mOIResponse.setAttributes(attributes);
-            ObjectMapper mapper = new ObjectMapper();
             try {
                 response = mapper.writeValueAsString(mOIResponse);
             } catch (Exception exception) {
@@ -310,7 +310,7 @@ public class ManagedObject3gppServiceInstances {
         ServiceInstancesRequest sir = createServiceInstanceRequest(request, requestId);
         String requestDetails = null;
         try {
-            requestDetails = new ObjectMapper().writeValueAsString(sir);
+            requestDetails = mapper.writeValueAsString(sir);
             LOGGER.debug(">>> sir: {}", sir);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -496,7 +496,6 @@ public class ManagedObject3gppServiceInstances {
     }
 
     Function<Object, String> toString = serviceRequest -> {
-        ObjectMapper mapper = new ObjectMapper();
         String requestAsString = null;
         try {
             requestAsString = mapper.writeValueAsString(serviceRequest);

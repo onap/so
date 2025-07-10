@@ -61,6 +61,7 @@ import static org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionConst
 public class UserParamsServiceTraversal {
 
     private static final Logger logger = LoggerFactory.getLogger(UserParamsServiceTraversal.class);
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     private final CatalogDbClient catalogDbClient;
     private final ExceptionBuilder exceptionBuilder;
@@ -79,9 +80,8 @@ public class UserParamsServiceTraversal {
         if (userParams != null) {
             for (Map<String, Object> params : userParams) {
                 if (params.containsKey(USER_PARAM_SERVICE)) {
-                    ObjectMapper obj = new ObjectMapper();
-                    String input = obj.writeValueAsString(params.get(USER_PARAM_SERVICE));
-                    Service validate = obj.readValue(input, Service.class);
+                    String input = mapper.writeValueAsString(params.get(USER_PARAM_SERVICE));
+                    Service validate = mapper.readValue(input, Service.class);
                     return getResourceList(execution, serviceModelVersionId, requestAction, validate);
                 }
             }

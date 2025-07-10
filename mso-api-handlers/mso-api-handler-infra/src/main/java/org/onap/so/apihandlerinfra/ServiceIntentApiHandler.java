@@ -97,6 +97,7 @@ import java.util.function.Function;
 public class ServiceIntentApiHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(ServiceIntentApiHandler.class);
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     private static final String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
 
@@ -351,7 +352,6 @@ public class ServiceIntentApiHandler {
     }
 
     Function<Object, String> toString = serviceRequest -> {
-        ObjectMapper mapper = new ObjectMapper();
         String requestAsString = null;
         try {
             requestAsString = mapper.writeValueAsString(serviceRequest);

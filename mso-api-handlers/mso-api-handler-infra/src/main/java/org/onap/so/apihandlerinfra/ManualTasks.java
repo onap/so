@@ -10,9 +10,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -68,6 +68,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @Component
 public class ManualTasks {
     private static Logger logger = LoggerFactory.getLogger(ManualTasks.class);
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper wrapMapper;
+
+    static {
+        wrapMapper = new ObjectMapper();
+        wrapMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
+    }
 
 
     @org.springframework.beans.factory.annotation.Value("${mso.camunda.rest.task.uri}")
@@ -99,7 +106,6 @@ public class ManualTasks {
         String apiVersion = version.substring(1);
 
         try {
-            ObjectMapper mapper = new ObjectMapper();
             taskRequest = mapper.readValue(request, TasksRequest.class);
 
             if (taskRequest.getRequestDetails() == null) {
@@ -155,9 +161,7 @@ public class ManualTasks {
 
         String camundaJsonReq;
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
-            camundaJsonReq = mapper.writeValueAsString(variablesForComplete);
+            camundaJsonReq = wrapMapper.writeValueAsString(variablesForComplete);
         } catch (JsonProcessingException e) {
             logger.error("Mapping of JSON object to Camunda request failed");
             ValidateException validateException =
@@ -177,9 +181,7 @@ public class ManualTasks {
         trr.setTaskId(taskId);
         String completeResp = null;
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
-            completeResp = mapper.writeValueAsString(trr);
+            completeResp = wrapMapper.writeValueAsString(trr);
         } catch (JsonProcessingException e) {
             logger.error("Unable to map response from Camunda");
             ValidateException validateException =

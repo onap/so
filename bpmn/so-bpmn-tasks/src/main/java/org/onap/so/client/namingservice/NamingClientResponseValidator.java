@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,6 +50,7 @@ public class NamingClientResponseValidator {
     private static final String NULL_RESPONSE_FROM_NAMING_SERVICE =
             "Error received a null response from Naming Service.";
     private static final String NAMING_SERVICE_ERROR = "Error from Naming Service: %s";
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     public String validateNameGenResponse(ResponseEntity<NameGenResponse> response) throws BadResponseException {
         if (response == null) {
@@ -139,7 +140,6 @@ public class NamingClientResponseValidator {
     }
 
     protected String formatError(HttpStatusCodeException e) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
         NameGenResponse errorResponse = mapper.readValue(e.getResponseBodyAsString(), NameGenResponse.class);
         NameGenResponseError error = errorResponse.getError();
 
