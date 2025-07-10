@@ -63,6 +63,8 @@ import java.util.stream.Collectors;
 @Component
 public class WorkflowSpecificationsHandler {
 
+    private static final ObjectMapper mapper = new ObjectMapper();
+
     @Autowired
     private ResponseBuilder builder;
 
@@ -145,9 +147,6 @@ public class WorkflowSpecificationsHandler {
         final String pnf_resource = "pnf";
         String apiVersion = version.substring(1);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         List<Workflow> workflows = queryWorkflowsForResourceTarget(pnf_resource);
 
         Optional<String> optional = getResponseByWorkflowSpec(workflows);
@@ -179,7 +178,6 @@ public class WorkflowSpecificationsHandler {
         WorkflowSpecifications workflowSpecifications = mapWorkflowsToWorkflowSpecifications(workflows);
 
         try {
-            ObjectMapper mapper = new ObjectMapper();
             return Optional.of(mapper.writeValueAsString(workflowSpecifications));
         } catch (JsonProcessingException e) {
             catchAndThrowValidationEx(e);

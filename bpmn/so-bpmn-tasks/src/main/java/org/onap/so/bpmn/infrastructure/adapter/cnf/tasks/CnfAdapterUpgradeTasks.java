@@ -66,7 +66,7 @@ public class CnfAdapterUpgradeTasks {
     @Autowired
     private VnfAdapterVfModuleObjectMapper vfModuleMapper;
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     /**
      * This method is used for updating the request for an Instance in Multicloud K8s Plugin.

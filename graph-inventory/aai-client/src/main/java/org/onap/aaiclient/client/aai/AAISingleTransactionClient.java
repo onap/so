@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,6 +45,7 @@ import com.google.common.base.Joiner;
 public class AAISingleTransactionClient extends
         GraphInventoryTransactionClient<AAISingleTransactionClient, AAIBaseResourceUri<?, ?>, AAIResourceUri, AAIEdgeLabel> {
 
+    private static final ObjectMapper mapper = new ObjectMapper();
     private final SingleTransactionRequest request;
     private AAIResourcesClient resourcesClient;
     private AAIClient aaiClient;
@@ -58,7 +59,7 @@ public class AAISingleTransactionClient extends
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.onap.aaiclient.client.aai.GraphInventoryTransactionClient#execute()
      */
     @Override
@@ -88,7 +89,6 @@ public class AAISingleTransactionClient extends
 
     @Override
     public void execute(boolean dryRun) throws BulkProcessFailed {
-        final ObjectMapper mapper = new ObjectMapper();
         if (dryRun) {
             try {
                 if (logger.isDebugEnabled()) {
@@ -104,7 +104,6 @@ public class AAISingleTransactionClient extends
 
     protected Optional<String> locateErrorMessages(SingleTransactionResponse response) {
         final List<String> errorMessages = new ArrayList<>();
-        final ObjectMapper mapper = new ObjectMapper();
 
         for (OperationBodyResponse body : response.getOperationResponses()) {
             if (Optional.ofNullable(body.getResponseStatusCode()).orElse(400) > 300) {

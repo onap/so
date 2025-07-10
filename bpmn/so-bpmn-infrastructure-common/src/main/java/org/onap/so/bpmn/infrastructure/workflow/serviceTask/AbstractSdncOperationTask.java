@@ -59,6 +59,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public abstract class AbstractSdncOperationTask implements JavaDelegate {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractSdncOperationTask.class);
+    private static final ObjectMapper objectMapper;
+
+    static {
+        objectMapper = new ObjectMapper();
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+    }
 
     @Autowired
     private Environment env;
@@ -103,10 +109,8 @@ public abstract class AbstractSdncOperationTask implements JavaDelegate {
     }
 
     protected String getPostbody(Object inputEntity) {
-        ObjectMapper objectMapper = new ObjectMapper();
         String postBody = null;
         try {
-            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
             postBody = objectMapper.writeValueAsString(inputEntity);
         } catch (JsonProcessingException e) {
             logger.error("JsonProcessingException in getPostbody", e);

@@ -55,6 +55,7 @@ public class ConfigAssignVnf {
     private static final String ORIGINATOR_ID = "SO";
     private static final String ACTION_NAME = "config-assign";
     private static final String MODE = "sync";
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private final ExtractPojosForBB extractPojosForBB;
     private final ExceptionBuilder exceptionBuilder;
@@ -130,7 +131,6 @@ public class ConfigAssignVnf {
     }
 
     private Service getServiceObjectFromServiceMap(Map<String, Object> serviceMap) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
         String serviceFromJson = objectMapper.writeValueAsString(serviceMap.get("service"));
         try {
             return objectMapper.readValue(serviceFromJson, Service.class);

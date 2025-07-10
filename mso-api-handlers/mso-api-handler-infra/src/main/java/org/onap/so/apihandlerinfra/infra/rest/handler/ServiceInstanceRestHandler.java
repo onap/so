@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,9 +45,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Component
 public class ServiceInstanceRestHandler extends AbstractRestHandler {
 
+    private static final Logger logger = LoggerFactory.getLogger(ServiceInstanceRestHandler.class);
+    private static final ObjectMapper mapper = new ObjectMapper();
     private static final String DEFAULT_VF_MODULE_UUID = "d88da85c-d9e8-4f73-b837-3a72a431622b";
 
-    private static final Logger logger = LoggerFactory.getLogger(ServiceInstanceRestHandler.class);
 
     public InfraActiveRequests mapInfraActiveRequestForDelete(String requestId, String serviceInstanceId,
             String requestorId, String source, String requestURL) {
@@ -77,7 +78,6 @@ public class ServiceInstanceRestHandler extends AbstractRestHandler {
 
     public RequestClientParameter buildRequestParams(ServiceInstancesRequest request, String requestURI,
             String requestId, String serviceInstanceId) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
         return new RequestClientParameter.Builder().setRequestId(requestId).setServiceInstanceId(serviceInstanceId)
                 .setALaCarte(true).setRequestDetails(mapper.writeValueAsString(request))
                 .setRequestAction(Action.deleteInstance.toString()).setRequestUri(requestURI).setApiVersion("v8")

@@ -106,6 +106,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class RequestHandlerUtils extends AbstractRestHandler {
 
     private static Logger logger = LoggerFactory.getLogger(RequestHandlerUtils.class);
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper nonNullMapper;
+
+    static {
+        nonNullMapper = new ObjectMapper();
+        nonNullMapper.setSerializationInclusion(Include.NON_NULL);
+    }
 
     protected static final String SAVE_TO_DB = "save instance to db";
     private static final String NAME = "name";
@@ -144,7 +151,6 @@ public class RequestHandlerUtils extends AbstractRestHandler {
 
     public Response postBPELRequest(InfraActiveRequests currentActiveReq, RequestClientParameter requestClientParameter,
             String orchestrationUri, String requestScope) throws ApiException {
-        ObjectMapper mapper = new ObjectMapper();
         ResponseEntity<String> response = postRequest(currentActiveReq, requestClientParameter, orchestrationUri);
         ServiceInstancesResponse jsonResponse = null;
         int bpelStatus = responseHandler.setStatus(response.getStatusCodeValue());
@@ -314,7 +320,6 @@ public class RequestHandlerUtils extends AbstractRestHandler {
     public ServiceInstancesRequest convertJsonToServiceInstanceRequest(String requestJSON, Actions action,
             String requestId, String requestUri) throws ApiException {
         try {
-            ObjectMapper mapper = new ObjectMapper();
             return mapper.readValue(requestJSON, ServiceInstancesRequest.class);
 
         } catch (IOException e) {
@@ -450,10 +455,8 @@ public class RequestHandlerUtils extends AbstractRestHandler {
 
     public String mapJSONtoMSOStyle(String msoRawRequest, ServiceInstancesRequest serviceInstRequest,
             boolean isAlaCarte, Actions action) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(Include.NON_NULL);
         if (serviceInstRequest != null) {
-            return mapper.writeValueAsString(serviceInstRequest);
+            return nonNullMapper.writeValueAsString(serviceInstRequest);
         } else {
             return msoRawRequest;
         }
@@ -833,9 +836,8 @@ public class RequestHandlerUtils extends AbstractRestHandler {
     }
 
     private Service serviceMapper(Map<String, Object> params) throws IOException {
-        ObjectMapper obj = new ObjectMapper();
-        String input = obj.writeValueAsString(params.get("service"));
-        return obj.readValue(input, Service.class);
+        String input = mapper.writeValueAsString(params.get("service"));
+        return mapper.readValue(input, Service.class);
     }
 
     private void addUserParams(Map<String, Object> targetUserParams, List<Map<String, String>> sourceUserParams) {

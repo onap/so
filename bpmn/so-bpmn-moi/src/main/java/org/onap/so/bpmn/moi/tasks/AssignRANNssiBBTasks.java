@@ -49,7 +49,7 @@ public class AssignRANNssiBBTasks {
     @Autowired
     private InjectionHelper injectionHelper;
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     private AAIRestClientImpl aaiRestClient = new AAIRestClientImpl();
 
