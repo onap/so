@@ -52,7 +52,6 @@ public class AAIPropertiesImpl implements org.onap.aaiclient.client.aai.AAIPrope
 
     @Override
     public String getKey() {
-        // TODO Auto-generated method stub
         return null;
     }
 

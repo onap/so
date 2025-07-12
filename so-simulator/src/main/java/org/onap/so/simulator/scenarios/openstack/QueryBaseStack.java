@@ -5,9 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import com.consol.citrus.endpoint.resolver.DynamicEndpointUriResolver;
-import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
-import com.consol.citrus.simulator.scenario.Scenario;
-import com.consol.citrus.simulator.scenario.ScenarioDesigner;
+import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
+import org.citrusframework.simulator.scenario.Scenario;
+import org.citrusframework.simulator.scenario.ScenarioDesigner;
 
 @Scenario("Openstack-QueryBaseStackByName")
 @RequestMapping(value = "/sim/v1/tenantOne/stacks/base_module_id/*", method = RequestMethod.GET)

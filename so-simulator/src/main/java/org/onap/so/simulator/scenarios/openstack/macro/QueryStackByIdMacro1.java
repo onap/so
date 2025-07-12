@@ -1,9 +1,9 @@
 package org.onap.so.simulator.scenarios.openstack.macro;
 
 import com.consol.citrus.endpoint.resolver.DynamicEndpointUriResolver;
-import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
-import com.consol.citrus.simulator.scenario.Scenario;
-import com.consol.citrus.simulator.scenario.ScenarioDesigner;
+import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
+import org.citrusframework.simulator.scenario.Scenario;
+import org.citrusframework.simulator.scenario.ScenarioDesigner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;

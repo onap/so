@@ -5,9 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.onap.so.simulator.actions.aai.DeleteVServers;
 import com.consol.citrus.endpoint.resolver.DynamicEndpointUriResolver;
-import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
-import com.consol.citrus.simulator.scenario.Scenario;
-import com.consol.citrus.simulator.scenario.ScenarioDesigner;
+import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
+import org.citrusframework.simulator.scenario.Scenario;
+import org.citrusframework.simulator.scenario.ScenarioDesigner;
 
 @Scenario("Openstack-QueryBaseVfModuleStackById")
 @RequestMapping(value = "/sim/v1/872f331350c54e59991a8de2cbffb40c/stacks/base_module_id/stackId")

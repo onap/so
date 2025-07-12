@@ -13,9 +13,9 @@
 
 package org.onap.so.simulator.scenarios;
 
-import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
-import com.consol.citrus.simulator.scenario.Scenario;
-import com.consol.citrus.simulator.scenario.ScenarioRunner;
+import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
+import org.citrusframework.simulator.scenario.Scenario;
+import org.citrusframework.simulator.scenario.ScenarioRunner;
 import org.springframework.http.HttpStatus;
 
 /**

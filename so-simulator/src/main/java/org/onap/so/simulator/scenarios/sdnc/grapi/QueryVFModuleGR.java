@@ -1,8 +1,8 @@
 package org.onap.so.simulator.scenarios.sdnc.grapi;
 
-import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
-import com.consol.citrus.simulator.scenario.Scenario;
-import com.consol.citrus.simulator.scenario.ScenarioDesigner;
+import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
+import org.citrusframework.simulator.scenario.Scenario;
+import org.citrusframework.simulator.scenario.ScenarioDesigner;
 import java.security.SecureRandom;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
