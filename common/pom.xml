@@ -14,7 +14,6 @@
     <protobuf.version>3.22.2</protobuf.version>
     <grpc.netty.version>4.1.30.Final</grpc.netty.version>
     <ccsdk.version>1.1.5</ccsdk.version>
-    <tomcat-catalina-version>9.0.105</tomcat-catalina-version>
     <logback.version>1.2.13</logback.version>
   </properties>
   <dependencies>
@@ -82,9 +81,10 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-catalina</artifactId>
-      <version>${tomcat-catalina-version}</version>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>4.0.1</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
