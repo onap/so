@@ -19,9 +19,8 @@
     <xmlunit.version>2.4.0</xmlunit.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <sdnc.northbound.version>3.0.2</sdnc.northbound.version>
     <!-- SDNC northbound API latest version -->
-    <logback-core.version>1.2.10</logback-core.version>
+    <sdnc.northbound.version>3.0.2</sdnc.northbound.version>
   </properties>
   <modules>
     <module>MSOCoreBPMN</module>

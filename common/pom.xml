@@ -37,6 +37,7 @@
     <dependency>
       <groupId>com.jayway.jsonpath</groupId>
       <artifactId>json-path</artifactId>
+      <version>2.5.0</version>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
@@ -145,6 +146,10 @@
           <groupId>io.springfox</groupId>
           <artifactId>springfox-boot-starter</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.kafka</groupId>
+          <artifactId>kafka-clients</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <!-- protobuf dependencies -->
@@ -238,11 +243,7 @@
     <dependency>
       <groupId>javax.cache</groupId>
       <artifactId>cache-api</artifactId>
-      <version>1.0.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.ehcache</groupId>
-      <artifactId>ehcache</artifactId>
+      <version>1.1.0</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
@@ -252,7 +253,7 @@
     <dependency>
       <groupId>org.apache.kafka</groupId>
       <artifactId>kafka-clients</artifactId>
-      <version>3.3.1</version>
+      <version>${kafka-clients.version}</version>
     </dependency>
     <dependency>
       <groupId>uk.org.webcompere</groupId>

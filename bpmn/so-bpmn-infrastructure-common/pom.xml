@@ -220,7 +220,6 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-core</artifactId>
-      <version>${logback-core.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

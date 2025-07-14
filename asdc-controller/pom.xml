@@ -16,7 +16,6 @@
     <sdc.tosca.version>1.6.5</sdc.tosca.version>
     <jtosca.version>1.5.1</jtosca.version>
     <sdc-dist-client.version>2.0.0</sdc-dist-client.version>
-    <kafka-clients.version>3.3.2</kafka-clients.version>
   </properties>
   <build>
     <finalName>${project.artifactId}-${project.version}</finalName>
