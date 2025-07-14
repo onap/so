@@ -66,9 +66,9 @@
     <siteNexusPath>content/sites/site/org/onap/so/${project.version}/</siteNexusPath>
     <cxf.version>3.4.10</cxf.version>
     <jax.ws.rs>2.1</jax.ws.rs>
-    <springboot.version>2.4.13</springboot.version>
+    <springboot.version>2.5.15</springboot.version>
     <spring-cloud.version>2020.0.6</spring-cloud.version>
-    <camunda.version>7.15.0</camunda.version>
+    <camunda.version>7.16.0</camunda.version>
     <format.skipValidate>false</format.skipValidate>
     <format.skipExecute>true</format.skipExecute>
     <io.fabric8.version>0.33.0</io.fabric8.version>
@@ -80,6 +80,7 @@
     <grpc.version>1.25.0</grpc.version>
     <logback.version>1.2.11</logback.version>
     <kafka-clients.version>3.3.2</kafka-clients.version>
+    <lombok.version>1.18.38</lombok.version>
   </properties>
   <distributionManagement>
     <repository>
@@ -239,9 +240,16 @@
             <arg>-parameters</arg>
           </compilerArgs>
           <forceJavacCompilerUse>true</forceJavacCompilerUse>
-          <source>11</source>
-          <target>11</target>
-          <release>11</release>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <release>${java.version}</release>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>${lombok.version}</version>
+            </path>
+				  </annotationProcessorPaths>
         </configuration>
       </plugin>
       <plugin>
@@ -895,7 +903,8 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.38</version>
+      <version>${lombok.version}</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
   <dependencyManagement>
