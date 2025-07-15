@@ -1,0 +1,660 @@
+{
+                "physical-location-id": "MTCWNJA4DCP",
+                "complex-name": "mtcnj",
+                "resource-version": "1498188613044",
+                "physical-location-type": "Mobility",
+                "street1": "200 S. Laurel Ave, Rm A4-3C30",
+                "city": "Middletown",
+                "state": "NJ",
+                "postal-code": "07748",
+                "country": "USA",
+                "region": "US",
+                "latitude": "40.39596",
+                "longitude": "-74.135342",
+                "lata": "224",
+                "ctag-pools": {
+                    "ctag-pool": [
+                        {
+                            "target-pe": "sfcca301vr1",
+                            "availability-zone-name": "mtcnj-esx-az01",
+                            "ctag-pool-purpose": "IPAG",
+                            "ctag-values": "2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025",
+                            "resource-version": "1494254946087",
+                            "relationship-list": {
+                                "relationship": [
+                                    {
+                                        "related-to": "vpls-pe",
+                                        "related-link": "https://localhost:8443/aai/v9/network/vpls-pes/vpls-pe/sfcca301vr1",
+                                        "relationship-data": [
+                                            {
+                                                "relationship-key": "vpls-pe.equipment-name",
+                                                "relationship-value": "sfcca301vr1"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "target-pe": "VPESAT-mtcnj401me6",
+                            "availability-zone-name": "mtcnj-esx-az01",
+                            "ctag-pool-purpose": "VPE",
+                            "ctag-values": "3001,3002,3003,3004,3005,3006,3007,3008,3009,3010,3011,3012,3013,3014,3015,3016,3017,3018,3019,3020,3021,3022,3023,3024,3025,3026,3027,3028,3029,3030,3031,3032,3033,3034,3035,3036,3037,3038,3039,3040,3041,3042,3043,3044,3045,3046,3047,3048,3049,3050",
+                            "resource-version": "1494254975977"
+                        }
+                    ]
+                },
+                "relationship-list": {
+                    "relationship": [
+                        {
+                            "related-to": "vce",
+                            "related-link": "https://localhost:8443/aai/v9/network/vces/vce/a9fec18e-1ea3-40e4-a6c0-a89b3de07053",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "vce.vnf-id",
+                                    "relationship-value": "a9fec18e-1ea3-40e4-a6c0-a89b3de07053"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "vce.vnf-name",
+                                    "property-value": "mtcnj411vbc"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj104snd",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj104snd"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj105snd",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj105snd"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/compute_host",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "compute_host"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj106snd",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj106snd"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj126sd9",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj126sd9"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "vce",
+                            "related-link": "https://localhost:8443/aai/v9/network/vces/vce/8ae1e5f8-61f1-4c71-913a-b40cc4593cb9",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "vce.vnf-id",
+                                    "relationship-value": "8ae1e5f8-61f1-4c71-913a-b40cc4593cb9"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "vce.vnf-name",
+                                    "property-value": "mtcnj411vbc"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj102sta",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj102sta"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnjtax102",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnjtax102"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj107snd",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj107snd"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj118snd",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj118snd"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj110snd",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj110snd"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj109snd",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj109snd"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj114snd",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj114snd"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj119snd",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj119snd"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj116snd",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj116snd"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "vce",
+                            "related-link": "https://localhost:8443/aai/v9/network/vces/vce/a2935fa9-b743-49f4-9813-a127f13c4e93",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "vce.vnf-id",
+                                    "relationship-value": "a2935fa9-b743-49f4-9813-a127f13c4e93"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "vce.vnf-name",
+                                    "property-value": "mtcnj410vbc"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj108snd",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj108snd"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj123sd9",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj123sd9"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj101snd",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj101snd"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj102snd",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj102snd"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnjtax101",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnjtax101"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj113snd",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj113snd"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj111snd",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj111snd"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj103snd",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj103snd"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj117snd",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj117snd"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj101sta",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj101sta"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "vce",
+                            "related-link": "https://localhost:8443/aai/v9/network/vces/vce/c7fe7698-8063-4e26-8bd3-ca3edde0b0d4",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "vce.vnf-id",
+                                    "relationship-value": "c7fe7698-8063-4e26-8bd3-ca3edde0b0d4"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "vce.vnf-name",
+                                    "property-value": "mtcnj412vbc"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj120snd",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj120snd"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj124sd9",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj124sd9"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj125sd9",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj125sd9"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj112snd",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj112snd"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "pserver",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj115snd",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "mtcnj115snd"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "cloud-region",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtcnj2",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "cloud-region.cloud-owner",
+                                    "relationship-value": "CloudOwner"
+                                },
+                                {
+                                    "relationship-key": "cloud-region.cloud-region-id",
+                                    "relationship-value": "mtcnj2"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "cloud-region.owner-defined-type",
+                                    "property-value": "lcp"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "oam-network",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/AAIAIC25/oam-networks/oam-network/f9263cat-4eaa-43a0-bea4-adcf6e123456",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "cloud-region.cloud-owner",
+                                    "relationship-value": "CloudOwner"
+                                },
+                                {
+                                    "relationship-key": "cloud-region.cloud-region-id",
+                                    "relationship-value": "AAIAIC25"
+                                },
+                                {
+                                    "relationship-key": "oam-network.network-uuid",
+                                    "relationship-value": "f9263cat-4eaa-43a0-bea4-adcf6e123456"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "oam-network.network-name",
+                                    "property-value": "VLAN-OAM-1323"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "oam-network",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/AAIAIC25/oam-networks/oam-network/b9263fab-4eaa-43a0-bea4-adcf6e999999",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "cloud-region.cloud-owner",
+                                    "relationship-value": "CloudOwner"
+                                },
+                                {
+                                    "relationship-key": "cloud-region.cloud-region-id",
+                                    "relationship-value": "AAIAIC25"
+                                },
+                                {
+                                    "relationship-key": "oam-network.network-uuid",
+                                    "relationship-value": "b9263fab-4eaa-43a0-bea4-adcf6e999999"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "oam-network.network-name",
+                                    "property-value": "VLAN-OAM-1323"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "oam-network",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/AAIAIC25/oam-networks/oam-network/cf33dc95-c5d2-48fd-8078-fd949363f63b",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "cloud-region.cloud-owner",
+                                    "relationship-value": "CloudOwner"
+                                },
+                                {
+                                    "relationship-key": "cloud-region.cloud-region-id",
+                                    "relationship-value": "AAIAIC25"
+                                },
+                                {
+                                    "relationship-key": "oam-network.network-uuid",
+                                    "relationship-value": "cf33dc95-c5d2-48fd-8078-fd949363f63b"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "oam-network.network-name",
+                                    "property-value": "VLAN-OAM-1323"
+                                }
+                            ]
+                        },
+                        {
+                            "related-to": "availability-zone",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/AAIAIC25/availability-zones/availability-zone/mtcnj-esx-az01",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "cloud-region.cloud-owner",
+                                    "relationship-value": "CloudOwner"
+                                },
+                                {
+                                    "relationship-key": "cloud-region.cloud-region-id",
+                                    "relationship-value": "AAIAIC25"
+                                },
+                                {
+                                    "relationship-key": "availability-zone.availability-zone-name",
+                                    "relationship-value": "mtcnj-esx-az01"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
