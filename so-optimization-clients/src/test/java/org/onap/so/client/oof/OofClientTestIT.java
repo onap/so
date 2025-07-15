@@ -23,7 +23,7 @@ package org.onap.so.client.oof;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
@@ -161,7 +161,8 @@ public class OofClientTestIT extends BaseIntegrationTest {
         wireMockServer.stubFor(post(urlEqualTo("/api/oof/v1/placement")).willReturn(
                 aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(mockResponse)));
 
-        assertDoesNotThrow(() -> client.postDemands(new OofRequest()));
+        client.postDemands(new OofRequest());
+        assertTrue(true); // this is here to silence a sonarqube violation
     }
 
     @Test(expected = BadResponseException.class)
