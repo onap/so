@@ -21,7 +21,7 @@
 package org.onap.so.apihandlerinfra.tenantisolationbeans;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.Assert.assertTrue;
 import java.util.List;
 import org.junit.Test;
 import org.onap.so.apihandlerinfra.BaseTest;
@@ -44,8 +44,8 @@ public class TenantIsolationBeansTest extends BaseTest {
     @Test
     public void ensureExpectedPojoCount() {
         List<PojoClass> pojoClasses = PojoClassFactory.getPojoClasses(POJO_PACKAGE, new FilterPackageInfo());
-        assertDoesNotThrow(
-                () -> Affirm.affirmEquals("Classes added / removed?", EXPECTED_CLASS_COUNT, pojoClasses.size()));
+        Affirm.affirmEquals("Classes added / removed?", EXPECTED_CLASS_COUNT, pojoClasses.size());
+        assertTrue(true); // this is here to silence a sonarqube violation
     }
 
     @Test
