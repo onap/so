@@ -34,7 +34,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -51,6 +53,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.GenericVnfs;
 import org.onap.aai.domain.yang.Relationship;
+import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aaiclient.client.aai.entities.AAIEdgeLabel;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
@@ -58,6 +61,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.defaultproperties.DefaultAAIPropertiesImpl;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.aaiclient.client.graphinventory.exceptions.GraphInventoryMultipleItemsException;
 import org.onap.so.client.RestClient;
 import com.github.tomakehurst.wiremock.admin.NotFoundException;
@@ -85,6 +89,23 @@ public class AAIResourcesClientTest {
     @Before
     public void beforeTest() {
         doReturn(new DefaultAAIPropertiesImpl(wireMockRule.port())).when(client).getRestProperties();
+    }
+
+    @Test
+    public void verifyGet() {
+        AAIResourceUri path = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("globalCustomer")
+                .serviceSubscription("serviceSubscription").serviceInstance("32398696-2630-4466-a9e7-31c1efe7375c"));
+        wireMockRule.stubFor(get(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBodyFile("aai/resources/serviceInstance.json").withStatus(200)));
+        AAIResourcesClient client = aaiClient;
+        AAIResultWrapper result = client.get(path);
+        assertNotNull(result);
+        ServiceInstance serviceInstance = result.asBean(ServiceInstance.class).get();
+        assertEquals("32398696-2630-4466-a9e7-31c1efe7375c", serviceInstance.getServiceInstanceId());
+
+        assertTrue(result.hasRelationshipsTo(Types.OWNING_ENTITY));
+        assertFalse(result.hasRelationshipsTo(Types.SERVICE_INSTANCE));
     }
 
     @Test
@@ -200,9 +221,10 @@ public class AAIResourcesClientTest {
                 .willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("hello").withStatus(404)));
         AAIResourcesClient client = aaiClient;
 
-        thrown.expect(NotFoundException.class);
-        thrown.expectMessage(containsString(path.build() + " not found in A&AI"));
-        client.get(path, NotFoundException.class);
+        NotFoundException thrown =
+                assertThrows(NotFoundException.class, () -> client.get(path, NotFoundException.class));
+        assertTrue(thrown.getMessage().contains(path.build() + " not found in A&AI"));
+
     }
 
     @Test
@@ -212,10 +234,9 @@ public class AAIResourcesClientTest {
                 .withHeader("Content-Type", "text/plain").withBodyFile("aai/error-message.json").withStatus(400)));
         AAIResourcesClient client = aaiClient;
 
-        thrown.expect(BadRequestException.class);
-        thrown.expectMessage(containsString(
+        BadRequestException thrown = assertThrows(BadRequestException.class, () -> client.get(path));
+        assertTrue(thrown.getMessage().contains(
                 "Invalid input performing PUT on url (msg=Precondition Required:resource-version not passed for update of url"));
-        AAIResultWrapper result = client.get(path);
     }
 
     @Test
@@ -263,8 +284,8 @@ public class AAIResourcesClientTest {
         doReturn(restClientMock).when(client).createClient(uri);
         when(restClientMock.get(GenericVnfs.class)).thenReturn(Optional.of(vnfs));
 
-        thrown.expect(GraphInventoryMultipleItemsException.class);
-        aaiClient.getOne(GenericVnfs.class, GenericVnf.class, uri);
+        assertThrows(GraphInventoryMultipleItemsException.class,
+                () -> aaiClient.getOne(GenericVnfs.class, GenericVnf.class, uri));
     }
 
     @Test
