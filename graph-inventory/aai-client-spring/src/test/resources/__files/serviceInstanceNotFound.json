@@ -1,0 +1,14 @@
+{
+  "requestError": {
+    "serviceException": {
+      "messageId": "SVC3001",
+      "text": "Resource not found for %1 using id %2 (msg=%3) (ec=%4)",
+      "variables": [
+        "GET",
+        "nodes/service-instances/service-instance/32398696-2630-4466-a9e7-31c1efe7375c",
+        "Node Not Found:No Node of type service-instance found at: nodes/service-instances/service-instance/32398696-2630-4466-a9e7-31c1efe7375c",
+        "ERR.5.4.6114"
+      ]
+    }
+  }
+}
