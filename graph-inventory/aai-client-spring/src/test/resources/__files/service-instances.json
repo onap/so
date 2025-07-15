@@ -1,0 +1,30 @@
+{
+  "service-instance": [
+    {
+      "service-instance-id": "32398696-2630-4466-a9e7-31c1efe7375c",
+      "service-instance-name": "Service_Ete_Name74d12c9e-9b9d-43df-a8ce-a805460b8db9",
+      "environment-context": "General_Revenue-Bearing",
+      "workload-context": "Production",
+      "model-invariant-id": "22fcc250-b3d1-4e31-af15-b6131533f622",
+      "model-version-id": "9696b7b2-8852-4920-8b5c-0482ad46a241",
+      "resource-version": "1752594958741",
+      "selflink": "rests/data/GENERIC-RESOURCE-API:services/service=32398696-2630-4466-a9e7-31c1efe7375c/service-data/service-topology?content=config",
+      "orchestration-status": "Active",
+      "relationship-list": {
+        "relationship": [
+          {
+            "related-to": "owning-entity",
+            "relationship-label": "org.onap.relationships.inventory.BelongsTo",
+            "related-link": "/aai/v30/business/owning-entities/owning-entity/46bbd369-58c4-4e27-9b09-00463669359f",
+            "relationship-data": [
+              {
+                "relationship-key": "owning-entity.owning-entity-id",
+                "relationship-value": "46bbd369-58c4-4e27-9b09-00463669359f"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
