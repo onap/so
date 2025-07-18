@@ -34,7 +34,7 @@ import org.onap.aaiclient.client.aai.entities.singletransaction.SingleTransactio
 import org.onap.aaiclient.client.aai.entities.singletransaction.SingleTransactionResponse;
 import org.onap.aaiclient.client.aai.entities.uri.AAIBaseResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryPatchConverter;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryTransactionClient;
 import org.onap.aaiclient.client.graphinventory.exceptions.BulkProcessFailed;
@@ -67,7 +67,7 @@ public class AAISingleTransactionClient extends
         try {
             if (!this.request.getOperations().isEmpty()) {
                 RestClient client =
-                        aaiClient.createClient(AAIUriFactory.createResourceUri(AAIObjectType.SINGLE_TRANSACTION));
+                        aaiClient.createClient(AAIClientUriFactory.createResourceUri(AAIObjectType.SINGLE_TRANSACTION));
                 SingleTransactionResponse response = client.post(this.request, SingleTransactionResponse.class);
                 if (response != null) {
                     final Optional<String> errorMessage = this.locateErrorMessages(response);

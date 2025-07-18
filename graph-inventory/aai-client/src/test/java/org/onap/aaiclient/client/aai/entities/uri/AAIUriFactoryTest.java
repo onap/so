@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,7 +31,7 @@ public class AAIUriFactoryTest {
     public void testCreateResourceUri() {
 
         AAIResourceUri uri =
-                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("VIP(VelocitytoIP)"));
+                AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("VIP(VelocitytoIP)"));
 
         String expected = "/network/generic-vnfs/generic-vnf/VIP%28VelocitytoIP%29";
         assertEquals(expected, uri.build().toString());
@@ -40,7 +40,7 @@ public class AAIUriFactoryTest {
     @Test
     public void testCreateNodesUri() {
 
-        AAIResourceUri uri = AAIUriFactory.createNodesUri(Types.GENERIC_VNF.getFragment("VIP(VelocitytoIP)"));
+        AAIResourceUri uri = AAIClientUriFactory.createNodesUri(Types.GENERIC_VNF.getFragment("VIP(VelocitytoIP)"));
 
         String expected = "/nodes/generic-vnfs/generic-vnf/VIP%28VelocitytoIP%29";
         assertEquals(expected, uri.build().toString());
@@ -51,7 +51,7 @@ public class AAIUriFactoryTest {
 
         AAIResourceUri uri =
                 new AAISimpleUri(AAIFluentTypeBuilder.network().genericVnf("").build(), "VIP(VelocitytoIP)");
-        AAIResourceUri uri2 = AAIUriFactory.createResourceFromExistingURI(Types.GENERIC_VNF, uri.build());
+        AAIResourceUri uri2 = AAIClientUriFactory.createResourceFromExistingURI(Types.GENERIC_VNF, uri.build());
 
         String expected = "/network/generic-vnfs/generic-vnf/VIP%28VelocitytoIP%29";
         assertEquals(expected, uri2.build().toString());
@@ -60,7 +60,7 @@ public class AAIUriFactoryTest {
     @Test
     public void testCreateResourceURIForPluralsWithValues() {
 
-        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+        AAIPluralResourceUri uri = AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
                 .customer("customerId").serviceSubscription("serviceType").serviceInstances());
 
         String expected =
@@ -71,7 +71,7 @@ public class AAIUriFactoryTest {
     @Test
     public void testCreateResourceURIForPluralsWithNoValues() {
 
-        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customers());
+        AAIPluralResourceUri uri = AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customers());
 
         String expected = "/business/customers";
         assertEquals(expected, uri.build().toString());

@@ -37,7 +37,7 @@ import org.onap.aaiclient.client.aai.entities.bulkprocess.Transaction;
 import org.onap.aaiclient.client.aai.entities.bulkprocess.Transactions;
 import org.onap.aaiclient.client.aai.entities.uri.AAIBaseResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryPatchConverter;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryTransactionClient;
 import org.onap.aaiclient.client.graphinventory.exceptions.BulkProcessFailed;
@@ -90,7 +90,8 @@ public class AAITransactionalClient extends
     public void execute() throws BulkProcessFailed {
         try {
             if (!this.transactions.getTransactions().isEmpty()) {
-                RestClient client = aaiClient.createClient(AAIUriFactory.createResourceUri(AAIObjectType.BULK_PROCESS));
+                RestClient client =
+                        aaiClient.createClient(AAIClientUriFactory.createResourceUri(AAIObjectType.BULK_PROCESS));
                 Response response = client.put(this.transactions);
                 if (response.hasEntity()) {
                     final Optional<String> errorMessage = this.locateErrorMessages(response.readEntity(String.class));

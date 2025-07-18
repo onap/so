@@ -32,6 +32,8 @@ import javax.ws.rs.core.UriBuilder;
 import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.Results;
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAISimpleUri;
 import org.onap.aaiclient.client.graphinventory.Format;
 import org.onap.aaiclient.client.graphinventory.entities.Pathed;
 import org.onap.aaiclient.client.graphinventory.entities.uri.HttpAwareUri;
@@ -62,7 +64,7 @@ public abstract class HttpLookupUri extends AAISimpleUri implements HttpAwareUri
     protected String getObjectById(Object id)
             throws GraphInventoryUriNotFoundException, GraphInventoryPayloadException {
         if (!this.getCachedValue().isPresent()) {
-            AAIResourceUri serviceInstanceUri = AAIUriFactory.createNodesUri(aaiType, id).format(Format.PATHED);
+            AAIResourceUri serviceInstanceUri = AAIClientUriFactory.createNodesUri(aaiType, id).format(Format.PATHED);
             String resultJson;
             try {
                 resultJson = this.getResourcesClient().get(serviceInstanceUri, NotFoundException.class).getJson();

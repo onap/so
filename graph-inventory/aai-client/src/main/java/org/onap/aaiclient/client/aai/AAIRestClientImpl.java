@@ -33,7 +33,7 @@ import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aaiclient.client.aai.entities.CustomQuery;
 import org.onap.aaiclient.client.aai.entities.Results;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.graphinventory.Format;
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
@@ -50,7 +50,7 @@ public class AAIRestClientImpl implements AAIRestClientI {
     @Override
     public List<Pserver> getPhysicalServerByVnfId(String vnfId) throws IOException {
         List<AAIResourceUri> startNodes = new ArrayList<>();
-        startNodes.add(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId)));
+        startNodes.add(AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId)));
         String jsonInput = new AAIQueryClient().query(Format.RESOURCE, new CustomQuery(startNodes, PSERVER_VNF_QUERY));
 
         return this.getListOfPservers(jsonInput);
@@ -72,21 +72,23 @@ public class AAIRestClientImpl implements AAIRestClientI {
     public void updateMaintenceFlagVnfId(String vnfId, boolean inMaint) {
         GenericVnf genericVnf = new GenericVnf();
         genericVnf.setInMaint(inMaint);
-        new AAIResourcesClient()
-                .update(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId)), genericVnf);
+        new AAIResourcesClient().update(
+                AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId)), genericVnf);
 
     }
 
     @Override
     public GenericVnf getVnfByName(String vnfId) {
-        return new AAIResourcesClient().get(GenericVnf.class,
-                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId))).orElse(null);
+        return new AAIResourcesClient()
+                .get(GenericVnf.class,
+                        AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId)))
+                .orElse(null);
     }
 
     @Override
     public Optional<Pnf> getPnfByName(String pnfId) {
         Response response = new AAIResourcesClient()
-                .getFullResponse(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(pnfId)));
+                .getFullResponse(AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(pnfId)));
         if (response.getStatus() != 200) {
             return Optional.empty();
         } else {
@@ -97,20 +99,20 @@ public class AAIRestClientImpl implements AAIRestClientI {
     @Override
     public void createPnf(String pnfId, Pnf pnf) {
         new AAIResourcesClient().createIfNotExists(
-                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(pnfId)), Optional.of(pnf));
+                AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(pnfId)), Optional.of(pnf));
     }
 
     @Override
     public void updatePnf(String pnfId, Pnf pnf) {
-        new AAIResourcesClient().update(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(pnfId)),
-                pnf);
+        new AAIResourcesClient()
+                .update(AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(pnfId)), pnf);
     }
 
     @Override
     public Optional<ServiceInstance> getServiceInstanceById(String serviceInstanceId, String serviceType,
             String globalSubscriberId) {
         Response response = new AAIResourcesClient().getFullResponse(
-                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId)
+                AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId)
                         .serviceSubscription(serviceType).serviceInstance(serviceInstanceId)));
         return Optional.ofNullable(response.readEntity(ServiceInstance.class));
     }
@@ -119,7 +121,7 @@ public class AAIRestClientImpl implements AAIRestClientI {
             String globalSubscriberId) {
         Response response =
                 new AAIResourcesClient()
-                        .getFullResponse(AAIUriFactory
+                        .getFullResponse(AAIClientUriFactory
                                 .createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId)
                                         .serviceSubscription(serviceType).serviceInstance(serviceInstanceId))
                                 .depth(Depth.ALL));
@@ -130,7 +132,7 @@ public class AAIRestClientImpl implements AAIRestClientI {
     public void updateServiceInstance(String serviceInstanceId, String serviceType, String globalSubscriberId,
             ServiceInstance serviceInstance) {
         try {
-            new AAIResourcesClient().update(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
+            new AAIResourcesClient().update(AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.business()
                     .customer(globalSubscriberId).serviceSubscription(serviceType).serviceInstance(serviceInstanceId)),
                     serviceInstance);
         } catch (Throwable ex) {
