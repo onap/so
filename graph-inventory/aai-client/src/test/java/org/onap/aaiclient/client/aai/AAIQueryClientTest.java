@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,7 +47,7 @@ import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.CustomQuery;
 import org.onap.aaiclient.client.aai.entities.Results;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.aaiclient.client.graphinventory.Format;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryClient;
@@ -79,7 +79,7 @@ public class AAIQueryClientTest {
 
     @Test
     public void testQuery() {
-        List<AAIResourceUri> uris = Arrays.asList(AAIUriFactory.createResourceUri(AAIObjectType.CUSTOM_QUERY));
+        List<AAIResourceUri> uris = Arrays.asList(AAIClientUriFactory.createResourceUri(AAIObjectType.CUSTOM_QUERY));
 
         Format format = Format.SIMPLE;
         CustomQuery query = new CustomQuery(uris);
@@ -87,7 +87,7 @@ public class AAIQueryClientTest {
         doReturn(restClient).when(client).createClient(isA(AAIResourceUri.class));
         aaiQueryClient.query(format, query);
         verify(client, times(1))
-                .createClient(AAIUriFactory.createResourceUri(AAIObjectType.CUSTOM_QUERY).format(format));
+                .createClient(AAIClientUriFactory.createResourceUri(AAIObjectType.CUSTOM_QUERY).format(format));
         verify(restClient, times(1)).put(query, String.class);
     }
 
@@ -100,7 +100,7 @@ public class AAIQueryClientTest {
         aaiQueryClient.nodesOnly();
         aaiQueryClient.subgraph(subgraph);
 
-        AAIResourceUri aaiUri = spy(AAIUriFactory.createResourceUri(AAIObjectType.CUSTOM_QUERY));
+        AAIResourceUri aaiUri = spy(AAIClientUriFactory.createResourceUri(AAIObjectType.CUSTOM_QUERY));
         doReturn(aaiUri).when(aaiUri).clone();
         aaiQueryClient.setupQueryParams(aaiUri);
 
@@ -114,7 +114,7 @@ public class AAIQueryClientTest {
         doReturn(getJson("single-query-result.json")).when(aaiQueryClient).query(eq(Format.RESOURCE_AND_URL),
                 any(CustomQuery.class));
         List<Complex> result = aaiQueryClient.querySingleResource(
-                new CustomQuery(Arrays.asList(AAIUriFactory.createNodesUri(Types.COMPLEX.getFragment("test")))),
+                new CustomQuery(Arrays.asList(AAIClientUriFactory.createNodesUri(Types.COMPLEX.getFragment("test")))),
                 Complex.class);
         assertEquals(2, result.size());
         assertEquals("complex-id-15100-jc689q2", result.get(1).getPhysicalLocationId());
@@ -125,7 +125,7 @@ public class AAIQueryClientTest {
         doReturn(getJson("single-query-result.json")).when(aaiQueryClient).query(eq(Format.RESOURCE_AND_URL),
                 any(CustomQuery.class));
         List<ResourceAndUrl<AAIResultWrapper>> result = aaiQueryClient.getResourceAndUrl(
-                new CustomQuery(Arrays.asList(AAIUriFactory.createNodesUri(Types.COMPLEX.getFragment("test")))));
+                new CustomQuery(Arrays.asList(AAIClientUriFactory.createNodesUri(Types.COMPLEX.getFragment("test")))));
         assertEquals(2, result.size());
 
         assertEquals(1, result.get(1).getWrapper().getRelationships().get().getRelatedUris(Types.PSERVER).size());
@@ -139,7 +139,7 @@ public class AAIQueryClientTest {
 
 
         List<Pathed> results = aaiQueryClient.queryPathed(
-                new CustomQuery(Arrays.asList(AAIUriFactory.createNodesUri(Types.COMPLEX.getFragment("test")))));
+                new CustomQuery(Arrays.asList(AAIClientUriFactory.createNodesUri(Types.COMPLEX.getFragment("test")))));
 
         assertEquals(2, results.size());
         assertEquals("service-instance", results.get(1).getResourceType());

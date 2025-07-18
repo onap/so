@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,14 +39,15 @@ public class AAISimpleUriTest {
 
     @Test
     public void relatedToTestPlural() {
-        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"))
-                .relatedTo(Types.PSERVERS.getFragment());
+        AAIPluralResourceUri uri =
+                AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"))
+                        .relatedTo(Types.PSERVERS.getFragment());
         String uriOutput = uri.build().toString();
 
         String expected = "/network/generic-vnfs/generic-vnf/test1/related-to/pservers";
         assertEquals(expected, uriOutput);
 
-        uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"))
+        uri = AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"))
                 .relatedTo(Types.PSERVERS.getFragment());
         uriOutput = uri.build().toString();
         assertEquals(expected, uriOutput);
@@ -54,14 +55,14 @@ public class AAISimpleUriTest {
 
     @Test
     public void relatedToTestSingular() {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"))
+        AAIResourceUri uri = AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"))
                 .relatedTo(Types.PSERVER.getFragment("test2"));
         String uriOutput = uri.build().toString();
 
         String expected = "/network/generic-vnfs/generic-vnf/test1/related-to/pservers/pserver/test2";
         assertEquals(expected, uriOutput);
 
-        uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"))
+        uri = AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"))
                 .relatedTo(Types.PSERVER.getFragment("test2"));
 
         uriOutput = uri.build().toString();
@@ -72,7 +73,7 @@ public class AAISimpleUriTest {
 
     @Test
     public void cloneTestSingular() {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"));
+        AAIResourceUri uri = AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"));
         AAIResourceUri cloned = uri.clone();
         assertEquals("/network/generic-vnfs/generic-vnf/test1", cloned.build().toString());
 
@@ -83,14 +84,14 @@ public class AAISimpleUriTest {
 
     @Test
     public void cloneTestPlural() {
-        AAISimplePluralUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnfs());
+        AAISimplePluralUri uri = AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnfs());
         AAISimplePluralUri cloned = uri.clone();
         assertEquals("/network/generic-vnfs", cloned.build().toString());
     }
 
     @Test
     public void cloneTestWithRelatedTo() {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"))
+        AAIResourceUri uri = AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"))
                 .relatedTo(Types.PSERVER.getFragment("test2"));
         String uriOutput = uri.clone().build().toString();
         assertEquals("/network/generic-vnfs/generic-vnf/test1/related-to/pservers/pserver/test2", uriOutput);
@@ -98,15 +99,16 @@ public class AAISimpleUriTest {
 
     @Test
     public void cloneTestPluralWithRelatedTo() {
-        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"))
-                .relatedTo(Types.PSERVERS.getFragment());
+        AAIPluralResourceUri uri =
+                AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"))
+                        .relatedTo(Types.PSERVERS.getFragment());
         String uriOutput = uri.clone().build().toString();
         assertEquals("/network/generic-vnfs/generic-vnf/test1/related-to/pservers", uriOutput);
     }
 
     @Test
     public void getKeysTest() {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+        AAIResourceUri uri = AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
                 .cloudRegion("cloud1", "cloud2").tenant("tenant1").vserver("vserver1"));
         Map<String, String> keys = uri.getURIKeys();
         System.out.println(keys);
@@ -116,7 +118,7 @@ public class AAISimpleUriTest {
 
     @Test
     public void getEncodedKeyTest() {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("test1")
+        AAIResourceUri uri = AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("test1")
                 .serviceSubscription("my value").serviceInstance("test3"));
         Map<String, String> keys = uri.getURIKeys();
 
@@ -125,7 +127,7 @@ public class AAISimpleUriTest {
 
     @Test
     public void serializeTest() throws IOException, ClassNotFoundException {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"));
+        AAIResourceUri uri = AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"));
 
         uri.depth(Depth.ONE);
         uri.limit(1);
@@ -150,7 +152,7 @@ public class AAISimpleUriTest {
 
     @Test
     public void fluentBuilderTest() {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
+        AAIResourceUri uri = AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
                 .cloudRegion("cloud1", "cloud-id").tenant("tenant-id").vserver("vserver-id"));
 
         assertEquals(
