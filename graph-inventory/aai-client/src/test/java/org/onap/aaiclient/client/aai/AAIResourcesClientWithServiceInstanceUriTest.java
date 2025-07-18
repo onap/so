@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,7 +42,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory;
 import org.onap.aaiclient.client.aai.entities.uri.ServiceInstanceUri;
 import org.onap.aaiclient.client.defaultproperties.DefaultAAIPropertiesImpl;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
@@ -71,7 +71,7 @@ public class AAIResourcesClientWithServiceInstanceUriTest {
         wireMockRule.stubFor(get(urlMatching("/aai/v[0-9]+/nodes.*")).willReturn(
                 aResponse().withStatus(404).withHeader("Content-Type", "application/json").withHeader("Mock", "true")));
 
-        uri = spy((ServiceInstanceUri) AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment("id")));
+        uri = spy((ServiceInstanceUri) AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment("id")));
         doReturn(aaiClient).when(uri).getResourcesClient();
     }
 
