@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,7 +34,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.aaiclient.client.graphinventory.entities.GraphInventoryEdgeLabel;
-import org.onap.aaiclient.client.graphinventory.entities.GraphInventoryResultWrapper;
 import org.onap.aaiclient.client.graphinventory.entities.uri.GraphInventoryPluralResourceUri;
 import org.onap.aaiclient.client.graphinventory.entities.uri.GraphInventoryResourceUri;
 import org.onap.aaiclient.client.graphinventory.entities.uri.GraphInventorySingleResourceUri;
@@ -57,7 +56,7 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
 
     /**
      * creates a new object in GraphInventory
-     * 
+     *
      * @param obj - can be any object which will marshal into a valid GraphInventory payload
      * @param uri
      * @return
@@ -69,7 +68,7 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
 
     /**
      * creates a new object in GraphInventory with no payload body
-     * 
+     *
      * @param uri
      * @return
      */
@@ -80,7 +79,7 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
 
     /**
      * returns false if the object does not exist in GraphInventory
-     * 
+     *
      * @param uri
      * @return
      */
@@ -99,7 +98,7 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
 
     /**
      * Adds a relationship between two objects in GraphInventory
-     * 
+     *
      * @param uriA
      * @param uriB
      * @return
@@ -112,7 +111,7 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
 
     /**
      * Adds a relationship between two objects in GraphInventory with a given edge label
-     * 
+     *
      * @param uriA
      * @param uriB
      * @param edge label
@@ -126,7 +125,7 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
 
     /**
      * Removes relationship from two objects in GraphInventory
-     * 
+     *
      * @param uriA
      * @param uriB
      * @return
@@ -139,7 +138,7 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
 
     /**
      * Deletes object from GraphInventory. Automatically handles resource-version.
-     * 
+     *
      * @param uri
      * @return
      */
@@ -156,7 +155,7 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
 
     /**
      * Deletes object from GraphInventory only if exists. Automatically handles resource-version.
-     * 
+     *
      * @param uri
      * @return
      */
@@ -186,7 +185,7 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
 
     /**
      * Retrieves an object from GraphInventory and unmarshalls it into the Class specified
-     * 
+     *
      * @param clazz
      * @param uri
      * @return
@@ -205,7 +204,7 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
 
     /**
      * Retrieves an object from GraphInventory and returns complete response
-     * 
+     *
      * @param uri
      * @return
      */
@@ -223,7 +222,7 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
 
     /**
      * Retrieves an object from GraphInventory and automatically unmarshalls it into a Map or List
-     * 
+     *
      * @param resultClass
      * @param uri
      * @return
@@ -324,7 +323,7 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
 
     /**
      * Retrieves an object from GraphInventory wrapped in a helper class which offer additional features
-     * 
+     *
      * @param uri
      * @return
      */
@@ -345,7 +344,7 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
     /**
      * Retrieves an object from GraphInventory wrapped in a helper class which offer additional features If the object
      * cannot be found in GraphInventory the method will throw the runtime exception included as an argument
-     * 
+     *
      * @param uri
      * @return
      */
@@ -380,7 +379,7 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
 
     /**
      * Will automatically create the object if it does not exist
-     * 
+     *
      * @param obj - Optional object which serializes to a valid GraphInventory payload
      * @param uri
      * @return
@@ -424,14 +423,14 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
 
     /**
      * Starts a transaction which encloses multiple GraphInventory mutations
-     * 
+     *
      * @return
      */
     public abstract TransactionalClient beginTransaction();
 
     /**
      * Starts a transaction groups multiple GraphInventory mutations
-     * 
+     *
      * @return
      */
     public abstract SingleTransactionClient beginSingleTransaction();
