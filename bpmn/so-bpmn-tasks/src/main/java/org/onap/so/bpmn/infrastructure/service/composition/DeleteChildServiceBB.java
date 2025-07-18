@@ -28,6 +28,7 @@ import org.onap.aai.domain.yang.RelationshipData;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
 import org.onap.logging.filter.base.ONAPComponents;
@@ -77,14 +78,14 @@ public class DeleteChildServiceBB {
                 buildingBlockExecution.getLookupMap().get(ResourceKey.CHILD_SERVICE_INSTANCE_ID);
         String parentServiceInstanceId = buildingBlockExecution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID);
         ServiceInstance childInstanceAAI = aaiResourcesClient.get(ServiceInstance.class,
-                AAIUriFactory
+                AAIClientUriFactory
                         .createResourceUri(
                                 AAIFluentTypeBuilder.Types.SERVICE_INSTANCE.getFragment(childServiceInstanceId))
                         .depth(Depth.TWO))
                 .orElse(null);
         ServiceInstance parentInstanceAAI =
                 aaiResourcesClient.get(ServiceInstance.class,
-                        AAIUriFactory.createResourceUri(
+                        AAIClientUriFactory.createResourceUri(
                                 AAIFluentTypeBuilder.Types.SERVICE_INSTANCE.getFragment(parentServiceInstanceId))
                                 .depth(Depth.TWO))
                         .orElse(null);
@@ -118,7 +119,7 @@ public class DeleteChildServiceBB {
 
             ServiceInstance parentInstanceAAI =
                     aaiResourcesClient.get(ServiceInstance.class,
-                            AAIUriFactory.createResourceUri(
+                            AAIClientUriFactory.createResourceUri(
                                     AAIFluentTypeBuilder.Types.SERVICE_INSTANCE.getFragment(parentServiceInstanceId))
                                     .depth(Depth.TWO))
                             .orElse(null);

@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,6 +31,7 @@ import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
@@ -60,7 +61,7 @@ public class AAIVnfResources {
         AAIResourceUri vnfURI =
                 AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnf.getVnfId()));
         vnf.setOrchestrationStatus(OrchestrationStatus.INVENTORIED);
-        AAIResourceUri serviceInstanceURI = AAIUriFactory
+        AAIResourceUri serviceInstanceURI = AAIClientUriFactory
                 .createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstance.getServiceInstanceId()));
         injectionHelper.getAaiClient().createIfNotExists(vnfURI, Optional.of(aaiObjectMapper.mapVnf(vnf)))
                 .connect(vnfURI, serviceInstanceURI);
@@ -109,7 +110,7 @@ public class AAIVnfResources {
 
     /**
      * Retrieve Generic VNF from AAI using vnf Id
-     * 
+     *
      * @param vnfId - vnf-id required vnf
      * @return AAI Generic Vnf
      */
@@ -120,7 +121,7 @@ public class AAIVnfResources {
 
     /**
      * Check inMaint flag value of Generic VNF from AAI using vnf Id
-     * 
+     *
      * @param vnfId - vnf-id required vnf
      * @return inMaint flag value
      */

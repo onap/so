@@ -89,6 +89,7 @@ import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.RequestDetails;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BBInputSetupUtilsTest {
@@ -525,7 +526,7 @@ public class BBInputSetupUtilsTest {
         vnf.setVnfId(vnfId);
         vnf.setVnfName(vnfName);
         doReturn(Optional.of(vnf)).when(MOCK_aaiResourcesClient).getOne(GenericVnfs.class, GenericVnf.class,
-                AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
+                AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
                         .relatedTo(Types.GENERIC_VNFS.getFragment()).queryParam("vnf-name", vnfName));
         Optional<GenericVnf> actual =
                 this.bbInputSetupUtils.getRelatedVnfByNameFromServiceInstance(serviceInstanceId, vnfName);
@@ -692,7 +693,7 @@ public class BBInputSetupUtilsTest {
         configuration.setConfigurationId("id123");
         doReturn(Optional.of(configuration)).when(MOCK_aaiResourcesClient).getOne(Configurations.class,
                 Configuration.class,
-                AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment("service-instance-id123"))
+                AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment("service-instance-id123"))
                         .relatedTo(Types.CONFIGURATIONS.getFragment())
                         .queryParam("configuration-name", "configuration-name123"));
         Optional<Configuration> actual = this.bbInputSetupUtils
