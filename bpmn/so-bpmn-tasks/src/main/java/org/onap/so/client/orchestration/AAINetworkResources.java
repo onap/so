@@ -31,6 +31,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIBaseResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
@@ -75,7 +76,7 @@ public class AAINetworkResources {
         AAIResourceUri networkURI =
                 AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Network(network.getNetworkId()));
         network.setOrchestrationStatus(OrchestrationStatus.INVENTORIED);
-        AAIResourceUri serviceInstanceURI = AAIUriFactory
+        AAIResourceUri serviceInstanceURI = AAIClientUriFactory
                 .createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstance.getServiceInstanceId()));
         org.onap.aai.domain.yang.L3Network aaiL3Network = aaiObjectMapper.mapNetwork(network);
         injectionHelper.getAaiClient().createIfNotExists(networkURI, Optional.of(aaiL3Network)).connect(networkURI,
@@ -181,7 +182,7 @@ public class AAINetworkResources {
 
     public void connectNetworkToNetworkCollectionServiceInstance(L3Network l3network,
             ServiceInstance networkCollectionServiceInstance) {
-        AAIResourceUri networkCollectionServiceInstanceUri = AAIUriFactory.createResourceUri(
+        AAIResourceUri networkCollectionServiceInstanceUri = AAIClientUriFactory.createResourceUri(
                 Types.SERVICE_INSTANCE.getFragment(networkCollectionServiceInstance.getServiceInstanceId()));
         AAIResourceUri networkURI =
                 AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Network(l3network.getNetworkId()));
@@ -209,7 +210,7 @@ public class AAINetworkResources {
             ServiceInstance networkCollectionServiceInstance) {
         AAIResourceUri networkCollectionUri =
                 AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().collection(networkCollection.getId()));
-        AAIResourceUri networkCollectionServiceInstanceUri = AAIUriFactory.createResourceUri(
+        AAIResourceUri networkCollectionServiceInstanceUri = AAIClientUriFactory.createResourceUri(
                 Types.SERVICE_INSTANCE.getFragment(networkCollectionServiceInstance.getServiceInstanceId()));
         injectionHelper.getAaiClient().connect(networkCollectionUri, networkCollectionServiceInstanceUri);
     }

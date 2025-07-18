@@ -25,6 +25,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.onap.aaiclient.client.aai.entities.AAIEdgeLabel;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.so.bpmn.common.InjectionHelper;
@@ -90,7 +91,7 @@ public class AAIConfigurationResources {
         AAIResourceUri configurationURI =
                 AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().configuration(configurationId));
         AAIResourceUri serviceInstanceURI =
-                AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId));
+                AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId));
         injectionHelper.getAaiClient().disconnect(configurationURI, serviceInstanceURI);
     }
 
@@ -131,7 +132,7 @@ public class AAIConfigurationResources {
         AAIResourceUri configurationURI =
                 AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().configuration(configurationId));
         AAIResourceUri serviceInstanceURI =
-                AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId));
+                AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId));
         injectionHelper.getAaiClient().connect(configurationURI, serviceInstanceURI);
     }
 
@@ -147,7 +148,7 @@ public class AAIConfigurationResources {
         AAIResourceUri configurationURI =
                 AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().configuration(configurationId));
         AAIResourceUri serviceInstanceURI =
-                AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId));
+                AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId));
         injectionHelper.getAaiClient().connect(configurationURI, serviceInstanceURI, aaiLabel);
     }
 
