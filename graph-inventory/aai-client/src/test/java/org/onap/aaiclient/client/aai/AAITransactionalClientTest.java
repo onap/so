@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,7 +44,7 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryPatchConverter;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -57,13 +57,16 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 public class AAITransactionalClientTest {
 
     private final static String AAI_JSON_FILE_LOCATION = "src/test/resources/__files/aai/bulkprocess/";
-    AAIResourceUri uriA = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"));
-    AAIResourceUri uriB = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().pserver("test2"));
-    AAIResourceUri uriC = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test3"));
-    AAIResourceUri uriD = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().pserver("test4"));
-    AAIResourceUri uriE = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test5"));
-    AAIResourceUri uriF = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().pserver("test6"));
-    AAIResourceUri uriG = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test7"));
+    AAIResourceUri uriA = AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"));
+    AAIResourceUri uriB =
+            AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().pserver("test2"));
+    AAIResourceUri uriC = AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test3"));
+    AAIResourceUri uriD =
+            AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().pserver("test4"));
+    AAIResourceUri uriE = AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test5"));
+    AAIResourceUri uriF =
+            AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().pserver("test6"));
+    AAIResourceUri uriG = AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test7"));
 
     ObjectMapper mapper;
 
