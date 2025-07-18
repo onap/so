@@ -10,6 +10,7 @@
   <packaging>pom</packaging>
   <modules>
     <module>fluent-builder-maven-plugin</module>
+    <module>aai-fluent-uri-builder</module>
     <module>aai-client</module>
   </modules>
 </project>
