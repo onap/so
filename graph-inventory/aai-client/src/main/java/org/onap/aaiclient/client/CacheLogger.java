@@ -29,6 +29,7 @@ public class CacheLogger implements CacheEntryExpiredListener<Key, Entry>, Cache
     @Override
     public void onRemoved(Iterable<CacheEntryEvent<? extends Key, ? extends Entry>> events)
             throws CacheEntryListenerException {
+
         for (CacheEntryEvent<? extends Key, ? extends Entry> event : events) {
             logger.debug("{} removed key: {}", event.getSource().getName(), event.getKey().getUri());
         }

@@ -30,6 +30,7 @@ import org.onap.aaiclient.client.graphinventory.entities.TraversalBuilder;
 import org.onap.aaiclient.client.graphinventory.entities.__;
 import org.onap.so.apihandlerinfra.infra.rest.exception.AAIEntityNotFound;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -48,7 +49,7 @@ public class AAIDataRetrieval {
     public ServiceInstance getServiceInstance(String serviceInstanceId) {
         return this.getAaiResourcesClient()
                 .get(ServiceInstance.class,
-                        AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId)))
+                        AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId)))
                 .orElseGet(() -> {
                     logger.debug("No Service Instance found in A&AI ServiceInstanceId: {}", serviceInstanceId);
                     return null;
@@ -121,19 +122,19 @@ public class AAIDataRetrieval {
 
     public boolean isServiceRelatedToNetworks(String serviceInstanceId) {
         return this.getAaiResourcesClient()
-                .exists(AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
+                .exists(AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
                         .relatedTo(Types.L3_NETWORKS.getFragment()));
     }
 
     public boolean isServiceRelatedToGenericVnf(String serviceInstanceId) {
         return this.getAaiResourcesClient()
-                .exists(AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
+                .exists(AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
                         .relatedTo(Types.GENERIC_VNFS.getFragment()));
     }
 
     public boolean isServiceRelatedToConfiguration(String serviceInstanceId) {
         return this.getAaiResourcesClient()
-                .exists(AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
+                .exists(AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
                         .relatedTo(Types.CONFIGURATIONS.getFragment()));
     }
 

@@ -83,6 +83,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory;
 
 @Component("BBInputSetupUtils")
 public class BBInputSetupUtils {
@@ -247,7 +248,7 @@ public class BBInputSetupUtils {
     }
 
     public Map<String, String> getURIKeysFromServiceInstance(String serviceInstanceId) {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId));
+        AAIResourceUri uri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId));
         return uri.getURIKeys();
     }
 
@@ -318,7 +319,7 @@ public class BBInputSetupUtils {
 
     public ServiceInstance getAAIServiceInstanceById(String serviceInstanceId) {
         return injectionHelper.getAaiClient()
-                .get(ServiceInstance.class, AAIUriFactory
+                .get(ServiceInstance.class, AAIClientUriFactory
                         .createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId)).depth(Depth.TWO))
                 .orElse(null);
     }
@@ -440,7 +441,7 @@ public class BBInputSetupUtils {
     public Optional<L3Network> getRelatedNetworkByNameFromServiceInstance(String serviceInstanceId, String networkName)
             throws MultipleObjectsFoundException {
         AAIPluralResourceUri uri =
-                AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
+                AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
                         .relatedTo(Types.L3_NETWORKS.getFragment()).queryParam("network-name", networkName);
         Optional<L3Networks> networks = injectionHelper.getAaiClient().get(L3Networks.class, uri);
         L3Network network = null;
@@ -462,7 +463,7 @@ public class BBInputSetupUtils {
 
     public Optional<GenericVnf> getRelatedVnfByNameFromServiceInstance(String serviceInstanceId, String vnfName) {
         AAIPluralResourceUri uri =
-                AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
+                AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
                         .relatedTo(Types.GENERIC_VNFS.getFragment()).queryParam("vnf-name", vnfName);
         return injectionHelper.getAaiClient().getOne(GenericVnfs.class, GenericVnf.class, uri);
 
@@ -558,7 +559,7 @@ public class BBInputSetupUtils {
 
     public Optional<Configuration> getRelatedConfigurationByNameFromServiceInstance(String serviceInstanceId,
             String configurationName) {
-        AAIPluralResourceUri uri = AAIUriFactory
+        AAIPluralResourceUri uri = AAIClientUriFactory
                 .createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
                 .relatedTo(Types.CONFIGURATIONS.getFragment()).queryParam("configuration-name", configurationName);
         return injectionHelper.getAaiClient().getOne(Configurations.class, Configuration.class, uri);
