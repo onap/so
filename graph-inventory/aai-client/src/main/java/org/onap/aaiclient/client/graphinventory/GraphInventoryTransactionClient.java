@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,7 +46,7 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
 
     /**
      * creates a new object in A&AI
-     * 
+     *
      * @param obj - can be any object which will marshal into a valid A&AI payload
      * @param uri
      * @return
@@ -59,7 +59,7 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
 
     /**
      * creates a new object in A&AI with no payload body
-     * 
+     *
      * @param uri
      * @return
      */
@@ -71,7 +71,7 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
 
     /**
      * Will automatically create the object if it does not exist
-     * 
+     *
      * @param obj - Optional object which serializes to a valid GraphInventory payload
      * @param uri
      * @return
@@ -90,7 +90,7 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
 
     /**
      * Adds a relationship between two objects in A&AI
-     * 
+     *
      * @param uriA
      * @param uriB
      * @return
@@ -104,7 +104,7 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
 
     /**
      * relationship between multiple objects in A&AI - connects A to all objects specified in list
-     * 
+     *
      * @param uriA
      * @param uris
      * @return
@@ -118,7 +118,7 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
 
     /**
      * relationship between multiple objects in A&AI - connects A to all objects specified in list
-     * 
+     *
      * @param uriA
      * @param uris
      * @return
@@ -131,7 +131,7 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
 
     /**
      * relationship between multiple objects in A&AI - connects A to all objects specified in list
-     * 
+     *
      * @param uriA
      * @param uris
      * @return
@@ -145,7 +145,7 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
 
     /**
      * Removes relationship from two objects in A&AI
-     * 
+     *
      * @param uriA
      * @param uriB
      * @return
@@ -159,7 +159,7 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
 
     /**
      * Removes relationship from multiple objects - disconnects A from all objects specified in list
-     * 
+     *
      * @param uriA
      * @param uris
      * @return
@@ -173,7 +173,7 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
 
     /**
      * Deletes object from A&AI. Automatically handles resource-version.
-     * 
+     *
      * @param uri
      * @return
      */
@@ -219,7 +219,7 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
 
     /**
      * Executes all created transactions in A&AI
-     * 
+     *
      * @throws BulkProcessFailed
      */
     public abstract void execute() throws BulkProcessFailed;
@@ -227,7 +227,7 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
 
     /**
      * Executes all created transactions in A&AI, with optional dry run flag
-     * 
+     *
      * @throws BulkProcessFailed
      */
     public abstract void execute(boolean dryrun) throws BulkProcessFailed;
