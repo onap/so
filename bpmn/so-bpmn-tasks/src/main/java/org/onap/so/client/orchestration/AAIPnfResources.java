@@ -27,6 +27,7 @@ import org.onap.aai.domain.yang.Relationship;
 import org.onap.aai.domain.yang.RelationshipData;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.so.bpmn.common.InjectionHelper;
@@ -54,7 +55,7 @@ public class AAIPnfResources {
     public void createPnfAndConnectServiceInstance(Pnf pnf, ServiceInstance serviceInstance) {
         AAIResourceUri pnfURI = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(pnf.getPnfName()));
         pnf.setOrchestrationStatus(OrchestrationStatus.INVENTORIED);
-        AAIResourceUri serviceInstanceURI = AAIUriFactory
+        AAIResourceUri serviceInstanceURI = AAIClientUriFactory
                 .createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstance.getServiceInstanceId()));
         injectionHelper.getAaiClient().createIfNotExists(pnfURI, Optional.of(aaiObjectMapper.mapPnf(pnf)))
                 .connect(pnfURI, serviceInstanceURI);

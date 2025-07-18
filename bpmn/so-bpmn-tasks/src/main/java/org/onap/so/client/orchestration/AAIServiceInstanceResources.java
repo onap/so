@@ -11,9 +11,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,6 +31,7 @@ import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.so.bpmn.common.InjectionHelper;
@@ -53,7 +54,7 @@ public class AAIServiceInstanceResources {
     private AAIObjectMapper aaiObjectMapper;
 
     public boolean existsServiceInstance(ServiceInstance serviceInstance) {
-        AAIResourceUri serviceInstanceURI = AAIUriFactory
+        AAIResourceUri serviceInstanceURI = AAIClientUriFactory
                 .createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstance.getServiceInstanceId()));
         return injectionHelper.getAaiClient().exists(serviceInstanceURI);
     }
@@ -71,7 +72,7 @@ public class AAIServiceInstanceResources {
 
     /**
      * Create ServiceSubscription in A&AI
-     * 
+     *
      * @param customer
      */
     public void createServiceSubscription(Customer customer) {
@@ -84,7 +85,7 @@ public class AAIServiceInstanceResources {
     }
 
     public void deleteServiceInstance(ServiceInstance serviceInstance) {
-        AAIResourceUri serviceInstanceURI = AAIUriFactory
+        AAIResourceUri serviceInstanceURI = AAIClientUriFactory
                 .createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstance.getServiceInstanceId()));
         injectionHelper.getAaiClient().delete(serviceInstanceURI);
     }
@@ -99,7 +100,7 @@ public class AAIServiceInstanceResources {
     public void createProjectandConnectServiceInstance(Project project, ServiceInstance serviceInstance) {
         AAIResourceUri projectURI =
                 AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().project(project.getProjectName()));
-        AAIResourceUri serviceInstanceURI = AAIUriFactory
+        AAIResourceUri serviceInstanceURI = AAIClientUriFactory
                 .createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstance.getServiceInstanceId()));
         org.onap.aai.domain.yang.Project aaiProject = aaiObjectMapper.mapProject(project);
         injectionHelper.getAaiClient().createIfNotExists(projectURI, Optional.of(aaiProject)).connect(projectURI,
@@ -177,7 +178,7 @@ public class AAIServiceInstanceResources {
     }
 
     public void updateServiceInstance(ServiceInstance serviceInstance) {
-        AAIResourceUri serviceInstanceURI = AAIUriFactory
+        AAIResourceUri serviceInstanceURI = AAIClientUriFactory
                 .createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstance.getServiceInstanceId()));
         org.onap.aai.domain.yang.ServiceInstance aaiServiceInstance =
                 aaiObjectMapper.mapServiceInstance(serviceInstance);
@@ -203,7 +204,7 @@ public class AAIServiceInstanceResources {
     }
 
     public boolean checkInstanceServiceNameInUse(ServiceInstance serviceInstance) {
-        AAIPluralResourceUri uriSI = AAIUriFactory.createNodesUri(Types.SERVICE_INSTANCES.getFragment())
+        AAIPluralResourceUri uriSI = AAIClientUriFactory.createNodesUri(Types.SERVICE_INSTANCES.getFragment())
                 .queryParam("service-instance-name", serviceInstance.getServiceInstanceName());
         return injectionHelper.getAaiClient().exists(uriSI);
     }

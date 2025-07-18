@@ -40,6 +40,7 @@ import org.onap.aai.domain.yang.Relationship;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 
@@ -92,7 +93,7 @@ public class CreateChildServiceBB {
 
     /*
      * This method is to create Relation between Parent & Child Services with Node as Composed Resource.
-     * 
+     *
      */
 
     public void updateRelations(BuildingBlockExecution buildingBlockExecution) throws Exception {
@@ -116,7 +117,7 @@ public class CreateChildServiceBB {
         client.create(composedResourceURI, composedResource);
 
         AAIResourceUri childURI =
-                AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(childSvcInstanceId));
+                AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(childSvcInstanceId));
 
         client.connect(composedResourceURI, childURI);
 
