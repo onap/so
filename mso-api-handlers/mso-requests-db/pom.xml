@@ -15,7 +15,7 @@
   </properties>
   <dependencies>
     <dependency>
-      <groupId>org.onap.so</groupId>
+      <groupId>org.onap.so.common</groupId>
       <artifactId>common</artifactId>
       <version>${project.version}</version>
     </dependency>
