@@ -20,6 +20,16 @@
   </properties>
   <dependencies>
     <dependency>
+      <groupId>org.onap.so</groupId>
+      <artifactId>logger</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.so</groupId>
+      <artifactId>clients-base</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
     </dependency>
@@ -105,11 +115,6 @@
       <artifactId>spring-retry</artifactId>
     </dependency>
     <dependency>
-      <groupId>net.jodah</groupId>
-      <artifactId>failsafe</artifactId>
-      <version>2.0.1</version>
-    </dependency>
-    <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <scope>test</scope>
@@ -184,11 +189,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.javatuples</groupId>
-      <artifactId>javatuples</artifactId>
-      <version>1.2</version>
-    </dependency>
-    <dependency>
       <groupId>org.camunda.bpm</groupId>
       <artifactId>camunda-external-task-client</artifactId>
     </dependency>
@@ -240,11 +240,6 @@
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>
       <version>2.3.0</version>
-    </dependency>
-    <dependency>
-      <groupId>javax.cache</groupId>
-      <artifactId>cache-api</artifactId>
-      <version>1.1.0</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>

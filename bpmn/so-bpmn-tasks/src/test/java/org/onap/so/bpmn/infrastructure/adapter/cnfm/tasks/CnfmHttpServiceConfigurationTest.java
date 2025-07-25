@@ -27,7 +27,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.so.configuration.rest.HttpComponentsClientConfiguration;
+import org.onap.so.configuration.HttpComponentsClientConfiguration;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 

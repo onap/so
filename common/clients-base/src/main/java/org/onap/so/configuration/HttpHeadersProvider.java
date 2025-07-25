@@ -1,8 +1,6 @@
 /*-
  * ============LICENSE_START=======================================================
- * SO
- * ================================================================================
- * Copyright (C) 2020 Samsung. All rights reserved.
+ *  Copyright (C) 2019 Nordix Foundation.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,25 +13,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.vevnfm.provider;
+package org.onap.so.configuration;
 
-import org.apache.logging.log4j.util.Strings;
-import org.onap.so.configuration.BasicHttpHeadersProvider;
+import org.springframework.http.HttpHeaders;
 
-public class AuthorizationHeadersProvider extends BasicHttpHeadersProvider {
+/**
+ * Providers {@link org.springframework.http.HttpHeaders} for HTTP requests
+ *
+ * @author waqas.ikram@est.tech
+ *
+ */
+public interface HttpHeadersProvider {
 
-    public void addAuthorization(final String authorization) {
-        if (Strings.isBlank(authorization)) {
-            return;
-        }
+    HttpHeaders getHttpHeaders();
 
-        getHttpHeaders().set(AUTHORIZATION_HEADER, authorization);
-    }
-
-    public void removeAuthorization() {
-        getHttpHeaders().remove(AUTHORIZATION_HEADER);
-    }
 }

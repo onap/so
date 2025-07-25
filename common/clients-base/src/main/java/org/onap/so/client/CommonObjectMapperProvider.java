@@ -18,28 +18,38 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.client.policy;
+package org.onap.so.client;
 
-import org.onap.so.client.CommonObjectMapperProvider;
-import org.springframework.stereotype.Component;
+import javax.ws.rs.ext.ContextResolver;
+import javax.ws.rs.ext.Provider;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 
-@Component
-public class JettisonStyleMapperProvider extends CommonObjectMapperProvider {
+@Provider
+public class CommonObjectMapperProvider implements ContextResolver<ObjectMapper> {
 
-    public JettisonStyleMapperProvider() {
+    protected static ObjectMapper mapper;
+
+    public CommonObjectMapperProvider() {
 
         mapper = new ObjectMapper();
-        JaxbAnnotationModule jaxbModule = new JaxbAnnotationModule();
         mapper.setSerializationInclusion(Include.NON_NULL);
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
-        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+        mapper.enable(MapperFeature.USE_ANNOTATIONS);
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, false);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.registerModule(jaxbModule);
     }
 
+    public ObjectMapper getMapper() {
+        return mapper;
+    }
+
+    @Override
+    public ObjectMapper getContext(Class<?> type) {
+
+        return mapper;
+    }
 }

@@ -9,6 +9,8 @@
   <artifactId>common</artifactId>
   <packaging>pom</packaging>
   <modules>
+    <module>logger</module>
+    <module>clients-base</module>
     <module>common</module>
   </modules>
 </project>

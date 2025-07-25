@@ -33,8 +33,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContextBuilder;
-import org.onap.so.configuration.rest.BasicHttpHeadersProvider;
-import org.onap.so.configuration.rest.HttpHeadersProvider;
+import org.onap.so.configuration.BasicHttpHeadersProvider;
+import org.onap.so.configuration.HttpHeadersProvider;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.onap.so.rest.service.HttpRestServiceProviderImpl;
 import org.slf4j.Logger;
@@ -52,7 +52,7 @@ import org.springframework.web.client.RestTemplate;
 /**
  * Provides {@link org.onap.so.rest.service.VnfmAdapterServiceProvider} configuration for
  * {@link VnfmAdapterCreateVnfTask}
- * 
+ *
  * @author waqas.ikram@est.tech
  */
 @Configuration
