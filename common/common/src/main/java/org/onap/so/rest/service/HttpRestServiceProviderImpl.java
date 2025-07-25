@@ -20,7 +20,7 @@
 
 package org.onap.so.rest.service;
 
-import org.onap.so.configuration.rest.HttpHeadersProvider;
+import org.onap.so.configuration.HttpHeadersProvider;
 import org.onap.so.rest.exceptions.HttpResouceNotFoundException;
 import org.onap.so.rest.exceptions.InvalidRestRequestException;
 import org.onap.so.rest.exceptions.RestProcessingException;
@@ -58,7 +58,7 @@ public class HttpRestServiceProviderImpl implements HttpRestServiceProvider {
     }
 
     /**
-     * 
+     *
      * @deprecated this constructor is deprecated in favor of using {@link HttpRestServiceProviderImpl(RestTemplate
      *             restTemplate, HttpHeaders defaultHttpHeaders)}
      */

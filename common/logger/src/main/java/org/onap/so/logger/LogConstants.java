@@ -1,8 +1,8 @@
 /*-
  * ============LICENSE_START=======================================================
- * SO
+ * ONAP - SO
  * ================================================================================
- * Copyright (C) 2020 Samsung. All rights reserved.
+ * Copyright (C) 2017 - 2018 ONAP - SO
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,22 +18,9 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.vevnfm.provider;
+package org.onap.so.logger;
 
-import org.apache.logging.log4j.util.Strings;
-import org.onap.so.configuration.BasicHttpHeadersProvider;
-
-public class AuthorizationHeadersProvider extends BasicHttpHeadersProvider {
-
-    public void addAuthorization(final String authorization) {
-        if (Strings.isBlank(authorization)) {
-            return;
-        }
-
-        getHttpHeaders().set(AUTHORIZATION_HEADER, authorization);
-    }
-
-    public void removeAuthorization() {
-        getHttpHeaders().remove(AUTHORIZATION_HEADER);
-    }
+public class LogConstants {
+    public static final String HTTP_URL = "Http-Url";
+    public static final String URI_BASE = "Uri-Base";
 }

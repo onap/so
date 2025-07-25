@@ -20,7 +20,7 @@
 
 package org.onap.aaiclient.client.graphinventory;
 
-import org.onap.so.client.policy.CommonObjectMapperProvider;
+import org.onap.so.client.CommonObjectMapperProvider;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.AnnotationIntrospector;

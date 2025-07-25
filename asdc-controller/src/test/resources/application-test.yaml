@@ -10,9 +10,9 @@ spring:
     jdbc-url: jdbc:mariadb://localhost:3307/catalogdb
     username: root
     password: password
-    driver-class-name: org.mariadb.jdbc.Driver    
+    driver-class-name: org.mariadb.jdbc.Driver
     initialization-mode: always
-  jpa:   
+  jpa:
     generate-ddl: false
     show-sql: true
     hibernate:
@@ -22,17 +22,19 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
   security:
     usercredentials:
-    -  
+    -
       username: test
       password: '$2a$12$Zi3AuYcZoZO/gBQyUtST2.F5N6HqcTtaNci2Et.ufsQhski56srIu'
-      role: Asdc-Client        
+      role: Asdc-Client
+  sleuth:
+    enabled: false
 
 mariaDB4j:
-  dataDir: 
+  dataDir:
   port: 3307
   databaseName: catalogdb
   databaseName2: requestdb
-        
+
 request:
   datasource:
     jdbc-url: jdbc:mariadb://localhost:3307/requestdb
@@ -54,19 +56,19 @@ management:
     export:
       prometheus:
         enabled: true # Whether exporting of metrics to Prometheus is enabled.
-        step: 1m # Step size (i.e. reporting frequency) to use.  
+        step: 1m # Step size (i.e. reporting frequency) to use.
 
 mso:
   adapters:
     requestDb:
       auth: Basic YnBlbDptc28tZGItMTUwNyE=
-      endpoint: http://localhost:8081  
+      endpoint: http://localhost:8081
   logPath: logs
   catalog:
     db:
       spring:
         endpoint: "http://localhost:"
-  camundaURL: http://localhost:${wiremock.server.port}/        
+  camundaURL: http://localhost:${wiremock.server.port}/
   db:
     auth: Basic YnBlbDptc28tZGItMTUwNyE=
   site-name: siteName
@@ -82,7 +84,7 @@ mso:
       pollingTimeout: 30
       relevantArtifactTypes: HEAT,HEAT_ENV,HEAT_VOL
       activateServerTLSAuth: false
-      keyStorePassword:  
+      keyStorePassword:
       keyStorePath:
       watchDogTimeout: 1
       isFilterInEmptyResources: true
@@ -103,4 +105,3 @@ mso:
 
 sdc:
   endpoint: http://localhost:${wiremock.server.port}
-  
