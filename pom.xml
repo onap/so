@@ -80,6 +80,7 @@
     <grpc.version>1.25.0</grpc.version>
     <logback.version>1.2.11</logback.version>
     <kafka-clients.version>3.3.2</kafka-clients.version>
+    <aai-schema.version>1.12.6</aai-schema.version>
   </properties>
   <distributionManagement>
     <repository>
@@ -1004,7 +1005,7 @@
       <dependency>
         <groupId>org.onap.aai.schema-service</groupId>
         <artifactId>aai-schema</artifactId>
-        <version>1.9.2</version>
+        <version>${aai-schema.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
