@@ -80,7 +80,7 @@
     <grpc.version>1.25.0</grpc.version>
     <logback.version>1.2.11</logback.version>
     <kafka-clients.version>3.3.2</kafka-clients.version>
-    <aai-schema.version>1.12.6</aai-schema.version>
+    <aai-schema.version>1.12.7</aai-schema.version>
   </properties>
   <distributionManagement>
     <repository>
