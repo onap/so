@@ -260,7 +260,7 @@ public class ManagedObject3gppServiceInstances {
         ranSliceSubnetProfile.setServiceType(serviceType);
         ranSliceSubnetProfile.setdLLatency(sliceProfile.getLatency());
         ranSliceSubnetProfile.setCoverageAreaTAList(Integer.valueOf(sliceProfile.getCoverageAreaTAList()));
-        ranSliceSubnetProfile.setMaxNumberofUEs(sliceProfile.getMaxNumberOfUEs());
+        ranSliceSubnetProfile.setMaxNumberofUEs(sliceProfile.getMaxNumberOfUes().getMaxNumberOfUe().size());
         ranSliceSubnetProfile.setResourceSharingLevel(sliceProfile.getResourceSharingLevel());
         ranSliceSubnetProfile.setAreaTrafficCapDL(sliceProfile.getAreaTrafficCapDL());
 

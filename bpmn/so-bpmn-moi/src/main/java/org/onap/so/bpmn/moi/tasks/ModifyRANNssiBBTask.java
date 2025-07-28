@@ -23,6 +23,7 @@ package org.onap.so.bpmn.moi.tasks;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.onap.aai.domain.yang.MaxNumberOfUes;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.SliceProfile;
 import org.onap.aaiclient.client.aai.AAIRestClientImpl;
@@ -160,7 +161,11 @@ public class ModifyRANNssiBBTask {
                         case "maxNumberofUEs":
                             Integer maxNumberofUEs = (Integer) ranMap.get(k);
                             LOGGER.info("maxNumberofUEs {}", maxNumberofUEs);
-                            sliceProfile.setMaxNumberOfUEs(maxNumberofUEs);
+                            LOGGER.warn("Setting max-number-of-ues is not supported yet, setting empty value");
+                            sliceProfile.setMaxNumberOfUes(new MaxNumberOfUes()); // TODO: adjust
+                                                                                  // org.onap.so.moi.SliceProfile to
+                                                                                  // allow
+                                                                                  // to set a proper value here
                             break;
 
                     }

@@ -21,15 +21,22 @@
 
 package org.onap.so.bpmn.moi.util;
 
+import org.onap.aai.domain.yang.MaxNumberOfUes;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.SliceProfile;
+import org.onap.so.bpmn.moi.tasks.AssignRANNssiBBTasks;
 import org.onap.so.moi.Attributes;
 import org.onap.so.moi.PlmnId;
 import org.onap.so.moi.Snssai;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SliceProfileAaiToMoiMapperUtil {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SliceProfileAaiToMoiMapperUtil.class);
+
 
     public ServiceInstance fillSliceProfileInstanceFromMoiRequest(Attributes moiRequestAttributes,
             ServiceInstance serviceInstance) {
@@ -84,7 +91,9 @@ public class SliceProfileAaiToMoiMapperUtil {
         Integer coverageAreaTAList = moiSliceProfile.getRANSliceSubnetProfile().getCoverageAreaTAList();
 
         aaiSliceProfile.setLatency(latency);
-        aaiSliceProfile.setMaxNumberOfUEs(maxNumberOfUEs);
+        LOGGER.warn("Setting max-number-of-ues is not supported yet, setting empty value");
+        aaiSliceProfile.setMaxNumberOfUes(new MaxNumberOfUes()); // TODO: adjust org.onap.so.moi.SliceProfile to allow
+                                                                 // to set a proper value here
         aaiSliceProfile.setResourceSharingLevel(resourceSharingLevel);
         aaiSliceProfile.setCoverageAreaTAList(String.valueOf(coverageAreaTAList));
         aaiSliceProfile.setAreaTrafficCapDL(areaTrafficCapDL);
