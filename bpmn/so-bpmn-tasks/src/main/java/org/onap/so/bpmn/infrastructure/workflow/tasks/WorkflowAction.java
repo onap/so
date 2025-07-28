@@ -57,6 +57,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -217,24 +218,65 @@ public class WorkflowAction {
                         execution.setVariable(HOMING, !"none".equals(params.get(HOMINGSOLUTION)));
                     }
                 }
-            }
 
+                // New
+                for (Map<String, Object> param : userParams) {
+                    if (param.containsKey("resumeFrom")) {
+                        String resumeFrom = (String) param.get("resumeFrom");
+                        execution.setVariable("resumeFrom", resumeFrom);
+                        logger.info("********** Injected resumeFrom: [{}] **********", resumeFrom);
+                    }
+                }
+            }
             if (CollectionUtils.isEmpty(flowsToExecute)) {
                 throw new IllegalStateException("Macro did not come up with a valid execution path.");
             }
 
+            /*
+             * List<String> flowNames = new ArrayList<>(); logger.info("List of BuildingBlocks to execute:");
+             *
+             * flowsToExecute.forEach(ebb -> { logger.info(ebb.getBuildingBlock().getBpmnFlowName());
+             * flowNames.add(ebb.getBuildingBlock().getBpmnFlowName()); });
+             *
+             * if (!isResume) { bbInputSetupUtils.persistFlowExecutionPath(requestId, flowsToExecute); }
+             * setExecutionVariables(execution, flowsToExecute, flowNames);
+             *
+             * }
+             */
+
+            // New
+            String resumeFrom = (String) execution.getVariable("resumeFrom");
+            logger.info("********** List of BuildingBlocks to execute: **********");
+
+            List<ExecuteBuildingBlock> filteredBBs = new ArrayList<>();
             List<String> flowNames = new ArrayList<>();
-            logger.info("List of BuildingBlocks to execute:");
 
-            flowsToExecute.forEach(ebb -> {
-                logger.info(ebb.getBuildingBlock().getBpmnFlowName());
-                flowNames.add(ebb.getBuildingBlock().getBpmnFlowName());
-            });
+            boolean startAdding = (resumeFrom == null || resumeFrom.isEmpty());
+            for (ExecuteBuildingBlock ebb : flowsToExecute) {
+                String bbFlowName = ebb.getBuildingBlock().getBpmnFlowName();
+                logger.info("Checking BB: [{}]", bbFlowName);
+                logger.info("Comparing BB flowName [{}] with resumeFrom [{}]", bbFlowName, resumeFrom);
+                if (!startAdding && bbFlowName.equals(resumeFrom)) {
+                    logger.info("********** Found resumeFrom match: [{}]  Starting inclusion **********", resumeFrom);
+                    startAdding = true;
+                }
 
+                if (startAdding) {
+                    logger.info("********** Including BB: [{}] **********", bbFlowName);
+                    flowNames.add(bbFlowName);
+                    filteredBBs.add(ebb); // <<--- Only include if it's after resumeFrom
+                } else {
+                    logger.info("********** Skipping BB: [{}] **********", bbFlowName);
+                }
+            }
+            // Persist path only in fresh request
             if (!isResume) {
                 bbInputSetupUtils.persistFlowExecutionPath(requestId, flowsToExecute);
+                logger.info("********** Persisted full flow execution path for requestId: [{}] **********", requestId);
             }
-            setExecutionVariables(execution, flowsToExecute, flowNames);
+
+            setExecutionVariables(execution, filteredBBs, flowNames); // <<--- use filtered BBs only
+
 
         } catch (Exception ex) {
             if (!(execution.hasVariable("WorkflowException")
@@ -369,7 +411,6 @@ public class WorkflowAction {
                 log += ", Action: " + block.getBuildingBlock().getBpmnAction();
             logger.info(log);
         }
-
         RelatedInstanceList[] instanceList = sIRequest.getRequestDetails().getRelatedInstanceList();
         execution.setVariable(IS_CHILD_PROCESS, Boolean.FALSE);
         if (instanceList != null) {
@@ -704,7 +745,6 @@ public class WorkflowAction {
         if (volumeGroupExisted && volumeGroupWillExist && !rebuildVolumeGroups) {
             keepVolumeGroup = true;
         }
-
         if (!volumeGroupExisted || keepVolumeGroup) {
             logger.debug("Filtering out deletion of volume groups");
             orchFlows = orchFlows.stream().filter(item -> !item.getFlowName().matches(VOLUMEGROUP_DELETE_PATTERN))
@@ -1056,5 +1096,4 @@ public class WorkflowAction {
         }
         return serviceInstanceId;
     }
-
 }
