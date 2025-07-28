@@ -44,6 +44,7 @@ import org.onap.so.constants.Status;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.db.camunda.CamundaResumeDao;
 import org.onap.so.logger.HttpHeadersConstants;
 import org.onap.so.logger.LogConstants;
 import org.onap.so.logger.MdcConstants;
@@ -64,6 +65,10 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Path("onap/so/infra/orchestrationRequests")
 @OpenAPIDefinition(info = @Info(title = "onap/so/infra/orchestrationRequests"))
@@ -85,6 +90,9 @@ public class ResumeOrchestrationRequest {
 
     @Autowired
     private MsoRequest msoRequest;
+
+    @Autowired
+    private CamundaResumeDao camundaResumeDao;
 
     @POST
     @Path("/{version:[vV][7]}/{requestId}/resume")
@@ -133,14 +141,14 @@ public class ResumeOrchestrationRequest {
 
         }
 
-        return resumeRequest(infraActiveRequest, currentActiveRequest, version, requestUri);
+        return resumeRequest(infraActiveRequest, currentActiveRequest, version, requestUri, requestId);
     }
 
     protected Response resumeRequest(InfraActiveRequests infraActiveRequest, InfraActiveRequests currentActiveRequest,
-            String version, String requestUri) throws ApiException {
+            String version, String requestUri, String requestId) throws ApiException {
         String requestBody = infraActiveRequest.getRequestBody();
         Action action = Action.valueOf(infraActiveRequest.getRequestAction());
-        String requestId = currentActiveRequest.getRequestId();
+        // String requestId = currentActiveRequest.getRequestId();
         String requestScope = infraActiveRequest.getRequestScope();
         String instanceName = getInstanceName(infraActiveRequest, requestScope, currentActiveRequest);
         HashMap<String, String> instanceIdMap = setInstanceIdMap(infraActiveRequest, requestScope);
@@ -160,12 +168,18 @@ public class ResumeOrchestrationRequest {
         if (aLaCarte == null) {
             aLaCarte = setALaCarteFlagIfNull(requestScope, action);
         }
+        // New
+        // Step 1: Fetch resumeFrom from Camunda DB
+        String resumeFrom = camundaResumeDao.findResumeFromBB(requestId);
+        logger.info("****** Found resumeFrom Building block in Camunda DB: {} ******", resumeFrom);
 
         RequestClientParameter requestClientParameter = setRequestClientParameter(recipeLookupResult, version,
-                infraActiveRequest, currentActiveRequest, pnfCorrelationId, aLaCarte, sir);
+                infraActiveRequest, currentActiveRequest, pnfCorrelationId, aLaCarte, sir, resumeFrom);
 
         return requestHandlerUtils.postBPELRequest(currentActiveRequest, requestClientParameter,
                 recipeLookupResult.getOrchestrationURI(), requestScope);
+
+
     }
 
     protected Boolean setALaCarteFlagIfNull(String requestScope, Action action) {
@@ -239,7 +253,7 @@ public class ResumeOrchestrationRequest {
 
     protected RequestClientParameter setRequestClientParameter(RecipeLookupResult recipeLookupResult, String version,
             InfraActiveRequests infraActiveRequest, InfraActiveRequests currentActiveRequest, String pnfCorrelationId,
-            Boolean aLaCarte, ServiceInstancesRequest sir) throws ApiException {
+            Boolean aLaCarte, ServiceInstancesRequest sir, String resumeFrom) throws ApiException {
         RequestClientParameter requestClientParameter = null;
         Action action = Action.valueOf(infraActiveRequest.getRequestAction());
         ModelInfo modelInfo = sir.getRequestDetails().getModelInfo();
@@ -250,7 +264,31 @@ public class ResumeOrchestrationRequest {
                     msoRequest.getSDCServiceModelVersion(sir), currentActiveRequest);
         }
 
+        // New
         try {
+            String requestJson =
+                    requestHandlerUtils.mapJSONtoMSOStyle(infraActiveRequest.getRequestBody(), sir, aLaCarte, action);
+
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            ObjectNode requestDetailsNode = (ObjectNode) objectMapper.readTree(requestJson);
+
+
+            JsonNode requestParamsNode = requestDetailsNode.path("requestDetails").path("requestParameters");
+            if (requestParamsNode.isObject()) {
+                ArrayNode userParamsNode = (ArrayNode) requestParamsNode.withArray("userParams");
+
+                if (resumeFrom != null && userParamsNode != null) {
+                    ObjectNode resumeParam = objectMapper.createObjectNode();
+                    resumeParam.put("resumeFrom", resumeFrom);
+                    userParamsNode.add(resumeParam);
+                    logger.info("****** Injected resumeFrom [{}] into userParams ******", resumeFrom);
+                }
+            }
+
+
+            String finalRequestDetailsJson = objectMapper.writeValueAsString(requestDetailsNode);
+
             requestClientParameter = new RequestClientParameter.Builder()
                     .setRequestId(currentActiveRequest.getRequestId()).setBaseVfModule(isBaseVfModule)
                     .setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
@@ -262,9 +300,7 @@ public class ResumeOrchestrationRequest {
                     .setNetworkId(infraActiveRequest.getNetworkId()).setServiceType(infraActiveRequest.getServiceType())
                     .setVnfType(infraActiveRequest.getVnfType())
                     .setVfModuleType(msoRequest.getVfModuleType(sir, infraActiveRequest.getRequestScope()))
-                    .setNetworkType(infraActiveRequest.getNetworkType())
-                    .setRequestDetails(requestHandlerUtils.mapJSONtoMSOStyle(infraActiveRequest.getRequestBody(), sir,
-                            aLaCarte, action))
+                    .setNetworkType(infraActiveRequest.getNetworkType()).setRequestDetails(finalRequestDetailsJson)
                     .setApiVersion(version).setALaCarte(aLaCarte).setRequestUri(currentActiveRequest.getRequestUrl())
                     .setInstanceGroupId(infraActiveRequest.getInstanceGroupId()).build();
         } catch (IOException e) {
