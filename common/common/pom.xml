@@ -358,6 +358,16 @@
             <argLine>${surefireArgLine}</argLine>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <configuration>
+            <excludes>
+              <exclude>org/onap/so/beans/nsmf/**/*</exclude>
+              <exclude>org/onap/so/moi/**/*</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
