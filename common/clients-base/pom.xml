@@ -12,6 +12,10 @@
   </properties>
   <dependencies>
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.onap.so</groupId>
       <artifactId>logger</artifactId>
       <version>${project.version}</version>

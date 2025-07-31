@@ -7,9 +7,9 @@
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
        http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,7 +37,7 @@
     </encoder>
   </appender>
 
-  <appender name="test" class="org.onap.so.utils.TestAppender" />
+  <appender name="test" class="org.onap.so.logging.TestAppender" />
 
   <logger name="com.att.ecomp.audit" level="info" additivity="false">
     <appender-ref ref="STDOUT" />
@@ -68,7 +68,7 @@
   <logger name="org.reflections" level="ERROR" additivity="false">
     <appender-ref ref="STDOUT" />
   </logger>
-  
+
   <logger name="org.reflections" level="ERROR" />
 
   <root level="WARN">

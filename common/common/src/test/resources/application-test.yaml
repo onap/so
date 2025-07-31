@@ -2,3 +2,6 @@ org:
   onap:
     so:
       cloud-owner: my-custom-owner
+spring:
+  sleuth:
+    enabled: false
