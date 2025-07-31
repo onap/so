@@ -185,6 +185,7 @@
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
+            <?m2e ignore?>
             <id>extract-docker-file</id>
             <configuration>
               <skip>false</skip>
