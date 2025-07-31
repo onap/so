@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -70,7 +70,7 @@ public class HttpClientTest {
         URL url = new URL("http://localhost:" + wireMockRule.port() + "/services/sdnc/post");
         HttpClient client = httpClientFactory.newJsonClient(url, ONAPComponents.BPMN);
 
-        client.addAdditionalHeader("Accept", "application/json");
+        // client.addAdditionalHeader("Accept", "application/json");
         client.addAdditionalHeader("id", null);
 
         client.post("{}");
@@ -89,7 +89,6 @@ public class HttpClientTest {
         HttpClient client = httpClientFactory.newJsonClient(url, ONAPComponents.BPMN);
 
         client.addBasicAuthHeader("", "12345");
-        client.addAdditionalHeader("Accept", "application/json");
 
         client.post("{}");
 
@@ -125,7 +124,6 @@ public class HttpClientTest {
         URL url = new URL("http://localhost:" + wireMockRule.port() + "/services/sdnc/post");
         HttpClient client = httpClientFactory.newXmlClient(url, ONAPComponents.BPMN);
 
-        client.accept = "application/xml";
         client.addAdditionalHeader("id", null);
 
         client.post("{}");
@@ -180,7 +178,7 @@ public class HttpClientTest {
         URL url = new URL("http://localhost:" + wireMockRule.port() + "/services/sdnc/post");
         HttpClient client = httpClientFactory.newTextXmlClient(url, ONAPComponents.BPMN);
 
-        client.addAdditionalHeader("Accept", "text/xml");
+        // client.addAdditionalHeader("Accept", "text/xml");
         client.addAdditionalHeader("id", null);
 
         client.post("{}");
@@ -199,7 +197,7 @@ public class HttpClientTest {
         HttpClient client = httpClientFactory.newTextXmlClient(url, ONAPComponents.BPMN);
 
         client.addBasicAuthHeader("", "12345");
-        client.addAdditionalHeader("Accept", "text/xml");
+        // client.addAdditionalHeader("Accept", "text/xml");
 
         client.post("{}");
 

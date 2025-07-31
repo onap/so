@@ -18,20 +18,9 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so;
+package org.onap.so.client.sdno;
 
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.onap.so.openpojo.rules.HasAnnotationMatcher.hasAnnotation;
-import static org.onap.so.openpojo.rules.HasAnnotationPropertyWithValueMatcher.hasAnnotationPropertyWithValue;
-import javax.persistence.Column;
-import javax.persistence.Temporal;
 import org.junit.Test;
-import org.onap.so.openpojo.rules.CustomSetterMustExistRule;
-import org.onap.so.openpojo.rules.EqualsAndHashCodeTester;
-import org.onap.so.openpojo.rules.HasEqualsAndHashCodeRule;
-import org.onap.so.openpojo.rules.HasToStringRule;
-import org.onap.so.openpojo.rules.ToStringTester;
 import com.openpojo.reflection.PojoClass;
 import com.openpojo.reflection.PojoClassFilter;
 import com.openpojo.reflection.filters.FilterEnum;
@@ -39,10 +28,8 @@ import com.openpojo.reflection.filters.FilterNonConcrete;
 import com.openpojo.reflection.filters.FilterPackageInfo;
 import com.openpojo.validation.Validator;
 import com.openpojo.validation.ValidatorBuilder;
-import com.openpojo.validation.rule.impl.BusinessKeyMustExistRule;
 import com.openpojo.validation.rule.impl.GetterMustExistRule;
 import com.openpojo.validation.rule.impl.NoNestedClassRule;
-import com.openpojo.validation.rule.impl.NoPrimitivesRule;
 import com.openpojo.validation.rule.impl.NoPublicFieldsExceptStaticFinalRule;
 import com.openpojo.validation.rule.impl.NoStaticExceptFinalRule;
 import com.openpojo.validation.rule.impl.SerializableMustHaveSerialVersionUIDRule;
@@ -60,20 +47,13 @@ public class BeansTest {
 
     @Test
     public void pojoStructure() {
-        test("org.onap.so.appc.orchestrator.service.beans");
-        test("org.onap.so.client.policy.entities");
-        test("org.onap.so.client.grm.beans");
-        test("org.onap.so.entity");
-        test("org.onap.so.serviceinstancebeans");
+        test("org.onap.so.client.sdno.beans");
     }
 
     private void test(String pojoPackage) {
         Validator validator = ValidatorBuilder.create().with(new GetterMustExistRule()).with(new NoNestedClassRule())
                 .with(new NoStaticExceptFinalRule()).with(new SerializableMustHaveSerialVersionUIDRule())
                 .with(new NoPublicFieldsExceptStaticFinalRule()).with(new SetterTester()).with(new GetterTester())
-
-
-
                 .build();
 
 
