@@ -12,7 +12,7 @@ public abstract class ExternalTaskUtils {
     private static final Logger logger = LoggerFactory.getLogger(ExternalTaskUtils.class);
 
     @Autowired
-    Environment env;
+    protected Environment env;
 
     private final RetrySequenceLevel retrySequenceLevel;
 

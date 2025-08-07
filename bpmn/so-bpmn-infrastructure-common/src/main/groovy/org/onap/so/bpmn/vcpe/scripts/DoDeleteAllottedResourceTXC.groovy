@@ -164,13 +164,6 @@ public class DoDeleteAllottedResourceTXC extends AbstractServiceTaskProcessor{
 
 			String callbackUrl = execution.getVariable("sdncCallbackUrl")
 			String requestId = execution.getVariable("msoRequestId")
-
-			String serviceChainServiceInstanceId = ""
-			String sourceNetworkId = ""
-			String sourceNetworkRole = ""
-			String allottedResourceRole = ""
-
-			String arModelInfo = ""
 			String modelInvariantId = ""
 			String modelVersion = ""
 			String modelUUId = ""

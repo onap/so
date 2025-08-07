@@ -56,11 +56,9 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
             if (utils.nodeExists(xml, "request-information")) {
                 throw new BpmnError("500", "FalloutHandler subflow does not support this request type.")
             }
-
             //Check request_id for the incoming request type
             //For INFRA_ACTIVE_REQUESTS payload request-id IS optional (Not sure why this is option since req id is primary key ... also tried exe through SOAP UI to check if MSO code handles null like auto generated seq not it does not)
             //For ACTIVE_REQUESTS payload request-id is NOT optional
-            def request_id = ""
             if (utils.nodeExists(xml, "request-id")) {
                 execution.setVariable("FH_request_id",utils.getNodeText(xml,"request-id"))
             }

@@ -455,15 +455,11 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
         def currentNSSI = execution.getVariable("currentNSSI")
 
         String nssiId = currentNSSI['nssiId']
-        String nsiId = currentNSSI['nsiId']
         String globalSubscriberId = execution.getVariable("globalSubscriberId")
         String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
 
         // NSSI
         AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
-
-
-        String allottedResourceId = null
 
 
         AAIResultWrapper nssiWrapper = client.get(nssiUri)

@@ -205,7 +205,6 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 							def xmlVfModules= new XmlSlurper().parseText(vfModulesText)
 							vfModules = xmlVfModules.'**'.findAll {it.name() == "vf-module"}
 							execution.setVariable("DUVAM_moduleCount", vfModules.size())
-							int vfModulesSize = 0
 							for (i in 0..vfModules.size()-1) {
 								def vfModuleXml = groovy.xml.XmlUtil.serialize(vfModules[i])
 
