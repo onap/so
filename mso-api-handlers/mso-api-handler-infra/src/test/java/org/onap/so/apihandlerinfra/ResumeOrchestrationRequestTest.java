@@ -53,6 +53,7 @@ import org.onap.so.apihandlerinfra.exceptions.DuplicateRequestException;
 import org.onap.so.apihandlerinfra.exceptions.RequestDbFailureException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.constants.Status;
+import org.onap.so.db.camunda.CamundaResumeDao;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.serviceinstancebeans.ModelInfo;
@@ -74,6 +75,9 @@ public class ResumeOrchestrationRequestTest {
 
     @Mock
     private RequestsDbClient requestDbClient;
+
+    @Mock
+    private CamundaResumeDao camundaResumeDao;
 
     @InjectMocks
     @Spy
@@ -119,7 +123,7 @@ public class ResumeOrchestrationRequestTest {
     private ContainerRequestContext requestContext = null;
     private HashMap<String, String> instanceIdMap = new HashMap<>();
     ModelInfo modelInfo;
-
+    private static final String FLOW_NAME = "AssignVnfBB";
 
     @Before
     public void setup() throws IOException {
@@ -196,22 +200,22 @@ public class ResumeOrchestrationRequestTest {
         infraActiveRequestVfModule.setVfModuleName(VFMODULE_NAME);
     }
 
-    private void setRequestClientParameter() {
-        requestClientParameter =
-                new RequestClientParameter.Builder().setRequestId(CURRENT_REQUEST_ID).setRecipeTimeout(80)
-                        .setRequestAction(Action.createInstance.toString()).setServiceInstanceId(SERVICE_INSTANCE_ID)
-                        .setPnfCorrelationId("pnfCorrelationId").setVnfId(VNF_ID).setVfModuleId(VFMODULE_ID)
-                        .setVolumeGroupId(VOLUME_GROUP_ID).setNetworkId(NETWORK_ID).setServiceType("serviceType")
-                        .setVnfType(null).setNetworkType(null).setRequestDetails(requestBody).setApiVersion(version)
-                        .setALaCarte(aLaCarte).setRequestUri(requestUri).setInstanceGroupId(null).build();
+    private void setRequestClientParameter() throws IOException {
+        requestClientParameter = new RequestClientParameter.Builder().setRequestId(CURRENT_REQUEST_ID)
+                .setRecipeTimeout(80).setRequestAction(Action.createInstance.toString())
+                .setServiceInstanceId(SERVICE_INSTANCE_ID).setPnfCorrelationId("pnfCorrelationId").setVnfId(VNF_ID)
+                .setVfModuleId(VFMODULE_ID).setVolumeGroupId(VOLUME_GROUP_ID).setNetworkId(NETWORK_ID)
+                .setServiceType("serviceType").setVnfType(null).setNetworkType(null)
+                .setRequestDetails(getRequestBody("/RequestDetails.json")).setApiVersion(version).setALaCarte(aLaCarte)
+                .setRequestUri(requestUri).setInstanceGroupId(null).build();
     }
 
-    private void setRequestClientParameterVfModule() {
-        requestClientParameterVfModule =
-                new RequestClientParameter.Builder().setRequestId(CURRENT_REQUEST_ID).setRecipeTimeout(80)
-                        .setRequestAction(Action.createInstance.toString()).setPnfCorrelationId("pnfCorrelationId")
-                        .setVnfId(VNF_ID).setVfModuleId(VFMODULE_ID).setRequestDetails(requestBody)
-                        .setApiVersion(version).setALaCarte(aLaCarte).setRequestUri(requestUri).build();
+    private void setRequestClientParameterVfModule() throws IOException {
+        requestClientParameterVfModule = new RequestClientParameter.Builder().setRequestId(CURRENT_REQUEST_ID)
+                .setRecipeTimeout(80).setRequestAction(Action.createInstance.toString())
+                .setPnfCorrelationId("pnfCorrelationId").setVnfId(VNF_ID).setVfModuleId(VFMODULE_ID)
+                .setRequestDetails(getRequestBody("/RequestDetails.json")).setApiVersion(version).setALaCarte(aLaCarte)
+                .setRequestUri(requestUri).build();
     }
 
     @Test
@@ -222,11 +226,11 @@ public class ResumeOrchestrationRequestTest {
                 any(InfraActiveRequests.class), nullable(String.class), any(Timestamp.class), nullable(String.class),
                 nullable(String.class), nullable(String.class), anyString());
         doReturn(response).when(resumeReq).resumeRequest(any(InfraActiveRequests.class), any(InfraActiveRequests.class),
-                anyString(), nullable(String.class));
+                anyString(), nullable(String.class), anyString());
 
         resumeReq.resumeOrchestrationRequest(REQUEST_ID, "v7", requestContext);
 
-        verify(resumeReq).resumeRequest(infraActiveRequest, currentActiveRequest, version, null);
+        verify(resumeReq).resumeRequest(infraActiveRequest, currentActiveRequest, version, null, REQUEST_ID);
     }
 
     @Test
@@ -260,8 +264,9 @@ public class ResumeOrchestrationRequestTest {
         when(serviceInstances.getPnfCorrelationId(any(ServiceInstancesRequest.class))).thenReturn("pnfCorrelationId");
         doReturn(lookupResult).when(requestHandler).getServiceInstanceOrchestrationURI(sir, action, aLaCarte,
                 currentActiveRequest);
+        doReturn(FLOW_NAME).when(camundaResumeDao).findResumeFromBB(REQUEST_ID);
         doReturn(requestClientParameter).when(resumeReq).setRequestClientParameter(lookupResult, version,
-                infraActiveRequest, currentActiveRequest, "pnfCorrelationId", aLaCarte, sir);
+                infraActiveRequest, currentActiveRequest, "pnfCorrelationId", aLaCarte, sir, FLOW_NAME);
         doNothing().when(resumeReq).requestDbSave(currentActiveRequest);
         when(requestHandler.postBPELRequest(any(InfraActiveRequests.class), any(RequestClientParameter.class),
                 anyString(), anyString())).thenReturn(response);
@@ -269,7 +274,8 @@ public class ResumeOrchestrationRequestTest {
                 SERVICE_INSTANCE_NAME, action);
 
         resumeReq.resumeRequest(infraActiveRequest, currentActiveRequest, version,
-                "/onap/so/infra/orchestrationRequests/v7/requests/00032ab7-na18-42e5-965d-8ea592502018/resume");
+                "/onap/so/infra/orchestrationRequests/v7/requests/00032ab7-na18-42e5-965d-8ea592502018/resume",
+                REQUEST_ID);
         verify(requestHandler).postBPELRequest(currentActiveRequest, requestClientParameter,
                 lookupResult.getOrchestrationURI(), infraActiveRequest.getRequestScope());
     }
@@ -280,7 +286,7 @@ public class ResumeOrchestrationRequestTest {
         when(requestHandler.mapJSONtoMSOStyle(anyString(), any(ServiceInstancesRequest.class), anyBoolean(),
                 any(Action.class))).thenReturn(requestBody);
         RequestClientParameter result = resumeReq.setRequestClientParameter(lookupResult, version, infraActiveRequest,
-                currentActiveRequest, "pnfCorrelationId", aLaCarte, sir);
+                currentActiveRequest, "pnfCorrelationId", aLaCarte, sir, FLOW_NAME);
         assertThat(requestClientParameter, sameBeanAs(result));
     }
 
@@ -290,7 +296,7 @@ public class ResumeOrchestrationRequestTest {
                 any(Action.class))).thenReturn(requestBody);
         doReturn(ModelType.vfModule).when(requestHandler).getModelType(action, modelInfo);
         RequestClientParameter result = resumeReq.setRequestClientParameter(lookupResult, version,
-                infraActiveRequestVfModule, currentActiveRequest, "pnfCorrelationId", aLaCarte, sir);
+                infraActiveRequestVfModule, currentActiveRequest, "pnfCorrelationId", aLaCarte, sir, FLOW_NAME);
         assertThat(requestClientParameterVfModule, sameBeanAs(result));
     }
 
@@ -313,8 +319,9 @@ public class ResumeOrchestrationRequestTest {
         doReturn(false).when(msoRequest).getAlacarteFlag(sirNullALaCarte);
         doReturn(lookupResult).when(requestHandler).getServiceInstanceOrchestrationURI(sirNullALaCarte, action, false,
                 currentActiveRequest);
+        doReturn(FLOW_NAME).when(camundaResumeDao).findResumeFromBB(REQUEST_ID);
         doReturn(requestClientParameter).when(resumeReq).setRequestClientParameter(lookupResult, version,
-                infraActiveRequest, currentActiveRequest, "pnfCorrelationId", aLaCarte, sirNullALaCarte);
+                infraActiveRequest, currentActiveRequest, "pnfCorrelationId", aLaCarte, sirNullALaCarte, FLOW_NAME);
         doReturn(false).when(resumeReq).setALaCarteFlagIfNull(SERVICE, action);
         doNothing().when(resumeReq).requestDbSave(currentActiveRequest);
         when(requestHandler.postBPELRequest(any(InfraActiveRequests.class), any(RequestClientParameter.class),
@@ -323,7 +330,8 @@ public class ResumeOrchestrationRequestTest {
                 SERVICE_INSTANCE_NAME, action);
 
         resumeReq.resumeRequest(infraActiveRequest, currentActiveRequest, version,
-                "/onap/so/infra/orchestrationRequests/v7/requests/00032ab7-na18-42e5-965d-8ea592502018/resume");
+                "/onap/so/infra/orchestrationRequests/v7/requests/00032ab7-na18-42e5-965d-8ea592502018/resume",
+                REQUEST_ID);
         verify(requestHandler).postBPELRequest(currentActiveRequest, requestClientParameter,
                 lookupResult.getOrchestrationURI(), infraActiveRequest.getRequestScope());
     }
@@ -337,7 +345,7 @@ public class ResumeOrchestrationRequestTest {
         thrown.expect(ValidateException.class);
         thrown.expectMessage("IOException while generating requestClientParameter to send to BPMN: IOException");
         resumeReq.setRequestClientParameter(lookupResult, version, infraActiveRequest, currentActiveRequest,
-                "pnfCorrelationId", aLaCarte, sir);
+                "pnfCorrelationId", aLaCarte, sir, FLOW_NAME);
     }
 
     @Test
