@@ -19,7 +19,6 @@ import org.onap.so.adapters.appc.orchestrator.client.beans.ConfigurationParamete
 import org.onap.so.adapters.appc.orchestrator.client.beans.Identity;
 import org.onap.so.adapters.appc.orchestrator.client.beans.Parameters;
 import org.onap.so.adapters.appc.orchestrator.client.beans.RequestParameters;
-import org.onap.so.adapters.appc.orchestrator.service.ApplicationControllerTaskImpl;
 import org.onap.so.appc.orchestrator.service.beans.ApplicationControllerTaskRequest;
 import org.onap.so.appc.orchestrator.service.beans.ApplicationControllerVnf;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryCommonObjectMapperProvider;

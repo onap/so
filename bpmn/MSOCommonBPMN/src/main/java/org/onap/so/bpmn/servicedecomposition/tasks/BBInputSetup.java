@@ -37,7 +37,6 @@ import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
-import org.javatuples.Pair;
 import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.Relationships;
@@ -113,7 +112,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Component("BBInputSetup")
 public class BBInputSetup implements JavaDelegate {

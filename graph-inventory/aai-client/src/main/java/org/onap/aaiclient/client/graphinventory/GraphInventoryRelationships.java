@@ -30,7 +30,6 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import org.onap.aaiclient.client.graphinventory.entities.uri.GraphInventorySingleResourceUri;
 import org.onap.so.jsonpath.JsonPathUtil;
-import com.ctc.wstx.shaded.msv_core.util.Uri;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

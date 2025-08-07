@@ -24,8 +24,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -53,7 +51,6 @@ import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.sniro.beans.SniroManagerRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 
 public class SniroHomingV2IT extends BaseIntegrationTest {
 

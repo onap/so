@@ -34,7 +34,10 @@ import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableName
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.onap.so.bpmn.infrastructure.decisionpoint.impl.camunda.controller.common.SoPropertyConstants;
-import org.onap.so.client.sdnc.lcm.beans.payload.*;
+import org.onap.so.client.sdnc.lcm.beans.payload.ActivateNESwPayload;
+import org.onap.so.client.sdnc.lcm.beans.payload.DownloadNESwPayload;
+import org.onap.so.client.sdnc.lcm.beans.payload.UpgradePostCheckPayload;
+import org.onap.so.client.sdnc.lcm.beans.payload.UpgradePreCheckPayload;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class SDNCLcmPayloadBuilderTest {

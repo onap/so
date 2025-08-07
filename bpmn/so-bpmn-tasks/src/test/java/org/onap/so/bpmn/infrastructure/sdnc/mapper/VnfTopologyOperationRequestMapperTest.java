@@ -35,8 +35,6 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfOperationInformation;
-import org.onap.so.bpmn.infrastructure.sdnc.mapper.GeneralTopologyObjectMapper;
-import org.onap.so.bpmn.infrastructure.sdnc.mapper.VnfTopologyOperationRequestMapper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;

@@ -30,7 +30,6 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.onap.so.bpmn.core.json.JsonUtils;
 import org.onap.so.bpmn.core.xml.XmlTool;
 import org.onap.so.exceptions.ValidationException;
 import org.xmlunit.builder.DiffBuilder;

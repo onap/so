@@ -33,8 +33,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
 import org.onap.so.bpmn.core.WorkflowException;

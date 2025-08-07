@@ -24,8 +24,6 @@ package org.onap.so.adapters.sdnc.client;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
-import org.onap.so.adapters.sdnc.client.CallbackHeader;
-import org.onap.so.adapters.sdnc.client.SDNCAdapterCallbackRequest;
 
 public class SDNCAdapterCallbackRequestTest {
 

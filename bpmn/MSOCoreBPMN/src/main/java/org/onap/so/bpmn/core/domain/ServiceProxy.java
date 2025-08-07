@@ -20,7 +20,10 @@
 package org.onap.so.bpmn.core.domain;
 
 import java.io.Serializable;
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"modelInfo", "toscaNodeType", "description", "sourceModelUuid"})

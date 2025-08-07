@@ -22,8 +22,6 @@
 package org.onap.so.bpmn.moi.tasks;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import junit.framework.TestCase;
-import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,11 +31,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.ServiceSubscription;
-import org.onap.aai.domain.yang.SliceProfile;
 import org.onap.aaiclient.client.aai.AAIRestClientImpl;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
-import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
@@ -46,13 +41,9 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.ExceptionBuilder;
-import org.onap.so.db.catalog.beans.OrchestrationStatus;
-import java.util.*;
-import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 

@@ -23,7 +23,6 @@
 package org.onap.so.bpmn.infrastructure.pnf.kafka;
 
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;

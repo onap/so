@@ -26,7 +26,6 @@ import static org.mockito.Mockito.doThrow;
 import java.io.IOException;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.so.bpmn.BaseBPMNTest;
 

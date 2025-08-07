@@ -32,7 +32,6 @@ import org.mockito.InjectMocks;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.db.request.beans.InfraActiveRequests;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class FlowCompletionTasksTest extends BaseTaskTest {
 

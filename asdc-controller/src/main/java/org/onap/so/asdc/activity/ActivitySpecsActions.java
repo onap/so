@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import java.net.URL;
 
 @Component

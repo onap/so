@@ -21,8 +21,6 @@
 package org.onap.so.entity;
 
 import org.junit.Test;
-import org.onap.so.openpojo.rules.HasToStringRule;
-import org.onap.so.openpojo.rules.ToStringTester;
 import com.openpojo.reflection.PojoClass;
 import com.openpojo.reflection.PojoClassFilter;
 import com.openpojo.reflection.filters.FilterEnum;

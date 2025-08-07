@@ -23,7 +23,6 @@ package org.onap.so.db.request;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import javax.transaction.Transactional;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.TestApplication;

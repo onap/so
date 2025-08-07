@@ -32,7 +32,6 @@ import java.util.UUID;
 import org.camunda.bpm.engine.test.Deployment;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.onap.so.bpmn.common.WorkflowTest;
 import org.onap.so.bpmn.common.WorkflowTest.CallbackSet;
 import org.onap.so.bpmn.core.WorkflowException;
 

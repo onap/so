@@ -30,7 +30,6 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Version;
 import java.util.Objects;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 

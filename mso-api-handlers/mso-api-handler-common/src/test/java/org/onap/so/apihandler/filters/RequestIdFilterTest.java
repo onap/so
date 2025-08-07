@@ -26,8 +26,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import java.io.IOException;
-import java.net.URI;
-import java.util.Collections;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.UriInfo;
 import org.junit.Rule;

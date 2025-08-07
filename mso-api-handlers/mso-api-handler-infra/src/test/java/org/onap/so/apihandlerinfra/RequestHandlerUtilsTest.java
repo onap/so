@@ -50,7 +50,6 @@ import org.onap.so.apihandlerinfra.exceptions.ContactCamundaException;
 import org.onap.so.apihandlerinfra.exceptions.RequestDbFailureException;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.request.beans.InfraActiveRequests;
-import org.onap.so.logger.HttpHeadersConstants;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.ModelType;
 import org.onap.so.serviceinstancebeans.RequestDetails;

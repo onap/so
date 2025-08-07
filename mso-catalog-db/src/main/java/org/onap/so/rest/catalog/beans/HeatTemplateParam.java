@@ -21,7 +21,6 @@
 package org.onap.so.rest.catalog.beans;
 
 import java.io.Serializable;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 
 public class HeatTemplateParam implements Serializable {

@@ -18,8 +18,6 @@
  */
 package org.onap.so.bpmn.infrastructure.decisionpoint.api;
 
-import org.camunda.bpm.engine.delegate.DelegateExecution;
-
 /**
  * This class is used to represent the Context used by {@ref ControllerRunnable}.
  */

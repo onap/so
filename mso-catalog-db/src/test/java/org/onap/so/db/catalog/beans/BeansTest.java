@@ -27,7 +27,6 @@ import static org.onap.so.openpojo.rules.HasAnnotationPropertyWithValueMatcher.h
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Temporal;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.so.openpojo.rules.CustomSetterMustExistRule;
 import org.onap.so.openpojo.rules.EqualsAndHashCodeTester;
@@ -41,10 +40,8 @@ import com.openpojo.reflection.filters.FilterNonConcrete;
 import com.openpojo.reflection.filters.FilterPackageInfo;
 import com.openpojo.validation.Validator;
 import com.openpojo.validation.ValidatorBuilder;
-import com.openpojo.validation.rule.impl.BusinessKeyMustExistRule;
 import com.openpojo.validation.rule.impl.GetterMustExistRule;
 import com.openpojo.validation.rule.impl.NoNestedClassRule;
-import com.openpojo.validation.rule.impl.NoPrimitivesRule;
 import com.openpojo.validation.rule.impl.NoPublicFieldsExceptStaticFinalRule;
 import com.openpojo.validation.rule.impl.NoStaticExceptFinalRule;
 import com.openpojo.validation.rule.impl.SerializableMustHaveSerialVersionUIDRule;

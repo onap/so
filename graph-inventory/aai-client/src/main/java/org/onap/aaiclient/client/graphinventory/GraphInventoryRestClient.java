@@ -35,7 +35,6 @@ import org.onap.so.client.ResponseExceptionMapper;
 import org.onap.so.client.RestClientSSL;
 import org.onap.so.client.RestProperties;
 import org.onap.so.client.CommonObjectMapperProvider;
-import org.onap.so.objects.audit.AAIObjectAudit;
 
 public abstract class GraphInventoryRestClient extends RestClientSSL {
 

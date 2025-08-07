@@ -20,7 +20,6 @@
 package org.onap.so.bpmn.infrastructure.decisionpoint.impl.camunda;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerContext;
 import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerRunnable;
 import org.springframework.stereotype.Component;

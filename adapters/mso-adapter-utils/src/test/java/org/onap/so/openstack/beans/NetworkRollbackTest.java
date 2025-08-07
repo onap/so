@@ -15,7 +15,7 @@
 
 package org.onap.so.openstack.beans;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;

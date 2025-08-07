@@ -30,7 +30,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import java.net.URI;
 import java.util.Optional;
-import javax.swing.text.html.Option;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,7 +42,6 @@ import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.cnfm.lcm.model.TerminateAsRequest;
-import org.reactivestreams.Publisher;
 
 /**
  * @author raviteja.kaumuri@est.tech

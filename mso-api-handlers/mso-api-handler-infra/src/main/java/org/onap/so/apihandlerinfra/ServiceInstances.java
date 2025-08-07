@@ -28,7 +28,6 @@ package org.onap.so.apihandlerinfra;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;

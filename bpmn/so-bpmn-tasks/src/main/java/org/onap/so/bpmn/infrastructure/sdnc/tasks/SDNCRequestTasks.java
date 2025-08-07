@@ -42,7 +42,6 @@ import org.onap.so.client.sdnc.SDNCClient;
 import org.onap.so.client.sdnc.beans.SDNCRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.w3c.dom.Document;

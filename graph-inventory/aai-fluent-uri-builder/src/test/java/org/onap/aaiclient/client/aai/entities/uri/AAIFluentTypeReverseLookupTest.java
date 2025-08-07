@@ -3,7 +3,6 @@ package org.onap.aaiclient.client.aai.entities.uri;
 import static org.junit.Assert.assertEquals;
 import org.junit.jupiter.api.Test;
 import org.onap.aaiclient.client.aai.AAIObjectType;
-import org.onap.aaiclient.client.aai.entities.uri.AAIFluentTypeReverseLookup;
 
 public class AAIFluentTypeReverseLookupTest {
 

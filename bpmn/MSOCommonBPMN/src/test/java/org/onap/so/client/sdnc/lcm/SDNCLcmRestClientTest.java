@@ -32,7 +32,10 @@ import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.so.BaseTest;
 import org.onap.so.client.restproperties.SDNCLcmPropertiesImpl;
 import org.onap.so.client.sdnc.common.SDNCConstants;
-import org.onap.so.client.sdnc.lcm.beans.*;
+import org.onap.so.client.sdnc.lcm.beans.LcmInput;
+import org.onap.so.client.sdnc.lcm.beans.LcmOutput;
+import org.onap.so.client.sdnc.lcm.beans.LcmOutputTest;
+import org.onap.so.client.sdnc.lcm.beans.LcmRestResponseTest;
 
 public class SDNCLcmRestClientTest extends BaseTest {
 

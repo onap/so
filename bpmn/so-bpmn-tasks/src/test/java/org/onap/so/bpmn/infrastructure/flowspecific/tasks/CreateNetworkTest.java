@@ -41,7 +41,6 @@ import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class CreateNetworkTest extends BaseTaskTest {
     @InjectMocks

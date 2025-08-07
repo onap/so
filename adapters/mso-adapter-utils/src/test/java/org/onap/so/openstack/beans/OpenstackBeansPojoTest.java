@@ -21,7 +21,6 @@
 package org.onap.so.openstack.beans;
 
 import org.junit.Test;
-import org.onap.so.BaseTest;
 import com.openpojo.reflection.PojoClass;
 import com.openpojo.reflection.impl.PojoClassFactory;
 import com.openpojo.validation.Validator;

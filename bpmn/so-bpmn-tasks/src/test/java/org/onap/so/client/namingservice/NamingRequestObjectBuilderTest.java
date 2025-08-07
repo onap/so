@@ -29,7 +29,6 @@ import org.onap.namingservice.model.Deleteelement;
 import org.onap.namingservice.model.Element;
 import org.onap.namingservice.model.NameGenDeleteRequest;
 import org.onap.namingservice.model.NameGenRequest;
-import org.onap.so.client.namingservice.NamingRequestObjectBuilder;
 
 public class NamingRequestObjectBuilderTest {
 

@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import org.camunda.bpm.client.ExternalTaskClient;
 import org.camunda.bpm.client.interceptor.ClientRequestInterceptor;
 import org.camunda.bpm.client.interceptor.auth.BasicAuthProvider;
-import org.onap.logging.filter.base.ScheduledLogging;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

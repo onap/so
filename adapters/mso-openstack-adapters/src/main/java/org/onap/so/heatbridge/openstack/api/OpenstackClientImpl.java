@@ -47,7 +47,6 @@ import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.Port;
 import org.openstack4j.model.network.Subnet;
 import org.openstack4j.model.storage.block.Volume;
-import org.openstack4j.model.storage.block.VolumeBackup;
 
 abstract class OpenstackClientImpl implements OpenstackClient {
     @Override

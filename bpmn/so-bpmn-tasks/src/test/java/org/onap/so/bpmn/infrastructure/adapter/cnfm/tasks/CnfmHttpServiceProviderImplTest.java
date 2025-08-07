@@ -38,7 +38,6 @@ import org.onap.so.cnfm.lcm.model.AsLcmOpOcc;
 import org.onap.so.cnfm.lcm.model.CreateAsRequest;
 import org.onap.so.cnfm.lcm.model.InstantiateAsRequest;
 import org.onap.so.cnfm.lcm.model.TerminateAsRequest;
-import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.onap.so.rest.service.HttpRestServiceProviderImpl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

@@ -22,15 +22,12 @@ package org.onap.so.bpmn.common;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onap.so.client.RestPropertiesLoader;
 import org.onap.aaiclient.client.aai.AAIProperties;
 import org.onap.so.client.dmaap.DmaapProperties;
 import org.onap.so.client.dmaap.DmaapPropertiesLoader;
-import org.onap.so.client.sdno.dmaap.SDNOHealthCheckDmaapConsumer;
 
 public class SPIPropertiesTest {
 

@@ -25,9 +25,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import java.security.GeneralSecurityException;
 import org.junit.Test;
-import org.onap.so.db.catalog.beans.AuthenticationType;
-import org.onap.so.db.catalog.beans.CloudIdentity;
-import org.onap.so.db.catalog.beans.ServerType;
 import org.onap.so.utils.CryptoUtils;
 
 public class CloudIdentityTest {

@@ -87,7 +87,6 @@ import org.onap.so.db.request.beans.RequestProcessingData;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.RequestDetails;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory;
 

@@ -34,7 +34,6 @@ import org.onap.aai.domain.yang.L3Network;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class NetworkBBUtilsTest extends BaseTaskTest {
     @InjectMocks

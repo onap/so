@@ -1,7 +1,6 @@
 package org.onap.so.apihandlerinfra.infra.rest.validator;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doReturn;
 import java.util.HashMap;
 import java.util.Map;

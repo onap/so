@@ -38,7 +38,6 @@ import org.onap.aaiclient.client.aai.entities.Relationships;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAISimpleUri;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
-import org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader.WorkflowActionExtractResourcesAAI;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 

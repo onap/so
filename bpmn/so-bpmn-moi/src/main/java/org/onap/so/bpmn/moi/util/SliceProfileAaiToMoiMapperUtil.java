@@ -24,7 +24,6 @@ package org.onap.so.bpmn.moi.util;
 import org.onap.aai.domain.yang.MaxNumberOfUes;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.SliceProfile;
-import org.onap.so.bpmn.moi.tasks.AssignRANNssiBBTasks;
 import org.onap.so.moi.Attributes;
 import org.onap.so.moi.PlmnId;
 import org.onap.so.moi.Snssai;

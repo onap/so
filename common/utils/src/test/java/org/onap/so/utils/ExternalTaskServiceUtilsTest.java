@@ -1,23 +1,17 @@
 package org.onap.so.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import org.camunda.bpm.client.ExternalTaskClient;
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.core.env.Environment;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExternalTaskServiceUtilsTest {

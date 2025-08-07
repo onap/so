@@ -25,8 +25,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.onap.so.adapters.sdnc.SDNCAdapterRequest;
-import org.onap.so.adapters.sdnc.RequestHeader;
 
 
 public class SDNCAdapterRequestTest {

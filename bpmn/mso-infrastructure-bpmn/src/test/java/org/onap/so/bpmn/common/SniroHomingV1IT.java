@@ -23,15 +23,16 @@
 package org.onap.so.bpmn.common;
 
 import static org.onap.so.bpmn.mock.StubResponseDatabase.MockGetServiceResourcesCatalogDataByModelUuid;
-import static org.onap.so.bpmn.mock.StubResponseSNIRO.*;
-import static org.junit.Assert.*;
+import static org.onap.so.bpmn.mock.StubResponseSNIRO.mockSNIRO;
+import static org.onap.so.bpmn.mock.StubResponseSNIRO.mockSNIRO_500;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.camunda.bpm.engine.test.Deployment;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;

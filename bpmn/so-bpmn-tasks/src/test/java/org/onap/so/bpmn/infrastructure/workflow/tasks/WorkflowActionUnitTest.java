@@ -20,17 +20,6 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -38,10 +27,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -55,10 +42,6 @@ import org.onap.so.db.catalog.beans.CvnfcCustomization;
 import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 import org.onap.so.db.catalog.client.CatalogDbClient;
-import org.onap.so.serviceinstancebeans.ModelInfo;
-import org.onap.so.serviceinstancebeans.RelatedInstance;
-import org.onap.so.serviceinstancebeans.RequestDetails;
-import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WorkflowActionUnitTest {
