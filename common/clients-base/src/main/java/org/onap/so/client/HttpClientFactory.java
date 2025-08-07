@@ -30,7 +30,7 @@ public class HttpClientFactory {
     }
 
     public HttpClient newXmlClient(URL host, ONAPComponentsList targetEntity) {
-        return new HttpClient(host, MediaType.APPLICATION_XML, targetEntity);
+        return new HttpClient(host, MediaType.APPLICATION_XML, MediaType.APPLICATION_XML, targetEntity);
     }
 
     public HttpClient newTextXmlClient(URL host, ONAPComponentsList targetEntity) {
