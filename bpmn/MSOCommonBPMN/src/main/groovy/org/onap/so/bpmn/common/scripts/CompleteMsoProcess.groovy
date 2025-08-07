@@ -53,8 +53,6 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
             if (utils.nodeExists(xml, "request-information")) {
                 throw new BpmnError("500", "CompleteMsoProcess subflow does not support this request type.")
             }
-
-            def request_id = ""
             if (utils.nodeExists(xml, "request-id")) {
                 execution.setVariable("CMSO_request_id",utils.getNodeText(xml,"request-id"))
             }

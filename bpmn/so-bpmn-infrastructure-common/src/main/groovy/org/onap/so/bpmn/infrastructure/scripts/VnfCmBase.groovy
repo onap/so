@@ -805,7 +805,6 @@ public abstract class VnfCmBase extends AbstractServiceTaskProcessor {
  
 	public void postProcessRollback (DelegateExecution execution) {
         logger.trace("postProcessRollback ")
-		String msg = ""
 		try {
 			Object workflowException = execution.getVariable("prevWorkflowException");
 			if (workflowException instanceof WorkflowException) {

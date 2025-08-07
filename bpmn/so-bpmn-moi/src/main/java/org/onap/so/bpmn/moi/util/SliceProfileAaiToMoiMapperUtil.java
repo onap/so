@@ -47,7 +47,6 @@ public class SliceProfileAaiToMoiMapperUtil {
         String environmentContext = null;
         String serviceType = null;
         String operationalState = "LOCKED";
-        String orchistrationStatus = "Assigned";
 
         for (org.onap.so.moi.SliceProfile moiSliceProfile : moiRequestAttributes.getSliceProfileList()) {
             serviceInstanceLocationId = getPlmnId(moiSliceProfile.getPlmnInfoList().get(0).getPlmnId());

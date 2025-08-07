@@ -477,12 +477,9 @@ class SDNCAdapterUtils {
 	}
 
 	public String updateHomingInfo(String homingInfo, String aicVersion) {
-		String newHomingInfo
 		if(homingInfo == null || homingInfo.trim().length() == 0) {
-			newHomingInfo = "<l2-homing-information><aic-version>" + aicVersion + "</aic-version></l2-homing-information>"
 		}
 		else {
-			newHomingInfo = homingInfo.substring(0, homingInfo.indexOf("</l2-homing-information>")) + "<aic-version>" + aicVersion + "</aic-version></l2-homing-information>"
 		}
 	}
 

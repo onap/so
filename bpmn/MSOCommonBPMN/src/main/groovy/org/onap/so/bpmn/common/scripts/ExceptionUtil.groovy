@@ -135,8 +135,6 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	WorkflowException MapAAIExceptionToWorkflowExceptionGeneric(DelegateExecution execution, String response, int resCode){
 		def utils=new MsoUtils()
 		logger.debug("Start MapAAIExceptionToWorkflowExceptionGeneric Process")
-
-		WorkflowException wfex
 		try {
 			if(utils.nodeExists(response, "Fault")){
 				String fault = utils.getNodeXml(response, "Fault")

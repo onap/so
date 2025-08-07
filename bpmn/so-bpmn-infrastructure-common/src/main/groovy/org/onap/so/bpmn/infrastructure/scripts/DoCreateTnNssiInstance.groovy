@@ -46,7 +46,6 @@ class DoCreateTnNssiInstance extends AbstractServiceTaskProcessor {
     String Prefix = "DCTN_"
 
     void preProcessRequest(DelegateExecution execution) {
-        String msg = ""
         logger.trace("Enter preProcessRequest()")
 
         execution.setVariable("prefix", Prefix)
