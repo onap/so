@@ -2009,7 +2009,6 @@ public class WorkflowActionTest extends BaseTaskTest {
     @Test
     public void selectExecutionListMacroResumeTest() throws Exception {
         String gAction = "createInstance";
-        String resource = "Service";
         String bpmnRequest = readBpmnRequestFromFile(MACRO_ASSIGN_JSON);
         initExecution(gAction, bpmnRequest, false);
         execution.setVariable("requestUri", "v6/serviceInstances/123");

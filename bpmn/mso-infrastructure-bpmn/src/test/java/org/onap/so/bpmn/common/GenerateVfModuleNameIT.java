@@ -39,21 +39,8 @@ public class GenerateVfModuleNameIT extends BaseIntegrationTest {
 
     @Test
     public void TestGenerateVfModuleNameSuvvess() {
-        //
-        String request =
-                "<vnf-request xmlns=\"http://ecomp.att.com/mso/infra/vnf-request/v1\">" + EOL + "  <request-info>" + EOL
-                        + "    <action>CREATE_VF_MODULE</action>" + EOL + "    <source>PORTAL</source>" + EOL
-                        + "  </request-info>" + EOL + "  <vnf-inputs>" + EOL + "    <vnf-name>STMTN5MMSC22</vnf-name>"
-                        + EOL + "    <vf-module-name>STMTN5MMSC22-MMSC::module-0-0</vf-module-name>" + EOL
-                        + "    <vf-module-model-name>MMSC::module-0</vf-module-model-name>" + EOL
-                        + "    <persona-model-id>973ed047-d251-4fb9-bf1a-65b8949e0a73</persona-model-id>" + EOL
-                        + "    <persona-model-version>1.0</persona-model-version>" + EOL
-                        + "    <service-id>00000000-0000-0000-0000-000000000000</service-id>" + EOL
-                        + "    <aic-node-clli>MDTWNJ21</aic-node-clli>" + EOL
-                        + "    <tenant-id>fba1bd1e195a404cacb9ce17a9b2b421</tenant-id>" + EOL + "  </vnf-inputs>" + EOL
-                        + "  <vnf-params xmlns:tns=\"http://ecomp.att.com/mso/infra/vnf-request/v1\"/>" + EOL
-                        + "</vnf-request>" + EOL;
 
+        //
         MockGetGenericVnfById(wireMockServer, ".*", "GenericFlows/getGenericVnfByNameResponse.xml");
         RuntimeService runtimeService = processEngine.getRuntimeService();
         Map<String, Object> variables = new HashMap<String, Object>();

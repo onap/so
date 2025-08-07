@@ -67,8 +67,8 @@ public class ApplicationControllerSupportTest {
         String errorMessage = "errormessage";
         AppcClientException exception = new AppcClientException(errorMessage);
         Status status = applicationControllerSupport.buildStatusFromAppcException(exception);
-        assertThat(status.getCode() == 200);
-        assertThat((status.getMessage()).equals(("Exception on APPC request: " + errorMessage)));
+        assertThat(status.getCode()).isEqualTo(200);
+        assertThat(status.getMessage()).isEqualTo("Exception on APPC request: " + errorMessage);
     }
 
     private Status createStatus(int code) {

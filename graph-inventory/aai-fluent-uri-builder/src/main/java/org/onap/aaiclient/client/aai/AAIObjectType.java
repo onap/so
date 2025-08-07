@@ -71,23 +71,6 @@ public class AAIObjectType implements AAIObjectBase, AAIObjectName, GraphInvento
     private final Class<?> aaiObjectClass;
     private final String name;
 
-    static {
-        /* Locate any AAIObjectTypes on the classpath and add them to our map */
-        java.util.Collection<URL> packages = ClasspathHelper.forPackage("");
-        Reflections r =
-                new Reflections(new ConfigurationBuilder().setUrls(packages).setScanners(new SubTypesScanner()));
-
-        Set<Class<? extends AAIObjectType>> resources = r.getSubTypesOf(AAIObjectType.class);
-
-        for (Class<? extends AAIObjectType> customTypeClass : resources) {
-            AAIObjectType customType;
-            try {
-                customType = customTypeClass.newInstance();
-            } catch (InstantiationException | IllegalAccessException e) {
-            }
-        }
-    }
-
     protected AAIObjectType() {
         this.parentUri = null;
         this.partialUri = null;

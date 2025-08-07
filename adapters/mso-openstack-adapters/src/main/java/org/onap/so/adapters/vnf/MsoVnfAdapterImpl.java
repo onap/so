@@ -375,9 +375,7 @@ public class MsoVnfAdapterImpl {
             logger.debug("orchestrating a VNF - *NOT* a module!");
             requestTypeString = requestTypeString.substring(1);
         }
-
         // let's parse out the request type we're being sent
-        boolean isBaseRequest = false;
         boolean isVolumeRequest = false;
         if (requestTypeString.startsWith("VOLUME")) {
             isVolumeRequest = true;
@@ -478,7 +476,6 @@ public class MsoVnfAdapterImpl {
                     logger.trace("Found vfModuleCust entry {}", vfmc.toString());
                 }
                 if (vf.getIsBase()) {
-                    isBaseRequest = true;
                     logger.debug("This is a BASE VF request!");
                 } else {
                     logger.debug("This is *not* a BASE VF request!");

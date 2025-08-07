@@ -157,10 +157,6 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
             String operationId = execution.getVariable("operationId")
             String operationType = execution.getVariable("operationType")
             String resourceTemplateUUIDs = ""
-            String result = "processing"
-            String progress = "0"
-            String reason = ""
-            String operationContent = "Prepare service updating"
             logger.info( "Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId + " operationType:" + operationType)
             serviceId = UriUtils.encode(serviceId,"UTF-8")
             execution.setVariable("serviceInstanceId", serviceId)
@@ -281,7 +277,6 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		logger.info("Entered " + method)
-		String msg = ""
 
 		String serviceInstanceVersion = execution.getVariable("serviceInstanceVersion")
 

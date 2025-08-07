@@ -723,7 +723,6 @@ public class HeatBridgeImplTest {
         when(port.getMacAddress()).thenReturn("78:4f:43:68:e2:78");
         when(port.getNetworkId()).thenReturn("890a203a-23gg-56jh-df67-731656a8f13a");
         when(port.getDeviceId()).thenReturn("test-device-id");
-        String pfPciId = "0000:08:00.0";
 
         Network network = mock(Network.class);
         when(network.getId()).thenReturn("test-network-id");
@@ -764,7 +763,6 @@ public class HeatBridgeImplTest {
         when(port.getMacAddress()).thenReturn("78:4f:43:68:e2:78");
         when(port.getNetworkId()).thenReturn("890a203a-23gg-56jh-df67-731656a8f13a");
         when(port.getDeviceId()).thenReturn(null);
-        String pfPciId = "0000:08:00.0";
 
         Network network = mock(Network.class);
         when(network.getId()).thenReturn("test-network-id");

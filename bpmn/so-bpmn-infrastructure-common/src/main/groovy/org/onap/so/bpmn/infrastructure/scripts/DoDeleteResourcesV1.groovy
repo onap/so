@@ -176,8 +176,6 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         if(resourceSequence != null) {
             for (resourceType in resourceSequence.reverse()) {
 
-                boolean vfFound = false
-
                 for (ImmutablePair resourceTuple : delResourceList) {
                     Resource resource = resourceTuple.getKey()
                     List<Resource> groupResources = resourceTuple.getValue()
@@ -430,7 +428,6 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
             String hdrRequestId = execution.getVariable("msoRequestId")
             String serviceInstanceId = execution.getVariable("serviceInstanceId")
             String source = execution.getVariable("source")
-            String sdnc_service_id = serviceInstanceId
             ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
             String serviceType = execution.getVariable("serviceType")
             String globalCustomerId = execution.getVariable("globalSubscriberId")

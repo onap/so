@@ -124,8 +124,6 @@ public class RainyDayHandler extends AbstractServiceTaskProcessor {
 			def workStep = execution.getVariable("workStep")
 			
 			logger.debug("Before querying policy")
-			
-			String decision = 'DENY'
 			String disposition = "Abort"
 			String defaultAllowedTreatments = "rollback, skip, manual, abort"
 			
@@ -161,7 +159,6 @@ public class RainyDayHandler extends AbstractServiceTaskProcessor {
 			
 						
 				if (decisionObject != null) {
-					decision = decisionObject.getDecision()
 					disposition = decisionObject.getDetails()
 					logger.debug("Obtained disposition from policy engine: " + disposition)
 				}

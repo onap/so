@@ -45,9 +45,6 @@ public class SDNCService extends ExternalTaskUtils {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Autowired
-    private Environment env;
-
     private static final ObjectMapper objMapper = new ObjectMapper();
 
     public SDNCService() {

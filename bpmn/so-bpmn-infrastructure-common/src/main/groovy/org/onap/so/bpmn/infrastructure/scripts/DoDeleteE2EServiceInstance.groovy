@@ -550,10 +550,6 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
             String operationId = execution.getVariable("operationId")
             String operationType = execution.getVariable("operationType")
             String resourceTemplateUUIDs = ""
-            String result = "processing"
-            String progress = "0"
-            String reason = ""
-            String operationContent = "Prepare service creation"
             logger.debug("Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId + " operationType:" + operationType)
             serviceId = UriUtils.encode(serviceId,"UTF-8")
             execution.setVariable("serviceInstanceId", serviceId)

@@ -446,7 +446,6 @@ public class ManagedObject3gppServiceInstances {
         InfraActiveRequests aq = new InfraActiveRequests();
         try {
             String serviceInstanceName = null;
-            String serviceInstanceId = null;
             if (action.name().equals("ranSlice")) {
                 serviceInstanceName = "ran_nssi_" + requestId;
                 aq.setServiceInstanceName(serviceInstanceName);

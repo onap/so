@@ -341,7 +341,6 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
         def key
         def value
         def networkKey
-        def networkValue
         def floatingIPKey
         def floatingIPKeyValue
         def floatingIPV6Key
@@ -375,8 +374,6 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
                     }
                 }
                 for(int n = 0; n < vmNetworksList.getLength(); n++){
-                    String floatingIpKeyValueStr = ""
-                    String floatingIpV6KeyValueStr = ""
                     Node nodeNetworkKey = vmNetworksList.item(n)
                     if (nodeNetworkKey.getNodeType() == Node.ELEMENT_NODE) {
                         Element eElementNetworkKey = (Element) nodeNetworkKey
@@ -466,7 +463,6 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
             }
         }
         //SDNC Response Params
-        String sdncResponseParams = ""
         List<String> sdncResponseParamsToSkip = [
             "vnf_id",
             "vf_module_id",
@@ -707,7 +703,6 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
         def key
         def value
         def networkKey
-        def networkValue
         def floatingIPKey
         def floatingIPKeyValue
         def floatingIPV6Key
@@ -741,8 +736,6 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
                     }
                 }
                 for(int n = 0; n < vmNetworksList.getLength(); n++){
-                    String floatingIpKeyValueStr = ""
-                    String floatingIpV6KeyValueStr = ""
                     Node nodeNetworkKey = vmNetworksList.item(n)
                     if (nodeNetworkKey.getNodeType() == Node.ELEMENT_NODE) {
                         Element eElementNetworkKey = (Element) nodeNetworkKey
@@ -1121,7 +1114,6 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
         def key
         def value
         def networkKey
-        def networkValue
         def floatingIPKey
         def floatingIPKeyValue
         def floatingIPV6Key
