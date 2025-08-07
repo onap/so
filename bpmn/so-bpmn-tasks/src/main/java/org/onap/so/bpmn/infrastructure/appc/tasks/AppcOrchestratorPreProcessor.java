@@ -116,15 +116,12 @@ public class AppcOrchestratorPreProcessor {
             execution.setVariable("vserverIdList", null);
             execution.setVariable("vmIndex", 0);
             execution.setVariable("vmIdListSize", 0);
-
-            String vfModuleId = null;
             VfModule vfModule = null;
             try {
                 vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
             } catch (BBObjectNotFoundException e) {
             }
             if (vfModule != null) {
-                vfModuleId = vfModule.getVfModuleId();
             }
             if (action.equals(Action.Snapshot)) {
                 try {

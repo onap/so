@@ -21,9 +21,6 @@ public class ApplicationControllerTask extends ExternalTaskUtils {
     private static final Logger logger = LoggerFactory.getLogger(ApplicationControllerTask.class);
 
     @Autowired
-    public Environment env;
-
-    @Autowired
     public ApplicationControllerTaskImpl applicationControllerTaskImpl;
 
     @Autowired
