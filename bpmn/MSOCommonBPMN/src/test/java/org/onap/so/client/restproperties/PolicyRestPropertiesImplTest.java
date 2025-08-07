@@ -22,7 +22,6 @@ package org.onap.so.client.restproperties;
 
 import static org.junit.Assert.assertEquals;
 import java.net.MalformedURLException;
-import java.net.URL;
 import org.junit.Test;
 
 public class PolicyRestPropertiesImplTest {

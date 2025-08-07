@@ -36,7 +36,6 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 import org.onap.so.client.RestPropertiesLoader;
 import org.onap.aaiclient.client.aai.AAIProperties;
-import org.onap.so.BaseTest;
 
 public class ThreadedReadTest {
     @Test

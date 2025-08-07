@@ -21,7 +21,8 @@
 package org.onap.so.db.catalog;
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;

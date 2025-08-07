@@ -25,7 +25,6 @@ import org.camunda.bpm.client.task.ExternalTaskService;
 import org.onap.appc.client.lcm.api.ResponseHandler;
 import org.onap.appc.client.lcm.exceptions.AppcClientException;
 import org.onap.appc.client.lcm.model.Status;
-import org.onap.so.adapters.appc.orchestrator.client.StatusCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

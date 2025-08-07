@@ -22,7 +22,6 @@ package org.onap.so.db.catalog.beans;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import org.onap.so.db.catalog.beans.CloudifyManager;
 
 public class CloudifyManagerTest {
 

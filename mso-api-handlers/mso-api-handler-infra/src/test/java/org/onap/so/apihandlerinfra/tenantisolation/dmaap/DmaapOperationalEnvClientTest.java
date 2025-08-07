@@ -24,16 +24,10 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.ParseException;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.onap.so.apihandlerinfra.ApiHandlerApplication;
 import org.onap.so.apihandlerinfra.BaseTest;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DmaapOperationalEnvClientTest extends BaseTest {

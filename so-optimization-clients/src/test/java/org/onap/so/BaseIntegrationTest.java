@@ -19,8 +19,6 @@
  */
 package org.onap.so;
 
-import java.io.IOException;
-import java.io.InputStream;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.onap.so.client.oof.OofClient;

@@ -26,7 +26,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.VnfmAdapterCreateVnfTaskConfiguration;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.springframework.web.client.RestTemplate;
 

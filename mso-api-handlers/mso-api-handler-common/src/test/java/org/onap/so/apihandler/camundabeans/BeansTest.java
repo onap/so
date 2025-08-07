@@ -23,8 +23,6 @@ package org.onap.so.apihandler.camundabeans;
 import org.junit.Test;
 import com.openpojo.validation.Validator;
 import com.openpojo.validation.ValidatorBuilder;
-import com.openpojo.validation.rule.impl.GetterMustExistRule;
-import com.openpojo.validation.rule.impl.SetterMustExistRule;
 import com.openpojo.validation.test.impl.GetterTester;
 import com.openpojo.validation.test.impl.SetterTester;
 import com.openpojo.reflection.PojoClass;
@@ -32,7 +30,6 @@ import com.openpojo.reflection.PojoClassFilter;
 import com.openpojo.reflection.filters.FilterEnum;
 import com.openpojo.reflection.filters.FilterNonConcrete;
 import com.openpojo.reflection.filters.FilterPackageInfo;
-import org.onap.so.openpojo.rules.HasToStringRule;
 import org.onap.so.openpojo.rules.ToStringTester;
 
 public class BeansTest {

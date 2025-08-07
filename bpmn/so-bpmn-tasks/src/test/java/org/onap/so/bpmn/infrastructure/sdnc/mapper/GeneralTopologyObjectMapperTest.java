@@ -47,7 +47,6 @@ import org.onap.sdnc.northbound.client.model.GenericResourceApiSvcActionEnumerat
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVfmoduleinformationVfModuleInformation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfinformationVnfInformation;
 import org.onap.so.bpmn.common.data.TestDataSetup;
-import org.onap.so.bpmn.infrastructure.sdnc.mapper.GeneralTopologyObjectMapper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;

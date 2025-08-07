@@ -41,7 +41,6 @@ import org.onap.so.apihandler.common.RequestClientParameter;
 import org.onap.so.apihandlerinfra.Action;
 import org.onap.so.apihandlerinfra.Constants;
 import org.onap.so.apihandlerinfra.infra.rest.exception.NoRecipeException;
-import org.onap.so.apihandlerinfra.infra.rest.handler.NetworkRestHandler;
 import org.onap.so.constants.Status;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;

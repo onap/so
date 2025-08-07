@@ -23,7 +23,6 @@
 package org.onap.so.client.sdnc;
 
 import java.util.LinkedHashMap;
-import javax.ws.rs.core.UriBuilder;
 import org.onap.so.client.BaseClient;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.MapperException;

@@ -41,7 +41,7 @@ import static org.assertj.core.api.Assertions.fail;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.*;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.EXECUTION_OBJECT;
 
 @RunWith(Parameterized.class)
 public class GenericPnfCDSProcessingDETest extends BaseTaskTest {

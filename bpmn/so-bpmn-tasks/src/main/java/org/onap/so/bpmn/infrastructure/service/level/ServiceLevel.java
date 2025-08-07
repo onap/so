@@ -23,7 +23,6 @@ package org.onap.so.bpmn.infrastructure.service.level;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import jline.internal.Log;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.bpmn.infrastructure.service.level.impl.ServiceLevelConstants;
 import org.onap.so.client.exception.ExceptionBuilder;

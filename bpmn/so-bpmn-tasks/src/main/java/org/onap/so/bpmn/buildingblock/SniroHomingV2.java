@@ -22,7 +22,8 @@
 
 package org.onap.so.bpmn.buildingblock;
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +56,7 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.sniro.SniroClient;
-import static org.onap.so.client.sniro.SniroValidator.*;
+import static org.onap.so.client.sniro.SniroValidator.validateSolution;
 import org.onap.so.client.sniro.beans.Demand;
 import org.onap.so.client.sniro.beans.LicenseInfo;
 import org.onap.so.client.sniro.beans.ModelInfo;

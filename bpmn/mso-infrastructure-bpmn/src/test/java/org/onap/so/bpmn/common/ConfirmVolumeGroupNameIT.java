@@ -25,9 +25,6 @@ import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetVolumeGroupById;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import org.camunda.bpm.engine.RuntimeService;
-import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
 

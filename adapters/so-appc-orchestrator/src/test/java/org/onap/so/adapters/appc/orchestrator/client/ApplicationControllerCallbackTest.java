@@ -20,7 +20,6 @@
 
 package org.onap.so.adapters.appc.orchestrator.client;
 
-import static org.hamcrest.CoreMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
@@ -30,8 +29,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.onap.so.adapters.appc.orchestrator.client.ApplicationControllerCallback;
-import org.onap.so.adapters.appc.orchestrator.client.ApplicationControllerSupport;
 import org.onap.appc.client.lcm.model.Status;
 import org.onap.appc.client.lcm.exceptions.AppcClientException;
 import org.onap.appc.client.lcm.model.ResumeTrafficOutput;

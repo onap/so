@@ -25,8 +25,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.appc.client.lcm.exceptions.AppcClientException;
 import org.onap.appc.client.lcm.model.Status;
-import org.onap.so.adapters.appc.orchestrator.client.ApplicationControllerSupport;
-import org.onap.so.adapters.appc.orchestrator.client.StatusCategory;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 

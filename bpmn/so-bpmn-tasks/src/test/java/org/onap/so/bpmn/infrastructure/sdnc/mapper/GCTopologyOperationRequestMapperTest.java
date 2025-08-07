@@ -22,9 +22,6 @@ package org.onap.so.bpmn.infrastructure.sdnc.mapper;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,15 +30,8 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiGcTopologyOperationInformation;
 import org.onap.so.bpmn.common.data.TestDataSetup;
-import org.onap.so.bpmn.infrastructure.sdnc.mapper.GCTopologyOperationRequestMapper;
-import org.onap.so.bpmn.infrastructure.sdnc.mapper.GeneralTopologyObjectMapper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceProxy;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBondingLink;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 

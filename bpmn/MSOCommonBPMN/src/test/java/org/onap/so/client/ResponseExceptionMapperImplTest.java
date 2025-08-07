@@ -22,9 +22,7 @@ package org.onap.so.client;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.InternalServerErrorException;

@@ -23,7 +23,7 @@
 package org.onap.so.client.sniro;
 
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.util.Map;
 import org.json.JSONObject;
 import org.onap.so.client.exception.BadResponseException;

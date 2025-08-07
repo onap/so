@@ -20,15 +20,12 @@
 
 package org.onap.so.cloud;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import java.util.Optional;
 import org.junit.Test;
 import org.onap.so.BaseTest;
-import org.onap.so.db.catalog.beans.AuthenticationType;
-import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
-import org.onap.so.db.catalog.beans.ServerType;
-import org.onap.so.openstack.exceptions.MsoException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

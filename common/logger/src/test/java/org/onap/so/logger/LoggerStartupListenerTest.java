@@ -19,7 +19,7 @@
  */
 package org.onap.so.logger;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 import java.net.UnknownHostException;
 import org.junit.jupiter.api.BeforeEach;

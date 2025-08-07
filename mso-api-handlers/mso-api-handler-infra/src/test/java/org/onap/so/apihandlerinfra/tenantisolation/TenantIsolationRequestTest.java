@@ -31,7 +31,6 @@ import org.junit.rules.ExpectedException;
 import org.onap.so.apihandlerinfra.BaseTest;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.Action;
 import org.onap.so.exceptions.ValidationException;
-import org.springframework.test.context.ActiveProfiles;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TenantIsolationRequestTest extends BaseTest {

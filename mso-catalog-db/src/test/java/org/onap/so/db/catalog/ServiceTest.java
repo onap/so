@@ -21,12 +21,9 @@
 package org.onap.so.db.catalog;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onap.so.db.catalog.beans.PnfResource;
-import org.onap.so.db.catalog.beans.PnfResourceCustomization;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;

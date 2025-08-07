@@ -30,7 +30,7 @@ import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
 
 public class VnfCDSRequestProviderTest extends AbstractVnfCDSRequestProviderTest {
 

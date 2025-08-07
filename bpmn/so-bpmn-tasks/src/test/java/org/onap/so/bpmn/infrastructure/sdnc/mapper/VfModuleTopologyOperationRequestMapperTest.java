@@ -40,8 +40,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVfModuleOperationInformation;
-import org.onap.so.bpmn.infrastructure.sdnc.mapper.GeneralTopologyObjectMapper;
-import org.onap.so.bpmn.infrastructure.sdnc.mapper.VfModuleTopologyOperationRequestMapper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;

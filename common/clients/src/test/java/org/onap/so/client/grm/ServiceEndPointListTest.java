@@ -23,7 +23,7 @@ package org.onap.so.client.grm;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.onap.so.client.grm.beans.ServiceEndPoint;
 import org.onap.so.client.grm.beans.ServiceEndPointList;

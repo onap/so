@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.apache.logging.log4j.util.Strings;
 import org.junit.Test;
 import org.onap.so.client.exception.BadResponseException;
 

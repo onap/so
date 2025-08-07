@@ -20,7 +20,6 @@
 
 package org.onap.so.apihandlerinfra.tenantisolation.dmaap;
 
-import java.io.IOException;
 import javax.inject.Provider;
 import org.apache.http.HttpStatus;
 import org.onap.so.apihandler.common.ErrorNumbers;

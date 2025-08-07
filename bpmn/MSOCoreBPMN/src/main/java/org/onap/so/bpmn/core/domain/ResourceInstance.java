@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.core.domain;
 
 import java.io.Serializable;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * Use resourceId in resource class instead

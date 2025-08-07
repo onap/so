@@ -30,7 +30,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.ServiceInstance;
-import org.onap.aai.domain.yang.ServiceSubscription;
 import org.onap.aaiclient.client.aai.AAIRestClientImpl;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
@@ -42,7 +41,6 @@ import org.onap.so.client.exception.ExceptionBuilder;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 

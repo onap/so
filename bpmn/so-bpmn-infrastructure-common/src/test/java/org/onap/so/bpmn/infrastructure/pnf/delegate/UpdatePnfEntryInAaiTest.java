@@ -27,7 +27,7 @@ import org.mockito.Mock;
 import org.onap.aai.domain.yang.Pnf;
 import org.onap.so.bpmn.infrastructure.pnf.management.PnfManagement;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;

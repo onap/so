@@ -21,7 +21,6 @@
 package org.onap.aaiclient.client.graphinventory.exceptions;
 
 import org.junit.Test;
-import org.onap.aaiclient.client.graphinventory.exceptions.GraphInventoryPayloadException;
 
 public class GraphInventoryPayloadExceptionTest {
 

@@ -24,8 +24,6 @@ package org.onap.so.bpmn.infrastructure.common.name.generation;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.MockitoAnnotations;
-import org.onap.so.bpmn.infrastructure.common.name.generation.AAIObjectInstanceNameGenerator;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoInstanceGroup;

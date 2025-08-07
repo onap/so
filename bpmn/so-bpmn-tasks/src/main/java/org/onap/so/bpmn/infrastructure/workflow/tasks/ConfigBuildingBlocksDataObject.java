@@ -22,9 +22,7 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlockBase;
-import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
-import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import java.io.Serializable;
 import java.util.List;
