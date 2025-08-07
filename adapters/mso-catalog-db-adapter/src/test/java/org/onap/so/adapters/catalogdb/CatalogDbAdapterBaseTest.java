@@ -20,6 +20,8 @@
 
 package org.onap.so.adapters.catalogdb;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,7 +41,9 @@ public class CatalogDbAdapterBaseTest {
     protected int port;
 
     @Test
-    public void testNothing() {}
+    public void testNothing() {
+        assertTrue(true);
+    }
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {

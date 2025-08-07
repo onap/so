@@ -167,14 +167,9 @@ public class UpdateVfModuleInfraV2 {
 			execution.setVariable(prefix + 'vfModuleModelInfo', vfModuleModelInfo)
 
 			def suppressRollback = reqMap.requestDetails?.requestInfo?.suppressRollback
-
-
-			def backoutOnFailure = ""
 			if(suppressRollback != null){
 				if ( suppressRollback == true) {
-					backoutOnFailure = "false"
 				} else if ( suppressRollback == false) {
-					backoutOnFailure = "true"
 				}
 			}
 

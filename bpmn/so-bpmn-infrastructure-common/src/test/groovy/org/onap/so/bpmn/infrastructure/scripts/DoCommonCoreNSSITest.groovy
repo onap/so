@@ -189,8 +189,6 @@ class DoCommonCoreNSSITest extends MsoGroovyTest {
 
         String urlString = String.format("http://mso.onap:8088/serviceInstantiation/v7/serviceInstances/%s/vnfs/%s", networkServiceInstance.getServiceInstanceId(), genericVnf.getVnfId())
 
-        String callPUTServiceInstanceResponse = "put"
-
         RequestDetails requestDetails = new RequestDetails()
         ObjectMapper mapper = new ObjectMapper()
         String requestDetailsStr = mapper.writeValueAsString(requestDetails)

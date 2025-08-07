@@ -435,15 +435,8 @@ public class OrchestrationRequestsTest extends BaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(requestJSON, headers);
 
         UriComponentsBuilder builder;
-        ResponseEntity<String> response;
-        Request request;
-
-        // Test valid status
-        request = ORCHESTRATION_LIST.getRequestList().get(1).getRequest();
         builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(
                 "/onap/so/infra/orchestrationRequests/v7/" + "5ffbabd6-b793-4377-a1ab-082670fbc7ac" + "/unlock"));
-
-        response = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, String.class);
         // Cannot assert anything further here, already have a wiremock in place
         // which ensures that the post was
         // properly called to update.

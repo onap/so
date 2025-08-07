@@ -857,7 +857,6 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 		def method = getClass().getSimpleName() + '.postProcessSDNCDelete(' +'execution=' + execution.getId() +')'
 		logger.info("Entered " + method)
 		logger.trace("postProcessSDNC " + action + " ")
-		String msg = ""
 
 		/*try {
 			WorkflowException workflowException = execution.getVariable("WorkflowException")
@@ -962,10 +961,6 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
             String operationId = execution.getVariable("operationId")
             String operationType = "DELETE"
             String resourceTemplateUUIDs = ""
-            String result = "processing"
-            String progress = "0"
-            String reason = ""
-            String operationContent = "Prepare service delete"
             logger.info("Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId + " operationType:" + operationType)
             serviceId = UriUtils.encode(serviceId,"UTF-8")
             execution.setVariable("serviceInstanceId", serviceId)

@@ -80,9 +80,7 @@ public class AAIObjectType implements AAIObjectBase, AAIObjectName, GraphInvento
         Set<Class<? extends AAIObjectType>> resources = r.getSubTypesOf(AAIObjectType.class);
 
         for (Class<? extends AAIObjectType> customTypeClass : resources) {
-            AAIObjectType customType;
             try {
-                customType = customTypeClass.newInstance();
             } catch (InstantiationException | IllegalAccessException e) {
             }
         }

@@ -974,9 +974,6 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
      */
     String prepareRequestDetails(DelegateExecution execution) {
         LOGGER.debug("${getPrefix()} Start prepareRequestDetails")
-
-        String errorCode = ""
-        String errorMessage = ""
         String response
 
         RequestDetails requestDetails = new RequestDetails()
@@ -1278,7 +1275,6 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
         String serviceId = currentNSSI['nsiId']
         String jobId = execution.getVariable("jobId")
-        String nsiId = currentNSSI['nsiId']
         String operationType = execution.getVariable("operationType")
         String resourceInstanceId = currentNSSI['nssiId']
 
@@ -1322,15 +1318,11 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
         def currentNSSI = execution.getVariable("currentNSSI")
 
-        ServiceInstance networkServiceInstance = (ServiceInstance)currentNSSI['networkServiceInstance']
-
         String url = currentNSSI['requestSelfLink']
 
         String msoKey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
 
         String basicAuth =  UrnPropertiesReader.getVariable("mso.adapters.po.auth", execution)
-
-        def authHeader = ""
         String basicAuthValue = utils.getBasicAuth(basicAuth, msoKey)
 
         getProgress(execution, url, basicAuthValue, "putStatus")
