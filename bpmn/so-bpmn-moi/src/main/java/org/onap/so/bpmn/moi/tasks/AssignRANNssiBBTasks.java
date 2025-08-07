@@ -268,7 +268,6 @@ public class AssignRANNssiBBTasks {
 
         // SliceProfile
         List<org.onap.so.moi.SliceProfile> sliceProfileList = new ArrayList<org.onap.so.moi.SliceProfile>();
-        ServiceInstance serviceInstanceObj;
         List<Relationship> listOfNssiRelationship = serviceInstance.getRelationshipList().getRelationship();
 
         List<Relationship> listOfNssiRelationshipAR = listOfNssiRelationship.stream()

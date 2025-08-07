@@ -117,12 +117,6 @@ class DeleteCustomE2EServiceInstanceTest extends GroovyTestBase {
         initPreProcess(mex)
         DeleteCustomE2EServiceInstance instance = new DeleteCustomE2EServiceInstance()
         instance.prepareFalloutRequest(mex)
-        String requestInfo =
-                """<request-info xmlns="http://org.onap/so/infra/vnf-request/v1">
-					<request-id>null</request-id>
-					<action>DELETE</action>
-					<source>null</source>
-				   </request-info>"""
         //verify(mex).setVariable("falloutRequest", requestInfo)
     }
 

@@ -66,7 +66,6 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
         String snssai = "S-NSSAI"
         String snssaiList = "[ \"${snssai}\" ]"
         String sliceProfileId = "slice-profile-id"
-        String modifyAction = "allocate"
         String sliceParams =  "{\n" +
                 "\"sliceProfileId\":\"${sliceProfileId}\",\"snssaiList\":${snssaiList}\n" +
                 "}"

@@ -76,7 +76,6 @@ class DoAllocateNSIandNSSI extends AbstractServiceTaskProcessor{
      */
 
     void preProcessRequest (DelegateExecution execution) {
-        String msg = ""
         logger.trace("Enter preProcessRequest()")
         Map<String, Object> nssiMap = new HashMap<>()
         int nsstCount=execution.getVariable("nsstCount") as int

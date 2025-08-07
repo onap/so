@@ -206,7 +206,6 @@ public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 	public void preProcessAAIPUT(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +'execution=' + execution.getId() +')'
 		logger.info("Entered " + method)
-		String msg = ""
 		logger.trace("preProcessAAIPUT ")
 
 		String serviceInstanceVersion = execution.getVariable("serviceInstanceVersion_n")

@@ -121,11 +121,9 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 			if (request == null) {
 				exceptionUtil.buildAndThrowWorkflowException(execution, 1002, processKey + " request is null")
 			}
-
 			// All requests must have a request ID.
 			// Some requests (e.g. SDN-MOBILITY) do not have a service instance ID.
 
-			String requestId = null
 			String serviceInstanceId = null
 
 			List<String> allRequiredVariables = new ArrayList<String>()
@@ -147,7 +145,6 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 				}
 
 				if ("mso-request-id".equals(variable)) {
-					requestId = (String) value
 				} else if ("mso-service-instance-id".equals(variable)) {
 					serviceInstanceId = (String) value
 				}

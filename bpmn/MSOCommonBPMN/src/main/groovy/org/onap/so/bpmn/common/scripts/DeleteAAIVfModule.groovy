@@ -123,7 +123,6 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 
 	// construct and send a DELETE request to A&AI to delete the Base or Add-on Vf Module
 	public void deleteVfModule(DelegateExecution execution) {
-		def responseData = ""
 		try {
 			String vnfId = execution.getVariable("DAAIVfMod_vnfId")
 			String vfModuleId = execution.getVariable("DAAIVfMod_vfModuleId")

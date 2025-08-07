@@ -111,7 +111,6 @@ public class ServiceMapperTest {
         HeatTemplate moduleHeatTemplate = new HeatTemplate();
         moduleHeatTemplate.setArtifactChecksum("artifactChecksum");
         moduleHeatTemplate.setArtifactUuid("artifactUuid");
-        List<HeatTemplate> childTemplates;
         // moduleHeatTemplate.setChildTemplates(childTemplates);
         moduleHeatTemplate.setDescription("description");
         Set<HeatTemplateParam> parameters = new HashSet<>();

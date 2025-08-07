@@ -2580,7 +2580,6 @@ public class BBInputSetupTest {
                 requestAction, lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
         doReturn(service).when(SPY_bbInputSetupUtils)
                 .getCatalogServiceByModelUUID(gBB.getServiceInstance().getModelInfoServiceInstance().getModelUuid());
-        String generatedId = "12131";
 
         SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
     }

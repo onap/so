@@ -147,8 +147,6 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 	// send a GET request to AA&I to retrieve the Generic VNF/VF Module information based on a Vnf Name
 	// expect a 200 response with the information in the response body or a 404 if the Generic VNF does not exist
 	public void queryAAIForGenericVnf(DelegateExecution execution) {
-
-		AAIResourceUri uri
 		def vnfId = execution.getVariable("CAAIVfMod_vnfId")
 		def vnfName = execution.getVariable("CAAIVfMod_vnfName")
         Optional<GenericVnf> genericVnfOp

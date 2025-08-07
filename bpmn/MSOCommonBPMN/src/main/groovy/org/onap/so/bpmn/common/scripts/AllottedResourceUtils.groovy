@@ -70,7 +70,6 @@ class AllottedResourceUtils {
 	public String getAROrchStatus (DelegateExecution execution) {
 
 		logger.trace("getAROrchStatus ")
-		String msg = ""
 		String serviceInstanceId = execution.getVariable("serviceInstanceId")
 		String arType = execution.getVariable("allottedResourceType")
 		String arRole = execution.getVariable("allottedResourceRole")

@@ -21,7 +21,6 @@
 package org.onap.aaiclient.client.aai;
 
 import java.io.Serializable;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -29,11 +28,11 @@ import java.util.regex.Pattern;
 import org.onap.aai.annotations.Metadata;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryObjectName;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryObjectType;
-import org.onap.aaiclient.client.aai.entities.uri.AAIFluentTypeReverseLookup;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
+import org.onap.aaiclient.client.aai.entities.uri.AAIFluentTypeReverseLookup;
 import com.google.common.base.CaseFormat;
 
 /**
@@ -76,9 +75,7 @@ public class AAIObjectType implements AAIObjectBase, AAIObjectName, GraphInvento
         java.util.Collection<URL> packages = ClasspathHelper.forPackage("");
         Reflections r =
                 new Reflections(new ConfigurationBuilder().setUrls(packages).setScanners(new SubTypesScanner()));
-
         Set<Class<? extends AAIObjectType>> resources = r.getSubTypesOf(AAIObjectType.class);
-
         for (Class<? extends AAIObjectType> customTypeClass : resources) {
             AAIObjectType customType;
             try {

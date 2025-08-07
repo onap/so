@@ -285,7 +285,6 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 	public void postProcessSDNCDelete(DelegateExecution execution, String response, String method) {
 
 		logger.trace("postProcessSDNC " + method + " ")
-		String msg = ""
 
 		/*try {
 			WorkflowException workflowException = execution.getVariable("WorkflowException")
@@ -320,7 +319,6 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 		try {
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			boolean foundInAAI = execution.getVariable("GENGS_FoundIndicator")
-			String serviceType = ""
 
 			if(foundInAAI){
 				logger.info("Found Service-instance in AAI")
@@ -472,10 +470,6 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
             String operationId = execution.getVariable("operationId")
             String operationType = execution.getVariable("operationType")
             String resourceTemplateUUIDs = ""
-            String result = "processing"
-            String progress = "0"
-            String reason = ""
-            String operationContent = "Prepare service creation"
             logger.info("Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId + " operationType:" + operationType)
             serviceId = UriUtils.encode(serviceId,"UTF-8")
             execution.setVariable("serviceInstanceId", serviceId)

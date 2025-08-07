@@ -220,41 +220,5 @@ class DoDeallocateNSSITest extends MsoGroovyTest {
 
 
     private String getArtifactContent(){
-        String content =
-                """
-                    {
-                        "metadata":{
-                            "id":"NSST-C-001-HDBNJ-NSSMF-01-A-HW",
-                            "vendor":"HW",
-                            "version":"1.0",
-                            "name":"eMBB_demo",
-                            "description":"eMBB for demo",
-                            "type":"embb",
-                            "domainType":"cn"
-                        },
-                        "capabilities":{
-                            "latency":{
-                                "type":"integer",
-                                "constrainstsl":"less_or_equal",
-                                "value":"20"
-                            },
-                            "areaTrafficCapDL":{
-                                "type":"integer",
-                                "constrainstsl":"less_or_equal",
-                                "value":"300"
-                            },
-                            "areaTrafficCapUL":{
-                                "type":"integer",
-                                "constrainstsl":"less_or_equal",
-                                "value":"300"
-                            },
-                            "maxNumberofUEs":{
-                                "type":"integer",
-                                "constrainstsl":"less_or_equal",
-                                "value":"300"
-                            }
-                        }
-                    }
-                """
     }
 }
