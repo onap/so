@@ -31,7 +31,7 @@ import org.onap.so.bpmn.BaseBPMNTest;
 
 public class VNFSnapShotActivityTest extends BaseBPMNTest {
     @Test
-    public void sunnyDayVNFSnapShotActivity_Test() throws InterruptedException {
+    public void sunnyDayVNFSnapShotActivity_Test() {
         variables.put("vmIdListSize", 0);
         variables.put("vmIdList", null);
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFSnapShotActivity", variables);
@@ -43,7 +43,7 @@ public class VNFSnapShotActivityTest extends BaseBPMNTest {
     }
 
     @Test
-    public void rainyDayVNFSnapShotActivity_Test() throws Exception {
+    public void rainyDayVNFSnapShotActivity_Test() {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(appcOrchestratorPreProcessor)
                 .buildAppcTaskRequest(any(BuildingBlockExecution.class), any(String.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFSnapShotActivity", variables);

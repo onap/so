@@ -33,13 +33,13 @@ public class CollectionNetworkResourceCustomizationRepositoryTest extends BaseTe
     private CollectionNetworkResourceCustomizationRepository cnrcRepo;
 
     @Test
-    public void findAllTest() throws Exception {
+    public void findAllTest() {
         List<CollectionNetworkResourceCustomization> cnrcList = cnrcRepo.findAll();
         Assert.assertFalse(CollectionUtils.isEmpty(cnrcList));
     }
 
     @Test
-    public void findOneByUuidTest() throws Exception {
+    public void findOneByUuidTest() {
         CollectionNetworkResourceCustomization cnrc =
                 cnrcRepo.findOneByModelCustomizationUUID("3bdbb104-ffff-483e-9f8b-c095b3d3068c");
         Assert.assertTrue(cnrc != null);

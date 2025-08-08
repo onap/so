@@ -90,7 +90,7 @@ public class WorkflowResourceTest extends BaseTest {
 
     @Transactional
     @Test
-    public void installWorkflowResource_Test() throws Exception {
+    public void installWorkflowResource_Test() {
         Workflow workflow = new Workflow();
 
         workflow.setArtifactChecksum("12345");

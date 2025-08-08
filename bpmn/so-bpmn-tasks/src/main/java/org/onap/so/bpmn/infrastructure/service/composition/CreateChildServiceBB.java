@@ -95,7 +95,7 @@ public class CreateChildServiceBB {
      *
      */
 
-    public void updateRelations(BuildingBlockExecution buildingBlockExecution) throws Exception {
+    public void updateRelations(BuildingBlockExecution buildingBlockExecution) {
 
         Map<ResourceKey, String> lookupMap = buildingBlockExecution.getLookupMap();
 

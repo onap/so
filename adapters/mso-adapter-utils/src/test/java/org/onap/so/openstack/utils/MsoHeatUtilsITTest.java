@@ -181,7 +181,7 @@ public class MsoHeatUtilsITTest extends BaseTest {
     }
 
     @Test(expected = MsoOpenstackException.class)
-    public final void getHeatClientOpenStackResponseException404Test() throws MsoException, IOException {
+    public final void getHeatClientOpenStackResponseException404Test() throws MsoException {
         CloudSite cloudSite = getCloudSite(getCloudIdentity());
         // mo mocks setup will cause 404 response from wiremock
         heatUtils.getHeatClient("MTN13", "TEST-tenant");
@@ -195,7 +195,7 @@ public class MsoHeatUtilsITTest extends BaseTest {
     }
 
     @Test(expected = MsoOpenstackException.class)
-    public final void getHeatClientOpenStackConnectExceptionTest() throws MsoException, IOException {
+    public final void getHeatClientOpenStackConnectExceptionTest() throws MsoException {
         CloudIdentity identity = getCloudIdentity();
         identity.setIdentityUrl("http://unreachable");
         CloudSite cloudSite = getCloudSite(identity);

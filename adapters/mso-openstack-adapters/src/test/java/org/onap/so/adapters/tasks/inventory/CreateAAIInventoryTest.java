@@ -31,8 +31,6 @@ import org.mockito.MockitoAnnotations;
 import org.onap.so.audit.beans.AuditInventory;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.so.objects.audit.AAIObjectAuditList;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class CreateAAIInventoryTest extends CreateAAIInventory {
@@ -57,7 +55,7 @@ public class CreateAAIInventoryTest extends CreateAAIInventory {
     AAIObjectAuditList missingSubInterfaces;
 
     @Before
-    public void setup() throws JsonParseException, JsonMappingException, IOException {
+    public void setup() throws IOException {
         auditInventory.setCloudOwner("cloudOwner");
         auditInventory.setCloudRegion("cloudRegion");
         auditInventory.setTenantId("tenantId");

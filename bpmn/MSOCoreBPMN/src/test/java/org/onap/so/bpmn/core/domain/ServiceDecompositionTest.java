@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class ServiceDecompositionTest {
     private static final String RESOURCE_PATH = "src/test/resources/json-examples/";
@@ -69,7 +68,7 @@ public class ServiceDecompositionTest {
     }
 
     @Test
-    public void serviceDecompositionTest() throws JsonProcessingException, IOException {
+    public void serviceDecompositionTest() throws IOException {
         // covering methods not covered by openpojo test
         String catalogRestOutput =
                 new String(Files.readAllBytes(Paths.get(RESOURCE_PATH + "ServiceDecomposition.json")));

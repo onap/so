@@ -167,7 +167,7 @@ public class BpmnRequestBuilderTest {
     }
 
     @Test
-    public void test_mapCloudConfigurationVnf() throws Exception {
+    public void test_mapCloudConfigurationVnf() {
         String vnfId = "6fb01019-c3c4-41fe-b307-d1c56850b687";
         Map<String, String[]> filters = new HashMap<>();
         filters.put("vnfId", new String[] {"EQ", vnfId});

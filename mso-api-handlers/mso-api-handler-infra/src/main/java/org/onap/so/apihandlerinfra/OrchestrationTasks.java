@@ -32,7 +32,6 @@ import org.apache.http.HttpStatus;
 import org.json.JSONObject;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandler.common.ResponseBuilder;
-import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.db.request.beans.OrchestrationTask;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.logging.filter.base.ErrorCode;
@@ -100,8 +99,7 @@ public class OrchestrationTasks {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response getOrchestrationTask(@PathParam("taskId") String taskId, @PathParam("version") String version)
-            throws ApiException {
+    public Response getOrchestrationTask(@PathParam("taskId") String taskId, @PathParam("version") String version) {
         try {
             OrchestrationTask orchestrationTask = requestsDbClient.getOrchestrationTask(taskId);
             return builder.buildResponse(HttpStatus.SC_OK, null, orchestrationTask, version);

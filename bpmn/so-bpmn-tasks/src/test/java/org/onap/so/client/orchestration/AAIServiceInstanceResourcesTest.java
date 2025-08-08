@@ -86,13 +86,13 @@ public class AAIServiceInstanceResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void deleteServiceInstanceSuccessTest() throws Exception {
+    public void deleteServiceInstanceSuccessTest() {
         aaiServiceInstanceResources.deleteServiceInstance(serviceInstance);
         verify(MOCK_aaiResourcesClient, times(1)).delete(any(AAIResourceUri.class));
     }
 
     @Test
-    public void deleteServiceInstanceExceptionTest() throws Exception {
+    public void deleteServiceInstanceExceptionTest() {
         expectedException.expect(Exception.class);
         doThrow(Exception.class).when(MOCK_aaiResourcesClient).delete(isA(AAIResourceUri.class));
         aaiServiceInstanceResources.deleteServiceInstance(serviceInstance);
@@ -194,7 +194,7 @@ public class AAIServiceInstanceResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void checkInstanceServiceNameInUseTrueTest() throws Exception {
+    public void checkInstanceServiceNameInUseTrueTest() {
         AAIPluralResourceUri uri = AAIUriFactory.createNodesUri(Types.SERVICE_INSTANCES.getFragment())
                 .queryParam("service-instance-name", serviceInstance.getServiceInstanceName());
         doReturn(true).when(MOCK_aaiResourcesClient).exists(eq(uri));
@@ -203,7 +203,7 @@ public class AAIServiceInstanceResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void checkInstanceServiceNameInUseFalseTest() throws Exception {
+    public void checkInstanceServiceNameInUseFalseTest() {
         AAIPluralResourceUri uri = AAIUriFactory.createNodesUri(Types.SERVICE_INSTANCES.getFragment())
                 .queryParam("service-instance-name", serviceInstance.getServiceInstanceName());
         doReturn(false).when(MOCK_aaiResourcesClient).exists(eq(uri));

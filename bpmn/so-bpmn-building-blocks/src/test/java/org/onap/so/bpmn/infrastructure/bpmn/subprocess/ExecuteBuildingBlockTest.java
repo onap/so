@@ -63,7 +63,7 @@ public class ExecuteBuildingBlockTest extends BaseBPMNTest {
     }
 
     @Test
-    public void test_sunnyDayExecuteBuildingBlock_silentSuccess() throws Exception {
+    public void test_sunnyDayExecuteBuildingBlock_silentSuccess() {
         variables.put("orchestrationStatusValidationResult", OrchestrationStatusValidationDirective.SILENT_SUCCESS);
         variables.put("homing", false);
 

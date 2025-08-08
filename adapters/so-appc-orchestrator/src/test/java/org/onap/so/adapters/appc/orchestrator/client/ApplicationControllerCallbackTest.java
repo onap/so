@@ -55,7 +55,7 @@ public class ApplicationControllerCallbackTest {
     }
 
     @Test
-    public void onResponse_appcCallback_success_Test() throws Exception {
+    public void onResponse_appcCallback_success_Test() {
         Status status = new Status();
         status.setCode(400);
         ResumeTrafficOutput response = new ResumeTrafficOutput();
@@ -68,7 +68,7 @@ public class ApplicationControllerCallbackTest {
     }
 
     @Test
-    public void onResponse_appcCallback_intermediateResponse_Test() throws Exception {
+    public void onResponse_appcCallback_intermediateResponse_Test() {
         Status status = new Status();
         status.setCode(100);
         ResumeTrafficOutput response = new ResumeTrafficOutput();
@@ -79,7 +79,7 @@ public class ApplicationControllerCallbackTest {
     }
 
     @Test
-    public void onResponse_appcCallback_failure_Test() throws Exception {
+    public void onResponse_appcCallback_failure_Test() {
         String testFailure = "test failure";
         Status status = new Status();
         status.setCode(200);
@@ -94,7 +94,7 @@ public class ApplicationControllerCallbackTest {
     }
 
     @Test
-    public void onException_appcCallback_failure_Test() throws Exception {
+    public void onException_appcCallback_failure_Test() {
         String testFailure = "test failure";
         AppcClientException appcException = new AppcClientException(testFailure);
         Status status = new Status();

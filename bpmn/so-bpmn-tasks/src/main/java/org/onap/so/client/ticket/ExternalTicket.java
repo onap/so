@@ -165,7 +165,7 @@ public class ExternalTicket {
 
 
 
-    public void createTicket() throws Exception {
+    public void createTicket() {
         // Replace with your ticket creation mechanism if any
     }
 

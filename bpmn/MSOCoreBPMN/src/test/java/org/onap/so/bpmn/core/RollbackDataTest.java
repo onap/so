@@ -40,7 +40,7 @@ public class RollbackDataTest {
     private static final String VALUE_2 = "value2";
 
     @Test
-    public void shouldReturnStringRepresentationOfDataInAnyPermutation() throws Exception {
+    public void shouldReturnStringRepresentationOfDataInAnyPermutation() {
         // given
         RollbackData data = new RollbackData();
         data.put(TYPE_A, KEY_1, VALUE_1);
@@ -55,7 +55,7 @@ public class RollbackDataTest {
     }
 
     @Test
-    public void shouldBeEmptyOnCreation() throws Exception {
+    public void shouldBeEmptyOnCreation() {
         // given
         RollbackData data = new RollbackData();
         // then
@@ -64,7 +64,7 @@ public class RollbackDataTest {
     }
 
     @Test
-    public void shouldHaveTypeAfterPuttingDataOfThatType() throws Exception {
+    public void shouldHaveTypeAfterPuttingDataOfThatType() {
         // given
         RollbackData data = new RollbackData();
         // when
@@ -76,7 +76,7 @@ public class RollbackDataTest {
     }
 
     @Test
-    public void shouldKeepTwoValuesWithSameKeysButDifferentTypes() throws Exception {
+    public void shouldKeepTwoValuesWithSameKeysButDifferentTypes() {
         // given
         RollbackData data = new RollbackData();
         // when

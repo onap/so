@@ -39,7 +39,7 @@ import org.onap.so.BaseIntegrationTest;
 public class ConfirmVolumeGroupTenantIT extends BaseIntegrationTest {
 
     @Test
-    public void testRemoveLayer3Service_success() throws Exception {
+    public void testRemoveLayer3Service_success() {
         MockGetVolumeGroupById(wireMockServer, "MDTWNJ21", "a8399879-31b3-4973-be26-0a0cbe776b58",
                 "CRTGVNF_queryAAIResponseVolume.xml");
 
@@ -61,7 +61,7 @@ public class ConfirmVolumeGroupTenantIT extends BaseIntegrationTest {
     }
 
     @Test
-    public void testRemoveLayer3Service_idsNotMatch() throws Exception {
+    public void testRemoveLayer3Service_idsNotMatch() {
         MockGetVolumeGroupById(wireMockServer, "MDTWNJ21", "a8399879-31b3-4973-be26-0a0cbe776b58",
                 "CRTGVNF_queryAAIResponseVolume_idsNotMatch.xml");
 

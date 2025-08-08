@@ -33,82 +33,82 @@ public class AAIServiceInstanceTest {
             .setWorkloadContext("workloadContext").createAAIServiceInstance();
 
     @Test
-    public void getServiceInstanceNameTest() throws Exception {
+    public void getServiceInstanceNameTest() {
         test.getServiceInstanceName();
     }
 
     @Test
-    public void setServiceInstanceNameTest() throws Exception {
+    public void setServiceInstanceNameTest() {
         test.setServiceInstanceName("serviceInstanceName");
     }
 
     @Test
-    public void getServiceTypeTest() throws Exception {
+    public void getServiceTypeTest() {
         test.getServiceType();
     }
 
     @Test
-    public void setServiceTypeTest() throws Exception {
+    public void setServiceTypeTest() {
         test.setServiceType("serviceType");
     }
 
     @Test
-    public void getServiceRoleTest() throws Exception {
+    public void getServiceRoleTest() {
         test.getServiceRole();
     }
 
     @Test
-    public void setServiceRoleTest() throws Exception {
+    public void setServiceRoleTest() {
         test.setServiceRole("serviceRole");
     }
 
     @Test
-    public void getOrchestrationStatusTest() throws Exception {
+    public void getOrchestrationStatusTest() {
         test.getOrchestrationStatus();
     }
 
     @Test
-    public void setOrchestrationStatusTest() throws Exception {
+    public void setOrchestrationStatusTest() {
         test.setOrchestrationStatus("status");
     }
 
     @Test
-    public void getModelInvariantUuidTest() throws Exception {
+    public void getModelInvariantUuidTest() {
         test.getModelInvariantUuid();
     }
 
     @Test
-    public void setModelInvariantUuidTest() throws Exception {
+    public void setModelInvariantUuidTest() {
         test.setModelInvariantUuid("uuid");
     }
 
     @Test
-    public void getModelVersionIdTest() throws Exception {
+    public void getModelVersionIdTest() {
         test.getModelVersionId();
     }
 
     @Test
-    public void setModelVersionIdTest() throws Exception {
+    public void setModelVersionIdTest() {
         test.setModelVersionId("versionId");
     }
 
     @Test
-    public void getEnvironmentContextTest() throws Exception {
+    public void getEnvironmentContextTest() {
         test.getEnvironmentContext();
     }
 
     @Test
-    public void setEnvironmentContextTest() throws Exception {
+    public void setEnvironmentContextTest() {
         test.setEnvironmentContext("context");
     }
 
     @Test
-    public void getWorkloadContextTest() throws Exception {
+    public void getWorkloadContextTest() {
         test.getWorkloadContext();
     }
 
     @Test
-    public void setWorkloadContextTest() throws Exception {
+    public void setWorkloadContextTest() {
         test.setWorkloadContext("context");
     }
 

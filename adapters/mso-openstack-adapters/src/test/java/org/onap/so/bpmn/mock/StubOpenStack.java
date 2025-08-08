@@ -403,7 +403,7 @@ public class StubOpenStack {
                         .withBodyFile("OpenstackResponse_Tenant.json").withStatus(HttpStatus.SC_OK)));
     }
 
-    public static void mockOpenStackPostTenant_200(WireMockServer wireMockServer) throws IOException {
+    public static void mockOpenStackPostTenant_200(WireMockServer wireMockServer) {
         wireMockServer.stubFor(post(urlPathEqualTo("/mockPublicUrl/tenants"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_OK)));
     }

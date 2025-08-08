@@ -97,7 +97,7 @@ public class CreateVcpeResCustServiceIT extends AbstractTestBase {
     }
 
     @Test
-    public void testCreateVcpeResCustService_Success() throws Exception {
+    public void testCreateVcpeResCustService_Success() {
         System.out.println("starting:  testCreateVcpeResCustService_Success\n");
         MockGetServiceResourcesCatalogData(wireMockServer, "uuid-miu-svc-011-abcdef", "2",
                 "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesData.json");
@@ -201,7 +201,7 @@ public class CreateVcpeResCustServiceIT extends AbstractTestBase {
     }
 
     @Test
-    public void testCreateVcpeResCustService_NoParts() throws Exception {
+    public void testCreateVcpeResCustService_NoParts() {
         System.out.println("starting: testCreateVcpeResCustService_NoParts\n");
         MockGetServiceResourcesCatalogData(wireMockServer, "uuid-miu-svc-011-abcdef", "2",
                 "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesNoData.json");
@@ -267,7 +267,7 @@ public class CreateVcpeResCustServiceIT extends AbstractTestBase {
     }
 
     @Test
-    public void testCreateVcpeResCustService_Fault_NoRollback() throws Exception {
+    public void testCreateVcpeResCustService_Fault_NoRollback() {
         System.out.println("starting:  testCreateVcpeResCustService_Fault_NoRollback\n");
         MockGetServiceResourcesCatalogData(wireMockServer, "uuid-miu-svc-011-abcdef", "2",
                 "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesData.json");
@@ -327,7 +327,7 @@ public class CreateVcpeResCustServiceIT extends AbstractTestBase {
     }
 
     @Test
-    public void testCreateVcpeResCustService_Fault_Rollback() throws Exception {
+    public void testCreateVcpeResCustService_Fault_Rollback() {
         System.out.println("starting:  testCreateVcpeResCustService_Fault_Rollback\n");
         MockGetServiceResourcesCatalogData(wireMockServer, "uuid-miu-svc-011-abcdef", "2",
                 "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesData.json");

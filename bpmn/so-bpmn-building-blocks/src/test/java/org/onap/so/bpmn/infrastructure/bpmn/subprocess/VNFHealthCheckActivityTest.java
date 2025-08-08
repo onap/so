@@ -31,7 +31,7 @@ import org.onap.so.bpmn.BaseBPMNTest;
 
 public class VNFHealthCheckActivityTest extends BaseBPMNTest {
     @Test
-    public void sunnyDayVNFHealthCheckActivity_Test() throws InterruptedException {
+    public void sunnyDayVNFHealthCheckActivity_Test() {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFHealthCheckActivity", variables);
         assertThat(pi).isNotNull();
         processExternalTasks(pi, "TaskHealthCheck");
@@ -41,7 +41,7 @@ public class VNFHealthCheckActivityTest extends BaseBPMNTest {
     }
 
     @Test
-    public void rainyDayVNFHealthCheckActivity_Test() throws Exception {
+    public void rainyDayVNFHealthCheckActivity_Test() {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(appcOrchestratorPreProcessor)
                 .buildAppcTaskRequest(any(BuildingBlockExecution.class), any(String.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFHealthCheckActivity", variables);

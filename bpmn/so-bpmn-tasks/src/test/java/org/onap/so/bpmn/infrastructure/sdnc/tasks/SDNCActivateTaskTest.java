@@ -93,7 +93,7 @@ public class SDNCActivateTaskTest extends BaseTaskTest {
     }
 
     @Test
-    public void activateVnfTest() throws Exception {
+    public void activateVnfTest() {
         doReturn(new GenericResourceApiVnfOperationInformation()).when(sdncVnfResources).activateVnf(eq(genericVnf),
                 eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));
         sdncActivateTasks.activateVnf(execution);
@@ -104,7 +104,7 @@ public class SDNCActivateTaskTest extends BaseTaskTest {
     }
 
     @Test
-    public void activateVnfTestException() throws Exception {
+    public void activateVnfTestException() {
         expectedException.expect(BpmnError.class);
         doThrow(RuntimeException.class).when(sdncVnfResources).activateVnf(eq(genericVnf), eq(serviceInstance),
                 eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));

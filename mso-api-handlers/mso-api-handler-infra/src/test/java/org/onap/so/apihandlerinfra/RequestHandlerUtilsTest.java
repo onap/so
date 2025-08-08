@@ -64,7 +64,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -254,7 +253,7 @@ public class RequestHandlerUtilsTest extends BaseTest {
     }
 
     @Test
-    public void setServiceTypeTestNetwork() throws JsonProcessingException {
+    public void setServiceTypeTestNetwork() {
         String requestScope = ModelType.network.toString();
         Boolean aLaCarteFlag = null;
         ServiceInstancesRequest sir = new ServiceInstancesRequest();
@@ -272,7 +271,7 @@ public class RequestHandlerUtilsTest extends BaseTest {
     }
 
     @Test
-    public void setServiceInstanceIdInstanceGroupTest() throws JsonParseException, JsonMappingException, IOException {
+    public void setServiceInstanceIdInstanceGroupTest() throws JsonMappingException, IOException {
         String requestScope = "instanceGroup";
         ServiceInstancesRequest sir =
                 mapper.readValue(inputStream("/CreateInstanceGroup.json"), ServiceInstancesRequest.class);
@@ -326,7 +325,7 @@ public class RequestHandlerUtilsTest extends BaseTest {
     }
 
     @Test
-    public void setCamundaHeadersTest() throws ContactCamundaException, RequestDbFailureException {
+    public void setCamundaHeadersTest() {
         String encryptedAuth = "015E7ACF706C6BBF85F2079378BDD2896E226E09D13DC2784BA309E27D59AB9FAD3A5E039DF0BB8408"; // user:password
         String key = "07a7159d3bf51a0e53be7a8f89699be7";
         HttpHeaders headers = camundaRequestHandler.setCamundaHeaders(encryptedAuth, key);

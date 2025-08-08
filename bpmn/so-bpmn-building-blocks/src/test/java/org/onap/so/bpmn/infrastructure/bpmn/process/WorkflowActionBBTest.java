@@ -25,7 +25,6 @@ package org.onap.so.bpmn.infrastructure.bpmn.process;
 import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.camunda.bpm.engine.delegate.BpmnError;
@@ -39,7 +38,7 @@ import org.onap.so.bpmn.BaseBPMNTest;
 public class WorkflowActionBBTest extends BaseBPMNTest {
 
     @Test
-    public void sunnyDaySuccessIsTopLevelFlow() throws InterruptedException, IOException {
+    public void sunnyDaySuccessIsTopLevelFlow() {
         variables.put("isTopLevelFlow", true);
         variables.put("completed", true);
 
@@ -56,7 +55,7 @@ public class WorkflowActionBBTest extends BaseBPMNTest {
     }
 
     @Test
-    public void sunnyDaySuccessNotTopLevelFlow() throws InterruptedException, IOException {
+    public void sunnyDaySuccessNotTopLevelFlow() {
         variables.put("isTopLevelFlow", false);
         variables.put("completed", true);
 
@@ -71,7 +70,7 @@ public class WorkflowActionBBTest extends BaseBPMNTest {
     }
 
     @Test
-    public void sunnyDayRollback() throws InterruptedException, IOException {
+    public void sunnyDayRollback() {
         variables.put("isTopLevelFlow", false);
         variables.put("isRollbackNeeded", false);
 
@@ -88,7 +87,7 @@ public class WorkflowActionBBTest extends BaseBPMNTest {
     }
 
     @Test
-    public void rainyDayAbort() throws Exception {
+    public void rainyDayAbort() {
         variables.put("isTopLevelFlow", true);
         variables.put("completed", false);
 
@@ -138,7 +137,7 @@ public class WorkflowActionBBTest extends BaseBPMNTest {
     }
 
     @Test
-    public void errorCatchBpmnSubprocessHandlingTest() throws Exception {
+    public void errorCatchBpmnSubprocessHandlingTest() {
         variables.put("isTopLevelFlow", true);
         variables.put("sentSyncResponse", false);
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(workflowActionBBTasks)

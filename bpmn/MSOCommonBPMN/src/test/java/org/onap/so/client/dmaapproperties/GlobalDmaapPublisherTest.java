@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class GlobalDmaapPublisherTest extends BaseTest {
 
     @BeforeClass
-    public static void setUp() throws Exception {
+    public static void setUp() {
         System.setProperty("mso.global.dmaap.host", "http://test:1234");
     }
 

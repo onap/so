@@ -39,7 +39,7 @@ public class AssignNetworkBBUtilsTest extends BaseTaskTest {
     }
 
     @Test
-    public void getCloudRegionTest25() throws Exception {
+    public void getCloudRegionTest25() {
         cloudRegion.setCloudRegionVersion("2.5");
 
         nonMockAssignNetworkBBUtils.getCloudRegion(execution);
@@ -49,7 +49,7 @@ public class AssignNetworkBBUtilsTest extends BaseTaskTest {
     }
 
     @Test
-    public void getCloudRegionTest30() throws Exception {
+    public void getCloudRegionTest30() {
         cloudRegion.setCloudRegionVersion("3.0");
 
         nonMockAssignNetworkBBUtils.getCloudRegion(execution);

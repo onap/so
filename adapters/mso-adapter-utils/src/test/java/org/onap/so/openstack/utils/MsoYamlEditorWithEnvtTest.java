@@ -24,8 +24,6 @@ import java.util.Set;
 import org.junit.Test;
 import org.onap.so.TestDataSetup;
 import org.onap.so.db.catalog.beans.HeatTemplateParam;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class MsoYamlEditorWithEnvtTest extends TestDataSetup {
     private MsoYamlEditorWithEnvt yaml;
@@ -39,7 +37,7 @@ public class MsoYamlEditorWithEnvtTest extends TestDataSetup {
             "parameters: {" + PARAMETER_NAME + ": " + PARAMETER_VALUE + "}";
 
     @Test
-    public void getParameterListTest() throws JsonParseException, JsonMappingException, IOException {
+    public void getParameterListTest() throws IOException {
         yaml = new MsoYamlEditorWithEnvt(RAW_ENTRY_WITH_NO_RESOURCE_REGISTRY.getBytes());
 
         MsoHeatEnvironmentParameter expectedHeatParam = mapper.readValue(
@@ -75,7 +73,7 @@ public class MsoYamlEditorWithEnvtTest extends TestDataSetup {
     }
 
     @Test
-    public void getParameterListFromEnvtTest() throws JsonParseException, JsonMappingException, IOException {
+    public void getParameterListFromEnvtTest() throws IOException {
         yaml = new MsoYamlEditorWithEnvt(RAW_ENTRY_WITH_NO_RESOURCE_REGISTRY.getBytes());
 
         HeatTemplateParam expectedHeatParam =

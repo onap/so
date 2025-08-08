@@ -42,7 +42,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import java.net.UnknownHostException;
 
 @Path("/nodehealthcheck")
 @OpenAPIDefinition(info = @Info(title = "/nodehealthcheck", description = "API Handler Infra Node Health Check"))
@@ -61,7 +60,7 @@ public class NodeHealthcheckHandler {
     @Operation(description = "Performing node health check", responses = @ApiResponse(
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
-    public Response nodeHealthcheck(@Context ContainerRequestContext requestContext) throws UnknownHostException {
+    public Response nodeHealthcheck(@Context ContainerRequestContext requestContext) {
         // Generated RequestId
         String requestId = requestContext.getProperty("requestId").toString();
         logger.info(LoggingAnchor.TWO, MessageEnum.APIH_GENERATED_REQUEST_ID.toString(), requestId);

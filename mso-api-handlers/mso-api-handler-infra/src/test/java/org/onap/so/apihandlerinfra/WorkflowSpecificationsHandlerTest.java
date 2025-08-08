@@ -22,7 +22,6 @@
 
 package org.onap.so.apihandlerinfra;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,7 +45,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
@@ -68,7 +66,7 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
 
     @Test
     public void queryWorkflowSpecificationsByVnfModelUUID_Test_Success()
-            throws ParseException, JSONException, JsonParseException, JsonMappingException, IOException {
+            throws JSONException, JsonMappingException, IOException {
 
         final String urlPath = basePath + "/v1/workflows";
         HttpHeaders headers = new HttpHeaders();

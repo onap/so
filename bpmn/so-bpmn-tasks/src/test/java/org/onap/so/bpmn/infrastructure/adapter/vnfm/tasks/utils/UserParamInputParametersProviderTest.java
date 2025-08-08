@@ -39,7 +39,7 @@ import org.onap.so.adapters.etsisol003adapter.lcm.v1.model.ExternalVirtualLink;
 public class UserParamInputParametersProviderTest {
 
     @Test
-    public void testGetInputParameter_ValidUserParams_NotEmptyInputParameter() throws Exception {
+    public void testGetInputParameter_ValidUserParams_NotEmptyInputParameter() {
         final InputParametersProvider<Map<String, Object>> objUnderTest = new UserParamInputParametersProvider();
 
         final InputParameter actual =
@@ -61,7 +61,7 @@ public class UserParamInputParametersProviderTest {
     }
 
     @Test
-    public void testGetInputParameter_EmptyOrNullUserParams_EmptyInputParameter() throws Exception {
+    public void testGetInputParameter_EmptyOrNullUserParams_EmptyInputParameter() {
         final InputParametersProvider<Map<String, Object>> objUnderTest = new UserParamInputParametersProvider();
 
         InputParameter actual = objUnderTest.getInputParameter(Collections.emptyMap());
@@ -78,7 +78,7 @@ public class UserParamInputParametersProviderTest {
     }
 
     @Test
-    public void testGetInputParameter_InValidExtVirtualLinks_NotEmptyInputParameter() throws Exception {
+    public void testGetInputParameter_InValidExtVirtualLinks_NotEmptyInputParameter() {
         final InputParametersProvider<Map<String, Object>> objUnderTest = new UserParamInputParametersProvider();
 
         final InputParameter actual =

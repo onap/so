@@ -31,7 +31,7 @@ import org.onap.so.asdc.installer.VfModuleMetaData;
 
 public class ASDCNotificationLoggingTest {
     @Test
-    public void dumpASDCNotificationTestForNull() throws Exception {
+    public void dumpASDCNotificationTestForNull() {
         INotificationData asdcNotification = iNotificationDataObject();
 
         String result = ASDCNotificationLogging.dumpASDCNotification(asdcNotification);
@@ -103,7 +103,7 @@ public class ASDCNotificationLoggingTest {
     }
 
     @Test
-    public void dumpASDCNotificationTest() throws Exception {
+    public void dumpASDCNotificationTest() {
         INotificationData asdcNotification = iNotificationDataObject();
         String result = ASDCNotificationLogging.dumpASDCNotification(asdcNotification);
 

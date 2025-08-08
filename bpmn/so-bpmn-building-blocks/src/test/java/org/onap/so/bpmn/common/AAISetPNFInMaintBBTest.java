@@ -4,14 +4,13 @@ import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Test;
 import org.onap.so.bpmn.BaseBPMNTest;
-import java.io.IOException;
 import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 
 public class AAISetPNFInMaintBBTest extends BaseBPMNTest {
     @Test
-    public void sunnyDayAAISetPnfInMaintBBTest() throws InterruptedException, IOException {
+    public void sunnyDayAAISetPnfInMaintBBTest() {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("AAISetPnfInMaintBB", variables);
         assertThat(pi).isNotNull().isStarted().hasPassedInOrder("Start_AAISetPnfInMaintBB", "Task_SetInMaint",
                 "End_AAISetPnfInMaintBB");
