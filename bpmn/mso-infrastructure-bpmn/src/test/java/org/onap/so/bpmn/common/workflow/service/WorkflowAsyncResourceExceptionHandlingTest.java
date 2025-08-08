@@ -37,7 +37,7 @@ public class WorkflowAsyncResourceExceptionHandlingTest {
 
     @Test
     @Deployment(resources = {"testAsyncResource.bpmn"})
-    public void asyncRequestSuccess() throws InterruptedException {
+    public void asyncRequestSuccess() {
         VariableMapImpl variableMap = new VariableMapImpl();
 
         Map<String, Object> variableValueType = new HashMap<>();

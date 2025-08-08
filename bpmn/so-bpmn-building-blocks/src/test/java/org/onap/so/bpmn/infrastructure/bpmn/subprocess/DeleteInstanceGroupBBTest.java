@@ -22,7 +22,6 @@ package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-import java.io.IOException;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Test;
@@ -31,7 +30,7 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 
 public class DeleteInstanceGroupBBTest extends BaseBPMNTest {
     @Test
-    public void sunnyDay() throws InterruptedException, IOException {
+    public void sunnyDay() {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeleteInstanceGroupBB", variables);
         assertThat(pi).isNotNull();
         assertThat(pi).isStarted().hasPassedInOrder("DeleteInstanceGroupBB_Start", "DeleteInstanceGroupNaming",

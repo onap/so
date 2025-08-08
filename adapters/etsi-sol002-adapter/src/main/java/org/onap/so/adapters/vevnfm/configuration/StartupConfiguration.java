@@ -49,7 +49,7 @@ public class StartupConfiguration {
     }
 
     @EventListener(ApplicationReadyEvent.class)
-    public void onApplicationReadyEvent() throws Exception {
+    public void onApplicationReadyEvent() {
         if (!environment.acceptsProfiles(Profiles.of(TEST_PROFILE))) {
             final List<EsrSystemInfo> infos = startupService.receiveVnfm();
             subscriptionScheduler.setInfos(infos);

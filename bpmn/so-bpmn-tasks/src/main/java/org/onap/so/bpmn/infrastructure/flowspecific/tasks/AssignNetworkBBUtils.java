@@ -53,7 +53,7 @@ public class AssignNetworkBBUtils {
      * @param execution
      * @return
      */
-    public boolean networkFoundByName(BuildingBlockExecution execution) throws Exception {
+    public boolean networkFoundByName(BuildingBlockExecution execution) {
 
         // TODO - populate logic after iTrack MSO-2143 implemented
         return false;

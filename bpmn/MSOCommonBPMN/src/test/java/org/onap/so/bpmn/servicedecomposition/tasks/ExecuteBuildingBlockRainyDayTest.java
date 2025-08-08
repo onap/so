@@ -69,7 +69,7 @@ public class ExecuteBuildingBlockRainyDayTest extends BaseTest {
     }
 
     @Test
-    public void setRetryTimerTest() throws Exception {
+    public void setRetryTimerTest() {
         delegateExecution.setVariable("retryCount", 2);
         executeBuildingBlockRainyDay.setRetryTimer(delegateExecution);
         assertEquals("PT40S", delegateExecution.getVariable("RetryDuration"));
@@ -84,7 +84,7 @@ public class ExecuteBuildingBlockRainyDayTest extends BaseTest {
     }
 
     @Test
-    public void queryRainyDayTableExists() throws Exception {
+    public void queryRainyDayTableExists() {
         customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
         serviceInstance.getModelInfoServiceInstance().setServiceType("st1");
         vnf.setVnfType("vnft1");
@@ -107,7 +107,7 @@ public class ExecuteBuildingBlockRainyDayTest extends BaseTest {
     }
 
     @Test
-    public void queryRainyDayTableDefault() throws Exception {
+    public void queryRainyDayTableDefault() {
         customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
         serviceInstance.getModelInfoServiceInstance().setServiceType("st1");
         vnf.setVnfType("vnft1");
@@ -130,7 +130,7 @@ public class ExecuteBuildingBlockRainyDayTest extends BaseTest {
     }
 
     @Test
-    public void queryRainyDayTableDoesNotExist() throws Exception {
+    public void queryRainyDayTableDoesNotExist() {
         customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
         serviceInstance.getModelInfoServiceInstance().setServiceType("st1");
         vnf.setVnfType("vnft1");
@@ -157,7 +157,7 @@ public class ExecuteBuildingBlockRainyDayTest extends BaseTest {
     }
 
     @Test
-    public void queryRainyDayTableSecondaryPolicyExists() throws Exception {
+    public void queryRainyDayTableSecondaryPolicyExists() {
         customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
         serviceInstance.getModelInfoServiceInstance().setServiceType("st1");
         vnf.setVnfType("vnft1");
@@ -182,7 +182,7 @@ public class ExecuteBuildingBlockRainyDayTest extends BaseTest {
     }
 
     @Test
-    public void queryRainyDayTableRollbackToAssignedMacro() throws Exception {
+    public void queryRainyDayTableRollbackToAssignedMacro() {
         customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
         serviceInstance.getModelInfoServiceInstance().setServiceType("st1");
         vnf.setVnfType("vnft1");
@@ -208,7 +208,7 @@ public class ExecuteBuildingBlockRainyDayTest extends BaseTest {
     }
 
     @Test
-    public void queryRainyDayTableRollbackToAssignedALaCarte() throws Exception {
+    public void queryRainyDayTableRollbackToAssignedALaCarte() {
         customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
         serviceInstance.getModelInfoServiceInstance().setServiceType("st1");
         vnf.setVnfType("vnft1");
@@ -234,7 +234,7 @@ public class ExecuteBuildingBlockRainyDayTest extends BaseTest {
     }
 
     @Test
-    public void queryRainyDayTableRollbackToCreated() throws Exception {
+    public void queryRainyDayTableRollbackToCreated() {
         customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
         serviceInstance.getModelInfoServiceInstance().setServiceType("st1");
         vnf.setVnfType("vnft1");
@@ -260,7 +260,7 @@ public class ExecuteBuildingBlockRainyDayTest extends BaseTest {
     }
 
     @Test
-    public void queryRainyDayTableRollbackToCreatedNoConfiguration() throws Exception {
+    public void queryRainyDayTableRollbackToCreatedNoConfiguration() {
         customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
         serviceInstance.getModelInfoServiceInstance().setServiceType("st1");
         vnf.setVnfType("vnft1");
@@ -290,7 +290,7 @@ public class ExecuteBuildingBlockRainyDayTest extends BaseTest {
 
 
     @Test
-    public void suppressRollbackTest() throws Exception {
+    public void suppressRollbackTest() {
         delegateExecution.setVariable("suppressRollback", true);
         delegateExecution.setVariable("aLaCarte", true);
         executeBuildingBlockRainyDay.queryRainyDayTable(delegateExecution, true);
@@ -298,7 +298,7 @@ public class ExecuteBuildingBlockRainyDayTest extends BaseTest {
     }
 
     @Test
-    public void queryRainyDayTableServiceRoleNotDefined() throws Exception {
+    public void queryRainyDayTableServiceRoleNotDefined() {
         customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
         serviceInstance.getModelInfoServiceInstance().setServiceType("st1");
         serviceInstance.getModelInfoServiceInstance().setServiceRole("sr1");
@@ -322,7 +322,7 @@ public class ExecuteBuildingBlockRainyDayTest extends BaseTest {
     }
 
     @Test
-    public void queryRainyDayTableServiceRoleNC() throws Exception {
+    public void queryRainyDayTableServiceRoleNC() {
         customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
         serviceInstance.getModelInfoServiceInstance().setServiceType("st1");
         serviceInstance.getModelInfoServiceInstance().setServiceRole("NETWORK-COLLECTION");

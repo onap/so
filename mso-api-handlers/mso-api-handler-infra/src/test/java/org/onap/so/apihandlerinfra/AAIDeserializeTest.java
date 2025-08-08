@@ -36,7 +36,6 @@ import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -62,7 +61,7 @@ public class AAIDeserializeTest extends BaseTest {
     }
 
     @Test
-    public void doNotFailOnUnknownPropertiesTest() throws JsonParseException, JsonMappingException, IOException {
+    public void doNotFailOnUnknownPropertiesTest() throws JsonMappingException, IOException {
         wireMockServer.stubFor(get(("/aai/" + AAIVersion.LATEST
                 + "/cloud-infrastructure/cloud-regions/cloud-region/cloudOwner/mdt1/tenants/tenant/88a6ca3ee0394ade9403f075db23167e"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)

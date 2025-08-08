@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -246,7 +246,7 @@ public class BPMNUtil {
 
     /**
      * Executes the Asynchronous workflow in synchronous fashion and returns the WorkflowResponse object
-     * 
+     *
      * @param processEngineServices
      * @param processKey
      * @param variables
@@ -276,7 +276,7 @@ public class BPMNUtil {
 
     /**
      * Execute workflow using async resource
-     * 
+     *
      * @param processEngineServices
      * @param processKey
      * @param asyncResponse
@@ -284,7 +284,7 @@ public class BPMNUtil {
      * @throws InterruptedException
      */
     private static void executeAsyncFlow(ProcessEngineServices processEngineServices, String processKey,
-            Map<String, String> variables) throws InterruptedException {
+            Map<String, String> variables) {
         VariableMapImpl variableMap = new VariableMapImpl();
 
         Map<String, Object> variableValueType = new HashMap<>();
@@ -328,12 +328,7 @@ public class BPMNUtil {
              * workflowResponse.setResponse(workflowResponseString); workflowResponse.setMessageCode(200); } return
              * null; } }).when(asyncResponse).setResponse(any(Response.class));
              */
-            try {
-                executeAsyncFlow(processEngineServices, processKey, variables);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            executeAsyncFlow(processEngineServices, processKey, variables);
         }
     }
 }

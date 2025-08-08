@@ -144,7 +144,7 @@ public class SDNCDeactivateTaskTest extends BaseTaskTest {
     }
 
     @Test
-    public void test_deactivateNetwork() throws Exception {
+    public void test_deactivateNetwork() {
         doReturn(new GenericResourceApiNetworkOperationInformation()).when(sdncNetworkResources)
                 .deactivateNetwork(network, serviceInstance, customer, requestContext, cloudRegion);
         sdncDeactivateTasks.deactivateNetwork(execution);

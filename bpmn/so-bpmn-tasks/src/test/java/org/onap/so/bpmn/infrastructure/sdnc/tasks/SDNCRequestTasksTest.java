@@ -112,26 +112,26 @@ public class SDNCRequestTasksTest {
     }
 
     @Test
-    public void convertIndicatorToBoolean_True_Test() throws MapperException, BadResponseException {
+    public void convertIndicatorToBoolean_True_Test() {
         boolean testValue = sndcRequestTasks.convertIndicatorToBoolean("Y");
         assertEquals(true, testValue);
     }
 
     @Test
-    public void convertIndicatorToBoolean_False_Test() throws MapperException, BadResponseException {
+    public void convertIndicatorToBoolean_False_Test() {
         boolean testValue = sndcRequestTasks.convertIndicatorToBoolean("N");
         assertEquals(false, testValue);
     }
 
     @Test
-    public void HandleTimeout_Test() throws MapperException, BadResponseException {
+    public void HandleTimeout_Test() {
         doReturn("processKey").when(exceptionBuilder).getProcessKey(delegateExecution);
         expectedException.expect(BpmnError.class);
         sndcRequestTasks.handleTimeOutException(delegateExecution);
     }
 
     @Test
-    public void processCallBack_Final_Test() throws MapperException, BadResponseException, IOException {
+    public void processCallBack_Final_Test() throws IOException {
         final String sdncResponse =
                 new String(Files.readAllBytes(Paths.get("src/test/resources/__files/SDNC_Async_Request2.xml")));
         delegateExecution.setVariable("correlationName_MESSAGE", sdncResponse);

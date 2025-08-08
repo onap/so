@@ -107,7 +107,7 @@ public class CamundaClientTest {
     }
 
     @Test
-    public void createBPMNFailureExceptionTest() throws IOException {
+    public void createBPMNFailureExceptionTest() {
         String response = "Request failed";
         HttpClientErrorException e =
                 new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, null, response.getBytes(), null);

@@ -82,9 +82,7 @@ import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.beans.VnfcCustomization;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.RequestDetails;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class BBInputSetupMapperLayerTest {
@@ -256,7 +254,7 @@ public class BBInputSetupMapperLayerTest {
     }
 
     @Test
-    public void testMapAAINetworkPolicy() throws JsonParseException, JsonMappingException, IOException {
+    public void testMapAAINetworkPolicy() throws IOException {
         NetworkPolicy expectedNetworkPolicy =
                 mapper.readValue(new File(RESOURCE_PATH + "NetworkPolicy.json"), NetworkPolicy.class);
 
@@ -272,7 +270,7 @@ public class BBInputSetupMapperLayerTest {
     }
 
     @Test
-    public void testMapAAIVolumeGroup() throws JsonParseException, JsonMappingException, IOException {
+    public void testMapAAIVolumeGroup() throws IOException {
         VolumeGroup expectedVolumeGroup =
                 mapper.readValue(new File(RESOURCE_PATH + "VolumeGroup.json"), VolumeGroup.class);
 
@@ -438,7 +436,7 @@ public class BBInputSetupMapperLayerTest {
     }
 
     @Test
-    public void testMapAAICollectionIntoCollection() throws JsonParseException, JsonMappingException, IOException {
+    public void testMapAAICollectionIntoCollection() throws IOException {
         org.onap.aai.domain.yang.Collection aaiCollection = mapper
                 .readValue(new File(RESOURCE_PATH + "CollectionInput.json"), org.onap.aai.domain.yang.Collection.class);
 
@@ -451,8 +449,7 @@ public class BBInputSetupMapperLayerTest {
     }
 
     @Test
-    public void testMapAAIInstanceGroupIntoInstanceGroup()
-            throws JsonParseException, JsonMappingException, IOException {
+    public void testMapAAIInstanceGroupIntoInstanceGroup() throws IOException {
         org.onap.aai.domain.yang.InstanceGroup aaiInstanceGroup = mapper.readValue(
                 new File(RESOURCE_PATH + "InstanceGroupInput.json"), org.onap.aai.domain.yang.InstanceGroup.class);
 
@@ -467,8 +464,7 @@ public class BBInputSetupMapperLayerTest {
     }
 
     @Test
-    public void testMapAAIRouteTableReferenceIntoRouteTableReference()
-            throws JsonParseException, JsonMappingException, IOException {
+    public void testMapAAIRouteTableReferenceIntoRouteTableReference() throws IOException {
         org.onap.aai.domain.yang.RouteTableReference aaiRouteTableReference =
                 mapper.readValue(new File(RESOURCE_PATH + "RouteTableReferenceInput.json"),
                         org.onap.aai.domain.yang.RouteTableReference.class);
@@ -483,7 +479,7 @@ public class BBInputSetupMapperLayerTest {
     }
 
     @Test
-    public void testMapCatalogNetworkToNetwork() throws JsonParseException, JsonMappingException, IOException {
+    public void testMapCatalogNetworkToNetwork() throws IOException {
         NetworkResourceCustomization networkResourceCustomization = mapper.readValue(
                 new File(RESOURCE_PATH + "NetworkResourceCustomizationInput.json"), NetworkResourceCustomization.class);
 
@@ -531,7 +527,7 @@ public class BBInputSetupMapperLayerTest {
     }
 
     @Test
-    public void testMapCatalogVfModuleToVfModule() throws JsonParseException, JsonMappingException, IOException {
+    public void testMapCatalogVfModuleToVfModule() throws IOException {
         VfModuleCustomization vfResourceCustomization = mapper
                 .readValue(new File(RESOURCE_PATH + "VfModuleCustomizationInput.json"), VfModuleCustomization.class);
 
@@ -545,7 +541,7 @@ public class BBInputSetupMapperLayerTest {
     }
 
     @Test
-    public void testMapRequestPlatform() throws JsonParseException, JsonMappingException, IOException {
+    public void testMapRequestPlatform() throws IOException {
         org.onap.so.serviceinstancebeans.Platform platform = mapper.readValue(
                 new File(RESOURCE_PATH + "RequestPlatformInput.json"), org.onap.so.serviceinstancebeans.Platform.class);
 
@@ -557,7 +553,7 @@ public class BBInputSetupMapperLayerTest {
     }
 
     @Test
-    public void testMapRequestLineOfBusiness() throws JsonParseException, JsonMappingException, IOException {
+    public void testMapRequestLineOfBusiness() throws IOException {
         org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusiness =
                 mapper.readValue(new File(RESOURCE_PATH + "RequestLineOfBusinessInput.json"),
                         org.onap.so.serviceinstancebeans.LineOfBusiness.class);
@@ -571,7 +567,7 @@ public class BBInputSetupMapperLayerTest {
     }
 
     @Test
-    public void testMapAAIConfiguration() throws JsonParseException, JsonMappingException, IOException {
+    public void testMapAAIConfiguration() throws IOException {
         org.onap.aai.domain.yang.Configuration configurationAAI = mapper.readValue(
                 new File(RESOURCE_PATH + "ConfigurationInput.json"), org.onap.aai.domain.yang.Configuration.class);
 

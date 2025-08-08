@@ -29,7 +29,6 @@ import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.sniro.beans.SniroConductorRequest;
 import org.onap.so.client.sniro.beans.SniroManagerRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 
 public class SniroClientTestIT extends BaseIntegrationTest {
@@ -39,7 +38,7 @@ public class SniroClientTestIT extends BaseIntegrationTest {
 
 
     @Test(expected = Test.None.class)
-    public void testPostDemands_success() throws BadResponseException, JsonProcessingException {
+    public void testPostDemands_success() throws BadResponseException {
         String mockResponse =
                 "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"corys cool\", \"requestStatus\": \"accepted\"}";
 
@@ -51,7 +50,7 @@ public class SniroClientTestIT extends BaseIntegrationTest {
     }
 
     @Test(expected = BadResponseException.class)
-    public void testPostDemands_error_failed() throws JsonProcessingException, BadResponseException {
+    public void testPostDemands_error_failed() throws BadResponseException {
         String mockResponse =
                 "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"missing data\", \"requestStatus\": \"failed\"}";
 
@@ -66,7 +65,7 @@ public class SniroClientTestIT extends BaseIntegrationTest {
     }
 
     @Test(expected = BadResponseException.class)
-    public void testPostDemands_error_noMessage() throws JsonProcessingException, BadResponseException {
+    public void testPostDemands_error_noMessage() throws BadResponseException {
         String mockResponse =
                 "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"\", \"requestStatus\": \"failed\"}";
 
@@ -79,7 +78,7 @@ public class SniroClientTestIT extends BaseIntegrationTest {
     }
 
     @Test(expected = BadResponseException.class)
-    public void testPostDemands_error_noStatus() throws JsonProcessingException, BadResponseException {
+    public void testPostDemands_error_noStatus() throws BadResponseException {
         String mockResponse =
                 "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"missing data\", \"requestStatus\": null}";
 
@@ -92,7 +91,7 @@ public class SniroClientTestIT extends BaseIntegrationTest {
     }
 
     @Test(expected = BadResponseException.class)
-    public void testPostDemands_error_empty() throws JsonProcessingException, BadResponseException {
+    public void testPostDemands_error_empty() throws BadResponseException {
         String mockResponse = "{ }";
 
         wireMockServer.stubFor(post(urlEqualTo("/sniro/api/placement/v2")).willReturn(
@@ -103,7 +102,7 @@ public class SniroClientTestIT extends BaseIntegrationTest {
     }
 
     @Test(expected = Test.None.class)
-    public void testPostRelease_success() throws BadResponseException, JsonProcessingException {
+    public void testPostRelease_success() throws BadResponseException {
         String mockResponse = "{\"status\": \"success\", \"message\": \"corys cool\"}";
 
         wireMockServer.stubFor(post(urlEqualTo("/v1/release-orders")).willReturn(
@@ -113,7 +112,7 @@ public class SniroClientTestIT extends BaseIntegrationTest {
     }
 
     @Test(expected = BadResponseException.class)
-    public void testPostRelease_error_failed() throws BadResponseException, JsonProcessingException {
+    public void testPostRelease_error_failed() throws BadResponseException {
         String mockResponse = "{\"status\": \"failure\", \"message\": \"corys cool\"}";
 
         wireMockServer.stubFor(post(urlEqualTo("/v1/release-orders")).willReturn(
@@ -123,7 +122,7 @@ public class SniroClientTestIT extends BaseIntegrationTest {
     }
 
     @Test(expected = BadResponseException.class)
-    public void testPostRelease_error_noStatus() throws BadResponseException, JsonProcessingException {
+    public void testPostRelease_error_noStatus() throws BadResponseException {
         String mockResponse = "{\"status\": \"\", \"message\": \"corys cool\"}";
 
         wireMockServer.stubFor(post(urlEqualTo("/v1/release-orders")).willReturn(
@@ -134,7 +133,7 @@ public class SniroClientTestIT extends BaseIntegrationTest {
     }
 
     @Test(expected = BadResponseException.class)
-    public void testPostRelease_error_noMessage() throws BadResponseException, JsonProcessingException {
+    public void testPostRelease_error_noMessage() throws BadResponseException {
         String mockResponse = "{\"status\": \"failure\", \"message\": null}";
 
         wireMockServer.stubFor(post(urlEqualTo("/v1/release-orders")).willReturn(
@@ -145,7 +144,7 @@ public class SniroClientTestIT extends BaseIntegrationTest {
     }
 
     @Test(expected = BadResponseException.class)
-    public void testPostRelease_error_empty() throws BadResponseException, JsonProcessingException {
+    public void testPostRelease_error_empty() throws BadResponseException {
         String mockResponse = "{ }";
 
         wireMockServer.stubFor(post(urlEqualTo("/v1/release-orders")).willReturn(

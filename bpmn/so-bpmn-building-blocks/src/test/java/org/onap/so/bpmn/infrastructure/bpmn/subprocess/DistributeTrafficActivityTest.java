@@ -31,7 +31,7 @@ import org.onap.so.bpmn.BaseBPMNTest;
 
 public class DistributeTrafficActivityTest extends BaseBPMNTest {
     @Test
-    public void sunnyDayDistributeTrafficActivity_Test() throws InterruptedException {
+    public void sunnyDayDistributeTrafficActivity_Test() {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DistributeTrafficActivity", variables);
         assertThat(pi).isNotNull();
         processExternalTasks(pi, "TaskDistributeTraffic");
@@ -41,7 +41,7 @@ public class DistributeTrafficActivityTest extends BaseBPMNTest {
     }
 
     @Test
-    public void rainyDayDistributeTrafficActivity_Test() throws Exception {
+    public void rainyDayDistributeTrafficActivity_Test() {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(appcOrchestratorPreProcessor)
                 .buildAppcTaskRequest(any(BuildingBlockExecution.class), any(String.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DistributeTrafficActivity", variables);

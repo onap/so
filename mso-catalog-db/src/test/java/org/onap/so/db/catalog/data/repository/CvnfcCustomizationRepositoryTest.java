@@ -43,14 +43,14 @@ public class CvnfcCustomizationRepositoryTest extends BaseTest {
 
 
     @Test
-    public void findAllTest() throws Exception {
+    public void findAllTest() {
         List<CvnfcCustomization> cvnfcCustomizationList = cvnfcCustomizationRepository.findAll();
         Assert.assertFalse(CollectionUtils.isEmpty(cvnfcCustomizationList));
     }
 
     @Test
     @Transactional
-    public void createAndGetAllTest() throws Exception {
+    public void createAndGetAllTest() {
 
         CvnfcCustomization cvnfcCustomization = setUpCvnfcCustomization();
         cvnfcCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
@@ -98,7 +98,7 @@ public class CvnfcCustomizationRepositoryTest extends BaseTest {
 
     @Test
     @Transactional
-    public void createAndGetCvnfcCustomizationListTest() throws Exception {
+    public void createAndGetCvnfcCustomizationListTest() {
 
         CvnfcCustomization cvnfcCustomization = setUpCvnfcCustomization();
         cvnfcCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
@@ -149,7 +149,7 @@ public class CvnfcCustomizationRepositoryTest extends BaseTest {
 
     @Test
     @Transactional
-    public void createAndGetCvnfcCustomizationTest() throws Exception {
+    public void createAndGetCvnfcCustomizationTest() {
 
         CvnfcCustomization cvnfcCustomization = setUpCvnfcCustomization();
         cvnfcCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");

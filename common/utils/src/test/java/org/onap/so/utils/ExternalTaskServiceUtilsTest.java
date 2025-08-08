@@ -33,7 +33,7 @@ public class ExternalTaskServiceUtilsTest {
     private ExternalTaskClient actualClient4;
 
     @Test
-    public void testCheckActiveClients() throws Exception {
+    public void testCheckActiveClients() {
         Set<ExternalTaskClient> taskClients = ConcurrentHashMap.newKeySet();
         taskClients.add(actualClient1);
         taskClients.add(actualClient2);

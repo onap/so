@@ -31,7 +31,7 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 
 public class DeleteNetworkCollectionBBTest extends BaseBPMNTest {
     @Test
-    public void sunnyDayCreateNetworkCollection_Test() throws InterruptedException {
+    public void sunnyDayCreateNetworkCollection_Test() {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeleteNetworkCollectionBB", variables);
         assertThat(pi).isNotNull();
         assertThat(pi).isStarted().hasPassedInOrder("deleteNetworkCollection_startEvent",

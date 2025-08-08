@@ -345,7 +345,7 @@ public class BBInputSetupUtilsTest {
     }
 
     @Test
-    public void getOptionalAAIServiceInstanceByNameNullTest() throws Exception {
+    public void getOptionalAAIServiceInstanceByNameNullTest() {
         Optional<ServiceInstance> actual = bbInputSetupUtils.getAAIServiceInstanceByName("", "", "");
 
         assertThat(actual, sameBeanAs(Optional.empty()));
@@ -517,7 +517,7 @@ public class BBInputSetupUtilsTest {
     }
 
     @Test
-    public void getRelatedVnfByNameFromServiceInstanceTest() throws Exception {
+    public void getRelatedVnfByNameFromServiceInstanceTest() {
         final String vnfId = "id123";
         final String vnfName = "name123";
         final String serviceInstanceId = "service-instance-id123";
@@ -534,7 +534,7 @@ public class BBInputSetupUtilsTest {
     }
 
     @Test
-    public void getRelatedVnfByNameFromServiceInstanceNotFoundTest() throws Exception {
+    public void getRelatedVnfByNameFromServiceInstanceNotFoundTest() {
         final String serviceInstanceId = "serviceInstanceId";
         final String vnfName = "vnfName";
 
@@ -546,7 +546,7 @@ public class BBInputSetupUtilsTest {
     }
 
     @Test
-    public void getRelatedVolumeGroupByNameFromVnfTest() throws Exception {
+    public void getRelatedVolumeGroupByNameFromVnfTest() {
         final String vnfId = "vnf-id123";
         final String volumeGroupId = "id123";
         final String volumeGroupName = "volume-group-name123";
@@ -562,7 +562,7 @@ public class BBInputSetupUtilsTest {
     }
 
     @Test
-    public void getRelatedVolumeGroupByNameFromVnfNotFoundTest() throws Exception {
+    public void getRelatedVolumeGroupByNameFromVnfNotFoundTest() {
         String vnfId = "vnfId";
         String volumeGroupName = "volumeGroupName";
 
@@ -682,12 +682,12 @@ public class BBInputSetupUtilsTest {
     }
 
     @Test
-    public void getRelatedConfigurationByNameFromServiceInstanceNotFoundTest() throws Exception {
+    public void getRelatedConfigurationByNameFromServiceInstanceNotFoundTest() {
         assertEquals(Optional.empty(), bbInputSetupUtils.getRelatedConfigurationByNameFromServiceInstance("", ""));
     }
 
     @Test
-    public void getRelatedConfigurationByNameFromServiceInstanceTest() throws Exception {
+    public void getRelatedConfigurationByNameFromServiceInstanceTest() {
         Configuration configuration = new Configuration();
         configuration.setConfigurationId("id123");
         doReturn(Optional.of(configuration)).when(MOCK_aaiResourcesClient).getOne(Configurations.class,

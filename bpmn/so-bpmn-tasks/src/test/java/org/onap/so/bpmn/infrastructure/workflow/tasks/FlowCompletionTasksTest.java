@@ -44,7 +44,7 @@ public class FlowCompletionTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateRequestDbStatusComplete_Test() throws Exception {
+    public void updateRequestDbStatusComplete_Test() {
         InfraActiveRequests mockedRequest = new InfraActiveRequests();
         when(requestsDbClient.getInfraActiveRequestbyRequestId(any(String.class))).thenReturn(mockedRequest);
         doNothing().when(requestsDbClient).updateInfraActiveRequests(any(InfraActiveRequests.class));
@@ -54,7 +54,7 @@ public class FlowCompletionTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateRequestDbStatusFailed_Test() throws Exception {
+    public void updateRequestDbStatusFailed_Test() {
         WorkflowException workflowException = new WorkflowException("testProcessKey", 7000, "Error");
         execution.setVariable("WorkflowException", workflowException);
         InfraActiveRequests mockedRequest = new InfraActiveRequests();

@@ -79,7 +79,7 @@ public class ActivateVnfDBHelperTest extends BaseTest {
     }
 
     @Test
-    public void testOperationalEnvDistributionStatusDbMethods() throws Exception {
+    public void testOperationalEnvDistributionStatusDbMethods() {
 
         // test insert method
         OperationalEnvDistributionStatus distStatus1 = dbHelper.insertRecordToOperationalEnvDistributionStatus(
@@ -99,7 +99,7 @@ public class ActivateVnfDBHelperTest extends BaseTest {
     }
 
     @Test
-    public void testOperationalEnvServiceModelStatusDbMethods() throws Exception {
+    public void testOperationalEnvServiceModelStatusDbMethods() {
 
         // test insert method
         OperationalEnvServiceModelStatus serviceModelStatus1 = dbHelper.insertRecordToOperationalEnvServiceModelStatus(

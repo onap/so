@@ -21,14 +21,13 @@
 package org.onap.so.client.restproperties;
 
 import static org.junit.Assert.assertEquals;
-import java.net.MalformedURLException;
 import org.junit.Test;
 
 public class PolicyRestPropertiesImplTest {
 
 
     @Test
-    public void getEndpointTest() throws MalformedURLException {
+    public void getEndpointTest() {
         assertEquals("policy.endpoint", PolicyRestPropertiesImpl.POLICY_ENDPOINT);
     }
 

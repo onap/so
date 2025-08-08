@@ -24,7 +24,6 @@ import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
-import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -40,7 +39,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.apihandler.common.RequestClientParameter;
 import org.onap.so.apihandlerinfra.Action;
 import org.onap.so.apihandlerinfra.Constants;
-import org.onap.so.apihandlerinfra.infra.rest.exception.NoRecipeException;
 import org.onap.so.constants.Status;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -72,7 +70,7 @@ public class VolumeRestHandlerTest {
     private ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    public void test_checkDuplicateRequest() throws MalformedURLException, NoRecipeException {
+    public void test_checkDuplicateRequest() {
         ArgumentCaptor<HashMap> instanceIdCaptor = ArgumentCaptor.forClass(HashMap.class);
         restHandler.checkDuplicateRequest("serviceInstanceId", "vnfId", "volumeGroupId", "instanceName", "requestId");
         Mockito.verify(infraActiveRequestsClient, Mockito.times(1)).checkInstanceNameDuplicate(
@@ -84,7 +82,7 @@ public class VolumeRestHandlerTest {
     }
 
     @Test
-    public void test_saveInstanceName() throws MalformedURLException, NoRecipeException {
+    public void test_saveInstanceName() {
         ServiceInstancesRequest request = createTestRequest();
         InfraActiveRequests dbRequest = createDatabaseRecord();
         restHandler.saveInstanceName(request, dbRequest);
@@ -105,7 +103,7 @@ public class VolumeRestHandlerTest {
     }
 
     @Test
-    public void test_createInfraActiveRequestForDelete() throws Exception {
+    public void test_createInfraActiveRequestForDelete() {
         InfraActiveRequests expected = new InfraActiveRequests();
         expected.setRequestAction(Action.deleteInstance.toString());
         expected.setServiceInstanceId("serviceInstanceId");

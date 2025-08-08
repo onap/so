@@ -29,12 +29,12 @@ public class AAIUpdatorImplTest {
     protected AAIRestClientI client;
 
     @Test
-    public void getClientTest() throws Exception {
+    public void getClientTest() {
         test.getClient();
     }
 
     @Test
-    public void setClientTest() throws Exception {
+    public void setClientTest() {
         test.setClient(client);
     }
 

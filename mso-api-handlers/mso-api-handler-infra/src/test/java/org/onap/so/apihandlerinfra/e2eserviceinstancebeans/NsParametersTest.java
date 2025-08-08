@@ -33,7 +33,7 @@ public class NsParametersTest {
 
 
     @Test
-    public void verifyNsParameters() throws Exception {
+    public void verifyNsParameters() {
 
         LocationConstraint obj = new LocationConstraint();
         List<LocationConstraint> locationConstraints = new ArrayList<LocationConstraint>();

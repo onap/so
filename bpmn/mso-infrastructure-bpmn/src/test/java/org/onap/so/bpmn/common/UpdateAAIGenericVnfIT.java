@@ -28,7 +28,6 @@ import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetGenericVnfById_404;
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockPatchGenericVnf;
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockPutGenericVnf;
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockPutGenericVnf_Bad;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -54,7 +53,7 @@ public class UpdateAAIGenericVnfIT extends BaseIntegrationTest {
      */
     @Test
 
-    public void happyPath() throws IOException {
+    public void happyPath() {
         logStart();
 
         String updateAAIGenericVnfRequest =
@@ -85,7 +84,7 @@ public class UpdateAAIGenericVnfIT extends BaseIntegrationTest {
      */
     @Test
 
-    public void personaMismatch() throws IOException {
+    public void personaMismatch() {
 
         logStart();
 
@@ -116,7 +115,7 @@ public class UpdateAAIGenericVnfIT extends BaseIntegrationTest {
      */
     @Test
 
-    public void badGet() throws IOException {
+    public void badGet() {
 
         logStart();
 
@@ -147,7 +146,7 @@ public class UpdateAAIGenericVnfIT extends BaseIntegrationTest {
      */
     @Test
 
-    public void badPatch() throws IOException {
+    public void badPatch() {
 
         logStart();
 

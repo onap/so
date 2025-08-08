@@ -39,7 +39,6 @@ import org.onap.namingservice.model.NameGenRequest;
 import org.onap.so.BaseIntegrationTest;
 import org.onap.so.client.exception.BadResponseException;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class NamingClientIT extends BaseIntegrationTest {
     @Autowired
@@ -93,7 +92,7 @@ public class NamingClientIT extends BaseIntegrationTest {
         client.deleteNameGenRequest(unassignSetup());
     }
 
-    public NameGenRequest assignSetup() throws JsonProcessingException {
+    public NameGenRequest assignSetup() {
         NameGenRequest request = new NameGenRequest();
         List<Element> elements = new ArrayList<>();
         Element testElement = new Element();
@@ -104,7 +103,7 @@ public class NamingClientIT extends BaseIntegrationTest {
         return request;
     }
 
-    public NameGenDeleteRequest unassignSetup() throws JsonProcessingException {
+    public NameGenDeleteRequest unassignSetup() {
         NameGenDeleteRequest request = new NameGenDeleteRequest();
         List<Deleteelement> deleteElements = new ArrayList<>();
         Deleteelement testElement = new Deleteelement();

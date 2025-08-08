@@ -114,24 +114,18 @@ public class PnfEventReadyKafkaClient implements KafkaClient {
     class KafkaTopicListenerThread implements Runnable {
         @Override
         public void run() {
-            try {
-                List<String> response;
-                System.out.println(pnfUpdateTopic + "   " + consumerGroup);
-                response = consumerForPnfUpdate.get(pnfUpdateTopic, consumerGroup, consumerIdUpdate);
-                if (response.isEmpty()) {
-                    response = consumerForPnfReady.get(pnfReadyTopic, consumerGroup, consumerId);
-                    getPnfCorrelationIdListFromResponse(response)
-                            .forEach(this::informAboutPnfReadyIfPnfCorrelationIdFound);
-                } else {
-                    getPnfCorrelationIdListFromResponse(response)
-                            .forEach(this::informAboutPnfReadyIfPnfCorrelationIdFound);
-                }
-            } catch (IOException e) {
-                logger.error("Exception caught during sending rest request to kafka for listening event topic", e);
+            List<String> response;
+            System.out.println(pnfUpdateTopic + "   " + consumerGroup);
+            response = consumerForPnfUpdate.get(pnfUpdateTopic, consumerGroup, consumerIdUpdate);
+            if (response.isEmpty()) {
+                response = consumerForPnfReady.get(pnfReadyTopic, consumerGroup, consumerId);
+                getPnfCorrelationIdListFromResponse(response).forEach(this::informAboutPnfReadyIfPnfCorrelationIdFound);
+            } else {
+                getPnfCorrelationIdListFromResponse(response).forEach(this::informAboutPnfReadyIfPnfCorrelationIdFound);
             }
         }
 
-        private List<String> getPnfCorrelationIdListFromResponse(List<String> response) throws IOException {
+        private List<String> getPnfCorrelationIdListFromResponse(List<String> response) {
             if (response != null) {
                 return JsonUtilForPnfCorrelationId.parseJsonToGelAllPnfCorrelationId(response);
             }
@@ -147,4 +141,3 @@ public class PnfEventReadyKafkaClient implements KafkaClient {
         }
     }
 }
-
