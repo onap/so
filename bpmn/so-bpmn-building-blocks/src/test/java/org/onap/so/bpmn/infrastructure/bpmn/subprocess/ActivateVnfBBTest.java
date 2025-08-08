@@ -21,14 +21,13 @@
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
 
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
-import java.io.IOException;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Test;
 import org.onap.so.bpmn.BaseBPMNTest;
 
 public class ActivateVnfBBTest extends BaseBPMNTest {
     @Test
-    public void sunnyDay() throws InterruptedException, IOException {
+    public void sunnyDay() {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("ActivateVnfBB", variables);
         assertThat(pi).isNotNull();

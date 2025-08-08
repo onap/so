@@ -101,7 +101,7 @@ public class ServiceLevelPreparationTest extends BaseTaskTest {
     }
 
     @Test
-    public void validateFailureParamsForPnfTest() throws Exception {
+    public void validateFailureParamsForPnfTest() {
         invalidExecution.removeVariable(BPMN_REQUEST);
         // BPMN exception is thrown in case of validation failure or invalid execution
         thrown.expect(BpmnError.class);

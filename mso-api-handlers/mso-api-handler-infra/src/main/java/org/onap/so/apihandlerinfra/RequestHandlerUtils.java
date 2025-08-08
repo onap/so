@@ -189,8 +189,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
     }
 
     @Override
-    public void updateStatus(InfraActiveRequests aq, Status status, String errorMessage)
-            throws RequestDbFailureException {
+    public void updateStatus(InfraActiveRequests aq, Status status, String errorMessage) {
         if ((status == Status.FAILED) || (status == Status.COMPLETE)) {
             aq.setStatusMessage(errorMessage);
             aq.setProgress(new Long(100));

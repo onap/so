@@ -31,7 +31,7 @@ import org.onap.so.bpmn.BaseBPMNTest;
 
 public class VNFConfigModifyActivityTest extends BaseBPMNTest {
     @Test
-    public void sunnyDayVNFConfigModifyActivity_Test() throws InterruptedException {
+    public void sunnyDayVNFConfigModifyActivity_Test() {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFConfigModifyActivity", variables);
         assertThat(pi).isNotNull();
         processExternalTasks(pi, "ConfigModify");
@@ -41,7 +41,7 @@ public class VNFConfigModifyActivityTest extends BaseBPMNTest {
     }
 
     @Test
-    public void rainyDayVNFConfigModifyActivity_Test() throws Exception {
+    public void rainyDayVNFConfigModifyActivity_Test() {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(appcOrchestratorPreProcessor)
                 .buildAppcTaskRequest(any(BuildingBlockExecution.class), any(String.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFConfigModifyActivity", variables);

@@ -181,7 +181,7 @@ public class AAIConfigurationResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void connectVrfConfigurationToVnrConfigurationTest() throws Exception {
+    public void connectVrfConfigurationToVnrConfigurationTest() {
         Configuration vrfConfiguration = buildConfiguration();
         Configuration vnrConfiguration = buildConfiguration();
         doNothing().when(MOCK_aaiResourcesClient).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
@@ -191,7 +191,7 @@ public class AAIConfigurationResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void connectConfigurationToPnfObjectTest() throws Exception {
+    public void connectConfigurationToPnfObjectTest() {
         doNothing().when(MOCK_aaiResourcesClient).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
 
         Pnf primaryPnf = serviceProxy.getServiceInstance().getPnfs().stream().filter(o -> o.getRole().equals("Primary"))
@@ -222,7 +222,7 @@ public class AAIConfigurationResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void updateOrchestrationStatusConfigurationTest() throws Exception {
+    public void updateOrchestrationStatusConfigurationTest() {
         configuration.setOrchestrationStatus(OrchestrationStatus.ACTIVE);
         doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),
                 isA(org.onap.aai.domain.yang.Configuration.class));
@@ -232,7 +232,7 @@ public class AAIConfigurationResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void updateConfigurationOrchestrationStatusTest() throws Exception {
+    public void updateConfigurationOrchestrationStatusTest() {
         doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),
                 isA(org.onap.aai.domain.yang.Configuration.class));
         aaiConfigurationResources.updateConfigurationOrchestrationStatus(configuration, OrchestrationStatus.ACTIVE);

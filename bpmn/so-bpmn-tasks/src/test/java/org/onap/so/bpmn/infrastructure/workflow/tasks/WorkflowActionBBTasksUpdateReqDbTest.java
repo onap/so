@@ -65,7 +65,7 @@ public class WorkflowActionBBTasksUpdateReqDbTest extends BaseTaskTest {
     }
 
     @Test
-    public void getUpdatedRequestTest() throws Exception {
+    public void getUpdatedRequestTest() {
         List<ExecuteBuildingBlock> flowsToExecute = new ArrayList();
         BuildingBlock bb1 = new BuildingBlock().setBpmnFlowName("CreateNetworkBB");
         ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock().setBuildingBlock(bb1);

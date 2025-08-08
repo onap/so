@@ -51,7 +51,6 @@ import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
-import org.onap.so.exceptions.ValidationException;
 import org.onap.so.serviceinstancebeans.CloudRequestData;
 import org.onap.so.serviceinstancebeans.GetOrchestrationListResponse;
 import org.onap.so.serviceinstancebeans.GetOrchestrationResponse;
@@ -424,8 +423,7 @@ public class OrchestrationRequestsTest extends BaseTest {
     }
 
     @Test
-    public void testUnlockOrchestrationRequest_Valid_Status()
-            throws JsonParseException, JsonMappingException, IOException, ValidationException {
+    public void testUnlockOrchestrationRequest_Valid_Status() throws IOException {
         setupTestUnlockOrchestrationRequest_Valid_Status("5ffbabd6-b793-4377-a1ab-082670fbc7ac", "PENDING");
         String requestJSON =
                 new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/Request.json")));
@@ -443,7 +441,7 @@ public class OrchestrationRequestsTest extends BaseTest {
     }
 
     @Test
-    public void mapRequestProcessingDataTest() throws JsonParseException, JsonMappingException, IOException {
+    public void mapRequestProcessingDataTest() throws IOException {
         RequestProcessingData entry = new RequestProcessingData();
         RequestProcessingData secondEntry = new RequestProcessingData();
         List<HashMap<String, String>> expectedList = new ArrayList<>();
@@ -474,7 +472,7 @@ public class OrchestrationRequestsTest extends BaseTest {
     }
 
     @Test
-    public void testThatActiveRequestsExceptionsAreMapped() throws Exception {
+    public void testThatActiveRequestsExceptionsAreMapped() {
         String testRequestId = UUID.randomUUID().toString();
         wireMockServer.stubFor(any(urlPathEqualTo("/infraActiveRequests/" + testRequestId))
                 .willReturn(aResponse().withStatus(HttpStatus.SC_UNAUTHORIZED)));

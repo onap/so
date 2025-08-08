@@ -22,7 +22,6 @@ package org.onap.so.apihandlerinfra.exceptions;
 
 
 import static org.junit.Assert.assertEquals;
-import java.io.IOException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.Marshaller;
@@ -84,7 +83,7 @@ public class ApiExceptionMapperTest {
     }
 
     @Test
-    public void testDuplicateRequestResponse() throws IOException {
+    public void testDuplicateRequestResponse() {
         DuplicateRequestException duplicateRequestException = new DuplicateRequestException.Builder("Test1", "Test2",
                 "Test3", "Test4", HttpStatus.SC_BAD_GATEWAY, ErrorNumbers.SVC_BAD_PARAMETER).build();
         Response resp = mapper.toResponse((ApiException) duplicateRequestException);

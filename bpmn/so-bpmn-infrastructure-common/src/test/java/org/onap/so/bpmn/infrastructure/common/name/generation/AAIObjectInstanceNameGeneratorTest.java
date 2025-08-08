@@ -35,7 +35,7 @@ public class AAIObjectInstanceNameGeneratorTest {
     public void before() {}
 
     @Test
-    public void generateInstanceGroupNameTest() throws Exception {
+    public void generateInstanceGroupNameTest() {
 
         ModelInfoInstanceGroup modelVnfc = new ModelInfoInstanceGroup();
         modelVnfc.setFunction("vre");

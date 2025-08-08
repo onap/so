@@ -35,7 +35,6 @@ import org.onap.aaiclient.client.aai.AAIVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +73,7 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
     private GrpcNettyServer grpcNettyServer;
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() {
 
         requestObject = FileUtil.readResourceFile("request/" + getClass().getSimpleName() + ".json");
         responseObject = FileUtil.readResourceFile("response/" + getClass().getSimpleName() + ".json");

@@ -21,7 +21,6 @@
 package org.onap.so.client.dmaap;
 
 import static org.junit.Assert.assertEquals;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.Test;
 import org.onap.so.client.sdno.dmaap.SDNOHealthCheckDmaapConsumer;
@@ -29,7 +28,7 @@ import org.onap.so.client.sdno.dmaap.SDNOHealthCheckDmaapConsumer;
 public class DmaapClientTest {
 
     @Test
-    public void deobfuscateTest() throws FileNotFoundException, IOException {
+    public void deobfuscateTest() throws IOException {
         String encodedBase64 = "dGVzdHBhc3N3b3Jk";
         String notEncoded = "testpassword";
         DmaapConsumer consumer = new SDNOHealthCheckDmaapConsumer();

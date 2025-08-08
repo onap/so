@@ -127,8 +127,7 @@ public abstract class AbstractRestHandler {
         return dup;
     }
 
-    public void updateStatus(InfraActiveRequests aq, Status status, String errorMessage)
-            throws RequestDbFailureException {
+    public void updateStatus(InfraActiveRequests aq, Status status, String errorMessage) {
         if ((aq != null) && ((status == Status.FAILED) || (status == Status.COMPLETE))) {
 
             aq.setStatusMessage(errorMessage);

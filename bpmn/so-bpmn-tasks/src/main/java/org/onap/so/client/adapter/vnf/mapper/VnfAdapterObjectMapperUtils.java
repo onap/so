@@ -20,7 +20,6 @@
 
 package org.onap.so.client.adapter.vnf.mapper;
 
-import java.io.UnsupportedEncodingException;
 import java.util.UUID;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.springframework.stereotype.Component;
@@ -33,7 +32,7 @@ public class VnfAdapterObjectMapperUtils {
         return UUID.randomUUID().toString();
     }
 
-    public String createCallbackUrl(String messageType, String correlator) throws UnsupportedEncodingException {
+    public String createCallbackUrl(String messageType, String correlator) {
         String endpoint = getProperty("mso.workflow.message.endpoint");
         if (endpoint != null) {
             while (endpoint.endsWith("/")) {

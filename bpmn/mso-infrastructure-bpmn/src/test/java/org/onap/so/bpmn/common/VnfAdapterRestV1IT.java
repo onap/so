@@ -154,7 +154,7 @@ public class VnfAdapterRestV1IT extends BaseIntegrationTest {
 
     @Test
 
-    public void testCreateVfModuleSuccess() throws Exception {
+    public void testCreateVfModuleSuccess() {
         logStart();
 
         mockVNFPost(wireMockServer, "", 202, "vnfId");
@@ -183,7 +183,7 @@ public class VnfAdapterRestV1IT extends BaseIntegrationTest {
 
     @Test
 
-    public void testUpdateVfModuleSuccess() throws Exception {
+    public void testUpdateVfModuleSuccess() {
         logStart();
 
         mockVNFPut(wireMockServer, "/vfModuleId", 202);
@@ -212,7 +212,7 @@ public class VnfAdapterRestV1IT extends BaseIntegrationTest {
 
     @Test
 
-    public void testDeleteVfModuleSuccess() throws Exception {
+    public void testDeleteVfModuleSuccess() {
         logStart();
 
         mockVNFDelete(wireMockServer, "vnfId", "/vfModuleId", 202);
@@ -241,7 +241,7 @@ public class VnfAdapterRestV1IT extends BaseIntegrationTest {
 
     @Test
 
-    public void testRollbackVfModuleSuccess() throws Exception {
+    public void testRollbackVfModuleSuccess() {
         logStart();
 
         mockVNFRollbackDelete(wireMockServer, "/vfModuleId", 202);
@@ -270,7 +270,7 @@ public class VnfAdapterRestV1IT extends BaseIntegrationTest {
 
     @Test
 
-    public void testCreateVfModuleException() throws Exception {
+    public void testCreateVfModuleException() {
         logStart();
 
         mockVNFPost(wireMockServer, "", 202, "vnfId");

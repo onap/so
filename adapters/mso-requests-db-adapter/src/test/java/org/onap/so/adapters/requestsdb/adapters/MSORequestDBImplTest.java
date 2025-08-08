@@ -236,7 +236,7 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
     }
 
     @Test
-    public void getSiteStatusNotDisabled() throws MsoRequestsDbException {
+    public void getSiteStatusNotDisabled() {
         setupTestEntities();
         // Given
         String siteName = "siteName";
@@ -249,7 +249,7 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
     }
 
     @Test
-    public void getSiteStatusDisabled() throws MsoRequestsDbException {
+    public void getSiteStatusDisabled() {
         setupTestEntities();
         // Given
         String siteName = "testSite";

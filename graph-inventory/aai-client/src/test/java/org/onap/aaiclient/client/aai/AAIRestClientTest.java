@@ -109,7 +109,7 @@ public class AAIRestClientTest {
 
 
     @Test
-    public void cacheGetTest() throws URISyntaxException, InterruptedException {
+    public void cacheGetTest() throws URISyntaxException {
 
         wireMockRule.stubFor(get(urlPathMatching("/cached"))
                 .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/plain").withBody("value")));
@@ -160,7 +160,7 @@ public class AAIRestClientTest {
     }
 
     @Test
-    public void cachePutTest() throws URISyntaxException, InterruptedException {
+    public void cachePutTest() throws URISyntaxException {
 
         wireMockRule.stubFor(put(urlPathMatching("/cached/1")).willReturn(aResponse().withStatus(200)));
 

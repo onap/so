@@ -27,7 +27,7 @@ public class GraphInventoryPayloadExceptionTest {
     Throwable t = new Throwable();
 
     @Test
-    public void callConstructorTest() throws Exception {
+    public void callConstructorTest() {
 
         GraphInventoryPayloadException test1 = new GraphInventoryPayloadException("testing");
 

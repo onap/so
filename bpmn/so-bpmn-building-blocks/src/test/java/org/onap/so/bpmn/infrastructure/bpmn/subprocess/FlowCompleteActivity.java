@@ -31,7 +31,7 @@ import org.onap.so.bpmn.BaseBPMNTest;
 
 public class FlowCompleteActivity extends BaseBPMNTest {
     @Test
-    public void sunnyDayFlowCompleteActivity_Test() throws InterruptedException {
+    public void sunnyDayFlowCompleteActivity_Test() {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("FlowCompleteActivity", variables);
         assertThat(pi).isNotNull();
         assertThat(pi).isStarted().hasPassedInOrder("FlowCompleteActivity_Start", "TaskUpdateRequestDB",
@@ -40,7 +40,7 @@ public class FlowCompleteActivity extends BaseBPMNTest {
     }
 
     @Test
-    public void rainyDayFlowCompleteActivity_Test() throws Exception {
+    public void rainyDayFlowCompleteActivity_Test() {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(flowCompletionTasks)
                 .updateRequestDbStatus(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("FlowCompleteActivity", variables);

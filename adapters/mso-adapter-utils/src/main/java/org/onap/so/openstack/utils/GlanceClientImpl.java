@@ -85,8 +85,7 @@ public class GlanceClientImpl extends MsoCommonUtils {
         }
     }
 
-    public Image queryImage(String cloudSiteId, String tenantId, String imageId)
-            throws MsoCloudSiteNotFound, GlanceClientException {
+    public Image queryImage(String cloudSiteId, String tenantId, String imageId) throws GlanceClientException {
         try {
             Glance glanceClient = getGlanceClient(cloudSiteId, tenantId);
             // list is set to false, otherwise an invalid URL is appended

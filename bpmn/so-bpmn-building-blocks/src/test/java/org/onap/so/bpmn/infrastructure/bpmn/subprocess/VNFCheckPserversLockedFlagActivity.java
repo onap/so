@@ -31,7 +31,7 @@ import org.onap.so.bpmn.BaseBPMNTest;
 
 public class VNFCheckPserversLockedFlagActivity extends BaseBPMNTest {
     @Test
-    public void sunnyDayVNFCheckInMaintFlagActivity_Test() throws InterruptedException {
+    public void sunnyDayVNFCheckInMaintFlagActivity_Test() {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFCheckPserversLockedFlagActivity", variables);
         assertThat(pi).isNotNull();
         assertThat(pi).isStarted().hasPassedInOrder("VNFCheckPserversLockedFlagActivity_Start",
@@ -40,7 +40,7 @@ public class VNFCheckPserversLockedFlagActivity extends BaseBPMNTest {
     }
 
     @Test
-    public void rainyDayVNFCheckPserversLockedFlagActivity_Test() throws Exception {
+    public void rainyDayVNFCheckPserversLockedFlagActivity_Test() {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiFlagTasks)
                 .checkVnfPserversLockedFlag(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFCheckPserversLockedFlagActivity", variables);

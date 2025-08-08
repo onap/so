@@ -22,7 +22,6 @@ package org.onap.so.apihandlerinfra.tenantisolation.dmaap;
 
 import static org.junit.Assert.assertEquals;
 import java.io.IOException;
-import java.text.ParseException;
 import org.junit.Test;
 import org.onap.so.apihandlerinfra.BaseTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,7 +40,7 @@ public class SDCDmaapClientTest extends BaseTest {
 
 
     @Test
-    public void verifyasdcCreateoeRequest() throws IOException, ParseException {
+    public void verifyasdcCreateoeRequest() throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();
 

@@ -864,7 +864,7 @@ public class MsoNetworkAdapterImpl {
         return;
     }
 
-    private void mergeRouteTableRefs(List<String> rtFqdns, Map<String, Object> stackParams) throws MsoException {
+    private void mergeRouteTableRefs(List<String> rtFqdns, Map<String, Object> stackParams) {
 
         // update parameters
         if (rtFqdns != null) {

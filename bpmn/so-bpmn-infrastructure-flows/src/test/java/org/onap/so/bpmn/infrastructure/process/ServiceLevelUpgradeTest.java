@@ -29,7 +29,6 @@ import static org.assertj.core.api.Assertions.fail;
 import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +73,7 @@ public class ServiceLevelUpgradeTest extends BaseBPMNTest {
     private GrpcNettyServer grpcNettyServer;
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() {
         actionNames[0] = "healthCheck";
         actionNames[1] = "healthCheck";
         actionNames[2] = "preCheck";

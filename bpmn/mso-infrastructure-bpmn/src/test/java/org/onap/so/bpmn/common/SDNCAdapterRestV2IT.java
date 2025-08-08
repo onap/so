@@ -68,7 +68,7 @@ public class SDNCAdapterRestV2IT extends BaseIntegrationTest {
      */
     @Test
     @Ignore
-    public void success() throws IOException {
+    public void success() {
         logStart();
         mocks();
 

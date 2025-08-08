@@ -43,8 +43,6 @@ import org.onap.so.openstack.beans.HeatStatus;
 import org.onap.so.openstack.beans.StackInfo;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.springframework.core.env.Environment;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.heat.Heat;
 import com.woorea.openstack.heat.model.Stack;
@@ -85,7 +83,7 @@ public class MsoHeatUtilsWithUpdateTest extends TestDataSetup {
     }
 
     @Test
-    public void updateStackTest() throws MsoException, JsonParseException, JsonMappingException, IOException {
+    public void updateStackTest() throws MsoException, IOException {
         CloudSite cloudSite = new CloudSite();
         Heat heatClient = new Heat("endpoint");
         Stack heatStack = mapper.readValue(new File(RESOURCE_PATH + "HeatStack.json"), Stack.class);
@@ -106,8 +104,7 @@ public class MsoHeatUtilsWithUpdateTest extends TestDataSetup {
     }
 
     @Test
-    public void updateStackWithEnvironmentTest()
-            throws JsonParseException, JsonMappingException, IOException, MsoException {
+    public void updateStackWithEnvironmentTest() throws IOException, MsoException {
         String environmentString = "environmentString";
 
         CloudSite cloudSite = new CloudSite();
@@ -131,7 +128,7 @@ public class MsoHeatUtilsWithUpdateTest extends TestDataSetup {
     }
 
     @Test
-    public void updateStackWithFilesTest() throws MsoException, JsonParseException, JsonMappingException, IOException {
+    public void updateStackWithFilesTest() throws MsoException, IOException {
         String environmentString = "environmentString";
         Map<String, Object> files = new HashMap<>();
         files.put("file1", new Object());

@@ -116,7 +116,7 @@ public class ConfigurationScaleOutTest extends BaseTaskTest {
     }
 
     @Test
-    public void callAppcClientTest() throws Exception {
+    public void callAppcClientTest() {
         Action action = Action.ConfigScaleOut;
         String vnfId = genericVnf.getVnfId();
         String controllerType = "testType";
@@ -172,7 +172,7 @@ public class ConfigurationScaleOutTest extends BaseTaskTest {
     }
 
     @Test
-    public void callAppcClientExceptionTest() throws Exception {
+    public void callAppcClientExceptionTest() {
         expectedException.expect(BpmnError.class);
         Action action = Action.ConfigScaleOut;
         String vnfId = genericVnf.getVnfId();

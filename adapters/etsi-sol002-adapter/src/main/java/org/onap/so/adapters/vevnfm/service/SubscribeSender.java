@@ -50,7 +50,7 @@ public class SubscribeSender {
         this.restProvider = restProvider;
     }
 
-    public String send(final EsrSystemInfo info, final LccnSubscriptionRequest request) throws VeVnfmException {
+    public String send(final EsrSystemInfo info, final LccnSubscriptionRequest request) {
         final ResponseEntity<SubscribeToManoResponse> response =
                 restProvider.postHttpRequest(request, getUrl(info), SubscribeToManoResponse.class);
 

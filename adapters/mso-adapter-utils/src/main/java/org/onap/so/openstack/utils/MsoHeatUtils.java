@@ -1196,7 +1196,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
     }
 
     public Stacks queryStacks(String cloudSiteId, String tenantId, int limit, String marker)
-            throws MsoCloudSiteNotFound, HeatClientException {
+            throws HeatClientException {
         Heat heatClient;
         try {
             heatClient = getHeatClient(cloudSiteId, tenantId);

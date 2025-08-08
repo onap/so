@@ -32,8 +32,6 @@ import java.util.HashSet;
 import org.junit.Test;
 import org.onap.so.TestDataSetup;
 import org.onap.so.db.catalog.beans.HeatTemplateParam;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class MsoHeatEnvironmentEntryTest extends TestDataSetup {
 
@@ -54,8 +52,7 @@ public class MsoHeatEnvironmentEntryTest extends TestDataSetup {
     }
 
     @Test
-    public void toFullString_ResourceRegistryNotPresentInRawEntry()
-            throws JsonParseException, JsonMappingException, IOException {
+    public void toFullString_ResourceRegistryNotPresentInRawEntry() throws IOException {
         StringBuilder sb = new StringBuilder(RAW_ENTRY_WITH_NO_RESOURCE_REGISTRY);
 
         MsoHeatEnvironmentEntry testedObject = new MsoHeatEnvironmentEntry(sb);

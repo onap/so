@@ -23,7 +23,6 @@ import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
-import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -95,7 +94,7 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup {
     }
 
     @Test
-    public void buildCreateNetworkRequestFromBbobjectTest() throws Exception {
+    public void buildCreateNetworkRequestFromBbobjectTest() {
 
         String cloudRegionPo = "cloudRegionPo";
         CreateNetworkRequest expectedCreateNetworkRequest = new CreateNetworkRequest();
@@ -146,7 +145,7 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup {
     }
 
     @Test
-    public void createNetworkRollbackRequestMapperTest() throws Exception {
+    public void createNetworkRollbackRequestMapperTest() {
 
         String cloudRegionPo = "cloudRegionPo";
         RollbackNetworkRequest expectedRollbackNetworkRequest = new RollbackNetworkRequest();
@@ -173,7 +172,7 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup {
     }
 
     @Test
-    public void updateNetworkRequestMapperTest() throws UnsupportedEncodingException {
+    public void updateNetworkRequestMapperTest() {
         org.onap.so.openstack.beans.Subnet subnet = new org.onap.so.openstack.beans.Subnet();
         subnet.setSubnetId("subnetId");
         subnet.setGatewayIp("NULL");
@@ -275,7 +274,7 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup {
     }
 
     @Test
-    public void deleteNetworkRequestMapperTest() throws Exception {
+    public void deleteNetworkRequestMapperTest() {
         DeleteNetworkRequest expectedDeleteNetworkRequest = new DeleteNetworkRequest();
 
         String messageId = "messageId";
@@ -317,7 +316,7 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup {
     }
 
     @Test
-    public void deleteNetworkRequestNoHeatIdMapperTest() throws Exception {
+    public void deleteNetworkRequestNoHeatIdMapperTest() {
         DeleteNetworkRequest expectedDeleteNetworkRequest = new DeleteNetworkRequest();
 
         String messageId = "messageId";

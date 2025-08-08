@@ -28,7 +28,7 @@ public class ActivitySpecRepositoryTest extends BaseTest {
     private ActivitySpecRepository activitySpecRepository;
 
     @Test
-    public void findAllTest() throws Exception {
+    public void findAllTest() {
         List<ActivitySpec> activitySpecList = activitySpecRepository.findAll();
         Assert.assertFalse(CollectionUtils.isEmpty(activitySpecList));
     }

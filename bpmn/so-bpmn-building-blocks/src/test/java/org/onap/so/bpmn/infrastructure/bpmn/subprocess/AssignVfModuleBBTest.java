@@ -31,7 +31,7 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 
 public class AssignVfModuleBBTest extends BaseBPMNTest {
     @Test
-    public void sunnyDayAssignVfModule_Test() throws InterruptedException {
+    public void sunnyDayAssignVfModule_Test() {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("AssignVfModuleBB", variables);
         assertThat(pi).isNotNull();
@@ -42,7 +42,7 @@ public class AssignVfModuleBBTest extends BaseBPMNTest {
     }
 
     @Test
-    public void rainyDayAssignVfModule_Test() throws Exception {
+    public void rainyDayAssignVfModule_Test() {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiCreateTasks)
                 .createVfModule(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("AssignVfModuleBB", variables);
