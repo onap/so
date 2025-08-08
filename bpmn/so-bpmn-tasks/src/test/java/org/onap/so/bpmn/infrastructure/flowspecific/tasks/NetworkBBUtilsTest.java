@@ -73,7 +73,7 @@ public class NetworkBBUtilsTest extends BaseTaskTest {
     }
 
     @Test
-    public void getCloudRegionSDNC25Test() throws Exception {
+    public void getCloudRegionSDNC25Test() {
         cloudRegion.setCloudRegionVersion("2.5");
 
         NetworkBBUtils spyAssign = Mockito.spy(NetworkBBUtils.class);
@@ -84,7 +84,7 @@ public class NetworkBBUtilsTest extends BaseTaskTest {
     }
 
     @Test
-    public void getCloudRegionSDNC30Test() throws Exception {
+    public void getCloudRegionSDNC30Test() {
         cloudRegion.setCloudRegionVersion("3.0");
 
         NetworkBBUtils spyAssign = Mockito.spy(NetworkBBUtils.class);
@@ -95,7 +95,7 @@ public class NetworkBBUtilsTest extends BaseTaskTest {
     }
 
     @Test
-    public void getCloudRegionPO25Test() throws Exception {
+    public void getCloudRegionPO25Test() {
         cloudRegion.setCloudRegionVersion("2.5");
 
         NetworkBBUtils spyAssign = Mockito.spy(NetworkBBUtils.class);
@@ -106,7 +106,7 @@ public class NetworkBBUtilsTest extends BaseTaskTest {
     }
 
     @Test
-    public void getCloudRegionPO30Test() throws Exception {
+    public void getCloudRegionPO30Test() {
         cloudRegion.setCloudRegionVersion("3.0");
 
         NetworkBBUtils spyAssignPO = Mockito.spy(NetworkBBUtils.class);

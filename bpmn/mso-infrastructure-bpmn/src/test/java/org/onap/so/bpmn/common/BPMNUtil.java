@@ -284,7 +284,7 @@ public class BPMNUtil {
      * @throws InterruptedException
      */
     private static void executeAsyncFlow(ProcessEngineServices processEngineServices, String processKey,
-            Map<String, String> variables) throws InterruptedException {
+            Map<String, String> variables) {
         VariableMapImpl variableMap = new VariableMapImpl();
 
         Map<String, Object> variableValueType = new HashMap<>();

@@ -21,7 +21,6 @@
 package org.onap.so.client.restproperties;
 
 import static org.junit.Assert.assertEquals;
-import java.net.MalformedURLException;
 import org.junit.Test;
 
 public class AAIPropertiesImplTest {
@@ -29,7 +28,7 @@ public class AAIPropertiesImplTest {
     private AAIPropertiesImpl aaiPropertiesImpl = new AAIPropertiesImpl();
 
     @Test
-    public void getEndpointTest() throws MalformedURLException {
+    public void getEndpointTest() {
         assertEquals("aai.endpoint", AAIPropertiesImpl.AAI_ENDPOINT);
     }
 

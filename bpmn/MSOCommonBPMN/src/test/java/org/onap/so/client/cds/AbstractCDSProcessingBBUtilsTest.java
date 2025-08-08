@@ -70,7 +70,7 @@ public class AbstractCDSProcessingBBUtilsTest {
     }
 
     @Test
-    public void preProcessRequestDETest() throws Exception {
+    public void preProcessRequestDETest() {
 
         DelegateExecution execution = mock(DelegateExecution.class);
         when(execution.getVariable("executionObject")).thenReturn(abstractCDSPropertiesBean);
@@ -92,7 +92,7 @@ public class AbstractCDSProcessingBBUtilsTest {
     }
 
     @Test
-    public void preProcessRequestBBTest() throws Exception {
+    public void preProcessRequestBBTest() {
 
         BuildingBlockExecution execution = mock(BuildingBlockExecution.class);
         when(execution.getVariable("executionObject")).thenReturn(abstractCDSPropertiesBean);

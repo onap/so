@@ -33,7 +33,6 @@ import static org.onap.so.bpmn.mock.StubResponseAAI.MockQueryAllottedResourceByI
 import static org.onap.so.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
 import static org.onap.so.bpmn.mock.StubResponseSDNCAdapter.mockSDNCAdapter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -262,7 +261,7 @@ public class DeleteVcpeResCustServiceIT extends AbstractTestBase {
         logEnd();
     }
 
-    private Map<String, Object> setupVariables(String requestId) throws UnsupportedEncodingException {
+    private Map<String, Object> setupVariables(String requestId) {
         Map<String, Object> variables = new HashMap<>();
         variables.put("isDebugLogEnabled", "true");
         variables.put("requestId", requestId);

@@ -41,7 +41,6 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
-import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.MapperException;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 import org.onap.so.client.sdnc.beans.SDNCSvcOperation;;
@@ -131,7 +130,7 @@ public class SDNCVfModuleResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void changeAssignVfModuleTest() throws MapperException, BadResponseException {
+    public void changeAssignVfModuleTest() throws MapperException {
         doReturn(sdncReq).when(vfModuleTopologyMapper).reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION,
                 SDNCSvcAction.CHANGE_ASSIGN, vfModule, null, vnf, serviceInstance, customer, cloudRegion,
                 requestContext, null, testURI);

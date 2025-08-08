@@ -91,7 +91,7 @@ public class ControllerExecutionTest extends BaseTaskTest {
     }
 
     @Test
-    public void testSetControllerActorScopeAction() throws Exception {
+    public void testSetControllerActorScopeAction() {
 
 
         doReturn(vnfResourceCustomization).when(catalogDbClient).getVnfResourceCustomizationByModelCustomizationUUID(
@@ -105,7 +105,7 @@ public class ControllerExecutionTest extends BaseTaskTest {
 
 
     @Test
-    public void testSelectBB() throws Exception {
+    public void testSelectBB() {
         // given
         BBNameSelectionReference bbNameSelectionReference = new BBNameSelectionReference();
         bbNameSelectionReference.setBbName(TEST_BBNAME);

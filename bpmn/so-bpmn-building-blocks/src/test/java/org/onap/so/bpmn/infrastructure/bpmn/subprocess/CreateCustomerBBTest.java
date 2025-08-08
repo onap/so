@@ -31,7 +31,7 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 
 public class CreateCustomerBBTest extends BaseBPMNTest {
     @Test
-    public void createCustomerBBTest() throws InterruptedException {
+    public void createCustomerBBTest() {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateCustomerBB", variables);
         assertThat(pi).isNotNull();
         assertThat(pi).isStarted().hasPassedInOrder("CreateCustomerBB_Start", "CreateCustomerAAI",

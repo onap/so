@@ -52,7 +52,7 @@ public class JAXBMarshallingTest {
     }
 
     @Test
-    public void xmlMarshalTest() throws IOException, JAXBException {
+    public void xmlMarshalTest() throws IOException {
 
         CreateVfModuleRequest request = new CreateVfModuleRequest();
         request.getVfModuleParams().put("test-null", null);

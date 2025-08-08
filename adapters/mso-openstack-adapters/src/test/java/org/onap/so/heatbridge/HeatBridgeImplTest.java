@@ -88,13 +88,11 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.graphinventory.entities.DSLQuery;
 import org.onap.aaiclient.client.graphinventory.entities.Pathed;
-import org.onap.aaiclient.client.graphinventory.exceptions.BulkProcessFailed;
 import org.onap.so.cloud.resource.beans.NodeType;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.heatbridge.constants.HeatBridgeConstants;
 import org.onap.so.heatbridge.helpers.AaiHelper;
 import org.onap.so.heatbridge.openstack.api.OpenstackClient;
-import org.onap.so.heatbridge.openstack.api.OpenstackClientException;
 import org.openstack4j.model.compute.Flavor;
 import org.openstack4j.model.compute.Image;
 import org.openstack4j.model.compute.Server;
@@ -113,7 +111,6 @@ import org.openstack4j.openstack.heat.domain.HeatResource.Resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -169,14 +166,14 @@ public class HeatBridgeImplTest {
 
 
     @Before
-    public void setUp() throws HeatBridgeException, OpenstackClientException, BulkProcessFailed {
+    public void setUp() {
         when(resourcesClient.beginSingleTransaction()).thenReturn(transaction);
     }
 
 
 
     @Test
-    public void testExtractStackResourceIdsByResourceType() throws HeatBridgeException {
+    public void testExtractStackResourceIdsByResourceType() {
         // Arrange
         List<Resource> expectedResourceList = (List<Resource>) extractTestStackResources();
         List<String> expectedServerIds =
@@ -435,8 +432,7 @@ public class HeatBridgeImplTest {
     }
 
     @Test
-    public void testUpdateVserverLInterfacesToAai()
-            throws HeatBridgeException, JsonParseException, JsonMappingException, IOException {
+    public void testUpdateVserverLInterfacesToAai() throws HeatBridgeException, JsonMappingException, IOException {
         // Arrange
         List<Resource> stackResources = (List<Resource>) extractTestStackResources();
         Port port = mock(Port.class);
@@ -502,7 +498,7 @@ public class HeatBridgeImplTest {
     }
 
     @Test
-    public void testUpdateNetworksToAai() throws HeatBridgeException {
+    public void testUpdateNetworksToAai() {
 
         Subnet subnet1 = mock(Subnet.class);
         when(subnet1.getId()).thenReturn("test-subnet1-id");
@@ -623,8 +619,7 @@ public class HeatBridgeImplTest {
     }
 
     @Test
-    public void testUpdateLInterfaceIps()
-            throws HeatBridgeException, JsonParseException, JsonMappingException, IOException {
+    public void testUpdateLInterfaceIps() {
 
         Port port = mock(Port.class);
         when(port.getNetworkId()).thenReturn("890a203a-23gg-56jh-df67-731656a8f13a");
@@ -671,8 +666,7 @@ public class HeatBridgeImplTest {
     }
 
     @Test
-    public void testUpdateVserverLInterfacesToAai_skipVlans()
-            throws HeatBridgeException, JsonParseException, JsonMappingException, IOException {
+    public void testUpdateVserverLInterfacesToAai_skipVlans() throws HeatBridgeException {
         // Arrange
         List<Resource> stackResources = (List<Resource>) extractTestStackResources();
         Port port = mock(Port.class);
@@ -712,8 +706,7 @@ public class HeatBridgeImplTest {
     }
 
     @Test
-    public void testBuildAddVserverLInterfacesToAaiAction_PortProfileNull()
-            throws HeatBridgeException, JsonParseException, JsonMappingException, IOException {
+    public void testBuildAddVserverLInterfacesToAaiAction_PortProfileNull() throws HeatBridgeException {
         // Arrange
         List<Resource> stackResources = (List<Resource>) extractTestStackResources();
         Port port = mock(Port.class);
@@ -752,8 +745,7 @@ public class HeatBridgeImplTest {
     }
 
     @Test
-    public void testBuildAddVserverLInterfacesToAaiAction_DeviceIdNull()
-            throws HeatBridgeException, JsonParseException, JsonMappingException, IOException {
+    public void testBuildAddVserverLInterfacesToAaiAction_DeviceIdNull() throws HeatBridgeException {
         // Arrange
         List<Resource> stackResources = (List<Resource>) extractTestStackResources();
         Port port = mock(Port.class);
@@ -790,7 +782,7 @@ public class HeatBridgeImplTest {
     }
 
     @Test
-    public void testExtractOpenstackImagesFromServers() throws HeatBridgeException {
+    public void testExtractOpenstackImagesFromServers() {
         // Arrange
         List<Server> serverList = new ArrayList<>();
         serverList.add(server);

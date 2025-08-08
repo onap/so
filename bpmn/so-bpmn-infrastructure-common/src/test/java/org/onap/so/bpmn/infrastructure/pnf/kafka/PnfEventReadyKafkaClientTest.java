@@ -101,7 +101,7 @@ public class PnfEventReadyKafkaClientTest {
      * and shutdown the executor because of empty map
      */
     @Test
-    public void pnfCorrelationIdIsFoundInHttpResponse_notifyAboutPnfUpdate() throws IOException {
+    public void pnfCorrelationIdIsFoundInHttpResponse_notifyAboutPnfUpdate() {
         when(kafkaConsumerMock.get(any(String.class), any(String.class), any(String.class)))
                 .thenReturn(Arrays.asList(String.format(JSON_EXAMPLE_WITH_PNF_CORRELATION_ID[0], PNF_CORRELATION_ID),
                         JSON_EXAMPLE_WITH_PNF_CORRELATION_ID[1]));
@@ -113,7 +113,7 @@ public class PnfEventReadyKafkaClientTest {
 
 
     @Test
-    public void pnfCorrelationIdIsFoundInHttpResponse_notifyAboutPnfReady() throws IOException {
+    public void pnfCorrelationIdIsFoundInHttpResponse_notifyAboutPnfReady() {
         when(kafkaConsumerMock.get(any(String.class), any(String.class), any(String.class)))
                 .thenReturn(Collections.emptyList())
                 .thenReturn(Arrays.asList(String.format(JSON_EXAMPLE_WITH_PNF_CORRELATION_ID[0], PNF_CORRELATION_ID),
@@ -135,7 +135,7 @@ public class PnfEventReadyKafkaClientTest {
      * response. run method should not do anything with the map not run any thread to notify camunda process
      */
     @Test
-    public void pnfCorrelationIdIsFoundInHttpResponse_NotFoundInMap() throws IOException {
+    public void pnfCorrelationIdIsFoundInHttpResponse_NotFoundInMap() {
         when(kafkaConsumerMock.get(any(String.class), any(String.class), any(String.class))).thenReturn(Arrays.asList(
                 String.format(JSON_EXAMPLE_WITH_PNF_CORRELATION_ID[0], PNF_CORRELATION_ID_NOT_FOUND_IN_MAP),
                 JSON_EXAMPLE_WITH_PNF_CORRELATION_ID[1]));
@@ -152,7 +152,7 @@ public class PnfEventReadyKafkaClientTest {
      * method should not do anything with the map and not run any thread to notify camunda process
      */
     @Test
-    public void pnfCorrelationIdIsNotFoundInHttpResponse() throws IOException {
+    public void pnfCorrelationIdIsNotFoundInHttpResponse() {
         when(kafkaConsumerMock.get(any(String.class), any(String.class), any(String.class)))
                 .thenReturn(Arrays.asList(JSON_EXAMPLE_WITH_NO_PNF_CORRELATION_ID));
         testedObjectInnerClassThread.run();

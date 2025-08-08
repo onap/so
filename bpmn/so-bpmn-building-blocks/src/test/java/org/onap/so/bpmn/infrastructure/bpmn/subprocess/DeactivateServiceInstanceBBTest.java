@@ -30,7 +30,7 @@ import org.onap.so.bpmn.BaseBPMNTest;
  */
 public class DeactivateServiceInstanceBBTest extends BaseBPMNTest {
     @Test
-    public void sunnyDayDeactivateServiceInstanceSDNC() throws InterruptedException {
+    public void sunnyDayDeactivateServiceInstanceSDNC() {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeactivateServiceInstanceBB", variables);
         assertThat(pi).isNotNull();

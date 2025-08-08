@@ -56,7 +56,7 @@ public class CheckAaiForPnfCorrelationIdDelegateTest {
         }
 
         @Test
-        public void shouldThrowExceptionWhenPnfCorrelationIdIsNotSet() throws Exception {
+        public void shouldThrowExceptionWhenPnfCorrelationIdIsNotSet() {
             // given
             DelegateExecution execution = mock(DelegateExecution.class);
             when(execution.getVariable(PNF_CORRELATION_ID)).thenReturn(null);
@@ -68,7 +68,7 @@ public class CheckAaiForPnfCorrelationIdDelegateTest {
         }
 
         @Test
-        public void shouldSetCorrectVariablesWhenAaiDoesNotContainInfoAboutPnf() throws Exception {
+        public void shouldSetCorrectVariablesWhenAaiDoesNotContainInfoAboutPnf() {
             // given
             DelegateExecution execution = mock(DelegateExecution.class);
             when(execution.getVariable(PNF_CORRELATION_ID)).thenReturn(ID_WITHOUT_ENTRY);
@@ -79,7 +79,7 @@ public class CheckAaiForPnfCorrelationIdDelegateTest {
         }
 
         @Test
-        public void shouldSetCorrectVariablesWhenAaiContainsInfoAboutPnfWithoutIp() throws Exception {
+        public void shouldSetCorrectVariablesWhenAaiContainsInfoAboutPnfWithoutIp() {
             // given
             DelegateExecution execution = mock(DelegateExecution.class);
             when(execution.getVariable(PNF_CORRELATION_ID)).thenReturn(ID_WITH_ENTRY);
@@ -104,7 +104,7 @@ public class CheckAaiForPnfCorrelationIdDelegateTest {
         }
 
         @Test
-        public void shouldThrowExceptionWhenIoExceptionOnConnectionToAai() throws Exception {
+        public void shouldThrowExceptionWhenIoExceptionOnConnectionToAai() {
             // given
             DelegateExecution execution = mock(DelegateExecution.class);
             when(execution.getVariable(PNF_CORRELATION_ID)).thenReturn(ID_WITH_ENTRY);

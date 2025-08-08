@@ -50,7 +50,7 @@ public class ExternalTicketTasksTest extends BaseTaskTest {
     private ExternalTicket MOCK_externalTicket;
 
     @Before
-    public void before() throws Exception {
+    public void before() {
         delegateExecution = new DelegateExecutionFake();
         buildingBlockExecution = new DelegateExecutionImpl(delegateExecution);
         generalBuildingBlock = new GeneralBuildingBlock();

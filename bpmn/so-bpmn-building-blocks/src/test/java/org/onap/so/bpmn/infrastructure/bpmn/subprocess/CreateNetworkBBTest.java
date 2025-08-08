@@ -31,7 +31,7 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 
 public class CreateNetworkBBTest extends BaseBPMNTest {
     @Test
-    public void sunnyDayCreateNetwork_Test() throws InterruptedException {
+    public void sunnyDayCreateNetwork_Test() {
 
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateNetworkBB", variables);
         assertThat(pi).isNotNull();

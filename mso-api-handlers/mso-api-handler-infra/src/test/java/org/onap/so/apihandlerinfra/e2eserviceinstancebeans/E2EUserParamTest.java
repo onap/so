@@ -30,7 +30,7 @@ public class E2EUserParamTest {
     E2EUserParam test = new E2EUserParam();
 
     @Test
-    public void verifyE2EParam() throws Exception {
+    public void verifyE2EParam() {
 
         test.setName("name");
         assertEquals(test.getName(), "name");

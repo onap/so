@@ -115,7 +115,7 @@ public class AAINetworkResourcesTest extends TestDataSetup {
 
 
     @Test
-    public void updateNetworkTest() throws Exception {
+    public void updateNetworkTest() {
 
         network.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
 
@@ -131,7 +131,7 @@ public class AAINetworkResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void createNetworkConnectToServiceInstanceTest() throws Exception {
+    public void createNetworkConnectToServiceInstanceTest() {
 
         network.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
 
@@ -149,7 +149,7 @@ public class AAINetworkResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void deleteNetworkTest() throws Exception {
+    public void deleteNetworkTest() {
 
         network.setOrchestrationStatus(OrchestrationStatus.INVENTORIED);
 
@@ -283,7 +283,7 @@ public class AAINetworkResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void createNetworkCollectionTest() throws Exception {
+    public void createNetworkCollectionTest() {
 
         doNothing().when(MOCK_aaiResourcesClient).create(isA(AAIResourceUri.class),
                 isA(org.onap.aai.domain.yang.Collection.class));
@@ -297,7 +297,7 @@ public class AAINetworkResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void createNetworkInstanceGroupTest() throws Exception {
+    public void createNetworkInstanceGroupTest() {
         doReturn(new org.onap.aai.domain.yang.InstanceGroup()).when(MOCK_aaiObjectMapper)
                 .mapInstanceGroup(instanceGroup);
         doNothing().when(MOCK_aaiResourcesClient).create(isA(AAIResourceUri.class),
@@ -308,7 +308,7 @@ public class AAINetworkResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void connectNetworkToNetworkCollectionInstanceGroupTest() throws Exception {
+    public void connectNetworkToNetworkCollectionInstanceGroupTest() {
         aaiNetworkResources.connectNetworkToNetworkCollectionInstanceGroup(network, instanceGroup);
         verify(MOCK_aaiResourcesClient, times(1)).connect(
                 eq(AAIUriFactory
@@ -317,14 +317,14 @@ public class AAINetworkResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void connectNetworkToNetworkCollectionServiceInstanceTest() throws Exception {
+    public void connectNetworkToNetworkCollectionServiceInstanceTest() {
         aaiNetworkResources.connectNetworkToNetworkCollectionServiceInstance(network, serviceInstance);
         verify(MOCK_aaiResourcesClient, times(1)).connect(any(AAIResourceUri.class),
                 eq(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Network(network.getNetworkId()))));
     }
 
     @Test
-    public void connectNetworkToCloudRegionTest() throws Exception {
+    public void connectNetworkToCloudRegionTest() {
         aaiNetworkResources.connectNetworkToCloudRegion(network, cloudRegion);
         verify(MOCK_aaiResourcesClient, times(1)).connect(
                 eq(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Network(network.getNetworkId()))),
@@ -333,7 +333,7 @@ public class AAINetworkResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void connectNetworkToTenantTest() throws Exception {
+    public void connectNetworkToTenantTest() {
         aaiNetworkResources.connectNetworkToTenant(network, cloudRegion);
         verify(MOCK_aaiResourcesClient, times(1)).connect(
                 eq(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()
@@ -344,7 +344,7 @@ public class AAINetworkResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void connectNetworkCollectionInstanceGroupToNetworkCollectionTest() throws Exception {
+    public void connectNetworkCollectionInstanceGroupToNetworkCollectionTest() {
         aaiNetworkResources.connectNetworkCollectionInstanceGroupToNetworkCollection(instanceGroup, collection);
         verify(MOCK_aaiResourcesClient, times(1)).connect(
                 eq(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().collection(collection.getId()))),
@@ -353,27 +353,27 @@ public class AAINetworkResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void connectNetworkCollectionToServiceInstanceTest() throws Exception {
+    public void connectNetworkCollectionToServiceInstanceTest() {
         aaiNetworkResources.connectNetworkCollectionToServiceInstance(collection, serviceInstance);
         verify(MOCK_aaiResourcesClient, times(1)).connect(any(AAIResourceUri.class), any(AAIResourceUri.class));
     }
 
     @Test
-    public void deleteCollectionTest() throws Exception {
+    public void deleteCollectionTest() {
         doNothing().when(MOCK_aaiResourcesClient).delete(isA(AAIResourceUri.class));
         aaiNetworkResources.deleteCollection(collection);
         verify(MOCK_aaiResourcesClient, times(1)).delete(any(AAIResourceUri.class));
     }
 
     @Test
-    public void deleteInstanceGroupTest() throws Exception {
+    public void deleteInstanceGroupTest() {
         doNothing().when(MOCK_aaiResourcesClient).delete(isA(AAIResourceUri.class));
         aaiNetworkResources.deleteNetworkInstanceGroup(instanceGroup);
         verify(MOCK_aaiResourcesClient, times(1)).delete(any(AAIResourceUri.class));
     }
 
     @Test
-    public void updateSubnetTest() throws Exception {
+    public void updateSubnetTest() {
 
         doReturn(new org.onap.aai.domain.yang.Subnet()).when(MOCK_aaiObjectMapper).mapSubnet(subnet);
         doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),
@@ -386,7 +386,7 @@ public class AAINetworkResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void connectInstanceGroupToCloudRegionTest() throws Exception {
+    public void connectInstanceGroupToCloudRegionTest() {
         aaiNetworkResources.connectInstanceGroupToCloudRegion(instanceGroup, cloudRegion);
         verify(MOCK_aaiResourcesClient, times(1)).connect(
                 eq(AAIUriFactory
@@ -416,7 +416,7 @@ public class AAINetworkResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void createNetworkPolicyTest() throws Exception {
+    public void createNetworkPolicyTest() {
         doNothing().when(MOCK_aaiResourcesClient).create(isA(AAIResourceUri.class),
                 isA(org.onap.aai.domain.yang.NetworkPolicy.class));
         doReturn(new org.onap.aai.domain.yang.NetworkPolicy()).when(MOCK_aaiObjectMapper)
@@ -427,14 +427,14 @@ public class AAINetworkResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void deleteNetworkPolicyTest() throws Exception {
+    public void deleteNetworkPolicyTest() {
         doNothing().when(MOCK_aaiResourcesClient).delete(isA(AAIResourceUri.class));
         aaiNetworkResources.deleteNetworkPolicy(networkPolicy.getNetworkPolicyId());
         verify(MOCK_aaiResourcesClient, times(1)).delete(any(AAIResourceUri.class));
     }
 
     @Test
-    public void checkInstanceGroupNameInUseTrueTest() throws Exception {
+    public void checkInstanceGroupNameInUseTrueTest() {
         AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Networks())
                 .queryParam("network-name", "networkName");
         doReturn(true).when(MOCK_aaiResourcesClient).exists(eq(uri));
@@ -443,7 +443,7 @@ public class AAINetworkResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void checkInstanceGroupNameInUseFalseTest() throws Exception {
+    public void checkInstanceGroupNameInUseFalseTest() {
         AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Networks())
                 .queryParam("network-name", "networkName");
         doReturn(false).when(MOCK_aaiResourcesClient).exists(eq(uri));

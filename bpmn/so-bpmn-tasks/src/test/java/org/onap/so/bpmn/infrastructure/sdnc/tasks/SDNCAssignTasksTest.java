@@ -94,7 +94,7 @@ public class SDNCAssignTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void assignServiceInstanceTest() throws Exception {
+    public void assignServiceInstanceTest() {
         doReturn(new GenericResourceApiServiceOperationInformation()).when(sdncServiceInstanceResources)
                 .assignServiceInstance(serviceInstance, customer, requestContext);
         sdncAssignTasks.assignServiceInstance(execution);
@@ -104,7 +104,7 @@ public class SDNCAssignTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void assignServiceInstanceExceptionTest() throws Exception {
+    public void assignServiceInstanceExceptionTest() {
         expectedException.expect(BpmnError.class);
         doThrow(RuntimeException.class).when(sdncServiceInstanceResources).assignServiceInstance(serviceInstance,
                 customer, requestContext);
@@ -112,7 +112,7 @@ public class SDNCAssignTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void assignVnfTest() throws Exception {
+    public void assignVnfTest() {
         doReturn(new GenericResourceApiVnfOperationInformation()).when(sdncVnfResources).assignVnf(eq(genericVnf),
                 eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext), eq(false), any(URI.class));
         execution.setVariable("generalBuildingBlock", gBBInput);
@@ -124,7 +124,7 @@ public class SDNCAssignTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void assignVnfExceptionTest() throws Exception {
+    public void assignVnfExceptionTest() {
         expectedException.expect(BpmnError.class);
         doThrow(RuntimeException.class).when(sdncVnfResources).assignVnf(eq(genericVnf), eq(serviceInstance),
                 eq(customer), eq(cloudRegion), eq(requestContext), eq(false), any(URI.class));
@@ -152,7 +152,7 @@ public class SDNCAssignTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void assignNetworkTest() throws Exception {
+    public void assignNetworkTest() {
         doReturn(new GenericResourceApiNetworkOperationInformation()).when(sdncNetworkResources).assignNetwork(network,
                 serviceInstance, customer, requestContext, cloudRegion);
         sdncAssignTasks.assignNetwork(execution);
@@ -163,7 +163,7 @@ public class SDNCAssignTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void assignNetworkExceptionTest() throws Exception {
+    public void assignNetworkExceptionTest() {
         expectedException.expect(BpmnError.class);
         doThrow(RuntimeException.class).when(sdncNetworkResources).assignNetwork(network, serviceInstance, customer,
                 requestContext, cloudRegion);

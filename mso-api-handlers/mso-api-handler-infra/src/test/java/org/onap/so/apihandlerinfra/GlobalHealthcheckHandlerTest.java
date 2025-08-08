@@ -48,7 +48,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 
 @RunWith(SpringRunner.class)
@@ -110,7 +109,7 @@ public class GlobalHealthcheckHandlerTest {
     }
 
     @Test
-    public void globalHealthcheckAllUPTest() throws JSONException, JsonProcessingException {
+    public void globalHealthcheckAllUPTest() throws JSONException {
 
         HealthCheckResponse expected = new HealthCheckResponse();
 

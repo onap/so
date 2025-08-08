@@ -27,7 +27,6 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.camunda.bpm.engine.delegate.BpmnError;
@@ -49,7 +48,6 @@ import org.onap.so.bpmn.servicedecomposition.homingobjects.Candidate;
 import org.onap.so.bpmn.servicedecomposition.homingobjects.CandidateType;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.sniro.beans.SniroManagerRequest;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class SniroHomingV2IT extends BaseIntegrationTest {
@@ -122,7 +120,7 @@ public class SniroHomingV2IT extends BaseIntegrationTest {
     }
 
     @Test(expected = Test.None.class)
-    public void testCallSniro_success_1VpnLink() throws BadResponseException, IOException {
+    public void testCallSniro_success_1VpnLink() throws BadResponseException {
         beforeVpnBondingLink("1");
 
         wireMockServer.stubFor(post(urlEqualTo("/sniro/api/placement/v2")).willReturn(
@@ -139,7 +137,7 @@ public class SniroHomingV2IT extends BaseIntegrationTest {
     }
 
     @Test
-    public void testCallSniro_success_3VpnLink() throws JsonProcessingException, BadResponseException {
+    public void testCallSniro_success_3VpnLink() throws BadResponseException {
         beforeVpnBondingLink("1");
         beforeVpnBondingLink("2");
         beforeVpnBondingLink("3");
@@ -158,7 +156,7 @@ public class SniroHomingV2IT extends BaseIntegrationTest {
     }
 
     @Test
-    public void testCallSniro_success_3Allotteds() throws BadResponseException, JsonProcessingException {
+    public void testCallSniro_success_3Allotteds() throws BadResponseException {
         beforeAllottedResource();
 
         wireMockServer.stubFor(post(urlEqualTo("/sniro/api/placement/v2")).willReturn(
@@ -175,7 +173,7 @@ public class SniroHomingV2IT extends BaseIntegrationTest {
     }
 
     @Test
-    public void testCallSniro_success_1Vnf() throws JsonProcessingException, BadResponseException {
+    public void testCallSniro_success_1Vnf() throws BadResponseException {
         beforeVnf();
 
         wireMockServer.stubFor(post(urlEqualTo("/sniro/api/placement/v2")).willReturn(
@@ -189,7 +187,7 @@ public class SniroHomingV2IT extends BaseIntegrationTest {
     }
 
     @Test
-    public void testCallSniro_success_3Allotteds1Vnf() throws JsonProcessingException, BadResponseException {
+    public void testCallSniro_success_3Allotteds1Vnf() throws BadResponseException {
         beforeAllottedResource();
         beforeVnf();
 
@@ -202,7 +200,7 @@ public class SniroHomingV2IT extends BaseIntegrationTest {
     }
 
     @Test
-    public void testCallSniro_success_1ServiceProxy() throws JsonProcessingException, BadResponseException {
+    public void testCallSniro_success_1ServiceProxy() throws BadResponseException {
         beforeServiceProxy();
 
         wireMockServer.stubFor(post(urlEqualTo("/sniro/api/placement/v2")).willReturn(
@@ -642,7 +640,7 @@ public class SniroHomingV2IT extends BaseIntegrationTest {
 
 
     @Test(expected = BpmnError.class)
-    public void testCallSniro_error_0Resources() throws BadResponseException, JsonProcessingException {
+    public void testCallSniro_error_0Resources() throws BadResponseException {
 
         sniroHoming.callSniro(execution);
 
@@ -650,7 +648,7 @@ public class SniroHomingV2IT extends BaseIntegrationTest {
     }
 
     @Test(expected = BpmnError.class)
-    public void testCallSniro_error_badResponse() throws BadResponseException, JsonProcessingException {
+    public void testCallSniro_error_badResponse() throws BadResponseException {
         beforeAllottedResource();
 
         mockResponse =

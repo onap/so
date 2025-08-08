@@ -34,7 +34,7 @@ public class ActivateVfModuleTest extends BaseTaskTest {
     private ActivateVfModule activateVfModule = new ActivateVfModule();
 
     @Test
-    public void setWaitBeforeDurationTest() throws Exception {
+    public void setWaitBeforeDurationTest() {
         when(env.getProperty(ActivateVfModule.VF_MODULE_TIMER_DURATION_PATH, ActivateVfModule.DEFAULT_TIMER_DURATION))
                 .thenReturn("PT300S");
         activateVfModule.setTimerDuration(execution);

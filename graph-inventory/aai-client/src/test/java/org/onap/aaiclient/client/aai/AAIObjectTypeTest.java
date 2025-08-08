@@ -29,14 +29,14 @@ import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.T
 public class AAIObjectTypeTest {
 
     @Test
-    public void fromTypeNameTest() throws IllegalArgumentException, IllegalAccessException, InstantiationException {
+    public void fromTypeNameTest() throws IllegalArgumentException {
         AAIObjectType type = AAIObjectType.fromTypeName("generic-query");
         assertEquals("generic-query", type.typeName());
 
     }
 
     @Test
-    public void customTypeTest() throws IllegalArgumentException, IllegalAccessException, InstantiationException {
+    public void customTypeTest() throws IllegalArgumentException {
         AAIObjectType type = AAIObjectType.fromTypeName("my-custom-name");
         assertEquals("my-custom-name", type.typeName());
 

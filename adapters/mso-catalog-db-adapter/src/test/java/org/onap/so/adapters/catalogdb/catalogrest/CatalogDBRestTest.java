@@ -30,7 +30,6 @@ import java.util.List;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.json.JSONException;
-import org.json.simple.parser.ParseException;
 import org.junit.Test;
 import org.onap.so.adapters.catalogdb.CatalogDbAdapterBaseTest;
 import org.onap.so.db.catalog.beans.ProcessingFlags;
@@ -113,7 +112,7 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
     /* Service Resources Endpoint */
 
     @Test
-    public void testGetServiceModelUUID() throws JSONException, IOException, ParseException {
+    public void testGetServiceModelUUID() throws JSONException, IOException {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
@@ -147,7 +146,7 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
     }
 
     @Test
-    public void testGetServiceInvariantUUIDAndVersion() throws JSONException, IOException {
+    public void testGetServiceInvariantUUIDAndVersion() throws JSONException {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
         UriComponentsBuilder builder =
@@ -802,7 +801,7 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
     }
 
     @Test
-    public void testGetVFModulesBadQueryParam() throws JSONException, IOException {
+    public void testGetVFModulesBadQueryParam() throws JSONException {
         TestAppender.events.clear();
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);

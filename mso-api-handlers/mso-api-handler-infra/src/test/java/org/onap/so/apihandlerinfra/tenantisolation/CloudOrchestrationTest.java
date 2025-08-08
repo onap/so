@@ -54,14 +54,14 @@ public class CloudOrchestrationTest extends BaseTest {
     private HttpHeaders headers = new HttpHeaders();
 
     @Before
-    public void setupTestClass() throws Exception {
+    public void setupTestClass() {
         wireMockServer.stubFor(post(urlPathEqualTo(getTestUrl(""))).willReturn(
                 aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_CREATED)));
     }
 
     @Test
-    public void testCreateOpEnvObjectMapperError() throws IOException {
+    public void testCreateOpEnvObjectMapperError() {
 
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
@@ -78,7 +78,7 @@ public class CloudOrchestrationTest extends BaseTest {
     }
 
     @Test
-    public void testCreateOpEnvError() throws IOException {
+    public void testCreateOpEnvError() {
 
         String request =
                 "{\"requestDetails\":{\"requestInfo\":{\"resourceType\":\"operationalEnvironment\",\"instanceName\": \"myOpEnv\",\"source\": \"VID\",\"requestorId\": \"xxxxxx\"},"

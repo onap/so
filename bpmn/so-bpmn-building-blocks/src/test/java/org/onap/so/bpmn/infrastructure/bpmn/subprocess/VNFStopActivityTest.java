@@ -31,7 +31,7 @@ import org.onap.so.bpmn.BaseBPMNTest;
 
 public class VNFStopActivityTest extends BaseBPMNTest {
     @Test
-    public void sunnyDayVNFStopActivity_Test() throws InterruptedException {
+    public void sunnyDayVNFStopActivity_Test() {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFStopActivity", variables);
         assertThat(pi).isNotNull();
         processExternalTasks(pi, "TaskStop");
@@ -41,7 +41,7 @@ public class VNFStopActivityTest extends BaseBPMNTest {
     }
 
     @Test
-    public void rainyDayVNFStopActivity_Test() throws Exception {
+    public void rainyDayVNFStopActivity_Test() {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(appcOrchestratorPreProcessor)
                 .buildAppcTaskRequest(any(BuildingBlockExecution.class), any(String.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFStopActivity", variables);

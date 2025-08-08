@@ -75,7 +75,7 @@ public class UnassignVnfTest extends BaseTaskTest {
     }
 
     @Test
-    public void deletecreateVnfcInstanceGroupExceptionTest() throws Exception {
+    public void deletecreateVnfcInstanceGroupExceptionTest() {
         expectedException.expect(BpmnError.class);
 
         unassignVnf.deleteInstanceGroups(execution);

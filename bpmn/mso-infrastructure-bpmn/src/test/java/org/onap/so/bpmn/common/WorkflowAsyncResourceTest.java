@@ -54,7 +54,7 @@ public class WorkflowAsyncResourceTest extends WorkflowTest {
         assertEquals(200, workflowResponse.getMessageCode());
     }
 
-    private void executeWorkflow(String request, String requestId, String processKey) throws InterruptedException {
+    private void executeWorkflow(String request, String requestId, String processKey) {
         WorkflowAsyncResource workflowResource = new WorkflowAsyncResource();
         VariableMapImpl variableMap = new VariableMapImpl();
 
