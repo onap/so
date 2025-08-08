@@ -34,9 +34,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.onap.so.BaseTest;
 import org.onap.so.client.avpn.dmaap.beans.AVPNDmaapBean;
-import org.onap.so.client.exception.MapperException;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DmaapPropertiesClientTest extends BaseTest {
@@ -60,7 +58,7 @@ public class DmaapPropertiesClientTest extends BaseTest {
     private String percentProgress = "100";
 
     @Test
-    public void testBuildRequestJson() throws MapperException, IOException {
+    public void testBuildRequestJson() throws IOException {
         AVPNDmaapBean actualBean = dmaapPropertiesClient.buildRequestJson(requestId, clientSource, correlator,
                 serviceInstanceId, startTime, finishTime, requestScope, requestType, timestamp, requestState,
                 statusMessage, percentProgress, true);
@@ -72,7 +70,7 @@ public class DmaapPropertiesClientTest extends BaseTest {
     }
 
     @Test
-    public void testDmaapPublishRequest() throws JsonProcessingException, MapperException {
+    public void testDmaapPublishRequest() {
         DmaapPropertiesClient client = Mockito.spy(DmaapPropertiesClient.class);
         GlobalDmaapPublisher mockedClientDmaapPublisher = Mockito.mock(GlobalDmaapPublisher.class);
         AVPNDmaapBean mockedDmaapBean = Mockito.mock(AVPNDmaapBean.class);

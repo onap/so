@@ -66,7 +66,7 @@ public class MonitorVnfmDeleteJobTaskTest extends BaseTaskTest {
     }
 
     @Test
-    public void testGetCurrentOperationStatus() throws Exception {
+    public void testGetCurrentOperationStatus() {
         Optional<QueryJobResponse> queryJobResponse = getQueryJobResponse();
         queryJobResponse.get().setOperationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.STATUS_FOUND);
         queryJobResponse.get().setOperationState(OperationStateEnum.COMPLETED);
@@ -79,7 +79,7 @@ public class MonitorVnfmDeleteJobTaskTest extends BaseTaskTest {
     }
 
     @Test
-    public void testGetCurrentOperationStatusFailed() throws Exception {
+    public void testGetCurrentOperationStatusFailed() {
         Optional<QueryJobResponse> queryJobResponse = getQueryJobResponse();
         queryJobResponse.get()
                 .setOperationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.CANNOT_RETRIEVE_STATUS);
@@ -93,7 +93,7 @@ public class MonitorVnfmDeleteJobTaskTest extends BaseTaskTest {
     }
 
     @Test
-    public void testGetCurrentOperationStatusEmpty() throws Exception {
+    public void testGetCurrentOperationStatusEmpty() {
         Optional<QueryJobResponse> queryJobResponse = getQueryJobResponse();
         queryJobResponse.get().setOperationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.STATUS_FOUND);
         when(mockedVnfmAdapterServiceProvider.getInstantiateOperationJobStatus(JOB_ID)).thenReturn(queryJobResponse);
@@ -104,7 +104,7 @@ public class MonitorVnfmDeleteJobTaskTest extends BaseTaskTest {
     }
 
     @Test
-    public void testGetCurrentOperationStatusException() throws Exception {
+    public void testGetCurrentOperationStatusException() {
         Optional<QueryJobResponse> queryJobResponse = getQueryJobResponse();
         queryJobResponse.get().setOperationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.STATUS_FOUND);
         when(mockedVnfmAdapterServiceProvider.getInstantiateOperationJobStatus(JOB_ID)).thenReturn(queryJobResponse);
@@ -115,26 +115,26 @@ public class MonitorVnfmDeleteJobTaskTest extends BaseTaskTest {
     }
 
     @Test
-    public void testHasOperationFinished() throws Exception {
+    public void testHasOperationFinished() {
         stubbedxecution.setVariable(Constants.OPERATION_STATUS_PARAM_NAME, Optional.of(OperationStateEnum.COMPLETED));
         assertTrue(objUnderTest.hasOperationFinished(stubbedxecution));
     }
 
     @Test
-    public void testHasOperationPending() throws Exception {
+    public void testHasOperationPending() {
         stubbedxecution.setVariable(Constants.OPERATION_STATUS_PARAM_NAME, Optional.absent());
         assertFalse(objUnderTest.hasOperationFinished(stubbedxecution));
     }
 
     @Test
-    public void testTimeOutLogFailue() throws Exception {
+    public void testTimeOutLogFailue() {
         objUnderTest.timeOutLogFailue(stubbedxecution);
         verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1213),
                 eq("Delete operation time out"));
     }
 
     @Test
-    public void testCheckIfOperationWasSuccessful() throws Exception {
+    public void testCheckIfOperationWasSuccessful() {
         stubbedxecution.setVariable(Constants.OPERATION_STATUS_PARAM_NAME, Optional.of(OperationStateEnum.COMPLETED));
         MonitorVnfmDeleteJobTask spyObject = Mockito.spy(objUnderTest);
         spyObject.checkIfOperationWasSuccessful(stubbedxecution);
@@ -142,14 +142,14 @@ public class MonitorVnfmDeleteJobTaskTest extends BaseTaskTest {
     }
 
     @Test
-    public void testCheckIfOperationWasSuccessfulWithPending() throws Exception {
+    public void testCheckIfOperationWasSuccessfulWithPending() {
         stubbedxecution.setVariable(Constants.OPERATION_STATUS_PARAM_NAME, Optional.of(OperationStateEnum.PROCESSING));
         objUnderTest.checkIfOperationWasSuccessful(stubbedxecution);
         verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1215), anyString());
     }
 
     @Test
-    public void testCheckIfOperationWasSuccessfulEmpty() throws Exception {
+    public void testCheckIfOperationWasSuccessfulEmpty() {
         stubbedxecution.setVariable(Constants.OPERATION_STATUS_PARAM_NAME, Optional.absent());
         objUnderTest.checkIfOperationWasSuccessful(stubbedxecution);
         verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1214), anyString());

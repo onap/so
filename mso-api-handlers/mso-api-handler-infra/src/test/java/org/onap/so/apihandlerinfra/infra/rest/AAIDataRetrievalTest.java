@@ -74,7 +74,7 @@ public class AAIDataRetrievalTest {
     }
 
     @Test
-    public void getVolumeGroupsOfVnfTest() throws Exception {
+    public void getVolumeGroupsOfVnfTest() {
         VolumeGroups volumeGroups = getVolumeGroups();
         AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("vnfId"))
                 .relatedTo(Types.VOLUME_GROUPS.getFragment());
@@ -86,7 +86,7 @@ public class AAIDataRetrievalTest {
     }
 
     @Test
-    public void getVolumeGroupsOfVnfWhenNoneTest() throws Exception {
+    public void getVolumeGroupsOfVnfWhenNoneTest() {
         VolumeGroups volumeGroups = new VolumeGroups();
         AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("vnfId"))
                 .relatedTo(Types.VOLUME_GROUPS.getFragment());

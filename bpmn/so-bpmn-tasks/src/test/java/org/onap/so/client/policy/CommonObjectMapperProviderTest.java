@@ -32,7 +32,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 public class CommonObjectMapperProviderTest {
 
     @Test
-    public void shouldSetCorrectMapperProperties() throws Exception {
+    public void shouldSetCorrectMapperProperties() {
         // given
         CommonObjectMapperProvider provider = new CommonObjectMapperProvider();
         // when

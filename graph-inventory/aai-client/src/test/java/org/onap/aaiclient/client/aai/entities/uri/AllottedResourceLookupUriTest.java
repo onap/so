@@ -24,9 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import javax.ws.rs.core.UriBuilder;
 import org.junit.Test;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
@@ -37,7 +35,7 @@ public class AllottedResourceLookupUriTest {
 
     @Test
     public void oneKey()
-            throws IOException, URISyntaxException, GraphInventoryUriNotFoundException, GraphInventoryPayloadException {
+            throws GraphInventoryUriNotFoundException, GraphInventoryPayloadException {
 
         AllottedResourceLookupUri instance = new AllottedResourceLookupUri(Types.ALLOTTED_RESOURCE.getFragment("key1"));
         AllottedResourceLookupUri spy = spy(instance);

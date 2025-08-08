@@ -74,7 +74,7 @@ public class UserParamsServiceTraversalTest extends BaseTaskTest {
     private String requestAction;
 
     @Before
-    public void before() throws Exception {
+    public void before() {
         execution = new DelegateExecutionFake();
         mockCatalogDbClient = mock(CatalogDbClient.class);
         userParamsServiceTraversal = new UserParamsServiceTraversal(mockCatalogDbClient, mock(ExceptionBuilder.class));

@@ -84,10 +84,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 
@@ -269,7 +267,7 @@ public class VnfAdapterVfModuleObjectMapper {
 
     private void buildParamsMapFromVnfSdncResponse(Map<String, Object> paramsMap,
             GenericResourceApiVnftopologyVnfTopology vnfTopology, Map<String, String> networkRoleMap,
-            boolean skipVnfResourceAssignments) throws IOException {
+            boolean skipVnfResourceAssignments) {
         // Get VNF parameters from SDNC response
         GenericResourceApiParam vnfParametersData = vnfTopology.getVnfParametersData();
         buildParamsMapFromSdncParams(paramsMap, vnfParametersData);
@@ -345,8 +343,7 @@ public class VnfAdapterVfModuleObjectMapper {
     }
 
     private void buildParamsMapFromVfModuleSdncResponse(Map<String, Object> paramsMap,
-            GenericResourceApiVfmoduletopologyVfModuleTopology vfModuleTopology, boolean skipVfModuleAssignments)
-            throws IOException {
+            GenericResourceApiVfmoduletopologyVfModuleTopology vfModuleTopology, boolean skipVfModuleAssignments) {
         // Get VF Module parameters from SDNC response
         GenericResourceApiParam vfModuleParametersData = vfModuleTopology.getVfModuleParameters();
         buildParamsMapFromSdncParams(paramsMap, vfModuleParametersData);
@@ -841,8 +838,7 @@ public class VnfAdapterVfModuleObjectMapper {
         }
     }
 
-    private Map<String, String> buildNetworkRoleMap(GenericResourceApiVfmoduletopologyVfModuleTopology vfModuleTopology)
-            throws JsonParseException, JsonMappingException, IOException {
+    private Map<String, String> buildNetworkRoleMap(GenericResourceApiVfmoduletopologyVfModuleTopology vfModuleTopology) {
         Map<String, String> networkRoleMap = new HashMap<>();
         GenericResourceApiVfmoduleassignmentsVfModuleAssignments vfModuleAssignments =
                 vfModuleTopology.getVfModuleAssignments();

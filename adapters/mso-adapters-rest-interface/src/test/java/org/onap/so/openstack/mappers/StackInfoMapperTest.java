@@ -29,7 +29,6 @@ import java.util.Map;
 import org.junit.Test;
 import org.onap.so.openstack.beans.HeatStatus;
 import org.onap.so.openstack.beans.StackInfo;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.woorea.openstack.heat.model.Stack;
@@ -61,7 +60,7 @@ public class StackInfoMapperTest {
     }
 
     @Test
-    public void checkOutputToMap() throws JsonParseException, JsonMappingException, IOException {
+    public void checkOutputToMap() throws JsonMappingException, IOException {
         ObjectMapper jacksonMapper = new ObjectMapper();
         Stack sample = jacksonMapper.readValue(this.getJson("stack-example.json"), Stack.class);
         StackInfoMapper mapper = new StackInfoMapper(sample);

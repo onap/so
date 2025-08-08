@@ -49,8 +49,6 @@ import org.onap.so.bpmn.infrastructure.workflow.tasks.VrfBondingServiceException
 import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class VrfValidationTest extends BaseTaskTest {
@@ -64,7 +62,7 @@ public class VrfValidationTest extends BaseTaskTest {
     public ExpectedException exceptionRule = ExpectedException.none();
 
     @Before
-    public void before() throws Exception {
+    public void before() {
         vrfValidation.setBbInputSetupUtils(bbSetupUtils);
     }
 
@@ -200,7 +198,7 @@ public class VrfValidationTest extends BaseTaskTest {
 
     @Test
     public void testAaiRouteTargetValidation()
-            throws VrfBondingServiceException, JsonParseException, JsonMappingException, IOException {
+            throws VrfBondingServiceException, IOException {
         L3Network l3Network = mapper.readValue(
                 new File("src/test/resources/__files/BuildingBlocks/aaiNetworkWrapper.json"), L3Network.class);
         AAIResultWrapper networkWrapper = new AAIResultWrapper(l3Network);

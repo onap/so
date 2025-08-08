@@ -31,7 +31,7 @@ import org.onap.so.bpmn.BaseBPMNTest;
 
 public class VNFSetInMaintFlagActivityTest extends BaseBPMNTest {
     @Test
-    public void sunnyDayVNFSetInMaintFlagActivity_Test() throws InterruptedException {
+    public void sunnyDayVNFSetInMaintFlagActivity_Test() {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFSetInMaintFlagActivity", variables);
         assertThat(pi).isNotNull();
         assertThat(pi).isStarted().hasPassedInOrder("VNFSetInMaintFlagActivity_Start", "TaskSetInMaint",
@@ -40,7 +40,7 @@ public class VNFSetInMaintFlagActivityTest extends BaseBPMNTest {
     }
 
     @Test
-    public void rainyDayVNFSetInMaintFlagActivity_Test() throws Exception {
+    public void rainyDayVNFSetInMaintFlagActivity_Test() {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiFlagTasks)
                 .modifyVnfInMaintFlag(any(BuildingBlockExecution.class), any(boolean.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFSetInMaintFlagActivity", variables);

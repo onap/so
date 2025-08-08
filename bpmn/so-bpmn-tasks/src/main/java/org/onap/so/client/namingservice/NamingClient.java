@@ -22,7 +22,6 @@
 
 package org.onap.so.client.namingservice;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.onap.namingservice.model.NameGenDeleteRequest;
@@ -58,7 +57,7 @@ public class NamingClient {
     @Autowired
     private NamingClientResponseValidator namingClientResponseValidator;
 
-    public String postNameGenRequest(NameGenRequest request) throws BadResponseException, IOException {
+    public String postNameGenRequest(NameGenRequest request) throws BadResponseException {
         String targetUrl = env.getProperty(ENDPOINT);
         HttpHeaders headers = setHeaders(env.getProperty(AUTH));
         logger.info("Sending postNameGenRequest to url: {}", targetUrl);
@@ -72,7 +71,7 @@ public class NamingClient {
         return namingClientResponseValidator.validateNameGenResponse(response);
     }
 
-    public String deleteNameGenRequest(NameGenDeleteRequest request) throws BadResponseException, IOException {
+    public String deleteNameGenRequest(NameGenDeleteRequest request) throws BadResponseException {
         String targetUrl = env.getProperty(ENDPOINT);
         HttpHeaders headers = setHeaders(env.getProperty(AUTH));
         logger.info("Sending deleteNameGenRequest to url: {}", targetUrl);

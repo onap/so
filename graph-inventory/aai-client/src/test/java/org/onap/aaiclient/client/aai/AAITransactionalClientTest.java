@@ -47,9 +47,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryPatchConverter;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -73,7 +71,7 @@ public class AAITransactionalClientTest {
     public AAIResourcesClient aaiClient = new AAIResourcesClient();
 
     @Before
-    public void before() throws JsonParseException, JsonMappingException, IOException {
+    public void before() {
         mapper = new AAICommonObjectMapperProvider().getMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
     }

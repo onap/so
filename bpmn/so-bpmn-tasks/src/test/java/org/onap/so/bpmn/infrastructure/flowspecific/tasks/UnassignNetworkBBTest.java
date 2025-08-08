@@ -82,7 +82,7 @@ public class UnassignNetworkBBTest extends BaseTaskTest {
     }
 
     @Test
-    public void checkRelationshipRelatedToUnassignNetworkExceptionTest() throws Exception {
+    public void checkRelationshipRelatedToUnassignNetworkExceptionTest() {
         String msg = "Cannot perform Unassign Network. Network is still related to vf-module";
         expectedException.expect(BpmnError.class);
         doReturn(true).when(networkBBUtils).isRelationshipRelatedToExists(any(Optional.class), eq("vf-module"));
@@ -91,7 +91,7 @@ public class UnassignNetworkBBTest extends BaseTaskTest {
     }
 
     @Test
-    public void getCloudSdncRegion25Test() throws Exception {
+    public void getCloudSdncRegion25Test() {
         CloudRegion cloudRegion = setCloudRegion();
         cloudRegion.setCloudRegionVersion("2.5");
         doReturn("AAIAIC25").when(networkBBUtils).getCloudRegion(execution, SourceSystem.SDNC);
@@ -100,7 +100,7 @@ public class UnassignNetworkBBTest extends BaseTaskTest {
     }
 
     @Test
-    public void getCloudSdncRegion30Test() throws Exception {
+    public void getCloudSdncRegion30Test() {
         CloudRegion cloudRegion = setCloudRegion();
         cloudRegion.setCloudRegionVersion("3.0");
         gBBInput.setCloudRegion(cloudRegion);
@@ -110,7 +110,7 @@ public class UnassignNetworkBBTest extends BaseTaskTest {
     }
 
     @Test
-    public void errorEncounteredTest_rollback() throws Exception {
+    public void errorEncounteredTest_rollback() {
         expectedException.expect(BpmnError.class);
         execution.setVariable("ErrorUnassignNetworkBB",
                 "Relationship's RelatedTo still exists in AAI, remove the relationship vf-module first.");
@@ -119,7 +119,7 @@ public class UnassignNetworkBBTest extends BaseTaskTest {
     }
 
     @Test
-    public void errorEncounteredTest_noRollback() throws Exception {
+    public void errorEncounteredTest_noRollback() {
         expectedException.expect(BpmnError.class);
         execution.setVariable("ErrorUnassignNetworkBB",
                 "Relationship's RelatedTo still exists in AAI, remove the relationship vf-module first.");

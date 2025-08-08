@@ -28,7 +28,6 @@ import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.core.MediaType;
@@ -44,7 +43,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -55,7 +53,7 @@ public class TasksHandlerTest extends BaseTest {
 
     @Test
     public void getTasksTestByOriginalRequestId()
-            throws ParseException, JSONException, JsonParseException, JsonMappingException, IOException {
+            throws JSONException, JsonMappingException, IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/sobpmnengine/task"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withBodyFile("Camunda/GetTaskResponse.json").withStatus(HttpStatus.SC_OK)));

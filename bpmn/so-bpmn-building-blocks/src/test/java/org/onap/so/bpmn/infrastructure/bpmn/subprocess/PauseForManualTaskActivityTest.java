@@ -46,7 +46,7 @@ public class PauseForManualTaskActivityTest extends BaseBPMNTest {
     protected TaskService taskService;
 
     @Test
-    public void sunnyDayPauseForManualTaskTimeout_Test() throws InterruptedException {
+    public void sunnyDayPauseForManualTaskTimeout_Test() {
         variables.put("taskTimeout", TIMEOUT_10_S);
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("PauseForManualTaskActivity", variables);
         assertThat(pi).isNotNull();
@@ -65,7 +65,7 @@ public class PauseForManualTaskActivityTest extends BaseBPMNTest {
     }
 
     @Test
-    public void sunnyDayPauseForManualTaskCompleted_Test() throws InterruptedException {
+    public void sunnyDayPauseForManualTaskCompleted_Test() {
         variables.put("taskTimeout", TIMEOUT_10_S);
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("PauseForManualTaskActivity", variables);
         assertThat(pi).isNotNull();
@@ -82,7 +82,7 @@ public class PauseForManualTaskActivityTest extends BaseBPMNTest {
     }
 
     @Test
-    public void rainyDayPauseForManualTask_Test() throws Exception {
+    public void rainyDayPauseForManualTask_Test() {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(manualHandlingTasks)
                 .createExternalTicket((any(BuildingBlockExecution.class)));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("PauseForManualTaskActivity", variables);

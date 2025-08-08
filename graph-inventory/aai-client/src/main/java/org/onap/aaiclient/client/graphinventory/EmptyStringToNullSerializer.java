@@ -22,7 +22,6 @@ package org.onap.aaiclient.client.graphinventory;
 
 import java.io.IOException;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
@@ -40,7 +39,7 @@ public class EmptyStringToNullSerializer extends StdSerializer<String> {
 
     @Override
     public void serialize(String value, JsonGenerator gen, SerializerProvider serializers)
-            throws IOException, JsonProcessingException {
+            throws IOException {
 
         if ("".equals(value)) {
             gen.writeNull();

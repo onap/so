@@ -384,7 +384,7 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
         return input;
     }
 
-    public static void mockUpdateRequestDb(WireMockServer wireMockServer, String requestId) throws IOException {
+    public static void mockUpdateRequestDb(WireMockServer wireMockServer, String requestId) {
         wireMockServer.stubFor(patch(urlPathEqualTo("/infraActiveRequests/" + requestId))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_OK)));
     }

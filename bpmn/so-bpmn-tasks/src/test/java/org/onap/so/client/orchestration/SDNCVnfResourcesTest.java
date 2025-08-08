@@ -180,7 +180,7 @@ public class SDNCVnfResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void unassignVnfSuccessTest() throws Exception {
+    public void unassignVnfSuccessTest() {
         doReturn(sdncReq).when(MOCK_vnfTopologyOperationRequestMapper).reqMapper(
                 eq(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION), eq(SDNCSvcAction.UNASSIGN),
                 isA(GenericResourceApiRequestActionEnumeration.class), any(GenericVnf.class),
@@ -194,7 +194,7 @@ public class SDNCVnfResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void unassignVnfExceptionTest() throws Exception {
+    public void unassignVnfExceptionTest() {
         expectedException.expect(Exception.class);
         doThrow(Exception.class).when(MOCK_vnfTopologyOperationRequestMapper).reqMapper(
                 eq(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION), eq(SDNCSvcAction.UNASSIGN),

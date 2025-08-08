@@ -122,7 +122,7 @@ public class ResumeOrchestrationRequestTest {
 
 
     @Before
-    public void setup() throws ValidateException, IOException {
+    public void setup() throws IOException {
         // Setup general requestHandler mocks
         when(requestHandler.getRequestUri(any(), anyString())).thenReturn(requestUri);
 
@@ -250,7 +250,7 @@ public class ResumeOrchestrationRequestTest {
     }
 
     @Test
-    public void resumeRequestTest() throws ApiException, IOException {
+    public void resumeRequestTest() throws ApiException {
         Response response = null;
         doReturn(instanceIdMap).when(resumeReq).setInstanceIdMap(infraActiveRequest, ModelType.service.toString());
         doReturn(SERVICE_INSTANCE_NAME).when(resumeReq).getInstanceName(infraActiveRequest,
@@ -302,7 +302,7 @@ public class ResumeOrchestrationRequestTest {
     }
 
     @Test
-    public void resumeRequestTestALaCarteNull() throws ApiException, IOException {
+    public void resumeRequestTestALaCarteNull() throws ApiException {
         Response response = null;
         doReturn(instanceIdMap).when(resumeReq).setInstanceIdMap(infraActiveRequest, ModelType.service.toString());
         doReturn(SERVICE_INSTANCE_NAME).when(resumeReq).getInstanceName(infraActiveRequest,

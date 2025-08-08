@@ -100,7 +100,7 @@ public class AssignVnfTest extends BaseTaskTest {
     }
 
     @Test
-    public void createInstanceGroupsSunnyDayTest() throws Exception {
+    public void createInstanceGroupsSunnyDayTest() {
 
         List<InstanceGroup> instanceGroupList = genericVnf.getInstanceGroups();
         instanceGroupList.add(instanceGroup1);
@@ -123,7 +123,7 @@ public class AssignVnfTest extends BaseTaskTest {
     }
 
     @Test
-    public void createVnfcInstanceGroupNoneTest() throws Exception {
+    public void createVnfcInstanceGroupNoneTest() {
         assignVnf.createInstanceGroups(execution);
 
 
@@ -133,7 +133,7 @@ public class AssignVnfTest extends BaseTaskTest {
     }
 
     @Test
-    public void createVnfcInstanceGroupExceptionTest() throws Exception {
+    public void createVnfcInstanceGroupExceptionTest() {
         List<InstanceGroup> instanceGroupList = genericVnf.getInstanceGroups();
         instanceGroupList.add(instanceGroup1);
         instanceGroupList.add(instanceGroup2);

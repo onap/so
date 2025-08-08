@@ -355,13 +355,13 @@ public class AbstractBuilderTest {
     }
 
     @Test
-    public void getRequestActionBlankOperationTypeTest() throws Exception {
+    public void getRequestActionBlankOperationTypeTest() {
         assertEquals(AbstractBuilder.RequestAction.CREATE_NETWORK_INSTANCE.getName(),
                 abstractBuilder.getRequestAction(delegateExecution));
     }
 
     @Test
-    public void getRequestActionDeleteOperationTypeBlankResourceTypeTest() throws Exception {
+    public void getRequestActionDeleteOperationTypeBlankResourceTypeTest() {
         delegateExecution.setVariable(AbstractBuilder.OPERATION_TYPE, RequestsDbConstant.OperationType.DELETE);
         delegateExecution.setVariable(AbstractBuilder.RESOURCE_TYPE, "");
         assertEquals(AbstractBuilder.RequestAction.DELETE_SERVICE_INSTANCE.getName(),
@@ -369,7 +369,7 @@ public class AbstractBuilderTest {
     }
 
     @Test
-    public void getRequestActionDeleteOperationTypeBadResourceTypeTest() throws Exception {
+    public void getRequestActionDeleteOperationTypeBadResourceTypeTest() {
         delegateExecution.setVariable(AbstractBuilder.OPERATION_TYPE, RequestsDbConstant.OperationType.DELETE);
         delegateExecution.setVariable(AbstractBuilder.RESOURCE_TYPE, "bad");
         assertEquals(AbstractBuilder.RequestAction.DELETE_SERVICE_INSTANCE.getName(),
@@ -377,7 +377,7 @@ public class AbstractBuilderTest {
     }
 
     @Test
-    public void getRequestActionDeleteOperationTypeOverlayResourceTypeTest() throws Exception {
+    public void getRequestActionDeleteOperationTypeOverlayResourceTypeTest() {
         delegateExecution.setVariable(AbstractBuilder.OPERATION_TYPE, RequestsDbConstant.OperationType.DELETE);
         delegateExecution.setVariable(AbstractBuilder.RESOURCE_TYPE, "overlay");
         assertEquals(AbstractBuilder.RequestAction.DEACTIVATE_DCI_NETWORK_INSTANCE.getName(),
@@ -385,7 +385,7 @@ public class AbstractBuilderTest {
     }
 
     @Test
-    public void getRequestActionDeleteOperationTypeUnderlayResourceTypeTest() throws Exception {
+    public void getRequestActionDeleteOperationTypeUnderlayResourceTypeTest() {
         delegateExecution.setVariable(AbstractBuilder.OPERATION_TYPE, RequestsDbConstant.OperationType.DELETE);
         delegateExecution.setVariable(AbstractBuilder.RESOURCE_TYPE, "underlay");
         assertEquals(AbstractBuilder.RequestAction.DELETE_NETWORK_INSTANCE.getName(),
@@ -393,14 +393,14 @@ public class AbstractBuilderTest {
     }
 
     @Test
-    public void getRequestActionDeleteOperationTypeTest() throws Exception {
+    public void getRequestActionDeleteOperationTypeTest() {
         delegateExecution.setVariable(AbstractBuilder.OPERATION_TYPE, RequestsDbConstant.OperationType.DELETE);
         assertEquals(AbstractBuilder.RequestAction.DELETE_SERVICE_INSTANCE.getName(),
                 abstractBuilder.getRequestAction(delegateExecution));
     }
 
     @Test
-    public void getRequestActionCreateOperationTypeBlankResourceTypeTest() throws Exception {
+    public void getRequestActionCreateOperationTypeBlankResourceTypeTest() {
         delegateExecution.setVariable(AbstractBuilder.OPERATION_TYPE, RequestsDbConstant.OperationType.CREATE);
         delegateExecution.setVariable(AbstractBuilder.RESOURCE_TYPE, "");
         assertEquals(AbstractBuilder.RequestAction.CREATE_SERVICE_INSTANCE.getName(),
@@ -408,7 +408,7 @@ public class AbstractBuilderTest {
     }
 
     @Test
-    public void getRequestActionCreateOperationTypeBadResourceTypeTest() throws Exception {
+    public void getRequestActionCreateOperationTypeBadResourceTypeTest() {
         delegateExecution.setVariable(AbstractBuilder.OPERATION_TYPE, RequestsDbConstant.OperationType.CREATE);
         delegateExecution.setVariable(AbstractBuilder.RESOURCE_TYPE, "bad");
         assertEquals(AbstractBuilder.RequestAction.CREATE_SERVICE_INSTANCE.getName(),
@@ -416,7 +416,7 @@ public class AbstractBuilderTest {
     }
 
     @Test
-    public void getRequestActionCreateOperationTypeOverlayResourceTypeTest() throws Exception {
+    public void getRequestActionCreateOperationTypeOverlayResourceTypeTest() {
         delegateExecution.setVariable(AbstractBuilder.OPERATION_TYPE, RequestsDbConstant.OperationType.CREATE);
         delegateExecution.setVariable(AbstractBuilder.RESOURCE_TYPE, "overlay");
         assertEquals(AbstractBuilder.RequestAction.ACTIVATE_DCI_NETWORK_INSTANCE.getName(),
@@ -424,7 +424,7 @@ public class AbstractBuilderTest {
     }
 
     @Test
-    public void getRequestActionCreateOperationTypeUnderlayResourceTypeTest() throws Exception {
+    public void getRequestActionCreateOperationTypeUnderlayResourceTypeTest() {
         delegateExecution.setVariable(AbstractBuilder.OPERATION_TYPE, RequestsDbConstant.OperationType.CREATE);
         delegateExecution.setVariable(AbstractBuilder.RESOURCE_TYPE, "underlay");
         assertEquals(AbstractBuilder.RequestAction.CREATE_NETWORK_INSTANCE.getName(),
@@ -432,7 +432,7 @@ public class AbstractBuilderTest {
     }
 
     @Test
-    public void getRequestActionCreateOperationTypeTest() throws Exception {
+    public void getRequestActionCreateOperationTypeTest() {
         delegateExecution.setVariable(AbstractBuilder.OPERATION_TYPE, RequestsDbConstant.OperationType.CREATE);
         assertEquals(AbstractBuilder.RequestAction.CREATE_SERVICE_INSTANCE.getName(),
                 abstractBuilder.getRequestAction(delegateExecution));
@@ -446,74 +446,74 @@ public class AbstractBuilderTest {
     }
 
     @Test
-    public void getSvcActionBlankOperationTypeTest() throws Exception {
+    public void getSvcActionBlankOperationTypeTest() {
         assertEquals(AbstractBuilder.SvcAction.CREATE.getName(), abstractBuilder.getSvcAction(delegateExecution));
     }
 
     @Test
-    public void getSvcActionDeleteOperationTypeBlankResourceTypeTest() throws Exception {
+    public void getSvcActionDeleteOperationTypeBlankResourceTypeTest() {
         delegateExecution.setVariable(AbstractBuilder.OPERATION_TYPE, RequestsDbConstant.OperationType.DELETE);
         delegateExecution.setVariable(AbstractBuilder.RESOURCE_TYPE, "");
         assertEquals(AbstractBuilder.SvcAction.UNASSIGN.getName(), abstractBuilder.getSvcAction(delegateExecution));
     }
 
     @Test
-    public void getSvcActionDeleteOperationTypeBadResourceTypeTest() throws Exception {
+    public void getSvcActionDeleteOperationTypeBadResourceTypeTest() {
         delegateExecution.setVariable(AbstractBuilder.OPERATION_TYPE, RequestsDbConstant.OperationType.DELETE);
         delegateExecution.setVariable(AbstractBuilder.RESOURCE_TYPE, "bad");
         assertEquals(AbstractBuilder.SvcAction.UNASSIGN.getName(), abstractBuilder.getSvcAction(delegateExecution));
     }
 
     @Test
-    public void getSvcActionDeleteOperationTypeOverlayResourceTypeTest() throws Exception {
+    public void getSvcActionDeleteOperationTypeOverlayResourceTypeTest() {
         delegateExecution.setVariable(AbstractBuilder.OPERATION_TYPE, RequestsDbConstant.OperationType.DELETE);
         delegateExecution.setVariable(AbstractBuilder.RESOURCE_TYPE, "overlay");
         assertEquals(AbstractBuilder.SvcAction.DEACTIVATE.getName(), abstractBuilder.getSvcAction(delegateExecution));
     }
 
     @Test
-    public void getSvcActionDeleteOperationTypeUnderlayResourceTypeTest() throws Exception {
+    public void getSvcActionDeleteOperationTypeUnderlayResourceTypeTest() {
         delegateExecution.setVariable(AbstractBuilder.OPERATION_TYPE, RequestsDbConstant.OperationType.DELETE);
         delegateExecution.setVariable(AbstractBuilder.RESOURCE_TYPE, "underlay");
         assertEquals(AbstractBuilder.SvcAction.DELETE.getName(), abstractBuilder.getSvcAction(delegateExecution));
     }
 
     @Test
-    public void getSvcActionDeleteOperationTypeTest() throws Exception {
+    public void getSvcActionDeleteOperationTypeTest() {
         delegateExecution.setVariable(AbstractBuilder.OPERATION_TYPE, RequestsDbConstant.OperationType.DELETE);
         assertEquals(AbstractBuilder.SvcAction.UNASSIGN.getName(), abstractBuilder.getSvcAction(delegateExecution));
     }
 
     @Test
-    public void getSvcActionCreateOperationTypeBlankResourceTypeTest() throws Exception {
+    public void getSvcActionCreateOperationTypeBlankResourceTypeTest() {
         delegateExecution.setVariable(AbstractBuilder.OPERATION_TYPE, RequestsDbConstant.OperationType.CREATE);
         delegateExecution.setVariable(AbstractBuilder.RESOURCE_TYPE, "");
         assertEquals(AbstractBuilder.SvcAction.ASSIGN.getName(), abstractBuilder.getSvcAction(delegateExecution));
     }
 
     @Test
-    public void getSvcActionCreateOperationTypeBadResourceTypeTest() throws Exception {
+    public void getSvcActionCreateOperationTypeBadResourceTypeTest() {
         delegateExecution.setVariable(AbstractBuilder.OPERATION_TYPE, RequestsDbConstant.OperationType.CREATE);
         delegateExecution.setVariable(AbstractBuilder.RESOURCE_TYPE, "bad");
         assertEquals(AbstractBuilder.SvcAction.ASSIGN.getName(), abstractBuilder.getSvcAction(delegateExecution));
     }
 
     @Test
-    public void getSvcActionCreateOperationTypeOverlayResourceTypeTest() throws Exception {
+    public void getSvcActionCreateOperationTypeOverlayResourceTypeTest() {
         delegateExecution.setVariable(AbstractBuilder.OPERATION_TYPE, RequestsDbConstant.OperationType.CREATE);
         delegateExecution.setVariable(AbstractBuilder.RESOURCE_TYPE, "overlay");
         assertEquals(AbstractBuilder.SvcAction.ACTIVATE.getName(), abstractBuilder.getSvcAction(delegateExecution));
     }
 
     @Test
-    public void getSvcActionCreateOperationTypeUnderlayResourceTypeTest() throws Exception {
+    public void getSvcActionCreateOperationTypeUnderlayResourceTypeTest() {
         delegateExecution.setVariable(AbstractBuilder.OPERATION_TYPE, RequestsDbConstant.OperationType.CREATE);
         delegateExecution.setVariable(AbstractBuilder.RESOURCE_TYPE, "underlay");
         assertEquals(AbstractBuilder.SvcAction.CREATE.getName(), abstractBuilder.getSvcAction(delegateExecution));
     }
 
     @Test
-    public void getSvcActionCreateOperationTypeTest() throws Exception {
+    public void getSvcActionCreateOperationTypeTest() {
         delegateExecution.setVariable(AbstractBuilder.OPERATION_TYPE, RequestsDbConstant.OperationType.CREATE);
         assertEquals(AbstractBuilder.SvcAction.ASSIGN.getName(), abstractBuilder.getSvcAction(delegateExecution));
     }
@@ -544,17 +544,17 @@ public class AbstractBuilderTest {
     }
 
     @Test
-    public void getOnapServiceModelInformationEntityTest() throws Exception {
+    public void getOnapServiceModelInformationEntityTest() {
         abstractBuilder.getOnapServiceModelInformationEntity(delegateExecution);
     }
 
     @Test
-    public void getOnapNetworkModelInformationEntityTest() throws Exception {
+    public void getOnapNetworkModelInformationEntityTest() {
         abstractBuilder.getOnapNetworkModelInformationEntity(delegateExecution);
     }
 
     @Test
-    public void getParamEntitiesTest() throws Exception {
+    public void getParamEntitiesTest() {
         Map<String, String> inputs = new HashMap<>();
         inputs.put("foo", "bar");
         List<ParamEntity> list = abstractBuilder.getParamEntities(inputs);
@@ -576,17 +576,17 @@ public class AbstractBuilderTest {
     }
 
     @Test
-    public void getRequestInformationEntityTest() throws Exception {
+    public void getRequestInformationEntityTest() {
         abstractBuilder.getRequestInformationEntity(delegateExecution);
     }
 
     @Test
-    public void getServiceInformationEntityTest() throws Exception {
+    public void getServiceInformationEntityTest() {
         abstractBuilder.getServiceInformationEntity(delegateExecution);
     }
 
     @Test
-    public void getServiceInstanceNameTest() throws Exception {
+    public void getServiceInstanceNameTest() {
         abstractBuilder.getServiceInstanceName(delegateExecution);
     }
 

@@ -25,7 +25,6 @@ import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
-import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -76,7 +75,7 @@ public class ServiceInstanceRestHandlerTest {
     private ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    public void test_find_service_recipe() throws MalformedURLException, NoRecipeException {
+    public void test_find_service_recipe() throws NoRecipeException {
         ServiceRecipe expected = new ServiceRecipe();
         expected.setAction("createInstance");
         doReturn(expected).when(catalogDbClient)
@@ -88,7 +87,7 @@ public class ServiceInstanceRestHandlerTest {
     }
 
     @Test
-    public void test_find_service_recipe_default_recipe() throws MalformedURLException, NoRecipeException {
+    public void test_find_service_recipe_default_recipe() throws NoRecipeException {
         ServiceRecipe expected = new ServiceRecipe();
         expected.setAction("createInstance");
         doReturn(null).when(catalogDbClient)
@@ -104,7 +103,7 @@ public class ServiceInstanceRestHandlerTest {
     }
 
     @Test
-    public void test_find_service_recipe_not_found() throws MalformedURLException, NoRecipeException {
+    public void test_find_service_recipe_not_found() throws NoRecipeException {
         ServiceRecipe expected = new ServiceRecipe();
         expected.setAction("createInstance");
         doReturn(null).when(catalogDbClient)
@@ -119,7 +118,7 @@ public class ServiceInstanceRestHandlerTest {
 
     @Test
     public void test_checkDuplicateRequest()
-            throws MalformedURLException, NoRecipeException, RequestConflictedException {
+            throws RequestConflictedException {
         ArgumentCaptor<HashMap> instanceIdCaptor = ArgumentCaptor.forClass(HashMap.class);
         restHandler.checkDuplicateRequest("serviceInstanceId", "instanceName", "requestId");
         Mockito.verify(infraActiveRequestsClient, Mockito.times(1)).checkInstanceNameDuplicate(
@@ -129,7 +128,7 @@ public class ServiceInstanceRestHandlerTest {
     }
 
     @Test
-    public void test_saveInstanceName() throws MalformedURLException, NoRecipeException {
+    public void test_saveInstanceName() {
         ServiceInstancesRequest request = createTestRequest();
         InfraActiveRequests dbRequest = createDatabaseRecord();
         restHandler.saveInstanceName(request, dbRequest);
@@ -150,7 +149,7 @@ public class ServiceInstanceRestHandlerTest {
     }
 
     @Test
-    public void test_createInfraActiveRequestForDelete() throws Exception {
+    public void test_createInfraActiveRequestForDelete() {
         InfraActiveRequests expected = new InfraActiveRequests();
         expected.setRequestAction(Action.deleteInstance.toString());
         expected.setServiceInstanceId("serviceInstanceId");

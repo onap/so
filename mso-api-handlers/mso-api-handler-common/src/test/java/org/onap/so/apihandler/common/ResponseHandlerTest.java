@@ -23,7 +23,6 @@
 package org.onap.so.apihandler.common;
 
 
-import java.io.IOException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -45,7 +44,7 @@ public class ResponseHandlerTest {
     public ExpectedException thrown = ExpectedException.none();
 
     @Test
-    public void acceptedResponseTest() throws IOException, BPMNFailureException {
+    public void acceptedResponseTest() throws BPMNFailureException {
         ResponseEntity<String> camundaResponse = ResponseEntity.noContent().build();
         thrown.expect(BPMNFailureException.class);
         thrown.expectMessage("Request Failed due to BPEL error with HTTP Status = 204");
@@ -53,7 +52,7 @@ public class ResponseHandlerTest {
     }
 
     @Test
-    public void acceptedOrNoContentResponseTest() throws IOException, BPMNFailureException {
+    public void acceptedOrNoContentResponseTest() throws BPMNFailureException {
         ResponseEntity<String> camundaResponse = ResponseEntity.badRequest().build();
         thrown.expect(BPMNFailureException.class);
         thrown.expectMessage("Request Failed due to BPEL error with HTTP Status = 400");

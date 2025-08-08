@@ -124,8 +124,7 @@ public class ApplicationControllerClient {
     }
 
     public Status runCommand(Action action, org.onap.appc.client.lcm.model.ActionIdentifiers actionIdentifiers,
-            org.onap.appc.client.lcm.model.Payload payload, String requestID)
-            throws ApplicationControllerOrchestratorException {
+            org.onap.appc.client.lcm.model.Payload payload, String requestID) {
         Object requestObject;
         requestObject = createRequest(action, actionIdentifiers, payload, requestID);
         appCSupport.logLCMMessage(requestObject);

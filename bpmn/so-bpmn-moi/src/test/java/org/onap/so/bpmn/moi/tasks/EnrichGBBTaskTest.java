@@ -30,7 +30,7 @@ public class EnrichGBBTaskTest {
     DelegateExecution execution;
 
     @Before
-    public void setUp() throws Exception {}
+    public void setUp() {}
 
     @Test
     public void prepareOofRequest() {}

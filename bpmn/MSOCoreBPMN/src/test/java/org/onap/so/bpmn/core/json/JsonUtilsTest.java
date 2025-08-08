@@ -197,27 +197,27 @@ public class JsonUtilsTest {
     }
 
     @Test
-    public void xml2jsonTest() throws IOException {
+    public void xml2jsonTest() {
         String expectedJson = "{\"name\":\"myName\"}";
         String xml = "<name>myName</name>";
         assertEquals(expectedJson, JsonUtils.xml2json(xml, false));
     }
 
     @Test
-    public void xml2jsonErrorTest() throws IOException {
+    public void xml2jsonErrorTest() {
         String malformedXml = "<name>myName<name>";
         assertNull(JsonUtils.xml2json(malformedXml));
     }
 
     @Test
-    public void json2xmlTest() throws IOException {
+    public void json2xmlTest() {
         String expectedXml = "<name>myName</name>";
         String malformedJson = "{\"name\":\"myName\"}";
         assertEquals(expectedXml, JsonUtils.json2xml(malformedJson, false));
     }
 
     @Test
-    public void json2xmlErrorTest() throws IOException {
+    public void json2xmlErrorTest() {
         String malformedJson = "{\"name\" \"myName\"}";
         assertNull(JsonUtils.json2xml(malformedJson));
     }
@@ -247,20 +247,20 @@ public class JsonUtilsTest {
     }
 
     @Test
-    public void getJsonValueForKeyErrorTest() throws IOException {
+    public void getJsonValueForKeyErrorTest() {
         String malformedJson = "{\"name\" \"myName\"}";
         assertNull(JsonUtils.getJsonValueForKey(malformedJson, "name"));
     }
 
     @Test
-    public void updJsonValueTest() throws IOException {
+    public void updJsonValueTest() {
         String expectedJson = "{\"name\": \"yourName\"}";
         String json = "{\"name\":\"myName\"}";
         assertEquals(expectedJson, JsonUtils.updJsonValue(json, "name", "yourName"));
     }
 
     @Test
-    public void updJsonValueErrorTest() throws IOException {
+    public void updJsonValueErrorTest() {
         String expectedJson = "{\"name\" \"myName\"}";
         String json = "{\"name\" \"myName\"}";
         assertEquals(expectedJson, JsonUtils.updJsonValue(json, "name", "yourName"));

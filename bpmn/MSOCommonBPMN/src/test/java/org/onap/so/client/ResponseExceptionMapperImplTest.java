@@ -22,7 +22,6 @@ package org.onap.so.client;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import java.io.UnsupportedEncodingException;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.InternalServerErrorException;
@@ -81,7 +80,7 @@ public class ResponseExceptionMapperImplTest {
     }
 
     @Test
-    public void shouldThrowExceptionWithCustomMessageWhenResponseHasEntity() throws UnsupportedEncodingException {
+    public void shouldThrowExceptionWithCustomMessageWhenResponseHasEntity() {
         // given
         Response response = createMockResponse(Status.BAD_REQUEST);
         when(response.hasEntity()).thenReturn(true);

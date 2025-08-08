@@ -25,14 +25,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -44,7 +42,7 @@ public class GraphInventoryPatchConverterTest {
 
     @Test
     public void convertObjectToPatchFormatTest()
-            throws URISyntaxException, JsonParseException, JsonMappingException, IOException {
+            throws JsonMappingException, IOException {
         GraphInventoryPatchConverter validator = new GraphInventoryPatchConverter();
         GenericVnf vnf = new GenericVnf();
         vnf.setIpv4Loopback0Address("");
@@ -56,8 +54,7 @@ public class GraphInventoryPatchConverterTest {
     }
 
     @Test
-    public void convertStringToPatchFormatTest()
-            throws URISyntaxException, JsonParseException, JsonMappingException, IOException {
+    public void convertStringToPatchFormatTest() {
         GraphInventoryPatchConverter validator = new GraphInventoryPatchConverter();
         String payload = "{\"ipv4-loopback0-address\":\"\"}";
         String result = validator.marshallObjectToPatchFormat(payload);
@@ -66,8 +63,7 @@ public class GraphInventoryPatchConverterTest {
     }
 
     @Test
-    public void convertStringToPatchFormatNull_Test()
-            throws URISyntaxException, JsonParseException, JsonMappingException, IOException {
+    public void convertStringToPatchFormatNull_Test() {
         GraphInventoryPatchConverter validator = new GraphInventoryPatchConverter();
         String payload = "{\"ipv4-loopback0-address\": null}";
         String result = validator.marshallObjectToPatchFormat(payload);
@@ -76,8 +72,7 @@ public class GraphInventoryPatchConverterTest {
     }
 
     @Test
-    public void convertMapToPatchFormatTest()
-            throws URISyntaxException, JsonParseException, JsonMappingException, IOException {
+    public void convertMapToPatchFormatTest() {
         GraphInventoryPatchConverter validator = new GraphInventoryPatchConverter();
         HashMap<String, String> map = new HashMap<>();
         map.put("ipv4-loopback0-address", "");

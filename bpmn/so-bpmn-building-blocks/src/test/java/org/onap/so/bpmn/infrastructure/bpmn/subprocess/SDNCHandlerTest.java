@@ -42,7 +42,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class SDNCHandlerTest extends BaseBPMNTest {
     @Test
     public void sunnyDay_SDNCHandler_Sync_Final_Test()
-            throws InterruptedException, MapperException, BadResponseException, IOException {
+            throws MapperException, BadResponseException, IOException {
         final String sdncResponse =
                 new String(Files.readAllBytes(Paths.get("src/test/resources/SDNCClientPut200Response.json")));
         doReturn(sdncResponse).when(sdncClient).post(createSDNCRequest().getSDNCPayload(), SDNCTopology.CONFIGURATION);

@@ -64,7 +64,7 @@ public class ReceiveWorkflowMessageTest extends WorkflowTest {
      */
     @Test
     @Deployment(resources = {"subprocess/ReceiveWorkflowMessage.bpmn"})
-    public void happyPath() throws Exception {
+    public void happyPath() {
 
         logStart();
 
@@ -93,7 +93,7 @@ public class ReceiveWorkflowMessageTest extends WorkflowTest {
      */
     @Test
     @Deployment(resources = {"subprocess/ReceiveWorkflowMessage.bpmn"})
-    public void timeout() throws Exception {
+    public void timeout() {
 
         logStart();
 

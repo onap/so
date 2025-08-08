@@ -113,7 +113,7 @@ public class ModelDistributionRequestTest extends BaseTest {
     }
 
     @Test
-    public void testSuccess_PATCH() throws ApiException, IOException {
+    public void testSuccess_PATCH() throws IOException {
         String path = "/onap/so/infra/modelDistributions/v1/distributions/ff3514e3-5a33-55df-13ab-12abad84e7fa";
         ObjectMapper mapper = new ObjectMapper();
         Distribution distRequest = mapper.readValue(requestJSON, Distribution.class);

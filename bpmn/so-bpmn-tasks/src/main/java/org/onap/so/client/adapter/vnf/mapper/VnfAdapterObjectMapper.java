@@ -119,7 +119,7 @@ public class VnfAdapterObjectMapper {
 
     public Map<String, Object> createVolumeGroupParams(RequestContext requestContext, GenericVnf genericVnf,
             VolumeGroup volumeGroup, String sdncVfModuleQueryResponse)
-            throws JsonParseException, JsonMappingException, IOException {
+            throws JsonMappingException, IOException {
         Map<String, Object> volumeGroupParams = new HashMap<>();
         final String USER_PARAM_NAME_KEY = "name";
         final String USER_PARAM_VALUE_KEY = "value";

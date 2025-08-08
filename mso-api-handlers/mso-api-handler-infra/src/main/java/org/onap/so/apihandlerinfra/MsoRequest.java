@@ -95,8 +95,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
@@ -591,7 +589,7 @@ public class MsoRequest {
     }
 
     public String getRequestJSON(ServiceInstancesRequest sir)
-            throws JsonGenerationException, JsonMappingException, IOException {
+            throws IOException {
 
         logger.debug("building sir from object {}", sir);
         String requestJSON = nonNullMapper.writeValueAsString(sir);

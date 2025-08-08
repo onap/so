@@ -31,7 +31,7 @@ import org.onap.so.bpmn.BaseBPMNTest;
 
 public class VNFUpgradeSoftwareActivityTest extends BaseBPMNTest {
     @Test
-    public void sunnyDayVNFUpgradeSoftwareActivity_Test() throws InterruptedException {
+    public void sunnyDayVNFUpgradeSoftwareActivity_Test() {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFUpgradeSoftwareActivity", variables);
         assertThat(pi).isNotNull();
         processExternalTasks(pi, "TaskUpgradeSoftware");
@@ -41,7 +41,7 @@ public class VNFUpgradeSoftwareActivityTest extends BaseBPMNTest {
     }
 
     @Test
-    public void rainyDayVNFUpgradeSoftwareActivity_Test() throws Exception {
+    public void rainyDayVNFUpgradeSoftwareActivity_Test() {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(appcOrchestratorPreProcessor)
                 .buildAppcTaskRequest(any(BuildingBlockExecution.class), any(String.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFUpgradeSoftwareActivity", variables);

@@ -34,7 +34,7 @@ public class CloudSiteCatalogUtilsTest extends BaseTaskTest {
     private CloudSiteCatalogUtils cloudSiteCatalogUtils = new CloudSiteCatalogUtils();
 
     @Test
-    public void testGetCloudSiteGetVersion30Test() throws Exception {
+    public void testGetCloudSiteGetVersion30Test() {
         CloudSite cloudSite = new CloudSite();
         String testCloudSiteId = "testCloudSiteId";
         cloudSite.setClli(testCloudSiteId);
@@ -44,7 +44,7 @@ public class CloudSiteCatalogUtilsTest extends BaseTaskTest {
     }
 
     @Test
-    public void testGetCloudSiteGetVersion25Test() throws Exception {
+    public void testGetCloudSiteGetVersion25Test() {
         CloudSite cloudSite = new CloudSite();
         String testCloudSiteId = "testCloudSiteId";
         cloudSite.setClli(testCloudSiteId);
@@ -55,7 +55,7 @@ public class CloudSiteCatalogUtilsTest extends BaseTaskTest {
     }
 
     @Test
-    public void testGetIdentityUrlFromCloudSiteSuccessTest() throws Exception {
+    public void testGetIdentityUrlFromCloudSiteSuccessTest() {
         CloudSite cloudSite = new CloudSite();
         String testCloudSiteId = "testCloudSiteId";
         String testIdentityUrl = "testIdentityUrl";
@@ -71,7 +71,7 @@ public class CloudSiteCatalogUtilsTest extends BaseTaskTest {
     }
 
     @Test
-    public void testGetIdentityUrlFromCloudSiteNoCloudIdProvidedTest() throws Exception {
+    public void testGetIdentityUrlFromCloudSiteNoCloudIdProvidedTest() {
         CloudSite cloudSite = new CloudSite();
         String testCloudSiteId = "testCloudSiteId";
         String testIdentityUrl = "testIdentityUrl";

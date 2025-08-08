@@ -77,7 +77,7 @@ public class AAIInstanceGroupResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void createInstanceGroupTest() throws Exception {
+    public void createInstanceGroupTest() {
         doReturn(new org.onap.aai.domain.yang.InstanceGroup()).when(MOCK_aaiObjectMapper)
                 .mapInstanceGroup(instanceGroup);
         aaiInstanceGroupResources.createInstanceGroup(instanceGroup);
@@ -88,14 +88,14 @@ public class AAIInstanceGroupResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void deleteInstanceGroupTest() throws Exception {
+    public void deleteInstanceGroupTest() {
         aaiInstanceGroupResources.deleteInstanceGroup(instanceGroup);
         verify(MOCK_aaiResourcesClient, times(1)).delete(eq(
                 AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().instanceGroup(instanceGroup.getId()))));
     }
 
     @Test
-    public void connectInstanceGroupTest() throws Exception {
+    public void connectInstanceGroupTest() {
         aaiInstanceGroupResources.connectInstanceGroupToVnf(instanceGroup, vnf);
         verify(MOCK_aaiResourcesClient, times(1)).connect(
                 eq(AAIUriFactory
@@ -104,7 +104,7 @@ public class AAIInstanceGroupResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void connectInstanceGroupWithEdgeTest() throws Exception {
+    public void connectInstanceGroupWithEdgeTest() {
         aaiInstanceGroupResources.connectInstanceGroupToVnf(instanceGroup, vnf, AAIEdgeLabel.BELONGS_TO);
         verify(MOCK_aaiResourcesClient, times(1)).connect(
                 eq(AAIUriFactory
@@ -114,7 +114,7 @@ public class AAIInstanceGroupResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void existsTest() throws Exception {
+    public void existsTest() {
         aaiInstanceGroupResources.exists(instanceGroup);
         verify(MOCK_aaiResourcesClient, times(1)).exists(eq(
                 AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().instanceGroup(instanceGroup.getId()))));
@@ -136,7 +136,7 @@ public class AAIInstanceGroupResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void checkInstanceGroupNameInUseTrueTest() throws Exception {
+    public void checkInstanceGroupNameInUseTrueTest() {
         AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().instanceGroups())
                 .queryParam("instance-group-name", "instanceGroupName");
         doReturn(true).when(MOCK_aaiResourcesClient).exists(eq(uri));
@@ -145,7 +145,7 @@ public class AAIInstanceGroupResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void checkInstanceGroupNameInUseFalseTest() throws Exception {
+    public void checkInstanceGroupNameInUseFalseTest() {
         AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().instanceGroups())
                 .queryParam("instance-group-name", "instanceGroupName");
         doReturn(false).when(MOCK_aaiResourcesClient).exists(eq(uri));

@@ -334,7 +334,7 @@ public class BBInputSetupUtils {
     }
 
     public org.onap.aai.domain.yang.ServiceInstance getAAIServiceInstanceByName(String serviceInstanceName,
-            Customer customer) throws Exception {
+            Customer customer) {
         Optional<org.onap.aai.domain.yang.ServiceInstance> aaiServiceInstance = injectionHelper.getAaiClient().getOne(
                 ServiceInstances.class, org.onap.aai.domain.yang.ServiceInstance.class,
                 AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(customer.getGlobalCustomerId())
@@ -483,14 +483,14 @@ public class BBInputSetupUtils {
     }
 
     public Optional<VolumeGroup> getRelatedVolumeGroupByNameFromVfModule(String vnfId, String vfModuleId,
-            String volumeGroupName) throws Exception {
+            String volumeGroupName) {
         AAIPluralResourceUri uri =
                 AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId).vfModule(vfModuleId))
                         .relatedTo(Types.VOLUME_GROUPS.getFragment()).queryParam("volume-group-name", volumeGroupName);
         return injectionHelper.getAaiClient().getOne(VolumeGroups.class, VolumeGroup.class, uri);
     }
 
-    public Optional<VolumeGroup> getRelatedVolumeGroupFromVfModule(String vnfId, String vfModuleId) throws Exception {
+    public Optional<VolumeGroup> getRelatedVolumeGroupFromVfModule(String vnfId, String vfModuleId) {
         AAIPluralResourceUri uri =
                 AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId).vfModule(vfModuleId))
                         .relatedTo(Types.VOLUME_GROUPS.getFragment());

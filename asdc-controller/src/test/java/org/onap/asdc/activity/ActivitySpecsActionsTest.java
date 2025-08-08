@@ -94,7 +94,7 @@ public class ActivitySpecsActionsTest extends BaseTest {
     }
 
     @Test
-    public void CertifyActivitySpec_Test() throws Exception {
+    public void CertifyActivitySpec_Test() {
         String HOSTNAME = createURLWithPort("");
 
         String activitySpecId = "testActivitySpec";
@@ -109,7 +109,7 @@ public class ActivitySpecsActionsTest extends BaseTest {
     }
 
     @Test
-    public void CertifyActivitySpecReturnsExists_Test() throws Exception {
+    public void CertifyActivitySpecReturnsExists_Test() {
         String HOSTNAME = createURLWithPort("");
 
         String activitySpecId = "testActivitySpec";

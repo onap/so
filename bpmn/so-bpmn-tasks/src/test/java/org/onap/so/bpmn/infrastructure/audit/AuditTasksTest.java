@@ -83,7 +83,7 @@ public class AuditTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void setupAuditVariableTest() throws Exception {
+    public void setupAuditVariableTest() {
         AuditInventory expectedAuditInventory = new AuditInventory();
         expectedAuditInventory.setCloudOwner("testCloudOwner");
         expectedAuditInventory.setCloudRegion("testLcpCloudRegionId");

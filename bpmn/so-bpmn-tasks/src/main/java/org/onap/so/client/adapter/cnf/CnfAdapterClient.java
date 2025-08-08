@@ -59,7 +59,7 @@ public class CnfAdapterClient {
     private static final String INSTANCE_CREATE_PATH = "/api/cnf-adapter/v1/instance";
 
     @Retryable(value = {HttpServerErrorException.class}, maxAttempts = 3, backoff = @Backoff(delay = 3000))
-    public InstanceResponse createVfModule(InstanceRequest request) throws CnfAdapterClientException {
+    public InstanceResponse createVfModule(InstanceRequest request) {
         try {
             // String uri = env.getRequiredProperty("mso.cnf.adapter.endpoint"); //TODO: This needs to be added as well
             // for configuration
@@ -80,7 +80,7 @@ public class CnfAdapterClient {
 
 
     @Retryable(value = {HttpServerErrorException.class}, maxAttempts = 3, backoff = @Backoff(delay = 3000))
-    public void deleteVfModule(String heatStackId) throws CnfAdapterClientException {
+    public void deleteVfModule(String heatStackId) {
         try {
             // String uri = env.getRequiredProperty("mso.cnf.adapter.endpoint"); //TODO: This needs to be added as well
             // for configuration
@@ -98,7 +98,7 @@ public class CnfAdapterClient {
     }
 
     @Retryable(value = {HttpServerErrorException.class}, maxAttempts = 3, backoff = @Backoff(delay = 3000))
-    public InstanceResponse healthcheck() throws CnfAdapterClientException {
+    public InstanceResponse healthcheck() {
         try {
             // String uri = env.getRequiredProperty("mso.cnf.adapter.endpoint"); //TODO: This needs to be added as well
             // for configuration
@@ -118,8 +118,7 @@ public class CnfAdapterClient {
     }
 
     @Retryable(value = {HttpServerErrorException.class}, maxAttempts = 3, backoff = @Backoff(delay = 3000))
-    public UpgradeInstanceResponse upgradeVfModule(UpgradeInstanceRequest request, String heatStackId)
-            throws CnfAdapterClientException {
+    public UpgradeInstanceResponse upgradeVfModule(UpgradeInstanceRequest request, String heatStackId) {
         try {
             String uri = "http://so-cnf-adapter:8090";
             String endpoint = UriBuilder.fromUri(uri).path(INSTANCE_CREATE_PATH + "/" + heatStackId + "/upgrade")

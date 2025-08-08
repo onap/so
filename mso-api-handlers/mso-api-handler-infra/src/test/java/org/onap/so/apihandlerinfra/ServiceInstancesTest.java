@@ -75,7 +75,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.util.UriComponentsBuilder;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -2904,7 +2903,7 @@ public class ServiceInstancesTest extends BaseTest {
     }
 
     @Test
-    public void setServiceTypeTestNetwork() throws JsonProcessingException {
+    public void setServiceTypeTestNetwork() {
         String requestScope = ModelType.network.toString();
         Boolean aLaCarteFlag = null;
         ServiceInstancesRequest sir = new ServiceInstancesRequest();
@@ -2922,7 +2921,7 @@ public class ServiceInstancesTest extends BaseTest {
     }
 
     @Test
-    public void setServiceInstanceIdInstanceGroupTest() throws JsonParseException, JsonMappingException, IOException {
+    public void setServiceInstanceIdInstanceGroupTest() throws JsonMappingException, IOException {
         String requestScope = "instanceGroup";
         ServiceInstancesRequest sir =
                 mapper.readValue(inputStream("/CreateInstanceGroup.json"), ServiceInstancesRequest.class);
@@ -2976,7 +2975,7 @@ public class ServiceInstancesTest extends BaseTest {
     }
 
     @Test
-    public void handleReplaceInstance_Test() throws JsonParseException, JsonMappingException, IOException {
+    public void handleReplaceInstance_Test() throws JsonMappingException, IOException {
         String replaceVfModule = inputStream("/ReplaceVfModule.json");
         ObjectMapper mapper = new ObjectMapper();
         ServiceInstancesRequest sir = mapper.readValue(replaceVfModule, ServiceInstancesRequest.class);
@@ -2986,7 +2985,7 @@ public class ServiceInstancesTest extends BaseTest {
 
     @Test
     public void handleReplaceInstance_retainAssignments_Test()
-            throws JsonParseException, JsonMappingException, IOException {
+            throws JsonMappingException, IOException {
         String replaceVfModule = inputStream("/ReplaceVfModuleRetainAssignments.json");
         ObjectMapper mapper = new ObjectMapper();
         ServiceInstancesRequest sir = mapper.readValue(replaceVfModule, ServiceInstancesRequest.class);
