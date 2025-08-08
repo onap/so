@@ -38,8 +38,6 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
-import org.onap.so.client.exception.BadResponseException;
-import org.onap.so.client.exception.MapperException;
 import org.onap.so.client.sdnc.SDNCClient;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
@@ -76,7 +74,7 @@ public class SDNCNetworkResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void assignNetworkTest() throws Exception {
+    public void assignNetworkTest() {
         doReturn(new GenericResourceApiNetworkOperationInformation()).when(MOCK_networkTopologyOperationRequestMapper)
                 .reqMapper(SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN,
                         GenericResourceApiRequestActionEnumeration.CREATENETWORKINSTANCE, network, serviceInstance,
@@ -89,7 +87,7 @@ public class SDNCNetworkResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void rollbackAssignNetworkTest() throws Exception {
+    public void rollbackAssignNetworkTest() {
         doReturn(new GenericResourceApiNetworkOperationInformation()).when(MOCK_networkTopologyOperationRequestMapper)
                 .reqMapper(SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.UNASSIGN,
                         GenericResourceApiRequestActionEnumeration.DELETENETWORKINSTANCE, network, serviceInstance,
@@ -102,7 +100,7 @@ public class SDNCNetworkResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void activateNetworkTest() throws Exception {
+    public void activateNetworkTest() {
         doReturn(new GenericResourceApiNetworkOperationInformation()).when(MOCK_networkTopologyOperationRequestMapper)
                 .reqMapper(SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.ACTIVATE,
                         GenericResourceApiRequestActionEnumeration.CREATENETWORKINSTANCE, network, serviceInstance,
@@ -115,7 +113,7 @@ public class SDNCNetworkResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void deleteNetworkTest() throws Exception {
+    public void deleteNetworkTest() {
         doReturn(new GenericResourceApiNetworkOperationInformation()).when(MOCK_networkTopologyOperationRequestMapper)
                 .reqMapper(SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.DELETE,
                         GenericResourceApiRequestActionEnumeration.DELETENETWORKINSTANCE, network, serviceInstance,
@@ -128,7 +126,7 @@ public class SDNCNetworkResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void test_deactivateNetwork() throws MapperException, BadResponseException {
+    public void test_deactivateNetwork() {
         doReturn(new GenericResourceApiNetworkOperationInformation()).when(MOCK_networkTopologyOperationRequestMapper)
                 .reqMapper(SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.DEACTIVATE,
                         GenericResourceApiRequestActionEnumeration.DELETENETWORKINSTANCE, network, serviceInstance,
@@ -141,7 +139,7 @@ public class SDNCNetworkResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void changeAssignNetworkTest() throws MapperException, BadResponseException {
+    public void changeAssignNetworkTest() {
         doReturn(new GenericResourceApiNetworkOperationInformation()).when(MOCK_networkTopologyOperationRequestMapper)
                 .reqMapper(SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.CHANGE_ASSIGN,
                         GenericResourceApiRequestActionEnumeration.CREATENETWORKINSTANCE, network, serviceInstance,
@@ -154,7 +152,7 @@ public class SDNCNetworkResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void unassignNetwork_Test() throws Exception {
+    public void unassignNetwork_Test() {
         doReturn(new GenericResourceApiNetworkOperationInformation()).when(MOCK_networkTopologyOperationRequestMapper)
                 .reqMapper(SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.UNASSIGN,
                         GenericResourceApiRequestActionEnumeration.DELETENETWORKINSTANCE, network, serviceInstance,

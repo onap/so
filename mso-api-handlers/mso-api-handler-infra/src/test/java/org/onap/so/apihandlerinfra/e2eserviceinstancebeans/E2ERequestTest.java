@@ -28,7 +28,7 @@ public class E2ERequestTest {
     E2ERequest test = new E2ERequest();
 
     @Test
-    public void verifyE2ERequest() throws Exception {
+    public void verifyE2ERequest() {
 
         test.setOperationId("operationId");
         assertEquals(test.getOperationId(), "operationId");

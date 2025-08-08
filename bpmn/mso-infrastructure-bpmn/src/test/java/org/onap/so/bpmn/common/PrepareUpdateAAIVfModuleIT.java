@@ -27,7 +27,6 @@ import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdWithDep
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetGenericVnfById_404;
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockPatchVfModuleId;
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockPutGenericVnf;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -52,7 +51,7 @@ public class PrepareUpdateAAIVfModuleIT extends BaseIntegrationTest {
      */
     @Test
 
-    public void happyPath() throws IOException {
+    public void happyPath() {
 
         logStart();
 
@@ -88,7 +87,7 @@ public class PrepareUpdateAAIVfModuleIT extends BaseIntegrationTest {
      */
     @Test
 
-    public void badGet() throws IOException {
+    public void badGet() {
 
         logStart();
 
@@ -122,7 +121,7 @@ public class PrepareUpdateAAIVfModuleIT extends BaseIntegrationTest {
      */
     @Test
 
-    public void failValidation1() throws IOException {
+    public void failValidation1() {
 
         logStart();
 
@@ -153,7 +152,7 @@ public class PrepareUpdateAAIVfModuleIT extends BaseIntegrationTest {
      */
     @Test
 
-    public void failValidation2() throws IOException {
+    public void failValidation2() {
 
         logStart();
 
@@ -184,7 +183,7 @@ public class PrepareUpdateAAIVfModuleIT extends BaseIntegrationTest {
      */
     @Test
 
-    public void badPatch() throws IOException {
+    public void badPatch() {
 
         logStart();
 

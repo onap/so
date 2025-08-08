@@ -86,7 +86,7 @@ public class SDNCUnassignTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void unassignServiceInstanceTest() throws Exception {
+    public void unassignServiceInstanceTest() {
         doReturn(new GenericResourceApiServiceOperationInformation()).when(sdncServiceInstanceResources)
                 .unassignServiceInstance(serviceInstance, customer, requestContext);
         sdncUnassignTasks.unassignServiceInstance(execution);
@@ -97,7 +97,7 @@ public class SDNCUnassignTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void unassignServiceInstanceExceptionTest() throws Exception {
+    public void unassignServiceInstanceExceptionTest() {
         expectedException.expect(BpmnError.class);
         doThrow(RuntimeException.class).when(sdncServiceInstanceResources).unassignServiceInstance(serviceInstance,
                 customer, requestContext);
@@ -124,7 +124,7 @@ public class SDNCUnassignTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void unassignVnfTest() throws Exception {
+    public void unassignVnfTest() {
         doReturn(new GenericResourceApiVnfOperationInformation()).when(sdncVnfResources).unassignVnf(eq(genericVnf),
                 eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));
         sdncUnassignTasks.unassignVnf(execution);
@@ -135,7 +135,7 @@ public class SDNCUnassignTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void unassignVnfExceptionTest() throws Exception {
+    public void unassignVnfExceptionTest() {
         expectedException.expect(BpmnError.class);
         doThrow(RuntimeException.class).when(sdncVnfResources).unassignVnf(eq(genericVnf), eq(serviceInstance),
                 eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));

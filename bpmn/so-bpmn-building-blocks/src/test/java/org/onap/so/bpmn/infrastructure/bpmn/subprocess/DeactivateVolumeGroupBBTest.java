@@ -31,7 +31,7 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 
 public class DeactivateVolumeGroupBBTest extends BaseBPMNTest {
     @Test
-    public void sunnyDayAssignVolumeGroup_Test() throws InterruptedException {
+    public void sunnyDayAssignVolumeGroup_Test() {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeactivateVolumeGroupBB", variables);
         assertThat(pi).isNotNull();
         assertThat(pi).isStarted().hasPassedInOrder("DeactivateVolumeGroupBB_Start", "DeactivateVolumeGroup",
@@ -40,7 +40,7 @@ public class DeactivateVolumeGroupBBTest extends BaseBPMNTest {
     }
 
     @Test
-    public void rainyDayAssignVolumeGroup_Test() throws Exception {
+    public void rainyDayAssignVolumeGroup_Test() {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiUpdateTasks)
                 .updateOrchestrationStatusCreatedVolumeGroup(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeactivateVolumeGroupBB", variables);

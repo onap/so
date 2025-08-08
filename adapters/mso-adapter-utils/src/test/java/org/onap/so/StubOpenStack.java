@@ -68,18 +68,17 @@ public class StubOpenStack {
                 .withHeader("Content-Type", "application/json").withBodyFile(filename).withStatus(HttpStatus.SC_OK)));
     }
 
-    public static void mockOpenStackPostTenantWithBodyFile_200(WireMockServer wireMockServer) throws IOException {
+    public static void mockOpenStackPostTenantWithBodyFile_200(WireMockServer wireMockServer) {
         wireMockServer.stubFor(post(urlPathEqualTo("/mockPublicUrl/tenants"))
                 .willReturn(aResponse().withBodyFile("OpenstackResponse_Tenant.json").withStatus(HttpStatus.SC_OK)));
     }
 
-    public static void mockOpenStackGetTenantByName(WireMockServer wireMockServer, String tenantName)
-            throws IOException {
+    public static void mockOpenStackGetTenantByName(WireMockServer wireMockServer, String tenantName) {
         wireMockServer.stubFor(get(urlMatching("/mockPublicUrl/tenants/[?]name=" + tenantName))
                 .willReturn(aResponse().withBodyFile("OpenstackResponse_Tenant.json").withStatus(HttpStatus.SC_OK)));
     }
 
-    public static void mockOpenStackGetTenantById(WireMockServer wireMockServer, String tenantId) throws IOException {
+    public static void mockOpenStackGetTenantById(WireMockServer wireMockServer, String tenantId) {
         wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/tenants/tenantId"))
                 .willReturn(aResponse().withBodyFile("OpenstackResponse_Tenant.json").withStatus(HttpStatus.SC_OK)));
     }

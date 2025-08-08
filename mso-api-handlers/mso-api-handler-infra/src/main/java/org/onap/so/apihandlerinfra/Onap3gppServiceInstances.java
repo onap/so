@@ -585,7 +585,7 @@ public class Onap3gppServiceInstances {
         }
     }
 
-    private Response getSubnetCapabilities(List<SubnetTypes> subnetTypes, String version) throws ApiException {
+    private Response getSubnetCapabilities(List<SubnetTypes> subnetTypes, String version) {
         String inputFileString = "";
         Map<String, Object> subnetCapability = new HashMap<>();
         BufferedReader br = null;

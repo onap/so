@@ -102,7 +102,7 @@ public class NamingRequestUtilsTest extends BaseTaskTest {
     }
 
     @Test
-    public void checkNamingPolicyAndAndEcompGeneratedNamingFalse1Test() throws BBObjectNotFoundException {
+    public void checkNamingPolicyAndAndEcompGeneratedNamingFalse1Test() {
         doReturn(null).when(modelInfoServiceInstanceMock).getNamingPolicy();
         doReturn(true).when(modelInfoServiceInstanceMock).getOnapGeneratedNaming();
         namingServiceUtils.checkNamingPolicyAndOnapGeneratedNaming(execution);
@@ -110,7 +110,7 @@ public class NamingRequestUtilsTest extends BaseTaskTest {
     }
 
     @Test
-    public void checkNamingPolicyAndAndEcompGeneratedNamingFalse2Test() throws BBObjectNotFoundException {
+    public void checkNamingPolicyAndAndEcompGeneratedNamingFalse2Test() {
         doReturn("testNaminPolicy").when(modelInfoServiceInstanceMock).getNamingPolicy();
         doReturn(false).when(modelInfoServiceInstanceMock).getOnapGeneratedNaming();
         namingServiceUtils.checkNamingPolicyAndOnapGeneratedNaming(execution);
@@ -118,7 +118,7 @@ public class NamingRequestUtilsTest extends BaseTaskTest {
     }
 
     @Test
-    public void checkNamingPolicyAndAndEcompGeneratedNamingFalse3Test() throws BBObjectNotFoundException {
+    public void checkNamingPolicyAndAndEcompGeneratedNamingFalse3Test() {
         doReturn("").when(modelInfoServiceInstanceMock).getNamingPolicy();
         doReturn(false).when(modelInfoServiceInstanceMock).getOnapGeneratedNaming();
         namingServiceUtils.checkNamingPolicyAndOnapGeneratedNaming(execution);
@@ -126,7 +126,7 @@ public class NamingRequestUtilsTest extends BaseTaskTest {
     }
 
     @Test
-    public void checkNamingPolicyAndAndEcompGeneratedNamingFalse4Test() throws BBObjectNotFoundException {
+    public void checkNamingPolicyAndAndEcompGeneratedNamingFalse4Test() {
         doReturn("bonding").when(modelInfoServiceInstanceMock).getNamingPolicy();
         doReturn(null).when(modelInfoServiceInstanceMock).getOnapGeneratedNaming();
         namingServiceUtils.checkNamingPolicyAndOnapGeneratedNaming(execution);

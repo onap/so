@@ -36,7 +36,6 @@ import org.junit.Test;
 import org.onap.so.db.catalog.beans.HeatTemplate;
 import org.onap.so.db.catalog.beans.HeatTemplateParam;
 import org.skyscreamer.jsonassert.JSONAssert;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -48,7 +47,7 @@ public class MsoHeatUtilsUnitTest {
     private ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    public void convertInputMapTest() throws JsonParseException, JsonMappingException, IOException {
+    public void convertInputMapTest() throws JsonMappingException, IOException {
         MsoHeatUtils utils = new MsoHeatUtils();
 
         Map<String, Object> input = new HashMap<>();

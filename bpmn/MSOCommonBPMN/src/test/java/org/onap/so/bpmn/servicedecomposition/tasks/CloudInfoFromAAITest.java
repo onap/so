@@ -45,9 +45,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -69,7 +67,7 @@ public class CloudInfoFromAAITest {
     }
 
     @Test
-    public void testGetCloudInfoFromAAI() throws JsonParseException, JsonMappingException, IOException {
+    public void testGetCloudInfoFromAAI() throws IOException {
         // Test vnfs
         ServiceInstance serviceInstance =
                 mapper.readValue(new File(RESOURCE_PATH + "ServiceInstance_getServiceInstanceNOAAIExpected.json"),

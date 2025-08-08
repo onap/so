@@ -23,7 +23,6 @@ package org.onap.so.bpmn.common;
 import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-import java.io.IOException;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Test;
@@ -33,7 +32,7 @@ public class AAICheckVnfInMaintBBTest extends BaseBPMNTest {
 
 
     @Test
-    public void sunnyDayAAICheckVnfInMaintBBTest() throws InterruptedException, IOException {
+    public void sunnyDayAAICheckVnfInMaintBBTest() {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("AAICheckVnfInMaintBB", variables);
         assertThat(pi).isNotNull();
         assertThat(pi).isStarted().hasPassedInOrder("Start_AAICheckVnfInMaintBB", "Task_CheckVnfInMaint",

@@ -31,7 +31,7 @@ import org.onap.so.bpmn.BaseBPMNTest;
 
 public class VNFUnsetClosedLoopDisabledFlagActivityTest extends BaseBPMNTest {
     @Test
-    public void sunnyDayVNFUnsetClosedLoopDisabledFlagActivity_Test() throws InterruptedException {
+    public void sunnyDayVNFUnsetClosedLoopDisabledFlagActivity_Test() {
         ProcessInstance pi =
                 runtimeService.startProcessInstanceByKey("VNFUnsetClosedLoopDisabledFlagActivity", variables);
         assertThat(pi).isNotNull();
@@ -41,7 +41,7 @@ public class VNFUnsetClosedLoopDisabledFlagActivityTest extends BaseBPMNTest {
     }
 
     @Test
-    public void rainyDayVNFUnsetClosedLoopFlag_Test() throws Exception {
+    public void rainyDayVNFUnsetClosedLoopFlag_Test() {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiFlagTasks)
                 .modifyVnfClosedLoopDisabledFlag(any(BuildingBlockExecution.class), any(boolean.class));
         ProcessInstance pi =

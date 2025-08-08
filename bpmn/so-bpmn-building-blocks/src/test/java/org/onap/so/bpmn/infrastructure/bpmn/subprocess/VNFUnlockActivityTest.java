@@ -31,7 +31,7 @@ import org.onap.so.bpmn.BaseBPMNTest;
 
 public class VNFUnlockActivityTest extends BaseBPMNTest {
     @Test
-    public void sunnyDayVNFUnlockActivity_Test() throws InterruptedException {
+    public void sunnyDayVNFUnlockActivity_Test() {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFUnlockActivity", variables);
         assertThat(pi).isNotNull();
         processExternalTasks(pi, "TaskUnlock");
@@ -41,7 +41,7 @@ public class VNFUnlockActivityTest extends BaseBPMNTest {
     }
 
     @Test
-    public void rainyDayVNFUnlockActivity_Test() throws Exception {
+    public void rainyDayVNFUnlockActivity_Test() {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(appcOrchestratorPreProcessor)
                 .buildAppcTaskRequest(any(BuildingBlockExecution.class), any(String.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFUnlockActivity", variables);

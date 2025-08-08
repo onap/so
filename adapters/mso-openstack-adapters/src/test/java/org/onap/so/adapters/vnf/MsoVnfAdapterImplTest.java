@@ -32,7 +32,6 @@ import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackGetStackVfModule_
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackPutStack;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackResponseAccess;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenstackGetWithResponse;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -521,7 +520,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
         return vfModuleCustomization;
     }
 
-    public static void mockUpdateRequestDb(WireMockServer wireMockServer, String requestId) throws IOException {
+    public static void mockUpdateRequestDb(WireMockServer wireMockServer, String requestId) {
         wireMockServer.stubFor(patch(urlPathEqualTo("/infraActiveRequests/" + requestId))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_OK)));
     }

@@ -31,7 +31,7 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 
 public class CreateVolumeGroupBBTest extends BaseBPMNTest {
     @Test
-    public void sunnyDayCreateVolumeGroup_Test() throws InterruptedException {
+    public void sunnyDayCreateVolumeGroup_Test() {
         mockSubprocess("VnfAdapter", "Mocked VnfAdapter", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateVolumeGroupBB", variables);
         assertThat(pi).isNotNull();
@@ -44,7 +44,7 @@ public class CreateVolumeGroupBBTest extends BaseBPMNTest {
     }
 
     @Test
-    public void rainyDayCreateVolumeGroup_Test() throws Exception {
+    public void rainyDayCreateVolumeGroup_Test() {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(vnfAdapterCreateTasks)
                 .createVolumeGroupRequest(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateVolumeGroupBB", variables);
@@ -56,7 +56,7 @@ public class CreateVolumeGroupBBTest extends BaseBPMNTest {
     }
 
     @Test
-    public void rainyDayCreateVolumeGroupUpdateHeatStackIdError_Test() throws Exception {
+    public void rainyDayCreateVolumeGroupUpdateHeatStackIdError_Test() {
         mockSubprocess("VnfAdapter", "Mocked VnfAdapter", "GenericStub");
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiUpdateTasks)
                 .updateHeatStackIdVolumeGroup(any(BuildingBlockExecution.class));

@@ -31,7 +31,7 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 
 public class CreateNetworkCollectionBBTest extends BaseBPMNTest {
     @Test
-    public void sunnyDayCreateNetworkCollection_Test() throws InterruptedException {
+    public void sunnyDayCreateNetworkCollection_Test() {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateNetworkCollectionBB", variables);
         assertThat(pi).isNotNull();
         assertThat(pi).isStarted().hasPassedInOrder("createNetworkCollection_startEvent", "BuildName_ServiceTask",
@@ -42,7 +42,7 @@ public class CreateNetworkCollectionBBTest extends BaseBPMNTest {
     }
 
     @Test
-    public void rainyDayCreateNetworkCollection_Test() throws Exception {
+    public void rainyDayCreateNetworkCollection_Test() {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiCreateTasks)
                 .createNetworkCollectionInstanceGroup(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateNetworkCollectionBB", variables);

@@ -184,7 +184,7 @@ public class SDNCQueryTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void queryVfModuleForVolumeGroupNoSelfLinkExceptionTest() throws Exception {
+    public void queryVfModuleForVolumeGroupNoSelfLinkExceptionTest() {
         expectedException.expect(BpmnError.class);
 
         vfModule.setSelflink("");
@@ -203,7 +203,7 @@ public class SDNCQueryTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void queryVfModuleForVolumeGroupNonVfObjectExceptionTest() throws Exception {
+    public void queryVfModuleForVolumeGroupNonVfObjectExceptionTest() {
         expectedException.expect(BpmnError.class);
 
         sdncQueryTasks.queryVfModuleForVolumeGroup(execution);

@@ -75,7 +75,7 @@ public class CnfInstantiateTaskTest {
     private final BuildingBlockExecution stubbedExecution = new StubbedBuildingBlockExecution();
 
     @Test
-    public void testCreateCreateASRequest_withValidValues_storesRequestInExecution() throws Exception {
+    public void testCreateCreateASRequest_withValidValues_storesRequestInExecution() {
 
         final CnfInstantiateTask objUnderTest = getCnfInstantiateTask();
         stubbedExecution.setVariable(INPUT_PARAMETER,
@@ -96,7 +96,7 @@ public class CnfInstantiateTaskTest {
     }
 
     @Test
-    public void testCreateCreateASRequest_ForBBThrowsException_exceptionBuilderCalled() throws Exception {
+    public void testCreateCreateASRequest_ForBBThrowsException_exceptionBuilderCalled() {
 
         final CnfInstantiateTask objUnderTest = getCnfInstantiateTask();
 
@@ -116,7 +116,7 @@ public class CnfInstantiateTaskTest {
     }
 
     @Test
-    public void invokeCnfmWithCreateAsRequest_validValues_storesResponseInExecution() throws Exception {
+    public void invokeCnfmWithCreateAsRequest_validValues_storesResponseInExecution() {
 
         final CnfInstantiateTask objUnderTest = getCnfInstantiateTask();
         stubbedExecution.setVariable(CREATE_AS_REQUEST_OBJECT, new CreateAsRequest());
@@ -130,7 +130,7 @@ public class CnfInstantiateTaskTest {
     }
 
     @Test
-    public void invokeCnfmWithCreateAsRequest_ForBBThrowsException_exceptionBuilderCalled() throws Exception {
+    public void invokeCnfmWithCreateAsRequest_ForBBThrowsException_exceptionBuilderCalled() {
 
         final CnfInstantiateTask objUnderTest = getCnfInstantiateTask();
         stubbedExecution.setVariable(CREATE_AS_REQUEST_OBJECT, new CreateAsRequest());
@@ -149,7 +149,7 @@ public class CnfInstantiateTaskTest {
     }
 
     @Test
-    public void testcreateAsInstanceRequest_withValidValues_storesRequestInExecution() throws Exception {
+    public void testcreateAsInstanceRequest_withValidValues_storesRequestInExecution() {
 
         final CnfInstantiateTask objUnderTest = getCnfInstantiateTask();
 

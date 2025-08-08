@@ -66,7 +66,7 @@ public class CreateInventoryTaskTest {
     }
 
     @Test
-    public void testExecuteExternalTask_InventoryException() throws InventoryException, JsonProcessingException {
+    public void testExecuteExternalTask_InventoryException() throws JsonProcessingException {
         AAIObjectAuditList object = new AAIObjectAuditList();
         AAIObjectAudit e = new AAIObjectAudit();
         e.setDoesObjectExist(true);

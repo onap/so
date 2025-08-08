@@ -121,7 +121,7 @@ public class JsonUtils2Test {
     }
 
     @Test
-    public void shouldConvertXmlToJsonAndBackToSameXml() throws Exception {
+    public void shouldConvertXmlToJsonAndBackToSameXml() {
         // Note: the current version of the JsonUtils.json2xml() method
         // does not support converting the JSONObject representation
         // of XML attributes (JSONArray) back to XML. So this test will
@@ -140,7 +140,7 @@ public class JsonUtils2Test {
     }
 
     @Test
-    public void shouldReadValuesForAbsoluteJsonPaths() throws Exception {
+    public void shouldReadValuesForAbsoluteJsonPaths() {
         // given
         String json = JsonUtils.xml2json(XML_REQ);
         // when, then
@@ -152,7 +152,7 @@ public class JsonUtils2Test {
     }
 
     @Test
-    public void shouldReturnValueForJsonKey() throws Exception {
+    public void shouldReturnValueForJsonKey() {
         // given
         String json = JsonUtils.xml2json(XML_REQ);
         // when, then
@@ -160,7 +160,7 @@ public class JsonUtils2Test {
     }
 
     @Test
-    public void shouldReturnNullForNonexistentJsonNode() throws Exception {
+    public void shouldReturnNullForNonexistentJsonNode() {
         // given
         String json = JsonUtils.xml2json(XML_REQ);
         // when, then
@@ -168,7 +168,7 @@ public class JsonUtils2Test {
     }
 
     @Test
-    public void shouldReturnNullForNonExistentParameter() throws Exception {
+    public void shouldReturnNullForNonExistentParameter() {
         // given
         String json = JsonUtils.xml2json(XML_REQ);
         // when, then
@@ -176,7 +176,7 @@ public class JsonUtils2Test {
     }
 
     @Test
-    public void shouldGetJasonParametersFromArray() throws Exception {
+    public void shouldGetJasonParametersFromArray() {
         // given
         String json = JsonUtils.xml2json(XML_REQ);
         // when, then
@@ -189,7 +189,7 @@ public class JsonUtils2Test {
     }
 
     @Test
-    public void shouldAddJsonValue() throws Exception {
+    public void shouldAddJsonValue() {
         // given
         String json = JsonUtils.xml2json(XML_REQ);
         String key = "vnf-request.request-info.comment";
@@ -202,7 +202,7 @@ public class JsonUtils2Test {
     }
 
     @Test
-    public void shouldIgnoreAddIfFieldAlreadyExists() throws Exception {
+    public void shouldIgnoreAddIfFieldAlreadyExists() {
         // given
         String json = JsonUtils.xml2json(XML_REQ);
         String key = "vnf-request.vnf-inputs.vnf-name";
@@ -215,7 +215,7 @@ public class JsonUtils2Test {
     }
 
     @Test
-    public void shouldUpdateValueInJson() throws Exception {
+    public void shouldUpdateValueInJson() {
         // given
         String json = JsonUtils.xml2json(XML_REQ);
         String key = "vnf-request.vnf-inputs.vnf-name";
@@ -246,7 +246,7 @@ public class JsonUtils2Test {
     }
 
     @Test
-    public void shouldReturnOriginalJsonWhenTryingToRemoveNonexistentField() throws Exception {
+    public void shouldReturnOriginalJsonWhenTryingToRemoveNonexistentField() {
         // given
         String json = JsonUtils.xml2json(XML_REQ);
         String key = "vnf-request.vnf-inputs.does-not-exist";
@@ -271,7 +271,7 @@ public class JsonUtils2Test {
     }
 
     @Test
-    public void shouldConvertJsonContainingArrayToXml() throws Exception {
+    public void shouldConvertJsonContainingArrayToXml() {
         // when
         String jsonParm = JsonUtils.getJsonNodeValue(jsonReqArray, "requestDetails.requestParameters.ucpeInfo");
         String xmlOut = JsonUtils.json2xml(jsonParm);

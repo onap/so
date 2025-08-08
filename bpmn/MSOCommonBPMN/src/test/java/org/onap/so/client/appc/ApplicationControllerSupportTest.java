@@ -43,7 +43,7 @@ public class ApplicationControllerSupportTest {
 
     @Test
     @Parameters(method = "statusesAndCategories")
-    public void shouldReturnCategoryForCode(int code, StatusCategory category) throws Exception {
+    public void shouldReturnCategoryForCode(int code, StatusCategory category) {
         // when
         StatusCategory detectedCategory = ApplicationControllerSupport.getCategoryOf(createStatus(code));
         // then
@@ -52,7 +52,7 @@ public class ApplicationControllerSupportTest {
 
     @Test
     @Parameters(method = "statusesAndFinalities")
-    public void shouldReturnFinalityForCode(int code, boolean expectedFinality) throws Exception {
+    public void shouldReturnFinalityForCode(int code, boolean expectedFinality) {
         // when
         boolean finality = ApplicationControllerSupport.getFinalityOf(createStatus(code));
         // then

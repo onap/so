@@ -28,14 +28,14 @@ public class WorkflowRepositoryTest extends BaseTest {
     private WorkflowRepository workflowRepository;
 
     @Test
-    public void findByArtifactUuid_ValidUuid_ExpectedOutput() throws Exception {
+    public void findByArtifactUuid_ValidUuid_ExpectedOutput() {
         Workflow workflow = workflowRepository.findByArtifactUUID("5b0c4322-643d-4c9f-b184-4516049e99b1");
 
         assertEquals("artifactName", "testingWorkflow.bpmn", workflow.getArtifactName());
     }
 
     @Test
-    public void findByVnfResourceModelUUIDTest() throws Exception {
+    public void findByVnfResourceModelUUIDTest() {
         List<Workflow> workflows =
                 workflowRepository.findWorkflowByVnfModelUUID("ff2ae348-214a-11e7-93ae-92361f002671");
 
@@ -46,7 +46,7 @@ public class WorkflowRepositoryTest extends BaseTest {
     }
 
     @Test
-    public void findBySourceTest() throws Exception {
+    public void findBySourceTest() {
         List<Workflow> workflows = workflowRepository.findBySource("sdc");
 
         Assert.assertTrue(workflows != null);

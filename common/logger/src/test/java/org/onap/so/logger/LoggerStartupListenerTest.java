@@ -21,7 +21,6 @@ package org.onap.so.logger;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
-import java.net.UnknownHostException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,7 +43,7 @@ public class LoggerStartupListenerTest {
     }
 
     @Test
-    public void thatServerNameIsSetOnStartup() throws UnknownHostException {
+    public void thatServerNameIsSetOnStartup() {
         loggerStartupListener.start();
 
         verify(context).putProperty(eq("server.name"), anyString());

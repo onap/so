@@ -25,7 +25,7 @@ import org.junit.Test;
 
 public class MsoRequestsDbExceptionTest {
     @Test
-    public void testConstructorWithMessaqge() throws Exception {
+    public void testConstructorWithMessaqge() {
         String message = "testing message";
         MsoRequestsDbException msoRequestsDbException = new MsoRequestsDbException(message);
         Assert.assertNull(msoRequestsDbException.getCause());
@@ -34,7 +34,7 @@ public class MsoRequestsDbExceptionTest {
     }
 
     @Test
-    public void testConstructorWithThrowable() throws Exception {
+    public void testConstructorWithThrowable() {
         String message = "testing message";
         Throwable throwable = new Throwable(message);
         MsoRequestsDbException msoRequestsDbException = new MsoRequestsDbException(throwable);
@@ -44,7 +44,7 @@ public class MsoRequestsDbExceptionTest {
     }
 
     @Test
-    public void testConstructorWithMessageAndThrowable() throws Exception {
+    public void testConstructorWithMessageAndThrowable() {
         String message = "testing message";
         String tMessage = "throwable message";
         Throwable throwable = new Throwable(tMessage);

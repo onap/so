@@ -25,7 +25,6 @@ import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
-import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -75,7 +74,7 @@ public class VfModuleRestHandlerTest {
     private ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    public void test_find_vf_module_recipe() throws MalformedURLException, NoRecipeException {
+    public void test_find_vf_module_recipe() throws NoRecipeException {
         VnfComponentsRecipe expected = new VnfComponentsRecipe();
         expected.setAction("createInstance");
         doReturn(expected).when(catalogDbClient)
@@ -90,7 +89,7 @@ public class VfModuleRestHandlerTest {
     }
 
     @Test
-    public void test_find_vf_module_recipe_default_recipe() throws MalformedURLException, NoRecipeException {
+    public void test_find_vf_module_recipe_default_recipe() throws NoRecipeException {
         VnfComponentsRecipe expected = new VnfComponentsRecipe();
         expected.setAction("createInstance");
         doReturn(null).when(catalogDbClient).getFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction(
@@ -107,7 +106,7 @@ public class VfModuleRestHandlerTest {
     }
 
     @Test
-    public void test_find_vf_module_recipe_not_found() throws MalformedURLException, NoRecipeException {
+    public void test_find_vf_module_recipe_not_found() throws NoRecipeException {
         VnfComponentsRecipe expected = new VnfComponentsRecipe();
         expected.setAction("createInstance");
         exceptionRule.expect(NoRecipeException.class);
@@ -117,7 +116,7 @@ public class VfModuleRestHandlerTest {
     }
 
     @Test
-    public void test_checkDuplicateRequest() throws MalformedURLException, NoRecipeException {
+    public void test_checkDuplicateRequest() {
         ArgumentCaptor<HashMap> instanceIdCaptor = ArgumentCaptor.forClass(HashMap.class);
         restHandler.checkDuplicateRequest("serviceInstanceId", "vnfId", "vfModuleId", "instanceName", "requestId");
         Mockito.verify(infraActiveRequestsClient, Mockito.times(1)).checkInstanceNameDuplicate(
@@ -129,7 +128,7 @@ public class VfModuleRestHandlerTest {
     }
 
     @Test
-    public void test_saveInstanceName() throws MalformedURLException, NoRecipeException {
+    public void test_saveInstanceName() {
         ServiceInstancesRequest request = createTestRequest();
         InfraActiveRequests dbRequest = createDatabaseRecord();
         restHandler.saveInstanceName(request, dbRequest);
@@ -150,7 +149,7 @@ public class VfModuleRestHandlerTest {
     }
 
     @Test
-    public void test_createInfraActiveRequestForDelete() throws Exception {
+    public void test_createInfraActiveRequestForDelete() {
         InfraActiveRequests expected = new InfraActiveRequests();
         expected.setRequestAction(Action.deleteInstance.toString());
         expected.setServiceInstanceId("serviceInstanceId");

@@ -26,152 +26,152 @@ public class BpmnRequestTest {
     BpmnRequest bpmnRequest = new BpmnRequest();
 
     @Test
-    public void getHostTest() throws Exception {
+    public void getHostTest() {
         bpmnRequest.getHost();
     }
 
     @Test
-    public void setHostTest() throws Exception {
+    public void setHostTest() {
         bpmnRequest.setHost(new CamundaInput());
     }
 
     @Test
-    public void getRequestIdTest() throws Exception {
+    public void getRequestIdTest() {
         bpmnRequest.getRequestId();
     }
 
     @Test
-    public void setRequestIdTest() throws Exception {
+    public void setRequestIdTest() {
         bpmnRequest.setRequestId(new CamundaInput());
     }
 
     @Test
-    public void getIsBaseVfModuleTest() throws Exception {
+    public void getIsBaseVfModuleTest() {
         bpmnRequest.getIsBaseVfModule();
     }
 
     @Test
-    public void setIsBaseVfModuleTest() throws Exception {
+    public void setIsBaseVfModuleTest() {
         bpmnRequest.setIsBaseVfModule(new CamundaBooleanInput());
     }
 
     @Test
-    public void getRecipeTimeoutTest() throws Exception {
+    public void getRecipeTimeoutTest() {
         bpmnRequest.getRecipeTimeout();
     }
 
     @Test
-    public void setRecipeTimeoutTest() throws Exception {
+    public void setRecipeTimeoutTest() {
         bpmnRequest.setRecipeTimeout(new CamundaIntegerInput());
     }
 
     @Test
-    public void getRequestActionTest() throws Exception {
+    public void getRequestActionTest() {
         bpmnRequest.getRequestAction();
     }
 
     @Test
-    public void setRequestActionTest() throws Exception {
+    public void setRequestActionTest() {
         bpmnRequest.setRequestAction(new CamundaInput());
     }
 
     @Test
-    public void getServiceInstanceIdTest() throws Exception {
+    public void getServiceInstanceIdTest() {
         bpmnRequest.getServiceInstanceId();
     }
 
     @Test
-    public void setServiceInstanceIdTest() throws Exception {
+    public void setServiceInstanceIdTest() {
         bpmnRequest.setServiceInstanceId(new CamundaInput());
     }
 
     @Test
-    public void getVnfIdTest() throws Exception {
+    public void getVnfIdTest() {
         bpmnRequest.getVnfId();
     }
 
     @Test
-    public void setVnfIdTest() throws Exception {
+    public void setVnfIdTest() {
         bpmnRequest.setVnfId(new CamundaInput());
     }
 
     @Test
-    public void getVfModuleIdTest() throws Exception {
+    public void getVfModuleIdTest() {
         bpmnRequest.getVnfId();
     }
 
     @Test
-    public void setVfModuleIdTest() throws Exception {
+    public void setVfModuleIdTest() {
         bpmnRequest.setVfModuleId(new CamundaInput());
     }
 
     @Test
-    public void getVolumeGroupIdTest() throws Exception {
+    public void getVolumeGroupIdTest() {
         bpmnRequest.getVolumeGroupId();
     }
 
     @Test
-    public void setVolumeGroupIdTest() throws Exception {
+    public void setVolumeGroupIdTest() {
         bpmnRequest.setVolumeGroupId(new CamundaInput());
     }
 
     @Test
-    public void getNetworkIdTest() throws Exception {
+    public void getNetworkIdTest() {
         bpmnRequest.getNetworkId();
     }
 
     @Test
-    public void setNetworkIdTest() throws Exception {
+    public void setNetworkIdTest() {
         bpmnRequest.setNetworkId(new CamundaInput());
     }
 
     @Test
-    public void getServiceTypeTest() throws Exception {
+    public void getServiceTypeTest() {
         bpmnRequest.getServiceType();
     }
 
     @Test
-    public void setServiceTypeTest() throws Exception {
+    public void setServiceTypeTest() {
         bpmnRequest.setServiceType(new CamundaInput());
     }
 
     @Test
-    public void getVnfTypeTest() throws Exception {
+    public void getVnfTypeTest() {
         bpmnRequest.getVnfType();
     }
 
     @Test
-    public void setVnfTypeTest() throws Exception {
+    public void setVnfTypeTest() {
         bpmnRequest.setVnfType(new CamundaInput());
     }
 
     @Test
-    public void getVfModuleTypeTest() throws Exception {
+    public void getVfModuleTypeTest() {
         bpmnRequest.getVfModuleType();
     }
 
     @Test
-    public void setVfModuleTypeTest() throws Exception {
+    public void setVfModuleTypeTest() {
         bpmnRequest.setVfModuleType(new CamundaInput());
     }
 
     @Test
-    public void getNetworkTypeTest() throws Exception {
+    public void getNetworkTypeTest() {
         bpmnRequest.getNetworkType();
     }
 
     @Test
-    public void setNetworkTypeTest() throws Exception {
+    public void setNetworkTypeTest() {
         bpmnRequest.setNetworkType(new CamundaInput());
     }
 
     @Test
-    public void getRequestDetailsTest() throws Exception {
+    public void getRequestDetailsTest() {
         bpmnRequest.getRequestDetails();
     }
 
     @Test
-    public void setRequestDetailsTest() throws Exception {
+    public void setRequestDetailsTest() {
         bpmnRequest.setRequestDetails(new CamundaInput());
     }
 

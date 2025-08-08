@@ -212,7 +212,7 @@ public class OofHomingTestIT extends BaseIntegrationTest {
 
     @Test
 
-    public void testHoming_success_2AR1Vnf() throws Exception {
+    public void testHoming_success_2AR1Vnf() {
 
         mockOof(wireMockServer);
 
@@ -266,7 +266,7 @@ public class OofHomingTestIT extends BaseIntegrationTest {
 
     @Test
 
-    public void testHoming_success_2AR1Vnf2Net() throws Exception {
+    public void testHoming_success_2AR1Vnf2Net() {
 
         mockOof(wireMockServer);
 
@@ -341,7 +341,7 @@ public class OofHomingTestIT extends BaseIntegrationTest {
     @Test
 
 
-    public void testHoming_success_vnfResourceList() throws Exception {
+    public void testHoming_success_vnfResourceList() {
 
         // Create a Service Decomposition
         MockGetServiceResourcesCatalogDataByModelUuid(wireMockServer, "2f7f309d-c842-4644-a2e4-34167be5eeb4",
@@ -419,7 +419,7 @@ public class OofHomingTestIT extends BaseIntegrationTest {
     }
 
     @Test
-    public void testHoming_success_existingLicense() throws Exception {
+    public void testHoming_success_existingLicense() {
 
         mockOof(wireMockServer);
 
@@ -474,7 +474,7 @@ public class OofHomingTestIT extends BaseIntegrationTest {
     }
 
     @Test
-    public void testHoming_error_inputVariable() throws Exception {
+    public void testHoming_error_inputVariable() {
 
         String businessKey = UUID.randomUUID().toString();
         Map<String, Object> variables = new HashMap<>();
@@ -494,7 +494,7 @@ public class OofHomingTestIT extends BaseIntegrationTest {
 
     @Test
 
-    public void testHoming_error_badResponse() throws Exception {
+    public void testHoming_error_badResponse() {
         mockOof_500(wireMockServer);
 
         String businessKey = UUID.randomUUID().toString();
@@ -515,7 +515,7 @@ public class OofHomingTestIT extends BaseIntegrationTest {
 
     @Test
 
-    public void testHoming_error_oofNoSolution() throws Exception {
+    public void testHoming_error_oofNoSolution() {
         mockOof(wireMockServer);
 
         String businessKey = UUID.randomUUID().toString();
@@ -538,7 +538,7 @@ public class OofHomingTestIT extends BaseIntegrationTest {
 
     @Test
 
-    public void testHoming_error_oofPolicyException() throws Exception {
+    public void testHoming_error_oofPolicyException() {
         mockOof(wireMockServer);
 
         String businessKey = UUID.randomUUID().toString();
@@ -562,7 +562,7 @@ public class OofHomingTestIT extends BaseIntegrationTest {
 
     @Test
 
-    public void testHoming_error_oofServiceException() throws Exception {
+    public void testHoming_error_oofServiceException() {
         mockOof(wireMockServer);
 
         String businessKey = UUID.randomUUID().toString();

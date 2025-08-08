@@ -65,7 +65,7 @@ public class NotificationControllerTest {
     }
 
     @Test
-    public void testReceiveNotification() throws Exception {
+    public void testReceiveNotification() {
         // given
         final MockHttpServletRequestBuilder request =
                 MockMvcRequestBuilders.post(notification).contentType(MediaType.APPLICATION_JSON).content(JSON);

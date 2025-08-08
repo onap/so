@@ -61,7 +61,7 @@ public class BPRestCallbackUnitTest {
     }
 
     @Test
-    public void sendTest() throws IOException {
+    public void sendTest() {
         ResponseEntity<String> postResponse = new ResponseEntity<String>("response", HttpStatus.OK);
         doReturn(restTemplate).when(bpRestCallback).setRestTemplate(60000);
         doReturn(false).when(bpRestCallback).setAuthorizationHeader(headers);
@@ -71,7 +71,7 @@ public class BPRestCallbackUnitTest {
     }
 
     @Test
-    public void sendNoAuthHeaderTest() throws IOException {
+    public void sendNoAuthHeaderTest() {
         doReturn(true).when(bpRestCallback).setAuthorizationHeader(headers);
         doReturn(restTemplate).when(bpRestCallback).setRestTemplate(60000);
         boolean response = bpRestCallback.send("http://localhost:8000/sdnc", message);
@@ -79,7 +79,7 @@ public class BPRestCallbackUnitTest {
     }
 
     @Test
-    public void sendErrorTest() throws IOException {
+    public void sendErrorTest() {
         doReturn(false).when(bpRestCallback).setAuthorizationHeader(headers);
         doReturn(restTemplate).when(bpRestCallback).setRestTemplate(60000);
         when(restTemplate.postForEntity(uri, requestEntity, String.class))
@@ -89,7 +89,7 @@ public class BPRestCallbackUnitTest {
     }
 
     @Test
-    public void sendResponse3xxTest() throws IOException {
+    public void sendResponse3xxTest() {
         ResponseEntity<String> postResponse = new ResponseEntity<String>("response", HttpStatus.MULTIPLE_CHOICES);
         doReturn(false).when(bpRestCallback).setAuthorizationHeader(headers);
         doReturn(restTemplate).when(bpRestCallback).setRestTemplate(60000);
@@ -99,7 +99,7 @@ public class BPRestCallbackUnitTest {
     }
 
     @Test
-    public void sendResponseNullMessageTest() throws IOException {
+    public void sendResponseNullMessageTest() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntityNoMessage = new HttpEntity<>(null, httpHeaders);
@@ -112,7 +112,7 @@ public class BPRestCallbackUnitTest {
     }
 
     @Test
-    public void postThrowsExceptionTest() throws IOException {
+    public void postThrowsExceptionTest() {
         doReturn(false).when(bpRestCallback).setAuthorizationHeader(headers);
         doReturn(restTemplate).when(bpRestCallback).setRestTemplate(60000);
         when(restTemplate.postForEntity(uri, requestEntity, String.class))

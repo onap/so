@@ -269,15 +269,7 @@ public class MsoNetworkAdapterImpl {
         }
 
         if (routeTableFqdns != null && !routeTableFqdns.isEmpty() && os3template) {
-            try {
-                mergeRouteTableRefs(routeTableFqdns, stackParams);
-            } catch (MsoException me) {
-                me.addContext(CREATE_NETWORK_CONTEXT);
-                logger.error("{} {} Exception Create Network, merging routeTableRefs type {} in {}/{} ",
-                        MessageEnum.RA_CREATE_NETWORK_EXC, ErrorCode.DataError.getValue(),
-                        neutronNetworkType.toString(), cloudSiteId, tenantId, me);
-                throw new NetworkException(me);
-            }
+            mergeRouteTableRefs(routeTableFqdns, stackParams);
         }
 
         // Deploy the network stack
@@ -496,15 +488,7 @@ public class MsoNetworkAdapterImpl {
             }
 
             if (routeTableFqdns != null && !routeTableFqdns.isEmpty() && os3template) {
-                try {
-                    mergeRouteTableRefs(routeTableFqdns, stackParams);
-                } catch (MsoException me) {
-                    me.addContext(UPDATE_NETWORK_CONTEXT);
-                    logger.error("{} {} Exception - UpdateNetwork mergeRouteTableRefs type {} in {}/{} ",
-                            MessageEnum.RA_UPDATE_NETWORK_ERR, ErrorCode.DataError.getValue(),
-                            neutronNetworkType.toString(), cloudSiteId, tenantId, me);
-                    throw new NetworkException(me);
-                }
+                mergeRouteTableRefs(routeTableFqdns, stackParams);
             }
 
             // Update the network stack
@@ -864,7 +848,7 @@ public class MsoNetworkAdapterImpl {
         return;
     }
 
-    private void mergeRouteTableRefs(List<String> rtFqdns, Map<String, Object> stackParams) throws MsoException {
+    private void mergeRouteTableRefs(List<String> rtFqdns, Map<String, Object> stackParams) {
 
         // update parameters
         if (rtFqdns != null) {

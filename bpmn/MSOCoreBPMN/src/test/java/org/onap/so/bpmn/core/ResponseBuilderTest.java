@@ -42,7 +42,7 @@ public class ResponseBuilderTest {
     private Object obj;
 
     @Before
-    public void before() throws Exception {
+    public void before() {
         responseBuilder = new ResponseBuilder();
         ProcessDefinition mockProcessDefinition = mock(ProcessDefinition.class);
         when(mockProcessDefinition.getKey()).thenReturn(processKey);

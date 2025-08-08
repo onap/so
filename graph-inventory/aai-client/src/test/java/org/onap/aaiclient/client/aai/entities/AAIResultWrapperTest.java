@@ -39,7 +39,6 @@ import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.springframework.util.SerializationUtils;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -63,7 +62,7 @@ public class AAIResultWrapperTest {
     }
 
     @Test
-    public void testAAIResultWrapperIsSerializable() throws IOException {
+    public void testAAIResultWrapperIsSerializable() {
         AAIResultWrapper original = new AAIResultWrapper("");
         byte[] serialized = SerializationUtils.serialize(original);
         AAIResultWrapper deserialized = (AAIResultWrapper) SerializationUtils.deserialize(serialized);
@@ -77,7 +76,7 @@ public class AAIResultWrapperTest {
     }
 
     @Test
-    public void testAsMap() throws JsonParseException, JsonMappingException, IOException {
+    public void testAsMap() throws JsonMappingException, IOException {
         ObjectMapper mapper = new AAICommonObjectMapperProvider().getMapper();
         Map<String, Object> expected = mapper.readValue(json, new TypeReference<Map<String, Object>>() {});
 

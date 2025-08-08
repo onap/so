@@ -32,7 +32,7 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 
 public class UnassignNetworkBBTest extends BaseBPMNTest {
     @Test
-    public void sunnyDayAssignNetwork_Test() throws InterruptedException {
+    public void sunnyDayAssignNetwork_Test() {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignNetworkBB", variables);
         assertThat(pi).isNotNull();
@@ -43,7 +43,7 @@ public class UnassignNetworkBBTest extends BaseBPMNTest {
     }
 
     @Test
-    public void rainyDayAssignNetwork_Test() throws Exception {
+    public void rainyDayAssignNetwork_Test() {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(unassignNetworkBB)
                 .checkRelationshipRelatedTo(any(BuildingBlockExecution.class), eq("vf-module"));

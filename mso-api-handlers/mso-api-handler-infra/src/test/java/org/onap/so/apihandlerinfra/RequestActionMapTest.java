@@ -28,7 +28,7 @@ public class RequestActionMapTest {
     RequestActionMap test = new RequestActionMap();
 
     @Test
-    public void getMappedRequestActionTest() throws Exception {
+    public void getMappedRequestActionTest() {
 
         test.getMappedRequestAction("action");
     }
