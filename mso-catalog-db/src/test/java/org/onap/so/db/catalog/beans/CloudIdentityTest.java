@@ -23,7 +23,6 @@ package org.onap.so.db.catalog.beans;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import java.security.GeneralSecurityException;
 import org.junit.Test;
 import org.onap.so.utils.CryptoUtils;
 
@@ -65,7 +64,7 @@ public class CloudIdentityTest {
     }
 
     @Test
-    public final void testEncryption() throws GeneralSecurityException {
+    public final void testEncryption() {
         String encrypted = CryptoUtils.encryptCloudConfigPassword("password");
         assertTrue(encrypted != null);
         assertTrue(!encrypted.equals("password"));

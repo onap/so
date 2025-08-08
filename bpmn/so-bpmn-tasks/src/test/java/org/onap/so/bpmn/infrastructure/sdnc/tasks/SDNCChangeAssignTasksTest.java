@@ -79,7 +79,7 @@ public class SDNCChangeAssignTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void changeModelVnfTest() throws Exception {
+    public void changeModelVnfTest() {
         doReturn(new GenericResourceApiVnfOperationInformation()).when(sdncVnfResources).changeModelVnf(eq(genericVnf),
                 eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));
         sdncChangeAssignTasks.changeModelVnf(execution);
@@ -90,7 +90,7 @@ public class SDNCChangeAssignTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void changeModelVnfExceptionTest() throws Exception {
+    public void changeModelVnfExceptionTest() {
         expectedException.expect(BpmnError.class);
         doThrow(RuntimeException.class).when(sdncVnfResources).changeModelVnf(eq(genericVnf), eq(serviceInstance),
                 eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));

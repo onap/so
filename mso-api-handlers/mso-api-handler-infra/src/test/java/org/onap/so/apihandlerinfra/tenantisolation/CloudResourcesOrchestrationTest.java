@@ -26,7 +26,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import java.text.ParseException;
 import javax.ws.rs.core.MediaType;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
@@ -50,7 +49,7 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
     HttpHeaders headers = new HttpHeaders();
 
     @Before
-    public void setupTestClass() throws Exception {
+    public void setupTestClass() {
         wireMockServer.stubFor(post(urlPathEqualTo(getTestUrl(""))).willReturn(
                 aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_CREATED)));
@@ -142,7 +141,7 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
     }
 
     @Test
-    public void testUnlock() throws ParseException {
+    public void testUnlock() {
         wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl("requestIdtestUnlock"))).willReturn(
                 aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(String.format(getResponseTemplate, "requestIdtestUnlock", "IN_PROGRESS"))
@@ -161,7 +160,7 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
     }
 
     @Test
-    public void testUnlockComplete() throws ParseException {
+    public void testUnlockComplete() {
         wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl("requestIdtestUnlockComplete"))).willReturn(
                 aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(String.format(getResponseTemplate, "requestIdtestUnlockComplete", "COMPLETE"))
@@ -204,7 +203,7 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
     }
 
     @Test
-    public void testGetOperationalEnvSuccess() throws ParseException {
+    public void testGetOperationalEnvSuccess() {
         wireMockServer
                 .stubFor(get(urlPathEqualTo(getTestUrl("90c56827-1c78-4827-bc4d-6afcdb37a51f"))).willReturn(
                         aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -232,7 +231,7 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
     }
 
     @Test
-    public void testGetOperationalEnvFilterSuccess() throws ParseException {
+    public void testGetOperationalEnvFilterSuccess() {
         wireMockServer
                 .stubFor(get(urlPathEqualTo(getTestUrl("requestIdtestGetOperationalEnvFilterSuccess"))).willReturn(
                         aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -269,7 +268,7 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
     }
 
     @Test
-    public void testGetOperationalEnvFilterException1() throws ParseException {
+    public void testGetOperationalEnvFilterException1() {
         InfraActiveRequests iar = new InfraActiveRequests();
         iar.setRequestId("requestId-getOpEnvFilterEx1");
         iar.setRequestScope("requestScope");
@@ -293,7 +292,7 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
     }
 
     @Test
-    public void testGetOperationalEnvFilterException2() throws ParseException {
+    public void testGetOperationalEnvFilterException2() {
         InfraActiveRequests iar = new InfraActiveRequests();
         iar.setRequestId("requestIdFilterException2");
         iar.setRequestScope("requestScope");

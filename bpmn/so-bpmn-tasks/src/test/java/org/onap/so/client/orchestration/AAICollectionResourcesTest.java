@@ -50,7 +50,7 @@ public class AAICollectionResourcesTest extends BaseTaskTest {
     }
 
     @Test
-    public void createCollectionTest() throws Exception {
+    public void createCollectionTest() {
         networkCollection.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
         doReturn(new org.onap.aai.domain.yang.Collection()).when(MOCK_aaiObjectMapper).mapCollection(networkCollection);
 
@@ -64,7 +64,7 @@ public class AAICollectionResourcesTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateCollectionTest() throws Exception {
+    public void updateCollectionTest() {
         doReturn(new org.onap.aai.domain.yang.Collection()).when(MOCK_aaiObjectMapper).mapCollection(networkCollection);
         aaiCollectionResources.updateCollection(networkCollection);
         verify(MOCK_aaiResourcesClient, times(1)).update(
@@ -74,7 +74,7 @@ public class AAICollectionResourcesTest extends BaseTaskTest {
     }
 
     @Test
-    public void deleteCollectionTest() throws Exception {
+    public void deleteCollectionTest() {
         aaiCollectionResources.deleteCollection(networkCollection);
         verify(MOCK_aaiResourcesClient, times(1)).delete(eq(
                 AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().collection(networkCollection.getId()))));

@@ -31,7 +31,7 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 
 public class DeleteNetworkBBTest extends BaseBPMNTest {
     @Test
-    public void sunnyDayDeleteNetwork_Test() throws InterruptedException {
+    public void sunnyDayDeleteNetwork_Test() {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeleteNetworkBB", variables);
         assertThat(pi).isNotNull();
         assertThat(pi).isStarted().hasPassedInOrder("deleteNetwork_startEvent", "deleteNetworkAIC", "updateNetworkAAI",
@@ -40,7 +40,7 @@ public class DeleteNetworkBBTest extends BaseBPMNTest {
     }
 
     @Test
-    public void rainyDayDeleteNetwork_Test() throws Exception {
+    public void rainyDayDeleteNetwork_Test() {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(networkAdapterDeleteTasks)
                 .deleteNetwork(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeleteNetworkBB", variables);

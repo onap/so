@@ -77,7 +77,7 @@ public class AAIVolumeGroupResourcesTest extends TestDataSetup {
 
 
     @Test
-    public void updateOrchestrationStatusVolumeGroupTest() throws Exception {
+    public void updateOrchestrationStatusVolumeGroupTest() {
         volumeGroup.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
 
         doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),
@@ -92,7 +92,7 @@ public class AAIVolumeGroupResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void createVolumeGroupTest() throws Exception {
+    public void createVolumeGroupTest() {
         volumeGroup.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
 
         doNothing().when(MOCK_aaiResourcesClient).create(isA(AAIResourceUri.class),
@@ -106,7 +106,7 @@ public class AAIVolumeGroupResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void connectVolumeGroupToVnfTest() throws Exception {
+    public void connectVolumeGroupToVnfTest() {
 
         volumeGroup.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
 
@@ -118,7 +118,7 @@ public class AAIVolumeGroupResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void connectVolumeGroupToTenantTest() throws Exception {
+    public void connectVolumeGroupToTenantTest() {
         GenericVnf genericVnf = buildGenericVnf();
 
         volumeGroup.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
@@ -140,7 +140,7 @@ public class AAIVolumeGroupResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void updateHeatStackIdVolumeGroupTest() throws Exception {
+    public void updateHeatStackIdVolumeGroupTest() {
         volumeGroup.setHeatStackId("testVolumeHeatStackId");
 
         doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),

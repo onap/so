@@ -74,7 +74,7 @@ public class ConfigDeployVnfTest extends BaseTaskTest {
 
 
     @Test
-    public void preProcessAbstractCDSProcessingTest() throws Exception {
+    public void preProcessAbstractCDSProcessingTest() {
 
         configDeployVnf.preProcessAbstractCDSProcessing(execution);
 
@@ -82,14 +82,14 @@ public class ConfigDeployVnfTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateAAIConfigureTaskTest() throws Exception {
+    public void updateAAIConfigureTaskTest() {
 
         configDeployVnf.updateAAIConfigure(execution);
         assertTrue(true);
     }
 
     @Test
-    public void updateAAIConfiguredTaskTest() throws Exception {
+    public void updateAAIConfiguredTaskTest() {
         configDeployVnf.updateAAIConfigured(execution);
         assertTrue(true);
     }

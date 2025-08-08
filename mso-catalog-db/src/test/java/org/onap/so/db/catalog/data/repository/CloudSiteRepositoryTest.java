@@ -35,7 +35,7 @@ public class CloudSiteRepositoryTest extends BaseTest {
     private CloudSiteRepository cloudSiteRepository;
 
     @Test
-    public void findByClliAndAicVersionTest() throws Exception {
+    public void findByClliAndAicVersionTest() {
         CloudSite cloudSite = cloudSiteRepository.findByClliAndCloudVersion("MDT13", "2.5");
         Assert.assertNotNull(cloudSite);
         Assert.assertEquals("mtn13", cloudSite.getId());
@@ -51,7 +51,7 @@ public class CloudSiteRepositoryTest extends BaseTest {
     }
 
     @Test
-    public void findAllTest() throws Exception {
+    public void findAllTest() {
         List<CloudSite> cloudSiteList = cloudSiteRepository.findAll();
         Assert.assertFalse(CollectionUtils.isEmpty(cloudSiteList));
     }

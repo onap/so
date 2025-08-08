@@ -130,7 +130,7 @@ public class RequestHandlerUtilsUnitTest {
         currentActiveRequest.setOriginalRequestId(RESUMED_REQUEST_ID);
     }
 
-    private void setCurrentActiveRequestNullInfraActive() throws IOException {
+    private void setCurrentActiveRequestNullInfraActive() {
         currentActiveRequestIARNull.setRequestId(CURRENT_REQUEST_ID);
         currentActiveRequestIARNull.setSource("VID");
         currentActiveRequestIARNull.setStartTime(startTimeStamp);
@@ -394,7 +394,7 @@ public class RequestHandlerUtilsUnitTest {
     }
 
     @Test
-    public void getModelTypeApplyUpdatedConfigTest() throws ApiException {
+    public void getModelTypeApplyUpdatedConfigTest() {
         ModelType modelTypeExpected = ModelType.vnf;
 
         ModelType modelTypeResult = requestHandler.getModelType(Action.applyUpdatedConfig, null);
@@ -402,7 +402,7 @@ public class RequestHandlerUtilsUnitTest {
     }
 
     @Test
-    public void getModelTypeInPlaceSoftwareUpdateTest() throws ApiException {
+    public void getModelTypeInPlaceSoftwareUpdateTest() {
         ModelType modelTypeExpected = ModelType.vnf;
 
         ModelType modelTypeResult = requestHandler.getModelType(Action.inPlaceSoftwareUpdate, null);
@@ -410,7 +410,7 @@ public class RequestHandlerUtilsUnitTest {
     }
 
     @Test
-    public void getModelTypeAddMembersTest() throws ApiException {
+    public void getModelTypeAddMembersTest() {
         ModelType modelTypeExpected = ModelType.instanceGroup;
 
         ModelType modelTypeResult = requestHandler.getModelType(Action.addMembers, null);
@@ -418,7 +418,7 @@ public class RequestHandlerUtilsUnitTest {
     }
 
     @Test
-    public void getModelTypeRemoveMembersTest() throws ApiException {
+    public void getModelTypeRemoveMembersTest() {
         ModelType modelTypeExpected = ModelType.instanceGroup;
 
         ModelType modelTypeResult = requestHandler.getModelType(Action.removeMembers, null);
@@ -426,7 +426,7 @@ public class RequestHandlerUtilsUnitTest {
     }
 
     @Test
-    public void getModelTypeTest() throws ApiException {
+    public void getModelTypeTest() {
         ModelType modelTypeExpected = ModelType.service;
         ModelInfo modelInfo = new ModelInfo();
         modelInfo.setModelType(ModelType.service);

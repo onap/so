@@ -17,7 +17,6 @@ import org.onap.so.adapters.vnf.MsoVnfAdapterImpl;
 import org.onap.so.adapters.vnf.VnfAdapterUtils;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.logging.tasks.AuditMDCSetup;
-import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.utils.MsoHeatUtils;
 import com.woorea.openstack.heat.model.Stack;
 
@@ -58,7 +57,7 @@ public class RollbackServiceTest {
     }
 
     @Test
-    public void testExecuteExternalTask() throws VnfException, MsoException, IOException {
+    public void testExecuteExternalTask() throws VnfException, IOException {
         String payload = new String(Files.readAllBytes(Paths.get(RESOURCE_PATH + "/vnfAdapterTaskRequestCreate.xml")));
 
         Stack stack = new Stack();

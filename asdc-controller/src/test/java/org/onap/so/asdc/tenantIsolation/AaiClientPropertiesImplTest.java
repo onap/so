@@ -32,7 +32,7 @@ public class AaiClientPropertiesImplTest extends BaseTest {
     private static final String LOCAL_HOST = "http://localhost:";
 
     @BeforeClass
-    public static void setup() throws Exception {
+    public static void setup() {
         System.setProperty("mso.config.path", "src/test/resources");
     }
 

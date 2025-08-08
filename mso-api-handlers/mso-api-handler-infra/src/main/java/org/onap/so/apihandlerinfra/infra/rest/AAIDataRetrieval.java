@@ -28,7 +28,6 @@ import org.onap.aaiclient.client.graphinventory.entities.Node;
 import org.onap.aaiclient.client.graphinventory.entities.Start;
 import org.onap.aaiclient.client.graphinventory.entities.TraversalBuilder;
 import org.onap.aaiclient.client.graphinventory.entities.__;
-import org.onap.so.apihandlerinfra.infra.rest.exception.AAIEntityNotFound;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory;
 import org.slf4j.Logger;
@@ -77,7 +76,7 @@ public class AAIDataRetrieval {
                 });
     }
 
-    public VolumeGroup getVolumeGroup(String vnfId, String volumeGroupId) throws AAIEntityNotFound {
+    public VolumeGroup getVolumeGroup(String vnfId, String volumeGroupId) {
         AAIResultWrapper wrapper = this.getAaiResourcesClient()
                 .get(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId))
                         .relatedTo(Types.VOLUME_GROUP.getFragment(volumeGroupId)));

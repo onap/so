@@ -31,7 +31,7 @@ import org.onap.so.bpmn.BaseBPMNTest;
 
 public class VNFUpgradePostCheckActivityTest extends BaseBPMNTest {
     @Test
-    public void sunnyDayVNFUpgradePostCheckActivity_Test() throws InterruptedException {
+    public void sunnyDayVNFUpgradePostCheckActivity_Test() {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFUpgradePostCheckActivity", variables);
         processExternalTasks(pi, "TaskUpgradePostCheck");
         assertThat(pi).isNotNull().isStarted().hasPassedInOrder("VNFUpgradePostCheckActivity_Start",
@@ -40,7 +40,7 @@ public class VNFUpgradePostCheckActivityTest extends BaseBPMNTest {
     }
 
     @Test
-    public void rainyDayVNFUpgradePostCheckActivity_Test() throws Exception {
+    public void rainyDayVNFUpgradePostCheckActivity_Test() {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(appcOrchestratorPreProcessor)
                 .buildAppcTaskRequest(any(BuildingBlockExecution.class), any(String.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFUpgradePostCheckActivity", variables);

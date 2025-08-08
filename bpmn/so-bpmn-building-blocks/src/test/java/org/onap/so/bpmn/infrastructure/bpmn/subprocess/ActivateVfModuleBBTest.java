@@ -23,7 +23,6 @@ package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
 import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-import java.io.IOException;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Before;
@@ -41,7 +40,7 @@ public class ActivateVfModuleBBTest extends BaseBPMNTest {
     }
 
     @Test
-    public void sunnyDay() throws InterruptedException, IOException {
+    public void sunnyDay() {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("ActivateVfModuleBB", variables);
 
@@ -52,7 +51,7 @@ public class ActivateVfModuleBBTest extends BaseBPMNTest {
     }
 
     @Test
-    public void rainyDay() throws Exception {
+    public void rainyDay() {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         doThrow(BpmnError.class).when(aaiUpdateTasks)
                 .updateOrchestrationStatusActivateVfModule(any(BuildingBlockExecution.class));

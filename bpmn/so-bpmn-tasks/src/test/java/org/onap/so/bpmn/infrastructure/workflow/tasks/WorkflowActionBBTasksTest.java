@@ -668,7 +668,7 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void postProcessingExecuteBBActivateVfModuleNotReplaceInstanceTest() throws CloneNotSupportedException {
+    public void postProcessingExecuteBBActivateVfModuleNotReplaceInstanceTest() {
         WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
         workflowResourceIds.setServiceInstanceId("1");
         workflowResourceIds.setVnfId("1");
@@ -733,8 +733,7 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void postProcessingExecuteBBActivateVfModuleReplaceInstanceHasConfigurationTest()
-            throws CloneNotSupportedException {
+    public void postProcessingExecuteBBActivateVfModuleReplaceInstanceHasConfigurationTest() {
         RequestDetails reqDetails = new RequestDetails();
         RelatedInstanceList[] list = new RelatedInstanceList[2];
         RelatedInstanceList vnfList = new RelatedInstanceList();
@@ -826,8 +825,7 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void postProcessingExecuteBBActivateVfModuleReplaceInstanceHasNoConfigurationTest()
-            throws CloneNotSupportedException {
+    public void postProcessingExecuteBBActivateVfModuleReplaceInstanceHasNoConfigurationTest() {
 
         WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
         workflowResourceIds.setServiceInstanceId("1");
@@ -889,7 +887,7 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 
 
     @Test
-    public void getExecuteBBForConfigTest() throws CloneNotSupportedException {
+    public void getExecuteBBForConfigTest() {
         BuildingBlock bbActivateVfModule = new BuildingBlock().setBpmnFlowName("ActivateVfModuleBB");
         ExecuteBuildingBlock ebbActivateVfModule = new ExecuteBuildingBlock().setBuildingBlock(bbActivateVfModule);
 

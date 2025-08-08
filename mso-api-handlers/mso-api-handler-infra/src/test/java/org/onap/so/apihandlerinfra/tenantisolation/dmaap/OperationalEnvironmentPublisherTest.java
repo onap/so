@@ -21,8 +21,6 @@
 package org.onap.so.apihandlerinfra.tenantisolation.dmaap;
 
 import static org.junit.Assert.assertEquals;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import org.junit.Test;
 import org.onap.so.apihandlerinfra.BaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +32,7 @@ public class OperationalEnvironmentPublisherTest extends BaseTest {
     private OperationalEnvironmentPublisher publisher;
 
     @Test
-    public void getProperties() throws FileNotFoundException, IOException {
+    public void getProperties() {
 
         assertEquals(
                 "B3705D6C2D521257CC2422ACCF03B001811ACC49F564DDB3A2CF2A1378B6D35A23CDCB696F2E1EDFBE6758DFE7C74B94F4A7DF84A0E2BB904935AC4D900D5597DF981ADE6CE1FF3AF993BED0",

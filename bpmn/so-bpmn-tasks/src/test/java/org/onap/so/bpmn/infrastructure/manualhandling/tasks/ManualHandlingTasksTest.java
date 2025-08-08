@@ -75,7 +75,7 @@ public class ManualHandlingTasksTest extends BaseTaskTest {
     private ExternalTicket MOCK_externalTicket;
 
     @Before
-    public void before() throws Exception {
+    public void before() {
         MockitoAnnotations.initMocks(this);
         delegateExecution = new DelegateExecutionFake();
         buildingBlockExecution = new DelegateExecutionImpl(delegateExecution);
@@ -114,7 +114,7 @@ public class ManualHandlingTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void completeTask_Test() throws Exception {
+    public void completeTask_Test() {
         when(task.getId()).thenReturn("taskId");
         when(task.getExecution()).thenReturn(mockExecution);
         Map<String, Object> taskVariables = new HashMap<String, Object>();
@@ -127,7 +127,7 @@ public class ManualHandlingTasksTest extends BaseTaskTest {
     }
 
     @Test
-    public void updateRequestDbStatus_Test() throws Exception {
+    public void updateRequestDbStatus_Test() {
         InfraActiveRequests mockedRequest = new InfraActiveRequests();
         when(requestsDbClient.getInfraActiveRequestbyRequestId(any(String.class))).thenReturn(mockedRequest);
         doNothing().when(requestsDbClient).updateInfraActiveRequests(any(InfraActiveRequests.class));

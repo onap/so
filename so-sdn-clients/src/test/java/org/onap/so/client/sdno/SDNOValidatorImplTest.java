@@ -30,7 +30,7 @@ import org.onap.so.client.sdno.beans.SDNO;
 public class SDNOValidatorImplTest {
 
     @Test
-    public void buildRequestDiagnosticTest() throws Exception {
+    public void buildRequestDiagnosticTest() {
         SDNOValidatorImpl validator = new SDNOValidatorImpl();
         UUID uuid = UUID.randomUUID();
         GenericVnf vnf = new GenericVnf();

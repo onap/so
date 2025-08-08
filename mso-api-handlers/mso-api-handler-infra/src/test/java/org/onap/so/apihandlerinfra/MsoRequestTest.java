@@ -54,7 +54,6 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import junitparams.JUnitParamsRunner;
@@ -127,7 +126,7 @@ public class MsoRequestTest extends BaseTest {
     }
 
     @Parameters
-    private Collection<Object[]> successParameters() throws JsonParseException, JsonMappingException, IOException {
+    private Collection<Object[]> successParameters() throws JsonMappingException, IOException {
         return Arrays.asList(new Object[][] {
                 {mapper.readValue(inputStream("/CloudConfiguration/EmptyCloudConfiguration.json"),
                         ServiceInstancesRequest.class), instanceIdMapTest, Action.updateInstance, "3"},
@@ -234,8 +233,7 @@ public class MsoRequestTest extends BaseTest {
     }
 
     @Parameters
-    private Collection<Object[]> customWorkflowSuccessParameters()
-            throws JsonParseException, JsonMappingException, IOException {
+    private Collection<Object[]> customWorkflowSuccessParameters() throws JsonMappingException, IOException {
         return Arrays.asList(
                 new Object[][] {{mapper.readValue(inputStream("/SuccessfulValidation/v1ExecuteCustomWorkflow.json"),
                         ServiceInstancesRequest.class), instanceIdMapTest, Action.inPlaceSoftwareUpdate, "1"}
@@ -245,8 +243,7 @@ public class MsoRequestTest extends BaseTest {
 
     @Test
     @Parameters(method = "aLaCarteParameters")
-    public void aLaCarteFlagTest(boolean expected, ServiceInstancesRequest sir)
-            throws JsonParseException, IOException, ValidationException {
+    public void aLaCarteFlagTest(boolean expected, ServiceInstancesRequest sir) {
         this.expected = expected;
         this.sir = sir;
         this.msoRequest = new MsoRequest();
@@ -268,7 +265,7 @@ public class MsoRequestTest extends BaseTest {
     @Parameters(method = "validationParameters")
     public void validationFailureTest(String expectedException, ServiceInstancesRequest sir,
             HashMap<String, String> instanceIdMapTest, Action action, int reqVersion)
-            throws JsonParseException, JsonMappingException, IOException, ValidationException {
+            throws IOException, ValidationException {
         this.expectedException = expectedException;
         this.sir = sir;
         this.instanceIdMapTest = instanceIdMapTest;
@@ -880,8 +877,7 @@ public class MsoRequestTest extends BaseTest {
     }
 
     @Test
-    public void nullInstanceIdMapTest()
-            throws JsonParseException, JsonMappingException, IOException, ValidationException {
+    public void nullInstanceIdMapTest() throws JsonMappingException, IOException, ValidationException {
         this.sir = mapper.readValue(inputStream("/RequestParameters/RequestParametersNull.json"),
                 ServiceInstancesRequest.class);
         this.instanceIdMapTest = null;
@@ -893,8 +889,7 @@ public class MsoRequestTest extends BaseTest {
     }
 
     @Test
-    public void serviceInstanceIdHashMapFailureTest()
-            throws JsonParseException, JsonMappingException, IOException, ValidationException {
+    public void serviceInstanceIdHashMapFailureTest() throws JsonMappingException, IOException, ValidationException {
         this.sir = mapper.readValue(inputStream("/SuccessfulValidation/InstanceIdHashMap.json"),
                 ServiceInstancesRequest.class);
         this.instanceIdMapTest.put("serviceInstanceId", "test");
@@ -908,8 +903,7 @@ public class MsoRequestTest extends BaseTest {
     }
 
     @Test
-    public void vnfInstanceIdHashMapFailureTest()
-            throws JsonParseException, JsonMappingException, IOException, ValidationException {
+    public void vnfInstanceIdHashMapFailureTest() throws JsonMappingException, IOException, ValidationException {
         this.sir = mapper.readValue(inputStream("/SuccessfulValidation/InstanceIdHashMap.json"),
                 ServiceInstancesRequest.class);
         this.instanceIdMapTest.put("vnfInstanceId", "test");
@@ -923,8 +917,7 @@ public class MsoRequestTest extends BaseTest {
     }
 
     @Test
-    public void vfModuleInstanceIdHashMapFailureTest()
-            throws JsonParseException, JsonMappingException, IOException, ValidationException {
+    public void vfModuleInstanceIdHashMapFailureTest() throws JsonMappingException, IOException, ValidationException {
         this.sir = mapper.readValue(inputStream("/SuccessfulValidation/InstanceIdHashMap.json"),
                 ServiceInstancesRequest.class);
         this.instanceIdMapTest.put("vfModuleInstanceId", "test");
@@ -939,7 +932,7 @@ public class MsoRequestTest extends BaseTest {
 
     @Test
     public void volumeGroupInstanceIdHashMapFailureTest()
-            throws JsonParseException, JsonMappingException, IOException, ValidationException {
+            throws JsonMappingException, IOException, ValidationException {
         this.sir = mapper.readValue(inputStream("/SuccessfulValidation/InstanceIdHashMap.json"),
                 ServiceInstancesRequest.class);
         this.instanceIdMapTest.put("volumeGroupInstanceId", "test");
@@ -953,8 +946,7 @@ public class MsoRequestTest extends BaseTest {
     }
 
     @Test
-    public void networkInstanceIdHashMapFailureTest()
-            throws JsonParseException, JsonMappingException, IOException, ValidationException {
+    public void networkInstanceIdHashMapFailureTest() throws JsonMappingException, IOException, ValidationException {
         this.sir = mapper.readValue(inputStream("/SuccessfulValidation/InstanceIdHashMap.json"),
                 ServiceInstancesRequest.class);
         this.instanceIdMapTest.put("networkInstanceId", "test");
@@ -969,7 +961,7 @@ public class MsoRequestTest extends BaseTest {
 
     @Test
     public void configurationInstanceIdHashMapFailureTest()
-            throws JsonParseException, JsonMappingException, IOException, ValidationException {
+            throws JsonMappingException, IOException, ValidationException {
         this.sir = mapper.readValue(inputStream("/SuccessfulValidation/InstanceIdHashMap.json"),
                 ServiceInstancesRequest.class);
         this.instanceIdMapTest.put("configurationInstanceId", "test");
@@ -983,8 +975,7 @@ public class MsoRequestTest extends BaseTest {
     }
 
     @Test
-    public void instanceGroupIdHashMapFailureTest()
-            throws JsonParseException, JsonMappingException, IOException, ValidationException {
+    public void instanceGroupIdHashMapFailureTest() throws JsonMappingException, IOException, ValidationException {
         this.sir = mapper.readValue(inputStream("/SuccessfulValidation/InstanceIdHashMap.json"),
                 ServiceInstancesRequest.class);
         this.instanceIdMapTest.put("instanceGroupInstanceId", "test");
@@ -998,8 +989,7 @@ public class MsoRequestTest extends BaseTest {
     }
 
     @Test
-    public void testVfModuleV4UsePreLoad()
-            throws JsonParseException, JsonMappingException, IOException, ValidationException {
+    public void testVfModuleV4UsePreLoad() throws JsonMappingException, IOException, ValidationException {
         this.requestJSON = inputStream("/SuccessfulValidation/v4CreateVfModule.json");
         this.instanceIdMapTest.put("serviceInstanceId", "3eecada1-83a4-4f33-9ed2-7937e7b8dbbc");
         this.instanceIdMapTest.put("vnfInstanceId", "3eecada1-83a4-4f33-9ed2-7937e7b8dbbc");
@@ -1020,8 +1010,7 @@ public class MsoRequestTest extends BaseTest {
     }
 
     @Test
-    public void buildServiceErrorResponseTest()
-            throws JsonParseException, JsonMappingException, IOException, ValidationException {
+    public void buildServiceErrorResponseTest() throws JsonMappingException, IOException, ValidationException {
         this.sir = mapper.readValue(inputStream("/SuccessfulValidation/InstanceIdHashMap.json"),
                 ServiceInstancesRequest.class);
         this.instanceIdMapTest.put("serviceInstanceId", "test");
@@ -1043,7 +1032,7 @@ public class MsoRequestTest extends BaseTest {
 
     @Test
     public void buildServiceErrorPolicyExceptionResponseTest()
-            throws JsonParseException, JsonMappingException, IOException, ValidationException {
+            throws JsonMappingException, IOException, ValidationException {
         this.sir = mapper.readValue(inputStream("/SuccessfulValidation/InstanceIdHashMap.json"),
                 ServiceInstancesRequest.class);
         this.instanceIdMapTest.put("serviceInstanceId", "test");

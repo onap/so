@@ -101,7 +101,7 @@ public class MonitorInstantiateVnfmNodeTaskTest extends BaseTaskTest {
     }
 
     @Test
-    public void testTimeOutLogFailue() throws Exception {
+    public void testTimeOutLogFailue() {
         objUnderTest.timeOutLogFailue(stubbedxecution);
         verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1221),
                 eq("Node operation time out"));

@@ -29,7 +29,7 @@ import org.onap.so.bpmn.BaseBPMNTest;
 
 public class BuildingBlockValidatorRunnerTest extends BaseBPMNTest {
     @Test
-    public void sunnyDayActivateNetwork_Test() throws InterruptedException {
+    public void sunnyDayActivateNetwork_Test() {
         variables.put("flowToBeCalled", "CreateVolumeGroupBB");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("BuildingBlockValidatorRunnerTest", variables);
         assertThat(pi).isNotNull();

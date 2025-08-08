@@ -25,7 +25,6 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
-import java.io.IOException;
 import java.util.UUID;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +35,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.db.request.beans.RequestProcessingData;
 import org.onap.so.db.request.client.RequestsDbClient;
-import org.onap.so.openstack.exceptions.MsoException;
 import com.woorea.openstack.heat.model.Stack;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -53,7 +51,7 @@ public class StackStatusHandlerTest {
     }
 
     @Test
-    public final void recordExists_Test() throws MsoException, IOException {
+    public final void recordExists_Test() {
         RequestProcessingData requestProcessingData = new RequestProcessingData();
         requestProcessingData.setValue("testMe");
 
@@ -72,7 +70,7 @@ public class StackStatusHandlerTest {
     }
 
     @Test
-    public final void record_Not_Exists_Test() throws MsoException, IOException {
+    public final void record_Not_Exists_Test() {
         String requestId = getRequestId();
         ArgumentCaptor<RequestProcessingData> requestCaptor = ArgumentCaptor.forClass(RequestProcessingData.class);
         doReturn(null).when(requestDBClient).getRequestProcessingDataBySoRequestIdAndNameAndGrouping(requestId,

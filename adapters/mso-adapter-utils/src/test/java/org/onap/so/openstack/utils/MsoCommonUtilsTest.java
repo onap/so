@@ -40,8 +40,6 @@ import org.onap.so.openstack.exceptions.MsoIOException;
 import org.onap.so.openstack.exceptions.MsoOpenstackException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.woorea.openstack.base.client.OpenStackBaseException;
 import com.woorea.openstack.base.client.OpenStackConnectException;
@@ -92,7 +90,7 @@ public class MsoCommonUtilsTest extends BaseTest {
     }
 
     @Test
-    public final void testKeystoneErrorToMsoException() throws JsonParseException, JsonMappingException, IOException {
+    public final void testKeystoneErrorToMsoException() throws IOException {
         OpenStackBaseException openStackConnectException = new OpenStackConnectException("connect");
 
         OpenStackBaseException openStackResponseException = new OpenStackResponseException("response", 1);
@@ -123,7 +121,7 @@ public class MsoCommonUtilsTest extends BaseTest {
     }
 
     @Test
-    public final void testHeatExceptionToMsoException() throws JsonParseException, JsonMappingException, IOException {
+    public final void testHeatExceptionToMsoException() throws IOException {
         OpenStackBaseException openStackConnectException = new OpenStackConnectException("connect");
 
         OpenStackBaseException openStackResponseException = new OpenStackResponseException("response", 1);
@@ -154,8 +152,7 @@ public class MsoCommonUtilsTest extends BaseTest {
     }
 
     @Test
-    public final void testNeutronExceptionToMsoException()
-            throws JsonParseException, JsonMappingException, IOException {
+    public final void testNeutronExceptionToMsoException() throws IOException {
         OpenStackBaseException openStackConnectException = new OpenStackConnectException("connect");
 
         OpenStackBaseException openStackResponseException = new OpenStackResponseException("response", 1);

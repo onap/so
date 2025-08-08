@@ -103,7 +103,7 @@ public class ServiceEBBLoaderTest extends BaseTaskTest {
     private BBInputSetup mockBbInputSetup;
 
     @Before
-    public void before() throws Exception {
+    public void before() {
         execution = new DelegateExecutionFake();
         mockUserParamsServiceTraversal = mock(UserParamsServiceTraversal.class);
         mockCatalogDbClient = mock(CatalogDbClient.class);

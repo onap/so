@@ -40,7 +40,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Optional;
@@ -102,8 +101,7 @@ public class ServiceInstanceUriTest {
     }
 
     @Test
-    public void oneKey()
-            throws IOException, URISyntaxException, GraphInventoryUriNotFoundException, GraphInventoryPayloadException {
+    public void oneKey() throws GraphInventoryUriNotFoundException, GraphInventoryPayloadException {
 
         ServiceInstanceUri instance = new ServiceInstanceUri(Types.SERVICE_INSTANCE.getFragment("key1"));
         ServiceInstanceUri spy = spy(instance);
@@ -120,8 +118,7 @@ public class ServiceInstanceUriTest {
     }
 
     @Test
-    public void oneKeyQueryParams()
-            throws IOException, URISyntaxException, GraphInventoryUriNotFoundException, GraphInventoryPayloadException {
+    public void oneKeyQueryParams() throws GraphInventoryUriNotFoundException, GraphInventoryPayloadException {
 
         ServiceInstanceUri instance = new ServiceInstanceUri(Types.SERVICE_INSTANCE.getFragment("key1"));
         ServiceInstanceUri spy = spy(instance);
@@ -138,8 +135,7 @@ public class ServiceInstanceUriTest {
     }
 
     @Test
-    public void oneKeyEncoded()
-            throws IOException, URISyntaxException, GraphInventoryUriNotFoundException, GraphInventoryPayloadException {
+    public void oneKeyEncoded() throws GraphInventoryUriNotFoundException, GraphInventoryPayloadException {
 
         ServiceInstanceUri instance = new ServiceInstanceUri(Types.SERVICE_INSTANCE.getFragment("key1"));
         ServiceInstanceUri spy = spy(instance);
@@ -156,8 +152,7 @@ public class ServiceInstanceUriTest {
     }
 
     @Test
-    public void oneKeyGetKeys()
-            throws IOException, URISyntaxException, GraphInventoryUriNotFoundException, GraphInventoryPayloadException {
+    public void oneKeyGetKeys() throws GraphInventoryUriNotFoundException, GraphInventoryPayloadException {
 
         ServiceInstanceUri instance = new ServiceInstanceUri(Types.SERVICE_INSTANCE.getFragment("key1"));
         ServiceInstanceUri spy = spy(instance);
@@ -170,7 +165,7 @@ public class ServiceInstanceUriTest {
     }
 
     @Test
-    public void oneKeyClone() throws GraphInventoryUriNotFoundException, GraphInventoryPayloadException {
+    public void oneKeyClone() {
         ServiceInstanceUri instance = new ServiceInstanceUri(Types.SERVICE_INSTANCE.getFragment("key1"));
         ServiceInstanceUri spy = spy(instance);
         String uri =
@@ -184,7 +179,7 @@ public class ServiceInstanceUriTest {
     }
 
     @Test
-    public void notfound() throws IOException, GraphInventoryUriNotFoundException, GraphInventoryPayloadException {
+    public void notfound() throws IOException {
         final String content =
                 new String(Files.readAllBytes(Paths.get(AAI_JSON_FILE_LOCATION + "empty-query-result.json")));
 
@@ -202,7 +197,7 @@ public class ServiceInstanceUriTest {
     }
 
     @Test
-    public void noVertexFound() throws GraphInventoryUriNotFoundException, GraphInventoryPayloadException {
+    public void noVertexFound() {
         ServiceInstanceUri instance = new ServiceInstanceUri(Types.SERVICE_INSTANCE.getFragment("key3"));
         ServiceInstanceUri spy = spy(instance);
         AAIResourcesClient client = aaiClient;
@@ -215,8 +210,7 @@ public class ServiceInstanceUriTest {
     }
 
     @Test
-    public void serializeTest() throws IOException, ClassNotFoundException, GraphInventoryUriNotFoundException,
-            GraphInventoryPayloadException {
+    public void serializeTest() throws IOException, ClassNotFoundException {
         ServiceInstanceUri instance = new ServiceInstanceUri(Types.SERVICE_INSTANCE.getFragment("key3"));
         final String content = new String(
                 Files.readAllBytes(Paths.get(AAI_JSON_FILE_LOCATION + "service-instance-pathed-query.json")));
@@ -268,8 +262,7 @@ public class ServiceInstanceUriTest {
     }
 
     @Test
-    public void relatedToEqualityTestBeforeBuildTest()
-            throws GraphInventoryUriNotFoundException, GraphInventoryPayloadException {
+    public void relatedToEqualityTestBeforeBuildTest() {
         ServiceInstanceUri instance = new ServiceInstanceUri(Types.SERVICE_INSTANCE.getFragment("key1"));
         ServiceInstanceUri spy = spy(instance);
 

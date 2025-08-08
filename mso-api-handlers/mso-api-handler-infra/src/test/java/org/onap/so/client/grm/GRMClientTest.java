@@ -57,7 +57,7 @@ public class GRMClientTest extends BaseTest {
             "(?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-5][0-9a-f]{3}-?[089ab][0-9a-f]{3}-?[0-9a-f]{12}$";
 
     @BeforeClass
-    public static void setUp() throws Exception {
+    public static void setUp() {
         System.setProperty("mso.config.path", "src/test/resources");
     }
 

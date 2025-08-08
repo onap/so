@@ -76,7 +76,7 @@ public class ResourceRequestBuilderTest extends BaseTest {
     }
 
     @Test
-    public void getResourceInputTest() throws Exception {
+    public void getResourceInputTest() {
 
         VnfResource resource = new VnfResource();
         resource.setResourceType(ResourceType.VNF);
@@ -88,7 +88,7 @@ public class ResourceRequestBuilderTest extends BaseTest {
     }
 
     @Test
-    public void getResourceInputDefaultValueTest() throws Exception {
+    public void getResourceInputDefaultValueTest() {
         VnfResource resource = new VnfResource();
         resource.setResourceType(ResourceType.VNF);
         resource.setResourceInput("{\"a\":\"key|default_value\"}");
@@ -99,7 +99,7 @@ public class ResourceRequestBuilderTest extends BaseTest {
     }
 
     @Test
-    public void getResourceInputValueNoDefaultTest() throws Exception {
+    public void getResourceInputValueNoDefaultTest() {
         VnfResource resource = new VnfResource();
         resource.setResourceType(ResourceType.VNF);
         resource.setResourceInput("{\"a\":\"value\"}");
@@ -110,7 +110,7 @@ public class ResourceRequestBuilderTest extends BaseTest {
     }
 
     @Test
-    public void getResourceSequenceTest() throws Exception {
+    public void getResourceSequenceTest() {
 
         wireMockServer.stubFor(get(urlEqualTo(
                 "/ecomp/mso/catalog/v2/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
@@ -181,7 +181,7 @@ public class ResourceRequestBuilderTest extends BaseTest {
     }
 
     @Test
-    public void getResourceInputWithEmptyServiceResourcesTest() throws Exception {
+    public void getResourceInputWithEmptyServiceResourcesTest() {
 
         VnfResource resource = new VnfResource();
         resource.setResourceType(ResourceType.VNF);
@@ -207,7 +207,7 @@ public class ResourceRequestBuilderTest extends BaseTest {
     }
 
     @Test
-    public void getListResourceInputTest() throws Exception {
+    public void getListResourceInputTest() {
 
         List<Map> vnfdata = null;
 

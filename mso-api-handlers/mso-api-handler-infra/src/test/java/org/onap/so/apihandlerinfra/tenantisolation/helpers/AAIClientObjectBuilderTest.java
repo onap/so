@@ -57,7 +57,7 @@ public class AAIClientObjectBuilderTest extends BaseTest {
     }
 
     @Test
-    public void testGetAaiClientObjectBuilder() throws Exception {
+    public void testGetAaiClientObjectBuilder() {
         AAIClientObjectBuilder builder = new AAIClientObjectBuilder();
         org.onap.aai.domain.yang.OperationalEnvironment operEnv =
                 builder.buildAAIOperationalEnvironment("Active", request);

@@ -212,7 +212,7 @@ public class AAICreateTasksTest extends TestDataSetup {
     }
 
     @Test
-    public void createProjectTest() throws Exception {
+    public void createProjectTest() {
         doNothing().when(aaiServiceInstanceResources)
                 .createProjectandConnectServiceInstance(serviceInstance.getProject(), serviceInstance);
         aaiCreateTasks.createProject(execution);

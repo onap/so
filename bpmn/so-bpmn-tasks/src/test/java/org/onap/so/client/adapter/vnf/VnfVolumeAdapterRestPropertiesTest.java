@@ -21,7 +21,6 @@
 package org.onap.so.client.adapter.vnf;
 
 import static org.junit.Assert.assertEquals;
-import java.net.MalformedURLException;
 import org.junit.Test;
 
 public class VnfVolumeAdapterRestPropertiesTest {
@@ -38,7 +37,7 @@ public class VnfVolumeAdapterRestPropertiesTest {
     }
 
     @Test
-    public void testGetUrl() throws MalformedURLException {
+    public void testGetUrl() {
         assertEquals("mso.adapters.volume-groups.rest.endpoint", VnfVolumeAdapterRestProperties.endpointProp);
     }
 }

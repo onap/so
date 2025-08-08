@@ -45,7 +45,6 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -2086,7 +2085,7 @@ public class WorkflowActionTest extends BaseTaskTest {
     }
 
     @Test
-    public void sortExecutionPathByObjectForVlanTaggingCreateTest() throws Exception {
+    public void sortExecutionPathByObjectForVlanTaggingCreateTest() {
         List<ExecuteBuildingBlock> executeFlows = new ArrayList<>();
 
         BuildingBlock bb = new BuildingBlock().setBpmnFlowName("AssignNetworkBB").setKey("0");
@@ -2120,7 +2119,7 @@ public class WorkflowActionTest extends BaseTaskTest {
     }
 
     @Test
-    public void sortExecutionPathByObjectForVlanTaggingDeleteTest() throws Exception {
+    public void sortExecutionPathByObjectForVlanTaggingDeleteTest() {
         List<ExecuteBuildingBlock> executeFlows = new ArrayList<>();
 
         BuildingBlock bb = new BuildingBlock().setBpmnFlowName("DeactivateNetworkBB").setKey("0");
@@ -2154,7 +2153,7 @@ public class WorkflowActionTest extends BaseTaskTest {
     }
 
     @Test
-    public void queryNorthBoundRequestCatalogDbNestedTest() throws MalformedURLException {
+    public void queryNorthBoundRequestCatalogDbNestedTest() {
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
         List<OrchestrationFlow> orchFlows = createFlowList("AAICheckVnfInMaintBB", "AAISetVnfInMaintBB",
                 "VNF-Macro-Replace", "SDNOVnfHealthCheckBB", "AAIUnsetVnfInMaintBB");
@@ -2180,7 +2179,7 @@ public class WorkflowActionTest extends BaseTaskTest {
     }
 
     @Test
-    public void queryNorthBoundRequestCatalogDbTransportTest() throws MalformedURLException {
+    public void queryNorthBoundRequestCatalogDbTransportTest() {
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
         List<OrchestrationFlow> orchFlows = createFlowList("AssignServiceInstanceBB");
         northBoundRequest.setOrchestrationFlowList(orchFlows);

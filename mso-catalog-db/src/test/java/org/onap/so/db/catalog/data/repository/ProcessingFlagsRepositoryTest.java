@@ -32,7 +32,7 @@ public class ProcessingFlagsRepositoryTest extends BaseTest {
     private ProcessingFlagsRepository processingFlagsRepository;
 
     @Test
-    public void findByFlagTest() throws Exception {
+    public void findByFlagTest() {
         ProcessingFlags processingFlags = processingFlagsRepository.findByFlag("TESTFLAG");
         Assert.assertNotNull(processingFlags);
         Assert.assertEquals("TESTENDPOINT", processingFlags.getEndpoint());
