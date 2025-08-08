@@ -102,8 +102,7 @@ public class ModifyRANNssiBBTask {
         return sliceProfileServiceInstanceObj;
     }
 
-    SliceProfile mapUserParamsToSliceProfile(List<Map<String, Object>> sliceProfilesData)
-            throws JsonProcessingException {
+    SliceProfile mapUserParamsToSliceProfile(List<Map<String, Object>> sliceProfilesData) {
         SliceProfile sliceProfile = new SliceProfile();
         Map<String, Object> mapParam = (Map<String, Object>) sliceProfilesData.get(0).get("nssi");
         LOGGER.info(">>> mapParam in map: {}", mapParam);
@@ -174,8 +173,7 @@ public class ModifyRANNssiBBTask {
         return sliceProfile;
     }
 
-    private String getSliceProfileIdFromReq(List<Map<String, Object>> sliceProfilesData)
-            throws JsonProcessingException {
+    private String getSliceProfileIdFromReq(List<Map<String, Object>> sliceProfilesData) {
         Map<String, Object> mapParam = (Map<String, Object>) sliceProfilesData.get(0).get("nssi");
 
         List<Object> list = (ArrayList<Object>) mapParam.get("sliceProfileList");

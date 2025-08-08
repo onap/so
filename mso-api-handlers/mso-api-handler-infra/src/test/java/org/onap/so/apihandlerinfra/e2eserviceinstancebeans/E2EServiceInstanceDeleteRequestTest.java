@@ -29,7 +29,7 @@ public class E2EServiceInstanceDeleteRequestTest {
     E2EServiceInstanceDeleteRequest test = new E2EServiceInstanceDeleteRequest();
 
     @Test
-    public void verifyE2ESerInstanceDelReq() throws Exception {
+    public void verifyE2ESerInstanceDelReq() {
 
         test.setGlobalSubscriberId("id");
         assertEquals(test.getGlobalSubscriberId(), "id");

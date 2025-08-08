@@ -28,7 +28,7 @@ public class DelE2ESvcRespTest {
     DelE2ESvcResp test = new DelE2ESvcResp();
 
     @Test
-    public void verifyDelE2ESvcResp() throws Exception {
+    public void verifyDelE2ESvcResp() {
         test.setOperationId("operationId");
         assertEquals(test.getOperationId(), "operationId");
     }

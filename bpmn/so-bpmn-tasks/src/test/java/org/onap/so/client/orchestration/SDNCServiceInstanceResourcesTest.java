@@ -39,8 +39,6 @@ import org.onap.so.bpmn.infrastructure.sdnc.mapper.ServiceTopologyOperationMappe
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
-import org.onap.so.client.exception.BadResponseException;
-import org.onap.so.client.exception.MapperException;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
 
@@ -64,7 +62,7 @@ public class SDNCServiceInstanceResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void assignServiceInstanceSuccessTest() throws Exception {
+    public void assignServiceInstanceSuccessTest() {
         doReturn(new GenericResourceApiServiceOperationInformation()).when(MOCK_serviceTopologyOperationMapper)
                 .reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.ASSIGN),
                         eq(GenericResourceApiRequestActionEnumeration.CREATESERVICEINSTANCE),
@@ -76,7 +74,7 @@ public class SDNCServiceInstanceResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void assignServiceInstanceExceptionTest() throws Exception {
+    public void assignServiceInstanceExceptionTest() {
         expectedException.expect(Exception.class);
         doThrow(Exception.class).when(MOCK_serviceTopologyOperationMapper).reqMapper(
                 eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.ASSIGN),
@@ -86,7 +84,7 @@ public class SDNCServiceInstanceResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void deleteServiceInstanceSuccessTest() throws Exception {
+    public void deleteServiceInstanceSuccessTest() {
         doReturn(new GenericResourceApiServiceOperationInformation()).when(MOCK_serviceTopologyOperationMapper)
                 .reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DELETE),
                         eq(GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE),
@@ -98,7 +96,7 @@ public class SDNCServiceInstanceResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void deleteServiceInstanceExceptionTest() throws Exception {
+    public void deleteServiceInstanceExceptionTest() {
         expectedException.expect(Exception.class);
         doThrow(Exception.class).when(MOCK_serviceTopologyOperationMapper).reqMapper(
                 eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DELETE),
@@ -108,7 +106,7 @@ public class SDNCServiceInstanceResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void unassignServiceInstanceSuccessTest() throws Exception {
+    public void unassignServiceInstanceSuccessTest() {
         doReturn(new GenericResourceApiServiceOperationInformation()).when(MOCK_serviceTopologyOperationMapper)
                 .reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DELETE),
                         eq(GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE),
@@ -120,7 +118,7 @@ public class SDNCServiceInstanceResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void unassignServiceInstanceExceptionTest() throws Exception {
+    public void unassignServiceInstanceExceptionTest() {
         expectedException.expect(Exception.class);
         doThrow(Exception.class).when(MOCK_serviceTopologyOperationMapper).reqMapper(
                 eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DELETE),
@@ -130,7 +128,7 @@ public class SDNCServiceInstanceResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void deactivateServiceInstanceSuccessTest() throws Exception {
+    public void deactivateServiceInstanceSuccessTest() {
         doReturn(new GenericResourceApiServiceOperationInformation()).when(MOCK_serviceTopologyOperationMapper)
                 .reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DEACTIVATE),
                         eq(GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE),
@@ -142,7 +140,7 @@ public class SDNCServiceInstanceResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void deactivateServiceInstanceExceptionTest() throws Exception {
+    public void deactivateServiceInstanceExceptionTest() {
         expectedException.expect(Exception.class);
         doThrow(Exception.class).when(MOCK_serviceTopologyOperationMapper).reqMapper(
                 eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DEACTIVATE),
@@ -152,7 +150,7 @@ public class SDNCServiceInstanceResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void test_changeModelServiceInstance() throws MapperException, BadResponseException {
+    public void test_changeModelServiceInstance() {
         doReturn(new GenericResourceApiServiceOperationInformation()).when(MOCK_serviceTopologyOperationMapper)
                 .reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.CHANGE_ASSIGN),
                         eq(GenericResourceApiRequestActionEnumeration.CREATESERVICEINSTANCE),

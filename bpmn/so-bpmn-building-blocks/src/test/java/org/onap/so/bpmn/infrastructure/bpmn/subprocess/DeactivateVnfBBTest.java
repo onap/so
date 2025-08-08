@@ -23,7 +23,6 @@ package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-import java.io.IOException;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Test;
@@ -32,7 +31,7 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 
 public class DeactivateVnfBBTest extends BaseBPMNTest {
     @Test
-    public void sunnyDay() throws InterruptedException, IOException {
+    public void sunnyDay() {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeactivateVnfBB", variables);
         assertThat(pi).isNotNull();
@@ -53,7 +52,7 @@ public class DeactivateVnfBBTest extends BaseBPMNTest {
     }
 
     @Test
-    public void rainyDayDeactivateVnfAAIError_Test() throws Exception {
+    public void rainyDayDeactivateVnfAAIError_Test() {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiUpdateTasks)
                 .updateOrchestrationStatusAssignedVnf(any(BuildingBlockExecution.class));

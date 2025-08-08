@@ -25,7 +25,6 @@ import java.util.List;
 import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.so.adapters.vevnfm.aai.AaiConnection;
 import org.onap.so.adapters.vevnfm.configuration.ConfigProperties;
-import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.retry.annotation.Backoff;
@@ -49,7 +48,7 @@ public class StartupService {
     }
 
     @Retryable(value = {Exception.class}, maxAttempts = 5, backoff = @Backoff(delay = 5000, multiplier = 2))
-    public List<EsrSystemInfo> receiveVnfm() throws VeVnfmException {
+    public List<EsrSystemInfo> receiveVnfm() {
         return aaiConnection.receiveVnfm();
     }
 

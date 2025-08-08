@@ -37,7 +37,6 @@ import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.so.adapters.etsisol003adapter.lcm.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.onap.so.adapters.vevnfm.configuration.ConfigProperties;
 import org.onap.so.adapters.vevnfm.configuration.StartupConfiguration;
-import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
@@ -86,7 +85,7 @@ public class SubscribeSenderTest {
     }
 
     @Test
-    public void testSuccess() throws VeVnfmException {
+    public void testSuccess() {
         // given
         final EsrSystemInfo info = new EsrSystemInfo();
         info.setServiceUrl(URL);

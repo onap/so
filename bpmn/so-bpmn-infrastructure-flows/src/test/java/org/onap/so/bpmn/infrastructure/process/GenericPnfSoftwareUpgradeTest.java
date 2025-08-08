@@ -35,7 +35,6 @@ import org.onap.aaiclient.client.aai.AAIVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +70,7 @@ public class GenericPnfSoftwareUpgradeTest extends BaseBPMNTest {
     private GrpcNettyServer grpcNettyServer;
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() {
         actionNames[0] = "preCheck";
         actionNames[1] = "downloadNESw";
         actionNames[2] = "activateNESw";

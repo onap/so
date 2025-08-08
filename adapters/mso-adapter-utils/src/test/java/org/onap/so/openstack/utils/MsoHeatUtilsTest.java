@@ -127,7 +127,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
     }
 
     @Test
-    public final void pollStackForStatus_Create_Complete_Test() throws MsoException, IOException {
+    public final void pollStackForStatus_Create_Complete_Test() throws MsoException {
         Stack stack = new Stack();
         stack.setId("id");
         stack.setStackName("stackName");
@@ -149,7 +149,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
     }
 
     @Test
-    public final void pollStackForStatus_No_Polling_Test() throws MsoException, IOException {
+    public final void pollStackForStatus_No_Polling_Test() throws MsoException {
         Stack stack = new Stack();
         stack.setId("id");
         stack.setStackName("stackName");
@@ -167,7 +167,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
     }
 
     @Test
-    public final void pollStackForStatus_Polling_Exhausted_Test() throws MsoException, IOException {
+    public final void pollStackForStatus_Polling_Exhausted_Test() throws MsoException {
         Stack stack = new Stack();
         stack.setId("id");
         stack.setStackName("stackName");
@@ -184,7 +184,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
     }
 
     @Test
-    public final void postProcessStackCreate_CREATE_IN_PROGRESS_Test() throws MsoException, IOException {
+    public final void postProcessStackCreate_CREATE_IN_PROGRESS_Test() throws MsoException {
         Stack stack = new Stack();
         stack.setId("id");
         stack.setStackName("stackName");
@@ -200,7 +200,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
     }
 
     @Test
-    public final void postProcessStackCreate_Backout_True_Test() throws MsoException, IOException {
+    public final void postProcessStackCreate_Backout_True_Test() throws MsoException {
         Stack stack = new Stack();
         stack.setId("id");
         stack.setStackName("stackName");
@@ -224,7 +224,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
     }
 
     @Test
-    public final void postProcessStackCreate_Backout_True_Delete_Fail_Test() throws MsoException, IOException {
+    public final void postProcessStackCreate_Backout_True_Delete_Fail_Test() throws MsoException {
         Stack stack = new Stack();
         stack.setId("id");
         stack.setStackName("stackName");
@@ -249,7 +249,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
     }
 
     @Test
-    public final void postProcessStackCreate_Keypair_True_Test() throws MsoException, IOException {
+    public final void postProcessStackCreate_Keypair_True_Test() throws MsoException {
         Stack stack = new Stack();
         stack.setId("id");
         stack.setStackName("stackName");
@@ -273,7 +273,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
     }
 
     @Test
-    public final void handleUnknownCreateStackFailure_Test() throws MsoException, IOException {
+    public final void handleUnknownCreateStackFailure_Test() throws MsoException {
 
         Stack stack = new Stack();
         stack.setId("id");
@@ -304,7 +304,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
 
 
     @Test
-    public final void handleUnknownCreateStackFailure_Null_Stack_Test() throws MsoException, IOException {
+    public final void handleUnknownCreateStackFailure_Null_Stack_Test() throws MsoException {
         Stack stack = null;
         exceptionRule.expect(StackCreationException.class);
         exceptionRule.expectMessage("Cannot Find Stack Name or Id");
@@ -312,7 +312,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
     }
 
     @Test
-    public final void postProcessStackDelete_Stack_Test() throws MsoException, IOException {
+    public final void postProcessStackDelete_Stack_Test() throws MsoException {
         Stack deletedStack = new Stack();
         deletedStack.setId("id");
         deletedStack.setStackName("stackName");
@@ -325,7 +325,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
     }
 
     @Test
-    public final void postProcessStackDelete__Null_Stack_Test() throws MsoException, IOException {
+    public final void postProcessStackDelete__Null_Stack_Test() throws MsoException {
         Stack stack = null;
         exceptionRule.expect(StackRollbackException.class);
         exceptionRule.expectMessage("Cannot Find Stack Name or Id");
@@ -333,14 +333,14 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
     }
 
     @Test
-    public final void isKeyPairFailure_Test() throws MsoException, IOException {
+    public final void isKeyPairFailure_Test() {
         boolean actual = heatUtils.isKeyPairFailure(
                 "Exception during create VF 0 : Stack error (CREATE_FAILED): Resource CREATE failed: Conflict: resources.bfnm_my_keypair: Key pair 'hst3bbfnm0011vm001' already exists. (HTTP 409) (Request-ID:req-941b0af6-63ae-4d6a-afbc-90b728bacf82) - stack successfully deleted'rolledBack='true'");
         assertEquals(true, actual);
     }
 
     @Test
-    public final void handleKeyPairConflict_Test() throws MsoException, IOException, NovaClientException {
+    public final void handleKeyPairConflict_Test() throws MsoException, NovaClientException {
         Stack stack = new Stack();
         stack.setId("id");
         stack.setStackName("stackName");
@@ -371,7 +371,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
     }
 
     @Test
-    public final void processCreateStack_Test() throws MsoException, IOException, NovaClientException {
+    public final void processCreateStack_Test() throws MsoException {
         Stack stack = new Stack();
         stack.setId("id");
         stack.setStackName("stackName");
@@ -402,8 +402,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
     }
 
     @Test
-    public final void processCreateStack_Exception_Backout_Test()
-            throws MsoException, IOException, NovaClientException {
+    public final void processCreateStack_Exception_Backout_Test() throws MsoException {
         Stack stack = new Stack();
         stack.setId("id");
         stack.setStackName("stackName");
@@ -433,7 +432,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
 
 
     @Test
-    public final void createStack_Test() throws MsoException, IOException, NovaClientException {
+    public final void createStack_Test() throws MsoException {
         CreateStackParam createStackParam = new CreateStackParam();
         createStackParam.setStackName("stackName");
 
@@ -452,7 +451,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
     }
 
     @Test
-    public final void saveStack_Test() throws MsoException, IOException, NovaClientException {
+    public final void saveStack_Test() throws IOException {
 
         CreateStackParam createStackParam = new CreateStackParam();
         createStackParam.setStackName("stackName");
@@ -481,7 +480,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
     }
 
     @Test
-    public final void saveStack__Exists_Test() throws MsoException, IOException, NovaClientException {
+    public final void saveStack__Exists_Test() {
         CreateStackParam createStackParam = new CreateStackParam();
         createStackParam.setStackName("stackName");
         Map<String, Object> parameters = new HashMap<String, Object>();
@@ -504,7 +503,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
     }
 
     @Test
-    public final void createStack_Error_Test() throws MsoException, IOException, NovaClientException {
+    public final void createStack_Error_Test() throws MsoException {
         CreateStackParam createStackParam = new CreateStackParam();
         createStackParam.setStackName("stackName");
 
@@ -524,7 +523,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
     }
 
     @Test
-    public final void createStack_Error_404_Test() throws MsoException, IOException, NovaClientException {
+    public final void createStack_Error_404_Test() throws MsoException {
         CreateStackParam createStackParam = new CreateStackParam();
         createStackParam.setStackName("stackName");
 
@@ -544,8 +543,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
     }
 
     @Test
-    public final void processCreateStack_Exception_No_Backout_Test()
-            throws MsoException, IOException, NovaClientException {
+    public final void processCreateStack_Exception_No_Backout_Test() throws MsoException {
         Stack stack = new Stack();
         stack.setId("id");
         stack.setStackName("stackName");

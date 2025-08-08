@@ -40,7 +40,7 @@ public class DecomposeJsonUtilTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Before
-    public void before() throws Exception {
+    public void before() {
 
     }
 

@@ -23,7 +23,6 @@ package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-import java.io.IOException;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Test;
@@ -32,7 +31,7 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 
 public class AssignVnfBBTest extends BaseBPMNTest {
     @Test
-    public void sunnyDayAssignVnfBBTest() throws InterruptedException, IOException {
+    public void sunnyDayAssignVnfBBTest() {
         variables.put("homing", true);
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("AssignVnfBB", variables);
@@ -45,7 +44,7 @@ public class AssignVnfBBTest extends BaseBPMNTest {
     }
 
     @Test
-    public void rainyDayAssignVnfBBTest() throws Exception {
+    public void rainyDayAssignVnfBBTest() {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiCreateTasks)
                 .createVnf(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("AssignVnfBB", variables);

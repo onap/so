@@ -26,7 +26,6 @@ import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdWithPri
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetVfModuleId;
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockPutVfModuleId;
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockPutVfModuleIdNoResponse;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -49,7 +48,7 @@ public class CreateAAIVfModuleVolumeGroupIT extends BaseIntegrationTest {
      * Test the happy path through the flow.
      */
     @Test
-    public void happyPath() throws IOException {
+    public void happyPath() {
 
         logStart();
 
@@ -80,7 +79,7 @@ public class CreateAAIVfModuleVolumeGroupIT extends BaseIntegrationTest {
      * Test the case where the GET to AAI returns a 404.
      */
     @Test
-    public void badGet() throws IOException {
+    public void badGet() {
 
         logStart();
 
@@ -108,7 +107,7 @@ public class CreateAAIVfModuleVolumeGroupIT extends BaseIntegrationTest {
      * Test the case where the GET to AAI is successful, but he subsequent PUT returns 404.
      */
     @Test
-    public void badPatch() throws IOException {
+    public void badPatch() {
 
         logStart();
 

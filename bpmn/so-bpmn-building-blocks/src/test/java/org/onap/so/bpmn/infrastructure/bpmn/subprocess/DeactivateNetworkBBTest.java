@@ -31,7 +31,7 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 
 public class DeactivateNetworkBBTest extends BaseBPMNTest {
     @Test
-    public void sunnyDayDeactivateNetworkBB_Test() throws InterruptedException {
+    public void sunnyDayDeactivateNetworkBB_Test() {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeactivateNetworkBB", variables);
         assertThat(pi).isNotNull();
@@ -41,7 +41,7 @@ public class DeactivateNetworkBBTest extends BaseBPMNTest {
     }
 
     @Test
-    public void rainyDayDeactivateNetworkBB_Test() throws Exception {
+    public void rainyDayDeactivateNetworkBB_Test() {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(sdncDeactivateTasks)
                 .deactivateNetwork(any(BuildingBlockExecution.class));

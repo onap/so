@@ -131,7 +131,7 @@ public class PnfEventReadyKafkaClient implements KafkaClient {
             }
         }
 
-        private List<String> getPnfCorrelationIdListFromResponse(List<String> response) throws IOException {
+        private List<String> getPnfCorrelationIdListFromResponse(List<String> response) {
             if (response != null) {
                 return JsonUtilForPnfCorrelationId.parseJsonToGelAllPnfCorrelationId(response);
             }

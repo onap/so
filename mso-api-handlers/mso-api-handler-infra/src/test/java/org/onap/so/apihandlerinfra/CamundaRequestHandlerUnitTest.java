@@ -43,8 +43,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.so.apihandlerinfra.exceptions.ContactCamundaException;
-import org.onap.so.apihandlerinfra.exceptions.RequestDbFailureException;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
@@ -135,7 +133,7 @@ public class CamundaRequestHandlerUnitTest {
     }
 
     @Test
-    public void getActivityNameTest() throws IOException {
+    public void getActivityNameTest() {
         String expectedActivityName = "Last task executed: BB to Execute";
         String actualActivityName = camundaRequestHandler.getActivityName(activityInstanceList);
 
@@ -143,7 +141,7 @@ public class CamundaRequestHandlerUnitTest {
     }
 
     @Test
-    public void getActivityNameNullActivityNameTest() throws IOException {
+    public void getActivityNameNullActivityNameTest() {
         String expectedActivityName = "Task name is null.";
         HistoricActivityInstanceEntity activityInstance = new HistoricActivityInstanceEntity();
         List<HistoricActivityInstanceEntity> activityInstanceList = new ArrayList<>();
@@ -155,7 +153,7 @@ public class CamundaRequestHandlerUnitTest {
     }
 
     @Test
-    public void getActivityNameNullListTest() throws IOException {
+    public void getActivityNameNullListTest() {
         String expectedActivityName = "No results returned on activityInstance history lookup.";
         List<HistoricActivityInstanceEntity> activityInstanceList = null;
         String actualActivityName = camundaRequestHandler.getActivityName(activityInstanceList);
@@ -164,7 +162,7 @@ public class CamundaRequestHandlerUnitTest {
     }
 
     @Test
-    public void getActivityNameEmptyListTest() throws IOException {
+    public void getActivityNameEmptyListTest() {
         String expectedActivityName = "No results returned on activityInstance history lookup.";
         List<HistoricActivityInstanceEntity> activityInstanceList = new ArrayList<>();
         String actualActivityName = camundaRequestHandler.getActivityName(activityInstanceList);
@@ -173,7 +171,7 @@ public class CamundaRequestHandlerUnitTest {
     }
 
     @Test
-    public void getCamundActivityHistoryNullTest() throws IOException, ContactCamundaException {
+    public void getCamundActivityHistoryNullTest() {
         HistoricProcessInstanceEntity processInstance = new HistoricProcessInstanceEntity();
         processInstance.setId("c4c6b647-a26e-11e9-b144-0242ac14000b");
         List<HistoricProcessInstanceEntity> processInstanceList = new ArrayList<>();
@@ -188,7 +186,7 @@ public class CamundaRequestHandlerUnitTest {
     }
 
     @Test
-    public void getCamundActivityHistoryErrorTest() throws IOException, ContactCamundaException {
+    public void getCamundActivityHistoryErrorTest() {
         HistoricProcessInstanceEntity processInstance = new HistoricProcessInstanceEntity();
         processInstance.setId("c4c6b647-a26e-11e9-b144-0242ac14000b");
         List<HistoricProcessInstanceEntity> processInstanceList = new ArrayList<>();
@@ -204,7 +202,7 @@ public class CamundaRequestHandlerUnitTest {
     }
 
     @Test
-    public void getTaskName() throws IOException, ContactCamundaException {
+    public void getTaskName() {
         doReturn(processInstanceResponse).when(camundaRequestHandler).getCamundaProcessInstanceHistory(REQUEST_ID,
                 false, false, true);
         doReturn(activityInstanceResponse).when(camundaRequestHandler)
@@ -218,7 +216,7 @@ public class CamundaRequestHandlerUnitTest {
     }
 
     @Test
-    public void getTaskNameNullProcessInstanceListTest() throws IOException, ContactCamundaException {
+    public void getTaskNameNullProcessInstanceListTest() {
         ResponseEntity<List<HistoricProcessInstanceEntity>> response = new ResponseEntity<>(null, HttpStatus.OK);
 
         String actual = camundaRequestHandler.getTaskInformation(response, REQUEST_ID);
@@ -227,7 +225,7 @@ public class CamundaRequestHandlerUnitTest {
     }
 
     @Test
-    public void getTaskNameNullProcessInstanceIdTest() throws IOException, ContactCamundaException {
+    public void getTaskNameNullProcessInstanceIdTest() {
         HistoricProcessInstanceEntity processInstance = new HistoricProcessInstanceEntity();
         List<HistoricProcessInstanceEntity> processInstanceList = new ArrayList<>();
         processInstanceList.add(processInstance);
@@ -240,7 +238,7 @@ public class CamundaRequestHandlerUnitTest {
     }
 
     @Test
-    public void getTaskNameEmptyProcessInstanceListTest() throws IOException, ContactCamundaException {
+    public void getTaskNameEmptyProcessInstanceListTest() {
         List<HistoricProcessInstanceEntity> processInstanceList = new ArrayList<>();
         ResponseEntity<List<HistoricProcessInstanceEntity>> response =
                 new ResponseEntity<>(processInstanceList, HttpStatus.OK);
@@ -251,7 +249,7 @@ public class CamundaRequestHandlerUnitTest {
     }
 
     @Test
-    public void getTaskNameProcessInstanceLookupFailureTest() throws IOException, ContactCamundaException {
+    public void getTaskNameProcessInstanceLookupFailureTest() {
         doThrow(HttpClientErrorException.class).when(camundaRequestHandler).getCamundaProcessInstanceHistory(REQUEST_ID,
                 false, false, true);
 
@@ -260,7 +258,7 @@ public class CamundaRequestHandlerUnitTest {
     }
 
     @Test
-    public void getCamundaActivityHistoryTest() throws IOException, ContactCamundaException {
+    public void getCamundaActivityHistoryTest() {
         HttpHeaders headers = setHeaders();
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
         String targetUrl =
@@ -291,7 +289,7 @@ public class CamundaRequestHandlerUnitTest {
     }
 
     @Test
-    public void getCamundaProccesInstanceHistoryTest() throws IOException, ContactCamundaException {
+    public void getCamundaProccesInstanceHistoryTest() {
         HttpHeaders headers = setHeaders();
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
         String targetUrl = "http://localhost:8089/sobpmnengine/history/process-instance?processInstanceBusinessKey="
@@ -340,7 +338,7 @@ public class CamundaRequestHandlerUnitTest {
     }
 
     @Test
-    public void getCamundaProccesInstanceHistoryFailThenSuccessTest() throws IOException, ContactCamundaException {
+    public void getCamundaProccesInstanceHistoryFailThenSuccessTest() {
         HttpHeaders headers = setHeaders();
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
         String targetUrl = "http://localhost:8089/sobpmnengine/history/process-instance?processInstanceBusinessKey="
@@ -359,7 +357,7 @@ public class CamundaRequestHandlerUnitTest {
     }
 
     @Test
-    public void setCamundaHeadersTest() throws ContactCamundaException, RequestDbFailureException {
+    public void setCamundaHeadersTest() {
         String encryptedAuth = "015E7ACF706C6BBF85F2079378BDD2896E226E09D13DC2784BA309E27D59AB9FAD3A5E039DF0BB8408"; // user:password
         String key = "07a7159d3bf51a0e53be7a8f89699be7";
 

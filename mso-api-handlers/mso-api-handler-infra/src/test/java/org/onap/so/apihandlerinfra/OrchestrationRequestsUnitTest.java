@@ -46,7 +46,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.apihandler.common.ResponseBuilder;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
-import org.onap.so.apihandlerinfra.exceptions.ContactCamundaException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.constants.OrchestrationRequestFormat;
 import org.onap.so.constants.Status;
@@ -485,7 +484,7 @@ public class OrchestrationRequestsUnitTest {
     }
 
     @Test
-    public void mapRequestStatusToRequestForFormatDetailTest() throws ApiException {
+    public void mapRequestStatusToRequestForFormatDetailTest() {
         iar.setRequestStatus(Status.ABORTED.toString());
         String result =
                 orchestrationRequests.mapRequestStatusToRequest(iar, OrchestrationRequestFormat.DETAIL.toString());
@@ -494,7 +493,7 @@ public class OrchestrationRequestsUnitTest {
     }
 
     @Test
-    public void mapRequestStatusToRequestForFormatStatusDetailTest() throws ApiException {
+    public void mapRequestStatusToRequestForFormatStatusDetailTest() {
         iar.setRequestStatus(Status.ABORTED.toString());
         String result = orchestrationRequests.mapRequestStatusToRequest(iar, "statusDetail");
 
@@ -503,7 +502,7 @@ public class OrchestrationRequestsUnitTest {
 
 
     @Test
-    public void mapRequestStatusToRequestForFormatEmptyStringTest() throws ApiException {
+    public void mapRequestStatusToRequestForFormatEmptyStringTest() {
         iar.setRequestStatus(Status.ABORTED.toString());
         String result = orchestrationRequests.mapRequestStatusToRequest(iar, StringUtils.EMPTY);
 
@@ -525,7 +524,7 @@ public class OrchestrationRequestsUnitTest {
     }
 
     @Test
-    public void taskNameLookup() throws ContactCamundaException {
+    public void taskNameLookup() {
         InfraActiveRequests req = new InfraActiveRequests();
         req.setRequestId("70debc2a-d6bc-4795-87ba-38a94d9b0b99");
         Instant startInstant = Instant.now().minus(1, ChronoUnit.DAYS);
@@ -542,7 +541,7 @@ public class OrchestrationRequestsUnitTest {
     }
 
     @Test
-    public void noCamundaLookupAfterInterval() throws ContactCamundaException {
+    public void noCamundaLookupAfterInterval() {
         InfraActiveRequests req = new InfraActiveRequests();
         req.setRequestId("70debc2a-d6bc-4795-87ba-38a94d9b0b99");
         Instant startInstant = Instant.now().minus(36, ChronoUnit.DAYS);

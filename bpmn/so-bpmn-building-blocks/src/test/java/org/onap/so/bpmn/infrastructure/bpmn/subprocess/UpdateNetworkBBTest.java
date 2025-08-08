@@ -32,7 +32,7 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 
 public class UpdateNetworkBBTest extends BaseBPMNTest {
     @Test
-    public void updateNetworkBBTest() throws InterruptedException {
+    public void updateNetworkBBTest() {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("UpdateNetworkBB", variables);
         assertThat(processInstance).isNotNull();
@@ -44,7 +44,7 @@ public class UpdateNetworkBBTest extends BaseBPMNTest {
     }
 
     @Test
-    public void updateNetworkBBExceptionTest() throws Exception {
+    public void updateNetworkBBExceptionTest() {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiQueryTasks)
                 .queryNetworkVpnBinding(any(BuildingBlockExecution.class));

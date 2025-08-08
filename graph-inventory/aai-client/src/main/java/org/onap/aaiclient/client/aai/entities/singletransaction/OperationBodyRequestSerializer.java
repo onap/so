@@ -22,7 +22,6 @@ package org.onap.aaiclient.client.aai.entities.singletransaction;
 
 import java.io.IOException;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
@@ -39,8 +38,7 @@ public class OperationBodyRequestSerializer extends StdSerializer<Object> {
     }
 
     @Override
-    public void serialize(Object value, JsonGenerator gen, SerializerProvider serializers)
-            throws IOException, JsonProcessingException {
+    public void serialize(Object value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
 
         if (value instanceof String) {
             gen.writeRawValue((String) value);

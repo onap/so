@@ -142,7 +142,7 @@ public class NetworkTopologyOperationRequestMapperTest {
     }
 
     @Test
-    public void createGenericResourceApiNetworkOperationInformationReqContextNullTest() throws Exception {
+    public void createGenericResourceApiNetworkOperationInformationReqContextNullTest() {
 
         RequestContext rc = new RequestContext();
         rc.setMsoRequestId(null);
@@ -159,7 +159,7 @@ public class NetworkTopologyOperationRequestMapperTest {
     }
 
     @Test
-    public void reqMapperTest() throws Exception {
+    public void reqMapperTest() {
 
         GenericResourceApiNetworkOperationInformation networkSDNCrequest =
                 mapper.reqMapper(SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN,
@@ -172,7 +172,7 @@ public class NetworkTopologyOperationRequestMapperTest {
     }
 
     @Test
-    public void reqMapperNoCollectionTest() throws Exception {
+    public void reqMapperNoCollectionTest() {
         GenericResourceApiNetworkOperationInformation networkSDNCrequest =
                 mapper.reqMapper(SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN,
                         GenericResourceApiRequestActionEnumeration.CREATENETWORKINSTANCE, network,

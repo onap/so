@@ -103,7 +103,7 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     }
 
     @Test
-    public void testGetCloudSiteHappyPath() throws Exception {
+    public void testGetCloudSiteHappyPath() {
         CloudSite cloudSite = client.getCloudSite(MTN13);
         assertNotNull(cloudSite);
         assertNotNull(cloudSite.getIdentityService());
@@ -113,13 +113,13 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     }
 
     @Test
-    public void testGetCloudSiteNotFound() throws Exception {
+    public void testGetCloudSiteNotFound() {
         CloudSite cloudSite = client.getCloudSite(UUID.randomUUID().toString());
         assertNull(cloudSite);
     }
 
     @Test
-    public void testGetCloudifyManagerHappyPath() throws Exception {
+    public void testGetCloudifyManagerHappyPath() {
         CloudifyManager cloudifyManager = client.getCloudifyManager("mtn13");
         assertNotNull(cloudifyManager);
         assertEquals("http://localhost:28090/v2.0", cloudifyManager.getCloudifyUrl());
@@ -127,26 +127,26 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     }
 
     @Test
-    public void testGetCloudifyManagerNotFound() throws Exception {
+    public void testGetCloudifyManagerNotFound() {
         CloudifyManager cloudifyManager = client.getCloudifyManager(UUID.randomUUID().toString());
         assertNull(cloudifyManager);
     }
 
 
     @Test
-    public void testGetCloudSiteByClliAndAicVersionHappyPath() throws Exception {
+    public void testGetCloudSiteByClliAndAicVersionHappyPath() {
         CloudSite cloudSite = client.getCloudSiteByClliAndAicVersion("MDT13", "2.5");
         assertNotNull(cloudSite);
     }
 
     @Test
-    public void testGetCloudSiteByClliAndAicVersionNotFound() throws Exception {
+    public void testGetCloudSiteByClliAndAicVersionNotFound() {
         CloudSite cloudSite = client.getCloudSiteByClliAndAicVersion("MDT13", "232496239746328");
         assertNull(cloudSite);
     }
 
     @Test
-    public void testGetServiceByID() throws Exception {
+    public void testGetServiceByID() {
         Service serviceByID = client.getServiceByID("5df8b6de-2083-11e7-93ae-92361f002671");
         assertNotNull(serviceByID);
         assertEquals("MSOTADevInfra_vSAMP10a_Service", serviceByID.getModelName());
@@ -155,13 +155,13 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     }
 
     @Test
-    public void testGetServiceByIDNotFound() throws Exception {
+    public void testGetServiceByIDNotFound() {
         Service serviceByID = client.getServiceByID(UUID.randomUUID().toString());
         assertNull(serviceByID);
     }
 
     @Test
-    public void testGetVfModuleByModelUUID() throws Exception {
+    public void testGetVfModuleByModelUUID() {
         VfModule vfModule = client.getVfModuleByModelUUID("20c4431c-246d-11e7-93ae-92361f002671");
         assertNotNull(vfModule);
         assertNotNull(vfModule.getVfModuleCustomization());
@@ -170,20 +170,20 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     }
 
     @Test
-    public void testGetVfModuleByModelUUIDNotFound() throws Exception {
+    public void testGetVfModuleByModelUUIDNotFound() {
         VfModule vfModule = client.getVfModuleByModelUUID(UUID.randomUUID().toString());
         assertNull(vfModule);
     }
 
     @Test
-    public void testGetVnfResourceByModelUUID() throws Exception {
+    public void testGetVnfResourceByModelUUID() {
         VnfResource vnfResource = client.getVnfResourceByModelUUID("ff2ae348-214a-11e7-93ae-92361f002671");
         assertNotNull(vnfResource);
         assertEquals("vSAMP10a", vnfResource.getModelName());
     }
 
     @Test
-    public void testGetVnfResourceByModelUUIDNotFound() throws Exception {
+    public void testGetVnfResourceByModelUUIDNotFound() {
         VnfResource vnfResource = client.getVnfResourceByModelUUID(UUID.randomUUID().toString());
         assertNull(vnfResource);
     }
@@ -663,7 +663,7 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     }
 
     @Test
-    public void testGetServiceTopologyById() throws Exception {
+    public void testGetServiceTopologyById() {
         org.onap.so.rest.catalog.beans.Service serviceByID =
                 client.getServiceModelInformation("5df8b6de-2083-11e7-93ae-92361f002671", "2");
         assertNotNull(serviceByID);
@@ -673,13 +673,13 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     }
 
     @Test
-    public void testGetServices() throws Exception {
+    public void testGetServices() {
         List<org.onap.so.rest.catalog.beans.Service> services = client.getServices();
         assertEquals(false, services.isEmpty());
     }
 
     @Test
-    public void testVnf() throws Exception {
+    public void testVnf() {
         org.onap.so.rest.catalog.beans.Vnf vnf = client.getVnfModelInformation("5df8b6de-2083-11e7-93ae-92361f002671",
                 "68dc9a92-214c-11e7-93ae-92361f002671", "0");
         assertNotNull(vnf);

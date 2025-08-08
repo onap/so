@@ -52,7 +52,7 @@ public class AAIClientHelperTest extends BaseTest {
     private AAIClientHelper clientHelper;
 
     @Test
-    public void testGetAaiOperationalEnvironmentSuccess() throws Exception {
+    public void testGetAaiOperationalEnvironmentSuccess() {
         wireMockServer.stubFor(
                 get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
                         .willReturn(aResponse().withHeader("Content-Type", "application/json")

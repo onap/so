@@ -28,7 +28,7 @@ import org.junit.Test;
 public class VariableNameExtractorTest {
 
     @Test
-    public void shouldExtractVariableName() throws Exception {
+    public void shouldExtractVariableName() {
         // given
         String name = "A_different_NAME123";
         String variable = "${A_different_NAME123}";
@@ -41,7 +41,7 @@ public class VariableNameExtractorTest {
     }
 
     @Test
-    public void shouldExtractVariableNameFromWhitespaces() throws Exception {
+    public void shouldExtractVariableNameFromWhitespaces() {
         // given
         String name = "name";
         String variable = " \n\t$ \n\t{ \n\tname \n\t} \n\t";
@@ -54,7 +54,7 @@ public class VariableNameExtractorTest {
     }
 
     @Test
-    public void shouldReturnEmptyIfThereIsMoreThanVariable() throws Exception {
+    public void shouldReturnEmptyIfThereIsMoreThanVariable() {
         // given
         String variable = "a ${test}";
         VariableNameExtractor extractor = new VariableNameExtractor(variable);
@@ -65,7 +65,7 @@ public class VariableNameExtractorTest {
     }
 
     @Test
-    public void shouldReturnEmptyIfVariableNameIsIncorrect() throws Exception {
+    public void shouldReturnEmptyIfVariableNameIsIncorrect() {
         // given
         String variable = "${name with space}";
         VariableNameExtractor extractor = new VariableNameExtractor(variable);
@@ -76,7 +76,7 @@ public class VariableNameExtractorTest {
     }
 
     @Test
-    public void shouldReturnEmptyIfTwoVariablesPresent() throws Exception {
+    public void shouldReturnEmptyIfTwoVariablesPresent() {
         // given
         String variable = "${var1} ${var2}";
         VariableNameExtractor extractor = new VariableNameExtractor(variable);

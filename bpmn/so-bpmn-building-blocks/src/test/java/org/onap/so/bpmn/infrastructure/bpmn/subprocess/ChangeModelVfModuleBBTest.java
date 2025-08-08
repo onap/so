@@ -31,7 +31,7 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 
 public class ChangeModelVfModuleBBTest extends BaseBPMNTest {
     @Test
-    public void sunnyDayChangeModelVfModuleTest() throws InterruptedException {
+    public void sunnyDayChangeModelVfModuleTest() {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("ChangeModelVfModuleBB", variables);
         assertThat(pi).isNotNull();

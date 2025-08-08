@@ -48,7 +48,7 @@ public class SiteStatusTest {
 
     @Test
     @Transactional
-    public void timeStampCreated() throws InterruptedException, NoEntityFoundException {
+    public void timeStampCreated() throws NoEntityFoundException {
         SiteStatus found =
                 repository.findById("test name4").orElseThrow(() -> new NoEntityFoundException("Cannot Find Site"));
 

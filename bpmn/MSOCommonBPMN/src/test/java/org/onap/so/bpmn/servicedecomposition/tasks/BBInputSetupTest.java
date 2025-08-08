@@ -129,9 +129,7 @@ import org.onap.so.serviceinstancebeans.RequestInfo;
 import org.onap.so.serviceinstancebeans.RequestParameters;
 import org.onap.so.serviceinstancebeans.Resources;
 import org.onap.so.serviceinstancebeans.SubscriberInfo;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.onap.so.serviceinstancebeans.VfModules;
 import org.onap.so.serviceinstancebeans.Vnfs;
@@ -258,7 +256,7 @@ public class BBInputSetupTest {
     }
 
     @Test
-    public void testGetCustomerAndServiceSubscription() throws JsonParseException, JsonMappingException, IOException {
+    public void testGetCustomerAndServiceSubscription() throws IOException {
         RequestDetails requestDetails = mapper.readValue(
                 new File(RESOURCE_PATH + "RequestDetailsInput_withRelatedInstanceList.json"), RequestDetails.class);
         SubscriberInfo subscriberInfo = new SubscriberInfo();
@@ -310,7 +308,7 @@ public class BBInputSetupTest {
     }
 
     @Test
-    public void testGetExecuteBBFromExecution() throws IOException {
+    public void testGetExecuteBBFromExecution() {
         BuildingBlock bb = new BuildingBlock().setBpmnFlowName("AssignServiceInstanceBB");
         ExecuteBuildingBlock expected =
                 new ExecuteBuildingBlock().setBuildingBlock(bb).setRequestId("00032ab7-3fb3-42e5-965d-8ea592502017");
@@ -1051,7 +1049,7 @@ public class BBInputSetupTest {
     }
 
     @Test
-    public void testGetServiceSubscription() throws IOException {
+    public void testGetServiceSubscription() {
         ServiceSubscription expected = new ServiceSubscription();
         RequestDetails requestDetails = new RequestDetails();
         RequestParameters params = new RequestParameters();
@@ -1070,7 +1068,7 @@ public class BBInputSetupTest {
     }
 
     @Test
-    public void testGetCustomer() throws IOException {
+    public void testGetCustomer() {
         Customer expected = new Customer();
         RequestDetails requestDetails = new RequestDetails();
         SubscriberInfo subscriberInfo = new SubscriberInfo();
@@ -1139,7 +1137,7 @@ public class BBInputSetupTest {
     }
 
     @Test
-    public void testPopulateInstanceGroup() throws Exception {
+    public void testPopulateInstanceGroup() {
         ModelInfo modelInfo = Mockito.mock(ModelInfo.class);
         Service service = Mockito.mock(Service.class);
         List<InstanceGroup> instanceGroups = Mockito.spy(new ArrayList<>());
@@ -1158,7 +1156,7 @@ public class BBInputSetupTest {
     }
 
     @Test
-    public void testIsVlanTagging() throws Exception {
+    public void testIsVlanTagging() {
         boolean expected = true;
         Service service = Mockito.mock(Service.class);
         String key = "collectionCustId";
@@ -1261,7 +1259,7 @@ public class BBInputSetupTest {
     }
 
     @Test
-    public void testPopulateL3Network() throws JsonParseException, JsonMappingException, IOException {
+    public void testPopulateL3Network() throws IOException {
         String instanceName = "networkName";
         ModelInfo modelInfo = new ModelInfo();
         modelInfo.setModelType(ModelType.network);
@@ -1319,7 +1317,7 @@ public class BBInputSetupTest {
     }
 
     @Test
-    public void testPopulateConfiguration() throws JsonParseException, JsonMappingException, IOException {
+    public void testPopulateConfiguration() throws IOException {
         String instanceName = "configurationName";
         ModelInfo modelInfo = new ModelInfo();
         modelInfo.setModelCustomizationUuid("72d9d1cd-f46d-447a-abdb-451d6fb05fa9");
@@ -1382,7 +1380,7 @@ public class BBInputSetupTest {
     }
 
     @Test
-    public void testPopulateConfigurationReplace() throws JsonParseException, JsonMappingException, IOException {
+    public void testPopulateConfigurationReplace() throws IOException {
         String instanceName = "configurationName";
         ModelInfo modelInfo = new ModelInfo();
         modelInfo.setModelCustomizationUuid("72d9d1cd-f46d-447a-abdb-451d6fb05fa9");
@@ -1449,7 +1447,7 @@ public class BBInputSetupTest {
     }
 
     @Test
-    public void testPopulateFabricConfiguration() throws JsonParseException, JsonMappingException, IOException {
+    public void testPopulateFabricConfiguration() throws IOException {
         String instanceName = "configurationName";
         ModelInfo modelInfo = new ModelInfo();
         modelInfo.setModelCustomizationUuid("72d9d1cd-f46d-447a-abdb-451d6fb05fa9");
@@ -1497,7 +1495,7 @@ public class BBInputSetupTest {
     }
 
     @Test
-    public void testPopulateGenericVnf() throws JsonParseException, JsonMappingException, IOException {
+    public void testPopulateGenericVnf() throws IOException {
         org.onap.so.serviceinstancebeans.Platform platform = new org.onap.so.serviceinstancebeans.Platform();
         org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusiness =
                 new org.onap.so.serviceinstancebeans.LineOfBusiness();
@@ -1571,7 +1569,7 @@ public class BBInputSetupTest {
     }
 
     @Test
-    public void testPopulateGenericVnfReplace() throws JsonParseException, JsonMappingException, IOException {
+    public void testPopulateGenericVnfReplace() throws IOException {
         org.onap.so.serviceinstancebeans.Platform platform = new org.onap.so.serviceinstancebeans.Platform();
         org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusiness =
                 new org.onap.so.serviceinstancebeans.LineOfBusiness();
@@ -1647,8 +1645,7 @@ public class BBInputSetupTest {
     }
 
     @Test
-    public void testPopulateGenericVnfWhereVnfTypeIsNull()
-            throws JsonParseException, JsonMappingException, IOException {
+    public void testPopulateGenericVnfWhereVnfTypeIsNull() throws IOException {
         org.onap.so.serviceinstancebeans.Platform platform = new org.onap.so.serviceinstancebeans.Platform();
         org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusiness =
                 new org.onap.so.serviceinstancebeans.LineOfBusiness();
@@ -2106,7 +2103,7 @@ public class BBInputSetupTest {
     }
 
     @Test
-    public void testMapCustomer() throws Exception {
+    public void testMapCustomer() {
         org.onap.aai.domain.yang.Customer customerAAI = new org.onap.aai.domain.yang.Customer();
         org.onap.aai.domain.yang.ServiceSubscription serviceSubscriptionAAI =
                 new org.onap.aai.domain.yang.ServiceSubscription();

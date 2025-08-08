@@ -42,7 +42,7 @@ public class DecomposeServiceIT extends BaseIntegrationTest {
     }
 
     @Test
-    public void testDecomposeService_success() throws Exception {
+    public void testDecomposeService_success() {
         MockGetServiceResourcesCatalogData(wireMockServer, "cmw-123-456-789", "1.0",
                 "/getCatalogServiceResourcesDataWithConfig.json");
 
@@ -59,7 +59,7 @@ public class DecomposeServiceIT extends BaseIntegrationTest {
 
     // @Test
     @Test
-    public void testDecomposeService_success_partial() throws Exception {
+    public void testDecomposeService_success_partial() {
         MockGetServiceResourcesCatalogData(wireMockServer, "cmw-123-456-789", "1.0",
                 "/getCatalogServiceResourcesDataNoNetwork.json");
 

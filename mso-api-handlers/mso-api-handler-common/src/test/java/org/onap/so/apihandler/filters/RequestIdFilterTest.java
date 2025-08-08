@@ -68,7 +68,7 @@ public class RequestIdFilterTest {
     private static final String REQUEST_ID = "32807a28-1a14-4b88-b7b3-2950918aa769";
     private ObjectMapper mapper = new ObjectMapper();
 
-    private RequestError getRequestError() throws IOException {
+    private RequestError getRequestError() {
         RequestError requestError = new RequestError();
         mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, false);
         ServiceException serviceException = new ServiceException();

@@ -51,7 +51,7 @@ public class OrchestrationTaskRepositoryCustomController {
 
     @PutMapping(value = "/orchestrationTask/{taskId}")
     public OrchestrationTask updateOrchestrationTask(@PathVariable("taskId") String taskId,
-            @RequestBody OrchestrationTask orchestrationTask) throws MsoRequestsDbException {
+            @RequestBody OrchestrationTask orchestrationTask) {
         return orchestrationTaskRepository.save(orchestrationTask);
     }
 

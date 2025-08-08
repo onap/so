@@ -26,7 +26,6 @@ import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.onap.so.apihandlerinfra.BaseTest;
-import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class ResponseBuilderTest extends BaseTest {
@@ -35,7 +34,7 @@ public class ResponseBuilderTest extends BaseTest {
     private ResponseBuilder builder;
 
     @Test
-    public void testBuildResponseResponse() throws ApiException {
+    public void testBuildResponseResponse() {
 
         String requestId = null;
         String apiVersion = "1";
@@ -52,7 +51,7 @@ public class ResponseBuilderTest extends BaseTest {
     }
 
     @Test
-    public void testBuildResponseVersion() throws ApiException {
+    public void testBuildResponseVersion() {
 
         String requestId = "123456-67889";
         String apiVersion = "v5";

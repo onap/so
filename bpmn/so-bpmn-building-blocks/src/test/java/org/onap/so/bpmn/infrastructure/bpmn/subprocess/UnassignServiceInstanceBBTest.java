@@ -30,7 +30,7 @@ import org.onap.so.bpmn.common.DelegateExecutionImpl;
 
 public class UnassignServiceInstanceBBTest extends BaseBPMNTest {
     @Test
-    public void sunnyDayUnassignServiceInstanceSDNC() throws InterruptedException {
+    public void sunnyDayUnassignServiceInstanceSDNC() {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         BuildingBlockExecution bbe = new DelegateExecutionImpl(new ExecutionImpl());
         variables.put("gBuildingBlockExecution", bbe);

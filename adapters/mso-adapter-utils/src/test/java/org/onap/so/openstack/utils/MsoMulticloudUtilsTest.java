@@ -32,7 +32,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 import static org.onap.so.openstack.utils.MsoMulticloudUtils.MULTICLOUD_QUERY_BODY_NULL;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Optional;
 import org.apache.http.HttpStatus;
@@ -79,7 +78,7 @@ public class MsoMulticloudUtilsTest extends BaseTest {
             "/api/multicloud/v1/CloudOwner/MTN14/infra_workload/TEST-workload";
 
     @Test
-    public void createStackSuccess() throws MsoException, IOException {
+    public void createStackSuccess() throws MsoException {
         wireMockServer
                 .stubFor(post(urlEqualTo(MULTICLOUD_CREATE_PATH)).inScenario("CREATE")
                         .willReturn(aResponse().withHeader("Content-Type", "application/json")

@@ -104,7 +104,7 @@ public class AAIObjectMapperTest {
     }
 
     @Test
-    public void mapVolumeGroupTest() throws Exception {
+    public void mapVolumeGroupTest() {
         VolumeGroup volumeGroup = new VolumeGroup();
         volumeGroup.setHeatStackId("heatStackId");
         volumeGroup.setModelInfoVfModule(new ModelInfoVfModule());

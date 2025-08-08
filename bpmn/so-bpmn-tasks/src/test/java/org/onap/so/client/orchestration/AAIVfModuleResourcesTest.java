@@ -77,7 +77,7 @@ public class AAIVfModuleResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void updateOrchestrationStatusVfModuleTest() throws Exception {
+    public void updateOrchestrationStatusVfModuleTest() {
         vfModule.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
 
         doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),
@@ -91,7 +91,7 @@ public class AAIVfModuleResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void createVfModuleTest() throws Exception {
+    public void createVfModuleTest() {
         vfModule.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
 
         doReturn(new org.onap.aai.domain.yang.VfModule()).when(MOCK_aaiObjectMapper).mapVfModule(vfModule);
@@ -104,7 +104,7 @@ public class AAIVfModuleResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void deleteVfModuleTest() throws Exception {
+    public void deleteVfModuleTest() {
         doNothing().when(MOCK_aaiResourcesClient).delete(isA(AAIResourceUri.class));
 
         aaiVfModuleResources.deleteVfModule(vfModule, vnf);
@@ -113,7 +113,7 @@ public class AAIVfModuleResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void changeAssignVfModuleTest() throws Exception {
+    public void changeAssignVfModuleTest() {
         doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),
                 isA(org.onap.aai.domain.yang.VfModule.class));
 
@@ -123,7 +123,7 @@ public class AAIVfModuleResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void connectVfModuleToVolumeGroupTest() throws Exception {
+    public void connectVfModuleToVolumeGroupTest() {
         VolumeGroup volumeGroup = buildVolumeGroup();
         volumeGroup.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
 
@@ -134,7 +134,7 @@ public class AAIVfModuleResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void updateHeatStackIdVfModuleTest() throws Exception {
+    public void updateHeatStackIdVfModuleTest() {
         vfModule.setHeatStackId("testHeatStackId");
 
         doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),
@@ -148,7 +148,7 @@ public class AAIVfModuleResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void updateContrailServiceInstanceFqdnVfModuleTest() throws Exception {
+    public void updateContrailServiceInstanceFqdnVfModuleTest() {
         vfModule.setContrailServiceInstanceFqdn("testContrailServiceInstanceFqdn");
 
         doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),
@@ -162,7 +162,7 @@ public class AAIVfModuleResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void checkNameInUseTrueTest() throws Exception {
+    public void checkNameInUseTrueTest() {
         AAIPluralResourceUri vfModuleUri = AAIUriFactory.createNodesUri(Types.VF_MODULES.getFragment())
                 .queryParam("vf-module-name", vfModule.getVfModuleName());
         AAIPluralResourceUri vfModuleUriWithCustomization = vfModuleUri.clone().queryParam("model-customization-id",
@@ -174,7 +174,7 @@ public class AAIVfModuleResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void checkNameInUseFalseIsResumeTest() throws Exception {
+    public void checkNameInUseFalseIsResumeTest() {
         AAIPluralResourceUri vfModuleUri = AAIUriFactory.createNodesUri(Types.VF_MODULES.getFragment())
                 .queryParam("vf-module-name", vfModule.getVfModuleName());
         AAIPluralResourceUri vfModuleUriWithCustomization = vfModuleUri.clone().queryParam("model-customization-id",
@@ -185,7 +185,7 @@ public class AAIVfModuleResourcesTest extends TestDataSetup {
     }
 
     @Test
-    public void checkNameInUseFalseTest() throws Exception {
+    public void checkNameInUseFalseTest() {
         AAIPluralResourceUri vfModuleUri = AAIUriFactory.createNodesUri(Types.VF_MODULES.getFragment())
                 .queryParam("vf-module-name", vfModule.getVfModuleName());
         AAIPluralResourceUri vfModuleUriWithCustomization = vfModuleUri.clone().queryParam("model-customization-id",

@@ -82,14 +82,14 @@ public class SubscriptionScheduler {
         return esrIds != null && !esrIds.isEmpty();
     }
 
-    private void singleSubscribe(final EsrId esrId) throws VeVnfmException {
+    private void singleSubscribe(final EsrId esrId) {
         if (esrId.getId() == null) {
             logger.info("Single subscribe task");
             esrId.setId(subscriberService.subscribe(esrId.getInfo()));
         }
     }
 
-    private void singleCheckSubscription(final EsrId esrId) throws VeVnfmException {
+    private void singleCheckSubscription(final EsrId esrId) {
         if (esrId.getId() != null) {
             logger.info("Checking subscription: {}", esrId.getId());
             if (!subscriberService.checkSubscription(esrId.getInfo(), esrId.getId())) {

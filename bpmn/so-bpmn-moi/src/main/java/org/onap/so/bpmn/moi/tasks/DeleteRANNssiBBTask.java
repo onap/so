@@ -61,8 +61,7 @@ public class DeleteRANNssiBBTask {
 
 
 
-    private String mapUserParamsToSliceProfile(List<Map<String, Object>> sliceProfilesData)
-            throws JsonProcessingException {
+    private String mapUserParamsToSliceProfile(List<Map<String, Object>> sliceProfilesData) {
         Map<String, Object> mapParam = (Map<String, Object>) sliceProfilesData.get(0).get("nssi");
         List<Object> list = (ArrayList<Object>) mapParam.get("sliceProfileList");
         Map<String, Object> idMap = (Map<String, Object>) list.get(0);

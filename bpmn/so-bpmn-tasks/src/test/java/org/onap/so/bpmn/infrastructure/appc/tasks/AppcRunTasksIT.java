@@ -116,7 +116,7 @@ public class AppcRunTasksIT extends BaseIntegrationTest {
     }
 
     @Test
-    public void runAppcCommandTest() throws Exception {
+    public void runAppcCommandTest() {
         Action action = Action.QuiesceTraffic;
         ControllerSelectionReference controllerSelectionReference = new ControllerSelectionReference();
         controllerSelectionReference.setControllerName("testName");
