@@ -127,7 +127,7 @@ public class AppcOrchestratorPreProcessor {
                 try {
                     getVserversForAppc(execution, vnf);
                 } catch (Exception e) {
-                    logger.warn("Unable to retrieve vservers for vnf: " + vnfId);
+                    logger.warn("Unable to retrieve vservers for vnf: {}", vnfId);
                 }
             }
 
@@ -253,7 +253,7 @@ public class AppcOrchestratorPreProcessor {
                 break;
         }
         if (errorMessage != null) {
-            logger.debug("verifyApplicationControllerTaskRequest() failed with " + errorMessage);
+            logger.debug("verifyApplicationControllerTaskRequest() failed with {}", errorMessage);
             throw new ValidationException(errorMessage, false);
         }
         return;

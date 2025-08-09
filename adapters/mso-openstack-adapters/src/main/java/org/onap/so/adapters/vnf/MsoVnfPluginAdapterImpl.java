@@ -178,7 +178,7 @@ public class MsoVnfPluginAdapterImpl {
     public void queryVnf(String cloudSiteId, String cloudOwner, String tenantId, String vnfNameOrId,
             MsoRequest msoRequest, Holder<Boolean> vnfExists, Holder<String> vnfId, Holder<VnfStatus> status,
             Holder<Map<String, String>> outputs) throws VnfException {
-        logger.debug("Querying VNF " + vnfNameOrId + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId);
+        logger.debug("Querying VNF {} in {}/{}/{}", vnfNameOrId, cloudOwner, cloudSiteId, tenantId);
 
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis();
@@ -265,7 +265,7 @@ public class MsoVnfPluginAdapterImpl {
 
         String vfModuleId = rollback.getVfModuleStackId();
 
-        logger.debug("Rolling Back VF Module " + vfModuleId + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId);
+        logger.debug("Rolling Back VF Module {} in {}/{}/{}", vfModuleId, cloudOwner, cloudSiteId, tenantId);
 
         VduInstance vduInstance = null;
 
@@ -326,7 +326,7 @@ public class MsoVnfPluginAdapterImpl {
             try {
                 return Integer.valueOf(inputValue.toString());
             } catch (Exception e) {
-                logger.debug("Unable to convert " + inputValue + " to an integer!", e);
+                logger.debug("Unable to convert {} to an integer!", inputValue, e);
                 return null;
             }
         } else if (type.equalsIgnoreCase("json")) {
@@ -334,7 +334,7 @@ public class MsoVnfPluginAdapterImpl {
                 JsonNode jsonNode = JSON_MAPPER.readTree(JSON_MAPPER.writeValueAsString(inputValue));
                 return jsonNode;
             } catch (Exception e) {
-                logger.debug("Unable to convert " + inputValue + " to a JsonNode!", e);
+                logger.debug("Unable to convert {} to a JsonNode!", inputValue, e);
                 return null;
             }
         } else if (type.equalsIgnoreCase("boolean")) {
@@ -376,8 +376,7 @@ public class MsoVnfPluginAdapterImpl {
                     String str = stackOutputs.get(key).toString();
                     stringOutputs.put(key, str);
                 } catch (Exception e) {
-                    logger.debug("Unable to add " + key + " to outputs - unable to call .toString() " + e.getMessage(),
-                            e);
+                    logger.debug("Unable to add {} to outputs - unable to call .toString() {}", key, e.getMessage(), e);
                 }
             }
         }
@@ -429,9 +428,9 @@ public class MsoVnfPluginAdapterImpl {
             final String json = JSON_MAPPER.writeValueAsString(obj);
             return json;
         } catch (JsonParseException jpe) {
-            logger.debug("Error converting json to string " + jpe.getMessage());
+            logger.debug("Error converting json to string {}", jpe.getMessage());
         } catch (Exception e) {
-            logger.debug("Error converting json to string " + e.getMessage());
+            logger.debug("Error converting json to string {}", e.getMessage());
         }
         return "[Error converting json to string]";
     }
@@ -453,7 +452,7 @@ public class MsoVnfPluginAdapterImpl {
                         String str = this.convertNode((JsonNode) obj);
                         stringMap.put(key, str);
                     } catch (Exception e) {
-                        logger.debug("DANGER WILL ROBINSON: unable to convert value for JsonNode " + key, e);
+                        logger.debug("DANGER WILL ROBINSON: unable to convert value for JsonNode {}", key, e);
                         // okay in this instance - only string values (fqdn) are expected to be needed
                     }
                 } else if (obj instanceof java.util.LinkedHashMap) {
@@ -462,23 +461,21 @@ public class MsoVnfPluginAdapterImpl {
                         String str = JSON_MAPPER.writeValueAsString(obj);
                         stringMap.put(key, str);
                     } catch (Exception e) {
-                        logger.debug("DANGER WILL ROBINSON: unable to convert value for LinkedHashMap " + key, e);
+                        logger.debug("DANGER WILL ROBINSON: unable to convert value for LinkedHashMap {}", key, e);
                     }
                 } else if (obj instanceof Integer) {
                     try {
                         String str = "" + obj;
                         stringMap.put(key, str);
                     } catch (Exception e) {
-                        logger.debug("DANGER WILL ROBINSON: unable to convert value for Integer " + key, e);
+                        logger.debug("DANGER WILL ROBINSON: unable to convert value for Integer {}", key, e);
                     }
                 } else {
                     try {
                         String str = obj.toString();
                         stringMap.put(key, str);
                     } catch (Exception e) {
-                        logger.debug(
-                                "DANGER WILL ROBINSON: unable to convert value " + key + " (" + e.getMessage() + ")",
-                                e);
+                        logger.debug("DANGER WILL ROBINSON: unable to convert value {} ({})", key, e.getMessage(), e);
                     }
                 }
             }
@@ -571,8 +568,8 @@ public class MsoVnfPluginAdapterImpl {
             isVolumeRequest = true;
         }
 
-        logger.debug("requestType = " + requestType + ", volumeGroupStackId = " + volumeGroupId + ", baseStackId = "
-                + baseVfModuleId);
+        logger.debug("requestType = {}, volumeGroupStackId = {}, baseStackId = {}", requestType, volumeGroupId,
+                baseVfModuleId);
 
         // Get the VNF/VF Module definition from the Catalog DB first.
         // There are three relevant records: VfModule, VfModuleCustomization, VnfResource
@@ -602,7 +599,7 @@ public class MsoVnfPluginAdapterImpl {
             vnfResource = vfModuleCust.getVfModule().getVnfResources();
         } catch (Exception e) {
 
-            logger.debug("unhandled exception in create VF - [Query]" + e.getMessage());
+            logger.debug("unhandled exception in create VF - [Query]{}", e.getMessage());
             throw new VnfException("Exception during create VF " + e.getMessage());
         }
 
@@ -662,7 +659,7 @@ public class MsoVnfPluginAdapterImpl {
         // More precise handling/messaging if the Module already exists
         if (vduInstance != null && !(vduInstance.getStatus().getState() == VduStateType.NOTFOUND)) {
             VduStateType status = vduInstance.getStatus().getState();
-            logger.debug("Found Existing VDU, status=" + status);
+            logger.debug("Found Existing VDU, status={}", status);
 
             if (status == VduStateType.INSTANTIATED) {
                 if (failIfExists != null && failIfExists) {
@@ -846,7 +843,7 @@ public class MsoVnfPluginAdapterImpl {
             logger.debug(error);
             throw new VnfException(error, MsoExceptionCategory.INTERNAL);
         } else {
-            logger.debug("Got HEAT Template from DB: " + heatTemplate.getHeatTemplate());
+            logger.debug("Got HEAT Template from DB: {}", heatTemplate.getHeatTemplate());
         }
 
         if (heatEnvironment == null) {
@@ -856,7 +853,7 @@ public class MsoVnfPluginAdapterImpl {
                     "OpenStack", ErrorCode.DataError.getValue(), error);
             throw new VnfException(error, MsoExceptionCategory.INTERNAL);
         } else {
-            logger.debug("Got Heat Environment from DB: " + heatEnvironment.getEnvironment());
+            logger.debug("Got Heat Environment from DB: {}", heatEnvironment.getEnvironment());
         }
 
 
@@ -878,7 +875,7 @@ public class MsoVnfPluginAdapterImpl {
             HashMap<String, HeatTemplateParam> params = new HashMap<String, HeatTemplateParam>();
 
             Set<HeatTemplateParam> paramSet = heatTemplate.getParameters();
-            logger.debug("paramSet has " + paramSet.size() + " entries");
+            logger.debug("paramSet has {} entries", paramSet.size());
 
             for (HeatTemplateParam htp : paramSet) {
                 params.put(htp.getParamName(), htp);
@@ -897,8 +894,8 @@ public class MsoVnfPluginAdapterImpl {
                     if (value != null) {
                         goldenInputs.put(key, value);
                     } else {
-                        logger.debug("Failed to convert input " + key + "='" + inputs.get(key) + "' to "
-                                + params.get(key).getParamType());
+                        logger.debug("Failed to convert input {}='{}' to {}", key, inputs.get(key),
+                                params.get(key).getParamType());
                     }
                 } else {
                     extraInputs.add(key);
@@ -916,7 +913,7 @@ public class MsoVnfPluginAdapterImpl {
                         }
                     }
                 }
-                logger.debug("Ignoring extra inputs: " + extraInputs);
+                logger.debug("Ignoring extra inputs: {}", extraInputs);
             }
 
             // Next add in Volume Group Outputs if there are any. Copy directly without conversions.
@@ -950,13 +947,13 @@ public class MsoVnfPluginAdapterImpl {
                 String propertyString = this.environment.getProperty(MsoVnfPluginAdapterImpl.CHECK_REQD_PARAMS);
                 if ("false".equalsIgnoreCase(propertyString) || "n".equalsIgnoreCase(propertyString)) {
                     checkRequiredParameters = false;
-                    logger.debug("CheckRequiredParameters is FALSE. Will still check but then skip blocking..."
-                            + MsoVnfPluginAdapterImpl.CHECK_REQD_PARAMS);
+                    logger.debug("CheckRequiredParameters is FALSE. Will still check but then skip blocking...{}",
+                            MsoVnfPluginAdapterImpl.CHECK_REQD_PARAMS);
                 }
             } catch (Exception e) {
                 // No problem - default is true
-                logger.debug("An exception occured trying to get property " + MsoVnfPluginAdapterImpl.CHECK_REQD_PARAMS,
-                        e);
+                logger.debug("An exception occured trying to get property {}",
+                        MsoVnfPluginAdapterImpl.CHECK_REQD_PARAMS, e);
             }
 
             // Do the actual parameter checking.
@@ -969,10 +966,10 @@ public class MsoVnfPluginAdapterImpl {
             for (HeatTemplateParam parm : heatTemplate.getParameters()) {
                 if (parm.isRequired() && (!goldenInputs.containsKey(parm.getParamName()))) {
                     if (mhee != null && mhee.containsParameter(parm.getParamName())) {
-                        logger.debug("Required parameter " + parm.getParamName()
-                                + " appears to be in environment - do not count as missing");
+                        logger.debug("Required parameter {} appears to be in environment - do not count as missing",
+                                parm.getParamName());
                     } else {
-                        logger.debug("adding to missing parameters list: " + parm.getParamName());
+                        logger.debug("adding to missing parameters list: {}", parm.getParamName());
                         if (missingParams == null) {
                             missingParams = parm.getParamName();
                         } else {
@@ -991,8 +988,8 @@ public class MsoVnfPluginAdapterImpl {
                     logger.debug(error);
                     throw new VnfException(error, MsoExceptionCategory.USERDATA);
                 } else {
-                    logger.debug("found missing parameters [" + missingParams
-                            + "] - but checkRequiredParameters is false - " + "will not block");
+                    logger.debug("found missing parameters [{}] - but checkRequiredParameters is false - "
+                            + "will not block", missingParams);
                 }
             } else {
                 logger.debug("No missing parameters found - ok to proceed");
@@ -1047,7 +1044,7 @@ public class MsoVnfPluginAdapterImpl {
 
         vnfId.value = vduInstance.getVduInstanceId();
 
-        logger.debug("VF Module " + vfModuleName + " successfully created");
+        logger.debug("VF Module {} successfully created", vfModuleName);
         return;
     }
 
@@ -1055,7 +1052,7 @@ public class MsoVnfPluginAdapterImpl {
     public void deleteVfModule(String cloudSiteId, String cloudOwner, String tenantId, String vfModuleId,
             MsoRequest msoRequest, Holder<Map<String, String>> outputs) throws VnfException {
 
-        logger.debug("Deleting VF Module " + vfModuleId + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId);
+        logger.debug("Deleting VF Module {} in {}/{}/{}", vfModuleId, cloudOwner, cloudSiteId, tenantId);
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis();
 

@@ -109,7 +109,7 @@ public class ResumeOrchestrationRequest {
         try {
             infraActiveRequest = requestsDbClient.getInfraActiveRequestbyRequestId(requestId);
         } catch (HttpClientErrorException e) {
-            logger.error("Error occurred while performing requestDb lookup by requestId: " + requestId, e);
+            logger.error("Error occurred while performing requestDb lookup by requestId: {}", requestId, e);
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.AvailabilityError).build();
             throw new ValidateException.Builder("Exception while performing requestDb lookup by requestId",

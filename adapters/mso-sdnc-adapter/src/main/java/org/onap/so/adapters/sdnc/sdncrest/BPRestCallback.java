@@ -11,9 +11,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -64,7 +64,7 @@ public class BPRestCallback {
     /**
      * Sends a message to the BPMN workflow message service. The URL path is constructed using the specified message
      * type and correlator.
-     * 
+     *
      * @param workflowMessageUrl the base BPMN WorkflowMessage URL
      * @param messageType the message type
      * @param correlator the message correlator
@@ -72,8 +72,8 @@ public class BPRestCallback {
      * @return true if the message was consumed successfully by the endpoint
      */
     public boolean send(String workflowMessageUrl, String messageType, String correlator, String message) {
-        logger.debug(getClass().getSimpleName() + ".send(" + "workflowMessageUrl=" + workflowMessageUrl
-                + " messageType=" + messageType + " correlator=" + correlator + " message=" + message + ")");
+        logger.debug("{}.send(workflowMessageUrl={} messageType={} correlator={} message={})",
+                getClass().getSimpleName(), workflowMessageUrl, messageType, correlator, message);
 
         while (workflowMessageUrl.endsWith("/")) {
             workflowMessageUrl = workflowMessageUrl.substring(0, workflowMessageUrl.length() - 1);
@@ -88,13 +88,13 @@ public class BPRestCallback {
     /**
      * Sends a message to the BPMN workflow message service. The specified URL must have the message type and correlator
      * already embedded in it.
-     * 
+     *
      * @param url the endpoint URL
      * @param message the JSON content
      * @return true if the message was consumed successfully by the endpoint
      */
     public boolean send(String url, String message) {
-        logger.debug(getClass().getSimpleName() + ".send(" + "url=" + url + " message=" + message + ")");
+        logger.debug("{}.send(" + "url={} message={})", getClass().getSimpleName(), url, message);
 
         logger.info(LoggingAnchor.THREE, MessageEnum.RA_CALLBACK_BPEL.toString(),
                 message == null ? "[no content]" : message, CAMUNDA);

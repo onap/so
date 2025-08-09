@@ -63,14 +63,14 @@ public class MapRequestTunables {
                         + reqTunable.getAction();
             }
         }
-        logger.debug(GENERATED_KEY + key);
+        logger.debug("{}{}", GENERATED_KEY, key);
 
         String value;
         value = env.getProperty(key, "");
 
         if (Constants.MSO_ACTION_LCM.equals(msoAction) && (value == null || value.length() == 0)) {
             key = Constants.REQUEST_TUNABLES + "." + msoAction + ".default";
-            logger.debug("Can not find key of " + reqTunable.getOperation() + ", use default: " + key);
+            logger.debug("Can not find key of {}, use default: {}", reqTunable.getOperation(), key);
             value = env.getProperty(key, "");
         }
 

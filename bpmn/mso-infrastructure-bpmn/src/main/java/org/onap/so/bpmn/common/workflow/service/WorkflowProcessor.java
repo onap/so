@@ -63,8 +63,8 @@ public class WorkflowProcessor extends ProcessEngineAwareService {
                     runtimeService.startProcessInstanceByKey(processKey, businessKey, inputVariables);
             processInstanceId = processInstance.getId();
 
-            logger.debug(logMarker + "Process " + processKey + ":" + processInstanceId + " "
-                    + (processInstance.isEnded() ? "ENDED" : "RUNNING"));
+            logger.debug("{}Process {}:{} {}", logMarker, processKey, processInstanceId,
+                    (processInstance.isEnded() ? "ENDED" : "RUNNING"));
         } catch (Exception e) {
             WorkflowResponse workflowResponse = new WorkflowResponse();
             workflowResponse.setResponse("Error occurred while executing the process: " + e);

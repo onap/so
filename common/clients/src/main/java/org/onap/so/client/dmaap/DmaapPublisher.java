@@ -42,7 +42,7 @@ public abstract class DmaapPublisher extends DmaapClient {
     }
 
     public void send(String json) {
-        logger.info("publishing message to dmaap topic " + this.getTopic() + ": " + json);
+        logger.info("publishing message to dmaap topic {}: {}", this.getTopic(), json);
         publisher.send(json);
         // publisher.close(seconds, TimeUnit.SECONDS);
     }

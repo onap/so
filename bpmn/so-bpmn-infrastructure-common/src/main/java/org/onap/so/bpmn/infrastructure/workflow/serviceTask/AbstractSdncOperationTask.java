@@ -345,7 +345,7 @@ public abstract class AbstractSdncOperationTask implements JavaDelegate {
         }
         msbPort = Integer.valueOf(strMsbPort);
 
-        logger.info("AbstractSdncOperationTask.getGenericResourceApiClient msbIp = " + msbIp + " msbPort = " + msbPort);
+        logger.info("AbstractSdncOperationTask.getGenericResourceApiClient msbIp = {} msbPort = {}", msbIp, msbPort);
         MSBServiceClient msbClient = new MSBServiceClient(msbIp, msbPort);
         RestServiceCreater restServiceCreater = new RestServiceCreater(msbClient);
         logger.info("AbstractSdncOperationTask.getGenericResourceApiClient end!");

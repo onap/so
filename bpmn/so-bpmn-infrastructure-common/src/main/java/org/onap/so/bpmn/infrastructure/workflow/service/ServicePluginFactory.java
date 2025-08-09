@@ -201,7 +201,7 @@ public class ServicePluginFactory {
             return true;
         }
         String host = (String) tpInfoMap.get("host");
-        logger.info("host string from tpinfo:" + host);
+        logger.info("host string from tpinfo:{}", host);
         // host is empty means TP is in local, not empty means TP is in remote ONAP
         if (!host.isEmpty()) {
             return false;
@@ -282,12 +282,12 @@ public class ServicePluginFactory {
                     tpInfoMap = tpJson;
                     // add resourceName
                     tpInfoMap.put("resourceName", vpnAttachmentResourceName);
-                    logger.info("*** we will try to find resourcename(" + vpnAttachmentResourceName
-                            + ") to add resource input ***");
+                    logger.info("*** we will try to find resourcename({}) to add resource input ***",
+                            vpnAttachmentResourceName);
                     break;
                 }
             }
-            logger.info("Get Terminal TP from InventoryOSS: " + tpInfoMap);
+            logger.info("Get Terminal TP from InventoryOSS: {}", tpInfoMap);
             return tpInfoMap;
         }
 
@@ -390,7 +390,7 @@ public class ServicePluginFactory {
             crossTps.put("local-access-ltp-id", localTPs.split(",")[0]);
             crossTps.put("remote-access-ltp-id", remoteTPs.split(",")[0]);
         }
-        logger.info("cross TP info:" + crossTps);
+        logger.info("cross TP info:{}", crossTps);
     }
 
     @SuppressWarnings("unchecked")

@@ -61,8 +61,8 @@ public class OofClient {
     public void postDemands(OofRequest homingRequest) throws BadResponseException, JsonProcessingException {
         logger.trace("Started oof Client Post Demands");
         String url = oofProperties.getHost() + oofProperties.getUri();
-        logger.debug("Post demands url: " + url);
-        logger.debug("Post demands payload: " + homingRequest.toJsonString());
+        logger.debug("Post demands url: {}", url);
+        logger.debug("Post demands payload: {}", homingRequest.toJsonString());
 
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);

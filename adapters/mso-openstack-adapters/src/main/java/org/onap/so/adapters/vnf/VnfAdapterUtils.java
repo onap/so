@@ -51,7 +51,7 @@ public class VnfAdapterUtils {
         // cloudsite, use that. Otherwise, the default is the (original) HEAT-based
         // impl.
 
-        logger.debug("Entered GetVnfAdapterImpl: mode=" + mode + ", cloudSite=" + cloudSiteId);
+        logger.debug("Entered GetVnfAdapterImpl: mode={}, cloudSite={}", mode, cloudSiteId);
 
         if (mode == null) {
             // Didn't get an explicit mode type requested.
@@ -60,9 +60,9 @@ public class VnfAdapterUtils {
             // has a CloudifyManager assigned to it
             Optional<CloudSite> cloudSite = cloudConfig.getCloudSite(cloudSiteId);
             if (cloudSite.isPresent()) {
-                logger.debug("Got CloudSite: " + cloudSite.toString());
+                logger.debug("Got CloudSite: {}", cloudSite.toString());
                 if (MULTICLOUD_MODE.equalsIgnoreCase(cloudSite.get().getOrchestrator())) {
-                    logger.debug("GetVnfAdapterImpl: mode=" + MULTICLOUD_MODE);
+                    logger.debug("GetVnfAdapterImpl: mode={}", MULTICLOUD_MODE);
                     return true;
                 }
             }

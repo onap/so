@@ -54,9 +54,9 @@ public abstract class DmaapConsumer extends DmaapClient {
                 stopwatch.stop();
                 for (String message : itr) {
                     if (this.isAccepted(message)) {
-                        logger.info("accepted message found for " + this.getRequestId() + " on " + this.getTopic());
+                        logger.info("accepted message found for {} on {}", this.getRequestId(), this.getTopic());
                     }
-                    logger.info("received dmaap message: " + message);
+                    logger.info("received dmaap message: {}", message);
                     if (this.isFailure(message)) {
                         this.stopProcessingMessages();
                         final String errorMsg = "failure received from dmaap topic " + this.getTopic();

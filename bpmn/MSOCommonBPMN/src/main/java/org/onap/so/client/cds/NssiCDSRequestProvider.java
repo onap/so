@@ -208,10 +208,10 @@ public class NssiCDSRequestProvider implements CDSRequestProvider {
     /*
      * private JsonObject setSliceProfileProperties(Map<String, Object> userParamsMap) { JsonObject
      * sliceProfilePropertiesNotPresentInAai = new JsonObject();
-     * 
+     *
      * if (userParamsMap != null) { userParamsMap.forEach((k, v) -> { if (!AAI_SUPPORTED_SLICE_PROFILE.contains((String)
      * k)) { sliceProfilePropertiesNotPresentInAai.addProperty(k, v.toString()); } }); }
-     * 
+     *
      * return sliceProfilePropertiesNotPresentInAai; }
      */
 
@@ -257,7 +257,7 @@ public class NssiCDSRequestProvider implements CDSRequestProvider {
                         sliceProfileInstancesOptional.get().getServiceInstance().get(0).getServiceInstanceId();
             }
         } catch (Exception e) {
-            LOGGER.error("Error in getting sliceProfile Instance" + e.getMessage());
+            LOGGER.error("Error in getting sliceProfile Instance {}", e.getMessage());
         }
         return sliceProfileInstanceId;
     }
@@ -276,7 +276,7 @@ public class NssiCDSRequestProvider implements CDSRequestProvider {
                 nssiName = sliceProfileInstancesOptional.get().getServiceInstanceName();
             }
         } catch (Exception e) {
-            LOGGER.error("Error in getting Nssi Instance" + e.getMessage());
+            LOGGER.error("Error in getting Nssi Instance{}", e.getMessage());
         }
         return nssiName;
     }

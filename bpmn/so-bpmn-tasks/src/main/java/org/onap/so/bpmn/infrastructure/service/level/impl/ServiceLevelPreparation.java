@@ -54,7 +54,7 @@ public class ServiceLevelPreparation extends ServiceLevel implements JavaDelegat
         if (execution.hasVariable(ServiceLevelConstants.RESOURCE_TYPE)
                 && execution.getVariable(ServiceLevelConstants.RESOURCE_TYPE) != null) {
             final String controllerScope = (String) execution.getVariable(ServiceLevelConstants.RESOURCE_TYPE);
-            LOG.debug("Scope retrieved from delegate execution: " + controllerScope);
+            LOG.debug("Scope retrieved from delegate execution: {}", controllerScope);
             if (ServiceLevelConstants.VALID_CONTROLLER_SCOPE.contains(controllerScope)) {
                 final String wflName =
                         fetchWorkflowUsingScope(controllerScope, ServiceLevelConstants.HEALTH_CHECK_OPERATION);

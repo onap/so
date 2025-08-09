@@ -65,9 +65,9 @@ public class SendRequestToSdnr implements JavaDelegate {
                 timeout = "PT30M";
             }
         }
-        logger.debug("Async Callback Timeout will be: " + timeout);
+        logger.debug("Async Callback Timeout will be: {}", timeout);
         String msg = (String) execution.getVariable("sdnrRequest");
-        logger.debug("msg to be sent on dmaap " + msg);
+        logger.debug("msg to be sent on dmaap {}", msg);
         sdnrDmaapPublisher.get().send(msg);
 
     }

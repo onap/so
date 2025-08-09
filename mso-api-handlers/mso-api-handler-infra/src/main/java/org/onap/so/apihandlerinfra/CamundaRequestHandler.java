@@ -217,7 +217,7 @@ public class CamundaRequestHandler {
             httpHeaders.set(httpHeaders.ACCEPT, headers.get(httpHeaders.ACCEPT).get(0));
             httpHeaders.set(httpHeaders.CONTENT_TYPE, headers.get(httpHeaders.CONTENT_TYPE).get(0));
         }).body(BodyInserters.fromObject(msgJson.toString())).retrieve().bodyToFlux(String.class);
-        flux.subscribe(res -> logger.debug("Send Camunda Message: " + res));
+        flux.subscribe(res -> logger.debug("Send Camunda Message: {}", res));
     }
 
     protected RestTemplate getRestTemplate(boolean retry) {

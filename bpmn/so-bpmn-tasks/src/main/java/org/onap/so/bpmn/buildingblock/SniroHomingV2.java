@@ -150,7 +150,7 @@ public class SniroHomingV2 {
             if (!placementDemands.isEmpty() || !licenseDemands.isEmpty()) {
                 client.postDemands(request);
             } else {
-                logger.debug(SERVICE_MISSING_DATA + "resources eligible for homing or licensing");
+                logger.debug("{}resources eligible for homing or licensing", SERVICE_MISSING_DATA);
                 throw new BpmnError(UNPROCESSABLE, SERVICE_MISSING_DATA + "resources eligible for homing or licensing");
             }
 
@@ -374,7 +374,7 @@ public class SniroHomingV2 {
      *
      */
     private Demand buildDemand(String id, ModelInfoMetadata metadata) {
-        logger.debug("Building demand for service or resource: " + id);
+        logger.debug("Building demand for service or resource: {}", id);
         Demand demand = new Demand();
         if (isNotBlank(id) && isNotBlank(metadata.getModelInstanceName())) {
             demand.setServiceResourceId(id);
@@ -488,7 +488,7 @@ public class SniroHomingV2 {
         List<GenericVnf> vnfs = serviceInstance.getVnfs();
         List<ServiceProxy> serviceProxies = serviceInstance.getServiceProxies();
 
-        logger.debug("Processing placement solution " + i + 1);
+        logger.debug("Processing placement solution {}1", i);
         for (int p = 0; p < placements.length(); p++) {
             JSONObject placement = placements.getJSONObject(p);
             SolutionInfo solutionInfo = new SolutionInfo();
@@ -586,7 +586,7 @@ public class SniroHomingV2 {
             solutionInfo.setTargetedCloudRegion(cloud);
             si.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
         } else {
-            logger.debug(invalidMessage + IDENTIFIER_TYPE);
+            logger.debug("{}{}", invalidMessage, IDENTIFIER_TYPE);
             throw new BpmnError(UNPROCESSABLE, invalidMessage + IDENTIFIER_TYPE);
         }
         si.setSolutionInfo(solutionInfo);

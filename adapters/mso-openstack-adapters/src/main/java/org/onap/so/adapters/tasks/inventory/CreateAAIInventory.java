@@ -62,7 +62,7 @@ public class CreateAAIInventory {
         CloudSite cloudSite = cloudConfig.getCloudSite(cloudInformation.getRegionId())
                 .orElseThrow(() -> new MsoCloudSiteNotFound(cloudInformation.getRegionId()));
         if (cloudSite.getOrchestrator() != null && MULTICLOUD_MODE.equalsIgnoreCase(cloudSite.getOrchestrator())) {
-            logger.debug("Skipping Heatbridge as CloudSite orchestrator is: " + MULTICLOUD_MODE);
+            logger.debug("Skipping Heatbridge as CloudSite orchestrator is: {}", MULTICLOUD_MODE);
             return;
         }
         CloudIdentity cloudIdentity = cloudSite.getIdentityService();

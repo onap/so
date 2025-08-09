@@ -77,7 +77,7 @@ public class ExecuteBuildingBlockBuilder {
                     .append("flowName", orchFlow.getFlowName()).append("flowVersion", orchFlow.getFlowVersion())
                     .append("bpmnAction", orchFlow.getBpmnAction()).append("bpmnScope", orchFlow.getBpmnScope())
                     .toString();
-            logger.info("Flow: " + flowDetails);
+            logger.info("Flow: {}", flowDetails);
             buildExecuteBuildingBlockListPlan(orchFlow, plan, requestId, apiVersion, resourceId, requestAction, vnfType,
                     workflowResourceIds, requestDetails, replaceVnf);
         }

@@ -99,7 +99,7 @@ public class ConfigDeployVnf {
 
             String blueprintName = vnf.getModelInfoGenericVnf().getBlueprintName();
             String blueprintVersion = vnf.getModelInfoGenericVnf().getBlueprintVersion();
-            logger.debug(" BlueprintName : " + blueprintName + " BlueprintVersion : " + blueprintVersion);
+            logger.debug(" BlueprintName : {} BlueprintVersion : {}", blueprintName, blueprintVersion);
 
             AbstractCDSPropertiesBean abstractCDSPropertiesBean = new AbstractCDSPropertiesBean();
 

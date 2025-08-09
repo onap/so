@@ -246,8 +246,8 @@ public class WorkflowActionBBTasks {
 
             if (Boolean.TRUE.equals(execution.getVariable(IS_CHILD_PROCESS))) {
                 String parentCorrelationId = (String) execution.getVariable(PARENT_CORRELATION_ID);
-                logger.info("Child service request completed. Sending message to parent process with correlationId: "
-                        + parentCorrelationId);
+                logger.info("Child service request completed. Sending message to parent process with correlationId: {}",
+                        parentCorrelationId);
                 execution.getProcessEngineServices().getRuntimeService()
                         .createMessageCorrelation(CHILD_SVC_REQ_MESSAGE_NAME)
                         .setVariable(CHILD_SVC_REQ_STATUS, "COMPLETED").setVariable(CHILD_SVC_REQ_ERROR, "")

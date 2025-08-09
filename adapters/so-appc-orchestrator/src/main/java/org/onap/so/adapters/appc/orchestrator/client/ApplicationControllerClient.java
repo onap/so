@@ -203,7 +203,7 @@ public class ApplicationControllerClient {
             requestObject.getClass().getDeclaredMethod("setActionIdentifiers", ActionIdentifiers.class)
                     .invoke(requestObject, identifier);
             if (payload != null) {
-                logger.info("payload in RunCommand: " + payload.getValue());
+                logger.info("payload in RunCommand: {}", payload.getValue());
                 requestObject.getClass().getDeclaredMethod("setPayload", Payload.class).invoke(requestObject, payload);
             }
         } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {

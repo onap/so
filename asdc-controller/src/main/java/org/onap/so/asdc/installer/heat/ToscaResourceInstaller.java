@@ -635,8 +635,8 @@ public class ToscaResourceInstaller {
             logger.debug("resource request for resource customization id {}: {}", resourceCustomizationUuid, jsonStr);
             return jsonStr;
         } catch (JsonProcessingException e) {
-            logger.error("resource input could not be deserialized for resource customization id ("
-                    + resourceCustomizationUuid + ")");
+            logger.error("resource input could not be deserialized for resource customization id ({})",
+                    resourceCustomizationUuid);
             throw new ArtifactInstallerException("resource input could not be parsed", e);
         }
     }
@@ -1061,12 +1061,12 @@ public class ToscaResourceInstaller {
 
                     IVfModuleData vfMetadata = vfModuleStructure.getVfModuleMetadata();
 
-                    logger.debug("Comparing Vf_Modules_Metadata CustomizationUUID : "
-                            + vfMetadata.getVfModuleModelCustomizationUUID());
+                    logger.debug("Comparing Vf_Modules_Metadata CustomizationUUID : {}",
+                            vfMetadata.getVfModuleModelCustomizationUUID());
 
                     Optional<IEntityDetails> matchingObject = vfModuleEntityList.stream()
-                            .peek(group -> logger.debug("To Csar Group VFModuleModelCustomizationUUID "
-                                    + group.getMetadata().getValue("vfModuleModelCustomizationUUID")))
+                            .peek(group -> logger.debug("To Csar Group VFModuleModelCustomizationUUID {}",
+                                    group.getMetadata().getValue("vfModuleModelCustomizationUUID")))
                             .filter(group -> group.getMetadata().getValue("vfModuleModelCustomizationUUID")
                                     .equals(vfMetadata.getVfModuleModelCustomizationUUID()))
                             .findFirst();
@@ -1105,9 +1105,9 @@ public class ToscaResourceInstaller {
             // add this vnfResource with existing vnfResource for this service
             addVnfCustomization(service, vnfResource);
         } else {
-            logger.debug("Notification VF ResourceCustomizationUUID: "
-                    + vfNotificationResource.getResourceCustomizationUUID() + " doesn't match "
-                    + "Tosca VF Customization UUID: " + vfCustomizationUUID);
+            logger.debug(
+                    "Notification VF ResourceCustomizationUUID: {} doesn't match " + "Tosca VF Customization UUID: {}",
+                    vfNotificationResource.getResourceCustomizationUUID(), vfCustomizationUUID);
         }
     }
 
@@ -1456,7 +1456,7 @@ public class ToscaResourceInstaller {
             service.setOnapGeneratedNaming(generateNamingValue);
 
             List<Input> serviceInputs = toscaResourceStructure.getSdcCsarHelper().getServiceInputs();
-            logger.debug("serviceInputs: {} " + serviceInputs);
+            logger.debug("serviceInputs: {} {}", serviceInputs);
             if (!serviceInputs.isEmpty()) {
                 serviceInputs.forEach(input -> {
                     if (CDS_MODEL_NAME.equalsIgnoreCase(input.getName())) {
@@ -2942,8 +2942,8 @@ public class ToscaResourceInstaller {
                 serviceInput = mapper.writeValueAsString(serviceInputList);
                 serviceInput = serviceInput.replace("\"", "\\\"");
             } catch (JsonProcessingException e) {
-                logger.error("service input could not be deserialized for service uuid:  "
-                        + sdcCsarHelper.getServiceMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+                logger.error("service input could not be deserialized for service uuid:  {}",
+                        sdcCsarHelper.getServiceMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
             }
         } else {
             logger.debug("serviceInput is null");
@@ -3020,9 +3020,9 @@ public class ToscaResourceInstaller {
                 propertiesJson = mapper.writeValueAsString(serviceProperties);
                 propertiesJson = propertiesJson.replace("\"", "\\\"");
             } catch (JsonProcessingException e) {
-                logger.error("serviceProperties could not be deserialized for service uuid:  " + serviceUUID);
+                logger.error("serviceProperties could not be deserialized for service uuid:  {}", serviceUUID);
             } catch (Exception ex) {
-                logger.error("service properties parsing failed. service uuid:" + serviceUUID);
+                logger.error("service properties parsing failed. service uuid:{}", serviceUUID);
             }
 
         } else {

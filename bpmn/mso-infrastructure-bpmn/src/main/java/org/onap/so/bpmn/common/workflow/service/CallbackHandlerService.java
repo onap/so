@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -80,8 +80,8 @@ public class CallbackHandlerService {
 
         long startTime = System.currentTimeMillis();
 
-        logger.debug(logMarker + " " + method + " received message: " + (message == null ? "" : System.lineSeparator())
-                + message);
+        logger.debug("{} {} received message: {}{}", logMarker, method, (message == null ? "" : System.lineSeparator()),
+                message);
 
         try {
             Map<String, Object> variables = new HashMap<>();
@@ -122,7 +122,7 @@ public class CallbackHandlerService {
      * exceptions are handled differently from process execution exceptions. Correlation exceptions are thrown so the
      * client knows something went wrong with the delivery of the message. Process execution exceptions are logged but
      * not thrown.
-     * 
+     *
      * @param messageEventName the message event name
      * @param correlationVariable the process variable used as the correlator
      * @param correlationValue the correlation value
@@ -133,8 +133,8 @@ public class CallbackHandlerService {
     protected boolean correlate(String messageEventName, String correlationVariable, String correlationValue,
             Map<String, Object> variables, String logMarker) {
         try {
-            logger.debug(logMarker + " Attempting to find process waiting" + " for " + messageEventName + " with "
-                    + correlationVariable + " = '" + correlationValue + "'");
+            logger.debug("{} Attempting to find process waiting" + " for {} with {} = '{}'", logMarker,
+                    messageEventName, correlationVariable, correlationValue);
 
 
 
@@ -198,18 +198,20 @@ public class CallbackHandlerService {
                 execInfoList.add(new ExecInfo(execution));
             }
 
-            logger.debug(logMarker + " Found " + count + " process(es) waiting" + " for " + messageEventName + " with "
-                    + correlationVariable + " = '" + correlationValue + "': " + execInfoList);
+            logger.debug("{} Found {} process(es) waiting for {} with {} = '{}': {}", logMarker, count,
+                    messageEventName, correlationVariable, correlationValue, execInfoList);
 
             if (count == 0) {
                 if (queryFailCount > 0) {
-                    String msg =
-                            queryFailCount + "/" + queryCount + " execution queries failed attempting to correlate "
-                                    + messageEventName + " with " + correlationVariable + " = '" + correlationValue
-                                    + "'; last exception was:" + queryException;
-                    logger.debug(msg);
-                    logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
-                            ErrorCode.UnknownError.getValue(), msg, queryException);
+                    if (logger.isWarnEnabled() || logger.isDebugEnabled()) {
+                        String msg =
+                                queryFailCount + "/" + queryCount + " execution queries failed attempting to correlate "
+                                        + messageEventName + " with " + correlationVariable + " = '" + correlationValue
+                                        + "'; last exception was:" + queryException;
+                        logger.debug(msg);
+                        logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
+                                ErrorCode.UnknownError.getValue(), msg, queryException);
+                    }
                 }
 
                 return false;
@@ -229,8 +231,8 @@ public class CallbackHandlerService {
             // acknowledged the notification associated with request #1.
 
             try {
-                logger.debug(logMarker + " Running " + execInfoList.get(0) + " to receive " + messageEventName
-                        + " with " + correlationVariable + " = '" + correlationValue + "'");
+                logger.debug("{} Running {} to receive {} with {} = '{}'", logMarker, execInfoList.get(0),
+                        messageEventName, correlationVariable, correlationValue);
 
                 @SuppressWarnings("unused")
                 MessageCorrelationResult result = runtimeService.createMessageCorrelation(messageEventName)
@@ -319,7 +321,7 @@ public class CallbackHandlerService {
 
     /**
      * Records audit and metric events in the log for a callback success.
-     * 
+     *
      * @param method the method name
      * @param startTime the request start time
      */
@@ -327,7 +329,7 @@ public class CallbackHandlerService {
 
     /**
      * Records error, audit and metric events in the log for a callback internal error.
-     * 
+     *
      * @param method the method name
      * @param startTime the request start time
      * @param msg the error message
@@ -338,7 +340,7 @@ public class CallbackHandlerService {
 
     /**
      * Records error, audit and metric events in the log for a callback internal error.
-     * 
+     *
      * @param method the method name
      * @param startTime the request start time
      * @param msg the error message

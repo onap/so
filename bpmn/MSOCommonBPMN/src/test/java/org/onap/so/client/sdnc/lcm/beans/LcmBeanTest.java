@@ -71,7 +71,7 @@ public class LcmBeanTest {
         ObjectMapper mapper = new ObjectMapper();
 
         String msgString = mapper.writeValueAsString(msgObject);
-        logger.debug(msgObject.getClass().getSimpleName() + "\n" + msgString);
+        logger.debug("{}\n{}", msgObject.getClass().getSimpleName(), msgString);
 
         return msgString;
     }

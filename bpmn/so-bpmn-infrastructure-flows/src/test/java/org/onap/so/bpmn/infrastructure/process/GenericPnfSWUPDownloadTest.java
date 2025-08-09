@@ -150,7 +150,7 @@ public class GenericPnfSWUPDownloadTest extends BaseBPMNTest {
 
     private void checkWithActionName(ExecutionServiceInput executionServiceInput, String action, String msoRequestId) {
 
-        logger.info("Checking the " + action + " request");
+        logger.info("Checking the {} request", action);
         ActionIdentifiers actionIdentifiers = executionServiceInput.getActionIdentifiers();
 
         /**

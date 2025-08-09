@@ -112,50 +112,50 @@ public class ManualHandlingTasks {
         try {
             logger.debug("Setting fallout task variables:");
             String taskId = task.getId();
-            logger.debug("taskId is: " + taskId);
+            logger.debug("taskId is: {}", taskId);
             String type = TASK_TYPE_FALLOUT;
             BuildingBlockExecution gBuildingBlockExecution =
                     (BuildingBlockExecution) execution.getVariable(G_BUILDING_BLOCK_EXECUTION);
             WorkflowException workflowException = (WorkflowException) execution.getVariable(WORKFLOW_EXCEPTION);
             String nfRole = (String) execution.getVariable(RAINY_DAY_VNF_TYPE);
-            logger.debug(TASK_VARIABLE_NFROLE + ": " + nfRole);
+            logger.debug("{}: {}", TASK_VARIABLE_NFROLE, nfRole);
             String subscriptionServiceType = (String) execution.getVariable(RAINY_DAY_SERVICE_TYPE);
-            logger.debug(TASK_VARIABLE_SUBSCRIPTION_SERVICE_TYPE + ": " + subscriptionServiceType);
+            logger.debug("{}: {}", TASK_VARIABLE_SUBSCRIPTION_SERVICE_TYPE, subscriptionServiceType);
             String originalRequestId = (String) execution.getVariable(MSO_REQUEST_ID);
-            logger.debug(TASK_VARIABLE_ORIGINAL_REQUEST_ID + ": " + originalRequestId);
+            logger.debug("{}: {}", TASK_VARIABLE_ORIGINAL_REQUEST_ID, originalRequestId);
             String originalRequestorId =
                     gBuildingBlockExecution.getGeneralBuildingBlock().getRequestContext().getRequestorId();
-            logger.debug(TASK_VARIABLE_ORIGINAL_REQUESTOR_ID + ": " + originalRequestorId);
+            logger.debug("{}: {}", TASK_VARIABLE_ORIGINAL_REQUESTOR_ID, originalRequestorId);
             String description = "Manual user task to handle a failure of a BB execution";
-            logger.debug(TASK_VARIABLE_DESCRIPTION + ": " + description);
+            logger.debug("{}: {}", TASK_VARIABLE_DESCRIPTION, description);
             String taskTimeout = (String) gBuildingBlockExecution.getVariable(TASK_TIMEOUT);
             String timeout = Date.from((new Date()).toInstant().plus(Duration.parse(taskTimeout))).toGMTString();
-            logger.debug(TASK_VARIABLE_TIMEOUT + ": " + timeout);
+            logger.debug("{}: {}", TASK_VARIABLE_TIMEOUT, timeout);
             String errorSource = ASTERISK;
             if (workflowException != null && workflowException.getExtSystemErrorSource() != null) {
                 errorSource = workflowException.getExtSystemErrorSource().toString();
             }
-            logger.debug(TASK_VARIABLE_ERROR_SOURCE + ": " + errorSource);
+            logger.debug("{}: {}", TASK_VARIABLE_ERROR_SOURCE, errorSource);
             String errorCode = ASTERISK;
             if (workflowException != null) {
                 errorCode = workflowException.getErrorCode() + "";
             }
-            logger.debug(TASK_VARIABLE_ERROR_CODE + ": " + errorCode);
+            logger.debug("{}: {}", TASK_VARIABLE_ERROR_CODE, errorCode);
             String errorMessage = ASTERISK;
             if (workflowException != null) {
                 errorMessage = workflowException.getErrorMessage();
             }
-            logger.debug(TASK_VARIABLE_ERROR_MESSAGE + ": " + errorMessage);
+            logger.debug("{}: {}", TASK_VARIABLE_ERROR_MESSAGE, errorMessage);
             String buildingBlockName = gBuildingBlockExecution.getFlowToBeCalled();
-            logger.debug(TASK_VARIABLE_BUILDING_BLOCK_NAME + ": " + buildingBlockName);
+            logger.debug("{}: {}", TASK_VARIABLE_BUILDING_BLOCK_NAME, buildingBlockName);
             String buildingBlockStep = ASTERISK;
             if (workflowException != null) {
                 buildingBlockStep = workflowException.getWorkStep();
             }
             execution.setVariable(WORKSTEP, buildingBlockStep);
-            logger.debug(TASK_VARIABLE_BUILDING_BLOCK_STEP + ": " + buildingBlockStep);
+            logger.debug("{}: {}", TASK_VARIABLE_BUILDING_BLOCK_STEP, buildingBlockStep);
             String validResponses = this.environment.getProperty(validResponsesPath);
-            logger.debug(TASK_VARIABLE_VALID_RESPONSES + ": " + validResponses);
+            logger.debug("{}: {}", TASK_VARIABLE_VALID_RESPONSES, validResponses);
 
             Map<String, String> taskVariables = new HashMap<>();
             taskVariables.put(TASK_VARIABLE_TYPE, type);
@@ -174,9 +174,9 @@ public class ManualHandlingTasks {
             TaskService taskService = execution.getProcessEngineServices().getTaskService();
 
             taskService.setVariablesLocal(taskId, taskVariables);
-            logger.debug("successfully created fallout task: " + taskId);
+            logger.debug("successfully created fallout task: {}", taskId);
         } catch (BpmnError e) {
-            logger.debug(BPMN_EXCEPTION + e.getMessage());
+            logger.debug("{}{}", BPMN_EXCEPTION, e.getMessage());
             throw e;
         } catch (Exception ex) {
             String msg = "Exception in setFalloutTaskVariables " + ex.getMessage();
@@ -191,7 +191,7 @@ public class ManualHandlingTasks {
 
         try {
             String taskId = task.getId();
-            logger.debug("taskId is: " + taskId);
+            logger.debug("taskId is: {}", taskId);
             String type = TASK_TYPE_PAUSE;
 
             String nfRole = (String) execution.getVariable(VNF_TYPE);
@@ -224,9 +224,9 @@ public class ManualHandlingTasks {
             TaskService taskService = execution.getProcessEngineServices().getTaskService();
 
             taskService.setVariablesLocal(taskId, taskVariables);
-            logger.debug("successfully created pause task: " + taskId);
+            logger.debug("successfully created pause task: {}", taskId);
         } catch (BpmnError e) {
-            logger.debug(BPMN_EXCEPTION + e.getMessage());
+            logger.debug("{}{}", BPMN_EXCEPTION, e.getMessage());
             throw e;
         } catch (Exception ex) {
             String msg = "Exception in setPauseTaskVariables " + ex.getMessage();
@@ -243,21 +243,21 @@ public class ManualHandlingTasks {
         try {
 
             String taskId = task.getId();
-            logger.debug("taskId is: " + taskId);
+            logger.debug("taskId is: {}", taskId);
             TaskService taskService = execution.getProcessEngineServices().getTaskService();
 
             Map<String, Object> taskVariables = taskService.getVariables(taskId);
             String responseValue = (String) taskVariables.get(RESPONSE_VALUE);
 
-            logger.debug("Received responseValue on completion: " + responseValue);
+            logger.debug("Received responseValue on completion: {}", responseValue);
             // Have to set the first letter of the response to upper case
             String responseValueUppercaseStart =
                     responseValue.substring(0, 1).toUpperCase() + responseValue.substring(1);
-            logger.debug("ResponseValue to taskListener: " + responseValueUppercaseStart);
+            logger.debug("ResponseValue to taskListener: {}", responseValueUppercaseStart);
             execution.setVariable(RESPONSE_VALUE_TASK, responseValueUppercaseStart);
 
         } catch (BpmnError e) {
-            logger.debug(BPMN_EXCEPTION + e.getMessage());
+            logger.debug("{}{}", BPMN_EXCEPTION, e.getMessage());
             throw e;
         } catch (Exception ex) {
             String msg = "Exception in completeManualTask " + ex.getMessage();

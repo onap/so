@@ -93,7 +93,7 @@ public class ConfigAssignVnf {
 
             String blueprintName = genericVnf.getModelInfoGenericVnf().getBlueprintName();
             String blueprintVersion = genericVnf.getModelInfoGenericVnf().getBlueprintVersion();
-            logger.debug(" BlueprintName : " + blueprintName + " BlueprintVersion : " + blueprintVersion);
+            logger.debug(" BlueprintName : {} BlueprintVersion : {}", blueprintName, blueprintVersion);
 
             AbstractCDSPropertiesBean abstractCDSPropertiesBean = new AbstractCDSPropertiesBean();
 

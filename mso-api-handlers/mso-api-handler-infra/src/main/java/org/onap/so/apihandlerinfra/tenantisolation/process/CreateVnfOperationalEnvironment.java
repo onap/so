@@ -94,8 +94,8 @@ public class CreateVnfOperationalEnvironment {
             int ctr = 0;
             int total = serviceEndpointRequestList.size();
             for (ServiceEndPointRequest requestList : serviceEndpointRequestList) {
-                logger.debug("Creating endpoint " + ++ctr + " of " + total + ": "
-                        + requestList.getServiceEndPoint().getName());
+                logger.debug("Creating endpoint {} of {}: {}", ++ctr, total,
+                        requestList.getServiceEndPoint().getName());
                 getGrmClient().addServiceEndPoint(requestList);
             }
 

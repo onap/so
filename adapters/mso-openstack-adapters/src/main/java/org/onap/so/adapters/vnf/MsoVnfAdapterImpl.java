@@ -297,7 +297,7 @@ public class MsoVnfAdapterImpl {
                         String str = this.convertNode((JsonNode) obj);
                         stringMap.put(key, str);
                     } catch (Exception e) {
-                        logger.debug("DANGER WILL ROBINSON: unable to convert value for JsonNode " + key, e);
+                        logger.debug("DANGER WILL ROBINSON: unable to convert value for JsonNode {}", key, e);
                         // okay in this instance - only string values (fqdn) are expected to be needed
                     }
                 } else if (obj instanceof java.util.LinkedHashMap) {
@@ -306,23 +306,21 @@ public class MsoVnfAdapterImpl {
                         String str = JSON_MAPPER.writeValueAsString(obj);
                         stringMap.put(key, str);
                     } catch (Exception e) {
-                        logger.debug("DANGER WILL ROBINSON: unable to convert value for LinkedHashMap " + key, e);
+                        logger.debug("DANGER WILL ROBINSON: unable to convert value for LinkedHashMap {}", key, e);
                     }
                 } else if (obj instanceof Integer) {
                     try {
                         String str = "" + obj;
                         stringMap.put(key, str);
                     } catch (Exception e) {
-                        logger.debug("DANGER WILL ROBINSON: unable to convert value for Integer " + key, e);
+                        logger.debug("DANGER WILL ROBINSON: unable to convert value for Integer {}", key, e);
                     }
                 } else {
                     try {
                         String str = obj.toString();
                         stringMap.put(key, str);
                     } catch (Exception e) {
-                        logger.debug(
-                                "DANGER WILL ROBINSON: unable to convert value " + key + " (" + e.getMessage() + ")",
-                                e);
+                        logger.debug("DANGER WILL ROBINSON: unable to convert value {} ({})", key, e.getMessage(), e);
                     }
                 }
             }
@@ -344,8 +342,8 @@ public class MsoVnfAdapterImpl {
         boolean useMCUuid = false;
         if (mcu != null && !mcu.isEmpty()) {
             if ("null".equalsIgnoreCase(mcu)) {
-                logger.debug("modelCustomizationUuid: passed in as the string 'null' - will ignore: "
-                        + modelCustomizationUuid);
+                logger.debug("modelCustomizationUuid: passed in as the string 'null' - will ignore: {}",
+                        modelCustomizationUuid);
                 useMCUuid = false;
                 mcu = "";
             } else {
@@ -381,8 +379,8 @@ public class MsoVnfAdapterImpl {
             isVolumeRequest = true;
         }
 
-        logger.debug("requestTypeString = " + requestTypeString + ", nestedStackId = " + nestedStackId
-                + ", nestedBaseStackId = " + nestedBaseStackId);
+        logger.debug("requestTypeString = {}, nestedStackId = {}, nestedBaseStackId = {}", requestTypeString,
+                nestedStackId, nestedBaseStackId);
 
         // handle a nestedStackId if sent- this one would be for the volume - so applies to both Vf and Vnf
         StackInfo nestedHeatStack = null;
@@ -560,10 +558,11 @@ public class MsoVnfAdapterImpl {
                         if (!doNotTest) {
                             if ((moreThanMin || equalToMin) // aic >= min
                                     && (equalToMax || !(moreThanMax))) { // aic <= max
-                                logger.debug("VNF Resource " + vnfResource.getModelName() + ", ModelUuid="
-                                        + vnfResource.getModelUUID() + " " + VERSION_MIN + " =" + minVersionVnf + " "
-                                        + VERSION_MAX + " :" + maxVersionVnf + " supported on Cloud: " + cloudSiteId
-                                        + " with AIC_Version:" + cloudSiteOpt.get().getCloudVersion());
+                                logger.debug(
+                                        "VNF Resource {}, ModelUuid={} {} ={} {} :{} supported on Cloud: {} with AIC_Version:{}",
+                                        vnfResource.getModelName(), vnfResource.getModelUUID(), VERSION_MIN,
+                                        minVersionVnf, VERSION_MAX, maxVersionVnf, cloudSiteId,
+                                        cloudSiteOpt.get().getCloudVersion());
                             } else {
                                 // ERROR
                                 String error = "VNF Resource type: " + vnfResource.getModelName() + ", ModelUuid="
@@ -617,7 +616,7 @@ public class MsoVnfAdapterImpl {
 
             if (oldWay) {
                 // This will handle old Gamma BrocadeVCE VNF
-                logger.debug("No environment parameter found for this Type " + vfModuleType);
+                logger.debug("No environment parameter found for this Type {}", vfModuleType);
             } else {
                 if (heatEnvironment == null) {
                     String error = "Update VNF: undefined Heat Environment. VF=" + vfModuleType
@@ -633,8 +632,8 @@ public class MsoVnfAdapterImpl {
                 }
             }
 
-            logger.debug("In MsoVnfAdapterImpl, about to call db.getNestedTemplates avec templateId="
-                    + heatTemplate.getArtifactUuid());
+            logger.debug("In MsoVnfAdapterImpl, about to call db.getNestedTemplates avec templateId={}",
+                    heatTemplate.getArtifactUuid());
 
 
             List<HeatTemplate> nestedTemplates = heatTemplate.getChildTemplates();
@@ -666,8 +665,8 @@ public class MsoVnfAdapterImpl {
                     logger.debug("AddGetFilesOnVolumeReq - setting to true! {}", propertyString);
                 }
             } catch (Exception e) {
-                logger.debug("An error occured trying to get property " + MsoVnfAdapterImpl.ADD_GET_FILES_ON_VOLUME_REQ
-                        + " - default to false", e);
+                logger.debug("An error occured trying to get property {} - default to false",
+                        MsoVnfAdapterImpl.ADD_GET_FILES_ON_VOLUME_REQ, e);
             }
 
             if (!isVolumeRequest || addGetFilesOnVolumeReq) {
@@ -676,8 +675,8 @@ public class MsoVnfAdapterImpl {
                 } else {
                     // now use VF_MODULE_TO_HEAT_FILES table
                     logger.debug(
-                            "In MsoVnfAdapterImpl createVfModule, about to call db.getHeatFilesForVfModule avec vfModuleId="
-                                    + vf.getModelUUID());
+                            "In MsoVnfAdapterImpl createVfModule, about to call db.getHeatFilesForVfModule avec vfModuleId={}",
+                            vf.getModelUUID());
                     heatFiles = vf.getHeatFiles();
                 }
                 if (heatFiles != null && !heatFiles.isEmpty()) {
@@ -688,7 +687,7 @@ public class MsoVnfAdapterImpl {
                     logger.debug("Contents of heatFiles - to be added to files: on stack");
 
                     for (HeatFiles heatfile : heatFiles) {
-                        logger.debug(heatfile.getFileName() + " -> " + heatfile.getFileBody());
+                        logger.debug("{} -> {}", heatfile.getFileName(), heatfile.getFileBody());
                         heatFilesObjects.put(heatfile.getFileName(), heatfile.getFileBody());
                     }
                 } else {
@@ -711,8 +710,8 @@ public class MsoVnfAdapterImpl {
                 String propertyString = this.environment.getProperty(MsoVnfAdapterImpl.CHECK_REQD_PARAMS);
                 if ("false".equalsIgnoreCase(propertyString) || "n".equalsIgnoreCase(propertyString)) {
                     checkRequiredParameters = false;
-                    logger.debug("CheckRequiredParameters is FALSE. Will still check but then skip blocking..."
-                            + MsoVnfAdapterImpl.CHECK_REQD_PARAMS);
+                    logger.debug("CheckRequiredParameters is FALSE. Will still check but then skip blocking...{}",
+                            MsoVnfAdapterImpl.CHECK_REQD_PARAMS);
                 }
             } catch (Exception e) {
                 // No problem - default is true
@@ -775,14 +774,14 @@ public class MsoVnfAdapterImpl {
             msoHeatUtils.copyBaseOutputsToInputs(goldenInputs, nestedVolumeOutputs, parameterNames, aliasToParam);
 
             for (HeatTemplateParam parm : heatTemplate.getParameters()) {
-                logger.debug("Parameter:'" + parm.getParamName() + "', isRequired=" + parm.isRequired() + ", alias="
-                        + parm.getParamAlias());
+                logger.debug("Parameter:'{}', isRequired={}, alias={}", parm.getParamName(), parm.isRequired(),
+                        parm.getParamAlias());
 
                 if (parm.isRequired() && (goldenInputs == null || !goldenInputs.containsKey(parm.getParamName()))) {
                     // The check for an alias was moved to the method in MsoHeatUtils - when we converted the
                     // Map<String, String> to Map<String, Object>
-                    logger.debug("**Parameter " + parm.getParamName() + " is required and not in the inputs...check "
-                            + "environment");
+                    logger.debug("**Parameter {} is required and not in the inputs...check " + "environment",
+                            parm.getParamName());
                     if (mhee != null && mhee.containsParameter(parm.getParamName())) {
                         logger.debug("Required parameter {} appears to be in environment - do not count as missing",
                                 parm.getParamName());
@@ -900,7 +899,7 @@ public class MsoVnfAdapterImpl {
             StackInfo currentStack =
                     msoHeatUtils.deleteStack(tenantId, cloudOwner, cloudSiteId, stackId, false, timeoutMinutes);
             if (currentStack != null && outputs != null && outputs.value != null) {
-                logger.debug("Adding canonical stack id to outputs " + currentStack.getCanonicalName());
+                logger.debug("Adding canonical stack id to outputs {}", currentStack.getCanonicalName());
                 outputs.value.put("canonicalStackId", currentStack.getCanonicalName());
             }
             msoHeatUtils.updateResourceStatus(msoRequest.getRequestId(),
@@ -986,10 +985,10 @@ public class MsoVnfAdapterImpl {
             vfModuleName = this.getVfModuleNameFromModuleStackId(vfModuleStackId);
         }
 
-        logger.debug("Updating VFModule: " + vfModuleName + " of type " + vfModuleType + "in " + cloudOwner + "/"
-                + cloudSiteId + "/" + tenantId);
-        logger.debug("requestTypeString = " + requestTypeString + ", nestedVolumeStackId = " + nestedStackId
-                + ", nestedBaseStackId = " + nestedBaseStackId);
+        logger.debug("Updating VFModule: {} of type {}in {}/{}/{}", vfModuleName, vfModuleType, cloudOwner, cloudSiteId,
+                tenantId);
+        logger.debug("requestTypeString = {}, nestedVolumeStackId = {}, nestedBaseStackId = {}", requestTypeString,
+                nestedStackId, nestedBaseStackId);
 
         // Build a default rollback object (no actions performed)
         VnfRollback vfRollback = new VnfRollback();
@@ -1185,9 +1184,9 @@ public class MsoVnfAdapterImpl {
                     if (!doNotTest) {
                         if ((moreThanMin || equalToMin) // aic >= min
                                 && ((equalToMax) || !(moreThanMax))) { // aic <= max
-                            logger.debug("VNF Resource " + vnfResource.getModelName() + " " + VERSION_MIN + " ="
-                                    + minVersionVnf + " " + VERSION_MAX + " :" + maxVersionVnf + " supported on Cloud: "
-                                    + cloudSiteId + " with AIC_Version:" + aicV);
+                            logger.debug("VNF Resource {} {} ={} {} :{} supported on Cloud: {} with AIC_Version:{}",
+                                    vnfResource.getModelName(), VERSION_MIN, minVersionVnf, VERSION_MAX, maxVersionVnf,
+                                    cloudSiteId, aicV);
                         } else {
                             // ERROR
                             String error = "VNF Resource type: " + vnfResource.getModelName() + " " + VERSION_MIN + " ="
@@ -1254,7 +1253,7 @@ public class MsoVnfAdapterImpl {
             for (HeatTemplate entry : nestedTemplates) {
 
                 nestedTemplatesChecked.put(entry.getTemplateName(), entry.getTemplateBody());
-                logger.debug(entry.getTemplateName() + " -> " + entry.getTemplateBody());
+                logger.debug("{} -> {}", entry.getTemplateName(), entry.getTemplateBody());
             }
         } else {
             logger.debug("No nested templates found - nothing to do here");
@@ -1292,7 +1291,7 @@ public class MsoVnfAdapterImpl {
                 // this will match the nested templates format
                 logger.debug("Contents of heatFiles - to be added to files: on stack:");
                 for (HeatFiles heatfile : heatFiles) {
-                    logger.debug(heatfile.getFileName() + " -> " + heatfile.getFileBody());
+                    logger.debug("{} -> {}", heatfile.getFileName(), heatfile.getFileBody());
                     heatFilesObjects.put(heatfile.getFileName(), heatfile.getFileBody());
                 }
             } else {
@@ -1350,8 +1349,8 @@ public class MsoVnfAdapterImpl {
         boolean hasJson = false;
 
         for (HeatTemplateParam parm : heatTemplate.getParameters()) {
-            logger.debug("Parameter:'" + parm.getParamName() + "', isRequired=" + parm.isRequired() + ", alias="
-                    + parm.getParamAlias());
+            logger.debug("Parameter:'{}', isRequired={}, alias={}", parm.getParamName(), parm.isRequired(),
+                    parm.getParamAlias());
             // handle json
             String parameterType = parm.getParamType();
             if (parameterType == null || "".equals(parameterType.trim())) {
@@ -1390,12 +1389,12 @@ public class MsoVnfAdapterImpl {
                         // TODO - what to do here?
                         // for now - send the error to debug, but just leave it as a String
                         String errorMessage = jpe.getMessage();
-                        logger.debug("Json Error Converting " + parm.getParamName() + " - " + errorMessage, jpe);
+                        logger.debug("Json Error Converting {} - {}", parm.getParamName(), errorMessage, jpe);
                         hasJson = false;
                         jsonNode = null;
                     } catch (Exception e) {
                         // or here?
-                        logger.debug("Json Error Converting " + parm.getParamName() + " " + e.getMessage(), e);
+                        logger.debug("Json Error Converting {} {}", parm.getParamName(), e.getMessage(), e);
                         hasJson = false;
                         jsonNode = null;
                     }
@@ -1416,7 +1415,7 @@ public class MsoVnfAdapterImpl {
                     String realParamName = parm.getParamName();
                     String alias = parm.getParamAlias();
                     Object value = inputs.get(alias);
-                    logger.debug("*Found an Alias: paramName=" + realParamName + ",alias=" + alias + ",value=" + value);
+                    logger.debug("*Found an Alias: paramName={},alias={},value={}", realParamName, alias, value);
                     inputs.remove(alias);
                     inputs.put(realParamName, value);
                     logger.debug("{} entry removed from inputs, added back using {}", alias, realParamName);

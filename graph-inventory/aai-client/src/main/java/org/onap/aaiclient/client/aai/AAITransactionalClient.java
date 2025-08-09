@@ -150,7 +150,7 @@ public class AAITransactionalClient extends
                         }
                         AAIErrorFormatter formatter = new AAIErrorFormatter(error);
                         String outputMessage = formatter.getMessage();
-                        logger.error("part of a bulk action failed in A&AI: " + entry.getValue());
+                        logger.error("part of a bulk action failed in A&AI: {}", entry.getValue());
                         errorMessages.add(outputMessage);
                     }
                 }

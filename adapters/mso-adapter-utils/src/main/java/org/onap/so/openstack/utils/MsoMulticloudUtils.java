@@ -585,9 +585,8 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
                     } else {
                         try {
                             logger.debug(
-                                    "Create Stack error - unable to query for stack status - attempting to delete stack: "
-                                            + instanceId
-                                            + " - This will likely fail and/or we won't be able to query to see if delete worked");
+                                    "Create Stack error - unable to query for stack status - attempting to delete stack: {} - This will likely fail and/or we won't be able to query to see if delete worked",
+                                    instanceId);
                             StackInfo deleteInfo = deleteStack(cloudSiteId, cloudOwner, tenantId, instanceId);
                             // this may be a waste of time - if we just got an exception trying to query the stack -
                             // we'll just
@@ -656,9 +655,9 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
                             "Create Stack error, stack deletion suppressed"));
                 } else {
                     try {
-                        logger.debug("Create Stack errored - attempting to DELETE stack: " + instanceId);
-                        logger.debug("deletePollInterval=" + deletePollInterval + ", deletePollTimeout="
-                                + deletePollTimeout);
+                        logger.debug("Create Stack errored - attempting to DELETE stack: {}", instanceId);
+                        logger.debug("deletePollInterval={}, deletePollTimeout={}", deletePollInterval,
+                                deletePollTimeout);
                         StackInfo deleteInfo = deleteStack(cloudSiteId, cloudOwner, tenantId, instanceId);
                         boolean deleted = false;
                         while (!deleted) {
@@ -689,15 +688,15 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
                                             "Create Stack errored, stack deletion FAILED", "", "",
                                             ErrorCode.BusinessProcessError.getValue(),
                                             "Create Stack error, stack deletion FAILED"));
-                                    logger.debug("Stack deletion FAILED on a rollback of a create - " + instanceId
-                                            + ", status=" + queryInfo.getStatus() + ", reason="
-                                            + queryInfo.getStatusMessage());
+                                    logger.debug(
+                                            "Stack deletion FAILED on a rollback of a create - {}, status={}, reason={}",
+                                            instanceId, queryInfo.getStatus(), queryInfo.getStatusMessage());
                                     break;
                                 }
                             } catch (MsoException me2) {
                                 // Just log this one. We will report the original exception.
-                                logger.debug("Exception thrown trying to delete " + instanceId
-                                        + " on a create->rollback: " + me2.getContextMessage(), me2);
+                                logger.debug("Exception thrown trying to delete {} on a create->rollback: {}",
+                                        instanceId, me2.getContextMessage(), me2);
                                 logger.warn(String.format("%s %s %s %s %d %s",
                                         MessageEnum.RA_CREATE_STACK_ERR.toString(),
                                         "Create Stack errored, then stack deletion FAILED - exception thrown", "", "",

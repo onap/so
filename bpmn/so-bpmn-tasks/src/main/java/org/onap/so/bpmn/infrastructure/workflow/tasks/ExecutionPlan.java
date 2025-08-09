@@ -44,7 +44,7 @@ class ExecutionPlan extends ExecutionCollection<ExecutionGroup> {
 
     public void changeCurrentGroup(ExecutionGroup group) {
         if (currentGroup == null || !currentGroup.equals(group)) {
-            logger.info("Change " + getName() + " group[" + group.getName() + "]");
+            logger.info("Change {} group[{}]", getName(), group.getName());
             if (currentGroup != null)
                 currentGroup.flushBlocksFromCache(this.blocksBuiltCache);
         }
@@ -134,7 +134,7 @@ class ExecutionCollection<T extends ExecutionCollection<?>> {
         String blocks =
                 blocksCache.stream().map(x -> x.getBuildingBlock().getBpmnFlowName() + ", ").reduce("", String::concat);
         blocks = blocks.substring(0, blocks.length() - 2);
-        logger.info("Push " + getName() + " (" + blocksCache.size() + ") blocks [" + blocks + "]");
+        logger.info("Push {} ({}) blocks [{}]", getName(), blocksCache.size(), blocks);
         this.blocksBuiltCache.addAll(blocksCache);
     }
 
@@ -150,7 +150,7 @@ class ExecutionCollection<T extends ExecutionCollection<?>> {
             String blocks = this.blocksBuiltCache.stream().map(x -> x.getBuildingBlock().getBpmnFlowName() + ", ")
                     .reduce("", String::concat);
             blocks = blocks.substring(0, blocks.length() - 2);
-            logger.info("Flush " + getName() + " (" + blocksBuiltCache.size() + ") blocks [" + blocks + "]");
+            logger.info("Flush {} ({}) blocks [{}]", getName(), blocksBuiltCache.size(), blocks);
             blockList.addAll(this.blocksBuiltCache);
             this.blocksBuiltCache.clear();
         }

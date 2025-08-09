@@ -49,8 +49,8 @@ public class ApplicationControllerCallback<T> implements ResponseHandler<T> {
 
         Status status = appCSupport.getStatusFromGenericResponse(response);
 
-        logger.info("Status code is: " + status.getCode());
-        logger.info("Status message is: " + status.getMessage());
+        logger.info("Status code is: {}", status.getCode());
+        logger.info("Status message is: {}", status.getMessage());
 
         if (appCSupport.getFinalityOf(status)) {
             logger.debug("Obtained final status, complete the task");
@@ -64,7 +64,7 @@ public class ApplicationControllerCallback<T> implements ResponseHandler<T> {
     public void onException(AppcClientException exception) {
 
         logger.info("ON EXCEPTION IN CALLBACK");
-        logger.info("Exception from APPC: " + exception.getMessage());
+        logger.info("Exception from APPC: {}", exception.getMessage());
         Status exceptionStatus = appCSupport.buildStatusFromAppcException(exception);
         completeExternalTask(externalTask, externalTaskService, exceptionStatus);
     }

@@ -142,7 +142,7 @@ public class OofHomingV2 {
             if (!placementInfo.getPlacementDemands().isEmpty() || !licenseInfo.getLicenseDemands().isEmpty()) {
                 oofClient.postDemands(oofRequest);
             } else {
-                logger.debug(SERVICE_MISSING_DATA + " resources eligible for homing or licensing");
+                logger.debug("{} resources eligible for homing or licensing", SERVICE_MISSING_DATA);
                 throw new BpmnError(UNPROCESSABLE,
                         SERVICE_MISSING_DATA + " resources eligible for homing or licensing");
             }
@@ -154,13 +154,13 @@ public class OofHomingV2 {
 
             logger.trace("Completed Oof Homing Call Oof");
         } catch (BpmnError e) {
-            logger.debug(ERROR_WHILE_PREPARING_OOF_REQUEST + e.getStackTrace());
+            logger.debug("{}{}", ERROR_WHILE_PREPARING_OOF_REQUEST, e.getStackTrace());
             exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(e.getErrorCode()), e.getMessage());
         } catch (BadResponseException e) {
-            logger.debug(ERROR_WHILE_PREPARING_OOF_REQUEST + e.getStackTrace());
+            logger.debug("{}{}", ERROR_WHILE_PREPARING_OOF_REQUEST, e.getStackTrace());
             exceptionUtil.buildAndThrowWorkflowException(execution, 400, e.getMessage());
         } catch (Exception e) {
-            logger.debug(ERROR_WHILE_PREPARING_OOF_REQUEST + e.getStackTrace());
+            logger.debug("{}{}", ERROR_WHILE_PREPARING_OOF_REQUEST, e.getStackTrace());
             exceptionUtil.buildAndThrowWorkflowException(execution, INTERNAL, "Internal Error - occurred while "
                     + "preparing oof request: " + e + "   Stack:" + ExceptionUtils.getFullStackTrace(e));
         }
@@ -350,7 +350,7 @@ public class OofHomingV2 {
      *
      */
     private LicenseDemand buildLicenseDemand(String id, ModelInfoMetadata metadata) {
-        logger.debug("Building demand for service or resource: " + id);
+        logger.debug("Building demand for service or resource: {}", id);
         LicenseDemand demand = new LicenseDemand();
         if (isNotBlank(id) && isNotBlank(metadata.getModelInstanceName())) {
 
@@ -368,7 +368,7 @@ public class OofHomingV2 {
      *
      */
     private PlacementDemand buildDemand(String id, ModelInfoMetadata metadata) {
-        logger.debug("Building demand for service or resource: " + id);
+        logger.debug("Building demand for service or resource: {}", id);
         PlacementDemand placementDemand = new PlacementDemand();
         if (isNotBlank(id) && isNotBlank(metadata.getModelInstanceName())) {
             placementDemand.setServiceResourceId(id);
@@ -453,7 +453,7 @@ public class OofHomingV2 {
         List<AllottedResource> allottes = serviceInstance.getAllottedResources();
         List<GenericVnf> vnfs = serviceInstance.getVnfs();
 
-        logger.debug("Processing placement solution " + i + 1);
+        logger.debug("Processing placement solution {}1", i);
         for (int p = 0; p < placements.length(); p++) {
             JSONObject placement = placements.getJSONObject(p);
             SolutionInfo solutionInfo = new SolutionInfo();
@@ -541,7 +541,7 @@ public class OofHomingV2 {
                     }
                 }
             } else {
-                logger.debug(invalidMessage + IDENTIFIER_TYPE);
+                logger.debug("{}{}", invalidMessage, IDENTIFIER_TYPE);
                 throw new BpmnError(UNPROCESSABLE, invalidMessage + IDENTIFIER_TYPE);
             }
         } else if (type.equals("cloudRegionId")) {
@@ -552,7 +552,7 @@ public class OofHomingV2 {
                 solutionInfo.setTargetedCloudRegion(cloud);
                 si.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
             } else {
-                logger.debug(invalidMessage + IDENTIFIER_TYPE);
+                logger.debug("{}{}", invalidMessage, IDENTIFIER_TYPE);
                 throw new BpmnError(UNPROCESSABLE, invalidMessage + IDENTIFIER_TYPE);
             }
         }
