@@ -74,8 +74,8 @@ public class ArchiveInfraRequestsScheduler {
         calendar.add(Calendar.DATE, -archivedPeriod);
         Date archivingDate = calendar.getTime();
 
-        logger.debug("Date before 6 months: " + (calendar.get(Calendar.MONTH) + 1) + "-" + calendar.get(Calendar.DATE)
-                + "-" + calendar.get(Calendar.YEAR));
+        logger.debug("Date before 6 months: {}-{}-{}", (calendar.get(Calendar.MONTH) + 1), calendar.get(Calendar.DATE),
+                calendar.get(Calendar.YEAR));
 
         List<InfraActiveRequests> requestsByEndTime = new ArrayList<>();
 

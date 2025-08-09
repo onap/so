@@ -92,8 +92,8 @@ public class NetworkCollectionCatalogDbQueryTest extends CatalogDbAdapterBaseTes
                                 collectionInstanceGroupList = instanceGroup.getCollectionInstanceGroupCustomizations();
                                 CollectionNetworkResourceCustomization collectionNetworkCust =
                                         instanceGroup.getCollectionNetworkResourceCustomizations().get(0);
-                                logger.debug("Found Collection Network Resource Customization: "
-                                        + collectionNetworkCust.getModelCustomizationUUID());
+                                logger.debug("Found Collection Network Resource Customization: {}",
+                                        collectionNetworkCust.getModelCustomizationUUID());
                             } else {
                                 logger.debug(
                                         "No Network Collection found. toscaNodeType does not contain NetworkCollection");
@@ -122,7 +122,7 @@ public class NetworkCollectionCatalogDbQueryTest extends CatalogDbAdapterBaseTes
         logger.debug(Integer.toString(port));
         String buildingBlockFlowName = "CreateNetworkCollectionBB";
         BuildingBlockDetail buildingBlockDetail = client.getBuildingBlockDetail(buildingBlockFlowName);
-        logger.debug("" + buildingBlockDetail.getResourceType());
+        logger.debug("{}", buildingBlockDetail.getResourceType());
         assertNotNull(buildingBlockDetail);
     }
 

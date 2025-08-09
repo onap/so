@@ -181,7 +181,7 @@ public class SdncControllerDE extends LcmControllerDE {
         logger.debug(String.format("requestId: %s, action: %s, pnfName: %s", requestId, requestAction, pnfName));
 
         String requestPayload = String.valueOf(execution.getVariable(REQUEST_PAYLOAD));
-        logger.debug("SO request payload: " + requestPayload);
+        logger.debug("SO request payload: {}", requestPayload);
 
         String lcmAction;
         String lcmPayload;

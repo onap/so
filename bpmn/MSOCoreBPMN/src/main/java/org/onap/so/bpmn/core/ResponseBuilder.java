@@ -54,18 +54,18 @@ public class ResponseBuilder implements java.io.Serializable {
         String method =
                 getClass().getSimpleName() + ".buildWorkflowException(" + "execution=" + execution.getId() + ")";
 
-        logger.debug("Entered " + method);
+        logger.debug("Entered {}", method);
 
         String prefix = (String) execution.getVariable("prefix");
         String processKey = getProcessKey(execution);
 
-        logger.debug("processKey=" + processKey);
+        logger.debug("processKey={}", processKey);
 
         // See if there"s already a WorkflowException object in the execution.
         WorkflowException theException = (WorkflowException) execution.getVariable(WORKFLOWEXCEPTION);
 
         if (theException != null) {
-            logger.debug("Exited " + method + " - propagated " + theException);
+            logger.debug("Exited {} - propagated {}", method, theException);
             return theException;
         }
 
@@ -73,8 +73,8 @@ public class ResponseBuilder implements java.io.Serializable {
 
         String errorResponse = trimString(execution.getVariable(prefix + "ErrorResponse"), null);
         String responseCode = trimString(execution.getVariable(prefix + "ResponseCode"), null);
-        logger.debug("errorResponse=" + errorResponse);
-        logger.debug("responseCode=" + responseCode);
+        logger.debug("errorResponse={}", errorResponse);
+        logger.debug("responseCode={}", responseCode);
         if (errorResponse != null || !isOneOf(responseCode, null, "0", "200", "201", "202", "204")) {
             // This is an error condition. We need to return a WorkflowExcpetion
 
@@ -98,8 +98,8 @@ public class ResponseBuilder implements java.io.Serializable {
             String xmlErrorCode = trimString(getXMLTextElement(maybeXML, "ErrorCode"), null);
 
             if (xmlErrorMessage != null || xmlErrorCode != null) {
-                logger.debug("xmlErrorMessage=" + xmlErrorMessage);
-                logger.debug("xmlErrorCode=" + xmlErrorCode);
+                logger.debug("xmlErrorMessage={}", xmlErrorMessage);
+                logger.debug("xmlErrorCode={}", xmlErrorCode);
 
                 if (xmlErrorMessage == null) {
                     errorResponse = "Received error code " + xmlErrorCode + " from " + processKey;
@@ -140,11 +140,11 @@ public class ResponseBuilder implements java.io.Serializable {
 
             theException = new WorkflowException(processKey, intResponseCode, errorResponse);
             execution.setVariable(WORKFLOWEXCEPTION, theException);
-            logger.debug("Exited " + method + " - created " + theException);
+            logger.debug("Exited {} - created {}", method, theException);
             return theException;
         }
 
-        logger.debug("Exited " + method + " - no WorkflowException");
+        logger.debug("Exited {} - no WorkflowException", method);
         return null;
     }
 
@@ -157,7 +157,7 @@ public class ResponseBuilder implements java.io.Serializable {
     public Object buildWorkflowResponse(DelegateExecution execution) {
 
         String method = getClass().getSimpleName() + ".buildWorkflowResponse(" + "execution=" + execution.getId() + ")";
-        logger.debug("Entered " + method);
+        logger.debug("Entered {}", method);
 
         String prefix = (String) execution.getVariable("prefix");
         String processKey = getProcessKey(execution);
@@ -178,7 +178,7 @@ public class ResponseBuilder implements java.io.Serializable {
             }
         }
 
-        logger.debug("Exited " + method);
+        logger.debug("Exited {}", method);
         return theResponse;
     }
 

@@ -223,8 +223,8 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
                     updateStack = queryHeatStack(heatClient, canonicalName);
                     logger.debug("{} ({}) ", updateStack.getStackStatus(), canonicalName);
                     try {
-                        logger.debug(
-                                "Current stack {}" + this.getOutputsAsStringBuilderWithUpdate(heatStack).toString());
+                        logger.debug("Current stack {}",
+                                this.getOutputsAsStringBuilderWithUpdate(heatStack).toString());
                     } catch (Exception e) {
                         logger.debug("an error occurred trying to print out the current outputs of the stack", e);
                     }

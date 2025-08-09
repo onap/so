@@ -158,8 +158,8 @@ public class ConfigurationScaleOut {
                     ErrorCode.UnknownError.getValue(), "APPC Error", e);
             appcMessage = e.getMessage();
         }
-        logger.error("Error Message: " + appcMessage);
-        logger.error("ERROR CODE: " + appcCode);
+        logger.error("Error Message: {}", appcMessage);
+        logger.error("ERROR CODE: {}", appcCode);
         logger.trace("End of runAppCommand ");
         if (appcCode != null && !("0").equals(appcCode)) {
             exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(appcCode), appcMessage);

@@ -600,7 +600,7 @@ public class CatalogDbAdapterRest {
 
     public Response getProcessingFlagsImpl(String flag) {
         ProcessingFlags processingFlags = null;
-        logger.debug("Flag is: " + flag);
+        logger.debug("Flag is: {}", flag);
         int respStatus = HttpStatus.SC_OK;
         try {
             processingFlags = processingFlagsRepo.findByFlag(flag);
@@ -633,7 +633,7 @@ public class CatalogDbAdapterRest {
 
     public Response updateProcessingFlagsValueImpl(String flag, ProcessingFlags updatedProcessingFlag) {
         ProcessingFlags processingFlags = null;
-        logger.debug("Flag is: " + flag);
+        logger.debug("Flag is: {}", flag);
         int respStatus = HttpStatus.SC_OK;
         try {
             if (updatedProcessingFlag == null) {
@@ -642,7 +642,7 @@ public class CatalogDbAdapterRest {
             }
             String value = updatedProcessingFlag.getValue();
             if (value == null || (!value.equalsIgnoreCase("YES") && !value.equalsIgnoreCase("NO"))) {
-                logger.debug("Value " + value + " is invalid, only yes/no are allowed");
+                logger.debug("Value {} is invalid, only yes/no are allowed", value);
                 throw new RuntimeException("Invalid value specified");
             }
             processingFlags = processingFlagsRepo.findByFlag(flag);

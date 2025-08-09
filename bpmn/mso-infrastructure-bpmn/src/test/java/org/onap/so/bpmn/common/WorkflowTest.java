@@ -776,7 +776,7 @@ public abstract class WorkflowTest {
      */
     protected Object getProcessVariable(String processKey, String variable, long timeout) {
 
-        logger.debug("Waiting " + timeout + "ms for " + processKey + "." + variable + " to be set");
+        logger.debug("Waiting {}ms for {}.{} to be set", timeout, processKey, variable);
 
         long now = System.currentTimeMillis() + timeout;
         long endTime = now + timeout;
@@ -787,10 +787,10 @@ public abstract class WorkflowTest {
         while (value == null) {
             if (now > endTime) {
                 if (processInstance == null) {
-                    logger.debug("Timed out waiting for " + processKey + " to start");
+                    logger.debug("Timed out waiting for {} to start", processKey);
                 } else {
-                    logger.debug("Timed out waiting for " + processKey + "[" + processInstance.getId() + "]." + variable
-                            + " to be set");
+                    logger.debug("Timed out waiting for {}[{}].{} to be set", processKey, processInstance.getId(),
+                            variable);
                 }
 
                 return null;
@@ -827,7 +827,7 @@ public abstract class WorkflowTest {
             now = System.currentTimeMillis();
         }
 
-        logger.debug(processKey + "[" + processInstance.getId() + "]." + variable + "=" + value);
+        logger.debug("{}[{}].{}={}", processKey, processInstance.getId(), variable, value);
 
         return value;
     }
@@ -860,7 +860,7 @@ public abstract class WorkflowTest {
         logger.debug("Injecting SDNC adapter callback");
 
         Response response = workflowMessageResource.deliver(contentType, "SDNCAResponse", sdncRequestId, content);
-        logger.debug("Workflow response to SDNC adapter callback: " + response);
+        logger.debug("Workflow response to SDNC adapter callback: {}", response);
         return true;
     }
 
@@ -900,7 +900,7 @@ public abstract class WorkflowTest {
         sdncAdapterCallbackRequest.setCallbackHeader(callbackHeader);
         sdncAdapterCallbackRequest.setRequestData(content);
         SDNCAdapterResponse sdncAdapterResponse = callbackService.sdncAdapterCallback(sdncAdapterCallbackRequest);
-        logger.debug("Workflow response to SDNC adapter callback: " + sdncAdapterResponse);
+        logger.debug("Workflow response to SDNC adapter callback: {}", sdncAdapterResponse);
 
         return true;
     }
@@ -1192,7 +1192,7 @@ public abstract class WorkflowTest {
             content = content.replace("((CORRELATOR))", correlator);
         }
 
-        logger.debug("Injecting " + messageType + " message");
+        logger.debug("Injecting {} message", messageType);
 
         Response response = workflowMessageResource.deliver(contentType, messageType, correlator, content);
         logger.debug("Workflow response to {} message: {}", messageType, response);

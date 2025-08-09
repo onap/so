@@ -159,8 +159,8 @@ public class WorkflowActionBBFailure {
 
             if (Boolean.TRUE.equals(execution.getVariable(IS_CHILD_PROCESS))) {
                 String parentCorrelationId = (String) execution.getVariable(PARENT_CORRELATION_ID);
-                logger.info("Child service creation failed. Sending message to parent with correlationId: "
-                        + parentCorrelationId);
+                logger.info("Child service creation failed. Sending message to parent with correlationId: {}",
+                        parentCorrelationId);
                 execution.getProcessEngineServices().getRuntimeService()
                         .createMessageCorrelation(CHILD_SVC_REQ_MESSAGE_NAME)
                         .setVariable(CHILD_SVC_REQ_STATUS, "FAILED").setVariable(CHILD_SVC_REQ_ERROR, childErrorMessage)

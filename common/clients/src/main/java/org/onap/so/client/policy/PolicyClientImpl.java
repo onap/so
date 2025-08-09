@@ -111,7 +111,7 @@ public class PolicyClientImpl implements PolicyClient {
         PolicyConfig[] policyConfigList = client.post(configReqParameters, PolicyConfig[].class);
         PolicyConfig policyConfig = null;
         if (policyConfigList.length > 1) {
-            logger.debug("Too many configs for policyName: " + policyName);
+            logger.debug("Too many configs for policyName: {}", policyName);
             return null;
         }
         try {

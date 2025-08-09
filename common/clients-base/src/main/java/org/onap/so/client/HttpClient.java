@@ -81,7 +81,7 @@ public class HttpClient extends RestClient {
             if (isNotBlank(name) && isNotBlank(value)) {
                 headerMap.add("ALL", Pair.with(name, value));
             } else {
-                log.warn("Not adding " + name + " to headers.");
+                log.warn("Not adding {} to headers.", name);
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
