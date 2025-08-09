@@ -168,8 +168,8 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
             giRC = client.createClient(clone.resourceVersion(resourceVersion));
             giRC.delete();
         } else {
-            logger.warn(clone.build() + " already does not exist in " + client.getGraphDBName()
-                    + " therefore delete call not executed");
+            logger.warn("{} already does not exist in {} therefore delete call not executed", clone.build(),
+                    client.getGraphDBName());
         }
     }
 

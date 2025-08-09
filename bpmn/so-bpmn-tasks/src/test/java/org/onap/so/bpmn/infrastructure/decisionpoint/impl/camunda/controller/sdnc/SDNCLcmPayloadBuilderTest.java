@@ -75,7 +75,7 @@ public class SDNCLcmPayloadBuilderTest {
         ActivateNESwPayload activateNESwPayload = SDNCLcmPayloadBuilder.buildActivateNESwPayload(execution);
         try {
             String payload = SDNCLcmPayloadBuilder.convertToSting(activateNESwPayload);
-            logger.debug("ActivateNESwPayload:\n" + payload);
+            logger.debug("ActivateNESwPayload:\n{}", payload);
 
             assertEquals(expectedPayload, payload);
         } catch (JsonProcessingException e) {
@@ -94,7 +94,7 @@ public class SDNCLcmPayloadBuilderTest {
         DownloadNESwPayload downloadNESwPayload = SDNCLcmPayloadBuilder.buildDownloadNESwPayload(execution);
         try {
             String payload = SDNCLcmPayloadBuilder.convertToSting(downloadNESwPayload);
-            logger.debug("DownloadNESwPayload:\n" + payload);
+            logger.debug("DownloadNESwPayload:\n{}", payload);
 
             assertEquals(expectedPayload, payload);
         } catch (JsonProcessingException e) {
@@ -111,7 +111,7 @@ public class SDNCLcmPayloadBuilderTest {
         UpgradePostCheckPayload upgradePostCheckPayload = SDNCLcmPayloadBuilder.buildUpgradePostCheckPayload(execution);
         try {
             String payload = SDNCLcmPayloadBuilder.convertToSting(upgradePostCheckPayload);
-            logger.debug("UpgradePostCheckPayload:\n" + payload);
+            logger.debug("UpgradePostCheckPayload:\n{}", payload);
 
             assertEquals(expectedPayload, payload);
         } catch (JsonProcessingException e) {
@@ -128,7 +128,7 @@ public class SDNCLcmPayloadBuilderTest {
         UpgradePreCheckPayload upgradePreCheckPayload = SDNCLcmPayloadBuilder.buildUpgradePreCheckPayload(execution);
         try {
             String payload = SDNCLcmPayloadBuilder.convertToSting(upgradePreCheckPayload);
-            logger.debug("UpgradePreCheckPayload:\n" + payload);
+            logger.debug("UpgradePreCheckPayload:\n{}", payload);
 
             assertEquals(expectedPayload, payload);
         } catch (JsonProcessingException e) {

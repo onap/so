@@ -61,7 +61,7 @@ public class OofInfraUtils {
             }
         } catch (Exception e) {
             logger.debug("Error looking up or creating cloudsite : {}", cloudSite.getId());
-            logger.debug("CloudSite Lookup/Creation Error: " + e);
+            logger.debug("CloudSite Lookup/Creation Error: {}", e);
         }
 
 

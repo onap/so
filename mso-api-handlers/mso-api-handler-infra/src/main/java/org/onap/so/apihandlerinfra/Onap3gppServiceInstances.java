@@ -294,7 +294,7 @@ public class Onap3gppServiceInstances {
                 Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
                         MsoException.ServiceException, "No communication to catalog DB " + e.getMessage(),
                         ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-                logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
+                logger.debug("{}{}", END_OF_THE_TRANSACTION, response.getEntity());
                 return response;
             }
 
@@ -304,7 +304,7 @@ public class Onap3gppServiceInstances {
                 Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
                         MsoException.ServiceException, "Recipe does not exist in catalog DB",
                         ErrorNumbers.SVC_GENERAL_SERVICE_ERROR, null, version);
-                logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
+                logger.debug("{}{}", END_OF_THE_TRANSACTION, response.getEntity());
                 return response;
             }
 
@@ -376,7 +376,7 @@ public class Onap3gppServiceInstances {
                 Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
                         MsoException.ServiceException, "No communication to catalog DB " + e.getMessage(),
                         ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-                logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
+                logger.debug("{}{}", END_OF_THE_TRANSACTION, response.getEntity());
                 return response;
             }
 
@@ -386,7 +386,7 @@ public class Onap3gppServiceInstances {
                 Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
                         MsoException.ServiceException, "Recipe does not exist in catalog DB",
                         ErrorNumbers.SVC_GENERAL_SERVICE_ERROR, null, version);
-                logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
+                logger.debug("{}{}", END_OF_THE_TRANSACTION, response.getEntity());
                 return response;
             }
 
@@ -457,7 +457,7 @@ public class Onap3gppServiceInstances {
                 Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
                         MsoException.ServiceException, "No communication to catalog DB " + e.getMessage(),
                         ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-                logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
+                logger.debug("{}{}", END_OF_THE_TRANSACTION, response.getEntity());
                 return response;
             }
 
@@ -467,7 +467,7 @@ public class Onap3gppServiceInstances {
                 Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
                         MsoException.ServiceException, "Recipe does not exist in catalog DB",
                         ErrorNumbers.SVC_GENERAL_SERVICE_ERROR, null, version);
-                logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
+                logger.debug("{}{}", END_OF_THE_TRANSACTION, response.getEntity());
                 return response;
             }
 
@@ -544,7 +544,7 @@ public class Onap3gppServiceInstances {
                 Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
                         MsoException.ServiceException, "No communication to catalog DB " + e.getMessage(),
                         ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-                logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
+                logger.debug("{}{}", END_OF_THE_TRANSACTION, response.getEntity());
                 return response;
             }
 
@@ -554,7 +554,7 @@ public class Onap3gppServiceInstances {
                 Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
                         MsoException.ServiceException, "Recipe does not exist in catalog DB",
                         ErrorNumbers.SVC_GENERAL_SERVICE_ERROR, null, version);
-                logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
+                logger.debug("{}{}", END_OF_THE_TRANSACTION, response.getEntity());
                 return response;
             }
 
@@ -633,8 +633,8 @@ public class Onap3gppServiceInstances {
         RecipeLookupResult recipeLookupResult = getServiceURI(serviceModelUUID, action, defaultServiceModelName);
 
         if (recipeLookupResult != null) {
-            logger.debug("Orchestration URI is: " + recipeLookupResult.getOrchestrationURI() + ", recipe Timeout is: "
-                    + Integer.toString(recipeLookupResult.getRecipeTimeout()));
+            logger.debug("Orchestration URI is: {}, recipe Timeout is: {}", recipeLookupResult.getOrchestrationURI(),
+                    Integer.toString(recipeLookupResult.getRecipeTimeout()));
         } else {
             logger.debug("No matching recipe record found");
         }
@@ -741,7 +741,7 @@ public class Onap3gppServiceInstances {
             String orchestrationURI, String requestScope) throws ApiException {
         ResponseEntity<String> response =
                 requestHandlerUtils.postRequest(currentActiveReq, parameter, orchestrationURI);
-        logger.debug("BPEL response : " + response);
+        logger.debug("BPEL response : {}", response);
         int bpelStatus = responseHandler.setStatus(response.getStatusCodeValue());
         String jsonResponse;
         try {

@@ -77,7 +77,7 @@ public class SDNCLcmDmaapClient {
             try {
                 lcmDmaapResponse = mapper.readValue(message, LcmDmaapResponse.class);
             } catch (Exception e) {
-                logger.warn("Invalid SDNC LCM DMaaP response: " + message);
+                logger.warn("Invalid SDNC LCM DMaaP response: {}", message);
                 continue;
             }
 

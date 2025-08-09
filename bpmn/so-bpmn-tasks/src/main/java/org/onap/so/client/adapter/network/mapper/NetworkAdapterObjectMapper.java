@@ -93,7 +93,7 @@ public class NetworkAdapterObjectMapper {
         String networkTechnology = l3Network.getModelInfoNetwork().getNetworkTechnology();
         if (networkTechnology == null) {
             networkTechnology = l3Network.getNetworkTechnology();
-            logger.warn("NetworkTechnology was null in CatalogDB. Using field from AAI: " + networkTechnology);
+            logger.warn("NetworkTechnology was null in CatalogDB. Using field from AAI: {}", networkTechnology);
         }
         if (networkTechnology != null) {
             createNetworkRequest.setNetworkTechnology(networkTechnology.toUpperCase());

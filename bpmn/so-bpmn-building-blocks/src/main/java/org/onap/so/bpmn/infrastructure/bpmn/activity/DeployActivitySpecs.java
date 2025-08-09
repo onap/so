@@ -62,9 +62,9 @@ public class DeployActivitySpecs {
                 String activitySpecName = f.getName();
                 String errorMessage = deployActivitySpec(hostname, activitySpecName);
                 if (errorMessage == null) {
-                    logger.debug("Deployed Activity Spec: " + activitySpecName);
+                    logger.debug("Deployed Activity Spec: {}", activitySpecName);
                 } else {
-                    logger.error("Error deploying Activity Spec: " + activitySpecName + " : " + errorMessage);
+                    logger.error("Error deploying Activity Spec: {} : {}", activitySpecName, errorMessage);
                 }
             }
         } else {

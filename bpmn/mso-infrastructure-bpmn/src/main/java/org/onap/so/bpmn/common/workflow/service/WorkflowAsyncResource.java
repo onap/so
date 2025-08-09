@@ -125,7 +125,7 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
         String requestId = getRequestId(inputVariables);
         long currentWaitTime = 0;
         long waitTime = getWaitTime();
-        logger.debug("WorkflowAsyncResource.waitForResponse using timeout: " + waitTime);
+        logger.debug("WorkflowAsyncResource.waitForResponse using timeout: {}", waitTime);
         while (waitTime > currentWaitTime) {
             Thread.sleep(workflowPollInterval);
             currentWaitTime = currentWaitTime + workflowPollInterval;

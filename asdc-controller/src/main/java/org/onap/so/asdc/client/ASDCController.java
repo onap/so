@@ -372,7 +372,7 @@ public class ASDCController {
                 return downloadResult;
             }
         } catch (RuntimeException e) {
-            logger.debug("Not able to download the artifact due to an exception: " + artifact.getArtifactURL());
+            logger.debug("Not able to download the artifact due to an exception: {}", artifact.getArtifactURL());
             this.sendASDCNotification(NotificationType.DOWNLOAD, artifact.getArtifactURL(), asdcConfig.getConsumerID(),
                     distributionId, DistributionStatusEnum.DOWNLOAD_ERROR, e.getMessage(), System.currentTimeMillis());
 
@@ -568,8 +568,8 @@ public class ASDCController {
     protected void sendFinalDistributionStatus(String distributionID, DistributionStatusEnum status,
             String errorReason) {
 
-        logger.debug("Enter sendFinalDistributionStatus with DistributionID " + distributionID + " and Status of "
-                + status.name() + " and ErrorReason " + errorReason);
+        logger.debug("Enter sendFinalDistributionStatus with DistributionID {} and Status of {} and ErrorReason {}",
+                distributionID, status.name(), errorReason);
 
         long subStarttime = System.currentTimeMillis();
         try {
@@ -775,8 +775,8 @@ public class ASDCController {
                 try {
 
                     if (!this.checkResourceAlreadyDeployed(resourceStructure, serviceDeployed)) {
-                        logger.debug("Processing Resource Type: " + resourceType + " and Model UUID: "
-                                + resourceStructure.getResourceInstance().getResourceUUID());
+                        logger.debug("Processing Resource Type: {} and Model UUID: {}", resourceType,
+                                resourceStructure.getResourceInstance().getResourceUUID());
 
 
                         if ("VF".equals(resourceType)) {
@@ -789,8 +789,8 @@ public class ASDCController {
                                 }
 
                                 if (ASDCConfiguration.VF_MODULES_METADATA.equals(artifact.getArtifactType())) {
-                                    logger.debug("VF_MODULE_ARTIFACT: "
-                                            + new String(resultArtifact.getArtifactPayload(), StandardCharsets.UTF_8));
+                                    logger.debug("VF_MODULE_ARTIFACT: {}",
+                                            new String(resultArtifact.getArtifactPayload(), StandardCharsets.UTF_8));
                                     logger.debug(ASDCNotificationLogging
                                             .dumpVfModuleMetaDataList(((VfResourceStructure) resourceStructure)
                                                     .decodeVfModuleArtifact(resultArtifact.getArtifactPayload())));
@@ -800,8 +800,8 @@ public class ASDCController {
                                             resultArtifact);
                                 } else {
                                     writeArtifactToFile(artifact, resultArtifact);
-                                    logger.debug(
-                                            "Adding workflow artifact to structure: " + artifact.getArtifactName());
+                                    logger.debug("Adding workflow artifact to structure: {}",
+                                            artifact.getArtifactName());
                                     resourceStructure.addWorkflowArtifactToStructure(artifact, resultArtifact);
                                 }
 
@@ -824,7 +824,7 @@ public class ASDCController {
 
                 if (!hasVFResource) {
 
-                    logger.debug("No resources found for Service: " + iNotif.getServiceUUID());
+                    logger.debug("No resources found for Service: {}", iNotif.getServiceUUID());
 
                     logger.debug("Preparing to deploy Service: {}", iNotif.getServiceUUID());
                     try {
@@ -984,13 +984,13 @@ public class ASDCController {
                         .filter(e -> e.getArtifactType().equalsIgnoreCase("WORKFLOW")).findFirst();
                 if (artifactOpt.isPresent()) {
                     IArtifactInfo artifactInfo = artifactOpt.get();
-                    logger.debug("Ready to parse this serviceArtifactUUID:  " + artifactInfo.getArtifactUUID());
+                    logger.debug("Ready to parse this serviceArtifactUUID:  {}", artifactInfo.getArtifactUUID());
                     String filePath = Paths.get(getMsoConfigPath(), "ASDC", artifactInfo.getArtifactVersion(),
                             artifactInfo.getArtifactName()).normalize().toString();
                     ZipParser zipParserInstance = ZipParser.getInstance();
                     artifactContent = zipParserInstance.parseJsonForZip(filePath);
-                    logger.debug(
-                            "serviceArtifact parsing success! serviceArtifactUUID: " + artifactInfo.getArtifactUUID());
+                    logger.debug("serviceArtifact parsing success! serviceArtifactUUID: {}",
+                            artifactInfo.getArtifactUUID());
 
                     ResourceStructure resourceStructure = new VfResourceStructure(iNotif, new ResourceInstance());
                     resourceStructure.setResourceType(ResourceType.OTHER);
@@ -1004,8 +1004,8 @@ public class ASDCController {
             }
 
         } catch (IOException e) {
-            logger.error("serviceArtifact parse failure for service uuid:  "
-                    + serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY));
+            logger.error("serviceArtifact parse failure for service uuid:  {}",
+                    serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY));
         } catch (Exception e) {
             logger.error("error NSST process resource failure ", e);
         }

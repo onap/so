@@ -494,7 +494,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
             heatClient = getHeatClient(cloudSiteId, tenantId);
         } catch (MsoTenantNotFound e) {
             // Tenant doesn't exist, so stack doesn't either
-            logger.debug("Tenant with id " + tenantId + "not found.", e);
+            logger.debug("Tenant with id {} not found.", tenantId, e);
             return new StackInfo(stackName, HeatStatus.NOTFOUND);
         } catch (MsoException me) {
             // Got an Openstack error. Propagate it

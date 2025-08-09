@@ -131,7 +131,7 @@ public class SDNCRequestTasks {
                 }
             }
         } catch (SDNCErrorResponseException e) {
-            logger.error("SDNC error response - " + e.getMessage());
+            logger.error("SDNC error response - {}", e.getMessage());
             exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e.getMessage(), ONAPComponents.SDNC);
         } catch (Exception e) {
             logger.error("Error processing SDNC callback", e);

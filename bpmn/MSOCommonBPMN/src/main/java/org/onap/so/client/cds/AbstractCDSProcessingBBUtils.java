@@ -113,7 +113,7 @@ public class AbstractCDSProcessingBBUtils {
             ExecutionServiceInput executionServiceInput = prepareExecutionServiceInput(executionObject);
 
             execution.setVariable(EXEC_INPUT, executionServiceInput);
-            logger.debug("Input payload: " + executionServiceInput.getPayload());
+            logger.debug("Input payload: {}", executionServiceInput.getPayload());
 
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);

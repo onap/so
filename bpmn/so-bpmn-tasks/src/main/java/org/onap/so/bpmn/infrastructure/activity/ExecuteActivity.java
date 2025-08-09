@@ -137,11 +137,11 @@ public class ExecuteActivity implements JavaDelegate {
             }
 
             handlingCode = (String) variableMap.get(HANDLING_CODE);
-            logger.debug("Handling code: " + handlingCode);
+            logger.debug("Handling code: {}", handlingCode);
 
             execution.setVariable(WORKFLOW_EXCEPTION, workflowException);
         } catch (Exception e) {
-            logger.error("BPMN exception on activity execution: " + e.getMessage());
+            logger.error("BPMN exception on activity execution: {}", e.getMessage());
             workflowException = new WorkflowException(EXECUTE_BUILDING_BLOCK, 7000, e.getMessage());
             handlingCode = ABORT_HANDLING_CODE;
         }

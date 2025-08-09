@@ -93,8 +93,8 @@ public class ServiceLevelRequestDispatcher implements JavaDelegate {
                     .filter(data -> data.getRelationshipKey().contains("pnf.pnf-name"))
                     .map(x -> x.getRelationshipValue()).collect(Collectors.toList());
             if (pnfNameList == null || pnfNameList.size() == 0) {
-                logger.warn(
-                        "Unable to find the PNF for service instance id: " + serviceInstance.getServiceInstanceId());
+                logger.warn("Unable to find the PNF for service instance id: {}",
+                        serviceInstance.getServiceInstanceId());
                 return;
             }
             delegateExecution.setVariable(ServiceLevelConstants.PNF_NAME_LIST, pnfNameList);

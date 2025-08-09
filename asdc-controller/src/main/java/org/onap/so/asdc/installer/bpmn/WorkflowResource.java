@@ -84,12 +84,12 @@ public class WorkflowResource {
             for (String uuid : artifactsMapByUUID.keySet()) {
                 WorkflowArtifact artifactToInstall = artifactsMapByUUID.get(uuid);
                 if (isLatestVersionAvailable(artifactsMapByUUID, artifactToInstall)) {
-                    logger.debug("Installing the BPMN: " + artifactToInstall.getArtifactInfo().getArtifactName());
+                    logger.debug("Installing the BPMN: {}", artifactToInstall.getArtifactInfo().getArtifactName());
                     deployWorkflowResourceToCamunda(artifactToInstall);
                     installWorkflowResource(artifactToInstall, vfResourceModelUuid);
                 } else {
-                    logger.debug("Skipping installing - not the latest version: "
-                            + artifactToInstall.getArtifactInfo().getArtifactName());
+                    logger.debug("Skipping installing - not the latest version: {}",
+                            artifactToInstall.getArtifactInfo().getArtifactName());
                 }
             }
         }
@@ -98,7 +98,7 @@ public class WorkflowResource {
     protected void deployWorkflowResourceToCamunda(WorkflowArtifact artifact) throws Exception {
         String bpmnName = artifact.getArtifactInfo().getArtifactName();
         String version = artifact.getArtifactInfo().getArtifactVersion();
-        logger.debug("BPMN Name: " + bpmnName);
+        logger.debug("BPMN Name: {}", bpmnName);
         try {
             HttpResponse response = bpmnInstaller.sendDeploymentRequest(bpmnName, version);
             logger.debug("Response status line: {}", response.getStatusLine());

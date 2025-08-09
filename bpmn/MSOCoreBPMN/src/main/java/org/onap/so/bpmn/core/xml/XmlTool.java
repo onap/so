@@ -208,7 +208,7 @@ public final class XmlTool {
             }
             return out.toString();
         } catch (Exception e) {
-            logger.debug("Exception at readResourceFile stream: " + e);
+            logger.debug("Exception at readResourceFile stream: {}", e);
             return null;
         }
     }

@@ -10,9 +10,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -77,7 +77,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
      * mso-service-request-timeout then it waits for the value specified in DEFAULT_WAIT_TIME Note: value specified in
      * mso-service-request-timeout is in seconds During polling time, if there is an exception encountered in the
      * process execution then polling is stopped and the error response is returned to the client
-     * 
+     *
      * @param processKey
      * @param variableMap
      * @return
@@ -117,7 +117,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
             long timeToWaitAfterProcessEnded = uriInfo == null ? 5000 : 60000;
             AtomicLong timeProcessEnded = new AtomicLong(0);
             boolean endedWithNoResponse = false;
-            logger.debug(LOGMARKER + "WorkflowResource.startProcessInstanceByKey using timeout: " + waitTime);
+            logger.debug("{} WorkflowResource.startProcessInstanceByKey using timeout: {}", LOGMARKER, waitTime);
             while (now <= endTime) {
                 Thread.sleep(pollingInterval);
 
@@ -191,7 +191,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
             workflowResponse.setMessageCode(500);
             return Response.status(500).entity(workflowResponse).build();
         } catch (Exception ex) {
-            logger.debug(LOGMARKER + "Exception in startProcessInstance by key", ex);
+            logger.debug("{} Exception in startProcessInstance by key", LOGMARKER, ex);
             workflowResponse.setMessage("Fail");
             workflowResponse.setResponse("Error occurred while executing the process: " + ex.getMessage());
             if (processInstance != null)
@@ -210,7 +210,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
     /**
      * Returns the wait time, this is used by the resource on how long it should wait to send a response If none
      * specified DEFAULT_WAIT_TIME is used
-     * 
+     *
      * @param inputVariables
      * @return
      */
@@ -243,7 +243,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
 
     /**
      * Checks to see if the specified process is ended.
-     * 
+     *
      * @param processInstanceId the process instance ID
      * @return true if the process is ended
      */
@@ -274,7 +274,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
         try {
             workflowResponse.setMessageCode(Integer.parseInt(responseCode));
         } catch (NumberFormatException nex) {
-            logger.debug(LOGMARKER + "Failed to parse ResponseCode: " + responseCode);
+            logger.debug("{} Failed to parse ResponseCode: {}", LOGMARKER, responseCode);
             workflowResponse.setMessageCode(-1);
         }
 
@@ -285,7 +285,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
         } else if ("Fail".equalsIgnoreCase(String.valueOf(status))) {
             workflowResponse.setMessage("Fail");
         } else {
-            logger.debug(LOGMARKER + "Unrecognized Status: " + responseCode);
+            logger.debug("{} Unrecognized Status: {}", LOGMARKER, responseCode);
             workflowResponse.setMessage("Fail");
         }
     }
@@ -310,7 +310,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
          * If an exception occurs when starting the process instance, it may be obtained by calling this method. Note
          * that exceptions are only recorded while the process is executing in its original thread. Once a process is
          * suspended, exception recording stops.
-         * 
+         *
          * @return the exception, or null if none has occurred
          */
         public Exception getException() {
@@ -324,7 +324,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
 
         /**
          * Sets the process instance exception.
-         * 
+         *
          * @param exception the exception
          */
         private void setException(Exception exception) {
@@ -344,7 +344,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
                 processInstance = runtimeService.startProcessInstanceByKey(processKey, inputVariables);
 
             } catch (Exception e) {
-                logger.debug(LOGMARKER + "ProcessThread caught an exception executing " + processKey + ": " + e);
+                logger.debug("{} ProcessThread caught an exception executing {}: {}", LOGMARKER, processKey, e);
                 setException(e);
             }
         }
@@ -377,7 +377,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
 
     /**
      * Attempts to get a response map from the specified process instance.
-     * 
+     *
      * @return the response map, or null if it is unavailable
      */
     private Map<String, Object> getResponseMap(ProcessInstance processInstance, String processKey,
@@ -391,12 +391,12 @@ public class WorkflowResource extends ProcessEngineAwareService {
         /*
          * RuntimeService runtimeService = getProcessEngineServices().getRuntimeService(); List<Execution> executions =
          * runtimeService.createExecutionQuery() .processInstanceId(processInstanceId).list();
-         * 
+         *
          * for (Execution execution : executions) {
-         * 
+         *
          * @SuppressWarnings("unchecked") Map<String, Object> responseMap = (Map<String, Object>)
          * getVariableFromExecution(runtimeService, execution.getId(), responseMapVariable);
-         * 
+         *
          * if (responseMap != null) { msoLogger.debug(LOGMARKER + "Obtained " + responseMapVariable + " from process " +
          * processInstanceId + " execution " + execution.getId()); return responseMap; } }
          */
@@ -417,8 +417,8 @@ public class WorkflowResource extends ProcessEngineAwareService {
                     processInstance.getId(), responseMapVariable);
 
             if (responseMap != null) {
-                logger.debug(LOGMARKER + "Obtained " + responseMapVariable + " from process " + processInstanceId
-                        + " history");
+                logger.debug("{}Obtained {} from process {} history", LOGMARKER, responseMapVariable,
+                        processInstanceId);
                 return responseMap;
             }
 
@@ -433,13 +433,13 @@ public class WorkflowResource extends ProcessEngineAwareService {
                         getVariableFromHistory(historyService, processInstanceId, "WorkflowResponse");
                 String workflowResponse =
                         workflowResponseObject == null ? null : String.valueOf(workflowResponseObject);
-                logger.debug(LOGMARKER + "WorkflowResponse: " + workflowResponse);
+                logger.debug("{}WorkflowResponse: {}", LOGMARKER, workflowResponse);
 
                 if (workflowResponse != null) {
                     Object responseCodeObject =
                             getVariableFromHistory(historyService, processInstanceId, prefix + "ResponseCode");
                     String responseCode = responseCodeObject == null ? null : String.valueOf(responseCodeObject);
-                    logger.debug(LOGMARKER + prefix + "ResponseCode: " + responseCode);
+                    logger.debug("{}{}ResponseCode: {}", LOGMARKER, prefix, responseCode);
                     responseMap = new HashMap<>();
                     responseMap.put("WorkflowResponse", workflowResponse);
                     responseMap.put("ResponseCode", responseCode);
@@ -476,17 +476,17 @@ public class WorkflowResource extends ProcessEngineAwareService {
                     }
 
                 }
-                logger.debug(LOGMARKER + "WorkflowException: " + workflowExceptionText);
+                logger.debug("{}WorkflowException: {}", LOGMARKER, workflowExceptionText);
 
                 // BEGIN LEGACY SUPPORT. TODO: REMOVE THIS CODE
                 Object object = getVariableFromHistory(historyService, processInstanceId, processKey + "Response");
                 String response = object == null ? null : String.valueOf(object);
-                logger.debug(LOGMARKER + processKey + "Response: " + response);
+                logger.debug("{}{}Response: {}", LOGMARKER, processKey, response);
 
                 if (response != null) {
                     object = getVariableFromHistory(historyService, processInstanceId, prefix + "ResponseCode");
                     String responseCode = object == null ? null : String.valueOf(object);
-                    logger.debug(LOGMARKER + prefix + "ResponseCode: " + responseCode);
+                    logger.debug("{}{}ResponseCode: {}", LOGMARKER, prefix, responseCode);
                     responseMap = new HashMap<>();
                     responseMap.put("Response", response);
                     responseMap.put("ResponseCode", responseCode);
@@ -496,12 +496,12 @@ public class WorkflowResource extends ProcessEngineAwareService {
 
                 object = getVariableFromHistory(historyService, processInstanceId, prefix + "ErrorResponse");
                 String errorResponse = object == null ? null : String.valueOf(object);
-                logger.debug(LOGMARKER + prefix + "ErrorResponse: " + errorResponse);
+                logger.debug("{}{}ErrorResponse: {}", LOGMARKER, prefix, errorResponse);
 
                 if (errorResponse != null) {
                     object = getVariableFromHistory(historyService, processInstanceId, prefix + "ResponseCode");
                     String responseCode = object == null ? null : String.valueOf(object);
-                    logger.debug(LOGMARKER + prefix + "ResponseCode: " + responseCode);
+                    logger.debug("{}{}ResponseCode: {}", LOGMARKER, prefix, responseCode);
                     responseMap = new HashMap<>();
                     responseMap.put("Response", errorResponse);
                     responseMap.put("ResponseCode", responseCode);
@@ -516,7 +516,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
 
     /**
      * Gets a variable value from the specified execution.
-     * 
+     *
      * @return the variable value, or null if the variable could not be obtained
      */
     private Object getVariableFromExecution(RuntimeService runtimeService, String executionId, String variableName) {
@@ -524,14 +524,14 @@ public class WorkflowResource extends ProcessEngineAwareService {
             return runtimeService.getVariable(executionId, variableName);
         } catch (ProcessEngineException e) {
             // Most likely cause is that the execution no longer exists.
-            logger.debug("Error retrieving execution " + executionId + " variable " + variableName + ": " + e);
+            logger.debug("Error retrieving execution {} variable {}: {}", executionId, variableName, e);
             return null;
         }
     }
 
     /**
      * Gets a variable value from specified historical process instance.
-     * 
+     *
      * @return the variable value, or null if the variable could not be obtained
      */
     private Object getVariableFromHistory(HistoryService historyService, String processInstanceId,
@@ -565,16 +565,16 @@ public class WorkflowResource extends ProcessEngineAwareService {
                 variablesMap.put(variableInstance.getName(), variableInstance.getValue().toString());
             }
 
-            logger.debug(LOGMARKER + "***Received MSO getProcessVariables with processKey:" + processKey
-                    + " and variables: " + variablesMap.toString());
+            logger.debug("{}***Received MSO getProcessVariables with processKey:{} and variables: {}", LOGMARKER,
+                    processKey, variablesMap.toString());
 
             response.setVariables(variablesMap);
             response.setMessage("Success");
             response.setResponse("Successfully retrieved the variables");
             response.setProcessInstanceID(processInstanceId);
 
-            logger.debug(LOGMARKER + response.getMessage() + " for processKey: " + processKey + " with response: "
-                    + response.getResponse());
+            logger.debug("{}{} for processKey: {} with response: {}", LOGMARKER, response.getMessage(), processKey,
+                    response.getResponse());
         } catch (Exception ex) {
             response.setMessage("Fail");
             response.setResponse("Failed to retrieve the variables," + ex.getMessage());

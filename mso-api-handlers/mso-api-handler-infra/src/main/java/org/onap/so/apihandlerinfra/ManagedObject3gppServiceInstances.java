@@ -237,7 +237,7 @@ public class ManagedObject3gppServiceInstances {
             try {
                 response = mapper.writeValueAsString(mOIResponse);
             } catch (Exception exception) {
-                LOGGER.error("Error while creating MOIResponse JSON" + exception.getMessage());
+                LOGGER.error("Error while creating MOIResponse JSON{}", exception.getMessage());
             }
 
             return builder.buildResponse(HttpStatus.SC_OK, null, response, version);
@@ -348,7 +348,7 @@ public class ManagedObject3gppServiceInstances {
                 Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
                         MsoException.ServiceException, "No communication to catalog DB " + e.getMessage(),
                         ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-                LOGGER.debug(END_OF_THE_TRANSACTION + response.getEntity());
+                LOGGER.debug("{}{}", END_OF_THE_TRANSACTION, response.getEntity());
                 return response;
             }
 
@@ -358,7 +358,7 @@ public class ManagedObject3gppServiceInstances {
                 Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
                         MsoException.ServiceException, "Recipe does not exist in catalog DB",
                         ErrorNumbers.SVC_GENERAL_SERVICE_ERROR, null, version);
-                LOGGER.debug(END_OF_THE_TRANSACTION + response.getEntity());
+                LOGGER.debug("{}{}", END_OF_THE_TRANSACTION, response.getEntity());
                 return response;
             }
 
@@ -486,8 +486,8 @@ public class ManagedObject3gppServiceInstances {
         RecipeLookupResult recipeLookupResult = getServiceURI(serviceModelUUID, action, defaultServiceModelName);
 
         if (recipeLookupResult != null) {
-            LOGGER.debug("Orchestration URI is: " + recipeLookupResult.getOrchestrationURI() + ", recipe Timeout is: "
-                    + Integer.toString(recipeLookupResult.getRecipeTimeout()));
+            LOGGER.debug("Orchestration URI is: {}, recipe Timeout is: {}", recipeLookupResult.getOrchestrationURI(),
+                    Integer.toString(recipeLookupResult.getRecipeTimeout()));
         } else {
             LOGGER.debug("No matching recipe record found");
         }
@@ -540,7 +540,7 @@ public class ManagedObject3gppServiceInstances {
             String orchestrationURI, String requestScope) throws ApiException {
         ResponseEntity<String> response =
                 requestHandlerUtils.postRequest(currentActiveReq, parameter, orchestrationURI);
-        LOGGER.debug("BPEL response : " + response);
+        LOGGER.debug("BPEL response : {}", response);
         int bpelStatus = responseHandler.setStatus(response.getStatusCodeValue());
         String jsonResponse;
         try {

@@ -94,7 +94,7 @@ public class WorkflowSpecificationsHandler {
             // 1. query workflow specifications for given vnfModelVersionId if need.
             if (vnfModelVersionId != null) {
                 List<Workflow> vnfWorkflows = queryWorkflowSpecificationsForVnf(vnfModelVersionId);
-                logger.debug("Retrieved " + vnfWorkflows.size() + " workflows for given vnfModelVersionId.");
+                logger.debug("Retrieved {} workflows for given vnfModelVersionId.", vnfWorkflows.size());
                 if (vnfWorkflows.size() > 0) {
                     workflows.addAll(vnfWorkflows);
                 }
@@ -103,7 +103,7 @@ public class WorkflowSpecificationsHandler {
             // 2. query workflow specifications for given pnfModelVersionId if need.
             if (pnfModelVersionId != null) {
                 List<Workflow> pnfWorkflows = queryWorkflowSpecificationsForPnf(pnfModelVersionId);
-                logger.debug("Retrieved " + pnfWorkflows.size() + " workflows for given pnfModelVerionId.");
+                logger.debug("Retrieved {} workflows for given pnfModelVerionId.", pnfWorkflows.size());
                 if (pnfWorkflows.size() > 0) {
                     workflows.addAll(pnfWorkflows);
                 }
@@ -112,8 +112,7 @@ public class WorkflowSpecificationsHandler {
             // 3. query workflow specifications for given resourceTarget
             if (resourceTarget != null) {
                 List<Workflow> workflowsForResourceTarget = queryWorkflowsForResourceTarget(resourceTarget);
-                logger.debug(
-                        "Retrieved " + workflowsForResourceTarget.size() + " workflows for given resource target.");
+                logger.debug("Retrieved {} workflows for given resource target.", workflowsForResourceTarget.size());
                 if (workflowsForResourceTarget.size() > 0) {
                     workflows.addAll(workflowsForResourceTarget);
                 }
@@ -222,7 +221,7 @@ public class WorkflowSpecificationsHandler {
                 if (activitySpec != null) {
                     ActivitySequence activitySequence = new ActivitySequence();
                     activitySequence.setName(activitySpec.getName());
-                    logger.debug("Adding activity: " + activitySpec.getName());
+                    logger.debug("Adding activity: {}", activitySpec.getName());
                     activitySequence.setDescription(activitySpec.getDescription());
                     activitySequences.add(activitySequence);
                 }

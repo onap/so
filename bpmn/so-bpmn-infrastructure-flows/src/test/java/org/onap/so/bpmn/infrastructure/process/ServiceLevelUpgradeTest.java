@@ -177,7 +177,7 @@ public class ServiceLevelUpgradeTest extends BaseBPMNTest {
     private void checkWithActionName(final ExecutionServiceInput executionServiceInput, final String action,
             final String pnfName) {
 
-        logger.info("Checking the " + action + " request");
+        logger.info("Checking the {} request", action);
         ActionIdentifiers actionIdentifiers = executionServiceInput.getActionIdentifiers();
 
         /**

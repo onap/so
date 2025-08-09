@@ -144,7 +144,7 @@ public class PnfHealthCheckTest extends BaseBPMNTest {
 
     private void checkWithActionName(ExecutionServiceInput executionServiceInput, String action) {
 
-        logger.info("Checking the " + action + " request");
+        logger.info("Checking the {} request", action);
         ActionIdentifiers actionIdentifiers = executionServiceInput.getActionIdentifiers();
 
         /**

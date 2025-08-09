@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,7 +47,7 @@ import io.swagger.v3.oas.annotations.info.Info;
 
 /**
  * Generalized REST interface that injects a message event into a waiting BPMN process. Examples:
- * 
+ *
  * <pre>
  *     /WorkflowMessage/SDNCAResponse/6d10d075-100c-42d0-9d84-a52432681cae-1478486185286
  *     /WorkflowMessage/SDNCAEvent/USOSTCDALTX0101UJZZ01
@@ -74,13 +74,13 @@ public class WorkflowMessageResource {
 
         String method = "receiveWorkflowMessage";
 
-        logger.debug(LOGMARKER + " Received workflow message" + " type='" + messageType + "'" + " correlator='"
-                + correlator + "'" + (contentType == null ? "" : " contentType='" + contentType + "'") + " message="
-                + System.lineSeparator() + message);
+        logger.debug("{} Received workflow message type='{}' correlator='{}'{} message={}{}", LOGMARKER, messageType,
+                correlator, (contentType == null ? "" : " contentType='" + contentType + "'"), System.lineSeparator(),
+                message);
 
         if (messageType == null || messageType.isEmpty()) {
             String msg = "Missing message type";
-            logger.debug(LOGMARKER + " " + msg);
+            logger.debug("{} {}", LOGMARKER, msg);
             logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
                     ErrorCode.DataError.getValue(), LOGMARKER + ":" + msg);
             return Response.status(400).entity(msg).build();
@@ -88,7 +88,7 @@ public class WorkflowMessageResource {
 
         if (correlator == null || correlator.isEmpty()) {
             String msg = "Missing correlator";
-            logger.debug(LOGMARKER + " " + msg);
+            logger.debug("{} {}", LOGMARKER, msg);
             logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
                     ErrorCode.DataError.getValue(), LOGMARKER + ":" + msg);
             return Response.status(400).entity(msg).build();

@@ -156,7 +156,7 @@ public class ControllerExecutionDETestIT extends BaseIntegrationTest {
 
     private void verifyRequestContentForAction(ExecutionServiceInput executionServiceInput) {
 
-        logger.info("Checking the " + this.action + " request");
+        logger.info("Checking the {} request", this.action);
         ActionIdentifiers actionIdentifiers = executionServiceInput.getActionIdentifiers();
 
         assertThat(actionIdentifiers.getBlueprintName()).isEqualTo(TEST_PNF_RESOURCE_BLUEPRINT_NAME);

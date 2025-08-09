@@ -199,7 +199,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
         Preconditions.checkState(!Strings.isNullOrEmpty(heatStackId), "Invalid heatStackId!");
         List<Resource> stackBasedResources =
                 osClient.getStackBasedResources(heatStackId, HeatBridgeConstants.OS_DEFAULT_HEAT_NESTING);
-        logger.debug(stackBasedResources.size() + " heat stack resources are extracted for stack: " + heatStackId);
+        logger.debug("{} heat stack resources are extracted for stack: {}", stackBasedResources.size(), heatStackId);
         return stackBasedResources;
     }
 
@@ -290,9 +290,9 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                         .cloudRegion(cloudOwner, cloudRegionId).image(aaiImage.getImageId()));
                 if (!resourcesClient.exists(uri)) {
                     transaction.create(uri, aaiImage);
-                    logger.debug("Queuing AAI command to add image: " + aaiImage.getImageId());
+                    logger.debug("Queuing AAI command to add image: {}", aaiImage.getImageId());
                 } else {
-                    logger.debug("Nothing to add since image: " + aaiImage.getImageId() + "already exists in AAI.");
+                    logger.debug("Nothing to add since image: {}already exists in AAI.", aaiImage.getImageId());
                 }
             } catch (WebApplicationException e) {
                 throw new HeatBridgeException(
@@ -467,7 +467,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
     }
 
     protected String getInterfaceType(NodeType nodeType, String nicType) {
-        logger.debug("nicType: " + nicType + "nodeType: " + nodeType);
+        logger.debug("nicType: {}nodeType: {}", nicType, nodeType);
         if (DIRECT.equalsIgnoreCase(nicType)) {
             return SRIOV;
         } else {
@@ -507,7 +507,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             for (Server server : osServers) {
                 Pserver pserver = aaiHelper.buildPserver(server);
                 if (pserver != null) {
-                    logger.debug("Adding Pserver: " + server.getHost());
+                    logger.debug("Adding Pserver: {}", server.getHost());
                     pserverMap.put(server.getHost(), pserver);
                 }
             }
@@ -773,7 +773,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             transaction.execute(dryrun);
         } catch (BulkProcessFailed e) {
             String msg = "Failed to commit transaction";
-            logger.debug(msg + " with error: " + e);
+            logger.debug("{} with error: {}", msg, e);
             throw new HeatBridgeException(msg, e);
         }
     }
@@ -811,11 +811,11 @@ public class HeatBridgeImpl implements HeatBridgeApi {
 
         } catch (NotFoundException e) {
             String msg = "Failed to commit delete heatbridge data transaction";
-            logger.debug(msg + " with error: " + e);
+            logger.debug("{} with error: {}", msg, e);
             throw new HeatBridgeException(msg, e);
         } catch (Exception e) {
             String msg = "Failed to commit delete heatbridge data transaction";
-            logger.debug(msg + " with error: " + e);
+            logger.debug("{} with error: {}", msg, e);
             throw new HeatBridgeException(msg, e);
         }
     }
@@ -849,8 +849,8 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                         pIf -> pIf.getSriovPfs() != null && CollectionUtils.isNotEmpty(pIf.getSriovPfs().getSriovPf()))
                         .forEach(pIf -> pIf.getSriovPfs().getSriovPf().forEach(sriovPf -> {
                             if (pciIds.contains(sriovPf.getPfPciId())) {
-                                logger.debug("creating transaction to delete SR-IOV PF: " + pIf.getInterfaceName()
-                                        + " from PServer: " + pserverName);
+                                logger.debug("creating transaction to delete SR-IOV PF: {} from PServer: {}",
+                                        pIf.getInterfaceName(), pserverName);
                                 if (env.getProperty("heatBridgeDryrun", Boolean.class, false)) {
                                     logger.debug("Would delete Sriov Pf: {}",
                                             AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure()

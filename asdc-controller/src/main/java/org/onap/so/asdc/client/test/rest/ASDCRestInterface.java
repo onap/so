@@ -135,7 +135,7 @@ public class ASDCRestInterface {
             logger.info(LoggingAnchor.FOUR, MessageEnum.ASDC_ARTIFACT_DEPLOY_SUC.toString(),
                     statusData.getDistributionID(), "ASDC", "ASDC Updates Are Complete");
         } catch (final Exception e) {
-            logger.info("Error caught " + e.getMessage());
+            logger.info("Error caught {}", e.getMessage());
             logger.error(LoggingAnchor.SIX, MessageEnum.ASDC_GENERAL_EXCEPTION.toString(),
                     "Exception caught during ASDCRestInterface", "ASDC", "invokeASDCService",
                     ErrorCode.BusinessProcessError.getValue(), "Exception in invokeASDCService", e);

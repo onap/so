@@ -114,7 +114,7 @@ public class CloudRestImpl {
                 catalogDBClient.postCloudSite(cloudSite);
             }
         } catch (Exception e) {
-            logger.error("Error creating cloud site in Catalog Adapter: " + e.getMessage(), e);
+            logger.error("Error creating cloud site in Catalog Adapter: {}", e.getMessage(), e);
             throw new CloudException("Error creating cloud site in Catalog Adapter", e);
         }
     }

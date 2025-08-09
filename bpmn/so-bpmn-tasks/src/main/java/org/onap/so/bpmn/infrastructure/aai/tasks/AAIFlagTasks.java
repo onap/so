@@ -147,7 +147,7 @@ public class AAIFlagTasks {
             String vnfId = vnf.getVnfId();
             inPserversLocked = aaiVnfResources.checkVnfPserversLockedFlag(vnfId);
         } catch (Exception ex) {
-            logger.warn("Exception on checking pservers: " + ex.getMessage());
+            logger.warn("Exception on checking pservers: {}", ex.getMessage());
         }
         if (inPserversLocked) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "VNF PServers in Locked in A&AI");

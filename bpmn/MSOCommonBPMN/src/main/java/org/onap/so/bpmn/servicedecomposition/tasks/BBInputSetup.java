@@ -615,8 +615,8 @@ public class BBInputSetup implements JavaDelegate {
             configuration.setModelInfoConfiguration(this.mapperLayer.mapCatalogConfigurationToConfiguration(
                     configurationResourceCustomization, vnfVfmoduleCvnfcConfigurationCustomization));
         } else {
-            logger.debug("for Fabric configuration mapping by VF MODULE CUST UUID: "
-                    + configurationResourceKeys.getVfModuleCustomizationUUID());
+            logger.debug("for Fabric configuration mapping by VF MODULE CUST UUID: {}",
+                    configurationResourceKeys.getVfModuleCustomizationUUID());
             vnfVfmoduleCvnfcConfigurationCustomization = findVnfVfmoduleCvnfcConfigurationCustomization(
                     service.getModelUUID(), configurationResourceKeys.getVnfResourceCustomizationUUID(),
                     configurationResourceKeys.getVfModuleCustomizationUUID(),
@@ -745,7 +745,7 @@ public class BBInputSetup implements JavaDelegate {
                         bbInputSetupUtils.getAAIVolumeGroup(cloudOwner, cloudRegionId, volumeGroup.getVolumeGroupId())
                                 .getModelCustomizationId();
                 if (modelInfo.getModelCustomizationId().equalsIgnoreCase(volumeGroupCustId)) {
-                    logger.debug("Found volume group for vfModule: " + volumeGroup.getVolumeGroupId());
+                    logger.debug("Found volume group for vfModule: {}", volumeGroup.getVolumeGroupId());
                     return Optional.of(volumeGroup.getVolumeGroupId());
                 }
             }

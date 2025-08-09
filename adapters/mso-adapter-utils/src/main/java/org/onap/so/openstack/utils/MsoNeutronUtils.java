@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -91,7 +91,7 @@ public class MsoNeutronUtils extends MsoCommonUtils {
      * If a network already exists with the same name, an exception will be thrown. Note that this is an MSO-imposed
      * restriction. Openstack does not require uniqueness on network names.
      * <p>
-     * 
+     *
      * @param cloudSiteId The cloud identifier (may be a region) in which to create the network.
      * @param tenantId The tenant in which to create the network
      * @param type The type of network to create (Basic, Provider, Multi-Provider)
@@ -172,7 +172,7 @@ public class MsoNeutronUtils extends MsoCommonUtils {
      * Whenever possible, the network ID should be used as it is much more efficient. Query by name requires retrieval
      * of all networks for the tenant and search for matching name.
      * <p>
-     * 
+     *
      * @param networkNameOrId The network to query
      * @param tenantId The Openstack tenant to look in for the network
      * @param cloudSiteId The cloud identifier (may be a region) in which to query the network.
@@ -210,7 +210,7 @@ public class MsoNeutronUtils extends MsoCommonUtils {
 
     public Optional<Port> getNeutronPort(String neutronPortId, String tenantId, String cloudSiteId) {
         try {
-            logger.debug("Finding Neutron port:" + neutronPortId);
+            logger.debug("Finding Neutron port: {}", neutronPortId);
             CloudSite cloudSite =
                     cloudConfig.getCloudSite(cloudSiteId).orElseThrow(() -> new MsoCloudSiteNotFound(cloudSiteId));
             Quantum neutronClient = getNeutronClient(cloudSite, tenantId);
@@ -228,7 +228,7 @@ public class MsoNeutronUtils extends MsoCommonUtils {
     /**
      * Delete the specified Network (by ID) in the given cloud. If the network does not exist, success is returned.
      * <p>
-     * 
+     *
      * @param networkId Openstack ID of the network to delete
      * @param tenantId The Openstack tenant.
      * @param cloudSiteId The cloud identifier (may be a region) from which to delete the network.
@@ -442,9 +442,9 @@ public class MsoNeutronUtils extends MsoCommonUtils {
      * name.
      *
      * @param adminClient an authenticated Keystone object
-     * 
+     *
      * @param tenantName the tenant name or ID to query
-     * 
+     *
      * @return a Tenant object or null if not found
      */
     public Network findNetworkByNameOrId(Quantum neutronClient, String networkNameOrId) {
@@ -465,9 +465,9 @@ public class MsoNeutronUtils extends MsoCommonUtils {
      * Find a network (or query its existence) by its Id.
      *
      * @param neutronClient an authenticated Quantum object
-     * 
+     *
      * @param networkId the network ID to query
-     * 
+     *
      * @return a Network object or null if not found
      */
     private Network findNetworkById(Quantum neutronClient, String networkId) {
@@ -502,7 +502,7 @@ public class MsoNeutronUtils extends MsoCommonUtils {
             return port;
         } catch (OpenStackResponseException e) {
             if (e.getStatus() == 404) {
-                logger.warn("Neutron port not found: " + neutronPortId, "Neutron port not found: " + neutronPortId);
+                logger.warn("Neutron port not found: {}", "Neutron port not found: " + neutronPortId, neutronPortId);
                 return null;
             } else {
                 logger.error("{} {} Openstack Error, GET Neutron Port By ID ({}): ",
@@ -524,9 +524,9 @@ public class MsoNeutronUtils extends MsoCommonUtils {
      * probably needs to return an error (instead of returning the first match).
      *
      * @param neutronClient an authenticated Quantum object
-     * 
+     *
      * @param networkName the network name to query
-     * 
+     *
      * @return a Network object or null if not found
      */
     public Network findNetworkByName(Quantum neutronClient, String networkName) {

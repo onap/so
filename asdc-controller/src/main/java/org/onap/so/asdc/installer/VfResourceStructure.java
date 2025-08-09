@@ -97,7 +97,7 @@ public class VfResourceStructure extends ResourceStructure {
         VfModuleArtifact vfModuleArtifact = new VfModuleArtifact(artifactInfo, clientResult, modifiedHeatTemplate);
         addArtifactByType(artifactInfo, clientResult, vfModuleArtifact);
         if (ASDCConfiguration.VF_MODULES_METADATA.equals(artifactInfo.getArtifactType())) {
-            logger.debug("VF_MODULE_ARTIFACT: " + new String(clientResult.getArtifactPayload(), "UTF-8"));
+            logger.debug("VF_MODULE_ARTIFACT: {}", new String(clientResult.getArtifactPayload(), "UTF-8"));
             logger.debug(ASDCNotificationLogging.dumpVfModuleMetaDataList(vfModulesMetadataList));
         }
     }

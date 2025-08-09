@@ -135,8 +135,8 @@ public class GenericVnfHealthCheck {
             }
         }
 
-        logger.error("Error Message: " + appcMessage);
-        logger.error("ERROR CODE: " + appcCode);
+        logger.error("Error Message: {}", appcMessage);
+        logger.error("ERROR CODE: {}", appcCode);
         if (appcCode != null && !("0").equals(appcCode)) {
             exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(appcCode), appcMessage);
         }

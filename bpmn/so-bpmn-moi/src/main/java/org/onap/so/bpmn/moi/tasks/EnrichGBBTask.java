@@ -98,7 +98,7 @@ public class EnrichGBBTask {
 
         // API Path
         String apiPath = "/api/oof/v1/selection/nsst";
-        LOGGER.debug("API path for NSST Selection: " + apiPath);
+        LOGGER.debug("API path for NSST Selection: {}", apiPath);
         execution.setVariable("NSST_apiPath", apiPath);
 
         // Setting correlator as requestId
@@ -116,7 +116,7 @@ public class EnrichGBBTask {
         profileInfo.put("areaTrafficCapDL", areaTrafficCapDL);
 
         String oofRequest = oofUtils.buildSelectNSTRequest(requestId, messageType, profileInfo);
-        LOGGER.debug("**** OOfRequest for NSST Selection: " + oofRequest);
+        LOGGER.debug("**** OOfRequest for NSST Selection: {}", oofRequest);
         execution.setVariable("NSST_oofRequest", oofRequest);
     }
 
@@ -129,7 +129,7 @@ public class EnrichGBBTask {
         LOGGER.debug(" **** Enter EnrichGBB ::: processOOFAsyncResponse ****");
         String OOFResponse = (String) execution.getVariable("NSST_asyncCallbackResponse");
         String requestStatus = jsonUtil.getJsonValue(OOFResponse, "requestStatus");
-        LOGGER.debug("NSST OOFResponse is: " + OOFResponse);
+        LOGGER.debug("NSST OOFResponse is: {}", OOFResponse);
         execution.setVariable("OOFResponse", OOFResponse);
         String solutions = "";
         if (requestStatus.equals("completed")) {
@@ -139,8 +139,8 @@ public class EnrichGBBTask {
             }
         } else {
             String statusMessage = jsonUtil.getJsonValue(OOFResponse, "statusMessage");
-            LOGGER.error("received failed status from oof " + statusMessage);
-            LOGGER.debug("received failed status from oof " + statusMessage);
+            LOGGER.error("received failed status from oof {}", statusMessage);
+            LOGGER.debug("received failed status from oof {}", statusMessage);
         }
 
         LOGGER.debug(">>>>>> solutions: {}", solutions);
