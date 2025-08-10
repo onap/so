@@ -21,11 +21,11 @@
 package org.onap.so.bpmn.infrastructure.sdnc.mapper;
 
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import java.util.HashMap;
 import java.util.Map;

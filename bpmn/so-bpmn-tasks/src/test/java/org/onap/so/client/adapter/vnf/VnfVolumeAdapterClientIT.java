@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -100,7 +100,7 @@ public class VnfVolumeAdapterClientIT extends BaseIntegrationTest {
         AdapterRestClient mockClient = mock(AdapterRestClient.class);
         doReturn(mockClient).when(client).getAdapterRestClient("/" + AAI_VOLUME_GROUP_ID);
         when(mockClient.delete(request, DeleteVolumeGroupResponse.class)).thenReturn(mockResponse);
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         DeleteVolumeGroupResponse response = client.deleteVNFVolumes(AAI_VOLUME_GROUP_ID, request);
         assertEquals("Testing DeleteVolumeGroup response", mockResponse.getVolumeGroupDeleted(),
@@ -120,7 +120,7 @@ public class VnfVolumeAdapterClientIT extends BaseIntegrationTest {
         doReturn(mockClient).when(client).getAdapterRestClient("/" + AAI_VOLUME_GROUP_ID);
         when(mockClient.delete(request, DeleteVolumeGroupResponse.class))
                 .thenThrow(new InternalServerErrorException("Error in delete volume group"));
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         client.deleteVNFVolumes(AAI_VOLUME_GROUP_ID, request);
     }
@@ -136,7 +136,7 @@ public class VnfVolumeAdapterClientIT extends BaseIntegrationTest {
         AdapterRestClient mockClient = mock(AdapterRestClient.class);
         doReturn(mockClient).when(client).getAdapterRestClient("/" + AAI_VOLUME_GROUP_ID + "/rollback");
         when(mockClient.delete(request, RollbackVolumeGroupResponse.class)).thenReturn(mockResponse);
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         RollbackVolumeGroupResponse response = client.rollbackVNFVolumes(AAI_VOLUME_GROUP_ID, request);
         assertEquals("Testing RollbackVolumeGroup response", mockResponse.getVolumeGroupRolledBack(),
@@ -155,7 +155,7 @@ public class VnfVolumeAdapterClientIT extends BaseIntegrationTest {
         doReturn(mockClient).when(client).getAdapterRestClient("/" + AAI_VOLUME_GROUP_ID + "/rollback");
         when(mockClient.delete(request, RollbackVolumeGroupResponse.class))
                 .thenThrow(new InternalServerErrorException("Error in rollback volume group"));
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         client.rollbackVNFVolumes(AAI_VOLUME_GROUP_ID, request);
     }
@@ -171,7 +171,7 @@ public class VnfVolumeAdapterClientIT extends BaseIntegrationTest {
         AdapterRestClient mockClient = mock(AdapterRestClient.class);
         doReturn(mockClient).when(client).getAdapterRestClient("/" + AAI_VOLUME_GROUP_ID);
         when(mockClient.put(request, UpdateVolumeGroupResponse.class)).thenReturn(mockResponse);
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         UpdateVolumeGroupResponse response = client.updateVNFVolumes(AAI_VOLUME_GROUP_ID, request);
         assertEquals("Testing DeleteVfModule response", mockResponse.getVolumeGroupId(), response.getVolumeGroupId());
@@ -189,7 +189,7 @@ public class VnfVolumeAdapterClientIT extends BaseIntegrationTest {
         doReturn(mockClient).when(client).getAdapterRestClient("/" + AAI_VOLUME_GROUP_ID);
         when(mockClient.put(request, UpdateVolumeGroupResponse.class))
                 .thenThrow(new InternalServerErrorException("Error in update volume group"));
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         client.updateVNFVolumes(AAI_VOLUME_GROUP_ID, request);
     }

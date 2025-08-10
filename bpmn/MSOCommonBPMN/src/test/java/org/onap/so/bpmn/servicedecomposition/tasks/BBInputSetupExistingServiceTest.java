@@ -82,7 +82,7 @@ public class BBInputSetupExistingServiceTest {
 
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Parameterized.Parameters
@@ -135,4 +135,3 @@ public class BBInputSetupExistingServiceTest {
                 any(String.class), isA(String.class), isA(CloudConfiguration.class));
     }
 }
-

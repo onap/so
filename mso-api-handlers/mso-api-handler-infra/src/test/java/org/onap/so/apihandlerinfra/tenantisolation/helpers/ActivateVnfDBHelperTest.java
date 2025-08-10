@@ -20,7 +20,6 @@
 
 package org.onap.so.apihandlerinfra.tenantisolation.helpers;
 
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.so.apihandlerinfra.BaseTest;
@@ -29,6 +28,7 @@ import org.onap.so.db.request.beans.OperationalEnvDistributionStatus;
 import org.onap.so.db.request.beans.OperationalEnvServiceModelStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 
 public class ActivateVnfDBHelperTest extends BaseTest {

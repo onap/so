@@ -49,7 +49,7 @@ public class ApplicationControllerCallbackTest {
 
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         appcTaskCallback = new ApplicationControllerCallback(mockExternalTask, mockExternalTaskService,
                 applicationControllerSupport);
     }

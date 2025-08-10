@@ -55,7 +55,7 @@ class DoCreateVfModuleTest {
 
     @Before
     void init() throws IOException {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test

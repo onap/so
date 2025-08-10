@@ -49,8 +49,8 @@ import java.util.ArrayList;
 import java.util.List;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 public class WorkflowSpecificationsHandlerTest extends BaseTest {
     @Autowired
