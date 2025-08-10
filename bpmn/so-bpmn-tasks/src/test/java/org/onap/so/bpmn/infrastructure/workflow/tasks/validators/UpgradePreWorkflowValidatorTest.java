@@ -38,7 +38,7 @@ public class UpgradePreWorkflowValidatorTest {
 
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         validator = new UpgradePreWorkflowValidator(catalogDbClient);
         objectMapper = new ObjectMapper();
     }

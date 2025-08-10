@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,7 +59,7 @@ class DoCreateVnfAndModulesTest {
 
 	@Before
 	void init() throws IOException {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 	}
 
 	@Test
@@ -94,7 +94,7 @@ class DoCreateVnfAndModulesTest {
 		String lastKey = list.get(20)
 		Assert.assertEquals("rollbackData", lastKey)
 	}
- 
+
 	@Test
 	void testQueryCatalogDB() {
 		ExecutionEntity mockExecution = setupMock()
@@ -122,7 +122,7 @@ class DoCreateVnfAndModulesTest {
 		String lastKey = list.get(20)
 		Assert.assertEquals("baseVfModuleId", lastKey)
 	}
- 
+
 	@Test
 	void testQueryCatalogDBWithVfModuleNames() {
 		ExecutionEntity mockExecution = setupMock()
@@ -155,7 +155,7 @@ class DoCreateVnfAndModulesTest {
 		String lastKey = list.get(20)
 		Assert.assertEquals("baseVfModuleId", lastKey)
 	}
- 
+
 	@Test
 	void testPreProcessAddonModule() {
 		ExecutionEntity mockExecution = setupMock()
@@ -195,7 +195,7 @@ class DoCreateVnfAndModulesTest {
 		String lastKey = list.get(16)
 		Assert.assertEquals("initialCount", lastKey)
 	}
- 
+
 	@Test
 	void testPreProcessAddonModuleWithVfModuleNames() {
 		ExecutionEntity mockExecution = setupMock()
@@ -208,7 +208,7 @@ class DoCreateVnfAndModulesTest {
 		vfModuleNames.put("3ec98c7a-ac20-49a1-9e0d-09fea7e8db45", "VGWA:e2:25:25:25:%")
 		vfModuleNames.put("cc250e7e-746b-4d84-8064-df20c74213a6", "VGWB:f9:32:32:32:%")
 		when(mockExecution.getVariable("vfModuleNames")).thenReturn(vfModuleNames)
-		
+
 		VnfResource vnf = serviceDecomposition.getVnfResources().get(0);
 		List<ModuleResource> vfModules = vnf.getAllVfModuleObjects()
 
@@ -240,7 +240,7 @@ class DoCreateVnfAndModulesTest {
 		String lastKey = list.get(16)
 		Assert.assertEquals("initialCount", lastKey)
 	}
- 
+
 	private static setupBasicProcessInputs(ExecutionEntity mockExecution) {
 		when(mockExecution.getVariable("prefix")).thenReturn("DCVAM_")
 		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
@@ -404,7 +404,7 @@ class DoCreateVnfAndModulesTest {
 		ar.setProvidingServiceModelUuid("61b6e96a-f0c6-4f34-a91c-dab3574dd025")
 		ar.setNfType("TunnelXConn")
 		ar.setNfRole("TunnelXConn")
-		
+
 		ar = new AllottedResource()
 		allottedResources.add(ar)
 		ar.setResourceId("3b1b3686-ccfe-4e7c-9d6b-76419db398f9")
@@ -443,7 +443,7 @@ class DoCreateVnfAndModulesTest {
 		ar.setProvidingServiceModelUuid("0e500bca-15ac-42eb-a2f1-4bfd3b2828ff")
 		ar.setNfType("BRG")
 		ar.setNfRole("BRG")
-		
+
 		return serviceDecomposition
 	}
 }

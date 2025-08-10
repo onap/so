@@ -58,7 +58,7 @@ public class ApplicationControllerTaskTest extends ApplicationControllerTask {
 
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         doNothing().when(mdcSetup).setupMDC(mockExternalTask);
         doReturn(request).when(mockExternalTask).getVariable("appcOrchestratorRequest");
         doReturn(msoRequestId).when(mockExternalTask).getVariable("mso-request-id");

@@ -22,8 +22,8 @@ package org.onap.so.adapters.requestsdb;
 
 
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import java.sql.Timestamp;
 import java.time.Instant;

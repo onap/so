@@ -1,22 +1,22 @@
-/*- 
- * ============LICENSE_START======================================================= 
- * ONAP - SO 
- * ================================================================================ 
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved. 
- * ================================================================================ 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
- * ============LICENSE_END========================================================= 
- */ 
+/*-
+ * ============LICENSE_START=======================================================
+ * ONAP - SO
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
 
 package org.onap.so.bpmn.infrastructure.scripts
 
@@ -63,7 +63,7 @@ class DeleteVfModuleVolumeInfraV1Test extends MsoGroovyTest {
 	@Before
 	void init() throws IOException {
 		super.init("DeleteVfModuleVolumeInfraV1")
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		when(deleteVfModuleVolumeInfraV1.getAAIClient()).thenReturn(client)
 	}
 
@@ -80,7 +80,7 @@ class DeleteVfModuleVolumeInfraV1Test extends MsoGroovyTest {
    <messageId>ebb9ef7b-a6a5-40e6-953e-f868f1767677</messageId>
    <notificationUrl>http://localhost:28080/mso/WorkflowMessage/VNFAResponse/ebb9ef7b-a6a5-40e6-953e-f868f1767677</notificationUrl>
 </deleteVolumeGroupRequest>"""
-	
+
 	String dbRequestXml = """<soapenv:Envelope xmlns:req="http://org.onap.so/requestsdb"
                   xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
    <soapenv:Header/>
@@ -95,7 +95,7 @@ class DeleteVfModuleVolumeInfraV1Test extends MsoGroovyTest {
       </req:updateInfraRequest>
    </soapenv:Body>
 </soapenv:Envelope>"""
-	
+
 	String completionRequestXml = """<aetgt:MsoCompletionRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
                             xmlns:ns="http://org.onap/so/request/types/v1"
                             xmlns="http://org.onap/so/infra/vnf-request/v1">
@@ -107,7 +107,7 @@ class DeleteVfModuleVolumeInfraV1Test extends MsoGroovyTest {
    <aetgt:status-message>Volume Group has been deleted successfully.</aetgt:status-message>
    <aetgt:mso-bpel-name>BPMN VF Module Volume action: DELETE</aetgt:mso-bpel-name>
 </aetgt:MsoCompletionRequest>"""
-	
+
 	String falloutHandlerRequestXml = """<aetgt:FalloutHandlerRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
                              xmlns:ns="http://org.onap/so/request/types/v1"
                              xmlns="http://org.onap/so/infra/vnf-request/v1">
@@ -121,11 +121,11 @@ class DeleteVfModuleVolumeInfraV1Test extends MsoGroovyTest {
       <aetgt:ErrorCode>5000</aetgt:ErrorCode>
    </aetgt:WorkflowException>
 </aetgt:FalloutHandlerRequest>"""
-	
+
 
 	@Test
 	public void testPrepareVnfAdapterDeleteRequest() {
-		
+
 		ExecutionEntity mockExecution = setupMock('DeleteVfModuleVolumeInfraV1')
 		when(mockExecution.getVariable("DELVfModVol_cloudRegion")).thenReturn('RDM2WAGPLCP')
 		when(mockExecution.getVariable("DELVfModVol_tenantId")).thenReturn('fba1bd1e195a404cacb9ce17a9b2b421')
@@ -139,54 +139,54 @@ class DeleteVfModuleVolumeInfraV1Test extends MsoGroovyTest {
 
 		DeleteVfModuleVolumeInfraV1 myproc = new DeleteVfModuleVolumeInfraV1()
 		myproc.prepareVnfAdapterDeleteRequest(mockExecution, 'true')
-		
+
 		verify(mockExecution).setVariable("DELVfModVol_deleteVnfARequest", deleteVnfAdapterRequestXml)
 
 	}
-	
+
 	@Test
 	//@Ignore
 	public void testPrepareDbRequest() {
-		
+
 		ExecutionEntity mockExecution = setupMock('DeleteVfModuleVolumeInfraV1')
 		when(mockExecution.getVariable("DELVfModVol_requestId")).thenReturn('TEST-REQUEST-ID-0123')
 		when(mockExecution.getVariable("DELVfModVol_volumeOutputs")).thenReturn('')
 		when(mockExecution.getVariable("mso.adapters.db.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 		when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
-		
+
 		DeleteVfModuleVolumeInfraV1 myproc = new DeleteVfModuleVolumeInfraV1()
 		myproc.prepareDBRequest(mockExecution, 'true')
-		
+
 		verify(mockExecution).setVariable("DELVfModVol_updateInfraRequest", dbRequestXml)
 	}
 
 	@Test
 	public void testPrepareCompletionHandlerRequest() {
-		
+
 		ExecutionEntity mockExecution = setupMock('DeleteVfModuleVolumeInfraV1')
 		when(mockExecution.getVariable("mso-request-id")).thenReturn('TEST-REQUEST-ID-0123')
 		when(mockExecution.getVariable("DELVfModVol_source")).thenReturn('VID')
-		
+
 		DeleteVfModuleVolumeInfraV1 myproc = new DeleteVfModuleVolumeInfraV1()
 		myproc.prepareCompletionHandlerRequest(mockExecution, 'true')
-		
+
 		verify(mockExecution).setVariable("DELVfModVol_CompleteMsoProcessRequest", completionRequestXml)
 	}
-	
+
 	@Test
 	public void testPrepareFalloutHandler() {
-		
+
 		WorkflowException workflowException = new WorkflowException('DeleteVfModuleVolumeInfraV1', 5000, 'Unexpected Error')
-		
+
 		ExecutionEntity mockExecution = setupMock('DeleteVfModuleVolumeInfraV1')
-		
+
 		when(mockExecution.getVariable("DELVfModVol_requestId")).thenReturn('TEST-REQUEST-ID-0123')
 		when(mockExecution.getVariable("WorkflowException")).thenReturn(workflowException)
 		when(mockExecution.getVariable("DELVfModVol_source")).thenReturn('VID')
-		
+
 		DeleteVfModuleVolumeInfraV1 myproc = new DeleteVfModuleVolumeInfraV1()
 		myproc.prepareFalloutHandler(mockExecution, 'true')
-		
+
 		verify(mockExecution).setVariable("DELVfModVol_Success", false)
 		verify(mockExecution).setVariable("DELVfModVol_FalloutHandlerRequest", falloutHandlerRequestXml)
 	}

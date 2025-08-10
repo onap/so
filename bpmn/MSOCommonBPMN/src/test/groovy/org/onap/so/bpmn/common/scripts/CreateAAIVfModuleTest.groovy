@@ -68,7 +68,7 @@ class CreateAAIVfModuleTest extends MsoGroovyTest{
     @Before
     public void init() throws IOException {
         super.init("CreateAAIVfModule")
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         executionFake = new DelegateExecutionFake()
         when(createAAIVfModule.getAAIClient()).thenReturn(client)
     }

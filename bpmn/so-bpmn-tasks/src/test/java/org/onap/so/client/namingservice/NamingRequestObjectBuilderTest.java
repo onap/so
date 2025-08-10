@@ -21,7 +21,7 @@
 package org.onap.so.client.namingservice;
 
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
