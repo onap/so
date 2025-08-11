@@ -42,26 +42,28 @@ public class ZipParser {
     }
 
     public String parseJsonForZip(String path) throws IOException {
-        ZipFile zf = new ZipFile(path);
-        InputStream in = new BufferedInputStream(new FileInputStream(path));
-        Charset cs = Charset.forName("utf-8");
-        ZipInputStream zin = new ZipInputStream(in, cs);
-        ZipEntry ze;
-        String artifactContent = null;
-        while ((ze = zin.getNextEntry()) != null) {
-            if (ze.toString().endsWith("json")) {
-                StringBuilder jsonStr = new StringBuilder();
-                BufferedReader br = new BufferedReader(new InputStreamReader(zf.getInputStream(ze)));
-                String line;
-                while ((line = br.readLine()) != null) {
-                    jsonStr.append(line);
+        try (ZipFile zipFile = new ZipFile(path)) {
+            InputStream inputStream = new BufferedInputStream(new FileInputStream(path));
+            Charset charset = Charset.forName("utf-8");
+            try (ZipInputStream zipInputStream = new ZipInputStream(inputStream, charset)) {
+                ZipEntry zipEntry;
+                String artifactContent = null;
+                while ((zipEntry = zipInputStream.getNextEntry()) != null) {
+                    if (zipEntry.toString().endsWith("json")) {
+                        StringBuilder jsonStr = new StringBuilder();
+                        BufferedReader br = new BufferedReader(new InputStreamReader(zipFile.getInputStream(zipEntry)));
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                            jsonStr.append(line);
+                        }
+                        br.close();
+                        artifactContent = jsonStr.toString().replace("\"", "\\\"").replaceAll("\\s", "");
+                    }
                 }
-                br.close();
-                artifactContent = jsonStr.toString().replace("\"", "\\\"").replaceAll("\\s", "");
+                zipInputStream.closeEntry();
+                return artifactContent;
             }
         }
-        zin.closeEntry();
-        return artifactContent;
     }
 
 }

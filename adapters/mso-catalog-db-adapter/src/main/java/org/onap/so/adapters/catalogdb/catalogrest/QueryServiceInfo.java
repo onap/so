@@ -77,9 +77,9 @@ public class QueryServiceInfo extends CatalogQuery {
         sb.append("\n");
         Map<String, String> valueMap = new HashMap<>();
         Service service = serviceInfo.getService();
-        put(valueMap, "ID", null == serviceInfo ? null : serviceInfo.getId());
-        put(valueMap, "SERVICE_INPUT", null == serviceInfo ? null : serviceInfo.getServiceInput());
-        put(valueMap, "SERVICE_PROPERTIES", null == serviceInfo ? null : serviceInfo.getServiceProperties());
+        put(valueMap, "ID", serviceInfo.getId());
+        put(valueMap, "SERVICE_INPUT", serviceInfo.getServiceInput());
+        put(valueMap, "SERVICE_PROPERTIES", serviceInfo.getServiceProperties());
         String subitem = new QueryServiceArtifact(service.getServiceArtifactList()).JSON2(true, true);
         valueMap.put("_SERVICEARTIFACT_", subitem.replaceAll("(?m)^", "\t\t"));
         sb.append(this.setTemplate(TEMPLATE, valueMap));
