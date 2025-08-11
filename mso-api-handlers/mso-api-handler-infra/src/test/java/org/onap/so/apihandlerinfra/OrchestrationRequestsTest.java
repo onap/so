@@ -435,9 +435,10 @@ public class OrchestrationRequestsTest extends BaseTest {
         UriComponentsBuilder builder;
         builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(
                 "/onap/so/infra/orchestrationRequests/v7/" + "5ffbabd6-b793-4377-a1ab-082670fbc7ac" + "/unlock"));
-        // Cannot assert anything further here, already have a wiremock in place
-        // which ensures that the post was
-        // properly called to update.
+
+        ResponseEntity<String> response =
+                restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, String.class);
+        assertEquals(HttpStatus.SC_NO_CONTENT, response.getStatusCode().value());
     }
 
     @Test

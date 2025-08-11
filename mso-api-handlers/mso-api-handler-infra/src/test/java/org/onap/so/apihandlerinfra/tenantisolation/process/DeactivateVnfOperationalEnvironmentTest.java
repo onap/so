@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,6 +30,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.startsWith;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import org.apache.http.HttpStatus;
@@ -98,7 +99,8 @@ public class DeactivateVnfOperationalEnvironmentTest extends BaseTest {
         wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/" + requestId))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
-        deactivate.execute(requestId, request);
+
+        assertDoesNotThrow(() -> deactivate.execute(requestId, request));
     }
 
     @Test
@@ -158,7 +160,7 @@ public class DeactivateVnfOperationalEnvironmentTest extends BaseTest {
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
 
-        deactivate.execute(requestId, request);
+        assertDoesNotThrow(() -> deactivate.execute(requestId, request));
     }
 
     @Test
@@ -180,4 +182,3 @@ public class DeactivateVnfOperationalEnvironmentTest extends BaseTest {
         deactivate.execute(requestId, request);
     }
 }
-
