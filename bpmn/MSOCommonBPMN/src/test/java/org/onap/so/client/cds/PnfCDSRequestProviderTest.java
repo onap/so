@@ -109,8 +109,8 @@ public class PnfCDSRequestProviderTest {
         assertThat(propertiesNode.get("pnf-customization-uuid").asText())
                 .isEqualTo(TEST_PNF_RESOURCE_CUSTOMIZATION_UUID);
         assertThat(propertiesNode.get("target-software-version").asText()).isEqualTo(TEST_SOFTWARE_VERSION);
-        assertThat(pnfCDSRequestProvider.getBlueprintName().equals(TEST_PNF_RESOURCE_BLUEPRINT_NAME));
-        assertThat(pnfCDSRequestProvider.getBlueprintVersion().equals(TEST_PNF_RESOURCE_BLUEPRINT_VERSION));
+        assertThat(pnfCDSRequestProvider.getBlueprintName()).isEqualTo(TEST_PNF_RESOURCE_BLUEPRINT_NAME);
+        assertThat(pnfCDSRequestProvider.getBlueprintVersion()).isEqualTo(TEST_PNF_RESOURCE_BLUEPRINT_VERSION);
     }
 
     private DelegateExecution prepareDelegateExecutionObj(String scope, String action) {

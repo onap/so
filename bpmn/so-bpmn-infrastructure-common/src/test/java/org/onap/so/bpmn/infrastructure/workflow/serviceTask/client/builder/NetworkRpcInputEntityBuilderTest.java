@@ -32,6 +32,7 @@ import org.camunda.bpm.engine.variable.value.TypedValue;
 import org.camunda.bpm.model.bpmn.BpmnModelInstance;
 import org.camunda.bpm.model.bpmn.instance.FlowElement;
 import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class NetworkRpcInputEntityBuilderTest {
     NetworkRpcInputEntityBuilder networRpcInputEntityBuilder = new NetworkRpcInputEntityBuilder();
@@ -329,7 +330,7 @@ public class NetworkRpcInputEntityBuilderTest {
 
     @Test
     public void buildTest() {
-        networRpcInputEntityBuilder.build(delegateExecution, null);
+        assertDoesNotThrow(() -> networRpcInputEntityBuilder.build(delegateExecution, null));
     }
 
 }

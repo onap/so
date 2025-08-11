@@ -24,6 +24,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.patch;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackDeleteStack_200;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackDeleteStack_500;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackGetNeutronNetwork;
@@ -199,8 +200,8 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
         request.setRequestId("5a29d907-b8c7-47bf-85f3-3940c0cce0f7");
         request.setServiceInstanceId("ab652f96-1fc3-4fdd-8e1b-4af629bc22c0");
 
-        impl.deleteNetwork("mtn13", "2871503957144f72b3cf481b379828ec", "CONTRAIL30_BASIC", null,
-                "43173f6a-d699-414b-888f-ab243dda6dfe", request);
+        assertDoesNotThrow(() -> impl.deleteNetwork("mtn13", "2871503957144f72b3cf481b379828ec", "CONTRAIL30_BASIC",
+                null, "43173f6a-d699-414b-888f-ab243dda6dfe", request));
     }
 
     @Test

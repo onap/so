@@ -32,6 +32,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -118,7 +119,7 @@ public class CreateChildServiceBBTest {
 
     @Test
     public void buildRequestTest() {
-        createChildServiceBB.buildRequest(execution);
+        assertDoesNotThrow(() -> createChildServiceBB.buildRequest(execution));
     }
 
     @Test
