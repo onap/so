@@ -979,12 +979,12 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
         vduInstance.setOutputs(stackInfo.getOutputs());
 
         // Translate the status elements
-        vduInstance.setStatus(stackStatusToVduStatus(stackInfo));
+        vduInstance.setStatus(mapStackStatusToVduStatus(stackInfo));
 
         return vduInstance;
     }
 
-    private VduStatus stackStatusToVduStatus(StackInfo stackInfo) {
+    private VduStatus mapStackStatusToVduStatus(StackInfo stackInfo) {
         VduStatus vduStatus = new VduStatus();
 
         // Map the status fields to more generic VduStatus.

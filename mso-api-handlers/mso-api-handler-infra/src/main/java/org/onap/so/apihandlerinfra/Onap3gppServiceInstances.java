@@ -23,6 +23,7 @@ package org.onap.so.apihandlerinfra;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
@@ -588,16 +589,14 @@ public class Onap3gppServiceInstances {
     private Response getSubnetCapabilities(List<SubnetTypes> subnetTypes, String version) {
         String inputFileString = "";
         Map<String, Object> subnetCapability = new HashMap<>();
-        BufferedReader br = null;
-        try {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(new File(subnetCapabilityConfigFile)))) {
             logger.debug("Reading SubnetCapability file");
-            br = new BufferedReader(new FileReader(new File(subnetCapabilityConfigFile)));
             StringBuilder sb = new StringBuilder();
-            String line = br.readLine();
+            String line = bufferedReader.readLine();
             while (line != null) {
                 sb.append(line);
                 sb.append("\n");
-                line = br.readLine();
+                line = bufferedReader.readLine();
             }
             inputFileString = sb.toString();
             subnetCapability = mapper.readValue(inputFileString, Map.class);
