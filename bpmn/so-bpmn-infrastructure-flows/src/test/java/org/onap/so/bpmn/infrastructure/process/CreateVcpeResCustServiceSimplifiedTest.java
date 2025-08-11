@@ -136,7 +136,7 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
                 "callCompleteMsoProcess_CallActivity", "ScriptTask_2", "CreateVCPE_EndEvent");
 
         List<ExecutionServiceInput> detailedMessages = grpcNettyServer.getDetailedMessages();
-        assertThat(detailedMessages.size() == 2);
+        assertThat(detailedMessages.size()).isEqualTo(2);
         int count = 0;
         try {
             for (ExecutionServiceInput eSI : detailedMessages) {
@@ -153,7 +153,7 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
             e.printStackTrace();
             fail("ConfigAssign/deploy request exception", e);
         }
-        assertThat(count == 2);
+        assertThat(count).isEqualTo(2);
     }
 
     private boolean isProcessInstanceEnded() {

@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -141,9 +141,9 @@ public class AppcOrchestratorPreProcessorTest extends TestDataSetup {
         execution.setVariable("vmIndex", 1);
         appcOrchestratorPreProcessor.addVmInfoToAppcTaskRequest(execution);
         Integer nextVmIndex = execution.getVariable("vmIndex");
-        assertThat(nextVmIndex == 2);
+        assertThat(nextVmIndex).isEqualTo(2);
         Integer vmIdListSize = execution.getVariable("vmIdListSize");
-        assertThat(vmIdListSize == 3);
+        assertThat(vmIdListSize).isEqualTo(3);
         appcTaskRequest = execution.getVariable("appcOrchestratorRequest");
         assertEquals(appcTaskRequest.getApplicationControllerVnf().getApplicationControllerVm().getVserverId(),
                 "14551849-1e70-45cd-bc5d-a256d49548a2");

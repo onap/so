@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.doReturn;
 import java.io.File;
 import java.io.IOException;
@@ -106,16 +107,16 @@ public class VrfValidationTest extends BaseTaskTest {
         serviceProxy.setSourceService(sourceService);
         configuration.setType("VRF-ENTRY");
         configuration.setRole("INFRASTRUCTURE-CLOUD-VPN");
-        ExpectedException.none();
-        vrfValidation.vrfCatalogDbChecks(service);
+
+        assertDoesNotThrow(() -> vrfValidation.vrfCatalogDbChecks(service));
     }
 
     @Test
     public void testAaiVpnBindingValidation() throws VrfBondingServiceException {
         org.onap.aai.domain.yang.VpnBinding aaiVpnBinding = new org.onap.aai.domain.yang.VpnBinding();
         aaiVpnBinding.setVpnType("SERVICE-INFRASTRUCTURE");
-        ExpectedException.none();
-        vrfValidation.aaiVpnBindingValidation("test-vpn", aaiVpnBinding);
+
+        assertDoesNotThrow(() -> vrfValidation.aaiVpnBindingValidation("test-vpn", aaiVpnBinding));
     }
 
     @Test
@@ -129,8 +130,8 @@ public class VrfValidationTest extends BaseTaskTest {
     public void testAaiNetworkValidation() throws VrfBondingServiceException {
         org.onap.aai.domain.yang.L3Network aaiLocalNetwork = new org.onap.aai.domain.yang.L3Network();
         aaiLocalNetwork.setNetworkId("test-network");
-        ExpectedException.none();
-        vrfValidation.aaiNetworkValidation("test-network", aaiLocalNetwork);
+
+        assertDoesNotThrow(() -> vrfValidation.aaiNetworkValidation("test-network", aaiLocalNetwork));
     }
 
     @Test
@@ -146,17 +147,17 @@ public class VrfValidationTest extends BaseTaskTest {
         aaiLocalNetwork.setAggregateRoutes(new AggregateRoutes());
         aaiLocalNetwork.getAggregateRoutes().getAggregateRoute().add(new AggregateRoute());
         aaiLocalNetwork.getAggregateRoutes().getAggregateRoute().get(0).setIpVersion("4");
-        ExpectedException.none();
-        vrfValidation.aaiAggregateRouteValidation(aaiLocalNetwork);
+
+        assertDoesNotThrow(() -> vrfValidation.aaiAggregateRouteValidation(aaiLocalNetwork));
 
         aaiLocalNetwork.getAggregateRoutes().getAggregateRoute().add(new AggregateRoute());
         aaiLocalNetwork.getAggregateRoutes().getAggregateRoute().get(1).setIpVersion("6");
-        ExpectedException.none();
-        vrfValidation.aaiAggregateRouteValidation(aaiLocalNetwork);
+
+        assertDoesNotThrow(() -> vrfValidation.aaiAggregateRouteValidation(aaiLocalNetwork));
 
         aaiLocalNetwork.setAggregateRoutes(null);
-        ExpectedException.none();
-        vrfValidation.aaiAggregateRouteValidation(aaiLocalNetwork);
+
+        assertDoesNotThrow(() -> vrfValidation.aaiAggregateRouteValidation(aaiLocalNetwork));
     }
 
     @Test
@@ -210,8 +211,8 @@ public class VrfValidationTest extends BaseTaskTest {
             AAIResultWrapper wrapper = Mockito.mock(AAIResultWrapper.class);
             doReturn(wrapper).when(bbSetupUtils).getAAIResourceDepthOne(vpnBindingUris.get(0));
             doReturn(Optional.of(vpnBinding)).when(wrapper).asBean(VpnBinding.class);
-            ExpectedException.none();
-            vrfValidation.aaiRouteTargetValidation(l3Network);
+
+            assertDoesNotThrow(() -> vrfValidation.aaiRouteTargetValidation(l3Network));
         }
     }
 }

@@ -33,6 +33,7 @@ import org.camunda.bpm.engine.delegate.BpmnError;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.onap.so.BaseIntegrationTest;
@@ -398,6 +399,7 @@ public class SniroHomingV2IT extends BaseIntegrationTest {
     }
 
     @Test
+    @Ignore
     public void testProcessSolution_success_3VpnLink_2Solutions() {
         // TODO
     }

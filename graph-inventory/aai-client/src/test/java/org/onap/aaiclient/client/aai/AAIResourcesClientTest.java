@@ -33,6 +33,8 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -104,7 +106,7 @@ public class AAIResourcesClientTest {
         wireMockRule.stubFor(delete(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
                 .withQueryParam("resource-version", equalTo("1234")).willReturn(aResponse().withStatus(204)));
         AAIResourcesClient client = aaiClient;
-        client.delete(path);
+        assertDoesNotThrow(() -> client.delete(path));
     }
 
     @Test
@@ -113,7 +115,7 @@ public class AAIResourcesClientTest {
         wireMockRule.stubFor(get(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(404)));
         AAIResourcesClient client = aaiClient;
-        client.deleteIfExists(path);
+        assertDoesNotThrow(() -> client.deleteIfExists(path));
     }
 
     @Test
@@ -125,7 +127,7 @@ public class AAIResourcesClientTest {
         wireMockRule.stubFor(delete(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
                 .withQueryParam("resource-version", equalTo("1234")).willReturn(aResponse().withStatus(204)));
         AAIResourcesClient client = aaiClient;
-        client.deleteIfExists(path);
+        assertDoesNotThrow(() -> client.deleteIfExists(path));
     }
 
     @Test
@@ -136,7 +138,8 @@ public class AAIResourcesClientTest {
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withBodyFile("aai/resources/mockObject.json").withStatus(200)));
         AAIResourcesClient client = aaiClient;
-        client.get(path);
+        AAIResultWrapper result = client.get(path);
+        assertNotNull(result);
     }
 
     @Test
@@ -177,7 +180,7 @@ public class AAIResourcesClientTest {
 
         AAIResourcesClient client = aaiClient;
 
-        client.update(path, "{}");
+        assertDoesNotThrow(() -> client.update(path, "{}"));
     }
 
     @Test
@@ -196,9 +199,10 @@ public class AAIResourcesClientTest {
         wireMockRule.stubFor(get(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
                 .willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("hello").withStatus(404)));
         AAIResourcesClient client = aaiClient;
+
         thrown.expect(NotFoundException.class);
         thrown.expectMessage(containsString(path.build() + " not found in A&AI"));
-        AAIResultWrapper result = client.get(path, NotFoundException.class);
+        client.get(path, NotFoundException.class);
     }
 
     @Test

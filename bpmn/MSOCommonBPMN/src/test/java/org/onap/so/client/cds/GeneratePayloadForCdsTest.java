@@ -58,7 +58,7 @@ public class GeneratePayloadForCdsTest {
     private static final String ASSIGN_ACTION = "configAssign";
     private static final String DEPLOY_ACTION = "configDeploy";
     private static final String DOWNLOAD_ACTION = "downloadNESw";
-    private static final String MSO_REQUEST_ID = "1234";
+    private static final String MSO_REQUEST_ID = "msoRequestId";
     private static final String BUILDING_BLOCK = "buildingBlock";
     private static final String PUBLIC_NET_ID = "public-net-id";
     private static final String CLOUD_REGION = "acl-cloud-region";
@@ -125,12 +125,12 @@ public class GeneratePayloadForCdsTest {
         // verify
         assertNotNull(propertyBean);
         String payload = propertyBean.getRequestObject();
-        assertThat(assignPayload.equals(payload));
-        assertThat(propertyBean.getRequestId().equals(MSO_REQUEST_ID));
-        assertThat(propertyBean.getOriginatorId().equals("SO"));
+        assertThat(assignPayload).isEqualTo(payload);
+        assertThat(propertyBean.getRequestId()).isEqualTo(TEST_MSO_REQUEST_ID);
+        assertThat(propertyBean.getOriginatorId()).isEqualTo("SO");
         assertNotNull(propertyBean.getSubRequestId());
-        assertThat(propertyBean.getActionName().equals(ASSIGN_ACTION));
-        assertThat(propertyBean.getMode().equalsIgnoreCase("sync"));
+        assertThat(propertyBean.getActionName()).isEqualTo(ASSIGN_ACTION);
+        assertThat(propertyBean.getMode()).isEqualToIgnoringCase("sync");
     }
 
     @Test
@@ -148,11 +148,11 @@ public class GeneratePayloadForCdsTest {
         assertNotNull(propertyBean);
         String payload = propertyBean.getRequestObject();
         assertThat(deployPayload.equals(payload));
-        assertThat(propertyBean.getRequestId().equals(MSO_REQUEST_ID));
-        assertThat(propertyBean.getOriginatorId().equals("SO"));
+        assertThat(propertyBean.getRequestId()).isEqualTo(TEST_MSO_REQUEST_ID);
+        assertThat(propertyBean.getOriginatorId()).isEqualTo("SO");
         assertNotNull(propertyBean.getSubRequestId());
-        assertThat(propertyBean.getActionName().equals(DEPLOY_ACTION));
-        assertThat(propertyBean.getMode().equalsIgnoreCase("sync"));
+        assertThat(propertyBean.getActionName()).isEqualTo(DEPLOY_ACTION);
+        assertThat(propertyBean.getMode()).isEqualToIgnoringCase("sync");
     }
 
     @Test
@@ -169,12 +169,12 @@ public class GeneratePayloadForCdsTest {
         // verify
         assertNotNull(propertyBean);
         String payload = propertyBean.getRequestObject();
-        assertThat(servicePayload.equals(payload));
-        assertThat(propertyBean.getRequestId().equals(MSO_REQUEST_ID));
-        assertThat(propertyBean.getOriginatorId().equals("SO"));
+        assertThat(servicePayload).isEqualTo(payload);
+        assertThat(propertyBean.getRequestId()).isEqualTo(TEST_MSO_REQUEST_ID);
+        assertThat(propertyBean.getOriginatorId()).isEqualTo("SO");
         assertNotNull(propertyBean.getSubRequestId());
-        assertThat(propertyBean.getActionName().equals(SERVICE_ACTION));
-        assertThat(propertyBean.getMode().equalsIgnoreCase("sync"));
+        assertThat(propertyBean.getActionName()).isEqualTo(SERVICE_ACTION);
+        assertThat(propertyBean.getMode()).isEqualToIgnoringCase("sync");
     }
 
     @Test
@@ -193,11 +193,11 @@ public class GeneratePayloadForCdsTest {
         assertNotNull(propertyBean);
         String payload = propertyBean.getRequestObject();
         assertThat(deployVfModulePayload.equals(payload));
-        assertThat(propertyBean.getRequestId().equals(MSO_REQUEST_ID));
-        assertThat(propertyBean.getOriginatorId().equals("SO"));
+        assertThat(propertyBean.getRequestId()).isEqualTo(TEST_MSO_REQUEST_ID);
+        assertThat(propertyBean.getOriginatorId()).isEqualTo("SO");
         assertNotNull(propertyBean.getSubRequestId());
-        assertThat(propertyBean.getActionName().equals(DEPLOY_ACTION));
-        assertThat(propertyBean.getMode().equalsIgnoreCase("sync"));
+        assertThat(propertyBean.getActionName()).isEqualTo(DEPLOY_ACTION);
+        assertThat(propertyBean.getMode()).isEqualToIgnoringCase("sync");
     }
 
     @Test
@@ -216,14 +216,14 @@ public class GeneratePayloadForCdsTest {
         // verify
         assertNotNull(propertyBean);
         String payload = propertyBean.getRequestObject();
-        assertThat(downloadPayload.equals(payload));
-        assertThat(propertyBean.getRequestId().equals(MSO_REQUEST_ID));
-        assertThat(propertyBean.getOriginatorId().equals("SO"));
+        assertThat(downloadPayload).isEqualTo(payload);
+        assertThat(propertyBean.getRequestId()).isEqualTo(TEST_MSO_REQUEST_ID);
+        assertThat(propertyBean.getOriginatorId()).isEqualTo("SO");
         assertNotNull(propertyBean.getSubRequestId());
-        assertThat(propertyBean.getActionName().equals(DOWNLOAD_ACTION));
-        assertThat(propertyBean.getMode().equalsIgnoreCase("async"));
-        assertThat(propertyBean.getBlueprintName().equalsIgnoreCase(TEST_PNF_RESOURCE_BLUEPRINT_NAME));
-        assertThat(propertyBean.getBlueprintVersion().equalsIgnoreCase(TEST_PNF_RESOURCE_BLUEPRINT_VERSION));
+        assertThat(propertyBean.getActionName()).isEqualTo(DOWNLOAD_ACTION);
+        assertThat(propertyBean.getMode()).isEqualToIgnoringCase("async");
+        assertThat(propertyBean.getBlueprintName()).isEqualToIgnoringCase(TEST_PNF_RESOURCE_BLUEPRINT_NAME);
+        assertThat(propertyBean.getBlueprintVersion()).isEqualToIgnoringCase(TEST_PNF_RESOURCE_BLUEPRINT_VERSION);
     }
 
     @Test
@@ -253,7 +253,7 @@ public class GeneratePayloadForCdsTest {
         RequestParameters requestParameters = new RequestParameters();
         requestParameters.setUserParams(createRequestUserParams());
         requestContext.setRequestParameters(requestParameters);
-        requestContext.setMsoRequestId(MSO_REQUEST_ID);
+        requestContext.setMsoRequestId(TEST_MSO_REQUEST_ID);
         generalBuildingBlock.setRequestContext(requestContext);
         return generalBuildingBlock;
     }
@@ -339,6 +339,7 @@ public class GeneratePayloadForCdsTest {
         execution.setVariable(SCOPE, scope);
         execution.setVariable(ACTION, action);
         execution.setVariable("mode", "async");
+
         return execution;
     }
 }
