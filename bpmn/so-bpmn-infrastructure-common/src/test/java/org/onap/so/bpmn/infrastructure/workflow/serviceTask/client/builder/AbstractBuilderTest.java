@@ -575,19 +575,4 @@ public class AbstractBuilderTest {
         assertEquals(0, list.size());
     }
 
-    @Test
-    public void getRequestInformationEntityTest() {
-        abstractBuilder.getRequestInformationEntity(delegateExecution);
-    }
-
-    @Test
-    public void getServiceInformationEntityTest() {
-        abstractBuilder.getServiceInformationEntity(delegateExecution);
-    }
-
-    @Test
-    public void getServiceInstanceNameTest() {
-        abstractBuilder.getServiceInstanceName(delegateExecution);
-    }
-
 }

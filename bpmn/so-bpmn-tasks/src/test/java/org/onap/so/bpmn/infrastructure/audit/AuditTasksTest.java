@@ -23,6 +23,7 @@ package org.onap.so.bpmn.infrastructure.audit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -92,7 +93,8 @@ public class AuditTasksTest extends BaseTaskTest {
         expectedAuditInventory.setTenantId("testTenantId");
         expectedAuditInventory.setGenericVnfId("testVnfId1");
         expectedAuditInventory.setMsoRequestId("fb06f44c-c797-4f38-9b17-b4b975344600");
-        auditTasks.setupAuditVariable(execution);
+
+        assertDoesNotThrow(() -> auditTasks.setupAuditVariable(execution));
         // assertThat((AuditInventory) execution.getVariable("auditInventory"), sameBeanAs(expectedAuditInventory));
     }
 

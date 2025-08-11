@@ -24,6 +24,7 @@ import com.openpojo.reflection.PojoClass;
 import lombok.Data;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import java.util.Objects;
 import javax.persistence.Id;
 import org.junit.Before;
@@ -43,7 +44,7 @@ public class EqualsAndHashCodeTesterTest {
     public void testValidEqualsAndHashCode() {
         PojoClass pojoClass = PojoClassFactory.getPojoClass(ValidEqualsWithId.class);
 
-        tester.run(pojoClass);
+        assertDoesNotThrow(() -> tester.run(pojoClass));
     }
 
     @Test
@@ -61,7 +62,7 @@ public class EqualsAndHashCodeTesterTest {
         PojoClass pojoClass = PojoClassFactory.getPojoClass(ValidEqualsWithId.class);
         EqualsAndHashCodeTester onlyDeclaredMethodsTester = new EqualsAndHashCodeTester().onlyDeclaredMethods();
 
-        onlyDeclaredMethodsTester.run(pojoClass);
+        assertDoesNotThrow(() -> onlyDeclaredMethodsTester.run(pojoClass));
     }
 
     @Data
