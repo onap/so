@@ -133,7 +133,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
         NotificationDataImpl request =
                 mapper.readValue(new File("src/test/resources/resource-examples/allottedresource/notif-portm.json"),
                         NotificationDataImpl.class);
-        headers.add("resource-location", "src/test/resources/resource-examples/allottedresource/");
+        headers.add("resource-location", "/resource-examples/allottedresource/");
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
@@ -185,7 +185,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
         ObjectMapper mapper = new ObjectMapper();
         NotificationDataImpl request = mapper.readValue(
                 new File("src/test/resources/resource-examples/vFW/notification.json"), NotificationDataImpl.class);
-        headers.add("resource-location", "src/test/resources/resource-examples/vFW/");
+        headers.add("resource-location", "/resource-examples/vFW/");
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
@@ -229,7 +229,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
         NotificationDataImpl request = mapper.readValue(
                 new File("src/test/resources/resource-examples/WorkflowBpmn/workflow-distribution.json"),
                 NotificationDataImpl.class);
-        headers.add("resource-location", "src/test/resources/resource-examples/WorkflowBpmn/");
+        headers.add("resource-location", "/resource-examples/WorkflowBpmn/");
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
@@ -279,7 +279,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
         ObjectMapper mapper = new ObjectMapper();
         NotificationDataImpl request = mapper.readValue(new File(resourceLocation + "demovcpeinfra-notification.json"),
                 NotificationDataImpl.class);
-        headers.add("resource-location", resourceLocation);
+        headers.add("resource-location", "/resource-examples/vcpe-infra/");
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
@@ -324,7 +324,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
         ObjectMapper mapper = new ObjectMapper();
         NotificationDataImpl request = mapper.readValue(new File(resourceLocation + "demo-ccvpn-notification.json"),
                 NotificationDataImpl.class);
-        headers.add("resource-location", resourceLocation);
+        headers.add("resource-location", "/resource-examples/ccvpn/");
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
@@ -349,7 +349,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
         NotificationDataImpl request;
         HttpEntity<NotificationDataImpl> entity;
         ResponseEntity<String> response;
-        headers.add("resource-location", resourceLocation);
+        headers.add("resource-location", "/resource-examples/e2eSlicing/");
 
         request = mapper.readValue(new File(resourceLocation + "nsst-notification.json"), NotificationDataImpl.class);
         entity = new HttpEntity<NotificationDataImpl>(request, headers);
@@ -385,7 +385,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
         ObjectMapper mapper = new ObjectMapper();
         NotificationDataImpl request = mapper.readValue(new File(resourceLocation + "demo-public-ns-notification.json"),
                 NotificationDataImpl.class);
-        headers.add("resource-location", resourceLocation);
+        headers.add("resource-location", "/resource-examples/public-ns/demo-public-ns-notification.json");
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
@@ -409,7 +409,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
         ObjectMapper mapper = new ObjectMapper();
         NotificationDataImpl request = mapper.readValue(
                 new File(resourceLocation + "demo-vcpe-rescust-notification.json"), NotificationDataImpl.class);
-        headers.add("resource-location", resourceLocation);
+        headers.add("resource-location", "/resource-examples/vcpe-rescust/");
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
@@ -431,7 +431,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
         ObjectMapper mapper = new ObjectMapper();
         NotificationDataImpl request = mapper.readValue(
                 new File(resourceLocation + "service-ubuntu16test-notification.json"), NotificationDataImpl.class);
-        headers.add("resource-location", resourceLocation);
+        headers.add("resource-location", "/resource-examples/service-ubuntu16test/");
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
@@ -453,7 +453,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
         ObjectMapper mapper = new ObjectMapper();
         NotificationDataImpl request = mapper.readValue(
                 new File(resourceLocation + "service-BasicCnf-notification.json"), NotificationDataImpl.class);
-        headers.add("resource-location", resourceLocation);
+        headers.add("resource-location", "/resource-examples/service-BasicCnf/");
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
@@ -474,7 +474,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
         ObjectMapper mapper = new ObjectMapper();
         NotificationDataImpl request = mapper.readValue(
                 new File(resourceLocation + "service-BasicNetwork-notification.json"), NotificationDataImpl.class);
-        headers.add("resource-location", resourceLocation);
+        headers.add("resource-location", "/resource-examples/service-BasicNetwork/");
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
