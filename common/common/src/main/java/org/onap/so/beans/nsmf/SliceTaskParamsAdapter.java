@@ -21,7 +21,6 @@ package org.onap.so.beans.nsmf;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonObject;
 import lombok.*;
 import org.onap.so.beans.nsmf.oof.TemplateInfo;
 import java.io.IOException;
@@ -123,4 +122,3 @@ public class SliceTaskParamsAdapter implements Serializable {
         return sliceProfileMap;
     }
 }
-

@@ -190,6 +190,11 @@
     </dependency>
     <dependency>
       <groupId>org.onap.so</groupId>
+      <artifactId>client-cds</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.so</groupId>
       <artifactId>MSOCoreBPMN</artifactId>
       <version>${project.version}</version>
     </dependency>

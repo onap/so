@@ -96,6 +96,8 @@ public class SliceTaskParams implements Serializable {
 
     private String anStatusDescription;
 
+    // TODO: Get rid of gson here
+    // This is the only class in the common module that uses gson
     public String convertToJson() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("ServiceId", serviceId);
