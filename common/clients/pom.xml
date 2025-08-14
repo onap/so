@@ -11,5 +11,6 @@
   <modules>
     <module>clients-base</module>
     <module>clients</module>
+    <module>client-cds</module>
   </modules>
 </project>
