@@ -34,7 +34,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -106,7 +106,8 @@ public class AAIResourcesClientTest {
         wireMockRule.stubFor(delete(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
                 .withQueryParam("resource-version", equalTo("1234")).willReturn(aResponse().withStatus(204)));
         AAIResourcesClient client = aaiClient;
-        assertDoesNotThrow(() -> client.delete(path));
+        client.delete(path);
+        assertTrue(true);
     }
 
     @Test
@@ -115,7 +116,8 @@ public class AAIResourcesClientTest {
         wireMockRule.stubFor(get(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(404)));
         AAIResourcesClient client = aaiClient;
-        assertDoesNotThrow(() -> client.deleteIfExists(path));
+        client.deleteIfExists(path);
+        assertTrue(true);
     }
 
     @Test
@@ -127,7 +129,8 @@ public class AAIResourcesClientTest {
         wireMockRule.stubFor(delete(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
                 .withQueryParam("resource-version", equalTo("1234")).willReturn(aResponse().withStatus(204)));
         AAIResourcesClient client = aaiClient;
-        assertDoesNotThrow(() -> client.deleteIfExists(path));
+        client.deleteIfExists(path);
+        assertTrue(true);
     }
 
     @Test
@@ -180,7 +183,8 @@ public class AAIResourcesClientTest {
 
         AAIResourcesClient client = aaiClient;
 
-        assertDoesNotThrow(() -> client.update(path, "{}"));
+        client.update(path, "{}");
+        assertTrue(true);
     }
 
     @Test
