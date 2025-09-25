@@ -1,25 +1,21 @@
-package org.onap.so.db.camunda;
+package org.onap.so.db.camunda.client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Component;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-@Repository
-@Transactional(readOnly = true)
-public class CamundaResumeDaoImpl implements CamundaResumeDao {
-
+@Component
+public class CamundaDBClient {
     @Autowired
     @Qualifier("camundaEntityManagerFactory")
     private EntityManager entityManager;
 
-    protected static Logger logger = LoggerFactory.getLogger(CamundaResumeDaoImpl.class);
+    protected static Logger logger = LoggerFactory.getLogger(CamundaDBClient.class);
 
-    @Override
     public String findResumeFromBB(String requestId) {
         String resumeFrom = null;
         try {

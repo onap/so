@@ -23,7 +23,7 @@ import javax.sql.DataSource;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(entityManagerFactoryRef = "camundaEntityManagerFactory",
-        transactionManagerRef = "camundaTransactionManager", basePackages = {"org.onap.so.db.camunda"})
+        transactionManagerRef = "camundaTransactionManager", basePackages = {"org.onap.so.db.camunda.client"})
 @Profile({"!test"})
 public class CamundaDBConfig {
     protected static Logger logger = LoggerFactory.getLogger(CamundaDBConfig.class);
@@ -33,7 +33,7 @@ public class CamundaDBConfig {
 
     @Bean
     @ConfigurationProperties(prefix = "bpmn.datasource.hikari")
-    public HikariConfig camundaDBConfig() {
+    public HikariConfig hikariDBConfig() {
         return new HikariConfig();
     }
 
@@ -43,14 +43,15 @@ public class CamundaDBConfig {
         if (mBeanExporter != null) {
             mBeanExporter.addExcludedBean("camundaDataSource");
         }
-        HikariConfig hikariConfig = this.camundaDBConfig();
+        HikariConfig hikariConfig = this.hikariDBConfig();
         return new HikariDataSource(hikariConfig);
     }
 
     @Bean(name = "camundaEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder,
             @Qualifier("camundaDataSource") DataSource dataSource) {
-        return builder.dataSource(dataSource).packages("org.onap.so.db.camunda").persistenceUnit("camundabpmn").build();
+        return builder.dataSource(dataSource).packages("org.onap.so.db.camunda.client").persistenceUnit("camundabpmn")
+                .build();
     }
 
     @Bean(name = "camundaTransactionManager")

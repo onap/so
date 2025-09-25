@@ -23,7 +23,7 @@ import javax.sql.DataSource;
 @Profile({"test"})
 @EnableTransactionManagement
 @EnableJpaRepositories(entityManagerFactoryRef = "camundaEntityManagerFactory",
-        transactionManagerRef = "camundaTransactionManager", basePackages = {"org.onap.so.db.camunda"})
+        transactionManagerRef = "camundaTransactionManager", basePackages = {"org.onap.so.db.camunda.client"})
 public class EmbeddedCamundaDbConfig {
     @Bean
     MariaDB4jSpringService mariaDB4jSpringService() {
@@ -51,7 +51,8 @@ public class EmbeddedCamundaDbConfig {
     @Bean(name = "camundaEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder,
             @Qualifier("camundaDataSource") DataSource dataSource) {
-        return builder.dataSource(dataSource).packages("org.onap.so.db.camunda").persistenceUnit("camundabpmn").build();
+        return builder.dataSource(dataSource).packages("org.onap.so.db.camunda.client").persistenceUnit("camundabpmn")
+                .build();
     }
 
 
