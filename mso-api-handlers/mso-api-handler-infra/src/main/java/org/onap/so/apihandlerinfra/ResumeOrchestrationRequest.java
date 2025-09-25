@@ -45,7 +45,7 @@ import org.onap.so.apihandlerinfra.exceptions.RequestDbFailureException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.constants.Status;
-import org.onap.so.db.camunda.CamundaResumeDao;
+import org.onap.so.db.camunda.client.CamundaDBClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.logging.filter.base.ErrorCode;
@@ -92,7 +92,7 @@ public class ResumeOrchestrationRequest {
     private MsoRequest msoRequest;
 
     @Autowired
-    private CamundaResumeDao camundaResumeDao;
+    private CamundaDBClient camundaDBClient;
 
     @POST
     @Path("/{version:[vV][7]}/{requestId}/resume")
@@ -168,10 +168,15 @@ public class ResumeOrchestrationRequest {
         if (aLaCarte == null) {
             aLaCarte = setALaCarteFlagIfNull(requestScope, action);
         }
-        // New
         // Step 1: Fetch resumeFrom from Camunda DB
-        String resumeFrom = camundaResumeDao.findResumeFromBB(requestId);
+        String resumeFrom = camundaDBClient.findResumeFromBB(requestId);
         logger.info("****** Found resumeFrom Building block in Camunda DB: {} ******", resumeFrom);
+        if (resumeFrom == null || resumeFrom.isEmpty()) {
+
+            throw new ValidateException.Builder(
+                    "Already completed all so building blocks for this request id: " + requestId,
+                    HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).build();
+        }
 
         RequestClientParameter requestClientParameter = setRequestClientParameter(recipeLookupResult, version,
                 infraActiveRequest, currentActiveRequest, pnfCorrelationId, aLaCarte, sir, resumeFrom);

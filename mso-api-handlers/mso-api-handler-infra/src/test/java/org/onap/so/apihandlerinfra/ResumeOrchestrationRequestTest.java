@@ -53,7 +53,7 @@ import org.onap.so.apihandlerinfra.exceptions.DuplicateRequestException;
 import org.onap.so.apihandlerinfra.exceptions.RequestDbFailureException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.constants.Status;
-import org.onap.so.db.camunda.CamundaResumeDao;
+import org.onap.so.db.camunda.client.CamundaDBClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.serviceinstancebeans.ModelInfo;
@@ -77,7 +77,7 @@ public class ResumeOrchestrationRequestTest {
     private RequestsDbClient requestDbClient;
 
     @Mock
-    private CamundaResumeDao camundaResumeDao;
+    private CamundaDBClient camundaDBClient;
 
     @InjectMocks
     @Spy
@@ -206,16 +206,16 @@ public class ResumeOrchestrationRequestTest {
                 .setServiceInstanceId(SERVICE_INSTANCE_ID).setPnfCorrelationId("pnfCorrelationId").setVnfId(VNF_ID)
                 .setVfModuleId(VFMODULE_ID).setVolumeGroupId(VOLUME_GROUP_ID).setNetworkId(NETWORK_ID)
                 .setServiceType("serviceType").setVnfType(null).setNetworkType(null)
-                .setRequestDetails(getRequestBody("/RequestDetails.json")).setApiVersion(version).setALaCarte(aLaCarte)
-                .setRequestUri(requestUri).setInstanceGroupId(null).build();
+                .setRequestDetails(getRequestBody("/RequestDetails.json").trim()).setApiVersion(version)
+                .setALaCarte(aLaCarte).setRequestUri(requestUri).setInstanceGroupId(null).build();
     }
 
     private void setRequestClientParameterVfModule() throws IOException {
         requestClientParameterVfModule = new RequestClientParameter.Builder().setRequestId(CURRENT_REQUEST_ID)
                 .setRecipeTimeout(80).setRequestAction(Action.createInstance.toString())
                 .setPnfCorrelationId("pnfCorrelationId").setVnfId(VNF_ID).setVfModuleId(VFMODULE_ID)
-                .setRequestDetails(getRequestBody("/RequestDetails.json")).setApiVersion(version).setALaCarte(aLaCarte)
-                .setRequestUri(requestUri).build();
+                .setRequestDetails(getRequestBody("/RequestDetails.json").trim()).setApiVersion(version)
+                .setALaCarte(aLaCarte).setRequestUri(requestUri).build();
     }
 
     @Test
@@ -264,7 +264,7 @@ public class ResumeOrchestrationRequestTest {
         when(serviceInstances.getPnfCorrelationId(any(ServiceInstancesRequest.class))).thenReturn("pnfCorrelationId");
         doReturn(lookupResult).when(requestHandler).getServiceInstanceOrchestrationURI(sir, action, aLaCarte,
                 currentActiveRequest);
-        doReturn(FLOW_NAME).when(camundaResumeDao).findResumeFromBB(REQUEST_ID);
+        doReturn(FLOW_NAME).when(camundaDBClient).findResumeFromBB(REQUEST_ID);
         doReturn(requestClientParameter).when(resumeReq).setRequestClientParameter(lookupResult, version,
                 infraActiveRequest, currentActiveRequest, "pnfCorrelationId", aLaCarte, sir, FLOW_NAME);
         doNothing().when(resumeReq).requestDbSave(currentActiveRequest);
@@ -319,7 +319,7 @@ public class ResumeOrchestrationRequestTest {
         doReturn(false).when(msoRequest).getAlacarteFlag(sirNullALaCarte);
         doReturn(lookupResult).when(requestHandler).getServiceInstanceOrchestrationURI(sirNullALaCarte, action, false,
                 currentActiveRequest);
-        doReturn(FLOW_NAME).when(camundaResumeDao).findResumeFromBB(REQUEST_ID);
+        doReturn(FLOW_NAME).when(camundaDBClient).findResumeFromBB(REQUEST_ID);
         doReturn(requestClientParameter).when(resumeReq).setRequestClientParameter(lookupResult, version,
                 infraActiveRequest, currentActiveRequest, "pnfCorrelationId", aLaCarte, sirNullALaCarte, FLOW_NAME);
         doReturn(false).when(resumeReq).setALaCarteFlagIfNull(SERVICE, action);
@@ -487,5 +487,19 @@ public class ResumeOrchestrationRequestTest {
     public void setALaCarteFlagIfNullRecreateTest() {
         Boolean aLaCarteFlag = resumeReq.setALaCarteFlagIfNull(VNF, Action.recreateInstance);
         assertEquals(aLaCarteFlag, false);
+    }
+
+    @Test
+    public void resumeRequestValidationTest() throws Exception {
+        when(requestHandler.convertJsonToServiceInstanceRequest(anyString(), any(Actions.class), anyString(),
+                anyString())).thenReturn(sir);
+        when(camundaDBClient.findResumeFromBB("00032ab7-na18-42e5-965d-8ea592502018")).thenReturn(null);
+
+        thrown.expect(ValidateException.class);
+        thrown.expectMessage(
+                "Already completed all so building blocks for this request id: 00032ab7-na18-42e5-965d-8ea592502018");
+        resumeReq.resumeRequest(infraActiveRequest, currentActiveRequest, version,
+                "/onap/so/infra/orchestrationRequests/v7/requests/00032ab7-na18-42e5-965d-8ea592502018/resume",
+                "00032ab7-na18-42e5-965d-8ea592502018");
     }
 }
