@@ -1,0 +1,9 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Verified+1: ONAP Required GHA <releng+onap.required.gha@linuxfoundation.org>
+Code-Review+2: Byung-Woo Jun <byung-woo.jun@est.tech>
+Verified+1: ONAP Bypass GHA <releng+onap.bypass.gha@linuxfoundation.org>
+Submitted-by: Byung-Woo Jun <byung-woo.jun@est.tech>
+Submitted-at: Fri, 24 Oct 2025 01:17:32 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/so/+/141819
+Project: so
+Branch: refs/heads/master
