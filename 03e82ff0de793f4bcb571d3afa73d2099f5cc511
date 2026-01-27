@@ -51,6 +51,23 @@
       "message": "Please review our \"Resume API\" feature(After First Implementation)",
       "revId": "03e82ff0de793f4bcb571d3afa73d2099f5cc511",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f948deb1_1d9d92ae",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/ResumeOrchestrationRequestTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 501,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-01-27T10:20:02Z",
+      "side": 1,
+      "message": "Can you add an assertion that asserts the result of `resumeReq.resumeRequest`?",
+      "revId": "03e82ff0de793f4bcb571d3afa73d2099f5cc511",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
