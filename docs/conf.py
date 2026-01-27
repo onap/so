@@ -23,7 +23,6 @@ extensions = [
     'sphinx.ext.graphviz',
     'sphinxcontrib.blockdiag',
     'sphinxcontrib.seqdiag',
-    'sphinxcontrib.swaggerdoc',
     'sphinxcontrib.plantuml'
 ]
 
