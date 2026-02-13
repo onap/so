@@ -1,3 +1,22 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * ONAP - SO
+ * ================================================================================
+ * Copyright (C) 2026 Deutsche Telekom AG.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
 package org.onap.so.db.camunda.client;
 
 import org.slf4j.Logger;
@@ -19,7 +38,7 @@ public class CamundaDBClient {
     public String findResumeFromBB(String requestId) {
         String resumeFrom = null;
         try {
-            logger.info("****** In Try Block to fetch resumeFrom ****** CamundaResumeDaoImpl");
+            logger.info("****** In Try Block to fetch resumeFrom ****** CamundaDBClient");
 
             // Correct query: Finds the latest started BB that has no corresponding End_
             String sql = "SELECT start.ACT_ID_ AS resume_from " + "FROM ACT_HI_ACTINST start "
@@ -43,5 +62,20 @@ public class CamundaDBClient {
             logger.error("****** Error querying resumeFrom from Camunda DB: {} ******", e.getMessage());
         }
         return resumeFrom;
+    }
+
+    public String findProcessInstanceId(String requestId) {
+        String processInstanceId = null;
+        try {
+            logger.info("****** In Try Block to fetch processInstanceId ****** CamundaDBClient");
+
+            String sql = "select PROC_INST_ID_ from ACT_HI_PROCINST where BUSINESS_KEY_ =?1 AND STATE_='SUSPENDED'";
+            Query query = entityManager.createNativeQuery(sql);
+            processInstanceId = query.setParameter(1, requestId).getSingleResult().toString();
+            logger.info("****** Found processInstanceId in Camunda DB: {} ******", processInstanceId);
+        } catch (Exception e) {
+            logger.error("****** Error querying from Camunda DB: {} ******", e.getMessage());
+        }
+        return processInstanceId;
     }
 }

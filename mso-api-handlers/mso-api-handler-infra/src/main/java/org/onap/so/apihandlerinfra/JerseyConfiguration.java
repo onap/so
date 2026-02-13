@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2026 Deutsche telekom
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -99,6 +101,8 @@ public class JerseyConfiguration extends ResourceConfig {
         register(com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider.class);
 
         register(ModelDistributionRequest.class);
+        register(PauseOrchestrationRequest.class);
+        register(AbortOrchestrationRequest.class);
         property(ServletProperties.FILTER_FORWARD_ON_404, true);
 
         OpenAPI oas = new OpenAPI();

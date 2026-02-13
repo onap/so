@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2026 Deutsche telekom
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,5 +39,6 @@ public enum Status {
     ABORTED,
     ROLLED_BACK,
     ROLLED_BACK_TO_ASSIGNED,
-    ROLLED_BACK_TO_CREATED
+    ROLLED_BACK_TO_CREATED,
+    PAUSED
 }

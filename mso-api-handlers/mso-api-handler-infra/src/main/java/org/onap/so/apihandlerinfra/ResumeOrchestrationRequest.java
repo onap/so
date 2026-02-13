@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2026 Deutsche telekom
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -164,25 +166,44 @@ public class ResumeOrchestrationRequest {
                 msoRequest.getAlacarteFlag(sir), currentActiveRequest);
 
         requestDbSave(currentActiveRequest);
-
+        String requestStatus = infraActiveRequest.getRequestStatus();
         if (aLaCarte == null) {
             aLaCarte = setALaCarteFlagIfNull(requestScope, action);
         }
-        // Step 1: Fetch resumeFrom from Camunda DB
-        String resumeFrom = camundaDBClient.findResumeFromBB(requestId);
-        logger.info("****** Found resumeFrom Building block in Camunda DB: {} ******", resumeFrom);
-        if (resumeFrom == null || resumeFrom.isEmpty()) {
+        if (requestStatus.equals("PAUSED") && requestId != null && !requestId.isEmpty()) {
+            String processInstanceId = camundaDBClient.findProcessInstanceId(requestId);
+            logger.info("****** Found processInstanceId in Camunda DB: {} ******", processInstanceId);
 
-            throw new ValidateException.Builder(
-                    "Already completed all so building blocks for this request id: " + requestId,
-                    HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).build();
+            if (processInstanceId == null || processInstanceId.isEmpty()) {
+                throw new ValidateException.Builder(
+                        "Process Instance Id does not exist for this request id: " + requestId, HttpStatus.SC_NOT_FOUND,
+                        ErrorNumbers.SVC_BAD_PARAMETER).build();
+            }
+            RequestClientParameter requestClientParameter = setRequestClientParameter(recipeLookupResult, version,
+                    infraActiveRequest, currentActiveRequest, pnfCorrelationId, aLaCarte, sir, processInstanceId);
+
+            return requestHandlerUtils.postBPELRequest(currentActiveRequest, requestClientParameter,
+                    recipeLookupResult.getOrchestrationURI(), requestScope);
+
+        } else if (requestStatus.equals("ABORTED") && requestId != null && !requestId.isEmpty()) {
+            throw new ValidateException.Builder("SO(Service instance) is already aborted for this request id: "
+                    + requestId + " so we can not resume it.", HttpStatus.SC_BAD_REQUEST,
+                    ErrorNumbers.SVC_BAD_PARAMETER).build();
+        } else {
+            String failedBBName = camundaDBClient.findResumeFromBB(requestId); // failed building block name
+            logger.info("****** Found resumeFrom Building block in Camunda DB: {} ******", failedBBName);
+            if (failedBBName == null || failedBBName.isEmpty()) {
+
+                throw new ValidateException.Builder(
+                        "Already completed all so building blocks for this request id: " + requestId,
+                        HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).build();
+            }
+            RequestClientParameter requestClientParameter = setRequestClientParameter(recipeLookupResult, version,
+                    infraActiveRequest, currentActiveRequest, pnfCorrelationId, aLaCarte, sir, failedBBName);
+
+            return requestHandlerUtils.postBPELRequest(currentActiveRequest, requestClientParameter,
+                    recipeLookupResult.getOrchestrationURI(), requestScope);
         }
-
-        RequestClientParameter requestClientParameter = setRequestClientParameter(recipeLookupResult, version,
-                infraActiveRequest, currentActiveRequest, pnfCorrelationId, aLaCarte, sir, resumeFrom);
-
-        return requestHandlerUtils.postBPELRequest(currentActiveRequest, requestClientParameter,
-                recipeLookupResult.getOrchestrationURI(), requestScope);
     }
 
     protected Boolean setALaCarteFlagIfNull(String requestScope, Action action) {
@@ -256,7 +277,7 @@ public class ResumeOrchestrationRequest {
 
     protected RequestClientParameter setRequestClientParameter(RecipeLookupResult recipeLookupResult, String version,
             InfraActiveRequests infraActiveRequest, InfraActiveRequests currentActiveRequest, String pnfCorrelationId,
-            Boolean aLaCarte, ServiceInstancesRequest sir, String resumeFrom) throws ApiException {
+            Boolean aLaCarte, ServiceInstancesRequest sir, String failedBBOrProcInsId) throws ApiException {
         RequestClientParameter requestClientParameter = null;
         Action action = Action.valueOf(infraActiveRequest.getRequestAction());
         ModelInfo modelInfo = sir.getRequestDetails().getModelInfo();
@@ -281,11 +302,15 @@ public class ResumeOrchestrationRequest {
             if (requestParamsNode.isObject()) {
                 ArrayNode userParamsNode = (ArrayNode) requestParamsNode.withArray("userParams");
 
-                if (resumeFrom != null && userParamsNode != null) {
+                if (failedBBOrProcInsId != null && userParamsNode != null) {
                     ObjectNode resumeParam = objectMapper.createObjectNode();
-                    resumeParam.put("resumeFrom", resumeFrom);
+                    if (infraActiveRequest.getRequestStatus().equals("PAUSED")) {
+                        resumeParam.put("processInstanceId", failedBBOrProcInsId);
+                    } else {
+                        resumeParam.put("resumeFrom", failedBBOrProcInsId);
+                    }
                     userParamsNode.add(resumeParam);
-                    logger.info("****** Injected resumeFrom [{}] into userParams ******", resumeFrom);
+                    logger.info("****** Injected failedBBOrProcInsId [{}] into userParams ******", failedBBOrProcInsId);
                 }
             }
 

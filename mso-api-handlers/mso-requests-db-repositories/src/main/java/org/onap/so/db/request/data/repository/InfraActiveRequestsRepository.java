@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2026 Deutsche telekom
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,4 +46,8 @@ public interface InfraActiveRequestsRepository
     @Query(value = "SELECT * FROM infra_active_requests WHERE request_status = 'IN_PROGRESS' AND (request_scope = 'volumeGroup' OR request_scope = 'vfModule') AND start_time < (NOW() - INTERVAL 2 MINUTE)"
             + " ORDER BY start_time DESC", nativeQuery = true)
     List<InfraActiveRequests> getInProgressVolumeGroupsAndVfModules();
+
+    @Query(value = "SELECT * FROM infra_active_requests WHERE request_url like '%serviceInstances%' AND original_request_id is null AND request_status = 'IN_PROGRESS'"
+            + " ORDER BY start_time DESC", nativeQuery = true)
+    List<InfraActiveRequests> getListOfRequestsInProgress();
 }

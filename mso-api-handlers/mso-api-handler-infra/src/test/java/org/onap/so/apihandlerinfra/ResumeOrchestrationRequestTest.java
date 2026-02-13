@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2026 Deutsche telekom
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -491,6 +493,7 @@ public class ResumeOrchestrationRequestTest {
 
     @Test
     public void resumeRequestValidationTest() throws Exception {
+        Response response = null;
         when(requestHandler.convertJsonToServiceInstanceRequest(anyString(), any(Actions.class), anyString(),
                 anyString())).thenReturn(sir);
         when(camundaDBClient.findResumeFromBB("00032ab7-na18-42e5-965d-8ea592502018")).thenReturn(null);
@@ -498,8 +501,10 @@ public class ResumeOrchestrationRequestTest {
         thrown.expect(ValidateException.class);
         thrown.expectMessage(
                 "Already completed all so building blocks for this request id: 00032ab7-na18-42e5-965d-8ea592502018");
-        resumeReq.resumeRequest(infraActiveRequest, currentActiveRequest, version,
+        response = resumeReq.resumeRequest(infraActiveRequest, currentActiveRequest, version,
                 "/onap/so/infra/orchestrationRequests/v7/requests/00032ab7-na18-42e5-965d-8ea592502018/resume",
                 "00032ab7-na18-42e5-965d-8ea592502018");
+        int status = response.getStatus();
+        assertEquals(status, 400);
     }
 }
