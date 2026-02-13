@@ -3,7 +3,9 @@
  * ONAP - SO 
  * ================================================================================ 
  * Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
- * ================================================================================ 
+ * ================================================================================
+ * Modifications Copyright (c) 2026 Deutsche telekom
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at 
@@ -54,9 +56,19 @@ public class WorkflowAsyncResourceExceptionHandlingTest {
         timeout.put("type", "String");
         timeout.put("value", "5");
 
+        Map<String, Object> requestUrl = new HashMap<>();
+        requestUrl.put("type", "String");
+        requestUrl.put("value", "http:localhost:6746/onap/so/infra/orchestrationRequests/v7/serviceInstance");
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("type", "String");
+        requestBody.put("value", "");
+
         variableValueType.put("testAsyncRequestMsg", requestMsg);
         variableValueType.put("mso-request-id", msorequestId);
         variableValueType.put("mso-service-request-timeout", timeout);
+        variableValueType.put("requestUri", requestUrl);
+        variableValueType.put("bpmnRequest", requestBody);
 
         variableMap.put("variables", variableValueType);
         WorkflowAsyncResource workflowAsyncResource = new WorkflowAsyncResource();

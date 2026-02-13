@@ -8,6 +8,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Modifications Copyright (c) 2026 Deutsche telekom
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -191,7 +193,8 @@ public class RequestHandlerUtils extends AbstractRestHandler {
     @Override
     public void updateStatus(InfraActiveRequests aq, Status status, String errorMessage)
             throws RequestDbFailureException {
-        if ((status == Status.FAILED) || (status == Status.COMPLETE)) {
+        if ((status == Status.FAILED) || (status == Status.COMPLETE) || (status == Status.PAUSED)
+                || (status == Status.ABORTED)) {
             aq.setStatusMessage(errorMessage);
             aq.setProgress(new Long(100));
             aq.setRequestStatus(status.toString());
@@ -1258,5 +1261,28 @@ public class RequestHandlerUtils extends AbstractRestHandler {
         }
 
         return new RecipeLookupResult(recipe.getOrchestrationUri(), recipe.getRecipeTimeout());
+    }
+
+    protected InfraActiveRequests createNewRecordCopyForPauseAbort(List<InfraActiveRequests> infraActiveRequestsList,
+            String requestId, Timestamp startTimeStamp, String source, String requestUri, String requestorId)
+            throws ApiException {
+
+        InfraActiveRequests request = new InfraActiveRequests();
+        request.setRequestId(requestId);
+        request.setStartTime(startTimeStamp);
+        request.setSource(source);
+        request.setRequestUrl(requestUri);
+        request.setProgress(new Long(5));
+        request.setRequestorId(requestorId);
+        request.setRequestScope("service");
+        request.setRequestAction("createInstance");
+        request.setRequestStatus(Status.IN_PROGRESS.toString());
+        request.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
+        if (infraActiveRequestsList.size() > 0) {
+            for (InfraActiveRequests infraActiveRequest : infraActiveRequestsList) {
+                request.setRequestBody(infraActiveRequest.getRequestBody());
+            }
+        }
+        return request;
     }
 }
