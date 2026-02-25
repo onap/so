@@ -32,7 +32,6 @@ import static org.mockito.Mockito.*
 
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.internal.debugging.MockitoDebuggerImpl
 import org.junit.Before
 import org.onap.so.bpmn.common.scripts.AaiUtil;
 import org.junit.Rule;

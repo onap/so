@@ -66,14 +66,15 @@
     <siteNexusPath>content/sites/site/org/onap/so/${project.version}/</siteNexusPath>
     <cxf.version>3.4.10</cxf.version>
     <jax.ws.rs>2.1</jax.ws.rs>
-    <springboot.version>2.5.15</springboot.version>
-    <spring-cloud.version>2020.0.6</spring-cloud.version>
+    <springboot.version>2.6.15</springboot.version>
+    <spring-cloud.version>2021.0.9</spring-cloud.version>
     <camunda.version>7.15.0</camunda.version>
     <format.skipValidate>false</format.skipValidate>
     <format.skipExecute>true</format.skipExecute>
     <io.fabric8.version>0.33.0</io.fabric8.version>
     <appc.client.version>1.7.2</appc.client.version>
     <bowman.client.version>0.9.0</bowman.client.version>
+    <spring-hateoas.version>1.3.7</spring-hateoas.version>
     <so-etsi-sol003-adapter-version>1.9.0-SNAPSHOT</so-etsi-sol003-adapter-version>
     <onap-logging-version>1.6.9</onap-logging-version>
     <jackson.version>2.14.3</jackson.version>
@@ -947,6 +948,11 @@
         <scope>compile</scope>
       </dependency>
       <dependency>
+        <groupId>org.springframework.hateoas</groupId>
+        <artifactId>spring-hateoas</artifactId>
+        <version>${spring-hateoas.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
         <version>${springboot.version}</version>
@@ -1095,7 +1101,7 @@
       <dependency>
         <groupId>org.glassfish.jersey.core</groupId>
         <artifactId>jersey-common</artifactId>
-        <version>2.33</version>
+        <version>2.35</version>
       </dependency>
       <dependency>
         <groupId>com.h2database</groupId>
