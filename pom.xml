@@ -66,8 +66,8 @@
     <siteNexusPath>content/sites/site/org/onap/so/${project.version}/</siteNexusPath>
     <cxf.version>3.4.10</cxf.version>
     <jax.ws.rs>2.1</jax.ws.rs>
-    <springboot.version>2.5.15</springboot.version>
-    <spring-cloud.version>2020.0.6</spring-cloud.version>
+    <springboot.version>2.6.15</springboot.version>
+    <spring-cloud.version>2021.0.9</spring-cloud.version>
     <camunda.version>7.15.0</camunda.version>
     <format.skipValidate>false</format.skipValidate>
     <format.skipExecute>true</format.skipExecute>
@@ -1095,7 +1095,7 @@
       <dependency>
         <groupId>org.glassfish.jersey.core</groupId>
         <artifactId>jersey-common</artifactId>
-        <version>2.33</version>
+        <version>2.35</version>
       </dependency>
       <dependency>
         <groupId>com.h2database</groupId>
