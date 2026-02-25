@@ -9,6 +9,51 @@ Service Orchestrator Release Notes
 
 The SO provides the highest level of service orchestration in the ONAP architecture.
 
+Version: 1.16.0
+---------------
+
+:Release Date: TBD
+
+SO Release Image Versions
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ - so-bpmn-infra **1.16.0**
+
+ - so-catalog-db-adapter **1.16.0**
+
+ - so-openstack-adapter **1.16.0**
+
+ - so-request-db-adapter **1.16.0**
+
+ - so-sdc-controller **1.16.0**
+
+ - so-sdnc-adapter **1.16.0**
+
+ - so-api-handler **1.16.0**
+
+
+Release Purpose
+~~~~~~~~~~~~~~~
+SO Quebec Release.
+
+**Changes**
+
+*  Upgrade Spring Boot to 2.5
+*  Introduce new ``common/clients`` module structure including a dedicated CDS client module, common logging module and clients-base module
+*  Move AAI URI building into a dedicated module
+*  Remove Spring Cloud Sleuth from the common module
+*  Use dependency-injected ``RestTemplateBuilder`` for ``RestTemplate`` creation across SO components
+*  Resolve critical SonarQube issues
+*  Improve code quality: consistently use parameterised logging, remove unused imports/variables and unreachable throws declarations
+*  Improve test quality: ensure all tests have assertions, replace deprecated test methods, disable flaky tests, improve code coverage in common
+*  Update vulnerable dependencies and AAI schema dependency
+*  Add GitHub Dependabot configuration for automated dependency updates
+*  CI: Add GitHub2Gerrit workflow
+*  Remove broken sphinxcontrib-swaggerdoc documentation module
+
+**********************************************************************************************************
+
+
 Version: 1.15.0
 ---------------
 
@@ -34,12 +79,233 @@ SO Release Image Versions
 
 Release Purpose
 ~~~~~~~~~~~~~~~
-SO OSLO Release.
-The key deliverable for this release is refactoring SO for better internal architecture.
+SO Oslo Release.
 
-**Epics**
+**Changes**
 
-*  `SO-4127 <https://lf-onap.atlassian.net/browse/SO-4127>`_ - ONAP RFC 8040 Migration - Oslo Enhancements
+*  RFC 8040 Migration enhancements (`SO-4127 <https://lf-onap.atlassian.net/browse/SO-4127>`_)
+*  Initial Oslo release baseline
+
+**********************************************************************************************************
+
+
+Version: 1.15.6
+---------------
+
+:Release Date: 2025-07-10
+
+SO Release Image Versions
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ - so-bpmn-infra **1.15.6**
+
+ - so-catalog-db-adapter **1.15.6**
+
+ - so-openstack-adapter **1.15.6**
+
+ - so-request-db-adapter **1.15.6**
+
+ - so-sdc-controller **1.15.6**
+
+ - so-sdnc-adapter **1.15.6**
+
+ - so-api-handler **1.15.6**
+
+
+Release Purpose
+~~~~~~~~~~~~~~~
+SO Oslo Maintenance Release.
+
+**Changes**
+
+*  Register ObjectMapper statically to reduce per-request instantiation overhead
+*  Update vulnerable dependencies (two rounds)
+*  Update Apache CXF
+*  Fix Maven plugin configuration issues
+*  Add so-simulator integration test
+
+**********************************************************************************************************
+
+
+Version: 1.15.5
+---------------
+
+:Release Date: 2025-07-02
+
+SO Release Image Versions
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ - so-bpmn-infra **1.15.5**
+
+ - so-catalog-db-adapter **1.15.5**
+
+ - so-openstack-adapter **1.15.5**
+
+ - so-request-db-adapter **1.15.5**
+
+ - so-sdc-controller **1.15.5**
+
+ - so-sdnc-adapter **1.15.5**
+
+ - so-api-handler **1.15.5**
+
+
+Release Purpose
+~~~~~~~~~~~~~~~
+SO Oslo Maintenance Release.
+
+**Changes**
+
+*  Add support for configurable authentication and authorization
+*  Upgrade Spring Boot to 2.4 and update Camunda
+*  Reduce excessive log noise across SO components
+*  Improve error mapping in OrchestrationRequests
+*  Allow unauthenticated access to the /error endpoint
+*  Add AuthenticationTest for the common library
+*  Remove hardcoded spring-security-web version from common POM
+
+**********************************************************************************************************
+
+
+Version: 1.15.4
+---------------
+
+:Release Date: 2025-06-24
+
+SO Release Image Versions
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ - so-bpmn-infra **1.15.4**
+
+ - so-catalog-db-adapter **1.15.4**
+
+ - so-openstack-adapter **1.15.4**
+
+ - so-request-db-adapter **1.15.4**
+
+ - so-sdc-controller **1.15.4**
+
+ - so-sdnc-adapter **1.15.4**
+
+ - so-api-handler **1.15.4**
+
+
+Release Purpose
+~~~~~~~~~~~~~~~
+SO Oslo Maintenance Release.
+
+**Changes**
+
+*  Update vulnerable dependencies
+
+**********************************************************************************************************
+
+
+Version: 1.15.3
+---------------
+
+:Release Date: 2025-06-22
+
+SO Release Image Versions
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ - so-bpmn-infra **1.15.3**
+
+ - so-catalog-db-adapter **1.15.3**
+
+ - so-openstack-adapter **1.15.3**
+
+ - so-request-db-adapter **1.15.3**
+
+ - so-sdc-controller **1.15.3**
+
+ - so-sdnc-adapter **1.15.3**
+
+ - so-api-handler **1.15.3**
+
+
+Release Purpose
+~~~~~~~~~~~~~~~
+SO Oslo Maintenance Release.
+
+**Changes**
+
+*  Upgrade Spring Boot to 2.3
+*  Reenable additional unit tests across SO modules
+*  Remove explicit dependency versions from the root POM
+
+**********************************************************************************************************
+
+
+Version: 1.15.2
+---------------
+
+:Release Date: 2025-06-06
+
+SO Release Image Versions
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ - so-bpmn-infra **1.15.2**
+
+ - so-catalog-db-adapter **1.15.2**
+
+ - so-openstack-adapter **1.15.2**
+
+ - so-request-db-adapter **1.15.2**
+
+ - so-sdc-controller **1.15.2**
+
+ - so-sdnc-adapter **1.15.2**
+
+ - so-api-handler **1.15.2**
+
+
+Release Purpose
+~~~~~~~~~~~~~~~
+SO Oslo Maintenance Release.
+
+**Changes**
+
+*  Fix missing property volume-selflink error
+*  Reenable tests for various SO modules
+*  Update base image
+*  Add distributed tracing for catalog-db-adapter
+*  Remove AAF (Authentication, Authorization and Accounting) integration from SO
+*  Update vulnerable Tomcat dependency
+
+**********************************************************************************************************
+
+
+Version: 1.15.1
+---------------
+
+:Release Date: 2025-05-14
+
+SO Release Image Versions
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ - so-bpmn-infra **1.15.1**
+
+ - so-catalog-db-adapter **1.15.1**
+
+ - so-openstack-adapter **1.15.1**
+
+ - so-request-db-adapter **1.15.1**
+
+ - so-sdc-controller **1.15.1**
+
+ - so-sdnc-adapter **1.15.1**
+
+ - so-api-handler **1.15.1**
+
+
+Release Purpose
+~~~~~~~~~~~~~~~
+SO Oslo Maintenance Release.
+
+**Changes**
+
+*  Re-release of 1.15.0 to correct container image labelling; no code changes
 
 **********************************************************************************************************
 
@@ -103,7 +369,7 @@ The full list of implemented tasks is available on `JIRA Kohn TASKS <https://jir
 
 **Bug Fixes**
 
-The full list of fixed bugs is available on `JIRA Kohn BUGS 
+The full list of fixed bugs is available on `JIRA Kohn BUGS
 <https://jira.onap.org/browse/SO-3908?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20Bug%20AND%20fixVersion%20%3D%20%22Kohn%20Release%22>`_
 
 Security Notes
@@ -111,7 +377,7 @@ Security Notes
 
 *Fixed Security Issues*
 
-*  `SO-3735 <https://jira.onap.org/browse/SO-3735>`_ 
+*  `SO-3735 <https://jira.onap.org/browse/SO-3735>`_
 *  `SO-3825 <https://jira.onap.org/browse/SO-3825>`_
 *  `SO-3846 <https://jira.onap.org/browse/SO-3846>`_
 
@@ -123,7 +389,7 @@ Quick Links:
 
 **Known Issues**
 
-*  `SO-3237`_ - Exposed HTTP port. 
+*  `SO-3237`_ - Exposed HTTP port.
 *  `SO-3745 <https://jira.onap.org/browse/SO-3745>`_ - SO images contain 1 GPLv3 lib
 
 **Upgrade Notes**
@@ -199,7 +465,7 @@ The full list of implemented tasks is available on `JIRA Jakarta TASKS <https://
 
 **Bug Fixes**
 
-The full list of fixed bugs is available on `JIRA Jakarta BUGS 
+The full list of fixed bugs is available on `JIRA Jakarta BUGS
 <https://jira.onap.org/browse/SO-3908?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20Bug%20AND%20fixVersion%20%3D%20%22jakarta%20Release%22>`_
 
 Security Notes
@@ -207,7 +473,7 @@ Security Notes
 
 *Fixed Security Issues*
 
-*  `SO-3735 <https://jira.onap.org/browse/SO-3735>`_ 
+*  `SO-3735 <https://jira.onap.org/browse/SO-3735>`_
 *  `SO-3825 <https://jira.onap.org/browse/SO-3825>`_
 *  `SO-3846 <https://jira.onap.org/browse/SO-3846>`_
 
@@ -219,7 +485,7 @@ Quick Links:
 
 **Known Issues**
 
-*  `SO-3237`_ - Exposed HTTP port. 
+*  `SO-3237`_ - Exposed HTTP port.
 *  `SO-3745 <https://jira.onap.org/browse/SO-3745>`_ - SO images contain 1 GPLv3 lib
 
 **Upgrade Notes**
@@ -297,7 +563,7 @@ The full list of implemented tasks is available on `JIRA Istanbul TASKS <https:/
 
 **Bug Fixes**
 
-The full list of fixed bugs is available on `JIRA Istanbul BUGS 
+The full list of fixed bugs is available on `JIRA Istanbul BUGS
 <https://jira.onap.org/issues/?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20Bug%20AND%20fixVersion%20%3D%20%22istanbul%20Release%22>`_
 
 Security Notes
@@ -316,7 +582,7 @@ Quick Links:
 
 **Known Issues**
 
-*  `SO-3237`_ - Exposed HTTP port. 
+*  `SO-3237`_ - Exposed HTTP port.
 
 
 **Upgrade Notes**
@@ -400,7 +666,7 @@ Quick Links:
 
 **Known Issues**
 
-*  `SO-3237`_ - Exposed HTTP port. 
+*  `SO-3237`_ - Exposed HTTP port.
 
 
 **Upgrade Notes**
@@ -477,7 +743,7 @@ The full list of implemented tasks is available on `JIRA Honolulu TASKS <https:/
 
 **Bug Fixes**
 
-The full list of fixed bugs is available on `JIRA Honolulu BUGS 
+The full list of fixed bugs is available on `JIRA Honolulu BUGS
 <https://jira.onap.org/issues/?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20Bug%20AND%20fixVersion%20%3D%20%22honolulu%20Release%22>`_
 
 
@@ -499,7 +765,7 @@ Quick Links:
 **Known Issues**
 *  `SO-3628 <https://jira.onap.org/browse/SO-3628>`_ - SO cannot send CDS request due to grpc schema problem.
 *  `SO-3626 <https://jira.onap.org/browse/SO-3626>`_ - SO does not requests CDS for skipPostInstantiation flag set to False.
-*  `SO-3237`_ - Exposed HTTP port. 
+*  `SO-3237`_ - Exposed HTTP port.
 
 
 **Upgrade Notes**
@@ -606,7 +872,7 @@ Listed below are highest and high piority jira tasks handled in the Guilin relea
 
 **Bug Fixes**
 
-The full list of fixed bugs is available on `JIRA GUILIN BUGS 
+The full list of fixed bugs is available on `JIRA GUILIN BUGS
 <https://jira.onap.org/issues/?jql=project%20%3D%20%22Service%20Orchestrator%22%20%20AND%20issuetype%20%3D%20Bug%20AND%20fixVersion%20%3D%20%22Guilin%20Release%22>`_
 Listed below are highest and high piority jira tasks handled in the Guilin release:
 
@@ -667,8 +933,8 @@ Quick Links:
 
 **Known Issues**
 *  `SO-3403 <https://jira.onap.org/browse/SO-3403>`_ - The functionality of the SO cnf-adapter will be tested further and will be delivered by the Guilin Maintenance Release as a 1.7.11 patch.
-*  `SO-3237 <https://jira.onap.org/browse/SO-SO-3237>`_ - Exposed HTTP port. 
-*  `SO-3414 <https://jira.onap.org/browse/SO-SO-3414>`_ - Search Query does not contain get model data for vFW closed loop. 
+*  `SO-3237 <https://jira.onap.org/browse/SO-SO-3237>`_ - Exposed HTTP port.
+*  `SO-3414 <https://jira.onap.org/browse/SO-SO-3414>`_ - Search Query does not contain get model data for vFW closed loop.
 
 
 **Upgrade Notes**
@@ -727,11 +993,11 @@ The main goal of the Frankfurt maintenance release was to:
 -  [`SO-2903 <https://jira.onap.org/browse/SO-2903>`__\ ] - Include so-appc-orchestrator with SO OOM.
 -  [`SO-2967 <https://jira.onap.org/browse/SO-2967>`__\ ] - Error in Delete MDONS service flow which causes No such property error.
 -  [`SO-2982 <https://jira.onap.org/browse/SO-2982>`__\ ] - Vnfm-Adapter unable to communicate with ETSI-Catalog through MSB.
--  [`SO-3022 <https://jira.onap.org/browse/SO-3022>`__\ ] - Use BB-based VNF-InPlaceUpdate flow for inPlaceSoftwareUpdate requests. 
+-  [`SO-3022 <https://jira.onap.org/browse/SO-3022>`__\ ] - Use BB-based VNF-InPlaceUpdate flow for inPlaceSoftwareUpdate requests.
 
 
 **Security Notes**
- 
+
  Quick Links:
 
 - `SO project page`_
@@ -762,7 +1028,7 @@ OJSI Issues
 Version: 1.6.3
 --------------
 
-:Release Date: 
+:Release Date:
 
 SO Release Image Versions
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -789,8 +1055,8 @@ The main goal of the Frankfurt release was to:
 	    - SOL002 adaptation
 	    - SOL004 Package support by ETSI Catalog Manager and SOL003 Adapter
 	- PNF orchestration Enhancements - Ericcson, Huawei, Nokia
-	    - PNF software upgrade  
-	    - PNF PNP enhancement  
+	    - PNF software upgrade
+	    - PNF PNP enhancement
 	- CCVPN Enhancement
 	    - MDONS support -  Fujitsu
 	    - Eline support - Bell, Huawei, CMCC
@@ -804,33 +1070,33 @@ The main goal of the Frankfurt release was to:
 Features Being considered for F release (As per the resource availability):
 
 +---------------------------------------------------------------------+
-|SOL005 Adapter supports communication security                       |                                    
+|SOL005 Adapter supports communication security                       |
 +---------------------------------------------------------------------+
-|SOL005 Adapter supports NS LCM                                       |                                    
+|SOL005 Adapter supports NS LCM                                       |
 +---------------------------------------------------------------------+
-|Multi-domain Optical Network Service Orchestration Support in SO     |                                    
+|Multi-domain Optical Network Service Orchestration Support in SO     |
 +---------------------------------------------------------------------+
-|SOL002 Adapter - supports EM-triggered VNF/VNFC Management           |                                    
+|SOL002 Adapter - supports EM-triggered VNF/VNFC Management           |
 +---------------------------------------------------------------------+
-|SO Catalog Management Support                                        |                                    
+|SO Catalog Management Support                                        |
 +---------------------------------------------------------------------+
-|Frankfurt release planning milestone                                 |                                    
+|Frankfurt release planning milestone                                 |
 +---------------------------------------------------------------------+
-|Initiate/ Terminate slice service; Activate/deactivate Slice service |                                    
+|Initiate/ Terminate slice service; Activate/deactivate Slice service |
 +---------------------------------------------------------------------+
-|SO support of Network Slicing Demo in Frankfurt                      |                                    
+|SO support of Network Slicing Demo in Frankfurt                      |
 +---------------------------------------------------------------------+
-|ETSI Alignment Support - SOL003 Adapter Enhancement for Frankfurt    |                                    
+|ETSI Alignment Support - SOL003 Adapter Enhancement for Frankfurt    |
 +---------------------------------------------------------------------+
-|AAI update for VNF improvements                                      |                                    
+|AAI update for VNF improvements                                      |
 +---------------------------------------------------------------------+
-|SO Multicloud plugin to Multicloud improvements                      |                                    
+|SO Multicloud plugin to Multicloud improvements                      |
 +---------------------------------------------------------------------+
-|SO to CDS Enhancement for Generic Implementation                     |                                    
+|SO to CDS Enhancement for Generic Implementation                     |
 +---------------------------------------------------------------------+
 |S3P improvement Requirements                                         |
 +---------------------------------------------------------------------+
-|Upgrade the APIs to Policy                                           |                                    
+|Upgrade the APIs to Policy                                           |
 +---------------------------------------------------------------------+
 
 **Epics**
@@ -965,7 +1231,7 @@ Features Being considered for F release (As per the resource availability):
 
 
 **Security Notes**
- 
+
  Quick Links:
 
 - `SO project page`_
@@ -1127,7 +1393,7 @@ The main goal of the El-Alto release was to improve documentation, UT improvemen
 -  [`SO-1605 <https://jira.onap.org/browse/SO-1605>`__\ ] - SO fails on updating Camunda table when DoCreateVfModule for vCPE infra service
 
 **Security Notes**
- 
+
  Quick Links:
 
 - `SO project page`_
@@ -1200,7 +1466,7 @@ The main goal of the Dublin release was to:
 
 -  [`SO-1508 <https://jira.onap.org/browse/SO-1508>`__\ ] - ETSI Alignment - SO SOL003 plugin support to connect to external VNFMs
 -  [`SO-1468 <https://jira.onap.org/browse/SO-1468>`__\ ] - Hardening of HPA in SO and extension of HPA capabilities to existing use-cases
--  [`SO-1394 <https://jira.onap.org/browse/SO-1394>`__\ ] - Extended and enhance the SO generic building block to support pre and post instantiation. 
+-  [`SO-1394 <https://jira.onap.org/browse/SO-1394>`__\ ] - Extended and enhance the SO generic building block to support pre and post instantiation.
 -  [`SO-1393 <https://jira.onap.org/browse/SO-1393>`__\ ] - Support the CCVPN Extension
 -  [`SO-1392 <https://jira.onap.org/browse/SO-1392>`__\ ] - Support the BroadBand Service Usecase
 -  [`SO-1353 <https://jira.onap.org/browse/SO-1353>`__\ ] - SO to be made independent of Cloud technologies
@@ -1376,7 +1642,7 @@ The main goal of the Dublin release was to:
 
 Testing Terminate and Delete of ETSI VNFM Adapter is done and has some of the minor issues pending, it will be done in El Alto.
 
--  [`SO-2013 <https://jira.onap.org/browse/SO-2013>`__\ ] - Test Terminate/Delete VNF with VNFM Adapter	
+-  [`SO-2013 <https://jira.onap.org/browse/SO-2013>`__\ ] - Test Terminate/Delete VNF with VNFM Adapter
 
 **Upgrade Notes**
 
@@ -1537,7 +1803,7 @@ There are some issues around the HPA and CCVPN that have been resolved in the pa
 
 - `SO-1257 <https://jira.onap.org/browse/SO-1257>`_
   Authorization header added to multicloud adapter breaks communication.
-  
+
 - `SO-1258 <https://jira.onap.org/browse/SO-1258>`_
   OOF Directives are not passed through flows to Multicloud Adapter.
 
@@ -1546,8 +1812,8 @@ There are some issues around the HPA and CCVPN that have been resolved in the pa
 
 - `SO-1194 <https://jira.onap.org/browse/SO-1194>`_
   Unable to find TOSCA CSAR location using ServiceModelUUID in DoCreateResource BPMN flow.
-  
-	
+
+
 Below issues will be resolved in the next release:
 
 - `SO-1248 <https://jira.onap.org/browse/SO-1248>`_
@@ -1603,19 +1869,19 @@ The Beijing release is the second release of the Service Orchestrator (SO) proje
 
 * Enhance Platform maturity by improving SO maturity matrix see `Wiki <https://wiki.onap.org/display/DW/Beijing+Release+Platform+Maturity>`_.
 * Manual scaling of network services and VNFs.
-* Homing and placement capabilities through OOF interaction. 
+* Homing and placement capabilities through OOF interaction.
 * Ability to perform change management.
 * Integrated to APPC
-* Integrated to OOF 
+* Integrated to OOF
 * Integrated to OOM
- 
+
 **Bug Fixes**
 
 	The defects fixed in this release could be found `here <https://jira.onap.org/issues/?jql=project%20%3D%20SO%20AND%20affectedVersion%20%3D%20%22Beijing%20Release%22%20AND%20status%20%3D%20Closed%20>`_.
 
 **Known Issues**
 
-	SO docker image is still on ecmop and not onap in the repository. 
+	SO docker image is still on ecmop and not onap in the repository.
 	This will be addressed in the next release.
 
 **Security Notes**
@@ -1665,18 +1931,18 @@ Version: 1.1.1
 **New Features**
 
 The SO provides the highest level of service orchestration in the ONAP architecture.
-It executes end-to-end service activities by processing workflows and business logic and coordinating other ONAP and external component activities. 
+It executes end-to-end service activities by processing workflows and business logic and coordinating other ONAP and external component activities.
 
-The orchestration engine is a reusable service. Any component of the architecture can execute SO orchestration capabilities. 
+The orchestration engine is a reusable service. Any component of the architecture can execute SO orchestration capabilities.
 
-* Orchestration services will process workflows based on defined models and recipe. 
+* Orchestration services will process workflows based on defined models and recipe.
 * The service model maintains consistency and re-usability across all orchestration activities and ensures consistent methods, structure and version of the workflow execution environment.
 * Orchestration processes interact with other platform components or external systems via standard and well-defined APIs.
 
 
 **Deprecation Notes**
 
-There is a MSO 1.0.0 SO implementation existing in the pre-R1 ONAP Gerrit system.  
+There is a MSO 1.0.0 SO implementation existing in the pre-R1 ONAP Gerrit system.
 The MSO1.0.0 is deprecated by the R1 release and the current release is built over this release.
 The Gerrit repos of mso/* are voided and already locked as read-only.
 Following are the deprecated SO projects in gerrit repo:
@@ -1686,7 +1952,7 @@ Following are the deprecated SO projects in gerrit repo:
 - mso/docker-config
 - mso/libs
 - mso/mso-config
-	
+
 **Other**
 	NA
 
