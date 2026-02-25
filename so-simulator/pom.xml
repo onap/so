@@ -17,7 +17,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <springboot.version>2.6.15</springboot.version>
-    <spring-cloud.version>2021.0.6</spring-cloud.version>
+    <spring-cloud.version>2021.0.9</spring-cloud.version>
     <citrus.simulator.version>2.1.1</citrus.simulator.version>
     <junit-jupiter.version>5.6.0</junit-jupiter.version>
   </properties>
