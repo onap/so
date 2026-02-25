@@ -75,7 +75,7 @@ public class ApplicationControllerCallbackTest {
         response.setStatus(status);
         doReturn(status).when(applicationControllerSupport).getStatusFromGenericResponse(response);
         appcTaskCallback.onResponse(response);
-        Mockito.verifyZeroInteractions(mockExternalTaskService);
+        Mockito.verifyNoInteractions(mockExternalTaskService);
     }
 
     @Test
