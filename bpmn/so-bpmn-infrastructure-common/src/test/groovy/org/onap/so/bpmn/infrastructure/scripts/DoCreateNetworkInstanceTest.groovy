@@ -42,7 +42,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.MockitoAnnotations
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner
 import org.onap.aai.domain.yang.L3Network
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.WorkflowException
@@ -4120,7 +4120,6 @@ String sdncAdapterWorkflowAssignResponse =
 			DoCreateNetworkInstance DoCreateNetworkInstance = new DoCreateNetworkInstance()
 			DoCreateNetworkInstance.validateCreateNetworkResponse(mockExecution)
 
-			//MockitoDebuggerImpl debugger = new MockitoDebuggerImpl()
 			//debugger.printInvocations(mockExecution)
 
 			verify(mockExecution).setVariable("prefix", Prefix)
@@ -4179,7 +4178,6 @@ String sdncAdapterWorkflowAssignResponse =
 			} catch (Exception ex) {
 				println " Graceful Exit - " + ex.getMessage()
 			}
-			//MockitoDebuggerImpl debugger = new MockitoDebuggerImpl()
 			//debugger.printInvocations(mockExecution)
 
 			//verify(mockExecution).setVariable(Prefix + "isSdncRollbackNeeded", true)
@@ -4211,7 +4209,6 @@ String sdncAdapterWorkflowAssignResponse =
 			} catch (Exception ex) {
 				println " Graceful Exit! - " + ex.getMessage()
 			}
-			//MockitoDebuggerImpl debugger = new MockitoDebuggerImpl()
 			//debugger.printInvocations(mockExecution)
 
 			// verify set prefix = Prefix + ""
@@ -4241,7 +4238,6 @@ String sdncAdapterWorkflowAssignResponse =
 			} catch (Exception ex) {
 				println " Graceful Exit - " + ex.getMessage()
 			}
-			//MockitoDebuggerImpl debugger = new MockitoDebuggerImpl()
 			//debugger.printInvocations(mockExecution)
 
 			//verify(mockExecution).setVariable(Prefix + "isSdncRollbackNeeded", true)
