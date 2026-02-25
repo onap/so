@@ -35,7 +35,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
@@ -177,7 +176,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         execution = new DelegateExecutionFake();
         org.onap.aai.domain.yang.ServiceInstance servInstance = new org.onap.aai.domain.yang.ServiceInstance();
         servInstance.setServiceInstanceId("TEST");
-        when(bbSetupUtils.getAAIServiceInstanceByName(anyString(), anyObject())).thenReturn(servInstance);
+        when(bbSetupUtils.getAAIServiceInstanceByName(anyString(), any())).thenReturn(servInstance);
         workflowAction.setBbInputSetupUtils(bbSetupUtils);
         workflowAction.setBbInputSetup(bbInputSetup);
 
@@ -1724,26 +1723,26 @@ public class WorkflowActionTest extends BaseTaskTest {
         org.onap.aai.domain.yang.GenericVnf vnf = new org.onap.aai.domain.yang.GenericVnf();
         vnf.setVnfId("vnf0");
         vnf.setModelCustomizationId("modelCustomizationId");
-        when(bbSetupUtils.getAAIGenericVnf(anyObject())).thenReturn(vnf);
+        when(bbSetupUtils.getAAIGenericVnf(any())).thenReturn(vnf);
 
         org.onap.aai.domain.yang.VfModule vfModule = new org.onap.aai.domain.yang.VfModule();
         vfModule.setModelCustomizationId("modelCustomizationId");
-        when(bbSetupUtils.getAAIVfModule(anyObject(), anyObject())).thenReturn(vfModule);
+        when(bbSetupUtils.getAAIVfModule(any(), any())).thenReturn(vfModule);
 
         List<org.onap.aai.domain.yang.Vnfc> vnfcs = new ArrayList<org.onap.aai.domain.yang.Vnfc>();
         org.onap.aai.domain.yang.Vnfc vnfc = new org.onap.aai.domain.yang.Vnfc();
         vnfc.setModelInvariantId("modelInvariantId");
         vnfc.setVnfcName("testVnfcName");
         vnfcs.add(vnfc);
-        doReturn(vnfcs).when(SPY_workflowAction).getRelatedResourcesInVfModule(anyObject(), anyObject(), anyObject(),
-                anyObject());
+        doReturn(vnfcs).when(SPY_workflowAction).getRelatedResourcesInVfModule(any(), any(), any(),
+                any());
 
         org.onap.aai.domain.yang.Configuration configuration = new org.onap.aai.domain.yang.Configuration();
         configuration.setConfigurationId("configurationId");
         configuration.setModelCustomizationId("modelCustimizationId");
         configuration.setConfigurationName("testConfigurationName");
-        doReturn(configuration).when(SPY_workflowAction).getRelatedResourcesInVnfc(anyObject(), anyObject(),
-                anyObject());
+        doReturn(configuration).when(SPY_workflowAction).getRelatedResourcesInVnfc(any(), any(),
+                any());
 
         SPY_workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
@@ -1812,11 +1811,11 @@ public class WorkflowActionTest extends BaseTaskTest {
         org.onap.aai.domain.yang.GenericVnf vnf = new org.onap.aai.domain.yang.GenericVnf();
         vnf.setVnfId("vnf0");
         vnf.setModelCustomizationId("modelCustomizationId");
-        when(bbSetupUtils.getAAIGenericVnf(anyObject())).thenReturn(vnf);
+        when(bbSetupUtils.getAAIGenericVnf(any())).thenReturn(vnf);
 
         org.onap.aai.domain.yang.VfModule vfModule = new org.onap.aai.domain.yang.VfModule();
         vfModule.setModelCustomizationId("modelCustomizationId");
-        when(bbSetupUtils.getAAIVfModule(anyObject(), anyObject())).thenReturn(null);
+        when(bbSetupUtils.getAAIVfModule(any(), any())).thenReturn(null);
 
         SPY_workflowAction.getConfigBuildingBlocks(dataObj);
     }
@@ -1989,16 +1988,16 @@ public class WorkflowActionTest extends BaseTaskTest {
         org.onap.aai.domain.yang.GenericVnf vnf = new org.onap.aai.domain.yang.GenericVnf();
         vnf.setVnfId("vnf0");
         vnf.setModelCustomizationId("modelCustomizationId");
-        when(bbSetupUtils.getAAIGenericVnf(anyObject())).thenReturn(vnf);
+        when(bbSetupUtils.getAAIGenericVnf(any())).thenReturn(vnf);
 
         org.onap.aai.domain.yang.VfModule vfModule = new org.onap.aai.domain.yang.VfModule();
         vfModule.setModelCustomizationId("modelCustomizationId");
-        when(bbSetupUtils.getAAIVfModule(anyObject(), anyObject())).thenReturn(vfModule);
+        when(bbSetupUtils.getAAIVfModule(any(), any())).thenReturn(vfModule);
 
         List<org.onap.aai.domain.yang.Vnfc> vnfcs = new ArrayList<org.onap.aai.domain.yang.Vnfc>();
 
-        doReturn(vnfcs).when(SPY_workflowAction).getRelatedResourcesInVfModule(anyObject(), anyObject(), anyObject(),
-                anyObject());
+        doReturn(vnfcs).when(SPY_workflowAction).getRelatedResourcesInVfModule(any(), any(), any(),
+                any());
 
         SPY_workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
@@ -2061,8 +2060,8 @@ public class WorkflowActionTest extends BaseTaskTest {
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().vnfc(vnfc.getVnfcName()));
         when(bbSetupUtils.getAAIResourceDepthOne(uri)).thenReturn(vfncWrapper);
 
-        doReturn(configurationResultWrappers).when(SPY_workflowAction).getResultWrappersFromRelationships(anyObject(),
-                anyObject());
+        doReturn(configurationResultWrappers).when(SPY_workflowAction).getResultWrappersFromRelationships(any(),
+                any());
         org.onap.aai.domain.yang.Configuration configuration = SPY_workflowAction.getRelatedResourcesInVnfc(vnfc,
                 org.onap.aai.domain.yang.Configuration.class, Types.CONFIGURATION);
         assertEquals("testConfigurationId", configuration.getConfigurationId());
