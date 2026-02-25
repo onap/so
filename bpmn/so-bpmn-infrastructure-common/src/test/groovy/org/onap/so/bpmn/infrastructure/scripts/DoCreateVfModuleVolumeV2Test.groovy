@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +22,7 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
-import static org.mockito.ArgumentMatchers.anyObject
+import static org.mockito.ArgumentMatchers.any
 import static org.mockito.Mockito.spy
 import static org.mockito.Mockito.times
 import static org.mockito.Mockito.verify
@@ -74,7 +74,7 @@ class DoCreateVfModuleVolumeV2Test extends MsoGroovyTest {
    <notificationUrl>http://localhost:8080/mso/WorkflowMessage/VNFAResponse/9a5a91e8-3b79-463c-81c3-874a78f5b567</notificationUrl>
 </rollbackVolumeGroupRequest>
 	"""
-	
+
 	String volumeRollbackRequestWithStackId = """
 <rollbackVolumeGroupRequest>
    <volumeGroupRollback>
@@ -93,9 +93,9 @@ class DoCreateVfModuleVolumeV2Test extends MsoGroovyTest {
    <notificationUrl>http://localhost:8080/mso/WorkflowMessage/VNFAResponse/9a5a91e8-3b79-463c-81c3-874a78f5b567</notificationUrl>
 </rollbackVolumeGroupRequest>
 	"""
-	
-	
-	
+
+
+
 	@Before
 	public void init()
 	{
@@ -104,7 +104,7 @@ class DoCreateVfModuleVolumeV2Test extends MsoGroovyTest {
 		when(doCreateVfModuleVolumeV2.getAAIClient()).thenReturn(client)
 		MockitoAnnotations.initMocks(this)
 	}
-	
+
 	@Test
 	public void testBuildRollbackVolumeGroupRequestXml() {
 		DoCreateVfModuleVolumeV2 process = new DoCreateVfModuleVolumeV2()
@@ -200,7 +200,7 @@ class DoCreateVfModuleVolumeV2Test extends MsoGroovyTest {
 		when(mockExecution.getVariable(modelCustomizationId)).thenReturn(modelCustomizationId)
 		when(mockExecution.getVariable(lcpCloudRegionId)).thenReturn(lcpCloudRegionId)
 		when(mockExecution.getVariable("DCVFMODVOLV2_createVnfAResponse")).thenReturn("<createVnfAResponse><volumeGroupStackId>volumeGroupStackId</volumeGroupStackId></createVnfAResponse>")
-		when(client.update(anyObject(),anyObject())).thenThrow(Exception.class)
+		when(client.update(any(),any())).thenThrow(Exception.class)
 		thrown.expect(BpmnError.class)
 		doCreateVfModuleVolumeV2.callRESTUpdateCreatedVolGrpName(mockExecution,null)
 		verify(mockExecution).setVariable("DCVFMODVOLV2_heatStackId","volumeGroupStackId")

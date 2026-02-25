@@ -34,7 +34,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.MockitoAnnotations
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.WorkflowException
 
@@ -289,7 +289,6 @@ String jsonIncomingRequest =
 			verify(mockExecution, atLeast(1)).setVariable("prefix", Prefix)
 			verify(mockExecution).setVariable(Prefix + "FalloutHandlerRequest", falloutHandlerRequest)
 
-			//MockitoDebuggerImpl debugger = new MockitoDebuggerImpl()
 			//debugger.printInvocations(mockExecution)
 
 		}

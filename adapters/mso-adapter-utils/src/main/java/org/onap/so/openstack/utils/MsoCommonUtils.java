@@ -48,6 +48,7 @@ import org.onap.so.openstack.exceptions.MsoOpenstackException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -82,10 +83,12 @@ public class MsoCommonUtils {
     protected AuthenticationMethodFactory authenticationMethodFactory;
 
     /** The tenant utils factory. */
+    @Lazy
     @Autowired
     protected MsoTenantUtilsFactory tenantUtilsFactory;
 
     /** The keystone V 3 authentication. */
+    @Lazy
     @Autowired
     protected KeystoneV3Authentication keystoneV3Authentication;
 

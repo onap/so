@@ -1891,7 +1891,6 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			} catch (Exception ex) {
 				println " Graceful Exit - " + ex.getMessage()
 			}
-			//MockitoDebuggerImpl debugger = new MockitoDebuggerImpl()
 			//debugger.printInvocations(mockExecution)
 
 			//verify(mockExecution).setVariable(Prefix + "isSdncRollbackNeeded", true)
