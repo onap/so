@@ -942,7 +942,7 @@ public class CatalogDbClient {
                         .queryParam(MODEL_INVARIANT_UUID, modelInvariantUUID).build().toString()));
     }
 
-    private <T> T getSingleResource(Client<T> client, URI uri) {
+    protected <T> T getSingleResource(Client<T> client, URI uri) {
         return client.get(uri);
     }
 
@@ -954,7 +954,7 @@ public class CatalogDbClient {
         return list;
     }
 
-    private <T> URI postSingleResource(Client<T> client, T type) {
+    protected <T> URI postSingleResource(Client<T> client, T type) {
         return client.post(type);
     }
 
@@ -1143,7 +1143,7 @@ public class CatalogDbClient {
                 UriBuilder.fromUri(endpoint + VNF_RECIPE).queryParam("size", "1000").build());
     }
 
-    private <T> void deleteSingleResource(Client<T> client, URI uri) {
+    protected <T> void deleteSingleResource(Client<T> client, URI uri) {
         client.delete(uri);
     }
 
