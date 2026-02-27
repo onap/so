@@ -11,7 +11,7 @@
   <groupId>org.onap.so</groupId>
   <artifactId>so</artifactId>
   <packaging>pom</packaging>
-  <version>1.16.1-SNAPSHOT</version>
+  <version>1.17.0-SNAPSHOT</version>
   <name>so</name>
   <description>This Maven project is responsible to build and package all child projects - contributions in the MSO project.
 	This build can be configured to run Functional tests and to start/stop a jboss server + Mysql DB.
