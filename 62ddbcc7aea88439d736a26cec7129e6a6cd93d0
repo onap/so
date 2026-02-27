@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2aec1e6e_28e2a8b7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-02-27T12:19:34Z",
+      "side": 1,
+      "message": "You have submitted two CRs now for no good reason (this and https://gerrit.onap.org/r/c/so/+/141612). Please create a new CR that contains all your changes.\nAnd a friendly reminder to amend and not create multiple commits",
+      "revId": "62ddbcc7aea88439d736a26cec7129e6a6cd93d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
