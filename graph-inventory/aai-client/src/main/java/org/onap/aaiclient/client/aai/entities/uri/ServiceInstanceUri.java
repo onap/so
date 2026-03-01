@@ -52,6 +52,6 @@ public class ServiceInstanceUri extends HttpLookupUri {
 
     @Override
     public URI buildNoNetwork() {
-        return super.build(new String[] {"NONE", "NONE", (String) this.values[0]});
+        return super.build("NONE", "NONE", (String) this.values[0]);
     }
 }

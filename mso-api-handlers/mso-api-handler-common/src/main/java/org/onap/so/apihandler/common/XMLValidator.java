@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,6 +25,7 @@ package org.onap.so.apihandler.common;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -60,7 +61,7 @@ public class XMLValidator {
 
         try (FileInputStream xsdStream = new FileInputStream(XSDS_PATH + xsdFile)) {
 
-            stringXsd = IOUtils.toString(xsdStream);
+            stringXsd = IOUtils.toString(xsdStream, StandardCharsets.UTF_8);
 
             factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             factory.setResourceResolver(new PathResourceResolver(XSDS_PATH));

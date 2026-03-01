@@ -1056,10 +1056,10 @@ public class JsonUtils {
             return report.toString();
         } catch (IOException e) {
             logger.debug("IOException performing JSON schema validation on document:", e);
-            throw new ValidationException(e.getMessage());
+            throw new ValidationException(e.getMessage(), true);
         } catch (ProcessingException e) {
             logger.debug("ProcessingException performing JSON schema validation on document:", e);
-            throw new ValidationException(e.getMessage());
+            throw new ValidationException(e.getMessage(), true);
         }
     }
 }

@@ -20,6 +20,7 @@
 
 package org.onap.aaiclient.client.aai;
 
+import static org.junit.Assert.assertThrows;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
@@ -36,7 +37,6 @@ import javax.ws.rs.core.Response.Status;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
@@ -53,9 +53,6 @@ public class AAIResourcesClientWithServiceInstanceUriTest {
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Spy
     public AAIClient client;
@@ -107,8 +104,7 @@ public class AAIResourcesClientWithServiceInstanceUriTest {
     @Test
     public void getWithException() {
         AAIResourcesClient client = aaiClient;
-        this.thrown.expect(IllegalArgumentException.class);
-        AAIResultWrapper result = client.get(uri, IllegalArgumentException.class);
+        assertThrows(IllegalArgumentException.class, () -> client.get(uri, IllegalArgumentException.class));
     }
 
     @Test

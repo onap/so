@@ -51,7 +51,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -163,7 +162,7 @@ public class RequestsDbClient {
     public List<InfraActiveRequests> getCloudOrchestrationFiltersFromInfraActive(Map<String, String> orchestrationMap) {
         URI uri = getUri(cloudOrchestrationFiltersFromInfraActive);
         HttpHeaders headers = getHttpHeaders();
-        HttpEntity<Map> entity = new HttpEntity<>(orchestrationMap, headers);
+        HttpEntity<Map<String, String>> entity = new HttpEntity<>(orchestrationMap, headers);
         try {
             return restTemplate.exchange(uri, HttpMethod.POST, entity,
                     new ParameterizedTypeReference<List<InfraActiveRequests>>() {}).getBody();
@@ -447,7 +446,7 @@ public class RequestsDbClient {
         String url = UriBuilder.fromUri(getUri(getInfraActiveRequests)).queryParam("from", "0")
                 .queryParam("to", "10000000000000").build().toString();
         HttpHeaders headers = getHttpHeaders();
-        HttpEntity<Map> entity = new HttpEntity<>(filters, headers);
+        HttpEntity<Map<String, String[]>> entity = new HttpEntity<>(filters, headers);
         return restTemplate
                 .exchange(url, HttpMethod.POST, entity, new ParameterizedTypeReference<List<InfraActiveRequests>>() {})
                 .getBody();
@@ -486,7 +485,7 @@ public class RequestsDbClient {
 
     @Component
     static class ClassURLMapper {
-        private static final Map<Class, String> classURLMap = new HashMap<>();
+        private static final Map<Class<?>, String> classURLMap = new HashMap<>();
 
         ClassURLMapper() {
             classURLMap.put(ArchivedInfraRequests.class, "/archivedInfraRequests/");
@@ -502,7 +501,7 @@ public class RequestsDbClient {
         }
 
         <T> String getURI(Class<T> className) {
-            Class actualClass = classURLMap.keySet().stream()
+            Class<?> actualClass = classURLMap.keySet().stream()
                     .filter(requestdbClass -> requestdbClass.isAssignableFrom(className)).findFirst().get();
             return classURLMap.get(actualClass);
         }
@@ -562,20 +561,6 @@ public class RequestsDbClient {
         } catch (HttpClientErrorException e) {
             if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
                 return null;
-            }
-            throw e;
-        }
-    }
-
-    private <T> List<T> postMultipleResponse(URI uri, HttpEntity<?> payload, ParameterizedTypeReference<List<T>> type) {
-        try {
-            HttpEntity<?> entity = new HttpEntity<>(payload.getBody(), getHttpHeaders());
-            ResponseEntity<List<T>> result = restTemplate.exchange(uri, HttpMethod.POST, entity, type);
-
-            return result.getBody();
-        } catch (HttpClientErrorException e) {
-            if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
-                return new ArrayList<T>();
             }
             throw e;
         }

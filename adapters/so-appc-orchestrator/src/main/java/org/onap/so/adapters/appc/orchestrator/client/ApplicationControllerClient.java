@@ -124,6 +124,7 @@ public class ApplicationControllerClient {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     public Status vnfCommand(Action action, String requestId, String vnfId, Optional<String> vserverId,
             Optional<String> request, String controllerType, ApplicationControllerCallback listener, String requestorId)
             throws ApplicationControllerOrchestratorException {
@@ -148,6 +149,7 @@ public class ApplicationControllerClient {
     }
 
 
+    @SuppressWarnings("rawtypes")
     public Status runCommand(Action action, org.onap.appc.client.lcm.model.ActionIdentifiers actionIdentifiers,
             org.onap.appc.client.lcm.model.Payload payload, String requestID, ApplicationControllerCallback listener,
             String requestorId) {

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,13 +21,13 @@
 package org.onap.so.apihandlerinfra.validation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.onap.so.apihandlerinfra.Action;
 import org.onap.so.apihandlerinfra.BaseTest;
 import org.onap.so.exceptions.ValidationException;
@@ -39,9 +39,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class RelatedInstancesValidationTest extends BaseTest {
 
     RelatedInstancesValidation validation = new RelatedInstancesValidation();
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     public ValidationInformation setupValidationInformation(String path) throws IOException {
         String jsonInput = new String(Files.readAllBytes(Paths.get(path)));
@@ -96,43 +93,43 @@ public class RelatedInstancesValidationTest extends BaseTest {
     }
 
     @Test
-    public void validateModelTypeExceptionTest() throws IOException, ValidationException {
-        thrown.expect(ValidationException.class);
-        thrown.expectMessage("No valid modelType in relatedInstance is specified");
-        validation.validate(
-                setupValidationInformation("src/test/resources/Validation/VpnBondingValidation/NoModelType.json"));
+    public void validateModelTypeExceptionTest() throws IOException {
+        ValidationException e = assertThrows(ValidationException.class, () -> validation.validate(
+                setupValidationInformation("src/test/resources/Validation/VpnBondingValidation/NoModelType.json")));
+        assertTrue(e.getMessage().contains("No valid modelType in relatedInstance is specified"));
     }
 
     @Test
-    public void validateInstanceNameVpnBindingExceptionTest() throws IOException, ValidationException {
-        thrown.expect(ValidationException.class);
-        thrown.expectMessage("No valid instanceName in relatedInstance for vpnBinding modelType is specified");
-        validation.validate(setupValidationInformation(
-                "src/test/resources/Validation/VpnBondingValidation/NoInstanceNameVpnBinding.json"));
+    public void validateInstanceNameVpnBindingExceptionTest() throws IOException {
+        ValidationException e =
+                assertThrows(ValidationException.class, () -> validation.validate(setupValidationInformation(
+                        "src/test/resources/Validation/VpnBondingValidation/NoInstanceNameVpnBinding.json")));
+        assertTrue(e.getMessage()
+                .contains("No valid instanceName in relatedInstance for vpnBinding modelType is specified"));
     }
 
     @Test
-    public void validateInstanceNameNetworkExceptionTest() throws IOException, ValidationException {
-        thrown.expect(ValidationException.class);
-        thrown.expectMessage("No valid instanceName in relatedInstance for network modelType is specified");
-        validation.validate(setupValidationInformation(
-                "src/test/resources/Validation/VpnBondingValidation/NoInstanceNameNetwork.json"));
+    public void validateInstanceNameNetworkExceptionTest() throws IOException {
+        ValidationException e =
+                assertThrows(ValidationException.class, () -> validation.validate(setupValidationInformation(
+                        "src/test/resources/Validation/VpnBondingValidation/NoInstanceNameNetwork.json")));
+        assertTrue(
+                e.getMessage().contains("No valid instanceName in relatedInstance for network modelType is specified"));
     }
 
     @Test
-    public void validateInstanceIdExceptionTest() throws IOException, ValidationException {
-        thrown.expect(ValidationException.class);
-        thrown.expectMessage("No valid instanceId in relatedInstance is specified");
-        validation.validate(
-                setupValidationInformation("src/test/resources/Validation/VpnBondingValidation/NoInstanceId.json"));
+    public void validateInstanceIdExceptionTest() throws IOException {
+        ValidationException e = assertThrows(ValidationException.class, () -> validation.validate(
+                setupValidationInformation("src/test/resources/Validation/VpnBondingValidation/NoInstanceId.json")));
+        assertTrue(e.getMessage().contains("No valid instanceId in relatedInstance is specified"));
     }
 
     @Test
-    public void validatemodelInvariantIdExceptionTest() throws IOException, ValidationException {
-        thrown.expect(ValidationException.class);
-        thrown.expectMessage("No valid modelInvariantId in relatedInstance is specified");
-        validation.validate(setupValidationInformation(
-                "src/test/resources/Validation/VpnBondingValidation/NoModelInvariantId.json"));
+    public void validatemodelInvariantIdExceptionTest() throws IOException {
+        ValidationException e =
+                assertThrows(ValidationException.class, () -> validation.validate(setupValidationInformation(
+                        "src/test/resources/Validation/VpnBondingValidation/NoModelInvariantId.json")));
+        assertTrue(e.getMessage().contains("No valid modelInvariantId in relatedInstance is specified"));
     }
 
     @Test
@@ -142,13 +139,14 @@ public class RelatedInstancesValidationTest extends BaseTest {
     }
 
     @Test
-    public void validateRelatedInstanceInstanceIdExceptionTest() throws IOException, ValidationException {
-        thrown.expect(ValidationException.class);
-        thrown.expectMessage("serviceInstanceId matching the serviceInstanceId in request URI");
-        ValidationInformation info = setupValidationInformation(
-                "src/test/resources/Validation/UserParamsValidation/RelatedInstanceInstanceId.json");
-        RelatedInstanceList[] instanceList = info.sir.getRequestDetails().getRelatedInstanceList();
-        instanceList[0].getRelatedInstance().setInstanceDirection(InstanceDirection.fromValue("destination"));
-        validation.validate(info);
+    public void validateRelatedInstanceInstanceIdExceptionTest() throws IOException {
+        ValidationException e = assertThrows(ValidationException.class, () -> {
+            ValidationInformation info = setupValidationInformation(
+                    "src/test/resources/Validation/UserParamsValidation/RelatedInstanceInstanceId.json");
+            RelatedInstanceList[] instanceList = info.sir.getRequestDetails().getRelatedInstanceList();
+            instanceList[0].getRelatedInstance().setInstanceDirection(InstanceDirection.fromValue("destination"));
+            validation.validate(info);
+        });
+        assertTrue(e.getMessage().contains("serviceInstanceId matching the serviceInstanceId in request URI"));
     }
 }

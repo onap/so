@@ -23,7 +23,6 @@ package org.onap.so.apihandlerinfra;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +43,6 @@ import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.apihandler.camundabeans.CamundaResponse;
-import org.onap.so.apihandler.common.CamundaClient;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandler.common.RequestClientParameter;
 import org.onap.so.apihandler.common.ResponseBuilder;
@@ -76,6 +74,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -117,9 +116,6 @@ public class Onap3gppServiceInstances {
 
     @Autowired
     private ResponseBuilder builder;
-
-    @Autowired
-    private CamundaClient camundaClient;
 
     @Autowired
     private ResponseHandler responseHandler;
@@ -599,7 +595,7 @@ public class Onap3gppServiceInstances {
                 line = bufferedReader.readLine();
             }
             inputFileString = sb.toString();
-            subnetCapability = mapper.readValue(inputFileString, Map.class);
+            subnetCapability = mapper.readValue(inputFileString, new TypeReference<Map<String, Object>>() {});
         } catch (Exception e) {
             logger.debug("Exception while reading subnet capability value from json", e);
         }

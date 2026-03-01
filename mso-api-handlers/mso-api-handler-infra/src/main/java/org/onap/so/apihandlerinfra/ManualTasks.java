@@ -109,16 +109,16 @@ public class ManualTasks {
             taskRequest = mapper.readValue(request, TasksRequest.class);
 
             if (taskRequest.getRequestDetails() == null) {
-                throw new ValidationException("requestDetails");
+                throw new ValidationException("requestDetails", true);
             }
             if (taskRequest.getRequestDetails().getRequestInfo() == null) {
-                throw new ValidationException("requestInfo");
+                throw new ValidationException("requestInfo", true);
             }
             if (empty(taskRequest.getRequestDetails().getRequestInfo().getSource())) {
-                throw new ValidationException("source");
+                throw new ValidationException("source", true);
             }
             if (empty(taskRequest.getRequestDetails().getRequestInfo().getRequestorId())) {
-                throw new ValidationException("requestorId");
+                throw new ValidationException("requestorId", true);
             }
 
         } catch (IOException e) {

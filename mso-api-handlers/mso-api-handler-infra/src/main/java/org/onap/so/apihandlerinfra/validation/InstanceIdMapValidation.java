@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,42 +45,42 @@ public class InstanceIdMapValidation implements ValidationRule {
         if (instanceIdMap != null) {
             if (instanceIdMap.get(Service_InstanceId) != null) {
                 if (!UUIDChecker.isValidUUID(instanceIdMap.get(Service_InstanceId))) {
-                    throw new ValidationException(Service_InstanceId);
+                    throw new ValidationException(Service_InstanceId, true);
                 }
                 sir.setServiceInstanceId(instanceIdMap.get(Service_InstanceId));
             }
 
             if (instanceIdMap.get(Vnf_InstanceId) != null) {
                 if (!UUIDChecker.isValidUUID(instanceIdMap.get(Vnf_InstanceId))) {
-                    throw new ValidationException(Vnf_InstanceId);
+                    throw new ValidationException(Vnf_InstanceId, true);
                 }
                 sir.setVnfInstanceId(instanceIdMap.get(Vnf_InstanceId));
             }
 
             if (instanceIdMap.get(vfModule_InstanceId) != null) {
                 if (!UUIDChecker.isValidUUID(instanceIdMap.get(vfModule_InstanceId))) {
-                    throw new ValidationException(vfModule_InstanceId);
+                    throw new ValidationException(vfModule_InstanceId, true);
                 }
                 sir.setVfModuleInstanceId(instanceIdMap.get(vfModule_InstanceId));
             }
 
             if (instanceIdMap.get(volume_Group_InstanceId) != null) {
                 if (!UUIDChecker.isValidUUID(instanceIdMap.get(volume_Group_InstanceId))) {
-                    throw new ValidationException(volume_Group_InstanceId);
+                    throw new ValidationException(volume_Group_InstanceId, true);
                 }
                 sir.setVolumeGroupInstanceId(instanceIdMap.get(volume_Group_InstanceId));
             }
 
             if (instanceIdMap.get(Network_Instance_Id) != null) {
                 if (!UUIDChecker.isValidUUID(instanceIdMap.get(Network_Instance_Id))) {
-                    throw new ValidationException(Network_Instance_Id);
+                    throw new ValidationException(Network_Instance_Id, true);
                 }
                 sir.setNetworkInstanceId(instanceIdMap.get(Network_Instance_Id));
             }
 
             if (instanceIdMap.get(Configuration_Instance_Id) != null) {
                 if (!UUIDChecker.isValidUUID(instanceIdMap.get(Configuration_Instance_Id))) {
-                    throw new ValidationException(Configuration_Instance_Id);
+                    throw new ValidationException(Configuration_Instance_Id, true);
                 }
                 sir.setConfigurationId(instanceIdMap.get(Configuration_Instance_Id));
             }

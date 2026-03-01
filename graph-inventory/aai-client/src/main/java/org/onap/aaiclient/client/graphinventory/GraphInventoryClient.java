@@ -46,7 +46,7 @@ public abstract class GraphInventoryClient {
 
     protected abstract RestClient createClient(URI uri);
 
-    public RestClient createClient(GraphInventoryUri uri) {
+    public RestClient createClient(GraphInventoryUri<?, ?> uri) {
         final URI result;
         if (uri instanceof HttpAwareUri) {
             result = ((HttpAwareUri) uri).locateAndBuild();
@@ -59,6 +59,7 @@ public abstract class GraphInventoryClient {
     }
 
 
+    @SuppressWarnings("unchecked")
     public <T extends RestProperties> T getRestProperties() {
         if (props == null) {
             throw new IllegalStateException("No RestProperty implementation found on classpath");

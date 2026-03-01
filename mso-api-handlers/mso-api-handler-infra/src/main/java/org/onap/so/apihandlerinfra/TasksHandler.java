@@ -49,8 +49,6 @@ import org.onap.so.apihandlerinfra.tasksbeans.TaskVariableValue;
 import org.onap.so.apihandlerinfra.tasksbeans.TaskVariables;
 import org.onap.so.apihandlerinfra.tasksbeans.TasksGetResponse;
 import org.onap.so.logger.MessageEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -71,7 +69,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 public class TasksHandler {
 
 
-    private static Logger logger = LoggerFactory.getLogger(TasksHandler.class);
     private static final ObjectMapper mapper = new ObjectMapper();
 
     @Value("${mso.camunda.rest.task.uri}")

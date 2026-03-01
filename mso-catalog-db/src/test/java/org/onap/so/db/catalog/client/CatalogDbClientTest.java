@@ -22,25 +22,22 @@
 package org.onap.so.db.catalog.client;
 
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.EntityNotFoundException;
 import javax.ws.rs.core.UriBuilder;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.db.catalog.beans.CvnfcCustomization;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
-import org.onap.so.db.catalog.beans.Workflow;
 import uk.co.blackpepper.bowman.Client;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -48,12 +45,9 @@ public class CatalogDbClientTest {
 
     @Spy
     private CatalogDbClient catalogDbClient;
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public final void testFindVnfResourceCustomizationInListNullInList() {
-        thrown.expect(EntityNotFoundException.class);
         String vnfCustomizationUUID = "a123";
         VnfResourceCustomization vrc = new VnfResourceCustomization();
         vrc.setModelCustomizationUUID("z789J");
@@ -62,13 +56,12 @@ public class CatalogDbClientTest {
         ArrayList<VnfResourceCustomization> vrcs = new ArrayList<VnfResourceCustomization>();
         vrcs.add(vrc);
         vrcs.add(vrc2);
-        catalogDbClient.findVnfResourceCustomizationInList(vnfCustomizationUUID, vrcs);
+        assertThrows(EntityNotFoundException.class,
+                () -> catalogDbClient.findVnfResourceCustomizationInList(vnfCustomizationUUID, vrcs));
     }
 
     @Test
     public final void testFindVnfResourceCustomizationInListNullString() {
-        thrown.expect(EntityNotFoundException.class);
-        thrown.expectMessage("a NULL UUID was provided in query to search for VnfResourceCustomization");
         String vnfCustomizationUUID = null;
         VnfResourceCustomization vrc = new VnfResourceCustomization();
         vrc.setModelCustomizationUUID("z789J");
@@ -77,7 +70,9 @@ public class CatalogDbClientTest {
         ArrayList<VnfResourceCustomization> vrcs = new ArrayList<VnfResourceCustomization>();
         vrcs.add(vrc);
         vrcs.add(vrc2);
-        catalogDbClient.findVnfResourceCustomizationInList(vnfCustomizationUUID, vrcs);
+        EntityNotFoundException e = assertThrows(EntityNotFoundException.class,
+                () -> catalogDbClient.findVnfResourceCustomizationInList(vnfCustomizationUUID, vrcs));
+        assertTrue(e.getMessage().contains("a NULL UUID was provided in query to search for VnfResourceCustomization"));
     }
 
     @Test
@@ -96,7 +91,6 @@ public class CatalogDbClientTest {
 
     @Test
     public final void testFindVfModuleCustomizationInListNullInList() {
-        thrown.expect(EntityNotFoundException.class);
         String vfModuleCustomizationUUID = "a123";
         VfModuleCustomization vmc = new VfModuleCustomization();
         vmc.setModelCustomizationUUID("z789J");
@@ -105,13 +99,12 @@ public class CatalogDbClientTest {
         ArrayList<VfModuleCustomization> vmcs = new ArrayList<VfModuleCustomization>();
         vmcs.add(vmc);
         vmcs.add(vmc2);
-        catalogDbClient.findVfModuleCustomizationInList(vfModuleCustomizationUUID, vmcs);
+        assertThrows(EntityNotFoundException.class,
+                () -> catalogDbClient.findVfModuleCustomizationInList(vfModuleCustomizationUUID, vmcs));
     }
 
     @Test
     public final void testFindVfModuleCustomizationInListNullString() {
-        thrown.expect(EntityNotFoundException.class);
-        thrown.expectMessage("a NULL UUID was provided in query to search for VfModuleCustomization");
         String vfModuleCustomizationUUID = null;
         VfModuleCustomization vmc = new VfModuleCustomization();
         vmc.setModelCustomizationUUID("z789J");
@@ -120,7 +113,9 @@ public class CatalogDbClientTest {
         ArrayList<VfModuleCustomization> vmcs = new ArrayList<VfModuleCustomization>();
         vmcs.add(vmc);
         vmcs.add(vmc2);
-        catalogDbClient.findVfModuleCustomizationInList(vfModuleCustomizationUUID, vmcs);
+        EntityNotFoundException e = assertThrows(EntityNotFoundException.class,
+                () -> catalogDbClient.findVfModuleCustomizationInList(vfModuleCustomizationUUID, vmcs));
+        assertTrue(e.getMessage().contains("a NULL UUID was provided in query to search for VfModuleCustomization"));
     }
 
     @Test
@@ -139,7 +134,6 @@ public class CatalogDbClientTest {
 
     @Test
     public final void testFindCvnfcCustomizationInListNullInList() {
-        thrown.expect(EntityNotFoundException.class);
         String cvnfcCustomizationUuid = "a123";
         CvnfcCustomization cvnfc = new CvnfcCustomization();
         cvnfc.setModelCustomizationUUID("z789J");
@@ -148,13 +142,12 @@ public class CatalogDbClientTest {
         ArrayList<CvnfcCustomization> cvnfcs = new ArrayList<CvnfcCustomization>();
         cvnfcs.add(cvnfc);
         cvnfcs.add(cvnfc2);
-        catalogDbClient.findCvnfcCustomizationInAList(cvnfcCustomizationUuid, cvnfcs);
+        assertThrows(EntityNotFoundException.class,
+                () -> catalogDbClient.findCvnfcCustomizationInAList(cvnfcCustomizationUuid, cvnfcs));
     }
 
     @Test
     public final void testFindCvnfcCustomizationInListNullString() {
-        thrown.expect(EntityNotFoundException.class);
-        thrown.expectMessage("a NULL UUID was provided in query to search for CvnfcCustomization");
         String cvnfcCustomizationUuid = null;
         CvnfcCustomization cvnfc = new CvnfcCustomization();
         cvnfc.setModelCustomizationUUID("z789J");
@@ -163,7 +156,9 @@ public class CatalogDbClientTest {
         ArrayList<CvnfcCustomization> cvnfcs = new ArrayList<CvnfcCustomization>();
         cvnfcs.add(cvnfc);
         cvnfcs.add(cvnfc2);
-        catalogDbClient.findCvnfcCustomizationInAList(cvnfcCustomizationUuid, cvnfcs);
+        EntityNotFoundException e = assertThrows(EntityNotFoundException.class,
+                () -> catalogDbClient.findCvnfcCustomizationInAList(cvnfcCustomizationUuid, cvnfcs));
+        assertTrue(e.getMessage().contains("a NULL UUID was provided in query to search for CvnfcCustomization"));
     }
 
     @Test
@@ -181,11 +176,12 @@ public class CatalogDbClientTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public final void testFindWorkflowByPnfModelUUID() {
         String pnfResourceModelUUID = "f2d1f2b2-88bb-49da-b716-36ae420ccbff";
 
-        doReturn(new ArrayList()).when(catalogDbClient).getMultipleResources(any(), any());
-        List<Workflow> results = catalogDbClient.findWorkflowByPnfModelUUID(pnfResourceModelUUID);
+        doReturn(new ArrayList<>()).when(catalogDbClient).getMultipleResources(any(), any());
+        catalogDbClient.findWorkflowByPnfModelUUID(pnfResourceModelUUID);
         verify(catalogDbClient).getMultipleResources(any(Client.class),
                 eq(UriBuilder.fromUri("/findWorkflowByPnfModelUUID")
                         .queryParam(CatalogDbClient.PNF_RESOURCE_MODEL_UUID, pnfResourceModelUUID).build()));
@@ -193,10 +189,11 @@ public class CatalogDbClientTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public final void testFindWorkflowByResourceTarget() {
         // when
         final String pnf_resource = "pnf";
-        doReturn(new ArrayList()).when(catalogDbClient).getMultipleResources(any(), any());
+        doReturn(new ArrayList<>()).when(catalogDbClient).getMultipleResources(any(), any());
         catalogDbClient.findWorkflowByResourceTarget(pnf_resource);
 
         // verify
@@ -205,9 +202,10 @@ public class CatalogDbClientTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public final void testFindWorkFlowByOperationName() {
         final String operationName = "PNFSoftwareUpgrade";
-        doReturn(new ArrayList()).when(catalogDbClient).getMultipleResources(any(), any());
+        doReturn(new ArrayList<>()).when(catalogDbClient).getMultipleResources(any(), any());
         catalogDbClient.findWorkflowByOperationName(operationName);
 
         // verify
