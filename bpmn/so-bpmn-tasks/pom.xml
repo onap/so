@@ -252,5 +252,10 @@
       <artifactId>so-cnfm-lcm-api</artifactId>
       <version>${so-cnfm-lcm-api.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>

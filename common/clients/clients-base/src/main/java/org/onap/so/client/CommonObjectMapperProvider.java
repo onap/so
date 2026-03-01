@@ -31,7 +31,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 @Provider
 public class CommonObjectMapperProvider implements ContextResolver<ObjectMapper> {
 
-    protected static ObjectMapper mapper;
+    protected ObjectMapper mapper;
 
     public CommonObjectMapperProvider() {
 
