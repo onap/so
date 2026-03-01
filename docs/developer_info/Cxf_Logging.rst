@@ -27,7 +27,7 @@ mso-infrastructure-bpmn.
 
 cxf-logging dependency for using in other components:
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  
+
   <dependency>
       <groupId>org.onap.so</groupId>
       <artifactId>cxf-logging</artifactId>
@@ -38,9 +38,9 @@ cxf-logging dependency for using in other components:
 pom.xml:
 +++++++++
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"> 
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
   <parent>
@@ -189,8 +189,8 @@ Here we can do configure the logger properties for the cxf-logging.
 		<appender-ref ref="test" />
 
 	</logger>
-	
-	<logger name="org.flywaydb" level="DEBUG" additivity="false">
+
+	<logger name="liquibase" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT" />
 
     </logger>
@@ -207,4 +207,3 @@ Here we can do configure the logger properties for the cxf-logging.
 	</root>
 
 </configuration>
-

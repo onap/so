@@ -1,7 +1,7 @@
 # TEST FILE
 catalog.db.endpoint: http://localhost:${wiremock.server.port}
 
-ssl-enable: false 
+ssl-enable: false
 mso:
   site-name: localDevEnv
   logPath: logs
@@ -20,12 +20,12 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
     initialization-mode: always
     data: classpath*:data.sql
-  flyway:
-    baseline-on-migrate: false
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-test.xml
     url: jdbc:mariadb://localhost:3307/catalogdb
     user: root
     password: password
-  jpa:   
+  jpa:
     generate-ddl: false
     show-sql: false
     hibernate:
@@ -37,7 +37,7 @@ spring:
       ddl-auto: validate
   security:
     usercredentials:
-    -  
+    -
       username: test
       password: '$2a$12$Zi3AuYcZoZO/gBQyUtST2.F5N6HqcTtaNci2Et.ufsQhski56srIu'
       role: BPEL-Client
@@ -45,15 +45,15 @@ spring:
       username: bpel
       password: '$2a$12$1xyutEZNfjGewIZRfKaE8eZE99f5sYFUmmM80BobI65KNjmcK0JuO'
       role: BPEL-Client
-    -  
+    -
       username: mso_admin
       password: '$2a$12$tidKuu.h88E2nuL95pTVY.ZOYMN/1dp29A9b1o.0GFDsVVSYlMkHa'
-      role: ACTUATOR  
+      role: ACTUATOR
 mariaDB4j:
-  dataDir: 
+  dataDir:
   port: 3307
   databaseName: catalogdb
-  
+
 server:
     port: ${wiremock.server.port}
     tomcat:
@@ -72,7 +72,7 @@ management:
     export:
       prometheus:
         enabled: true # Whether exporting of metrics to Prometheus is enabled.
-        step: 1m # Step size (i.e. reporting frequency) to use.  
+        step: 1m # Step size (i.e. reporting frequency) to use.
 
 cloud_config:
   identity_services:

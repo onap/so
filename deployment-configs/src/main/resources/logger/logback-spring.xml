@@ -201,7 +201,7 @@
 		name="org.camunda.bpm.engine.impl.persistence.entity.JobEntity.level"
 		level="${LOG_LEVEL:-DEBUG}" />
 
-	<logger name="org.flywaydb" level="${LOG_LEVEL:-DEBUG}"/>
+	<logger name="liquibase" level="${LOG_LEVEL:-DEBUG}"/>
 	<logger name="org.apache.wire" level="${LOG_LEVEL:-DEBUG}" />
 	<logger name="org.onap" level="${LOG_LEVEL:-DEBUG}" />
 	<logger name="org.apache.cxf.interceptor" level="${LOG_LEVEL:-DEBUG}" />

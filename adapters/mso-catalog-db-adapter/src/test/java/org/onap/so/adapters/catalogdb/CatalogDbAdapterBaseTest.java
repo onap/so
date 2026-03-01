@@ -48,7 +48,7 @@ public class CatalogDbAdapterBaseTest {
     static void configureProperties(DynamicPropertyRegistry registry) {
         int port = SocketUtils.findAvailableTcpPort();
         registry.add("spring.datasource.url", () -> String.format("jdbc:mariadb://localhost:%s/catalogdb", port));
-        registry.add("spring.flyway.url", () -> String.format("jdbc:mariadb://localhost:%s/catalogdb", port));
+        registry.add("spring.liquibase.url", () -> String.format("jdbc:mariadb://localhost:%s/catalogdb", port));
         registry.add("mariaDB4j.port", () -> port);
     }
 }

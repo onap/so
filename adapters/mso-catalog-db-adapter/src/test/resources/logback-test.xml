@@ -25,7 +25,7 @@
         <appender-ref ref="test" />
     </logger>
 
-    <logger name="org.flywaydb" level="DEBUG" additivity="false">
+    <logger name="liquibase" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
     <logger name="org.hibernate" level="DEBUG" additivity="false">
@@ -37,7 +37,7 @@
     </logger>
 
     <logger name="org.reflections" level="ERROR" />
-    
+
     <root level="WARN">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="test" />

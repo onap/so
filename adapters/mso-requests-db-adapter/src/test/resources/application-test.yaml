@@ -25,15 +25,15 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
     initialize: true
     initialization-mode: never
-  flyway:
-    baseline-on-migrate: false
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-test.xml
     url: jdbc:mariadb://localhost:3307/requestdb
     user: root
     password: password
-  jpa:   
+  jpa:
     generate-ddl: false
     show-sql: false
-    hibernate:      
+    hibernate:
       ddl-auto: validate
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
       enable-lazy-load-no-trans: true
@@ -44,12 +44,12 @@ spring:
       username: bpel
       password: '$2a$12$1xyutEZNfjGewIZRfKaE8eZE99f5sYFUmmM80BobI65KNjmcK0JuO'
       role: BPEL-Client
-    -  
+    -
       username: mso_admin
       password: '$2a$12$tidKuu.h88E2nuL95pTVY.ZOYMN/1dp29A9b1o.0GFDsVVSYlMkHa'
       role: ACTUATOR
 mariaDB4j:
-  dataDir: 
+  dataDir:
   port: 3307
   databaseName: requestdb
 
@@ -65,4 +65,4 @@ management:
     export:
       prometheus:
         enabled: true # Whether exporting of metrics to Prometheus is enabled.
-        step: 1m # Step size (i.e. reporting frequency) to use.  
+        step: 1m # Step size (i.e. reporting frequency) to use.

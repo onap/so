@@ -32,8 +32,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
-import org.flywaydb.core.api.MigrationVersion;
-import org.flywaydb.core.api.migration.BaseJavaMigration;
+import liquibase.change.custom.CustomTaskChange;
+import liquibase.database.Database;
+import liquibase.database.jvm.JdbcConnection;
+import liquibase.exception.CustomChangeException;
+import liquibase.exception.SetupException;
+import liquibase.exception.ValidationErrors;
+import liquibase.resource.ResourceAccessor;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
@@ -49,17 +54,43 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
  * (application-{profile}.yaml) and persist data (when not already present) to the catalod database.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class R__CloudConfigMigration extends BaseJavaMigration {
-    private static final Logger logger = LoggerFactory.getLogger(R__CloudConfigMigration.class);
+public class CloudConfigMigration implements CustomTaskChange {
+    private static final Logger logger = LoggerFactory.getLogger(CloudConfigMigration.class);
     private static final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-    public static final String FLYWAY = "FLYWAY";
+    public static final String MIGRATION = "MIGRATION";
 
     @JsonProperty("cloud_config")
     private CloudConfig cloudConfig;
 
     @Override
-    public boolean isUndo() {
-        return false;
+    public void execute(Database database) throws CustomChangeException {
+        try {
+            JdbcConnection jdbcConnection = (JdbcConnection) database.getConnection();
+            Connection connection = jdbcConnection.getWrappedConnection();
+            migrate(connection);
+        } catch (Exception e) {
+            throw new CustomChangeException("CloudConfigMigration failed", e);
+        }
+    }
+
+    @Override
+    public String getConfirmationMessage() {
+        return "CloudConfigMigration completed successfully";
+    }
+
+    @Override
+    public void setUp() throws SetupException {
+        // no setup required
+    }
+
+    @Override
+    public void setFileOpener(ResourceAccessor resourceAccessor) {
+        // not used
+    }
+
+    @Override
+    public ValidationErrors validate(Database database) {
+        return new ValidationErrors();
     }
 
     public void migrate(Connection connection) throws Exception {
@@ -81,7 +112,7 @@ public class R__CloudConfigMigration extends BaseJavaMigration {
             logger.debug("No CloudConfig defined in {}", configLocation);
 
             // Try the application.yaml file
-            try (InputStream stream = R__CloudConfigMigration.class.getResourceAsStream(getApplicationYamlName())) {
+            try (InputStream stream = CloudConfigMigration.class.getResourceAsStream(getApplicationYamlName())) {
                 cloudConfiguration = loadCloudConfig(stream);
             }
 
@@ -106,7 +137,7 @@ public class R__CloudConfigMigration extends BaseJavaMigration {
     }
 
     private CloudConfig loadCloudConfig(InputStream stream) throws IOException {
-        R__CloudConfigMigration cloudConfigMigration = mapper.readValue(stream, R__CloudConfigMigration.class);
+        CloudConfigMigration cloudConfigMigration = mapper.readValue(stream, CloudConfigMigration.class);
         CloudConfig cloudConfiguration = cloudConfigMigration.getCloudConfig();
 
         if (cloudConfiguration != null) {
@@ -153,7 +184,7 @@ public class R__CloudConfigMigration extends BaseJavaMigration {
                                 cloudIdentity.getIdentityAuthenticationType() != null
                                         ? cloudIdentity.getIdentityAuthenticationType().name()
                                         : null);
-                        ps.setString(10, FLYWAY);
+                        ps.setString(10, MIGRATION);
                         ps.setString(11, cloudIdentity.getProjectDomainName());
                         ps.setString(12, cloudIdentity.getUserDomainName());
                         ps.executeUpdate();
@@ -187,7 +218,7 @@ public class R__CloudConfigMigration extends BaseJavaMigration {
                         ps.setString(6, cloudSite.getCloudifyId());
                         ps.setString(7, cloudSite.getPlatform());
                         ps.setString(8, cloudSite.getOrchestrator());
-                        ps.setString(9, FLYWAY);
+                        ps.setString(9, MIGRATION);
                         ps.executeUpdate();
                     }
                 }
@@ -216,29 +247,11 @@ public class R__CloudConfigMigration extends BaseJavaMigration {
                         ps.setString(3, cloudifyManager.getUsername());
                         ps.setString(4, cloudifyManager.getPassword());
                         ps.setString(5, cloudifyManager.getVersion());
-                        ps.setString(6, FLYWAY);
+                        ps.setString(6, MIGRATION);
                         ps.executeUpdate();
                     }
                 }
             }
         }
-    }
-
-    public MigrationVersion getVersion() {
-        return null;
-    }
-
-    public String getDescription() {
-        return "R_CloudConfigMigration";
-    }
-
-    public Integer getChecksum() {
-        return Math.toIntExact(System.currentTimeMillis() / 1000);
-    }
-
-    @Override
-    public void migrate(org.flywaydb.core.api.migration.Context context) throws Exception {
-        migrate(context.getConnection());
-
     }
 }

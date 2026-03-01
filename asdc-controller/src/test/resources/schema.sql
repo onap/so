@@ -396,25 +396,39 @@ CREATE TABLE `external_service_to_internal_model_mapping` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `flyway_schema_history`
+-- Table structure for Liquibase tracking tables
 --
 
-DROP TABLE IF EXISTS `flyway_schema_history`;
+DROP TABLE IF EXISTS `DATABASECHANGELOGLOCK`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `flyway_schema_history` (
-  `installed_rank` int(11) NOT NULL,
-  `version` varchar(50) DEFAULT NULL,
-  `description` varchar(200) NOT NULL,
-  `type` varchar(20) NOT NULL,
-  `script` varchar(1000) NOT NULL,
-  `checksum` int(11) DEFAULT NULL,
-  `installed_by` varchar(100) NOT NULL,
-  `installed_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `execution_time` int(11) NOT NULL,
-  `success` tinyint(1) NOT NULL,
-  PRIMARY KEY (`installed_rank`),
-  KEY `flyway_schema_history_s_idx` (`success`)
+CREATE TABLE `DATABASECHANGELOGLOCK` (
+  `ID` int(11) NOT NULL,
+  `LOCKED` tinyint(1) NOT NULL,
+  `LOCKGRANTED` datetime DEFAULT NULL,
+  `LOCKEDBY` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+DROP TABLE IF EXISTS `DATABASECHANGELOG`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `DATABASECHANGELOG` (
+  `ID` varchar(255) NOT NULL,
+  `AUTHOR` varchar(255) NOT NULL,
+  `FILENAME` varchar(255) NOT NULL,
+  `DATEEXECUTED` datetime NOT NULL,
+  `ORDEREXECUTED` int(11) NOT NULL,
+  `EXECTYPE` varchar(10) NOT NULL,
+  `MD5SUM` varchar(35) DEFAULT NULL,
+  `DESCRIPTION` varchar(255) DEFAULT NULL,
+  `COMMENTS` varchar(255) DEFAULT NULL,
+  `TAG` varchar(255) DEFAULT NULL,
+  `LIQUIBASE` varchar(20) DEFAULT NULL,
+  `CONTEXTS` varchar(255) DEFAULT NULL,
+  `LABELS` varchar(255) DEFAULT NULL,
+  `DEPLOYMENT_ID` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1214,7 +1228,7 @@ CREATE TABLE IF NOT EXISTS `pnf_resource_customization` (
 CREATE TABLE IF NOT EXISTS `pnf_resource_customization_to_service` (
   `SERVICE_MODEL_UUID` varchar(200) NOT NULL,
   `RESOURCE_MODEL_CUSTOMIZATION_UUID` varchar(200) NOT NULL,
-  PRIMARY KEY (`SERVICE_MODEL_UUID`,`RESOURCE_MODEL_CUSTOMIZATION_UUID`)  
+  PRIMARY KEY (`SERVICE_MODEL_UUID`,`RESOURCE_MODEL_CUSTOMIZATION_UUID`)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -1535,7 +1549,7 @@ CREATE TABLE `archived_infra_requests` (
   `CONFIGURATION_NAME` varchar(200) DEFAULT NULL,
   `OPERATIONAL_ENV_ID` varchar(45) DEFAULT NULL,
   `OPERATIONAL_ENV_NAME` varchar(200) DEFAULT NULL,
-  `REQUEST_URL` varchar(500) DEFAULT NULL,  
+  `REQUEST_URL` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`REQUEST_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -1569,7 +1583,7 @@ CREATE TABLE `watchdog_service_mod_ver_id_lookup` (
   `DISTRIBUTION_ID` varchar(45) NOT NULL,
   `SERVICE_MODEL_VERSION_ID` varchar(45) NOT NULL,
   `DISTRIBUTION_NOTIFICATION` LONGTEXT NULL,
-  `CONSUMER_ID` varchar(200) NULL,  
+  `CONSUMER_ID` varchar(200) NULL,
   `CREATE_TIME` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `MODIFY_TIME` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`DISTRIBUTION_ID`,`SERVICE_MODEL_VERSION_ID`)
@@ -1585,7 +1599,7 @@ CREATE TABLE `activate_operational_env_service_model_distribution_status` (
   `WORKLOAD_CONTEXT` varchar(80) NOT NULL,
   `CREATE_TIME` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `MODIFY_TIME` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  `VNF_OPERATIONAL_ENV_ID` varchar(45) NOT NULL,  
+  `VNF_OPERATIONAL_ENV_ID` varchar(45) NOT NULL,
   PRIMARY KEY (`OPERATIONAL_ENV_ID`,`SERVICE_MODEL_VERSION_ID`,`REQUEST_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -1617,7 +1631,7 @@ create table operation_status (
   FINISHED_AT datetime NOT NULL,
   primary key (SERVICE_ID,OPERATION_ID)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-    
+
 create table resource_operation_status (
   SERVICE_ID varchar(255) not null,
   OPERATION_ID varchar(255) not null,
@@ -1661,7 +1675,3 @@ create table if not exists model (
 	CONSTRAINT uk1_model UNIQUE (`MODEL_TYPE`, `MODEL_VERSION_ID`),
 	FOREIGN KEY (`RECIPE`) REFERENCES `model_recipe` (`MODEL_ID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-
-
-

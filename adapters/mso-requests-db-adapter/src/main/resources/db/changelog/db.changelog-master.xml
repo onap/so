@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Versioned migrations (migrated from Flyway) -->
+    <changeSet id="V1__Base_version" author="so-migration">
+        <sqlFile path="db/migration/V1__Base_version.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.1__Add_Identifiers_Active_Requests" author="so-migration">
+        <sqlFile path="db/migration/V2.1__Add_Identifiers_Active_Requests.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.2__Add_Operation_Status" author="so-migration">
+        <sqlFile path="db/migration/V2.2__Add_Operation_Status.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.3__Remove_Invalid_requestdb_data" author="so-migration">
+        <sqlFile path="db/migration/V2.3__Remove_Invalid_requestdb_data.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.4__Activate_Requests_Nullable_Coulmns" author="so-migration">
+        <sqlFile path="db/migration/V2.4__Activate_Requests_Nullable_Coulmns.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.5__Archived_Infra_Requests" author="so-migration">
+        <sqlFile path="db/migration/V2.5__Archived_Infra_Requests.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.6__shedlock" author="so-migration">
+        <sqlFile path="db/migration/V2.6__shedlock.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.7__Update_Status_Message_ColumnTypes" author="so-migration">
+        <sqlFile path="db/migration/V2.7__Update_Status_Message_ColumnTypes.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.2__Add_Request_Processing_Data" author="so-migration">
+        <sqlFile path="db/migration/V4.2__Add_Request_Processing_Data.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.3__Expand_Column_Size" author="so-migration">
+        <sqlFile path="db/migration/V4.3__Expand_Column_Size.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.13__Add_Rollback_Status_Message_To_Infra_Active_Reqests" author="so-migration">
+        <sqlFile path="db/migration/V4.13__Add_Rollback_Status_Message_To_Infra_Active_Reqests.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.14__Add_Flow_Status_To_Infra_Active_Requests" author="so-migration">
+        <sqlFile path="db/migration/V4.14__Add_Flow_Status_To_Infra_Active_Requests.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.1__Add_Column_Request_url_varchar500" author="so-migration">
+        <sqlFile path="db/migration/V5.1__Add_Column_Request_url_varchar500.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.2__Add_Instance_Group_Data" author="so-migration">
+        <sqlFile path="db/migration/V5.2__Add_Instance_Group_Data.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.3__Add_Add_Column_To_WatchDog_Model_Id_Lookup" author="so-migration">
+        <sqlFile path="db/migration/V5.3__Add_Add_Column_To_WatchDog_Model_Id_Lookup.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.3.1__Watchdog_Lock_Version_Column" author="so-migration">
+        <sqlFile path="db/migration/V5.3.1__Watchdog_Lock_Version_Column.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.4__Add_Vnf_Operational_Env_Id_column" author="so-migration">
+        <sqlFile path="db/migration/V5.4__Add_Vnf_Operational_Env_Id_column.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.7__Add_OpenStack_Request_Information" author="so-migration">
+        <sqlFile path="db/migration/V5.7__Add_OpenStack_Request_Information.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.8__Add_Column_Original_Request_Id" author="so-migration">
+        <sqlFile path="db/migration/V5.8__Add_Column_Original_Request_Id.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.9__Add_Column_Ext_System_Error_Source" author="so-migration">
+        <sqlFile path="db/migration/V5.9__Add_Column_Ext_System_Error_Source.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.10__Add_Column_IS_DATA_INTERNAL" author="so-migration">
+        <sqlFile path="db/migration/V5.10__Add_Column_IS_DATA_INTERNAL.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V6.1__Add_Column_Rollback_Ext_System_Error_Source" author="so-migration">
+        <sqlFile path="db/migration/V6.1__Add_Column_Rollback_Ext_System_Error_Source.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V6.1.1__Add_Instance_NFVO_Mapping_Table" author="so-migration">
+        <sqlFile path="db/migration/V6.1.1__Add_Instance_NFVO_Mapping_Table.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V6.2__Expand_Column_Size_Infra_Active_Requests_Request_Status" author="so-migration">
+        <sqlFile path="db/migration/V6.2__Expand_Column_Size_Infra_Active_Requests_Request_Status.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V6.3__Expand_Column_Size_Archived_Infra_Active_Requests_Request_Status" author="so-migration">
+        <sqlFile path="db/migration/V6.3__Expand_Column_Size_Archived_Infra_Active_Requests_Request_Status.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V6.4__Add_Indexes_to_Infra_Active_Requests_Table" author="so-migration">
+        <sqlFile path="db/migration/V6.4__Add_Indexes_to_Infra_Active_Requests_Table.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V6.4.1__Rename_Infra_active_requests_AIC_CLOUD_REGION_Column" author="so-migration">
+        <sqlFile path="db/migration/V6.4.1__Rename_Infra_active_requests_AIC_CLOUD_REGION_Column.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V6.5__Drop_Table_Active_Requests" author="so-migration">
+        <sqlFile path="db/migration/V6.5__Drop_Table_Active_Requests.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V6.6__UpdateRequestProcessingData" author="so-migration">
+        <sqlFile path="db/migration/V6.6__UpdateRequestProcessingData.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V7.1__Drop_Columns_from_Infra_requests_archive_tables" author="so-migration">
+        <sqlFile path="db/migration/V7.1__Drop_Columns_from_Infra_requests_archive_tables.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V7.2__Add_PNF_Column_Infra_Requests_archive_tables" author="so-migration">
+        <sqlFile path="db/migration/V7.2__Add_PNF_Column_Infra_Requests_archive_tables.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V7.2.1__Add_PNF_Column_Infra_Requests_archive_tables" author="so-migration">
+        <sqlFile path="db/migration/V7.2.1__Add_PNF_Column_Infra_Requests_archive_tables.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V7.3__Add_Columns_Tenant_Name_Product_Family_Name" author="so-migration">
+        <sqlFile path="db/migration/V7.3__Add_Columns_Tenant_Name_Product_Family_Name.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V7.3.1__AddResourceStatusMessageColumn" author="so-migration">
+        <sqlFile path="db/migration/V7.3.1__AddResourceStatusMessageColumn.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V8.1__Add_Orchestration_Task_Table" author="so-migration">
+        <sqlFile path="db/migration/V8.1__Add_Orchestration_Task_Table.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V8.2__Fix_Invalid_Request_Status" author="so-migration">
+        <sqlFile path="db/migration/V8.2__Fix_Invalid_Request_Status.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V8.3__Add_Columns_Workflow_Name_Operation_Name" author="so-migration">
+        <sqlFile path="db/migration/V8.3__Add_Columns_Workflow_Name_Operation_Name.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Versioned migrations (migrated from Flyway) -->
+    <changeSet id="V1__Base_version" author="so-migration">
+        <sqlFile path="db/migration/V1__Base_version.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V1.1__Initial_Recipe_Setup" author="so-migration">
+        <sqlFile path="db/migration/V1.1__Initial_Recipe_Setup.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.0.0__Modify_Resource_Relationships" author="so-migration">
+        <sqlFile path="db/migration/V2.0.0__Modify_Resource_Relationships.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.0.1__Modify_Resource_Relationships_Alters" author="so-migration">
+        <sqlFile path="db/migration/V2.0.1__Modify_Resource_Relationships_Alters.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.1__Update_Recipe_For_API_Flag" author="so-migration">
+        <sqlFile path="db/migration/V2.1__Update_Recipe_For_API_Flag.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.2__ONAP_TABLE_CHANGES" author="so-migration">
+        <sqlFile path="db/migration/V2.2__ONAP_TABLE_CHANGES.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.3__MacroTableChanges" author="so-migration">
+        <sqlFile path="db/migration/V2.3__MacroTableChanges.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.4__MacroReferenceData1806" author="so-migration">
+        <sqlFile path="db/migration/V2.4__MacroReferenceData1806.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.5__RainyDayHandlerMacroData" author="so-migration">
+        <sqlFile path="db/migration/V2.5__RainyDayHandlerMacroData.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.6__NorthboundAddTopLevelFlow" author="so-migration">
+        <sqlFile path="db/migration/V2.6__NorthboundAddTopLevelFlow.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.7__VNFCInstanceGroup1806" author="so-migration">
+        <sqlFile path="db/migration/V2.7__VNFCInstanceGroup1806.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.8__OrchestrationStatus_ValidActionStateTransition" author="so-migration">
+        <sqlFile path="db/migration/V2.8__OrchestrationStatus_ValidActionStateTransition.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.9__UpdateIsTopLevelFlowColumn" author="so-migration">
+        <sqlFile path="db/migration/V2.9__UpdateIsTopLevelFlowColumn.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.10__VNFCInstanceGroupChanges" author="so-migration">
+        <sqlFile path="db/migration/V2.10__VNFCInstanceGroupChanges.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.11__Modify_IS_Base_Type" author="so-migration">
+        <sqlFile path="db/migration/V2.11__Modify_IS_Base_Type.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.12__UpdateMacroReferenceData_Homing" author="so-migration">
+        <sqlFile path="db/migration/V2.12__UpdateMacroReferenceData_Homing.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.13__Alter_external_service_to_internal_model_mapping" author="so-migration">
+        <sqlFile path="db/migration/V2.13__Alter_external_service_to_internal_model_mapping.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.14__DeactivateAndCloudDelete" author="so-migration">
+        <sqlFile path="db/migration/V2.14__DeactivateAndCloudDelete.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.15__Orchestration_Status_Valid_Action_State_Transition_Table_Updates" author="so-migration">
+        <sqlFile path="db/migration/V2.15__Orchestration_Status_Valid_Action_State_Transition_Table_Updates.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.16__Remove_Orchestration_Flow_Reference_FK_To_Building_Block_Detail_Pre_New_Solution" author="so-migration">
+        <sqlFile path="db/migration/V2.16__Remove_Orchestration_Flow_Reference_FK_To_Building_Block_Detail_Pre_New_Solution.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.17__DeactivateAndCloudDeleteChanges" author="so-migration">
+        <sqlFile path="db/migration/V2.17__DeactivateAndCloudDeleteChanges.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V2.18__AlterVNFRecipeVnfTypeColumnName" author="so-migration">
+        <sqlFile path="db/migration/V2.18__AlterVNFRecipeVnfTypeColumnName.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V3.1__AddServiceMacroDeactivateToMacroTables" author="so-migration">
+        <sqlFile path="db/migration/V3.1__AddServiceMacroDeactivateToMacroTables.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V3.2__ChangeMINApiVersionInNorthbound" author="so-migration">
+        <sqlFile path="db/migration/V3.2__ChangeMINApiVersionInNorthbound.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V3.3__ChangeMINApiVersionServiceMacroDeactivate" author="so-migration">
+        <sqlFile path="db/migration/V3.3__ChangeMINApiVersionServiceMacroDeactivate.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V3.4__AddUpdateNetworkALaCarte" author="so-migration">
+        <sqlFile path="db/migration/V3.4__AddUpdateNetworkALaCarte.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V3.5__PointGrApiDefault_To_UpdateVfModuleVolumeInfraV1" author="so-migration">
+        <sqlFile path="db/migration/V3.5__PointGrApiDefault_To_UpdateVfModuleVolumeInfraV1.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V3.6__UpdateNetworkCollectionCatalogDB" author="so-migration">
+        <sqlFile path="db/migration/V3.6__UpdateNetworkCollectionCatalogDB.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V3.7__FixDeactivateNetworkCollection" author="so-migration">
+        <sqlFile path="db/migration/V3.7__FixDeactivateNetworkCollection.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V3.8__UnassignFabricConfigurationData" author="so-migration">
+        <sqlFile path="db/migration/V3.8__UnassignFabricConfigurationData.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V3.9__DropCRModelUUID_FK" author="so-migration">
+        <sqlFile path="db/migration/V3.9__DropCRModelUUID_FK.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.0__AddModelAndModelRecipe" author="so-migration">
+        <sqlFile path="db/migration/V4.0__AddModelAndModelRecipe.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.1__AddCloudConfig" author="so-migration">
+        <sqlFile path="db/migration/V4.1__AddCloudConfig.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.3__ScaleOutRecipe" author="so-migration">
+        <sqlFile path="db/migration/V4.3__ScaleOutRecipe.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.4__AddVnfcTables" author="so-migration">
+        <sqlFile path="db/migration/V4.4__AddVnfcTables.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.6__Remove1802StyleAssignNetwork" author="so-migration">
+        <sqlFile path="db/migration/V4.6__Remove1802StyleAssignNetwork.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.7__CreateTableControllerSelectionRefence" author="so-migration">
+        <sqlFile path="db/migration/V4.7__CreateTableControllerSelectionRefence.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.8__AutoScaleOutReferenceData" author="so-migration">
+        <sqlFile path="db/migration/V4.8__AutoScaleOutReferenceData.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.9__DeleteServiceRecipeOldMacro" author="so-migration">
+        <sqlFile path="db/migration/V4.9__DeleteServiceRecipeOldMacro.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.10__CvnfcCustomizationNullableColumn" author="so-migration">
+        <sqlFile path="db/migration/V4.10__CvnfcCustomizationNullableColumn.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.11__RecreateRecipe" author="so-migration">
+        <sqlFile path="db/migration/V4.11__RecreateRecipe.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.12__add_second_column_to_rainy_day_handler_for_after_retry" author="so-migration">
+        <sqlFile path="db/migration/V4.12__add_second_column_to_rainy_day_handler_for_after_retry.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.12.1__UpdateAutoScaleOutRefData" author="so-migration">
+        <sqlFile path="db/migration/V4.12.1__UpdateAutoScaleOutRefData.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.12.2__AddDomainColumnsCloudIdentity" author="so-migration">
+        <sqlFile path="db/migration/V4.12.2__AddDomainColumnsCloudIdentity.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.13__UpdateBBOrchestrationStatusAutoScaleOut" author="so-migration">
+        <sqlFile path="db/migration/V4.13__UpdateBBOrchestrationStatusAutoScaleOut.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.14__RemoveRetryFromRainyDayHandlingTable" author="so-migration">
+        <sqlFile path="db/migration/V4.14__RemoveRetryFromRainyDayHandlingTable.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.14.2__AddCloudOwnerColumnToNorthBoundRequest" author="so-migration">
+        <sqlFile path="db/migration/V4.14.2__AddCloudOwnerColumnToNorthBoundRequest.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.15__UpdateRainyDayHandlerMacroForScaleOut" author="so-migration">
+        <sqlFile path="db/migration/V4.15__UpdateRainyDayHandlerMacroForScaleOut.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.16__Add_Default_NeutronNetwork" author="so-migration">
+        <sqlFile path="db/migration/V4.16__Add_Default_NeutronNetwork.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.17__UpdateCloudSiteColumn" author="so-migration">
+        <sqlFile path="db/migration/V4.17__UpdateCloudSiteColumn.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.18__ControllerSelectionReferenceData" author="so-migration">
+        <sqlFile path="db/migration/V4.18__ControllerSelectionReferenceData.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.19__RenameCustomToNoValidate" author="so-migration">
+        <sqlFile path="db/migration/V4.19__RenameCustomToNoValidate.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.20__SetActivitiesBBsToNoValidate" author="so-migration">
+        <sqlFile path="db/migration/V4.20__SetActivitiesBBsToNoValidate.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V4.21__AddHomingTables" author="so-migration">
+        <sqlFile path="db/migration/V4.21__AddHomingTables.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.1__ServiceProxyTableConsolidation" author="so-migration">
+        <sqlFile path="db/migration/V5.1__ServiceProxyTableConsolidation.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.2__AddServiceTypeColumnToNorthBoundRequest" author="so-migration">
+        <sqlFile path="db/migration/V5.2__AddServiceTypeColumnToNorthBoundRequest.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.4__AddPnfResourceAndCustomization" author="so-migration">
+        <sqlFile path="db/migration/V5.4__AddPnfResourceAndCustomization.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.5.1__Correct_Default_NeutronNetwork" author="so-migration">
+        <sqlFile path="db/migration/V5.5.1__Correct_Default_NeutronNetwork.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.6__Fix_CVNFC_Customization" author="so-migration">
+        <sqlFile path="db/migration/V5.6__Fix_CVNFC_Customization.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.6.1__Use_ID_To_Identify_Tables" author="so-migration">
+        <sqlFile path="db/migration/V5.6.1__Use_ID_To_Identify_Tables.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.6.2__AddResourceInput" author="so-migration">
+        <sqlFile path="db/migration/V5.6.2__AddResourceInput.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.6.3__ChangeResourceInputLength" author="so-migration">
+        <sqlFile path="db/migration/V5.6.3__ChangeResourceInputLength.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.6.4__UpdateHeatRelatedAttribute" author="so-migration">
+        <sqlFile path="db/migration/V5.6.4__UpdateHeatRelatedAttribute.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.6.5__AddBluePrintNameVersion" author="so-migration">
+        <sqlFile path="db/migration/V5.6.5__AddBluePrintNameVersion.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.6.6__Add_Column_For_Distrobution_Status" author="so-migration">
+        <sqlFile path="db/migration/V5.6.6__Add_Column_For_Distrobution_Status.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.7__Use_ID_Configuration_Customization" author="so-migration">
+        <sqlFile path="db/migration/V5.7__Use_ID_Configuration_Customization.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.7.1__WorkFlowDesignerTables" author="so-migration">
+        <sqlFile path="db/migration/V5.7.1__WorkFlowDesignerTables.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.7.2__Add_Error_Message_Rainy_Day" author="so-migration">
+        <sqlFile path="db/migration/V5.7.2__Add_Error_Message_Rainy_Day.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.9__AddSkipPostInstantiationConfiguration" author="so-migration">
+        <sqlFile path="db/migration/V5.9__AddSkipPostInstantiationConfiguration.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.10__AlterforWorkFlowDesignerTables" author="so-migration">
+        <sqlFile path="db/migration/V5.10__AlterforWorkFlowDesignerTables.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.10.1__AlterTblActivitySpecToUserParameters" author="so-migration">
+        <sqlFile path="db/migration/V5.10.1__AlterTblActivitySpecToUserParameters.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.11__AddVnfResourceOrder" author="so-migration">
+        <sqlFile path="db/migration/V5.11__AddVnfResourceOrder.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V5.12__Add_Relation_VnfcCustomization" author="so-migration">
+        <sqlFile path="db/migration/V5.12__Add_Relation_VnfcCustomization.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V6.0__AddNamingPolicyToService" author="so-migration">
+        <sqlFile path="db/migration/V6.0__AddNamingPolicyToService.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V6.1.1__AddServiceRoleToRainyDayHandling" author="so-migration">
+        <sqlFile path="db/migration/V6.1.1__AddServiceRoleToRainyDayHandling.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V6.2__AddNfValidData" author="so-migration">
+        <sqlFile path="db/migration/V6.2__AddNfValidData.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V6.3__AlterColumnActionCategoryControllerSelectionCategory" author="so-migration">
+        <sqlFile path="db/migration/V6.3__AlterColumnActionCategoryControllerSelectionCategory.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V7.0__AddActivatedForOrchestrationStatus" author="so-migration">
+        <sqlFile path="db/migration/V7.0__AddActivatedForOrchestrationStatus.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V7.1__UpdatedCloudSiteTable" author="so-migration">
+        <sqlFile path="db/migration/V7.1__UpdatedCloudSiteTable.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V7.2__UpdateCloudSiteTableSupportFabric" author="so-migration">
+        <sqlFile path="db/migration/V7.2__UpdateCloudSiteTableSupportFabric.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V7.3__UpdateVnfcCustResourceInputLength" author="so-migration">
+        <sqlFile path="db/migration/V7.3__UpdateVnfcCustResourceInputLength.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V7.5__AddServiceArtifact" author="so-migration">
+        <sqlFile path="db/migration/V7.5__AddServiceArtifact.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V7.5.1__AddServiceArtifact" author="so-migration">
+        <sqlFile path="db/migration/V7.5.1__AddServiceArtifact.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V8.1__AddControllerActorAndBlueprint" author="so-migration">
+        <sqlFile path="db/migration/V8.1__AddControllerActorAndBlueprint.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V8.2__AddScopeAndActionColumnsInOrchestrationFlowReference" author="so-migration">
+        <sqlFile path="db/migration/V8.2__AddScopeAndActionColumnsInOrchestrationFlowReference.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V8.4__AddBBNameSelectionReference" author="so-migration">
+        <sqlFile path="db/migration/V8.4__AddBBNameSelectionReference.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V8.5__AddCloudOwner" author="so-migration">
+        <sqlFile path="db/migration/V8.5__AddCloudOwner.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V8.6__Update_Service_Function" author="so-migration">
+        <sqlFile path="db/migration/V8.6__Update_Service_Function.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V8.7__AddProcessingFlags" author="so-migration">
+        <sqlFile path="db/migration/V8.7__AddProcessingFlags.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V8.7.1__Update_Optical_Service_Recipe" author="so-migration">
+        <sqlFile path="db/migration/V8.7.1__Update_Optical_Service_Recipe.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V8.8__AddSoftwareVersionToPnfCustomization" author="so-migration">
+        <sqlFile path="db/migration/V8.8__AddSoftwareVersionToPnfCustomization.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V8.8.1__AddColumnAdminProjectDomainName" author="so-migration">
+        <sqlFile path="db/migration/V8.8.1__AddColumnAdminProjectDomainName.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V8.9__EnforceNotNullWithDefaults" author="so-migration">
+        <sqlFile path="db/migration/V8.9__EnforceNotNullWithDefaults.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="V8.9.1__AddBuildingBlockRollback" author="so-migration">
+        <sqlFile path="db/migration/V8.9.1__AddBuildingBlockRollback.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+
+    <!-- Repeatable migrations (runOnChange) -->
+    <changeSet id="R__MacroData" author="so-migration" runOnChange="true">
+        <sqlFile path="db/migration/R__MacroData.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+    <changeSet id="R__WorkflowDesignerData" author="so-migration" runOnChange="true">
+        <sqlFile path="db/migration/R__WorkflowDesignerData.sql" relativeToChangelogFile="false"/>
+    </changeSet>
+
+    <!-- Cloud config Java migration (converted from Flyway R__CloudConfigMigration) -->
+    <changeSet id="R__CloudConfigMigration" author="so-migration" runOnChange="true">
+        <customChange class="db.migration.CloudConfigMigration"/>
+    </changeSet>
+
+</databaseChangeLog>

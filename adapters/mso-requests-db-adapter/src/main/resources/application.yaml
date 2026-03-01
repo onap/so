@@ -25,9 +25,9 @@ spring:
       driver-class-name: org.mariadb.jdbc.Driver
       pool-name: reqdb-pool
       registerMbeans: true
-  flyway:
-    baseline-on-migrate: false
-    url:  jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
     user: ${DB_ADMIN_USERNAME}
     password: ${DB_ADMIN_PASSWORD}
   jpa:

@@ -70,8 +70,8 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.flywaydb</groupId>
-      <artifactId>flyway-core</artifactId>
+      <groupId>org.liquibase</groupId>
+      <artifactId>liquibase-core</artifactId>
       <optional>true</optional>
     </dependency>
     <dependency>

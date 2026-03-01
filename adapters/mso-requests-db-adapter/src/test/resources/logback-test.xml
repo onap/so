@@ -25,7 +25,7 @@
         <appender-ref ref="test" />
     </logger>
 
-    <logger name="org.flywaydb" level="DEBUG" additivity="false">
+    <logger name="liquibase" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
 

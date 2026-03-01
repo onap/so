@@ -26,13 +26,11 @@ spring:
        pool-name: catdb-pool
        registerMbeans: true
 
-  flyway:
-    baseline-on-migrate: false
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
     url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
     user: ${DB_ADMIN_USERNAME}
     password: ${DB_ADMIN_PASSWORD}
-    outOfOrder: true
-    validateOnMigrate: false
   jpa:
       show-sql: true
       hibernate:

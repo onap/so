@@ -34,7 +34,7 @@ org:
             delete:
               pollTimeout: 300
               pollInterval: 15
-        tenant: 
+        tenant:
           default_x_aic_orm_client_string: ONAP-SO
           default_keystone_url_version: /v2.0
           default_keystone_reg_ex: "/[vV][0-9]"
@@ -51,12 +51,12 @@ org:
         valet:
           base_url: http://localhost:${wiremock.server.port}
           base_path: /api/valet/placement/v1/
-          valet_auth: 
+          valet_auth:
         po:
           retryCodes: 504
           retryDelay: 5
           retryCount: 3
-      
+
 server-port: 8080
 ssl-enable: false
 tomcat:
@@ -79,35 +79,33 @@ spring:
     jdbc-url: jdbc:mariadb://localhost:3307/catalogdb
     username: root
     password: password
-    driver-class-name: org.mariadb.jdbc.Driver    
+    driver-class-name: org.mariadb.jdbc.Driver
     initialization-mode: always
-  jpa:   
+  jpa:
     generate-ddl: false
     show-sql: false
-    hibernate:      
+    hibernate:
       ddl-auto: none
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
       enable-lazy-load-no-trans: true
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-  flyway:
-    baseline-on-migrate: true
-    out-of-order: true
-    ignore-missing-migrations: true
+  liquibase:
+    enabled: false
   security:
     usercredentials:
-    -  
+    -
       username: test
       password: '$2a$12$Zi3AuYcZoZO/gBQyUtST2.F5N6HqcTtaNci2Et.ufsQhski56srIu'
-      role: MSO-Client        
+      role: MSO-Client
 
 mariaDB4j:
-  dataDir: 
+  dataDir:
   port: 3307
   databaseName: catalogdb
 
 
 #Actuator
-management: 
+management:
   endpoints:
     enabled-by-default: false
   endpoint:
