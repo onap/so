@@ -262,7 +262,7 @@
       <artifactId>jersey-media-json-jackson</artifactId>
     </dependency>
     <dependency>
-      <groupId>uk.co.blackpepper.bowman</groupId>
+      <groupId>me.hdpe.bowman</groupId>
       <artifactId>bowman-client</artifactId>
       <version>${bowman.client.version}</version>
     </dependency>
