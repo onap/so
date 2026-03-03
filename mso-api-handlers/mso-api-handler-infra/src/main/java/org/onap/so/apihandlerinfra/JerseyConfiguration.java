@@ -99,6 +99,8 @@ public class JerseyConfiguration extends ResourceConfig {
         register(com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider.class);
 
         register(ModelDistributionRequest.class);
+        register(PauseOrchestrationRequest.class);
+        register(AbortOrchestrationRequest.class);
         property(ServletProperties.FILTER_FORWARD_ON_404, true);
 
         OpenAPI oas = new OpenAPI();
