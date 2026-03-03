@@ -62,6 +62,15 @@ request:
       driver-class-name: org.mariadb.jdbc.Driver
       pool-name: reqdb-pool
       registerMbeans: true
+bpmn:
+  datasource:
+    hikari:
+      jdbcUrl: jdbc:mariadb://${DB_HOST}:${DB_PORT}/camundabpmn
+      username: ${DB_USERNAME}
+      password: ${DB_PASSWORD}
+      driver-class-name: org.mariadb.jdbc.Driver
+      pool-name: bpmn-pool
+      registerMbeans: true
 #Actuator
 management:
   endpoints:

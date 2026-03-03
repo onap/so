@@ -6,6 +6,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Modifications Copyright (c) 2026 Deutsche Telekom AG.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,10 +24,7 @@
 
 package org.onap.so.bpmn.common.workflow.service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -33,12 +32,18 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.HttpStatus;
 import org.camunda.bpm.engine.ProcessEngineServices;
 import org.camunda.bpm.engine.variable.impl.VariableMapImpl;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.bpmn.common.workflow.context.WorkflowContext;
 import org.onap.so.bpmn.common.workflow.context.WorkflowContextHolder;
 import org.onap.so.bpmn.common.workflow.context.WorkflowResponse;
+import org.onap.so.serviceinstancebeans.RequestReferences;
+import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
+import org.onap.so.serviceinstancebeans.ServiceInstancesResponse;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowProcessorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,6 +92,7 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
 
     protected static final Logger logger = LoggerFactory.getLogger(WorkflowAsyncResource.class);
     protected static final long DEFAULT_WAIT_TIME = 60000; // default wait time
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     /**
      * Asynchronous JAX-RS method that starts a process instance.
@@ -103,21 +109,40 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
     @Consumes("application/json")
     public Response startProcessInstanceByKey(@PathParam("processKey") String processKey, VariableMapImpl variableMap) {
         Map<String, Object> inputVariables = getInputVariables(variableMap);
+        String requestUrl = (String) inputVariables.get("requestUri");
+
+        boolean pause = requestUrl.endsWith("pause");
+        boolean abort = requestUrl.endsWith("abort");
+        String resumeProcessInstanceId = getProcessInstanceId(inputVariables);
+        boolean resume = (resumeProcessInstanceId != null && !resumeProcessInstanceId.isEmpty());
         try {
             MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, getRequestId(inputVariables));
-            processor.startProcess(processKey, variableMap);
-            WorkflowResponse response = waitForResponse(inputVariables);
-            if (response.getMessageCode() == 500) {
-                return Response.status(500).entity(response).build();
+            WorkflowResponse response;
+            if (pause) {
+                processor.pauseProcess(processKey);
+                response = waitForProcessResponse(inputVariables, processKey);
+            } else if (abort) {
+                processor.abortProcess(processKey);
+                response = waitForProcessResponse(inputVariables, processKey);
+            } else if (resume) {
+                processor.activateProcess(processKey, resumeProcessInstanceId);
+                response = waitForProcessResponse(inputVariables, processKey);
             } else {
-                return Response.status(202).entity(response).build();
+                processor.startProcess(processKey, variableMap);
+                response = waitForResponse(inputVariables);
             }
+            if (response.getMessageCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
+                return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).entity(response).build();
+            } else {
+                return Response.status(HttpStatus.SC_ACCEPTED).entity(response).build();
+            }
+
         } catch (WorkflowProcessorException e) {
             WorkflowResponse response = e.getWorkflowResponse();
-            return Response.status(500).entity(response).build();
+            return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).entity(response).build();
         } catch (Exception e) {
             WorkflowResponse response = buildUnkownError(getRequestId(inputVariables), e.getMessage());
-            return Response.status(500).entity(response).build();
+            return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).entity(response).build();
         }
     }
 
@@ -194,4 +219,58 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
         return env.getProperty(ASYNC_WAIT_TIME, Long.class, new Long(DEFAULT_WAIT_TIME));
     }
 
+    protected WorkflowResponse waitForProcessResponse(Map<String, Object> inputVariables, String processKey)
+            throws Exception {
+        String requestId = getRequestId(inputVariables);
+        String serviceInstanceId = (String) inputVariables.get("serviceInstanceId");
+        long currentWaitTime = 0;
+        long waitTime = getWaitTime();
+        logger.debug("WorkflowAsyncResource.waitForProcResponse using timeout: " + waitTime);
+        while (waitTime > currentWaitTime) {
+            Thread.sleep(workflowPollInterval);
+            currentWaitTime = currentWaitTime + workflowPollInterval;
+            ServiceInstancesResponse serviceInstancesResponse = new ServiceInstancesResponse();
+            RequestReferences requestRef = new RequestReferences();
+            requestRef.setInstanceId(serviceInstanceId);
+            requestRef.setRequestId(requestId);
+            serviceInstancesResponse.setRequestReferences(requestRef);
+            String response = "";
+            try {
+                response = mapper.writeValueAsString(serviceInstancesResponse);
+            } catch (JsonProcessingException e) {
+                throw new Exception(
+                        "Could not marshall ServiceInstancesRequest to Json string to respond to API Handler.", e);
+            }
+            WorkflowResponse workflowResponse = new WorkflowResponse();
+            workflowResponse.setResponse(response);
+            workflowResponse.setMessageCode(200);
+            workflowResponse.setMessage("Success");
+            WorkflowContext foundContext =
+                    new WorkflowContext(processKey, requestId, workflowPollInterval, workflowResponse);
+            if (foundContext != null) {
+                return buildResponse(foundContext);
+            }
+        }
+        throw new Exception("TimeOutOccured in WorkflowAsyncResource.waitForResponse for time " + waitTime + "ms");
+    }
+
+    protected String getProcessInstanceId(Map<String, Object> inputVariable) {
+        String processInstanceId = null;
+        String bpmnRequest = (String) inputVariable.get("bpmnRequest");
+        try {
+            ServiceInstancesRequest serviceInstancesRequest =
+                    mapper.readValue(bpmnRequest, ServiceInstancesRequest.class);
+            List<Map<String, Object>> userParams =
+                    serviceInstancesRequest.getRequestDetails().getRequestParameters().getUserParams();
+            for (Map<String, Object> param : userParams) {
+                if (param.containsKey("processInstanceId")) {
+                    processInstanceId = (String) param.get("processInstanceId");
+                    logger.info("***processInstanceId*** {}", processInstanceId);
+                }
+            }
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return processInstanceId;
+    }
 }

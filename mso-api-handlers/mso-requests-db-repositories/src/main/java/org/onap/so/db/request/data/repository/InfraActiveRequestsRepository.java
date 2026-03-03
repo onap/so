@@ -44,4 +44,8 @@ public interface InfraActiveRequestsRepository
     @Query(value = "SELECT * FROM infra_active_requests WHERE request_status = 'IN_PROGRESS' AND (request_scope = 'volumeGroup' OR request_scope = 'vfModule') AND start_time < (NOW() - INTERVAL 2 MINUTE)"
             + " ORDER BY start_time DESC", nativeQuery = true)
     List<InfraActiveRequests> getInProgressVolumeGroupsAndVfModules();
+
+    @Query(value = "SELECT * FROM infra_active_requests WHERE request_url like '%serviceInstances%' AND original_request_id is null AND request_status = 'IN_PROGRESS'"
+            + " ORDER BY start_time DESC", nativeQuery = true)
+    List<InfraActiveRequests> getListOfRequestsInProgress();
 }
