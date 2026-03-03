@@ -509,6 +509,57 @@
       "message": "Same comment about `\"Service Instantiation is Aborted from this : \"` not being self contained",
       "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3476e290_a5d13267",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/PauseOrchestrationRequest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:39:57Z",
+      "side": 1,
+      "message": "Please remove this newline here",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e642de66_a16493ea",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/PauseOrchestrationRequest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:39:57Z",
+      "side": 1,
+      "message": "Same comment about `private final`",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "df81a2b3_0d512a17",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/ResumeOrchestrationRequest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:39:57Z",
+      "side": 1,
+      "message": "Please register the ObjectMapper on the class level if there is not already one registered, since ObjectMapper creation is a comparatively expensive operation",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
