@@ -1,0 +1,1 @@
+{"requestDetails":{"modelInfo":{"modelInvariantId":"f7ce78bb-423b-11e7-93f8-0050569a7965","modelVersion":"1.0","modelType":"service","modelName":"serviceModel"},"requestInfo":{"source":"VID","requestorId":"xxxxxx","instanceName":"testService","productFamilyId":"test"},"requestParameters":{"aLaCarte":"false","userParams":[{"resumeFrom":"AssignVnfBB"}]}}}
