@@ -6,6 +6,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Modifications Copyright (c) 2026 Deutsche Telekom AG.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,17 +24,21 @@
 
 package org.onap.so.bpmn.common.workflow.service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.sql.Timestamp;
+import java.util.*;
+import org.camunda.bpm.engine.HistoryService;
 import org.camunda.bpm.engine.RuntimeService;
+import org.camunda.bpm.engine.history.HistoricProcessInstance;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.variable.impl.VariableMapImpl;
 import org.onap.so.bpmn.common.workflow.context.WorkflowResponse;
+import org.onap.so.bpmn.infrastructure.CamundaBpmnDB;
+import org.onap.so.db.request.beans.InfraActiveRequests;
+import org.onap.so.db.request.client.RequestsDbClient;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowProcessorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +47,12 @@ public class WorkflowProcessor extends ProcessEngineAwareService {
 
     private static final Logger logger = LoggerFactory.getLogger(WorkflowProcessor.class);
     protected static final String logMarker = "[WRKFLOW-RESOURCE]";
+
+    @Autowired
+    private RequestsDbClient requestDbClient;
+
+    @Autowired
+    private CamundaBpmnDB camundaBpmnDB;
 
     @Async
     public void startProcess(String processKey, VariableMapImpl variableMap) {
@@ -105,4 +117,132 @@ public class WorkflowProcessor extends ProcessEngineAwareService {
         return value;
     }
 
+    /*
+     * This method will be used for pausing of SO(Service Instantiation) processKey is using only for logging in caller
+     * method we are taking reference of runtime service from ProcessEngine and process instance id used for suspending
+     * the workflow process.
+     */
+    public void pauseProcess(String processKey) {
+        try {
+            RuntimeService runtimeService = getProcessEngineServices().getRuntimeService();
+            List<String> listOfProcessInstanceId = camundaBpmnDB.fetchListOfProcessInstanceId();
+            logger.debug("Reached pauseProcess for listOfProcessInstanceId: {}", listOfProcessInstanceId);
+
+            for (String parentProcessInsId : listOfProcessInstanceId) {
+                logger.debug("so Process InstanceId: {}", parentProcessInsId);
+                ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
+                        .processInstanceId(parentProcessInsId).singleResult();
+                if (processInstance != null) {
+                    runtimeService.suspendProcessInstanceById(parentProcessInsId);
+                    String businessKey = camundaBpmnDB.findBusinessKey(parentProcessInsId);
+                    InfraActiveRequests request = requestDbClient.getInfraActiveRequestbyRequestId(businessKey);
+                    request.setRequestStatus("PAUSED");
+                    request.setStatusMessage("Service instantiation is paused");
+                    request.setLastModifiedBy("CamundaBPMN");
+                    request.setEndTime(new Timestamp(System.currentTimeMillis()));
+                    requestDbClient.updateInfraActiveRequests(request);
+                }
+                logger.debug("processInstance: {} and processInsId: {}", processInstance, parentProcessInsId);
+            }
+            logger.debug("Completed pauseProcess for ProcessKey: {}", processKey);
+        } catch (Exception e) {
+            WorkflowResponse workflowResponse = new WorkflowResponse();
+            workflowResponse.setResponse("Pause could not be performed:" + e.getMessage());
+            workflowResponse.setMessageCode(500);
+            workflowResponse.setMessage("Fail");
+            throw new WorkflowProcessorException(workflowResponse);
+        }
+    }
+
+    /*
+     * This method will be used for aborting of SO(Service Instantiation) processKey is using only for logging in caller
+     * method we are taking reference of runtime service from ProcessEngine and process instance id used for terminating
+     * the workflow process.
+     */
+    public void abortProcess(String processKey) {
+        try {
+            RuntimeService runtimeService = getProcessEngineServices().getRuntimeService();
+            HistoryService historyService = getProcessEngineServices().getHistoryService();
+            List<String> listOfProcessInstanceId = camundaBpmnDB.fetchListOfProcessInstanceId();
+            logger.debug("Reached abortProcess for listOfProcessInstanceId: {}", listOfProcessInstanceId);
+
+            for (String parentProcessInsId : listOfProcessInstanceId) {
+                ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
+                        .processInstanceId(parentProcessInsId).singleResult();
+                logger.debug("processInstance: {} and processInsId: {}", processInstance, parentProcessInsId);
+
+                if (processInstance != null) {
+                    runtimeService.deleteProcessInstance(parentProcessInsId, "User aborted the process", true, true);
+                }
+                ProcessInstance parentProcessInstance = runtimeService.createProcessInstanceQuery()
+                        .processInstanceId(parentProcessInsId).singleResult();
+                logger.debug("parentProcessInstance: {} and processInsId: {}", parentProcessInstance,
+                        parentProcessInsId);
+                String businessKey = camundaBpmnDB.findBusinessKey(parentProcessInsId);
+                // deleting data for super process instance based on parent process instance id
+                if (parentProcessInstance == null) {
+                    historyService.deleteHistoricProcessInstance(parentProcessInsId);
+                }
+                List<HistoricProcessInstance> historicInstances = historyService.createHistoricProcessInstanceQuery()
+                        .processInstanceBusinessKey(businessKey).list();
+                // deleting data for sub process instance based on sub process instance id
+                for (HistoricProcessInstance instance : historicInstances) {
+                    logger.debug("Subprocess insId:{} and businessKey: {}", instance.getId(), businessKey);
+                    historyService.deleteHistoricProcessInstance(instance.getId());
+                }
+                InfraActiveRequests request = requestDbClient.getInfraActiveRequestbyRequestId(businessKey);
+                request.setRequestStatus("ABORTED");
+                request.setStatusMessage("Service instantiation is aborted");
+                request.setLastModifiedBy("CamundaBPMN");
+                request.setEndTime(new Timestamp(System.currentTimeMillis()));
+                requestDbClient.updateInfraActiveRequests(request);
+            }
+            logger.debug("Completed abortProcess for ProcessKey: {}", processKey);
+        } catch (Exception e) {
+            WorkflowResponse workflowResponse = new WorkflowResponse();
+            workflowResponse.setResponse("Abort could not be performed:" + e.getMessage());
+            workflowResponse.setMessageCode(500);
+            workflowResponse.setMessage("Fail");
+            throw new WorkflowProcessorException(workflowResponse);
+        }
+    }
+
+    /*
+     * This method is used for reactivation of service instantiation, resuming from the last stored execution state.
+     * Process key is used only for logging in the caller method. The reference to the runtime service is retrieved from
+     * the ProcessEngine and the process instance id is used for resuming the workflow process.
+     */
+    public void activateProcess(String processKey, String processInstanceId) {
+        try {
+            logger.debug("Reached activateProcess for ProcessInstanceId: {}", processInstanceId);
+            RuntimeService runtimeService = getProcessEngineServices().getRuntimeService();
+            ProcessInstance processInstance =
+                    runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
+            logger.debug("Process instance: {} and process instance id: {}", processInstance, processInstanceId);
+
+            if (processInstance.isSuspended()) {
+                activateProcessAsync(processInstanceId, runtimeService);
+                logger.debug("Completed activateProcess for ProcessInstanceId: {}", processInstanceId);
+            } else {
+                logger.info("Process instance is not suspended for this ProcessInstanceId:" + processInstanceId);
+            }
+            ProcessInstance processInstance2 =
+                    runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
+            logger.debug(logMarker + "Process key: " + processKey + " ProcessInstanceId:" + processInstanceId + " "
+                    + (processInstance2.isEnded() ? "ENDED" : "RUNNING"));
+
+        } catch (Exception e) {
+            WorkflowResponse workflowResponse = new WorkflowResponse();
+            workflowResponse.setResponse("Error occurred while reactivating the process: " + e);
+            workflowResponse.setMessageCode(500);
+            workflowResponse.setMessage("Fail");
+            throw new WorkflowProcessorException(workflowResponse);
+        }
+    }
+
+    @Async
+    public void activateProcessAsync(String processInstanceId, RuntimeService runtimeService) {
+        runtimeService.activateProcessInstanceById(processInstanceId);
+        logger.info("Activated process instance: {}", processInstanceId);
+    }
 }
