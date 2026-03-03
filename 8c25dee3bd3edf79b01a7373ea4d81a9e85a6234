@@ -16,6 +16,227 @@
       "message": "Hi please review this patch set",
       "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2230c964_25435741",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowAsyncResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:02:40Z",
+      "side": 1,
+      "message": "Please rename this to `resumeProcessInstanceId`",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "70e05d0e_a6d572df",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowAsyncResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:02:40Z",
+      "side": 1,
+      "message": "This whole block is super redundant.\nYou are duplicating:\n```\nWorkflowResponse response \u003d waitForProcResponse(inputVariables, processKey);\n                if (response.getMessageCode() \u003d\u003d 500) {\n                    return Response.status(500).entity(response).build();\n                } else {\n                    return Response.status(202).entity(response).build();\n                }\n```\nhere essentially four times instead of doing:\n```\nWorkflowResponse response;\n\nif (pause) {\n    processor.pauseProcess(processKey);\n    response \u003d waitForProcResponse(inputVariables, processKey);\n} else if (abort) {\n    processor.abortProcess(processKey);\n    response \u003d waitForProcResponse(inputVariables, processKey);\n} else if (resume) {\n    processor.activateProcess(processKey, resumeProcessInsId);\n    response \u003d waitForProcResponse(inputVariables, processKey);\n} else {\n    processor.startProcess(processKey, variableMap);\n    response \u003d waitForResponse(inputVariables);\n}\n\nif (response.getMessageCode() \u003d\u003d 500) {\n    return Response.status(500).entity(response).build();\n} else {\n    return Response.status(202).entity(response).build();\n}\n```",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b6e54ab6_3f4a7493",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowAsyncResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:02:40Z",
+      "side": 1,
+      "message": "Please rename this to `waitForProcessResponse`",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "50bdd943_f8f21ffe",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowAsyncResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:02:40Z",
+      "side": 1,
+      "message": "Please help me understand what line in the while body is doing some external check to let it eventually stop?!\nI can\u0027t see that",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "445a5a2e_80fd8579",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowAsyncResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:02:40Z",
+      "side": 1,
+      "message": "`processInstanceId`",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b0150c25_637398b5",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowAsyncResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:02:40Z",
+      "side": 1,
+      "message": "Please use speaking variable names in all your code changes for this repo. So I want write a review comment for each instance in this CR, please just adjust this everywhere",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cbf48cf0_0fd5ecaa",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowAsyncResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:02:40Z",
+      "side": 1,
+      "message": "Log lines should not contain any `***` or `###` visual indicators. Please remove them",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7beb5b79_59f9bf55",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowProcessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:02:40Z",
+      "side": 1,
+      "message": "This approach has a couple of issues:\n- it introduces global state on this singleton\n- this state is gone when the pod is restarted\n- the `volatile String soProcessInstanceId` is detrimental for performance since only one process at a time may read and modify it\n- you do not have any cleanup logic in place it seems, so this will basically result in a memory leak with a sufficient number of process executions\n(since this hashmap can only group)\n\nFor all these reasons this approach should be changed to rely on persistence (in the request-db for instance) since that is where request related information is already stored if I understand the SO architecture correctly",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7133a251_41c140a9",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowProcessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:02:40Z",
+      "side": 1,
+      "message": "Log lines should not contain any `***` or `###` visual indicators. Please remove them",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "74a0f4bc_93faabd9",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowProcessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:02:40Z",
+      "side": 1,
+      "message": "`Pause could not be performed:  + e.getMessage()`",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dd084ba6_6f46af6b",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowProcessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:02:40Z",
+      "side": 1,
+      "message": "The status message should be self contained. So either change this to `Service instantiation is aborted from: \" + \u003cyour java code that retrieves from\u003e` or to `Service instantiation is aborted`",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d8060877_829d6aaf",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowProcessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:02:40Z",
+      "side": 1,
+      "message": "Please",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6c807196_c75b92ce",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowProcessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:02:40Z",
+      "side": 1,
+      "message": "Typo `from where from there`",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
