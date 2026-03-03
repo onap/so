@@ -173,6 +173,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "70f35397_0a67c7e5",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowProcessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:36:43Z",
+      "side": 1,
+      "message": "Please include the information from the `RuntimeException` here",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "74a0f4bc_93faabd9",
         "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowProcessor.java",
         "patchSetId": 1
@@ -224,6 +241,40 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "7df22a6a_aff3919f",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowProcessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:36:43Z",
+      "side": 1,
+      "message": "Please include the information from the `RuntimeException` here",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "65aad7f8_ac5787af",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowProcessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:36:43Z",
+      "side": 1,
+      "message": "Please include the information from the `Exception` here",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "6c807196_c75b92ce",
         "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowProcessor.java",
         "patchSetId": 1
@@ -235,6 +286,227 @@
       "writtenOn": "2026-03-03T13:02:40Z",
       "side": 1,
       "message": "Typo `from where from there`",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "01e02bb1_1dda6920",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:36:43Z",
+      "side": 1,
+      "message": "Please remove this comment. It is meaningless",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e95ea22b_a331cdf2",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:36:43Z",
+      "side": 1,
+      "message": "Please remove the commented out code",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e2368bab_aacca1d6",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:36:43Z",
+      "side": 1,
+      "message": "Please change this to the debug level",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9aae0000_34aa25a1",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:36:43Z",
+      "side": 1,
+      "message": "Please change this to the debug level",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a59add83_9d0fda11",
+        "filename": "mso-api-handlers/mso-api-handler-common/src/main/java/org/onap/so/db/camunda/client/CamundaDBClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:36:43Z",
+      "side": 1,
+      "message": "~~Please reduce the number of indivitual concatenations you are doing here. Concatenating so much is detrimental to performance~~\n\nPlease register this as a `private static final` in the class level. There is no need to recreate this string on every method invocation when it is templated anyways and then populated with `query.setParameter`",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "40539456_25641f18",
+        "filename": "mso-api-handlers/mso-api-handler-common/src/main/java/org/onap/so/db/camunda/client/CamundaDBClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:36:43Z",
+      "side": 1,
+      "message": "Adding such comments is usually a good indication that what follows should likely be a dedicated method.\nPlease move the logic into a dedicated (`stripStartPrefix`) method",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c32b00af_2cf17acb",
+        "filename": "mso-api-handlers/mso-api-handler-common/src/main/java/org/onap/so/db/camunda/client/CamundaDBClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:36:43Z",
+      "side": 1,
+      "message": "Change this to `logger.trace` or remove it",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7cb8de0f_7f4da937",
+        "filename": "mso-api-handlers/mso-api-handler-common/src/main/java/org/onap/so/db/camunda/client/CamundaDBClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:36:43Z",
+      "side": 1,
+      "message": "Please register this as a `private static final` in the class level. There is no need to recreate this string on every method invocation when it is templated anyways and then populated with `query.setParameter`",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e14c9edc_294866a7",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/AbortOrchestrationRequest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:36:43Z",
+      "side": 1,
+      "message": "Please remove this newline",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e8f2a843_cd0a659a",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/AbortOrchestrationRequest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:36:43Z",
+      "side": 1,
+      "message": "Please make everything `private final` and leverage `@RequiredArgsConstructor` here",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ab7271c0_03f569d1",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/AbortOrchestrationRequest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:36:43Z",
+      "side": 1,
+      "message": "I never understood `@Transactional`. Can you spend a word for my better understanding why you are adding this annotation here and what it does?",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b81c9f48_a0b61d8d",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/AbortOrchestrationRequest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:36:43Z",
+      "side": 1,
+      "message": "I think it would be good to introduce some `InfraActiveRequestsService` that would provide the `infraActiveRequestsList` and the `currentActiveRequest` here.\nThat would move all the business logic out of this controller and make the controller really only about http serialization.\nI know that this problem is all over the SO, but for new code we can do better",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a8d0f117_7a3fe213",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/AbortOrchestrationRequest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-03T13:36:43Z",
+      "side": 1,
+      "message": "Same comment about `\"Service Instantiation is Aborted from this : \"` not being self contained",
       "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
