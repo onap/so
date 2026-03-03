@@ -122,12 +122,19 @@ request:
     username: root
     password: password
     driver-class-name: org.mariadb.jdbc.Driver
+bpmn:
+  datasource:
+    jdbcUrl: jdbc:mariadb://localhost:3307/camundabpmn
+    username: root
+    password: password
+    driver-class-name: org.mariadb.jdbc.Driver
 
 mariaDB4j:
   dataDir:
   port: 3307
   databaseName: catalogdb
   databaseName2: requestdb
+  databaseName3: camundabpmn
 #Actuator
 management:
   endpoints:
