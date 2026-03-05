@@ -13,9 +13,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,7 +35,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
@@ -117,13 +116,11 @@ public class WorkflowActionTest extends BaseTaskTest {
     private static final String MACRO_ASSIGN_NO_CLOUD_JSON = "Macro/ServiceMacroAssignNoCloud.json";
     private static final String VF_MODULE_CREATE_WITH_FABRIC_JSON = "VfModuleCreateWithFabric.json";
     private static final String VF_MODULE_CREATE_WITH_FABRIC_NO_PARAMS_JSON = "VfModuleCreateWithFabricNoParams.json";
-    private static final String VF_MODULE_REPLACE_REBUILD_VOLUME_GROUPS_JSON =
-            "VfModuleReplaceRebuildVolumeGroups.json";
+    private static final String VF_MODULE_REPLACE_REBUILD_VOLUME_GROUPS_JSON = "VfModuleReplaceRebuildVolumeGroups.json";
     private static final String MACRO_CREATE_NETWORK_COLLECTION_JSON = "Macro/CreateNetworkCollection.json";
     private static final String MACRO_VNF_MACRO_REPLACE_JSON = "Macro/VnfMacroReplace.json";
     private static final String MACRO_CREATE_JSON = "Macro/ServiceMacroAssignVnfAndPnf.json";
-    private static final String MACRO_CREATE_SERVICE_MULTIPLE_SAME_MODEL_VNF_VFMODULE =
-            "Macro/ServiceMacroCreateMultipleSameModelVnfsAndVfModules.json";
+    private static final String MACRO_CREATE_SERVICE_MULTIPLE_SAME_MODEL_VNF_VFMODULE = "Macro/ServiceMacroCreateMultipleSameModelVnfsAndVfModules.json";
 
     @Mock
     protected Environment environment;
@@ -157,11 +154,11 @@ public class WorkflowActionTest extends BaseTaskTest {
 
     private String RESOURCE_PATH = "src/test/resources/__files/";
 
-    private List<OrchestrationFlow> replaceVfModuleOrchFlows =
-            createFlowList("DeactivateVfModuleBB", "DeleteVfModuleATTBB", "DeactivateVolumeGroupBB",
-                    "DeleteVolumeGroupBB", "UnassignVFModuleBB", "UnassignVolumeGroupBB", "AssignVolumeGroupBB",
-                    "AssignVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB", "CreateVolumeGroupBB",
-                    "ActivateVolumeGroupBB", "ChangeModelVnfBB", "ChangeModelServiceInstanceBB");
+    private List<OrchestrationFlow> replaceVfModuleOrchFlows = createFlowList("DeactivateVfModuleBB",
+            "DeleteVfModuleATTBB", "DeactivateVolumeGroupBB", "DeleteVolumeGroupBB", "UnassignVFModuleBB",
+            "UnassignVolumeGroupBB", "AssignVolumeGroupBB", "AssignVfModuleBB", "CreateVfModuleBB",
+            "ActivateVfModuleBB", "CreateVolumeGroupBB", "ActivateVolumeGroupBB", "ChangeModelVnfBB",
+            "ChangeModelServiceInstanceBB");
     private List<OrchestrationFlow> replaceRetainAssignmentsVfModuleOrchFlows = createFlowList("DeactivateVfModuleBB",
             "DeleteVfModuleATTBB", "DeactivateVolumeGroupBB", "DeleteVolumeGroupBB", "UnassignVolumeGroupBB",
             "AssignVolumeGroupBB", "ChangeModelVfModuleBB", "CreateVolumeGroupBB", "ActivateVolumeGroupBB",
@@ -177,7 +174,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         execution = new DelegateExecutionFake();
         org.onap.aai.domain.yang.ServiceInstance servInstance = new org.onap.aai.domain.yang.ServiceInstance();
         servInstance.setServiceInstanceId("TEST");
-        when(bbSetupUtils.getAAIServiceInstanceByName(anyString(), anyObject())).thenReturn(servInstance);
+        when(bbSetupUtils.getAAIServiceInstanceByName(anyString(), any())).thenReturn(servInstance);
         workflowAction.setBbInputSetupUtils(bbSetupUtils);
         workflowAction.setBbInputSetup(bbInputSetup);
 
@@ -195,8 +192,8 @@ public class WorkflowActionTest extends BaseTaskTest {
         execution.setVariable("requestUri", "v6/networks/123");
 
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
-        List<OrchestrationFlow> orchFlows =
-                createFlowList("AssignNetwork1802BB", "CreateNetworkBB", "ActivateNetworkBB");
+        List<OrchestrationFlow> orchFlows = createFlowList("AssignNetwork1802BB", "CreateNetworkBB",
+                "ActivateNetworkBB");
         northBoundRequest.setOrchestrationFlowList(orchFlows);
 
         when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
@@ -216,8 +213,8 @@ public class WorkflowActionTest extends BaseTaskTest {
         execution.setVariable("requestUri", "v6/networks/123");
 
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
-        List<OrchestrationFlow> orchFlows =
-                createFlowList("DeactivateNetworkBB", "DeleteNetworkBB", "UnassignNetwork1802BB");
+        List<OrchestrationFlow> orchFlows = createFlowList("DeactivateNetworkBB", "DeleteNetworkBB",
+                "UnassignNetwork1802BB");
         northBoundRequest.setOrchestrationFlowList(orchFlows);
 
         when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
@@ -235,7 +232,6 @@ public class WorkflowActionTest extends BaseTaskTest {
         String bpmnRequest = readBpmnRequestFromFile(MACRO_ASSIGN_JSON);
         initExecution(gAction, bpmnRequest, true);
         execution.setVariable("requestUri", "v6/serviceInstances/123");
-
 
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
         List<OrchestrationFlow> orchFlows = createFlowList("AssignServiceInstanceBB", "ActivateServiceInstanceBB");
@@ -383,17 +379,15 @@ public class WorkflowActionTest extends BaseTaskTest {
         execution.setVariable("requestUri", "v6/serviceInstances/si0");
 
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
-        List<OrchestrationFlow> orchFlows =
-                createFlowList("CreateNetworkBB", "ActivateNetworkBB", "CreateVolumeGroupBB", "ActivateVolumeGroupBB",
-                        "CreateVfModuleBB", "ActivateVfModuleBB", "ActivateVnfBB", "ActivateServiceInstanceBB");
+        List<OrchestrationFlow> orchFlows = createFlowList("CreateNetworkBB", "ActivateNetworkBB",
+                "CreateVolumeGroupBB", "ActivateVolumeGroupBB", "CreateVfModuleBB", "ActivateVfModuleBB",
+                "ActivateVnfBB", "ActivateServiceInstanceBB");
         northBoundRequest.setOrchestrationFlowList(orchFlows);
 
         ServiceInstance serviceInstanceAAI = new ServiceInstance();
         serviceInstanceAAI.setServiceInstanceId("si0");
-        org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance();
-        org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO = new org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf = new org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf();
         vnf.setVnfId("vnf0");
 
         org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule = buildVfModule();
@@ -401,8 +395,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule2 = buildVfModule();
         vnf.getVfModules().add(vfModule2);
 
-        org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup volumeGroup =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup volumeGroup = new org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup();
         volumeGroup.setVolumeGroupId("volumeGroup0");
         vnf.getVolumeGroups().add(volumeGroup);
 
@@ -531,8 +524,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         networkCust.setModelCustomizationUUID("123");
         networkCustomizations.add(networkCust);
         service.setNetworkCustomizations(networkCustomizations);
-        NetworkCollectionResourceCustomization collectionResourceCustomization =
-                new NetworkCollectionResourceCustomization();
+        NetworkCollectionResourceCustomization collectionResourceCustomization = new NetworkCollectionResourceCustomization();
         collectionResourceCustomization.setModelCustomizationUUID("123");
 
         CollectionResource collectionResource = new CollectionResource();
@@ -540,14 +532,12 @@ public class WorkflowActionTest extends BaseTaskTest {
         InstanceGroup instanceGroup = new InstanceGroup();
         instanceGroup.setToscaNodeType("NetworkCollectionResource");
         instanceGroup.setCollectionNetworkResourceCustomizations(new ArrayList<>());
-        CollectionNetworkResourceCustomization collectionNetworkResourceCust =
-                new CollectionNetworkResourceCustomization();
+        CollectionNetworkResourceCustomization collectionNetworkResourceCust = new CollectionNetworkResourceCustomization();
         collectionNetworkResourceCust.setModelCustomizationUUID("123");
         collectionNetworkResourceCust.setNetworkResourceCustomization(collectionResourceCustomization);
         instanceGroup.getCollectionNetworkResourceCustomizations().add(collectionNetworkResourceCust);
         List<CollectionResourceInstanceGroupCustomization> collectionInstanceGroupCustomizations = new ArrayList<>();
-        CollectionResourceInstanceGroupCustomization collectionInstanceGroupCustomization =
-                new CollectionResourceInstanceGroupCustomization();
+        CollectionResourceInstanceGroupCustomization collectionInstanceGroupCustomization = new CollectionResourceInstanceGroupCustomization();
         collectionInstanceGroupCustomization.setModelCustomizationUUID("123");
         collectionInstanceGroupCustomization.setSubInterfaceNetworkQuantity(3);
         collectionInstanceGroupCustomizations.add(collectionInstanceGroupCustomization);
@@ -555,7 +545,8 @@ public class WorkflowActionTest extends BaseTaskTest {
         collectionInstanceGroupCustomization.setCollectionResourceCust(collectionResourceCustomization);
         instanceGroup.setCollectionInstanceGroupCustomizations(collectionInstanceGroupCustomizations);
         collectionResource.setInstanceGroup(instanceGroup);
-        collectionResourceCustomization.setCollectionResource(collectionResource);;
+        collectionResourceCustomization.setCollectionResource(collectionResource);
+        ;
         service.getCollectionResourceCustomizations().add(collectionResourceCustomization);
         doReturn(service).when(catalogDbClient).getServiceByID("3c40d244-808e-42ca-b09a-256d83d19d0a");
         doReturn(collectionResourceCustomization).when(catalogDbClient)
@@ -814,26 +805,25 @@ public class WorkflowActionTest extends BaseTaskTest {
                 .thenReturn(vfModuleCustomization2);
         when(catalogDbClient.getServiceByID("f2444885-3c76-4ddc-8668-7741c0631495")).thenReturn(service);
 
-
-        Resource serviceResource =
-                new Resource(WorkflowType.SERVICE, "f2444885-3c76-4ddc-8668-7741c0631495", false, null);
-        Resource vnfResource1 =
-                new Resource(WorkflowType.VNF, "0d0ba1ee-6b7f-47fe-8266-2967993b2c08", false, serviceResource);
+        Resource serviceResource = new Resource(WorkflowType.SERVICE, "f2444885-3c76-4ddc-8668-7741c0631495", false,
+                null);
+        Resource vnfResource1 = new Resource(WorkflowType.VNF, "0d0ba1ee-6b7f-47fe-8266-2967993b2c08", false,
+                serviceResource);
         vnfResource1.setInstanceName("vnf-instanceName-1");
-        Resource vfmResource1 =
-                new Resource(WorkflowType.VFMODULE, "3bd19000-6d21-49f1-9eb3-ea76a6eac5e0", false, vnfResource1);
+        Resource vfmResource1 = new Resource(WorkflowType.VFMODULE, "3bd19000-6d21-49f1-9eb3-ea76a6eac5e0", false,
+                vnfResource1);
         vfmResource1.setInstanceName("demo-network-1");
-        Resource vfmResource2 =
-                new Resource(WorkflowType.VFMODULE, "83677d89-428a-407b-b4ec-738e68275d84", false, vnfResource1);
+        Resource vfmResource2 = new Resource(WorkflowType.VFMODULE, "83677d89-428a-407b-b4ec-738e68275d84", false,
+                vnfResource1);
         vfmResource2.setInstanceName("demo-1");
-        Resource vnfResource2 =
-                new Resource(WorkflowType.VNF, "0d0ba1ee-6b7f-47fe-8266-2967993b2c08", false, serviceResource);
+        Resource vnfResource2 = new Resource(WorkflowType.VNF, "0d0ba1ee-6b7f-47fe-8266-2967993b2c08", false,
+                serviceResource);
         vnfResource2.setInstanceName("vnf-instanceName-2");
-        Resource vfmResource3 =
-                new Resource(WorkflowType.VFMODULE, "83677d89-428a-407b-b4ec-738e68275d84", false, vnfResource2);
+        Resource vfmResource3 = new Resource(WorkflowType.VFMODULE, "83677d89-428a-407b-b4ec-738e68275d84", false,
+                vnfResource2);
         vfmResource3.setInstanceName("demo-2");
-        Resource vfmResource4 =
-                new Resource(WorkflowType.VFMODULE, "83677d89-428a-407b-b4ec-738e68275d84", false, vnfResource2);
+        Resource vfmResource4 = new Resource(WorkflowType.VFMODULE, "83677d89-428a-407b-b4ec-738e68275d84", false,
+                vnfResource2);
         vfmResource4.setInstanceName("demo-3");
 
         when(userParamsServiceTraversal.getResourceListFromUserParams(any(), anyList(), anyString(), any()))
@@ -844,8 +834,8 @@ public class WorkflowActionTest extends BaseTaskTest {
 
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
 
-        Map<String, List<ExecuteBuildingBlock>> flowNamesToEbbList =
-                ebbs.stream().collect(Collectors.groupingBy(e -> e.getBuildingBlock().getBpmnFlowName()));
+        Map<String, List<ExecuteBuildingBlock>> flowNamesToEbbList = ebbs.stream()
+                .collect(Collectors.groupingBy(e -> e.getBuildingBlock().getBpmnFlowName()));
 
         assertEquals(1, flowNamesToEbbList.get("AssignServiceInstanceBB").size());
         assertEquals(2, flowNamesToEbbList.get("AssignVnfBB").size());
@@ -860,11 +850,11 @@ public class WorkflowActionTest extends BaseTaskTest {
         String vnfInstanceId2 = flowNamesToEbbList.get("AssignVnfBB").get(1).getWorkflowResourceIds().getVnfId();
 
         // should be 3 = 1 AssignVfModuleBB + 1 CreateVfModuleBB + 1 ActivateVfModuleBB
-        boolean allEbbsForVfModule1HaveCorrectParentVnfId =
-                3 == ebbs.stream().map(ExecuteBuildingBlock::getWorkflowResourceIds)
-                        .filter(w -> "demo-network-1".equals(w.getVfModuleInstanceName())
-                                && vnfInstanceId1.equals(w.getVnfId()))
-                        .count();
+        boolean allEbbsForVfModule1HaveCorrectParentVnfId = 3 == ebbs.stream()
+                .map(ExecuteBuildingBlock::getWorkflowResourceIds)
+                .filter(w -> "demo-network-1".equals(w.getVfModuleInstanceName())
+                        && vnfInstanceId1.equals(w.getVnfId()))
+                .count();
         boolean allEbbsForVfModule2HaveCorrectParentVnfId = 3 == ebbs.stream()
                 .map(ExecuteBuildingBlock::getWorkflowResourceIds)
                 .filter(w -> "demo-1".equals(w.getVfModuleInstanceName()) && vnfInstanceId1.equals(w.getVnfId()))
@@ -913,12 +903,9 @@ public class WorkflowActionTest extends BaseTaskTest {
 
         ServiceInstance serviceInstanceAAI = new ServiceInstance();
         serviceInstanceAAI.setServiceInstanceId("aaisi123");
-        org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance();
-        org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf();
-        org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf pnf =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO = new org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf = new org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf pnf = new org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf();
         vnf.setVnfId("vnfId123");
         pnf.setPnfId("pnfId123");
 
@@ -927,8 +914,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule2 = buildVfModule();
         vnf.getVfModules().add(vfModule2);
 
-        org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup volumeGroup =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup volumeGroup = new org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup();
         volumeGroup.setVolumeGroupId("vg123");
         vnf.getVolumeGroups().add(volumeGroup);
 
@@ -970,10 +956,8 @@ public class WorkflowActionTest extends BaseTaskTest {
 
         ServiceInstance serviceInstanceAAI = new ServiceInstance();
         serviceInstanceAAI.setServiceInstanceId("aaisi123");
-        org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance();
-        org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf pnf =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO = new org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf pnf = new org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf();
         pnf.setPnfId("pnfId123");
 
         serviceInstanceMSO.getPnfs().add(pnf);
@@ -1002,10 +986,8 @@ public class WorkflowActionTest extends BaseTaskTest {
 
         ServiceInstance serviceInstanceAAI = new ServiceInstance();
         serviceInstanceAAI.setServiceInstanceId("aaisi123");
-        org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance();
-        org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO = new org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf = new org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf();
         vnf.setVnfId("vnfId123");
 
         org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule = buildVfModule();
@@ -1013,8 +995,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule2 = buildVfModule();
         vnf.getVfModules().add(vfModule2);
 
-        org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup volumeGroup =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup volumeGroup = new org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup();
         volumeGroup.setVolumeGroupId("vg123");
         vnf.getVolumeGroups().add(volumeGroup);
 
@@ -1052,15 +1033,12 @@ public class WorkflowActionTest extends BaseTaskTest {
 
         ServiceInstance serviceInstanceAAI = new ServiceInstance();
         serviceInstanceAAI.setServiceInstanceId("aaisi123");
-        org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO = new org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance();
 
-        org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network network =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network network = new org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network();
         network.setNetworkId("123");
         serviceInstanceMSO.getNetworks().add(network);
-        org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network network2 =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network network2 = new org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network();
         network2.setNetworkId("321");
         serviceInstanceMSO.getNetworks().add(network2);
 
@@ -1098,18 +1076,14 @@ public class WorkflowActionTest extends BaseTaskTest {
 
         ServiceInstance serviceInstanceAAI = new ServiceInstance();
         serviceInstanceAAI.setServiceInstanceId("123");
-        org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance();
-        org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO = new org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf = new org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf();
         vnf.setVnfId("1234");
 
-        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule = new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
         vfModule.setVfModuleId("vfModule1");
         vnf.getVfModules().add(vfModule);
-        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule2 =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule2 = new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
         vfModule2.setVfModuleId("vfModule2");
         vnf.getVfModules().add(vfModule2);
 
@@ -1153,17 +1127,13 @@ public class WorkflowActionTest extends BaseTaskTest {
 
         ServiceInstance serviceInstanceAAI = new ServiceInstance();
         serviceInstanceAAI.setServiceInstanceId("123");
-        org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance();
-        org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO = new org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf = new org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf();
         vnf.setVnfId("1234");
-        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule = new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
         vfModule.setVfModuleId("vfModule1");
         vnf.getVfModules().add(vfModule);
-        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule2 =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule2 = new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
         vfModule2.setVfModuleId("vfModule2");
         vnf.getVfModules().add(vfModule2);
         serviceInstanceMSO.getVnfs().add(vnf);
@@ -1304,8 +1274,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 
         List<CvnfcCustomization> cvnfcCustomizations = new ArrayList<CvnfcCustomization>();
         CvnfcCustomization cvnfcCustomization = new CvnfcCustomization();
-        CvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization =
-                new CvnfcConfigurationCustomization();
+        CvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization = new CvnfcConfigurationCustomization();
         ConfigurationResource configurationResource = new ConfigurationResource();
         configurationResource.setToscaNodeType("FabricConfiguration");
         vnfVfmoduleCvnfcConfigurationCustomization.setConfigurationResource(configurationResource);
@@ -1318,8 +1287,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         cvnfcCustomizations.add(cvnfcCustomization);
 
         CvnfcCustomization cvnfcCustomization2 = new CvnfcCustomization();
-        CvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization2 =
-                new CvnfcConfigurationCustomization();
+        CvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization2 = new CvnfcConfigurationCustomization();
         ConfigurationResource configurationResource2 = new ConfigurationResource();
         configurationResource2.setToscaNodeType("FabricConfiguration");
         vnfVfmoduleCvnfcConfigurationCustomization2.setConfigurationResource(configurationResource2);
@@ -1338,8 +1306,6 @@ public class WorkflowActionTest extends BaseTaskTest {
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         assertEqualsBulkFlowName(ebbs, "AssignVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB");
     }
-
-
 
     @Test
     public void selectExecutionListALaCarteVfModuleNoVolumeGroupReplaceTest() throws Exception {
@@ -1724,26 +1690,24 @@ public class WorkflowActionTest extends BaseTaskTest {
         org.onap.aai.domain.yang.GenericVnf vnf = new org.onap.aai.domain.yang.GenericVnf();
         vnf.setVnfId("vnf0");
         vnf.setModelCustomizationId("modelCustomizationId");
-        when(bbSetupUtils.getAAIGenericVnf(anyObject())).thenReturn(vnf);
+        when(bbSetupUtils.getAAIGenericVnf(any())).thenReturn(vnf);
 
         org.onap.aai.domain.yang.VfModule vfModule = new org.onap.aai.domain.yang.VfModule();
         vfModule.setModelCustomizationId("modelCustomizationId");
-        when(bbSetupUtils.getAAIVfModule(anyObject(), anyObject())).thenReturn(vfModule);
+        when(bbSetupUtils.getAAIVfModule(any(), any())).thenReturn(vfModule);
 
         List<org.onap.aai.domain.yang.Vnfc> vnfcs = new ArrayList<org.onap.aai.domain.yang.Vnfc>();
         org.onap.aai.domain.yang.Vnfc vnfc = new org.onap.aai.domain.yang.Vnfc();
         vnfc.setModelInvariantId("modelInvariantId");
         vnfc.setVnfcName("testVnfcName");
         vnfcs.add(vnfc);
-        doReturn(vnfcs).when(SPY_workflowAction).getRelatedResourcesInVfModule(anyObject(), anyObject(), anyObject(),
-                anyObject());
+        doReturn(vnfcs).when(SPY_workflowAction).getRelatedResourcesInVfModule(any(), any(), any(), any());
 
         org.onap.aai.domain.yang.Configuration configuration = new org.onap.aai.domain.yang.Configuration();
         configuration.setConfigurationId("configurationId");
         configuration.setModelCustomizationId("modelCustimizationId");
         configuration.setConfigurationName("testConfigurationName");
-        doReturn(configuration).when(SPY_workflowAction).getRelatedResourcesInVnfc(anyObject(), anyObject(),
-                anyObject());
+        doReturn(configuration).when(SPY_workflowAction).getRelatedResourcesInVnfc(any(), any(), any());
 
         SPY_workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
@@ -1812,11 +1776,11 @@ public class WorkflowActionTest extends BaseTaskTest {
         org.onap.aai.domain.yang.GenericVnf vnf = new org.onap.aai.domain.yang.GenericVnf();
         vnf.setVnfId("vnf0");
         vnf.setModelCustomizationId("modelCustomizationId");
-        when(bbSetupUtils.getAAIGenericVnf(anyObject())).thenReturn(vnf);
+        when(bbSetupUtils.getAAIGenericVnf(any())).thenReturn(vnf);
 
         org.onap.aai.domain.yang.VfModule vfModule = new org.onap.aai.domain.yang.VfModule();
         vfModule.setModelCustomizationId("modelCustomizationId");
-        when(bbSetupUtils.getAAIVfModule(anyObject(), anyObject())).thenReturn(null);
+        when(bbSetupUtils.getAAIVfModule(any(), any())).thenReturn(null);
 
         SPY_workflowAction.getConfigBuildingBlocks(dataObj);
     }
@@ -1830,8 +1794,8 @@ public class WorkflowActionTest extends BaseTaskTest {
         WorkflowType resourceType = WorkflowType.VFMODULE;
         execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
         execution.setVariable("requestAction", gAction);
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
+        String bpmnRequest = new String(
+                Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
         execution.setVariable("bpmnRequest", bpmnRequest);
         execution.setVariable("vnfId", "1234");
         execution.setVariable("vfModuleId", "vfModuleId1234");
@@ -1905,8 +1869,8 @@ public class WorkflowActionTest extends BaseTaskTest {
         WorkflowType resourceType = WorkflowType.VFMODULE;
         execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
         execution.setVariable("requestAction", gAction);
-        String bpmnRequest =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
+        String bpmnRequest = new String(
+                Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
         execution.setVariable("bpmnRequest", bpmnRequest);
         execution.setVariable("vnfId", "1234");
         execution.setVariable("vfModuleId", "vfModuleId1234");
@@ -1989,16 +1953,15 @@ public class WorkflowActionTest extends BaseTaskTest {
         org.onap.aai.domain.yang.GenericVnf vnf = new org.onap.aai.domain.yang.GenericVnf();
         vnf.setVnfId("vnf0");
         vnf.setModelCustomizationId("modelCustomizationId");
-        when(bbSetupUtils.getAAIGenericVnf(anyObject())).thenReturn(vnf);
+        when(bbSetupUtils.getAAIGenericVnf(any())).thenReturn(vnf);
 
         org.onap.aai.domain.yang.VfModule vfModule = new org.onap.aai.domain.yang.VfModule();
         vfModule.setModelCustomizationId("modelCustomizationId");
-        when(bbSetupUtils.getAAIVfModule(anyObject(), anyObject())).thenReturn(vfModule);
+        when(bbSetupUtils.getAAIVfModule(any(), any())).thenReturn(vfModule);
 
         List<org.onap.aai.domain.yang.Vnfc> vnfcs = new ArrayList<org.onap.aai.domain.yang.Vnfc>();
 
-        doReturn(vnfcs).when(SPY_workflowAction).getRelatedResourcesInVfModule(anyObject(), anyObject(), anyObject(),
-                anyObject());
+        doReturn(vnfcs).when(SPY_workflowAction).getRelatedResourcesInVfModule(any(), any(), any(), any());
 
         SPY_workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
@@ -2024,8 +1987,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         when(bbSetupUtils.getAAIServiceInstanceById("123")).thenReturn(si);
         when(catalogDbClient.getServiceByID("3c40d244-808e-42ca-b09a-256d83d19d0a")).thenReturn(service);
 
-        String flowsToExecuteString =
-                "[{\"buildingBlock\":{\"mso-id\":\"2f9ddc4b-4dcf-4129-a35f-be1625ae0176\",\"bpmn-flow-name\":\"AssignServiceInstanceBB\",\"key\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"is-virtual-link\":false,\"virtual-link-key\":null},\"requestId\":\"9c944122-d161-4280-8594-48c06a9d96d5\",\"apiVersion\":\"7\",\"resourceId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"requestAction\":\"deleteInstance\",\"vnfType\":\"\",\"aLaCarte\":true,\"homing\":false,\"workflowResourceIds\":{\"serviceInstanceId\":\"ff9dae72-05bb-4277-ad2b-1b082467c138\",\"vnfId\":\"84a29830-e533-4f20-a838-910c740bf24c\",\"networkId\":\"\",\"volumeGroupId\":\"\",\"vfModuleId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"networkCollectionId\":null,\"configurationId\":\"10f8a3a3-91bf-4821-9515-c01b2864dff0\",\"instanceGroupId\":\"\"},\"requestDetails\":{\"modelInfo\":{\"modelCustomizationName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelInvariantId\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelType\":\"vfModule\",\"modelId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelVersion\":\"1\",\"modelCustomizationUuid\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelVersionId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelCustomizationId\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelUuid\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelInvariantUuid\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelInstanceName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\"},\"requestInfo\":{\"source\":\"VID\",\"suppressRollback\":false,\"requestorId\":\"pj8646\"},\"cloudConfiguration\":{\"tenantId\":\"e2a6af59d1cb43b2874e943bbbf8470a\",\"cloudOwner\":\"att-nc\",\"lcpCloudRegionId\":\"auk51b\"},\"requestParameters\":{\"testApi\":\"GR_API\"}},\"configurationResourceKeys\":{\"vfModuleCustomizationUUID\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"vnfResourceCustomizationUUID\":\"a80f05b8-d651-44af-b999-8ed78fb4582f\",\"cvnfcCustomizationUUID\":\"69cce457-9ffd-4359-962b-0596a1e83ad1\",\"vnfcName\":\"zauk51bmcmr01mcm001\"}}]";
+        String flowsToExecuteString = "[{\"buildingBlock\":{\"mso-id\":\"2f9ddc4b-4dcf-4129-a35f-be1625ae0176\",\"bpmn-flow-name\":\"AssignServiceInstanceBB\",\"key\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"is-virtual-link\":false,\"virtual-link-key\":null},\"requestId\":\"9c944122-d161-4280-8594-48c06a9d96d5\",\"apiVersion\":\"7\",\"resourceId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"requestAction\":\"deleteInstance\",\"vnfType\":\"\",\"aLaCarte\":true,\"homing\":false,\"workflowResourceIds\":{\"serviceInstanceId\":\"ff9dae72-05bb-4277-ad2b-1b082467c138\",\"vnfId\":\"84a29830-e533-4f20-a838-910c740bf24c\",\"networkId\":\"\",\"volumeGroupId\":\"\",\"vfModuleId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"networkCollectionId\":null,\"configurationId\":\"10f8a3a3-91bf-4821-9515-c01b2864dff0\",\"instanceGroupId\":\"\"},\"requestDetails\":{\"modelInfo\":{\"modelCustomizationName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelInvariantId\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelType\":\"vfModule\",\"modelId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelVersion\":\"1\",\"modelCustomizationUuid\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelVersionId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelCustomizationId\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelUuid\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelInvariantUuid\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelInstanceName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\"},\"requestInfo\":{\"source\":\"VID\",\"suppressRollback\":false,\"requestorId\":\"pj8646\"},\"cloudConfiguration\":{\"tenantId\":\"e2a6af59d1cb43b2874e943bbbf8470a\",\"cloudOwner\":\"att-nc\",\"lcpCloudRegionId\":\"auk51b\"},\"requestParameters\":{\"testApi\":\"GR_API\"}},\"configurationResourceKeys\":{\"vfModuleCustomizationUUID\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"vnfResourceCustomizationUUID\":\"a80f05b8-d651-44af-b999-8ed78fb4582f\",\"cvnfcCustomizationUUID\":\"69cce457-9ffd-4359-962b-0596a1e83ad1\",\"vnfcName\":\"zauk51bmcmr01mcm001\"}}]";
         ObjectMapper om = new ObjectMapper();
         List<ExecuteBuildingBlock> flowsToExecute = null;
         try {
@@ -2048,12 +2010,12 @@ public class WorkflowActionTest extends BaseTaskTest {
         vnfc.setModelInvariantId("modelInvariantId");
         vnfc.setVnfcName("testVnfcName");
 
-        String vfncPayload =
-                new String(Files.readAllBytes(Paths.get(RESOURCE_PATH + "/BuildingBlocks/vnfcResponse.json")));
+        String vfncPayload = new String(
+                Files.readAllBytes(Paths.get(RESOURCE_PATH + "/BuildingBlocks/vnfcResponse.json")));
         AAIResultWrapper vfncWrapper = new AAIResultWrapper(vfncPayload);
 
-        String configurationPayload =
-                new String(Files.readAllBytes(Paths.get(RESOURCE_PATH + "/BuildingBlocks/configurationResponse.json")));
+        String configurationPayload = new String(
+                Files.readAllBytes(Paths.get(RESOURCE_PATH + "/BuildingBlocks/configurationResponse.json")));
         AAIResultWrapper configurationWrapper = new AAIResultWrapper(configurationPayload);
         List<AAIResultWrapper> configurationResultWrappers = new ArrayList<AAIResultWrapper>();
         configurationResultWrappers.add(configurationWrapper);
@@ -2061,8 +2023,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().vnfc(vnfc.getVnfcName()));
         when(bbSetupUtils.getAAIResourceDepthOne(uri)).thenReturn(vfncWrapper);
 
-        doReturn(configurationResultWrappers).when(SPY_workflowAction).getResultWrappersFromRelationships(anyObject(),
-                anyObject());
+        doReturn(configurationResultWrappers).when(SPY_workflowAction).getResultWrappersFromRelationships(any(), any());
         org.onap.aai.domain.yang.Configuration configuration = SPY_workflowAction.getRelatedResourcesInVnfc(vnfc,
                 org.onap.aai.domain.yang.Configuration.class, Types.CONFIGURATION);
         assertEquals("testConfigurationId", configuration.getConfigurationId());
@@ -2112,8 +2073,8 @@ public class WorkflowActionTest extends BaseTaskTest {
         ExecuteBuildingBlock ebb6 = new ExecuteBuildingBlock().setBuildingBlock(bb6);
         executeFlows.add(ebb6);
 
-        List<ExecuteBuildingBlock> sorted =
-                workflowAction.sortExecutionPathByObjectForVlanTagging(executeFlows, "createInstance");
+        List<ExecuteBuildingBlock> sorted = workflowAction.sortExecutionPathByObjectForVlanTagging(executeFlows,
+                "createInstance");
         assertEqualsBulkFlowName(sorted, "AssignNetworkBB", "CreateNetworkBB", "ActivateNetworkBB", "AssignNetworkBB",
                 "CreateNetworkBB", "ActivateNetworkBB");
     }
@@ -2146,8 +2107,8 @@ public class WorkflowActionTest extends BaseTaskTest {
         ExecuteBuildingBlock ebb6 = new ExecuteBuildingBlock().setBuildingBlock(bb6);
         executeFlows.add(ebb6);
 
-        List<ExecuteBuildingBlock> sorted =
-                workflowAction.sortExecutionPathByObjectForVlanTagging(executeFlows, "deleteInstance");
+        List<ExecuteBuildingBlock> sorted = workflowAction.sortExecutionPathByObjectForVlanTagging(executeFlows,
+                "deleteInstance");
         assertEqualsBulkFlowName(sorted, "DeactivateNetworkBB", "DeleteNetworkBB", "UnassignNetworkBB",
                 "DeactivateNetworkBB", "DeleteNetworkBB", "UnassignNetworkBB");
     }

@@ -32,7 +32,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import org.mockito.Spy
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner
 import org.onap.so.bpmn.common.scripts.MsoUtils;
 import org.onap.so.db.request.beans.InfraActiveRequests
 import org.onap.so.db.request.client.RequestsDbClient
