@@ -13,9 +13,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,7 +35,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
@@ -177,7 +176,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         execution = new DelegateExecutionFake();
         org.onap.aai.domain.yang.ServiceInstance servInstance = new org.onap.aai.domain.yang.ServiceInstance();
         servInstance.setServiceInstanceId("TEST");
-        when(bbSetupUtils.getAAIServiceInstanceByName(anyString(), anyObject())).thenReturn(servInstance);
+        when(bbSetupUtils.getAAIServiceInstanceByName(anyString(), any())).thenReturn(servInstance);
         workflowAction.setBbInputSetupUtils(bbSetupUtils);
         workflowAction.setBbInputSetup(bbInputSetup);
 
@@ -235,7 +234,6 @@ public class WorkflowActionTest extends BaseTaskTest {
         String bpmnRequest = readBpmnRequestFromFile(MACRO_ASSIGN_JSON);
         initExecution(gAction, bpmnRequest, true);
         execution.setVariable("requestUri", "v6/serviceInstances/123");
-
 
         NorthBoundRequest northBoundRequest = new NorthBoundRequest();
         List<OrchestrationFlow> orchFlows = createFlowList("AssignServiceInstanceBB", "ActivateServiceInstanceBB");
@@ -763,7 +761,7 @@ public class WorkflowActionTest extends BaseTaskTest {
     }
 
     @Test
-    public void selectExecutionListServiceMacroCreateWithMultipleSameModelVnfAndVfModules() throws Exception {
+    public void selectExecutionListServiceMacroCreateWithMultipleSameModelVnfsAndVfModules() throws Exception {
         String gAction = "createInstance";
         String resource = "Service";
         String bpmnRequest = readBpmnRequestFromFile(MACRO_CREATE_SERVICE_MULTIPLE_SAME_MODEL_VNF_VFMODULE);
@@ -813,7 +811,6 @@ public class WorkflowActionTest extends BaseTaskTest {
         when(catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID("83677d89-428a-407b-b4ec-738e68275d84"))
                 .thenReturn(vfModuleCustomization2);
         when(catalogDbClient.getServiceByID("f2444885-3c76-4ddc-8668-7741c0631495")).thenReturn(service);
-
 
         Resource serviceResource =
                 new Resource(WorkflowType.SERVICE, "f2444885-3c76-4ddc-8668-7741c0631495", false, null);
@@ -1339,8 +1336,6 @@ public class WorkflowActionTest extends BaseTaskTest {
         assertEqualsBulkFlowName(ebbs, "AssignVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB");
     }
 
-
-
     @Test
     public void selectExecutionListALaCarteVfModuleNoVolumeGroupReplaceTest() throws Exception {
         String gAction = "replaceInstance";
@@ -1724,26 +1719,24 @@ public class WorkflowActionTest extends BaseTaskTest {
         org.onap.aai.domain.yang.GenericVnf vnf = new org.onap.aai.domain.yang.GenericVnf();
         vnf.setVnfId("vnf0");
         vnf.setModelCustomizationId("modelCustomizationId");
-        when(bbSetupUtils.getAAIGenericVnf(anyObject())).thenReturn(vnf);
+        when(bbSetupUtils.getAAIGenericVnf(any())).thenReturn(vnf);
 
         org.onap.aai.domain.yang.VfModule vfModule = new org.onap.aai.domain.yang.VfModule();
         vfModule.setModelCustomizationId("modelCustomizationId");
-        when(bbSetupUtils.getAAIVfModule(anyObject(), anyObject())).thenReturn(vfModule);
+        when(bbSetupUtils.getAAIVfModule(any(), any())).thenReturn(vfModule);
 
         List<org.onap.aai.domain.yang.Vnfc> vnfcs = new ArrayList<org.onap.aai.domain.yang.Vnfc>();
         org.onap.aai.domain.yang.Vnfc vnfc = new org.onap.aai.domain.yang.Vnfc();
         vnfc.setModelInvariantId("modelInvariantId");
         vnfc.setVnfcName("testVnfcName");
         vnfcs.add(vnfc);
-        doReturn(vnfcs).when(SPY_workflowAction).getRelatedResourcesInVfModule(anyObject(), anyObject(), anyObject(),
-                anyObject());
+        doReturn(vnfcs).when(SPY_workflowAction).getRelatedResourcesInVfModule(any(), any(), any(), any());
 
         org.onap.aai.domain.yang.Configuration configuration = new org.onap.aai.domain.yang.Configuration();
         configuration.setConfigurationId("configurationId");
         configuration.setModelCustomizationId("modelCustimizationId");
         configuration.setConfigurationName("testConfigurationName");
-        doReturn(configuration).when(SPY_workflowAction).getRelatedResourcesInVnfc(anyObject(), anyObject(),
-                anyObject());
+        doReturn(configuration).when(SPY_workflowAction).getRelatedResourcesInVnfc(any(), any(), any());
 
         SPY_workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
@@ -1812,11 +1805,11 @@ public class WorkflowActionTest extends BaseTaskTest {
         org.onap.aai.domain.yang.GenericVnf vnf = new org.onap.aai.domain.yang.GenericVnf();
         vnf.setVnfId("vnf0");
         vnf.setModelCustomizationId("modelCustomizationId");
-        when(bbSetupUtils.getAAIGenericVnf(anyObject())).thenReturn(vnf);
+        when(bbSetupUtils.getAAIGenericVnf(any())).thenReturn(vnf);
 
         org.onap.aai.domain.yang.VfModule vfModule = new org.onap.aai.domain.yang.VfModule();
         vfModule.setModelCustomizationId("modelCustomizationId");
-        when(bbSetupUtils.getAAIVfModule(anyObject(), anyObject())).thenReturn(null);
+        when(bbSetupUtils.getAAIVfModule(any(), any())).thenReturn(null);
 
         SPY_workflowAction.getConfigBuildingBlocks(dataObj);
     }
@@ -1989,16 +1982,15 @@ public class WorkflowActionTest extends BaseTaskTest {
         org.onap.aai.domain.yang.GenericVnf vnf = new org.onap.aai.domain.yang.GenericVnf();
         vnf.setVnfId("vnf0");
         vnf.setModelCustomizationId("modelCustomizationId");
-        when(bbSetupUtils.getAAIGenericVnf(anyObject())).thenReturn(vnf);
+        when(bbSetupUtils.getAAIGenericVnf(any())).thenReturn(vnf);
 
         org.onap.aai.domain.yang.VfModule vfModule = new org.onap.aai.domain.yang.VfModule();
         vfModule.setModelCustomizationId("modelCustomizationId");
-        when(bbSetupUtils.getAAIVfModule(anyObject(), anyObject())).thenReturn(vfModule);
+        when(bbSetupUtils.getAAIVfModule(any(), any())).thenReturn(vfModule);
 
         List<org.onap.aai.domain.yang.Vnfc> vnfcs = new ArrayList<org.onap.aai.domain.yang.Vnfc>();
 
-        doReturn(vnfcs).when(SPY_workflowAction).getRelatedResourcesInVfModule(anyObject(), anyObject(), anyObject(),
-                anyObject());
+        doReturn(vnfcs).when(SPY_workflowAction).getRelatedResourcesInVfModule(any(), any(), any(), any());
 
         SPY_workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
@@ -2061,8 +2053,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().vnfc(vnfc.getVnfcName()));
         when(bbSetupUtils.getAAIResourceDepthOne(uri)).thenReturn(vfncWrapper);
 
-        doReturn(configurationResultWrappers).when(SPY_workflowAction).getResultWrappersFromRelationships(anyObject(),
-                anyObject());
+        doReturn(configurationResultWrappers).when(SPY_workflowAction).getResultWrappersFromRelationships(any(), any());
         org.onap.aai.domain.yang.Configuration configuration = SPY_workflowAction.getRelatedResourcesInVnfc(vnfc,
                 org.onap.aai.domain.yang.Configuration.class, Types.CONFIGURATION);
         assertEquals("testConfigurationId", configuration.getConfigurationId());

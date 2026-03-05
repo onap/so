@@ -38,8 +38,7 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import static org.junit.Assert.*;
 
 import org.mockito.MockitoAnnotations
-import org.mockito.runners.MockitoJUnitRunner
-import org.mockito.internal.debugging.MockitoDebuggerImpl
+import org.mockito.junit.MockitoJUnitRunner
 import org.junit.Before
 import org.junit.Rule;
 import org.junit.Test

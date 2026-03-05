@@ -27,7 +27,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
@@ -121,7 +120,7 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         execution = new DelegateExecutionFake();
         ServiceInstance servInstance = new ServiceInstance();
         servInstance.setServiceInstanceId("TEST");
-        when(bbSetupUtils.getAAIServiceInstanceByName(anyString(), anyObject())).thenReturn(servInstance);
+        when(bbSetupUtils.getAAIServiceInstanceByName(anyString(), any())).thenReturn(servInstance);
         workflowAction.setBbInputSetupUtils(bbSetupUtils);
         workflowAction.setBbInputSetup(bbInputSetup);
     }

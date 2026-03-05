@@ -27,7 +27,6 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 
 import static org.assertj.core.api.Assertions.assertThat
 import static org.mockito.ArgumentMatchers.any
-import static org.mockito.ArgumentMatchers.anyObject
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when
 
@@ -97,7 +96,7 @@ class CreateAAIVfModuleTest extends MsoGroovyTest{
     @Test
     void testCreateGenericVnf(){
         when(mockExecution.getVariable("CAAIVfMod_vnfName")).thenReturn("vnfName")
-        Mockito.doNothing().when(client).create(any(AAIResourceUri.class) as AAIResourceUri,anyObject())
+        Mockito.doNothing().when(client).create(any(AAIResourceUri.class) as AAIResourceUri,any())
         createAAIVfModule.createGenericVnf(mockExecution)
         Mockito.verify(mockExecution).setVariable("CAAIVfMod_createGenericVnfResponseCode", 201)
         Mockito.verify(mockExecution).setVariable("CAAIVfMod_createGenericVnfResponse","Vnf Created")
@@ -112,7 +111,7 @@ class CreateAAIVfModuleTest extends MsoGroovyTest{
 
         when(mockExecution.getVariable("CAAIVfMod_personaId")).thenReturn("model1")
         when(mockExecution.getVariable("CAAIVfMod_moduleName")).thenReturn("vfModuleName")
-        Mockito.doNothing().when(client).create(any(AAIResourceUri.class) as AAIResourceUri,anyObject())
+        Mockito.doNothing().when(client).create(any(AAIResourceUri.class) as AAIResourceUri,any())
         createAAIVfModule.createVfModule(mockExecution,false)
         Mockito.verify(mockExecution).setVariable("CAAIVfMod_createVfModuleResponseCode", 201)
         Mockito.verify(mockExecution).setVariable("CAAIVfMod_createVfModuleResponse","Vf Module Created")
@@ -173,7 +172,7 @@ class CreateAAIVfModuleTest extends MsoGroovyTest{
         Optional<GenericVnf> genericVnf = getAAIObjectFromJson(GenericVnf.class,"__files/aai/GenericVnfVfModule.json");
         when(mockExecution.getVariable("CAAIVfMod_queryGenericVnfResponse")).thenReturn(genericVnf.get())
         when(mockExecution.getVariable("CAAIVfMod_moduleName")).thenReturn("vfModuleName")
-        Mockito.doNothing().when(client).create(any(AAIResourceUri.class) as AAIResourceUri,anyObject())
+        Mockito.doNothing().when(client).create(any(AAIResourceUri.class) as AAIResourceUri,any())
         createAAIVfModule.createVfModule(mockExecution,true)
         Mockito.verify(mockExecution).setVariable("CAAIVfMod_createVfModuleResponseCode", 201)
         Mockito.verify(mockExecution).setVariable("CAAIVfMod_createVfModuleResponse","Vf Module Created")
