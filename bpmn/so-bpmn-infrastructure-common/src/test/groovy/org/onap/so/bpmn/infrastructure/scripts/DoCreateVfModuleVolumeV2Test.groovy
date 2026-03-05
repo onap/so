@@ -22,7 +22,7 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
-import static org.mockito.ArgumentMatchers.anyObject
+import static org.mockito.ArgumentMatchers.any
 import static org.mockito.Mockito.spy
 import static org.mockito.Mockito.times
 import static org.mockito.Mockito.verify
@@ -200,7 +200,7 @@ class DoCreateVfModuleVolumeV2Test extends MsoGroovyTest {
 		when(mockExecution.getVariable(modelCustomizationId)).thenReturn(modelCustomizationId)
 		when(mockExecution.getVariable(lcpCloudRegionId)).thenReturn(lcpCloudRegionId)
 		when(mockExecution.getVariable("DCVFMODVOLV2_createVnfAResponse")).thenReturn("<createVnfAResponse><volumeGroupStackId>volumeGroupStackId</volumeGroupStackId></createVnfAResponse>")
-		when(client.update(anyObject(),anyObject())).thenThrow(Exception.class)
+		when(client.update(any(),any())).thenThrow(Exception.class)
 		thrown.expect(BpmnError.class)
 		doCreateVfModuleVolumeV2.callRESTUpdateCreatedVolGrpName(mockExecution,null)
 		verify(mockExecution).setVariable("DCVFMODVOLV2_heatStackId","volumeGroupStackId")
