@@ -37,7 +37,7 @@
     </plugins>
   </build>
   <dependencies>
-      <dependency>
+    <dependency>
       <groupId>me.hdpe.bowman</groupId>
       <artifactId>bowman-client</artifactId>
       <version>${bowman.client.version}</version>
