@@ -118,6 +118,125 @@
       "message": "`*****`",
       "revId": "fc0844824c88c248f0ea457f6687cf9ad478d6d7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a98a6116_9d163dc9",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/AbortOrchestrationRequest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-10T13:01:23Z",
+      "side": 1,
+      "message": "This approach also involves removing the `@Autowired`s",
+      "revId": "fc0844824c88c248f0ea457f6687cf9ad478d6d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c8eb1975_3bcce559",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/InfraActiveRequestsService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-10T13:01:23Z",
+      "side": 1,
+      "message": "`@Service`",
+      "revId": "fc0844824c88c248f0ea457f6687cf9ad478d6d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4de921f0_b7901ff4",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/InfraActiveRequestsService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-10T13:01:23Z",
+      "side": 1,
+      "message": "`@Slf4j`",
+      "revId": "fc0844824c88c248f0ea457f6687cf9ad478d6d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "31b1dc26_2ff4de29",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/InfraActiveRequestsService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-10T13:01:23Z",
+      "side": 1,
+      "message": "Remove autowired",
+      "revId": "fc0844824c88c248f0ea457f6687cf9ad478d6d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "43ca5d99_0ce6377e",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/InfraActiveRequestsService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-10T13:01:23Z",
+      "side": 1,
+      "message": "We should use `debug` logging here",
+      "revId": "fc0844824c88c248f0ea457f6687cf9ad478d6d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3c533b64_11abe74e",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/PauseOrchestrationRequest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-10T13:01:23Z",
+      "side": 1,
+      "message": "I don\u0027t think we need `javax.swing` here, do we?",
+      "revId": "fc0844824c88c248f0ea457f6687cf9ad478d6d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "34fed072_75849e34",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/ResumeOrchestrationRequest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-10T13:01:23Z",
+      "side": 1,
+      "message": "Remove `@Autowired`",
+      "revId": "fc0844824c88c248f0ea457f6687cf9ad478d6d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
