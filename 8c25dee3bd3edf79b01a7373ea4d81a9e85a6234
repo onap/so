@@ -432,6 +432,57 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "0d5bcfe4_a3a93c61",
+        "filename": "mso-api-handlers/mso-api-handler-common/src/main/java/org/onap/so/db/camunda/client/CamundaDBClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-10T07:54:19Z",
+      "side": 1,
+      "message": "Please use constructor injection for this with `private final`",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "49ae3a05_89698f35",
+        "filename": "mso-api-handlers/mso-api-handler-common/src/main/java/org/onap/so/db/camunda/client/CamundaDBClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-10T07:54:19Z",
+      "side": 1,
+      "message": "You can use `@Slf4j` for this",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "98f8d0d6_5df92275",
+        "filename": "mso-api-handlers/mso-api-handler-common/src/main/java/org/onap/so/db/camunda/client/CamundaDBClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-10T07:54:19Z",
+      "side": 1,
+      "message": "This should be `logger.debug` or even `logger.trace`",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a59add83_9d0fda11",
         "filename": "mso-api-handlers/mso-api-handler-common/src/main/java/org/onap/so/db/camunda/client/CamundaDBClient.java",
         "patchSetId": 1
@@ -712,6 +763,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "13014c49_fb484835",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/AbortOrchestrationRequest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-10T07:54:19Z",
+      "side": 1,
+      "message": "`serviceInstanceRequest`",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a8d0f117_7a3fe213",
         "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/AbortOrchestrationRequest.java",
         "patchSetId": 1
@@ -817,6 +885,40 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "ee7db4d3_47cfb24d",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/PauseOrchestrationRequest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-10T07:54:19Z",
+      "side": 1,
+      "message": "`serviceInstanceRequest`",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e5702a6e_bc6f1f49",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/ResumeOrchestrationRequest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-10T07:54:19Z",
+      "side": 1,
+      "message": "leftover",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "df81a2b3_0d512a17",
         "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/ResumeOrchestrationRequest.java",
         "patchSetId": 1
@@ -846,6 +948,159 @@
       "side": 1,
       "message": "I have registered ObjectMapper on the class level",
       "parentUuid": "df81a2b3_0d512a17",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "61afb120_23c0fa2f",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/configuration/CamundaDBConfig.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-10T07:54:19Z",
+      "side": 1,
+      "message": "Copyright header",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e89275c3_81ba87b8",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/configuration/CamundaDBConfig.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-10T07:54:19Z",
+      "side": 1,
+      "message": "`@Slf4j`",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "09e1e109_66aadf1d",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/configuration/CamundaDBConfig.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-10T07:54:19Z",
+      "side": 1,
+      "message": "private final + @RequiredArgsConstructor",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b161cafd_78b26bb5",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/configuration/CamundaDBConfig.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-10T07:54:19Z",
+      "side": 1,
+      "message": "Please remove that",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "31ab8ebc_eb66b574",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/configuration/CamundaDBConfig.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-10T07:54:19Z",
+      "side": 1,
+      "message": "Please add a comment here to explain why you are doing this, i.e:\n`With multiple DataSource beans a NameAlreadyBoundException would be thrown due to name collisions`",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "81c621bf_1f56d702",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/AbortOrchestrationRequestTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-10T07:54:19Z",
+      "side": 1,
+      "message": "`http://`",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7a771663_ac5b408f",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/AbortOrchestrationRequestTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-10T07:54:19Z",
+      "side": 1,
+      "message": "`serviceInstanceRequest`",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e4289a4d_0ea4b5ef",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/AbortOrchestrationRequestTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-10T07:54:19Z",
+      "side": 1,
+      "message": "Insert a new line here with `InfraActiveRequests infraActiveRequests \u003d new InfraActiveRequests();`\nand then set the attributes on that and ultimately `return infraActiveRequests;`",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "44feed5f_656baf6b",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/AbortOrchestrationRequestTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-03-10T07:54:19Z",
+      "side": 1,
+      "message": "As far as I can see, this method is a one to one copy of `setInfraActiveRequest1()`.\nPlease remove it.",
       "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
