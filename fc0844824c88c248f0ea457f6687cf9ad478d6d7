@@ -120,6 +120,24 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2be944bd_3c10e690",
+        "filename": "mso-api-handlers/mso-api-handler-common/src/main/java/org/onap/so/db/camunda/client/CamundaDBClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 8523
+      },
+      "writtenOn": "2026-03-11T13:31:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fc90b198_c39ef04f",
+      "revId": "fc0844824c88c248f0ea457f6687cf9ad478d6d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a98a6116_9d163dc9",
@@ -133,6 +151,24 @@
       "writtenOn": "2026-03-10T13:01:23Z",
       "side": 1,
       "message": "This approach also involves removing the `@Autowired`s",
+      "revId": "fc0844824c88c248f0ea457f6687cf9ad478d6d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1c1be4ad_7c2f0cf0",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/AbortOrchestrationRequest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 8523
+      },
+      "writtenOn": "2026-03-11T13:31:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a98a6116_9d163dc9",
       "revId": "fc0844824c88c248f0ea457f6687cf9ad478d6d7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
@@ -154,6 +190,24 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "88dd825c_eae7b2d8",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/InfraActiveRequestsService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 8523
+      },
+      "writtenOn": "2026-03-11T13:31:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c8eb1975_3bcce559",
+      "revId": "fc0844824c88c248f0ea457f6687cf9ad478d6d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4de921f0_b7901ff4",
@@ -167,6 +221,24 @@
       "writtenOn": "2026-03-10T13:01:23Z",
       "side": 1,
       "message": "`@Slf4j`",
+      "revId": "fc0844824c88c248f0ea457f6687cf9ad478d6d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "34adb564_ce919453",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/InfraActiveRequestsService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 8523
+      },
+      "writtenOn": "2026-03-11T13:31:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4de921f0_b7901ff4",
       "revId": "fc0844824c88c248f0ea457f6687cf9ad478d6d7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
@@ -188,6 +260,24 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0a9b18b3_9a958d84",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/InfraActiveRequestsService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 8523
+      },
+      "writtenOn": "2026-03-11T13:31:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "31b1dc26_2ff4de29",
+      "revId": "fc0844824c88c248f0ea457f6687cf9ad478d6d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "43ca5d99_0ce6377e",
@@ -201,6 +291,24 @@
       "writtenOn": "2026-03-10T13:01:23Z",
       "side": 1,
       "message": "We should use `debug` logging here",
+      "revId": "fc0844824c88c248f0ea457f6687cf9ad478d6d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5916a977_bd4753bb",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/InfraActiveRequestsService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 8523
+      },
+      "writtenOn": "2026-03-11T13:31:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "43ca5d99_0ce6377e",
       "revId": "fc0844824c88c248f0ea457f6687cf9ad478d6d7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
@@ -222,6 +330,24 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6b21b967_8a89b3d6",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/PauseOrchestrationRequest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 8523
+      },
+      "writtenOn": "2026-03-11T13:31:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3c533b64_11abe74e",
+      "revId": "fc0844824c88c248f0ea457f6687cf9ad478d6d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "34fed072_75849e34",
@@ -235,6 +361,24 @@
       "writtenOn": "2026-03-10T13:01:23Z",
       "side": 1,
       "message": "Remove `@Autowired`",
+      "revId": "fc0844824c88c248f0ea457f6687cf9ad478d6d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f08392ff_01e1120f",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/ResumeOrchestrationRequest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 8523
+      },
+      "writtenOn": "2026-03-11T13:31:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "34fed072_75849e34",
       "revId": "fc0844824c88c248f0ea457f6687cf9ad478d6d7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }

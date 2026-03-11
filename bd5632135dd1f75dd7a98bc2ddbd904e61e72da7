@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3a55f742_826b9319",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8523
+      },
+      "writtenOn": "2026-03-11T13:31:30Z",
+      "side": 1,
+      "message": "Some more comments are resolved and third patch set is uploaded",
+      "revId": "bd5632135dd1f75dd7a98bc2ddbd904e61e72da7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
