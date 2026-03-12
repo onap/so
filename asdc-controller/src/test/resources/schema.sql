@@ -1418,7 +1418,7 @@ CREATE TABLE IF NOT EXISTS `service_artifact`(
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --------START Request DB SCHEMA --------
-CREATE DATABASE requestdb;
+CREATE DATABASE IF NOT EXISTS requestdb;
 USE requestdb;
 
 

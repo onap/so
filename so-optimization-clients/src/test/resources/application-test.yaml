@@ -43,7 +43,7 @@ pnf:
 mso:
   naming:
     endpoint: http://localhost:${wiremock.server.port}/web/service/v1/genNetworkElementName
-    auth: Basic YnBlbDptc28tZGItMTUwNyE= 
+    auth: Basic YnBlbDptc28tZGItMTUwNyE=
   adapters:
     requestDb:
       auth: Basic YnBlbDptc28tZGItMTUwNyE=
@@ -99,7 +99,7 @@ mso:
     db:
       endpoint: http://localhost:${wiremock.server.port}/
       spring:
-        endpoint: http://localhost:${wiremock.server.port}  
+        endpoint: http://localhost:${wiremock.server.port}
   correlation:
         timeout: 60
   db:
@@ -120,9 +120,9 @@ mso:
   request:
     db:
       endpoint: http://localhost:${wiremock.server.port}/
-  rollback: 'true' 
+  rollback: 'true'
   site-name: localDevEnv
-  workflow:    
+  workflow:
     default:
       aai:
         cloud-region:
@@ -196,7 +196,9 @@ spring:
     username: root
     password: password
     driver-class-name: org.mariadb.jdbc.Driver
-    initialization-mode: always
+  sql:
+    init:
+      mode: always
   jpa:
     generate-ddl: false
     show-sql: false
