@@ -18,7 +18,6 @@ spring:
     username: root
     password: password
     driver-class-name: org.mariadb.jdbc.Driver
-    initialization-mode: always
     data: classpath*:data.sql
   liquibase:
     change-log: classpath:db/changelog/db.changelog-test.xml

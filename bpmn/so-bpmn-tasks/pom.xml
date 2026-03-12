@@ -156,6 +156,17 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <!-- Pin Netty to the version compatible with grpc-netty 1.29.0.
+             Newer Netty (4.1.86+) calls Http2Headers.isEmpty() which grpc-netty
+             1.29.0's AbstractHttp2Headers throws as UnsupportedOperationException.
+             This pin must precede spring-boot-dependencies to take effect. -->
+        <groupId>io.netty</groupId>
+        <artifactId>netty-bom</artifactId>
+        <version>4.1.85.Final</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
         <!-- Import dependency management from Spring Boot -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>

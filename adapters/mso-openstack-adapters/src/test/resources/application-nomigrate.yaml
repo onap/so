@@ -80,7 +80,9 @@ spring:
     username: root
     password: password
     driver-class-name: org.mariadb.jdbc.Driver
-    initialization-mode: always
+  sql:
+    init:
+      mode: always
   jpa:
     generate-ddl: false
     show-sql: false

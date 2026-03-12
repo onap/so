@@ -24,7 +24,9 @@ spring:
     password: password
     driver-class-name: org.mariadb.jdbc.Driver
     initialize: true
-    initialization-mode: never
+  sql:
+    init:
+      mode: never
   liquibase:
     change-log: classpath:db/changelog/db.changelog-test.xml
     url: jdbc:mariadb://localhost:3307/requestdb

@@ -50,12 +50,12 @@ org:
         valet:
           base_url: http://localhost:${wiremock.server.port}
           base_path: /api/valet/placement/v1/
-          valet_auth: 
+          valet_auth:
         po:
           retryCodes: 504
           retryDelay: 5
           retryCount: 3
-      
+
 server-port: 8080
 ssl-enable: false
 tomcat:
@@ -88,23 +88,25 @@ spring:
     url: jdbc:mariadb://localhost:3307/catalogdb
     username: root
     password: password
-    driver-class-name: org.mariadb.jdbc.Driver    
-    initialization-mode: always
-  jpa:   
+    driver-class-name: org.mariadb.jdbc.Driver
+  sql:
+    init:
+      mode: always
+  jpa:
     generate-ddl: false
     show-sql: false
-    hibernate:      
+    hibernate:
       ddl-auto: none
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
   security:
     usercredentials:
-    -  
+    -
       username: test
       password: '$2a$12$Zi3AuYcZoZO/gBQyUtST2.F5N6HqcTtaNci2Et.ufsQhski56srIu'
-      role: MSO-Client        
+      role: MSO-Client
 
 mariaDB4j:
-  dataDir: 
+  dataDir:
   port: 3308
   databaseName: catalogdb
 
@@ -121,7 +123,7 @@ management:
     export:
       prometheus:
         enabled: true # Whether exporting of metrics to Prometheus is enabled.
-        step: 1m # Step size (i.e. reporting frequency) to use.  
+        step: 1m # Step size (i.e. reporting frequency) to use.
 
 appc:
   client:

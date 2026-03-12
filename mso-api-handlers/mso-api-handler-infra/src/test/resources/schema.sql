@@ -1264,7 +1264,7 @@ CREATE TABLE IF NOT EXISTS `pnf_resource_customization_to_service` (
   PRIMARY KEY (`SERVICE_MODEL_UUID`,`RESOURCE_MODEL_CUSTOMIZATION_UUID`)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
 --------START Request DB SCHEMA --------
-CREATE DATABASE requestdb;
+CREATE DATABASE IF NOT EXISTS requestdb;
 USE requestdb;
 
 

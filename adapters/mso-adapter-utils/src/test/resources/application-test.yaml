@@ -44,7 +44,7 @@ org:
     orm_url_replace_with_this: "7080"
     quota_value: "10"
     set_default_quota: "false"
-      
+
 server-port: 8080
 ssl-enable: false
 tomcat:
@@ -70,26 +70,28 @@ spring:
     jdbc-url: jdbc:mariadb://localhost:3307/catalogdb
     username: root
     password: password
-    driver-class-name: org.mariadb.jdbc.Driver    
+    driver-class-name: org.mariadb.jdbc.Driver
     initialize: true
-    initialization-mode: never
-  jpa:   
+  sql:
+    init:
+      mode: never
+  jpa:
     generate-ddl: false
     show-sql: false
-    hibernate:      
+    hibernate:
       ddl-auto: none
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
       enable-lazy-load-no-trans: true
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
 
 mariaDB4j:
-  dataDir: 
+  dataDir:
   port: 3307
   databaseName: catalogdb
 
 
 #Actuator
-management: 
+management:
   endpoints:
     enabled-by-default: false
   endpoint:
