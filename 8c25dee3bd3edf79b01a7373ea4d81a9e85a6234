@@ -194,6 +194,24 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "076d4ea1_ec98acde",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowAsyncResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 8523
+      },
+      "writtenOn": "2026-03-18T13:45:12Z",
+      "side": 1,
+      "message": "This line return buildResponse(foundContext) is doing for stopping loop.",
+      "parentUuid": "50bdd943_f8f21ffe",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "445a5a2e_80fd8579",
@@ -260,6 +278,24 @@
       "writtenOn": "2026-03-03T13:02:40Z",
       "side": 1,
       "message": "Please use speaking variable names in all your code changes for this repo. So I want write a review comment for each instance in this CR, please just adjust this everywhere",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "34d5603e_e108efd7",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowAsyncResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 8523
+      },
+      "writtenOn": "2026-03-18T13:45:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b0150c25_637398b5",
       "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
@@ -1591,6 +1627,24 @@
       "writtenOn": "2026-03-10T07:54:19Z",
       "side": 1,
       "message": "Please add a comment here to explain why you are doing this, i.e:\n`With multiple DataSource beans a NameAlreadyBoundException would be thrown due to name collisions`",
+      "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b3a31082_fdcf59f2",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/configuration/CamundaDBConfig.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 8523
+      },
+      "writtenOn": "2026-03-18T13:45:12Z",
+      "side": 1,
+      "message": "By calling mBeanExporter.addExcludedBean(\"camundaDataSource\"), you are telling the Spring MBeanExporter to ignore the bean with the specified name during its auto-detection process, even if the bean meets the general criteria for JMX exposure. The mBeanExporter.addExcludedBean method in Spring Boot is used to prevent specific beans from being automatically registered as JMX MBeans, primarily to resolve conflicts or avoid redundant registrations",
+      "parentUuid": "31ab8ebc_eb66b574",
       "revId": "8c25dee3bd3edf79b01a7373ea4d81a9e85a6234",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
