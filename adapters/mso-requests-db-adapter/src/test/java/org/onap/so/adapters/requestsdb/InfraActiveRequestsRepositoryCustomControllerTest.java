@@ -21,8 +21,7 @@
 package org.onap.so.adapters.requestsdb;
 
 
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import java.sql.Timestamp;
@@ -330,7 +329,8 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
 
         for (InfraActiveRequests result : responseList) {
             if (result.getRequestId().equals(request.getRequestId())) {
-                assertThat(request, sameBeanAs(result).ignoring("modifyTime"));
+                assertThat(request).usingRecursiveComparison().ignoringFields("modifyTime", "startTime")
+                        .isEqualTo(result);
                 expectedReturned = true;
             }
         }

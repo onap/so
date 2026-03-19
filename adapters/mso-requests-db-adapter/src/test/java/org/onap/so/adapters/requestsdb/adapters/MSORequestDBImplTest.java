@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,8 +20,7 @@
 
 package org.onap.so.adapters.requestsdb.adapters;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import java.util.ArrayList;
@@ -133,8 +132,8 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
             fail("Null infraRequest");
 
         // Then
-        assertThat(infraRequest, sameBeanAs(testRequest).ignoring("requestBody").ignoring("endTime")
-                .ignoring("startTime").ignoring("modifyTime"));
+        assertThat(infraRequest).usingRecursiveComparison()
+                .ignoringFields("requestBody", "endTime", "startTime", "modifyTime").isEqualTo(testRequest);
     }
 
 
@@ -199,8 +198,8 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
                 serviceInstanceName, configurationId, configurationName, vfModuleName);
         InfraActiveRequests infraRequest = dbAdapter.getInfraRequest(requestId);
         // Then
-        assertThat(infraRequest, sameBeanAs(testRequest).ignoring("requestBody").ignoring("endTime")
-                .ignoring("startTime").ignoring("modifyTime"));
+        assertThat(infraRequest).usingRecursiveComparison()
+                .ignoringFields("requestBody", "endTime", "startTime", "modifyTime").isEqualTo(testRequest);
 
 
     }
@@ -231,8 +230,8 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
                 null, null, null, null, null, null, null, null, null, null, null);
         InfraActiveRequests infraRequest = dbAdapter.getInfraRequest(requestId);
         // Then
-        assertThat(infraRequest, sameBeanAs(testRequest).ignoring("requestBody").ignoring("endTime")
-                .ignoring("startTime").ignoring("modifyTime"));
+        assertThat(infraRequest).usingRecursiveComparison()
+                .ignoringFields("requestBody", "endTime", "startTime", "modifyTime").isEqualTo(testRequest);
     }
 
     @Test
@@ -280,7 +279,7 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
 
         dbAdapter.setInstanceNfvoMappingRepository(instanceId, nfvoName, endpoint, username, password, apiRoot);
         InstanceNfvoMapping dbInstNfvoMap = dbAdapter.getInstanceNfvoMapping(instanceId);
-        assertThat(dbInstNfvoMap, sameBeanAs(instanceNfvoMapping));
+        assertThat(dbInstNfvoMap).usingRecursiveComparison().isEqualTo(instanceNfvoMapping);
     }
 
 
@@ -313,7 +312,8 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
         dbAdapter.updateServiceOperationStatus(serviceId, operationId, operation, userId, result, operationContent,
                 progress, reason);
         OperationStatus dbOpStatus = operationStatusRepository.findOneByServiceIdAndOperationId(serviceId, operationId);
-        assertThat(dbOpStatus, sameBeanAs(updatedOperationStatus).ignoring("operateAt").ignoring("finishedAt"));
+        assertThat(dbOpStatus).usingRecursiveComparison().ignoringFields("operateAt", "finishedAt")
+                .isEqualTo(updatedOperationStatus);
     }
 
 
@@ -345,7 +345,8 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
         dbAdapter.updateServiceOperationStatus(serviceId, operationId, operation, userId, result, operationContent,
                 progress, reason);
         OperationStatus dbOpStatus = operationStatusRepository.findOneByServiceIdAndOperationId(serviceId, operationId);
-        assertThat(dbOpStatus, sameBeanAs(updatedOperationStatus).ignoring("operateAt").ignoring("finishedAt"));
+        assertThat(dbOpStatus).usingRecursiveComparison().ignoringFields("operateAt", "finishedAt")
+                .isEqualTo(updatedOperationStatus);
     }
 
     @Test
@@ -387,7 +388,7 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
         dbAdapter.initResourceOperationStatus(serviceId, operationId, operationType, resourceTemplateUUIDs);
         List<ResourceOperationStatus> testList =
                 resourceOperationStatusRepo.findByServiceIdAndOperationId(serviceId, operationId);
-        assertThat(testList, sameBeanAs(expectedResult));
+        assertThat(testList).usingRecursiveComparison().isEqualTo(expectedResult);
     }
 
     @Test
@@ -410,7 +411,7 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
 
         ResourceOperationStatus actualResource =
                 dbAdapter.getResourceOperationStatus(serviceId, operationId, "template1");
-        assertThat(actualResource, sameBeanAs(resource1));
+        assertThat(actualResource).usingRecursiveComparison().isEqualTo(resource1);
     }
 
     @Test
@@ -446,6 +447,6 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
 
         ResourceOperationStatus actualResource =
                 dbAdapter.getResourceOperationStatus(serviceId, operationId, "template1");
-        assertThat(actualResource, sameBeanAs(expectedResource));
+        assertThat(actualResource).usingRecursiveComparison().isEqualTo(expectedResource);
     }
 }

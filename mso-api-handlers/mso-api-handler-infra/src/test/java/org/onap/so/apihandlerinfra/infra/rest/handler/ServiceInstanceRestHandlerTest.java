@@ -20,8 +20,7 @@
 
 package org.onap.so.apihandlerinfra.infra.rest.handler;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -81,7 +80,7 @@ public class ServiceInstanceRestHandlerTest {
         doReturn(expected).when(catalogDbClient)
                 .findServiceRecipeByActionAndServiceModelUUID(Action.createInstance.toString(), "testModelId");
         Recipe actual = restHandler.findServiceRecipe("testModelId", Action.createInstance.toString());
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
         Mockito.verify(catalogDbClient, Mockito.times(1))
                 .findServiceRecipeByActionAndServiceModelUUID(Action.createInstance.toString(), "testModelId");
     }
@@ -95,7 +94,7 @@ public class ServiceInstanceRestHandlerTest {
         doReturn(expected).when(catalogDbClient).findServiceRecipeByActionAndServiceModelUUID(
                 Action.createInstance.toString(), "d88da85c-d9e8-4f73-b837-3a72a431622b");
         Recipe actual = restHandler.findServiceRecipe("testModelId", Action.createInstance.toString());
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
         Mockito.verify(catalogDbClient, Mockito.times(1))
                 .findServiceRecipeByActionAndServiceModelUUID(Action.createInstance.toString(), "testModelId");
         Mockito.verify(catalogDbClient, Mockito.times(1)).findServiceRecipeByActionAndServiceModelUUID(
@@ -144,7 +143,7 @@ public class ServiceInstanceRestHandlerTest {
                         .setRequestUri("http://localhost:8080/serviceInstances").setApiVersion("v8").build();
         RequestClientParameter actual = restHandler.buildRequestParams(createTestRequest(),
                 "http://localhost:8080/serviceInstances", "requestId", "serviceInstanceId");
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -161,7 +160,7 @@ public class ServiceInstanceRestHandlerTest {
         expected.setRequestScope(ModelType.service.toString());
         InfraActiveRequests actual = restHandler.createInfraActiveRequestForDelete("requestId", "serviceInstanceId",
                 "userId", "VID", "http://localhost:9090");
-        assertThat(actual, sameBeanAs(expected).ignoring("startTime"));
+        assertThat(actual).usingRecursiveComparison().ignoringFields("startTime").isEqualTo(expected);
         Mockito.verify(infraActiveRequestsClient, Mockito.times(1)).save(actual);
     }
 

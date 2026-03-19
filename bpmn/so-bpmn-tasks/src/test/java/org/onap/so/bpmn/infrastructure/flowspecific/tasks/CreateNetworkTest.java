@@ -19,8 +19,7 @@
  */
 package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
@@ -87,6 +86,7 @@ public class CreateNetworkTest extends BaseTaskTest {
         verify(networkAdapterObjectMapper, times(1)).createNetworkRequestMapper(requestContext, cloudRegion,
                 orchestrationContext, serviceInstance, network, userInput, cloudRegionPo, customer);
 
-        assertThat(expectedCreateNetworkRequest, sameBeanAs(execution.getVariable("createNetworkRequest")));
+        assertThat(expectedCreateNetworkRequest).usingRecursiveComparison()
+                .isEqualTo(execution.getVariable("createNetworkRequest"));
     }
 }

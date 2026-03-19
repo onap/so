@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,6 +20,7 @@
 
 package org.onap.so.apihandlerinfra;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import org.apache.http.HttpStatus;
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,11 +33,10 @@ import org.onap.so.logger.MessageEnum;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.startsWith;
-
 
 public class ApiExceptionTest extends BaseTest {
 
@@ -54,7 +54,6 @@ public class ApiExceptionTest extends BaseTest {
         throw testException;
     }
 
-
     @Test
     public void testBPMNFailureException() throws ApiException {
         List<String> testVariables = new LinkedList<>();
@@ -63,12 +62,11 @@ public class ApiExceptionTest extends BaseTest {
         thrown.expectMessage(startsWith("Request Failed due to BPEL error with HTTP Status ="));
         thrown.expect(hasProperty("httpResponseCode", is(HttpStatus.SC_NOT_FOUND)));
         thrown.expect(hasProperty("messageID", is(ErrorNumbers.SVC_BAD_PARAMETER)));
-        thrown.expect(hasProperty("variables", sameBeanAs(testVariables)));
+        thrown.expect(hasProperty("variables", equalTo(testVariables)));
         BPMNFailureException testException = new BPMNFailureException.Builder("Test Message", HttpStatus.SC_NOT_FOUND,
                 ErrorNumbers.SVC_BAD_PARAMETER).variables(testVariables).build();
         throw testException;
     }
-
 
     @Test
     public void testClientConnectionException() throws ApiException {
@@ -79,13 +77,12 @@ public class ApiExceptionTest extends BaseTest {
         thrown.expect(hasProperty("messageID", is(ErrorNumbers.SVC_BAD_PARAMETER)));
         thrown.expect(hasProperty("httpResponseCode", is(HttpStatus.SC_NOT_FOUND)));
         thrown.expect(hasProperty("messageID", is(ErrorNumbers.SVC_BAD_PARAMETER)));
-        thrown.expect(hasProperty("cause", sameBeanAs(ioException)));
+        thrown.expect(hasProperty("cause", equalTo(ioException)));
         ClientConnectionException testException =
                 new ClientConnectionException.Builder("test", HttpStatus.SC_NOT_FOUND, ErrorNumbers.SVC_BAD_PARAMETER)
                         .cause(ioException).build();
         throw testException;
     }
-
 
     @Test
     public void testDuplicateRequestException() throws ApiException {
@@ -96,12 +93,11 @@ public class ApiExceptionTest extends BaseTest {
         thrown.expectMessage(startsWith("Error: Locked instance"));
         thrown.expect(hasProperty("httpResponseCode", is(HttpStatus.SC_NOT_FOUND)));
         thrown.expect(hasProperty("messageID", is(ErrorNumbers.SVC_BAD_PARAMETER)));
-        thrown.expect(hasProperty("errorLoggerInfo", sameBeanAs(testLog)));
+        thrown.expect(hasProperty("errorLoggerInfo", equalTo(testLog)));
         DuplicateRequestException testException = new DuplicateRequestException.Builder("Test1", "Test2", "Test3",
                 "Test4", HttpStatus.SC_NOT_FOUND, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(testLog).build();
         throw testException;
     }
-
 
     @Test
     public void testValidateException() throws ApiException {
@@ -117,7 +113,6 @@ public class ApiExceptionTest extends BaseTest {
         throw testException;
     }
 
-
     @Test
     public void testVfModuleNotFoundException() throws ApiException {
         thrown.expect(VfModuleNotFoundException.class);
@@ -129,6 +124,5 @@ public class ApiExceptionTest extends BaseTest {
                         ErrorNumbers.SVC_BAD_PARAMETER).httpResponseCode(HttpStatus.SC_CONFLICT).build();
         throw testException;
     }
-
 
 }
