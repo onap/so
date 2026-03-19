@@ -22,6 +22,7 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.tasks.ebb.loader;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -67,8 +68,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -116,7 +115,6 @@ public class ServiceEBBLoaderTest extends BaseTaskTest {
                 mockAaiConfigurationResources, mockWorkflowActionExtractResourcesAAI, mockBbInputSetupUtils,
                 mockBbInputSetup, mock(ExceptionBuilder.class));
     }
-
 
     @Test
     public void getResourceListForServiceWithRequestActionAssignInstance()
@@ -258,7 +256,7 @@ public class ServiceEBBLoaderTest extends BaseTaskTest {
             serviceEBBLoader.traverseAAIService(execution, resourceCounter, resourceId, aaiResourceIds);
             assertEquals(8, resourceCounter.size());
             assertTrue(resourceCounter.get(2).isBaseVfModule());
-            assertThat(aaiResourceIds, sameBeanAs(getExpectedResourceIds()));
+            assertThat(aaiResourceIds).usingRecursiveComparison().isEqualTo(getExpectedResourceIds());
         } catch (Exception e) {
             fail("Unexpected exception was thrown.");
         }
@@ -291,7 +289,6 @@ public class ServiceEBBLoaderTest extends BaseTaskTest {
         relatedVpnBinding.setInstanceId("vpnBindingInstanceId");
         RelatedInstance relatedLocalNetwork = new RelatedInstance();
         relatedLocalNetwork.setInstanceId("localNetworkInstanceId");
-
 
         doReturn(aaiLocalNetwork).when(mockBbInputSetupUtils).getAAIL3Network("localNetworkInstanceId");
 
@@ -340,7 +337,6 @@ public class ServiceEBBLoaderTest extends BaseTaskTest {
         service.setModelUUID("abc");
         service.getCollectionResourceCustomizations().add(collectionResourceCustomization);
         service.getCollectionResourceCustomizations().add(collectionResourceCustomization);
-
 
         doReturn(service).when(mockCatalogDbClient).getServiceByID("3c40d244-808e-42ca-b09a-256d83d19d0a");
         doReturn(collectionResourceCustomization).when(mockCatalogDbClient)
@@ -394,7 +390,6 @@ public class ServiceEBBLoaderTest extends BaseTaskTest {
         RelatedToProperty relatedToProperty1 = new RelatedToProperty();
         relatedToProperty1.setPropertyKey("service-instance.service-instance-name");
         relatedToProperty.setPropertyValue("child_euler_001");
-
 
         Relationship relationship = new Relationship();
         Relationship relationship1 = new Relationship();

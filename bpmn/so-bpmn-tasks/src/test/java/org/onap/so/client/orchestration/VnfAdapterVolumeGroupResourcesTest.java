@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,7 +20,7 @@
 
 package org.onap.so.client.orchestration;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -44,7 +44,6 @@ import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.client.adapter.vnf.VnfVolumeAdapterClientImpl;
 import org.onap.so.client.adapter.vnf.mapper.VnfAdapterObjectMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
-import com.shazam.shazamcrest.matcher.Matchers;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class VnfAdapterVolumeGroupResourcesTest extends TestDataSetup {
@@ -104,7 +103,7 @@ public class VnfAdapterVolumeGroupResourcesTest extends TestDataSetup {
         verify(MOCK_vnfAdapterObjectMapper, times(1)).createVolumeGroupRequestMapper(requestContext, cloudRegion,
                 orchestrationContext, serviceInstance, genericVnf, volumeGroup, sdncVfModuleQueryResponse);
 
-        assertThat(createVolumeGroupRequest, Matchers.sameBeanAs(actualCreateVolumeGroupResponse));
+        assertThat(createVolumeGroupRequest).usingRecursiveComparison().isEqualTo(actualCreateVolumeGroupResponse);
     }
 
     @Test
@@ -119,6 +118,7 @@ public class VnfAdapterVolumeGroupResourcesTest extends TestDataSetup {
 
         verify(MOCK_vnfAdapterObjectMapper, times(1)).deleteVolumeGroupRequestMapper(requestContext, cloudRegion,
                 serviceInstance, volumeGroup);
-        assertThat(expectedDeleteVolumeGroupRequest, Matchers.sameBeanAs(actualDeleteVolumeGroupRequest));
+        assertThat(expectedDeleteVolumeGroupRequest).usingRecursiveComparison()
+                .isEqualTo(actualDeleteVolumeGroupRequest);
     }
 }
