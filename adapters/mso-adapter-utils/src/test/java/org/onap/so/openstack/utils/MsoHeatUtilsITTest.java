@@ -22,11 +22,10 @@
 
 package org.onap.so.openstack.utils;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -99,9 +98,8 @@ public class MsoHeatUtilsITTest extends BaseTest {
 
         VduInstance actual = heatUtils.instantiateVdu(cloudInfo, instanceName, inputs, vduModel, rollbackOnFailure);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
-
 
     @Test
     public void queryVduTest() throws Exception {
@@ -127,7 +125,7 @@ public class MsoHeatUtilsITTest extends BaseTest {
 
         VduInstance actual = heatUtils.queryVdu(cloudInfo, instanceId);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -156,7 +154,7 @@ public class MsoHeatUtilsITTest extends BaseTest {
 
         VduInstance actual = heatUtils.deleteVdu(cloudInfo, instanceId, timeoutInMinutes);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -213,7 +211,5 @@ public class MsoHeatUtilsITTest extends BaseTest {
                 "TEST-heat", new HashMap<>(), false, 1, "TEST-env", new HashMap<>(), new HashMap<>(), false, false);
         assertNotNull(stackInfo);
     }
-
-
 
 }

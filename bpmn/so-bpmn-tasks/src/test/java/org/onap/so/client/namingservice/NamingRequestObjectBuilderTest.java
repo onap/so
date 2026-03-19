@@ -20,8 +20,7 @@
 
 package org.onap.so.client.namingservice;
 
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
@@ -53,7 +52,7 @@ public class NamingRequestObjectBuilderTest {
         Element actual =
                 mapper.elementMapper(instanceGroupId, policyInstanceName, namingType, nfNamingCode, instanceGroupName);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -65,7 +64,7 @@ public class NamingRequestObjectBuilderTest {
         // Actual Deleteelement
         Deleteelement actual = mapper.deleteElementMapper(instanceGroupId);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -85,7 +84,7 @@ public class NamingRequestObjectBuilderTest {
         // Actual NameGenRequest
         NameGenRequest actual = mapper.nameGenRequestMapper(elements);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -101,6 +100,6 @@ public class NamingRequestObjectBuilderTest {
         // Actual NameGenDeleteRequest
         NameGenDeleteRequest actual = mapper.nameGenDeleteRequestMapper(deleteElements);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 }

@@ -22,8 +22,6 @@
 
 package org.onap.so.bpmn.infrastructure.appc.tasks;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
@@ -90,7 +88,7 @@ public class AppcOrchestratorPreProcessorTest extends TestDataSetup {
         when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
         appcOrchestratorPreProcessor.buildAppcTaskRequest(execution, "Lock");
         ApplicationControllerTaskRequest actualTaskRequest = execution.getVariable("appcOrchestratorRequest");
-        assertThat(actualTaskRequest, sameBeanAs(expectedTaskRequest));
+        assertThat(actualTaskRequest).usingRecursiveComparison().isEqualTo(expectedTaskRequest);
     }
 
     @Test
@@ -195,7 +193,7 @@ public class AppcOrchestratorPreProcessorTest extends TestDataSetup {
         when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
         appcOrchestratorPreProcessor.buildAppcTaskRequest(execution, "ConfigModify");
         ApplicationControllerTaskRequest actualTaskRequest = execution.getVariable("appcOrchestratorRequest");
-        assertThat(actualTaskRequest, sameBeanAs(expectedTaskRequest));
+        assertThat(actualTaskRequest).usingRecursiveComparison().isEqualTo(expectedTaskRequest);
     }
 
     private void fillRequiredAppcExecutionFieldsConfigModify() {
