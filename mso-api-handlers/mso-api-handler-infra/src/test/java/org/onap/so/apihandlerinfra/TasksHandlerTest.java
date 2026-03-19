@@ -20,12 +20,11 @@
 
 package org.onap.so.apihandlerinfra;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -106,11 +105,10 @@ public class TasksHandlerTest extends BaseTest {
 
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-
         // then
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         TasksGetResponse realResponse = mapper.readValue(response.getBody(), TasksGetResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse));
+        assertThat(realResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
         assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
         assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
         assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));

@@ -24,8 +24,7 @@
 
 package org.onap.so.bpmn.servicedecomposition.tasks;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -218,7 +217,7 @@ public class BBInputSetupTest {
 
         ServiceInstance actual = SPY_bbInputSetup.getALaCarteServiceInstance(service, requestDetails, customer, null,
                 null, lookupKeyMap, serviceInstanceId, aLaCarte, bbName);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test(expected = Exception.class)
@@ -252,7 +251,7 @@ public class BBInputSetupTest {
 
         ServiceInstance actual = SPY_bbInputSetup.getALaCarteServiceInstance(service, requestDetails, customer, null,
                 null, lookupKeyMap, serviceInstanceId, aLaCarte, bbName);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -276,12 +275,11 @@ public class BBInputSetupTest {
 
         Customer actual = this.SPY_bbInputSetup.getCustomerAndServiceSubscription(requestDetails, resourceId);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
 
         requestDetails.setSubscriberInfo(null);
 
-
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
 
     }
 
@@ -304,7 +302,7 @@ public class BBInputSetupTest {
         actual.getCustomer().getServiceSubscription().getServiceInstances().get(0).getVnfs().add(genericVnfActual);
 
         SPY_bbInputSetup.setHomingFlag(actual, homing, lookupKeyMap);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -315,7 +313,7 @@ public class BBInputSetupTest {
         DelegateExecution execution = Mockito.mock(DelegateExecution.class);
         doReturn(expected).when(execution).getVariable(any(String.class));
         ExecuteBuildingBlock actual = SPY_bbInputSetup.getExecuteBBFromExecution(execution);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -343,7 +341,7 @@ public class BBInputSetupTest {
         GeneralBuildingBlock actual =
                 SPY_bbInputSetup.getGBB(executeBB, lookupKeyMap, requestAction, aLaCarte, resourceId, null);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -376,7 +374,7 @@ public class BBInputSetupTest {
                 .mapAAIGenericVnfIntoGenericVnf(ArgumentMatchers.isA(org.onap.aai.domain.yang.GenericVnf.class));
         GeneralBuildingBlock actual =
                 SPY_bbInputSetup.getGBBCM(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -422,7 +420,7 @@ public class BBInputSetupTest {
         GeneralBuildingBlock actual =
                 SPY_bbInputSetup.getGBBCM(executeBB, requestDetails, lookupKeyMap, requestAction, instanceGroupId);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -455,7 +453,7 @@ public class BBInputSetupTest {
         GeneralBuildingBlock actual = SPY_bbInputSetup.getGBBALaCarteNonService(executeBB, requestDetails, lookupKeyMap,
                 requestAction, resourceId, vnfType);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -495,7 +493,7 @@ public class BBInputSetupTest {
         verify(SPY_bbInputSetupUtils, times(1)).getCatalogServiceByModelUUID(aaiServiceInstance.getModelVersionId());
         verify(SPY_bbInputSetupUtils, times(1)).getCatalogServiceByModelUUID("modelUUID");
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -578,7 +576,7 @@ public class BBInputSetupTest {
         GeneralBuildingBlock actual = SPY_bbInputSetup.getGBBALaCarteNonService(executeBB, requestDetails, lookupKeyMap,
                 requestAction, resourceId, vnfType);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -623,7 +621,7 @@ public class BBInputSetupTest {
         GeneralBuildingBlock actual = SPY_bbInputSetup.getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap,
                 requestAction, resourceId);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -670,7 +668,7 @@ public class BBInputSetupTest {
         GeneralBuildingBlock actual = SPY_bbInputSetup.getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap,
                 requestAction, resourceId);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -710,7 +708,7 @@ public class BBInputSetupTest {
         GeneralBuildingBlock actual = SPY_bbInputSetup.getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap,
                 requestAction, resourceId);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -731,13 +729,12 @@ public class BBInputSetupTest {
         doReturn(null).when(SPY_bbInputSetupUtils).getAAIServiceInstanceByName(requestInfo.getInstanceName(), customer);
         doReturn(null).when(SPY_bbInputSetupUtils).getAAIServiceInstanceById(serviceInstanceId);
 
-
         doReturn(expected).when(SPY_bbInputSetup).createServiceInstance(requestDetails, null, null, lookupKeyMap,
                 serviceInstanceId);
 
         ServiceInstance actual = SPY_bbInputSetup.getServiceInstanceHelper(requestDetails, customer, null, null,
                 lookupKeyMap, serviceInstanceId, aLaCarte, service, bbName);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -763,7 +760,7 @@ public class BBInputSetupTest {
 
         ServiceInstance actual = SPY_bbInputSetup.getServiceInstanceHelper(requestDetails, customer, null, null,
                 lookupKeyMap, serviceInstanceId, aLaCarte, service, bbName);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -788,7 +785,7 @@ public class BBInputSetupTest {
 
         ServiceInstance actual = SPY_bbInputSetup.getServiceInstanceHelper(requestDetails, customer, null, null,
                 lookupKeyMap, serviceInstanceId, aLaCarte, service, bbName);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -811,10 +808,9 @@ public class BBInputSetupTest {
 
         doReturn(serviceInstanceAAI).when(SPY_bbInputSetupUtils).getAAIServiceInstanceById(serviceInstanceId);
 
-
         ServiceInstance actual = SPY_bbInputSetup.getServiceInstanceHelper(requestDetails, customer, null, null,
                 lookupKeyMap, serviceInstanceId, aLaCarte, service, bbName);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -834,7 +830,7 @@ public class BBInputSetupTest {
                 Mockito.any(), Mockito.any());
         ServiceInstance actual = SPY_bbInputSetup.getServiceInstanceHelper(requestDetails, customer, null, null,
                 new HashMap<>(), "SharansInstanceId", false, new Service(), "ActivateServiceInstanceBB");
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test(expected = Exception.class)
@@ -1009,7 +1005,7 @@ public class BBInputSetupTest {
                 .setRequestDetails(requestDetails).setExecuteBB(executeBB).setRequestAction(requestAction).build();
         GeneralBuildingBlock actual = SPY_bbInputSetup.populateGBBWithSIAndAdditionalInfo(parameter);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -1045,7 +1041,7 @@ public class BBInputSetupTest {
                 SPY_bbInputSetup.getALaCarteServiceInstance(service, requestDetails, customer, project, owningEntity,
                         lookupKeyMap, serviceInstanceId, aLaCarte, executeBB.getBuildingBlock().getBpmnFlowName());
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -1064,7 +1060,7 @@ public class BBInputSetupTest {
         doReturn(expected).when(bbInputSetupMapperLayer).mapAAIServiceSubscription(aaiServiceSubscription);
 
         ServiceSubscription actual = SPY_bbInputSetup.getServiceSubscription(requestDetails, customer);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -1080,7 +1076,7 @@ public class BBInputSetupTest {
         doReturn(expected).when(bbInputSetupMapperLayer).mapAAICustomer(aaiCustomer);
 
         Customer actual = SPY_bbInputSetup.getCustomerFromRequest(requestDetails);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -1090,9 +1086,8 @@ public class BBInputSetupTest {
 
         doReturn(expected).when(bbInputSetupMapperLayer).mapAAIServiceInstanceIntoServiceInstance(serviceInstanceAAI);
 
-
         ServiceInstance actual = SPY_bbInputSetup.getExistingServiceInstance(serviceInstanceAAI);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -1518,7 +1513,6 @@ public class BBInputSetupTest {
         lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, "genericVnfId");
         String bbName = AssignFlows.VNF.toString();
 
-
         ServiceModel serviceModel = new ServiceModel();
         serviceModel.setCurrentService(service);
 
@@ -1807,8 +1801,9 @@ public class BBInputSetupTest {
         SPY_bbInputSetup.mapCatalogNetworkCollectionInstanceGroup(service,
                 serviceInstance.getCollection().getInstanceGroup(), collectionCust.getModelCustomizationUUID());
 
-        assertThat(collection.getModelInfoCollection(), sameBeanAs(modelInfoCollection));
-        assertThat(instanceGroup.getModelInfoInstanceGroup(), sameBeanAs(modelInfoInstanceGroup));
+        assertThat(collection.getModelInfoCollection()).usingRecursiveComparison().isEqualTo(modelInfoCollection);
+        assertThat(instanceGroup.getModelInfoInstanceGroup()).usingRecursiveComparison()
+                .isEqualTo(modelInfoInstanceGroup);
     }
 
     @Test
@@ -1825,7 +1820,6 @@ public class BBInputSetupTest {
         Map<String, String> uriKeys = new HashMap<>();
         uriKeys.put("global-customer-id", "globalCustomerId");
         uriKeys.put("service-type", "serviceType");
-
 
         doNothing().when(SPY_bbInputSetup).mapProject(any(), eq(serviceInstance));
         doNothing().when(SPY_bbInputSetup).mapOwningEntity(any(), eq(serviceInstance));
@@ -2176,7 +2170,7 @@ public class BBInputSetupTest {
 
         SPY_bbInputSetup.populateLookupKeyMapWithIds(workflowResourceIds, actual);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -2307,7 +2301,7 @@ public class BBInputSetupTest {
         service.setServiceProxyCustomizations(new ArrayList<ServiceProxyResourceCustomization>());
         service.getServiceProxyCustomizations().add(serviceProxyCatalog);
         ServiceProxy actual = SPY_bbInputSetup.getServiceProxy(service);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -2419,7 +2413,7 @@ public class BBInputSetupTest {
 
         GeneralBuildingBlock actual = SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap,
                 requestAction, resourceId, vnfType);
-        assertThat(actual, sameBeanAs(gBB));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(gBB);
     }
 
     @Test
@@ -3071,12 +3065,12 @@ public class BBInputSetupTest {
 
         VfModule actual = SPY_bbInputSetup.createVfModule(lookupKeyMap, vfModuleId, instanceName, instanceParams);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
         assertEquals("LookupKeyMap is populated", vfModuleId, lookupKeyMap.get(ResourceKey.VF_MODULE_ID));
 
         expected.getCloudParams().clear();
         actual = SPY_bbInputSetup.createVfModule(lookupKeyMap, vfModuleId, instanceName, null);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -3099,12 +3093,12 @@ public class BBInputSetupTest {
         VolumeGroup actual =
                 SPY_bbInputSetup.createVolumeGroup(lookupKeyMap, volumeGroupId, instanceName, vnfType, instanceParams);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
         assertEquals("LookupKeyMap is populated", volumeGroupId, lookupKeyMap.get(ResourceKey.VOLUME_GROUP_ID));
 
         expected.getCloudParams().clear();
         actual = SPY_bbInputSetup.createVolumeGroup(lookupKeyMap, volumeGroupId, instanceName, vnfType, null);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -3137,13 +3131,13 @@ public class BBInputSetupTest {
         L3Network actual =
                 SPY_bbInputSetup.createNetwork(lookupKeyMap, instanceName, networkId, instanceParams, parameter);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
         assertEquals("LookupKeyMap is populated", networkId, lookupKeyMap.get(ResourceKey.NETWORK_ID));
 
         expected.getCloudParams().clear();
 
         actual = SPY_bbInputSetup.createNetwork(lookupKeyMap, instanceName, networkId, null, parameter);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -3187,13 +3181,13 @@ public class BBInputSetupTest {
         GenericVnf actual = SPY_bbInputSetup.createGenericVnf(lookupKeyMap, instanceName, requestPlatform,
                 requestLineOfBusiness, vnfId, vnfType, instanceParams, productFamilyId, applicationId);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
         assertEquals("LookupKeyMap is populated", vnfId, lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID));
 
         expected.getCloudParams().clear();
         actual = SPY_bbInputSetup.createGenericVnf(lookupKeyMap, instanceName, requestPlatform, requestLineOfBusiness,
                 vnfId, vnfType, null, productFamilyId, applicationId);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -3216,14 +3210,14 @@ public class BBInputSetupTest {
 
         SPY_bbInputSetup.mapCatalogVfModule(vfModule, modelInfo, service, vnfModelCustomizationUUID);
 
-        assertThat(vfModule.getModelInfoVfModule(), sameBeanAs(modelInfoVfModule));
+        assertThat(vfModule.getModelInfoVfModule()).usingRecursiveComparison().isEqualTo(modelInfoVfModule);
 
         modelInfo.setModelCustomizationUuid(null);
         modelInfo.setModelCustomizationId(vfModuleCustomizationUUID);
 
         SPY_bbInputSetup.mapCatalogVfModule(vfModule, modelInfo, service, vnfModelCustomizationUUID);
 
-        assertThat(vfModule.getModelInfoVfModule(), sameBeanAs(modelInfoVfModule));
+        assertThat(vfModule.getModelInfoVfModule()).usingRecursiveComparison().isEqualTo(modelInfoVfModule);
     }
 
     @Test
@@ -3245,7 +3239,7 @@ public class BBInputSetupTest {
 
         SPY_bbInputSetup.mapCatalogVfModule(vfModule, modelInfo, service, vnfModelCustomizationUUID);
 
-        assertThat(vfModule.getModelInfoVfModule(), sameBeanAs(modelInfoVfModule));
+        assertThat(vfModule.getModelInfoVfModule()).usingRecursiveComparison().isEqualTo(modelInfoVfModule);
 
         verify(SPY_bbInputSetupUtils, times(1))
                 .getVfModuleCustomizationByModelCuztomizationUUID(modelInfo.getModelCustomizationId());
@@ -3466,7 +3460,6 @@ public class BBInputSetupTest {
                 .setLookupKeyMap(lookupKeyMap).setResourceId(resourceId).setRelatedInstanceList(relatedInstanceList)
                 .setInstanceName(instanceName).setInstanceParams(instanceParams)
                 .setCloudConfiguration(cloudConfiguration).setIsReplace(true).setServiceModel(serviceModel).build();
-
 
         SPY_bbInputSetup.populateVfModule(parameter);
 

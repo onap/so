@@ -20,8 +20,7 @@
 
 package org.onap.so.adapters.sdnc.impl;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.adapters.sdnc.SDNCAdapterApplication;
@@ -52,7 +51,7 @@ public class MapRequestTunablesTest {
 
         RequestTunables mappedTunable = tunableMapper.setTunables(testMapper);
 
-        assertThat(mappedTunable, sameBeanAs(expectedResult));
+        assertThat(mappedTunable).usingRecursiveComparison().isEqualTo(expectedResult);
     }
 
     @Test
@@ -69,7 +68,7 @@ public class MapRequestTunablesTest {
 
         RequestTunables mappedTunable = tunableMapper.setTunables(testMapper);
 
-        assertThat(mappedTunable, sameBeanAs(expectedResult));
+        assertThat(mappedTunable).usingRecursiveComparison().isEqualTo(expectedResult);
     }
 
     @Test
@@ -86,7 +85,7 @@ public class MapRequestTunablesTest {
 
         RequestTunables mappedTunable = tunableMapper.setTunables(testMapper);
 
-        assertThat(mappedTunable, sameBeanAs(expectedResult));
+        assertThat(mappedTunable).usingRecursiveComparison().isEqualTo(expectedResult);
     }
 
     @Test
@@ -103,9 +102,8 @@ public class MapRequestTunablesTest {
 
         RequestTunables mappedTunable = tunableMapper.setTunables(testMapper);
 
-        assertThat(mappedTunable, sameBeanAs(expectedResult));
+        assertThat(mappedTunable).usingRecursiveComparison().isEqualTo(expectedResult);
     }
-
 
     @Test
     public void test_setTunables_EmptyOperation_EmptyMSOActionRESTDELETE() {
@@ -121,7 +119,7 @@ public class MapRequestTunablesTest {
 
         RequestTunables mappedTunable = tunableMapper.setTunables(testMapper);
 
-        assertThat(mappedTunable, sameBeanAs(expectedResult));
+        assertThat(mappedTunable).usingRecursiveComparison().isEqualTo(expectedResult);
     }
 
 }
