@@ -20,8 +20,7 @@
 
 package org.onap.so.bpmn.servicedecomposition.tasks;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
@@ -85,7 +84,7 @@ public class CloudInfoFromAAITest {
         doReturn(relationshipsOp).when(SPY_CloudInfoFromAAI).getRelationshipsFromWrapper(isA(AAIResultWrapper.class));
         doReturn(Optional.of(expected)).when(SPY_CloudInfoFromAAI).getRelatedCloudRegionAndTenant(relationships);
         Optional<CloudRegion> actual = SPY_CloudInfoFromAAI.getCloudInfoFromAAI(serviceInstance);
-        assertThat(actual.get(), sameBeanAs(expected));
+        assertThat(actual.get()).usingRecursiveComparison().isEqualTo(expected);
 
         // Test networks
         serviceInstance =
@@ -99,7 +98,7 @@ public class CloudInfoFromAAITest {
         aaiL3Network.setNetworkId(networkId);
         doReturn(aaiL3Network).when(SPY_bbInputSetupUtils).getAAIL3Network(l3Network.getNetworkId());
         actual = SPY_CloudInfoFromAAI.getCloudInfoFromAAI(serviceInstance);
-        assertThat(actual.get(), sameBeanAs(expected));
+        assertThat(actual.get()).usingRecursiveComparison().isEqualTo(expected);
 
         // Test no relationships
 
@@ -151,6 +150,6 @@ public class CloudInfoFromAAITest {
 
         Optional<CloudRegion> actual = SPY_CloudInfoFromAAI.getRelatedCloudRegionAndTenant(relationships);
 
-        assertThat(actual.get(), sameBeanAs(expected));
+        assertThat(actual.get()).usingRecursiveComparison().isEqualTo(expected);
     }
 }

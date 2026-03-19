@@ -20,9 +20,7 @@
 
 package org.onap.so.bpmn.servicedecomposition.tasks;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -93,61 +91,60 @@ public class BBInputSetupMapperLayerTest {
 
     private static final String RESOURCE_PATH = "src/test/resources/__files/ExecuteBuildingBlock/";
 
-
     @Test
     public void testMapOrchestrationStatusFromAAI() {
         OrchestrationStatus expected = OrchestrationStatus.INVENTORIED;
         String orchStatusInput = "Inventoried";
         OrchestrationStatus actual = bbInputSetupMapperLayer.mapOrchestrationStatusFromAAI(orchStatusInput);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
 
         expected = OrchestrationStatus.ASSIGNED;
         orchStatusInput = "Assigned";
         actual = bbInputSetupMapperLayer.mapOrchestrationStatusFromAAI(orchStatusInput);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
 
         expected = OrchestrationStatus.ACTIVE;
         orchStatusInput = "Active";
         actual = bbInputSetupMapperLayer.mapOrchestrationStatusFromAAI(orchStatusInput);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
 
         expected = OrchestrationStatus.CREATED;
         orchStatusInput = "Created";
         actual = bbInputSetupMapperLayer.mapOrchestrationStatusFromAAI(orchStatusInput);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
 
         expected = OrchestrationStatus.PRECREATED;
         orchStatusInput = "PreCreated";
         actual = bbInputSetupMapperLayer.mapOrchestrationStatusFromAAI(orchStatusInput);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
 
         expected = OrchestrationStatus.PENDING_CREATE;
         orchStatusInput = "PendingCreate";
         actual = bbInputSetupMapperLayer.mapOrchestrationStatusFromAAI(orchStatusInput);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
 
         expected = OrchestrationStatus.PENDING_DELETE;
         orchStatusInput = "PendingDelete";
         actual = bbInputSetupMapperLayer.mapOrchestrationStatusFromAAI(orchStatusInput);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
 
         expected = OrchestrationStatus.PENDING;
         orchStatusInput = "Pending";
         actual = bbInputSetupMapperLayer.mapOrchestrationStatusFromAAI(orchStatusInput);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
 
         expected = OrchestrationStatus.PENDING_ACTIVATION;
         orchStatusInput = "PendingActivation";
         actual = bbInputSetupMapperLayer.mapOrchestrationStatusFromAAI(orchStatusInput);
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
     public void testMapOrchestrationFuzzyCases() {
         List<String> values = Arrays.asList("pending-create", "pending_Create", "pendinggcreate", "PendingCreate");
         values.forEach(value -> {
-            assertThat(bbInputSetupMapperLayer.mapOrchestrationStatusFromAAI(value),
-                    equalTo(OrchestrationStatus.PENDING_CREATE));
+            assertThat(bbInputSetupMapperLayer.mapOrchestrationStatusFromAAI(value))
+                    .isEqualTo(OrchestrationStatus.PENDING_CREATE);
         });
     }
 
@@ -160,7 +157,7 @@ public class BBInputSetupMapperLayerTest {
 
         Customer actual = bbInputSetupMapperLayer.mapAAICustomer(customerAAI);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -174,7 +171,7 @@ public class BBInputSetupMapperLayerTest {
 
         ServiceSubscription actual = bbInputSetupMapperLayer.mapAAIServiceSubscription(svcSubscriptionAAI);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -186,7 +183,7 @@ public class BBInputSetupMapperLayerTest {
 
         Project actual = bbInputSetupMapperLayer.mapAAIProject(projectAAI);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -198,7 +195,7 @@ public class BBInputSetupMapperLayerTest {
 
         Project actual = bbInputSetupMapperLayer.mapRequestProject(requestProject);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -211,7 +208,7 @@ public class BBInputSetupMapperLayerTest {
 
         OwningEntity actual = bbInputSetupMapperLayer.mapAAIOwningEntity(entityAAI);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -225,7 +222,7 @@ public class BBInputSetupMapperLayerTest {
 
         OwningEntity actual = bbInputSetupMapperLayer.mapRequestOwningEntity(requestOwningEntity);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -237,7 +234,7 @@ public class BBInputSetupMapperLayerTest {
 
         Platform actual = bbInputSetupMapperLayer.mapAAIPlatform(platformAAI);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -250,7 +247,7 @@ public class BBInputSetupMapperLayerTest {
 
         LineOfBusiness actual = bbInputSetupMapperLayer.mapAAILineOfBusiness(lobAAI);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -266,7 +263,7 @@ public class BBInputSetupMapperLayerTest {
 
         NetworkPolicy actualNetworkPolicy = bbInputSetupMapperLayer.mapAAINetworkPolicy(aaiNetworkPolicy);
 
-        assertThat(actualNetworkPolicy, sameBeanAs(expectedNetworkPolicy));
+        assertThat(actualNetworkPolicy).usingRecursiveComparison().isEqualTo(expectedNetworkPolicy);
     }
 
     @Test
@@ -279,7 +276,7 @@ public class BBInputSetupMapperLayerTest {
 
         VolumeGroup actualVolumeGroup = bbInputSetupMapperLayer.mapAAIVolumeGroup(aaiVolumeGroup);
 
-        assertThat(actualVolumeGroup, sameBeanAs(expectedVolumeGroup));
+        assertThat(actualVolumeGroup).usingRecursiveComparison().isEqualTo(expectedVolumeGroup);
     }
 
     @Test
@@ -291,7 +288,7 @@ public class BBInputSetupMapperLayerTest {
 
         ModelInfoServiceInstance actual = bbInputSetupMapperLayer.mapCatalogServiceIntoServiceInstance(catalogService);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -313,7 +310,7 @@ public class BBInputSetupMapperLayerTest {
         ModelInfoInstanceGroup actual =
                 bbInputSetupMapperLayer.mapCatalogInstanceGroupToInstanceGroup(collectionResourceCust, instanceGroup);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -343,7 +340,7 @@ public class BBInputSetupMapperLayerTest {
         NetworkResourceCustomization actual = bbInputSetupMapperLayer
                 .mapCollectionNetworkResourceCustToNetworkResourceCust(collectionNetworkResourceCust);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -361,7 +358,7 @@ public class BBInputSetupMapperLayerTest {
         ModelInfoCollection actual =
                 bbInputSetupMapperLayer.mapCatalogCollectionToCollection(collectionCust, collectionResource);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -375,7 +372,7 @@ public class BBInputSetupMapperLayerTest {
 
         ServiceInstance actual = bbInputSetupMapperLayer.mapAAIServiceInstanceIntoServiceInstance(serviceInstanceAAI);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -396,7 +393,7 @@ public class BBInputSetupMapperLayerTest {
         bbInputSetupMapperLayer.setPlatformAndLOBIntoServiceInstance(platformMSO, lineOfBusinessMSO, actual,
                 resourcesToBeOrchestrated);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -410,7 +407,7 @@ public class BBInputSetupMapperLayerTest {
 
         L3Network actual = bbInputSetupMapperLayer.mapAAIL3Network(aaiL3Network);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -421,7 +418,7 @@ public class BBInputSetupMapperLayerTest {
 
         GenericVnf actual = bbInputSetupMapperLayer.mapAAIGenericVnfIntoGenericVnf(aaiGenericVnf);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -432,7 +429,7 @@ public class BBInputSetupMapperLayerTest {
 
         Pnf actual = bbInputSetupMapperLayer.mapAAIPnfIntoPnf(aaiPnf);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -445,7 +442,7 @@ public class BBInputSetupMapperLayerTest {
 
         Collection actualCollection = bbInputSetupMapperLayer.mapAAICollectionIntoCollection(aaiCollection);
 
-        assertThat(actualCollection, sameBeanAs(expectedCollection));
+        assertThat(actualCollection).usingRecursiveComparison().isEqualTo(expectedCollection);
     }
 
     @Test
@@ -460,7 +457,7 @@ public class BBInputSetupMapperLayerTest {
         org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup actualInstanceGroup =
                 bbInputSetupMapperLayer.mapAAIInstanceGroupIntoInstanceGroup(aaiInstanceGroup);
 
-        assertThat(actualInstanceGroup, sameBeanAs(expectedInstanceGroup));
+        assertThat(actualInstanceGroup).usingRecursiveComparison().isEqualTo(expectedInstanceGroup);
     }
 
     @Test
@@ -475,7 +472,7 @@ public class BBInputSetupMapperLayerTest {
         RouteTableReference actualRouteTableReference =
                 bbInputSetupMapperLayer.mapAAIRouteTableReferenceIntoRouteTableReference(aaiRouteTableReference);
 
-        assertThat(actualRouteTableReference, sameBeanAs(expectedRouteTableReference));
+        assertThat(actualRouteTableReference).usingRecursiveComparison().isEqualTo(expectedRouteTableReference);
     }
 
     @Test
@@ -489,7 +486,7 @@ public class BBInputSetupMapperLayerTest {
         ModelInfoNetwork actualModelInfoNetwork =
                 bbInputSetupMapperLayer.mapCatalogNetworkToNetwork(networkResourceCustomization);
 
-        assertThat(actualModelInfoNetwork, sameBeanAs(expectedModelInfoNetwork));
+        assertThat(actualModelInfoNetwork).usingRecursiveComparison().isEqualTo(expectedModelInfoNetwork);
     }
 
     @Test
@@ -503,7 +500,7 @@ public class BBInputSetupMapperLayerTest {
         ModelInfoGenericVnf actualModelInfoGenericVnf =
                 bbInputSetupMapperLayer.mapCatalogVnfToVnf(vnfResourceCustomization);
 
-        assertThat(actualModelInfoGenericVnf, sameBeanAs(expectedModelInfoGenericVnf));
+        assertThat(actualModelInfoGenericVnf).usingRecursiveComparison().isEqualTo(expectedModelInfoGenericVnf);
     }
 
     @Test
@@ -523,7 +520,7 @@ public class BBInputSetupMapperLayerTest {
 
         ModelInfoPnf actualModelInfoPnf = bbInputSetupMapperLayer.mapCatalogPnfToPnf(pnfResourceCustomization);
 
-        assertThat(actualModelInfoPnf, sameBeanAs(expectedModelInfoPnf));
+        assertThat(actualModelInfoPnf).usingRecursiveComparison().isEqualTo(expectedModelInfoPnf);
     }
 
     @Test
@@ -537,7 +534,7 @@ public class BBInputSetupMapperLayerTest {
         ModelInfoVfModule actualModelInfoVfModule =
                 bbInputSetupMapperLayer.mapCatalogVfModuleToVfModule(vfResourceCustomization);
 
-        assertThat(actualModelInfoVfModule, sameBeanAs(expectedModelInfoVfModule));
+        assertThat(actualModelInfoVfModule).usingRecursiveComparison().isEqualTo(expectedModelInfoVfModule);
     }
 
     @Test
@@ -549,7 +546,7 @@ public class BBInputSetupMapperLayerTest {
 
         Platform actualPlatform = bbInputSetupMapperLayer.mapRequestPlatform(platform);
 
-        assertThat(actualPlatform, sameBeanAs(expectedPlatform));
+        assertThat(actualPlatform).usingRecursiveComparison().isEqualTo(expectedPlatform);
     }
 
     @Test
@@ -563,7 +560,7 @@ public class BBInputSetupMapperLayerTest {
 
         LineOfBusiness actualLineOfBusiness = bbInputSetupMapperLayer.mapRequestLineOfBusiness(lineOfBusiness);
 
-        assertThat(actualLineOfBusiness, sameBeanAs(expectedLineOfBusiness));
+        assertThat(actualLineOfBusiness).usingRecursiveComparison().isEqualTo(expectedLineOfBusiness);
     }
 
     @Test
@@ -576,7 +573,7 @@ public class BBInputSetupMapperLayerTest {
 
         Configuration actualConfiguration = bbInputSetupMapperLayer.mapAAIConfiguration(configurationAAI);
 
-        assertThat(actualConfiguration, sameBeanAs(expectedConfiguration));
+        assertThat(actualConfiguration).usingRecursiveComparison().isEqualTo(expectedConfiguration);
     }
 
     @Test
@@ -588,7 +585,7 @@ public class BBInputSetupMapperLayerTest {
                 .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_mapReqContext.json"), RequestDetails.class);
         RequestContext actual = bbInputSetupMapperLayer.mapRequestContext(requestDetails);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -601,7 +598,7 @@ public class BBInputSetupMapperLayerTest {
 
         OrchestrationContext actual = bbInputSetupMapperLayer.mapOrchestrationContext(requestDetails);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -614,7 +611,7 @@ public class BBInputSetupMapperLayerTest {
 
         OrchestrationContext actual = bbInputSetupMapperLayer.mapOrchestrationContext(requestDetails);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -635,7 +632,7 @@ public class BBInputSetupMapperLayerTest {
 
         CloudRegion actual = bbInputSetupMapperLayer.mapCloudRegion(cloudConfig, cloudRegion);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -658,7 +655,7 @@ public class BBInputSetupMapperLayerTest {
 
         CloudRegion actual = bbInputSetupMapperLayer.mapCloudRegion(cloudConfig, cloudRegion);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -675,7 +672,7 @@ public class BBInputSetupMapperLayerTest {
 
         Tenant actual = bbInputSetupMapperLayer.mapTenant(aaiTenant);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -684,7 +681,7 @@ public class BBInputSetupMapperLayerTest {
 
         CloudRegion actual = bbInputSetupMapperLayer.mapCloudRegion(null, null);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -712,7 +709,7 @@ public class BBInputSetupMapperLayerTest {
         ModelInfoConfiguration actual = bbInputSetupMapperLayer
                 .mapCatalogConfigurationToConfiguration(configurationResourceCustomization, policyNameTable);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -741,7 +738,7 @@ public class BBInputSetupMapperLayerTest {
         ModelInfoConfiguration actual =
                 bbInputSetupMapperLayer.mapCatalogConfigurationToConfiguration(fabricCustomization);
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test

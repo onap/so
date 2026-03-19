@@ -20,8 +20,7 @@
 
 package org.onap.so.client.orchestration;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -113,7 +112,6 @@ public class AAINetworkResourcesTest extends TestDataSetup {
         doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
     }
 
-
     @Test
     public void updateNetworkTest() {
 
@@ -175,7 +173,8 @@ public class AAINetworkResourcesTest extends TestDataSetup {
 
         if (oVpnBinding.isPresent()) {
             VpnBinding vpnBinding = oVpnBinding.get();
-            assertThat(aaiResultWrapper.asBean(VpnBinding.class).get(), sameBeanAs(vpnBinding));
+            assertThat(aaiResultWrapper.asBean(VpnBinding.class).get()).usingRecursiveComparison()
+                    .isEqualTo(vpnBinding);
         }
     }
 
@@ -193,8 +192,8 @@ public class AAINetworkResourcesTest extends TestDataSetup {
         verify(MOCK_aaiResourcesClient, times(1)).get(any(AAIResourceUri.class));
         if (oNetPolicy.isPresent()) {
             org.onap.aai.domain.yang.NetworkPolicy networkPolicy = oNetPolicy.get();
-            assertThat(aaiResultWrapper.asBean(org.onap.aai.domain.yang.NetworkPolicy.class).get(),
-                    sameBeanAs(networkPolicy));
+            assertThat(aaiResultWrapper.asBean(org.onap.aai.domain.yang.NetworkPolicy.class).get())
+                    .usingRecursiveComparison().isEqualTo(networkPolicy);
         }
     }
 
@@ -212,8 +211,8 @@ public class AAINetworkResourcesTest extends TestDataSetup {
         verify(MOCK_aaiResourcesClient, times(1)).get(any(AAIPluralResourceUri.class));
         if (oNetPolicies.isPresent()) {
             org.onap.aai.domain.yang.NetworkPolicies networkPolicies = oNetPolicies.get();
-            assertThat(aaiResultWrapper.asBean(org.onap.aai.domain.yang.NetworkPolicies.class).get(),
-                    sameBeanAs(networkPolicies));
+            assertThat(aaiResultWrapper.asBean(org.onap.aai.domain.yang.NetworkPolicies.class).get())
+                    .usingRecursiveComparison().isEqualTo(networkPolicies);
         }
     }
 
@@ -232,7 +231,8 @@ public class AAINetworkResourcesTest extends TestDataSetup {
 
         if (oRtref.isPresent()) {
             RouteTableReference rTref = oRtref.get();
-            assertThat(aaiResultWrapper.asBean(RouteTableReference.class).get(), sameBeanAs(rTref));
+            assertThat(aaiResultWrapper.asBean(RouteTableReference.class).get()).usingRecursiveComparison()
+                    .isEqualTo(rTref);
         }
     }
 
@@ -278,7 +278,6 @@ public class AAINetworkResourcesTest extends TestDataSetup {
                 result.asBean(org.onap.aai.domain.yang.L3Network.class);
         assertEquals(network.getNetworkId(), aaiL3Network.get().getNetworkId());
         assertEquals(network.getNetworkName(), aaiL3Network.get().getNetworkName());
-
 
     }
 
@@ -411,7 +410,8 @@ public class AAINetworkResourcesTest extends TestDataSetup {
 
         if (oSubnet.isPresent()) {
             org.onap.aai.domain.yang.Subnet subnet = oSubnet.get();
-            assertThat(aaiResultWrapper.asBean(org.onap.aai.domain.yang.Subnet.class).get(), sameBeanAs(subnet));
+            assertThat(aaiResultWrapper.asBean(org.onap.aai.domain.yang.Subnet.class).get()).usingRecursiveComparison()
+                    .isEqualTo(subnet);
         }
     }
 
