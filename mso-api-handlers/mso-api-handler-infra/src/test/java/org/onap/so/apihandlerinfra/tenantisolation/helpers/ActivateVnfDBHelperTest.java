@@ -20,6 +20,7 @@
 
 package org.onap.so.apihandlerinfra.tenantisolation.helpers;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.so.apihandlerinfra.BaseTest;
@@ -27,9 +28,6 @@ import org.onap.so.apihandlerinfra.tenantisolationbeans.DistributionStatus;
 import org.onap.so.db.request.beans.OperationalEnvDistributionStatus;
 import org.onap.so.db.request.beans.OperationalEnvServiceModelStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 
 public class ActivateVnfDBHelperTest extends BaseTest {
 
@@ -84,7 +82,7 @@ public class ActivateVnfDBHelperTest extends BaseTest {
         // test insert method
         OperationalEnvDistributionStatus distStatus1 = dbHelper.insertRecordToOperationalEnvDistributionStatus(
                 distributionId1, operationalEnvironmentId, serviceModelVersionId1, requestId, statusOk, "");
-        assertThat(distStatus1, sameBeanAs(expectedDistStatus));
+        assertThat(distStatus1).usingRecursiveComparison().isEqualTo(expectedDistStatus);
 
         // prepare updated expected object
         OperationalEnvDistributionStatus expectedUpdatedDistStatus = expectedDistStatus;
@@ -94,7 +92,7 @@ public class ActivateVnfDBHelperTest extends BaseTest {
         // test update method - statusOk to statusError
         OperationalEnvDistributionStatus distStatus2 =
                 dbHelper.updateStatusInOperationalEnvDistributionStatus(distStatus1, statusError, errorReason);
-        assertThat(distStatus2, sameBeanAs(expectedUpdatedDistStatus));
+        assertThat(distStatus2).usingRecursiveComparison().isEqualTo(expectedUpdatedDistStatus);
 
     }
 
@@ -105,7 +103,7 @@ public class ActivateVnfDBHelperTest extends BaseTest {
         OperationalEnvServiceModelStatus serviceModelStatus1 = dbHelper.insertRecordToOperationalEnvServiceModelStatus(
                 requestId, operationalEnvironmentId, serviceModelVersionId1, statusOk, recoveryActionRetry,
                 retryCountThree, workloadContext1, vnfOperationalEnvironmentId);
-        assertThat(serviceModelStatus1, sameBeanAs(expectedServiceModelStatus));
+        assertThat(serviceModelStatus1).usingRecursiveComparison().isEqualTo(expectedServiceModelStatus);
 
         // prepare updated expected object
         OperationalEnvServiceModelStatus expectedUpdatedServiceModelStatus = serviceModelStatus1;
@@ -116,7 +114,7 @@ public class ActivateVnfDBHelperTest extends BaseTest {
         OperationalEnvServiceModelStatus serviceModelStatus2 =
                 dbHelper.updateRetryCountAndStatusInOperationalEnvServiceModelStatus(serviceModelStatus1, statusError,
                         retryCountZero);
-        assertThat(serviceModelStatus2, sameBeanAs(expectedUpdatedServiceModelStatus));
+        assertThat(serviceModelStatus2).usingRecursiveComparison().isEqualTo(expectedUpdatedServiceModelStatus);
 
     }
 

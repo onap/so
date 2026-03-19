@@ -20,8 +20,7 @@
 
 package org.onap.so.client.dmaapproperties;
 
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -41,7 +40,6 @@ public class DmaapPropertiesClientTest extends BaseTest {
 
     @Autowired
     private DmaapPropertiesClient dmaapPropertiesClient;
-
 
     private final String file = "src/test/resources/org/onap/so/client/avpn/dmaap/avpnDmaapAsyncRequestStatus.json";
     private String requestId = "rq1234d1-5a33-55df-13ab-12abad84e331";
@@ -66,7 +64,7 @@ public class DmaapPropertiesClientTest extends BaseTest {
         AVPNDmaapBean expected = new ObjectMapper().readValue(new File(file), AVPNDmaapBean.class);
 
         assertNotNull(actualBean);
-        assertThat(actualBean, sameBeanAs(expected));
+        assertThat(actualBean).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test

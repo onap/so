@@ -20,6 +20,7 @@
 
 package org.onap.so.apihandlerinfra.tenantisolation.process;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -27,7 +28,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import java.util.UUID;
@@ -52,7 +52,6 @@ import org.onap.so.logger.MessageEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 
 public class CreateEcompOperationalEnvironmentTest extends BaseTest {
 
@@ -135,7 +134,8 @@ public class CreateEcompOperationalEnvironmentTest extends BaseTest {
         try {
             createEcompOpEn.execute(uuid, getCloudOrchestrationRequest());
         } catch (ApiException e) {
-            assertThat(e, sameBeanAs((ApiException) expectedException).ignoring("cause"));
+            assertThat(e).usingRecursiveComparison().ignoringFields("cause")
+                    .isEqualTo((ApiException) expectedException);
         }
     }
 

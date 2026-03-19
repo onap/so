@@ -20,6 +20,7 @@
 
 package org.onap.so.apihandlerinfra;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.any;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
@@ -28,8 +29,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -153,8 +152,9 @@ public class OrchestrationRequestsTest extends BaseTest {
                 restTemplate.exchange(builder.build().toUri(), HttpMethod.GET, entity, GetOrchestrationResponse.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-        assertThat(response.getBody(), sameBeanAs(testResponse).ignoring("request.startTime")
-                .ignoring("request.finishTime").ignoring("request.requestStatus.timeStamp"));
+        assertThat(response.getBody()).usingRecursiveComparison()
+                .ignoringFields("request.startTime", "request.finishTime", "request.requestStatus.timeStamp")
+                .isEqualTo(testResponse);
         assertNull(response.getBody().getRequest().getInstanceReferences().getRequestorId());
         assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
         assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
@@ -188,8 +188,9 @@ public class OrchestrationRequestsTest extends BaseTest {
                 restTemplate.exchange(builder.build().toUri(), HttpMethod.GET, entity, GetOrchestrationResponse.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-        assertThat(response.getBody(), sameBeanAs(testResponse).ignoring("request.startTime")
-                .ignoring("request.finishTime").ignoring("request.requestStatus.timeStamp"));
+        assertThat(response.getBody()).usingRecursiveComparison()
+                .ignoringFields("request.startTime", "request.finishTime", "request.requestStatus.timeStamp")
+                .isEqualTo(testResponse);
         assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
         assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
         assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
@@ -228,8 +229,9 @@ public class OrchestrationRequestsTest extends BaseTest {
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, GetOrchestrationResponse.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-        assertThat(response.getBody(), sameBeanAs(testResponse).ignoring("request.startTime")
-                .ignoring("request.finishTime").ignoring("request.requestStatus.timeStamp"));
+        assertThat(response.getBody()).usingRecursiveComparison()
+                .ignoringFields("request.startTime", "request.finishTime", "request.requestStatus.timeStamp")
+                .isEqualTo(testResponse);
     }
 
     @Test
@@ -275,8 +277,9 @@ public class OrchestrationRequestsTest extends BaseTest {
         System.out.println("Response :" + response.getBody().toString());
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
 
-        assertThat(response.getBody(), sameBeanAs(testResponse).ignoring("request.startTime")
-                .ignoring("request.finishTime").ignoring("request.requestStatus.timeStamp"));
+        assertThat(response.getBody()).usingRecursiveComparison()
+                .ignoringFields("request.startTime", "request.finishTime", "request.requestStatus.timeStamp")
+                .isEqualTo(testResponse);
         assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
         assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
         assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
@@ -346,8 +349,10 @@ public class OrchestrationRequestsTest extends BaseTest {
 
         ResponseEntity<GetOrchestrationListResponse> response = restTemplate.exchange(builder.toUriString(),
                 HttpMethod.GET, entity, GetOrchestrationListResponse.class);
-        assertThat(response.getBody(), sameBeanAs(testResponse).ignoring("requestList.request.startTime")
-                .ignoring("requestList.request.finishTime").ignoring("requestList.request.requestStatus.timeStamp"));
+        assertThat(response.getBody())
+                .usingRecursiveComparison().ignoringFields("requestList.request.startTime",
+                        "requestList.request.finishTime", "requestList.request.requestStatus.timeStamp")
+                .isEqualTo(testResponse);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         assertEquals(requests.size(), response.getBody().getRequestList().size());
 
@@ -385,7 +390,7 @@ public class OrchestrationRequestsTest extends BaseTest {
         actualRequestError = mapper.readValue(response.getBody(), RequestError.class);
 
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
-        assertThat(actualRequestError, sameBeanAs(expectedRequestError));
+        assertThat(actualRequestError).usingRecursiveComparison().isEqualTo(expectedRequestError);
     }
 
     @Test
@@ -419,7 +424,7 @@ public class OrchestrationRequestsTest extends BaseTest {
         actualRequestError = mapper.readValue(response.getBody(), RequestError.class);
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatusCode().value());
-        assertThat(expectedRequestError, sameBeanAs(actualRequestError));
+        assertThat(expectedRequestError).usingRecursiveComparison().isEqualTo(actualRequestError);
     }
 
     @Test
@@ -469,7 +474,7 @@ public class OrchestrationRequestsTest extends BaseTest {
                 mapper.readValue(new File("src/test/resources/OrchestrationRequest/RequestProcessingData.json"),
                         new TypeReference<List<org.onap.so.db.request.beans.RequestProcessingData>>() {});
         actualProcessingData = orchReq.mapRequestProcessingData(processingData);
-        assertThat(actualProcessingData, sameBeanAs(expectedDataList));
+        assertThat(actualProcessingData).usingRecursiveComparison().isEqualTo(expectedDataList);
     }
 
     @Test

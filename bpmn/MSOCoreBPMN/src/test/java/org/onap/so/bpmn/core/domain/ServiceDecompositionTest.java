@@ -14,8 +14,7 @@
  */
 package org.onap.so.bpmn.core.domain;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -51,7 +50,6 @@ public class ServiceDecompositionTest {
         configResource.setResourceId("configResourceId");
     }
 
-
     @Test
     public void serviceDecompositionWithGroupandVnfc() throws IOException {
         String sericeStr = new String(Files.readAllBytes(Paths.get(RESOURCE_PATH + "ServiceWithGroupandVnfc.json")));
@@ -79,10 +77,14 @@ public class ServiceDecompositionTest {
         serviceDecomp.addAllottedResource(allottedResource);
         serviceDecomp.addConfigResource(configResource);
 
-        assertThat(serviceDecomp.getServiceResource(vnfResource.getResourceId()), sameBeanAs(vnfResource));
-        assertThat(serviceDecomp.getServiceResource(networkResource.getResourceId()), sameBeanAs(networkResource));
-        assertThat(serviceDecomp.getServiceResource(allottedResource.getResourceId()), sameBeanAs(allottedResource));
-        assertThat(serviceDecomp.getServiceResource(configResource.getResourceId()), sameBeanAs(configResource));
+        assertThat(serviceDecomp.getServiceResource(vnfResource.getResourceId())).usingRecursiveComparison()
+                .isEqualTo(vnfResource);
+        assertThat(serviceDecomp.getServiceResource(networkResource.getResourceId())).usingRecursiveComparison()
+                .isEqualTo(networkResource);
+        assertThat(serviceDecomp.getServiceResource(allottedResource.getResourceId())).usingRecursiveComparison()
+                .isEqualTo(allottedResource);
+        assertThat(serviceDecomp.getServiceResource(configResource.getResourceId())).usingRecursiveComparison()
+                .isEqualTo(configResource);
 
         VnfResource vnfResourceReplace = new VnfResource();
         vnfResourceReplace.setResourceId(vnfResource.getResourceId());
@@ -116,10 +118,14 @@ public class ServiceDecompositionTest {
 
         System.out.println(serviceDecomp.toJsonString());
 
-        assertThat(serviceDecomp.getServiceResource(vnfResource.getResourceId()), sameBeanAs(vnfResource));
-        assertThat(serviceDecomp.getServiceResource(networkResource.getResourceId()), sameBeanAs(networkResource));
-        assertThat(serviceDecomp.getServiceResource(allottedResource.getResourceId()), sameBeanAs(allottedResource));
-        assertThat(serviceDecomp.getServiceResource(configResource.getResourceId()), sameBeanAs(configResource));
+        assertThat(serviceDecomp.getServiceResource(vnfResource.getResourceId())).usingRecursiveComparison()
+                .isEqualTo(vnfResource);
+        assertThat(serviceDecomp.getServiceResource(networkResource.getResourceId())).usingRecursiveComparison()
+                .isEqualTo(networkResource);
+        assertThat(serviceDecomp.getServiceResource(allottedResource.getResourceId())).usingRecursiveComparison()
+                .isEqualTo(allottedResource);
+        assertThat(serviceDecomp.getServiceResource(configResource.getResourceId())).usingRecursiveComparison()
+                .isEqualTo(configResource);
 
         serviceDecomp = new ServiceDecomposition(catalogRestOutput, "serviceInstanceId");
         serviceDecomp.addVnfResource(vnfResourceJson);
@@ -130,7 +136,7 @@ public class ServiceDecompositionTest {
         ServiceDecomposition expectedServiceDecomp =
                 new ServiceDecomposition(expectedCatalogRestOutput, "serviceInstanceId");
 
-        assertThat(serviceDecomp, sameBeanAs(expectedServiceDecomp));
+        assertThat(serviceDecomp).usingRecursiveComparison().isEqualTo(expectedServiceDecomp);
         assertEquals(
                 serviceDecomp.listToJson(Arrays.asList(networkResource))
                         + serviceDecomp.listToJson(Arrays.asList(vnfResource))
