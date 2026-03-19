@@ -15,8 +15,7 @@
 
 package org.onap.so.openstack.utils;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNull;
 import java.io.File;
 import java.io.IOException;
@@ -46,7 +45,7 @@ public class MsoYamlEditorWithEnvtTest extends TestDataSetup {
         Set<MsoHeatEnvironmentParameter> heatEnvironmentSet = yaml.getParameterListFromEnvt();
 
         for (MsoHeatEnvironmentParameter heatEnvironment : heatEnvironmentSet) {
-            assertThat(heatEnvironment, sameBeanAs(expectedHeatParam));
+            assertThat(heatEnvironment).usingRecursiveComparison().isEqualTo(expectedHeatParam);
         }
     }
 
@@ -59,7 +58,7 @@ public class MsoYamlEditorWithEnvtTest extends TestDataSetup {
         Set<MsoHeatEnvironmentResource> heatResourceSet = yaml.getResourceListFromEnvt();
 
         for (MsoHeatEnvironmentResource heatResource : heatResourceSet) {
-            assertThat(heatResource, sameBeanAs(expectedHeatResource));
+            assertThat(heatResource).usingRecursiveComparison().isEqualTo(expectedHeatResource);
         }
     }
 
@@ -82,7 +81,7 @@ public class MsoYamlEditorWithEnvtTest extends TestDataSetup {
         Set<HeatTemplateParam> heatParamSet = yaml.getParameterList();
 
         for (HeatTemplateParam heatParam : heatParamSet) {
-            assertThat(heatParam, sameBeanAs(expectedHeatParam));
+            assertThat(heatParam).usingRecursiveComparison().isEqualTo(expectedHeatParam);
         }
     }
 }

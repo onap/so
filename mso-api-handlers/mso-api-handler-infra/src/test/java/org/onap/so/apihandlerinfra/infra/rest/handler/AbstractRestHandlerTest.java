@@ -20,8 +20,7 @@
 
 package org.onap.so.apihandlerinfra.infra.rest.handler;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -58,7 +57,7 @@ public class AbstractRestHandlerTest {
         doReturn(Optional.of(selfLinkURL)).when(restHandler).buildSelfLinkUrl("http://localhost:8080/v1", "requestId");
         ServiceInstancesResponse actualResponse =
                 restHandler.createResponse("instanceId", "requestId", mockRequestContext);
-        assertThat(actualResponse, sameBeanAs(expectedResponse));
+        assertThat(actualResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
     }
 
     @Test
@@ -69,6 +68,6 @@ public class AbstractRestHandlerTest {
                 "http://some.domain.com:30277/onap/so/infra/orchestrationRequests/v7/4d0437c3-ee48-4361-a4f7-e1613c82493a"));
         Optional<URL> resultURL = restHandler.buildSelfLinkUrl(initialLink, requestId);
 
-        assertThat(resultURL, sameBeanAs(expectedLink));
+        assertThat(resultURL).usingRecursiveComparison().isEqualTo(expectedLink);
     }
 }

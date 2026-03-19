@@ -20,8 +20,7 @@
 
 package org.onap.so.apihandlerinfra;
 
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -142,7 +141,6 @@ public class RequestHandlerUtilsUnitTest {
         currentActiveRequestIARNull.setOriginalRequestId(RESUMED_REQUEST_ID);
     }
 
-
     @Test
     public void createNewRecordCopyFromInfraActiveRequestTest() throws IOException, ApiException {
         doNothing().when(requestHandler).setInstanceIdAndName(infraActiveRequest, currentActiveRequest);
@@ -150,14 +148,14 @@ public class RequestHandlerUtilsUnitTest {
                 .updateRequestorIdInRequestBody(infraActiveRequest, "yyyyyy");
         InfraActiveRequests result = requestHandler.createNewRecordCopyFromInfraActiveRequest(infraActiveRequest,
                 CURRENT_REQUEST_ID, startTimeStamp, "VID", requestUri, "yyyyyy", RESUMED_REQUEST_ID);
-        assertThat(currentActiveRequest, sameBeanAs(result));
+        assertThat(currentActiveRequest).usingRecursiveComparison().isEqualTo(result);
     }
 
     @Test
     public void createNewRecordCopyFromInfraActiveRequestNullIARTest() throws ApiException {
         InfraActiveRequests result = requestHandler.createNewRecordCopyFromInfraActiveRequest(null, CURRENT_REQUEST_ID,
                 startTimeStamp, "VID", requestUri, "xxxxxx", RESUMED_REQUEST_ID);
-        assertThat(currentActiveRequestIARNull, sameBeanAs(result));
+        assertThat(currentActiveRequestIARNull).usingRecursiveComparison().isEqualTo(result);
     }
 
     @Test
@@ -169,7 +167,7 @@ public class RequestHandlerUtilsUnitTest {
         expected.setServiceInstanceName(SERVICE_INSTANCE_NAME);
 
         requestHandler.setInstanceIdAndName(infraActiveRequest, serviceRequest);
-        assertThat(serviceRequest, sameBeanAs(expected));
+        assertThat(serviceRequest).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -184,7 +182,7 @@ public class RequestHandlerUtilsUnitTest {
         expected.setServiceInstanceId(SERVICE_INSTANCE_ID);
 
         requestHandler.setInstanceIdAndName(request, serviceRequest);
-        assertThat(serviceRequest, sameBeanAs(expected));
+        assertThat(serviceRequest).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -214,7 +212,7 @@ public class RequestHandlerUtilsUnitTest {
         InfraActiveRequests expected = new InfraActiveRequests();
 
         requestHandler.setInstanceIdAndName(originalServiceRequest, serviceRequest);
-        assertThat(serviceRequest, sameBeanAs(expected));
+        assertThat(serviceRequest).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -230,7 +228,7 @@ public class RequestHandlerUtilsUnitTest {
         expected.setVnfName(VNF_NAME);
 
         requestHandler.setInstanceIdAndName(vnfRequestOriginal, vnfRequest);
-        assertThat(vnfRequest, sameBeanAs(expected));
+        assertThat(vnfRequest).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -246,7 +244,7 @@ public class RequestHandlerUtilsUnitTest {
         expected.setVfModuleName(VFMODULE_NAME);
 
         requestHandler.setInstanceIdAndName(vfModuleRequestOriginal, vfModuleRequest);
-        assertThat(vfModuleRequest, sameBeanAs(expected));
+        assertThat(vfModuleRequest).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -262,7 +260,7 @@ public class RequestHandlerUtilsUnitTest {
         expected.setNetworkName(NETWORK_NAME);
 
         requestHandler.setInstanceIdAndName(networkRequestOriginal, networkRequest);
-        assertThat(networkRequest, sameBeanAs(expected));
+        assertThat(networkRequest).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -278,7 +276,7 @@ public class RequestHandlerUtilsUnitTest {
         expected.setVolumeGroupName(VOLUME_GROUP_NAME);
 
         requestHandler.setInstanceIdAndName(volumeGroupRequestOriginal, volumeGroupRequest);
-        assertThat(volumeGroupRequest, sameBeanAs(expected));
+        assertThat(volumeGroupRequest).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test

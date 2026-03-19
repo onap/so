@@ -1,7 +1,6 @@
 package org.onap.so.adapters.cloudregion;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -24,7 +23,6 @@ import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.catalog.data.repository.NetworkTechnologyReferenceRepository;
-
 
 @RunWith(MockitoJUnitRunner.class)
 public class CloudRegionRestImplTest {
@@ -66,9 +64,8 @@ public class CloudRegionRestImplTest {
     @Test
     public void mapCloudRegionTest() {
         CloudRegion mappedRegion = cloudRestImpl.mapCloudRegion(cloudSite);
-        assertThat(mappedRegion, sameBeanAs(testCloudRegion));
+        assertThat(mappedRegion).usingRecursiveComparison().isEqualTo(testCloudRegion);
     }
-
 
     @Test
     public void mapCloudRegionVersionGreaterThan3Test() {
@@ -87,7 +84,7 @@ public class CloudRegionRestImplTest {
         testRegion2.setOwnerDefinedType("cLCP");
         testRegion2.setCloudType("openstack");
         testRegion2.setCloudZone("region");
-        assertThat(mappedRegion, sameBeanAs(testRegion2));
+        assertThat(mappedRegion).usingRecursiveComparison().isEqualTo(testRegion2);
     }
 
     @Test
@@ -103,7 +100,8 @@ public class CloudRegionRestImplTest {
         verify(catalogDbClientMock, times(1)).postCloudSite(cloudSite);
         verify(aaiResClientMock, times(1)).createIfNotExists(Mockito.eq(uri), Mockito.any());
         verify(aaiResClientMock, times(1)).createIfNotExists(actualURI.capture(), actualCloudRegion.capture());
-        assertThat((CloudRegion) actualCloudRegion.getValue().get(), sameBeanAs(testCloudRegion));
+        assertThat((CloudRegion) actualCloudRegion.getValue().get()).usingRecursiveComparison()
+                .isEqualTo(testCloudRegion);
     }
 
     @Test

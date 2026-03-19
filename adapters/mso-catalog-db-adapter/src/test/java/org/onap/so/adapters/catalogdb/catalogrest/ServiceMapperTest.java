@@ -20,8 +20,7 @@
 
 package org.onap.so.adapters.catalogdb.catalogrest;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -46,14 +45,13 @@ public class ServiceMapperTest {
     @Test
     public void service_map_test() throws JsonParseException, JsonMappingException, IOException {
         Service actual = serviceMapper.mapService(getTestService(), 2);
-        assertThat(actual, sameBeanAs(getExpectedService()));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(getExpectedService());
     }
 
     private Service getExpectedService() throws JsonParseException, JsonMappingException, IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(getJson("ExpectedService.json"), Service.class);
     }
-
 
     private org.onap.so.db.catalog.beans.Service getTestService() {
         org.onap.so.db.catalog.beans.Service testService = new org.onap.so.db.catalog.beans.Service();

@@ -20,12 +20,11 @@
 
 package org.onap.so.asdc.client.test.rest;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -106,10 +105,8 @@ public class ASDCRestInterfaceTest extends BaseTest {
     @LocalServerPort
     private int port;
 
-
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
-
 
     @Before
     public void setUp() {
@@ -157,18 +154,15 @@ public class ASDCRestInterfaceTest extends BaseTest {
 
         arCustomization.setAllottedResource(expectedService);
 
-
         expectedService.setAllotedResourceCustomization(arCustomizationSet);
 
         AllottedResource actualResponse = allottedRepo.findResourceByModelUUID("5b18c75e-2d08-4bf2-ad58-4ea704ec648d");
 
-
         if (actualResponse == null)
             throw new Exception("No Allotted Resource Written to database");
 
-
-        assertThat(actualResponse, sameBeanAs(expectedService).ignoring("0x1.created")
-                .ignoring("0x1.allotedResourceCustomization.created"));
+        assertThat(actualResponse).usingRecursiveComparison()
+                .ignoringFields("created", "allotedResourceCustomization.created").isEqualTo(expectedService);
     }
 
     @Test
@@ -200,10 +194,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
         expectedService.setModelUUID("e16e4ed9-3429-423a-bc3c-1389ae91491c");
         expectedService.setModelVersion("1.0");
 
-
-
         Service actualService = serviceRepo.findOneByModelUUID("e16e4ed9-3429-423a-bc3c-1389ae91491c");
-
 
         if (actualService == null)
             throw new Exception("No Allotted Resource Written to database");
@@ -263,7 +254,6 @@ public class ASDCRestInterfaceTest extends BaseTest {
         assertNull(response);
 
     }
-
 
     @Test
     public void test_Vcpe_Infra_Distribution() throws Exception {
@@ -441,7 +431,6 @@ public class ASDCRestInterfaceTest extends BaseTest {
         assertEquals("ubuntu16test", service.get().getModelName());
     }
 
-
     @Test
     public void testServiceBasicCnf() throws Exception {
         wireMockServer.stubFor(post(urlPathMatching("/aai/.*"))
@@ -483,7 +472,6 @@ public class ASDCRestInterfaceTest extends BaseTest {
         assertTrue(service.isPresent());
         assertEquals("basic_network", service.get().getModelName());
     }
-
 
     protected String createURLWithPort(String uri) {
         return "http://localhost:" + port + uri;
