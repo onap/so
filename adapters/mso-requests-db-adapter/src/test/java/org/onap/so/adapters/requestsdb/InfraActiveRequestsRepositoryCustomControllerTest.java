@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,9 +20,7 @@
 
 package org.onap.so.adapters.requestsdb;
 
-
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import java.sql.Timestamp;
@@ -140,7 +138,6 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
         assertEquals(201, response.getStatusCodeValue());
     }
 
-
     @Test
     public void getCloudOrchestrationFiltersFromInfraActiveTest() {
 
@@ -200,7 +197,6 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
 
     @Test
     public void checkVnfIdStatusTest() {
-
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(
                 "/infraActiveRequests" + "/checkVnfIdStatus/" + infraActiveRequests.getOperationalEnvId()));
@@ -330,7 +326,7 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
 
         for (InfraActiveRequests result : responseList) {
             if (result.getRequestId().equals(request.getRequestId())) {
-                assertThat(request, sameBeanAs(result).ignoring("modifyTime"));
+                assertThat(request).usingRecursiveComparison().ignoringFields("modifyTime", "startTime").isEqualTo(result);
                 expectedReturned = true;
             }
         }

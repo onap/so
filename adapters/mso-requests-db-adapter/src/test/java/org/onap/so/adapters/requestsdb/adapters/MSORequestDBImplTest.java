@@ -20,8 +20,7 @@
 
 package org.onap.so.adapters.requestsdb.adapters;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import java.util.ArrayList;
@@ -89,7 +88,6 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
                 testRequest.getServiceInstanceName(), testRequest.getConfigurationId(),
                 testRequest.getConfigurationName(), testRequest.getVfModuleName());
 
-
     }
 
     private InfraActiveRequests buildTestRequest() {
@@ -133,10 +131,9 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
             fail("Null infraRequest");
 
         // Then
-        assertThat(infraRequest, sameBeanAs(testRequest).ignoring("requestBody").ignoring("endTime")
-                .ignoring("startTime").ignoring("modifyTime"));
+        assertThat(infraRequest).usingRecursiveComparison()
+                .ignoringFields("requestBody", "endTime", "startTime", "modifyTime").isEqualTo(testRequest);
     }
-
 
     @Test
     public void getByInvalidRequestId() throws MsoRequestsDbException {
@@ -157,7 +154,6 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
         // Given
         String requestId = "00032ab7-3fb3-42e5-965d-8ea592502017";
 
-
         // When
         String lastModifiedBy = "UNIT TEST";
         String statusMessage = "TESTING THE UDPATES";
@@ -174,7 +170,6 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
         String responseBody = "NewResponseBody";
         String vfModuleId = "NEW VF MODULEID";
         String serviceInstanceId = " new serv ind";
-
 
         testRequest.setVolumeGroupId(volumeGroupId);
         testRequest.setServiceInstanceName(serviceInstanceName);
@@ -193,15 +188,13 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
         testRequest.setVfModuleName(vfModuleName);
         testRequest.setVnfOutputs(vnfOutputs);
 
-
         dbAdapter.updateInfraRequest(testRequest.getRequestId(), lastModifiedBy, statusMessage, responseBody,
                 requestStatus, progress, vnfOutputs, serviceInstanceId, networkId, vnfId, vfModuleId, volumeGroupId,
                 serviceInstanceName, configurationId, configurationName, vfModuleName);
         InfraActiveRequests infraRequest = dbAdapter.getInfraRequest(requestId);
         // Then
-        assertThat(infraRequest, sameBeanAs(testRequest).ignoring("requestBody").ignoring("endTime")
-                .ignoring("startTime").ignoring("modifyTime"));
-
+        assertThat(infraRequest).usingRecursiveComparison()
+                .ignoringFields("requestBody", "endTime", "startTime", "modifyTime").isEqualTo(testRequest);
 
     }
 
@@ -219,7 +212,6 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
         }
     }
 
-
     @Test
     public void updateInfraRequestNulls() throws MsoRequestsDbException {
         InfraActiveRequests testRequest = setupTestEntities();
@@ -231,8 +223,8 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
                 null, null, null, null, null, null, null, null, null, null, null);
         InfraActiveRequests infraRequest = dbAdapter.getInfraRequest(requestId);
         // Then
-        assertThat(infraRequest, sameBeanAs(testRequest).ignoring("requestBody").ignoring("endTime")
-                .ignoring("startTime").ignoring("modifyTime"));
+        assertThat(infraRequest).usingRecursiveComparison()
+                .ignoringFields("requestBody", "endTime", "startTime", "modifyTime").isEqualTo(testRequest);
     }
 
     @Test
@@ -280,9 +272,8 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
 
         dbAdapter.setInstanceNfvoMappingRepository(instanceId, nfvoName, endpoint, username, password, apiRoot);
         InstanceNfvoMapping dbInstNfvoMap = dbAdapter.getInstanceNfvoMapping(instanceId);
-        assertThat(dbInstNfvoMap, sameBeanAs(instanceNfvoMapping));
+        assertThat(dbInstNfvoMap).usingRecursiveComparison().isEqualTo(instanceNfvoMapping);
     }
-
 
     @Test
     public void updateServiceOperation() throws MsoRequestsDbException {
@@ -298,8 +289,6 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
 
         OperationStatus updatedOperationStatus = new OperationStatus();
 
-
-
         updatedOperationStatus.setServiceId(serviceId);
         updatedOperationStatus.setServiceName(serviceName);
         updatedOperationStatus.setOperationId(operationId);
@@ -313,9 +302,9 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
         dbAdapter.updateServiceOperationStatus(serviceId, operationId, operation, userId, result, operationContent,
                 progress, reason);
         OperationStatus dbOpStatus = operationStatusRepository.findOneByServiceIdAndOperationId(serviceId, operationId);
-        assertThat(dbOpStatus, sameBeanAs(updatedOperationStatus).ignoring("operateAt").ignoring("finishedAt"));
+        assertThat(dbOpStatus).usingRecursiveComparison().ignoringFields("operateAt", "finishedAt")
+                .isEqualTo(updatedOperationStatus);
     }
-
 
     @Test
     public void updateServiceOperation_Not_Found() throws MsoRequestsDbException {
@@ -331,8 +320,6 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
 
         OperationStatus updatedOperationStatus = new OperationStatus();
 
-
-
         updatedOperationStatus.setServiceId(serviceId);
         updatedOperationStatus.setOperationId(operationId);
         updatedOperationStatus.setOperation(operation);
@@ -345,7 +332,8 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
         dbAdapter.updateServiceOperationStatus(serviceId, operationId, operation, userId, result, operationContent,
                 progress, reason);
         OperationStatus dbOpStatus = operationStatusRepository.findOneByServiceIdAndOperationId(serviceId, operationId);
-        assertThat(dbOpStatus, sameBeanAs(updatedOperationStatus).ignoring("operateAt").ignoring("finishedAt"));
+        assertThat(dbOpStatus).usingRecursiveComparison().ignoringFields("operateAt", "finishedAt")
+                .isEqualTo(updatedOperationStatus);
     }
 
     @Test
@@ -387,7 +375,7 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
         dbAdapter.initResourceOperationStatus(serviceId, operationId, operationType, resourceTemplateUUIDs);
         List<ResourceOperationStatus> testList =
                 resourceOperationStatusRepo.findByServiceIdAndOperationId(serviceId, operationId);
-        assertThat(testList, sameBeanAs(expectedResult));
+        assertThat(testList).usingRecursiveComparison().isEqualTo(expectedResult);
     }
 
     @Test
@@ -405,12 +393,11 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
         resource1.setStatus(RequestsDbConstant.Status.PROCESSING);
         resource1.setStatusDescription("Waiting for start");
 
-
         dbAdapter.initResourceOperationStatus(serviceId, operationId, operationType, resourceTemplateUUIDs);
 
         ResourceOperationStatus actualResource =
                 dbAdapter.getResourceOperationStatus(serviceId, operationId, "template1");
-        assertThat(actualResource, sameBeanAs(resource1));
+        assertThat(actualResource).usingRecursiveComparison().isEqualTo(resource1);
     }
 
     @Test
@@ -427,7 +414,6 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
         String errorCode = "errorCode";
         String statusDescription = "statusDescription";
 
-
         ResourceOperationStatus expectedResource = new ResourceOperationStatus();
         expectedResource.setOperationId(operationId);
         expectedResource.setServiceId(serviceId);
@@ -440,12 +426,11 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
         expectedResource.setProgress(progress);
         expectedResource.setResourceInstanceID(resourceInstanceID);
 
-
         dbAdapter.updateResourceOperationStatus(serviceId, operationId, resourceTemplateUUID, operationType,
                 resourceInstanceID, jobId, status, progress, errorCode, statusDescription);
 
         ResourceOperationStatus actualResource =
                 dbAdapter.getResourceOperationStatus(serviceId, operationId, "template1");
-        assertThat(actualResource, sameBeanAs(expectedResource));
+        assertThat(actualResource).usingRecursiveComparison().isEqualTo(expectedResource);
     }
 }
