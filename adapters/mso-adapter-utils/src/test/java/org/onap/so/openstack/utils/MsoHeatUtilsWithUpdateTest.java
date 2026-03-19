@@ -20,8 +20,7 @@
 
 package org.onap.so.openstack.utils;
 
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
 import java.io.File;
@@ -100,7 +99,7 @@ public class MsoHeatUtilsWithUpdateTest extends TestDataSetup {
         StackInfo actualStackInfo = heatUtils.updateStack(cloudSiteId, cloudOwner, tenantId, stackName, heatTemplate,
                 stackInputs, pollForCompletion, timeoutMinutes);
 
-        assertThat(actualStackInfo, sameBeanAs(expectedStackInfo));
+        assertThat(actualStackInfo).usingRecursiveComparison().isEqualTo(expectedStackInfo);
     }
 
     @Test
@@ -124,7 +123,7 @@ public class MsoHeatUtilsWithUpdateTest extends TestDataSetup {
         StackInfo actualStackInfo = heatUtils.updateStack(cloudSiteId, cloudOwner, tenantId, stackName, heatTemplate,
                 stackInputs, pollForCompletion, timeoutMinutes, environmentString);
 
-        assertThat(actualStackInfo, sameBeanAs(expectedStackInfo));
+        assertThat(actualStackInfo).usingRecursiveComparison().isEqualTo(expectedStackInfo);
     }
 
     @Test
@@ -149,6 +148,6 @@ public class MsoHeatUtilsWithUpdateTest extends TestDataSetup {
         StackInfo actualStackInfo = heatUtils.updateStack(cloudSiteId, cloudOwner, tenantId, stackName, heatTemplate,
                 stackInputs, pollForCompletion, timeoutMinutes, environmentString, files);
 
-        assertThat(actualStackInfo, sameBeanAs(expectedStackInfo));
+        assertThat(actualStackInfo).usingRecursiveComparison().isEqualTo(expectedStackInfo);
     }
 }

@@ -20,8 +20,7 @@
 
 package org.onap.so.asdc.installer;
 
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -89,35 +88,41 @@ public class ToscaResourceStructureTest {
         toscaResourceStructure.setSuccessfulDeployment();
 
         assertEquals("heatTemplateUUID", toscaResourceStructure.getHeatTemplateUUID());
-        assertThat(toscaResourceStructure.getAllottedList(), sameBeanAs(new ArrayList<NodeTemplate>()));
+        assertThat(toscaResourceStructure.getAllottedList()).usingRecursiveComparison()
+                .isEqualTo(new ArrayList<NodeTemplate>());
         assertEquals(sdcCsarHelper, toscaResourceStructure.getSdcCsarHelper());
-        assertThat(toscaResourceStructure.getServiceMetadata(), sameBeanAs(new Metadata(new HashMap<>())));
-        assertThat(toscaResourceStructure.getCatalogService(), sameBeanAs(new Service()));
-        assertThat(toscaResourceStructure.getNetworkTypes(), sameBeanAs(new ArrayList<>()));
-        assertThat(toscaResourceStructure.getVfTypes(), sameBeanAs(new ArrayList<>()));
-        assertThat(toscaResourceStructure.getCatalogResourceCustomization(),
-                sameBeanAs(new AllottedResourceCustomization()));
-        assertThat(toscaResourceStructure.getCatalogNetworkResourceCustomization(),
-                sameBeanAs(new NetworkResourceCustomization()));
-        assertThat(toscaResourceStructure.getCatalogNetworkResource(), sameBeanAs(new NetworkResource()));
-        assertThat(toscaResourceStructure.getCatalogVfModule(), sameBeanAs(new VfModule()));
-        assertThat(toscaResourceStructure.getVnfResourceCustomization(), sameBeanAs(new VnfResourceCustomization()));
-        assertThat(toscaResourceStructure.getVfModuleCustomization(), sameBeanAs(new VfModuleCustomization()));
-        assertThat(toscaResourceStructure.getAllottedResource(), sameBeanAs(new AllottedResource()));
-        assertThat(toscaResourceStructure.getAllottedResourceCustomization(),
-                sameBeanAs(new AllottedResourceCustomization()));
-        assertThat(toscaResourceStructure.getCatalogTempNetworkHeatTemplateLookup(),
-                sameBeanAs(new TempNetworkHeatTemplateLookup()));
+        assertThat(toscaResourceStructure.getServiceMetadata()).usingRecursiveComparison()
+                .isEqualTo(new Metadata(new HashMap<>()));
+        assertThat(toscaResourceStructure.getCatalogService()).usingRecursiveComparison().isEqualTo(new Service());
+        assertThat(toscaResourceStructure.getNetworkTypes()).usingRecursiveComparison().isEqualTo(new ArrayList<>());
+        assertThat(toscaResourceStructure.getVfTypes()).usingRecursiveComparison().isEqualTo(new ArrayList<>());
+        assertThat(toscaResourceStructure.getCatalogResourceCustomization()).usingRecursiveComparison()
+                .isEqualTo(new AllottedResourceCustomization());
+        assertThat(toscaResourceStructure.getCatalogNetworkResourceCustomization()).usingRecursiveComparison()
+                .isEqualTo(new NetworkResourceCustomization());
+        assertThat(toscaResourceStructure.getCatalogNetworkResource()).usingRecursiveComparison()
+                .isEqualTo(new NetworkResource());
+        assertThat(toscaResourceStructure.getCatalogVfModule()).usingRecursiveComparison().isEqualTo(new VfModule());
+        assertThat(toscaResourceStructure.getVnfResourceCustomization()).usingRecursiveComparison()
+                .isEqualTo(new VnfResourceCustomization());
+        assertThat(toscaResourceStructure.getVfModuleCustomization()).usingRecursiveComparison()
+                .isEqualTo(new VfModuleCustomization());
+        assertThat(toscaResourceStructure.getAllottedResource()).usingRecursiveComparison()
+                .isEqualTo(new AllottedResource());
+        assertThat(toscaResourceStructure.getAllottedResourceCustomization()).usingRecursiveComparison()
+                .isEqualTo(new AllottedResourceCustomization());
+        assertThat(toscaResourceStructure.getCatalogTempNetworkHeatTemplateLookup()).usingRecursiveComparison()
+                .isEqualTo(new TempNetworkHeatTemplateLookup());
         assertEquals("heatFilesUUID", toscaResourceStructure.getHeatFilesUUID());
         assertEquals(artifactInfo, toscaResourceStructure.getToscaArtifact());
-        assertThat(toscaResourceStructure.getToscaCsar(), sameBeanAs(new ToscaCsar()));
+        assertThat(toscaResourceStructure.getToscaCsar()).usingRecursiveComparison().isEqualTo(new ToscaCsar());
         assertEquals("volHeatTemplateUUID", toscaResourceStructure.getVolHeatTemplateUUID());
         assertEquals("envHeatTemplateUUID", toscaResourceStructure.getEnvHeatTemplateUUID());
         assertEquals("serviceVersion", toscaResourceStructure.getServiceVersion());
         assertEquals("workloadPerformance", toscaResourceStructure.getWorkloadPerformance());
-        assertThat(toscaResourceStructure.getVfModule(), sameBeanAs(new VfModule()));
-        assertThat(toscaResourceStructure.getTempNetworkHeatTemplateLookup(),
-                sameBeanAs(new TempNetworkHeatTemplateLookup()));
+        assertThat(toscaResourceStructure.getVfModule()).usingRecursiveComparison().isEqualTo(new VfModule());
+        assertThat(toscaResourceStructure.getTempNetworkHeatTemplateLookup()).usingRecursiveComparison()
+                .isEqualTo(new TempNetworkHeatTemplateLookup());
         assertEquals(true, toscaResourceStructure.isDeployedSuccessfully());
     }
 

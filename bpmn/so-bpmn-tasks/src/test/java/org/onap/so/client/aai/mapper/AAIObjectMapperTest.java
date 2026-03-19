@@ -22,8 +22,7 @@
 
 package org.onap.so.client.aai.mapper;
 
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
@@ -69,7 +68,6 @@ public class AAIObjectMapperTest {
     private AAIObjectMapper aaiObjectMapper = new AAIObjectMapper();
     private final static String JSON_FILE_LOCATION = "src/test/resources/__files/BuildingBlocks/";
 
-
     @Test
     public void mapConfigurationTest() {
         Configuration configuration = new Configuration();
@@ -100,7 +98,7 @@ public class AAIObjectMapperTest {
 
         org.onap.aai.domain.yang.Configuration actualConfiguration = aaiObjectMapper.mapConfiguration(configuration);
 
-        assertThat(actualConfiguration, sameBeanAs(expectedConfiguration));
+        assertThat(actualConfiguration).usingRecursiveComparison().isEqualTo(expectedConfiguration);
     }
 
     @Test
@@ -126,7 +124,7 @@ public class AAIObjectMapperTest {
 
         org.onap.aai.domain.yang.VolumeGroup actualVolumeGroup = aaiObjectMapper.mapVolumeGroup(volumeGroup);
 
-        assertThat(actualVolumeGroup, sameBeanAs(expectedVolumeGroup));
+        assertThat(actualVolumeGroup).usingRecursiveComparison().isEqualTo(expectedVolumeGroup);
     }
 
     @Test
@@ -288,7 +286,7 @@ public class AAIObjectMapperTest {
         org.onap.aai.domain.yang.VfModule reqMapper1 =
                 omapper.readValue(jsonToCompare, org.onap.aai.domain.yang.VfModule.class);
 
-        assertThat(reqMapper1, sameBeanAs(AAIVfModule));
+        assertThat(reqMapper1).usingRecursiveComparison().isEqualTo(AAIVfModule);
 
     }
 
@@ -314,7 +312,7 @@ public class AAIObjectMapperTest {
         org.onap.aai.domain.yang.VfModule reqMapper1 =
                 omapper.readValue(jsonToCompare, org.onap.aai.domain.yang.VfModule.class);
 
-        assertThat(reqMapper1, sameBeanAs(AAIVfModule));
+        assertThat(reqMapper1).usingRecursiveComparison().isEqualTo(AAIVfModule);
 
     }
 
@@ -336,7 +334,6 @@ public class AAIObjectMapperTest {
         model.setInstanceGroupRole("SUB-INTERFACE");
 
         instanceGroup.setModelInfoInstanceGroup(model);
-
 
         org.onap.aai.domain.yang.InstanceGroup aaiInstanceGroup = aaiObjectMapper.mapInstanceGroup(instanceGroup);
 
@@ -376,7 +373,7 @@ public class AAIObjectMapperTest {
 
         org.onap.aai.domain.yang.Customer actualCustomer = aaiObjectMapper.mapCustomer(customer);
 
-        assertThat(actualCustomer, sameBeanAs(expectedCustomer));
+        assertThat(actualCustomer).usingRecursiveComparison().isEqualTo(expectedCustomer);
     }
 
     @Test
@@ -413,7 +410,7 @@ public class AAIObjectMapperTest {
         org.onap.aai.domain.yang.L3Network network =
                 omapper.readValue(getJson("aaiL3NetworkMapped.json"), org.onap.aai.domain.yang.L3Network.class);
 
-        com.shazam.shazamcrest.MatcherAssert.assertThat(aaiL3Network, sameBeanAs(network));
+        assertThat(aaiL3Network).usingRecursiveComparison().isEqualTo(network);
 
     }
 
@@ -443,7 +440,7 @@ public class AAIObjectMapperTest {
 
         org.onap.aai.domain.yang.Collection actualCollection = aaiObjectMapper.mapCollection(networkCollection);
 
-        assertThat(actualCollection, sameBeanAs(expectedCollection));
+        assertThat(actualCollection).usingRecursiveComparison().isEqualTo(expectedCollection);
     }
 
     /*
@@ -673,7 +670,6 @@ public class AAIObjectMapperTest {
         routeTarget.setGlobalRouteTarget("testGrt");
         vpnBinding.getRouteTargets().add(routeTarget);
 
-
         org.onap.aai.domain.yang.VpnBinding expectedVpnBinding = new org.onap.aai.domain.yang.VpnBinding();
         expectedVpnBinding.setVpnId("testVpnId");
         expectedVpnBinding.setVpnName("testVpn");
@@ -694,7 +690,7 @@ public class AAIObjectMapperTest {
 
         org.onap.aai.domain.yang.VpnBinding actualVpnBinding = aaiObjectMapper.mapVpnBinding(vpnBinding);
 
-        assertThat(actualVpnBinding, sameBeanAs(expectedVpnBinding));
+        assertThat(actualVpnBinding).usingRecursiveComparison().isEqualTo(expectedVpnBinding);
     }
 
     @Test
@@ -709,7 +705,7 @@ public class AAIObjectMapperTest {
 
         org.onap.aai.domain.yang.RouteTarget actualRouteTarget = aaiObjectMapper.mapRouteTarget(routeTarget);
 
-        assertThat(actualRouteTarget, sameBeanAs(expectedRouteTarget));
+        assertThat(actualRouteTarget).usingRecursiveComparison().isEqualTo(expectedRouteTarget);
     }
 
     @Test
@@ -726,7 +722,7 @@ public class AAIObjectMapperTest {
 
         org.onap.aai.domain.yang.Subnet actualSubnet = aaiObjectMapper.mapSubnet(subnet);
 
-        assertThat(actualSubnet, sameBeanAs(expectedSubnet));
+        assertThat(actualSubnet).usingRecursiveComparison().isEqualTo(expectedSubnet);
     }
 
     @Test
@@ -743,6 +739,6 @@ public class AAIObjectMapperTest {
 
         org.onap.aai.domain.yang.NetworkPolicy actualNetworkPolicy = aaiObjectMapper.mapNetworkPolicy(networkPolicy);
 
-        assertThat(actualNetworkPolicy, sameBeanAs(expectedNetworkPolicy));
+        assertThat(actualNetworkPolicy).usingRecursiveComparison().isEqualTo(expectedNetworkPolicy);
     }
 }
