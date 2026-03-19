@@ -20,8 +20,7 @@
 
 package org.onap.so.client.orchestration;
 
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -211,7 +210,6 @@ public class AAIVnfResourcesTest extends TestDataSetup {
                         .cloudRegion(cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId()))));
     }
 
-
     @Test
     public void checkVnfClosedLoopDisabledFlagTest() {
         Optional<org.onap.aai.domain.yang.GenericVnf> vnf = Optional.of(new org.onap.aai.domain.yang.GenericVnf());
@@ -240,7 +238,6 @@ public class AAIVnfResourcesTest extends TestDataSetup {
         verify(MOCK_aaiValidatorImpl, times(1)).isPhysicalServerLocked(isA(String.class));
         assertTrue(isVnfPserversLockedFlag);
     }
-
 
     @Test
     public void checkNameInUseTrueTest() {
@@ -290,7 +287,8 @@ public class AAIVnfResourcesTest extends TestDataSetup {
 
         if (oVserver.isPresent()) {
             org.onap.aai.domain.yang.Vserver vserver = oVserver.get();
-            assertThat(aaiResultWrapper.asBean(org.onap.aai.domain.yang.Vserver.class).get(), sameBeanAs(vserver));
+            assertThat(aaiResultWrapper.asBean(org.onap.aai.domain.yang.Vserver.class).get()).usingRecursiveComparison()
+                    .isEqualTo(vserver);
         }
     }
 }

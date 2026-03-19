@@ -20,8 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.sdnc.mapper;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -146,8 +145,8 @@ public class VfModuleTopologyOperationRequestMapperTest {
         GenericResourceApiVfModuleOperationInformation reqMapper1 =
                 omapper.readValue(jsonToCompare, GenericResourceApiVfModuleOperationInformation.class);
 
-        assertThat(vfModuleSDNCrequest, sameBeanAs(reqMapper1).ignoring("sdncRequestHeader.svcRequestId")
-                .ignoring("requestInformation.requestId"));
+        assertThat(vfModuleSDNCrequest).usingRecursiveComparison()
+                .ignoringFields("sdncRequestHeader.svcRequestId", "requestInformation.requestId").isEqualTo(reqMapper1);
         assertEquals("MsoRequestId", vfModuleSDNCrequest.getRequestInformation().getRequestId());
     }
 
@@ -184,8 +183,8 @@ public class VfModuleTopologyOperationRequestMapperTest {
         GenericResourceApiVfModuleOperationInformation reqMapper1 =
                 omapper.readValue(jsonToCompare, GenericResourceApiVfModuleOperationInformation.class);
 
-        assertThat(vfModuleSDNCrequest, sameBeanAs(reqMapper1).ignoring("sdncRequestHeader.svcRequestId")
-                .ignoring("requestInformation.requestId"));
+        assertThat(vfModuleSDNCrequest).usingRecursiveComparison()
+                .ignoringFields("sdncRequestHeader.svcRequestId", "requestInformation.requestId").isEqualTo(reqMapper1);
         assertEquals("MsoRequestId", vfModuleSDNCrequest.getRequestInformation().getRequestId());
     }
 

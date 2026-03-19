@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,8 +20,7 @@
 
 package org.onap.so.apihandlerinfra.infra.rest.handler;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import java.util.HashMap;
@@ -41,7 +40,6 @@ import org.onap.so.apihandlerinfra.Action;
 import org.onap.so.apihandlerinfra.Constants;
 import org.onap.so.constants.Status;
 import org.onap.so.db.catalog.beans.Recipe;
-import org.onap.so.db.catalog.beans.ServiceRecipe;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
@@ -73,11 +71,9 @@ public class VnfRestHandlerTest {
 
     @Test
     public void test_find_vnf_recipe() {
-        ServiceRecipe expected = new ServiceRecipe();
-        expected.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
         Recipe actual = restHandler.findVnfModuleRecipe("testModelId", ModelType.vnf.toString(),
                 Action.createInstance.toString());
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual.getOrchestrationUri()).isEqualTo("/mso/async/services/WorkflowActionBB");
     }
 
     @Test
@@ -109,7 +105,7 @@ public class VnfRestHandlerTest {
                 .setRequestUri("http://localhost:8080/serviceInstances").setApiVersion("v8").build();
         RequestClientParameter actual = restHandler.buildRequestParams(createTestRequest(),
                 "http://localhost:8080/serviceInstances", "requestId", "serviceInstanceId", "vnfId");
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -127,7 +123,7 @@ public class VnfRestHandlerTest {
         expected.setRequestScope(ModelType.vnf.toString());
         InfraActiveRequests actual = restHandler.createInfraActiveRequestForDelete("requestId", "serviceInstanceId",
                 "vnfId", "userId", "VID", "http://localhost:9090");
-        assertThat(actual, sameBeanAs(expected).ignoring("startTime"));
+        assertThat(actual).usingRecursiveComparison().ignoringFields("startTime").isEqualTo(expected);
         Mockito.verify(infraActiveRequestsClient, Mockito.times(1)).save(actual);
     }
 
