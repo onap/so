@@ -22,7 +22,6 @@
 
 package org.onap.so.client.policy;
 
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -158,7 +157,7 @@ public class PolicyClientImplTest {
         String configJson = returnedPolicyConfigList[0].getConfig();
         Config actual = client.getConfigFromStringJson(configJson);
 
-        org.hamcrest.MatcherAssert.assertThat(actual, sameBeanAs(expected));
+        org.hamcrest.MatcherAssert.assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -177,7 +176,7 @@ public class PolicyClientImplTest {
 
         Config actual = client.getConfigWithPolicyName("policyName");
 
-        org.hamcrest.MatcherAssert.assertThat(actual, sameBeanAs(expected));
+        org.hamcrest.MatcherAssert.assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
 
     }
 }

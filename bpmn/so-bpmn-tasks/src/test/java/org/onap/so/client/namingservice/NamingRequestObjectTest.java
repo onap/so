@@ -20,8 +20,7 @@
 
 package org.onap.so.client.namingservice;
 
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import java.util.HashMap;
 import org.junit.Test;
 import org.onap.namingservice.model.Element;
@@ -54,7 +53,7 @@ public class NamingRequestObjectTest {
         namingRequestObject.setResourceNameValue(resourceName);
 
         HashMap<String, String> actual = namingRequestObject.getNamingRequestObjectMap();
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -77,6 +76,6 @@ public class NamingRequestObjectTest {
         namingRequestObject.setServiceModelNameValue(serviceModelName);
 
         HashMap<String, String> actual = namingRequestObject.getNamingRequestObjectMap();
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 }

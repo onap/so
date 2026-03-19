@@ -20,8 +20,7 @@
 
 package org.onap.so.asdc.client.exceptions;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 
 public class ASDCDownloadExceptionTest {
@@ -34,7 +33,7 @@ public class ASDCDownloadExceptionTest {
 
         Exception expectedException = new Exception(exceptionMessage);
 
-        assertThat(asdcDownloadException, sameBeanAs(expectedException));
+        assertThat(asdcDownloadException).usingRecursiveComparison().isEqualTo(expectedException);
     }
 
     @Test
@@ -44,6 +43,6 @@ public class ASDCDownloadExceptionTest {
 
         Exception expectedException = new Exception(exceptionMessage, new Throwable(throwableMessage));
 
-        assertThat(asdcDownloadException, sameBeanAs(expectedException));
+        assertThat(asdcDownloadException).usingRecursiveComparison().isEqualTo(expectedException);
     }
 }

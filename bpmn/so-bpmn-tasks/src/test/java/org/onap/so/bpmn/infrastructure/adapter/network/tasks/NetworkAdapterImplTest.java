@@ -1,7 +1,6 @@
 package org.onap.so.bpmn.infrastructure.adapter.network.tasks;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import javax.xml.bind.JAXBException;
 import org.junit.Test;
@@ -30,8 +29,8 @@ public class NetworkAdapterImplTest extends TestDataSetup {
         execution.setVariable("WorkflowResponse", RESPONSE);
         networkAdapterImpl.postProcessNetworkAdapter(execution);
         assertNotNull(execution.getVariable("createNetworkResponse"));
-        assertThat(networkAdapterImpl.unmarshalXml(RESPONSE, CreateNetworkResponse.class),
-                sameBeanAs(execution.getVariable("createNetworkResponse")));
+        assertThat(networkAdapterImpl.unmarshalXml(RESPONSE, CreateNetworkResponse.class)).usingRecursiveComparison()
+                .isEqualTo(execution.getVariable("createNetworkResponse"));
     }
 
 }

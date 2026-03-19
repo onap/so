@@ -22,8 +22,7 @@
 
 package org.onap.so.bpmn.servicedecomposition.tasks;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -127,7 +126,8 @@ public class BBInputSetupUtilsTest {
 
         doReturn(expected).when(MOCK_catalogDbClient).getServiceByID(modelUUID);
 
-        assertThat(bbInputSetupUtils.getCatalogServiceByModelUUID(modelUUID), sameBeanAs(expected));
+        assertThat(bbInputSetupUtils.getCatalogServiceByModelUUID(modelUUID)).usingRecursiveComparison()
+                .isEqualTo(expected);
     }
 
     @Test
@@ -141,7 +141,7 @@ public class BBInputSetupUtilsTest {
                 modelInvariantUUID);
 
         assertThat(bbInputSetupUtils.getCatalogServiceByModelVersionAndModelInvariantUUID(modelVersion,
-                modelInvariantUUID), sameBeanAs(expectedService));
+                modelInvariantUUID)).usingRecursiveComparison().isEqualTo(expectedService);
     }
 
     @Test
@@ -153,7 +153,8 @@ public class BBInputSetupUtilsTest {
         doReturn(Arrays.asList(vnfc)).when(MOCK_catalogDbClient)
                 .getVnfcInstanceGroupsByVnfResourceCust(modelCustomizationUUID);
 
-        assertThat(bbInputSetupUtils.getVnfcInstanceGroups(modelCustomizationUUID), sameBeanAs(Arrays.asList(vnfc)));
+        assertThat(bbInputSetupUtils.getVnfcInstanceGroups(modelCustomizationUUID)).usingRecursiveComparison()
+                .isEqualTo(Arrays.asList(vnfc));
     }
 
     @Test
@@ -166,7 +167,7 @@ public class BBInputSetupUtilsTest {
 
         doReturn(infraActiveRequest).when(MOCK_requestsDbClient).getInfraActiveRequestbyRequestId(requestId);
 
-        assertThat(bbInputSetupUtils.getRequestDetails(requestId), sameBeanAs(expected));
+        assertThat(bbInputSetupUtils.getRequestDetails(requestId)).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -186,7 +187,7 @@ public class BBInputSetupUtilsTest {
                                 .cloudRegion(cloudConfig.getCloudOwner(), cloudConfig.getLcpCloudRegionId()))
                         .depth(Depth.ONE).nodesOnly(true));
 
-        assertThat(bbInputSetupUtils.getCloudRegion(cloudConfig), sameBeanAs(expected.get()));
+        assertThat(bbInputSetupUtils.getCloudRegion(cloudConfig)).usingRecursiveComparison().isEqualTo(expected.get());
     }
 
     @Test
@@ -214,7 +215,8 @@ public class BBInputSetupUtilsTest {
         doReturn(expected).when(MOCK_aaiResourcesClient).get(InstanceGroup.class,
                 AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().instanceGroup(instanceGroupId)));
 
-        assertThat(bbInputSetupUtils.getAAIInstanceGroup(instanceGroupId), sameBeanAs(expected.get()));
+        assertThat(bbInputSetupUtils.getAAIInstanceGroup(instanceGroupId)).usingRecursiveComparison()
+                .isEqualTo(expected.get());
     }
 
     @Test
@@ -231,7 +233,8 @@ public class BBInputSetupUtilsTest {
         doReturn(expected).when(MOCK_aaiResourcesClient).get(org.onap.aai.domain.yang.Customer.class,
                 AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId)));
 
-        assertThat(bbInputSetupUtils.getAAICustomer(globalSubscriberId), sameBeanAs(expected.get()));
+        assertThat(bbInputSetupUtils.getAAICustomer(globalSubscriberId)).usingRecursiveComparison()
+                .isEqualTo(expected.get());
     }
 
     @Test
@@ -251,8 +254,8 @@ public class BBInputSetupUtilsTest {
                 AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer(globalSubscriberId)
                         .serviceSubscription(subscriptionServiceType)));
 
-        assertThat(bbInputSetupUtils.getAAIServiceSubscription(globalSubscriberId, subscriptionServiceType),
-                sameBeanAs(expected.get()));
+        assertThat(bbInputSetupUtils.getAAIServiceSubscription(globalSubscriberId, subscriptionServiceType))
+                .usingRecursiveComparison().isEqualTo(expected.get());
     }
 
     @Test
@@ -271,7 +274,8 @@ public class BBInputSetupUtilsTest {
         doReturn(Optional.of(expectedServiceInstance)).when(MOCK_aaiResourcesClient).get(isA(Class.class),
                 isA(AAIResourceUri.class));
 
-        assertThat(bbInputSetupUtils.getAAIServiceInstanceById(serviceInstanceId), sameBeanAs(expectedServiceInstance));
+        assertThat(bbInputSetupUtils.getAAIServiceInstanceById(serviceInstanceId)).usingRecursiveComparison()
+                .isEqualTo(expectedServiceInstance);
     }
 
     @Test
@@ -298,7 +302,7 @@ public class BBInputSetupUtilsTest {
                                 .depth(Depth.TWO));
 
         assertThat(bbInputSetupUtils.getAAIServiceInstanceByIdAndCustomer(globalCustomerId, serviceType,
-                serviceInstanceId), sameBeanAs(expected));
+                serviceInstanceId)).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -348,7 +352,7 @@ public class BBInputSetupUtilsTest {
     public void getOptionalAAIServiceInstanceByNameNullTest() {
         Optional<ServiceInstance> actual = bbInputSetupUtils.getAAIServiceInstanceByName("", "", "");
 
-        assertThat(actual, sameBeanAs(Optional.empty()));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(Optional.empty());
     }
 
     @Test
@@ -364,7 +368,8 @@ public class BBInputSetupUtilsTest {
 
         doReturn(expectedInstanceGroup).when(MOCK_catalogDbClient).getInstanceGroupByModelUUID(modelUUID);
 
-        assertThat(bbInputSetupUtils.getCatalogInstanceGroup(modelUUID), sameBeanAs(expectedInstanceGroup));
+        assertThat(bbInputSetupUtils.getCatalogInstanceGroup(modelUUID)).usingRecursiveComparison()
+                .isEqualTo(expectedInstanceGroup);
     }
 
     @Test
@@ -376,8 +381,8 @@ public class BBInputSetupUtilsTest {
         doReturn(Arrays.asList(expectedCollection)).when(MOCK_catalogDbClient)
                 .getCollectionResourceInstanceGroupCustomizationByModelCustUUID(modelCustomizationUUID);
 
-        assertThat(bbInputSetupUtils.getCollectionResourceInstanceGroupCustomization(modelCustomizationUUID),
-                sameBeanAs(Arrays.asList(expectedCollection)));
+        assertThat(bbInputSetupUtils.getCollectionResourceInstanceGroupCustomization(modelCustomizationUUID))
+                .usingRecursiveComparison().isEqualTo(Arrays.asList(expectedCollection));
     }
 
     @Test
@@ -394,7 +399,8 @@ public class BBInputSetupUtilsTest {
         doReturn(Optional.of(expectedAaiConfiguration)).when(MOCK_aaiResourcesClient).get(isA(Class.class),
                 isA(AAIResourceUri.class));
 
-        assertThat(bbInputSetupUtils.getAAIConfiguration(configurationId), sameBeanAs(expectedAaiConfiguration));
+        assertThat(bbInputSetupUtils.getAAIConfiguration(configurationId)).usingRecursiveComparison()
+                .isEqualTo(expectedAaiConfiguration);
     }
 
     @Test
@@ -411,7 +417,7 @@ public class BBInputSetupUtilsTest {
         doReturn(Optional.of(expectedAaiVnf)).when(MOCK_aaiResourcesClient).get(isA(Class.class),
                 eq(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(vnfId)).depth(Depth.ONE)));
 
-        assertThat(bbInputSetupUtils.getAAIGenericVnf(vnfId), sameBeanAs(expectedAaiVnf));
+        assertThat(bbInputSetupUtils.getAAIGenericVnf(vnfId)).usingRecursiveComparison().isEqualTo(expectedAaiVnf);
     }
 
     @Test
