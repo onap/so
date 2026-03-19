@@ -20,9 +20,7 @@
 
 package org.onap.so.client.adapter.vnf.mapper;
 
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -73,7 +71,7 @@ public class VnfAdapterVfModuleObjectMapperTest {
 
         mapper.addPairToMap(map, "test", "_key2", Arrays.asList());
 
-        assertThat(map.containsKey("test_key2"), equalTo(false));
+        assertThat(map.containsKey("test_key2")).isFalse();
 
         mapper.addPairToMap(map, "test", "_key3", "myVal");
 
@@ -116,8 +114,8 @@ public class VnfAdapterVfModuleObjectMapperTest {
         DeleteVfModuleRequest actualDeleteVfModuleRequest =
                 mapper.deleteVfModuleRequestMapper(requestContext, cloudRegion, serviceInstance, genericVnf, vfModule);
 
-        assertThat(actualDeleteVfModuleRequest,
-                sameBeanAs(expectedDeleteVfModuleRequest).ignoring("messageId").ignoring("notificationUrl"));
+        assertThat(actualDeleteVfModuleRequest).usingRecursiveComparison()
+                .ignoringFields("messageId", "notificationUrl").isEqualTo(expectedDeleteVfModuleRequest);
     }
 
 }

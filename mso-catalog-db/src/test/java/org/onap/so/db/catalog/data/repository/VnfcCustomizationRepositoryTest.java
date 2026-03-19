@@ -20,8 +20,7 @@
 
 package org.onap.so.db.catalog.data.repository;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
@@ -60,6 +59,7 @@ public class VnfcCustomizationRepositoryTest extends BaseTest {
                 vnfcCustomizationRepository.findById("cf9f6efc-9f14-11e8-98d0-529269fb1459")
                         .orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
 
-        assertThat(vnfcCustomization, sameBeanAs(foundVnfcCustomization).ignoring("created"));
+        assertThat(vnfcCustomization).usingRecursiveComparison().ignoringFields("created")
+                .isEqualTo(foundVnfcCustomization);
     }
 }

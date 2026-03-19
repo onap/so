@@ -20,15 +20,13 @@
 
 package org.onap.so.apihandlerinfra;
 
-
+import static org.assertj.core.api.Assertions.assertThat;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -187,7 +185,6 @@ public class ServiceInstancesTest extends BaseTest {
         Service defaultService = new Service();
         defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
 
-
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -213,7 +210,8 @@ public class ServiceInstancesTest extends BaseTest {
         // then
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -230,7 +228,6 @@ public class ServiceInstancesTest extends BaseTest {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/CreateGenericALaCarteServiceInstance"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
-
 
         wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -265,11 +262,9 @@ public class ServiceInstancesTest extends BaseTest {
         Service defaultService = new Service();
         defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
 
-
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB")).willReturn(aResponse()
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_BAD_GATEWAY)));
-
 
         wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -359,7 +354,6 @@ public class ServiceInstancesTest extends BaseTest {
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
 
-
         wireMockServer.stubFor(get(urlMatching(
                 ".*/serviceRecipe/search/findFirstByServiceModelUUIDAndAction?serviceModelUUID=d88da85c-d9e8-4f73-b837-3a72a431622a&action=activateInstance"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -420,7 +414,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -467,7 +462,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -512,7 +508,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -557,7 +554,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -598,7 +596,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -618,7 +617,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
         assertTrue(response.getBody().contains("1882939"));
     }
 
@@ -650,7 +650,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -671,7 +672,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -692,7 +694,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -713,7 +716,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -734,7 +738,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -754,7 +759,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -774,7 +780,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -782,7 +789,6 @@ public class ServiceInstancesTest extends BaseTest {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
-
 
         wireMockServer.stubFor(get(urlMatching(
                 ".*/vnfResourceCustomization/search/findByModelCustomizationUUID[?]MODEL_CUSTOMIZATION_UUID=68dc9a92-214c-11e7-93ae-92361f002671"))
@@ -814,7 +820,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -831,7 +838,6 @@ public class ServiceInstancesTest extends BaseTest {
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("vnfResourceCustomizationsList_Response.json"))
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
-
 
         wireMockServer.stubFor(
                 get(urlMatching(".*/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002672/vnfResources"))
@@ -857,7 +863,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
         assertTrue(response.getBody().contains("1882939"));
     }
 
@@ -915,7 +922,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -954,7 +962,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -994,7 +1003,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -1033,7 +1043,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -1071,7 +1082,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -1079,7 +1091,6 @@ public class ServiceInstancesTest extends BaseTest {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/VnfConfigUpdate"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
-
 
         wireMockServer.stubFor(get(urlMatching(".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction"
                 + "[?]nfRole=GR-API-DEFAULT&action=applyUpdatedConfig"))
@@ -1100,7 +1111,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -1127,7 +1139,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -1154,7 +1167,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
         assertTrue(response.getBody().contains("1882939"));
     }
 
@@ -1205,7 +1219,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
         assertTrue(response.getBody().contains("1882939"));
     }
 
@@ -1251,7 +1266,6 @@ public class ServiceInstancesTest extends BaseTest {
                         .withBody(getWiremockResponseForCatalogdb("vfModulePCM_Response.json"))
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
-
         wireMockServer.stubFor(
                 get(urlMatching(".*/vnfComponentsRecipe/search/findFirstVnfComponentsRecipeByVnfComponentTypeAndAction"
                         + "[?]vnfComponentType=vfModule&action=createInstance"))
@@ -1273,7 +1287,8 @@ public class ServiceInstancesTest extends BaseTest {
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ObjectMapper mapper = new ObjectMapper();
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -1334,11 +1349,11 @@ public class ServiceInstancesTest extends BaseTest {
         ResponseEntity<String> response =
                 sendRequest(inputStream("/VfModuleNoMatchingModelUUID.json"), uri, HttpMethod.DELETE, headers);
 
-
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ObjectMapper mapper = new ObjectMapper();
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -1413,7 +1428,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -1451,7 +1467,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -1498,7 +1515,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -1554,7 +1572,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -1591,7 +1610,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -1621,7 +1641,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -1658,7 +1679,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -1698,7 +1720,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
         assertTrue(response.getBody().contains("1882939"));
     }
 
@@ -1740,7 +1763,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -1785,7 +1809,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -1823,7 +1848,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -1860,7 +1886,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
         assertTrue(response.getBody().contains("1882939"));
     }
 
@@ -1900,7 +1927,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -1915,7 +1943,6 @@ public class ServiceInstancesTest extends BaseTest {
                                 .withBody(getWiremockResponseForCatalogdb("networkRecipe_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
-
         // expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -1929,7 +1956,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -2004,7 +2032,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -2043,7 +2072,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -2101,7 +2131,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -2140,7 +2171,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -2182,7 +2214,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -2377,7 +2410,7 @@ public class ServiceInstancesTest extends BaseTest {
                 mapper.readValue(inputStream("/LegacyMacroServiceInstance.json"), ServiceInstancesRequest.class);
         requestHandlerUtils.mapToLegacyRequest(request.getRequestDetails());
         System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(request));
-        assertThat(request, sameBeanAs(expected));
+        assertThat(request).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -2401,7 +2434,6 @@ public class ServiceInstancesTest extends BaseTest {
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("vfModule_Response.json"))
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
-
 
         wireMockServer.stubFor(get(urlMatching(
                 ".*/vnfComponentsRecipe/search/findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction"
@@ -2430,7 +2462,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
         assertTrue(response.getBody().contains("1882939"));
     }
 
@@ -2652,7 +2685,8 @@ public class ServiceInstancesTest extends BaseTest {
         // then
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
         assertEquals(response.getHeaders().get(TRANSACTION_ID).get(0), "32807a28-1a14-4b88-b7b3-2950918aa76d");
     }
 
@@ -2675,7 +2709,8 @@ public class ServiceInstancesTest extends BaseTest {
         // then
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -2696,7 +2731,8 @@ public class ServiceInstancesTest extends BaseTest {
         // then
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -2758,7 +2794,8 @@ public class ServiceInstancesTest extends BaseTest {
         // then
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -2779,7 +2816,8 @@ public class ServiceInstancesTest extends BaseTest {
         // then
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -2811,7 +2849,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -3003,7 +3042,7 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
         RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
-        assertThat(expectedResponse, sameBeanAs(realResponse));
+        assertThat(expectedResponse).usingRecursiveComparison().isEqualTo(realResponse);
     }
 
 }
