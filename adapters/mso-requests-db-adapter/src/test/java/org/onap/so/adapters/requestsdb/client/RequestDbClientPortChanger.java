@@ -20,7 +20,6 @@
 
 package org.onap.so.adapters.requestsdb.client;
 
-
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.springframework.stereotype.Component;
 import java.net.URI;
@@ -39,4 +38,3 @@ public class RequestDbClientPortChanger extends RequestsDbClient {
         return URI.create(uri);
     }
 }
-

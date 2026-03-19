@@ -32,8 +32,7 @@
  */
 package org.onap.so.heatbridge;
 
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -164,13 +163,10 @@ public class HeatBridgeImplTest {
     private HeatBridgeImpl heatbridge = new HeatBridgeImpl(resourcesClient, cloudIdentity, CLOUD_OWNER, REGION_ID,
             REGION_ID, TENANT_ID, NodeType.GREENFIELD);
 
-
     @Before
     public void setUp() {
         when(resourcesClient.beginSingleTransaction()).thenReturn(transaction);
     }
-
-
 
     @Test
     public void testExtractStackResourceIdsByResourceType() {
@@ -186,7 +182,6 @@ public class HeatBridgeImplTest {
         // Assert
         assertEquals(expectedServerIds, serverIds);
     }
-
 
     @Test
     @Ignore
@@ -240,7 +235,6 @@ public class HeatBridgeImplTest {
         when(server1.getFlavor()).thenReturn(flavor);
         when(server2.getFlavor()).thenReturn(flavor);
         when(flavor.getId()).thenReturn("test-flavor-id");
-
 
         // Act
         heatbridge.buildAddVserversToAaiAction("test-genericVnf-id", "test-vfModule-id", servers);
@@ -379,7 +373,6 @@ public class HeatBridgeImplTest {
                 REGION_ID, "test-genericVnf-id", "test-vfModule-id", server3);
         assertEquals(2, relList3.getRelationship().size());
     }
-
 
     @Test
     public void testUpdateImagesToAai() throws HeatBridgeException {
@@ -662,7 +655,7 @@ public class HeatBridgeImplTest {
 
         assertTrue(argument.getValue().isPresent());
 
-        assertThat((L3InterfaceIpv6AddressList) argument.getValue().get(), sameBeanAs(ipv6));
+        assertThat((L3InterfaceIpv6AddressList) argument.getValue().get()).usingRecursiveComparison().isEqualTo(ipv6);
     }
 
     @Test
@@ -794,7 +787,6 @@ public class HeatBridgeImplTest {
 
         List<Image> images = heatbridge.extractOpenstackImagesFromServers(serverList);
 
-
         // Assert
         assertEquals(1, images.size());
     }
@@ -833,7 +825,6 @@ public class HeatBridgeImplTest {
         return stackResources;
     }
 
-
     private String readTestResourceFile(String filePath) {
         String content = null;
         String pathname = Objects.requireNonNull(getClass().getClassLoader().getResource(filePath)).getFile();
@@ -849,7 +840,5 @@ public class HeatBridgeImplTest {
     private String getJson(String filename) throws IOException {
         return new String(Files.readAllBytes(Paths.get("src/test/resources/__files/" + filename)));
     }
-
-
 
 }

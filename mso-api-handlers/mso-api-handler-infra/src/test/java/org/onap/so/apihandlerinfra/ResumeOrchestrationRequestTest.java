@@ -19,8 +19,7 @@
  */
 package org.onap.so.apihandlerinfra;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -119,7 +118,6 @@ public class ResumeOrchestrationRequestTest {
     private ContainerRequestContext requestContext = null;
     private HashMap<String, String> instanceIdMap = new HashMap<>();
     ModelInfo modelInfo;
-
 
     @Before
     public void setup() throws IOException {
@@ -281,7 +279,7 @@ public class ResumeOrchestrationRequestTest {
                 any(Action.class))).thenReturn(requestBody);
         RequestClientParameter result = resumeReq.setRequestClientParameter(lookupResult, version, infraActiveRequest,
                 currentActiveRequest, "pnfCorrelationId", aLaCarte, sir);
-        assertThat(requestClientParameter, sameBeanAs(result));
+        assertThat(requestClientParameter).usingRecursiveComparison().isEqualTo(result);
     }
 
     @Test
@@ -291,7 +289,7 @@ public class ResumeOrchestrationRequestTest {
         doReturn(ModelType.vfModule).when(requestHandler).getModelType(action, modelInfo);
         RequestClientParameter result = resumeReq.setRequestClientParameter(lookupResult, version,
                 infraActiveRequestVfModule, currentActiveRequest, "pnfCorrelationId", aLaCarte, sir);
-        assertThat(requestClientParameterVfModule, sameBeanAs(result));
+        assertThat(requestClientParameterVfModule).usingRecursiveComparison().isEqualTo(result);
     }
 
     @Test

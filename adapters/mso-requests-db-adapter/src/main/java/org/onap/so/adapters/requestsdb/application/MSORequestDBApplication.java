@@ -39,7 +39,7 @@ import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock;
  * @since Version 1.0
  *
  */
-@SpringBootApplication(scanBasePackages = {"org.onap.so", "org.onap.logging.filter"})
+@SpringBootApplication(scanBasePackages = { "org.onap.so", "org.onap.logging.filter" })
 @EnableScheduling
 @EnableSchedulerLock(defaultLockAtMostFor = "120s")
 @EnableMBeanExport(registration = RegistrationPolicy.IGNORE_EXISTING)
@@ -64,6 +64,5 @@ public class MSORequestDBApplication {
     public LockProvider lockProvider(DataSource dataSource) {
         return new JdbcTemplateLockProvider(dataSource);
     }
-
 
 }

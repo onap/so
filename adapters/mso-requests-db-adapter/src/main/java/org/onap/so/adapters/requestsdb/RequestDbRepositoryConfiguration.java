@@ -20,5 +20,4 @@ public class RequestDbRepositoryConfiguration implements RepositoryRestConfigure
                 .collect(Collectors.toList()).toArray(new Class[0]));
     }
 
-
 }

@@ -22,7 +22,6 @@
 
 package org.onap.so.adapters.requestsdb.application;
 
-
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,11 +41,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-@Profile({"!test"})
+@Profile({ "!test" })
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(entityManagerFactoryRef = "requestEntityManagerFactory",
-        transactionManagerRef = "requestTransactionManager", basePackages = {"org.onap.so.db.request.data.repository"})
+@EnableJpaRepositories(entityManagerFactoryRef = "requestEntityManagerFactory", transactionManagerRef = "requestTransactionManager", basePackages = {
+        "org.onap.so.db.request.data.repository" })
 public class RequestDBConfig {
 
     @Autowired(required = false)
@@ -66,7 +65,6 @@ public class RequestDBConfig {
         HikariConfig hikariConfig = this.requestDbConfig();
         return new HikariDataSource(hikariConfig);
     }
-
 
     @Primary
     @Bean(name = "requestEntityManagerFactory")

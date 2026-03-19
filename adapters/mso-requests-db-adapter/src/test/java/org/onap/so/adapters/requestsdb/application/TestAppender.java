@@ -25,8 +25,6 @@ import java.util.List;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
 
-
-
 public class TestAppender extends AppenderBase<ILoggingEvent> {
     public static List<ILoggingEvent> events = new ArrayList<>();
 

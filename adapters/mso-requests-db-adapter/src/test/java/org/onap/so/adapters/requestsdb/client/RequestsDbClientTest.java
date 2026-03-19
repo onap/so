@@ -21,8 +21,7 @@
 
 package org.onap.so.adapters.requestsdb.client;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -127,13 +126,13 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
     }
 
     private void verifyOperationStatus(OperationStatus request, OperationStatus response) {
-        assertThat(request, sameBeanAs(response).ignoring("operateAt").ignoring("finishedAt"));
+        assertThat(request).usingRecursiveComparison().ignoringFields("operateAt", "finishedAt").isEqualTo(response);
     }
 
-
     private void verifyInfraActiveRequests(InfraActiveRequests infraActiveRequestsResponse) {
-        assertThat(infraActiveRequestsResponse, sameBeanAs(infraActiveRequests).ignoring("modifyTime").ignoring("log")
-                .ignoring("cloudApiRequests.created").ignoring("cloudApiRequests.id"));
+        assertThat(infraActiveRequestsResponse).usingRecursiveComparison()
+                .ignoringFields("modifyTime", "startTime", "log", "cloudApiRequests.created", "cloudApiRequests.id")
+                .isEqualTo(infraActiveRequests);
     }
 
     @Test
@@ -152,8 +151,8 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
 
     @Test
     public void checkVnfIdStatusTest() {
-        InfraActiveRequests infraActiveRequestsResponse =
-                requestsDbClient.checkVnfIdStatus(infraActiveRequests.getOperationalEnvId());
+        InfraActiveRequests infraActiveRequestsResponse = requestsDbClient
+                .checkVnfIdStatus(infraActiveRequests.getOperationalEnvId());
         verifyInfraActiveRequests(infraActiveRequestsResponse);
         assertNull(requestsDbClient.checkVnfIdStatus(UUID.randomUUID().toString()));
     }
@@ -205,11 +204,11 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
 
     @Test
     public void getInfraActiveRequestbyRequestIdTest() {
-        InfraActiveRequests infraActiveRequestsResponse =
-                requestsDbClient.getInfraActiveRequestbyRequestId(infraActiveRequests.getRequestId());
+        InfraActiveRequests infraActiveRequestsResponse = requestsDbClient
+                .getInfraActiveRequestbyRequestId(infraActiveRequests.getRequestId());
         verifyInfraActiveRequests(infraActiveRequestsResponse);
-        infraActiveRequestsResponse =
-                requestsDbClient.getInfraActiveRequestbyRequestId(infraActiveRequests.getRequestId());
+        infraActiveRequestsResponse = requestsDbClient
+                .getInfraActiveRequestbyRequestId(infraActiveRequests.getRequestId());
 
         assertNull(requestsDbClient.getInfraActiveRequestbyRequestId(UUID.randomUUID().toString()));
     }
@@ -219,8 +218,8 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
         // requestUrl setup to null and save
         infraActiveRequests.setRequestUrl(null);
         requestsDbClient.updateInfraActiveRequests(infraActiveRequests);
-        InfraActiveRequests infraActiveRequestsResponse =
-                requestsDbClient.getInfraActiveRequestbyRequestId(infraActiveRequests.getRequestId());
+        InfraActiveRequests infraActiveRequestsResponse = requestsDbClient
+                .getInfraActiveRequestbyRequestId(infraActiveRequests.getRequestId());
         verifyInfraActiveRequests(infraActiveRequestsResponse);
 
         assertNull(infraActiveRequestsResponse.getRequestUrl());
@@ -249,28 +248,26 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
                 operationStatus.getOperationId()));
     }
 
-
     @Test
     public void getRequestProcessingDataBySoRequestIdTest() {
-        List<RequestProcessingData> requestProcessingDataList =
-                requestsDbClient.getRequestProcessingDataBySoRequestId("00032ab7-na18-42e5-965d-8ea592502018");
+        List<RequestProcessingData> requestProcessingDataList = requestsDbClient
+                .getRequestProcessingDataBySoRequestId("00032ab7-na18-42e5-965d-8ea592502018");
         assertNotNull(requestProcessingDataList);
         assertFalse(requestProcessingDataList.isEmpty());
         assertEquals(2, requestProcessingDataList.size());
     }
 
-
     @Test
     public void findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestIdTest() {
-        OperationalEnvServiceModelStatus operationalEnvServiceModelStatus =
-                requestsDbClient.findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId("1234", "TEST1234",
+        OperationalEnvServiceModelStatus operationalEnvServiceModelStatus = requestsDbClient
+                .findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId("1234", "TEST1234",
                         "00032ab7-3fb3-42e5-965d-8ea592502017");
         assertNotNull(operationalEnvServiceModelStatus);
         assertEquals("1234", operationalEnvServiceModelStatus.getOperationalEnvId());
         assertEquals("TEST1234", operationalEnvServiceModelStatus.getServiceModelVersionId());
 
-        OperationalEnvServiceModelStatus operationalEnvServiceModelStatus1 =
-                requestsDbClient.findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId("1234", "TEST1235",
+        OperationalEnvServiceModelStatus operationalEnvServiceModelStatus1 = requestsDbClient
+                .findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId("1234", "TEST1235",
                         "00032ab7-3fb3-42e5-965d-8ea592502018");
         assertNotNull(operationalEnvServiceModelStatus1);
         assertEquals("00032ab7-3fb3-42e5-965d-8ea592502018", operationalEnvServiceModelStatus1.getRequestId());
@@ -280,8 +277,8 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
 
     @Test
     public void getAllByOperationalEnvIdAndRequestId() {
-        List<OperationalEnvServiceModelStatus> operationalEnvServiceModelStatuses =
-                requestsDbClient.getAllByOperationalEnvIdAndRequestId("1234", "00032ab7-3fb3-42e5-965d-8ea592502017");
+        List<OperationalEnvServiceModelStatus> operationalEnvServiceModelStatuses = requestsDbClient
+                .getAllByOperationalEnvIdAndRequestId("1234", "00032ab7-3fb3-42e5-965d-8ea592502017");
         assertNotNull(operationalEnvServiceModelStatuses);
         assertFalse(operationalEnvServiceModelStatuses.isEmpty());
         assertEquals(2, operationalEnvServiceModelStatuses.size());
@@ -289,8 +286,8 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
 
     @Test
     public void getDistributionStatusByIdTest() {
-        OperationalEnvDistributionStatus operationalEnvDistributionStatus =
-                requestsDbClient.getDistributionStatusById("111");
+        OperationalEnvDistributionStatus operationalEnvDistributionStatus = requestsDbClient
+                .getDistributionStatusById("111");
         assertNotNull(operationalEnvDistributionStatus);
         assertEquals("111", operationalEnvDistributionStatus.getDistributionId());
         assertEquals("ERROR", operationalEnvDistributionStatus.getDistributionIdErrorReason());
@@ -309,9 +306,9 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
     @Test
     public void getInfraActiveRequestbyRequestId_Filters_Test() {
         Map<String, String[]> filters = new HashMap<>();
-        filters.put("requestStatus", new String[] {"EQ", "IN_PROGRESS"});
-        filters.put("action", new String[] {"EQ", "create"});
-        filters.put("serviceInstanceId", new String[] {"EQ", infraActiveRequests.getServiceInstanceId()});
+        filters.put("requestStatus", new String[] { "EQ", "IN_PROGRESS" });
+        filters.put("action", new String[] { "EQ", "create" });
+        filters.put("serviceInstanceId", new String[] { "EQ", infraActiveRequests.getServiceInstanceId() });
         List<InfraActiveRequests> infraActiveRequestsResponse = requestsDbClient.getRequest(filters);
 
         verifyInfraActiveRequests(infraActiveRequestsResponse.get(0));
@@ -330,17 +327,17 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
         requestsDbClient.save(request);
 
         List<InfraActiveRequests> infraActiveRequests = requestsDbClient.getInProgressVolumeGroupsAndVfModules();
-        assertThat(request, sameBeanAs(infraActiveRequests.get(0)).ignoring("modifyTime"));
+        assertThat(request).usingRecursiveComparison().ignoringFields("modifyTime", "startTime")
+                .isEqualTo(infraActiveRequests.get(0));
     }
 
     @Test
     public void getRequestProcessingDataBySoRequestIdAndNameAndTag() {
-        List<RequestProcessingData> requestProcessingData =
-                requestsDbClient.getRequestProcessingDataBySoRequestIdAndNameAndTagOrderByCreateTimeDesc(
+        List<RequestProcessingData> requestProcessingData = requestsDbClient
+                .getRequestProcessingDataBySoRequestIdAndNameAndTagOrderByCreateTimeDesc(
                         "00032ab7-na18-42e5-965d-8ea592502018", "requestAction", "pincFabricConfigRequest");
         assertNotNull(requestProcessingData);
         assertEquals(1, requestProcessingData.size());
         assertEquals("assign", requestProcessingData.get(0).getValue());
     }
 }
-

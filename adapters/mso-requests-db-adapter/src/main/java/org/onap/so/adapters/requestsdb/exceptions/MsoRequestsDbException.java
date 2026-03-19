@@ -20,8 +20,6 @@
 
 package org.onap.so.adapters.requestsdb.exceptions;
 
-
-
 import javax.xml.ws.WebFault;
 import org.onap.so.exceptions.MSOException;
 import org.onap.logging.filter.base.ErrorCode;
@@ -32,15 +30,12 @@ import org.onap.logging.filter.base.ErrorCode;
  * 
  *
  */
-@WebFault(name = "MsoRequestsDbException",
-        faultBean = "org.onap.so.adapters.requestsdb.exceptions.MsoRequestsDbExceptionBean",
-        targetNamespace = "http://org.onap.so/requestsdb")
+@WebFault(name = "MsoRequestsDbException", faultBean = "org.onap.so.adapters.requestsdb.exceptions.MsoRequestsDbExceptionBean", targetNamespace = "http://org.onap.so/requestsdb")
 public class MsoRequestsDbException extends MSOException {
 
     private static final long serialVersionUID = 1L;
 
     private MsoRequestsDbExceptionBean faultInfo;
-
 
     public MsoRequestsDbException(String msg) {
         super(msg);

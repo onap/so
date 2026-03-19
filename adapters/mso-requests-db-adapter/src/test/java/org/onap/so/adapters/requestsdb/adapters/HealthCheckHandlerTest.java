@@ -32,7 +32,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
-
 public class HealthCheckHandlerTest extends RequestsAdapterBase {
 
     @LocalServerPort
@@ -42,12 +41,11 @@ public class HealthCheckHandlerTest extends RequestsAdapterBase {
 
     HttpHeaders headers = new HttpHeaders();
 
-
     @Test
     public void testHealthcheck() throws JSONException {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
-        ResponseEntity<String> response =
-                restTemplate.exchange(createURLWithPort("/manage/health"), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/manage/health"), HttpMethod.GET,
+                entity, String.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
     }
 

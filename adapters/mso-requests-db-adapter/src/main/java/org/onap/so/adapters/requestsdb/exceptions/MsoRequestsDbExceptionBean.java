@@ -20,7 +20,6 @@
 
 package org.onap.so.adapters.requestsdb.exceptions;
 
-
 import java.io.Serializable;
 
 /**

@@ -53,7 +53,6 @@ public class ArchiveInfraRequestsScheduler {
     @Autowired
     private ArchivedInfraRequestsRepository archivedInfraRepo;
 
-
     @Value("${mso.infra-requests.archived.period}")
     private int archivedPeriod;
 

@@ -20,7 +20,6 @@
 
 package org.onap.so.adapters.requestsdb.application;
 
-
 import org.onap.logging.filter.spring.LoggingInterceptor;
 import org.onap.logging.filter.spring.StatusLoggingInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.handler.MappedInterceptor;
 
 @Configuration
-@ComponentScan(basePackages = {"org.onap.logging.filter"})
+@ComponentScan(basePackages = { "org.onap.logging.filter" })
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
     @Value("${logging.request-status.exclusions:}")
@@ -47,14 +46,14 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     @Bean
     public MappedInterceptor mappedLoggingInterceptor() {
         return excludedPaths != null && excludedPaths.length > 0
-                ? new MappedInterceptor(new String[] {"/**"}, excludedPaths, loggingInterceptor)
-                : new MappedInterceptor(new String[] {"/**"}, loggingInterceptor);
+                ? new MappedInterceptor(new String[] { "/**" }, excludedPaths, loggingInterceptor)
+                : new MappedInterceptor(new String[] { "/**" }, loggingInterceptor);
     }
 
     @Bean
     public MappedInterceptor mappedStatusLoggingInterceptor() {
         return excludedPaths != null && excludedPaths.length > 0
-                ? new MappedInterceptor(new String[] {"/**"}, excludedPaths, statusLoggingInterceptor)
-                : new MappedInterceptor(new String[] {"/**"}, statusLoggingInterceptor);
+                ? new MappedInterceptor(new String[] { "/**" }, excludedPaths, statusLoggingInterceptor)
+                : new MappedInterceptor(new String[] { "/**" }, statusLoggingInterceptor);
     }
 }
