@@ -20,8 +20,7 @@
 
 package org.onap.so.apihandlerinfra.infra.rest;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -63,7 +62,6 @@ public class BpmnRequestBuilderTest {
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
 
-
     @Mock
     private AAIResourcesClient aaiResourcesClient;
 
@@ -75,7 +73,6 @@ public class BpmnRequestBuilderTest {
 
     @InjectMocks
     private BpmnRequestBuilder reqBuilder = spy(BpmnRequestBuilder.class);
-
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -97,7 +94,7 @@ public class BpmnRequestBuilderTest {
         expectedRequest.getRequestDetails().getModelInfo().setModelId(null); // bad getter/setter setting multiple
                                                                              // fields
         ServiceInstancesRequest actualRequest = reqBuilder.buildServiceDeleteRequest("serviceId");
-        assertThat(actualRequest, sameBeanAs(expectedRequest));
+        assertThat(actualRequest).usingRecursiveComparison().isEqualTo(expectedRequest);
     }
 
     @Test
@@ -110,7 +107,7 @@ public class BpmnRequestBuilderTest {
         ServiceInstancesRequest expectedRequest =
                 mapper.readValue(new File(RESOURCE_PATH + "ExpectedVnfRequest.json"), ServiceInstancesRequest.class);
         ServiceInstancesRequest actualRequest = reqBuilder.buildVnfDeleteRequest("vnfId");
-        assertThat(actualRequest, sameBeanAs(expectedRequest));
+        assertThat(actualRequest).usingRecursiveComparison().isEqualTo(expectedRequest);
     }
 
     @Test
@@ -128,7 +125,7 @@ public class BpmnRequestBuilderTest {
                 .readValue(new File(RESOURCE_PATH + "ExpectedVfModuleRequest.json"), ServiceInstancesRequest.class);
         ServiceInstancesRequest actualRequest =
                 reqBuilder.buildVFModuleDeleteRequest("vnfId", "vfModuleId", ModelType.vfModule);
-        assertThat(actualRequest, sameBeanAs(expectedRequest));
+        assertThat(actualRequest).usingRecursiveComparison().isEqualTo(expectedRequest);
     }
 
     @Test
@@ -147,7 +144,7 @@ public class BpmnRequestBuilderTest {
         ServiceInstancesRequest expectedRequest = mapper
                 .readValue(new File(RESOURCE_PATH + "ExpectedVolumeGroupRequest.json"), ServiceInstancesRequest.class);
         ServiceInstancesRequest actualRequest = reqBuilder.buildVolumeGroupDeleteRequest("vnfId", "volumeGroupId");
-        assertThat(actualRequest, sameBeanAs(expectedRequest));
+        assertThat(actualRequest).usingRecursiveComparison().isEqualTo(expectedRequest);
     }
 
     @Test
@@ -185,7 +182,6 @@ public class BpmnRequestBuilderTest {
 
         doReturn(filters).when(reqBuilder).createQueryRequest("vnfId", vnfId);
         doReturn(Optional.of(serviceRequest)).when(reqBuilder).findServiceInstanceRequest(filters);
-
 
         CloudConfiguration result = reqBuilder.mapCloudConfigurationVnf(vnfId);
         assertEquals("tenantId", result.getTenantId());

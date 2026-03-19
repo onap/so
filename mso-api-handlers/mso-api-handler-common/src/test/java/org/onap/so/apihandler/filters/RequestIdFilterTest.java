@@ -20,8 +20,7 @@
 
 package org.onap.so.apihandler.filters;
 
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -97,10 +96,8 @@ public class RequestIdFilterTest {
         thrown.expect(DuplicateRequestIdException.class);
         thrown.expectMessage("HTTP 400 Bad Request");
 
-
         requestIdFilter.filter(mockContext);
     }
-
 
     @Test
     public void filterTestInfraSkipRequestIdLookup() throws IOException {
@@ -119,13 +116,12 @@ public class RequestIdFilterTest {
         requestIdFilter.filter(mockContext);
     }
 
-
     @Test
     public void createRequestErrorTest() throws IOException {
         RequestError requestError = getRequestError();
         String result = requestIdFilter.createRequestError(REQUEST_ID, "InfraActiveRequests");
         RequestError resultingError = mapper.readValue(result, RequestError.class);
 
-        assertThat(resultingError, sameBeanAs(requestError));
+        assertThat(resultingError).usingRecursiveComparison().isEqualTo(requestError);
     }
 }

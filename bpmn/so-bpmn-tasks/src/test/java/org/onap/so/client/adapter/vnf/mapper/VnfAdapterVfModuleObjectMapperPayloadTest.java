@@ -20,8 +20,7 @@
 
 package org.onap.so.client.adapter.vnf.mapper;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import java.io.IOException;
@@ -143,8 +142,8 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
         String jsonToCompare =
                 new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "vnfAdapterCreateVfModuleRequest.json")));
         CreateVfModuleRequest reqMapper1 = omapper.readValue(jsonToCompare, CreateVfModuleRequest.class);
-        assertThat(vfModuleVNFAdapterRequest, sameBeanAs(reqMapper1).ignoring("messageId").ignoring("notificationUrl"));
-
+        assertThat(vfModuleVNFAdapterRequest).usingRecursiveComparison().ignoringFields("messageId", "notificationUrl")
+                .isEqualTo(reqMapper1);
 
         doReturn("true").when(spyMapper).getProperty("mso.bridgeEnabled");
         vfModuleVNFAdapterRequest =
@@ -153,8 +152,8 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
         jsonToCompare = new String(Files
                 .readAllBytes(Paths.get(JSON_FILE_LOCATION + "vnfAdapterCreateVfModuleRequestBridgeEnabled.json")));
         reqMapper1 = omapper.readValue(jsonToCompare, CreateVfModuleRequest.class);
-        assertThat(vfModuleVNFAdapterRequest, sameBeanAs(reqMapper1).ignoring("messageId").ignoring("notificationUrl"));
-
+        assertThat(vfModuleVNFAdapterRequest).usingRecursiveComparison().ignoringFields("messageId", "notificationUrl")
+                .isEqualTo(reqMapper1);
 
         doReturn(null).when(spyMapper).getProperty("mso.bridgeEnabled");
         vfModuleVNFAdapterRequest =
@@ -163,7 +162,8 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
         jsonToCompare = new String(Files
                 .readAllBytes(Paths.get(JSON_FILE_LOCATION + "vnfAdapterCreateVfModuleRequestBridgeEnabled.json")));
         reqMapper1 = omapper.readValue(jsonToCompare, CreateVfModuleRequest.class);
-        assertThat(vfModuleVNFAdapterRequest, sameBeanAs(reqMapper1).ignoring("messageId").ignoring("notificationUrl"));
+        assertThat(vfModuleVNFAdapterRequest).usingRecursiveComparison().ignoringFields("messageId", "notificationUrl")
+                .isEqualTo(reqMapper1);
     }
 
     @Test
@@ -232,13 +232,13 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
                 vfModuleObjectMapper.createVfModuleRequestMapper(requestContext, cloudRegion, orchestrationContext,
                         serviceInstance, vnf, vfModule, null, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
 
-
         String jsonToCompare = new String(
                 Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "vnfAdapterCreateVfModuleRequestTrueBackout.json")));
 
         CreateVfModuleRequest reqMapper1 = omapper.readValue(jsonToCompare, CreateVfModuleRequest.class);
 
-        assertThat(vfModuleVNFAdapterRequest, sameBeanAs(reqMapper1).ignoring("messageId").ignoring("notificationUrl"));
+        assertThat(vfModuleVNFAdapterRequest).usingRecursiveComparison().ignoringFields("messageId", "notificationUrl")
+                .isEqualTo(reqMapper1);
     }
 
     @Test
@@ -303,13 +303,13 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
                 vfModuleObjectMapper.createVfModuleRequestMapper(requestContext, cloudRegion, orchestrationContext,
                         serviceInstance, vnf, vfModule, null, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
 
-
         String jsonToCompare = new String(Files.readAllBytes(Paths
                 .get(JSON_FILE_LOCATION + "vnfAdapterCreateVfModuleWithNoEnvironmentAndWorkloadContextRequest.json")));
 
         CreateVfModuleRequest reqMapper1 = omapper.readValue(jsonToCompare, CreateVfModuleRequest.class);
 
-        assertThat(vfModuleVNFAdapterRequest, sameBeanAs(reqMapper1).ignoring("messageId").ignoring("notificationUrl"));
+        assertThat(vfModuleVNFAdapterRequest).usingRecursiveComparison().ignoringFields("messageId", "notificationUrl")
+                .isEqualTo(reqMapper1);
     }
 
     @Test
@@ -384,13 +384,13 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
                 vfModuleObjectMapper.createVfModuleRequestMapper(requestContext, cloudRegion, orchestrationContext,
                         serviceInstance, vnf, vfModule, null, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
 
-
         String jsonToCompare = new String(
                 Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "vnfAdapterCreateVfModuleAddonRequest.json")));
 
         CreateVfModuleRequest reqMapper1 = omapper.readValue(jsonToCompare, CreateVfModuleRequest.class);
 
-        assertThat(vfModuleVNFAdapterRequest, sameBeanAs(reqMapper1).ignoring("messageId").ignoring("notificationUrl"));
+        assertThat(vfModuleVNFAdapterRequest).usingRecursiveComparison().ignoringFields("messageId", "notificationUrl")
+                .isEqualTo(reqMapper1);
     }
 
     @Test
@@ -489,13 +489,13 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
                 vfModuleObjectMapper.createVfModuleRequestMapper(requestContext, cloudRegion, orchestrationContext,
                         serviceInstance, vnf, vfModule, volumeGroup, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
 
-
         String jsonToCompare = new String(Files
                 .readAllBytes(Paths.get(JSON_FILE_LOCATION + "vnfAdapterCreateVfModuleWithVolumeGroupRequest.json")));
 
         CreateVfModuleRequest reqMapper1 = omapper.readValue(jsonToCompare, CreateVfModuleRequest.class);
 
-        assertThat(vfModuleVNFAdapterRequest, sameBeanAs(reqMapper1).ignoring("messageId").ignoring("notificationUrl"));
+        assertThat(vfModuleVNFAdapterRequest).usingRecursiveComparison().ignoringFields("messageId", "notificationUrl")
+                .isEqualTo(reqMapper1);
     }
 
     @Test
@@ -561,13 +561,13 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
                 vfModuleObjectMapper.createVfModuleRequestMapper(requestContext, cloudRegion, orchestrationContext,
                         serviceInstance, vnf, vfModule, null, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
 
-
         String jsonToCompare = new String(Files.readAllBytes(
                 Paths.get(JSON_FILE_LOCATION + "vnfAdapterCreateVfModuleRequestWithSingleAvailabilityZone.json")));
 
         CreateVfModuleRequest reqMapper1 = omapper.readValue(jsonToCompare, CreateVfModuleRequest.class);
 
-        assertThat(vfModuleVNFAdapterRequest, sameBeanAs(reqMapper1).ignoring("messageId").ignoring("notificationUrl"));
+        assertThat(vfModuleVNFAdapterRequest).usingRecursiveComparison().ignoringFields("messageId", "notificationUrl")
+                .isEqualTo(reqMapper1);
     }
 
     @Test
@@ -633,13 +633,13 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
                 vfModuleObjectMapper.createVfModuleRequestMapper(requestContext, cloudRegion, orchestrationContext,
                         serviceInstance, vnf, vfModule, null, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
 
-
         String jsonToCompare = new String(Files.readAllBytes(
                 Paths.get(JSON_FILE_LOCATION + "vnfAdapterCreateVfModuleRequestWithCloudResources.json")));
 
         CreateVfModuleRequest reqMapper1 = omapper.readValue(jsonToCompare, CreateVfModuleRequest.class);
 
-        assertThat(vfModuleVNFAdapterRequest, sameBeanAs(reqMapper1).ignoring("messageId").ignoring("notificationUrl"));
+        assertThat(vfModuleVNFAdapterRequest).usingRecursiveComparison().ignoringFields("messageId", "notificationUrl")
+                .isEqualTo(reqMapper1);
     }
 
     @Test
@@ -704,13 +704,13 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
                 vfModuleObjectMapper.createVfModuleRequestMapper(requestContext, cloudRegion, orchestrationContext,
                         serviceInstance, vnf, vfModule, null, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
 
-
         String jsonToCompare = new String(
                 Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "vnfAdapterCreateVfModuleRequestDhcpDisabled.json")));
 
         CreateVfModuleRequest reqMapper1 = omapper.readValue(jsonToCompare, CreateVfModuleRequest.class);
 
-        assertThat(vfModuleVNFAdapterRequest, sameBeanAs(reqMapper1).ignoring("messageId").ignoring("notificationUrl"));
+        assertThat(vfModuleVNFAdapterRequest).usingRecursiveComparison().ignoringFields("messageId", "notificationUrl")
+                .isEqualTo(reqMapper1);
     }
 
     @Test
@@ -775,13 +775,13 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
                 vfModuleObjectMapper.createVfModuleRequestMapper(requestContext, cloudRegion, orchestrationContext,
                         serviceInstance, vnf, vfModule, null, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
 
-
         String jsonToCompare = new String(
                 Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "vnfAdapterCreateVfModuleRequestMultipleDhcp.json")));
 
         CreateVfModuleRequest reqMapper1 = omapper.readValue(jsonToCompare, CreateVfModuleRequest.class);
 
-        assertThat(vfModuleVNFAdapterRequest, sameBeanAs(reqMapper1).ignoring("messageId").ignoring("notificationUrl"));
+        assertThat(vfModuleVNFAdapterRequest).usingRecursiveComparison().ignoringFields("messageId", "notificationUrl")
+                .isEqualTo(reqMapper1);
     }
 
     @Test
@@ -844,13 +844,13 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
                 vfModuleObjectMapper.createVfModuleRequestMapper(requestContext, cloudRegion, orchestrationContext,
                         serviceInstance, vnf, vfModule, null, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
 
-
         String jsonToCompare = new String(
                 Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "vnfAdapterCreateVfModuleRequestNoUserParams.json")));
 
         CreateVfModuleRequest reqMapper1 = omapper.readValue(jsonToCompare, CreateVfModuleRequest.class);
 
-        assertThat(vfModuleVNFAdapterRequest, sameBeanAs(reqMapper1).ignoring("messageId").ignoring("notificationUrl"));
+        assertThat(vfModuleVNFAdapterRequest).usingRecursiveComparison().ignoringFields("messageId", "notificationUrl")
+                .isEqualTo(reqMapper1);
     }
 
     @Test
@@ -906,14 +906,13 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
         DeleteVfModuleRequest vfModuleVNFAdapterRequest = vfModuleObjectMapper
                 .deleteVfModuleRequestMapper(requestContext, cloudRegion, serviceInstance, vnf, vfModule);
 
-
         String jsonToCompare =
                 new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "vnfAdapterDeleteVfModuleRequest.json")));
 
         DeleteVfModuleRequest reqMapper1 = omapper.readValue(jsonToCompare, DeleteVfModuleRequest.class);
 
-        assertThat(vfModuleVNFAdapterRequest,
-                sameBeanAs(reqMapper1).ignoring("messageId").ignoring("notificationUrl").ignoring("vfModuleStackId"));
+        assertThat(vfModuleVNFAdapterRequest).usingRecursiveComparison()
+                .ignoringFields("messageId", "notificationUrl", "vfModuleStackId").isEqualTo(reqMapper1);
     }
 
     @Test

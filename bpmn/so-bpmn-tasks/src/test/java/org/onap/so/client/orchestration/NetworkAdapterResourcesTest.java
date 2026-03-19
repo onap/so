@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,7 +20,7 @@
 
 package org.onap.so.client.orchestration;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
@@ -59,7 +59,6 @@ import org.onap.so.client.adapter.network.NetworkAdapterClientImpl;
 import org.onap.so.client.adapter.network.mapper.NetworkAdapterObjectMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.entity.MsoRequest;
-import com.shazam.shazamcrest.matcher.Matchers;
 
 
 @RunWith(MockitoJUnitRunner.Silent.class)
@@ -155,7 +154,7 @@ public class NetworkAdapterResourcesTest extends TestDataSetup {
         verify(MOCK_networkAdapterObjectMapper, times(1)).createNetworkRequestMapper(requestContext, cloudRegion,
                 orchestrationContext, serviceInstance, l3Network, userInput, cloudRegionPo, customer);
 
-        assertThat(expectedCreateNetworkResponse, Matchers.sameBeanAs(actualCreateNetwrokResponse));
+        assertThat(expectedCreateNetworkResponse).usingRecursiveComparison().isEqualTo(actualCreateNetwrokResponse);
     }
 
     @Test
@@ -183,7 +182,7 @@ public class NetworkAdapterResourcesTest extends TestDataSetup {
                 isA(ServiceInstance.class), isA(L3Network.class), isA(Map.class), isA(String.class),
                 isA(CreateNetworkResponse.class));
 
-        RollbackNetworkResponse actualRollbackCreateNetwrokResponse =
+        RollbackNetworkResponse actualRollbackCreateNetworkResponse =
                 (networkAdapterResources.rollbackCreateNetwork(requestContext, cloudRegion, orchestrationContext,
                         serviceInstance, l3Network, userInput, cloudRegionPo, createNetworkResponse)).get();
 
@@ -193,7 +192,8 @@ public class NetworkAdapterResourcesTest extends TestDataSetup {
                 cloudRegion, orchestrationContext, serviceInstance, l3Network, userInput, cloudRegionPo,
                 createNetworkResponse);
 
-        assertThat(expectedRollbackNetworkResponse, Matchers.sameBeanAs(actualRollbackCreateNetwrokResponse));
+        assertThat(expectedRollbackNetworkResponse).usingRecursiveComparison()
+                .isEqualTo(actualRollbackCreateNetworkResponse);
     }
 
     @Test
@@ -235,6 +235,6 @@ public class NetworkAdapterResourcesTest extends TestDataSetup {
         verify(MOCK_networkAdapterObjectMapper, times(1)).deleteNetworkRequestMapper(requestContext, cloudRegion,
                 serviceInstance, l3Network);
         verify(MOCK_networkAdapterClient, times(1)).deleteNetwork(l3Network.getNetworkId(), deleteNetworkRequest);
-        assertThat(expectedDeleteNetworkResponse, Matchers.sameBeanAs(actualDeleteNetworkResponse));
+        assertThat(expectedDeleteNetworkResponse).usingRecursiveComparison().isEqualTo(actualDeleteNetworkResponse);
     }
 }

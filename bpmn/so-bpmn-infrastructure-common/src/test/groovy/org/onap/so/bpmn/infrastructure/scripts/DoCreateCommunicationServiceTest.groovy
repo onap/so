@@ -32,8 +32,7 @@ import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs
+import static org.assertj.core.api.Assertions.assertThat
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
 import static org.mockito.ArgumentMatchers.eq
@@ -78,7 +77,7 @@ class DoCreateCommunicationServiceTest extends MsoGroovyTest {
         ServiceInstance resData = captor.getValue()
         resData.setCreatedAt("")
         resData.setEnvironmentContext("")
-        assertThat(resData, sameBeanAs(expectedServiceInstanceData))
+        assertThat(resData).usingRecursiveComparison().isEqualTo(expectedServiceInstanceData)
     }
 
     @Test
@@ -97,7 +96,7 @@ class DoCreateCommunicationServiceTest extends MsoGroovyTest {
         Mockito.verify(mockExecution).setVariable(eq("communicationServiceInstanceProfile"), captor.capture())
         CommunicationServiceProfile resData = captor.getValue()
         resData.setProfileId("")
-        assertThat(resData, sameBeanAs(expectedServiceInstanceData))
+        assertThat(resData).usingRecursiveComparison().isEqualTo(expectedServiceInstanceData)
     }
 
     private static CommunicationServiceProfile getExpectedServiceInstanceProfile() {

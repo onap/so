@@ -20,6 +20,7 @@
 
 package org.onap.so.adapters.catalogdb.catalogrest;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import javax.transaction.Transactional;
 import javax.ws.rs.core.MediaType;
@@ -37,8 +38,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 
 public class CloudConfigTest extends CatalogDbAdapterBaseTest {
 
@@ -88,11 +87,10 @@ public class CloudConfigTest extends CatalogDbAdapterBaseTest {
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
         System.out.println(cloudSiteString.getBody());
         assertEquals(Response.Status.OK.getStatusCode(), actualCloudSite.getStatusCode().value());
-        assertThat(actualCloudSite.getBody(), sameBeanAs(cloudSite).ignoring("created").ignoring("updated")
-                .ignoring("identityService.created").ignoring("identityService.updated"));
+        assertThat(actualCloudSite.getBody()).usingRecursiveComparison()
+                .ignoringFields("created", "updated", "identityService.created", "identityService.updated")
+                .isEqualTo(cloudSite);
 
     }
-
-
 
 }
