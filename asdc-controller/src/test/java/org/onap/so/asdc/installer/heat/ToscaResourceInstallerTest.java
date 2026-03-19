@@ -20,8 +20,7 @@
 
 package org.onap.so.asdc.installer.heat;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -150,7 +149,6 @@ public class ToscaResourceInstallerTest extends BaseTest {
 
         ToscaCsarRepository toscaCsarRepo = spy(ToscaCsarRepository.class);
 
-
         doReturn(artifactUuid).when(toscaCsar).getArtifactUUID();
         doReturn(checkSum).when(toscaCsar).getArtifactChecksum();
         doReturn(returnValue).when(toscaCsarRepo).findById(artifactUuid);
@@ -190,8 +188,8 @@ public class ToscaResourceInstallerTest extends BaseTest {
 
         verify(vfResourceStructure, times(3)).getResourceInstance();
         verify(vfResourceStructure, times(5)).getNotification();
-        assertThat(actualWatchdogComponentDistributionStatus,
-                sameBeanAs(expectedComponentDistributionStatus).ignoring("createTime").ignoring("modifyTime"));
+        assertThat(actualWatchdogComponentDistributionStatus).usingRecursiveComparison()
+                .ignoringFields("createTime", "modifyTime").isEqualTo(expectedComponentDistributionStatus);
     }
 
     @Test
@@ -245,8 +243,8 @@ public class ToscaResourceInstallerTest extends BaseTest {
 
         assertEquals(statusData.getDistributionID(), cdStatus.getDistributionId());
         assertEquals(statusData.getComponentName(), cdStatus.getComponentName());
-        assertThat(actualWatchdogComponentDistributionStatus,
-                sameBeanAs(expectedWatchdogComponentDistributionStatus).ignoring("createTime").ignoring("modifyTime"));
+        assertThat(actualWatchdogComponentDistributionStatus).usingRecursiveComparison()
+                .ignoringFields("createTime", "modifyTime").isEqualTo(expectedWatchdogComponentDistributionStatus);
     }
 
     @Test
@@ -300,7 +298,6 @@ public class ToscaResourceInstallerTest extends BaseTest {
         toscaResourceStructObj.setToscaArtifact(inputCsar);
 
         ToscaCsarRepository toscaCsarRepo = spy(ToscaCsarRepository.class);
-
 
         ToscaCsar toscaCsar = mock(ToscaCsar.class);
         Optional<ToscaCsar> returnValue = Optional.of(toscaCsar);
@@ -365,7 +362,6 @@ public class ToscaResourceInstallerTest extends BaseTest {
 
         doReturn(resourceCustomizationUUID).when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
         doReturn(uuid).when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELUUID);
-
 
         // vnfc instance group list
         List<Group> vnfcInstanceGroupList = new ArrayList<>();
@@ -439,8 +435,6 @@ public class ToscaResourceInstallerTest extends BaseTest {
         doReturn(null).when(vnfcInstanceGroupCustomizationRepo).save(any(VnfcInstanceGroupCustomization.class));
         return toscaResourceStructObj;
     }
-
-
 
     @Test
     public void installTheResourceExceptionTest() throws Exception {
@@ -660,7 +654,6 @@ public class ToscaResourceInstallerTest extends BaseTest {
         doReturn(null).when(toscaInstaller).getLeafPropertyValue(entityDetails, SdcPropertyNames.PROPERTY_NAME_NFTYPE);
     }
 
-
     @Test
     public void getConfigurationResourceCustomizationTest() {
         prepareConfigurationResourceCustomization();
@@ -776,7 +769,6 @@ public class ToscaResourceInstallerTest extends BaseTest {
 
     }
 
-
     class MockConstants {
         public final static String MODEL_NAME = "VLAN Network Receptor Configuration";
         public final static String MODEL_INVARIANT_UUID = "1608eef4-de53-4334-a8d2-ba79cab4bde0";
@@ -786,7 +778,6 @@ public class ToscaResourceInstallerTest extends BaseTest {
         public final static String MODEL_CUSTOMIZATIONUUID = "2db953e8-679d-437b-bff7-cb262638a8cd";
         public final static String TEMPLATE_TYPE = "org.openecomp.nodes.VLANNetworkReceptor";
         public final static String TEMPLATE_NAME = "VLAN Network Receptor Configuration 0";
-
 
     }
 }

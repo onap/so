@@ -20,8 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.sdnc.mapper;
 
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -62,7 +61,6 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
 import org.onap.so.client.exception.MapperException;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
-
 
 public class GeneralTopologyObjectMapperTest extends TestDataSetup {
     @InjectMocks
@@ -278,7 +276,8 @@ public class GeneralTopologyObjectMapperTest extends TestDataSetup {
         onapModelInformation.setModelCustomizationUuid("my-customization-uuid");
         networkInformation.setOnapModelInformation(onapModelInformation);
 
-        assertThat(networkInformation, sameBeanAs(genObjMapper.buildNetworkInformation(network)));
+        assertThat(networkInformation).usingRecursiveComparison()
+                .isEqualTo(genObjMapper.buildNetworkInformation(network));
 
     }
 
@@ -297,11 +296,10 @@ public class GeneralTopologyObjectMapperTest extends TestDataSetup {
         networkInformation.networkTechnology("my-network-technology");
         networkInformation.setFromPreload(null);
 
-
-        assertThat(networkInformation, sameBeanAs(genObjMapper.buildNetworkInformation(network)));
+        assertThat(networkInformation).usingRecursiveComparison()
+                .isEqualTo(genObjMapper.buildNetworkInformation(network));
 
     }
-
 
     @Test
     public void buildVfModuleInformationTest_withNoModelIsFromPreload() {

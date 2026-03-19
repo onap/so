@@ -20,11 +20,10 @@
 
 package org.onap.so.apihandlerinfra;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.onap.logging.filter.base.Constants.HttpHeaders.ECOMP_REQUEST_ID;
 import static org.onap.logging.filter.base.Constants.HttpHeaders.ONAP_PARTNER_NAME;
@@ -48,7 +47,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.http.Fault;
-
 
 public class ManualTasksTest extends BaseTest {
 
@@ -85,17 +83,15 @@ public class ManualTasksTest extends BaseTest {
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, String.class);
 
-
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         TaskRequestReference realResponse = mapper.readValue(response.getBody(), TaskRequestReference.class);
 
-
         // then
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
-        assertThat(realResponse, sameBeanAs(expectedResponse));
+        assertThat(realResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
     }
 
     @Test
@@ -125,7 +121,7 @@ public class ManualTasksTest extends BaseTest {
 
         RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
-        assertThat(realResponse, sameBeanAs(expectedResponse));
+        assertThat(realResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
     }
 
     @Test
@@ -161,7 +157,7 @@ public class ManualTasksTest extends BaseTest {
 
         RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
-        assertThat(realResponse, sameBeanAs(expectedResponse));
+        assertThat(realResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
     }
 
     @Test
@@ -197,12 +193,11 @@ public class ManualTasksTest extends BaseTest {
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, String.class);
 
-
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals(Response.Status.BAD_GATEWAY.getStatusCode(), response.getStatusCode().value());
-        assertThat(realResponse, sameBeanAs(expectedResponse));
+        assertThat(realResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
     }
 }

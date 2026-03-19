@@ -20,8 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.sdnc.mapper;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -136,8 +135,8 @@ public class NetworkTopologyOperationRequestMapperTest {
                 omapper.readValue(getJson("genericResourceApiNetworkOperationInformation.json"),
                         GenericResourceApiNetworkOperationInformation.class);
 
-        assertThat(networkSDNCrequest, sameBeanAs(reqMapper1).ignoring("sdncRequestHeader.svcRequestId")
-                .ignoring("requestInformation.requestId"));
+        assertThat(networkSDNCrequest).usingRecursiveComparison()
+                .ignoringFields("sdncRequestHeader.svcRequestId", "requestInformation.requestId").isEqualTo(reqMapper1);
         assertEquals("MsoRequestId", networkSDNCrequest.getRequestInformation().getRequestId());
     }
 
@@ -197,8 +196,9 @@ public class NetworkTopologyOperationRequestMapperTest {
                 omapperUnassign.readValue(getJson("genericResourceApiNetworkOperationInformationUnAssign.json"),
                         GenericResourceApiNetworkOperationInformation.class);
 
-        assertThat(reqMapperUnassign, sameBeanAs(networkSDNCrequestUnassign).ignoring("sdncRequestHeader.svcRequestId")
-                .ignoring("requestInformation.requestId"));
+        assertThat(reqMapperUnassign).usingRecursiveComparison()
+                .ignoringFields("sdncRequestHeader.svcRequestId", "requestInformation.requestId")
+                .isEqualTo(networkSDNCrequestUnassign);
         assertEquals("MsoRequestId", networkSDNCrequestUnassign.getRequestInformation().getRequestId());
 
     }
@@ -218,8 +218,9 @@ public class NetworkTopologyOperationRequestMapperTest {
                 omapper.readValue(getJson("genericResourceApiNetworkOperationInformationNoNetworkName.json"),
                         GenericResourceApiNetworkOperationInformation.class);
 
-        assertThat(reqMapper1, sameBeanAs(networkSDNCrequest).ignoring("sdncRequestHeader.svcRequestId")
-                .ignoring("requestInformation.requestId"));
+        assertThat(reqMapper1).usingRecursiveComparison()
+                .ignoringFields("sdncRequestHeader.svcRequestId", "requestInformation.requestId")
+                .isEqualTo(networkSDNCrequest);
     }
 
     /*
